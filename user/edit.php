@@ -50,73 +50,17 @@
         $usernew->lastname  = strip_tags($usernew->lastname);
 
         if (find_form_errors($user, $usernew, $err) ) {
+            if ($filename = valid_uploaded_file($imagefile)) { 
+                $usernew->picture = save_user_image($user->id, $filename);
+            }
+
             $user = $usernew;
 
         } else {
 		    $timenow = time();
 
             if ($filename = valid_uploaded_file($imagefile)) { 
-                $imageinfo = GetImageSize($filename);
-                $image->width  = $imageinfo[0];
-                $image->height = $imageinfo[1];
-                $image->type   = $imageinfo[2];
-    
-                switch ($image->type) {
-                    case 2: $im = ImageCreateFromJPEG($filename); break;
-                    case 3: $im = ImageCreateFromPNG($filename); break;
-                    default: error("Image must be in JPG or PNG format");
-                }
-                if (function_exists("ImageCreateTrueColor") and $CFG->gdversion >= 2) {
-                    $im1 = ImageCreateTrueColor(100,100);
-                    $im2 = ImageCreateTrueColor(35,35);
-                } else {
-                    $im1 = ImageCreate(100,100);
-                    $im2 = ImageCreate(35,35);
-                }
-                
-                $cx = $image->width / 2;
-                $cy = $image->height / 2;
-    
-                if ($image->width < $image->height) {
-                    $half = floor($image->width / 2.0);
-                } else {
-                    $half = floor($image->height / 2.0);
-                }
-    
-                if (!file_exists("$CFG->dataroot/users")) {
-                    if (! mkdir("$CFG->dataroot/users", 0777)) {
-                        $badpermissions = true;
-                    }
-                }
-                if (!file_exists("$CFG->dataroot/users/$user->id")) {
-                    if (! mkdir("$CFG->dataroot/users/$user->id", 0777)) {
-                        $badpermissions = true;
-                    }
-                }
-                
-                if ($badpermissions) {
-                    $usernew->picture = "0";
-
-                } else {
-                    ImageCopyBicubic($im1, $im, 0, 0, $cx-$half, $cy-$half, 100, 100, $half*2, $half*2);
-                    ImageCopyBicubic($im2, $im, 0, 0, $cx-$half, $cy-$half, 35, 35, $half*2, $half*2);
-    
-                    // Draw borders over the top.
-                    $black1 = ImageColorAllocate ($im1, 0, 0, 0);
-                    $black2 = ImageColorAllocate ($im2, 0, 0, 0);
-                    ImageLine ($im1, 0, 0, 0, 99, $black1);
-                    ImageLine ($im1, 0, 99, 99, 99, $black1);
-                    ImageLine ($im1, 99, 99, 99, 0, $black1);
-                    ImageLine ($im1, 99, 0, 0, 0, $black1);
-                    ImageLine ($im2, 0, 0, 0, 34, $black2);
-                    ImageLine ($im2, 0, 34, 34, 34, $black2);
-                    ImageLine ($im2, 34, 34, 34, 0, $black2);
-                    ImageLine ($im2, 34, 0, 0, 0, $black2);
-                
-                    ImageJpeg($im1, "$CFG->dataroot/users/$user->id/f1.jpg", 90);
-                    ImageJpeg($im2, "$CFG->dataroot/users/$user->id/f2.jpg", 95);
-                    $usernew->picture = "1";
-                }
+                $usernew->picture = save_user_image($user->id, $filename);
             } else {
                 $usernew->picture = $user->picture;
             }
@@ -196,6 +140,11 @@
 
     print_heading( get_string("userprofilefor", "", "$userfullname") );
     print_simple_box_start("center", "", "$THEME->cellheading");
+    if ($err) {
+       echo "<CENTER>";
+       notify(get_string("someerrorswerefound"));
+       echo "</CENTER>";
+    }
 	include("edit.html");
     print_simple_box_end();
     print_footer($course);

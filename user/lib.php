@@ -49,6 +49,77 @@ function ImageCopyBicubic ($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $
     } 
 }
 
+
+function save_user_image($userid, $filename) {
+// Given a filename to a known image, this function scales and crops
+// it and saves it in the right place to be a user image.
+
+    global $CFG;
+
+    $imageinfo = GetImageSize($filename);
+    $image->width  = $imageinfo[0];
+    $image->height = $imageinfo[1];
+    $image->type   = $imageinfo[2];
+
+    switch ($image->type) {
+        case 2: $im = ImageCreateFromJPEG($filename); break;
+        case 3: $im = ImageCreateFromPNG($filename); break;
+        default: return 0;
+    }
+    if (function_exists("ImageCreateTrueColor") and $CFG->gdversion >= 2) {
+        $im1 = ImageCreateTrueColor(100,100);
+        $im2 = ImageCreateTrueColor(35,35);
+    } else {
+        $im1 = ImageCreate(100,100);
+        $im2 = ImageCreate(35,35);
+    }
+    
+    $cx = $image->width / 2;
+    $cy = $image->height / 2;
+
+    if ($image->width < $image->height) {
+        $half = floor($image->width / 2.0);
+    } else {
+        $half = floor($image->height / 2.0);
+    }
+
+    if (!file_exists("$CFG->dataroot/users")) {
+        if (! mkdir("$CFG->dataroot/users", 0777)) {
+            $badpermissions = true;
+        }
+    }
+    if (!file_exists("$CFG->dataroot/users/$user->id")) {
+        if (! mkdir("$CFG->dataroot/users/$user->id", 0777)) {
+            $badpermissions = true;
+        }
+    }
+    
+    if ($badpermissions) {
+        return 0;
+
+    } else {
+        ImageCopyBicubic($im1, $im, 0, 0, $cx-$half, $cy-$half, 100, 100, $half*2, $half*2);
+        ImageCopyBicubic($im2, $im, 0, 0, $cx-$half, $cy-$half, 35, 35, $half*2, $half*2);
+
+        // Draw borders over the top.
+        $black1 = ImageColorAllocate ($im1, 0, 0, 0);
+        $black2 = ImageColorAllocate ($im2, 0, 0, 0);
+        ImageLine ($im1, 0, 0, 0, 99, $black1);
+        ImageLine ($im1, 0, 99, 99, 99, $black1);
+        ImageLine ($im1, 99, 99, 99, 0, $black1);
+        ImageLine ($im1, 99, 0, 0, 0, $black1);
+        ImageLine ($im2, 0, 0, 0, 34, $black2);
+        ImageLine ($im2, 0, 34, 34, 34, $black2);
+        ImageLine ($im2, 34, 34, 34, 0, $black2);
+        ImageLine ($im2, 34, 0, 0, 0, $black2);
+    
+        ImageJpeg($im1, "$CFG->dataroot/users/$userid/f1.jpg", 90);
+        ImageJpeg($im2, "$CFG->dataroot/users/$userid/f2.jpg", 95);
+        return 1;
+    }
+}
+
+
 function print_user($user, $course, $string) {
 
     global $USER, $COUNTRIES;

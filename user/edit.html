@@ -19,10 +19,11 @@ if (isadmin()) {
 	if (isset($err["newpassword"])) {
         formerr($err["newpassword"]);
     } else if (empty($user->newpassword)) {
-	    echo "(".get_string("leavetokeep").")";
+	    echo " (".get_string("leavetokeep").")";
     }
 	echo "</td>";
     echo "</tr>";
+    echo "<tr><td colspan=2><HR></td></tr>";
 }
 ?>
 <tr valign=top>
@@ -124,9 +125,12 @@ if (isadmin()) {
 </tr>
 <tr valign=top>
 	<td><P><? print_string("userdescription") ?>:</td>
-	<td><TEXTAREA NAME=description COLS=50 ROWS=10 WRAP=virtual><? p($user->description) ?></TEXTAREA> 
+	<td><? if ($err["description"]) {
+               formerr($err["description"]);
+               echo "<BR>";
+           } ?>
+    <TEXTAREA NAME=description COLS=50 ROWS=10 WRAP=virtual><? p($user->description) ?></TEXTAREA> 
     <? helpbutton("text", get_string("helptext")) ?>
-	<? formerr($err["description"]) ?>
 	</td>
 </tr>
 <tr>
