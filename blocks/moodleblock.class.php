@@ -60,7 +60,7 @@ class MoodleBlock {
 
         switch($this->content_type) {
             case BLOCK_TYPE_TEXT:
-                if(empty($this->content->text)) {
+                if(empty($this->content->text) && empty($this->content->footer)) {
                     break;
                 }
                 if ($this->edit_controls !== NULL || !$this->hide_header()) {
@@ -70,7 +70,7 @@ class MoodleBlock {
                 }
             break;
             case BLOCK_TYPE_LIST:
-                if(empty($this->content->items)) {
+                if(empty($this->content->items) && empty($this->content->footer)) {
                     break;
                 }
                 if ($this->edit_controls !== NULL || !$this->hide_header()) {
