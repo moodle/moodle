@@ -1,0 +1,64 @@
+<form name="message_settings" action="<?php echo $ME ?>" method="post">
+<input type="hidden" name="tab" value="settings" />
+
+
+<table cellpadding="5" align="center">
+
+
+    <tr valign="top">
+        <td align="right"><input type="checkbox" name="showmessagewindow" alt="<?php print_string('showmessagewindow', 'message') ?>" <?php echo $cbshowmessagewindow ?> /></td>
+        <td colspan="2"><?php print_string('showmessagewindow', 'message') ?></td>
+    </tr>
+    <tr valign="top">
+        <td align="right"><input type="checkbox" name="beepnewmessage" alt="<?php print_string('beepnewmessage', 'message') ?>" <?php echo $cbbeepnewmessage ?>  /></td>
+        <td colspan="2"><?php print_string('beepnewmessage', 'message') ?></td>
+    </tr>
+
+    
+    <tr><td colspan="3"><hr /></td></tr>
+
+
+    <tr valign="top">
+        <td><input type="text" name="maxmessages" size="2" value="<?php echo $txmaxmessages ?>" alt="<?php print_string('maxmessages', 'message') ?>" /></td>
+        <td colspan="2"><?php print_string('maxmessages', 'message') ?></td>
+    </tr>
+    <tr valign="top">
+        <td><input type="text" name="deletemessagesdays" size="2" value="<?php echo $txdeletemessagesdays ?>" alt="<?php print_string('deletemessagesdays', 'message') ?>" /></td>
+        <td colspan="2"><?php print_string('deletemessagesdays', 'message') ?></td>
+    </tr>
+    
+
+    <tr><td colspan="3"><hr /></td></tr>
+
+    <tr valign="top">
+        <td><input type="checkbox" name="emailmessages" alt="<?php print_string('emailmessages', 'message') ?>" <?php echo $cbemailmessages ?>  /></td>
+        <td colspan="2"><?php print_string('emailmessages', 'message') ?></td>
+    </tr>
+    <tr valign="top">
+        <td>&nbsp;</td>
+        <td align="right"><?php print_string('email') ?>:</td>
+        <td><input type="text" name="emailaddress" size="30" value="<?php echo $txemailaddress ?>" alt="<?php print_string('email') ?>" /></td>
+    </tr>
+    <tr valign="top">
+        <td>&nbsp;</td>
+        <td align="right"><?php print_string('format') ?>:</td>
+        <td><?php echo $format_select ?>
+        </td>
+    </tr>
+    <tr valign="top">
+        <td>&nbsp;</td>
+        <td align="right"><?php print_string('timenosee', 'message') ?>:</td>
+        <td><input type="text" name="emailtimenosee" size="2" value="<?php echo $txemailtimenosee ?>" alt="<?php print_string('timenosee', 'message') ?>" /></td>
+
+
+    <tr><td colspan="3"><hr /></td></tr>
+
+    
+    <tr valign="top">
+        <td colspan="3" align="center"><input type="submit" value="<?php print_string('savemysettings', 'message') ?>" /></td>
+    </tr>
+
+
+</table>
+
+</form>
