@@ -507,7 +507,7 @@ function main_upgrade($oldversion=0) {
         // Add blockinfo to the site course
         require_once($CFG->dirroot.'/lib/blocklib.php');
         $site = get_site();
-        blocks_get_default_blocks($site->id, BLOCK_SITE_DEFAULT);
+        blocks_get_default_blocks($site->id, BLOCKS_DEFAULT_SITE);
     }
 
     if ($oldversion < 2004053000) {     /// set defaults for site course

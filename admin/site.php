@@ -32,7 +32,7 @@
                 // [pj] We are about to create the site, so let's add some blocks...
                 // calendar_month is included as a Moodle feature advertisement ;-)
                 require_once($CFG->dirroot.'/lib/blocklib.php');
-                $form->blockinfo = blocks_get_default_blocks(NULL, BLOCK_SITE_DEFAULT);
+                $form->blockinfo = blocks_get_default_blocks(NULL, BLOCKS_DEFAULT_SITE);
 
                 if ($newid = insert_record("course", $form)) {
                     $cat->name = get_string("miscellaneous");

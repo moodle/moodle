@@ -9,7 +9,10 @@ define('BLOCK_MOVE_RIGHT',  0x02);
 define('BLOCK_MOVE_UP',     0x04);
 define('BLOCK_MOVE_DOWN',   0x08);
 
-define('BLOCK_SITE_DEFAULT', 'site_main_menu,admin,course_list:course_summary,calendar_month');
+define('BLOCKS_DEFAULT_SITE',   'site_main_menu,admin,course_list:course_summary,calendar_month');
+define('BLOCKS_DEFAULT_SOCIAL', 'participants,search_forums,calendar_month,calendar_upcoming,social_activities,recent_activity,admin,course_list');
+define('BLOCKS_DEFAULT_TOPICS', 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity');
+define('BLOCKS_DEFAULT_WEEKS',  'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity');
 
 function block_formats_to_array($formatstring) {
     $retval = array();
@@ -693,13 +696,8 @@ function upgrade_blocks_plugins($continueto) {
         //Iterate over each course
         if ($courses = get_records("course")) {
             foreach ($courses as $course) {
-                //Dependig of the format, insert some values
-                if ($course->format == "social") {
-                    $blockinfo = blocks_get_default_blocks ($course->id, "participants,search_forums,calendar_month,calendar_upcoming,social_activities,recent_activity,admin,course_list");
-                } else {
-                    //For topics and weeks formats (default built in the function)
-                    $blockinfo = blocks_get_default_blocks($course->id);
-                }
+                //Depending of the format, insert some values
+                $blockinfo = blocks_get_default_blocks ($course->id, constant('BLOCKS_DEFAULT_'.strtoupper($course->format)));
                 if ($CFG->debug) {
                     echo 'Updating blockinfo for course: '.$course->shortname.'('.$blockinfo.')<br>';
                 }
@@ -835,7 +833,7 @@ function block_get_name_by_id ($blockid) {
 //will be converted to their blockids equivalent. If a course is specified
 //then the function will update the field too!
 
-function blocks_get_default_blocks ($courseid = NULL, $blocknames="") {
+function blocks_get_default_blocks ($courseid = NULL, $blocknames = '') {
 
     global $CFG;
 
@@ -843,7 +841,7 @@ function blocks_get_default_blocks ($courseid = NULL, $blocknames="") {
         if (!empty($CFG->defaultblocks)) {
             $blocknames = $CFG->defaultblocks;
         } else {
-            $blocknames = "participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity";
+            $blocknames = BLOCKS_DEFAULT_WEEKS;
         }
     }
 
