@@ -6,13 +6,14 @@
 </head>
 <body bgcolor="#FFFFFF">
 <h1>Manual de Estilo del C&oacute;digo</h1> 
-<p class="normaltext">Cualquier proyecto colaborativo necesita que que la consistencia
+<p class="normaltext">Cualquier proyecto colaborativo necesita que la consistencia 
   y la estabilidad sean fuertes.</p>
-<p class="normaltext">Esta manual de estilo ha sido escrito para conseguir que
-  todo el c&oacute;digo de Moodle cumpla estas caracter&iacute;sticas. Es cierto que la parte
-  m&aacute;s antigua del c&oacute;digo no cumple lo aqu&iacute; especificado en algunos casos, pero
-  esto ser&aacute; solucionado en breve. Todo el c&oacute;digo nuevo definitivamente deber&aacute;
-  adherirse a estos est&aacute;ndares de la forma m&aacute;s exacta posible.</p>
+<p class="normaltext">Este manual de estilo ha sido escrito para conseguir que 
+  todo el c&oacute;digo de Moodle cumpla estas caracter&iacute;sticas. Es cierto 
+  que la parte m&aacute;s antigua del c&oacute;digo no cumple lo aqu&iacute; especificado 
+  en algunos casos, pero esto ser&aacute; solucionado en breve. Todo el c&oacute;digo 
+  nuevo definitivamente deber&aacute; adherirse a estos est&aacute;ndares de la 
+  forma m&aacute;s exacta posible.</p>
 <h2>Reglas Generales</h2>
 <ol class="normaltext">
   <li class="spaced">Todos los archivos con c&oacute;digo deber&iacute;an utilizar la extensi&oacute;n
@@ -26,24 +27,20 @@
   </li>
   <li class="spaced">Todos los avisos de copyright deben ser mantenidos. Puedes
     incluir los tuyos propios si resulta necesario.</li>
-  <li class="spaced">Todos los archivos deben incluir el el archivo principal
-    config.php.</li>
+  <li class="spaced">Todos los archivos deben incluir el archivo principal config.php.</li>
   <li class="spaced">Cada archivo deber&iacute;a comprobar que el usuario est&aacute; autenticado
     correctamente, utilizando las funciones require_login() y
     isadmin(),
     isteacher(),
     iscreator()
     o isstudent().</li>
-  <li class="spaced">Todos los accesos a la base de datos deber&iacute;an utilizar las
-    funciones de finidas en
-    lib/datalib.php cuando sea posible
-    -
-    esto permite la compatibilidad con un gran n&uacute;mero de bases de datos.
-    
-    Deber&iacute;as encontrar que pr&aacute;cticamente todo es posible utilizando estas funciones.
-    Si quieres esribir c&oacute;digo SQL entonces deber&aacute;s comprobar que: funciona en
-    cualquir plataforma; restringido a funciones espec&iacute;ficas de tu c&oacute;digo (normalmente
-    un archivo lib.php); y claramente comentado.</li>
+  <li class="spaced">Todos los accesos a la base de datos deber&iacute;an utilizar 
+    las funciones definidas en lib/datalib.php cuando sea posible - esto permite 
+    la compatibilidad con un gran n&uacute;mero de bases de datos. Deber&iacute;as 
+    encontrar que pr&aacute;cticamente todo es posible utilizando estas funciones. 
+    Si quieres escribir c&oacute;digo SQL entonces deber&aacute;s comprobar que: 
+    funciona en cualquier plataforma; restringido a funciones espec&iacute;ficas 
+    de tu c&oacute;digo (normalmente un archivo lib.php); y claramente comentado.</li>
   <li class="spaced">No crees o utilices variables globales distintas de las
     est&aacute;ndar $CFG, $SESSION, $THEME y $USER.</li>
   <li class="spaced">Todas las variables deber&iacute;an ser inicializadas o, al menos,
@@ -57,22 +54,23 @@
   <li class="spaced">Todos los archivos de ayuda deber&iacute;an ser traducibles - crea
     nuevos textos en el directorio &quot;es/help&quot; y ll&aacute;malos utilizando
     la funci&oacute;n helpbutton().</li>
-  <li class="spaced">La informaci&oacute;n que llaga desde el navegador (enviada con
-    los m&eacute;todos GET o POST) autom&aacute;ticamente tiene las &quot;magic_quotes&quot; aplicadas
-    (sin importar la configuraci&oacute;n de PHP) por lo que uedes insertarla contotal
-    seguridad en la base de datos. El resto de la informaci&oacute;n(obtenida desde
-    los archivos, o desde la base de datos)
-    debe ser escapada con la funci&oacute;n <font color="#339900">addslashes()</font> antes
-    de insertarla en la base de datos.</li>
+  <li class="spaced">La informaci&oacute;n que llega desde el navegador (enviada 
+    con los m&eacute;todos GET o POST) autom&aacute;ticamente tiene las &quot;magic_quotes&quot; 
+    aplicadas (sin importar la configuraci&oacute;n de PHP) por lo que puedes 
+    insertarla con total seguridad en la base de datos. El resto de la informaci&oacute;n(obtenida 
+    desde los archivos, o desde la base de datos) debe ser escapada con la funci&oacute;n 
+    <font color="#339900">addslashes()</font> antes de insertarla en la base de 
+    datos.</li>
 </ol>
 <p>&nbsp;</p>
 <h2>Estilo del C&oacute;digo</h2>
-<p class="normaltext">Comprendo que puede ser un poco frustrante modificar tu
-  estilo de programaci&oacute;n si has trabajado en otras coasa, pero compara esa frustraci&oacute;n
-  con la frustraci&oacute;n de toda la gente que intente, m&aacute;s adelante, encontrar el
-  sentido del c&oacute;digo de Moodle si es una mezcla de estilos. Obviamente, hay muchos
-  puntos a favor y en contra de cada estilo que la gente utiliza, pero el que
-  se detalla aqu&iacute; es el que deber&aacute;s utilizar.</p>
+<p class="normaltext">Comprendo que puede ser un poco frustrante modificar tu 
+  estilo de programaci&oacute;n si has trabajado en otras cosas, pero compara 
+  esa frustraci&oacute;n con la frustraci&oacute;n de toda la gente que intente, 
+  m&aacute;s adelante, encontrar el sentido del c&oacute;digo de Moodle si es 
+  una mezcla de estilos. Obviamente, hay muchos puntos a favor y en contra de 
+  cada estilo que la gente utiliza, pero el que se detalla aqu&iacute; es el que 
+  deber&aacute;s utilizar.</p>
 <ol class="normaltext">
   <li class="spaced"><strong>El sangrado</strong> del texto debe ser siempre
     de 4 espacios. No utilices los tabuladosres NUNCA.</li>
@@ -99,11 +97,12 @@
     <p class="examplecode"><font color="#006600">define(&quot;FORUM_MODE_FLATOLDEST&quot;, 
       1);</font></p>
   </li>
-  <li class="spaced"><strong>Los nombres de las funciones</strong> tienen que
-    ser palabras sencillas en min&uacute;sculas y en Ingl&eacute;s, y empezar con el nombre
-    del m&oacute;dulo al que pertenecen para evitar conflictos entre m&oacute;dulos.  Las palabras
-    deber&iacute;an separarse por guiones bajos. Los par&aacute;mentros, si es posible, tendr&aacute;n
-    valores por defecto. F&iacute;jate en que no has espacio entre el nombre de la funci&oacute;n
+  <li class="spaced"><strong>Los nombres de las funciones</strong> tienen que 
+    ser palabras sencillas en min&uacute;sculas y en Ingl&eacute;s, y empezar 
+    con el nombre del m&oacute;dulo al que pertenecen para evitar conflictos entre 
+    m&oacute;dulos. Las palabras deber&iacute;an separarse por guiones bajos. 
+    Los par&aacute;mentros, si es posible, tendr&aacute;n valores por defecto. 
+    F&iacute;jate en que no haya espacio entre el nombre de la funci&oacute;n 
     y lo siguiente (par&eacute;ntesis).<br>
     <p class="examplecode"> <font color="#007700">function </font><font color="#0000BB">forum_set_display_mode</font><font color="#007700">(</font><font color="#0000BB">$mode</font><font color="#007700">=</font><font color="#0000BB">0</font><font color="#007700">) 
       {<br />
@@ -121,9 +120,9 @@
       &nbsp;&nbsp;&nbsp;&nbsp;}<br />
       }</font></p>
   </li>
-  <li class="spaced"><strong>Los bloques de c&oacute;digo</strong> siempre deben
-    estar encerrados por llaves(incluso si solo constan de una l&iacute;nea). Moodle
-    utiliza este estilo: 
+  <li class="spaced"><strong>Los bloques de c&oacute;digo</strong> siempre deben 
+    estar encerrados por llaves (incluso si solo constan de una l&iacute;nea). 
+    Moodle utiliza este estilo: 
     <p class="examplecode"> <font color="#006600">if (</font><font color="#0000CC">$quiz</font><font color="#006600">-&gt;</font><font color="#0000CC">attempts</font><font color="#006600">) 
       {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000CC">$numattempts </font><font color="#006600">&gt; 
@@ -209,9 +208,9 @@
       <li><strong>name</strong> - el nombre completo de la instancia</li>
     </ul>
   </li>
-  <li class="spaced">El resto de las tablas asociadas con un m&oacute;dulo que contiene
-    informaci&oacute;n sobre 'cosas', deber&iacute;an ser llamandas <strong>modulo_cosas</strong>(f&iacute;jate
-    en el plural!).</li>
+  <li class="spaced">El resto de las tablas asociadas con un m&oacute;dulo que 
+    contiene informaci&oacute;n sobre 'cosas', deber&iacute;an ser llamandas <strong>modulo_cosas 
+    </strong>(f&iacute;jate en el plural!).</li>
   <li class="spaced">Los nombres de los campos (columnas) deber&iacute;an ser sencillos
     y cortos, siguiendo las mismas reglas que los nombres de las variables.</li>
   <li class="spaced">Cuando sea posible, las columnas que contengan una referencia
