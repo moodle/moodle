@@ -77,7 +77,7 @@
 
     print_heading($strpreferences);
 
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start("center");
 
     $prefs->dstpreset  = get_user_preferences('calendar_dstpreset', 0);
     $prefs->timeformat = get_user_preferences('calendar_timeformat', '');

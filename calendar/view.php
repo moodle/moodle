@@ -180,7 +180,7 @@
 
 
 function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
-    global $CFG, $THEME, $USER;
+    global $CFG, $USER;
 
     if (!checkdate($m, $d, $y)) {
         $now = usergetdate(time());
@@ -541,19 +541,19 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
 
 
 function calendar_print_event($event) {
-    global $CFG, $THEME, $USER;
+    global $CFG, $USER;
 
     static $strftimetime;
 
     echo '<table border="0" cellpadding="3" cellspacing="0" class="eventfull" width="100%">';
-    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"eventfullpicture\" width=\"32\" valign=\"top\">";
+    echo "<tr><td class=\"eventfullpicture\" width=\"32\" valign=\"top\">";
     if (!empty($event->icon)) {
         echo $event->icon;
     } else {
         print_spacer(16,16);
     }
     echo '</td>';
-    echo "<td bgcolor=\"$THEME->cellheading\" class=\"eventfullheader\" width=\"100%\">";
+    echo "<td class=\"eventfullheader\" width=\"100%\">";
 
     if (!empty($event->referer)) {
         echo '<span style="float:left;" class="calendarreferer">'.$event->referer.' </span>';
@@ -570,8 +570,8 @@ function calendar_print_event($event) {
     }
 
     echo "</td></tr>";
-    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" valign=\"top\" class=\"eventfullside\" width=\"32\">&nbsp;</td>";
-    echo "<td bgcolor=\"$THEME->cellcontent\" class=\"eventfullmessage\">\n";
+    echo "<tr><td valign=\"top\" class=\"eventfullside\" width=\"32\">&nbsp;</td>";
+    echo "<td class=\"eventfullmessage\">\n";
     echo format_text($event->description, FORMAT_HTML);
     if (calendar_edit_event_allowed($event)) {
         echo '<div align="right">';
