@@ -54,7 +54,7 @@
 
 function print_user($user, $course, $teacherlinks) {
 
-    global $COUNTRIES;
+    global $USER, $COUNTRIES;
     
     echo "<TABLE WIDTH=80% ALIGN=CENTER BORDER=0 CELLPADDING=1 CELLSPACING=1><TR><TD BGCOLOR=#888888>";
     echo "<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0><TR>";
@@ -80,13 +80,11 @@ function print_user($user, $course, $teacherlinks) {
     if ($teacherlinks) {
         $timemidnight = usergetmidnight(time());
         echo "<A HREF=\"../course/user.php?id=$course->id&user=$user->id\">".get_string("activity")."</A><BR>";
-        echo "<A HREF=\"../course/log.php?id=$course->id&user=$user->id&date=$timemidnight\">".get_string("todaylogs")."</A><BR>";
-        echo "<A HREF=\"../course/log.php?id=$course->id&user=$user->id\">".get_string("alllogs")."</A><BR>";
         echo "<A HREF=\"../course/unenrol.php?id=$course->id&user=$user->id\">".get_string("unenrol")."</A><BR>";
         if (isstudent($course->id, $user->id)) {
             echo "<A HREF=\"../course/loginas.php?id=$course->id&user=$user->id\">".get_string("loginas")."</A><BR>";
         }
-    }
+    } 
     echo "<A HREF=\"view.php?id=$user->id&course=$course->id\">".get_string("fullprofile")."...</A>";
     echo "</FONT>";
 

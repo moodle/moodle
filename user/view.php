@@ -116,14 +116,27 @@
     echo "</TD></TR></TABLE></TABLE>";
 
 //  Print other functions
-    if ($user->id == $USER->id and !isguest() ) {
-        echo "<CENTER><TABLE ALIGN=CENTER><TR>";
+    echo "<CENTER><TABLE ALIGN=CENTER><TR>";
+    if (isteacher($course->id) or ($user->id == $USER->id and !isguest()) ) {
         echo "<TD NOWRAP><P><FORM ACTION=\"../course/unenrol.php\" METHOD=GET>";
         echo "<INPUT type=hidden name=id value=\"$course->id\">";
+        echo "<INPUT type=hidden name=user value=\"$user->id\">";
         echo "<INPUT type=submit value=\"".get_string("unenrolme", "", $course->shortname)."\">";
         echo "</FORM></P></TD>";
-        echo "</TR></TABLE></CENTER>\n";
     }
+    if (isteacher($course->id)) {
+        echo "<TD NOWRAP><P><FORM ACTION=\"../course/user.php\" METHOD=GET>";
+        echo "<INPUT type=hidden name=id value=\"$course->id\">";
+        echo "<INPUT type=hidden name=user value=\"$user->id\">";
+        echo "<INPUT type=submit value=\"".get_string("activityreport")."\">";
+        echo "</FORM></P></TD>";
+        echo "<TD NOWRAP><P><FORM ACTION=\"../course/loginas.php\" METHOD=GET>";
+        echo "<INPUT type=hidden name=id value=\"$course->id\">";
+        echo "<INPUT type=hidden name=user value=\"$user->id\">";
+        echo "<INPUT type=submit value=\"".get_string("loginas")."\">";
+        echo "</FORM></P></TD>";
+    }
+    echo "</TR></TABLE></CENTER>\n";
 
     print_user_discussions($course, $user);
 
