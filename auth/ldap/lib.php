@@ -996,14 +996,26 @@ function auth_ldap_isgroupmember ($username='', $groupdns='') {
  *
  * @return connection result
  */
-function auth_ldap_connect(){
+function auth_ldap_connect($binddn='',$bindpwd=''){
 /// connects  and binds to ldap-server
 /// Returns connection result
 
     global $CFG;
     auth_ldap_init();
+    
+    //Select bind password, With empty values use
+    //ldap_bind_* variables or anonymous bind if ldap_bind_* are empty
+    if ($binddn == '' AND $bindpwd == '') {
+        if (!empty($CFG->ldap_bind_dn)){
+           $binddn = $CFG->ldap_bind_dn;
+        }
+        if (!empty($CFG->ldap_bind_pw)){
+           $bindpwd = $CFG->ldap_bind_pw;
+        }
+    }
+    
     $urls = explode(";",$CFG->ldap_host_url);
-
+        
     foreach ($urls as $server){
         $connresult = ldap_connect($server);
         //ldap_connect returns ALWAYS true
@@ -1012,9 +1024,9 @@ function auth_ldap_connect(){
             ldap_set_option($connresult, LDAP_OPT_PROTOCOL_VERSION, $CFG->ldap_version);
         }
 
-        if ($CFG->ldap_bind_dn){
+        if (!empty($binddn)){
             //bind with search-user
-            $bindresult=@ldap_bind($connresult, $CFG->ldap_bind_dn,$CFG->ldap_bind_pw);
+            $bindresult=@ldap_bind($connresult, $binddn,$bindpwd);
         } else {
             //bind anonymously
             $bindresult=@ldap_bind($connresult);
