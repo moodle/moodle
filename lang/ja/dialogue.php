@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // dialogue.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['addmynewentries'] = '新しいエントリーを追加';
@@ -9,7 +9,7 @@ $string['allowmultiple'] = '同一人物による複数ダイアログ作成を許可する';
 $string['allowstudentdialogues'] = '学生 - 学生のダイアログを許可する';
 $string['close'] = '閉じる';
 $string['closed'] = '閉鎖中';
-$string['confirmclosure'] = '$a とのダイアログを閉じようとしています。終了したダイアログは再開することは出来ません。このダイアログを閉じた場合、閲覧することは可能ですが追加することは出来ません。この人と計測して&quot;会話&quot;を行う場合、再度ダイアログを開始する必要があります。<br /><br />本当にこのダイアログを閉じても宜しいですか?';
+$string['confirmclosure'] = '$a とのダイアログを閉じようとしています。終了したダイアログは再開することは出来ません。このダイアログを閉じた場合、閲覧することは可能ですが追加することは出来ません。この人と計測して\"会話\"を行う場合、再度ダイアログを開始する必要があります。<br /><br />本当にこのダイアログを閉じても宜しいですか?';
 $string['deleteafter'] = '終了したダイアログを削除する(○日後)';
 $string['dialogueclosed'] = 'ダイアログが閉じられました';
 $string['dialogueintro'] = 'ダイアログ説明';
@@ -41,8 +41,8 @@ $string['notyetseen'] = 'まだ閲覧されていません';
 $string['numberofentries'] = 'エントリー数';
 $string['numberofentriesadded'] = '追加されたエントリー: $a';
 $string['of'] = '中';
-$string['onwrote'] = '$a への書込み日時';
-$string['onyouwrote'] = '$a へのあなたの書込み日時';
+$string['onwrote'] = '書込み日時: $a';
+$string['onyouwrote'] = 'あなたの書込み日時: $a';
 $string['open'] = '開催中';
 $string['openadialoguewith'] = 'ダイアログを開く';
 $string['opendialogue'] = 'ダイアログを開く';
