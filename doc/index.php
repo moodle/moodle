@@ -8,7 +8,7 @@
     optional_variable($lang, "");     // override current language
 
     if (!empty($lang)) {
-        $SESSION->doclang = $lang;
+        $SESSION->lang = $lang;
         save_session("SESSION");
     }
 

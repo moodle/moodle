@@ -897,10 +897,14 @@ function clean_filename($string) {
 
 function current_language() {
 /// Returns the code for the current language
-    global $CFG, $USER;
+    global $CFG, $USER, $SESSION;
 
-    if (isset($USER->lang)) {    // User language can override site language
+    if (isset($SESSION->lang)) {    // Session language can override other settings
+        return $SESSION->lang;
+
+    } else if (isset($USER->lang)) {    // User language can override site language
         return $USER->lang;
+
     } else {
         return $CFG->lang;
     }

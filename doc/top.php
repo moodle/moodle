@@ -2,11 +2,7 @@
 
     require("../config.php");
 
-    if (!empty($SESSION->doclang)) {
-        $currlang = $SESSION->doclang;
-    } else {
-        $currlang = current_language();
-    }
+    $currlang = current_language();
 
     $langs = get_list_of_languages();
     $langmenu = popup_form ("$CFG->wwwroot/doc/?lang=", $langs, "chooselang", $currlang, "", "", "", true);
