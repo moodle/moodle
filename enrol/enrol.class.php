@@ -203,6 +203,10 @@ function print_entry($course) {
 function check_entry($form, $course) {
     global $CFG, $USER, $SESSION, $THEME;
 
+    if (empty($form->password)) {
+        $form->password = '';
+    }
+
     $groupid = $this->check_group_entry($course->id, $form->password);
     if (($form->password == $course->password) or ($groupid !== false) ) {
 
