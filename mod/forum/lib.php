@@ -464,7 +464,7 @@ function forum_cron () {
         }
     }
 
-    if($usermailcount > 0) {
+    if(!empty($usermailcount)) {
         echo "\n".get_string('digestsentusers', 'forum', $usermailcount)."\n";
     }
 
