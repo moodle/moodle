@@ -4,6 +4,10 @@
 
     require_variable($id);   // course
 
+    if (!empty($CFG->forcelogin)) {
+        require_login();
+    }
+
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");
     }
