@@ -15,6 +15,10 @@
         error("Site isn't defined!");
     }
 
+    if (!confirm_sesskey()) {
+        error(get_string('confirmsesskeybad', 'error'));
+    }
+
     //Initialise error variables
     $error = false;
     $sche_destination_error = "";
