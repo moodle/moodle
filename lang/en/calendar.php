@@ -30,6 +30,7 @@ $string['eventkind'] = 'Type of event';
 $string['eventname'] = 'Name';
 $string['eventrepeat'] = 'Repeats';
 $string['eventsfor'] = '$a events';
+$string['eventsfromcourse'] = 'Events from course';
 $string['eventstarttime'] = 'Start time';
 $string['eventtime'] = 'Time';
 $string['eventview'] = 'Event Details';
