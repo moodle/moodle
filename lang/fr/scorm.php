@@ -5,6 +5,7 @@ $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms';
 #------------------------------------------------------------
 
+$string['asset'] = 'Élément';
 $string['autocontinue'] = 'Continuer automatiquement';
 $string['browse'] = 'Consulter';
 $string['browsed'] = 'Consulté';
@@ -50,4 +51,5 @@ $string['trackingloose'] = 'Attention ! Les données du suivi de ce paquet SCORM 
 $string['validation'] = 'Résultat de la validation';
 $string['validateascorm'] = 'Valider un paquet SCORM';
 $string['viewallreports'] = 'Afficher les rapports des $a tentatives';
+
 ?>
