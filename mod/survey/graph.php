@@ -341,7 +341,7 @@
 
 
        $graph = new graph($SURVEY_GWIDTH,$SURVEY_GHEIGHT);
-       $graph->parameter['title'] = "$survey->name";
+       $graph->parameter['title'] = strip_tags(format_string($survey->name,true));
 
        $graph->x_data               = $names;
 
@@ -502,7 +502,7 @@
 
 
        $graph = new graph($SURVEY_GWIDTH,$SURVEY_GHEIGHT);
-       $graph->parameter['title'] = "$survey->name";
+       $graph->parameter['title'] = strip_tags(format_string($survey->name,true));
 
        $graph->x_data               = $names;
 

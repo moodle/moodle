@@ -53,13 +53,13 @@
     if ($course->category) {
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                        <a href=\"index.php?id=$course->id\">$strsurveys</a> ->
-                       <a href=\"view.php?id=$cm->id\">$survey->name</a> -> ";
+                       <a href=\"view.php?id=$cm->id\">".format_string($survey->name,true)."</a> -> ";
     } else {
         $navigation = "<a href=\"index.php?id=$course->id\">$strsurveys</a> ->
-                       <a href=\"view.php?id=$cm->id\">$survey->name</a> -> ";
+                       <a href=\"view.php?id=$cm->id\">".format_string($survey->name,true)."</a> -> ";
     }
 
-    print_header("$course->shortname: $survey->name", "$course->fullname", "$navigation $strreport",
+    print_header("$course->shortname: ".format_string($survey->name), "$course->fullname", "$navigation $strreport",
                  "", "", true,
                  update_module_button($cm->id, $course->id, $strsurvey), navmenu($course, $cm));
 

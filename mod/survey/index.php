@@ -60,10 +60,10 @@
         //Calculate the href
         if (!$survey->visible) {
             //Show dimmed if the mod is hidden
-            $tt_href = "<a class=\"dimmed\" href=\"view.php?id=$survey->coursemodule\">$survey->name</a>";
+            $tt_href = "<a class=\"dimmed\" href=\"view.php?id=$survey->coursemodule\">".format_string($survey->name,true)."</a>";
         } else {
             //Show normal if the mod is visible
-            $tt_href = "<a href=\"view.php?id=$survey->coursemodule\">$survey->name</a>";
+            $tt_href = "<a href=\"view.php?id=$survey->coursemodule\">".format_string($survey->name,true)".</a>";
         }
 
         if ($course->format == "weeks" or $course->format == "topics") {

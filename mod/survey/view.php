@@ -28,8 +28,8 @@
     $strsurveys = get_string("modulenameplural", "survey");
     $strsurvey = get_string("modulename", "survey");
 
-    print_header_simple("$survey->name", "",
-                 "<a href=\"index.php?id=$course->id\">$strsurveys</a> -> $survey->name", "", "", true,
+    print_header_simple(format_string($survey->name), "",
+                 "<a href=\"index.php?id=$course->id\">$strsurveys</a> -> ".format_string($survey->name), "", "", true,
                   update_module_button($cm->id, $course->id, $strsurvey), navmenu($course, $cm));
 
 /// Check to see if groups are being used in this survey

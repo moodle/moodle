@@ -90,7 +90,7 @@
     $strsurveysaved = get_string("surveysaved", "survey");
 
     print_header_simple("$strsurveysaved", "",
-        "<a href=\"index.php?id=$course->id\">$strsurveys</a> -> $survey->name -> $strsurveysaved", "");
+        "<a href=\"index.php?id=$course->id\">$strsurveys</a> -> ".format_string($survey->name)." -> $strsurveysaved", "");
 
 
     notice(get_string("thanksforanswers","survey", $USER->firstname), "$CFG->wwwroot/course/view.php?id=$course->id");

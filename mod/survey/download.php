@@ -125,7 +125,7 @@
         require_once("$CFG->libdir/excel/Workbook.php");
 
         header("Content-type: application/vnd.ms-excel");
-        $downloadfilename = clean_filename("$course->shortname $survey->name");
+        $downloadfilename = clean_filename("$course->shortname ".strip_tags(format_string($survey->name,true)));
         header("Content-Disposition: attachment; filename=$downloadfilename.xls");
         header("Expires: 0");
         header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
@@ -133,7 +133,7 @@
 
         $workbook = new Workbook("-");
         // Creating the first worksheet
-        $myxls =& $workbook->add_worksheet(substr($survey->name, 0, 31));
+        $myxls =& $workbook->add_worksheet(substr(strip_tags(format_string($survey->name,true)), 0, 31));
 
         $header = array("surveyid","surveyname","userid","firstname","lastname","email","idnumber","time", "notes");
         $col=0;
@@ -166,7 +166,7 @@
                 $notes = "No notes made";
             }
             $myxls->write_string($row,$col++,$survey->id);
-            $myxls->write_string($row,$col++,$survey->name);
+            $myxls->write_string($row,$col++,strip_tags(format_text($survey->name,true)));
             $myxls->write_string($row,$col++,$user);
             $myxls->write_string($row,$col++,$u->firstname);
             $myxls->write_string($row,$col++,$u->lastname);
@@ -197,7 +197,7 @@
 
     header("Content-Type: application/download\n");
 
-    $downloadfilename = clean_filename("$course->shortname $survey->name");
+    $downloadfilename = clean_filename("$course->shortname ".strip_tags(format_string($survey->name,true)));
     header("Content-Disposition: attachment; filename=\"$downloadfilename.txt\"");
 
 // Print names of all the fields
@@ -221,7 +221,7 @@
             error("Error finding student # $user");
         }
         echo $survey->id."\t";
-        echo $survey->name."\t";
+        echo strip_tags(format_string($survey->name,true))."\t";
         echo $user."\t";
         echo $u->firstname."\t";
         echo $u->lastname."\t";
