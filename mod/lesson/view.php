@@ -901,69 +901,72 @@
                         
                     } else {
                         $score = 0;
+                        $essayquestions = 0;
+						$essayquestionpoints = 0;
+
                         if ($useranswers = get_records_select("lesson_attempts",  "lessonid = $lesson->id AND 
                                 userid = $USER->id AND retry = $ntries", "timeseen")) {
-
+							// group each try with its page
                             foreach ($useranswers as $useranswer) {
-                                if (@!array_key_exists($useranswer->pageid, $temp)) {
-                                    $temp[$useranswer->pageid] = array($useranswer->answerid, 1);
-                                } else {
-                                    if ($temp[$useranswer->pageid][1] < $lesson->maxattempts) {
-                                        $n = $temp[$useranswer->pageid][1] + 1;
-                                        $temp[$useranswer->pageid] = array($useranswer->answerid, $n);
-                                    }
-                                }
-                            }
-                            if ($answervalues = get_records_select("lesson_answers",  "lessonid = $lesson->id")) {
-                                if ($pages = get_records_select("lesson_pages", "lessonid = $lesson->id")) {
-                                    foreach ($pages as $page) {
-                                        $questions[$page->id] = $page->qtype;
-                                    }
-                                } else {
-                                    $questions = array();
-                                }
-                                $tempmaxgrade = $lesson->grade;
-                                $essayquestions = 0;
-                                foreach ($answervalues as $answervalue) {
-                                    if (array_key_exists($answervalue->pageid, $temp)) {
-                                        if ($temp[$answervalue->pageid][0] == $answervalue->id) {
-                                            if ($questions[$answervalue->pageid] == LESSON_ESSAY) {
-                                                $tempmaxgrade = $tempmaxgrade - $answervalue->score;
-                                                $essayquestions++;
-                                            } else {
-                                                $score = $score + $answervalue->score;
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                error("Error: Could not find answers!");
-                            }
-                        }
-                        if ($score > $lesson->grade) {
-                            $thegrade = 100;
-                            $score = $lesson->grade;
-                        } elseif ($score < 0) {
-                            $thegrade = 0;
-                            $score = 0;
-                        } else {
-                            $thegrade = intval(100 * $score / $lesson->grade);
-                        }
+								$attemptset[$useranswer->pageid][] = $useranswer;								
+							}
+							
+							$pageids = array_keys($attemptset);
+							$pageids = implode(",", $pageids);
+							
+							// get only the pages and their answers that the user answered
+							$answeredpages = get_records_select("lesson_pages", "lessonid = $lesson->id AND id IN($pageids)");
+							$pageanswers = get_records_select("lesson_answers", "lessonid = $lesson->id AND pageid IN($pageids)");
 
+							foreach ($attemptset as $attempts) {
+								if(count($attempts) > $lesson->maxattempts) { // if there are more tries than the max that is allowed, grab the last "legal" attempt
+									$attempt = $attempts[$lesson->maxattempts - 1];
+								} else {
+									// else, user attempted the question less than the max, so grab the last one
+									$attempt = end($attempts);
+								}
+								// if essay question, handle it, otherwise add to score
+								if ($answeredpages[$attempt->pageid]->qtype == LESSON_ESSAY) {
+									$essayinfo = unserialize($attempt->useranswer);
+									$score += $essayinfo->score;
+									$essayquestions++;
+									$essayquestionpoints += $pageanswers[$attempt->answerid]->score;
+								} else {
+									$score += $pageanswers[$attempt->answerid]->score;
+								}
+							}
+							$bestscores = array();
+							// find the highest possible score per page
+							foreach ($pageanswers as $pageanswer) {
+								if(isset($bestscores[$pageanswer->pageid])) {
+									if ($bestscores[$pageanswer->pageid] < $pageanswer->score) {
+										$bestscores[$pageanswer->pageid] = $pageanswer->score;
+									}
+								} else {
+									$bestscores[$pageanswer->pageid] = $pageanswer->score;
+								}
+							}
+							
+							$bestscore = array_sum($bestscores);
+						}
+							
+						$thegrade = intval(100 * $score / $bestscore);
                         unset($a);
                         if ($essayquestions > 0) {
                             $a->score = $score;
-                            $a->tempmaxgrade = $tempmaxgrade;
+                            $a->tempmaxgrade = $bestscore - $essayquestionpoints;
                             $a->essayquestions = $essayquestions;
-                            $a->grade = $lesson->grade;
-                            echo "<div align=\"center\">";
-                            echo get_string("displayscorewithessays", "lesson", $a);
-                            echo "</div>";
+                            $a->grade = $bestscore;
+                            echo "<div align=\"center\">".get_string("displayscorewithessays", "lesson", $a)."</div>";
                         } else {
                             $a->score = $score;
-                            $a->grade = $lesson->grade;
+                            $a->grade = $bestscore;
                             echo "<div align=\"center\">".get_string("displayscorewithoutessays", "lesson", $a)."</div>";						
                         }
+						echo "<p align=\"center\">".get_string("gradeis", "lesson", 
+                                number_format($thegrade * $lesson->grade / 100, 1)).
+                            " (".get_string("outof", "lesson", $lesson->grade).")</p>\n";
+
                     }
                     /// CDC-FLAG ///						
                     $grade->lessonid = $lesson->id;
@@ -1748,24 +1751,22 @@
         
 		$essayinfo = unserialize($essay->useranswer);
 
-		$grade = current($grades);
-
-		// I modded this function a bit so it would work here...  :) ;) :P
-		$score = lesson_calculate_ongoing_score($lesson, $essay->userid, $essay->retry, true);  // this function ignores essay questions
-		$score += $form->score;
-		if ($score > $lesson->grade) {
-			$score = $lesson->grade;
-		} elseif ($score < 0) {
-			$score = 0;
-		}
-        $updategrade->grade = intval(100 * $score / $lesson->grade);
-		$updategrade->id = $grade->id;
-
        	$essayinfo->graded = 1;
         $essayinfo->score = $form->score;
         $essayinfo->response = $form->response;
 		$essayinfo->sent = 0;
+
 		$essay->useranswer = serialize($essayinfo);
+
+		if (!update_record("lesson_attempts", $essay)) {
+			error("Could not update essay score");
+		}
+
+		$grade = current($grades);
+
+		// I modded this function a bit so it would work here...  :) ;) :P
+		$updategrade->grade = lesson_calculate_ongoing_score($lesson, $essay->userid, $essay->retry, true);
+		$updategrade->id = $grade->id;
 		
         if(update_record("lesson_attempts", $essay) && update_record("lesson_grades", $updategrade)) {
             redirect("view.php?id=$cm->id&amp;action=essayview", get_string("updatesuccess", "lesson"));
@@ -1826,18 +1827,18 @@
                 if ($lesson->custom) {
 					$points->score = $essayinfo->score;
 					$points->outof = $essayanswers[$essay->pageid]->score;
-                    $message .= get_string("youhavereceived", "lesson", $points)."<br>";
+                    $message .= get_string("youhavereceived", "lesson", $points);
 				} else {
 					$points->score = $essayinfo->score;
 					$points->outof = 1;
-                    $message .= get_string("youhavereceived", "lesson", $points)."<br>";
+                    $message .= get_string("youhavereceived", "lesson", $points);
 				}
 				$message .= "<br><br>";
 				$message .= get_string("yourgradeisnow", "lesson", $grade->grade)."%.";
 				
 				$plaintxt = format_text_email($message, FORMAT_HTML);
 
-			    if(email_to_user($users[$essay->userid], $USER, $subject, $message, $plaintxt)) {
+			    if(email_to_user($users[$essay->userid], $USER, $subject, $plaintxt, $message)) {
 					$essayinfo->sent = 1;
 					$essay->useranswer = serialize($essayinfo);
                     update_record("lesson_attempts", $essay);
