@@ -540,7 +540,7 @@ function count_records_sql($sql) {
  * @return   object(fieldset) A fieldset object containing the first record selected
  * @todo Isn't the return from this function an associative array (array type) ?
  */
-function get_record($table, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
+function get_record($table, $field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields='*') {
 
     global $CFG ;
 
@@ -553,7 +553,7 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
         }
     }
 
-    return get_record_sql('SELECT * FROM '. $CFG->prefix . $table .' '. $select);
+    return get_record_sql('SELECT '.$fields.' FROM '. $CFG->prefix . $table .' '. $select);
 }
 
 /**
