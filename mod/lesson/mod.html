@@ -483,7 +483,7 @@ if ($form->mode == "add") {
 <?php
 	}  // end if statement  if ($form->mode != "add") {
 ?>
-
+<?php print_visible_setting($form); ?>
 </table>
 <!-- These hidden variables are always the same -->
 <input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
