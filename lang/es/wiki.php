@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004060400)
+      // wiki.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['action'] = '-- Acción --';
@@ -51,8 +51,8 @@ $string['errorroandwr'] = 'Error de Flag: La página es escribible y de sólo lect
 $string['errorsize'] = 'Tamaño de página mayor de 64k';
 $string['errversionsave'] = 'Lo sentimos, mientras usted editaba esta página alguien más guardó una versión modificada. Por favor, regrese a la pantalla anterior y copie sus cambios al portapapeles para insertarlos de nuevo una vez haya recargado la pantalla de edición.';
 $string['ewikiacceptbinary'] = 'Permitir archivos binarios';
-$string['ewikiprinttitle'] = 'Imprimir el título en cada página Wiki';
-$string['export'] = 'Exportar.';
+$string['ewikiprinttitle'] = 'Imprimir nombre wiki en cada página.';
+$string['export'] = 'Exportar';
 $string['exportformats'] = 'Formatos de exportación';
 $string['exportsuccessful'] = 'Exportación exitosa.';
 $string['exportto'] = 'Exportar a';
@@ -165,6 +165,7 @@ $string['wantedpages'] = 'Páginas deseadas';
 $string['wikidefaultpagename'] = 'Primera Página';
 $string['wikiexport'] = 'Exportar páginas';
 $string['wikiexportcomment'] = 'Aquí puede configurar la exportación de acuerdo con sus necesidades.';
+$string['wikilinkoptions'] = 'Opciones auto-enlace Wiki';
 $string['wikilinks'] = 'Enlaces Wiki';
 $string['wikiname'] = 'Nombre de la página';
 $string['wikistartederror'] = 'Wiki ya tiene entradas: no puede cambiarse.';
