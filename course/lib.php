@@ -601,6 +601,9 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
             }
         }
 
+        //Filter log->info 
+        $log->info = format_string($log->info);
+
         $log->url  = strip_tags(urldecode($log->url));   // Some XSS protection
         $log->info = strip_tags(urldecode($log->info));  // Some XSS protection
         $log->url  = str_replace('&', '&amp;', $log->url); /// XHTML compatibility
