@@ -55,9 +55,13 @@
         }
     ?>
     <TD>
-        <INPUT align="RIGHT" type="text" id="correct0" name="answer[]" size="20" value="<? p($answers[0]->answer) ?>"/>&nbsp;&nbsp;
-        <B><? print_string("acceptederror", "quiz"); ?>:</B>&nbsp;
-        <INPUT align="LEFT" type="text" id="acceptederror0" name="acceptederror[]" size="15" value="<? p($acceptederror) ?>" />
+        <INPUT align="LEFT" type="text" id="correct0" name="answer[]" size="20" value="<? p($answers[0]->answer) ?>"/>&nbsp;&nbsp;
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("acceptederror", "quiz"); ?>:</B></P></TD>
+    <TD>
+        <INPUT align="LEFT" type="text" id="acceptederror0" name="acceptederror[]" size="15" value="<? p($acceptederror) ?>" />&plusmn;
         <!-- Values max and min will be determined when the form is submitted -->
         <INPUT type="HIDDEN" id="min0" name="min[]" value=""/>
         <INPUT type="HIDDEN" id="max0" name="max[]" value=""/>
