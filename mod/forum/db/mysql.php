@@ -83,6 +83,19 @@ function forum_upgrade($oldversion) {
   if ($oldversion < 2004010100) {
       table_column("forum", "", "assesspublic", "integer", "4", "unsigned", "0", "", "assessed");
   }
+
+  if ($oldversion < 2004011404) {
+      table_column("forum_discussions", "", "userid", "integer", "10", "unsigned", "0", "", "firstpost");
+
+      if ($discussions = get_records_sql("SELECT d.id, p.userid
+                                            FROM {$CFG->prefix}forum_discussions as d, 
+                                                 {$CFG->prefix}forum_posts as p
+                                           WHERE d.firstpost = p.id")) {
+          foreach ($discussions as $discussion) {
+              update_record("forum_discussions", $discussion);
+          }
+      }
+  }
   
   return true;
 

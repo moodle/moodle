@@ -199,6 +199,7 @@
             $discussion->course = $restore->course_id;
             $discussion->name = backup_todb($dis_info['#']['NAME']['0']['#']);
             $discussion->firstpost = backup_todb($dis_info['#']['FIRSTPOST']['0']['#']);
+            $discussion->userid = backup_todb($dis_info['#']['USERID']['0']['#']);
             $discussion->assessed = backup_todb($dis_info['#']['ASSESSED']['0']['#']);
             $discussion->timemodified = backup_todb($dis_info['#']['TIMEMODIFIED']['0']['#']);
 
@@ -227,13 +228,18 @@
                 if ($rec) {
                     //Put its new firstpost
                     $discussion->firstpost = $rec->new_id;
+                    if ($post = get_record("forum_posts", "id", $discussion->firstpost)) {
+                        $discussion->userid = $post->userid;
+                    }
                 } else {
                      $discussion->firstpost = 0;
+                     $discussion->userid = 0;
                 }
                 //Create temp discussion record
                 $temp_discussion->id = $newid;
                 $temp_discussion->firstpost = $discussion->firstpost;
-                //Update discussion (only firstpost will be changed)
+                $temp_discussion->userid = $discussion->userid;
+                //Update discussion (only firstpost and userid will be changed)
                 $status = update_record("forum_discussions",$temp_discussion);
                 //echo "Updated firstpost ".$old_firstpost." to ".$temp_discussion->firstpost."<br>";                //Debug
             } else {

@@ -386,6 +386,11 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
 
     $strftimerecent = get_string("strftimerecent");
 
+    $isteacheredit = isteacheredit($course->id);
+    $mygroupid     = mygroupid($course->id);
+
+    $groupmode = array();   /// To cache group modes
+
     foreach ($logs as $log) {
         //Get post info, I'll need it later
         $post = forum_get_post_from_log($log);
@@ -411,22 +416,16 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
                     }
                 }
                 /// Check whether this is belongs to a discussion in a group that 
-                /// should not be accessible to the current user
-                /// TEMPORARY:  This algorithm is ridiculously cumbersome ... 
-                ///             There MUST be a better way of doing this...
-                if ($cm = get_coursemodule_from_instance("forum", $post->forum, $course->id)) {
-                    $groupmode = groupmode($course, $cm);
-                    if ($groupmode == SEPARATEGROUPS or $groupmode == VISIBLEGROUPS) {
-                        if (!isteacheredit($course->id)) {
-                            if ($discussion = get_record("forum_discussions", "id", $post->discussion)) {
-                                if ($firstpost = get_record("forum_posts", "id", $discussion->firstpost)) {
-                                    if ($group = user_group($course->id, $firstpost->userid)) {
-                                        if (mygroupid($course->id) != $group->id) {
-                                            continue;
-                                        }
-                                    }
-                                }
-                            }
+                /// should NOT be accessible to the current user
+
+                if (!$isteacheredit) {   /// Because editing teachers can see everything
+                    if (!isset($cm[$post->forum])) {
+                        $cm[$forum->id] = get_coursemodule_from_instance("forum", $forum->id, $course->id);
+                        $groupmode[$forum->id] = groupmode($course, $cm[$forum->id]);
+                    }
+                    if ($groupmode($forum->id)) {
+                        if ($mygroupid != forum_get_groupid_from_discussion($post->discussion, $course->id)) {
+                            continue;
                         }
                     }
                 }
@@ -800,6 +799,34 @@ function forum_get_post_from_log($log) {
     return NULL;
 }
 
+function forum_get_firstpost_from_discussion($discussionid) {
+/// Given a discussion id, return the first post from the discussion
+    global $CFG;
+
+    return get_record_sql("SELECT p.*
+                             FROM {$CFG->prefix}forum_discussions d, 
+                                  {$CFG->prefix}forum_posts p
+                            WHERE d.id = '$discussionid' 
+                              AND d.firstpost = p.id ");
+}
+
+function forum_get_groupid_from_discussion($discussionid, $courseid) {
+/// Given a discussion id, return the groupid of the first poster
+    global $CFG;
+
+    if ($info = get_record_sql("SELECT gm.groupid as id
+                                  FROM {$CFG->prefix}forum_discussions d, 
+                                       {$CFG->prefix}forum_posts p,
+                                       {$CFG->prefix}groups g,
+                                       {$CFG->prefix}groups_members gm
+                                 WHERE d.id = '$discussionid' 
+                                   AND g.courseid = '$courseid'
+                                   AND gm.groupid = g.id
+                                   AND gm.userid = d.userid")) {
+        return $info->groupid;
+    }
+    return 0;
+}
 
 function forum_get_user_grades($forumid) {
 /// Get all user grades for a forum

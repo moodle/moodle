@@ -30,6 +30,7 @@ CREATE TABLE prefix_forum_discussions (
   forum integer NOT NULL default '0',
   name varchar(255) NOT NULL default '',
   firstpost integer NOT NULL default '0',
+  userid integer NOT NULL default '0',
   assessed integer NOT NULL default '1',
   timemodified integer NOT NULL default '0'
 );
