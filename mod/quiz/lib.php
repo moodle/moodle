@@ -678,9 +678,9 @@ function quiz_print_question($number, $question, $grade, $quizid,
                }
                echo "</td>";
                if (empty($feedback) or empty($correct[$answer->id])) {
-                   echo "<td valign=\"top\">$qnumchar. $answer->answer</td>";
+                   echo '<td valign="top">'.format_text("$qnumchar. $answer->answer").'</td>';
                } else {
-                   echo "<td valign=\"top\" class=\"highlight\">$qnumchar. $answer->answer</td>";
+                   echo '<td valign="top" class="highlight">'.format_text("$qnumchar. $answer->answer").'</td>';
                }
                if (!empty($feedback)) {
                    echo "<td valign=\"top\">&nbsp;";
