@@ -4,6 +4,7 @@
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
 $string['addanewtopic'] = 'トピックの追加';
+$string['allforums'] = '全てのフォーラム';
 $string['allowchoice'] = '選択可能';
 $string['allowdiscussions'] = '$a  はこのフォーラムに投稿可能ですか?';
 $string['allowratings'] = '投稿を評価可能にしますか?';
@@ -147,6 +148,7 @@ $string['searchresults'] = '検索結果';
 $string['searchsubject'] = '題名';
 $string['searchuser'] = '投稿者名';
 $string['searchuserid'] = '投稿者のMoodle ID';
+$string['searchwhichforums'] = '検索対象';
 $string['searchwords'] = 'いずれかのキーワードを含む';
 $string['seeallposts'] = 'このユーザによる全ての投稿を表示';
 $string['sendinratings'] = '私の評価を送信する';
