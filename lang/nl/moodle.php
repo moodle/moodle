@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003102900)
+      // moodle.php - created with Moodle 1.2 development (2003103100)
 
 
 $string['action'] = "Actie";
@@ -670,6 +670,7 @@ $string['showlistofcourses'] = "Laat de lijst met vakken zien";
 $string['showonlytopic'] = "Laat alleen onderwerp \$a zien";
 $string['showonlyweek'] = "Laat alleen week \$a zien";
 $string['showrecent'] = "Laat recente activiteiten zien";
+$string['showreports'] = "Toon activiteitenrapporten ";
 $string['showtheselogs'] = "Laat deze statistieken zien";
 $string['site'] = "Site";
 $string['sitefiles'] = "Site bestanden";
