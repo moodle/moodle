@@ -398,7 +398,7 @@ function dialogue_list_conversations_other($dialogue) {
             } else {
                 $status = get_string("notyetseen", "dialogue");
             }
-            $table->data[] = array("<a href=\"dialogues.php?id=$cm->id&action=printdialogue&cid=$conversation->id\">".
+            $table->data[] = array("<a href=\"dialogues.php?id=$cm->id&amp;action=printdialogue&amp;cid=$conversation->id\">".
                 "$name</a>", clean_text($conversation->subject), $byuser." ".get_string("of", "dialogue")." ".$total,
                 userdate($conversation->timemodified), $status);
             }
