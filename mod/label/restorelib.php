@@ -43,7 +43,7 @@
             $newid = insert_record ("label",$label);
 
             //Do some output     
-            echo "<li>".get_string("modulename","label")." \"".$label->name."\"</li>";
+            echo "<li>".get_string("modulename","label")." \"".format_string(stripslashes($label->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {

@@ -11,7 +11,7 @@ function label_add_instance($label) {
 /// will create a new instance and return the id number 
 /// of the new instance.
 
-    $label->name = strip_tags($label->content);
+    $label->name = strip_tags(format_string(stripslashes($label->content),true));
     if (strlen($label->name) > LABEL_MAX_NAME_LENGTH) {
         $label->name = substr($label->name, 0, LABEL_MAX_NAME_LENGTH)."...";
     }
@@ -25,8 +25,7 @@ function label_update_instance($label) {
 /// Given an object containing all the necessary data, 
 /// (defined by the form in mod.html) this function 
 /// will update an existing instance with new data.
-
-    $label->name = strip_tags($label->content);
+    $label->name = strip_tags(format_string(stripslashes($label->content),true));
     if (strlen($label->name) > LABEL_MAX_NAME_LENGTH) {
         $label->name = substr($label->name, 0, LABEL_MAX_NAME_LENGTH)."...";
     }
