@@ -711,36 +711,50 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL) {
 
     /// Get the questions
 
-    if (empty($quiz->questions)) {
-        notify("No questions have been defined!", "view.php?id=$cm->id");
-        return false;
-    }
-
     if (!$questions) {
-        if (!$questions = get_records_list("quiz_questions", "id", $quiz->questions, "")) {
-            notify("Error when reading questions cound not be read from the database!");
+        if (empty($quiz->questions)) {
+            notify("No questions have been defined!");
             return false;
         }
-    }
 
-
-    /// Examine the set of questions for random questions, and retrieve them 
-
-    if (empty($results)) {
-        if ($randomcats = quiz_get_random_categories($quiz->questions)) {
-            foreach ($randomcats as $randomcat => $randomdraw) {
-                /// Get the appropriate amount of random questions from this category
-                if (!$catquestions[$randomcat] = quiz_choose_random_questions($randomcat, $randomdraw)) {
-                    notify(get_string("toomanyrandom", "quiz", $randomcat), "view.php?id=$cm->id");
-                    return false;
-                }
-            }
+        if (!$questions = get_records_list("quiz_questions", "id", $quiz->questions, "")) {
+            notify("Error when reading questions from the database!");
+            return false;
         }
     }
 
     if (!$grades = get_records_list("quiz_question_grades", "question", $quiz->questions, "", "question,grade")) {
         notify("No grades were found for these questions!");
         return false;
+    }
+
+
+    /// Examine the set of questions for random questions, and retrieve them 
+
+    if (empty($results)) {   // Choose some new random questions
+        if ($randomcats = quiz_get_random_categories($quiz->questions)) {
+            foreach ($randomcats as $randomcat => $randomdraw) {
+                /// Get the appropriate amount of random questions from this category
+                if (!$catquestions[$randomcat] = quiz_choose_random_questions($randomcat, $randomdraw)) {
+                    notify(get_string("toomanyrandom", "quiz", $randomcat));
+                    return false;
+                }
+            }
+        }
+    } else {                 // Get the previously chosen questions
+        $chosen = array();
+        foreach ($questions as $question) {
+            if (isset($question->random)) {
+                $chosen[] = $question->random;
+            }
+        }
+        if ($chosen) {
+            $chosenlist = implode(",", $chosen);
+            if (!$chosen = get_records_list("quiz_questions", "id", $chosenlist, "")) {
+                notify("Error when reading questions from the database!");
+                return false;
+            }
+        }
     }
 
     $strconfirmattempt = addslashes(get_string("readytosend", "quiz"));
@@ -781,7 +795,7 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL) {
             }
             if (!empty($question->random)) {
                 $randomquestion = $question;
-                $question = get_record("quiz_questions", "id", $question->random);
+                $question = $chosen[$question->random];
                 $grades[$question->id]->grade = $grades[$randomquestion->id]->grade;
             }
         }
