@@ -1490,7 +1490,7 @@ function highlightfast($needle, $haystack) {
 function print_header ($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
 
-    global $USER, $CFG, $THEME, $SESSION, $ME;
+    global $USER, $CFG, $SESSION, $ME;
 
 /// This is an ugly hack to be replaced later by a proper global $COURSE
     global $course;
@@ -1499,20 +1499,11 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     }
 
 /// Add the required stylesheets
-    $stylesheets = '';
-    $theme = current_theme();
-    if ($theme != 'standard') {    /// The standard sheet is always loaded first
-        $stylesheets .= '<link rel="stylesheet" type="text/css" href="'.
-                        $CFG->wwwroot.'/theme/standard/styles.php" />'."\n";
+    $stylesheetshtml = '';
+    foreach ($CFG->stylesheets as $stylesheet) {
+        $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
     }
-    if (!empty($THEME->parent)) {  /// Parent stylesheets are loaded next
-        $stylesheets .= '<link rel="stylesheet" type="text/css" href="'.
-                        $CFG->wwwroot.'/theme/'.$THEME->parent.'/styles.php?parent=true" />'."\n";
-    }
-    $stylesheets .= '<link rel="stylesheet" type="text/css" href="'.
-                    $CFG->wwwroot.'/theme/'.$theme.'/styles.php" />'."\n";
-
-    $meta = $stylesheets.$meta;
+    $meta = $stylesheetshtml.$meta;
 
 
     if ($navigation == 'home') {
@@ -1797,6 +1788,47 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='') {
     }
 
     return $CFG->wwwroot .'/theme/'. $CFG->theme;
+
+}
+
+function theme_setup($theme = '', $extraparams='') {
+/// Sets up global variables related to themes
+
+    global $CFG, $THEME;
+
+    if (empty($theme)) {
+        $theme = current_theme();
+    }
+    if (empty($extraparams)) {
+        $params = '';
+        $paramsparent = '?parent=true';
+    } else {
+        $params = '?'.$extraparams;
+        $paramsparent = '?parent=true&amp;'.$extraparams;
+    }
+
+    $THEME = null;
+    include($CFG->dirroot .'/theme/'. $theme .'/config.php');
+
+    if (empty($CFG->custompix)) {    // Could be set in the above file
+        $CFG->pixpath = $CFG->wwwroot .'/pix';
+        $CFG->modpixpath = $CFG->wwwroot .'/mod';
+    } else {
+        $CFG->pixpath = $CFG->wwwroot .'/theme/'. $theme .'/pix';
+        $CFG->modpixpath = $CFG->wwwroot .'/theme/'. $theme .'/pix/mod';
+    }
+
+    $CFG->header = $CFG->dirroot .'/theme/'. $theme .'/header.html';
+    $CFG->footer = $CFG->dirroot .'/theme/'. $theme .'/footer.html';
+
+    $CFG->stylesheets = array();
+    if ($theme != 'standard') {    /// The standard sheet is always loaded first
+        $CFG->stylesheets[] = $CFG->wwwroot.'/theme/standard/styles.php'.$params;
+    }
+    if (!empty($THEME->parent)) {  /// Parent stylesheets are loaded next
+        $CFG->stylesheets[] = $CFG->wwwroot.'/theme/'.$THEME->parent.'/styles.php'.$paramsparent;
+    }
+    $CFG->stylesheets[] = $CFG->wwwroot.'/theme/'.$theme.'/styles.php'.$params;
 
 }
 

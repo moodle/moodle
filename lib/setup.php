@@ -223,20 +223,8 @@ global $THEME;
     if (!isset($CFG->theme)) {
         $CFG->theme = 'standard';
     }
-    $currenttheme = current_theme();
-    include($CFG->dirroot .'/theme/'. $currenttheme .'/config.php');
 
-    if (empty($CFG->custompix)) {    // Could be set in the above file
-        $CFG->pixpath = $CFG->wwwroot .'/pix';
-        $CFG->modpixpath = $CFG->wwwroot .'/mod';
-    } else {
-        $CFG->pixpath = $CFG->wwwroot .'/theme/'. $currenttheme .'/pix';
-        $CFG->modpixpath = $CFG->wwwroot .'/theme/'. $currenttheme .'/pix/mod';
-    }
-
-    $CFG->stylesheet  = $CFG->wwwroot .'/theme/'. $currenttheme .'/styles.php';
-    $CFG->header      = $CFG->dirroot .'/theme/'. $currenttheme .'/header.html';
-    $CFG->footer      = $CFG->dirroot .'/theme/'. $currenttheme .'/footer.html';
+    theme_setup();  // Sets up theme global variables
 
 
 /// A hack to get around magic_quotes_gpc being turned off
