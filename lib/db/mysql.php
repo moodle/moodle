@@ -197,6 +197,21 @@ function main_upgrade($oldversion=0) {
         execute_sql(" ALTER TABLE `course` ADD `showrecent` TINYINT(5) UNSIGNED DEFAULT '1' NOT NULL AFTER `numsections` ");
     }
 
+    if ($oldversion < 2002111400) {
+    // Rebuild all course caches, because some may not be done in new installs (eg site page)
+        if ($courses = get_records_sql("SELECT * FROM course")) {
+            require_once("$CFG->dirroot/course/lib.php");
+            foreach ($courses as $course) {
+                
+                $modinfo = serialize(get_array_of_activities($course->id));
+
+                if (!set_field("course", "modinfo", $modinfo, "id", $course->id)) {
+                    notify("Could not cache module information for course '$course->fullname'!");
+                }
+            }
+        }
+    }
+
 
     return true;
 }
