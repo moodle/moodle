@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.2 Beta (2004022400)
+      // lesson.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['addanewpage'] = 'Adicionar uma nova página';
@@ -20,6 +20,7 @@ $string['endoflesson'] = 'Fim da lição';
 $string['gradeis'] = 'A nota é $a';
 $string['jumpto'] = 'Saltar para';
 $string['maximumnumberofanswers'] = 'Número máximo de respostas';
+$string['maximumnumberofattempts'] = 'Número máximo de tentativas';
 $string['modulename'] = 'Lição';
 $string['modulenameplural'] = 'Lições';
 $string['movepagehere'] = 'Mover página para aqui';
@@ -37,6 +38,8 @@ $string['pleasecheckoneanswer'] = 'Por favor escolha uma resposta';
 $string['response'] = 'Resposta';
 $string['sanitycheckfailed'] = 'Falha no diagnóstico: esta tentativa será apagada';
 $string['savepage'] = 'Guardar página';
+$string['thatsthecorrectanswer'] = 'Essa é a Resposta Correcta';
+$string['thatsthewronganswer'] = 'Essa é a Resposta Errada';
 $string['thispage'] = 'Esta página';
 $string['youhaveseen'] = 'Já consultou mais do que uma página de esta licção.<br />Quer continuar com a última página que consultou?';
 

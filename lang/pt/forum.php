@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 Beta (2004022400)
+      // forum.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['addanewdiscussion'] = 'Adicione um novo tópico de discussão';
@@ -116,12 +116,14 @@ $string['searchforums'] = 'Procurar nos foruns';
 $string['searcholderposts'] = 'Porcurar mensagens antigas...';
 $string['searchresults'] = 'Procurar resultados';
 $string['sendinratings'] = 'Enviar as minhas últimas classificações';
-$string['showsubscribers'] = 'Mostrar subscritores';
+$string['showsubscribers'] = 'Mostrar/editar subscritores actuais';
 $string['singleforum'] = 'Uma única discussão simples';
 $string['startedby'] = 'Iniciado por';
 $string['subject'] = 'Assunto';
 $string['subscribe'] = 'Subscrever a este forum';
+$string['subscribeall'] = 'Subscrever todos neste forum';
 $string['subscribed'] = 'Subscrito';
+$string['subscribenone'] = 'Desubscrever todos deste forum';
 $string['subscribers'] = 'Subscritores';
 $string['subscribersto'] = 'Subscritores para \'$a\'';
 $string['subscribestart'] = 'Envie-me cópias de mensagens deste forum por email';
@@ -130,6 +132,7 @@ $string['subscription'] = 'Subscrição';
 $string['subscriptions'] = 'Subscrições';
 $string['unsubscribe'] = 'Cancelar a subscrição a este forum';
 $string['unsubscribed'] = 'Subscrição cancelada';
+$string['unsubscribeshort'] = 'Desubscrever';
 $string['youratedthis'] = 'Você avaliou este';
 $string['yournewtopic'] = 'Seu novo tópico de discussão';
 $string['yourreply'] = 'A sua resposta';
