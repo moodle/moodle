@@ -19,29 +19,29 @@
 
 <li class="spaced">Tous les fichiers contenant du code doivent avoir l'extension .php.</li>
 
-<li class="spaced">Tous les fichiers mod&egrave;les doivent avoir l'extension .html.</li>
+<li class="spaced">Tous les fichiers mod&egrave;les (&laquo;&nbsp;themes&nbsp;&raquo;) doivent avoir l'extension .html.</li>
 
-<li class="spaced">Tous les fichiers textes doivent &ecirc;tre ne format texte Unix (la plupart des &eacute;diteurs de texte permettent cela).</li>
+<li class="spaced">Tous les fichiers en format texte doivent &ecirc;tre en format Unix (la plupart des &eacute;diteurs de texte permettent de convertir les caract&egrave;res de fin de ligne).</li>
 
-<li class="spaced">Toutes les balises php doivent &ecirc;tre en forme compl&egrave;te, par exemple <font color="#339900"><?php ... ?></font> et non en forme abr&eacute;g&eacute;e comme <font color="#339900"><?php  ... ?></font>.</li>
+<li class="spaced">Toutes les balises php doivent &ecirc;tre en forme compl&egrave;te, comme ceci <font color="#339900">&lt;?php ... ?&gt;</font>, et non en forme abr&eacute;g&eacute;e comme ceci <font color="#339900">&lt;?php  ... ?&gt;</font>.</li>
 
-<li class="spaced">Toutes les indications de copyright doivent &ecirc;tre conserv&eacute;e. Vous pouvez ajouter les v&ocirc;tres au besoin.</li>
+<li class="spaced">Toutes les indications de copyright doivent &ecirc;tre conserv&eacute;es. Vous pouvez ajouter les v&ocirc;tres au besoin.</li>
 
-<li class="spaced">Tous les fichiers doivent inclure le fichier config.php principal.</li>
+<li class="spaced">Tous les fichiers doivent comporter une commande d'inclusion du fichier config.php principal.</li>
 
-<li class="spaced">Tous les fichiers doivent v&eacute;rifier que l'utilisateur est correctement authentifi&eacute;, &agrave; l'aide de require_login() et d'une des fonctions isadmin(), isteacher(), iscreator() ou isstudent().</li>
+<li class="spaced">Tous les fichiers doivent v&eacute;rifier que l'utilisateur est correctement authentifi&eacute;, &agrave; l'aide de require_login() et d'une des fonctions isadmin(), isteacher(), iscreator() et isstudent().</li>
 
 <li class="spaced">Tous les acc&egrave;s aux bases de donn&eacute;es doivent autant que possible utiliser les fonctions d&eacute;finies dans lib/datalib.php. Ceci permet la compatibilit&eacute; avec un grand nombre de marques de bases de donn&eacute;es. Il est possible de faire presque tout avec ces fonctions. Si vous devez &eacute;crire du code SQL, assurez-vous qu'il soit&nbsp;: multi-plateforme, restreint &agrave; des fonctions sp&eacute;cifiques de votre code (habituellement plac&eacute;s dans un fichier lib.php) et clairement marqu&eacute;.</li>
 
-<li class="spaced">Ne cr&eacute;ez et n'utilisez aucune variable locale, sauf les variables standard $CFG, $SESSION, $THEME et $USER.</li>
+<li class="spaced">Ne cr&eacute;ez et n'utilisez aucune variable globale, sauf les variables standard $CFG, $SESSION, $THEME et $USER.</li>
 
 <li class="spaced">Toutes les variables doivent &ecirc;tre initialis&eacute;es ou au moins leur existence doit &ecirc;tre test&eacute;e avec isset() ou empty() avant leur utilisation.</li>
 
-<li class="spaced">Toutes les cha&icirc;nes de caract&egrave;res doivent &ecirc;tre traduisibles. Cr&eacute;ez les nouvelles cha&icirc;nes dans les fichiers du dossier &laquo;&nbsp;lang/en&nbsp;&raquo;, donnez-leur des noms en minuscules, brefs, en anglais, et utilisez-les dans votre code par l'interm&eacute;diaire des fonctions get_string() ou print_string().</li>
+<li class="spaced">Toutes les cha&icirc;nes de caract&egrave;res doivent &ecirc;tre traduisibles. Cr&eacute;ez les nouvelles cha&icirc;nes dans les fichiers du dossier &laquo;&nbsp;lang/en&nbsp;&raquo;, donnez-leur des noms en minuscules, courts, en anglais, et utilisez-les dans votre code par l'interm&eacute;diaire des fonctions get_string() ou print_string().</li>
 
-<li class="spaced">Tous les fichiers d'aide doivent &ecirc;tre traductibles. Cr&eacute;ez-les dans le dossier &laquo;&nbsp;lang/en/help&nbsp;&raquo; et appelez-les avec la fonction helpbutton().</li>
+<li class="spaced">Tous les fichiers d'aide doivent &ecirc;tre traduisibles. Cr&eacute;ez-les dans le dossier &laquo;&nbsp;lang/en/help&nbsp;&raquo; et appelez-les avec la fonction helpbutton().</li>
 
-<li class="spaced">Les magic_quotes sont automatiquement appliqu&eacute;es aux donn&eacute;es en provenance du navigateur (envoy&eacute;es via GET or POST), ind&eacute;pendamment des r&eacute;glages de PHP. Il est donc s&ucirc;r de les ins&eacute;rer directement dans la base de donn&eacute;es. Toutes les autres donn&eacute;es brutes (en provenance de fichiers ou de bases de donn&eacute;es) doivent &ecirc;tre encod&eacute;es avec <font color="#339900">addslashes()</font> avant de les ins&eacute;rer dans la base de donn&eacute;es.</li>
+<li class="spaced">Les magic_quotes sont automatiquement appliqu&eacute;es aux donn&eacute;es en provenance du navigateur (envoy&eacute;es via GET ou POST), ind&eacute;pendamment des r&eacute;glages de PHP. Il est donc s&ucirc;r de les ins&eacute;rer directement dans la base de donn&eacute;es. Toutes les autres donn&eacute;es brutes (en provenance de fichiers ou de bases de donn&eacute;es) doivent &ecirc;tre encod&eacute;es avec <font color="#339900">addslashes()</font> avant de les ins&eacute;rer dans la base de donn&eacute;es.</li>
 
 <li class="spaced">IMPORTANT : tous les textes dans Moodle, tout particuli&egrave;rement ceux qui proviennent des utilisateurs, doivent &ecirc;tre affich&eacute;s &agrave; l'aide de la fonction format_text(). Ceci permet de s'assurer que le texte est filtr&eacute; et nettoy&eacute; correctement.</li>
 
@@ -51,13 +51,13 @@
 
 <h2>Style du code</h2>
 
-<p class="normaltext">Je suis conscient qu'il est ennuyeux de changer votre style si vous avez d'autres habitudes, mais comparez cet emb&ecirc;tement avec les gros ennuis qu'ont ult&eacute;rieurement les personnes qui essaient de comprendre un code compos&eacute; avec des styles diff&eacute;rents. Bien s&ucirc;r il y a des avantages et des inconv&eacute;nients &agrave; n'importe quel style, mais le style de Moodle <strong>existe</strong>, alors tenez-vous y, s'il vous pla&icirc;t.</p>
+<p class="normaltext">Je suis conscient qu'il est ennuyeux de changer votre style si vous avez d'autres habitudes, mais comparez cet emb&ecirc;tement avec les gros ennuis qu'ont ult&eacute;rieurement les personnes qui essaient de comprendre un code compos&eacute; dans des styles diff&eacute;rents. Bien s&ucirc;r il y a des avantages et des inconv&eacute;nients &agrave; chaque style, mais le style de Moodle <strong>existe</strong>, alors tenez-vous y, s'il vous pla&icirc;t.</p>
 
 <ol class="normaltext">
 
 <li class="spaced">L'<strong>indentation</strong> doit &ecirc;tre de 4 espaces. N'utiliser pas <strong>DU TOUT</strong> de tabulations.</li>
 
-<li class="spaced">Les <strong>noms des variables</strong> doivent toujours &ecirc;tre des mots anglais faciles &agrave; lire, ayant une signification claire et en minuscules. Si vous avez vraiment besoin de plusieurs mots, concat&eacute;nez-les, mais gardez-les aussi courts que possible. Utilisez des noms au pluriel pour les tableaux d'objets.
+<li class="spaced">Les <strong>noms des variables</strong> doivent toujours &ecirc;tre des mots anglais en minuscules, faciles &agrave; lire et ayant une signification claire. Si vous avez vraiment besoin de plusieurs mots, concat&eacute;nez-les, mais gardez-les aussi courts que possible. Utilisez des noms au pluriel pour les tableaux d'objets.
     <p class="examplecode"><font color="#006600">BON : $quiz<br />
       BON : $errorstring<br />
       BON : $assignments (pour un tableau d'objets)<br />
@@ -70,7 +70,7 @@
 <li class="spaced">Les noms des <strong>constantes</strong> doivent toujours &ecirc;tre en majuscules, et toujours commencer par le nom du module. Les mots qui les constituent doivent &ecirc;tre s&eacute;par&eacute;s par des caract&egrave;res &laquo;&nbsp;soulign&eacute;&nbsp;&raquo; (underscore).
 <p class="examplecode"><font color="#006600">define("FORUM_MODE_FLATOLDEST", 1);</font></p></li>
 
-<li class="spaced">Les noms des <strong>fonctions</strong> doivent &ecirc;tre de simples mots anglais en minsucules, et commencer avec le nom du module pour &eacute;viter les conflits entre modules. Les mots qui les constituent doivent &ecirc;tre s&eacute;par&eacute;s par des caract&egrave;res &laquo;&nbsp;soulign&eacute;&nbsp;&raquo; (underscore). Les param&egrave;tres doivent avoir si possible une valeur par d&eacute;faut sens&eacute;e. On ne place pas d'espace entre le nom de la fonction et la suite (parenth&egrave;ses)
+<li class="spaced">Les noms des <strong>fonctions</strong> doivent &ecirc;tre de simples mots anglais en minuscules, et commencer par le nom du module, pour &eacute;viter les conflits entre modules. Les mots qui les constituent doivent &ecirc;tre s&eacute;par&eacute;s par des caract&egrave;res &laquo;&nbsp;soulign&eacute;&nbsp;&raquo; (underscore). Les param&egrave;tres doivent avoir si possible une valeur par d&eacute;faut sens&eacute;e. On ne place pas d'espace entre le nom de la fonction et la suite (parenth&egrave;ses)
     <p class="examplecode"> <font color="#007700">function </font><font color="#0000BB">forum_set_display_mode</font><font color="#007700">(</font><font color="#0000BB">$mode</font><font color="#007700">=</font><font color="#0000BB">0</font><font color="#007700">) 
       {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;global </font><font color="#0000BB">$USER</font><font color="#007700">, 
@@ -165,25 +165,31 @@
 
 <ol class="normaltext">
 
- <li class="spaced">Toutes les tables doit avoir un champ <strong>id</strong> (INT10) &agrave; incr&eacute;mentation automatique pour index principal.</li>
+<li class="spaced">Toutes les tables doivent avoir un champ <strong>id</strong> (INT10) &agrave; incr&eacute;mentation automatique pour index principal.</li>
 
 <li class="spaced">La table principale contenant les instances de chaque module doit avoir le m&ecirc;me nom que le module (par exemple <strong>bidule</strong>) et doit contenir au moins les champs suivants&nbsp;:
+
     <ul>
-      <li><strong>id</strong> - voir description ci-dessus</li>
-      <li><strong>course</strong> - l'identifiant du cours auquel appartient chaque instance</li>
-      <li><strong>name</strong> - le nom complet de chaque instance du module</li>
+
+      <li><strong>id</strong>&nbsp;: voir description ci-dessus</li>
+
+      <li><strong>course</strong>&nbsp;: l'identifiant du cours auquel appartient chaque instance</li>
+
+      <li><strong>name</strong>&nbsp;: le nom complet de chaque instance du module</li>
+
     </ul>
-  </li>
 
-<li class="spaced">Les autres tables associ&eacute;es &agrave; un module et contenant des informations sur des &laquo;&nbsp;choses&nbsp;&raquo; doivent &ecirc;tre appel&eacute;es <strong>bidule_choses</strong> (remarquez le pluriel).</li>
+</li>
 
-<li class="spaced">Les noms de colonnes doivent &ecirc;tre simples et brefs, suivant les m&ecirc;mes r&egrave;gles que les noms des variables.</li>
+<li class="spaced">Les autres tables associ&eacute;es &agrave; un module et contenant des informations sur des &laquo;&nbsp;machins&nbsp;&raquo; doivent &ecirc;tre appel&eacute;es <strong>bidule_machins</strong> (remarquez le pluriel).</li>
 
-<li class="spaced">Si possible, les colonnes faisant r&eacute;f&eacute;rence au champ id d'une autre table (par exemple <strong>bidule</strong>) doivent &ecirc;tre appel&eacute;es <strong>widgetid</strong>. (Remarquez que cette convention est nouvelle, et n'a pas &eacute;t&eacute; suivie dans certaines tables plus anciennes.)</li>
+<li class="spaced">Les noms de colonnes doivent &ecirc;tre simples et courts, suivant les m&ecirc;mes r&egrave;gles que les noms des variables.</li>
+
+<li class="spaced">Si possible, les colonnes faisant r&eacute;f&eacute;rence au champ id d'une autre table (par exemple <strong>bidule</strong>) doivent &ecirc;tre appel&eacute;es <strong>biduleid</strong>. Cette convention est nouvelle, et n'a pas &eacute;t&eacute; suivie dans certaines tables plus anciennes.</li>
 
 <li class="spaced">Les champs bool&eacute;ens doivent &ecirc;tre impl&eacute;ment&eacute;s comme des entiers petits (par exemple INT4) contenant 0 ou 1, afin de permettre une &eacute;ventuelle extension des valeurs si n&eacute;cessaire.</li>
 
-<li class="spaced">La plupart des tables doivent avoir une champ <strong>timemodified</strong> (INT10) qui soit mis &agrave; jour avec la date et l'heure obtenue avec la fonction PHP <strong>time()</strong>.</li>
+<li class="spaced">La plupart des tables doivent avoir un champ <strong>timemodified</strong> (INT10) qui soit mis &agrave; jour avec la date et l'heure obtenue avec la fonction PHP <strong>time()</strong>.</li>
 
 </ol>
 
