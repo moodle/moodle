@@ -412,7 +412,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
     return $output;
 }
 
-function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withduration = true) {
+function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withduration=true, $ignorehidden=true) {
     $whereclause = '';
     // Quick test
     if(is_bool($users) && is_bool($groups) && is_bool($courses)) {
@@ -464,6 +464,12 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         if(!empty($whereclause)) $whereclause .= ' OR';
         $whereclause .= ' groupid = 0 AND courseid != 0';
     }
+
+    if ($ignorehidden) {
+        if (!empty($whereclause)) $whereclause .= ' AND';
+        $whereclause .= ' visible = 1';
+    }
+
     if($withduration) {
         $timeclause = 'timestart + timeduration >= '.$tstart.' AND timestart <= '.$tend;
     }
