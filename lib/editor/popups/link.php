@@ -1,8 +1,8 @@
 <?php // $Id$
-	include("../../../config.php");
-	
+    include("../../../config.php");
+
     $id = $_GET['id'];
-    
+
     require_variable($id);
 
     if (!$course = get_record("course", "id", $id)) {
@@ -24,7 +24,7 @@
 
 function onTargetChanged() {
 /*
-  // commented out since it does not work!!!  
+  // commented out since it does not work!!!
   var f = document.getElementById("f_other_target");
   if (this.value == "_other") {
     f.style.visibility = "visible";
@@ -97,7 +97,7 @@ function checkvalue(elm,formname) {
         alert("Nothing to do!");
         el.focus();
         return false;
-    } 
+    }
 }
 
 function submit_form(dothis) {
@@ -110,7 +110,7 @@ function submit_form(dothis) {
     if(dothis == "zip") {
         window.fbrowser.document.dirform.action.value = "zip";
     }
-        
+
     window.fbrowser.document.dirform.submit();
     return false;
 }
@@ -171,74 +171,74 @@ color: black;
   <table width="660" border="0" cellspacing="0" cellpadding="2">
     <tr>
       <td width="380" valign="top"><fieldset>
-        <legend><?php 
+        <legend><?php
         if(isteacher($id)) {
             print_string("filebrowser","editor");
         } else {
             print "";
         }?></legend>
-        
+
         <div class="space"></div>
         <?php print(isteacher($id))?
         "<iframe id=\"fbrowser\" name=\"fbrowser\" src=\"../coursefiles.php?id=".$course->id."\" width=\"360\" height=\"260\"></iframe>":
         ""; ?>
-		<p>
-		</p>
-  	    <div class="space"></div>
-		</fieldset>&nbsp;</td>
+        <p>
+        </p>
+        <div class="space"></div>
+        </fieldset>&nbsp;</td>
       <td width="300" valign="top">
       <form name="mainform">
       <fieldset>
         <legend><?php print_string("properties","editor");?></legend>
         <div class="space"></div>
-		<table width="298" border="0">
-		<tr>
-			<td width="35" align="right"><?php print_string("modified");?>:</td>
-			<td align="left"><input id="imodified" type="text" name="imodified" size="40"></td>
-		</tr>
+        <table width="298" border="0">
+        <tr>
+            <td width="35" align="right"><?php print_string("modified");?>:</td>
+            <td align="left"><input id="imodified" type="text" name="imodified" size="40"></td>
+        </tr>
           <tr>
-			<td width="35" align="right"><?php print_string("type","editor");?>:</td>
-			<td align="left"><input id="itype" type="text" name="itype" size="40"></td>
-		</tr>
-		<tr>
-			<td width="35" align="right"><?php print_string("size","editor");?>:</td>
-			<td align="left"><input id="isize" type="text" name="isize" size="40"></td>
-		</tr>
-		</table>
+            <td width="35" align="right"><?php print_string("type","editor");?>:</td>
+            <td align="left"><input id="itype" type="text" name="itype" size="40"></td>
+        </tr>
+        <tr>
+            <td width="35" align="right"><?php print_string("size","editor");?>:</td>
+            <td align="left"><input id="isize" type="text" name="isize" size="40"></td>
+        </tr>
+        </table>
         <br>
-		</fieldset>
-		<fieldset><legend><?php print_string("linkproperties","editor");?></legend>
-		<br>
-		<table width="82%" border="0">
-		<tr>
-			<td width="35" align="right"><?php print_string("linkurl","editor");?>:</td>
-			<td><input id="f_href" type="text" name="f_href" size="40"></td>
-		</tr>
-		<tr>
-			<td width="35" align="right"><?php print_string("linktitle","editor");?>:</td>
-			<td><input id="f_title" type="text" name="f_title" size="40"></td>
-		</tr>
-		<tr>
-			<td width="35" align="right"><?php print_string("linktarget","editor");?>:</td>
-			<td><select id="f_target" name="f_target">
-			<option value=""><?php print_string("linktargetnone","editor");?></option>
-		 	<option value="_blank"><?php print_string("linktargetblank","editor");?></option>
-      		<option value="_self"><?php print_string("linktargetself","editor");?></option>
-      		<option value="_top"><?php print_string("linktargettop","editor");?></option>
-			</select></td>
-		</tr>
-		</table>
-		<div class="space"></div>
-		 <table width="78%" border="0" cellspacing="0" cellpadding="2">
-  		<tr>
+        </fieldset>
+        <fieldset><legend><?php print_string("linkproperties","editor");?></legend>
+        <br>
+        <table width="82%" border="0">
+        <tr>
+            <td width="35" align="right"><?php print_string("linkurl","editor");?>:</td>
+            <td><input id="f_href" type="text" name="f_href" size="40"></td>
+        </tr>
+        <tr>
+            <td width="35" align="right"><?php print_string("linktitle","editor");?>:</td>
+            <td><input id="f_title" type="text" name="f_title" size="40"></td>
+        </tr>
+        <tr>
+            <td width="35" align="right"><?php print_string("linktarget","editor");?>:</td>
+            <td><select id="f_target" name="f_target">
+            <option value=""><?php print_string("linktargetnone","editor");?></option>
+            <option value="_blank"><?php print_string("linktargetblank","editor");?></option>
+            <option value="_self"><?php print_string("linktargetself","editor");?></option>
+            <option value="_top"><?php print_string("linktargettop","editor");?></option>
+            </select></td>
+        </tr>
+        </table>
+        <div class="space"></div>
+         <table width="78%" border="0" cellspacing="0" cellpadding="2">
+        <tr>
             <td align="right" valign="middle"><button name="btnOk" onclick="return onOK();"><?php print_string("ok","editor");?></button>&nbsp;
-			<button name="btnCancel" onclick="return onCancel();"><?php print_string("cancel","editor");?></button></td>
-  		</tr>
-		</table>
-		<div class="space"></div>
-		</fieldset>
+            <button name="btnCancel" onclick="return onCancel();"><?php print_string("cancel","editor");?></button></td>
+        </tr>
+        </table>
+        <div class="space"></div>
+        </fieldset>
         </form>
-		</td>
+        </td>
     </tr>
   </table>
   <table border="0" cellpadding="2" cellspacing="0">
@@ -255,9 +255,9 @@ color: black;
           <input type="hidden" name="file" value="" />
           <input type="hidden" name="action" value="rename" />
           <input name="btnRename" type="submit" id="btnRename" value="<?php print_string("rename","editor");?>" /></form></td>
-          <tr></table>
+          </tr></table>
     <table border="0" cellpadding="1" cellspacing="1">
-    <tr> 
+    <tr>
       <td height="22"><?php
       if(isteacher($id)) { ?>
           <form name="cfolder" id="cfolder" action="../coursefiles.php" method="post" target="fbrowser">
@@ -276,7 +276,7 @@ color: black;
           <input type="file" name="userfile" id="userfile" size="35" />
           <input name="save" type="submit" id="save" onclick="return checkvalue('userfile','uploader');" value="<?php print_string("upload","editor");?>" />
           </form>
-          <?php 
+          <?php
           } else {
               print "";
           } ?>
