@@ -1373,7 +1373,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
     $select = "u.deleted = '0' AND u.confirmed = '1'";
 
     if (!$courseid or $courseid == SITEID) {
-        return $admins = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
+        return get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
                       FROM {$CFG->prefix}user u
                       WHERE $select
                           AND ($fullname $LIKE '%$searchtext%' OR u.email $LIKE '%$searchtext%')
