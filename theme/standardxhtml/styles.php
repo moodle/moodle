@@ -825,10 +825,26 @@ TABLE.formtable TD {
 }
 .message_link {
 	font-size: x-small;
+    vertical-align: center;
 }
 .message_pix {
 	font-size: x-small;
 }
 .message_form {
 	font-size: 0.78em;
+}
+.message_heading {
+	font-size: medium;
+    font-weight: bold;
+    text-align:center;
+}
+.message_search_results {
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+TABLE.message_search_results TD {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    padding: 5px;
 }

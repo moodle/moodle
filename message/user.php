@@ -19,6 +19,7 @@
 
 /// By default, print frameset to contain all the various panes
     if (!$frame) {
+        $USER->message_user_refresh[$user->id] = time();
     ?>
     <html>
      <head><title><?php echo get_string('discussion', 'message').': '.fullname($user) ?></title></head>
@@ -58,6 +59,8 @@
             echo '</td>';
             echo '</tr></table>';
             echo '</table></table></body>'; // Close possible theme tables off
+
+            $USER->message_user_refresh[$user->id] = time();
         break;
 
         case 'messages':  /// Print the main frame containing the current chat
@@ -74,7 +77,7 @@
             header("Cache-Control: no-cache, must-revalidate");
             header("Pragma: no-cache");
             header("Content-Type: text/html");
-            header("Refresh: 5; url=user.php?id=$user->id&frame=refresh");
+            header("Refresh: $CFG->message_chat_refresh; url=user.php?id=$user->id&frame=refresh");
 
             echo '<body>';
             if ($messages = get_records_select('message', "useridto = '$USER->id' AND useridfrom = '$user->id'", 
@@ -107,8 +110,7 @@
                 echo "parent.messages.scroll(1,5000000);\n";
                 echo "</script>\n\n";
             }
-            $timeago = time() - $user->lastaccess;
-            if ($user->lastaccess and $timeago > 300) {
+            if ($user->lastaccess > $USER->message_user_refresh[$user->id]) {
                 echo '<script language="Javascript">';
                 echo "parent.info.document.location.replace('$CFG->wwwroot/message/user.php?id=$user->id&frame=info');\n";
                 echo "</script>\n\n";

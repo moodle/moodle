@@ -3,8 +3,14 @@
 
 
 define ('MESSAGE_SHORTLENGTH', 300);
-define ('MESSAGE_WINDOW', true);
-define ('MESSAGE_CONTACTS_REFRESH', 30);
+define ('MESSAGE_WINDOW', true);          // We are in a message window (so don't pop up a new one!)
+
+if (!isset($CFG->message_contacts_refresh)) {  // Refresh the contacts list every 30 seconds
+    $CFG->message_contacts_refresh = 30;
+}
+if (!isset($CFG->message_chat_refresh)) {      // Look for new comments every 5 seconds
+    $CFG->message_chat_refresh = 5;
+}
 
 
 function message_print_contacts() {
@@ -22,13 +28,13 @@ function message_print_contacts() {
                                        FROM {$CFG->prefix}user u, {$CFG->prefix}message_contacts mc
                                        WHERE mc.userid='$USER->id' AND u.id=mc.contactid AND u.lastaccess>=$timefrom 
                                          AND mc.blocked='0' 
-                                       ORDER BY u.lastaccess DESC");
+                                       ORDER BY u.firstname ASC");
 
     $offlinecontacts = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture, mc.blocked
                                        FROM {$CFG->prefix}user u, {$CFG->prefix}message_contacts mc
                                        WHERE mc.userid='$USER->id' AND u.id=mc.contactid AND u.lastaccess<$timefrom
                                          AND mc.blocked='0' 
-                                       ORDER BY u.lastaccess DESC");
+                                       ORDER BY u.firstname ASC");
 
     $unreadmessages = get_records_sql("SELECT m.id, m.useridfrom, u.firstname, u.lastname, u.picture 
                                        FROM {$CFG->prefix}user u, {$CFG->prefix}message m 
@@ -44,8 +50,8 @@ function message_print_contacts() {
 
     $countcontacts = (is_array($onlinecontacts)) ? count($onlinecontacts) : 0;
     
-    echo '<tr><td colspan="3">';
-    echo '<strong>'.get_string('onlinecontacts', 'message', $countcontacts).'</strong>';
+    echo '<tr><td colspan="3" class="message_heading">';
+    echo get_string('onlinecontacts', 'message', $countcontacts);
     echo '</td></tr>';
     
     if (!empty($onlinecontacts)) {
@@ -80,8 +86,8 @@ function message_print_contacts() {
     
     $countcontacts = (is_array($offlinecontacts)) ? count($offlinecontacts) : 0;
     
-    echo '<tr><td colspan="3">';
-    echo '<strong>'.get_string('offlinecontacts', 'message', $countcontacts).'</strong>';
+    echo '<tr><td colspan="3" class="message_heading">';
+    echo get_string('offlinecontacts', 'message', $countcontacts);
     echo '</td></tr>';
     
     if (!empty($offlinecontacts)) {
@@ -141,8 +147,8 @@ function message_print_contacts() {
 
 /// print out list of incoming contacts
     if (!empty($unknownmessages)) {
-        echo '<tr><td colspan="3">';
-        echo '<strong>'.get_string('incomingcontacts', 'message', count($unknownmessages)).'</strong>';
+        echo '<tr><td colspan="3" class="message_heading">';
+        echo get_string('incomingcontacts', 'message', count($unknownmessages));
         echo '</td></tr>';
 
         foreach ($unknownmessages as $messageuser) {
@@ -172,7 +178,7 @@ function message_print_contacts() {
 
     echo '</table>';
 
-    echo '<p align="center" class="message_small_note">'.get_string('pagerefreshes', 'message', MESSAGE_CONTACTS_REFRESH).'</p>';
+    echo '<p align="center" class="message_small_note">'.get_string('pagerefreshes', 'message', $CFG->message_contacts_refresh).'</p>';
 }
 
 
@@ -237,7 +243,7 @@ function message_print_settings() {
     }
 
     $cbshowmessagewindow = (get_user_preferences('message_showmessagewindow', 1) == '1') ? 'checked="checked"' : '';
-    $cbbeepnewmessage = (get_user_preferences('message_beepnewmessage', 1) == '1') ? 'checked="checked"' : '';
+    $cbbeepnewmessage = (get_user_preferences('message_beepnewmessage', 0) == '1') ? 'checked="checked"' : '';
     $txmaxmessages = get_user_preferences('message_maxmessages', 20);
     $txdeletemessagesdays = get_user_preferences('message_deletemessagesdays', 30);
     $cbemailmessages = (get_user_preferences('message_emailmessages', 1) == '1') ? 'checked="checked"' : '';
@@ -305,7 +311,7 @@ function message_get_contact($contactid) {
 
 
 function message_print_search_results($frm) {
-    global $ME, $USER;
+    global $ME, $USER, $CFG;
 
     echo '<div align="center">';
 
@@ -399,19 +405,20 @@ function message_print_search_results($frm) {
             }
 
         /// print heading with number of results
-        echo '<strong>'.get_string('keywordssearchresults', 'message', count($messages)).'</strong>';
+            echo '<strong>'.get_string('keywordssearchresults', 'message', count($messages)).'</strong>';
 
         /// print table headings
-            echo '<table class="message_users" cellpadding="5" border="0">';
+            echo '<table class="message_search_results">';
             echo '<tr>';
-            echo '<td align="center"><strong>'.get_string('from').'</strong></td>';
-            echo '<td align="center"><strong>'.get_string('to').'</strong></td>';
-            echo '<td align="center"><strong>'.get_string('message', 'message').'</strong></td>';
-            echo '<td align="center"><strong>'.get_string('timesent', 'message').'</strong></td>';
+            echo '<td><strong>'.get_string('from').'</strong></td>';
+            echo '<td><strong>'.get_string('to').'</strong></td>';
+            echo '<td><strong>'.get_string('message', 'message').'</strong></td>';
+            echo '<td><strong>'.get_string('timesent', 'message').'</strong></td>';
             echo "</tr>\n";
 
             $blockedcount = 0;
             $dateformat = get_string('strftimedatetime');
+            $strmore = get_string('more');
             foreach ($messages as $message) {
 
             /// ignore messages to and from blocked users unless $frm->includeblocked is set
@@ -463,7 +470,8 @@ function message_print_search_results($frm) {
                 message_print_user($userto, $tocontact, $toblocked);
                 echo '</td>';
                 echo '<td class="message_summary">'.message_shorten_message($message->message, 20);
-                echo ' '.message_history_link($message->useridto, $message->useridfrom, true, $datestring);
+                echo ' ...('.message_history_link($message->useridto, $message->useridfrom, true, $datestring, 
+                     $strmore.'&nbsp;<img src="'.$CFG->pixpath.'/t/log.gif" height="11" width="11" border="0">').')';
                 echo '</td>';
                 echo '<td class="message_date">'.userdate($message->timecreated, $dateformat).'</td>';
                 echo "</tr>\n";
@@ -566,8 +574,8 @@ function message_contact_link($userid, $linktype='add', $return=false) {
     }
 }
 
-function message_history_link ($userid1, $userid2=0, $returnstr=false, $position='') {
-    global $USER;
+function message_history_link ($userid1, $userid2=0, $returnstr=false, $position='', $linktext='') {
+    global $USER, $CFG;
 
     if (!$userid2) {
         $userid2 = $USER->id;
@@ -576,8 +584,14 @@ function message_history_link ($userid1, $userid2=0, $returnstr=false, $position
         $position = "#$position";
     }
 
+    if ($linktext == 'icon') {
+        $linktext = '<img src="'.$CFG->pixpath.'/t/log.gif" height="11" width="11" border="0">';
+    } else if ($linktext == '') {
+        $linktext = get_string('messagehistory', 'message');
+    }
+
     $str = link_to_popup_window("/message/history.php?user1=$userid1&user2=$userid2$position", 
-                    "message_history_$user->id", get_string('messagehistory', 'message'), 500, 500, '', 
+                    "message_history_$user->id", $linktext, 500, 500, '', 
                     'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500', true);
 
     if ($returnstr) {

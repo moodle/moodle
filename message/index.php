@@ -45,7 +45,7 @@ $tabprintfunction = 'message_print_'.$tab;
 
 if ($tab == 'contacts') {
     print_header(get_string('messages', 'message').' - '.$SITE->fullname, '', '', '', 
-                 '<meta http-equiv="refresh" content="'. MESSAGE_CONTACTS_REFRESH .'; url=index.php" />');
+                 '<meta http-equiv="refresh" content="'. $CFG->message_contacts_refresh .'; url=index.php" />');
 } else {
     print_header(get_string('messages', 'message').' - '.$SITE->fullname);
 }
