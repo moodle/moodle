@@ -245,7 +245,7 @@ class Wiki {
       "\\1<A HREF=\"http://www.\\2\\3\" TARGET=\"newpage\">www.\\2\\3</A>", $line);
 
     // make email addresses into mailtos....
-    $line = eregi_replace("([[:space:]]|^)([a-zA-Z0-9@.]+)\(([^)]+)\)",
+    $line = eregi_replace("([[:space:]]|^)([[:alnum:]._-]+@[[:alnum:]._-]+)\(([^)]+)\)",
       "\\1<a href=\"mailto:\\2\">\\3</a>", $line);
 
     // !# at the beginning of any lines means a heading
@@ -269,6 +269,15 @@ class Wiki {
       } else {
         $line = eregi_replace( "/([a-zA-Z0-9./_-]+)(png|gif|jpg)\(([^)]+)\)",
           "<img src=\"$CFG->wwwroot/file.php\?file=$course->id/\\1\\2\" alt=\"\\3\" />", $line );
+      }
+
+      // Replace everything else resource link
+      if ($CFG->slasharguments) {
+        $line = eregi_replace( "file:/([[:alnum:]/._-]+)\(([^)]+)\)",
+          "<a href=\"$CFG->wwwroot/file.php/$course->id/\\1\" >\\2</a>", $line );
+      } else {
+        $line = eregi_replace( "file:/([[:alnum:]/._-]+)\(([^)]+)\)",
+          "<a href=\"$CFG->wwwroot/file.php\?file=$course->id/\\1\" >\\2</a>", $line );
       }
 
       replace_smilies( $line );
