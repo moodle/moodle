@@ -166,7 +166,7 @@
             $fullurl = "$CFG->wwwroot$relativeurl";
 
             if ($CFG->resource_filterexternalpages and $resourcetype == "html") {
-                $fullurl = "$CFG->wwwroot/mod/resource/fetch.php?id=$cm->id&url=$fullurl";
+                $fullurl = "$CFG->wwwroot/mod/resource/fetch.php?id=$cm->id&file=/$course->id/$resource->reference";
             }
 
 
