@@ -331,7 +331,7 @@
             }
             echo "</form>";    
             echo "</td></tr></table>";
-            if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual"){
+            if (is_internal_auth()){
                 print_heading("<a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a>");
             }
 
@@ -343,7 +343,7 @@
 
         }
 
-        if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual"){
+        if (is_internal_auth()){
             print_heading("<a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a>");
         }
 
