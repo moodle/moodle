@@ -134,7 +134,7 @@ function commit_sql() {
  * Assumes that the input text (file or string) consists of
  * a number of SQL statements ENDING WITH SEMICOLONS.  The
  * semicolons MUST be the last character in a line.
- * Lines that are blank or that start with "#" are ignored.
+ * Lines that are blank or that start with "#" or "--" (postgres) are ignored.
  * Only tested with mysql dump files (mysqldump -p -d moodle)
  *
  * @uses $CFG
@@ -171,7 +171,7 @@ function modify_database($sqlfile='', $sqlstring='') {
         $line = rtrim($line);
         $length = strlen($line);
 
-        if ($length and $line[0] <> '#') {
+        if ($length and $line[0] <> '#' and $line[0].$line[1] <> '--') {
             if (substr($line, $length-1, 1) == ';') {
                 $line = substr($line, 0, $length-1);   // strip ;
                 $command .= $line;
