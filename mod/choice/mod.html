@@ -83,8 +83,8 @@
 
 <?php
 $standardblanks = 10;
+$count = 0;
 if ($options = get_records_menu('choice_options','choiceid', $form->instance, 'id', 'id,text')) {
-    $count = 0;
     foreach ($options as $id => $text) { 
         $count++;
     ?>
