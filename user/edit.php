@@ -98,7 +98,7 @@
                     }
                     redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id", get_string("changessaved"));
                 } else {
-                    redirect("$CFG->wwwroot/admin/user.php", get_string("changessaved"));
+                    redirect("$CFG->wwwroot/$CFG->admin/user.php", get_string("changessaved"));
                 }
             } else {
                 error("Could not update the user record ($user->id)");
