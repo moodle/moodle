@@ -78,6 +78,14 @@
 
 /// If data submitted, then process and store.
 
+    if (!empty($options)) {
+	    if ($config = data_submitted()) {  
+            foreach ($config as $name => $value) {
+                set_config($name, $value);
+            }
+        }
+    }
+
     if (!empty($add) and !empty($uselect)) {
         $selectedfilter = $uselect;
         if (!in_array($selectedfilter, $installedfilters)) {
