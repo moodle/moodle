@@ -30,13 +30,21 @@
 
     if (match_referer() && isset($HTTP_POST_VARS)) {    // form submitted
         $form = (object)$HTTP_POST_VARS;
+        $timenow = time();
         if ($current) {
-            if (! choice_update_in_database($current, $form->answer)) {
+            $newanswer = $current;
+            $newanswer->answer = $form->answer;
+            $newanswer->timemodified = $timenow;
+            if (! update_record("choice_answers", $newanswer)) {
                 error("Could not update your choice");
             }
             add_to_log($course->id, "choice", "update", "view.php?id=$cm->id", "$choice->id");
         } else {
-            if (! choice_add_new_to_database($choice, $form->answer)) {
+            $newanswer->choice = $choice->id;
+            $newanswer->user   = $USER->id;
+            $newanswer->answer = $form->answer;
+            $newanswer->timemodified = $timenow;
+            if (! insert_record("choice_answers", $newanswer)) {
                 error("Could not save your choice");
             }
             add_to_log($course->id, "choice", "add", "view.php?id=$cm->id", "$choice->id");

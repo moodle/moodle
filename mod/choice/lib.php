@@ -83,28 +83,6 @@ function choice_delete_instance($id) {
 }
 
 
-function choice_add_new_to_database($choice, $answer) {
-    global $db;
-    global $USER;
-
-    $timenow = time();
-
-    $rs = $db->Execute("INSERT INTO choice_answers (choice, user, answer, timemodified)
-                        VALUES ( '$choice->id', '$USER->id', '$answer', '$timenow')");
-    return $rs;
-}
-
-function choice_update_in_database($current, $answer) {
-    global $db;
-
-    $timenow = time();
-
-    $rs = $db->Execute("UPDATE choice_answers
-                        SET answer='$answer', timemodified='$timenow' 
-                        WHERE id = '$current->id'");
-    return $rs;
-}
-
 function choice_get_answer($choice, $code) {
 // Returns text string which is the answer that matches the code
     switch ($code) {
