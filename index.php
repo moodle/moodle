@@ -116,7 +116,8 @@
     }
 
     // If the block width cache is not set, set it
-    if(!isset($SESSION) or !isset($SESSION->blockcache->width->{$site->id}) or $editing) {
+    if(!isset($SESSION) or !isset($SESSION->blockcache) or 
+        !isset($SESSION->blockcache->width->{$site->id}) or $editing) {
         // This query might be optimized away if we 're in editing mode
         if(!isset($recblocks)) {
             $recblocks = get_records('blocks','visible','1');
@@ -128,8 +129,7 @@
         // But is there any real need to simplify the structure?
         $SESSION->blockcache->width->{$site->id}->left = $preferred_width_left;
         $SESSION->blockcache->width->{$site->id}->right = $preferred_width_right;
-    }
-    else {
+    } else {
         $preferred_width_left = $SESSION->blockcache->width->{$site->id}->left;
         $preferred_width_right = $SESSION->blockcache->width->{$site->id}->right;
     }
