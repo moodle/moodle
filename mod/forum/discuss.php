@@ -9,6 +9,7 @@
     require_variable($d);       // Discussion ID
     optional_variable($parent); // If set, then display this post and all children.
     optional_variable($mode);   // If set, changes the layout of the thread
+    optional_variable($move);   // If set, moves this discussion to another forum
 
     if (! $discussion = get_record("forum_discussions", "id", $d)) {
         error("Discussion ID was incorrect or no longer exists");
@@ -18,19 +19,38 @@
         error("Course ID is incorrect - discussion is faulty");
     }
 
-    if (! $forum = get_record("forum", "id", $discussion->forum)) {
-        notify("Bad forum ID stored in this discussion");
+    if ($course->category) {
+        require_login($course->id);
+    }
+
+    if (!empty($move)) { 
+        if (!isteacher($course->id)) {
+            error("Only teachers can do that!");
+        }
+        if ($forum = get_record("forum", "id", $move)) {
+            set_field("forum_discussions", "forum", $forum->id, "id", $discussion->id);
+            $discussion->forum = $forum->id;
+            add_to_log($course->id, "forum", "move discussion", "discuss.php?d=$discussion->id", "$discussion->id");
+        } else {
+            error("You can't move to that forum - it doesn't exist!");
+        }
+    }
+
+    if (empty($forum)) {
+        if (! $forum = get_record("forum", "id", $discussion->forum)) {
+            notify("Bad forum ID stored in this discussion");
+        }
     }
 
     if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
         //notify("Bad coursemodule for this discussion");  // Only affects navmenu
     }
 
-    if ($course->category) {
-        require_login($course->id);
+    $logparameters = "d=$discussion->id";
+    if ($parent) {
+        $logparameters .= "&parent=$parent";
     }
-
-    add_to_log($course->id, "forum", "view discussion", "discuss.php?".$_SERVER["QUERY_STRING"], "$discussion->id");
+    add_to_log($course->id, "forum", "view discussion", "discuss.php?$logparameters", "$discussion->id");
 
     unset($SESSION->fromdiscussion);
 
@@ -66,6 +86,23 @@
     } else {
         print_header("$course->shortname: $discussion->name", "$course->fullname",
                  "$navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
+    }
+
+    if (isteacher($course->id)) {    // Popup menu to allow discussions to be moved to other forums
+        if ($forums = get_all_instances_in_course("forum", $course->id, "cw.section ASC")) {
+            foreach ($forums as $courseforum) {
+                if ($courseforum->id != $forum->id) {
+                    $url = "discuss.php?d=$discussion->id&move=$courseforum->id";
+                    $forummenu[$url] = $courseforum->name;
+                }
+            }
+            if (!empty($forummenu)) {
+                echo "<div align=\"right\">";
+                echo popup_form("$CFG->wwwroot/mod/forum/", $forummenu, "forummenu", "", 
+                                 get_string("movethisdiscussionto", "forum"), "", "", true);
+                echo "</div>";
+            }
+        }
     }
 
     forum_print_discussion($course, $forum, $discussion, $post, $displaymode);

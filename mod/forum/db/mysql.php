@@ -4,6 +4,8 @@ function forum_upgrade($oldversion) {
 // This function does anything necessary to upgrade
 // older versions to match current functionality
 
+  global $CFG;
+
   if ($oldversion < 2002073008) {
     execute_sql("DELETE FROM modules WHERE name = 'discuss' ");
     execute_sql("ALTER TABLE `discuss` RENAME `forum_discussions` ");
@@ -56,6 +58,9 @@ function forum_upgrade($oldversion) {
       execute_sql("ALTER TABLE `forum_subscriptions` CHANGE `user` `userid` INT(10) UNSIGNED DEFAULT '0' NOT NULL ");
   }
 
+  if ($oldversion < 2003042402) {
+      execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('forum', 'move discussion', 'forum_discussions', 'name')");
+  }
   return true;
 
 }

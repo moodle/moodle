@@ -54,6 +54,7 @@ $string['modeflatnewestfirst'] = "Display replies flat, with newest first";
 $string['modenested'] = "Display replies in nested form";
 $string['modethreaded'] = "Display replies in threaded form";
 $string['more'] = "more";
+$string['movethisdiscussionto'] = "Move this discussion to ... ";
 $string['namenews'] = "News forum";
 $string['namesocial'] = "Social forum";
 $string['nameteacher'] = "Teacher forum";

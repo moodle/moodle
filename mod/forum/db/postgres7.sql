@@ -83,6 +83,7 @@ INSERT INTO prefix_log_display VALUES ('forum', 'update', 'forum', 'name');
 INSERT INTO prefix_log_display VALUES ('forum', 'add discussion', 'forum_discussions', 'name');
 INSERT INTO prefix_log_display VALUES ('forum', 'add post', 'forum_posts', 'subject');
 INSERT INTO prefix_log_display VALUES ('forum', 'update post', 'forum_posts', 'subject');
+INSERT INTO prefix_log_display VALUES ('forum', 'move discussion', 'forum_discussions', 'name');
 INSERT INTO prefix_log_display VALUES ('forum', 'view subscribers', 'forum', 'name');
 INSERT INTO prefix_log_display VALUES ('forum', 'view discussion', 'forum_discussions', 'name');
 INSERT INTO prefix_log_display VALUES ('forum', 'view forum', 'forum', 'name');
