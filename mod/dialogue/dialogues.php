@@ -268,9 +268,9 @@
     /****************** print dialogue (allowing new entry)********************/
     elseif ($action == 'printdialogue') {
     
-        if (!$conversation = get_record("dialogue_conversations", "id", $_GET['cid'])) {
-            error("Print Dialogue: can not get conversation record");
-        }
+        // if (!$conversation = get_record("dialogue_conversations", "id", $_GET['cid'])) {
+        //     error("Print Dialogue: can not get conversation record");
+        // }
             
         print_simple_box( text_to_html($dialogue->intro) , "center");
         echo "<br />";

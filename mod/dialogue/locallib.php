@@ -455,8 +455,8 @@ function dialogue_list_conversations_self($dialogue) {
                     error("User not found");
                 }
             }
-            // print_user_picture($user->id, $course->id, $user->picture);
-            echo "<b>".get_string("dialoguewith", "dialogue", fullname($otheruser)).
+            $picture = print_user_picture($otheruser->id, $course->id, $otheruser->picture, false, true);
+            echo $picture." <b>".get_string("dialoguewith", "dialogue", fullname($otheruser)).
                 "</b></td>";
             echo "<td bgcolor=\"$THEME->cellheading2\"><i>".clean_text($conversation->subject)."&nbsp;</i><br />\n";
             echo "<div align=\"right\">\n";
@@ -560,8 +560,8 @@ function dialogue_print_conversation($dialogue, $conversation) {
             error("User not found");
         }
     }
-    // print_user_picture($user->id, $course->id, $user->picture);
-    echo "<b>".get_string("dialoguewith", "dialogue", fullname($otheruser)).
+    $picture = print_user_picture($otheruser->id, $course->id, $otheruser->picture, false, true);
+    echo $picture." <b>".get_string("dialoguewith", "dialogue", fullname($otheruser)).
         "</b></td>";
     echo "<td bgcolor=\"$THEME->cellheading2\"><i>".clean_text($conversation->subject)."&nbsp;</i><br />\n";
     echo "<div align=\"right\">\n";
@@ -728,8 +728,8 @@ function dialogue_show_conversation($dialogue, $conversation) {
             error("User not found");
         }
     }
-    // print_user_picture($user->id, $course->id, $user->picture);
-    echo "<b>".get_string("dialoguewith", "dialogue", fullname($otheruser)).
+    $picture = print_user_picture($otheruser->id, $course->id, $otheruser->picture, false, true);
+    echo $picture." <b>".get_string("dialoguewith", "dialogue", fullname($otheruser)).
         "</b></td>";
     echo "<td bgcolor=\"$THEME->cellheading2\" valign=\"top\"><i>".clean_text($conversation->subject)."&nbsp;</i></td></tr>";
 
