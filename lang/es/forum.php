@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 unstable development (2004083000)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['addanewdiscussion'] = 'Colocar un nuevo tema de discusión aquí';
@@ -11,13 +11,17 @@ $string['allowsdiscussions'] = 'Foro abierto a todos';
 $string['anyfile'] = 'Cualquier archivo';
 $string['attachment'] = 'Archivo adjunto';
 $string['bynameondate'] = 'de $a->name - $a->date';
+$string['configcleanreadtime'] = 'Hora del día para limpiar mensajes antiguos de la tabla de lectura.';
 $string['configdisplaymode'] = 'Forma de visualización por defecto, si no se ha configurado ninguna.';
 $string['configenablerssfeeds'] = 'Este interruptor permite canales RSS para todos los foros. Necesitará activar los canales manualmente en los ajustes de cada foro.';
 $string['configlongpost'] = 'Cualquier mensaje que exceda esta extensión (sin incluir código HTML) se considera largo.';
 $string['configmanydiscussions'] = 'Máximo número de temas mostrados en una página de foro.';
 $string['configmaxbytes'] = 'Tamaño máximo por defecto para los archivos adjuntos a los mensajes de los foros en este sitio (sujeto a los límites del curso y otras configuraciones del servidor)';
+$string['configoldpostdays'] = 'Número de días para que un mensaje se considere leído.';
 $string['configreplytouser'] = 'Cuando un mensaje del foro es enviado por correo electrónico, ¿debería contener la dirección del usuario de modo que los receptores pudieran responderle personalmente en lugar de hacerlo en el foro? Incluso aunque se seleccione \'Sí\', los usuarios pueden elegir en su perfil que su dirección de correo electrónico se mantenga en secreto.';
 $string['configshortpost'] = 'Cualquier mensaje que no alcance esta extensión (sin incluir código HTML) se considera corto.';
+$string['configtrackreadposts'] = 'Seleccione \'Sí\' si desea rastrear leído/no leído para cada usuario.';
+$string['configusermarksread'] = 'Si elige \'sí\' el usuario debe marcar manualmente un mensaje como leído. Si \'no\', cuando el mensaje sea visto se marcará como leído.';
 $string['couldnotadd'] = 'No se puede colocar su mensaje debido a un problema desconocido.';
 $string['couldnotdeleteratings'] = 'Lo sentimos, no podemos borrar este mensaje debido a que ha sido calificado.';
 $string['couldnotdeletereplies'] = 'Lo sentimos, no podemos borrar este mensaje debido a que tiene respuestas.';
@@ -59,6 +63,8 @@ $string['introsocial'] = 'Foro abierto a todos los temas';
 $string['introteacher'] = 'Foro exclusivo para profesores';
 $string['lastpost'] = 'Último mensaje';
 $string['learningforums'] = 'Foros de aprendizaje';
+$string['markread'] = 'Marcar como leído';
+$string['markunread'] = 'Marcar como no leído';
 $string['maxattachmentsize'] = 'Tamaño máximo del archivo adjunto';
 $string['maxtimehaspassed'] = 'Lo sentimos, pero el tiempo máximo para editar ($a) ya venció.';
 $string['message'] = 'Mensaje';
@@ -147,6 +153,10 @@ $string['subscribestart'] = 'Deseo recibir copias de este foro por correo';
 $string['subscribestop'] = 'No deseo recibir copias de este foro por correo';
 $string['subscription'] = 'Suscripción';
 $string['subscriptions'] = 'Suscripciones';
+$string['unread'] = 'No leído';
+$string['unreadposts'] = 'Mensajes no leídos';
+$string['unreadpostsnumber'] = '$a mensajes no leídos';
+$string['unreadpostsone'] = '1 mensaje no leído';
 $string['unsubscribe'] = 'Darse de baja de este foro';
 $string['unsubscribed'] = 'No suscrito';
 $string['unsubscribeshort'] = 'Dar de baja';

@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4 alpha (2004081500)
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['about'] = 'Acerca de este editor';
 $string['absbottom'] = 'Abajo';
-$string['middle'] = 'Centro';
 $string['address'] = 'Dirección';
+$string['alertnoselectedtext'] = '¡Antes debe seleccionar el texto!';
 $string['alignment'] = 'Alinear';
 $string['alternatetext'] = 'Texto alterno';
 $string['anchorhelp'] = 'Esta acción sólo crea un ancla. Deberá crear un enlace manualmente.';
@@ -30,7 +30,10 @@ $string['createlink'] = 'Insertar enlace';
 $string['cut'] = 'Cortar selección';
 $string['delete'] = 'Eliminar';
 $string['filebrowser'] = 'Navegador de archivos';
+$string['fontname'] = 'Nombre de fuente';
+$string['fontsize'] = 'Tamaño de fuente';
 $string['forecolor'] = 'Color de fuente';
+$string['formatblock'] = 'Formato';
 $string['fullscreen'] = 'Editor pantalla completa';
 $string['heading'] = 'Encabezado';
 $string['height'] = 'Altura';
@@ -65,6 +68,7 @@ $string['linkurl'] = 'URL';
 $string['middle'] = 'Centrado';
 $string['minimize'] = 'Minimizar editor';
 $string['move'] = 'Mover';
+$string['nolink'] = 'Anular enlace a glosario';
 $string['normal'] = 'Normal';
 $string['notimage'] = 'El archivo seleccionado no es una imagen. Por favor, seleccione una imagen!';
 $string['notset'] = 'Ninguno';

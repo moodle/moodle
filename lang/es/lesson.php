@@ -2,6 +2,7 @@
       // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
+$string['accesscontrol'] = 'Control de Acceso';
 $string['actionaftercorrectanswer'] = 'Acción posterior a la respuesta correcta';
 $string['addabranchtable'] = 'Añadir una tabla de ramificaciones';
 $string['addanendofbranch'] = 'Añadir un final de ramificación';
@@ -77,10 +78,13 @@ $string['essayscore'] = 'Puntuación del ensayo';
 $string['fileformat'] = 'Formato de archivo';
 $string['firstanswershould'] = 'La primera respuesta debería saltar a la página \"correcta\"';
 $string['firstwrong'] = 'Lo sentimos, usted no puede obtener este punto porque su respuesta no es correcta. ¿Desea seguir intentándolo? (únicamente para aprender, no para ganar el punto).';
+$string['flowcontrol'] = 'Control de Flujo';
+$string['general'] = 'General';
 $string['gobacktolesson'] = 'Volver a la Lección';
 $string['grade'] = 'Calificación';
 $string['gradeessay'] = 'Calificar preguntas de ensayo';
 $string['gradeis'] = 'La calificación es $a';
+$string['gradeoptions'] = 'Opciones de Calificación';
 $string['handlingofretakes'] = 'Manejo de nuevos intentos';
 $string['havenotgradedyet'] = 'Aún no calificado.';
 $string['here'] = 'aquí';
@@ -94,6 +98,7 @@ $string['leftduringtimednoretake'] = 'Se ha interrumpido una lección con tiempo 
 $string['lesson'] = 'Lección $a';
 $string['lessonclosed'] = 'Esta lección se cerró el $a.';
 $string['lessondefault'] = 'Utilizar los ajustes de esta lección como valores por defecto';
+$string['lessonformating'] = 'Formateado de la Lección';
 $string['lessonmenu'] = 'Menú Lección';
 $string['lessonopen'] = 'Esta lección se abrirá el $a.';
 $string['lessonstats'] = 'Estadísticas de la lección';
@@ -143,6 +148,7 @@ $string['ongoingcustom'] = 'Esta es una lección de $a->grade puntos. Usted ha ob
 $string['ongoingnormal'] = 'Usted ha respondido correctamente $a->correct pregunta(s) de un total de $a->viewed pregunta(s).';
 $string['or'] = 'O';
 $string['ordered'] = 'Ordenado';
+$string['other'] = 'Otro';
 $string['outof'] = 'Fuera de $a';
 $string['outoftime'] = 'Fuera de tiempo';
 $string['overview'] = 'Revisión';
