@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 Beta (2004022400)
+      // moodle.php - created with Moodle 1.2 Beta ++ (2004031100)
 
 
 $string['action'] = '操作';
@@ -133,6 +133,7 @@ $string['configcountry'] = 'ここで国を設定した場合、新規アカウントのユーザに初期
 ';
 $string['configdebug'] = 'この設定を Yes にした場合、PHPのエラーレポートが増加して、より多くの警告が表示されるようになります。開発者向けの設定です。';
 $string['configerrorlevel'] = '表示したいPHPの警告数を選択してください。通常はNormalが最適です。';
+$string['configfilteruploadedfiles'] = 'この設定を行った場合、Moodleは全てのアップロードされたHTML及びテキストファイルを表示する前にフィルタにかけます。';
 $string['configforcelogin'] = '通常、サイトとコース一覧(コースでは無い)のフロントページはサイトにログインせずに閲覧することが出来ます。全ての動作を行う前にログインを強制したい場合は、この設定を行ってください。';
 $string['configframename'] = 'Moodleをフレーム内で使用する場合、フレーム名を指定してください。フレームを使用しない場合は「_top」のままにしてください。';
 $string['configfullnamedisplay'] = 'ここではどのように名前が表示されるのかを設定します。殆どの単一言語を使用したサイトでは「名前+名字」を使用した方が良いでしょう。しかし、名字を隠したり、言語設定に添った形(いくつかの言語では異なる並び)の並びにすることも可能です。';
@@ -170,6 +171,7 @@ $string['configuration'] = '設定';
 $string['configvariables'] = '詳細設定';
 $string['configwarning'] = '間違った設定はトラブルの原因になりますので、これらの設定を変更する場合は注意してください。';
 $string['configzip'] = 'ZIPプログラムの場所を指定してください(UNIXのみ、任意)。これはZIP書庫をサーバ内で作成するために必要です。空白にした場合、Moodleは内部ルーチンを使用します';
+$string['confirm'] = '確認';
 $string['confirmed'] = '登録が完了しました';
 $string['confirmednot'] = '登録はまだ完了していません！';
 $string['continue'] = '続ける';
@@ -844,6 +846,7 @@ $string['userdescription'] = '自己紹介';
 $string['userfiles'] = 'ユーザファイル';
 $string['username'] = 'ユーザ名';
 $string['usernameexists'] = 'このユーザ名は既に使用されています　他のユーザ名を入力してください';
+$string['usernotconfirmed'] = '$a を確認出来ませんでした';
 $string['userprofilefor'] = '$a のプロフィール';
 $string['users'] = 'ユーザ';
 $string['usersnew'] = '新しいユーザ';
