@@ -742,7 +742,7 @@ function print_course_admin_links($course, $width=180) {
         $modpixpath = "$CFG->wwwroot/theme/$CFG->theme/pix/mod";
     }
     if (isteacher($course->id)) {
-        if (iscreator()) {
+        if (isteacheredit($course->id)) {
             $adminicon[]="<img src=\"$pixpath/i/edit.gif\" height=16 width=16 alt=\"\">";
             if (isediting($course->id)) {
                 $admindata[]="<a href=\"view.php?id=$course->id&edit=off\">".get_string("turneditingoff")."</a>";
