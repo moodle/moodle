@@ -38,7 +38,6 @@
 		    }
     
 		    reset_login_count();
-            add_to_log("Logged in");
 
             if ($CFG->smsnotify) {
                 $time = date("H:i D j M", time());

@@ -3,7 +3,6 @@
 
     require("../config.php");
 
-    add_to_log("Logged out");
     $USER = NULL;
     redirect($HTTP_REFERER);
     exit;

@@ -26,7 +26,6 @@
 
 			set_moodle_cookie($USER->username);
 
-            add_to_log("Changed password");
 			reset_login_count();
 
 			print_header("Changed password", "Password changed successfully", "Changed Password", "");
