@@ -1928,9 +1928,9 @@ function print_heading($text, $align='', $size=2) {
  * @param string $icon Image to display if needed
  */
 function print_heading_with_help($text, $helppage, $module='moodle', $icon='') {
-    echo "<h$size>$icon".stripslashes_safe($text);
+    echo '<h2>'.$icon.stripslashes_safe($text);
     helpbutton($helppage, $text, $module);
-    echo "</h$size>";
+    echo '</h2>';
 }
 
 /**
@@ -3323,7 +3323,7 @@ function notify ($message, $style='notifyproblem', $align='center') {
 
     $message = clean_text($message);
 
-    echo '<div class="'.$style.'" align="'. $align .'">'. $message .'</div>' . "\n";
+    echo '<div class="'.$style.'" align="'. $align .'"><p>'. $message .'</p></div>' . "<br />\n";
 }
 
 
