@@ -1,0 +1,28 @@
+<P ALIGN=CENTER><B>Wygl¹d s³ownika</B></P>
+
+<P>Ten parametr okre¶la sposób w jaki definicje zostan± zaprezentowane w s³owniku. Mo¿liwe s± nastêpuj±ce sposoby prezentacji:</p>
+<blockquote>
+<dl>
+<dt><b>Prosty s³ownik</b>:</dt>
+<dd>Przypomina klasyczny s³ownik. Autorzy nie s± uwidocznieni a za³±czniki schowane s± za linkami.</dd>
+<dt><b>Ci±g³y</b>:</dt>
+<dd>Pokazuje terminy jeden po drugim bez ¿adnych przerw oprócz edycyjnych ikon.</dd>
+<dt><b>Pe³en z autorami</b>:</dt>
+<dd>Pokazuje terminy wraz z danymi autora w sposób podobny do forum. Za³±czniki schowane sa za linkami.</dd>
+<dt><b>Pe³en bez autorów</b>:</dt>
+<dd>Format podobny do poprzedniego z tym, ¿e nie zawiera informacji o autorach.</dd>
+<dt><b>Encyklopedia</b>:</dt>
+<dd>Taki jak "Ci±g³y z autorami" ale za³±czniki s± wy¶wietlone w tek¶cie.</dd>
+<dt><b>Czêsto zadawane pytania (FAQ)</b>:</dt>
+<dd>U¿yteczny przy wy¶wietlaniu "Czêsto zadawanych pytañ (FAQ). Automatycznie kategoryzuje terminy definiowane i definicje jako pytania i odpowiedzi.</dd>
+</dl>
+</blockquote>
+
+<hr>
+<p>Administratorzy Moodle'a mog± utworzyæ nowe formy wy¶wietlenia s³ownika:
+<ol>
+<li> Sprawd¼ zawrato¶æ katalogu mod/glossary/formats .... Powinny tam byæ ponumerowane pliki odpowiadaj±ce dostêpnym formatom s³ownika.
+<li> Skopiuj jeden z tych plików i nadaj jemu now± nazwê tj. numer N (zwróæ uwagê, ¿e 0 i 1 s± zarezerwowane).
+<li> Dokonaj edycji tego pliku w/g w³asnego uznania (musisz jednak trochê znaæ PHP).
+<li> Nastêpnie, dopisz w ka¿dym pakiecie jêzykowym jakiego u¿ywasz <b>displayformatN</b>, i nadaj mu krótk± ale logiczn± nazwê.
+</ol>
