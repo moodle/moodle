@@ -1,3 +1,98 @@
+2002-09-09 Monday 20:37  martin
+
+	* course/index.php, course/lib.php, lang/en/moodle.php: 
+	
+	Tweaks to category display
+
+2002-09-09 Monday 19:48  martin
+
+	* CHANGES, index.php, version.php, admin/index.php, admin/site.php,
+	course/categories.php, course/index.php, course/lib.php,
+	lang/en/moodle.php: 
+	
+	Categories upgrade.  Admin can now create/edit/delete categories,
+	and these are diesplayed wherever courses are listed
+
+2002-09-09 Monday 19:42  martin
+
+	* course/social.php: 
+	
+	Layout fixes ... much better now
+
+2002-09-09 Monday 19:31  martin
+
+	* course/edit.html: 
+	
+	Changed maximum number of weeks/topics up to 52
+
+2002-09-09 Monday 18:38  martin
+
+	* course/teachers.php: 
+	
+	Rearrange code ... accidentally placed table->head in the loop
+
+2002-09-09 Monday 14:23  martin
+
+	* lib/adodb/: adodb-cryptsession.php, adodb-csvlib.inc.php,
+	adodb-errorhandler.inc.php, adodb-errorpear.inc.php,
+	adodb-lib.inc.php, adodb-pager.inc.php, adodb-pear.inc.php,
+	adodb-session.php, adodb.inc.php, crypt.inc.php, readme.htm,
+	server.php, tips_portable_sql.htm, toexport.inc.php,
+	tohtml.inc.php, tute.htm, drivers/adodb-access.inc.php,
+	drivers/adodb-ado.inc.php, drivers/adodb-ado_access.inc.php,
+	drivers/adodb-ado_mssql.inc.php,
+	drivers/adodb-borland_ibase.inc.php, drivers/adodb-csv.inc.php,
+	drivers/adodb-db2.inc.php, drivers/adodb-fbsql.inc.php,
+	drivers/adodb-firebird.inc.php, drivers/adodb-ibase.inc.php,
+	drivers/adodb-informix72.inc.php, drivers/adodb-mssql.inc.php,
+	drivers/adodb-mysql.inc.php, drivers/adodb-oci8.inc.php,
+	drivers/adodb-oci805.inc.php, drivers/adodb-oci8po.inc.php,
+	drivers/adodb-odbc.inc.php, drivers/adodb-odbc_mssql.inc.php,
+	drivers/adodb-odbc_oracle.inc.php, drivers/adodb-oracle.inc.php,
+	drivers/adodb-postgres.inc.php, drivers/adodb-postgres64.inc.php,
+	drivers/adodb-postgres7.inc.php, drivers/adodb-proxy.inc.php,
+	drivers/adodb-sqlanywhere.inc.php, drivers/adodb-sybase.inc.php,
+	drivers/adodb-vfp.inc.php, tests/benchmark.php, tests/client.php,
+	tests/test.php, tests/test2.php, tests/test4.php, tests/test5.php,
+	tests/testdatabases.inc.php, tests/testgenid.php,
+	tests/testmssql.php, tests/testoci8.php, tests/testpaging.php,
+	tests/testpear.php: 
+	
+	Whoops ... last conversion actully tampered with comment formatting
+	... I've fixed that now.
+
+2002-09-09 Monday 14:17  martin
+
+	* lib/adodb/: adodb-cryptsession.php, adodb-csvlib.inc.php,
+	adodb-errorhandler.inc.php, adodb-errorpear.inc.php,
+	adodb-lib.inc.php, adodb-pager.inc.php, adodb-pear.inc.php,
+	adodb-session.php, adodb.inc.php, crypt.inc.php, license.txt,
+	readme.htm, readme.txt, server.php, tips_portable_sql.htm,
+	toexport.inc.php, tohtml.inc.php, tute.htm,
+	drivers/adodb-access.inc.php, drivers/adodb-ado.inc.php,
+	drivers/adodb-ado_access.inc.php, drivers/adodb-ado_mssql.inc.php,
+	drivers/adodb-borland_ibase.inc.php, drivers/adodb-csv.inc.php,
+	drivers/adodb-db2.inc.php, drivers/adodb-fbsql.inc.php,
+	drivers/adodb-firebird.inc.php, drivers/adodb-ibase.inc.php,
+	drivers/adodb-informix.inc.php, drivers/adodb-informix72.inc.php,
+	drivers/adodb-mssql.inc.php, drivers/adodb-mysql.inc.php,
+	drivers/adodb-mysqlt.inc.php, drivers/adodb-oci8.inc.php,
+	drivers/adodb-oci805.inc.php, drivers/adodb-oci8po.inc.php,
+	drivers/adodb-odbc.inc.php, drivers/adodb-odbc_mssql.inc.php,
+	drivers/adodb-odbc_oracle.inc.php, drivers/adodb-oracle.inc.php,
+	drivers/adodb-postgres.inc.php, drivers/adodb-postgres64.inc.php,
+	drivers/adodb-postgres7.inc.php, drivers/adodb-proxy.inc.php,
+	drivers/adodb-sqlanywhere.inc.php, drivers/adodb-sybase.inc.php,
+	drivers/adodb-vfp.inc.php, tests/benchmark.php, tests/client.php,
+	tests/test.php, tests/test2.php, tests/test3.php, tests/test4.php,
+	tests/test5.php, tests/testcache.php, tests/testdatabases.inc.php,
+	tests/testgenid.php, tests/testmssql.php, tests/testoci8.php,
+	tests/testpaging.php, tests/testpear.php, tests/testsessions.php: 
+	
+	Converted all the DOS format text files to UNIX format, for
+	consistency with the rest of Moodle and also to prevent possible
+	mangling of files in case they are FTP'd individually to a server.
+
 2002-09-09 Monday 00:13  martin
 
 	* lib/weblib.php: 
