@@ -194,9 +194,9 @@ function stripslashes_safe($string) {
 if (!function_exists('str_ireplace')) {
     function str_ireplace($find, $replace, $string) {
     /// This does a search and replace, ignoring case
-    /// This function is only here because one doesn't exist yet in PHP
-    /// Unlike str_replace(), this only works on single values (not arrays)
-    /// Function from the PHP manual, by bradhuizenga@softhome.net
+    /// This function is only here versions of PHP older than version 5
+    /// may not have a native version of this function.
+    /// Taken from the PHP manual, by bradhuizenga@softhome.net
 
         if (!is_array($find)) {
             $find = array($find);
