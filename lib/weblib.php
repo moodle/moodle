@@ -1170,8 +1170,8 @@ function print_header_simple($title="", $heading="", $navigation="", $focus="", 
     print_header("$course->shortname: $title", "$course->fullname $heading", "$shortname $navigation", $focus, $meta,
                        $cache, $button, $menu, $usexml, $bodytags);
 }
-                       
-                       
+
+
 
 function print_footer ($course=NULL, $usercourse=NULL) {
 // Can provide a course object to make the footer contain a link to
@@ -2559,11 +2559,11 @@ function print_editor_config() {
 
     echo " }\";\n";
     echo "config.killWordOnPaste = ";
-    echo(!$CFG->editorkillword) ? "false":"true";
+    echo(empty($CFG->editorkillword)) ? "false":"true";
     echo ";\n";
     echo "config.fontname = {\n";
 
-    $fontlist = explode(";", $CFG->editorfontlist);
+    $fontlist = isset($CFG->editorfontlist) ? explode(';', $CFG->editorfontlist) : array();
     $i = 1;                     // Counter is used to get rid of the last comma.
     $count = count($fontlist);  // Otherwise IE doesn't load the editor.
 
@@ -2578,7 +2578,7 @@ function print_editor_config() {
         $i++;
     }
     echo "};";
-    if($CFG->editorspelling && !empty($CFG->aspellpath)) {
+    if(!empty($CFG->editorspelling) && !empty($CFG->aspellpath)) {
         print_speller_code($usehtmleditor=true);
     }
 }
