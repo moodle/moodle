@@ -3,7 +3,8 @@
     <TITLE><?=$title ?></TITLE>
     <META NAME="keywords" CONTENT="Moodle, <?=$title ?> ">
     <?=$meta ?>
-    <LINK rel="stylesheet" HREF="<?=$styles ?>">
+    <LINK REL="stylesheet" HREF="<?=$styles ?>">
+    <LINK REL="SHORTCUT ICON" HREF="<?=$CFG->wwwroot?>/theme/standard/favicon.ico">
     <? include("$CFG->javascript"); ?>
 </HEAD>
 
@@ -19,7 +20,7 @@
     <FONT FACE="Trebuchet MS, Verdana, Arial, Helvetica, sans-serif" SIZE=2><B>
 <?  print_navigation("$navigation"); ?>
     </B></FONT></TD></TR></TABLE>
-    <IMG SRC="$CFG->wwwroot/pix/spacer.gif" ALT="" HEIGHT=5 WIDTH=1>
+    <IMG SRC="<?=$CFG->wwwroot?>/pix/spacer.gif" ALT="" HEIGHT=5 WIDTH=1>
 <?  } else { ?>
     <HR SIZE=1 NOSHADE>
 <?  } ?>
