@@ -2866,5 +2866,12 @@ function address_in_subnet($addr, $subnetstr) {
     return $found;
 }
 
+function mtrace($string, $eol="\n") {
+// For outputting debugging info 
+    fwrite(STDOUT, $string.$eol);
+    flush();
+}
+
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

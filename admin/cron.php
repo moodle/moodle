@@ -25,11 +25,6 @@
 
     require_once("../config.php");
 
-    function trace($string, $eol="\n") {
-        fwrite(STDOUT, $string.$eol);
-        flush();
-    }
-
     if (!$alreadyadmin = isadmin()) {
         unset($_SESSION['USER']);
         unset($USER);
@@ -41,11 +36,11 @@
     echo "<pre>\n";
 
     $timenow  = time();
-    trace("Server Time: ".date('r',$timenow)."\n\n");
+    mtrace("Server Time: ".date('r',$timenow)."\n\n");
 
 /// Run all cron jobs for each module
 
-    trace("Starting activity modules");
+    mtrace("Starting activity modules");
     if ($mods = get_records_select("modules", "cron > 0 AND (($timenow - lastcron) > cron)")) {
         foreach ($mods as $mod) {
             $libfile = "$CFG->dirroot/mod/$mod->name/lib.php";
@@ -53,18 +48,18 @@
                 include_once($libfile);
                 $cron_function = $mod->name."_cron";
                 if (function_exists($cron_function)) {
-                    trace("Processing module function $cron_function ...", '');
+                    mtrace("Processing module function $cron_function ...", '');
                     if ($cron_function()) {
                         if (! set_field("modules", "lastcron", $timenow, "id", $mod->id)) {
-                            trace("Error: could not update timestamp for $mod->fullname");
+                            mtrace("Error: could not update timestamp for $mod->fullname");
                         }
                     }
-                    trace("done.");
+                    mtrace("done.");
                 }
             }
         }
     }
-    trace("Finished activity modules");
+    mtrace("Finished activity modules");
 
 /// Run all core cron jobs, but not every time since they aren't too important.
 /// These don't have a timer to reduce load, so we'll use a random number 
@@ -74,7 +69,7 @@
     $random100 = rand(0,100);
 
     if ($random100 < 20) {     // Approximately 20% of the time.
-        trace("Running clean-up tasks...");
+        mtrace("Running clean-up tasks...");
 
         /// Unenrol users who haven't logged in for $CFG->longtimenosee
 
@@ -83,7 +78,7 @@
             if ($students = get_users_longtimenosee($longtime)) {
                 foreach ($students as $student) {
                     if (unenrol_student($student->userid, $student->course)) {
-                        trace("Deleted student enrolment for user $student->userid from course $student->course");
+                        mtrace("Deleted student enrolment for user $student->userid from course $student->course");
                     }
                 }
             }
@@ -139,7 +134,7 @@
     } // End of occasional clean-up tasks
 
     if (file_exists("$CFG->dataroot/cronextra.php")) {
-        trace("Running extra commands in $CFG->dataroot/cronextra.php ...");
+        mtrace("Running extra commands in $CFG->dataroot/cronextra.php ...");
         include("$CFG->dataroot/cronextra.php");
     }
 
@@ -156,12 +151,12 @@
             include_once("$CFG->dirroot/backup/backuplib.php");
             include_once("$CFG->dirroot/backup/lib.php");
             require_once ("$CFG->libdir/blocklib.php");
-            trace("Running backups if required...");
+            mtrace("Running backups if required...");
     
             if (! schedule_backup_cron()) {
-                trace("ERORR: Something went wrong while performing backup tasks!!!");
+                mtrace("ERORR: Something went wrong while performing backup tasks!!!");
             } else {
-                trace("Backup tasks finished.");
+                mtrace("Backup tasks finished.");
             }
         }
     }
@@ -169,12 +164,12 @@
     if (!empty($CFG->enablerssfeeds)) {  //Defined in admin/variables page
         if (file_exists("$CFG->dirroot/rss/rsslib.php")) {
             include_once("$CFG->dirroot/rss/rsslib.php");
-            trace("Running rssfeeds if required...");
+            mtrace("Running rssfeeds if required...");
 
             if ( ! cron_rss_feeds()) {
-                trace("Something went wrong while generating rssfeeds!!!");
+                mtrace("Something went wrong while generating rssfeeds!!!");
             } else {
-                trace("Rssfeeds finished");
+                mtrace("Rssfeeds finished");
             }
         }
     }
@@ -184,16 +179,16 @@
     $enrol = new enrolment_plugin();
     $enrol->cron();
     if (!empty($enrol->log)) {
-        trace($enrol->log);
+        mtrace($enrol->log);
     }
 
     //Unset session variables and destroy it
     @session_unset();
     @session_destroy();
 
-    trace("Cron script completed correctly");
+    mtrace("Cron script completed correctly");
 
     $difftime = microtime_diff($starttime, microtime());
-    trace("Execution took ".$difftime." seconds"); 
+    mtrace("Execution took ".$difftime." seconds"); 
 
 ?>
