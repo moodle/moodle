@@ -31,7 +31,7 @@
     // extract relative path components
     $args = explode('/', trim($relativepath, '/'));
     
-    if (count($args) < 4) {
+    if (count($args) < 5) {
         not_found();
     }
 
@@ -39,6 +39,7 @@
     $userid     = (int)$args[1];
     $modulename = clean_param($args[2], PARAM_FILE);
     $instance   = (int)$args[3];
+    $filename   = clean_param($args[4], PARAM_FILE);
     
     if (!$course = get_record("course", "id", $courseid)) {
         not_found();
@@ -68,7 +69,6 @@
         not_found();
     }
 
-    $filename = $instance.'.xml';
     $pathname = $CFG->dataroot.'/rss/'.$modulename.'/'.$filename;
 
     //Check that file exists
@@ -81,7 +81,7 @@
 
     function not_found() {
         /// error, send some XML with error message
-        global $lifetime;
-        send_file(rss_geterrorxmlfile(), 'rsserror.xml', $lifetime, false, true);
+        global $lifetime, $filename;
+        send_file(rss_geterrorxmlfile(), $filename, $lifetime, false, true);
     }
 ?>
