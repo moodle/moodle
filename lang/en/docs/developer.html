@@ -38,7 +38,7 @@
   </li>
   <li><strong>Moodle should be easy to install, learn and modify</strong><br>
     <br>
-    Early prototypes of Moodle (1999) were built using <a href="http://www.zope.org/">Zope</a> 
+    Early prototypes of Moodle (1999) were built using <a target=_top href="http://www.zope.org/">Zope</a> 
     - an advanced object-oriented web application server. Unfortunately I found 
     that although the technology was pretty cool, it had a very steep learning 
     curve and was not very flexible in terms of system administration. The PHP 
@@ -125,14 +125,13 @@
 <p> <strong><a name="themes" id="themes"></a>Themes</strong></p>
 <blockquote> 
   <p>Themes (or skins) define the look of a site. A number of simple themes are 
-    provided in the main distribution, but you may want to copy one of these and 
-    customise it to suit your own needs (eg local logo, colours, styles, graphics 
-    etc). Each theme is in a subdirectory of the &quot;theme&quot; directory. 
-    You can copy the &quot;standard&quot; theme or any other theme as a template 
-    for your own.</p>
-  <p>Here is what each of the files does:</p>
+    provided in the main distribution, but you may want to create your own theme
+    with your own colours, logo, styles and graphics.
+
+  <p>Each theme is in a subdirectory of the &quot;theme&quot; directory, and contains 
+     at least the following files:</p>
   <ul>
-    <li><strong>config.php</strong>: defines your theme colours used throughout 
+    <li><strong>config.php</strong>: defines the theme colours used throughout 
       the site</li>
     <li><strong>styles.php</strong>: the style sheet, containing CSS definitions 
       for standard HTML elements as well as many Moodle elements.</li>
@@ -140,17 +139,31 @@
       what you need to edit to add a logo at the top of pages, for example.</li>
     <li><strong>footer.html</strong>: Included at the bottom of each page.</li>
   </ul>
-  <p>Note that Moodle upgrades <em>may</em> break themes slightly, so check the 
+  <p>To create your own themes for current versions of Moodle:</p>
+  <ol>
+    <li>Copy one of the existing theme folders to one with a new name.  I recommend
+        starting with one of the standard themes.
+    <li>Edit config.php and insert your own colours.
+    <li>Edit styles.php and change your CSS styles.
+    <li>Edit header.html and footer.html to add new logos, or change the layout.
+  </ol>
+  <p>Note that all these steps are optional - you can make a radically different
+    look to your site simply by editing the colours in config.php</p>
+  <p>Note also that Moodle upgrades <em>may</em> break themes slightly, so check the 
     release notes carefully if you are using a custom theme.</p>
-  <p>In particular, Moodle 2.0 will have a completely new display system, based 
-    on a XSL transformations of XML output from Moodle. It is likely that the 
+  <p>In particular, Moodle 2.0 will have a completely new display system, probably based on
+    XSL transformations of XML output from Moodle. It is likely that the 
     themes for this will be a completely different format, but the advantage will 
     be a much higher possible degree of customisation (including moving elements 
     around the page).</p>
-  <p>More discussion about this in the <a href="http://moodle.com/mod/forum/view.php?id=46">Themes 
-    forum on Using Moodle</a>.<br>
+  <p>More discussion about this in the <a target=_top href="http://moodle.com/mod/forum/view.php?id=46">Themes 
+    forum on Using Moodle</a>.  If you create a nice theme that you think others
+    might want to use, please post your zip file on the themes forum!<br>
   </p>
 </blockquote>
+
+  <p>&nbsp;</p>
+
 <p><strong><a name="languages" id="languages"></a>Languages</strong></p>
 <blockquote> 
   <p>Moodle has been designed for internationalisation. Each 'string' or 'page' 
@@ -194,10 +207,10 @@
   <p>Note that you can edit languages online, using the administration web tools 
     under &quot;Check this language&quot;. This makes it easy to not to only create 
     new languages but to refine existing ones. If you are starting a new language, 
-    please contact me, <a href="http://dougiamas.com/">Martin Dougiamas</a>. </p>
-  <p>You might also like to post in the <a href="http://moodle.com/mod/forum/view.php?id=43" target="_top">Languages 
+    please contact me, <a target=_top href="http://dougiamas.com/">Martin Dougiamas</a>. </p>
+  <p>You might also like to post in the <a target=_top href="http://moodle.com/mod/forum/view.php?id=43" target="_top">Languages 
     forum on Using Moodle</a>. </p>
-  <p>If you are maintaining a language an ongoing basis, I can give you <a href="cvs.html">CVS 
+  <p>If you are maintaining a language an ongoing basis, I can give you <a href="?file=cvs.html">CVS 
     write access to the Moodle source code</a> so that you can directly maintain 
     the files.</p>
 </blockquote>
@@ -206,6 +219,7 @@
 <blockquote> 
   <p>Given a working database with defined tables, the intentionally simple SQL 
     used in Moodle should work fine with a wide variety of database brands.</p>
+
   <p>A problem exists with <strong>automatically creating</strong> new tables 
     in a database, which is what Moodle tries to do upon initial installation. 
     Because every database is very different, there doesn't yet exist any way 
@@ -213,15 +227,16 @@
     database, schemas can be created that list the required SQL to create Moodle 
     tables in a particular database. These are files in <strong>lib/db</strong> 
     and inside the <strong>db</strong> subdirectory of each module.</p>
-  <p>Currently, only MySQL is supported because that's what I know. If you are 
+
+  <p>Currently, only MySQL and PostgreSQL are fully supported in this way. If you are 
     familiar with another database (especially open source databases) and are 
-    willing to help port the MySQL schema, please get in contact with me (<a href="http://dougiamas.com/">Martin 
+    willing to help port the existing schema, please get in contact with me (<a target=_top href="http://dougiamas.com/">Martin 
     Dougiamas</a>).</p>
 </blockquote>
 <p>&nbsp;</p>
 <p><strong><a name="courseformats" id="courseformats"></a>Course Formats</strong></p>
 <blockquote> 
-  <p>Moodle 1.x supports three different course formats: weekly, topics and social. 
+  <p>Moodle currently supports three different course formats: weekly, topics and social. 
   </p>
   <p>These are a little more connected to the rest of the code (and hence, less 
     &quot;pluggable&quot;) but it is still quite easy to add new ones.</p>
@@ -234,13 +249,13 @@
 <blockquote> 
   <p>If you feel like writing a tutorial, an article, an academic paper or anything 
     else about Moodle, please do! </p>
-  <p>Put it on the web and make sure you include links to <a href="http://moodle.com/">http://moodle.com/</a></p>
+  <p>Put it on the web and make sure you include links to <a target=_top href="http://moodle.com/">http://moodle.com/</a></p>
   </blockquote>
 <p>&nbsp;</p>
 <p><strong><a name="bugs" id="bugs"></a>Participating in the bug tracker</strong></p>
 <blockquote> 
   <p>Finally, I would like to invite you to register on the &quot;bug tracker&quot; 
-    at <a href="http://bugs.moodle.org">bugs.moodle.org</a> so you can file any 
+    at <a target=_top href="http://bugs.moodle.org">bugs.moodle.org</a> so you can file any 
     bugs that you find and perhaps participate in discussing and fixing them. 
   </p>
   <p>&quot;Bugs&quot; not only includes software bugs with current versions of 
@@ -255,7 +270,7 @@
     <blockquote> 
       <p align="center">Thanks for using Moodle!</p>
       <p align="center">Cheers,<br>
-        <a href="http://dougiamas.com/" target="_top">Martin Dougiamas</a></p>
+        <a target=_top href="http://dougiamas.com/" target="_top">Martin Dougiamas</a></p>
     </blockquote>
   </blockquote>
 </blockquote>
