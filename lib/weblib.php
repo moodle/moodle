@@ -1056,11 +1056,12 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 /** Given a simple string, this function returns the string
  *  processed by enabled filters if $CFG->filterall is enabled
  *
- *  @param string $string   The string to be filtered.
- *  @param int    $courseid Current course as filters can, potentially, use it
+ *  @param string  $string     The string to be filtered.
+ *  @param boolean $striplinks To strip any link in the result text.
+ *  @param int     $courseid   Current course as filters can, potentially, use it
  *  @return string
  */
-function format_string ($string, $courseid=NULL ) {
+function format_string ($string, $striplinks = false, $courseid=NULL ) {
 
     global $CFG, $course;
 
@@ -1072,6 +1073,10 @@ function format_string ($string, $courseid=NULL ) {
 
     if ($CFG->filterall) {
         $string = filter_text($string, $courseid);
+    }
+
+    if ($striplinks) {  //strip links in string
+        $string = preg_replace('/(<a[^>]+?>)(.+?)(<\/a>)/is','$2',$string);
     }
 
     return $string;
