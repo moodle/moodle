@@ -37,7 +37,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
- 
+
 /// Constants
 
 /// Define text formatting types ... eventually we can add Wiki, BBcode etc
@@ -122,7 +122,7 @@ function p($var) {
 /**
  * Ensure that a variable is set
  *
- * Return $var if it is defined, otherwise return $default, 
+ * Return $var if it is defined, otherwise return $default,
  * This function is very similar to {@link optional_variable()}
  *
  * @param    mixed $var the variable which may be unset
@@ -269,7 +269,7 @@ function match_referer($goodreferer = '') {
  * Returns the data as an object, if it's found.
  * This object can be used in foreach loops without
  * casting because it's cast to (array) automatically
- * 
+ *
  * Checks that submitted POST data exists, and also
  * checks the referer against the given url (it uses
  * the current page if none was specified.
@@ -301,7 +301,7 @@ function data_submitted($url='') {
 /**
  * Moodle replacement for php stripslashes() function
  *
- * The standard php stripslashes() removes ALL backslashes 
+ * The standard php stripslashes() removes ALL backslashes
  * even from strings - so  C:\temp becomes C:temp - this isn't good.
  * This function should work as a fairly safe replacement
  * to be called on quoted AND unquoted strings (to be sure)
@@ -467,7 +467,7 @@ function read_template($filename, &$var) {
 /**
  * Set a variable's value depending on whether or not it already has a value.
  *
- * If variable is set, set it to the set_value otherwise set it to the 
+ * If variable is set, set it to the set_value otherwise set it to the
  * unset_value.  used to handle checkboxes when you are expecting them from
  * a form
  *
@@ -655,13 +655,13 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
  * @param string $helptext The name of the label for the help button
  * @param boolean $return Indicates whether the function should return the text
  *         as a string or echo it directly to the page being rendered
- * @param string $targetwindow The name of the target page to open the linked page in. 
+ * @param string $targetwindow The name of the target page to open the linked page in.
  * @return string If $return is true then the entire form is returned as a string.
  * @todo Finish documenting this function<br>
  */
 function popup_form($common, $options, $formname, $selected='', $nothing='choose', $help='', $helptext='', $return=false, $targetwindow='self') {
 
-    global $CFG; 
+    global $CFG;
     static $go, $choose;   /// Locally cached, in case there's lots on a page
 
     if (empty($options)) {
@@ -694,9 +694,9 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
 
     $inoptgroup = false;
     foreach ($options as $value => $label) {
-    
+
         if (substr($label,0,2) == '--') { /// we are starting a new optgroup
-        
+
             /// Check to see if we already have a valid open optgroup
             /// XHTML demands that there be at least 1 option within an optgroup
             if ($inoptgroup and (count($optgr) > 1) ) {
@@ -708,30 +708,30 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
             $optgr = array();
 
             $optgr[]  = '   <optgroup label="'. substr($label,2) .'">';   // Plain labels
-            
+
             $inoptgroup = true; /// everything following will be in an optgroup
             continue;
-            
+
         } else {
             $optstr = '   <option value="' . $common . $value . '"';
-            
+
             if ($value == $selected) {
                 $optstr .= ' selected="selected"';
             }
-            
+
             if ($label) {
                 $optstr .= '>'. $label .'</option>' . "\n";
             } else {
                 $optstr .= '>'. $value .'</option>' . "\n";
             }
-            
+
             if ($inoptgroup) {
                 $optgr[] = $optstr;
             } else {
                 $output .= $optstr;
             }
         }
-        
+
     }
 
     /// catch the final group if not closed
@@ -926,7 +926,7 @@ function format_text_menu() {
 
 /**
  * Given text in a variety of format codings, this function returns
- * the text as safe HTML. 
+ * the text as safe HTML.
  *
  * @uses $CFG
  * @uses FORMAT_MOODLE
@@ -935,7 +935,7 @@ function format_text_menu() {
  * @uses FORMAT_WIKI
  * @uses FORMAT_MARKDOWN
  * @param string $text The text to be formatted. This is raw text originally from user input.
- * @param int $format Identifier of the text format to be used 
+ * @param int $format Identifier of the text format to be used
  *            (FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_WIKI, FORMAT_MARKDOWN)
  * @param  array $options ?
  * @param int $courseid ?
@@ -1034,7 +1034,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
  * @uses FORMAT_WIKI
  * @uses FORMAT_MARKDOWN
  * @param string $text The text to be formatted. This is raw text originally from user input.
- * @param int $format Identifier of the text format to be used 
+ * @param int $format Identifier of the text format to be used
  *            (FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_WIKI, FORMAT_MARKDOWN)
  * @return string
  */
@@ -1112,7 +1112,7 @@ function filter_text($text, $courseid=NULL) {
  * @uses FORMAT_PLAIN
  * @uses ALLOWED_TAGS
  * @param string $text The text to be cleaned
- * @param int $format Identifier of the text format to be used 
+ * @param int $format Identifier of the text format to be used
  *            (FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_WIKI, FORMAT_MARKDOWN)
  * @return string The cleaned up text
  */
@@ -1204,7 +1204,7 @@ function cleanAttributes2($htmlTag){
  * @return string
  */
 function replace_smilies(&$text) {
-/// 
+///
     global $CFG;
 
 /// this builds the mapping array only once
@@ -1285,7 +1285,7 @@ function replace_smilies(&$text) {
  */
 
 function text_to_html($text, $smiley=true, $para=true, $newlines=true) {
-/// 
+///
 
     global $CFG;
 
@@ -1579,7 +1579,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     if ($cache) {  // Allow caching on "back" (but not on normal clicks)
         @header('Cache-Control: private, pre-check=0, post-check=0, max-age=0');
         @header('Pragma: no-cache');
-        @header('Expires: ');          
+        @header('Expires: ');
     } else {       // Do everything we can to always prevent clients and proxies caching
         @header('Cache-Control: no-store, no-cache, must-revalidate');
         @header('Cache-Control: post-check=0, pre-check=0', false);
@@ -1647,7 +1647,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     }
 
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
-    
+
     include ($CFG->dirroot .'/theme/'. $CFG->theme .'/header.html');
 
     echo message_popup_window();
@@ -2525,7 +2525,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 }
 
 /**
- * Legacy function, provided for backward compatability. 
+ * Legacy function, provided for backward compatability.
  * This method now simply calls {@link use_html_editor()}
  *
  * @deprecated Use {@link use_html_editor()} instead.
@@ -2567,7 +2567,7 @@ function use_html_editor($name='') {
  * @return string
  */
 function update_course_icon($courseid) {
- 
+
     global $CFG, $USER;
 
     if (isteacheredit($courseid)) {
@@ -2956,7 +2956,7 @@ function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit') {
  * @param boolean $includenograde ?
  * @todo Finish documenting this function
  */
-function print_grade_menu($courseid, $name, $current, $includenograde=true) { 
+function print_grade_menu($courseid, $name, $current, $includenograde=true) {
 
     global $CFG;
 
@@ -3087,13 +3087,13 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
         }
 
         $linkobject .= $imagetext;
-        
+
     } else {
         $linkobject .= $title;
     }
 
     $linkobject .= '</span>';
-    
+
     if ($text) {
         $url = '/help.php?module='. $module .'&amp;text='. htmlentities(urlencode($text));
     } else {
@@ -3199,7 +3199,7 @@ function redirect($url, $message='', $delay='0') {
 
     $url     = clean_text($url);
     $message = clean_text($message);
- 
+
     $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
     $encodedurl = htmlentities($url);
 
@@ -3267,7 +3267,7 @@ function notify ($message, $color='red', $align='center') {
  * @return string
  */
 function obfuscate_text($plaintext) {
- 
+
     $i=0;
     $length = strlen($plaintext);
     $obfuscated='';
@@ -3400,7 +3400,7 @@ function rebuildnolinktag($text) {
  * @param  array $attributes ?
  * @todo Finish documenting this function. Show example of various attributes, etc.
  */
-function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array()) { 
+function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array()) {
 
     print_side_block_start($heading, $attributes);
 
@@ -3476,7 +3476,7 @@ function print_side_block_start($heading='', $attributes = array()) {
  * Print table ending tags for a side block box.
  */
 function print_side_block_end() {
-    echo '</td></tr></tbody></table><br />';
+    echo '</td></tr></tbody></table>';
     echo "\n";
 }
 
@@ -3544,7 +3544,7 @@ function print_side_block_end() {
  * @param boolean $usehtmleditor ?
  * @todo Finish documenting this function
  */
-function print_speller_code ($usehtmleditor=false) { 
+function print_speller_code ($usehtmleditor=false) {
     global $CFG;
 
     if(!$usehtmleditor) {
