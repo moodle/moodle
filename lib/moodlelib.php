@@ -2459,6 +2459,15 @@ function remove_course_contents($courseid, $showfeedback=true) {
         error('No modules are installed!');
     }
 
+    // Delete course blocks
+    if (delete_records('block_instance', 'pagetype', PAGE_COURSE_VIEW, 'pageid', $course->id)) {
+        if ($showfeedback) {
+            notify($strdeleted .' block_instance');
+        }
+    } else {
+        $result = false;
+    }
+
     // Delete any user stuff
 
     if (delete_records('user_students', 'course', $course->id)) {
