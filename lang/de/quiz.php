@@ -2,6 +2,7 @@
       // quiz.php - created with Moodle 1.0.8 dev (2002122301)
 
 $string['addquestions'] = "Fragen hinzufügen";
+$string['addingquestions'] = "Diese Spalte der Seite ist zum Verwalten Quizfragen. Sie können jede dieser Fragen auswählen und Ihrem Quiz in der anderen Spalte hinzufügen.";
 $string['addquestionstoquiz'] = "Frage zu aktuellem Quiz hinzufügen";
 $string['addselectedtoquiz'] = "Auswahl zum Quiz hinzufügen";
 $string['allowreview'] = "Bericht erlauben";
@@ -53,6 +54,7 @@ $string['editingtruefalse'] = "Ja/Nein-Frage bearbeiten";
 $string['false'] = "Falsch";
 $string['feedback'] = "Rückmeldung";
 $string['fileformat'] = "Dateiformat";
+$string['filename'] = "Dateiname";
 $string['filloutoneanswer'] = "Sie müssen mindestens eine mögliche Antwort geben. Leere Antworten werden ignoriert.";
 $string['filloutthreequestions'] = "Sie müssen mindestens 3 Fragen auswählen. Leere Fragen werden nicht verwendet";
 $string['fillouttwochoices'] = "Sie müssen mindestens zwei mögliche Antwort geben. Leere Antworten werden ignoriert.";
@@ -68,7 +70,7 @@ $string['grademethod'] = "Bewertungsschema";
 $string['grades'] = "Noten";
 $string['guestsno'] = "Entschuldigung, aber Gäste können das Quiz nicht sehen oder probieren.";
 $string['imagedisplay'] = "Bild für die Anzeige";
-$string['importquestions'] = "Eine Datei aus einer Datei importieren";
+$string['importquestions'] = "Eine Frage aus einer Datei importieren";
 $string['introduction'] = "Einleitung";
 $string['marks'] = "Punkte";
 $string['match'] = "Zuordnung";
@@ -91,7 +93,7 @@ $string['publish'] = "Veröffentlichen";
 $string['qti'] = "IMS QTI Format";
 $string['question'] = "Frage";
 $string['questioninuse'] = "Die Frage '\$a' wird momentan benutzt:";
-$string['questionname'] = "Title der Frage";
+$string['questionname'] = "Titel der Frage";
 $string['questions'] = "Fragen";
 $string['quizavailable'] = "Dieses Quiz ist verfügbar bis: \$a";
 $string['quizclose'] = "Dieses Quiz schließen";
