@@ -61,6 +61,7 @@ if (isadmin()) {
     choose_from_menu ($choices, "mailformat", $user->mailformat, "") ?>
 	</td>
 </tr>
+<? if ($CFG->htmleditor) { ?>
 <tr valign=top>
 	<td><P><? print_string("textediting") ?>:</td>
 	<td><? 
@@ -70,6 +71,7 @@ if (isadmin()) {
     choose_from_menu ($choices, "htmleditor", $user->htmleditor, "") ?>
 	</td>
 </tr>
+<? } ?>
 <tr valign=top>
 	<td><P><? print_string("city") ?>:</td>
 	<td><input type="text" name="city" size=25 value="<? p($user->city) ?>">
