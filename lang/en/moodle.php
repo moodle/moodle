@@ -714,6 +714,7 @@ $string['moveright'] = 'Move right';
 $string['moveselectedcoursesto'] = 'Move selected courses to...';
 $string['movetoanotherfolder'] = 'Move to another folder';
 $string['moveup'] = 'Move up';
+$string['mustchangepassword'] = 'The new password must be different than the current one';
 $string['mustconfirm'] = 'You need to confirm your login';
 $string['mycourses'] = 'My courses';
 $string['name'] = 'Name';
