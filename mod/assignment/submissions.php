@@ -51,7 +51,7 @@
     $teachers = get_course_teachers($course->id);
 
     if ($currentgroup) {
-        $users = get_course_students($course->id, "", "", 0, 99999, "", "", $currentgroup);
+        $users = get_users_in_group($currentgroup);
     } else {
         $users = get_course_students($course->id);
     }
