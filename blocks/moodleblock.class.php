@@ -87,7 +87,7 @@ class MoodleBlock {
                 }
             break;
             case BLOCK_TYPE_LIST:
-                if(empty($this->content->text) && empty($this->content->footer)) {
+                if(empty($this->content->items) && empty($this->content->footer)) {
                     if(empty($this->edit_controls)) {
                         // No content, no edit controls, so just shut up
                         break;
