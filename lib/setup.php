@@ -14,10 +14,6 @@
         die;
     }
     
-    if (!isset($CFG->enrol)) { // This is a hack to fix bug 1598
-        $CFG->enrol = 'internal';
-    }
-
 /// If there are any errors in the standard libraries we want to know!
     error_reporting(E_ALL);
 
@@ -95,6 +91,11 @@
     }
     error_reporting($CFG->debug);
 
+
+/// Set a default enrolment configuration (see bug 1598)
+    if (!isset($CFG->enrol)) {
+        $CFG->enrol = 'internal';
+    }
 
 /// File permissions on created directories in the $CFG->dataroot
 
