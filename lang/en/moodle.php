@@ -39,6 +39,7 @@ $string['assignteachers'] = "Assign teachers";
 $string['authentication'] = "Authentication";
 $string['availablecourses'] = "Available Courses";
 $string['backup'] = "Backup";
+$string['backupdir'] = "backupdata";
 $string['backupnameformat'] = "%%Y%%m%%d-%%H%%M";
 $string['backupdetails'] = "Backup Details";
 $string['cancel'] = "Cancel";
