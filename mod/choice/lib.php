@@ -108,6 +108,4 @@ function choice_get_choice($choiceid) {
     }
 }
 
-
 ?>
-
