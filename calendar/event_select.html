@@ -13,7 +13,7 @@
       <select name='groupid'>
         <option value=''></option>
       <?php foreach($allowed->groups as $group) {?>
-        <option value='<?php echo $group->id?>' <?php if($group->id == $groupid) echo 'selected="selected"';?>><?php echo $group->name?></option>
+        <option value='<?php echo $group->id; ?>' <?php if($group->id == $groupid) echo 'selected="selected"';?>><?php echo $group->name; ?></option>
       <?php }?>
       </select>
     <?php } ?>
