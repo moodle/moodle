@@ -149,6 +149,11 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         /// Determine ->answers[]
         $result->answers = array();
         if ('' !== $response0) {
+
+            /// These are things to protect in the strings when wildcards are used
+            $search = array('\\', '+', '(', ')', '[', ']', '-');
+            $replace = array('\\\\', '\+', '\(', '\)', '\[', '\]', '\-');
+
             foreach ($answers as $answer) {
 
                 $answer->answer = trim($answer->answer);  // Just in case
@@ -166,8 +171,9 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
                     if (strpos(' '.$answer0, '*')) {
                         $answer0 = str_replace('\*','@@@@@@',$answer0);
                         $answer0 = str_replace('*','.*',$answer0);
+                        $answer0 = str_replace($search, $replace, $answer0);
                         $answer0 = str_replace('@@@@@@', '\*',$answer0);
-                        $answer0 = str_replace('+', '\+',$answer0);
+
                         if (ereg('^'.$answer0.'$', $response0)) {
                             $result->answers[$nameprefix] = $answer;
                         }
