@@ -24,6 +24,8 @@
     $strinfo = get_string("info");
     $strtheme = get_string("theme");
     $strthemesaved = get_string("themesaved");
+    $strscreenshot = get_string("screenshot");
+    $stroldtheme = get_string("oldtheme");
 
 
     if ($choose and confirm_sesskey()) {
@@ -71,41 +73,65 @@
     echo "<tr class=\"generaltableheader\"><th>$strtheme</th><th>$strinfo</th></tr>";
     foreach ($themes as $theme) {
 
+        unset($THEME);
+
         if (!file_exists("$CFG->dirroot/theme/$theme/config.php")) {   // bad folder
             continue;
         }
 
-        unset($THEME);
         include_once("$CFG->dirroot/theme/$theme/config.php");
 
+        $readme = '';
+        $screenshot = '';
+        $screenshotpath = '';
+
+        if (file_exists("$theme/README.html")) {
+            $readme =  '<li>'.
+            link_to_popup_window('/theme/'.$theme.'/README.html', $theme, $strinfo, 400, 500, '', 'none', true).'</li>';
+        } else if (file_exists("$theme/README.txt")) {
+            $readme =  '<li>'.
+            link_to_popup_window('/theme/'.$theme.'/README.txt', $theme, $strinfo, 400, 500, '', 'none', true).'</li>';
+        }
+        if (file_exists("$theme/screenshot.png")) {
+            $screenshotpath = "$theme/screenshot.png";
+        } else if (file_exists("$theme/screenshot.jpg")) {
+            $screenshotpath = "$theme/screenshot.jpg";
+        }
+
         echo "<tr>";
-        echo "<td align=\"center\"><iframe name=\"$theme\" src=\"preview.php?preview=$theme\" height=\"150\" width=\"500\"></iframe></td>";
+        echo "<td align=\"center\">";
+
+        if ($screenshotpath) {
+            $screenshot = "<li><a target=\"$theme\" href=\"$theme/screenshot.jpg\">$strscreenshot</a></li>";
+            echo "<iframe name=\"$theme\" src=\"$screenshotpath\" height=\"200\" width=\"400\"></iframe></td>";
+        } else {
+            echo "<iframe name=\"$theme\" src=\"preview.php?preview=$theme\" height=\"200\" width=\"400\"></iframe></td>";
+        }
+
 
         if ($CFG->theme == $theme) {
-            echo '<td valign="top" style="border-style:solid; border-width:2px; border-color=#000000">';
+            echo '<td valign="top" style="border-style:solid; border-width:1px; border-color=#555555">';
         } else {
             echo '<td valign="top">';
         }
-        echo "<h4>$theme</h4>";
-        if (!isset($THEME->sheets)) {
-            notify("OLD THEME!!");
+        if (isset($THEME->sheets)) {
+            echo '<p style="font-size:1.5em;font-style:bold;">'.$theme.'</p>';
+        } else {
+            echo '<p style="font-size:1.5em;font-style:bold;color:red;">'.$theme.' (Moodle 1.4)</p>';
         }
 
         echo '<ul>';
 
-        if (file_exists("$theme/README.html")) {
-            echo "<li><a target=\"$theme\" href=\"preview.php?preview=$theme\">$strpreview</a>";
-            echo '<li>';
-            link_to_popup_window('/theme/'.$theme.'/README.html', $theme, $strinfo);
-        } else if (file_exists("$theme/README.txt")) {
-            echo "<li><a target=\"$theme\" href=\"preview.php?preview=$theme\">$strpreview</a>";
-            echo '<li>';
-            link_to_popup_window('/theme/'.$theme.'/README.txt', $theme, $strinfo);
+        if ($screenshot or $readme) {
+            echo "<li><a target=\"$theme\" href=\"preview.php?preview=$theme\">$strpreview</a></li>";
         }
-        if ($CFG->theme != $theme) {
-            echo "<li><a href=\"index.php?choose=$theme&amp;sesskey=$sesskey\">$strchoose</a>";
-        }
+        echo $screenshot.$readme;
         echo '</ul>';
+
+        $options = null;
+        $options['choose'] = $theme;
+        $options['sesskey'] = $sesskey;
+        print_single_button('index.php', $options, $strchoose);
         echo '</td>';
         echo "</tr>";
     }
