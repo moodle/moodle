@@ -2949,4 +2949,46 @@ function workshop_test_user_assessments($workshop, $user) {
 	return $result;
 	}
 
+function workshop_get_participants($workshopid) {
+//Returns the users with data in one workshop
+//(users with records in workshop_submissions, workshop_assessments and workshop_comments, students)
+
+    global $CFG;
+
+    //Get students from workshop_submissions
+    $st_submissions = get_records_sql("SELECT DISTINCT u.*    
+                                       FROM {$CFG->prefix}user u,
+                                            {$CFG->prefix}workshop_submissions s
+                                       WHERE s.workshopid = '$workshopid' and
+                                             u.id = s.userid");
+    //Get students from workshop_assessments
+    $st_assessments = get_records_sql("SELECT DISTINCT u.*
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}workshop_assessments a
+                                 WHERE a.workshopid = '$workshopid' and
+                                       u.id = a.userid");
+
+    //Get students from workshop_comments
+    $st_comments = get_records_sql("SELECT DISTINCT u.*
+                                   FROM {$CFG->prefix}user u,
+                                        {$CFG->prefix}workshop_comments c
+                                   WHERE c.workshopid = '$workshopid' and
+                                         u.id = c.userid");
+
+    //Add st_assessments to st_submissions
+    if ($st_assessments) {
+        foreach ($st_assessments as $st_assessment) {
+            $st_submissions[$st_assessment->id] = $st_assessment;
+        }
+    }
+    //Add st_comments to st_submissions
+    if ($st_comments) {
+        foreach ($st_comments as $st_comment) {
+            $st_submissions[$st_comment->id] = $st_comment;
+        }
+    }
+    //Return st_submissions array (it contains an array of unique users)
+    return ($st_submissions);
+}
+
 ?>
