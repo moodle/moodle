@@ -869,46 +869,106 @@ function get_user_dst_preset() {
 
     $preset = get_record('dst_preset', 'id', $presetid);
 
-    if (!empty($preset) && (time() >= $preset->next_change || time() < $preset->last_change)) {
-        $preset = dst_update_preset($preset);
-        update_record('dst_preset', $preset);
+    if(!empty($USER)) {
+        if(empty($USER->dstoffsets)) {
+            $USER->dstoffsets = array(0 => 0);
+            for($i = 1970; $i < 2030; ++$i) {
+                $changes = dst_changes_for_year($i, $preset);
+                if($changes['activate'] != 0) {
+                    $USER->dstoffsets[$changes['activate']] = dst_offset_for_year($i, $preset);
+                }
+                if($changes['deactivate'] != 0) {
+                    $USER->dstoffsets[$changes['deactivate']] = 0;
+                }
+            }
+            $calcuntil = make_timestamp(2031, 1, 1, 00, 00, 00, get_user_timezone(99), false);
+            $USER->dstoffsets[$calcuntil] = NULL;
+            krsort($USER->dstoffsets);
+        }
     }
     return $preset;
 }
 
-function dst_update_preset($dstpreset) {
+// This should be obsolete, but let's leave it inside a while longer
+/*
+function dst_update_preset($dstpreset, $time = NULL) {
 
-    // What's the date according to our user right now?
-    $now  = time();
-    $date = usergetdate($now);
+    // What's the date according to our user?
+    if($time === NULL) {
+        $time = time();
+    }
+    $date = usergetdate($time);
 
     $changes = dst_changes_for_year($date['year'], $dstpreset);
 
-    // Great... let's see where exactly we are now.
-    if ($now < $changes['activate']) {
-        // DST has not been turned on this year
-        $dstpreset->next_change = $changes['activate'];
-        // For the last change, we need to fetch the previous year's DST deactivation timestamp
-        $prevchanges = dst_changes_for_year($date['year'] - 1, $dstpreset);
-        $dstpreset->last_change = $prevchanges['deactivate'];
-        $dstpreset->current_offset = 0;
+    if($changes['activate'] == 0 && $changes['deactivate'] == 0) {
+        // This timezone doesn't have DST, so don't do anything
+        return $dstpreset;
+    }
+    else if($changes['activate'] == 0) {
+        // There's only the "deactivate" time
+        if($time >= $changes['deactivate']) {
+            $nextchanges = dst_changes_for_year($date['year'] + 1, $dstpreset);
+            $dstpreset->next_change = min($nextchanges['activate'], $nextchanges['deactivate']);
+            $dstpreset->current_offset = 0;
+        }
+        return $dstpreset;
+    }
+    else if($changes['deactivate'] == 0) {
+        // There's only the "activate" time
+        if($time >= $changes['activate']) {
+            $nextchanges = dst_changes_for_year($date['year'] + 1, $dstpreset);
+            $dstpreset->next_change = min($nextchanges['activate'], $nextchanges['deactivate']);
+            $dstpreset->current_offset = $dstpreset->apply_offset;
+        }
+    }
+    else if($changes['activate'] < $changes['deactivate']) {
+        // Northern hemisphere
 
-    } else if($now < $changes['deactivate']) {
-        // DST is on for this year right now
-        $dstpreset->last_change = $changes['activate'];
-        $dstpreset->next_change = $changes['deactivate'];
-        $dstpreset->current_offset = $dstpreset->apply_offset;
+        if ($time < $changes['activate']) {
+            // DST has not been turned on this year
+            $dstpreset->next_change = $changes['activate'];
+            $dstpreset->current_offset = 0;
+    
+        } else if($time < $changes['deactivate']) {
+            // DST is on at this time
+            $dstpreset->next_change = $changes['deactivate'];
+            $dstpreset->current_offset = $dstpreset->apply_offset;
+    
+        } else {
+            // DST has already been turned off; we are nearing the end of the year
+            $nextchanges = dst_changes_for_year($date['year'] + 1, $dstpreset);
+            $dstpreset->next_change = $nextchanges['activate'];
+            $dstpreset->current_offset = 0;
+        }
+    }
+    else if($changes['activate'] > $changes['deactivate']) {
+        // Southern hemisphere
 
-    } else {
-        // DST has already been turned off; we are nearing the end of the year
-        $dstpreset->last_change = $changes['deactivate'];
-        // For the next change, we need to fetch next year's DST activation timestamp
-        $nextchanges = dst_changes_for_year($date['year'] + 1, $dstpreset);
-        $dstpreset->next_change = $nextchanges['activate'];
-        $dstpreset->current_offset = 0;
+        if ($time < $changes['deactivate']) {
+            // DST is still on from the previous year
+            $dstpreset->next_change = $changes['deactivate'];
+            $dstpreset->current_offset = $dstpreset->apply_offset;
+
+        } else if($time < $changes['activate']) {
+            // DST is off at this time
+            $dstpreset->next_change = $changes['activate'];
+            $dstpreset->current_offset = 0;
+    
+        } else {
+            // DST has been turned on; we are nearing the end of the year
+            $nextchanges = dst_changes_for_year($date['year'] + 1, $dstpreset);
+            $dstpreset->next_change = $nextchanges['deactivate'];
+            $dstpreset->current_offset = $dstpreset->apply_offset;
+        }
     }
 
     return $dstpreset;
+}
+*/
+
+function dst_offset_for_year($year, $dstpreset) {
+    return $dstpreset->apply_offset * MINSECS;
 }
 
 function dst_changes_for_year($year, $dstpreset) {
@@ -942,24 +1002,29 @@ function dst_changes_for_year($year, $dstpreset) {
 function dst_offset_on($time) {
     $preset = get_user_dst_preset();
 
-    if (empty($preset)) {
+    if(empty($preset)) {
         return 0;
     }
 
-    if ($time >= $preset->last_change && $time < $preset->next_change) {
-        return $preset->current_offset * MINSECS;
-    }
-
-    // It's in some other time period, we need to recalculate
-    $changes = dst_changes_for_year(gmdate('Y', $time), $preset);
-
-    if ($time >= $changes['activate'] && $time < $changes['deactivate']) {
-        // Compensation required
-        return $preset->apply_offset * MINSECS;
-    } else {
+    if(empty($USER) || empty($USER->dstchanges)) {
         return 0;
     }
 
+    $finaloffset = NULL;
+
+    foreach($USER->dstchanges as $from => $offset) {
+        if($from < $time) {
+            $finaloffset = $offset;
+            break;
+        }
+    }
+
+    if($finaloffset === NULL) {
+        // This means we haven't calculated far enough ahead, do it now?
+        error('Error in calculating DST offset for timestamp '.$time);
+    }
+
+    return $finaloffset;
 }
 
 function find_day_in_month($index, $weekday, $month, $year) {
