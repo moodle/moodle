@@ -1,12 +1,12 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 development (2003111400)
+      // dialogue.php - created with Moodle 1.2 development (2003120700)
 
 
-$string['addmynewentries'] = 'Meine neuen Eintäge hinzufügen.';
+$string['addmynewentries'] = 'Meine neuen Einträge hinzufügen.';
 $string['addmynewentry'] = 'Meinen neuen Eintrag hinzufügen.';
 $string['addsubject'] = 'Betreff eingeben';
 $string['allowmultiple'] = 'Mehr als einen Dialog mit der gleichen Person führen ist möglich';
-$string['allowstudentdialogues'] = 'Dialoge zwischen Studenten sind erlaubt';
+$string['allowstudentdialogues'] = 'Dialoge zwischen Teilnehmer/innen sind erlaubt';
 $string['close'] = 'Schließen';
 $string['closed'] = 'geschlossen';
 $string['confirmclosure'] = 'Sie wollen diesen Dialog mit $a schließen. Geschlossene Dialoge können nicht wieder geöffnet werden. Wenn Sie einen Dialog schließen, können Sie ihn weiterhin ansehen, aber nichts mehr hinzufügen. Sie müssen einen neuen Dialog beginnen, wenn Sie weiter mit dieser Person den Dialog führen wollen.<br /><br /> Sind Sie sicher, dass Sie diesen Dialog beenden möchten ?';
@@ -32,8 +32,8 @@ $string['newdialogueentries'] = 'neue Einträge in diesem Dialog';
 $string['newentry'] = 'neuer Eintrag';
 $string['noavailablepeople'] = 'Hier ist niemand anwesend, mit dem ein Dialog geführt werden kann.';
 $string['nopersonchosen'] = 'Keine Person ausgewählt';
-$string['nosubject'] = 'kein Betreff eingegeben';
-$string['notextentered'] = 'keinen Text eingegeben';
+$string['nosubject'] = 'Kein Betreff eingegeben';
+$string['notextentered'] = 'Keinen Text eingegeben';
 $string['notstarted'] = 'Sie haben den Dialog noch nicht gestartet.';
 $string['notyetseen'] = 'nicht hier gesehen';
 $string['numberofentries'] = 'Anzahl der Einträge';
@@ -57,7 +57,7 @@ $string['status'] = 'Status';
 $string['studenttostudent'] = 'von Teilnehmer/in zu Teilnehmer/in';
 $string['subject'] = 'Betreff';
 $string['subjectadded'] = 'Betreff einfügen';
-$string['teachertostudent'] = 'von Lehrer zu Student ';
+$string['teachertostudent'] = 'von Trainer/in zu Teilnehmer/in';
 $string['typefirstentry'] = 'Geben sie den ersten Eintrag hier ein.';
 $string['typefollowup'] = 'Wiedervorlage hier eingeben';
 $string['typeofdialogue'] = 'Art des Dialogs';

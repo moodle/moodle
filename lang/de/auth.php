@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.2 development (2003111400)
+      // auth.php - created with Moodle 1.2 development (2003120700)
 
 
 $string['auth_dbdescription'] = 'Diese Methode benutzt eine externe Datenbank-Tabelle, um die Gültigkeit eines angegebenen Nutzernamens und Kennwort zu überprüfen, Wenn der Zugang neu ist, werden die Informationen der übrigen Felder ebenso zu Moodle hinüberkopiert.';
 $string['auth_dbextrafields'] = 'Diese Felder sind optional. Sie können auswählen, einige Moodle Nutzer-Felder mit Informationen des <b>externen Datenbank-Feldes</b> vorauszufüllen, das Sie hier angeben.
-<p>Wenn Sie dieses leer lassen, dann werden Standardwerte benutzt.<P>Im anderen Fall wird der Nutzer befähigt, alle diese Felder nach der Anmeldung zu bearbeiten.';
+<p>Wenn Sie dieses leer lassen, dann werden Standardwerte benutzt.<P>Im anderen Fall wird der/die Nutzer/in befähigt, alle diese Felder nach der Anmeldung zu bearbeiten.';
 $string['auth_dbfieldpass'] = 'Name des Feldes, das das Passwort enthält';
 $string['auth_dbfielduser'] = 'Name des Feldes, das den Nutzernamen enthält';
 $string['auth_dbhost'] = 'Der Computer, der die Datenbank bereitstellt';
@@ -15,7 +15,7 @@ $string['auth_dbtable'] = 'Name der Datenbank-Tabelle';
 $string['auth_dbtitle'] = 'Eine externe Datenbank benutzen';
 $string['auth_dbtype'] = 'Der Datenbank-Typ (Siehe <A HREF=../lib/adodb/readme.htm#drivers>ADOdb Anleitung</A> für Einzelheiten)';
 $string['auth_dbuser'] = 'Nutzername mit Schreibzugriff auf die Datenbank';
-$string['auth_emaildescription'] = 'E-Mail-Bestätigung ist die Standard-Authentifizierungsmethode. Wenn sich der Nutzer anmeldet, sein eigenen Nutzernamen und sein Passwort auswählt, wird eine Bestätigungs-E-Mail an die E-Mail-Adresse des Nutzers gesendet. Diese E-Mail enthält einen sicheren Verweis auf eine Seite, wo der Nutzer seinen Zugang bestätigen kann. Spätere Anmeldungen prüfen nur den Nutzernamen und Kennwort anhand der in der Moodle-Datenbank gespeicherten Daten.';
+$string['auth_emaildescription'] = 'E-Mail-Bestätigung ist die Standard-Authentifizierungsmethode. Wenn sich der Nutzer anmeldet, seinen eigenen Nutzernamen und sein Passwort auswählt, wird eine Bestätigungs-E-Mail an die E-Mail-Adresse des Nutzers gesendet. Diese E-Mail enthält einen sicheren Verweis auf eine Seite, wo der Nutzer seinen Zugang bestätigen kann. Spätere Anmeldungen prüfen nur den Nutzernamen und Kennwort anhand der in der Moodle-Datenbank gespeicherten Daten.';
 $string['auth_emailtitle'] = 'E-Mail-basierte Authentifizierung';
 $string['auth_imapdescription'] = 'Diese Methode verwendet einen IMAP-Server, um zu prüfen, ob der angegebener Nutzername und das Passwort gültig sind.';
 $string['auth_imaphost'] = 'IMAP Server-Adresse. Benutzen Sie die IP, nicht den DNS-Namen';
@@ -64,6 +64,6 @@ $string['guestloginbutton'] = 'Gast-Login Schaltfläche';
 $string['instructions'] = 'Anweisungen';
 $string['md5'] = 'MD5-Verschlüsselung';
 $string['plaintext'] = 'Reiner Text';
-$string['showguestlogin'] = 'Sie können die Gast Login-Schaltfläche auf der Anmeldeseite anzeigen oder verbergen.';
+$string['showguestlogin'] = 'Sie können die Gast-Login Schaltfläche auf der Anmeldeseite anzeigen oder verbergen.';
 
 ?>

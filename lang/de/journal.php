@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.2 development (2003111400)
+      // journal.php - created with Moodle 1.2 development (2003120700)
 
 
 $string['alwaysopen'] = 'Immer offen';
@@ -9,10 +9,10 @@ $string['editingended'] = 'Bearbeitungszeitraum ist abgelaufen';
 $string['editingends'] = 'Bearbeitungszeitraum endet';
 $string['entries'] = 'Einträge';
 $string['feedbackupdated'] = 'Mitteilung für Eintrag $a aktualisiert';
-$string['journalmail'] = '$a->teacher hat einen Kommentar zu Ihrem eingereichten Journal \'$a->assignment\' abgegeben. Sie können dieses angehängt an Ihr eingereichtes Journal sehen:
+$string['journalmail'] = '$a->Trainer/in hat einen Kommentar zu Ihrem eingereichten Journal \'$a->Journal\' abgegeben. Sie können dieses angehängt an Ihr eingereichtes Journal sehen:
 
 $a->url';
-$string['journalmailhtml'] = '$a->teacher hat einen Kommentar zu Ihrem eingereichten Journal abgegeben</i>\'<br /><br /> Sie können diesen angehängt an Ihr <a href=\"$a->url\">eingereichtes Journal</a> sehen:';
+$string['journalmailhtml'] = '$a->Trainer/in hat einen Kommentar zu Ihrem eingereichten <i>->Journal </i>\' abgegeben<br /><br /> Sie können diesen angehängt an Ihr <a href=\"$a->url\">eingereichtes Journal</a> sehen.';
 $string['journalname'] = 'Name des Journals';
 $string['journalquestion'] = 'Journal-Frage';
 $string['journalrating1'] = 'nicht zufriedenstellend';
