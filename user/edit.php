@@ -103,7 +103,7 @@
 
 
             if (update_record("user", $usernew)) {
-                add_to_log($course->id, "user", "update", "view.php?user=$user->id&course=$course->id", "");
+                add_to_log($course->id, "user", "update", "view.php?id=$user->id&course=$course->id", "");
 
                 // Copy data into $USER session variable
                 $usernew = (array)$usernew;
