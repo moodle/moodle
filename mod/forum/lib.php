@@ -431,12 +431,19 @@ function forum_search_posts($search, $courseid, $page=0, $recordsperpage=50) {
              $limit = "LIMIT $recordsperpage,$page";
     }
 
+    //to allow caseinsensitive search for postgesql
+    if($CFG->dbtype == "postgres7") {
+       $LIKE = "ILIKE";
+       }else {
+       $LIKE = "LIKE";
+    }
+
     return get_records_sql("SELECT p.*,u.firstname,u.lastname,u.email,u.picture
                             FROM {$CFG->prefix}forum_posts p,  
                                  {$CFG->prefix}forum_discussions d, 
                                  {$CFG->prefix}user u, 
                                  {$CFG->prefix}forum f
-                            WHERE (p.message LIKE '%$search%' OR p.subject LIKE '%$search%')
+                            WHERE (p.message $LIKE '%$search%' OR p.subject $LIKE '%$search%')
                               AND p.userid = u.id 
                               AND p.discussion = d.id 
                               AND d.course = '$courseid' 
