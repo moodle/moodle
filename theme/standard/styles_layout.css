@@ -764,6 +764,16 @@ table.calendar-controls .next
 *** Blocks
 ***
 ******************************/
+/* block_search_forums.php */
+
+.block_search_forums.sideblock .searchform {
+    text-align: center;
+}
+
+.block_search_forums.sideblock .searchform img {
+    vertical-align: center;
+}
+
 /* block_rss_client.php */
 .rssclientlink {
     padding-bottom:5px;
