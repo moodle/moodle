@@ -303,8 +303,9 @@ function journal_get_users_done($journal) {
                                  WHERE j.userid = u.id
                                    AND t.userid = u.id 
                                    AND j.journal = $journal->id
-                                   AND t.course = $journal->course)
+                                   AND t.course = $journal->course
                               ORDER BY j.modified DESC");
+
     if ($studentjournals and !$teacherjournals) {
         return $studentjournals;
     }
