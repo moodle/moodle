@@ -762,7 +762,7 @@ function displaydir ($wdir) {
             } else if ($icon == "zip.gif") {
                 $edittext = "<a href=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">$strunzip</a>&nbsp;";
                 $edittext .= "<a href=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=listzip\">$strlist</a> ";
-                if (!empty($CFG->backup_version) and isteacher($id) and iscreator()) {
+                if (!empty($CFG->backup_version) and isteacher($id) and isteacheredit($id)) {
                     $edittext .= "<a href=\"index.php?id=$id&wdir=$wdir&file=$filesafe&action=restore\">$strrestore</a> ";
                 }
             } else {
