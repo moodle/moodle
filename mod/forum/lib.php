@@ -672,7 +672,7 @@ function forum_subscribed_users($course, $forum) {
             return get_site_users();
         }
     }
-    return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay,
+    return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
                                    u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture
                               FROM {$CFG->prefix}user u, 
                                    {$CFG->prefix}forum_subscriptions s
