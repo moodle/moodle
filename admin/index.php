@@ -346,6 +346,8 @@
     }
 
 /// Check for valid admin user
+    require_login();
+
     if (!isadmin()) {
         error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
     }
