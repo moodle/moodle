@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // moodle.php - created with Moodle 1.1 Beta +++ (2003082702)
 
 
@@ -90,7 +90,7 @@ $string['categoryduplicate'] = "Ya existe una categoría llamada '\$a' ";
 $string['changedpassword'] = "Contraseña cambiada";
 $string['changepassword'] = "Cambiar contraseña";
 $string['changessaved'] = "Cambios guardados";
-$string['checkingbackup'] = "Comprobando copia de respaldo";
+$string['checkingbackup'] = "Comprobando copia de seguridad";
 $string['checkingcourse'] = "Comprobando curso";
 $string['checkinginstances'] = "Comprobando instancias";
 $string['checkingsections'] = "Comprobando secciones";
@@ -183,7 +183,7 @@ $string['currentversion'] = "Versión actual";
 $string['databasechecking'] = "Actualizando la base de datos: version \$a->oldversion a \$a->newversion...";
 $string['databasesetup'] = "Configurando la base de datos";
 $string['databasesuccess'] = "La base de datos se ha actualizado satisfactoriamente";
-$string['databaseupgradebackups'] = "La versión de la copia de respaldo es ahora \$a";
+$string['databaseupgradebackups'] = "La versión de la copia de seguridad es ahora \$a";
 $string['databaseupgrades'] = "Actualizando la base de datos";
 $string['day'] = "día";
 $string['days'] = "días";
@@ -582,7 +582,7 @@ $string['publicdirectory1'] = "Publicar sólo el nombre del sitio";
 $string['publicdirectory2'] = "Publicar el nombre del sitio con un enlace";
 $string['publicsitefileswarning'] = "Nota: los archivos colocados aquí están accesibles a todos";
 $string['question'] = "Pregunta";
-$string['readinginfofrombackup'] = "Leuendo información de la copia de respaldo";
+$string['readinginfofrombackup'] = "Leuendo información de la copia de seguridad";
 $string['readme'] = "LEAME";
 $string['recentactivity'] = "Actividad reciente";
 $string['registration'] = "Registrar Moodle";
@@ -716,7 +716,7 @@ $string['unpacking'] = "Desempaquetando \$a";
 $string['unsafepassword'] = "Contraseña insegura - intente alguna otra";
 $string['unusedaccounts'] = "Las cuentas no usadas durante más de \$a días son automáticamente dadas de baja.";
 $string['unzip'] = "Descomprimir";
-$string['unzippingbackup'] = "Descomprimiendo copia de respaldo";
+$string['unzippingbackup'] = "Descomprimiendo copia de seguridad";
 $string['update'] = "Actualizar";
 $string['updated'] = "Actualizado: \$a";
 $string['updatemyprofile'] = "Actualizar información personal";
@@ -780,6 +780,6 @@ $string['youaregoingtorestorefrom'] = "Va a restaurar de:";
 $string['yourlastlogin'] = "Su última entrada fue el";
 $string['yourself'] = "usted";
 $string['yourteacher'] = "su \$a";
-$string['zippingbackup'] = "Comprimiendo copia de respaldo";
+$string['zippingbackup'] = "Comprimiendo copia de seguridad";
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.1 Beta +++ (2003082702)
+      // workshop.php - created with Moodle 1.1 (2003082800)
 
 
 $string['absent'] = "Ausente";
@@ -71,12 +71,17 @@ $string['gradingstrategy'] = "Estrategia de calificación";
 $string['hidegradesbeforeagreement'] = "Ocultar Calificaciones antes de ser aceptadas";
 $string['includeteachersgrade'] = "Incluir la Calificación del Profesor";
 $string['incorrect'] = "Incorrecto";
+$string['leaguetable'] = "Tabla de trabajos entregados";
 $string['listassessments'] = "Listado de Evaluaciones";
 $string['listofallsubmissions'] = "Listado de todos los envíos";
 $string['liststudentsassessments'] = "Listado de las Evaluaciones de los alumnos";
 $string['mail1'] = "Tu tarea '\$a' ha sido evaluada por";
+$string['mail2'] = "Los comentarios y la calificación pueden verse en '\$a'";
+$string['mail3'] = "Puede verlo en su tarea de taller";
 $string['mail4'] = "Se ha añadido un comentario a la tarea '\$a' por";
+$string['mail5'] = "El nuevo comentario puede verse en '\$a'";
 $string['mail6'] = "Su evaluación de la tarea '\$a' ha sido revisada";
+$string['mail7'] = "Los comentarios realizados por '\$a' pueden verse en su tarea de taller";
 $string['managingassignment'] = "Administrar tarea";
 $string['maximumsize'] = "Tamaño máximo";
 $string['modulename'] = "Taller";
