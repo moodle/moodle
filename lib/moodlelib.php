@@ -1286,7 +1286,7 @@ function sync_metacourse($metacourseid) {
     if ($enrolments = get_records('user_students','course',$metacourseid,'','id,userid')) {
         foreach ($enrolments as $enrol) {
             if ($maxmin = get_record_sql("SELECT min(timestart) AS timestart, max(timeend) AS timeend
-               FROM mdl_user_students u JOIN {$CFG->prefix}course_meta mc ON u.course = mc.child_course WHERE userid = $enrol->userid
+               FROM {$CFG->prefix}user_students u JOIN {$CFG->prefix}course_meta mc ON u.course = mc.child_course WHERE userid = $enrol->userid
                AND mc.parent_course = $metacourseid")) {
                 $enrol->timestart = $maxmin->timestart;
                 $enrol->timeend = $maxmin->timeend;
