@@ -110,7 +110,8 @@
             $modrestore = $modname."_restore_mods";
             //If exists the lib & function
             $exist = "exists_".$modname;
-            $var = "restore_".$modname;
+            $restore_var = "restore_".$modname;
+            $user_info_var = "restore_user_info_".$modname;
             if ($$exist) {
                 //Now check that we have that module info in the backup file
                 if ($info->mods[$modname]->backup == "true") {
@@ -121,27 +122,28 @@
                     echo "</td><td>";
                     $restore_options[0] = get_string("no"); 
                     $restore_options[1] = get_string("yes");
-                    choose_from_menu($restore_options, $var, $$var, "");
-                    $var = "restore_user_info_".$modname;
+                    choose_from_menu($restore_options, $restore_var, $$restore_var, "");
                     //If backup contains user data, then show menu, else fix it to
                     //without user data
                     if ($info->mods[$modname]->userinfo == "true") {
                         $restore_user_options[0] = get_string("withoutuserdata"); 
                         $restore_user_options[1] = get_string("withuserdata");
-                        choose_from_menu($restore_user_options, $var, $$var, "");
+                        choose_from_menu($restore_user_options, $user_info_var, $$user_info_var, "");
                     } else {
                         //Module haven't userdata
                         echo get_string("withoutuserdata");
-                        echo "<input type=\"hidden\" name=\"$var\" value=\"0\">";
+                        echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\">";
                     }
                     echo "</td></tr>";
                 } else {
                     //Module isn't restorable
-                    echo "<input type=\"hidden\" name=\"$var\" value=\"0\">";
+                    echo "<input type=\"hidden\" name=\"$restore_var\" value=\"0\">";
+                    echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\">";
                 }
             } else {
                 //Module isn't restorable
-                echo "<input type=\"hidden\" name=\"$var\" value=\"0\">";
+                echo "<input type=\"hidden\" name=\"$restore_var\" value=\"0\">";
+                echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\">";
             }
         }
         //Line
