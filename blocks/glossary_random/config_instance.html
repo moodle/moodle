@@ -30,6 +30,13 @@
 		 ?></td>
 </tr> 
 
+<tr valign=top>	
+<td align=right>
+<input type="hidden" name="showconcept" value="0" />
+<input type="checkbox" name="showconcept" value="1" <?php if(!empty($this->config->showconcept)) echo 'checked="checked"'; ?> /></td>
+<td>
+<?php print_string('showconcept', 'block_glossary_random'); ?></td></tr>
+
 <tr>
     <td colspan="2">
         <b><?php print_string("whichfooter","block_glossary_random") ?></b></td></tr>

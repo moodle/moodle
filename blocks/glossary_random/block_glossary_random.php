@@ -8,7 +8,7 @@ class block_glossary_random extends block_base {
     function init() {
 
         $this->title = get_string('blockname','block_glossary_random');
-        $this->version = 2005010300;
+        $this->version = 2005040500;
 
     }
 
@@ -75,7 +75,11 @@ class block_glossary_random extends block_base {
                                         '     AND approved = 1 '.
                                         'ORDER BY timemodified '.$SORT.' '.$LIMIT)) {
 
-                $text = "<b>$entry->concept</b><br />";
+		if ($this->config->showconcept) {
+                    $text = "<b>$entry->concept</b><br />";
+                } else {
+                    $text = '';
+                }  
                 $text .= format_text($entry->definition, $entry->format);
 
                 $this->config->nexttime = usergetmidnight(time()) + DAYSECS * $this->config->refresh;
@@ -103,7 +107,7 @@ class block_glossary_random extends block_base {
             // ... teacher has not yet configured the block, let's put some default values here to explain things
             $this->config->title = get_string('blockname','block_glossary_random');
             $this->config->refresh = 0;
-
+            $this->config->showconcept = 1;
             $this->config->cache= get_string('notyetconfigured','block_glossary_random');
             $this->config->addentry=get_string('addentry', 'block_glossary_random');
             $this->config->viewglossary=get_string('viewglossary', 'block_glossary_random');
@@ -170,7 +174,9 @@ class block_glossary_random extends block_base {
                 
 		$this->content->footer = '<a href="'.$CFG->wwwroot.'/mod/glossary/edit.php?id='.$cm->id
                 .'" title="'.$this->config->addentry.'">'.$this->config->addentry.'</a><br />';
-            } 
+            } else {
+		$this->content->footer ='';
+	    }	 
             
             $this->content->footer .= '<a href="'.$CFG->wwwroot.'/mod/glossary/view.php?id='.$cm->id
                 .'" title="'.$this->config->viewglossary.'">'.$this->config->viewglossary.'</a>';
