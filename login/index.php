@@ -78,7 +78,10 @@
 
             unset($SESSION->wantsurl);
             unset($SESSION->lang);
+            unset($SESSION->encoding);
+
             $SESSION->justloggedin = true;
+            $SESSION->encoding = get_string('thischarset');
 
             add_to_log(SITEID, "user", "login", "view.php?id=$user->id&course=".SITEID, $user->id, 0, $user->id);
 
