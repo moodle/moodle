@@ -150,8 +150,6 @@
         }
     }
 
-    $SESSION->fullnamedisplay = 'firstname lastname';
-
 
 /// Calculate data ready to create the editing interface
 
