@@ -7,11 +7,11 @@ function dialogue_upgrade($oldversion) {
     global $CFG;
 
     if ($oldversion < 2004111000) {
-        execute_sql('DROP INDEX prefix_dialogue_course_idx;',false);
-        execute_sql('DROP INDEX prefix_dialogue_conversations_userid_idx;',false);
-        execute_sql('DROP INDEX prefix_dialogue_conversations_recipientid_idx;',false);
-        execute_sql('DROP INDEX prefix_dialogue_entries_dialogueid_idx;',false);
-        execute_sql('DROP INDEX prefix_dialogue_entries_userid_idx;',false);
+        execute_sql("DROP INDEX {$CFG->prefix}dialogue_course_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}dialogue_conversations_userid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}dialogue_conversations_recipientid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}dialogue_entries_dialogueid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}dialogue_entries_userid_idx;",false);
 
         modify_database('','CREATE INDEX prefix_dialogue_course_idx ON prefix_dialogue (course);');
         modify_database('','CREATE INDEX prefix_dialogue_conversations_userid_idx ON prefix_dialogue_conversations (userid);');

@@ -16,11 +16,11 @@ function dialogue_upgrade($oldversion) {
 		}
     
     if ($oldversion < 2004111000) {
-        execute_sql('ALTER TABLE prefix_dialogue DROP KEY course;',false);
-        execute_sql('ALTER TABLE prefix_dialogue_conversations DROP KEY recipientid;',false);
-        execute_sql('ALTER TABLE prefix_dialogue_conversations DROP KEY userid;',false);
-        execute_sql('ALTER TABLE prefix_dialogue_entries DROP KEY dialogueid;',false);
-        execute_sql('ALTER TABLE prefix_dialogue_entries DROP KEY userid;',false);
+        execute_sql("ALTER TABLE {$CFG->prefix}dialogue DROP KEY course;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}dialogue_conversations DROP KEY recipientid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}dialogue_conversations DROP KEY userid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}dialogue_entries DROP KEY dialogueid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}dialogue_entries DROP KEY userid;",false);
 
         modify_database('','ALTER TABLE prefix_dialogue ADD KEY course (course);');
         modify_database('','ALTER TABLE prefix_dialogue_conversations ADD KEY recipientid (recipientid);');
