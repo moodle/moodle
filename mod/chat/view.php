@@ -52,6 +52,11 @@
                   "", "", true, update_module_button($cm->id, $course->id, $strchat), 
                   navmenu($course, $cm));
 
+    if ($chat->studentlogs or isteacher($course->id)) {
+        echo "<p align=right><a href=\"report.php?id=$chat->id\">".
+              get_string("viewreport", "chat")."</a></p>";
+    }
+
 /// Print the main part of the page
 
    // Do the browser-detection etc later on.

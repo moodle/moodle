@@ -6,7 +6,16 @@ function chat_upgrade($oldversion) {
 
     global $CFG;
 
-    if ($oldversion < 2002080500) {
+    if ($oldversion < 2003072100) {
+        modify_database ("", " INSERT INTO prefix_log_display VALUES ('chat', 'report', 'chat', 'name'); ");
+    }
+
+    if ($oldversion < 2003072101) {
+        table_column("chat", "messages", "keepdays", "integer", "10", "unsigned", "0", "not null");
+    }
+
+    if ($oldversion < 2003072102) {
+        table_column("chat", "", "studentlogs", "integer", "4", "unsigned", "0", "not null", "keepdays");
     }
 
     return true;

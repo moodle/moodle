@@ -138,6 +138,16 @@ function chat_cron () {
 
     chat_delete_old_users();
 
+    /// Delete old messages
+    if ($chats = get_records("chat")) {
+        foreach ($chats as $chat) {
+            if ($chat->keepdays) {
+                $timeold = time() - ($chat->keepdays * 24 * 3600);
+                delete_records_select("chat_messages", "chatid = '$chat->id' AND timestamp < '$timeold'");
+            }
+        }
+    }
+
     return true;
 }
 
@@ -217,6 +227,7 @@ function chat_delete_old_users() {
         }
     }
 }
+
 
 function chat_browser_detect($HTTP_USER_AGENT) {
 

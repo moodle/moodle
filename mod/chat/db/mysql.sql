@@ -7,7 +7,8 @@ CREATE TABLE `prefix_chat` (
   `course` int(10) unsigned NOT NULL default '0',
   `name` varchar(255) NOT NULL default '',
   `intro` text NOT NULL,
-  `messages` int(11) NOT NULL default '1000',
+  `keepdays` int(11) NOT NULL default '0',
+  `studentlogs` int(4) NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Each of these is a chat room';
@@ -52,4 +53,5 @@ CREATE TABLE `prefix_chat_users` (
 INSERT INTO prefix_log_display VALUES ('chat', 'view', 'chat', 'name');
 INSERT INTO prefix_log_display VALUES ('chat', 'add', 'chat', 'name');
 INSERT INTO prefix_log_display VALUES ('chat', 'update', 'chat', 'name');
+INSERT INTO prefix_log_display VALUES ('chat', 'report', 'chat', 'name');
 

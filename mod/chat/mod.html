@@ -5,8 +5,11 @@
     if (!isset($form->intro)) {
         $form->intro = "";
     }
-    if (!isset($form->messages)) {
-        $form->messages = 1000;
+    if (!isset($form->keepdays)) {
+        $form->keepdays = 30;
+    }
+    if (!isset($form->studentlogs)) {
+        $form->studentlogs = 0;
     }
 ?>
 <form name="form" method="post" <?php echo $onsubmit ?> action="mod.php">
@@ -39,8 +42,32 @@
 	<td align=right><p><b><?php print_string("savemessages", "chat")?>:</b></p>
 	<td>
     <?php 
-       $options = array(5000, 1000, 500, 100);
-       choose_from_menu ($options, "messages", $form->messages, "", "", "");
+       unset($options);
+       $options[0]    = get_string("neverdeletemessages", "chat");
+       $options[365]  = get_string("numdays", "", 365);
+       $options[180]  = get_string("numdays", "", 180);
+       $options[150]  = get_string("numdays", "", 150);
+       $options[120]  = get_string("numdays", "", 120);
+       $options[90]   = get_string("numdays", "", 90);
+       $options[60]   = get_string("numdays", "", 60);
+       $options[30]   = get_string("numdays", "", 30);
+       $options[21]   = get_string("numdays", "", 21);
+       $options[14]   = get_string("numdays", "", 14);
+       $options[7]    = get_string("numdays", "", 7);
+       $options[2]    = get_string("numdays", "", 2);
+
+       choose_from_menu ($options, "keepdays", $form->keepdays, "", "", "");
+    ?>
+    </td>
+</tr>
+<tr valign=top>
+	<td align=right><p><b><?php print_string("studentseereports", "chat")?>:</b></p>
+	<td>
+    <?php 
+       unset($options);
+       $options[0]    = get_string("no");
+       $options[1]    = get_string("yes");
+       choose_from_menu ($options, "studentlogs", $form->studentlogs, "", "", "");
     ?>
     </td>
 </tr>
