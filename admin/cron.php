@@ -169,6 +169,10 @@
     echo $enrol->log;
 
 
+    //Unset session variables and destroy it
+    @session_unset();
+    @session_destroy();
+
     echo "Cron script completed correctly\n";
 
     $difftime = microtime_diff($starttime, microtime());
