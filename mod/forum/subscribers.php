@@ -49,8 +49,6 @@
     print_header_simple("$strsubscribers", "", "$navigation",
         "", "", true, forum_update_subscriptions_button($course->id, $id), true);
 
-    echo '<div id="forum-subscribers" class="forum">';  // forum-subscribers wrapper start
-
 /// Check to see if groups are being used in this forum
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
         $currentgroup = setup_and_print_groups($course, $groupmode, "subscribers.php?id=$forum->id");
@@ -80,8 +78,6 @@
             }
             echo "</table>";
         }
-
-        echo '</div>';  // forum-subscribers wrapper end
 
         print_footer($course);
         exit;
@@ -164,8 +160,6 @@
     include('subscriber.html');
 
     print_simple_box_end();
-
-    echo '</div>';  // forum-subscribers wrapper end
 
     print_footer();
 

@@ -85,13 +85,9 @@ if ( $confirm ) {
               <a href=\"view.php?id=$cm->id\">$glossary->name</a> -> $stredit", "form.text",
               "", true, "", navmenu($course, $cm));
 
-        echo '<div id="glossary-edit" class="glossary">';  // glossary-edit wrapper start
-
         print_heading($glossary->name);
 
         include("edit.html");
-
-        echo '</div>';  // glossary-edit wrapper end
 
         print_footer($course);
         die;
@@ -289,8 +285,6 @@ print_header_simple(strip_tags("$glossary->name"), "",
               <a href=\"view.php?id=$cm->id\">$glossary->name</a> -> $stredit", "",
               "", true, "", navmenu($course, $cm));
 
-echo '<div id="glossary-edit" class="glossary">';  // glossary-edit wrapper start
-
 $ineditperiod = ((time() - $newentry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
 if ( (!$ineditperiod  || $USER->id != $newentry->userid) and !isteacher($course->id) and $e) {
     if ( $USER->id != $newentry->userid ) {
@@ -307,10 +301,7 @@ if ( (!$ineditperiod  || $USER->id != $newentry->userid) and !isteacher($course-
 /// Info box
 
     if ( $glossary->intro ) {
-        echo '<table align="center" width="70%" border="0">';
-        echo '<tr><td align="center" class="glossaryintrobox">';
-        echo format_text($glossary->intro);
-        print_simple_box_end();
+        print_simple_box(format_text($glossary->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
     }
 
     echo '<br />';
@@ -330,7 +321,6 @@ glossary_print_tabbed_table_end();
        use_html_editor("text");
     }
 
-echo '</div>';  // glossary-edit wrapper end
 
 print_footer($course);
 

@@ -46,19 +46,12 @@
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
 
-    echo '<div id="glossary-export" class="glossary">';  // glossary-export wrapper start
-
-    echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
-    echo '</b></font></p>';
+    print_heading($glossary->name);
 
 /// Info box
 
     if ( $glossary->intro ) {
-        echo '<table align="center" width="70%" border="0">';
-        echo '<tr><td align="center" class="glossaryintrobox">';
-        echo format_text($glossary->intro);
-        print_simple_box_end();
-
+        print_simple_box(format_text($glossary->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
         echo '<br />';
     }
 

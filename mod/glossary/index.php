@@ -29,8 +29,6 @@
 
     print_header_simple("$strglossarys", "", "$strglossarys", "", "", true, "", navmenu($course));
 
-    echo '<div id="glossary-index" class="glossary">';  // glossary-index wrapper start
-
 /// Get all the appropriate data
 
     if (! $glossarys = get_all_instances_in_course("glossary", $course)) {
@@ -123,8 +121,6 @@
     print_table($table);
 
 /// Finish the page
-
-    echo '</div>';  // glossary-index wrapper end
 
     print_footer($course);
 

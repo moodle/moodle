@@ -49,18 +49,12 @@
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
 
-    echo '<div id="glossary-import" class="glossary">';  // glossary-import wrapper start
-
-    echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
-    echo '</b></font></p>';
+    print_heading($glossary->name);
 
 /// Info box
 
     if ( $glossary->intro ) {
-        echo '<table align="center" width="70%" border="0">';
-        echo '<tr><td align="center" class="glossaryintrobox">';
-        echo format_text($glossary->intro);
-        print_simple_box_end();
+        print_simple_box(format_text($glossary->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
         echo '<br />';
     }
 
@@ -74,7 +68,6 @@
         echo '</center>';
         glossary_print_tabbed_table_end();
         print_footer($course);
-        echo '</div>';  // glossary-import wrapper end
         exit;
     }
 
@@ -157,7 +150,6 @@
                     echo '</center>';
                     glossary_print_tabbed_table_end();
                     print_footer($course);
-                    echo '</div>'; // glossary-import wrapper end
                     exit;
                 } else {
                     //The instance has been created, so lets do course_modules
@@ -209,7 +201,6 @@
                 echo '</center>';
                 glossary_print_tabbed_table_end();
                 print_footer($course);
-                echo '</div>'; // glossary-import wrapper end
                 exit;
             }
         }
@@ -387,8 +378,6 @@
     glossary_print_tabbed_table_end();
 
 /// Finish the page
-
-    echo '</div>'; // glossary-import wrapper end
 
     print_footer($course);
 

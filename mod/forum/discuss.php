@@ -120,8 +120,6 @@
                  "$navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
     }
 
-    echo '<div id="forum-discuss" class="forum">';  // forum-discuss wrapper start
-
 
 /// Check to see if groups are being used in this forum
 /// If so, make sure the current person is allowed to see this discussion
@@ -205,8 +203,6 @@
 /// Print the actual discussion
 
     forum_print_discussion($course, $forum, $discussion, $post, $displaymode, $canreply);
-
-    echo '</div>';  // forum-discuss wrapper end
 
     print_footer($course);
 

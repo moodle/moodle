@@ -27,8 +27,6 @@
 
     print_header_simple("$strwikis", "", "$strwikis", "", "", true, "", navmenu($course));
 
-    echo '<div id="wiki-index" class="mwiki">';  // wiki-index wrapper start
-
 /// Get all the appropriate data
 
     if (! $wikis = get_all_instances_in_course("wiki", $course)) {
@@ -100,8 +98,6 @@
     print_table($table);
 
 /// Finish the page
-
-    echo '</div>';  // wiki-index wrapper end
 
     print_footer($course);
 
