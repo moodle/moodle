@@ -844,4 +844,30 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo "</td></tr></table>";
 }
 
+    function glossary_print_dynaentry($courseid, $entries) {
+        global $THEME, $USER;
+
+        $colour = $THEME->cellheading2;
+
+        echo "\n<center><table width=95% border=0><tr>";
+        echo "<td width=100%\">";
+        if ( $entries ) {
+            foreach ( $entries as $entry ) {
+
+                if (! $glossary = get_record("glossary", "id", $entry->glossaryid)) {
+                    error("Glossary ID was incorrect or no longer exists");
+                }
+                if (! $course = get_record("course", "id", $glossary->course)) {
+                    error("Glossary is misconfigured - don't know what course it's from");
+                }
+                if (!$cm = get_coursemodule_from_instance("glossary", $entry->glossaryid, $courseid) ) {
+                    error("Glossary is misconfigured - don't know what course module it is ");
+                }
+
+                glossary_print_entry($course, $cm, $glossary, $entry);
+            }
+        }
+        echo "</td>";
+        echo "</tr></table></center>";
+    }
 ?>
