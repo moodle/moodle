@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // message.php - created with Moodle 1.4.3 (2004083130)
 
 
@@ -30,7 +30,7 @@ $string['messaging'] = 'Mitteilungen';
 $string['mycontacts'] = 'Meine Kontakte';
 $string['newsearch'] = 'Neue Suche';
 $string['nomessages'] = 'Es liegen keine neuen Mitteilungen vor';
-$string['nomessagesfound'] = 'Es wurden keine Mittelungenn gefunden';
+$string['nomessagesfound'] = 'Es wurden keine Mitteilungen gefunden';
 $string['nosearchresults'] = 'Es liegen keine Ergebnisse für Ihre Suche vor';
 $string['offline'] = 'Offline';
 $string['offlinecontacts'] = 'Offline Kontakte ($a)';
