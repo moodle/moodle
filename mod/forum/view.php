@@ -4,13 +4,13 @@
     require_once("lib.php");
     require_once("$CFG->dirroot/rss/rsslib.php");
 
-    $id      = optional_variable('id', 0, PARAM_INT);        // Course Module ID
-    $f       = optional_variable('f', 0, PARAM_INT);         // Forum ID
-    $mode    = optional_variable('mode', 0, PARAM_INT);      // Display mode (for single forum)
-    $showall = optional_variable('showall', '', PARAM_INT);  // show all discussions on one page
-    $group   = optional_variable('group', -1, PARAM_INT);    // choose the current group
-    $page    = optional_variable('page', 0, PARAM_INT);      // which page to show
-    $search  = optional_variable('search', '');              // search string
+    $id      = optional_param('id', 0, PARAM_INT);        // Course Module ID
+    $f       = optional_param('f', 0, PARAM_INT);         // Forum ID
+    $mode    = optional_param('mode', 0, PARAM_INT);      // Display mode (for single forum)
+    $showall = optional_param('showall', '', PARAM_INT);  // show all discussions on one page
+    $group   = optional_param('group', -1, PARAM_INT);    // choose the current group
+    $page    = optional_param('page', 0, PARAM_INT);      // which page to show
+    $search  = optional_param('search', '');              // search string
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
