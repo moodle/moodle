@@ -112,7 +112,7 @@
 <blockquote>
 <p>You need to create an empty database (eg "moodle") in your database system 
     along with a special user (eg "moodleuser") that has access to that database 
-    (and that database only. You could use the "root" user if you wanted to, but 
+    (and that database only). You could use the "root" user if you wanted to, but 
     this is not recommended for a production system: if hackers manage to discover
     the password then your whole database system would be at risk, rather than 
     just one database.
@@ -128,6 +128,11 @@
 </PRE>
   <p>(For MySQL I highly recommend the use of <a href="http://phpmyadmin.sourceforge.net/">phpMyAdmin</a> 
     to manage your databases).</p>
+<p>Note that Moodle currently does  not yet support table name prefixes, and works best with a whole 
+   database to itself.  If you do want to install Moodle in a database that already contains
+   tables, and are SURE that Moodle tables will not conflict with any tables
+   that you already have installed, then you can call this script in your moodle 
+   installation: admin/forcetables.php</p>
 </blockquote>
 <P>&nbsp;</P>
 <H3><A NAME="webserver" id="webserver"></A>6. Check your web server settings</H3>
