@@ -3,8 +3,8 @@
     require_once("../config.php");
     require_once("$CFG->libdir/gdlib.php");
 
-    optional_variable($id);       // user id
-    optional_variable($course);   // course id
+    $id     = optional_param('id',     PARAM_INT);   // user id
+    $course = optional_param('course', PARAM_INT);   // course id
 
     if (empty($id)) {         // See your own profile by default
         require_login();
@@ -64,6 +64,20 @@
             check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
         }
 
+        // data cleanup 
+        // username is validated in find_form_errors
+        $usernew->country = clean_param($usernew->country, PARAM_ALPHA);
+        $usernew->lang    = clean_param($usernew->lang,    PARAM_FILE);
+        $usernew->url     = clean_param($usernew->url,     PARAM_URL);
+        $usernew->icq     = clean_param($usernew->icq,     PARAM_INT);
+        
+        $usernew->maildisplay   = clean_param($usernew->maildisplay,   PARAM_INT);
+        $usernew->mailformat    = clean_param($usernew->mailformat,    PARAM_INT);
+        $usernew->maildigest    = clean_param($usernew->maildigest,    PARAM_INT);
+        $usernew->autosubscribe = clean_param($usernew->autosubscribe, PARAM_INT);
+        $usernew->htmleditor    = clean_param($usernew->htmleditor,    PARAM_INT);
+        $usernew->emailstop     = clean_param($usernew->emailstop,     PARAM_INT);
+        
         foreach ($usernew as $key => $data) {
             $usernew->$key = addslashes(clean_text(stripslashes($usernew->$key), FORMAT_MOODLE));
         }

@@ -2230,16 +2230,16 @@ function current_language() {
     global $CFG, $USER, $SESSION;
 
     if (!empty($CFG->courselang)) {    // Course language can override all other settings for this page
-        return $CFG->courselang;
+        return clean_param($CFG->courselang, PARAM_FILE);
 
     } else if (!empty($SESSION->lang)) {    // Session language can override other settings
-        return $SESSION->lang;
+        return clean_param($SESSION->lang, PARAM_FILE);
 
     } else if (!empty($USER->lang)) {    // User language can override site language
-        return $USER->lang;
+        return clean_param($USER->lang, PARAM_FILE);
 
     } else {
-        return $CFG->lang;
+        return clean_param($CFG->lang, PARAM_FILE);
     }
 }
 
