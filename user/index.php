@@ -9,6 +9,8 @@
     optional_variable($sort, "lastaccess");  //how to sort students
     optional_variable($dir,"desc");          //how to sort students
     optional_variable($page, "0");           // which page to show
+    optional_variable($lastinitial, "");     // only show students with this last initial
+    optional_variable($firstinitial, "");    // only show students with this first initial
     optional_variable($perpage, "20");       // how many per page
 
 
@@ -38,6 +40,7 @@
     $string->mins        = get_string("mins");
     $string->sec         = get_string("sec");
     $string->secs        = get_string("secs");
+    $string->all         = get_string("all");
 
     $countries = get_list_of_countries();
 
@@ -78,28 +81,80 @@
         $dsort = "u.$sort";
     }
 
-    $totalcount = count_records("user_students", "course", $course->id);
+    $students = get_course_students($course->id, $dsort, $dir, $page*$perpage, 
+                                    $perpage, $firstinitial, $lastinitial);
+
+    $totalcount = $matchcount = count_records("user_students", "course", $course->id);
 
     echo "<h2 align=center>$totalcount $course->students</h2>";
 
-    if ($CFG->longtimenosee < 500) {
+    if (($CFG->longtimenosee < 500) and (!$page) and ($sort == "lastaccess")) {
         echo "<center><p><font size=1>(";
         print_string("unusedaccounts","",$CFG->longtimenosee);
         echo ")</font></p></center>";
     }
 
-    if (0 < $totalcount and $totalcount < USER_SMALL_CLASS) {    // Print simple listing
+    /// Print paging bars if necessary
 
-        if ($students = get_course_students($course->id, $dsort, $dir)) {
-            foreach ($students as $student) {
-                print_user($student, $course, $string, $countries);
+    if ($totalcount > $perpage) {
+        $alphabet = explode(',', get_string('alphabet'));
+
+        /// Bar of first initials
+
+        echo "<center><p align=\"center\">";
+        echo get_string("firstname")." : ";
+        if ($firstinitial) {
+            echo " <a href=\"index.php?id=$course->id&sort=firstname&dir=ASC&".
+                   "perpage=$perpage&lastinitial=$lastinitial\">$string->all</a> ";
+        } else {
+            echo " <b>$string->all</b> ";
+        }
+        foreach ($alphabet as $letter) {
+            if ($letter == $firstinitial) {
+                echo " <b>$letter</b> ";
+            } else {
+                echo " <a href=\"index.php?id=$course->id&sort=firstname&dir=ASC&".
+                       "perpage=$perpage&lastinitial=$lastinitial&firstinitial=$letter\">$letter</a> ";
             }
         }
+        echo "<br />";
 
-    } else if ($students = get_course_students($course->id, $dsort, $dir, $page*$perpage, $perpage)) {
+        /// Bar of last initials
 
-        print_paging_bar($totalcount, $page, $perpage, 
-                         "index.php?id=$course->id&sort=$sort&dir=$dir&perpage=$perpage&");
+        echo get_string("lastname")." : ";
+        if ($lastinitial) {
+            echo " <a href=\"index.php?id=$course->id&sort=lastname&dir=ASC&".
+                   "perpage=$perpage&firstinitial=$firstinitial\">$string->all</a> ";
+        } else {
+            echo " <b>$string->all</b> ";
+        }
+        foreach ($alphabet as $letter) {
+            if ($letter == $lastinitial) {
+                echo " <b>$letter</b> ";
+            } else {
+                echo " <a href=\"index.php?id=$course->id&sort=lastname&dir=ASC&".
+                       "perpage=$perpage&firstinitial=$firstinitial&lastinitial=$letter\">$letter</a> ";
+            }
+        }
+        echo "</p>";
+        echo "</center>";
+
+        $matchcount = count_course_students($course, "", $firstinitial, $lastinitial);
+
+        print_paging_bar($matchcount, $page, $perpage, 
+                         "index.php?id=$course->id&sort=$sort&dir=$dir&perpage=$perpage&firstinitial=$firstinitial&lastinitial=$lastinitial&");
+
+    }
+
+    if ($matchcount == 0) {
+        print_heading(get_string("nostudentsfound", "", $course->students));
+
+    } if (0 < $matchcount and $matchcount < USER_SMALL_CLASS) {    // Print simple listing
+        foreach ($students as $student) {
+            print_user($student, $course, $string, $countries);
+        }
+
+    } else if ($matchcount > 0) {
 
         // Print one big table with abbreviated info
         $columns = array("firstname", "lastname", "city", "country", "lastaccess");
@@ -139,6 +194,7 @@
             $students = $nstudents;
         }
 
+
         $table->head = array ("&nbsp;", "$firstname / $lastname", $city, $country, $lastaccess);
         $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT", "LEFT");
         $table->size = array ("10",  "*", "*", "*", "*");
@@ -168,7 +224,7 @@
         }
         print_table($table);
 
-        print_paging_bar($totalcount, $page, $perpage, 
+        print_paging_bar($matchcount, $page, $perpage, 
                          "index.php?id=$course->id&sort=$sort&dir=$dir&perpage=$perpage&");
 
         if ($perpage != 99999) {
@@ -176,8 +232,7 @@
             echo "<a href=\"index.php?id=$course->id&sort=$sort&dir=$dir&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
             echo "</p></center>";
         }
-
-    } 
+    }
 
     print_footer($course);
 

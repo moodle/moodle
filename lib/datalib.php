@@ -1112,28 +1112,76 @@ function get_recent_enrolments($courseid, $timestart) {
 * 
 * @param	type description
 */
-function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, $recordsperpage=99999) {
+function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, $recordsperpage=99999,
+                             $firstinitial="", $lastinitial="") {
 
     global $CFG;
 
     switch ($CFG->dbtype) {
         case "mysql":
              $limit = "LIMIT $page,$recordsperpage";
+             $LIKE = "LIKE";
              break;
         case "postgres7":
              $limit = "LIMIT $recordsperpage OFFSET ".($page);
+             $LIKE = "ILIKE";
              break;
         default: 
              $limit = "LIMIT $recordsperpage,$page";
+             $LIKE = "ILIKE";
+    }
+
+    $select = "s.course = '$courseid' AND s.userid = u.id AND u.deleted = '0' ";
+
+    if ($firstinitial) {
+        $select .= " AND u.firstname $LIKE '$firstinitial%' ";
+    }
+
+    if ($lastinitial) {
+        $select .= " AND u.lastname $LIKE '$lastinitial%' ";
     }
 
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
                             u.email, u.city, u.country, u.lastlogin, u.picture, s.timeaccess as lastaccess
                             FROM {$CFG->prefix}user u, 
                                  {$CFG->prefix}user_students s
-                            WHERE s.course = '$courseid' AND s.userid = u.id AND u.deleted = '0'
+                            WHERE $select
                             ORDER BY $sort $dir $limit");
 }
+
+/**
+* Counts the students in a given course, or a subset of them
+* 
+* @param	type description
+*/
+function count_course_students($course, $search="", $firstinitial="", $lastinitial="") {
+
+    global $CFG;
+
+    switch ($CFG->dbtype) {
+        case "mysql":
+             $LIKE = "LIKE";
+             break;
+        default: 
+             $LIKE = "ILIKE";
+    }
+
+    $select = "s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'";
+
+    if ($search) {
+        $select .= " AND u.firstname $LIKE '%$search%' OR u.lastname $LIKE '%$search%'";
+    } 
+    if ($firstinitial) {
+        $select .= " AND u.firstname $LIKE '$firstinitial%'";
+    } 
+    if ($lastinitial) {
+        $select .= " AND u.lastname $LIKE '$lastinitial%'";
+    } 
+
+    return count_records_sql("SELECT COUNT(*) FROM {$CFG->prefix}user u,{$CFG->prefix}user_students s WHERE $select");
+
+}
+
 
 /**
 * Returns list of all teachers in this course
