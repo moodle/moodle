@@ -1584,7 +1584,7 @@ function get_directory_size($rootdir, $excludefile="") {
         return $dirs;
     }
 
-    if (!$dir = opendir($rootdir)) {  // Can't open it for some reason
+    if (!$dir = @opendir($rootdir)) {  // Can't open it for some reason
         return $dirs;
     }
 
