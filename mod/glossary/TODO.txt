@@ -14,8 +14,6 @@ Things that are in the inkpot yet:
         * Default view for automatic links, entry view, etc.
 	* What else? Post in http://moodle.org/mod/forum/view.php?id=742
 
-News about plugin-formats TODO (Updated: Jul 23, 2004 - Eloy)
+News about plugin-formats TODO (Updated: Jul 30, 2004 - Eloy)
 
-*Review every format (only dictionary has been polished just now).
-*Include a template format to make things easier for new formats.
 *Include support for a customised print view in each format.
