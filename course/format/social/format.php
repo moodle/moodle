@@ -57,7 +57,7 @@
       echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;">';
       print_course_blocks($course, $rightblocks, BLOCK_RIGHT);
       if ($editing && !empty($missingblocks)) {
-          block_print_blocks_admin($course->id, $missingblocks);
+          block_print_blocks_admin($course, $missingblocks);
       }
       print_spacer(1, 120, true);
       echo '</td>';

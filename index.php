@@ -216,7 +216,7 @@
         }
         print_course_blocks($site, $rightblocks, BLOCK_RIGHT);
         if ($editing && !empty($missingblocks)) {
-            block_print_blocks_admin($site->id, $missingblocks);
+            block_print_blocks_admin($site, $missingblocks);
         }
         echo '</td>';
     }

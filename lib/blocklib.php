@@ -355,8 +355,8 @@ function block_find($blockid, $leftblocks, $rightblocks) {
 }
 
 //This function prints the block to admin blocks as necessary
-function block_print_blocks_admin($courseid, $missingblocks) {
-    if (isediting($courseid)) {
+function block_print_blocks_admin($course, $missingblocks) {
+    if (isediting($course->id)) {
         $strblocks = get_string('blocks');
         $stradd    = get_string('add');
         if (!empty($missingblocks)) {
@@ -370,13 +370,13 @@ function block_print_blocks_admin($courseid, $missingblocks) {
                     $menu[$block->id] = $blockobject->get_title();
                 }
 
-                if($courseid == 1) {
+                if($course->id == 1) {
                     $target = 'index.php';
                 }
                 else {
                     $target = 'view.php';
                 }
-                $content = popup_form($target.'?id='.$courseid.'&amp;blockaction=add&amp;blockid=',
+                $content = popup_form($target.'?id='.$course->id.'&amp;blockaction=add&amp;blockid=',
                                       $menu, 'add_block', '', "$stradd...", '', '', true);
                 $content = '<div align="center">'.$content.'</div>';
                 print_side_block($strblocks, $content, NULL, NULL, NULL);
