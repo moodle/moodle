@@ -44,6 +44,7 @@
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$attendance->timemodified));
                 fwrite ($bf,full_tag("DYNSECTION",4,false,$attendance->dynsection));
                 fwrite ($bf,full_tag("EDITED",4,false,$attendance->edited));
+                fwrite ($bf,full_tag("AUTOATTEND",4,false,$attendance->autoattend));
                 //if we've selected to backup users info, then execute backup_attendance_roll
                 if ($preferences->mods["attendance"]->userinfo) {
                     $status = backup_attendance_roll($bf,$preferences,$attendance->id);
