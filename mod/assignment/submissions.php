@@ -5,6 +5,7 @@
 
     require_variable($id);    // Assignment
     optional_variable($sort, ""); 
+    optional_variable($dir, "");
 
     $timewas = $_POST['timenow'];
     $timenow = time();
@@ -49,7 +50,7 @@
     }
 
 /// Make some easy ways to reference submissions
-    if ($submissions = assignment_get_all_submissions($assignment, $sort)) {
+    if ($submissions = assignment_get_all_submissions($assignment, $sort, $dir)) {
         foreach ($submissions as $submission) {
             $submissionbyuser[$submission->userid] = $submission;
         }
@@ -68,7 +69,7 @@
     }
 
     if (isset($newsubmission)) {   // Get them all out again to be sure
-        $submissions = assignment_get_all_submissions($assignment, $sort);
+        $submissions = assignment_get_all_submissions($assignment, $sort, $dir);
     }
 
 
@@ -119,7 +120,7 @@
                 }
             }
         }
-        $submissions = assignment_get_all_submissions($assignment,$sort);
+        $submissions = assignment_get_all_submissions($assignment,$sort, $dir);
         add_to_log($course->id, "assignment", "update grades", "submissions.php?id=$assignment->id", "$count users");
         notify(get_string("feedbackupdated", "assignment", $count));
     } else {
@@ -130,9 +131,15 @@
     print_simple_box_start("CENTER", "50%");
     echo "<P align=\"CENTER\">";
     print_string("order");
-    echo ": <A HREF=\"submissions.php?id=$assignment->id&sort=lastname&dir=ASC\">".get_string("name")."</a> - ";
-    echo "<A HREF=\"submissions.php?id=$assignment->id\">".get_string("lastmodified")."</a> - ";
-    echo "<A HREF=\"submissions.php?id=$assignment->id&sort=grade\">".get_string("feedback")."</a>";
+
+    if ($dir == "ASC")
+        $dir = "DESC";
+    else
+        $dir = "ASC";
+
+    echo ": <A HREF=\"submissions.php?id=$assignment->id&sort=lastname&dir=$dir\">".get_string("name")."</a> - ";
+    echo "<A HREF=\"submissions.php?id=$assignment->id&sort=timemodified&dir=$dir\">".get_string("lastmodified")."</a> - ";
+    echo "<A HREF=\"submissions.php?id=$assignment->id&sort=grade&dir=$dir\">".get_string("feedback")."</a>";
     echo "</P>";
     print_simple_box_end();
     print_spacer(8,1);
