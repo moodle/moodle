@@ -118,7 +118,7 @@
                                          FROM {$CFG->prefix}backup_log
                                          WHERE courseid = '$courseid'  AND
                                                laststarttime = '$execution->laststarttime'
-                                         ORDER BY time");
+                                         ORDER BY id");
                 if ($logs) {
                     foreach ($logs as $log) {
                         echo "<tr nowrap=\"nowrap\">";
