@@ -1,7 +1,7 @@
 <?PHP // $Id$
       // Script to assign students to courses
 
-	require_once("../config.php");
+    require_once("../config.php");
 
     define("MAX_USERS_PER_PAGE", 50);
 
@@ -43,7 +43,7 @@
         $strexistingstudents .= " ($course->students)";
     }
 
-	print_header("$course->shortname: $strassignstudents", 
+    print_header("$course->shortname: $strassignstudents", 
                  "$site->fullname", 
                  "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strassignstudents", 
                  "studentform.searchtext");
@@ -93,39 +93,42 @@
 
     $previoussearch = (!empty($frm->search) or ($frm->previoussearch == 1)) ;
 
-/// Get all existing students for this course.
+/// Get all existing students and teachers for this course.
     if (!$students = get_course_students($course->id, "u.firstname ASC, u.lastname ASC", "", 0, 99999,
                                          '', '', NULL, '', 'u.id,u.firstname,u.lastname,u.email')) {
         $students = array();
     }
-    
-    $studentarray = array();
-    foreach ($students as $student) {
-        $studentarray[] = $student->id;
+    if (!$teachers = get_course_teachers($course->id)) {
+        $teachers = array();
     }
-    $studentlist = implode(',', $studentarray);
+    $existinguserarray = array();
+    foreach ($students as $student) {
+        $existinguserarray[] = $student->id;
+    }
+    foreach ($teachers as $teacher) {
+        $existinguserarray[] = $teacher->id;
+    }
+    $existinguserlist = implode(',', $existinguserarray);
     
-    unset($studentarray);
+    unset($existinguserarray);
 
 
 /// Get search results excluding any users already in this course
     if (!empty($frm->searchtext) and $previoussearch) {
-        $searchusers = get_users(true, $frm->searchtext, true, $studentlist, 'firstname ASC, lastname ASC', 
+        $searchusers = get_users(true, $frm->searchtext, true, $existinguserlist, 'firstname ASC, lastname ASC', 
                                       '', '', 0, 99999, 'id, firstname, lastname, email');
         $usercount = get_users(false, '', true, $studentlist);
     }
     
 /// If no search results then get potential students for this course excluding users already in course
     if (empty($searchusers)) {
-        if (!$users = get_users(true, '', true, $studentlist, 'firstname ASC, lastname ASC', '', '', 
+        if (!$users = get_users(true, '', true, $existinguserlist, 'firstname ASC, lastname ASC', '', '', 
                                 0, 99999, 'id, firstname, lastname, email') ) {
             $users = array();
         }
         $usercount = count($users);
     }
 
-
-    
 
     $searchtext = (isset($frm->searchtext)) ? $frm->searchtext : "";
     $previoussearch = ($previoussearch) ? '1' : '0';
