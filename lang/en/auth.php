@@ -33,6 +33,7 @@ $string['auth_ldapdescription'] = "This method provides authentication against a
                                   entry in its database. This module can read user attributes from LDAP and prefill 
                                   wanted fields in Moodle.  For following logins only the username and 
                                   password are checked.";
+$string['auth_ldapextrafields'] = "These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <B>LDAP fields</B> that you specify here. <P>If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.<P>In either case, the user will be able to edit all of these fields after they log in.";
 $string['auth_ldaptitle'] = "Use an LDAP server";
 $string['auth_nntpdescription'] = "This method uses an NNTP server to check whether a given username and password is valid.";
 $string['auth_nntphost'] = "The NNTP server address. Use the IP number, not DNS name.";

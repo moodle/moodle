@@ -42,25 +42,23 @@ function auth_get_userinfo($username){
   global $CFG;
   //reads userinformation from ldap and return it in array()
 
-  $result = array();
-  $ldap_connection=auth_ldap_connect();
-  	
+  $config = (array)$CFG;
+  $fields = array("firstname", "lastname", "email", "phone1", "phone2", 
+                  "department", "address", "city", "country", "description", 
+                  "idnumber", "lang");
+
   $moodleattributes = array();
-  //atribute mappings between moodle and ldap
+  foreach ($fields as $field) {
+      if ($config["auth_user_$field"]) {
+          $moodleattributes[$field] = $config["auth_user_$field"];
+      }
+  }
 
-  $moodleattributes['firstname']    ='givenname';
-  $moodleattributes['lastname']     ='sn';
-  $moodleattributes['email']        ='mail';
-  $moodleattributes['phone1']       ='telephonenumber';
-  //$moodleattributes['phone2']       ='facsimiletelephonenumber';
-  //$moodleattributes['institution']  ='institution';
-  $moodleattributes['department']   ='ou';
-  $moodleattributes['address']      ='street';
-  $moodleattributes['city']         ='physicaldeliveryofficename';
-  //$moodleattributes['country']      ='country';
-  $moodleattributes['description']  ='description';
+  $ldap_connection=auth_ldap_connect();
 
+  $result = array();
   $search_attribs = array();	
+  	
   foreach ($moodleattributes as $key=>$value) {
 	array_push($search_attribs, $value);
   }

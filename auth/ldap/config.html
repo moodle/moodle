@@ -1,4 +1,4 @@
-<tr valign="top">
+<tr valign="top" BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>ldap_host_url:</TD>
 	<TD>
         <INPUT name=ldap_host_url TYPE=text SIZE=30 VALUE="<?=$config->ldap_host_url?>">
@@ -9,8 +9,8 @@
     </TD>
 </TR>
 
-<TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P>ldap_user_context(s):</TD>
+<TR VALIGN=TOP BGCOLOR="<?=$THEME->cellheading2 ?>">
+	<TD ALIGN=RIGHT><P>ldap_user_context:</TD>
 	<TD>
     <INPUT name=ldap_contexts TYPE=text SIZE=30 VALUE="<?=$config->ldap_contexts?>">
     <? formerr($err["ldap_contexts"]); ?>
@@ -20,8 +20,8 @@
     </TD>
 </TR>
 
-<TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P>ldap_user_attribute(s):</TD>
+<TR VALIGN=TOP BGCOLOR="<?=$THEME->cellheading2 ?>">
+	<TD ALIGN=RIGHT><P>ldap_user_attribute:</TD>
 	<TD>
     <INPUT name=ldap_user_attribute TYPE=text SIZE=30 VALUE="<?=$config->ldap_user_attribute?>">
     <? formerr($err["ldap_user_attribute"]); ?>
@@ -31,7 +31,7 @@
     </TD>
 </TR>
 
-<TR VALIGN=TOP>
+<TR VALIGN=TOP BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>ldap_search_sub:</TD>
 	<TD>
     <INPUT name=ldap_search_sub TYPE=text SIZE=1 VALUE="<?=$config->ldap_search_sub?>">
@@ -42,7 +42,7 @@
     </TD>
 </TR>
 
-<TR VALIGN=TOP>
+<TR VALIGN=TOP BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>ldap_bind_dn:</TD>
 	<TD>
     <INPUT name=ldap_bind_dn TYPE=text SIZE=30 VALUE="<?=$config->ldap_bind_dn?>">
@@ -52,7 +52,7 @@
     </TD>
 </TR>
 
-<TR VALIGN=TOP>
+<TR VALIGN=TOP BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>ldap_bind_password:</TD>
 	<TD>
     <INPUT name=ldap_bind_pw TYPE=text SIZE=30 VALUE="<?=$config->ldap_bind_pw?>">
@@ -61,6 +61,96 @@
     <? print_string("auth_ldap_bind_pw","auth") ?>
     </TD>
 </TR>
+
+
+
+<TR>
+	<TD ALIGN=RIGHT><P><? print_string("firstname") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_firstname" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_firstname?>">
+    </TD>
+    <TD rowspan=12 VALIGN=CENTER>
+    <? print_string("auth_ldapextrafields","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("lastname") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_lastname" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_lastname?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("email") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_email" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_email?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("phone") ?> 1:</TD>
+	<TD>
+    <INPUT name="auth_user_phone1" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_phone1?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("phone") ?> 2:</TD>
+	<TD>
+    <INPUT name="auth_user_phone2" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_phone2?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("department") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_department" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_department?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("address") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_address" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_address?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("city") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_city" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_city?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("country") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_country" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_country?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("description") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_description" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_description?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("idnumber") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_idnumber" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_idnumber?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("language") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_lang" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_lang?>">
+    </TD>
+</TR>
+
 
 <TR VALIGN=TOP>
 	<TD ALIGN=RIGHT><P><? print_string("instructions", "auth") ?>:</TD>
@@ -72,3 +162,7 @@
     <? helpbutton("text", get_string("helptext")) ?>
     </TD>
 </TR>
+
+
+
+
