@@ -1,20 +1,20 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.2 development (2004021500)
+      // auth.php - created with Moodle 1.3 (2004052500)
 
 
-$string['auth_dbdescription'] = 'วิธีนี้เป็นการใช้ฐานข้อมูลนอกในการตรวจสอบ ว่า ชื่อและรหัสผ่าน นั้นถูกต้องหรือไม่ ถ้าหาก account ดังกล่าวเป็น ข้อมูลใหม่ ข้อมูลจะถูกส่งไปยังส่วนต่างๆ ใน Moodle';
+$string['auth_dbdescription'] = 'วิธีนี้เป็นการใช้ฐานข้อมูลนอกในการตรวจสอบว่าชื่อและรหัสผ่านนั้นถูกต้องหรือไม่ ถ้าหาก account ดังกล่าวเป็น ข้อมูลใหม่ ข้อมูลจะถูกส่งไปยังส่วนต่าง ๆ ใน Moodle';
 $string['auth_dbextrafields'] = 'ช่องนี้จะเติมหรือไม่ก็ได้  คุณสามารถเลือกใช้ ค่าที่ระบบ ตั้งไว้ก่อน จาก  <b>ฐานข้อมูลนอก</b><p>  ถ้าหาก ปล่อยว่าง ไม่เติม ระบบจะเลือกใช้ ค่า default  <p> และ ทั้งสองกรณี ผู้ใช้สามารถที่จะแก้ไขค่าต่างๆ ได้ ภายหลังจาก ล็อกอิน';
 $string['auth_dbfieldpass'] = 'ส่วนที่มีข้อมูลของ  password ';
-$string['auth_dbfielduser'] = 'ส่วนที่มีข้อมูลของ usernames';
+$string['auth_dbfielduser'] = 'ส่วนที่มีข้อมูลของ username';
 $string['auth_dbhost'] = 'คอมพิวเตอร์ที่ใช้ เก็บฐานข้อมูล';
 $string['auth_dbname'] = 'ชื่อของฐานข้อมูล';
 $string['auth_dbpass'] = 'password ตรงกับ username';
 $string['auth_dbpasstype'] = 'ระบุรูปแบบที่จะใช้ในช่องใส่ password  การใช้ MD5 encrption มีประโยชน์ในการติดต่อกับโปรแกรมการจัดการเว็บอื่นๆ เช่น PostNuke';
 $string['auth_dbtable'] = 'ชื่อของตารางในฐานข้อมูล';
 $string['auth_dbtitle'] = 'ใช้ฐานข้อมูลนอก';
-$string['auth_dbtype'] = 'ประเภทของฐานข้อมูล(ดูข้อมูลเพิ่มเติมจาก  <A HREF=../lib/adodb/readme.htm#drivers>ADOdb documentation</A> )';
+$string['auth_dbtype'] = 'ประเภทของฐานข้อมูล(ดูข้อมูลเพิ่มเติมจาก  <A HREF=../lib/adodb/readme.htm#drivers>การใช้ ADOdb </A> )';
 $string['auth_dbuser'] = 'Username ที่สามารถเข้าไปอ่านฐานข้อมูลได้';
-$string['auth_emaildescription'] = 'ในการสมัครเป็นสมาชิกนั้น จะได้รับการอนุมัติ ผ่านอีเมล์ ซึ่งเป็น default ของระบบ เมื่อผู้ใช้สมัคร และเลือก ชื่อ และ รหัส ผ่านแล้ว ระบบจะทำการส่งอีเมล์ไปยัง อีเมล์ของผู้ใช้นั้น อีเมล์นี้จะมี ลิงค์ กลับไปยังหน้าหลักของ page ซึ่งจะเป็นการยืนยันว่า อีเมล์ดังกล่าวใช้ได้จริง  หลังจากนั้นผู้ใช้ สามารถ ล็อกอิน โดยใช้ชื่อ และ รหัส ผ่าน เว็บ';
+$string['auth_emaildescription'] = 'ในการสมัครเป็นสมาชิกนั้น ผู้สมัครจะได้รับการอนุมัติ ผ่านอีเมล์ ซึ่งเป็นค่าที่ตั้งไว้ของระบบ เมื่อผู้สมัครเลือก ชื่อ และ รหัสผ่านแล้ว ระบบจะทำการส่งอีเมล์ไปยัง อีเมล์ของผู้ใช้นั้น อีเมล์นี้จะมีลิงค์กลับไปยังหน้าหลักของหน้า ซึ่งจะเป็นการยืนยันว่า อีเมล์ดังกล่าวใช้ได้จริง  หลังจากนั้นผู้ใช้ สามารถล็อกอินโดยใช้ชื่อและรหัสผ่านเว็บ';
 $string['auth_emailtitle'] = 'ใช้วิธีอนุมัติผ่านอีเมล์';
 $string['auth_imapdescription'] = 'ใช้วิธีการ ชื่อและรหัส โดย IMAP เซิร์ฟเวอร์';
 $string['auth_imaphost'] = 'IMAP เซิร์ฟเวอร์นั้น ใช้ เลข  IP ไม่ใช่เลข DNS ';
@@ -31,9 +31,10 @@ $string['auth_ldap_creators'] = 'รายการกลุ่มผู้ใช้ที่อนุญาตให้สามารถสร้างหลักสูต
 ดังตัวอย่าง  \'cn=teachers,ou=staff,o=myorg\'';
 $string['auth_ldap_host_url'] = 'ระบุ LDAP host เช่น  \'ldap://ldap.myorg.com/\' หรือ  \'ldaps://ldap.myorg.com/\' ';
 $string['auth_ldap_memberattribute'] = 'คุณสมบัติของสมาชิกใหม่ของกลุ่ม ปกติใช้  \'member\'';
-$string['auth_ldap_search_sub'] = 'ใส่ค่า &lt;&gt; 0 ถ้าหากต้องการ ค้นหาผู้ใช้ผ่านหัวข้อย่อย ';
+$string['auth_ldap_search_sub'] = 'ใส่ค่า <> 0 ถ้าหากต้องการ ค้นหาผู้ใช้ผ่านหัวข้อย่อย ';
 $string['auth_ldap_update_userinfo'] = 'อัพเดทข้อมูลสมาชิก (ชื่อ,นามสกุล,ที่อยู่..) จาก LDAP ถึง  Moodle. ดูเพิ่มเติมที่  /auth/ldap/attr_mappings.php ';
 $string['auth_ldap_user_attribute'] = 'attribute ที่ใช้ในการค้นหาชื่อผู้ใช้ ส่วนใหญ่จะใช้  \'cn\'.';
+$string['auth_ldap_version'] = 'รุ่นของ LDAP ที่ใช้อยู่';
 $string['auth_ldapdescription'] = 'วิธีการอนุมัติการใช้งานผ่าน  external LDAP server ถ้าหาก ชื่อ และ รหัสที่ใส่มานั้นถูกต้อง Moodle จะทำการสร้าง รายชื่อสมาชิกใหม่ในฐานข้อมูล  โมดูลดังกล่าว สามารถ อ่าน attribute ของสมาชิกจาก LDAP  และ ใส่ค่าที่ต้องการใน moodle ล่วงหน้า  หลังจากนั้น เวลาล็อกอิน ก็จะมีการเช็ค แค่ชื่อและรหัสผ่านเท่านั้น ';
 $string['auth_ldapextrafields'] = 'ช่องนี้จะเติมหรือไม่ก็ได้  คุณสามารถเลือกใช้ ค่าที่ระบบ ตั้งไว้ก่อน จาก  <b>LDAP fileds</b><p>  ถ้าหาก ปล่อยว่าง ไม่เติม จะไม่มีการดึงข้อมูลจาก LDAP ระบบจะเลือกใช้ ค่า default ใน moodle <p> และ ทั้งสองกรณี ผู้ใช้สามารถที่จะแก้ไขค่าต่างๆ ได้ ภายหลังจาก ล็อกอิน';
 $string['auth_ldaptitle'] = 'ใช้ LDAP server';
@@ -51,7 +52,7 @@ $string['auth_pop3host'] = 'POP3 server ใช้ เลข IP  ไม่ใช่ DNS ';
 $string['auth_pop3port'] = 'Server port (110 โดยทั่วไป)';
 $string['auth_pop3title'] = 'ใช้ POP3 server';
 $string['auth_pop3type'] = 'ประเภทของเซิร์ฟเวอร์ ถ้าเซิร์ฟเวอร์ ใช้  certificate security ให้เลือก pop3cert.';
-$string['auth_user_create'] = 'อนุญาตให้ผู้ใช้สร้างได้';
+$string['auth_user_create'] = 'อนุญาตให้เพิ่มสมาชิกได้';
 $string['auth_user_creation'] = 'อนุญาตให้ผู้ใช้ทั่วไปสามารถสร้างบัญชีผู้ใช้และตอบยืนยันได้ ถ้าอนุญาต โปรดอย่าลืมไปปรับแก้ระบบ moodule-specific ตัวเลือก user creation ด้วย';
 $string['auth_usernameexists'] = 'มีผู้ใช้ชื่อนี้ในระบบแล้ว กรุณาเลือกชื่อใหม่';
 $string['authenticationoptions'] = 'วิธีการอนุมัติการเป็นสมาชิก';
@@ -63,6 +64,6 @@ $string['guestloginbutton'] = 'ปุ่ม login สำหรับบุคคลทั่วไป';
 $string['instructions'] = 'วิธีใช้';
 $string['md5'] = 'เข้ารหัสแบบ MD5  ';
 $string['plaintext'] = 'ตัวหนังสือธรรมดา';
-$string['showguestlogin'] = 'คุณสามารถซ่อนหรือแสดงปุ่ม Login สำหรับบุคคลทั่วไปในหน้า ล็อกอินได้ ';
+$string['showguestlogin'] = 'คุณสามารถซ่อนหรือแสดงปุ่ม Login สำหรับบุคคลทั่วไปในหน้าล็อกอินได้ ';
 
 ?>

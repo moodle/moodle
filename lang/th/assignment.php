@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 development (2004021500)
+      // assignment.php - created with Moodle 1.3 (2004052500)
 
 
 $string['allowresubmit'] = 'อนุญาตให้ส่งการบ้านซ้ำอีกครั้ง';
@@ -41,7 +41,7 @@ $string['typeuploadsingle'] = 'ส่งโดยให้อัพโหลดไฟล์';
 $string['uploadbadname'] = 'ไฟล์นี้ มีชื่อที่ใช้ตัวอักษร ไม่ถูกต้อง ไม่สามารถทำการ อัพโหลดได้ กรุณาเปลี่ยนชื่อไฟล์';
 $string['uploadedfiles'] = 'ไฟล์ที่อัพโหลดแล้ว';
 $string['uploaderror'] = 'เกิดข้อขัดข้องในระหว่างการบันทึกไฟล์ลงบนเซิร์ฟเวอร์';
-$string['uploadfailnoupdate'] = 'อัพโหลดไฟเรียบร้อย แต่ไม่สามารถอัพเดท งานที่ส่งลงในแฟ้มงานของคุณ';
+$string['uploadfailnoupdate'] = 'อัพโหลดไฟล์เรียบร้อย แต่ไม่สามารถอัพเดท งานที่ส่งลงในแฟ้มงานของคุณ';
 $string['uploadfiletoobig'] = 'ขออภัย ไฟล์มีขนาดใหญ่เกินไป( ไฟล์ควรมีขนาดน้อยกว่า $a bytes)';
 $string['uploadnofilefound'] = 'หาไฟล์ไม่พบ กรุณาตรวจสอบว่าทำการเลือกไฟล์ ก่อนอัพโหลดหรือไม่';
 $string['uploadnotregistered'] = '\'$a\'  อัพโหลดเรียบร้อย  แต่ว่างานที่ส่งนี้ยังไม่ได้รับการลงทะเบียน ';
