@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004040500)
+      // calendar.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['april'] = 'April';
@@ -42,7 +42,7 @@ $string['february'] = 'Februar';
 $string['fri'] = 'Fr';
 $string['friday'] = 'Freitag';
 $string['globalevents'] = 'Globale Termine';
-$string['groupevents'] = 'Gruppentermine';
+$string['groupevents'] = 'Gruppen- termine';
 $string['hidden'] = 'versteckt';
 $string['january'] = 'Januar';
 $string['july'] = 'Juli';
@@ -89,9 +89,9 @@ $string['tuesday'] = 'Dienstag';
 $string['typecourse'] = 'Kurstermine';
 $string['typegroup'] = 'Gruppentermine';
 $string['typesite'] = 'Seitentermine';
-$string['typeuser'] = 'Teilnehmertermine';
+$string['typeuser'] = 'Teilnehmerterm.';
 $string['upcomingevents'] = 'Bevorstehende Termine';
-$string['userevents'] = 'Teilnehmertermine';
+$string['userevents'] = 'Teilnehmer- termine';
 $string['wed'] = 'Mi';
 $string['wednesday'] = 'Mittwoch';
 $string['yesterday'] = 'Gestern';

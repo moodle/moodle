@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 alpha (2004022100)
+      // forum.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['addanewdiscussion'] = 'Ein neues Diskussionsthema hinzufügen';
@@ -112,7 +112,7 @@ $string['repliesone'] = '$a Antwort bis jetzt';
 $string['reply'] = 'Antwort';
 $string['replyforum'] = 'Antwort ans Forum';
 $string['search'] = 'Suche';
-$string['searchforums'] = 'Durchsuche Foren';
+$string['searchforums'] = 'in Foren';
 $string['searcholderposts'] = 'Suche ältere Beiträge...';
 $string['searchresults'] = 'Suchergebnisse';
 $string['sendinratings'] = 'Aktuelle Bewertung senden';
