@@ -248,10 +248,12 @@
     }
 
     $streditinga = get_string("editinga", "moodle", $fullmodulename);
+    $strmodulenameplural = get_string("modulenameplural", $module->name);
 
     if ($course->category) {
         print_header("$course->shortname: $streditinga", "$course->fullname",
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
+                      <A HREF=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</A> -> 
                       $streditinga", "form.name", "", false);
     } else {
         print_header("$course->shortname: $streditinga", "$course->fullname",
