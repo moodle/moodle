@@ -478,6 +478,7 @@ function quiz_print_category_form($course, $current) {
             notify("Error creating a default category!");
             return false;
         }
+        $categories[$category->id] = $category;
     }
     foreach ($categories as $key => $category) {
        if ($category->publish) {
