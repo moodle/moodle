@@ -11,7 +11,7 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
     if ($entry) {
         echo '<table class="glossarypost encyclopedia" cellspacing="0">';
         echo '<tr valign="top">';
-        echo '<td class="picture">';
+        echo '<td class="left picture">';
         
         print_user_picture($user->id, $course->id, $user->picture);
     
@@ -20,19 +20,19 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
         echo '<span class="concept">';
         glossary_print_entry_concept($entry);
         echo '</span><br />';
-        echo '<span class="author">'.$strby.' '.fullname($user, isteacher($course->id));
-        echo '&nbsp;&nbsp;('.get_string('lastedited').': '.
+        echo '<span class="author">'.$strby.' '.fullname($user, isteacher($course->id)).'</span>';
+        echo '&nbsp;&nbsp;<span class="time">('.get_string('lastedited').': '.
              userdate($entry->timemodified).')</span>';
         echo '</td>';
         
-        echo '<td class="entryheader">';
+        echo '<td class="entryapproval">';
         glossary_print_entry_approval($cm, $entry, $mode);
         echo '</td>';
         
         echo '</tr>';
 
         echo '<tr valign="top">';
-        echo '<td class="left">&nbsp;</td>';
+        echo '<td class="left side" rowspan="2">&nbsp;</td>';
         echo '<td colspan="2" class="entry">';
 
         if ($entry->attachment) {
@@ -49,7 +49,6 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
         if ($printicons or $ratings or $aliases) {
             echo '</td></tr>';
             echo '<tr>';
-            echo '<td class="left">&nbsp;</td>';
             echo '<td colspan="2" class="entrylowersection">';
             $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings, $aliases);
             echo ' ';
