@@ -125,7 +125,8 @@
         require_once("$CFG->libdir/excel/Workbook.php");
 
         header("Content-type: application/vnd.ms-excel");
-        header("Content-Disposition: attachment; filename=".$survey->name.".xls");
+        $downloadfilename = clean_filename("$course->shortname $survey->name");
+        header("Content-Disposition: attachment; filename=$downloadfilename.xls");
         header("Expires: 0");
         header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
         header("Pragma: public");
@@ -195,7 +196,9 @@
 // Print header to force download
 
     header("Content-Type: application/download\n"); 
-    header("Content-Disposition: attachment; filename=\"$survey->name.txt\"");
+
+    $downloadfilename = clean_filename("$course->shortname $survey->name");
+    header("Content-Disposition: attachment; filename=\"$downloadfilename.txt\"");
 
 // Print names of all the fields
 
