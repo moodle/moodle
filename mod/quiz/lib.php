@@ -348,7 +348,7 @@ function quiz_add_instance($quiz) {
     $event->instance    = $quiz->id;
     $event->eventtype   = 'open';
     $event->timestart   = $quiz->timeopen;
-    $event->visible     = instance_is_visible('quiz', $quiz->id);
+    $event->visible     = instance_is_visible('quiz', $quiz);
     $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
 
     if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Long durations create two events
