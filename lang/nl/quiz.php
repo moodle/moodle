@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012501)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -55,6 +55,8 @@ $string['choices'] = 'Mogelijke keuzes';
 $string['choosedatasetproperties'] = 'Kies de eigenschappen van de gegevensset';
 $string['close'] = 'Sluit weergave test';
 $string['confirmstartattempt'] = 'Deze test heeft een tijdsduurbeperking. Ben je klaar om te beginnen?';
+$string['copyingfrom'] = 'Kopie aan het maken van vraag \'$a\'';
+$string['copyingquestion'] = 'Vraag kopiëren';
 $string['correctanswer'] = 'Het goede antwoord';
 $string['correctanswerformula'] = 'Juiste antwoordformule';
 $string['correctanswerlength'] = 'Aantal beduidende cijfers';
@@ -146,6 +148,7 @@ $string['keptcategory3'] = 'een link uit dezelfde categorie met herbruikbare ree
 $string['keptlocal1'] = 'een jokerteken uit dezelfde reeks privéjokertekens als hiervoor';
 $string['keptlocal2'] = 'een bestand uit dezelfde reeks privébestanden als hiervoor';
 $string['keptlocal3'] = 'een link uit dezelfde reeks privélinks als hiervoor';
+$string['learnwise'] = 'Learnwise opmaak';
 $string['link'] = 'Link';
 $string['listitems'] = 'Lijst van items in de test';
 $string['literal'] = 'Jokertekens';
@@ -207,6 +210,7 @@ $string['questionname'] = 'Naam vraag';
 $string['questionnametoolong'] = 'Vraagnaam te lang op lijn $a (maximum 255 tekens). De naam is afgekort.';
 $string['questions'] = 'Vragen';
 $string['questionsperpage'] = 'Maximum aantal vragen per pagina';
+$string['questiontypesetupoptions'] = 'Instellingen voor vraagtypes';
 $string['quizavailable'] = 'De test is beschikbaar tot: $a';
 $string['quizclose'] = 'Sluit de test';
 $string['quizclosed'] = 'Deze test  wordt op $a gesloten';

@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // block_rss_client.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // block_rss_client.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012501)
 
 
+$string['block_rss_add_feed'] = 'Voeg een URL voor een RSS-feed toe';
 $string['block_rss_add_headline_block'] = 'Voeg RSS-hoofdpuntenblok toe';
 $string['block_rss_add_new'] = 'Voeg nieuw blok toe';
 $string['block_rss_choose_feed'] = 'Kies een RSS-feed om in dit blok te tonen';
@@ -28,5 +29,6 @@ $string['block_rss_shownumentries'] = 'Maximum aantal te tonen items per blok';
 $string['block_rss_submitters'] = 'Wie kan nieuwe RSS-fees definiëren? De feeds staan ter beschikking voor elk lid van je site, zodat zij die kunnen toevoegen aan hun eigen pagina\'s';
 $string['block_rss_timeout'] = 'block_rss_timeout';
 $string['block_rss_timeout_desc'] = 'Tijd in minuten die een RSS-feed in cache blijft.';
+$string['block_rss_update_feed'] = 'Ververs een RSS-feed URL:';
 
 ?>

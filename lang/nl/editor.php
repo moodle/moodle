@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012501)
 
 
 $string['about'] = 'Info';
@@ -29,7 +29,10 @@ $string['createlink'] = 'Weblink invoegen';
 $string['cut'] = 'Knippen';
 $string['delete'] = 'Verwijder';
 $string['filebrowser'] = 'Bladeren in bestanden';
+$string['fontname'] = 'Naam lettertype ';
+$string['fontsize'] = 'Grootte lettertype';
 $string['forecolor'] = 'Tekstkleur';
+$string['formatblock'] = 'Opmaak';
 $string['fullscreen'] = 'Volledig scherm';
 $string['heading'] = 'Koptekst (h)';
 $string['height'] = 'Hoogte';
@@ -95,9 +98,6 @@ $string['superscript'] = 'Superscript';
 $string['textindicator'] = 'Huidige stijl';
 $string['textmode'] = 'Je bent in TEKSTMODUS. Gebruik de [<>] knop om terug om te schakelen naar WYSIWIG.';
 $string['texttop'] = 'Texttop';
-$string['thischarset'] = 'iso-8859-1 ';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 $string['top'] = 'Bovenaan';
 $string['type'] = 'Type';
 $string['underline'] = 'Onderstrepen';

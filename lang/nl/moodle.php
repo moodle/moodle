@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012501)
 
 
 $string['action'] = 'Actie';
@@ -573,6 +573,7 @@ $string['htmleditordisabledbrowser'] = 'De HTML-editor is niet beschikbaar omdat
 $string['htmlformat'] = 'Mooie HTML-opmaak';
 $string['icqnumber'] = 'ICQ-nummer';
 $string['idnumber'] = 'Nummer (ID)';
+$string['importmetacoursenote'] = 'Gebruik dit formulier om onderliggende vakken aan je koepelvak toe te voegen (hiermee worden de aanmeldingen geïmporteerd)';
 $string['inactive'] = 'Niet actief';
 $string['include'] = 'Voeg toe';
 $string['includeallusers'] = 'Voeg alle gebruikers toe';
@@ -647,6 +648,9 @@ $string['makeeditable'] = 'Als je \'$a\' bewerkbaar maakt door het proces op de 
 $string['manageblocks'] = 'Blokken';
 $string['managedatabase'] = 'Beheer de database';
 $string['managefilters'] = 'Filters';
+$string['managemeta'] = 'Is dit een koepelvak';
+$string['managemetadisabled'] = 'Deze optie is uitgeschakeld omdat dit vak al in een koepelvak zit';
+$string['managemetaexplan'] = '(Dit betekent dat aanmeldingen overgeërft worden van andere vakken)';
 $string['managemodules'] = 'Beheer de modules';
 $string['markedthistopic'] = 'Dit onderwerp is geselecteerd als het huidige onderwerp';
 $string['markthistopic'] = 'Selecteer dit onderwerp als het huidige onderwerp';
@@ -655,6 +659,16 @@ $string['maximumgrade'] = 'Hoogst haalbare cijfer';
 $string['maximumshort'] = 'Max';
 $string['maximumupload'] = 'Maximale uploadgrootte';
 $string['maxsize'] = 'Maximale grootte: $a';
+$string['metaaddcourse'] = 'Voeg dit vak toe';
+$string['metaalreadycourses'] = 'Vakken zijn al toegewezen';
+$string['metaalreadyhascourses'] = 'Dit koepelvak bevat al onderliggende vakken.';
+$string['metaalreadyhasenrolments'] = 'Dit vak heeft al gewone aanmeldingen.';
+$string['metaalreadyinmeta'] = 'Dit vak is al een onderliggend vak van een koepelvak.';
+$string['metaassigncourses'] = 'Wijs vakken toe';
+$string['metanoalreadycourses'] = 'Er zijn nog geen vakken toegewezen';
+$string['metanopotentialcourses'] = 'Er zijn geen vakken beschikbaar';
+$string['metapotentialcourses'] = 'Beschikbare vakken';
+$string['metaremovecourse'] = 'Verwijder dit vak';
 $string['min'] = 'minuut';
 $string['mins'] = 'minuten';
 $string['minutes'] = 'minuten';

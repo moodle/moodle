@@ -4,6 +4,7 @@
 
 $string['bestgrades'] = 'De $a hoogste cijfers';
 $string['config_format_absolute'] = 'Absolute cijfers';
+$string['config_format_fraction'] = 'Breuken';
 $string['config_format_percentage'] = 'Percentages';
 $string['config_grade_format'] = 'Toon cijfers als:';
 $string['config_select_quiz'] = 'Van welke test wil je dat dit blok de resultaten toont?';
