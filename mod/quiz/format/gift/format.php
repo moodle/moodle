@@ -150,15 +150,15 @@ function writequestion( $question ) {
     $expout = "";
 
     // add comment
-    $expout .= "<!-- question: $question->id  name: $question->name -->\n";
+    $expout .= "\n\n<!-- question: $question->id  name: $question->name -->\n";
 
     // add opening tag
     $question_type = $this->get_qtype( $question->qtype );
     $name_text = $this->writetext( $question->name );
     $question_text = $this->writetext( $question->questiontext );
     $expout .= "<question type=\"$question_type\">\n";   
-    $expout .= "<name>$name_text</name>\n";
-    $expout .= "<questiontext>$question_text</questiontext>\n";   
+    $expout .= "<name>".$this->writetext($name_text)."</name>\n";
+    $expout .= "<questiontext>".$this->writetext($question_text)."</questiontext>\n";   
 
     // output depends on question type
     switch($question->qtype) {
@@ -179,47 +179,41 @@ function writequestion( $question ) {
         $expout .= "</answer>\n";
         break;
     case MULTICHOICE:
-        $expout .= "::".$question->name."::".$question->questiontext."{\n";
         foreach($question->answers as $answer) {
-            if ($answer->fraction==1) {
-                $answertext = '=';
+            $percent = round( $answer->fraction * 100 );
+            $expout .= "<answer fraction=\"$percent\">\n";
+            $expout .= $this->writetext( $answer->answer );
+            $expout .= "<feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
+            $expout .= "</answer>\n";
             }
-            else {
-                $answertext = '~';
-            }
-            $expout .= "\t".$answertext.$answer->answer;
-            if ($answer->feedback!="") {
-                $expout .= "#".$answer->feedback;
-            }
-            $expout .= "\n";
-        }
-        $expout .= "}\n";
         break;
     case SHORTANSWER:
-        $expout .= "::".$question->name."::".$question->questiontext."{\n";
         foreach($question->answers as $answer) {
-            $weight = 100 * $answer->fraction;
-            $expout .= "\t=%".$weight."%".$answer->answer."#".$answer->feedback."\n";
+            $percent = 100 * $answer->fraction;
+            $expout .= "<answer fraction=\"$percent\">\n";
+            $expout .= $this->writetext( $answer->answer );
+            $expout .= "<feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
+            $expout .= "</answer>\n";
         }
-        $expout .= "}\n";
         break;
     case NUMERICAL:
-        $expout .= "::".$question->name."::".$question->questiontext."{\n";
-        $expout .= "\t#".$question->min."..".$question->max."#".$question->answer->feedback."\n";
-        $expout .= "}\n";
+        $expout .= "<min>$question->min</min>\n";
+        $expout .= "<max>$question->max</max>\n";
+        $expout .= "<feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
         break;
     case MATCH:
-        $expout .= "::".$question->name."::".$question->questiontext."{\n";
         foreach($question->subquestions as $subquestion) {
-            $expout .= "\t=".$subquestion->questiontext." -> ".$subquestion->answertext."\n";
+            $expout .= "<subquestion>\n";
+            $expout .= $this->writetext( $subquestion->questiontext );
+            $expout .= "<answer>".$this->writetext( $subquestion->answertext )."</answer>\n";
+            $expout .= "</subquestion>\n";
         }
-        $expout .= "}\n";
         break;
     case DESCRIPTION:
-        $expout .= "// DESCRIPTION type is not supported\n";
+        $expout .= "<!-- DESCRIPTION type is not supported -->\n";
         break;
     case MULTIANSWER:
-        $expout .= "// CLOZE type is not supported\n";
+        $expout .= "<!-- CLOZE type is not supported -->\n";
         break;
     default:
         error( "No handler for qtype $question->qtype for GIFT export" );
