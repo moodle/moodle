@@ -363,12 +363,8 @@
                          "<p><a href=\"teacher.php\">".get_string("assignteachers")."</a></p>".
                          "<p><a href=\"../course/delete.php\">".get_string("deletecourse")."</a></p>".
                          "<p><a href=\"../course/categories.php\">".get_string("categories")."</a></p>";
-                if (!empty($CFG->backup_version)) {
-                    //MODIFY RELATIVE PATH TO backup.php
-                    $backup_path = "../backup/backup.php";
-                    //END MODIFY
-                    $table->data[0][1] .= "<p><a href=\"".$backup_path."\">".get_string("coursebackup")."</a></p>";
-                }
+        $table->data[0][1] .= "<p><a href=\"../backup/backup.php\">".get_string("coursebackup")."</a></p>";
+        $table->data[0][1] .= "<p><a href=\"../files/index.php?id=$site->id\">".get_string("courserestore")."</a></p>";
         if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual") {
 		    $table->data[0][2] = "<p><a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a></p>";
         }    

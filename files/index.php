@@ -32,12 +32,12 @@
     
     function html_header($course, $wdir, $formfield=""){
 
+        global $CFG;
+
         $strfiles = get_string("files");
     
         if ($wdir == "/") {
-            print_header("$course->shortname: $strfiles", "$course->fullname", 
-                         "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> 
-                          -> $strfiles", $formfield);
+            $fullnav = "$strfiles";
         } else {
             $dirs = explode("/", $wdir);
             $numdirs = count($dirs);
@@ -48,10 +48,21 @@
                $link .= "/".urlencode($dirs[$i]);
                $navigation .= "<A HREF=\"index.php?id=$course->id&wdir=$link\">".$dirs[$i]."</A>";
             }
+            $fullnav = "<a href=\"index.php?id=$course->id&wdir=/\">$strfiles</a> $navigation";
+        }
 
+        if (! $site = get_site()) {
+            error("Invalid site!");
+        }
+
+        if ($course->id == $site->id) {
             print_header("$course->shortname: $strfiles", "$course->fullname", 
-                         "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> -> 
-                          <A HREF=\"index.php?id=$course->id&wdir=/\">$strfiles</A> $navigation", $formfield);
+                         "<a href=\"../$CFG->admin/index.php\">".get_string("administration").
+                         "</a> -> $fullnav", $formfield);
+        } else {
+            print_header("$course->shortname: $strfiles", "$course->fullname", 
+                         "<a href=\"../course/view.php?id=$course->id\">$course->shortname".
+                         "</a> -> $fullnav", $formfield);
         }
         echo "<table border=0 align=center cellspacing=3 cellpadding=3 width=640>";
         echo "<tr>";
