@@ -40,10 +40,24 @@
        }
        $timestart = $coursestart = usergetmidnight($course->startdate);
 
+       if ((($timenow - $timestart)/86400.0) > 40) {
+           $reducedays = 7;
+       } else {
+           $reducedays = 0;
+       }
+
        $i = 0;
        while ($timestart < $timenow) {
            $timefinish = $timestart + 86400;
-           $days[$i] = userdate($timestart, "%a %d %b");
+           if ($reducedays) {
+               if ($i % $reducedays) {
+                   $days[$i] = "";
+               } else {
+                   $days[$i] = userdate($timestart, "%a %d %b");
+               }
+           } else {
+               $days[$i] = userdate($timestart, "%a %d %b");
+           }
            $logs[$i] = 0;
            $i++;
            $timestart = $timefinish;
