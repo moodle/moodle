@@ -245,6 +245,11 @@ function main_upgrade($oldversion=0) {
         execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('course', 'user report', 'user', 'CONCAT(firstname,\" \",lastname)') ");
     }
 
+    if ($oldversion < 2003091000) {
+        # Old field that was never added!
+        table_column("course", "", "showrecent", "integer", "10", "unsigned", "1", "", "numsections");
+    }
+
     return $result;
 }
 ?>    
