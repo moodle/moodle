@@ -27,6 +27,7 @@ CREATE TABLE `course` (
   `guest` tinyint(1) unsigned NOT NULL default '0',
   `startdate` int(10) unsigned NOT NULL default '0',
   `enddate` int(10) unsigned NOT NULL default '0',
+  `marker` int(10) unsigned NOT NULL default '0',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
