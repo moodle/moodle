@@ -140,9 +140,9 @@
         //Iterate over analysis
         for($i = 0; $i < sizeof($analysis); $i++) {
             $sub_info = $analysis[$i];
-            traverse_xmlize($sub_info);                                                                 //Debug
-            print_object ($GLOBALS['traverse_array']);                                                  //Debug
-            $GLOBALS['traverse_array']="";                                                              //Debug
+            //traverse_xmlize($sub_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //We'll need this later!!
             $oldid = backup_todb($sub_info['#']['ID']['0']['#']);
