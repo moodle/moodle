@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.6.4 (2002112400)
+      // forum.php - created with Moodle 1.0.7 (2002121000)
 
 
 $string['addanewdiscussion'] = "添加一个新的讨论话题";
@@ -102,7 +102,7 @@ $string['searchforums'] = "搜索讨论区";
 $string['searchresults'] = "搜索结果";
 $string['sendinratings'] = "呈送我的最新评分";
 $string['showsubscribers'] = "显示订阅者";
-$string['singleforum'] = "A single simple discussion";
+$string['singleforum'] = "单个简单论题";
 $string['subject'] = "主题";
 $string['subscribe'] = "订阅该讨论区";
 $string['subscribed'] = "订阅";
