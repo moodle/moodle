@@ -37,9 +37,9 @@
     //Lastlog view
     if (!$courseid) {
         print_header("$site->shortname: $strconfiguration: $strbackup", $site->fullname,
-                      "<a href=\"../admin/index.php\">$stradmin</a> -> ".
-                      "<a href=\"../admin/configure.php\">$strconfiguration</a> -> ".
-                      "<a href=\"../admin/backup.php\">$strbackup</a> -> ".
+                      "<a href=\"../$CFG->admin/index.php\">$stradmin</a> -> ".
+                      "<a href=\"../$CFG->admin/configure.php\">$strconfiguration</a> -> ".
+                      "<a href=\"../$CFG->admin/backup.php\">$strbackup</a> -> ".
                       $strlogs);
 
         print_heading($backuploglaststatus);
@@ -81,9 +81,9 @@
     //Detailed View !!
     } else {
         print_header("$site->shortname: $strconfiguration: $strbackup", $site->fullname,
-                      "<a href=\"../admin/index.php\">$stradmin</a> -> ".
-                      "<a href=\"../admin/configure.php\">$strconfiguration</a> -> ".
-                      "<a href=\"../admin/backup.php\">$strbackup</a> -> ".
+                      "<a href=\"../$CFG->admin/index.php\">$stradmin</a> -> ".
+                      "<a href=\"../$CFG->admin/configure.php\">$strconfiguration</a> -> ".
+                      "<a href=\"../$CFG->admin/backup.php\">$strbackup</a> -> ".
                       "<a href=\"log.php\">$strlogs</a> -> ".
                       $strbackupdetails);
 
