@@ -75,6 +75,8 @@
         $table->size = array ("*", "*", "*");
     }
 
+    $currentsection = "";
+
     foreach ($quizzes as $quiz) {
         if (!$quiz->visible) { 
             //Show dimmed if the mod is hidden
@@ -86,10 +88,15 @@
 
         $bestgrade = quiz_get_best_grade($quiz->id, $USER->id);
 
-        if ($quiz->section) {
-            $section = "$quiz->section";
-        } else {
-            $section = "";
+        $printsection = "";
+        if ($quiz->section !== $currentsection) {
+            if ($quiz->section) {
+                $printsection = $quiz->section;
+            }
+            if ($currentsection !== "") {
+                $table->data[] = 'hr';
+            }
+            $currentsection = $quiz->section;
         }
 
         $closequiz = userdate($quiz->timeclose);
@@ -113,7 +120,7 @@
         }
 
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($section, $link, $closequiz, $gradecol);
+            $table->data[] = array ($printsection, $link, $closequiz, $gradecol);
         } else {
             $table->data[] = array ($link, $closequiz, $gradecol);
         }

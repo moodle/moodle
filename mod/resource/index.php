@@ -45,12 +45,15 @@
     $currentsection = "";
     foreach ($resources as $resource) {
         if ($course->format == "weeks" or $course->format == "topics") {
-            if ($resource->section != $currentsection and $resource->section) {
-                $printsection = $resource->section;
+            $printsection = "";
+            if ($resource->section !== $currentsection) {
+                if ($resource->section) {
+                    $printsection = $resource->section;
+                }
+                if ($currentsection !== "") {
+                    $table->data[] = 'hr';
+                }
                 $currentsection = $resource->section;
-                $table->data[] = 'hr';
-            } else {
-                $printsection = "";
             }
         } else {
             $printsection = '<span class="smallinfo">'.userdate($resource->timemodified)."</span>";

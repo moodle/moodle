@@ -45,6 +45,8 @@
         $table->align = array ("left", "left", "left");
     }
 
+    $currentsection = "";
+
     foreach ($assignments as $assignment) {
         if (isteacher($course->id)) {
             if ($assignment->type == OFFLINE) {
@@ -53,13 +55,13 @@
             } else {
                 $count = count_records_select("assignment_submissions",
                                               "assignment = '$assignment->id' AND timemodified > 0");
-                $submitted = "<A HREF=\"submissions.php?id=$assignment->id\">" .
+                $submitted = "<a href=\"submissions.php?id=$assignment->id\">" .
                              get_string("viewsubmissions", "assignment", $count) . "</A>";
             }
         } else {
             if ($submission = assignment_get_submission($assignment, $USER)) {
                 if ($submission->timemodified <= $assignment->timedue) {
-                  $submitted = userdate($submission->timemodified);
+                    $submitted = userdate($submission->timemodified);
                 } else {
                     $submitted = "<font color=red>".userdate($submission->timemodified)."</font>";
                 }
@@ -71,19 +73,25 @@
         $due = userdate($assignment->timedue);
         if (!$assignment->visible) {
             //Show dimmed if the mod is hidden
-            $link = "<A class=\"dimmed\" HREF=\"view.php?id=$assignment->coursemodule\">$assignment->name</A>";
+            $link = "<a class=\"dimmed\" href=\"view.php?id=$assignment->coursemodule\">$assignment->name</a>";
         } else {
             //Show normal if the mod is visible
-            $link = "<A HREF=\"view.php?id=$assignment->coursemodule\">$assignment->name</A>";
+            $link = "<a href=\"view.php?id=$assignment->coursemodule\">$assignment->name</a>";
         }
-        if ($assignment->section) {
-            $section = "$assignment->section";
-        } else {
-            $section = "";
+
+        $printsection = "";
+        if ($assignment->section !== $currentsection) {
+            if ($assignment->section) {
+                $printsection = $assignment->section;
+            }
+            if ($currentsection !== "") {
+                $table->data[] = 'hr';
+            }
+            $currentsection = $assignment->section;
         }
 
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($section, $link, $due, $submitted);
+            $table->data[] = array ($printsection, $link, $due, $submitted);
         } else {
             $table->data[] = array ($link, $due, $submitted);
         }
