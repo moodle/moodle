@@ -733,7 +733,7 @@ function create_user_record($username, $password) {
     global $REMOTE_ADDR, $CFG;
     //just in case check text case
     $username = trim(moodle_strtolower($username));
-    if (function_exists(auth_get_userinfo)) {
+    if (function_exists('auth_get_userinfo')) {
         if ($newinfo = auth_get_userinfo($username)) {
             foreach ($newinfo as $key => $value){
                 $newuser->$key = addslashes(stripslashes($value)); // Just in case
