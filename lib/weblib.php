@@ -1222,13 +1222,27 @@ function make_table($table) {
     return $output;
 }
 
-function print_textarea($richedit, $rows, $cols, $width, $height, $name, $value="") {
+function print_textarea($richedit, $rows, $cols, $width, $height, $name, $value="", $courseid=0) {
 /// Prints a richtext field or a normal textarea
-    global $CFG, $THEME;
+    global $CFG, $THEME, $course;
+
+    if (!$courseid) {
+        if (!empty($course->id)) {  // search for it in global context
+            $courseid = $course->id;
+        }
+    }
 
     if ($richedit) {
+        if ($courseid) {
+            if (isteacher($courseid)) {
+                $richediturl = "$CFG->wwwroot/lib/rte/richedit.php?id=$courseid&wwwroot=$CFG->wwwroot";
+            } else {
+                $richediturl = "$CFG->wwwroot/lib/rte/richedit.html";
+            }
+        }
+
         echo "<object id=\"richedit\" style=\"background-color: buttonface\"";
-        echo " data=\"$CFG->wwwroot/lib/rte/richedit.html\"";
+        echo " data=\"$richediturl\"";
         echo " width=\"$width\" height=\"$height\" ";
         echo " type=\"text/x-scriptlet\" VIEWASTEXT=\"true\"></object>\n";
         echo "<textarea style=\"display:none\" name=\"$name\" rows=\"1\" cols=\"1\">";

@@ -1,7 +1,26 @@
+10/10/2002:
+
 This version of the Richtext editor started out as 0.3 beta 1,
 and I've hacked richedit.html to make the toolbars more compact.
 
 I've also changed the smilies to refer to Moodle smilies, and 
 added/removed some.
 
-Martin Dougiamas, 10/10/2002
+
+
+12/10/2003:
+
+I've just added and further hacked some changes from Janne 
+Mikkonen (http://moodle.org/mod/forum/discuss.php?d=2126)
+to allow a popup so that images can be selected from the 
+course files area.
+
+This includes these PHP files in this folder:
+
+ -- courseimages.php
+ -- dlg_ins_image.php
+ -- richedit.php
+ -- rte.php
+
+
+Martin Dougiamas
