@@ -746,6 +746,48 @@ function delete_records_select($table, $select="") {
 * @param	type description
 */
 function insert_record($table, $dataobject, $returnid=true) {
+                                                                                                                
+    global $db, $CFG;
+
+    // Get empty record from table
+    $infosql = "SELECT * FROM $CFG->prefix$table WHERE id ='-1'";
+
+    // Execute the query and get the empty recordset
+    $rs = $db->Execute($infosql);
+                                                                                                                
+    // Convert data to array to hold the record data to insert
+    $record = (array)$dataobject;
+                                                                                                                
+    //Get insertsql from adodb
+    $insertSQL = $db->GetInsertSQL($rs, $record);
+                                                                                                                
+    if (! $rs = $db->Execute($insertSQL)) {
+        return false;
+    }
+                                                                                                                
+    if (!$returnid) {   // Return ID is not needed so just finish here.
+        return true;
+    }
+
+    switch ($CFG->dbtype) {
+        case "postgres7":
+            $oid = $db->Insert_ID();
+            if ($rs = $db->Execute("SELECT id FROM $CFG->prefix$table WHERE oid = $oid")) {
+                // every table needs to have a primary field named 'id' for this to work
+                if ($rs->RecordCount() == 1) {
+                    return $rs->fields[0];
+                }
+            }
+            return false;
+
+        default: 
+            return $db->Insert_ID();   // Should work on most databases, but not all!
+    }
+}
+
+
+function insert_record_old($table, $dataobject, $returnid=true) {
+// Will be deleted soon if there are no problems with the new one
 
     global $db, $CFG;
 
