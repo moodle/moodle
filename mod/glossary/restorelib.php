@@ -79,7 +79,7 @@
                 }
             }
 
-            //To mantain backwards compatibility (pre 1.4) we have to check the displayformat field
+            //To mantain upwards compatibility (pre 1.4) we have to check the displayformat field
             //If it's numeric (0-6) we have to convert it to its new formatname.
             //Define current 0-6 format names
             $formatnames = array('dictionary','continuous','fullwithauthor','encyclopedia',
