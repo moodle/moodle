@@ -24,4 +24,17 @@ CREATE TABLE `prefix_backup_ids` (
   `info` mediumtext,
   PRIMARY KEY  (`backup_code`,`table_name`,`old_id`)
 ) TYPE=MyISAM COMMENT='To store and convert ids in backup/restore';
+# --------------------------------------------------------
 
+#
+# Table structure for table `prefix_backup_config`
+#
+
+CREATE TABLE `prefix_backup_config` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL default '',
+  `value` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `name` (`name`)
+) TYPE=MyISAM COMMENT='To store backup configuration variables';
+# --------------------------------------------------------

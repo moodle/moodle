@@ -31,4 +31,13 @@ CREATE TABLE prefix_backup_ids (
 
 CREATE INDEX prefix_backup_codenameid_idx ON prefix_backup_ids (backup_code,table_name,old_id);
 
+#
+# Table structure for table prefix_backup_config
+#
 
+CREATE TABLE prefix_backup_config (
+   id SERIAL PRIMARY KEY,
+   name varchar(255) NOT NULL default '',
+   value varchar(255) NOT NULL default '',
+   CONSTRAINT config_name_uk UNIQUE (name)
+);

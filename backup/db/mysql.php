@@ -68,7 +68,17 @@ function backup_upgrade($oldversion=0) {
 
     if ($oldversion < 2003082600 and $result) {
         print_simple_box("This is the first non-alpha release of the Backup/Restore module.<p>Thanks for upgrading!","center", "50%", "$THEME->cellheading", "20", "noticebox");
-    } 
+    }
+
+    if ($oldversion < 2003112700 and $result) {
+        $result = execute_sql("CREATE TABLE `prefix_backup_config` (
+                      `id` int(10) unsigned NOT NULL auto_increment,
+                      `name` varchar(255) NOT NULL default '',
+                      `value` varchar(255) NOT NULL default '',
+                      PRIMARY KEY  (`id`),
+                      UNIQUE KEY `name` (`name`)
+                    ) TYPE=MyISAM COMMENT='To store backup configuration variables'");
+    }
 
     //Finally, return result
     return $result;
