@@ -56,13 +56,12 @@
 <tr valign="top">
     <td align="right"><b><?php print_string("choicename","choice") ?>:</b></td>
     <td>
-        <input type="text" name="name" size="30" value="<?php p($form->name) ?>" />
+        <input type="text" name="name" size="30" alt="<?php print_string("choicename","choice") ?>" value="<?php p($form->name) ?>" />
     </td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><b><?php print_string("choicetext","choice") ?>:</b>
-    <font size="1">
+    <td align="right"><b><?php print_string("choicetext","choice") ?>:</b><br />
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
         echo "<br />";
@@ -74,8 +73,6 @@
            emoticonhelpbutton("form", "text");
         }   
       ?>
-      <br />
-    </font>
     </td>
     <td>
     <?php 
@@ -84,7 +81,7 @@
        if ($usehtmleditor) {
            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
        } else {
-           echo "<p align=\"right\">";
+           echo "<div align=\"right\">";
            helpbutton("textformat", get_string("formattexttype"));
            print_string("formattexttype");
            echo ":&nbsp;";
@@ -92,7 +89,7 @@
                $form->format = $defaultformat;
            }
            choose_from_menu(format_text_menu(), "format", $form->format, ""); 
-           echo "</p>";
+           echo "</div>";
        }
     ?>
     </td>
@@ -101,7 +98,7 @@
 <tr valign="top">
     <td align="right"><b><?php print_string("choice","choice","1") ?>:</b></td>
     <td>
-        <input type="text" name="answer1" size="60" value="<?php p($form->answer1) ?>" />
+        <input type="text" name="answer1" size="60" alt="<?php print_string("choice","choice","1") ?>" value="<?php p($form->answer1) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
@@ -109,7 +106,7 @@
 <tr valign="top">
     <td align="right"><b><?php print_string("choice","choice","2") ?>:</b></td>
     <td>
-        <input type="text" name="answer2" size="60" value="<?php p($form->answer2) ?>" />
+        <input type="text" name="answer2" size="60" alt="<?php print_string("choice","choice","2") ?>" value="<?php p($form->answer2) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
@@ -117,28 +114,28 @@
 <tr valign="top">
     <td align="right"><b><?php print_string("choice","choice","3") ?>:</b></td>
     <td>
-        <input type="text" name="answer3" size="60" value="<?php p($form->answer3) ?>" />
+        <input type="text" name="answer3" size="60" alt="<?php print_string("choice","choice","3") ?>" value="<?php p($form->answer3) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><b><?php print_string("choice","choice","4") ?>:</b></td>
     <td>
-        <input type="text" name="answer4" size="60" value="<?php p($form->answer4) ?>" />
+        <input type="text" name="answer4" size="60" alt="<?php print_string("choice","choice","4") ?>" value="<?php p($form->answer4) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><b><?php print_string("choice","choice","5") ?>:</b></td>
     <td>
-        <input type="text" name="answer5" size="60" value="<?php p($form->answer5) ?>" />
+        <input type="text" name="answer5" size="60" alt="<?php print_string("choice","choice","5") ?>" value="<?php p($form->answer5) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><b><?php print_string("choice","choice","6") ?>:</b></td>
     <td>
-        <input type="text" name="answer6" size="60" value="<?php p($form->answer6) ?>" />
+        <input type="text" name="answer6" size="60" alt="<?php print_string("choice","choice","6") ?>" value="<?php p($form->answer6) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
@@ -150,7 +147,7 @@
             var timeitems = ['openday','openmonth','openyear','openhour', 'openminute', 'closeday','closemonth','closeyear','closehour','closeminute'];
         </script>
 
-        <input name="timerestrict" type="checkbox" value="1" onclick="return lockoptions('form','timerestrict', timeitems)" <?php if ($form->timerestrict) echo "checked"; ?> />
+        <input name="timerestrict" type="checkbox" value="1" alt="<?php print_string("timerestrict", "choice") ?>" onclick="return lockoptions('form','timerestrict', timeitems)" <?php if ($form->timerestrict) echo 'checked="checked"'; ?> />
     <?php
         helpbutton("timerestrict", get_string("timerestrict","choice"), "choice");
      ?>
