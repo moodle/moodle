@@ -78,9 +78,9 @@ $CFG->wwwroot   = 'http://example.com/moodle';
 //
 //    $CFG->dirroot = 'c:\program files\easyphp\www\moodle';    // Windows
 //    $CFG->dirroot = '/var/www/html/moodle';     // Redhat Linux
-//    $CFG->dirroot = '/home/example/www/moodle'; // Cpanel host
+//    $CFG->dirroot = '/home/example/public_html/moodle'; // Cpanel host
 
-$CFG->dirroot   = '/home/example/www/moodle';
+$CFG->dirroot   = '/home/example/public_html/moodle';
 
 
 //=========================================================================
@@ -152,13 +152,10 @@ $CFG->admin = 'admin';
 // Setting this to true will enable admins to edit any post at any time
 //      $CFG->admineditalways = true;
 //
-// Setting this to true will force a non-guest login to see the user pages 
-// eg the teachers linked from course descriptions or site news
-//      $CFG->forceloginforprofiles = true;
-//
-// Setting this variable will make Moodle allow anything as a username,
-// rather than alphanumerical characters only.
-//      $CFG->extendedusernamechars = true;
+// This variable will override the default block configuration on newly
+// created courses, or on upgraded courses from Moodle 1.2.1 and earlier.
+// The names here should all be existing blocks in the "blocks" directory.
+//      $CFG->defaultblocks = "participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity";
 //
 // This setting will put Moodle in Unicode mode.  It's very new and 
 // most likely doesn't work yet.   THIS IS FOR DEVELOPERS ONLY, IT IS
