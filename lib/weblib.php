@@ -282,6 +282,7 @@ function text_to_html($text) {
 
     // Turn smileys into images.
 
+    $text = ereg_replace(":)", "<IMG ALT=smile SRC=$CFG->wwwroot/pix/s/smiley.gif>", $text);
     $text = ereg_replace(":-)", "<IMG ALT=smile SRC=$CFG->wwwroot/pix/s/smiley.gif>", $text);
     $text = ereg_replace(":-D", "<IMG ALT=grin SRC=$CFG->wwwroot/pix/s/biggrin.gif>", $text);
     $text = ereg_replace(";-)", "<IMG ALT=wink SRC=$CFG->wwwroot/pix/s/wink.gif>", $text);
