@@ -2385,7 +2385,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
 			echo "</TD><TD>". get_string("suggestedgrade", "exercise")."</TD></TR>\n";
 			for ($i=0; $i<=$exercise->nelements; $i++) {
 				if ($i == intval($error + 0.5)) {
-					echo "<TR><TD ALIGN=\"CENTER\"><IMG SRC=\"../../pix/t/right.gif\"> $i</TD><TD ALIGN=\"CENTER\">{$elements[$i]->maxscore}</TD></TR>\n";
+					echo "<TR><TD ALIGN=\"CENTER\"><IMG SRC=\"$CFG->pixpath/t/right.gif\"> $i</TD><TD ALIGN=\"CENTER\">{$elements[$i]->maxscore}</TD></TR>\n";
 					}
 				else {
 					echo "<TR><TD ALIGN=\"CENTER\">$i</TD><TD ALIGN=\"CENTER\">{$elements[$i]->maxscore}</TD></TR>\n";
@@ -2981,7 +2981,7 @@ function exercise_print_dual_assessment_form($exercise, $assessment, $submission
 			echo "</TD><TD>". get_string("suggestedgrade", "exercise")."</TD></TR>\n";
 			for ($i=0; $i<=$exercise->nelements; $i++) {
 				if ($i == intval($error + 0.5)) {
-					echo "<TR><TD ALIGN=\"CENTER\"><IMG SRC=\"../../pix/t/right.gif\"> $i</TD><TD ALIGN=\"CENTER\">{$elements[$i]->maxscore}</TD></TR>\n";
+					echo "<TR><TD ALIGN=\"CENTER\"><IMG SRC=\"$CFG->pixpath/t/right.gif\"> $i</TD><TD ALIGN=\"CENTER\">{$elements[$i]->maxscore}</TD></TR>\n";
 					}
 				else {
 					echo "<TR><TD ALIGN=\"CENTER\">$i</TD><TD ALIGN=\"CENTER\">{$elements[$i]->maxscore}</TD></TR>\n";
@@ -3423,7 +3423,7 @@ function exercise_print_dual_assessment_form($exercise, $assessment, $submission
 			echo "</TD><TD>". get_string("suggestedgrade", "exercise")."</TD></TR>\n";
 			for ($i=0; $i<=$exercise->nelements; $i++) {
 				if ($i == intval($error + 0.5)) {
-					echo "<TR><TD ALIGN=\"CENTER\"><IMG SRC=\"../../pix/t/right.gif\"> $i</TD><TD ALIGN=\"CENTER\">{$elements[$i]->maxscore}</TD></TR>\n";
+					echo "<TR><TD ALIGN=\"CENTER\"><IMG SRC=\"$CFG->pixpath/t/right.gif\"> $i</TD><TD ALIGN=\"CENTER\">{$elements[$i]->maxscore}</TD></TR>\n";
 					}
 				else {
 					echo "<TR><TD ALIGN=\"CENTER\">$i</TD><TD ALIGN=\"CENTER\">{$elements[$i]->maxscore}</TD></TR>\n";
@@ -3727,7 +3727,7 @@ function exercise_print_submission_title($exercise, $submission) {
             } else {
                 $ffurl = "file.php?file=/$filearea/$file";
             }
-            return "<IMG SRC=\"$CFG->wwwroot/files/pix/$icon\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"File\">".
+            return "<IMG SRC=\"$CFG->pixpath/f/$icon\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"File\">".
                 "&nbsp;<A TARGET=\"uploadedfile\" HREF=\"$CFG->wwwroot/$ffurl\">$submission->title</A>";
         }
     }

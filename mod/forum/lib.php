@@ -1641,7 +1641,7 @@ function forum_print_attachments($post, $return=NULL) {
                 } else {
                     $ffurl = "file.php?file=/$filearea/$file";
                 }
-                $image = "<img border=0 src=\"$CFG->wwwroot/files/pix/$icon\" height=16 width=16 alt=\"$strpopupwindow\">";
+                $image = "<img border=\"0\" src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" alt=\"$strpopupwindow\">";
 
                 if ($return == "html") {
                     $output .= "<a href=\"$CFG->wwwroot/$ffurl\">$image</a> ";

@@ -513,9 +513,9 @@ function assignment_print_user_files($assignment, $user) {
                     $ffurl = "file.php?file=/$filearea/$file";
                 }
 
-                echo "<IMG SRC=\"$CFG->wwwroot/files/pix/$icon\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"File\">";
-                echo "&nbsp;<A TARGET=\"uploadedfile\" HREF=\"$CFG->wwwroot/$ffurl\">$file</A>";
-                echo "<BR>";
+                echo "<img src=\"$CFG->pixpath/f/$icon\" height=16 width=16 border=0 alt=\"file\">";
+                echo "&nbsp;<a target=\"uploadedfile\" href=\"$CFG->wwwroot/$ffurl\">$file</a>";
+                echo "<br />";
             }
         }
     }

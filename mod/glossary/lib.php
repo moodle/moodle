@@ -568,7 +568,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
         if ( $entry->sourceglossaryid ) {
             $icon = "minus.gif";   // graphical metaphor (minus) for deleting an imported entry
         } else {
-            $icon = "../../pix/t/delete.gif";
+            $icon = "$CFG->pixpath/t/delete.gif";
         }
 
         // Exported entries can be updated/deleted only by teachers in the main glossary
@@ -577,7 +577,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
             $return .= $icon;
             $return .= "\" height=11 width=11 border=0></a> ";
             
-            $return .= " <a title=\"" . get_string("edit") . "\" href=\"edit.php?id=$cm->id&e=$entry->id&mode=$mode&hook=$hook\"><img src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a>";
+            $return .= " <a title=\"" . get_string("edit") . "\" href=\"edit.php?id=$cm->id&e=$entry->id&mode=$mode&hook=$hook\"><img src=\"$CFG->pixpath/t/edit.gif\" height=11 width=11 border=0></a>";
         } elseif ( $importedentry ) {
             $return .= " <font size=-1>" . get_string("exportedentry","glossary") . "</font>";
         }
@@ -981,7 +981,7 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
                 } else {
                     $ffurl = "file.php?file=/$filearea/$file";
                 }
-                $image = "<img border=0 src=\"$CFG->wwwroot/files/pix/$icon\" height=16 width=16 alt=\"$strpopupwindow\">";
+                $image = "<img border=0 src=\"$CFG->pixpath/f/$icon\" height=16 width=16 alt=\"$strpopupwindow\">";
 
                 if ($return == "html") {
                     $output .= "<a target=_image href=\"$CFG->wwwroot/$ffurl\">$image</a> ";
@@ -1440,11 +1440,11 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo "<div align=right><p align=right>";
     if ( (time() - $comment->timemodified <  $CFG->maxeditingtime and $USER->id == $comment->userid)  or isteacher($course->id) ) {
         echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=edit\"><img  
-               alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a> ";
+               alt=\"" . get_string("edit") . "\" src=\"$CFG->pixpath/t/edit.gif\" height=11 width=11 border=0></a> ";
     }
     if ( $USER->id == $comment->userid or isteacher($course->id) ) {
         echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=delete\"><img  
-               alt=\"" . get_string("delete") . "\" src=\"../../pix/t/delete.gif\" height=11 width=11 border=0></a>";
+               alt=\"" . get_string("delete") . "\" src=\"$CFG->pixpath/t/delete.gif\" height=11 width=11 border=0></a>";
     }
     
     echo "</p>";
