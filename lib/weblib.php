@@ -122,20 +122,26 @@ function me() {
 function qualified_me() {
 /// like me() but returns a full URL
 
-    if (!empty($_SERVER["HTTP_HOST"])) {
-        $hostname = $_SERVER["HTTP_HOST"];
-    } else if (!empty($_ENV["HTTP_HOST"])) {
-        $hostname = $_ENV["HTTP_HOST"];
-    } else if (!empty($_SERVER["SERVER_NAME"])) {
+    if (!empty($_SERVER["SERVER_NAME"])) {
         $hostname = $_SERVER["SERVER_NAME"];
     } else if (!empty($_ENV["SERVER_NAME"])) {
         $hostname = $_ENV["SERVER_NAME"];
+    } else if (!empty($_SERVER["HTTP_HOST"])) {
+        $hostname = $_SERVER["HTTP_HOST"];
+    } else if (!empty($_ENV["HTTP_HOST"])) {
+        $hostname = $_ENV["HTTP_HOST"];
     } else {
         notify("Warning: could not find the name of this server!");
         return false;
     }
+    if (isset($_SERVER['HTTPS'])) {
+        $protocol = ($_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
+    } else if (isset($_SERVER['SERVER_PORT'])) { # Apache2 does not export $_SERVER['HTTPS']
+        $protocol = ($_SERVER['SERVER_PORT'] == '443') ? 'https://' : 'http://';
+    } else {
+        $protocol = 'http://';
+    }
 
-    $protocol = (isset($_SERVER["HTTPS"]) and $_SERVER["HTTPS"] == "on") ? "https://" : "http://";
     $url_prefix = $protocol.$hostname;
     return $url_prefix . me();
 }
