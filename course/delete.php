@@ -38,13 +38,17 @@
                      "$strdeletecheck");
 
         notice_yesno("$strdeletecoursecheck<BR><BR>$course->fullname ($course->shortname)", 
-                     "delete.php?id=$course->id&delete=".md5($course->timemodified), 
+                     "delete.php?id=$course->id&delete=".md5($course->timemodified)."&sesskey=$USER->sesskey", 
                      "category.php?id=$course->category");
         exit;
     }
 
     if ($delete != md5($course->timemodified)) {
         error("The check variable was wrong - try again");
+    }
+
+    if (!confirm_sesskey()) {
+        error(get_string('confirmsesskeybad', 'error'));
     }
 
     // OK checks done, delete the course now.
