@@ -3,11 +3,11 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    optional_variable($id);      // Course Module ID
-    optional_variable($f);       // Forum ID
-    optional_variable($mode);    // Display mode (for single forum)
+    optional_variable($id);            // Course Module ID
+    optional_variable($f);             // Forum ID
+    optional_variable($mode);          // Display mode (for single forum)
     optional_variable($search, "");    // search string
-
+    optional_variable($showall, "");   // show all discussions on one page
 
     $strforums = get_string("modulenameplural", "forum");
     $strforum = get_string("modulename", "forum");
@@ -127,13 +127,21 @@
                 echo "&nbsp";
             }
             echo "</P>";
-            forum_print_latest_discussions($forum->id, 0);
+            if (!empty($showall)) {
+                forum_print_latest_discussions($forum->id, 0, "header");
+            } else {
+                forum_print_latest_discussions($forum->id, FORUM_MANY_DISCUSSIONS, "header");
+            }
             break;
 
         default:
             print_simple_box(text_to_html($forum->intro), "CENTER");
             echo "<P>&nbsp;</P>";
-            forum_print_latest_discussions($forum->id, 0);
+            if (!empty($showall)) {
+                forum_print_latest_discussions($forum->id, 0, "header");
+            } else {
+                forum_print_latest_discussions($forum->id, FORUM_MANY_DISCUSSIONS, "header");
+            }
             break;
     }
 

@@ -29,7 +29,7 @@ define("FORUM_SHORT_POST", 300);  // Less non-HTML characters than this is short
 
 define("FORUM_LONG_POST", 600);   // More non-HTML characters than this is long
 
-define("FORUM_MANY_DISCUSSIONS", 3);
+define("FORUM_MANY_DISCUSSIONS", 100);
 
 
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
@@ -1478,8 +1478,8 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
         return;
     }
     
-    if ((!$forum_numdiscussions) && ($forum_style == "plain") && (count($discussions) > FORUM_MANY_DISCUSSIONS) ) { 
-        $forum_style = "header";  // Abbreviate display if it's going to be long.
+    if ((!$forum_numdiscussions) && ($forum_style == "plain")) { 
+        $forum_style = "header";  // Abbreviate display by default
     }
 
     $replies = forum_count_discussion_replies($forum->id);
@@ -1507,7 +1507,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
         $discussioncount++;
 
         if ($forum_numdiscussions && ($discussioncount > $forum_numdiscussions)) {
-            echo "<P ALIGN=right><A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">";
+            echo "<P ALIGN=right><A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id&showall=1\">";
             echo get_string("olderdiscussions", "forum")."</A> ...</P>";
             break;
         }
