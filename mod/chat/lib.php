@@ -296,6 +296,8 @@ function chat_update_chat_times($chatid=0) {
     }
 
     foreach ($chats as $chat) {
+        unset($chat->name);
+        unset($chat->intro);
         switch ($chat->schedule) {
             case 1: // Single event - turn off schedule and disable
                     $chat->chattime = 0;
