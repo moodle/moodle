@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004060400)
+      // forum.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
@@ -79,7 +79,6 @@ $string['nomorepostscontaining'] = 'Er zijn geen berichten met \'$a\' meer gevon
 $string['nonews'] = 'Er zijn nog geen nieuwsberichten';
 $string['noposts'] = 'Geen berichten';
 $string['nopostscontaining'] = 'Er zijn geen berichten met \'$a\' gevonden';
-$string['noreply'] = '\"\"';
 $string['nosubscribers'] = 'Er is nog niemand lid van dit forum';
 $string['notingroup'] = 'Sorry, je moet bij een groep horen om dit forum te kunnen zien.';
 $string['nownotsubscribed'] = '$a->name zal via e-mail GEEN bijdragen aan \'$a->forum\' ontvangen.
@@ -104,11 +103,12 @@ $string['postrating1'] = 'Vooral \'Separate Knowing\'';
 $string['postrating2'] = '\'Separate\'en \'Knowing\'';
 $string['postrating3'] = 'Vooral \'Connected\'';
 $string['posts'] = 'Berichten';
-$string['posttoforum'] = 'Post op het forum';
+$string['posttoforum'] = 'Plaats op het forum';
 $string['postupdated'] = 'Je bericht is bijgewerkt';
 $string['processingdigest'] = 'E-mail samenvatting aan het verwerken voor gebruiker $a';
 $string['processingpost'] = 'Bericht $a aan het verwerken';
 $string['prune'] = 'Onderbreek';
+$string['prunedpost'] = 'Er is een nieuwe discussie gestart met dat bericht';
 $string['pruneheading'] = 'Onderbreek dit bericht en verplaats het naar een nieuwe discussie';
 $string['rate'] = 'Beoordeel';
 $string['rating'] = 'Beoordeling';
