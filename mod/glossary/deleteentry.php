@@ -61,7 +61,7 @@
                         }
                     } else {
                         if ( $entry->attachment ) {
-                            glossary_delete_old_attachments($entry->id);
+                            glossary_delete_old_attachments($entry);
                         }
                         delete_records("glossary_entries","id", $entry->id);				
                     }

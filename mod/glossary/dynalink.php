@@ -1,8 +1,5 @@
 <?PHP // $Id$
 
-    define("GLOSSARY_CONCEPT_IS_ENTRY", "0");
-    define("GLOSSARY_CONCEPT_IS_CATEGORY", "1");
-
     $textfilter_function = 'glossary_dynamic_link';
 
     if (function_exists($textfilter_function)) {
@@ -12,6 +9,9 @@
     function glossary_dynamic_link($courseid, $text) {
     global $CFG;
 
+        $GLOSSARY_CONCEPT_IS_ENTRY = 0;
+        $GLOSSARY_CONCEPT_IS_CATEGORY = 1;
+
         $glossarieslist = get_records_select("glossary", "usedynalink = 1 and course = $courseid","id");
         if ( $glossarieslist ) {
             $glossaries = "";
@@ -20,8 +20,8 @@
             }
             $glossaries=substr($glossaries,0,-1);
 
-            $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink = 1","glossaryid","id,glossaryid,concept,casesensitive,".GLOSSARY_CONCEPT_IS_ENTRY." category,fullmatch");
-            $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries)", "glossaryid,id","id,glossaryid,name concept, 1 casesensitive,".GLOSSARY_CONCEPT_IS_CATEGORY." category, 1 fullmatch");
+            $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink = 1","glossaryid","id,glossaryid,concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY category,fullmatch");
+            $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries)", "glossaryid,id","id,glossaryid,name concept, 1 casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY category, 1 fullmatch");
             if ( $entries and $categories ) {
                 $concepts = array_merge($entries, $categories);
             } elseif ( $categories ) {
@@ -118,7 +118,7 @@
 
         $text = str_replace($final,array_keys($final),$text);
 
-        $list_of_words_cp = "(".$list_of_words_cp."$nocharsend)";
+        $list_of_words_cp = "(".$list_of_words_cp.")";
         if ( $casesensitive ) {
             $text = ereg_replace("$list_of_words_cp", "$href_tag_begin"."\\1"."$href_tag_end", $text);
         } else {
@@ -131,8 +131,10 @@
         if ( $excludes ) {
             $text = str_replace(array_keys($excludes),$excludes,$text);
         }
-        if ( $words and $fullmatch ) {
-            $text = str_replace(array_keys($words),$words,$text);
+        if ( isset($words) and $fullmatch ) {
+            if ($words) {
+                $text = str_replace(array_keys($words),$words,$text);
+            }
         }
         return stripslashes($text);
     }

@@ -712,104 +712,106 @@ function glossary_print_tabbed_table_end() {
 
 function glossary_print_alphabet_menu($cm, $glossary, $l, $sortkey, $sortorder = "") {
 global $CFG, $THEME;
-     $strselectletter     = get_string("selectletter", "glossary");
-     $strspecial          = get_string("special", "glossary");
-     $strallentries       = get_string("allentries", "glossary");
-     $strsort             = get_string("sortchronogically", "glossary");
-     $strsortbycreation   = get_string("sortbycreation", "glossary");
-     $strsortbylastupdate = get_string("sortbylastupdate", "glossary");
+    $strselectletter     = get_string("selectletter", "glossary");
+    $strspecial          = get_string("special", "glossary");
+    $strallentries       = get_string("allentries", "glossary");
+    $strsort             = get_string("sortchronogically", "glossary");
+    $strsortbycreation   = get_string("sortbycreation", "glossary");
+    $strsortbylastupdate = get_string("sortbylastupdate", "glossary");
 
-     if ($glossary->showalphabet) {
-         $output .= get_string("explainalphabet","glossary").'<br />';
+    $output = "";
+    if ($glossary->showalphabet) {
+        $output .= get_string("explainalphabet","glossary").'<br />';
+    }
+
+    echo "<center>$output<p>";
+
+     if ( $glossary->showspecial ) {
+         if ( $l == "SPECIAL" ) {
+              echo "<b>$strspecial</b> | ";
+         } else {
+              $strexplainspecial = strip_tags(get_string("explainspecial","glossary"));
+              echo "<a title=\"$strexplainspecial\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=SPECIAL\">$strspecial</a> | ";
+         }
      }
-     
-     echo "<center>$output<p>";
 
-      if ( $glossary->showspecial ) {
-          if ( $l == "SPECIAL" ) {
-               echo "<b>$strspecial</b> | ";
-          } else {
-               $strexplainspecial = strip_tags(get_string("explainspecial","glossary"));
-               echo "<a title=\"$strexplainspecial\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=SPECIAL\">$strspecial</a> | ";
+     if ( $glossary->showalphabet ) {
+          $alphabet = explode("|", get_string("alphabet","glossary"));
+          $letters_by_line = 14;
+          for ($i = 0; $i < count($alphabet); $i++) {
+              if ( $l == $alphabet[$i] and $l) {
+                   echo "<b>$alphabet[$i]</b>";
+              } else {
+                   echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=$alphabet[$i]\">$alphabet[$i]</a>";
+              }
+              if ((int) ($i % $letters_by_line) != 0 or $i == 0) {
+                   echo " | ";
+              } else {
+                   echo "<br>";
+              }
           }
-      }
+     }
 
-      if ( $glossary->showalphabet ) {
-           $alphabet = explode("|", get_string("alphabet","glossary"));
-           $letters_by_line = 14;
-           for ($i = 0; $i < count($alphabet); $i++) {
-               if ( $l == $alphabet[$i] and $l) {
-                    echo "<b>$alphabet[$i]</b>";
-               } else {
-                    echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=$alphabet[$i]\">$alphabet[$i]</a>";
-               }
-               if ((int) ($i % $letters_by_line) != 0 or $i == 0) {
-                    echo " | ";
-               } else {
-                    echo "<br>";
-               }
-           }
-      }
+     if ( $glossary->showall ) {
+         if ( $l == "ALL" ) {
+              echo "<b>$strallentries</b>";
+         } else {
+              $strexplainall = strip_tags(get_string("explainall","glossary"));
+              echo "<a title=\"$strexplainall\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=ALL\">$strallentries</a>";
+         }
+     }
+     $neworder = "";
+     if ( $sortorder ) {
+         if ( $sortorder == "asc" ) {
+             $neworder = "&sortorder=desc";
+             $ordertitle = get_string("descending","glossary");
+         } else {
+             $neworder = "&sortorder=asc";
+             $ordertitle = get_string("ascending","glossary");
+         }
+         $icon = " <img src=\"$sortorder.gif\" border=0 width=16 height=16>";
+     } else {
+         if ( $sortkey != "CREATION" and $sortkey != "UPDATE" ) {
+             $icon = "";
+             $ordertitle = get_string("ascending","glossary");
+         } else {
+             $ordertitle = get_string("descending","glossary");
+             $neworder = "&sortorder=desc";
+             $icon = " <img src=\"asc.gif\" border=0 width=16 height=16>";
+         }
+     }
+     $cicon = "";
+     $cneworder = "";
+     $cbtag = "";
+     $cendbtag = "";
 
-      if ( $glossary->showall ) {
-          if ( $l == "ALL" ) {
-               echo "<b>$strallentries</b>";
-          } else {
-               $strexplainall = strip_tags(get_string("explainall","glossary"));
-               echo "<a title=\"$strexplainall\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=ALL\">$strallentries</a>";
-          }
-      }
-      $neworder = "";
-      if ( $sortorder ) {
-          if ( $sortorder == "asc" ) {
-              $neworder = "&sortorder=desc";
-              $ordertitle = get_string("descending","glossary");
-          } else {
-              $neworder = "&sortorder=asc";
-              $ordertitle = get_string("ascending","glossary");
-          }
-          $icon = " <img src=\"$sortorder.gif\" border=0 width=16 height=16>";
-      } else {
-          if ( $sortkey != "CREATION" and $sortkey != "UPDATE" ) {
-              $icon = "";
-              $ordertitle = get_string("ascending","glossary");
-          } else {
-              $ordertitle = get_string("descending","glossary");
-              $neworder = "&sortorder=desc";
-              $icon = " <img src=\"asc.gif\" border=0 width=16 height=16>";
-          }
-      }
-      $cicon = "";
-      $cneworder = "";
-      $cbtag = "";
-      $cendbtag = "";
+     $uicon = "";
+     $uneworder = "";
+     $ubtag = "";
+     $uendbtag = "";
 
-      $uicon = "";
-      $uneworder = "";
-      $ubtag = "";
-      $uendbtag = "";
-
-      if ( $sortkey == "CREATION" ) {
-          $cicon = $icon;
-          $cneworder = $neworder;
-          $cordertitle = $ordertitle;
-          $uordertitle = get_string("ascending","glossary");
-          $cbtag = "<b>";
-          $cendbtag = "</b>";
-      } elseif ($sortkey == "UPDATE") {
-          $uicon = $icon;
-          $uneworder = $neworder;
-          $cordertitle = get_string("ascending","glossary");
-          $uordertitle = $ordertitle;
-          $ubtag = "<b>";
-          $uendbtag = "</b>";
-      } else {
-          $cordertitle = get_string("ascending","glossary");
-          $uordertitle = get_string("ascending","glossary");
-      }
-      echo "<br>$strsort: $ubtag<a title=\"$strsortbylastupdate $uordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=UPDATE$uneworder\">$strsortbylastupdate$uicon</a>$uendbtag | ".
-                           "$cbtag<a title=\"$strsortbycreation $cordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=CREATION$cneworder\">$strsortbycreation$cicon</a>$cendbtag</p>";
+     if ( $sortkey == "CREATION" ) {
+         $cicon = $icon;
+         $cneworder = $neworder;
+         $cordertitle = $ordertitle;
+         $uordertitle = get_string("ascending","glossary");
+         $cbtag = "<b>";
+         $cendbtag = "</b>";
+     } elseif ($sortkey == "UPDATE") {
+         $uicon = $icon;
+         $uneworder = $neworder;
+         $cordertitle = get_string("ascending","glossary");
+         $uordertitle = $ordertitle;
+         $ubtag = "<b>";
+         $uendbtag = "</b>";
+     } else {
+         $cordertitle = get_string("ascending","glossary");
+         $uordertitle = get_string("ascending","glossary");
+     }
+     echo "<br>$strsort: $ubtag<a title=\"$strsortbylastupdate $uordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=UPDATE$uneworder\">$strsortbylastupdate$uicon</a>$uendbtag | ".
+                          "$cbtag<a title=\"$strsortbycreation $cordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=CREATION$cneworder\">$strsortbycreation$cicon</a>$cendbtag</p>";
 }
+
 function glossary_print_categories_menu($course, $cm, $glossary, $cat, $category) {
 global $CFG, $THEME;
      echo "<table border=0 width=100%>";
