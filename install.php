@@ -11,13 +11,15 @@ if (file_exists('./config.php')) {
 
 ///==========================================================================//
 /// We are doing this in stages
-/// 1. Welcome and language settings
+/// 0. Welcome and language settings
+/// 1. Compatibility
 /// 2. Database settings
 /// 3. Host settings
 /// 4. Administration directory name
 /// 5. Save or display the settings
 /// 6. Redirect to index.php
 ///==========================================================================//
+
 
 
 /// Begin the session as we are holding all information in a session
@@ -32,7 +34,10 @@ if (! isset($_SESSION['INSTALL'])) {
 
 $INSTALL = &$_SESSION['INSTALL'];   // Makes it easier to reference
 
-if ( empty($INSTALL['language']) and empty($_POST['language']) ) {   // First time through this script
+
+/// If it's our first time through this script then we need to set some default values
+
+if ( empty($INSTALL['language']) and empty($_POST['language']) ) {
 
     /// set defaults
     $INSTALL['language']        = 'en';
@@ -50,7 +55,7 @@ if ( empty($INSTALL['language']) and empty($_POST['language']) ) {   // First ti
 
     $INSTALL['admindirname']    = 'admin';
 
-    $INSTALL['stage'] = 1;
+    $INSTALL['stage'] = 0;
 }
 
 
@@ -58,11 +63,14 @@ if ( empty($INSTALL['language']) and empty($_POST['language']) ) {   // First ti
 //==========================================================================//
 
 /// Fake some settings so that we can use selected functions from moodlelib.php and weblib.php
+
 $SESSION->lang = (!empty($_POST['language'])) ? $_POST['language'] : $INSTALL['language'];
 $CFG->dirroot = $INSTALL['dirroot'];
 $CFG->dataroot = $INSTALL['dataroot'];
 $CFG->directorypermissions = 0777;
 
+
+/// Include some moodle libraries
 
 require_once('./lib/moodlelib.php');
 require_once('./lib/weblib.php');
@@ -74,18 +82,32 @@ if ($INSTALL['wwwroot'] == '') {
     list($INSTALL['wwwroot'], $xtra) = explode('/install.php', qualified_me());
 }
 
-$stagetext = array(1 => get_string('chooselanguage', 'install'),
-                          get_string('directorysettings', 'install'),
-                          get_string('databasesettings', 'install'),
-                          get_string('admindirsetting', 'install'),
-                          get_string('configurationcomplete', 'install')
+$stagetext = array(0 => get_string('chooselanguage', 'install'),
+                        get_string('compatibilitysettings', 'install'),
+                        get_string('directorysettings', 'install'),
+                        get_string('databasesettings', 'install'),
+                        get_string('admindirsetting', 'install'),
+                        get_string('configurationcomplete', 'install')
                     );
+
+
+
+
+//==========================================================================//
+
+/// Are we in help mode?
+
+if (isset($_GET['help'])) {
+    $nextstage = -1;
+}
+
 
 
 //==========================================================================//
 
 /// Was data submitted?
-if (!empty($_POST['stage'])) {
+
+if (isset($_POST['stage'])) {
 
     /// Get the stage for which the form was set and the next stage we are going to
 
@@ -96,7 +118,7 @@ if (!empty($_POST['stage'])) {
         $nextstage = $_POST['stage'] - 1;
     }
     
-    if ($nextstage < 1) $nextstage = 1;
+    if ($nextstage < 0) $nextstage = 0;
     
 
     /// Store any posted data
@@ -107,7 +129,7 @@ if (!empty($_POST['stage'])) {
 } else {
 
     $goforward = true;
-    $nextstage = 1;
+    $nextstage = 0;
     
 }
 
@@ -116,6 +138,7 @@ if (!empty($_POST['stage'])) {
 //==========================================================================//
 
 /// Check the directory settings
+
 if ($INSTALL['stage'] == 2) {
 
     error_reporting(0);
@@ -156,15 +179,20 @@ if ($INSTALL['stage'] == 2) {
 
 /// Check database settings if stage 3 data submitted
 /// Try to connect to the database. If that fails then try to create the database
+
 if ($INSTALL['stage'] == 3) {
 
     if (empty($INSTALL['dbname'])) {
         $INSTALL['dbname'] = 'moodle';
     }
     
-    /// different format for postgres7
-    if ($INSTALL['dbtype'] == 'postgres7') {
+    /// different format for postgres7 by socket
+    if ($INSTALL['dbtype'] == 'postgres7' and ($INSTALL['dbhost'] == 'localhost' || $INSTALL['dbhost'] == '127.0.0.1')) {
         $INSTALL['dbhost'] = "user='{$INSTALL['dbuser']}' password='{$INSTALL['dbpass']}' dbname='{$INSTALL['dbname']}'";
+        $INSTALL['dbuser'] = '';
+        $INSTALL['dbpass'] = '';
+        $INSTALL['dbname'] = '';
+
         if ($INSTALL['prefix'] == '') { /// must have a prefix
             $INSTALL['prefix'] = 'mdl_';
         }
@@ -227,6 +255,7 @@ if ($nextstage == 4 or $INSTALL['stage'] == 4) {
 /// Display or print the data
 /// Put the data into a string
 /// Try to open config file for writing.
+
 if ($nextstage == 5) {
 
     $str  = '<?php  /// Moodle Configuration File '."\n";
@@ -284,15 +313,35 @@ if ($nextstage == 5) {
 
 <body>
 
-<h1 align="center">MOODLE INSTALL</h1>
+<table align="center">
+</table>
+
+
+<?php
+if (isset($_GET['help'])) {
+    print_install_help($_GET['help']);
+} else {
+?>
+
 
 <table class="main" align="center" cellpadding="3" cellspacing="0">
     <tr>
-        <td class="td_mainheading"><p class="p_mainheading"><?php echo $stagetext[$nextstage] ?></p></td>
+        <td class="td_mainlogo">
+            <p class="p_mainlogo"><img src="pix/moodlelogo-med.gif" width="240" height="60"></p>
+        </td>
+        <td class="td_mainlogo" valign="bottom">
+            <p class="p_mainheader"><?php print_string('installation', 'install') ?></p>
+        </td>
     </tr>
 
     <tr>
-        <td class="td_main">
+        <td class="td_mainheading" colspan="2">
+            <p class="p_mainheading"><?php echo $stagetext[$nextstage] ?></p>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="td_main" colspan="2">
     
 <?php
 
@@ -310,7 +359,9 @@ if ($nextstage == 5) {
         echo "</div>\n";
         echo "<hr />\n";
     }
-    echo "<p>(<a href=\"index.php?lang={$INSTALL['language']}\">Continue</a>)</p>\n";
+    $options = array();
+    $options['lang'] = $INSTALL['language'];
+    print_single_button("index.php", $options, get_string('continue')."  &raquo;");
 } else {
     $formaction = (isset($_GET['configfile'])) ? "install.php?configfile=".$_GET['configfile'] : "install.php";
     form_table($nextstage, $formaction);
@@ -321,6 +372,10 @@ if ($nextstage == 5) {
         </td>
     </tr>
 </table>
+
+<?php
+}
+?>
 
 </body>
 </html>
@@ -349,7 +404,7 @@ function print_object($object) {
 
 //==========================================================================//
 
-function form_table($nextstage = 1, $formaction = "install.php") {
+function form_table($nextstage = 0, $formaction = "install.php") {
     global $INSTALL;
 
     /// standard lines for all forms
@@ -362,7 +417,7 @@ function form_table($nextstage = 1, $formaction = "install.php") {
 <?php
     /// what we do depends on the stage we're at
     switch ($nextstage) {
-        case 1: /// Language settings
+        case 0: /// Language settings
 ?>
             <tr>
                 <td class="td_left"><p><?php print_string('language') ?></p></td>
@@ -372,6 +427,28 @@ function form_table($nextstage = 1, $formaction = "install.php") {
             </tr>
 
 <?php
+            break;
+        case 1: /// Compatibilty check
+            $compatsuccess = true;
+            
+            /// Check that PHP is of a sufficient version
+            print_compatibility_row(check_php_version("4.1.0"), get_string('PHPversion', 'install'), get_string('PHPversionerror', 'install'), 'phpversionhelp');
+            /// Check safe mode 
+            print_compatibility_row(!ini_get_bool('safe_mode'), get_string('safemode', 'install'), get_string('safemodeerror', 'install'), 'safemodehelp');
+            /// Check session auto start
+            print_compatibility_row(!ini_get_bool('session.auto_start'), get_string('sessionautostart', 'install'), get_string('sessionautostarterror', 'install'), 'sessionautostarthelp');
+            /// Check session save path
+            print_compatibility_row(!ini_get_bool('session.save_path'), get_string('sessionsavepath', 'install'), get_string('sessionsavepatherror', 'install'), 'sessionsavepathhelp');
+            /// Check magic quotes
+            print_compatibility_row(!ini_get_bool('magic_quotes_runtime'), get_string('magicquotesruntime', 'install'), get_string('magicquotesruntimeerror', 'install'), 'magicquotesruntimehelp');
+            /// Check file uploads
+            print_compatibility_row(ini_get_bool('file_uploads'), get_string('fileuploads', 'install'), get_string('fileuploadserror', 'install'), 'fileuploadshelp');
+            /// Check GD version
+            print_compatibility_row(check_gd_version(), get_string('gdversion', 'install'), get_string('gdversionerror', 'install'), 'gdversionhelp');
+            /// Check memory limit
+            print_compatibility_row(check_memory_limit(), get_string('memorylimit', 'install'), get_string('memorylimiterror', 'install'), 'memorylimithelp');
+
+
             break;
         case 2: /// Directory settings
 ?>
@@ -458,10 +535,11 @@ function form_table($nextstage = 1, $formaction = "install.php") {
 
     <tr>
         <td align="left">
-            <?php echo ($nextstage > 1) ? "<input type=\"submit\" name=\"prev\" value=\"".get_string('previous')."\" />\n" : "&nbsp;\n" ?>
+            <?php echo ($nextstage > 0) ? "<input type=\"submit\" name=\"prev\" value=\"&laquo;  ".get_string('previous')."\" />\n" : "&nbsp;\n" ?>
         </td>
+        <?php if ($nextstage == 1) echo "<td>&nbsp;</td>\n"; ?>
         <td align="right">
-            <?php echo ($nextstage < 5) ? "<input type=\"submit\" name=\"next\" value=\"".get_string('next')."\" />\n" : "&nbsp;\n" ?>
+            <?php echo ($nextstage < 5) ? "<input type=\"submit\" name=\"next\" value=\"".get_string('next')."  &raquo;\" />\n" : "&nbsp;\n" ?>
         </td>
     </tr>
     
@@ -475,17 +553,101 @@ function form_table($nextstage = 1, $formaction = "install.php") {
 
 //==========================================================================//
 
+function print_compatibility_row($success, $testtext, $errormessage, $helpfield='') {
+    echo "<tr>\n";
+    echo "<td class=\"td_left\" valign=\"top\" nowrap><p>$testtext</p></td>\n";
+    if ($success) {
+         echo "<td valign=\"top\"><p class=\"p_pass\">".get_string('pass', 'install')."</p></td>\n";
+         echo "<td valign=\"top\">&nbsp;</td>\n";
+    } else {
+         echo "<td valign=\"top\"><p class=\"p_fail\">".get_string('fail', 'install')."</p></td>\n";
+         echo "<td valign=\"top\">";
+         echo "<p>$errormessage ";
+         install_helpbutton("install.php?help=$helpfield");
+         echo "</p></td>\n";
+    }
+    echo "</tr>\n";
+    return $success;
+}
+
+
+//==========================================================================//
+
+function install_helpbutton($url, $title='') {
+    if ($title == '') {
+        $title = get_string('help');
+    }
+    echo "<a href=\"javascript: void(0)\">";
+    echo "<img src=\"./pix/help.gif\" height=\"17\" width=\"22\" alt=\"$title\"";
+    echo "border=\"0\" align=\"absmiddle\" title=\"$title\" ";
+    echo "onClick=\"return window.open('$url', 'Help', 'menubar=0,location=0,scrollbars,resizable,width=500,height=400')\">";
+    echo "</a>\n";
+}
+    
+
+
+//==========================================================================//
+
+function print_install_help($help) {
+    echo "<p class=\"p_help\">";
+    switch ($help) {
+        case 'phpversionhelp':
+            print_string($help, 'install', phpversion());
+            break;
+        case 'memorylimithelp':
+            print_string($help, 'install', ini_get('memory_limit'));
+            break;
+        default:
+            print_string($help, 'install');
+    }
+    echo "</p>\n";
+}
+
+
+//==========================================================================//
+
+function get_memory_limit() {
+    if ($limit = ini_get('memory_limit')) {
+        return $limit;
+    } else {
+        return get_cfg_var('memory_limit');
+    }
+}
+
+//==========================================================================//
+
+function check_memory_limit() {
+
+    /// if limit is already 16M or more then we don't care if we can change it or not
+    if ((int)str_replace('M', '', get_memory_limit()) >= 16) {
+        return true;
+    }
+
+    /// Otherwise, see if we can change it ourselves
+    @ini_set('memory_limit', '16M');
+    return ((int)str_replace('M', '', get_memory_limit()) >= 16);
+}
+
+//==========================================================================//
+
 function css_styles() {
 ?>
 
 <style type="text/css">
 
     body { background-color: #ffeece; }
-    p { font-family: helvetica, arial, sans-serif; size: normal; }
+    p { 
+        font-family: helvetica, arial, sans-serif;
+        font-size: 10pt;
+    }
     a { text-decoration: none; color: blue; }
     .errormsg {
         color: red;
         font-weight: bold;
+    }
+    blockquote {
+        font-family: helvetica, arial, sans-serif;
+        font-size: 10pt;
     }
     .install_table {
         width: 500px;
@@ -507,15 +669,39 @@ function css_styles() {
     }
     .td_mainheading {
         background-color: #fee6b9;
+        padding: 10px;
     }
     .td_main {
         text-align: center;
     }
+    .td_mainlogo {
+    }
+    .p_mainlogo {
+    }
     .p_mainheading {
-        font-size: 10pt;
+        font-size: 11pt;
+    }
+    .p_mainheader{
+        text-align: right;
+        font-size: 20pt;
+        font-weight: bold;
+    }
+    .p_pass {
+        color: green;
+        font-weight: bold;
+    }
+    .p_fail {
+        color: red;
+        font-weight: bold;
+    }
+    .p_help {
+        text-align: center;
+        font-family: helvetica, arial, sans-serif;
+        font-size: 14pt;
+        font-weight: bold;
+        color: #333333;
     }
         
-    
 </style>
 
 <?php
