@@ -52,6 +52,31 @@
         return $status;  
     }   
 
+    //This function iterates over all modules in backup file, searching for a
+    //MODNAME_refresh_events() to execute. Perhaps it should ve moved to central Moodle...
+    function restore_refresh_events($restore) {
+   
+        global $CFG;
+        $status = true;
+        
+        //Take all modules in backup
+        $modules = $restore->mods;
+        //Iterate
+        foreach($modules as $name => $module) {
+            //Only if the module is being restored
+            if ($module->restore == 1) {
+                //Include module library
+                include_once("$CFG->dirroot/mod/$name/lib.php");
+                //If module_refresh_events exists
+                $function_name = $name."_refresh_events";
+                if (function_exists($function_name)) {
+                    $status = $function_name($restore->course_id);
+                }
+            }
+        }
+        return $status;
+    }
+
     //This function read the xml file and store it data from the info zone in an object
     function restore_read_xml_info ($xml_file) {
 
@@ -989,10 +1014,9 @@
                         $eve->timeduration = backup_todb($info['EVENT']['#']['TIMEDURATION']['0']['#']);
                         $eve->timemodified = backup_todb($info['EVENT']['#']['TIMEMODIFIED']['0']['#']);
 
-
                         //Now search if that event exists (by description and timestart field) in
                         //restore->course_id course 
-                        $eve_db = get_record("event","courseid",$restore->course_id,"description",$eve->description,"timestart",$eve->timestart);
+                        $eve_db = get_record("event","courseid",$eve->courseid,"description",$eve->description,"timestart",$eve->timestart);
                         //If it doesn't exist, create
                         if (!$eve_db) {
                             $create_event = true;
