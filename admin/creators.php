@@ -41,6 +41,7 @@
         "searchagain",
         "users",
         "toomanytoshow",
+        "searchresults"
         );
 
     foreach ($stringstoload as $stringtoload){
