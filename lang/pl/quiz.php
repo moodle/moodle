@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2004020300)
+      // quiz.php - created with Moodle 1.2 development (2004021201)
 
 
 $string['acceptederror'] = 'Zaakceptowany b³±d';
@@ -28,6 +28,7 @@ $string['attemptsunlimited'] = 'Nielimitowana liczba prób';
 $string['backtoquiz'] = 'Powrót do edycji quizu';
 $string['bestgrade'] = 'Najlepsza ocena';
 $string['blackboard'] = 'Tablica';
+$string['calculatedquestion'] = 'Kalkulowane pytnie nie wykryto na lini $a. Pytanie zostanie zignorowane.';
 $string['caseno'] = 'Nie, wielko¶æ liter jest niewa¿na';
 $string['casesensitive'] = 'Uwzglêdnianie wielko¶ci liter';
 $string['caseyes'] = 'Tak, wielko¶æ liter musi siê zgadzaæ';
@@ -44,6 +45,7 @@ $string['corrresp'] = 'W³a¶ciwa odpowied¼';
 $string['countdown'] = 'Odliczanie';
 $string['countdownfinished'] = 'Quiz jest zamykany, powiniene¶ wys³aæ swoje odpowiedzi natychmiast.';
 $string['countdowntenminutes'] = 'Quiz zostanie zamkniêty za 10 minut';
+$string['coursetestmanager'] = 'Format Mened¿era Testów Kursu';
 $string['createmultiple'] = 'Utwórz wiele pytañ';
 $string['createnewquestion'] = 'Utwórz nowe pytanie';
 $string['custom'] = 'Niestandardowy format';
@@ -51,8 +53,10 @@ $string['daysavailable'] = 'Dni dostêpno¶ci';
 $string['default'] = 'Domy¶lny';
 $string['defaultgrade'] = 'Domy¶lna ocena za pytanie';
 $string['defaultinfo'] = 'Domy¶lna kategoria pytañ';
+$string['deleteattemptcheck'] = 'Czy jeste¶ pewien, ¿e chcesz usun±æ te dane?';
 $string['deletequestioncheck'] = 'Czy masz ca³kowit± pewno¶æ, ¿e chcesz usun±æ \'$a\'?';
 $string['description'] = 'Opis';
+$string['discrimination'] = 'Indeks dobrych i z³ych pytañ';
 $string['eachattemptbuildsonthelast'] = 'Ka¿da nowa próba na podstawie poprzedniej';
 $string['editcategories'] = 'Modyfikuj kategorie';
 $string['editingdescription'] = 'Edycja opisu';
@@ -82,6 +86,7 @@ $string['gradehighest'] = 'Najwy¿sza ocena';
 $string['grademethod'] = 'Metoda oceniania';
 $string['guestsno'] = 'Niestety, go¶cie nie mog± ogl±daæ ani rozwi±zywaæ quizów';
 $string['imagedisplay'] = 'Grafika do wy¶wietlenia';
+$string['imagemissing'] = 'Obrazek nie jest dostêpny na lini $a. Nazwa pliku zostanie zignorowana.';
 $string['importquestions'] = 'Importuj pytania z pliku';
 $string['indivresp'] = 'Indywidualne odpowiedzi na dane pytanie';
 $string['introduction'] = 'Wprowadzenie';
@@ -90,6 +95,7 @@ $string['listitems'] = 'Lista pytañ w tym quizie';
 $string['marks'] = 'Punkty';
 $string['match'] = 'Dopasuj odpowied¼';
 $string['matchanswer'] = 'Pasuj±ca odpowied¼';
+$string['missinganswer'] = 'Za ma³o odpowiedzi! Musisz podaæ przynajmniej 2 mo¿liwe odpowiedzi.';
 $string['missingcorrectanswer'] = 'Poprawna odpowied¼ musi byæ okre¶lona';
 $string['missingname'] = 'Pominiêto nazwê pytania';
 $string['missingquestion'] = 'Pominiêto opis pytnia (linia $a)';
@@ -109,6 +115,7 @@ $string['noreview'] = 'Nie mo¿esz przegl±daæ tego quizu';
 $string['noreviewuntil'] = 'Nie mo¿esz przegl±daæ tego quizu do $a';
 $string['notenoughsubquestions'] = 'Nie zdefiniowano wystarczaj±cej liczby podpunktów pytañ! <br> Czy chcesz wróciæ i poprawiæ pytanie?';
 $string['numerical'] = 'Numeryczne';
+$string['paragraphquestion'] = 'Pytanie w bloku tekstu nie mo¿e byæ odnalezione na lini $a. Pytanie zostanie zignorowane';
 $string['percentcorrect'] = 'Procent poprawnych odpowiedzi';
 $string['publish'] = 'Opublikuj';
 $string['qti'] = 'Format IMS QTI';
@@ -165,9 +172,12 @@ $string['toomanyrandom'] = 'Liczba potrzebnych pytañ wybieranych losowo jest wiê
 $string['true'] = 'Prawda';
 $string['truefalse'] = 'Prawda/Fa³sz';
 $string['type'] = 'Typ';
+$string['unknowntype'] = 'Nie mo¿na odnle¼æ tego typu pytania na lini $a. Pytanie to zostanie zignorowane.';
 $string['viewallanswers'] = 'Przegl±daj $a ukoñczonych quizów';
 $string['viewallreports'] = 'Obejrzyj raporty dla próby $a';
+$string['warningsdetected'] = 'Wykryto $a ostrze¿eñ';
 $string['webct'] = 'Format WebCT';
+$string['withsummary'] = 'wraz z ogóln± statystyk±';
 $string['wronggrade'] = 'B³êdna ocena (linia $a)';
 $string['yourfinalgradeis'] = 'Twoja ostateczna ocena za ten quiz wynosi $a';
 

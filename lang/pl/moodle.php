@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2004020300)
+      // moodle.php - created with Moodle 1.2 development (2004021201)
 
 
 $string['action'] = 'Akcja';
@@ -121,6 +121,7 @@ $string['closewindow'] = 'Zamknij to okno';
 $string['comparelanguage'] = 'Przejrzyj i edytuj bie¿±cy jêzyk';
 $string['complete'] = 'Pe³na wersja';
 $string['configallowunenroll'] = 'Je¶li ta opcja jest ustawiona na \"Tak\", wówczas studenci maj± prawo sami wypisaæ siê z danego kursy kiedy tylko chc±. W przeciwnym razie, wypisaæ studenta mog± tylko nauczyciele i administratorzy.';
+$string['configcachetext'] = 'Dla wiêkszych stron lub stron, które u¿ywaj± filtrów ustawienie tego parametru mo¿e poprawiæ szybko¶æ dzia³ania strony. Kopia tekstu bêdzie zapisana w pamiêci przez czas okre¶lony w tym parametrze. Zbyt ma³a warto¶æ mo¿e spowolniæ dzia³anie systemu. Z kolei, zbyt du¿a warto¶æ, mo¿e oznaczaæ, ¿e zbyt d³ugo trzeba bêdzie czekaæ na od¶wie¿enie tekstu (n.p. z nowymi linkami).';
 $string['configcountry'] = 'Je¿eli ustawisz tutaj kraj, wówczas ten kraj bêdzie domy¶lny dla nowych u¿ytkowników. Je¿eli chcesz wymusiæ, aby u¿ytkownicy wybierali kraj samodzielnie zostaw to pole niewype³nione.';
 $string['configdebug'] = 'Je¶li w³±czysz t± funkcjê to podniesiony zostanie poziom raportowania b³êdów PHP, dziêki czemu wiêcej ostrze¿eñ bêdzie drukowanych. Ta opcja przydatna jest tylko dla programistów.';
 $string['configerrorlevel'] = 'Wybierz ilo¶æ ostrze¿eñ z PHP, która a byæ wy¶wietlana. Zwykle najlepszym wyborem jest Normalna';
@@ -142,6 +143,7 @@ $string['configloglifetime'] = 'Tutaj mo¿esz zdefiniowaæ okres przez jaki chcesz
 $string['configlongtimenosee'] = 'Je¿eli student nie loguje siê przez bardzo d³ugi okres czasu, jest automatycznie usuwany z wszystkich kursów. Parametr ten okre¶la w³a¶nie ów limit czasu.';
 $string['configmaxbytes'] = 'Ten paramter okre¶la maksymalny rozmiar plików, które mog± byæ przesy³ane. Parametr ten odnosi siê do ca³ej strony i ograniczony jest tylko przez paramter PHP o nazwie: upload_max_filesize oraz parametr Apache: LimitRequestBody. Z drugiej strony, maksymalny rozmiar plików mo¿e byæ zmodyfikowany na poziomie kursu czy te¿ modu³u.';
 $string['configmaxeditingtime'] = 'Okre¶l tutaj limit czasu, w którym u¿ytkownicy mog± dokonywaæ zmian w postach do forum, informacjach zwrotnych w dzienniku itp. Zazwyczaj odpowiednim ograniczeniem jest 30 minut.';
+$string['configopentogoogle'] = 'Uaktwynienie tego parametru pozwoli Google wej¶æ na Twoj± stronê w charakterze Go¶cia. Ponadto, internaci, którzy odnajd± Twoj± stronê u¿ywaj±c Google, zostan± automatycznie zalogowani jako Go¶cie. Zauwa¿, ¿e to pozwala na dostêp do kursów, które daj± dostêp Go¶ciom.';
 $string['configproxyhost'] = 'Je¿eli ten <B>serwer</B> wymaga komputera po¶rednicz±cego (np. zabezpieczenie firewall) w celu uzyskania dostêpu do internetu, wpisz tutaj nazwê hosta i port serwera proxy, w przeciwnym przypadku pozostaw to miejsce puste.';
 $string['configsecureforms'] = 'Moodle mo¿e korzystaæ z dodatkowego poziomu zabezpieczeñ, podczas przyjmowania ramek danych z sieci. Je¶li opcja ta jest aktywna, to zmienna HTTP_REFERER w przegl±darce internetowej jest porównywana z aktualnym adresem ramki danych. W bardzo niewielu przypadkach mo¿e to powodowaæ problemy, je¶li u¿ytkownik korzysta z programu typu firewall (np. Zonealarm) skonfigurowanego tak, by usuwaæ HTTP_REFERER ze swojej komunikacji sieciowej. Objawiaæ siê to mo¿e zawi¶niêciem na ramce. Je¶li u¿ytkownicy maj± problemy z stron± logowania(przyk³adowo) mo¿esz zdecydowaæ siê wy³±czyæ t± opcjê, chocia¿ spowoduje to wiêksz± wra¿liwo¶æ twojej strony na bezpo¶rednie ataki na has³o (brute-force password attack).  Je¶li masz w±tpliwo¶ci pozostaw w tym miejscu \'Tak\'.';
 $string['configsessioncookie'] = 'Ten paramter pozwala nadaæ nazwê plikowi cookie used podczas sesji Moodle. Jest to paramter opcjonalny i staje siê u¿yteczny tylko w przypadku gdy wiêcej ni¿ jedna copia Moodle jest uruchomiona.';
@@ -150,6 +152,8 @@ $string['configslasharguments'] = 'Pliki (graficzne i inne przesy³ane na serwer)
 $string['configsmtphosts'] = 'Podaj pe³n± nazwê jednego lub wiêcej lokalnych serwerów SMTP, które platforma Moodle powinna wykorzystywaæ do wysy³ania poczty elektronicznej (np. \'mail.a.com\' lub \'mail.a.com;mail.b.com\'). Je¿eli nic tu nie wpiszesz, Moodle bêdzie wysy³aæ pocztê przy u¿yciu domy¶lnej metody PHP.';
 $string['configsmtpuser'] = 'Je¿eli wskaza³e¶ powy¿ej serwer SMTP, który wymaga uwierzytelnienia, wpisz tutaj nazwê u¿ytkownika i has³o.';
 $string['configteacherassignteachers'] = ' Czy zwykli prowadz±cy mog± dodawaæ prowadz±cych do kursów w których nauczaj±? Je¶li \'Nie\' tylko autorzy kursów i administratorzy mog± dodawaæ prowadz±cych.';
+$string['configtextfilters'] = 'Filtry tekstu maj± ró¿ny efekt na danym tek¶cie. Wska¿ ¶cie¿kê dostêpu do filtrów, które chcesz u¿yæ. Mo¿esz wskazaæ wiele filtrów, u¿ywaj±c przecinka (n.p. mod/glossary/dynalink.php, filter/censor/censor.php)';
+$string['configtimezone'] = 'Mo¿esz tutaj okre¶liæ domy¶ln± strefê czasow±. Jest to domy¶lny paramter dla wy¶wietlania daty. Jednak¿e ka¿dy u¿ytkownik mo¿e wybraæ swoje w³asne ustawienia i zachowaæ je w swoim profilu. \"Czas serwera\" spowoduje wy¶wietlnie aktulanego czasu zgodnego ze systemem operacyjnym serwera, z kolei \"czas serwera\" w profilu u¿ytkownika spowoduje wy¶wietlenie czasu zgodnego z tym parametrem.';
 $string['configunzip'] = 'Wska¿ miejsce gdzie znajduje siê Twój program unzip (jest to polecenie opcjonalne i dotyczy tylko systemu Unix). Je¿eli lokalizacja zostanie podana, program ten bêdzie stosowany do rozpakowywania na serwerze archiwów zip. Je¿eli nic tutaj nie wpiszesz, Moodle zastosuje do tego celu procedury wewnêtrzne.';
 $string['configuration'] = ' Konfiguracja';
 $string['configvariables'] = 'Konfiguruj zmienne';
@@ -316,6 +320,8 @@ $string['firsttime'] = 'Czy jeste¶ w tym serwisie po raz pierwszy?';
 $string['followingoptional'] = 'Nastêpuj±ce punkty s± opcjonalne';
 $string['followingrequired'] = 'Nastêpuj±ce punkty s± wymagane';
 $string['force'] = 'Wymu¶';
+$string['forcelanguage'] = 'Wymu¶ jêzyk';
+$string['forceno'] = 'Nie wymuszaj';
 $string['forgotten'] = 'Zapomnia³e¶(a¶) nazwy u¿ytkownika lub has³a?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'Format HTML';
@@ -565,6 +571,7 @@ $string['numberweeks'] = 'Liczba tygodni/tematów';
 $string['numdays'] = '$a dni';
 $string['numhours'] = '$a godz.';
 $string['numminutes'] = '$a min.';
+$string['numseconds'] = '$a sek.';
 $string['numviews'] = '$a wgl±dów';
 $string['numweeks'] = '$a tygodni';
 $string['numwords'] = '$a s³ów';
