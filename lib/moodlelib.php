@@ -1997,7 +1997,7 @@ function delete_event($id) {
 
 /// ENVIRONMENT CHECKING  ////////////////////////////////////////////////////////////
 
-function get_list_of_plugins($plugin="mod") {
+function get_list_of_plugins($plugin="mod", $exclude="") {
 /// Lists plugin directories within some directory
 
     global $CFG;
@@ -2005,7 +2005,7 @@ function get_list_of_plugins($plugin="mod") {
     $basedir = opendir("$CFG->dirroot/$plugin");
     while ($dir = readdir($basedir)) {
         $firstchar = substr($dir, 0, 1);
-        if ($firstchar == "." or $dir == "CVS" or $dir == "_vti_cnf" or $dir == "db") {
+        if ($firstchar == "." or $dir == "CVS" or $dir == "_vti_cnf" or $dir == $exclude) {
             continue;
         }
         if (filetype("$CFG->dirroot/$plugin/$dir") != "dir") {

@@ -413,7 +413,7 @@ function upgrade_blocks_plugins($continueto) {
 
     $site = get_site();
 
-    if (!$blocks = get_list_of_plugins("blocks") ) {
+    if (!$blocks = get_list_of_plugins("blocks", "db") ) {
         error("No blocks installed!");
     }
 
