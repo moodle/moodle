@@ -196,6 +196,36 @@
     $strediting = get_string('editquestions', "quiz");
 
     // Print basic page layout.
+    
+    if (isset($modform->instance) and record_exists_sql("SELECT * FROM {$CFG->prefix}quiz_attempts WHERE quiz = '$modform->instance' AND NOT (userid = '$USER->id') LIMIT 1")){    
+    // one column layout with table of questions used in this quiz
+        print_header_simple($strediting, '',
+                 "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
+                 " -> <a href=\"view.php?q=$modform->instance\">$modform->name</a>".
+                 " -> $strediting");
+        print_simple_box_start("center");
+        print_heading($modform->name);
+        $attemptcount = count_records_select("quiz_attempts", "quiz = '$modform->instance' AND timefinish > 0");
+
+        $strviewallanswers  = get_string("viewallanswers","quiz",$attemptcount);
+        $strattemptsexist  = get_string("attemptsexist","quiz");
+        $usercount = count_records("quiz_grades", "quiz", "$modform->instance");
+        $strusers  = get_string("users");
+        if (! $cm = get_coursemodule_from_instance("quiz", $modform->instance, $course->id)) {
+            error("Course Module ID was incorrect");
+        }
+        notify("$strattemptsexist<br /><a href=\"report.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
+
+        $sumgrades = quiz_print_question_list($modform->questions, $modform->grades, false);
+        if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
+            error('Failed to set sumgrades');
+        }
+
+        print_simple_box_end();
+        print_continue('view.php?q='.$modform->instance);
+        print_footer($course);
+        exit;
+    }
 
     if (!isset($modform->instance)) {
         // one column layout for non-quiz-specific editing page
@@ -220,18 +250,8 @@
             error('Failed to set sumgrades');
         }
 
-        if ($attemptcount = count_records_select("quiz_attempts", "quiz = '$modform->instance' AND timefinish > 0"))  {
-            $strviewallanswers  = get_string("viewallanswers","quiz",$attemptcount);
-            $strattemptsexist  = get_string("attemptsexist","quiz");
-            $usercount = count_records("quiz_grades", "quiz", "$modform->instance");
-            $strusers  = get_string("users");
-            if (! $cm = get_coursemodule_from_instance("quiz", $modform->instance, $course->id)) {
-                error("Course Module ID was incorrect");
-            }
-            notify("$strattemptsexist<br /><a href=\"report.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
-        }
-
         print_simple_box_end();
+        print_continue('view.php?q='.$modform->instance);
         echo '</td><td valign="top" width="50%">';
     }
     // non-quiz-specific column
@@ -246,15 +266,15 @@
     quiz_print_cat_question_list($modform->category,
                                  isset($modform->instance), $modform->recurse, $page, $perpage);
     print_simple_box_end();
-
-    echo '</td></tr>';
-    echo '</table>';
-
     if (!isset($modform->instance)) {
         print_continue("index.php?id=$modform->course");
     } else {
         print_continue('view.php?q='.$modform->instance);
     }
+    echo '</td></tr>';
+    echo '</table>';
+
+
 
     print_footer($course);
 ?>

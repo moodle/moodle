@@ -1132,7 +1132,7 @@ function quiz_gradesmenu_options($defaultgrade) {
     return $gradesmenu;
 }
 
-function quiz_print_question_list($questionlist, $grades) {
+function quiz_print_question_list($questionlist, $grades, $allowdelete=true) {
 // Prints a list of quiz questions in a small layout form with knobs
 // returns sum of maximum grades
 // $questionlist is comma-separated list
@@ -1212,8 +1212,10 @@ function quiz_print_question_list($questionlist, $grades) {
         if ($canedit) {
             echo "<a title=\"$stredit\" href=\"question.php?id=$qnum\">
                   <img src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
-            echo "<a title=\"$strdelete\" href=\"edit.php?delete=$qnum&amp;sesskey=$USER->sesskey\">
-                  <img src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>&nbsp;";
+            if ($allowdelete) {
+                echo "<a title=\"$strdelete\" href=\"edit.php?delete=$qnum&amp;sesskey=$USER->sesskey\">
+                      <img src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>&nbsp;";
+            }
             echo "<a title=\"$strpreview\" href=\"#\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
                   <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
         }
