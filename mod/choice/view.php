@@ -84,8 +84,13 @@
     }
 
     if (isteacher($course->id)) {
-        if ( $allanswers = get_records("choice_answers", "choiceid", $choice->id)) {
-            $responsecount = count($allanswers);
+        if ( $allanswers = get_records("choice_answers", "choiceid", $choice->id)) {            
+            $responsecount = 0;
+            foreach ($allanswers as $aa) {
+                if (isstudent($course->id, $aa->userid) or isteacher($course->id, $aa->userid, false)) { //check to make sure user is enrolled in course.
+                    $responsecount++;
+                }
+            }
         } else {
             $responsecount = 0;
         }
