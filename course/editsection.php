@@ -42,7 +42,7 @@
         $form = $section;
     }
 
-    $sectionname = $SECTION[$course->format];
+    $sectionname = $COURSE_SECTION[$course->format];
 
     print_header("Edit $sectionname $section->section", "Edit $sectionname $section->section", "", "form.summary");
 

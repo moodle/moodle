@@ -43,7 +43,7 @@
 <tr valign=top>
 	<td><P><? print_string("format") ?>:</td>
 	<td><? 
-           choose_from_menu ($FORMATS, "format", "$form->format");
+           choose_from_menu ($COURSE_FORMATS, "format", "$form->format");
 	       formerr($err["format"]);
         ?>
 	</td>

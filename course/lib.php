@@ -1,18 +1,18 @@
 <? // $Id$
 
-$MAXNEWSDISPLAY = 4;
-
-$FORMATS = array (
+$COURSE_FORMATS = array (
              "weeks" => "Weekly layout",
              "social" => "Social layout",
              "topics" => "Topics layout"
            );
 
-$SECTION = array (
+$COURSE_SECTION = array (
              "weeks" => "week",
              "social" => "section",
              "topics" => "topic"
            );
+
+$COURSE_MAX_LOG_DISPLAY = 150;  // days
 
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate="today") {

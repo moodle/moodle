@@ -5,11 +5,12 @@
 CREATE TABLE forum (
   id int(10) unsigned NOT NULL auto_increment,
   course int(10) unsigned NOT NULL default '0',
-  type enum('discussion','news','general','social','eachuser','teacher') NOT NULL default 'general',
+  type enum('single','news','general','social','eachuser','teacher') NOT NULL default 'general',
   name varchar(255) NOT NULL default '',
-  intro mediumtext NOT NULL,
+  intro text NOT NULL,
   open tinyint(1) unsigned NOT NULL default '0',
   assessed tinyint(1) unsigned NOT NULL default '0',
+  forcesubscribe tinyint(1) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id)
@@ -38,7 +39,7 @@ CREATE TABLE forum_discussions (
 
 CREATE TABLE forum_posts (
   id int(10) unsigned NOT NULL auto_increment,
-  discuss int(10) unsigned NOT NULL default '0',
+  discussion int(10) unsigned NOT NULL default '0',
   parent int(10) unsigned NOT NULL default '0',
   user int(10) unsigned NOT NULL default '0',
   created int(10) unsigned NOT NULL default '0',

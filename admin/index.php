@@ -9,7 +9,7 @@
 
     // Check databases and modules and install as needed.
     if (! $db->Metatables() ) { 
-        print_header("Setting up database", "Setting up database", "Setting up databases for the first time", "");
+        print_header("Setting up database", "Setting up database", "Setting up databases for the first time");
 
         if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql")) {
             $db->debug = true;
@@ -34,6 +34,7 @@
 
     if ($dversion = get_field("config", "value", "name", "version")) { 
         if ($version > $dversion) {  // upgrade
+            print_header("Upgrading database", "Upgrading database", "Upgrading main databases");
             notify("Upgrading databases from version $dversion to $version...");
             $db->debug=true;
             if (upgrade_moodle($dversion)) {
@@ -56,6 +57,7 @@
     } else {
         $dversion->name  = "version";
         $dversion->value = $version;
+        print_header("Upgrading database", "Upgrading database", "Upgrading main databases");
         if (insert_record("config", $dversion)) {
             notify("You are currently using Moodle version $version");
             print_heading("<A HREF=\"index.php\">Continue</A>");
@@ -125,7 +127,9 @@
                 print_header("Setting up database", "Setting up database", "Setting up module tables", "");
             }
             $updated_modules = true;
+            $db->debug = true;
             if (modify_database("$fullmod/db/$CFG->dbtype.sql")) {
+                $db->debug = false;
                 if ($module->id = insert_record("modules", $module)) {
                     notify("$module->name tables have been set up correctly");
                 } else {
