@@ -355,4 +355,16 @@
         return addslashes(utf8_decode($data));
     }
 
+    //This function is used to check that every necessary function to 
+    //backup/restore exists in the current php installation. Thanks to
+    //gregb@crowncollege.edu by the idea.
+    function backup_required_functions() {
+
+        if(!function_exists('utf8_encodes') {
+            error('You need to add utf8 support to your PHP installation');  
+        }
+
+    }
+    
+
 ?>
