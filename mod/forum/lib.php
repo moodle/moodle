@@ -905,6 +905,7 @@ function forum_cron () {
 
             if ($users = forum_subscribed_users($course, $forum)) {
                 $strforums = get_string("forums", "forum");
+                $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
 
                 $mailcount=0;
                 foreach ($users as $userto) {
@@ -946,6 +947,11 @@ function forum_cron () {
                             $posthtml .= " -> <A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</A></FONT></P>";
                         }
                         $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, true, false, false);
+
+                        if ($canunsubscribe) {
+                            $posthtml .= "\n<BR><HR SIZE=1 NOSHADE><FONT SIZE=1><A HREF=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</A></FONT>";
+                        }
+
                     } else {
                       $posthtml = "";
                     }
