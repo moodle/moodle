@@ -723,8 +723,30 @@ function replace_smilies(&$text) {
         $runonce = true;
     }
 
+    // Exclude from transformations all the code inside <script> tags
+    // Needed to solve Bug 1185. Thanks to jouse 2001 detecting it. :-)
+    // Based on code from glossary fiter by Williams Castillo.
+    //       - Eloy
+
+    // Detect all the <script> zones to take out
+    $excludes = array();
+    preg_match_all('/<script language(.+?)<\/script>/is',$text,$list_of_excludes);
+
+    // Take out all the <script> zones from text
+    foreach (array_unique($list_of_excludes[0]) as $key=>$value) {
+        $excludes['<+'.$key.'+>'] = $value;
+    }
+    if ($excludes) {
+        $text = str_replace($excludes,array_keys($excludes),$text);
+    }
+
 /// this is the meat of the code - this is run every time
     $text = str_replace($e, $img, $text);
+
+    // Recover all the <script> zones to text
+    if ($excludes) {
+        $text = str_replace(array_keys($excludes),$excludes,$text);
+    }
 }
 
 function text_to_html($text, $smiley=true, $para=true, $newlines=true) {
