@@ -111,6 +111,8 @@
         include_once("$CFG->dirroot/backup/backuplib.php");
         include_once("$CFG->dirroot/backup/lib.php");
         echo "Running backups if required...\n";
+        flush();
+
         if (! schedule_backup_cron()) {
             echo "Something went wrong while performing backup tasks!!!\n";
         } else {
