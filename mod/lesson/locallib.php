@@ -1027,7 +1027,12 @@ function lesson_calculate_ongoing_score($lesson, $userid, $retries, $return=fals
             }
         }
         $nviewed = count($temp); // this counts number of Questions the user viewed
-        $thegrade = intval(100 * $ncorrect / $nviewed);
+		if ($nviewed != 0) {
+			$thegrade = intval(100 * $ncorrect / $nviewed);	
+		} else {
+			$thegrade = 0;
+		}
+        
 
         if ($return) {
             return $thegrade;
