@@ -7,7 +7,8 @@
         redirect("$CFG->wwwroot/admin/");
     }
 
-    print_header("$site->fullname", "$site->fullname", "", "");
+    print_header("$site->fullname", "$site->fullname", "", "",
+                 "<META NAME=\"Description\" CONTENT=\"$site->summary\">");
 
 
 ?>
