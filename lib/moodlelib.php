@@ -1214,7 +1214,7 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
 
 /// CORRESPONDENCE  ////////////////////////////////////////////////
 
-function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $attachment="", $attachname="") {
+function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $attachment="", $attachname="", $usetrueaddress=true) {
 ///  user        - a user record as an object
 ///  from        - a user record as an object
 ///  subject     - plain text subject line of the email
@@ -1222,6 +1222,8 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 ///  messagehtml - complete html version of the message (optional)
 ///  attachment  - a file on the filesystem, relative to $CFG->dataroot
 ///  attachname  - the name of the file (extension indicates MIME)
+///  usetrueaddress - determines whether $from email address should be sent out. 
+///                   Will be overruled by user profile setting for maildisplay
 
     global $CFG, $_SERVER;
 
@@ -1275,8 +1277,13 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     $mail->Sender   = "$adminuser->email";
 
-    $mail->From     = "$from->email";
-    $mail->FromName = fullname($from);
+    if ($usetrueaddress and $from->maildisplay) {
+        $mail->From     = "$from->email";
+        $mail->FromName = fullname($from);
+    } else {
+        $mail->From     = "$CFG->noreplyaddress";
+        $mail->FromName = fullname($from).' '.get_string('noreply', 'forum');
+    }
     $mail->Subject  =  stripslashes($subject);
 
     $mail->AddAddress("$user->email", fullname($user) );

@@ -30,6 +30,7 @@
        "longtimenosee"    =>  100,
        "maxbytes"         =>  0,
        "maxeditingtime"   =>  1800,
+       "noreplyaddress"   => 'noreply@'.$_SERVER['HTTP_HOST'],
        "opentogoogle"     =>  false,
        "prefix"           => "",
        "proxyhost"        => "",
