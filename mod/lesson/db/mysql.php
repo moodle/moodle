@@ -42,7 +42,7 @@ function lesson_upgrade($oldversion) {
 
 	// CDC-FLAG
 	if ($oldversion < 2004072100) {
-		execute_sql(" create table mdl_lesson_high_scores
+		execute_sql(" create table ".$CFG->prefix."lesson_high_scores
 					( id int(10) unsigned not null auto_increment,
 					  lessonid int(10) unsigned not null,
 					  userid int(10) unsigned not null,
@@ -51,7 +51,7 @@ function lesson_upgrade($oldversion) {
 					  PRIMARY KEY  (`id`)
 					)");
 
-		execute_sql(" create table mdl_lesson_branch
+		execute_sql(" create table ".$CFG->prefix."lesson_branch
 					( id int(10) unsigned not null auto_increment,
 					  lessonid int(10) unsigned not null,
 					  userid int(10) unsigned not null,
@@ -63,7 +63,7 @@ function lesson_upgrade($oldversion) {
 					)");
 
 		
-		execute_sql(" create table mdl_lesson_timer
+		execute_sql(" create table ".$CFG->prefix."lesson_timer
 					( id int(10) unsigned not null auto_increment,
   					lessonid int(10) unsigned not null,
 					userid int(10) unsigned not null,
