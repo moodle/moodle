@@ -237,6 +237,30 @@ body {
     border-color:#FFC86C;
 }
 
+.course-2 .topicsoutlinecontent,
+.course-2 .topicsoutlinecontenthighlight {
+    background-color:#FFFFFF;
+    border-color:#51BEF4;
+}
+
+.course-3 .topicsoutlinecontent,
+.course-3 .topicsoutlinecontenthighlight {
+    background-color:#FFFFFF;
+    border-color:#FF756C;
+}
+
+.course-4 .topicsoutlinecontent,
+.course-4 .topicsoutlinecontenthighlight {
+    background-color:#FFFFFF;
+    border-color:#FFE56C;
+}
+
+.course-5 .topicsoutlinecontent,
+.course-5 .topicsoutlinecontenthighlight {
+    background-color:#FFFFFF;
+    border-color:#D4F859;
+}
+
 .topicsoutlinecontenthidden {
     background-color:#FFFFFF;
     border-color:#EEF0F2;
@@ -339,7 +363,7 @@ body {
 }
 
 .unread {
-    border-bottom-color:#FFB63B;
+    border-color:#FFB63B;
     color:#555555;
 } 
 

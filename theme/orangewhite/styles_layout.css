@@ -395,7 +395,8 @@ table.formtable td {
 }
 
 .unread {
-    border-bottom:2px solid;
+    border-width:1px 0px;
+    border-style:solid;
 }
 
 
