@@ -114,6 +114,28 @@ function quiz_upgrade($oldversion) {
         }
     }
 
+    if ($oldversion < 2003111100) {
+        $duplicates = get_records_sql("SELECT stamp as id,count(*) as cuenta
+                                       FROM {$CFG->prefix}quiz_questions
+                                       GROUP BY stamp
+                                       HAVING count(*)>1");
+
+        if ($duplicates) {
+            notify("You have some quiz questions with duplicate stamps IDs.  Cleaning these up.");
+            foreach ($duplicates as $duplicate) {
+                $questions = get_records("quiz_questions","stamp",$duplicate->id);
+                $add = 1;
+                foreach ($questions as $question) {
+                    echo "Changing question id $question->id stamp to ".$duplicate->id.$add."<br>";
+                    set_field("quiz_questions","stamp",$duplicate->id.$add,"id",$question->id);
+                    $add++;
+                }
+            } 
+        } else {
+            notify("Checked your quiz questions for stamp duplication errors, but no problems were found.", "green");
+        }
+    }
+
     return true;
 }
 
