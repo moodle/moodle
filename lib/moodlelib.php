@@ -39,6 +39,14 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
             $button = "<FONT SIZE=2><A HREF=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</A></FONT>";
         }
     }
+
+    // Specify character set ... default is iso-8859-1 but some languages might need something else
+    // Could be optimised by carrying the charset variable around in $USER
+    if (current_language() == "en") {
+        $meta .= "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=iso-8859-1\">\n";
+    } else {
+        $meta .= "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=".get_string("thischarset")."\">\n";
+    }
  
     if (!$cache) {   // Do everything we can to prevent clients and proxies caching
         @header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
@@ -46,7 +54,7 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         $meta .= "\n<META HTTP-EQUIV=\"Pragma\" CONTENT=\"no-cache\">";
         $meta .= "\n<META HTTP-EQUIV=\"Expires\" CONTENT=\"0\">";
     }
- 
+
     include ("$CFG->dirroot/theme/$CFG->theme/header.html");
 }
 
@@ -1569,6 +1577,16 @@ function print_string($identifier, $module="", $a=NULL) {
     echo get_string($identifier, $module, $a);
 }
 
+function current_language() {
+// Returns the code for the current language
+    global $CFG, $USER;
+
+    if (isset($USER->lang)) {    // User language can override site language
+        return $USER->lang;
+    } else {
+        return $CFG->lang;
+    }
+}
 
 function get_string($identifier, $module="", $a=NULL) {
 // Return the translated string specified by $identifier as 
@@ -1579,13 +1597,9 @@ function get_string($identifier, $module="", $a=NULL) {
 // eg "hello \$a->firstname \$a->lastname"
 // or "hello \$a"
 
-    global $CFG, $USER;
+    global $CFG;
 
-    if (isset($USER->lang)) {    // User language can override site language
-        $lang = $USER->lang;
-    } else {
-        $lang = $CFG->lang;
-    }
+    $lang = current_language();
 
     if ($module == "") {
         $module = "moodle";
