@@ -984,7 +984,6 @@ function quiz_grade_attempt_results($quiz, $questions) {
                     if ($answer->fraction > 0) {
                         $correct[$answer->id] = true;
                     }
-                    $correct[$answer->id]  = $answer->fraction;  // 0 or 1
                     if ($question->answer) {
                         foreach ($question->answer as $questionanswer) {
                             if ($questionanswer == $answer->id) {
