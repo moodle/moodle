@@ -22,12 +22,11 @@
 
     require_login($course->id);
 
-    add_to_log($course->id, "lesson", "view", "view.php?id=$cm->id", "$lesson->id", $cm->id);
 
 /// Print the page header
 
     if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
     }
 
     $strlessons = get_string("modulenameplural", "lesson");
@@ -61,6 +60,7 @@
         // if pageid is EOL then the end of the lesson has been reached
         print_heading($lesson->name);
 		if (empty($_GET['pageid'])) {
+            add_to_log($course->id, "lesson", "start", "view.php?id=$cm->id", "$lesson->id", $cm->id);
             // if no pageid given see if the lesson has been started
             if ($grades = get_records_select("lesson_grades", "lessonid = $lesson->id AND userid = $USER->id",
                         "grade DESC")) {
@@ -125,6 +125,7 @@
             $pageid = $_GET['pageid'];
         }
         if ($pageid != EOL) {
+            add_to_log($course->id, "lesson", "view", "view.php?id=$cm->id&action=navigation&pageid=$pageid", "$pageid", $cm->id);
             if (!$page = get_record("lesson_pages", "id", $pageid)) {
                 error("Navigation: the page record not found");
             }
@@ -163,6 +164,7 @@
             echo "</table>\n";
         } else {
             // end of lesson reached work out grade
+            add_to_log($course->id, "lesson", "end", "view.php?id=$cm->id", "$lesson->id", $cm->id);
             print_heading(get_string("congratulations", "lesson"));
             print_simple_box_start("center");
             $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
