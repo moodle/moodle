@@ -110,7 +110,7 @@ class quiz_report extends quiz_default_report {
                 $myxls->InsertNumber($average[$i]);
             }
 
-            $myxls->SendFileName("$quiz->name simplestat");
+            $myxls->SendFileName("$course->shortname $quiz->name");
         
             exit;
         }
@@ -121,7 +121,7 @@ class quiz_report extends quiz_default_report {
         /// Print header to force download
     
             header("Content-Type: application/download\n"); 
-            header("Content-Disposition: attachment; filename=\"$course->shortname $strgrades.txt\"");
+            header("Content-Disposition: attachment; filename=\"$course->shortname $quiz->name.txt\"");
 
         /// Print names of all the fields
     
