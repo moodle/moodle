@@ -213,7 +213,7 @@ $string['emailpasswordsent'] = "Thank you for confirming the change of password.
   <a href=\$a->link>change your password</a> to something easier to remember.";
 $string['enrolmentkey'] = "Enrollment key";
 $string['enrolmentkeyfrom'] = "This course requires an 'enrollment key' - a one-time<BR>
-password that you should have got from \$a";
+password that you should have received from \$a";
 $string['enrolmentkeyhint'] = "That enrollment key was incorrect, please try again<BR>
 (Here's a hint - it starts with '\$a')";
 $string['entercourse'] = "Click to enter this course";
