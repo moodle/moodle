@@ -37,24 +37,25 @@
 
     print_header("$course->shortname: $strsubscribers", "$course->fullname", "$navigation");
 
-    $subscribers = get_records_sql("SELECT u.* FROM user u, user_students us, user_teachers ut, 
-                                          forum_subscriptions fs
-                                    WHERE fs.forum = '$forum->id' AND fs.user = u.id AND 
-                                          (fs.user = us.user OR fs.user = ut.user) 
-                                    GROUP BY u.id 
-                                    ORDER BY u.firstname");
+    if (! $users = get_course_users($course->id)) {
+        print_heading("No users yet");
 
-    if (! $subscribers) {
-        print_heading("No subscribers yet");
     } else {
         print_heading("Subscribers to '$forum->name'");
         echo "<TABLE ALIGN=CENTER>";
-        foreach ($subscribers as $subscriber) {
-            echo "<TR><TD>";
-            print_user_picture($subscriber->id, $course->id, $subscriber->picture);
-            echo "</TD><TD>";
-            echo "$subscriber->firstname $subscriber->lastname";
-            echo "</TD></TR>";
+        $count = 0;
+        foreach ($users as $user) {
+            if (is_subscribed($user->id, $forum->id)) {
+                echo "<TR><TD>";
+                print_user_picture($user->id, $course->id, $user->picture);
+                echo "</TD><TD>";
+                echo "$user->firstname $user->lastname";
+                echo "</TD></TR>";
+                $count++;
+            }
+        }
+        if (!$count) {
+            echo "<TR><TD>No subscribers yet</TD></TR>";
         }
         echo "</TABLE>";
     }
