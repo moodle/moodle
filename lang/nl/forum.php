@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1 Beta (2003082001)
+      // forum.php - created with Moodle 1.1 Beta + (2003082300)
 
 
 $string['addanewdiscussion'] = "Voeg een nieuw onderwerp voor discussie toe";
@@ -71,11 +71,11 @@ $string['nonews'] = "Er zijn nog geen nieuws bijdragen";
 $string['noposts'] = "Geen bijdragen";
 $string['nopostscontaining'] = "Er zijn geen bijdragen met '\$a' gevonden";
 $string['nosubscribers'] = "Er is nog niemand lid van dit forum";
-$string['nownotsubscribed'] = "\$a->name zal via e-mail GEEN bijdragen aan '\$a->forum' ontvangen.
-
+$string['nownotsubscribed'] = "\$a->name zal via e-mail GEEN bijdragen aan '\$a->forum' ontvangen.
+
 ";
-$string['nowsubscribed'] = "\$a->naam zal bijdragen aan '\$a->forum' ontvangen via e-mail.
-
+$string['nowsubscribed'] = "\$a->naam zal bijdragen aan '\$a->forum' ontvangen via e-mail.
+
 ";
 $string['numposts'] = "\$a bijdragen";
 $string['olderdiscussions'] = "Oudere discussies";
@@ -85,8 +85,8 @@ $string['openmode2'] = "Nieuwe discussies en bijdragen zijn toegestaan";
 $string['parentofthispost'] = "'Moeder' van deze bijdrage";
 $string['postadded'] = "Je bijdrage is met succes toegevoegd.<p> Je hebt \$a de tijd om deze bijdrage te wijzigen als je iets wilt veranderen.";
 $string['postincontext'] = "Bekijk deze bijdrage in zijn context";
-$string['postmailinfo'] = "Dit is een kopie van een bijdrage die is toegevoegd op de \$a website.
-
+$string['postmailinfo'] = "Dit is een kopie van een bijdrage die is toegevoegd op de \$a website.
+
 Klik op deze link om jouw antwoord via de website toe te voegen:";
 $string['postrating1'] = "Laat voornamelijk 'gescheiden kennen' zien";
 $string['postrating2'] = "Even 'gescheiden' als 'verbonden/relationeel'";
@@ -101,6 +101,8 @@ $string['ratingno'] = "Geen classificaties";
 $string['ratingonlyteachers'] = "Alleen \$a kan bijdragen classificeren";
 $string['ratings'] = "Classificaties  ";
 $string['ratingssaved'] = "Classificaties zijn bewaard";
+$string['ratingsuse'] = "Gebruik classificaties";
+$string['ratingtime'] = "Beperk classificaties tot berichten binnen het bereik van deze data:";
 $string['re'] = "Re:";
 $string['readtherest'] = "Lees de rest van deze discussie";
 $string['replies'] = "Antwoorden";

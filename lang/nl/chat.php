@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.1 Beta (2003082001)
+      // chat.php - created with Moodle 1.1 Beta + (2003082300)
 
 
 $string['beep'] = "piep";
@@ -7,6 +7,9 @@ $string['chatintro'] = "Inleidende tekst";
 $string['chatname'] = "Naam van deze chatroom";
 $string['chatreport'] = "Chat sessies";
 $string['chattime'] = "Volgende chat tijd";
+$string['configoldping'] = "Na hoeveel tijd wil je een gebruiker als weg beschouwen, nadat deze een tijd niets van zich heeft laten horen?";
+$string['configrefreshroom'] = "Hoe vaak moet de chatroom ververst worden? (in seconden). Als je deze waarde laag in stelt kan de chatroom sneller lijken te werken, maar het kan ook, als veel mensen aan het chatten zijn, een hogere belasting op de webserver veroorzaken.";
+$string['configrefreshuserlist'] = "Hoe vaak moet de lijst met gebruikers ververst worden? (in seconden)";
 $string['currentchats'] = "Actieve chat sessies";
 $string['currentusers'] = "Huidige gebruikers";
 $string['donotusechattime'] = "Publiceer geen chat tijden";
