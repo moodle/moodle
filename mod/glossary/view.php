@@ -5,7 +5,8 @@
     require_once("lib.php");
     
     require_variable($id);           // Course Module ID
-    optional_variable($l,"");           // letter to look for
+    optional_variable($l,"");        // letter to look for
+    optional_variable($offset,0);    // entries to bypass (paging purpouses)
     optional_variable($eid);         // Entry ID
     optional_variable($search, "");  // search string
     optional_variable($includedefinition); // include definition in search function?
@@ -16,6 +17,12 @@
     optional_variable($sortkey,"");  // Sorted view: CREATION or UPDATE
     optional_variable($sortorder,"");  // it define the order of the sorting (ASC or DESC)
 
+    global $CFG;
+    $entriesbypage = $CFG->glossary_entbypage;
+
+    if (!$entriesbypage) {
+        $entriesbypage = 10;
+    }
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
     } 
@@ -185,31 +192,49 @@
             $orderby = "timemodified $sortorder";
         break;
 		default:
-            $orderby = "$sortkey $sortorder";
+            $orderby .= "$sortkey $sortorder";
     }
     
     switch ($tab) {
         case GLOSSARY_CATEGORY_VIEW:
             if ($cat == GLOSSARY_SHOW_ALL_CATEGORIES) { 
-                $sql = "SELECT gec.id gecid, gc.name, gc.id CID, ge.*
-                        FROM {$CFG->prefix}glossary_entries ge,
+                $sqlselect = "SELECT gec.id gecid, gc.name, gc.id CID, ge.*";
+                $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge,
                              {$CFG->prefix}glossary_entries_categories gec,
-                             {$CFG->prefix}glossary_categories gc
-                        WHERE (ge.glossaryid = '$glossary->id' or ge.sourceglossaryid = '$glossary->id') AND
+                             {$CFG->prefix}glossary_categories gc";
+                $sqlwhere  = "WHERE (ge.glossaryid = '$glossary->id' or ge.sourceglossaryid = '$glossary->id') AND
                               gec.entryid = ge.id AND
                               gc.id = gec.categoryid";
 
                 if ( $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
-                    $sql .= ' ORDER BY gc.name, ge.timecreated';
+                    $sqlorderby = ' ORDER BY gc.name, ge.timecreated';
                 } else {
-                    $sql .= ' ORDER BY gc.name, ge.concept';
+                    $sqlorderby = ' ORDER BY gc.name, ge.concept';
                 }
-                $allentries = get_records_sql($sql);
+                $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
+                $sqllimit = " LIMIT $offset, $entriesbypage";
+
+                $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
             } else {
                 if ( $cat == GLOSSARY_SHOW_NOT_CATEGORISED ) {
-                    $allentries = glossary_get_entries_sorted($glossary, '',$orderby);
+                    $sqlselect  = "SELECT *";
+                    $sqlfrom    = "FROM {$CFG->prefix}glossary_entries";
+                    $sqlwhere   = "WHERE (glossaryid = $glossary->id or sourceglossaryid = $glossary->id)";
+                    $sqlorderby = "ORDER BY $orderby";
+
+                    $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
+                    $sqllimit   = " LIMIT $offset, $entriesbypage";
+                    $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
                 } else {
-                    $allentries = glossary_get_entries_by_category($glossary, $cat, '',$orderby);
+                    $sqlselect  = "SELECT *";
+                    $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}glossary_entries_categories c";
+                    $sqlwhere   = "WHERE (ge.id = c.entryid and c.categoryid = $cat) and
+                                  (ge.glossaryid = $glossary->id or ge.sourceglossaryid = $glossary->id)";
+                    $sqlorderby = "ORDER BY $orderby";
+
+                    $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
+                    $sqllimit   = " LIMIT $offset, $entriesbypage";
+                    $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
                 }
             }
             $currentcategory = "";
@@ -231,16 +256,22 @@
                 if ($l != 'ALL' and $l != 'SPECIAL') {
                     switch ($CFG->dbtype) {
                         case 'postgres7':
-                            $where = 'substr(ucase(concept),1,' .  strlen($l) . ') = \'' . strtoupper($l) . '\'';
+                            $where = 'and substr(ucase(concept),1,' .  strlen($l) . ') = \'' . strtoupper($l) . '\'';
                         break;
                         case 'mysql':
-                            $where = 'left(ucase(concept),' .  strlen($l) . ") = '$l'";
+                            $where = 'and left(ucase(concept),' .  strlen($l) . ") = '$l'";
                         break;
                         default:
                             $where = '';
                     }
                 }
-                $allentries = glossary_get_entries_sorted($glossary, $where,$orderby);
+                $sqlselect  = "SELECT *";
+                $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge";
+                $sqlwhere   = "WHERE (ge.glossaryid = $glossary->id or ge.sourceglossaryid = $glossary->id) $where";
+                $sqlorderby = "ORDER BY $orderby";
+                $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
+                $sqllimit   = " LIMIT $offset, $entriesbypage";
+                $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
             }
             $currentletter = '';
         break;
@@ -248,6 +279,25 @@
     
     $dumpeddefinitions = 0;
     if ($allentries) {
+        $paging = '';
+        if ($count > $entriesbypage ) {
+            for ($i = 0; ($i*$entriesbypage) < $count  ; $i++   ) {
+                if ( $paging != '' ) {
+                    if ($i % 20 == 0) {
+                        $paging .= '<br>';
+                    } else {
+                        $paging .= ' | ';
+                    }
+                }
+                if ($offset / $entriesbypage == $i) {
+                    $paging .= '<strong>' . ($i + 1 ) . '</strong>';
+                } else {
+                    $paging .= "<a href=\"view.php?id=$id&l=$l&search=$search&tab=$tab&cat=$cat&includedefinition=$includedefinition&sortkey=$sortkey&sortored=$sortorder&offset=" . ($i*$entriesbypage) . "\">" . ($i+1) . '</a>';
+                }
+            }
+            $paging  = "<font size=1><center>" . get_string ("jumpto") . " $paging</center></font>";
+        }
+        echo "$paging<p>";
         if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS) {
             echo '<table border=0 cellspacing=0 width=95% valign=top cellpadding=5><tr><td align=left bgcolor="#FFFFFF">';
         }
@@ -347,7 +397,6 @@
                 } 
     
                 glossary_print_entry($course, $cm, $glossary, $entry, $tab, $cat);
-    
                 if ($glossary->displayformat != GLOSSARY_FORMAT_SIMPLE) {
                     echo '<p>';
                 } 
@@ -365,6 +414,9 @@
         } 
         print_simple_box_end();
     } else {
+        if ( $paging ) {
+            echo "<table border=0><tr><td>$paging</td></tr></table>";
+        }
         switch ($glossary->displayformat) {
             case GLOSSARY_FORMAT_CONTINUOUS:
                 echo '</td></tr></table><p>';
