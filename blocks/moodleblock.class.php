@@ -2,6 +2,7 @@
 
 define('BLOCK_TYPE_LIST',    1);
 define('BLOCK_TYPE_TEXT',    2);
+define('BLOCK_TYPE_NUKE',    3);
 
 class MoodleBlock {
     var $str;
@@ -59,6 +60,7 @@ class MoodleBlock {
         $this->get_content();
 
         switch($this->content_type) {
+            case BLOCK_TYPE_NUKE:
             case BLOCK_TYPE_TEXT:
                 if(empty($this->content->text) && empty($this->content->footer)) {
                     break;
@@ -162,7 +164,7 @@ class MoodleBlock {
             $errors[] = 'title_not_set';
             $correct = false;
         }
-        if(!in_array($this->get_content_type(), array(BLOCK_TYPE_LIST, BLOCK_TYPE_TEXT))) {
+        if(!in_array($this->get_content_type(), array(BLOCK_TYPE_LIST, BLOCK_TYPE_TEXT, BLOCK_TYPE_NUKE))) {
             $errors[] = 'invalid_content_type';
             $correct = false;
         }
@@ -209,6 +211,41 @@ class MoodleBlock {
     function hide_header() {
         //Default, false--> the header is showed
         return false;
+    }
+}
+
+class MoodleBlock_Nuke extends MoodleBlock {
+    function get_content() {
+
+        // This whole thing begs to be written for PHP >= 4.3.0
+        // using glob();
+
+        global $CFG;
+        $dir = $CFG->dirroot.'/blocks/'.$this->name().'/nuke/';
+        if($dh = @opendir($dir)) {
+            while (($file = readdir($dh)) !== false) {
+                $regs = array();
+                if(ereg('^block\-(.*)\.php$', $file, $regs)) {
+                    $old = $_SERVER['PHP_SELF'];
+                    $_SERVER['PHP_SELF'] = 'index.php';
+
+                    // Do our best to suppress any spurious output
+                    ob_start();
+                    @include($dir.$file);
+                    ob_end_clean();
+
+                    // We should have $content set now
+                    $_SERVER['PHP_SELF'] = $old;
+                    if(!isset($content)) {
+                        return NULL;
+                    }
+                    return $this->content->text = $content;
+                }
+            }
+        }
+        else {
+            // nuke subdirectory does not exist
+        }
     }
 }
 

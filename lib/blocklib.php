@@ -419,7 +419,7 @@ function upgrade_blocks_plugins($continueto) {
         error("No blocks installed!");
     }
 
-    @include_once($CFG->dirroot."/blocks/moodleblock.class.php");
+    include_once($CFG->dirroot."/blocks/moodleblock.class.php");
     if(!class_exists('moodleblock')) {
         error('Class MoodleBlock is not defined or file not found for /blocks/moodleblock.class.php');
     }
@@ -439,11 +439,13 @@ function upgrade_blocks_plugins($continueto) {
             continue;
         }
 
-        if ( is_readable("$fullblock/db/$CFG->dbtype.php")) {
-            include_once("$fullblock/db/$CFG->dbtype.php");  # defines upgrading function
-        } else {
-            $notices[] ="Block $blockname: $fullblock/db/$CFG->dbtype.php was not readable";
-            continue;
+        if ( is_dir("$fullblock/db/")) {
+            if ( is_readable("$fullblock/db/$CFG->dbtype.php")) {
+                include_once("$fullblock/db/$CFG->dbtype.php");  # defines upgrading function
+            } else {
+                $notices[] ="Block $blockname: $fullblock/db/$CFG->dbtype.php was not readable";
+                continue;
+            }
         }
 
         $classname = 'CourseBlock_'.$blockname;
@@ -536,7 +538,7 @@ function upgrade_blocks_plugins($continueto) {
             $updated_blocks = true;
             $db->debug = true;
             set_time_limit(0);  // To allow slow databases to complete the long SQL
-            if (modify_database("$fullblock/db/$CFG->dbtype.sql")) {
+            if (!is_dir("$fullblock/db/") || modify_database("$fullblock/db/$CFG->dbtype.sql")) {
                 $db->debug = false;
                 if ($block->id = insert_record('blocks', $block)) {
                     notify(get_string('blocksuccess', '', $blocktitle), 'green');
