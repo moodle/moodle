@@ -144,7 +144,7 @@ function checkform() {
 
 <noscript>
     <!-- Without Javascript, no checking is done -->
-    <input type="submit" value="<? get_string("clicktocontinue", "survey") ?>">
+    <input type="submit" value="<?php  get_string("clicktocontinue", "survey") ?>">
 </noscript>
 
 </center>

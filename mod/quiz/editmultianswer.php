@@ -119,7 +119,7 @@
 
 ?>
 
-<FORM name="theform" method="post" <?=$onsubmit ?> action="editmultianswer.php">
+<FORM name="theform" method="post" <?php echo $onsubmit ?> action="editmultianswer.php">
 
 <CENTER>
 
@@ -127,11 +127,11 @@
 
 <TR valign=top>
 
-    <TD align=right><P><B><? print_string("category", "quiz") ?>:</B></P></TD>
+    <TD align=right><P><B><?php  print_string("category", "quiz") ?>:</B></P></TD>
 
     <TD>
 
-    <?  choose_from_menu($categories, "category", "$question->category", ""); ?>
+    <?php   choose_from_menu($categories, "category", "$question->category", ""); ?>
 
     </TD>
 
@@ -139,13 +139,13 @@
 
 <TR valign=top>
 
-    <TD align=right><P><B><? print_string("questionname", "quiz") ?>:</B></P></TD>
+    <TD align=right><P><B><?php  print_string("questionname", "quiz") ?>:</B></P></TD>
 
     <TD>
 
-        <INPUT type="text" name="name" size=40 value="<? p($question->name) ?>">
+        <INPUT type="text" name="name" size=40 value="<?php  p($question->name) ?>">
 
-        <? if (isset($err["name"])) formerr($err["name"]); ?>
+        <?php  if (isset($err["name"])) formerr($err["name"]); ?>
 
     </TD>
 
@@ -153,11 +153,11 @@
 
 <TR valign=top>
 
-    <TD align=right><P><B><? print_string("question", "quiz") ?>:</B></P></TD>
+    <TD align=right><P><B><?php  print_string("question", "quiz") ?>:</B></P></TD>
 
     <TD>
 
-        <? if (isset($err["questiontext"])) {
+        <?php  if (isset($err["questiontext"])) {
 
                formerr($err["questiontext"]); 
 
@@ -185,11 +185,11 @@
 
 <TR valign=top>
 
-    <TD align=right><P><B><? print_string("imagedisplay", "quiz") ?>:</B></P></TD>
+    <TD align=right><P><B><?php  print_string("imagedisplay", "quiz") ?>:</B></P></TD>
 
     <TD>
 
-    <?  if (empty($images)) {
+    <?php   if (empty($images)) {
 
             print_string("noimagesyet");
 
@@ -209,13 +209,13 @@
 
 
 
-<INPUT type="hidden" name=id value="<? p($question->id) ?>">
+<INPUT type="hidden" name=id value="<?php  p($question->id) ?>">
 
-<INPUT type="hidden" name=qtype value="<? p($question->qtype) ?>">
+<INPUT type="hidden" name=qtype value="<?php  p($question->qtype) ?>">
 
-<INPUT type="hidden" name=defaultgrade value="<? p($question->defaultgrade) ?>">
+<INPUT type="hidden" name=defaultgrade value="<?php  p($question->defaultgrade) ?>">
 
-<INPUT type="submit" value="<? print_string("savechanges") ?>">
+<INPUT type="submit" value="<?php  print_string("savechanges") ?>">
 
 
 
@@ -223,7 +223,7 @@
 
 </FORM>
 
-<? 
+<?php  
 
    if ($usehtmleditor) { 
 

@@ -54,18 +54,18 @@
                 ?>
                 <tr valign="top">
                     <td align="right" nowrap>
-                        <p><b><?=$strtypename?>:</b></p>
+                        <p><b><?php echo $strtypename?>:</b></p>
                     </td>
                     <td>
-                        <textarea name="reference" rows=3 cols=50 wrap="virtual"><? p($form->reference) ?></textarea>
+                        <textarea name="reference" rows=3 cols=50 wrap="virtual"><?php  p($form->reference) ?></textarea>
                     </td>
                 </tr>
                 <tr valign="top">
                     <td align="right" nowrap>
-                        <p><b>(<?=$strexample?>)</b></p>
+                        <p><b>(<?php echo $strexample?>)</b></p>
                     </td>
                     <td>
-                    <p><?=$strexamplereference?></p>
+                    <p><?php echo $strexamplereference?></p>
                     </td>
                 </TR>
 
@@ -77,10 +77,10 @@
                 ?>
                 <tr valign="top">
                     <td align="right" nowrap>
-                        <p><b><?=$strtypename?>:</b></p>
+                        <p><b><?php echo $strtypename?>:</b></p>
                     </td>
                     <td>
-                        <input name="reference" size="100" value="<? p($form->reference) ?>">
+                        <input name="reference" size="100" value="<?php  p($form->reference) ?>">
                     </td>
                 </tr>
                 <tr valign="top">
@@ -212,10 +212,10 @@
                 ?>
                 <tr valign="top">
                     <td align="right" nowrap>
-                        <p><b><?=$strtypename?>:</b></p>
+                        <p><b><?php echo $strtypename?>:</b></p>
                     </td>
                     <td>
-                        <input name="reference" size="100" value="<? p($form->reference) ?>">
+                        <input name="reference" size="100" value="<?php  p($form->reference) ?>">
                     </td>
                 </tr>
                 <tr valign="top">
@@ -236,7 +236,7 @@
                 ?>
                 <tr valign="top">
                     <td align="right" nowrap>
-                        <p><b><?=$strfilename?>:</b></p>
+                        <p><b><?php echo $strfilename?>:</b></p>
                     </td>
                     <td>
                         <?
@@ -251,10 +251,10 @@
                 </tr>
                 <tr valign="top">
                     <td align="right" nowrap>
-                        <p><b><?=$strnote?>:</b></p>
+                        <p><b><?php echo $strnote?>:</b></p>
                     </td>
                     <td>
-                    <p><?=$strnotefile?>
+                    <p><?php echo $strnotefile?>
                     </p>
                     </td>
                 </tr>
@@ -267,15 +267,15 @@
                 ?>
                 <tr valign="top">
                     <td align="right" nowrap>
-                        <p><b><?=$strfulltext?>:</b></p><br />
+                        <p><b><?php echo $strfulltext?>:</b></p><br />
                         <font size="1">
-                        <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
-                        <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?> <br />
-                        <? emoticonhelpbutton("theform", "alltext") ?> <br />
+                        <?php  helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
+                        <?php  helpbutton("text", get_string("helptext"), "moodle", true, true) ?> <br />
+                        <?php  emoticonhelpbutton("theform", "alltext") ?> <br />
                         </font>
                     </td>
                     <td>
-                        <textarea name="alltext" rows=20 cols=50 wrap="virtual"><? p($form->alltext) ?></textarea>
+                        <textarea name="alltext" rows=20 cols=50 wrap="virtual"><?php  p($form->alltext) ?></textarea>
                     </td>
                 </tr>
                 <?
@@ -286,14 +286,14 @@
                 ?>
                 <tr valign="top">
                     <td align="right" nowrap="true">
-                        <p><b><?=$strfulltext?>:</b></p><br \>
+                        <p><b><?php echo $strfulltext?>:</b></p><br \>
                         <font size="1">
-                        <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
-                        <? helpbutton("wiki", get_string("helpwiki"), "moodle", true, true) ?> <br />
+                        <?php  helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
+                        <?php  helpbutton("wiki", get_string("helpwiki"), "moodle", true, true) ?> <br />
                         </font>
                     </td>
                     <td>
-                        <textarea name="alltext" rows="20" cols="50" wrap="virtual"><? p($form->alltext) ?></textarea>
+                        <textarea name="alltext" rows="20" cols="50" wrap="virtual"><?php  p($form->alltext) ?></textarea>
                     </td>
                 </tr>
                 <?
@@ -304,10 +304,10 @@
                 ?>
                 <tr valign="top">
                     <td align="right" nowrap>
-                        <p><b><?=$strhtmlfragment?>:</b></p><br />
+                        <p><b><?php echo $strhtmlfragment?>:</b></p><br />
                         <font size="1">
-                        <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
-                        <? if ($usehtmleditor) {
+                        <?php  helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
+                        <?php  if ($usehtmleditor) {
                               helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
                            } else {   
                               helpbutton("html", get_string("helphtml"), "moodle", true, true);
@@ -315,7 +315,7 @@
                         </font>
                     </td>
                     <td>
-                        <? print_textarea($usehtmleditor, 20, 50, 680, 400, "alltext", $form->alltext); ?>
+                        <?php  print_textarea($usehtmleditor, 20, 50, 680, 400, "alltext", $form->alltext); ?>
                     </td>
                 </tr>
                 <?
@@ -328,20 +328,20 @@
 
         ?>
         </table>
-        <input type="hidden" name=summary    value="<? p($form->summary) ?>">
-        <input type="hidden" name=type       value="<? p($form->type) ?>">
-        <input type="hidden" name=name       value="<? p($form->name) ?>">
+        <input type="hidden" name=summary    value="<?php  p($form->summary) ?>">
+        <input type="hidden" name=type       value="<?php  p($form->type) ?>">
+        <input type="hidden" name=name       value="<?php  p($form->name) ?>">
 
-        <input type="hidden" name=course     value="<? p($form->course) ?>">
-        <input type="hidden" name=coursemodule     value="<? p($form->coursemodule) ?>">
-        <input type="hidden" name=section       value="<? p($form->section) ?>">
-        <input type="hidden" name=module     value="<? p($form->module) ?>">
-        <input type="hidden" name=modulename value="<? p($form->modulename) ?>">
-        <input type="hidden" name=instance   value="<? p($form->instance) ?>">
-        <input type="hidden" name=mode       value="<? p($form->mode) ?>">
+        <input type="hidden" name=course     value="<?php  p($form->course) ?>">
+        <input type="hidden" name=coursemodule     value="<?php  p($form->coursemodule) ?>">
+        <input type="hidden" name=section       value="<?php  p($form->section) ?>">
+        <input type="hidden" name=module     value="<?php  p($form->module) ?>">
+        <input type="hidden" name=modulename value="<?php  p($form->modulename) ?>">
+        <input type="hidden" name=instance   value="<?php  p($form->instance) ?>">
+        <input type="hidden" name=mode       value="<?php  p($form->mode) ?>">
         <center>
-        <input type="submit" value="<? print_string("savechanges") ?>">
-        <input type="submit" name=cancel value="<? print_string("cancel") ?>">
+        <input type="submit" value="<?php  print_string("savechanges") ?>">
+        <input type="submit" name=cancel value="<?php  print_string("cancel") ?>">
         </center>
         </form>
 <?

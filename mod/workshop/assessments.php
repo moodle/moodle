@@ -460,8 +460,8 @@
 		// close table and form
 		?>
 		</TABLE>
-		<input type="submit" value="<? print_string("savechanges") ?>">
-		<input type="submit" name=cancel value="<? print_string("cancel") ?>">
+		<input type="submit" value="<?php  print_string("savechanges") ?>">
+		<input type="submit" name=cancel value="<?php  print_string("cancel") ?>">
 		</CENTER>
 		</FORM>
 		<?PHP

@@ -165,10 +165,10 @@
         ?>
         <CENTER>
         <P>&nbsp;</P>
-        <FORM  NAME=theform METHOD=post ACTION=<?=$modform->destination ?>>
-        <INPUT TYPE="hidden" NAME=course  VALUE="<? p($modform->course) ?>">
-        <INPUT TYPE="submit" VALUE="<? print_string("savequiz", "quiz") ?>">
-        <INPUT type="submit" name=cancel value="<? print_string("cancel") ?>">
+        <FORM  NAME=theform METHOD=post ACTION=<?php echo $modform->destination ?>>
+        <INPUT TYPE="hidden" NAME=course  VALUE="<?php  p($modform->course) ?>">
+        <INPUT TYPE="submit" VALUE="<?php  print_string("savequiz", "quiz") ?>">
+        <INPUT type="submit" name=cancel value="<?php  print_string("cancel") ?>">
         </FORM>
         </CENTER>
         <?

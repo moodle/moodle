@@ -1,23 +1,23 @@
-<FORM name="theform" method="post" <?=$onsubmit ?> action="question.php">
+<FORM name="theform" method="post" <?php echo $onsubmit ?> action="question.php">
 <CENTER>
 <TABLE cellpadding=5>
 <TR valign=top>
-    <TD align=right><P><B><? print_string("category", "quiz") ?>:</B></P></TD>
+    <TD align=right><P><B><?php  print_string("category", "quiz") ?>:</B></P></TD>
     <TD>
-    <?  choose_from_menu($categories, "category", "$question->category", ""); ?>
+    <?php   choose_from_menu($categories, "category", "$question->category", ""); ?>
     </TD>
 </TR>
 <TR valign=top>
-    <TD align=right><P><B><? print_string("questionname", "quiz") ?>:</B></P></TD>
+    <TD align=right><P><B><?php  print_string("questionname", "quiz") ?>:</B></P></TD>
     <TD>
-        <INPUT type="text" name="name" size=50 value="<? p($question->name) ?>">
-        <? if (isset($err["name"])) formerr($err["name"]); ?>
+        <INPUT type="text" name="name" size=50 value="<?php  p($question->name) ?>">
+        <?php  if (isset($err["name"])) formerr($err["name"]); ?>
     </TD>
 </TR>
 <TR valign=top>
-    <TD align=right><P><B><? print_string("question", "quiz") ?>:</B></P></TD>
+    <TD align=right><P><B><?php  print_string("question", "quiz") ?>:</B></P></TD>
     <TD>
-        <? if (isset($err["questiontext"])) {
+        <?php  if (isset($err["questiontext"])) {
                formerr($err["questiontext"]); 
                echo "<BR \>";
            }
@@ -31,9 +31,9 @@
     </TD>
 </TR>
 <TR valign=top>
-    <TD align=right><P><B><? print_string("imagedisplay", "quiz") ?>:</B></P></TD>
+    <TD align=right><P><B><?php  print_string("imagedisplay", "quiz") ?>:</B></P></TD>
     <TD>
-    <?  if (empty($images)) {
+    <?php   if (empty($images)) {
             print_string("noimagesyet");
         } else {
             choose_from_menu($images, "image", "$question->image", get_string("none"),"","");
@@ -43,7 +43,7 @@
 </TR>
 
 <TR valign=top>
-    <TD align=right><P><B><? print_string("correctanswer", "quiz") ?>:</B></P></TD>
+    <TD align=right><P><B><?php  print_string("correctanswer", "quiz") ?>:</B></P></TD>
     <?
         // Even thou the rest of the module can handle up to six numerical answers,
         // this form will limit the number of numerical answers to one only.
@@ -55,13 +55,13 @@
         }
     ?>
     <TD>
-        <INPUT align="LEFT" type="text" id="correct0" name="answer[]" size="20" value="<? p($answers[0]->answer) ?>"/>&nbsp;&nbsp;
+        <INPUT align="LEFT" type="text" id="correct0" name="answer[]" size="20" value="<?php  p($answers[0]->answer) ?>"/>&nbsp;&nbsp;
     </TD>
 </TR>
 <TR valign=top>
-    <TD align=right><P><B><? print_string("acceptederror", "quiz"); ?>:</B></P></TD>
+    <TD align=right><P><B><?php  print_string("acceptederror", "quiz"); ?>:</B></P></TD>
     <TD>
-        <INPUT align="LEFT" type="text" id="acceptederror0" name="acceptederror[]" size="15" value="<? p($acceptederror) ?>" />&plusmn;
+        <INPUT align="LEFT" type="text" id="acceptederror0" name="acceptederror[]" size="15" value="<?php  p($acceptederror) ?>" />&plusmn;
         <!-- Values max and min will be determined when the form is submitted -->
         <INPUT type="HIDDEN" id="min0" name="min[]" value=""/>
         <INPUT type="HIDDEN" id="max0" name="max[]" value=""/>
@@ -70,16 +70,16 @@
     </TD>
 </TR>
 <TR valign=top>
-    <TD align=right><P><B><? print_string("feedback", "quiz") ?>:</B></P></TD>
+    <TD align=right><P><B><?php  print_string("feedback", "quiz") ?>:</B></P></TD>
     <TD>
-        <textarea name="feedback[]" rows=2 cols=50 wrap="virtual"><? p($answers[0]->feedback) ?></textarea>
+        <textarea name="feedback[]" rows=2 cols=50 wrap="virtual"><?php  p($answers[0]->feedback) ?></textarea>
     </TD>
 </TR>
 </TABLE>
 
-<INPUT type="hidden" name=id value="<? p($question->id) ?>">
-<INPUT type="hidden" name=qtype value="<? p($question->qtype) ?>">
-<INPUT type="submit" onClick="return determineMinAndMax();"  value="<? print_string("savechanges") ?>">
+<INPUT type="hidden" name=id value="<?php  p($question->id) ?>">
+<INPUT type="hidden" name=qtype value="<?php  p($question->qtype) ?>">
+<INPUT type="submit" onClick="return determineMinAndMax();"  value="<?php  print_string("savechanges") ?>">
 </CENTER>
 </FORM>
 <SCRIPT language="JAVASCRIPT">
@@ -88,7 +88,7 @@ function determineMinAndMax() {
     // based on the input for answer and acceptederror.
     with(document.theform) {
         if (correct0.value=='') {
-            alert('<? print_string("missingcorrectanswer","quiz") ?>');
+            alert('<?php  print_string("missingcorrectanswer","quiz") ?>');
             return false;
         } else if (acceptederror0.value=='') {
             var correct= parseFloat(correct0.value);
@@ -98,7 +98,7 @@ function determineMinAndMax() {
             }
             return true;
         } else if (isNaN(acceptederror0.value) || isNaN(correct0.value)) {
-            alert('<? print_string("answerswithacceptederrormarginmustbenumeric", "quiz") ?>');
+            alert('<?php  print_string("answerswithacceptederrormarginmustbenumeric", "quiz") ?>');
             return false;
         } else {
             var correct= parseFloat(correct0.value);
@@ -110,7 +110,7 @@ function determineMinAndMax() {
     }
 }
 </SCRIPT>
-<? 
+<?php  
    if ($usehtmleditor) { 
        print_richedit_javascript("theform", "questiontext", "no");
    }
