@@ -22,6 +22,12 @@
 
 	if ($config = data_submitted($match)) {  
 
+        if (isset($USER)) {             // Additional identity check
+            if (!confirm_sesskey()) {
+                error(get_string('confirmsesskeybad', 'error'));
+            }
+        }
+
         validate_form($config, $err);
 
         if (count($err) == 0) {
@@ -82,6 +88,8 @@
         echo "<br />";
     }
 
+    $sesskey = isset($USER) ? $USER->sesskey : '';
+
     print_simple_box_start("center", "", "$THEME->cellheading");
 	include("config.html");
     print_simple_box_end();
@@ -110,10 +118,9 @@
 
 function validate_form(&$form, &$err) {
 
-   // if (empty($form->fullname))
-   //     $err["fullname"] = get_string("missingsitename");
+    // Currently no checks are needed ...
 
-    return;
+    return true;
 }
 
 
