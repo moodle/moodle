@@ -35,10 +35,6 @@
         error("The PHP server variable 'file_uploads' is not turned On - $documentationlink");
     }
 
-    if (!ini_get_bool('short_open_tag')) {
-        error("The PHP server variable 'short_open_tag' is not turned On - $documentationlink");
-    }
-
 
 
 /// Check that sessions are supported
