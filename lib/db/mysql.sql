@@ -158,10 +158,10 @@ CREATE TABLE `prefix_event` (
 # --------------------------------------------------------
 
 #
-# Table structure for table `text_cache`
+# Table structure for table `cache_text`
 #
 
-CREATE TABLE `prefix_text_cache` (
+CREATE TABLE `prefix_cache_text` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `md5key` varchar(32) NOT NULL default '',
   `formattedtext` longtext NOT NULL,

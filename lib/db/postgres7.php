@@ -389,8 +389,8 @@ function main_upgrade($oldversion=0) {
         table_column("course", "", "lang", "varchar", "5", "", "", "", "groupmodeforce");
     }
 
-    if ($oldversion < 2004020902) {
-        modify_database("", "CREATE TABLE prefix_text_cache (
+    if ($oldversion < 2004020903) {
+        modify_database("", "CREATE TABLE prefix_cache_text (
                                 id SERIAL PRIMARY KEY,
                                 md5key varchar(32) NOT NULL default '',
                                 formattedtext text,

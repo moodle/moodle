@@ -165,7 +165,7 @@ CREATE TABLE prefix_scale (
    timemodified integer NOT NULL default '0'
 );
 
-CREATE TABLE prefix_text_cache (
+CREATE TABLE prefix_cache_text (
    id SERIAL PRIMARY KEY,
    md5key varchar(32) NOT NULL default '',
    formattedtext text,

@@ -494,7 +494,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     if (!empty($CFG->cachetext)) {
         $time = time() - $CFG->cachetext;
         $md5key = md5($text);
-        if ($cacheitem = get_record_select('text_cache', "md5key = '$md5key' AND timemodified > '$time'")) {
+        if ($cacheitem = get_record_select('cache_text', "md5key = '$md5key' AND timemodified > '$time'")) {
             return $cacheitem->formattedtext;
         }
     }
@@ -539,7 +539,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         $newrecord->md5key = $md5key;
         $newrecord->formattedtext = addslashes($text);
         $newrecord->timemodified = time();
-        insert_record('text_cache', $newrecord);
+        insert_record('cache_text', $newrecord);
     }
 
     return $text;
