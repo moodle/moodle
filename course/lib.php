@@ -1391,7 +1391,7 @@ function print_courses_sideblock($category=0, $width="100%") {
                            "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
                 $modicon[]=$icon;
             }
-            $fulllist = "<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
+            $fulllist = "<p><a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...</p>";
             print_side_block( get_string("mycourses"), "", $moddata, $modicon, $fulllist, $width);
             return;
         }
@@ -1404,8 +1404,9 @@ function print_courses_sideblock($category=0, $width="100%") {
             $moddata[]="<a $linkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
             $modicon[]=$icon;
         }
-        $fulllist = "<a href=\"$CFG->wwwroot/course/\">".get_string("searchcourses")."</a>...";
+        $fulllist = "<p><a href=\"$CFG->wwwroot/course/\">".get_string("searchcourses")."</a>...</p>";
         $blocktitle = get_string("categories");
+
     } else {                          // Just print course names of single category
         $category = array_shift($categories);
         $courses = get_courses($category->id);
@@ -1417,7 +1418,7 @@ function print_courses_sideblock($category=0, $width="100%") {
                            "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
                 $modicon[]=$icon;
             }   
-            $fulllist = "<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
+            $fulllist = "<p><a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...</p>";
         } else {
             $moddata = array();
             $modicon = array();
