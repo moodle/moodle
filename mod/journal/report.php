@@ -74,23 +74,24 @@
             }
         }
         add_to_log($course->id, "journal", "update feedback", "report.php?id=$cm->id", "$count students");
-        notify("Journal feedback updated for $count students.");
+        notify("Journal feedback updated for $count people.");
     } else {
         add_to_log($course->id, "journal", "view responses", "report.php?id=$cm->id", "$journal->id");
     }
 
 
-    if (! $students = get_records_sql("SELECT u.* FROM user u, user_students s 
-                                       WHERE s.course = '$course->id' AND s.user = u.id
+    if (! $students = get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t
+                                       WHERE (s.course = '$course->id' AND s.user = u.id) OR 
+                                             (t.course = '$course->id' AND t.user = u.id)
                                        ORDER BY u.lastaccess DESC")) {
-        notify("No students", "/course/view.php?id=$course->id");
+        notify("No students", "$CFG->wwwroot/course/view.php?id=$course->id");
         die;
     }
 
     if (! $teachers = get_records_sql("SELECT u.* FROM user u, user_teachers t 
                                        WHERE t.course = '$course->id' AND t.user = u.id
                                        ORDER BY u.lastaccess DESC")) {
-        notify("No teachers", "/course/view.php?id=$course->id");
+        notify("No teachers", "$CFG->wwwroot/course/view.php?id=$course->id");
         die;
     }
 
