@@ -83,9 +83,9 @@
         $strcancel= get_string("cancel");
         echo "<tr>";
         echo "<td colspan=\"3\" valign=\"top\" class=\"topicoutlineclip\" width=\"100%\">";
-        echo "<p><font size=\"2\">";
+        echo "<div><font size=\"2\">";
         echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"mod.php?cancelcopy=true&amp;sesskey=$USER->sesskey\">$strcancel</a>)";
-        echo "</font></p>";
+        echo "</font></div>";
         echo "</td>";
         echo "</tr>";
         echo "<tr><td colspan=\"3\"><img src=\"../pix/spacer.gif\" width=\"1\" height=\"1\" alt=\"\" /></td></tr>";
@@ -182,7 +182,7 @@
 
             echo "<tr>";
             echo "<td nowrap=\"nowrap\" $colorsides valign=\"top\" width=\"20\">";
-            echo "<p align=\"center\"><font size=\"3\"><b><a name=\"$section\">$section</a></b></font></p>";
+            echo "<div align=\"center\"><font size=\"3\"><b><a name=\"$section\">$section</a></b></font></div>";
             echo "</td>";
 
             if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
