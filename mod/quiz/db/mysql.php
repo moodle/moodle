@@ -126,6 +126,10 @@ function quiz_upgrade($oldversion) {
         execute_sql(" ALTER TABLE {$CFG->prefix}quiz ADD eachattemptbuildsonthelast TINYINT(4) DEFAULT '0' NOT NULL AFTER `attempts` ");
     }
 
+    if ($oldversion < 2003080400) {
+        table_column("quiz", "eachattemptbuildsonthelast", "attemptonlast", "TINYINT", "4", "UNSIGNED", "0", "NOT NULL", "");
+    }
+
     return true;
 }
 

@@ -21,7 +21,7 @@ CREATE TABLE `prefix_quiz` (
   `timeopen` int(10) unsigned NOT NULL default '0',
   `timeclose` int(10) unsigned NOT NULL default '0',
   `attempts` smallint(6) NOT NULL default '0',
-  `eachattemptbuildsonthelast` tinyint(4) NOT NULL default '0',
+  `attemptonlast` tinyint(4) NOT NULL default '0',
   `feedback` tinyint(4) NOT NULL default '0',
   `correctanswers` tinyint(4) NOT NULL default '1',
   `grademethod` tinyint(4) NOT NULL default '1',

@@ -19,8 +19,8 @@
     if (!isset($form->attempts)) {
         $form->attempts = 0;
     }
-    if (!isset($form->eachattemptbuildsonthelast)) {
-        $form->eachattemptbuildsonthelast = 0;
+    if (!isset($form->attemptonlast)) {
+        $form->attemptonlast = 0;
     }
     if (!isset($form->grademethod)) {
         $form->grademethod = "";
@@ -140,8 +140,8 @@
         $options = array();
         $options[0] = get_string("no");
         $options[1] = get_string("yes");
-        choose_from_menu($options, "eachattemptbuildsonthelast",
-                         "$form->eachattemptbuildsonthelast", "");
+        choose_from_menu($options, "attemptonlast",
+                         "$form->attemptonlast", "");
         helpbutton("eachattemptbuildsonthelast",
                    get_string("eachattemptbuildsonthelast", "quiz"),
                    "quiz");
