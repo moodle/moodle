@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.7 (2002121000)
+      // forum.php - created with Moodle 1.0.8 dev (2002121200)
 
 
 $string['addanewdiscussion'] = "添加一个新的讨论话题";
@@ -44,10 +44,10 @@ $string['introteacher'] = "一个教师专用讨论区";
 $string['learningforums'] = "学习讨论区";
 $string['maxtimehaspassed'] = "抱歉，编辑该贴的时间限制（ \$a ）已过！";
 $string['message'] = "讯息";
-$string['modeflatnewestfirst'] = "列表显示回贴，新贴在前";
-$string['modeflatoldestfirst'] = "列表显示回贴，旧贴在前";
-$string['modenested'] = "嵌套显示回贴";
-$string['modethreaded'] = "树状显示回贴";
+$string['modeflatnewestfirst'] = "列表显示回贴内容，新贴在前";
+$string['modeflatoldestfirst'] = "列表显示回贴内容，旧贴在前";
+$string['modenested'] = "嵌套显示回贴内容";
+$string['modethreaded'] = "树状显示回贴标题";
 $string['modulename'] = "讨论区";
 $string['modulenameplural'] = "讨论区";
 $string['more'] = "更多";
@@ -71,23 +71,36 @@ $string['parentofthispost'] = "该贴的父贴";
 $string['postadded'] = "你的贴子已经发表了。<P>如果你想修改，在 \$a 时间内是允许的。";
 $string['postincontext'] = "在上下文中看此贴";
 $string['postingtip'] = "<B>发贴提示：</B>
+
 在回贴时：
+
 <UL>
+
 <LI>设身处地，仔细认真地读别人的贴子
+
 <LI>想想你能给予什么回答
+
 </UL>
 
+
+
 在写贴时：
+
 <UL>
+
 <LI>让你的贴子简短，且避免离题
+
 <LI>清楚解释你的观点
+
 <LI>想想你要问的问题
+
 </UL>";
 $string['postmailinfo'] = "这是一份来自 \$a 网站的贴子。
+
 要在网站上回贴，请点击这个链接：";
-$string['postrating1'] = "Shows mostly SEPARATE knowing";
-$string['postrating2'] = "Equally separate and connected";
-$string['postrating3'] = "Shows mostly CONNECTED knowing";
+$string['postrating1'] = "极端独立型";
+$string['postrating2'] = "独立型与情景型兼备";
+$string['postrating3'] = "极端情况型";
 $string['postupdated'] = "你的贴子已经更新";
 $string['processingpost'] = "正在处理贴子 \$a";
 $string['rate'] = "评分";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.7 (2002121000)
+      // moodle.php - created with Moodle 1.0.8 dev (2002121200)
 
 
 $string['action'] = "动作";
@@ -7,6 +7,7 @@ $string['activities'] = "活动项目";
 $string['activity'] = "活动项目";
 $string['activityreport'] = "活动报告";
 $string['add'] = "添加";
+$string['addadmin'] = "添加管理员";
 $string['added'] = "已添加 \$a";
 $string['addinganew'] = "添加一个新的 \$a";
 $string['addinganewto'] = "正在添加一个新 \$a->what 到 \$a->to";
@@ -29,7 +30,8 @@ $string['alphanumerical'] = "只允许用字母或阿拉伯数字";
 $string['alreadyconfirmed'] = "登记已经确认";
 $string['answer'] = "回答";
 $string['assessment'] = "评价";
-$string['assignteachers'] = "分派教师";
+$string['assignadmins'] = "任命管理员";
+$string['assignteachers'] = "任命教师";
 $string['authentication'] = "身份验证";
 $string['availablecourses'] = "现有的课程";
 $string['cancel'] = "取消";
@@ -51,6 +53,7 @@ $string['city'] = "城市";
 $string['closewindow'] = "关闭窗口";
 $string['comparelanguage'] = "比较并编辑当前语言";
 $string['complete'] = "完成";
+$string['configcountry'] = "如果你在这里设定了国家，那么新用户在默认情况下选择的也是这个国家。如果要让用户选择国家，只要保留原样不作改动。";
 $string['configerrorlevel'] = "选择显示的PHP警告数目。‘正常’是最佳选择。";
 $string['configgdversion'] = "指明已安装的GD版本。默认显示的版本号是自动探测的结果。不要轻易改变它，除非你清楚你在做什么。";
 $string['confightmleditor'] = "选择是否允许使用嵌入式文本编辑器。即使你选择允许，也只能在IE5.5以上版本使用。用户也可以选择不用。";
@@ -122,21 +125,126 @@ $string['edituser'] = "编辑用户帐号";
 $string['email'] = "Email地址";
 $string['emailconfirm'] = "确认你的帐号";
 $string['emailconfirmation'] = "\$a->lastname ：<br>
+
+
+
+
+
+
+
 &nbsp;&nbsp;&nbsp;&nbsp;你好！<br>
+
+
+
+
+
+
+
 &nbsp;&nbsp;&nbsp;&nbsp;刚才你用你的电子邮箱地址在‘ \$a->sitename ’上申请了一个新帐号。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 &nbsp;&nbsp;&nbsp;&nbsp;如果要确认你的新帐号，请点击以下链接：<br>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   \$a->link
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <br>&nbsp;&nbsp;&nbsp;&nbsp;在多数的邮件软件中，这个地址应该显示为蓝色的链接。如果不是这样，请将以上地址复制粘贴到网页浏览器（比如IE或netscape等）的地址栏，打开这个网页。<br>
+
+
+
+
+
+
+
 致
+
+
+
+
+
+
+
 &nbsp;&nbsp;&nbsp;&nbsp;敬礼！
+
+
+
+
+
+
+
 <P align=right>‘ \$a->sitename ’管理员<br>
+
+
+
+
+
+
+
 \$a->admin </P>";
 $string['emailconfirmsent'] = "   <P>一封电子邮件已经发送到你的地址 <B> \$a </B>。
+
+
+
+
+
+
+
    <P>这封邮件简要说明了你如何完成注册。
+
+
+
+
+
+
+
    <P>如果你还遇到什么困难，请和网站管理员联系。";
 $string['emaildisplay'] = "Email显示";
 $string['emaildisplaycourse'] = "只允许参加同一课程的其他成员看见我的email地址";
@@ -147,13 +255,35 @@ $string['emailformat'] = "Email格式";
 $string['emailmustbereal'] = "注意：你的email地址必须是真实的";
 $string['enrolmentkey'] = "选课密钥";
 $string['enrolmentkeyfrom'] = "该课程需要‘选课密钥’——<BR>
+
+
+
+
+
+
+
 一个从 \$a 获得的一次性密码";
 $string['enrolmentkeyhint'] = "这个选课密钥不正确，请再试一次<BR>
+
+
+
+
+
+
+
 （提示：以'\$a'开头）";
 $string['entercourse'] = "点击进入该课程";
 $string['enteremailaddress'] = "输入你的email地址以重设密码，
+
+
+
+
+
+
+
 新密码将送到你的信箱中。";
 $string['error'] = "错误";
+$string['existingadmins'] = "现有管理员";
 $string['existingteachers'] = "现有教师";
 $string['feedback'] = "反馈";
 $string['filemissing'] = "\$a 找不到";
@@ -182,9 +312,51 @@ $string['gd2'] = "GD 2.x已经安装";
 $string['gdnot'] = "GD没有安装";
 $string['gpl'] = "版权所有 (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 该系统是自由软件；你可以按照自由软件基金会所公布的GNU通用公共许可证（GPL）进行修改或重新发布；许可证可以是第2版或更新的版本。
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 发布该软件是希望它有用有益，但不提供任何形式的担保，不论是明确的还是隐含的，包括但不限于可销售和适合特定用途的隐含保证。详见GNU通用公共许可证：
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 http://www.gnu.org/copyleft/gpl.html";
 $string['grade'] = "年级";
@@ -199,8 +371,10 @@ $string['help'] = "帮助";
 $string['helphtml'] = "如何写html";
 $string['helppicture'] = "如何上载图片";
 $string['helpquestions'] = "如何提问题";
+$string['helpreading'] = "仔细阅读";
 $string['helprichtext'] = "关于富文本格式HTML编辑器";
 $string['helptext'] = "如何写文本";
+$string['helpwriting'] = "仔细编写";
 $string['hide'] = "隐藏";
 $string['hits'] = "点击次数";
 $string['hitsoncourse'] = "\$a->username 点击 \$a->coursename 的次数";
@@ -241,14 +415,77 @@ $string['loginas'] = "登录为";
 $string['loginguest'] = "作为访客登录";
 $string['loginsite'] = "登录该站";
 $string['loginsteps'] = "嗨，你好！为了完全访问所有课程，你必须花一两分钟时间申请一个新帐号。各个课程可能还需要一个一次性的“选课密钥”，用过一次以后就不再需要。请按以下步骤：
+
+
+
+
+
+
+
    <OL size=2>
+
+
+
+
+
+
+
    <LI>填写<A HREF= \$a >注册新帐号</A>上的关于个人情况的表单。
+
+
+
+
+
+
+
    <LI>一封email会马上发送到你的email信箱中。
+
+
+
+
+
+
+
    <LI>阅读这封email，点击信中包含的网页链接。
+
+
+
+
+
+
+
    <LI>你的帐号会马上得到确认，而你也将登录到本站中。
+
+
+
+
+
+
+
    <LI>然后，选择你想选修的课程。
+
+
+
+
+
+
+
    <LI>如果系统提示“选课密钥”，请用你的老师提供给你的密钥。这样才能注册到该课程中。
+
+
+
+
+
+
+
    <LI>这时你可以完全访问课程。从此后你只需输入你个人的用户名和密码（在本页面的表单中）以登录并进入任一个你已注册的课程。
+
+
+
+
+
+
+
    </OL>";
 $string['loginstepsnone'] = "嗨！<P>为了完全访问课程你必须申请一个新帐号。<P>你所需要做的是创建一个用户名和密码，并在本页面中使用。<P>如果别人已经申请了相同的用户名，只好请你委屈一下用别的用户名重试。";
 $string['loginto'] = "登录到 \$a";
@@ -305,21 +542,133 @@ $string['new'] = "新";
 $string['newaccount'] = "新帐号";
 $string['newpassword'] = "新密码";
 $string['newpasswordtext'] = "\$a->lastname ：<br>
+
+
+
+
+
+
+
 &nbsp;&nbsp;&nbsp;&nbsp;你好！ 
+
+
+
+
+
+
+
 <br>&nbsp;&nbsp;&nbsp;&nbsp;你在‘ \$a->sitename ’上的帐号密码已被重设，这是你新的临时密码。
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <br>&nbsp;&nbsp;&nbsp;&nbsp;现在你的登录信息是：
+
+
+
+
+
+
+
 <br>&nbsp;&nbsp;&nbsp;&nbsp;   用户名： \$a->username
+
+
+
+
+
+
+
 <br>&nbsp;&nbsp;&nbsp;&nbsp;   密码： \$a->newpassword
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <br>&nbsp;&nbsp;&nbsp;&nbsp;请到这里更改你的密码：
+
+
+
+
+
+
+
    \$a->link
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <br>&nbsp;&nbsp;&nbsp;&nbsp;在多数的邮件软件中，这个地址应该显示为蓝色的链接。如果不是这样，请将以上地址复制粘贴到网页浏览器（比如IE或netscape等）的地址栏，打开这个网页。<br>
+
+
+
+
+
+
+
 致
+
+
+
+
+
+
+
 <br>&nbsp;&nbsp;&nbsp;&nbsp;敬礼！
+
+
+
+
+
+
+
 <P align=right>'\$a->sitename'管理员<br>
+
+
+
+
+
+
+
 \$a->signoff
+
+
+
+
+
+
+
 </P>";
 $string['newpicture'] = "新照片";
 $string['newsitem'] = "新闻条目";
@@ -329,11 +678,13 @@ $string['newuser'] = "新用户";
 $string['newusers'] = "新用户";
 $string['no'] = "不";
 $string['nocoursesyet'] = "此类中无课程";
+$string['noexistingadmins'] = "没有管理员,这是个严重的错误,你应该不会看到这条信息。";
 $string['noexistingteachers'] = "没有教师";
 $string['nofilesyet'] = "你的课程尚未上载任何文件";
 $string['nograde'] = "不分级";
 $string['noimagesyet'] = "你的课程尚未上载任何图片";
 $string['none'] = "无";
+$string['nopotentialadmins'] = "没有候选管理员";
 $string['nopotentialteachers'] = "没有候选教师";
 $string['normal'] = "正常";
 $string['nostudentsyet'] = "尚无学生选修此课程";
@@ -362,12 +713,34 @@ $string['passwordrecovery'] = "是的，帮我登录吧";
 $string['passwordsdiffer'] = "这些密码不对";
 $string['passwordsent'] = "密码已被发送";
 $string['passwordsenttext'] = "   <P>一封email已经送到你的邮箱 \$a->email。
+
+
+
+
+
+
+
    <P><B>请查收你的email以获取密码。</B>
+
+
+
+
+
+
+
    <P>这个新密码是自动生成的，所以你可能需要点击
+
+
+
+
+
+
+
    <A HREF= \$a->link >这里</A>改成你自己容易记的密码。";
 $string['people'] = "人物";
 $string['personalprofile'] = "个人资料";
 $string['phone'] = "电话";
+$string['potentialadmins'] = "候选管理员";
 $string['potentialteachers'] = "候选教师";
 $string['preferredlanguage'] = "偏爱的语言";
 $string['preview'] = "预览";
@@ -375,6 +748,7 @@ $string['previeworchoose'] = "预览或选取一个主题风格";
 $string['question'] = "问题";
 $string['readme'] = "README";
 $string['recentactivity'] = "当前活动项目";
+$string['removeadmin'] = "删除管理员";
 $string['removeteacher'] = "删除教师";
 $string['rename'] = "重命名";
 $string['requireskey'] = "该课程要求一个选课密钥";
@@ -391,7 +765,7 @@ $string['secs'] = "秒";
 $string['section'] = "Section";
 $string['selectacountry'] = "选择一个国家";
 $string['senddetails'] = "用email发送我的详细资料";
-$string['separateandconnected'] = "Separate and Connected ways of knowing";
+$string['separateandconnected'] = "独立型和情景型思维方式";
 $string['serverlocaltime'] = "服务器的当地时间";
 $string['settings'] = "设置";
 $string['shortname'] = "简称";
@@ -471,7 +845,35 @@ $string['weeklyoutline'] = "每周概要";
 $string['welcometocourse'] = "欢迎来到 \$a";
 $string['welcometocoursetext'] = "欢迎你来 \$a->coursename！
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 你首先要做的一件事情是编辑你的个人信息，以便我们更好地了解你：
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   \$a->profileurl";
 $string['withchosenfiles'] = "用选中的文件";

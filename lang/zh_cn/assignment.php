@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.5 dev (2002092300)
+      // assignment.php - created with Moodle 1.0.8 dev (2002121200)
 
 
 $string['allowresubmit'] = "允许重交";
@@ -10,6 +10,7 @@ $string['description'] = "描述";
 $string['duedate'] = "截止日期";
 $string['early'] = "\$a 之前";
 $string['failedupdatefeedback'] = "为用户 \$a 更新上交反馈失败";
+$string['feedback'] = "反馈";
 $string['feedbackupdated'] = "为 \$a 个人更新上交反馈";
 $string['late'] = "\$a 之后";
 $string['maximumgrade'] = "最高得分";
@@ -19,6 +20,7 @@ $string['modulenameplural'] = "作业";
 $string['newsubmissions'] = "已交的作业";
 $string['notsubmittedyet'] = "未交";
 $string['overwritewarning'] = "警告：重新上载将覆盖你已交的作业";
+$string['saveallfeedback'] = "保存我的所有反馈";
 $string['submissionfeedback'] = "上交反馈";
 $string['submissions'] = "上交";
 $string['submitassignment'] = "用此表单上交作业";
