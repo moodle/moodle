@@ -53,6 +53,7 @@ $string['forcesubscribeq'] = 'Abonner tout le monde ?';
 $string['forum'] = 'Forum';
 $string['forumintro'] = 'Introduction au forum';
 $string['forumname'] = 'Nom du forum';
+$string['forumposts'] = 'Messages des forums';
 $string['forums'] = 'Forums';
 $string['forumtype'] = 'Type de forum';
 $string['generalforum'] = 'Forum standard pour utilisation générale';
