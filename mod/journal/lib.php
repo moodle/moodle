@@ -53,8 +53,6 @@ function journal_cron () {
 
     global $CFG;
 
-    echo "Processing journals...\n";
-
     $cutofftime = time() - $CFG->maxeditingtime;
 
     if ($entries = get_records_sql("SELECT e.*, j.course, j.name
