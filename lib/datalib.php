@@ -933,10 +933,7 @@ function get_user_info_from_db($field, $value) {
     }
 
     if ($admins = get_records("user_admins", "userid", $user->id)) {
-        foreach ($admins as $admin) {
-            $user->admin = true;
-            break;
-        }
+        $user->admin = true;
     }
 
     if ($displays = get_records("course_display", "userid", $user->id)) {
@@ -949,6 +946,12 @@ function get_user_info_from_db($field, $value) {
         foreach ($groups as $groupmember) {
             $courseid = get_field("groups", "courseid", "id", $groupmember->groupid);
             $user->groupmember[$courseid] = $groupmember->groupid;
+        }
+    }
+
+    if ($preferences = get_records('user_preferences', 'userid', $user->id)) {
+        foreach ($preferences as $preference) {
+            $user->preference[$preference->name] = $preference->value;
         }
     }
 

@@ -618,6 +618,19 @@ function main_upgrade($oldversion=0) {
                             ) TYPE=MyISAM COMMENT='For everything with a time associated to it'; ");
     }
 
+    if ($oldversion < 2004012800) {
+        modify_database("", "CREATE TABLE `prefix_user_preferences` (
+                              `id` int(10) unsigned NOT NULL auto_increment,
+                              `userid` int(10) unsigned NOT NULL default '0',
+                              `name` varchar(50) NOT NULL default '',
+                              `value` varchar(255) NOT NULL default '',
+                              PRIMARY KEY  (`id`),
+                              UNIQUE KEY `id` (`id`),
+                              KEY `useridname` (userid,name)
+                            ) TYPE=MyISAM COMMENT='Allows modules to store arbitrary user preferences'; ");
+    }
+
+
     return $result;
 
 }

@@ -314,6 +314,25 @@ CREATE TABLE `prefix_user_admins` (
 ) TYPE=MyISAM COMMENT='One record per administrator user';
 # --------------------------------------------------------
 
+
+
+#
+# Table structure for table `user_preferences`
+#
+
+CREATE TABLE `prefix_user_preferences` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `userid` int(10) unsigned NOT NULL default '0',
+  `name` varchar(50) NOT NULL default '',
+  `value` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `id` (`id`),
+  KEY `useridname` (userid,name)
+) TYPE=MyISAM COMMENT='Allows modules to store arbitrary user preferences';
+# --------------------------------------------------------
+
+
+
 #
 # Table structure for table `user_students`
 #

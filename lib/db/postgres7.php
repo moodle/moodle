@@ -365,6 +365,17 @@ function main_upgrade($oldversion=0) {
     }
 
 
+    if ($oldversion < 2004012800) {
+        modify_database("", "CREATE TABLE prefix_user_preferences (
+                                id SERIAL PRIMARY KEY,
+                                userid integer NOT NULL default '0',
+                                name varchar(50) NOT NULL default '',
+                                value varchar(255) NOT NULL default ''
+                             ); ");
+
+        modify_database("", "CREATE INDEX prefix_user_preferences_useridname_idx ON prefix_user_preferences (userid,name);");
+    }
+
     return $result;
 }
 

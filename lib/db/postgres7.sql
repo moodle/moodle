@@ -205,6 +205,15 @@ CREATE TABLE prefix_user_admins (
    userid integer NOT NULL default '0'
 );
 
+CREATE TABLE prefix_user_preferences (
+   id SERIAL PRIMARY KEY,
+   userid integer NOT NULL default '0',
+   name varchar(50) NOT NULL default '',
+   value varchar(255) NOT NULL default ''
+);
+
+CREATE INDEX prefix_user_preferences_useridname_idx ON prefix_user_preferences (userid,name);
+
 CREATE TABLE prefix_user_students (
    id SERIAL PRIMARY KEY,
    userid integer NOT NULL default '0',

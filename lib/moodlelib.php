@@ -60,6 +60,7 @@ function optional_variable(&$var, $default=0) {
 
 function set_config($name, $value) {
 /// No need for get_config because they are usually always available in $CFG
+
     global $CFG;
 
     $CFG->$name = $value;  // So it's defined for this invocation at least
@@ -71,6 +72,84 @@ function set_config($name, $value) {
         $config->value = $value;
         return insert_record("config", $config);
     }
+}
+
+
+function reload_user_preferences() {
+/// Refresh current USER with all their current preferences
+
+    global $USER;
+
+    unset($USER->preference); 
+
+    if ($preferences = get_records('user_preferences', 'userid', $USER->id)) {
+        foreach ($preferences as $preference) {
+            $USER->preference[$preference->name] = $preference->value;
+        }
+    }
+}
+
+function set_user_preference($name, $value) {
+/// Sets a preference for the current user
+
+    global $USER;
+
+    if (empty($name)) {
+        return false;
+    }
+
+    if ($preference = get_record('user_preferences', 'userid', $USER->id, 'name', $name)) {
+        return set_field("user_preferences", "value", $value, "id", $preference->id);
+
+    } else {
+        $preference->userid = $USER->id;
+        $preference->name   = $name;
+        $preference->value  = (string)$value;
+        if (insert_record('user_preferences', $record)) {
+            $USER->preference[$name] = $value;
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+function set_user_preferences($prefarray) {
+/// Sets a whole array of preferences for the current user
+
+    if (!is_array($prefarray) or empty($prefarray)) {
+        return false;
+    }
+
+    $return = true;
+    foreach ($prefarray as $name => $value) {
+        // The order is important; if the test for return is done first,
+        // then if one function call fails all the remaining ones will
+        // be "optimized away"
+        $return = set_user_preference($name, $value) and $return;
+    }
+    return $return;
+}
+
+function get_user_preferences($name=NULL, $default=NULL) {
+/// Without arguments, returns all the current user preferences
+/// as an array.  If a name is specified, then this function 
+/// attempts to return that particular preference value.  If 
+/// none is found, then the optional value $default is returned,
+/// otherwise NULL.
+
+    global $USER;
+
+    if (empty($USER->preference)) {
+        return $default;              // Default value (or NULL)
+    }
+    if (empty($name)) {
+        return $USER->preference;     // Whole array
+    }
+    if (!isset($USER->preference[$name])) {
+        return $default;              // Default value (or NULL)
+    }
+    return $USER->preference[$name];  // The single value
 }
 
 
