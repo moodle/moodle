@@ -1,7 +1,8 @@
-<?php // $Id$ 
-      // choice.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+<?PHP // $Id$ 
+      // choice.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032800)
 
 
+$string['addmorechoices'] = '選択肢の追加';
 $string['allowupdate'] = '投票の更新を許可する';
 $string['answered'] = '回答済み';
 $string['choice'] = '選択肢 $a';
@@ -9,6 +10,9 @@ $string['choiceclose'] = '終了日時';
 $string['choicename'] = '投票名';
 $string['choiceopen'] = '開始日時';
 $string['choicetext'] = '説明文';
+$string['displayhorizontal'] = '水平に表示';
+$string['displaymode'] = '表示モード';
+$string['displayvertical'] = '垂直に表示';
 $string['havetologin'] = '投票を実行する前にログインしてください。';
 $string['modulename'] = '投票';
 $string['modulenameplural'] = '投票';
@@ -27,9 +31,6 @@ $string['responses'] = '回答';
 $string['responsesto'] = '$a へ回答する';
 $string['savemychoice'] = '回答を保存する';
 $string['showunanswered'] = '未回答欄を表示する';
-$string['thischarset'] = 'UTF-8';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 $string['timerestrict'] = '回答期限';
 $string['viewallresponses'] = '回答を表示($a 件)';
 
