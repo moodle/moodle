@@ -137,7 +137,7 @@ function lesson_save_question_options($question) {
             // Insert all the new answers
             foreach ($question->answer as $key => $dataanswer) {
                 if ($dataanswer != "") {
-                    unset($answer);
+                    $answer = new stdClass;
                     $answer->lessonid   = $question->lessonid;
                     $answer->pageid   = $question->id;
                     if ($question->fraction[$key] >=0.5) {
@@ -176,7 +176,7 @@ function lesson_save_question_options($question) {
             // for each answer store the pair of min and max values even if they are the same 
             foreach ($question->answer as $key => $dataanswer) {
                 if ($dataanswer != "") {
-                    unset($answer);
+                    $answer = new stdClass;
                     $answer->lessonid   = $question->lessonid;
                     $answer->pageid   = $question->id;
                     $answer->jumpto = LESSON_NEXTPAGE;
@@ -225,7 +225,7 @@ function lesson_save_question_options($question) {
             }
 
             // the lie    
-            unset($answer);
+            $answer = new stdClass;
             $answer->lessonid   = $question->lessonid;
             $answer->pageid = $question->id;
             $answer->timecreated   = $timenow;
@@ -255,7 +255,7 @@ function lesson_save_question_options($question) {
             // Insert all the new answers
             foreach ($question->answer as $key => $dataanswer) {
                 if ($dataanswer != "") {
-                    unset($answer);
+                    $answer = new stdClass;
                     $answer->lessonid   = $question->lessonid;
                     $answer->pageid   = $question->id;
                     $answer->timecreated   = $timenow;
@@ -313,7 +313,7 @@ function lesson_save_question_options($question) {
             foreach ($question->subquestions as $key => $questiontext) {
                 $answertext = $question->subanswers[$key]; echo $answertext; echo "<br>"; exit;
                 if (!empty($questiontext) and !empty($answertext)) {
-                    unset($answer);
+                    $answer = new stdClass;
                     $answer->lessonid   = $question->lessonid;
                     $answer->pageid   = $question->id;
                     $answer->timecreated   = $timenow;
@@ -382,7 +382,7 @@ function lesson_save_question_options($question) {
                         return $result;
                     }
                 } else {    // This is a completely new answer
-                    unset($multianswer);
+                    $multianswer = new stdClass;
                     $multianswer->question = $question->id;
                     $multianswer->positionkey = $dataanswer->positionkey;
                     $multianswer->norm = $dataanswer->norm;
@@ -610,7 +610,8 @@ function lesson_cluster_jump($lesson, $user, $pageid) {
 	}
 
 	$pageid = $lessonpages[$pageid]->nextpageid; // move down from the cluster page
-
+	
+	$clusterpages = array();
 	while (true) {  // now load all the pages into the cluster that are not already inside of a branch table.
 		if ($lessonpages[$pageid]->qtype == LESSON_ENDOFCLUSTER) {
 			// store the endofcluster page's jump
@@ -636,6 +637,7 @@ function lesson_cluster_jump($lesson, $user, $pageid) {
 	}
 
 	// filter out the ones we have seen
+	$unseen = array();
 	foreach ($clusterpages as $clusterpage) {
 		if ($clusterpage->qtype == LESSON_BRANCHTABLE) {			// if branchtable, check to see if any pages inside have been viewed
 			$branchpages = lesson_pages_in_branch($lessonpages, $clusterpage->id); // get the pages in the branchtable
@@ -657,7 +659,7 @@ function lesson_cluster_jump($lesson, $user, $pageid) {
 		}
 	}
 
-	if (isset($unseen)) { // if not set, then use exitjump, otherwise find out next page/branch
+	if (count($unseen) > 0) { // it does not contain elements, then use exitjump, otherwise find out next page/branch
 		$nextpage = $unseen[rand(0, count($unseen)-1)];
 	} else {
 		return $exitjump; // seen all there is to see, leave the cluster
@@ -732,13 +734,14 @@ function lesson_unseen_question_jump($lesson, $user, $pageid) {
 	$pagesinbranch = lesson_pages_in_branch($lessonpages, $pageid);
 	
 	// this foreach loop stores all the pages that are within the branch table but are not in the $seenpages array
+	$unseen = array();
 	foreach($pagesinbranch as $page) {	
 		if (!in_array($page->id, $seenpages)) {
 			$unseen[] = $page->id;
 		}
 	}
 
-	if(!isset($unseen)) {
+	if(count($unseen) == 0) {
 		if(isset($pagesinbranch)) {
 			$temp = end($pagesinbranch);
 			$nextpage = $temp->nextpageid; // they have seen all the pages in the branch, so go to EOB/next branch table/EOL
@@ -795,14 +798,14 @@ function lesson_unseen_branch_jump($lesson, $user) {
 		}
 		$pageid = $lessonpages[$pageid]->nextpageid;
 	}
-	
+	$unseen = array();
 	foreach ($branchtables as $branchtable) {
 		// load all of the unseen branch tables into unseen
 		if (!array_key_exists($branchtable, $seen)) {
 			$unseen[] = $branchtable;
 		}
 	}
-	if (isset($unseen)) {
+	if (count($unseen) > 0) {
 		return $unseen[rand(0, count($unseen)-1)];  // returns a random page id for the next page
 	} else {
 		return LESSON_EOL;  // has viewed all of the branch tables
@@ -831,7 +834,7 @@ function lesson_random_question_jump($lesson, $pageid) {
 	// get the pages within the branch	
 	$pagesinbranch = lesson_pages_in_branch($lessonpages, $pageid);
 	
-	if(!isset($pagesinbranch)) {
+	if(count($pagesinbranch) == 0) {
 		// there are no pages inside the branch, so return the next page
 		return $lessonpages[$pageid]->nextpageid;
 	} else {
@@ -1002,12 +1005,13 @@ function lesson_print_tree($pageid, $lessonid, $cmid, $pixpath) {
 function lesson_calculate_ongoing_score($lesson, $userid, $retries, $return=false) {
 // this calculates and prints the ongoing score for students	
 	if (!$lesson->custom) {
-		$ncorrect = 0;						
+		$ncorrect = 0;					
+		$temp = array();	
 		if ($pagesanswered = get_records_select("lesson_attempts",  "lessonid = $lesson->id AND 
 				userid = $userid AND retry = $retries order by timeseen")) {
 
 			foreach ($pagesanswered as $pageanswered) {
-				if (@!array_key_exists($pageanswered->pageid, $temp)) {
+				if (!array_key_exists($pageanswered->pageid, $temp)) {
 					$temp[$pageanswered->pageid] = array($pageanswered->correct, 1);
 				} else {
 					if ($temp[$pageanswered->pageid][1] < $lesson->maxattempts) {
@@ -1028,6 +1032,7 @@ function lesson_calculate_ongoing_score($lesson, $userid, $retries, $return=fals
 		if ($return) {
 			return $thegrade;
 		} else {
+			$output = new stdClass;
 			$output->correct = $ncorrect;
 			$output->viewed = $nviewed;
 			print_simple_box(get_string("ongoingnormal", "lesson", $output), "center");
@@ -1092,6 +1097,7 @@ function lesson_calculate_ongoing_score($lesson, $userid, $retries, $return=fals
 			return $thegrade;
 		} else {
 			// not taking into account essay questions... may want to?
+			$ongoingoutput = new stdClass;
 			$ongoingoutput->score = $score;
 			$ongoingoutput->currenthigh = $bestscore;
 			print_simple_box(get_string("ongoingcustom", "lesson", $ongoingoutput), "center");

@@ -45,6 +45,7 @@
     $strdeadline  = get_string("deadline", "lesson");
     $strweek  = get_string("week");
     $strtopic  = get_string("topic");
+	$table = new stdClass;
 
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname, $strgrade, $strdeadline);

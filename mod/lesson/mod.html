@@ -128,7 +128,8 @@ if ($form->mode == "add") {
 <tr>
     <td align="right"><b><?php print_string("timed", "lesson"); ?>:</b></td>
     <td>
-    <?PHP 
+    <?PHP
+		$options = array(); 
         $options[0] = get_string("no"); $options[1] = get_string("yes");
 		choose_from_menu($options, "timed", $form->timed, "");
         helpbutton("timed", get_string("timed", "lesson"), "lesson");
@@ -148,6 +149,7 @@ if ($form->mode == "add") {
     <td align="right"><b><?php  print_string("maximumnumberofanswersbranches", "lesson") ?>:</b></td>
     <td>
         <?php
+		$numbers = array();
         for ($i=20; $i>1; $i--) {
             $numbers[$i] = $i;
         }
@@ -166,7 +168,8 @@ if ($form->mode == "add") {
 <tr>
     <td align="right"><b><?php  print_string("practice", "lesson"); ?>:</b></td>
     <td>
-    <?PHP 
+    <?PHP
+		$options = array(); 
         $options[0] = get_string("no"); $options[1] = get_string("yes");
 		choose_from_menu($options, "practice", $form->practice, "");
         helpbutton("practice", get_string("practice", "lesson"), "lesson");
@@ -177,7 +180,8 @@ if ($form->mode == "add") {
 <tr>
     <td align="right"><b><?php  print_string("customscoring", "lesson"); ?>:</b></td>
     <td>
-    <?PHP 
+    <?PHP
+		$options = array(); 
         $options[0] = get_string("no"); $options[1] = get_string("yes");
 		choose_from_menu($options, "custom", $form->custom, "");
         helpbutton("custom", get_string("customscoring", "lesson"), "lesson");
@@ -189,6 +193,7 @@ if ($form->mode == "add") {
     <td align="right"><b><?php  print_string("maximumgrade") ?>:</b></td>
     <td>
         <?php
+		$grades = array();
         for ($i=100; $i>=0; $i--) {
             $grades[$i] = $i;
         }
@@ -201,7 +206,8 @@ if ($form->mode == "add") {
 <tr>
     <td align="right"><b><?php  print_string("canretake", "lesson", $course->student) ?>:</b></td>
     <td>
-    <?PHP 
+    <?PHP
+		$options = array(); 
         $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "retake", $form->retake, "");
         helpbutton("retake", get_string("canretake", "lesson", $course->student), "lesson");
@@ -213,6 +219,7 @@ if ($form->mode == "add") {
     <td align="right"><b><?php  print_string("handlingofretakes", "lesson") ?>:</b></td>
     <td>
     <?PHP 
+		$options = array();
         $options[0] = get_string("usemean", "lesson"); $options[1] = get_string("usemaximum", "lesson");
         choose_from_menu($options, "usemaxgrade", $form->usemaxgrade, "");
         helpbutton("handlingofretakes", get_string("handlingofretakes", "lesson"), "lesson");
@@ -224,6 +231,7 @@ if ($form->mode == "add") {
     <td align="right"><b><?php  print_string("ongoing", "lesson"); ?>:</b></td>
     <td>
     <?php
+		$options = array();
         $options[0] = get_string("no"); $options[1] = get_string("yes");
 		choose_from_menu($options, "ongoing", $form->ongoing, "");
         helpbutton("ongoing", get_string("ongoing", "lesson"), "lesson");
@@ -241,6 +249,7 @@ if ($form->mode == "add") {
     <td align="right"><b><?php  print_string("modattempts", "lesson"); ?>:</b></td>
     <td>
     <?PHP 
+		$options = array();
         $options[0] = get_string("no"); $options[1] = get_string("yes");
 		choose_from_menu($options, "modattempts", $form->modattempts, "");
         helpbutton("modattempts", get_string("modattempts", "lesson"), "lesson");
@@ -252,6 +261,7 @@ if ($form->mode == "add") {
     <td align="right"><b><?php print_string("displayreview", "lesson"); ?>:</b></td>
     <td>
     <?php
+		$options = array();
         $options[0] = get_string("no"); $options[1] = get_string("yes");
 		choose_from_menu($options, "review", $form->review, "");
         helpbutton("review", get_string("displayreview", "lesson"), "lesson");
@@ -263,7 +273,7 @@ if ($form->mode == "add") {
     <td align="right"><b><?php  print_string("maximumnumberofattempts", "lesson") ?>:</b></td>
     <td>
         <?php
-        unset($numbers);
+        $numbers = array();
         for ($i=10; $i>0; $i--) {
             $numbers[$i] = $i;
         }
@@ -287,7 +297,7 @@ if ($form->mode == "add") {
     <td align="right"><b><?php  print_string("minimumnumberofquestions", "lesson") ?>:</b></td>
     <td>
         <?php
-        unset($numbers);
+        $numbers = array();
         for ($i=100; $i>=0; $i--) {
             $numbers[$i] = $i;
         }
@@ -301,7 +311,7 @@ if ($form->mode == "add") {
     <td align="right"><b><?php  print_string("numberofpagestoshow", "lesson") ?>:</b></td>
     <td>
         <?php
-        unset($numbers);
+        $numbers = array();
         for ($i=100; $i>=0; $i--) {
             $numbers[$i] = $i;
         }
@@ -321,6 +331,7 @@ if ($form->mode == "add") {
     <td align="right"><b><?php print_string("slideshow", "lesson"); ?>:</b></td>
     <td>
     <?PHP 
+		$options = array();
         $options[0] = get_string("no"); $options[1] = get_string("yes");
 		choose_from_menu($options, "slideshow", $form->slideshow, "");
         helpbutton("slideshow", get_string("slideshow", "lesson"), "lesson");
@@ -357,6 +368,7 @@ if ($form->mode == "add") {
     <td align="right"><b><?php  print_string("displayleftmenu", "lesson"); ?>:</b></td>
     <td>
     <?PHP 
+		$options = array();
         $options[0] = get_string("no"); $options[1] = get_string("yes");
 		choose_from_menu($options, "displayleft", $form->displayleft, "");
         helpbutton("displayleft", get_string("displayleftmenu", "lesson"), "lesson");
@@ -374,6 +386,7 @@ if ($form->mode == "add") {
     <td align="right"><b><?php  print_string("usepassword", "lesson"); ?>:</b></td>
     <td>
     <?PHP 
+		$options = array();
         $options[0] = get_string("no"); $options[1] = get_string("yes");
 		choose_from_menu($options, "usepassword", $form->usepassword, "");
         helpbutton("usepassword", get_string("usepassword", "lesson"), "lesson");
@@ -417,6 +430,7 @@ if ($form->mode == "add") {
     <td align="right"><b><?php print_string("treeview", "lesson"); ?>:</b></td>
     <td>
     <?PHP 
+		$options = array();
         $options[0] = get_string("no"); $options[1] = get_string("yes");
 		choose_from_menu($options, "tree", $form->tree, "");
         helpbutton("tree", get_string("treeview", "lesson"), "lesson");
@@ -428,6 +442,7 @@ if ($form->mode == "add") {
     <td align="right"><b><?php print_string("displayhighscores", "lesson"); ?>:</b></td>
     <td>
     <?PHP 
+		$options = array();
         $options[0] = get_string("no"); $options[1] = get_string("yes");
 		choose_from_menu($options, "highscores", $form->highscores, "");
         helpbutton("highscores", get_string("displayhighscores", "lesson"), "lesson");
@@ -447,6 +462,7 @@ if ($form->mode == "add") {
     <td align="right"><b><?php print_string("lessondefault", "lesson"); ?>:</b></td>
     <td>
     <?PHP 
+		$options = array();
         $options[0] = get_string("no"); $options[1] = get_string("yes");
 		choose_from_menu($options, "lessondefault", $form->lessondefault, "");
         helpbutton("lessondefault", get_string("lessondefault", "lesson"), "lesson");

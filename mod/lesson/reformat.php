@@ -61,6 +61,7 @@ function importmodifiedaikenstyle($filename) {
 	$lines = file($filename);
 	$answer_found = 0;
 	$responses = 0;
+	$outlines = array();
 	foreach ($lines as $line) {
 		// strip leading and trailing whitespace
 		$line = trim($line);
