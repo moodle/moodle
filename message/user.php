@@ -76,11 +76,10 @@
             echo '<br /><font size="1">';     /// Print login status of this user
             if ($user->lastaccess) {
                 if (time() - $user->lastaccess > $CFG->message_offline_time) {
-                    echo get_string('offline', 'message').":";
+                    echo get_string('offline', 'message').': '.format_time(time() - $user->lastaccess);
                 } else {
-                    echo get_string("lastaccess").":";
+                    echo get_string('lastaccess').': '.get_string('ago', 'message', format_time(time() - $user->lastaccess));
                 }
-                echo get_string('ago', 'message', format_time(time() - $user->lastaccess));
             } else {
                 echo get_string("lastaccess").":". get_string("never");
             }

@@ -477,7 +477,8 @@ function message_print_search_results($frm) {
                 echo '</td>';
                 echo '<td class="message_summary">'.message_get_fragment($message->message, $keywords);
                 echo '<br /><div class="message_summary_link">';
-                message_history_link($message->useridto, $message->useridfrom, true, $keywordstring, $datestring, $strcontext);
+                message_history_link($message->useridto, $message->useridfrom, false, 
+                                     $keywordstring, $datestring, $strcontext);
                 echo '</div>';
                 echo '</td>';
                 echo '<td class="message_date">'.userdate($message->timecreated, $dateformat).'</td>';
