@@ -50,7 +50,7 @@ function quiz_upgrade($oldversion) {
                           );");
     }
 
-    if ($oldversion < 2003030302) {
+    if ($oldversion < 2003030303) {
         table_column("quiz_questions", "", "defaultgrade", "INTEGER", "6", "UNSIGNED", "1", "NOT NULL", "image");
     }
 
