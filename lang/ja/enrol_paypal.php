@@ -1,7 +1,9 @@
 <?PHP // $Id$ 
-      // enrol_paypal.php - created with Moodle 1.4 development (2004062600)
+      // enrol_paypal.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
 
 
+$string['business'] = 'Paypalビジネスアカウントのメールアドレス';
+$string['description'] = 'Paypalモジュールでは有料のコースを設定することが出来ます。コースの費用がゼロの場合、学生は支払いを求められません。サイト全体に適用されるデフォルトの費用をここで設定することも、個々に設定することも出来ます。コース費用は、サイト全体の費用に優先されます。';
 $string['enrolname'] = 'Paypal';
 $string['sendpaymentbutton'] = 'Paypalで支払う';
 

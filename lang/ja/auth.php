@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.4 alpha (2004081500)
+      // auth.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
 
 
 $string['auth_dbdescription'] = 'ユーザ名とパスワードを確認するために外部のデータベースを使用します。新しいアカウントを作成する場合、他のフィールドの情報がMoodleへ複製されます。';
@@ -37,6 +37,7 @@ $string['auth_ldap_host_url'] = 'LDAPホストのURLを下記のように明示してください。
 
 \'ldap://ldap.myorg.com/\' 又は \'ldaps://ldap.myorg.com/\' ';
 $string['auth_ldap_memberattribute'] = 'ユーザがグループに属性している場合、ユーザの属性を特定してください。通常は\'member\'です。';
+$string['auth_ldap_objectclass'] = 'フィルタはユーザ名検索時に使用されます。通常は、objectClass=posixAccountのように設定します。デフォルトのobjectClass=*は全てのオブジェクトをLDAPより返します。';
 $string['auth_ldap_search_sub'] = 'サブコンテキストからユーザを検索する場合は、  <> 0 のように入力してください。';
 $string['auth_ldap_update_userinfo'] = 'LDAPよりMoodleの情報(名前、名字、住所等)を更新します。マッピング情報に関しては /auth/ldap/attr_mappings をご覧ください。';
 $string['auth_ldap_user_attribute'] = 'name/searchユーザに使われる属性です。通常は\'cn\'です。';
