@@ -1,7 +1,6 @@
 <form method="post" action="event.php">
 <table class="formtable">
   <tr>
-  <td style="vertical-align: top; text-align: right;"><?php print_string('eventkind', 'calendar'); ?>:</td>
   <td>
   <?php if(!empty($allowed->user)) { ?><div><input type='radio' name='type' value='user' id='type_user' checked='checked' /><label for='type_user'><?php print_string('typeuser', 'calendar') ?></label></div>
   <?php } ?>
@@ -23,12 +22,9 @@
   </td>
   </tr>
   <tr>
-  <td>&nbsp;</td>
-  <td>
-    <div>
+  <td style="text-align: center;">
     <input type="submit" value=" <?php print_string('ok') ?> " />
     <input type="button" onclick="document.location.href='view.php?view=upcoming';" value=" <?php print_string('cancel') ?> " />
-    </div>
   </td>
   </tr>
 </table>

@@ -128,8 +128,6 @@
 
     echo calendar_overlib_html();
 
-    echo '<div id="calendar-container">';
-
     // Layout the whole page as three big columns.
     echo '<table id="calendar">';
     echo '<tr>';
@@ -180,8 +178,6 @@
     echo '</td>';
 
     echo '</tr></table>';
-
-    echo '</div>'; // id=calendar-container
 
     print_footer();
 
@@ -253,7 +249,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
 
         // Then, show a list of all events that just span this day
         if (!empty($underway)) {
-            echo '<p>'.get_string('spanningevents', 'calendar').':</p>';
+            echo '<h3>'.get_string('spanningevents', 'calendar').':</h3>';
             foreach ($underway as $event) {
                 $event->time = calendar_format_event_time($event, time(), '', false);
                 calendar_print_event($event);
@@ -546,62 +542,6 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
         print_heading(get_string('noupcomingevents', 'calendar'));
     }
 }
-
-
-function calendar_print_event($event) {
-    global $CFG, $USER;
-
-    static $strftimetime;
-
-    echo '<table class="eventfull">';
-    echo '<tr><td class="eventfullpicture">';
-    if (!empty($event->icon)) {
-        echo $event->icon;
-    } else {
-        print_spacer(16,16);
-    }
-    echo '</td>';
-    echo '<td class="eventfullheader">';
-
-    if (!empty($event->referer)) {
-        echo '<div style="float:left;" class="calendarreferer">'.$event->referer.'</div>';
-    } else {
-        echo '<div style="float:left;" class="event">'.$event->name."</div>";
-    }
-    if (!empty($event->courselink)) {
-        echo '<div style="float:left; clear: left; font-size: 0.8em;">'.$event->courselink.' </div>';
-    }
-    if (!empty($event->time)) {
-        echo '<span style="float:right;" class="event_date">'.$event->time.'</span>';
-    } else {
-        echo '<span style="float:right;" class="event_date">'.calendar_time_representation($event->timestart).'</span>';
-    }
-
-    echo "</td></tr>";
-    echo "<tr><td valign=\"top\" class=\"eventfullside\" width=\"32\">&nbsp;</td>";
-    echo "<td class=\"eventfullmessage\">\n";
-    echo format_text($event->description, FORMAT_HTML);
-    if (calendar_edit_event_allowed($event)) {
-        echo '<div align="right">';
-        if (empty($event->cmid)) {
-            $editlink   = CALENDAR_URL.'event.php?action=edit&amp;id='.$event->id;
-            $deletelink = CALENDAR_URL.'event.php?action=delete&amp;id='.$event->id;
-        } else {
-            $editlink   = $CFG->wwwroot.'/course/mod.php?update='.$event->cmid.'&amp;return=true&amp;sesskey='.$USER->sesskey;
-            $deletelink = $CFG->wwwroot.'/course/mod.php?delete='.$event->cmid.'&amp;sesskey='.$USER->sesskey;;
-        }
-        echo ' <a href="'.$editlink.'"><img
-                  src="'.$CFG->pixpath.'/t/edit.gif" alt="'.get_string('tt_editevent', 'calendar').'"
-                  title="'.get_string('tt_editevent', 'calendar').'" /></a>';
-        echo ' <a href="'.$deletelink.'"><img
-                  src="'.$CFG->pixpath.'/t/delete.gif" alt="'.get_string('tt_deleteevent', 'calendar').'"
-                  title="'.get_string('tt_deleteevent', 'calendar').'" /></a>';
-        echo '</div>';
-    }
-    echo '</td></tr></table>';
-
-}
-
 
 function calendar_course_filter_selector($getvars = '') {
     global $USER, $SESSION;

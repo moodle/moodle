@@ -535,17 +535,22 @@ CALENDAR STYLES -- PROVISIONALLY PLACED HERE UNTIL FINALIZED
     font-weight:bold;
 }
 
-#calendar .maincalendar table.calendarmonth {
-    -moz-border-radius: 10px;
-    margin: 0px auto;
-    width: 98%;
-}
-
-#calendar .maincalendar table.calendarmonth tbody td {
+#calendar .maincalendar .calendarmonth tbody td {
+    height: 5em;
     font-size:0.8em;
     line-height:1.2em;
     padding-left: 4px;
     padding-top: 4px;
+}
+
+#calendar .maincalendar .calendarmonth tbody td table td{
+    height: auto;
+}
+
+#calendar .maincalendar table.calendarmonth {
+    -moz-border-radius: 10px;
+    margin: 0px auto;
+    width: 98%;
 }
 
 #calendar .maincalendar table.calendarmonth thead th {
@@ -553,14 +558,14 @@ CALENDAR STYLES -- PROVISIONALLY PLACED HERE UNTIL FINALIZED
     border-bottom:2px solid;
 }
 
-#calendar-container #calendar {
+#calendar {
     width: 100%;
     border-spacing: 5px;
 }
 
 #calendar,
-#calendar-container .maincalendar .eventlist table,
-#calendar-container .maincalendar table.calendarmonth {
+#calendar .maincalendar .eventlist table,
+#calendar .maincalendar table.calendarmonth {
     border-collapse: separate;
 }
 
@@ -590,7 +595,9 @@ table.calendarmonth tbody td, table.minicalendar tbody td, table.minicalendar th
     float: right;
 }
 
-.maincalendar .filters table, .sidecalendar .filters table {
+#calendar .maincalendar .filters table,
+#calendar .sidecalendar .filters table,
+.sideblock.block_calendar_month .filters table {
     border-collapse:separate;
     border-spacing: 2px;
     -moz-border-radius:4px;
@@ -599,20 +606,21 @@ table.calendarmonth tbody td, table.minicalendar tbody td, table.minicalendar th
     width: 100%;
 }
 
-.sidecalendar .filters {
-    font-size: 0.75em;
+#calendar .sidecalendar .filters,
+.sideblock.block_calendar_month .filters {
+    font-size:0.75em;
     padding: 5px;
 }
 
-.maincalendar .filters {
+#calendar .maincalendar .filters {
     padding: 0px 10px;
 }
 
-.maincalendar .day {
+#calendar .maincalendar .day {
     font-weight: bold;
 }
 
-#calendar .maincalendar .heading, #calendar-container .sidecalendar .heading {
+#calendar .maincalendar .heading, #calendar .sidecalendar .heading {
     background-image:url(gradient.jpg);
     background-position:top;
     background-repeat:repeat-x;
@@ -641,15 +649,7 @@ table.minicalendar tbody td {
     text-align: center;
 }
 
-#calendar .maincalendar .calendarmonth tbody td {
-    height: 5em;
-}
-
-#calendar .maincalendar .calendarmonth tbody td table td{
-    height: auto;
-}
-
-#calendar .maincalendar .eventlist {
+#calendar .eventlist {
     padding: 10px;
 }
 
@@ -675,4 +675,8 @@ table.minicalendar tbody td {
 
 #calendar .maincalendar ul li {
     margin-top: 4px;
+}
+
+#calendar #selecteventtype table {
+    margin:auto;
 }

@@ -327,64 +327,101 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 break;
             }
 
-            $eventtime = calendar_format_event_time($event, $now, $morehref);
-
-            $outkey = count($output);
-
-            $output[$outkey] = $event;   // Grab the whole raw event by default
-
-            // Now we know how to display the time, we have to see how to display the event
-            if(!empty($event->modulename)) {                                // Activity event
-
-                // The module name is set. I will assume that it has to be displayed, and
-                // also that it is an automatically-generated event. And of course that the
-                // fields for get_coursemodule_from_instance are set correctly.
-
-                $module = calendar_get_module_cached($coursecache, $event->modulename, $event->instance);
-
-                if ($module === false) {
-                    // This shouldn't have happened. What to do now?
-                    // Just ignore it
-                    continue;
-                }
-
-                $modulename = get_string('modulename', $event->modulename);
-                $eventtype = get_string($event->eventtype, $event->modulename);
-                $icon = $CFG->modpixpath.'/'.$event->modulename.'/icon.gif';
-
-                $output[$outkey]->icon = '<img height="16" width="16" src="'.$icon.'" alt="" title="'.$modulename.'" style="vertical-align: middle;" />';
-                $output[$outkey]->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$event->name.'</a>';
-                $output[$outkey]->time = $eventtime;
-                $output[$outkey]->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$module->course.'">'.$coursecache[$module->course]->fullname.'</a>';
-                $output[$outkey]->cmid = $module->id;
-
-
-            } else if($event->courseid == SITEID) {                              // Site event
-                $output[$outkey]->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/site.gif" alt="" style="vertical-align: middle;" />';
-                $output[$outkey]->time = $eventtime;
-
-
-            } else if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {          // Course event
-                calendar_get_course_cached($coursecache, $event->courseid);
-
-                $output[$outkey]->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/course.gif" alt="" style="vertical-align: middle;" />';
-                $output[$outkey]->time = $eventtime;
-                $output[$outkey]->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$event->courseid.'">'.$coursecache[$event->courseid]->fullname.'</a>';
-
-
-            } else if ($event->groupid) {                                    // Group event
-                $output[$outkey]->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/group.gif" alt="" style="vertical-align: middle;" />';
-                $output[$outkey]->time = $eventtime;
-
-
-            } else if($event->userid) {                                      // User event
-                $output[$outkey]->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/user.gif" alt="" style="vertical-align: middle;" />';
-                $output[$outkey]->time = $eventtime;
-            }
+            $event->time = calendar_format_event_time($event, $now, $morehref);
+            $output[] = $event;
             ++$processed;
         }
     }
     return $output;
+}
+
+function calendar_print_event($event) {
+    global $CFG, $USER;
+
+    static $strftimetime;
+
+    if(!empty($event->modulename)) {                                // Activity event
+        // The module name is set. I will assume that it has to be displayed, and
+        // also that it is an automatically-generated event. And of course that the
+        // fields for get_coursemodule_from_instance are set correctly.
+        $module = calendar_get_module_cached($coursecache, $event->modulename, $event->instance);
+
+        if ($module === false) {
+            return;
+        }
+
+        $modulename = get_string('modulename', $event->modulename);
+        $eventtype = get_string($event->eventtype, $event->modulename);
+        $icon = $CFG->modpixpath.'/'.$event->modulename.'/icon.gif';
+
+        $event->icon = '<img height="16" width="16" src="'.$icon.'" alt="" title="'.$modulename.'" style="vertical-align: middle;" />';
+        $event->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$event->name.'</a>';
+        $event->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$module->course.'">'.$coursecache[$module->course]->fullname.'</a>';
+        $event->cmid = $module->id;
+
+
+    } else if($event->courseid == SITEID) {                              // Site event
+        $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/site.gif" alt="" style="vertical-align: middle;" />';
+
+    } else if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {          // Course event
+        calendar_get_course_cached($coursecache, $event->courseid);
+        $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/course.gif" alt="" style="vertical-align: middle;" />';
+        $event->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$event->courseid.'">'.$coursecache[$event->courseid]->fullname.'</a>';
+
+    } else if ($event->groupid) {                                    // Group event
+        $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/group.gif" alt="" style="vertical-align: middle;" />';
+
+    } else if($event->userid) {                                      // User event
+        $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/user.gif" alt="" style="vertical-align: middle;" />';
+    }
+
+    echo '<table class="eventfull">';
+    echo '<tr><td class="eventfullpicture">';
+    if (!empty($event->icon)) {
+        echo $event->icon;
+    } else {
+        print_spacer(16,16);
+    }
+    echo '</td>';
+    echo '<td class="eventfullheader">';
+
+    if (!empty($event->referer)) {
+        echo '<div style="float:left;" class="calendarreferer">'.$event->referer.'</div>';
+    } else {
+        echo '<div style="float:left;" class="event">'.$event->name."</div>";
+    }
+    if (!empty($event->courselink)) {
+        echo '<div style="float:left; clear: left; font-size: 0.8em;">'.$event->courselink.' </div>';
+    }
+    if (!empty($event->time)) {
+        echo '<span style="float:right;" class="event_date">'.$event->time.'</span>';
+    } else {
+        echo '<span style="float:right;" class="event_date">'.calendar_time_representation($event->timestart).'</span>';
+    }
+
+    echo "</td></tr>";
+    echo "<tr><td valign=\"top\" class=\"eventfullside\" width=\"32\">&nbsp;</td>";
+    echo "<td class=\"eventfullmessage\">\n";
+    echo format_text($event->description, FORMAT_HTML);
+    if (calendar_edit_event_allowed($event)) {
+        echo '<div align="right">';
+        if (empty($event->cmid)) {
+            $editlink   = CALENDAR_URL.'event.php?action=edit&amp;id='.$event->id;
+            $deletelink = CALENDAR_URL.'event.php?action=delete&amp;id='.$event->id;
+        } else {
+            $editlink   = $CFG->wwwroot.'/course/mod.php?update='.$event->cmid.'&amp;return=true&amp;sesskey='.$USER->sesskey;
+            $deletelink = $CFG->wwwroot.'/course/mod.php?delete='.$event->cmid.'&amp;sesskey='.$USER->sesskey;;
+        }
+        echo ' <a href="'.$editlink.'"><img
+                  src="'.$CFG->pixpath.'/t/edit.gif" alt="'.get_string('tt_editevent', 'calendar').'"
+                  title="'.get_string('tt_editevent', 'calendar').'" /></a>';
+        echo ' <a href="'.$deletelink.'"><img
+                  src="'.$CFG->pixpath.'/t/delete.gif" alt="'.get_string('tt_deleteevent', 'calendar').'"
+                  title="'.get_string('tt_deleteevent', 'calendar').'" /></a>';
+        echo '</div>';
+    }
+    echo '</td></tr></table>';
+
 }
 
 function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withduration=true, $ignorehidden=true) {

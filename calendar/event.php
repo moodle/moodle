@@ -59,8 +59,10 @@
         redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
     }
 
+    $strcalendar = get_string('calendar', 'calendar');
+
     $now = usergetdate(time());
-    $nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;', $now['mday'], $now['mon'], $now['year']);
+    $nav = calendar_get_link_tag($strcalendar, CALENDAR_URL.'view.php?view=upcoming&amp;', $now['mday'], $now['mon'], $now['year']);
     $day = intval($now['mday']);
     $mon = intval($now['mon']);
     $yr = intval($now['year']);
@@ -211,13 +213,13 @@
         $nav = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$SESSION->cal_course_referer.'">'.$shortname.'</a> -> '.$nav;
     }
 
-    print_header(get_string('calendar', 'calendar').': '.$title, $site->fullname, $nav.' -> '.$title,
+    print_header($site->shortname.': '.$strcalendar.': '.$title, $strcalendar, $nav.' -> '.$title,
                  $focus, '', true, '', '<p class="logininfo">'.user_login_string($site).'</p>');
 
     echo calendar_overlib_html();
 
-    echo '<table border="0" cellpadding="3" cellspacing="0" width="100%"><tr valign="top">';
-    echo '<td valign="top" width="100%">';
+    echo '<table id="calendar">';
+    echo '<tr><td class="maincalendar">';
 
     switch($_REQUEST['action']) {
         case 'delete':
@@ -248,9 +250,13 @@
                 $d = $eventtime['mday'];
                 $y = $eventtime['year'];
                 // Display confirmation form
-                print_side_block_start(get_string('deleteevent', 'calendar').': '.$event->name, array('class' => 'mycalendar'));
+                echo '<div class="heading">'.get_string('deleteevent', 'calendar').': '.$event->name.'</div>';
+                echo '<h2>'.get_string('confirmeventdelete', 'calendar').'</h2>';
+                echo '<div class="eventlist">';
+                $event->time = calendar_format_event_time($event, time(), '', false);
+                calendar_print_event($event);
+                echo '</div>';
                 include('event_delete.html');
-                print_side_block_end();
             }
         break;
 
@@ -285,9 +291,8 @@
                 $course = $site;
             }
 
-            print_side_block_start(get_string('editevent', 'calendar'), array('class' => 'mycalendar'));
+            echo '<div class="heading">'.get_string('editevent', 'calendar').'</div>';
             include('event_edit.html');
-            print_side_block_end();
             if ($usehtmleditor) {
                 use_html_editor("description");
             }
@@ -415,7 +420,8 @@
                 $header = ' ('.$header.')';
             }
 
-            print_side_block_start(get_string('newevent', 'calendar').$header, array('class' => 'mycalendar'));
+            echo '<div class="heading">'.get_string('newevent', 'calendar').$header.'</div>';
+
             if($_REQUEST['type'] == 'select') {
                 $defaultcourse = $SESSION->cal_course_referer;
                 if(isteacheredit($defaultcourse, $USER->id)) {
@@ -428,7 +434,10 @@
                 optional_variable($_REQUEST['courseid'], $defaultcourse);
                 $groupid = $_REQUEST['groupid'];
                 $courseid = $_REQUEST['courseid'];
+                echo '<h2>'.get_string('eventkind', 'calendar').':</h2>';
+                echo '<div id="selecteventtype">';
                 include('event_select.html');
+                echo '</div>';
             }
             else {
                 include('event_new.html');
@@ -436,22 +445,24 @@
                     use_html_editor("description");
                 }
             }
-            print_side_block_end();
+
         break;
     }
     echo '</td>';
 
     // START: Last column (3-month display)
-    echo '<td style="vertical-align: top; width: 180px;">';
 
     $defaultcourses = calendar_get_default_courses();
     calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
-
-    print_side_block_start(get_string('monthlyview', 'calendar'));
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
-
+    
+    echo '<td class="sidecalendar">';
+    echo '<div class="heading">'.get_string('monthlyview', 'calendar').'</div>';
+    echo '<div class="filters">';
     echo calendar_filter_controls('event', 'action='.$_REQUEST['action'].'&amp;type='.$_REQUEST['type'].'&amp;id='.$_REQUEST['id']);
+    echo '</div>';
+    
     echo '<div>';
     echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
     echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
@@ -462,10 +473,8 @@
     echo calendar_top_controls('display', array('m' => $nextmon, 'y' => $nextyr));
     echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
     echo '</div>';
-    print_side_block_end();
-    print_spacer(1, 180);
-    echo '</td>';
 
+    echo '</td>';
     echo '</tr></table>';
 
     print_footer();

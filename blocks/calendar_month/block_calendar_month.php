@@ -7,6 +7,10 @@ class block_calendar_month extends block_base {
         $this->version = 2004081200;
     }
 
+    function preferred_width() {
+        return 200;
+    }
+
     function get_content() {
         global $USER, $CFG, $SESSION;
         optional_variable($_GET['cal_m']);
@@ -61,7 +65,8 @@ class block_calendar_month extends block_base {
             $this->content->text .= calendar_top_controls('course', array('id' => $courseshown, 'm' => $_GET['cal_m'], 'y' => $_GET['cal_y']));
             $this->content->text .= calendar_get_mini($courses, $group, $user, $_GET['cal_m'], $_GET['cal_y']);
             $course = get_record('course', 'id', $this->instance->pageid);
-            $this->content->text .= calendar_filter_controls('course', '', $course);
+            $this->content->text .= '<div class="filters">'.calendar_filter_controls('course', '', $course).'</div>';
+            
         }
 
         return $this->content;
