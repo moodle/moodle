@@ -25,9 +25,9 @@ en changeant &agrave; chaque fois une ou plusieurs options.
 L'analyse est contr&ocirc;l&eacute;e par trois options
 apparaissant au sommet de la page.</p>
 
-<ol> <li>L'option &laquo;&nbsp;Pond&eacute;ration des
-&eacute;valuations de l'enseignant&nbsp;&raquo; permet de fixer
-le poids des &eacute;valuations faites par l'enseignant en
+<ol> <li>L'option &laquo;&nbsp;<b>Pond&eacute;ration des
+&eacute;valuations de l'enseignant</b>&nbsp;&raquo; permet de
+fixer le poids des &eacute;valuations faites par l'enseignant en
 comparaison avec celles des &eacute;tudiants, lors de la phase
 d'analyse d'erreurs. Si l'enseignant d&eacute;sire que sa propre
 strat&eacute;gie d'&eacute;valuation domine celles des
@@ -43,11 +43,11 @@ aussi dans la partie sup&eacute;rieure de la liste de la Table
 d'erreurs. Les &eacute;tudiants situ&eacute;s au bas de la liste
 sont ceux qui &eacute;valuent d'une fa&ccedil;on
 diff&eacute;rente de celle de l'enseignant (ou de celle des
-&eacute;tudiants du haut de la liste).<br /><br /> Plus
-l'enseignant a effectu&eacute; d'&eacute;valuations, et moins
-l'on aura besoin d'utiliser cette option pour forcer l'enseignant
-&agrave; appara&icirc;tre au haut de la liste. Il est &agrave;
-noter que cette option <b>n'applique pas</b> un coefficient aux
+&eacute;tudiants du haut de la liste).<br /> Plus l'enseignant a
+effectu&eacute; d'&eacute;valuations, et moins l'on aura besoin
+d'utiliser cette option pour forcer l'enseignant &agrave;
+appara&icirc;tre au haut de la liste. Il est &agrave; noter que
+cette option <b>n'applique pas</b> un coefficient aux
 &eacute;valuations de l'enseignant lors du calcul des notes
 finales. Dans ce calcul, les &eacute;valuations de l'enseignant
 ont le m&ecirc;me poids que celles des &eacute;tudiants. Ainsi
@@ -56,44 +56,64 @@ par l'enseignant et 45% et 55% par ses pairs, la note finale de
 ce travail sera de (41% + 45% + 55%) / 3, c'est-&agrave;-dire
 47%.</li>
 
-<li>The Weight for Grading of Assessments is used in the
-calculation of the Final Grade. A simple formula is used to
-calculate a student's "Grading Performance". It is the proportion
-of "good"assessments that student have done compared to the
-maximum number of assessments open to them. So, if for example,
-the assignment asks the students to do 3 assessments of the
-example submission and 5 peer assessments and the student does 7
-assessments and 1 of those is dropped from the analysis (see
-below), then their grading performance is (7 - 1)/8, that is 75%.
-The final grade for the assignment a weighted combination of this
-grading performanace and the grade given to their submission (or
-best grade if they made more than one submission). The grade for
-the submission is always given a weight of 1. So setting this
-option to say, 0.5, means that the two grades are added together
-in the proportion 0.5:1 or 33% of the grading performance and 66%
-of the grade of the submission.</li>
+<li>L'option &laquo;&nbsp;<b>Pond&eacute;ration pour les notes
+des &eacute;valuations</b>&nbsp;&raquo; est utilis&eacute;e dans
+le calcul de la note finale. Pour calculer la
+&laquo;&nbsp;performance d'&eacute;valuation&nbsp;&raquo; d'un
+&eacute;tudiant, une formule simple est utilis&eacute;e&nbsp;:
+c'est le rapport entre le nombre des
+&laquo;&nbsp;bonnes&nbsp;&raquo; &eacute;valuations d'un
+&eacute;tudiant et le nombre maximum de celles qu'il peut
+effectuer. Si par exemple les travail demande aux
+&eacute;tudiants d'&eacute;valuer 3 travaux d'exemples et 5
+travaux de pairs, et que l'&eacute;tudiant &eacute;value 7
+travaux et qu'une &eacute;valuation parmi celles-ci est
+rejet&eacute;e lors de l'analyse (voir ci-dessous), sa
+performance d'&eacute;valuation est alors de (7 - 1)/8,
+c'est-&agrave;-dire 75%. La note finale d'un &eacute;tudiant est
+une combinaison pond&eacute;r&eacute;e de sa performace
+d'&eacute;valuation et de la note re&ccedil;ue pour son propre
+travail (ou de la meilleure, s'il a rendu plusieurs travaux). Le
+coefficient de la note du travail est toujours 1. Donc si vous
+choisissez de r&eacute;gler cette option sur 0.5, cela signifie
+que la performance d'&eacute;valuation aura pour la note finale
+la moiti&eacute; de la valeur de la note du travail.</li>
 
-<li>The Percentage of Assessments to Drop determines the number
-of the assessments which are to be excluded when calculating the
-final grades. This number can be set in one of two ways.
+<li>L'option &laquo;&nbsp;<b>Nombre d'&eacute;valuations &agrave;
+rejeter</b>&nbsp;&raquo; d&eacute;termine le nombre des
+&eacute;valuations &agrave; rejeter lors du calcul des notes
+finales. Ce nombre peut &ecirc;tre fix&eacute; de deux
+fa&ccedil;ons.
 
-<ul> <li>Given the way the Grading Performance is calculated each
-student could, if they assessed all the work allocated to them,
-achieve full marks (for this element) if no assessments are
-dropped. If the teacher wishes to have a more reason average
-grade then setting this option to 30% would result in the average
-Grading Performance of about 70% (again if all students graded
-all the assessments open to them).</li>
+<ul>
 
-<li>Alternatively the number of assessments to drop might be set
-such that the remaining "good" assessments result in the Average
-Errors being constrained to some reasonable value. These are the
-percentages given in the fourth column of the Error Table. For
-example, it may be thought that all the student assessments
-should (on average) lie within the 20% range. Then the analysis
-is repeated a number of times adjusting the number of assessments
-to drop until the figures in this column all lie within a
-particular limit. </ul> </ol>
+<li>Suivant la fa&ccedil;on dont la performance
+d'&eacute;valuation est calcul&eacute;e et si aucune
+&eacute;valuation n'est rejet&eacute;e, chaque &eacute;tudiant
+pourrait, en ayant &eacute;valu&eacute; tous les travaux qui lui
+sont soumis, obtenir la note maximale. Si l'enseignant
+d&eacute;sire avoir une moyenne plus raisonnable, il peut, en
+r&eacute;glant par exemple cette option &agrave; 30%, faire en
+sorte que la moyenne des performances d'&eacute;valuation soit
+d'environ 70% (pour autant bien s&ucirc;r que tous les
+&eacute;tudiants aient &eacute;valu&eacute; tous les travaux qui
+leur &eacute;taient soumis).</li>
+
+<li>Autrement, le nombre d'&eacute;valuations &agrave; rejeter
+peut &ecirc;tre fix&eacute; de telle mani&egrave;re que les
+Erreurs moyennes (quatri&egrave;me colonne de la Table d'erreurs)
+des &laquo;&nbsp;bonnes&nbsp;&raquo; &eacute;valuations restantes
+demeurent en de&ccedil;&agrave; d'une valeur raisonnable. Par
+exemple, on pourrait penser que toutes les &eacute;valuations des
+&eacute;tudiants devraient se situer (en moyenne) dans un
+intervalle de 20%. Dans ce cas, l'analyse est
+r&eacute;p&eacute;t&eacute;e en ajustant &agrave; chaque fois le
+nombre d'&eacute;valuations &agrave; rejeter, jusqu'&agrave; ce
+que les valeurs de cette colonne soient dans cette limite.</li>
+
+</ul>
+
+</ol>
 
 <p>In addition to the Error Table the analysis lists the grades
 of all assessments and the final grades given to the students.
