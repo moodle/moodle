@@ -66,6 +66,7 @@
         } else {
 
             print_simple_box(format_text($survey->intro), "center", "80%");
+            print_spacer(30);
 
             $questions = get_records_list("survey_questions", "id", $survey->questions);
             $questionorder = explode(",", $survey->questions);
