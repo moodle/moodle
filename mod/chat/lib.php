@@ -201,12 +201,11 @@ function chat_get_users($chatid, $groupid=0) {
         $groupselect = "";
     }
    
-    return get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping
+    return get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping
                               FROM {$CFG->prefix}chat_users c,
                                    {$CFG->prefix}user u
                              WHERE c.chatid = '$chatid'
                                AND u.id = c.userid $groupselect
-                             GROUP BY u.id
                              ORDER BY c.firstping ASC");
 }
 
