@@ -686,7 +686,7 @@ function exercise_copy_assessment($assessment, $submission, $withfeedback = fals
 
 	if ($grades = get_records("exercise_grades", "assessmentid", $assessment->id)) {
 		foreach ($grades as $grade) {
-
+            unset($grade->id); // clear id, insert record now seems to believe it!
             if (!$withfeedback) {
 				$grade->feedback = '';
 			}
