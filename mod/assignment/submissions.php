@@ -4,8 +4,8 @@
     require_once("lib.php");
 
     require_variable($id);    // Assignment
-    optional_variable($sort, ""); 
-    optional_variable($dir, "");
+    optional_variable($sort, "lastname"); 
+    optional_variable($dir, "ASC");
 
     $timewas = $_POST['timenow'];
     $timenow = time();
@@ -27,7 +27,7 @@
     }
 
     if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
     }
 
     $strassignments = get_string("modulenameplural", "assignment");
@@ -36,14 +36,47 @@
     $strsaveallfeedback = get_string("saveallfeedback", "assignment");
 
     print_header("$course->shortname: $assignment->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strassignments</A> -> 
-                  <A HREF=\"view.php?a=$assignment->id\">$assignment->name</A> -> $strsubmissions", 
+                 "$navigation <a href=\"index.php?id=$course->id\">$strassignments</a> -> 
+                  <a href=\"view.php?a=$assignment->id\">$assignment->name</a> -> $strsubmissions", 
                   "", "", true);
+
+/// Check to see if groups are being used in this forum
+/// and if so, set $currentgroup to reflect the current group
+
+    $groupmode = groupmode($course, $cm);   // Groups are being used
+    $currentgroup = get_and_set_current_group($course, $groupmode, $_GET['group']);
+
+    if (!isteacheredit($course->id) and $groupmode and !$currentgroup) {
+        print_heading("Sorry, but you can't see this group");
+        print_footer();
+        exit;
+    }
+
+    if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
+        if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+            echo '<table align="center"><tr><td>';
+            if ($groupmode == VISIBLEGROUPS) {
+                print_string('groupsvisible');
+            } else {
+                print_string('groupsseparate');
+            }
+            echo ':';
+            echo '</td><td nowrap="nowrap" align="left" width="50%">';
+            popup_form("submissions.php?id=$assignment->id&group=", $groups, 'selectgroup', $currentgroup, "", "", "", false, "self");
+            echo '</tr></table>';
+        }
+    }
+
 
 /// Get all teachers and students
     $teachers = get_course_teachers($course->id);
 
-    if (!$users = get_course_students($course->id)) {
+    if ($currentgroup) {
+        $users = get_course_students($course->id, "", "", 0, 99999, "", "", $currentgroup);
+    } else {
+        $users = get_course_students($course->id);
+    }
+    if (!$users) {
         print_heading(get_string("nostudentsyet"));
         print_footer($course);
         exit;
@@ -128,37 +161,57 @@
     }
 
     // Submission sorting
-    print_simple_box_start("CENTER", "50%");
-    echo "<P align=\"CENTER\">";
-    print_string("order");
 
-    if ($dir == "ASC")
-        $dir = "DESC";
-    else
-        $dir = "ASC";
 
-    echo ": <A HREF=\"submissions.php?id=$assignment->id&sort=lastname&dir=$dir\">".get_string("name")."</a> - ";
-    echo "<A HREF=\"submissions.php?id=$assignment->id&sort=timemodified&dir=$dir\">".get_string("lastmodified")."</a> - ";
-    echo "<A HREF=\"submissions.php?id=$assignment->id&sort=grade&dir=$dir\">".get_string("feedback")."</a>";
-    echo "</P>";
+    $sorttypes = array('firstname', 'lastname', 'timemodified', 'grade');
+
+    print_simple_box_start("center", "50%");
+    echo '<p align="center">'.get_string('order').':&nbsp;&nbsp;';
+
+    foreach ($sorttypes as $sorttype) {
+        if ($sorttype == 'timemodified') {
+            $label = get_string("lastmodified");
+        } else {
+            $label = get_string($sorttype);
+        }
+        if ($sort == $sorttype) {   // Current sort
+            $newdir = $dir == 'ASC' ? 'DESC' : 'ASC';
+        } else {
+            $newdir = 'ASC';
+        }
+        echo "<a href=\"submissions.php?id=$assignment->id&sort=$sorttype&dir=$newdir\">$label</a>";
+        if ($sort == $sorttype) {   // Current sort
+             $diricon = $dir == 'ASC' ? 'down' : 'up';
+             echo " <img src=\"$CFG->pixpath/t/$diricon.gif\" />";
+        }
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;";
+    }
+
+    echo "</p>";
     print_simple_box_end();
+
     print_spacer(8,1);
 
-    echo "<FORM ACTION=submissions.php METHOD=post>\n";
+    echo '<form action="submissions.php" method="post">';
     
     $grades = make_grades_menu($assignment->grade);
 
     foreach ($submissions as $submission) {
-        $user = $users[$submission->userid];
-        assignment_print_submission($assignment, $user, $submission, $teachers, $grades);
+        if (isset($users[$submission->userid])) {
+            $user = $users[$submission->userid];
+            assignment_print_submission($assignment, $user, $submission, $teachers, $grades);
+        }
     }
 
-    echo "<CENTER>";
-    echo "<INPUT TYPE=hidden NAME=timenow VALUE=\"$timenow\">";
-    echo "<INPUT TYPE=hidden NAME=id VALUE=\"$assignment->id\">";
-    echo "<INPUT TYPE=submit VALUE=\"$strsaveallfeedback\">";
-    echo "</CENTER>";
-    echo "</FORM>";
+    if ($groupmode != VISIBLEGROUPS or isteacheredit($course->id) or ismember($currentgroup)) {
+        echo "<center>";
+        echo "<input type=hidden name=sort value=\"$sort\">";
+        echo "<input type=hidden name=timenow value=\"$timenow\">";
+        echo "<input type=hidden name=id value=\"$assignment->id\">";
+        echo "<input type=submit value=\"$strsaveallfeedback\">";
+        echo "</center>";
+        echo "</form>";
+    }
     
     print_footer($course);
  
