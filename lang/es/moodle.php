@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004053000)
+      // moodle.php - created with Moodle 1.4 development (2004060100)
 
 
 $string['action'] = 'Acción';
@@ -143,6 +143,7 @@ $string['configcachetext'] = 'Para sitios grandes, o que usan filtros de texto, 
 $string['configcountry'] = 'País donde radica la institución. Si se deja en blanco, cada alumno podrá elegir un país.';
 $string['configdebug'] = 'Para desarrolladores en busca de algún error en el programa.';
 $string['configdeleteunconfirmed'] = 'Si usted está utilizando la autenticación por email, éste es el período dentro del cual los usuarios han de aceptar una respuesta. Después de ese período, las cuentas viejas no confirmadas se eliminarán.';
+$string['configdigestmailtime'] = 'Las personas que elijan que se les envíen correos en forma de resumen recibirán dicho resumen cada día. Este ajuste controla a qué hora se enviará diariamente el correo electrónico (i.e., el correo será enviado por el primer cron que se ejecute después de esa hora).';
 $string['configenablerssfeeds'] = 'Este interruptor activa los canales RSS del sitio. Para ver cualquier cambio, necesitará habilitar también los canales RSS en los módulos individuales (hágalo en los ajustes de los módulos, en la configuración Admin).';
 $string['configenablerssfeedsdisabled'] = 'No está disponible porque los canales RSS están deshabilitados en todo el sitio. Para activarlos, vaya a los ajustes de Variables en la configuración Admin.';
 $string['configerrorlevel'] = 'Seleccione la cantidad de advertencias PHP que desea ver. \'Normal\' suele ser la mejor opción.';
@@ -322,6 +323,10 @@ $string['emailconfirmsent'] = '   <P>Hemos enviado un correo electrónico a <B>$a
    <P>ahí encontrará instrucciones sencillas para concluir el proceso.
 
    <P>Si enfrenta alguna dificultad contacte al Administrador del Sistema.';
+$string['emaildigest'] = 'Tipo de resumen de correo';
+$string['emaildigestcomplete'] = 'Completo (correo diario con mensajes completos)';
+$string['emaildigestoff'] = 'Sin resumen (un correo por cada mensaje del foro)';
+$string['emaildigestsubjects'] = 'Por temas (correo diario sólo con temas)';
 $string['emaildisable'] = 'La dirección de e-mail no está habilitada';
 $string['emaildisplay'] = 'Mostrar correo';
 $string['emaildisplaycourse'] = 'Mostrar mi dirección de correo sólo a mis compañeros de curso';

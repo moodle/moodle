@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004053000)
+      // forum.php - created with Moodle 1.4 development (2004060100)
 
 
 $string['addanewdiscussion'] = 'Colocar un nuevo tema de discusión aquí';
@@ -25,6 +25,10 @@ $string['delete'] = 'Borrar ';
 $string['deleteddiscussion'] = 'El tema se ha borrado';
 $string['deletedpost'] = 'El mensaje se ha borrado';
 $string['deletesure'] = '¿Está seguro de que desea borrar este mensaje?';
+$string['digestmailheader'] = 'Éste es su resumen diario por correo de los nuevos mensajes de los foros de $a->sitename. Si desea cambiar sus preferencias de foro por correo, hágalo en $a->userprefs.';
+$string['digestmailprefs'] = 'su perfil de usuario';
+$string['digestmailsubject'] = 'Resumen diario del foro de $a';
+$string['digestsentusers'] = 'Resúmenes de correo enviados con éxito a $a usuarios.';
 $string['discussion'] = 'Tema';
 $string['discussionmoved'] = 'Este tema se ha movido a \'$a\'.';
 $string['discussionname'] = 'Denominación';
@@ -96,6 +100,7 @@ $string['postrating3'] = 'Muy comunicativo';
 $string['posts'] = 'Mensajes';
 $string['posttoforum'] = 'Enviar al foro';
 $string['postupdated'] = 'Su mensaje se ha actualizado';
+$string['processingdigest'] = 'Procesando el resumen por correo para el usuario $a';
 $string['processingpost'] = 'Procesando $a';
 $string['prune'] = 'Partir';
 $string['pruneheading'] = 'Partir el mensaje y pasar a una nueva discusión';
