@@ -2717,7 +2717,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         }
     }
 
-    if ($messagehtml) {
+    if ($messagehtml && $user->mailformat == 1) { // Don't ever send HTML to users who don't want it
         $mail->IsHTML(true);
         $mail->Encoding = 'quoted-printable';           // Encoding to use
         $mail->Body    =  $messagehtml;
