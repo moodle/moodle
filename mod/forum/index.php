@@ -138,8 +138,7 @@
                 }
             }
 
-            $forum->intro = forum_shorten_post($forum->intro);
-            replace_smilies($forum->intro);
+            $forum->intro = format_text(forum_shorten_post($forum->intro));
             $forum->intro = "<span style=\"font-size:x-small;\">$forum->intro</span>";;
 
             if ($forum->visible) {
@@ -262,8 +261,7 @@
                     }
                 }
 
-                $forum->intro = forum_shorten_post($forum->intro);
-                replace_smilies($forum->intro);
+                $forum->intro = format_text(forum_shorten_post($forum->intro));
                 $forum->intro = "<span style=\"font-size:x-small;\">$forum->intro</span>";
 
                 if ($forum->section != $currentsection) {

@@ -126,7 +126,7 @@
                     //First all rss feeds common headers
                     $header = rss_standard_header(format_string($forum->name,true),
                                                   $CFG->wwwroot."/mod/forum/view.php?f=".$forum->id,
-                                                  $forum->intro);
+                                                  format_string($forum->intro,true);
                     //Now all the rss items
                     if (!empty($header)) {
                         $articles = rss_add_items($items);
