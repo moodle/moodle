@@ -18,7 +18,7 @@
     require_login();
 
     if (!empty($id)) {
-        if (!isteacher($id)) {
+        if (!isteacheredit($id)) {
             error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     } else {

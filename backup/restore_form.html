@@ -23,7 +23,7 @@
 
     //Check admin
     if (!empty($id)) {
-        if (!isteacher($id)) {
+        if (!isteacheredit($id)) {
             error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     } else {
@@ -84,7 +84,7 @@
     }
 
     if (!isset($restore_restoreto)) {
-        if (isteacher($id) and !isadmin()) {
+        if (isteacheredit($id) and !isadmin()) {
             $restore_restoreto = 1;
         }
         if (isadmin()) {
@@ -108,7 +108,7 @@
     echo "<td align=\"right\"><P><b>";
     echo get_string("restoreto").":</b>";
     echo "</td><td>";
-    if (isteacher($id) and !isadmin()) {
+    if (isteacheredit($id) and !isadmin()) {
         $restore_restoreto_options[0] = get_string("currentcoursedeleting");
         $restore_restoreto_options[1] = get_string("currentcourseadding");
     } 
