@@ -280,4 +280,27 @@ function print_recent_activity($course) {
 
 }
 
+
+function unenrol_student_in_course($user, $course) {
+    global $db;
+
+    return $db->Execute("DELETE FROM user_students WHERE user = '$user' AND course = '$course'");
+}
+
+
+
+function enrol_student_in_course($user, $course) {
+    global $db;
+
+	$timenow = time();
+
+	$rs = $db->Execute("INSERT INTO user_students (user, course, start, end, time) 
+                        VALUES ($user, $course, 0, 0, $timenow)");
+	if ($rs) {
+		return true;
+	} else {
+	    return false;
+	}
+}
+
 ?>

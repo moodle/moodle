@@ -34,7 +34,7 @@
     
         } else {
             $errormsg = "That entry key was incorrect, please try again".
-                        "<BR>(Here's a hint - it starts with \"".substr($actual_password,0,1)."\")";
+                        "<BR>(Here's a hint - it starts with \"".substr($course->password,0,1)."\")";
         }
     }
 
@@ -68,26 +68,9 @@
 
     print_course($course); 
 
-    include("login.html");
+    include("enrol.html");
 
     print_footer();
 
-
-//// FUNCTIONS /////////////////////////////////////////////
-
-function enrol_student_in_course($user, $course) {
-    
-    global $db;
-
-	$timenow = time();
-
-	$rs = $db->Execute("INSERT INTO user_students (user, course, start, end, time) 
-                        VALUES ($user, $course, 0, 0, $timenow)");
-	if ($rs) {
-		return true;
-	} else {
-	    return false;
-	}
-}
 
 ?>
