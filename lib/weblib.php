@@ -357,7 +357,7 @@ function stripslashes_recursive($var) {
  */
 function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
 
-    if (in_array(current_language(), array('ja', 'zh_cn', 'zh_tw', 'zh_tw_utf8'))) {  // Multibyte languages
+    if (in_array(current_language(), array('ja', 'ja_utf8', 'kn_utf8', 'sr_utf8', 'vi_utf8', 'zh_cn', 'zh_tw', 'zh_tw_utf8'))) {  // Multibyte languages
         return $string;
     }
 
