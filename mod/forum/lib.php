@@ -1398,7 +1398,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo "</font></p></td></tr>";
     echo "<tr><td bgcolor=\"$THEME->cellcontent2\" valign=\"top\" class=\"forumpostside\" width=\"10\">";
     if ($group = user_group($courseid, $post->userid)) {
-        print_group_picture($group, $courseid, false, false, false);
+        print_group_picture($group, $courseid, false, false, true);
     } else {
         echo "&nbsp;";
     }
