@@ -56,16 +56,17 @@ if (isadmin()) {
         }
         echo " </td>";
         echo "</tr>\n";
-        if(!$adminself && ($CFG->{'auth_'.$user->auth.'_stdchangepassword'} || $CFG->changepassword)){
+        if(!$adminself && (isset($CFG->{'auth_'.$user->auth.'_stdchangepassword'}) || $CFG->changepassword)){
              echo "<tr>";
-             echo '<td align=right><p>'.get_string('forcepasswordchange').':</td>';
-             echo '<td><input type="checkbox" name="forcepasswordchange" />'.get_string('forcepasswordchange_help').'</td>';            
+             echo '<td align=right><p>'.get_string('forcechangepassword', 'auth').':</td>';
+             echo '<td><input type="checkbox" name="forcepasswordchange" />'.get_string('forcechangepassword_help','auth').'</td>';            
              echo "</tr>";
          }
                  
         echo "<tr><td colspan=\"2\"><hr /></td></tr>";
     }
 }
+
 ?>
 <tr valign="top">
     <td align="right"><?php print_string("firstname") ?>:</td>

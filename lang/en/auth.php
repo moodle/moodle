@@ -95,6 +95,6 @@ $string['stdchangepassword'] = 'Use standard Change Password Page';
 $string['stdchangepassword_expl'] = 'If the external authentication system allows password changes through Moodle, switch this to Yes. This setting overrides \'Change Password URL\'.';
 $string['stdchangepassword_explldap'] = 'NOTE: It is recommended that you use LDAP over an SSL encrypted tunnel (ldaps://) if the LDAP server is remote.';
 $string['forcechangepassword'] = 'Force change password';
-$string['forcechangepassword_help'] = 'Force users to change password on their first login to Moodle.';$string['guestloginbutton'] = 'Guest login button';
+$string['forcechangepassword_help'] = 'Force users to change password on their next login to Moodle.';$string['guestloginbutton'] = 'Guest login button';
 
 ?>
