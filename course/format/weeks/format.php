@@ -174,7 +174,7 @@
 
             echo "<tr>";
             echo "<td nowrap $colorsides valign=top width=20>";
-            echo "<p align=center><font size=3><b>$section</b></font></p>";
+            echo "<p align=center><font size=3><a name=\"$section\">$section</a></font></p>";
             echo "</td>";
     
             echo "<td valign=top $colormain width=\"100%\">";

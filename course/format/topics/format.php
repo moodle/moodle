@@ -186,7 +186,7 @@
 
             echo "<tr>";
             echo "<td nowrap $colorsides valign=top width=20>";
-            echo "<p align=center><font size=3><b>$section</b></font></p>";
+            echo "<p align=center><font size=3><b><a name=\"$section\">$section</a></b></font></p>";
             echo "</td>";
 
             if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
