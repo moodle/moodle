@@ -237,7 +237,8 @@
         $form->course     = $course->id;
         $form->module     = $module->id;
         $form->modulename = $module->name;
-        $form->instance   = $cm->instance;
+        $form->instance   = "";
+        $form->coursemodule = "";
         $form->mode       = "add";
 
         $sectionname    = get_string("name$course->format");
