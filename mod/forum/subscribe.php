@@ -44,6 +44,14 @@
         }
     }
 
+    if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+        if (groupmode($course, $cm) and !isteacheredit($course->id)) {   // Make sure user is allowed
+            if (! mygroupid($course->id)) {
+                error("Sorry, but you must be a group member to subscribe.");
+            }
+        }
+    }
+
     $returnto = forum_go_back_to("index.php?id=$course->id");
 
     if ($force and isteacher($course->id)) {
