@@ -821,7 +821,7 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
                 $parents[$cat->id]   = $parents[$category->id];
                 $parents[$cat->id][] = $category->id;
             }
-            make_categories_list($list, &$parents, $cat, $path);         
+            make_categories_list($list, $parents, $cat, $path);         
         }
     }
 }
@@ -832,7 +832,7 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
 /// with or without courses included
 
     if (!$displaylist) {
-        make_categories_list(&$displaylist, &$parentslist);
+        make_categories_list($displaylist, $parentslist);
     }
 
     if ($category) {
@@ -869,7 +869,6 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
         print_simple_box_end();
     }
 }
-
 
 
 function print_category_box($category, $depth) {
