@@ -4,7 +4,6 @@
 		/// used outside of the lesson module.  All functions (I hope) that are only local
 		/// are now in locallib.php.  All the constants moved there as well.
 
-
 /// Library of functions and constants for module lesson
 /// (replace lesson with the name of your module and delete this line)
 
@@ -68,6 +67,7 @@ function lesson_update_instance($lesson) {
 			$lesson->deadlinemonth, $lesson->deadlineday, $lesson->deadlinehour, 
 			$lesson->deadlineminute);
     $lesson->id = $lesson->instance;
+
 	/// CDC-FLAG ///
 	if (!empty($lesson->password)) {
 		$lesson->password = md5($lesson->password);
@@ -91,8 +91,34 @@ function lesson_update_instance($lesson) {
 	} else {
 		unset($lesson->lessondefault);
 	}
+	
+	if (!empty($lesson->deleteattempts)) {
+		$subject = "Delete User Attempts";
+		$message = "";
 
-    return update_record("lesson", $lesson);
+		if ($userid = get_field("user", "id", "username", $lesson->deleteattempts)) {
+			if (delete_records("lesson_attempts", "lessonid", $lesson->id, "userid", $userid)) {
+				// email good
+				$message = "Successfully deleted attempts from \"$lesson->name\" lesson!<br>\r\n";
+			} else {
+				// email couldnt delete
+				$message = "Failed to delete attempts from \"$lesson->name\" lesson!<br>\r\n";
+			}
+		} else {
+			// email couldnt find user
+			$message = "Could not find user in database.<br>\r\n";
+		}
+		$message .= "<br>\r\n User ID used: $lesson->deleteattempts <br>\r\n";
+		
+		if ($currentuser = get_record("user", "id", $lesson->deleteattemptsid)) {
+			email_to_user($currentuser, $currentuser, $subject, $message, $message);
+		}
+		// unset lessondefault
+	}
+	unset($lesson->deleteattempts);
+	unset($lesson->deleteattemptsid);
+	
+	return update_record("lesson", $lesson);
 }
 
 
