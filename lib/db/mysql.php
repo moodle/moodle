@@ -1092,6 +1092,17 @@ function main_upgrade($oldversion=0) {
         modify_database('', "INSERT INTO prefix_log_display VALUES ('message', 'block contact', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
         modify_database('', "INSERT INTO prefix_log_display VALUES ('message', 'unblock contact', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
     }
+
+    if ($oldversion < 2005011000) {     // Create a .htaccess file in dataroot, just in case
+        if (!file_exists($CFG->dataroot.'/.htaccess')) {
+            if ($handle = fopen($CFG->dataroot.'/.htaccess', 'w')) {   // For safety
+                @fwrite($handle, "deny from all\r\n");
+                @fclose($handle); 
+                notify("Created a default .htaccess file in $CFG->dataroot");
+            }
+        }
+    }
+
     return $result;
 
 }

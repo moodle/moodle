@@ -2567,6 +2567,10 @@ function make_upload_directory($directory, $shownotices=true) {
             }
             return false;
         }
+        if ($handle = fopen($currdir.'/.htaccess', 'w')) {   // For safety
+            @fwrite($handle, "deny from all\r\n");
+            @fclose($handle); 
+        }
     }
 
     $dirarray = explode('/', $directory);
