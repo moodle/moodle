@@ -1733,7 +1733,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     echo "</td>\n";
 
     // Group picture
-    if ($group !== '-1') {  // Groups are active - group is a group data object or NULL
+    if ($group !== -1) {  // Groups are active - group is a group data object or NULL
         echo "<td class=\"forumpostheadergroup\" align=\"center\">";
         if (!empty($group->picture)) {
             print_group_picture($group, $forum->course, false, false, true);
