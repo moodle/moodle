@@ -58,8 +58,15 @@
         } else {
             $tt = "<FONT SIZE=1>".userdate($resource->timemodified);
         }
-        $table->data[] = array ($tt, "<A HREF=\"view.php?id=$resource->coursemodule\">$resource->name</A>",
-                                text_to_html($resource->summary) );
+        if (!$resource->visible) {
+           //Show dimmed if the mod is hidden
+           $table->data[] = array ($tt, "<A class=\"dimmed\" HREF=\"view.php?id=$resource->coursemodule\">$resource->name</A>",
+                                   text_to_html($resource->summary) );
+        } else {
+           //Show normal if the mod is visible
+           $table->data[] = array ($tt, "<A HREF=\"view.php?id=$resource->coursemodule\">$resource->name</A>",
+                                   text_to_html($resource->summary) );
+        }
     }
 
     echo "<BR>";
