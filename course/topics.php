@@ -67,9 +67,6 @@
     $modicon = array();
     if ($modtype) {
         foreach ($modtype as $modname => $modfullname) {
-            if ($modname == "discuss") {
-                continue;  // Covered by forum
-            }
             $moddata[] = "<A HREF=\"../mod/$modname/index.php?id=$course->id\">".$modfullname."s</A>";
             $modicon[] = "<IMG SRC=\"../mod/$modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$modfullname\">";
         }

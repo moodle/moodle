@@ -50,6 +50,10 @@
             $mods[$mod->id] = $mod;
             $modtype[$mod->modname] = $mod->modfullname;
         }
+        if (isset($modtype["forum"]) and isset($modtype["discuss"])) {
+            // We only need one of them
+            unset($modtype["discuss"]);
+        }
         ksort($modtype);
     }
 
