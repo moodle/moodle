@@ -49,8 +49,8 @@
             $newid = insert_record ("resource",$resource);
             if ($newid) {
                 //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,$mod->modtype,$mod->id,
-                             $newid,$data->info);
+                backup_putid($restore->backup_unique_code,$mod->modtype,
+                             $mod->id, $newid);
    
             } else {
                 $status = false;

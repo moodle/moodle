@@ -59,8 +59,8 @@
             $newid = insert_record ("choice",$choice);
             if ($newid) {
                 //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,$mod->modtype,$mod->id,
-                             $newid,$data->info);
+                backup_putid($restore->backup_unique_code,$mod->modtype,
+                             $mod->id, $newid);
                 //Now check if want to restore user data and do it.
                 if ($restore->mods[choice]->userinfo) {
                     //Restore choice_answers
@@ -84,15 +84,15 @@
 
         $status = true;
 
-        //Get the submissions array
+        //Get the answers array
         $answers = $info['MOD']['#']['ANSWERS']['0']['#']['ANSWER'];
 
-        //Iterate over submissions
+        //Iterate over answers
         for($i = 0; $i < sizeof($answers); $i++) {
             $sub_info = $answers[$i];
-            traverse_xmlize($sub_info);                                                                 //Debug
-            print_object ($GLOBALS['traverse_array']);                                                  //Debug
-            $GLOBALS['traverse_array']="";                                                              //Debug
+            //traverse_xmlize($sub_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //We'll need this later!!
             $oldid = backup_todb($sub_info['#']['ID']['0']['#']);

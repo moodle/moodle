@@ -57,8 +57,8 @@
             $newid = insert_record ("assignment",$assignment);
             if ($newid) {
                 //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,$mod->modtype,$mod->id,
-                             $newid,$data->info);
+                backup_putid($restore->backup_unique_code,$mod->modtype,
+                             $mod->id, $newid);
                 //Now check if want to restore user data and do it.
                 if ($restore->mods[assignment]->userinfo) {
                     //Restore assignmet_submissions
