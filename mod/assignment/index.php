@@ -53,7 +53,7 @@
                 $submitted =  "<a href=\"submissions.php?id=$assignment->id\">" .
                                 get_string("viewfeedback", "assignment") . "</a>";
             } else {
-                $count = count(assignment_get_all_submissions($assignment));
+                $count = assignment_count_real_submissions($assignment);
                 $submitted = "<a href=\"submissions.php?id=$assignment->id\">" .
                              get_string("viewsubmissions", "assignment", $count) . "</A>";
             }

@@ -308,8 +308,23 @@ function assignment_log_info($log) {
                               AND u.id = '$log->userid'");
 }
 
+function assignment_count_real_submissions($assignment) {
+/// Return all real assignment submissions by ENROLLED students (not empty ones)
+    global $CFG;
+
+    return count_records_sql("SELECT count(a.id)
+                              FROM {$CFG->prefix}assignment_submissions a, 
+                                   {$CFG->prefix}user_students s,
+                                   {$CFG->prefix}user u
+                             WHERE a.userid = s.userid
+                               AND u.id = a.userid
+                               AND s.course = '$assignment->course'
+                               AND a.assignment = '$assignment->id' 
+                               AND a.timemodified > 0");
+}
+
 function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
-/// Return all assignment submissions by ENROLLED students
+/// Return all assignment submissions by ENROLLED students (even empty)
     global $CFG;
 
     if ($sort == "lastname" or $sort == "firstname") {
