@@ -11,7 +11,7 @@
 
     if ($preview) {
         $CFG->theme = $preview;
-        $CFG->stylesheet  = "$CFG->wwwroot/theme/$CFG->theme/styles.css";
+        $CFG->stylesheet  = "$CFG->wwwroot/theme/$CFG->theme/styles.php?themename=$preview";
         $CFG->header      = "$CFG->dirroot/theme/$CFG->theme/header.html";
         $CFG->footer      = "$CFG->dirroot/theme/$CFG->theme/footer.html";
         include ("$CFG->theme/config.php");
@@ -55,7 +55,7 @@
     $themes = get_list_of_plugins("theme");
 
     echo "<TABLE ALIGN=CENTER cellpadding=7 cellspacing=5>";
-    echo "<TR><TH>$strtheme<TH>&nbsp;</TR>";
+    echo "<TR><TH class=\"generaltableheader\">$strtheme<TH class=\"generaltableheader\">&nbsp;</TR>";
     foreach ($themes as $theme) {
         include ("$theme/config.php");
         echo "<TR>";

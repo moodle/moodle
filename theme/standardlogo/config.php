@@ -6,5 +6,6 @@ $THEME->cellheading2 = "#FFB62D";  // Highlight headings of tables
 $THEME->cellcontent  = "#FFFFFF";  // For areas with text
 $THEME->cellcontent2 = "#FFD991";  // Alternate colour
 $THEME->borders      = "#555555";  // Table borders
+$THEME->highlight    = "#AAFFAA";  // Highlighted text (eg after a search)
 
 ?>
