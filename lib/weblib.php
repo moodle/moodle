@@ -1798,7 +1798,7 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
 
         if ($mod->section > 0 and $section <> $mod->section) {
             //Only add if visible or collapsed or teacher or course format = weeks
-            if ($sectionrecs[$mod->section]->visible or $course->hiddentopics == 0 or $isteacher or $course->format == 'weeks') {
+            if ($sectionrecs[$mod->section]->visible or !$course->hiddensections or $isteacher) {
                 $menu[] = "-------------- $strsection $mod->section --------------";
             }
         }
