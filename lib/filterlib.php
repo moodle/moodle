@@ -199,4 +199,30 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
 
 }
 
+
+
+function filter_remove_duplicates($linkarray) {
+
+    $concepts  = array(); // keep a record of concepts as we cycle through
+    $lconcepts = array(); // a lower case version for case insensitive
+
+    $cleanlinks = array();
+    
+    foreach ($linkarray as $key=>$filterobject) {
+        if ($filterobject->casesensitive) {
+            $exists = in_array($filterobject->phrase, $concepts);
+        } else {
+            $exists = in_array(strtolower($filterobject->phrase), $lconcepts);
+        }
+        
+        if (!$exists) {
+            $cleanlinks[] = $filterobject;
+            $concepts[] = $filterobject->phrase;
+            $lconcepts[] = strtolower($filterobject->phrase);
+        }
+    }
+
+    return $cleanlinks;
+}
+
 ?>
