@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032300)
 
 
 $string['calendar'] = 'Kalender';
@@ -17,7 +17,6 @@ $string['detailedmonthview'] = 'Gedetaileerd maandoverzicht';
 $string['dstadjusttime'] = 'Verzet tijd';
 $string['dstat'] = 'naar';
 $string['dstby'] = 'bij';
-$string['dstdefaultpresetname'] = 'Nieuwe voorkeuze voor zomertijd ';
 $string['dsthumanreadable'] = 'Op de $a->activate_index $a->activate_weekday van elke $a->activate_month, verzet de tijd $a->offset minutes $a->direction. Deze wijziging blijft tot de  $a->deactivate_index $a->deactivate_weekday van $a->deactivate_month.';
 $string['dstof'] = 'van';
 $string['dstonthe'] = 'Op de ';
@@ -72,7 +71,6 @@ $string['notusingdst'] = 'Gebruikt geen zomertijd';
 $string['noupcomingevents'] = 'Er zijn geen activiteiten op komst';
 $string['nth'] = 'On the $a->activate_index $a->activate_weekday of each $a->activate_month, move the time $a->offset minutes $a->direction. This change lasts until the $a->deactivate_index $a->deactivate_weekday of $a->{$a}st';
 $string['oneevent'] = '1 activiteit';
-$string['pref_dstpreset'] = 'Zomertijd';
 $string['pref_lookahead'] = 'Aantal dagen vooruit kijken naar komende activiteiten';
 $string['pref_maxevents'] = 'maximumaantal getoonde activiteiten';
 $string['pref_persistflt'] = 'Filsterinstellingen opslaan';
@@ -95,6 +93,7 @@ $string['timeformat_12'] = '12-uur (am/pm)';
 $string['timeformat_24'] = '24-uur';
 $string['timeforward'] = 'vooruit';
 $string['timerewind'] = 'achteruit';
+$string['timezonename'] = 'Tijdzone';
 $string['today'] = 'Vandaag';
 $string['tomorrow'] = 'Morgen';
 $string['tt_deleteevent'] = 'Wis activiteit';

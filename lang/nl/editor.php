@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032300)
 
 
 $string['about'] = 'Info';
@@ -22,6 +22,7 @@ $string['cellspacing'] = 'Cel tot Cel';
 $string['choosechar'] = 'Kies teken';
 $string['chooseicon'] = 'Kies een icoontje om in te voegen';
 $string['close'] = 'Sluiten';
+$string['closeafterreplace'] = 'Sluit na vervangen';
 $string['cols'] = 'Kolommen';
 $string['copy'] = 'Kopieren';
 $string['createanchor'] = 'Maak een anker';
@@ -30,6 +31,7 @@ $string['createlink'] = 'Weblink invoegen';
 $string['cut'] = 'Knippen';
 $string['delete'] = 'Verwijder';
 $string['filebrowser'] = 'Bladeren in bestanden';
+$string['findwhat'] = 'Zoek';
 $string['fontname'] = 'Naam lettertype ';
 $string['fontsize'] = 'Grootte lettertype';
 $string['forecolor'] = 'Tekstkleur';
@@ -49,6 +51,7 @@ $string['insertlink'] = 'Voeg link in';
 $string['insertsmile'] = 'Emoticon invoegen';
 $string['inserttable'] = 'Tabel invoegen';
 $string['italic'] = 'Cursief';
+$string['itemsreplaced'] = 'Items vervangen!';
 $string['justifycenter'] = 'Centreren';
 $string['justifyfull'] = 'Uitvullen';
 $string['justifyleft'] = 'Links uitlijnen';
@@ -65,6 +68,7 @@ $string['linktargetself'] = 'Zelfde frame';
 $string['linktargettop'] = 'Zelfde venster';
 $string['linktitle'] = 'Titel';
 $string['linkurl'] = 'URL';
+$string['matchcase'] = 'Hoofdlettergevoelig';
 $string['middle'] = 'Midden';
 $string['minimize'] = 'Verklein editor';
 $string['move'] = 'Verplaats';
@@ -73,6 +77,7 @@ $string['normal'] = 'Standaard';
 $string['notimage'] = 'Het geselecteerde bestand is geen afbeelding. Kies een afbeelding.';
 $string['notset'] = 'Niet ingesteld';
 $string['ok'] = 'OK';
+$string['options'] = 'Opties';
 $string['orderedlist'] = 'Geordende lijst';
 $string['outdent'] = 'Inspringing verkleinen';
 $string['paste'] = 'Plakken van klembord';
@@ -84,11 +89,16 @@ $string['preformatted'] = 'Vaste opmaak (pre)';
 $string['preview'] = 'Voorbeeld';
 $string['properties'] = 'Eigenschappen';
 $string['redo'] = 'Opnieuw';
+$string['regularexpressions'] = 'Gebruik regular expressions';
 $string['removelink'] = 'Verwijder link';
 $string['rename'] = 'Hernoem';
+$string['replaceall'] = 'Vervang alles';
+$string['replacewith'] = 'Vervang';
 $string['right'] = 'Rechts';
 $string['righttoleft'] = 'Richting van recht naar links';
 $string['rows'] = 'Rijen';
+$string['searchandreplace'] = 'Zoek  en vervang';
+$string['searchnotfound'] = 'Niet gevonden!';
 $string['selectcolor'] = 'Kies kleur';
 $string['selection'] = 'Selectie';
 $string['showhelp'] = 'Help ';

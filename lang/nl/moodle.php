@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032300)
 
 
 $string['action'] = 'Actie';
@@ -477,6 +477,7 @@ $string['groupadd'] = 'Nieuwe groep';
 $string['groupaddusers'] = 'Voeg selectie toe aan groep';
 $string['groupfor'] = 'voor groep';
 $string['groupinfo'] = 'Info over geselecteerde groep';
+$string['groupinfoedit'] = 'Bewerk instellingen van de groep';
 $string['groupinfomembers'] = 'Info over geselecteerde leden';
 $string['groupinfopeople'] = 'Info over geselecteerde personen';
 $string['groupmembers'] = 'Groepsleden';
