@@ -78,6 +78,6 @@
 	include("preferences.html");
     print_simple_box_end();
 
-    print_footer($course->id);
+    print_footer($course);
 
 ?>
