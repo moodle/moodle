@@ -18,28 +18,28 @@
     print_header("$site->shortname: $stradministration", "$site->fullname", 
                  "<a href=\"index.php\">$stradministration</a> -> $strusers");
 
-    print_simple_box_start("center", "80%", "#FFFFFF", 20);
     print_heading($strusers);
 
     $table->align = array ("right", "left");
 
+    $table->data[] = array("<b><a href=\"auth.php\">".get_string("authentication")."</a></b>",
+                           get_string("adminhelpauthentication"));
+
     if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual"){
-        $table->data[] = array("<a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".get_string("addnewuser")."</a>",
-                               "<font size=-1>".get_string("adminhelpaddnewuser"));
+        $table->data[] = array("<b><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".get_string("addnewuser")."</a></b>",
+                               get_string("adminhelpaddnewuser"));
     }
-    $table->data[] = array("<a href=\"user.php\">".get_string("edituser")."</a>",
-                           "<font size=-1>".get_string("adminhelpedituser"));
-    $table->data[] = array("<a href=\"admin.php\">".get_string("assignadmins")."</a>",
-                           "<font size=-1>".get_string("adminhelpassignadmins"));
-    $table->data[] = array("<a href=\"creators.php\">".get_string("assigncreators")."</a>",
-                           "<font size=-1>".get_string("adminhelpassigncreators"));
-    $table->data[] = array("<a href=\"auth.php\">".get_string("authentication")."</a>",
-                           "<font size=-1>".get_string("adminhelpauthentication"));
+    $table->data[] = array("<b><a href=\"user.php\">".get_string("edituser")."</a></b>",
+                           get_string("adminhelpedituser"));
+    $table->data[] = array("<b><a href=\"admin.php\">".get_string("assignadmins")."</a></b>",
+                           get_string("adminhelpassignadmins"));
+    $table->data[] = array("<b><a href=\"creators.php\">".get_string("assigncreators")."</a></b>",
+                           get_string("adminhelpassigncreators"));
+    $table->data[] = array("<b><a href=\"../course/index.php?edit=on\">".get_string("assignteachers")."</a></b>",
+                           get_string("adminhelpassignteachers")." <img src=\"../pix/t/user.gif\" height=11 width=11>");
 
     print_table($table);
     
-    print_simple_box_end();
-
     print_footer($site);
 
 ?>

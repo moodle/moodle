@@ -347,31 +347,31 @@
 
     $stradministration = get_string("administration");
     print_header("$site->shortname: $stradministration","$site->fullname", "$stradministration");
-    print_simple_box_start("center", "80%", "#FFFFFF", 20);
+    print_simple_box_start("center", "90%", "$THEME->cellcontent2", 20);
     print_heading($stradministration);
 
     $table->align = array ("right", "left");
-    $table->data[] = array("<a href=\"../course/index.php?edit=on\">".get_string("courses")."</a>",
-                           "<font size=-1>".get_string("adminhelpcourses"));
-    $table->data[] = array("<a href=\"users.php\">".get_string("users")."</a>",
-                           "<font size=-1>".get_string("adminhelpusers"));
-    $table->data[] = array("<a href=\"config.php\">".get_string("configvariables")."</a>",
-                           "<font size=-1>".get_string("adminhelpconfiguration"));
-    $table->data[] = array("<a href=\"site.php\">".get_string("sitesettings")."</a>",
-                           "<font size=-1>".get_string("adminhelpsitesettings"));
-    $table->data[] = array("<a href=\"../files/index.php?id=$site->id\">".get_string("sitefiles")."</a>",
-                           "<font size=-1>".get_string("adminhelpsitefiles"));
-    $table->data[] = array("<a href=\"../theme/index.php\">".get_string("themes")."</a>",
-                           "<font size=-1>".get_string("adminhelpthemes"));
-    $table->data[] = array("<a href=\"lang.php\">".get_string("language")."</a>",
-                           "<font size=-1>".get_string("adminhelplanguage"));
-    $table->data[] = array("<a href=\"modules.php\">".get_string("managemodules")."</a>",
-                           "<font size=-1>".get_string("adminhelpmanagemodules"));
-    $table->data[] = array("<a href=\"../course/log.php?id=$site->id.php\">".get_string("logs")."</a>",
-                           "<font size=-1>".get_string("adminhelplogs"));
+    $table->data[] = array("<b><a href=\"config.php\">".get_string("configvariables")."</a></b>",
+                           get_string("adminhelpconfiguration"));
+    $table->data[] = array("<b><a href=\"site.php\">".get_string("sitesettings")."</a></b>",
+                           get_string("adminhelpsitesettings"));
+    $table->data[] = array("<b><a href=\"../course/index.php?edit=on\">".get_string("courses")."</a></b>",
+                           get_string("adminhelpcourses"));
+    $table->data[] = array("<b><a href=\"users.php\">".get_string("users")."</a></b>",
+                           get_string("adminhelpusers"));
+    $table->data[] = array("<b><a href=\"../theme/index.php\">".get_string("themes")."</a></b>",
+                           get_string("adminhelpthemes"));
+    $table->data[] = array("<b><a href=\"lang.php\">".get_string("language")."</a></b>",
+                           get_string("adminhelplanguage"));
+    $table->data[] = array("<b><a href=\"modules.php\">".get_string("managemodules")."</a></b>",
+                           get_string("adminhelpmanagemodules"));
+    $table->data[] = array("<b><a href=\"../course/log.php?id=$site->id.php\">".get_string("logs")."</a></b>",
+                           get_string("adminhelplogs"));
+    $table->data[] = array("<b><a href=\"../files/index.php?id=$site->id\">".get_string("sitefiles")."</a></b>",
+                           get_string("adminhelpsitefiles"));
     if (file_exists("$CFG->dirroot/admin/$CFG->dbtype")) {
-        $table->data[] = array("<a href=\"$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a>",
-                               "<font size=-1>".get_string("adminhelpmanagedatabase"));
+        $table->data[] = array("<b><a href=\"$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a></b>",
+                               get_string("adminhelpmanagedatabase"));
     }
 
     $table->width = "90%";

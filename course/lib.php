@@ -692,6 +692,12 @@ function print_admin_links ($siteid, $width=180) {
         $icon = "<img src=\"$CFG->wwwroot/theme/$CFG->theme/pix/i/admin.gif\" height=16 width=16 alt=\"\">";
     }
 
+    if (isadmin()) {
+	    $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/config.php\">".get_string("configvariables")."</a>";
+		$modicon[]=$icon;
+		$moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/site.php\">".get_string("sitesettings")."</a>";
+		$modicon[]=$icon;
+    }
     if (iscreator()) {
 	    $moddata[]="<a href=\"$CFG->wwwroot/course/index.php?edit=on\">".get_string("courses")."</a>";
 		$modicon[]=$icon;
@@ -700,12 +706,6 @@ function print_admin_links ($siteid, $width=180) {
     if (isadmin()) {
 	    $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/users.php\">".get_string("users")."</a>";
 		$modicon[]=$icon;
-	    $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/config.php\">".get_string("configvariables")."</a>";
-		$modicon[]=$icon;
-		$moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/site.php\">".get_string("sitesettings")."</a>";
-		$modicon[]=$icon;
-		$moddata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$siteid\">".get_string("sitefiles")."</a>";
-		$modicon[]=$icon;
 		$moddata[]="<a href=\"$CFG->wwwroot/theme/index.php\">".get_string("themes")."</a>";
 		$modicon[]=$icon;
 		$moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/lang.php\">".get_string("language")."</a>";
@@ -713,6 +713,8 @@ function print_admin_links ($siteid, $width=180) {
 		$moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/modules.php\">".get_string("managemodules")."</a>";
 		$modicon[]=$icon;
 		$moddata[]="<a href=\"$CFG->wwwroot/course/log.php?id=$siteid\">".get_string("logs")."</a>";
+		$modicon[]=$icon;
+		$moddata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$siteid\">".get_string("sitefiles")."</a>";
 		$modicon[]=$icon;
 		if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
             $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a>";
