@@ -9,4 +9,10 @@
 #
 
 CREATE TABLE prefix_block_rss_client (
+ id SERIAL PRIMARY KEY,
+ userid INTEGER NOT NULL default '0',
+ title varchar(64) NOT NULL default '',
+ description varchar(128) NOT NULL default '',
+ url varchar(255) NOT NULL default '',
+ type char(1) NOT NULL default 'R'
 );
