@@ -54,8 +54,15 @@
             $forum->intro = backup_todb($info['MOD']['#']['INTRO']['0']['#']);
             $forum->open = backup_todb($info['MOD']['#']['OPEN']['0']['#']);
             $forum->assessed = backup_todb($info['MOD']['#']['ASSESSED']['0']['#']);
+            $forum->scale = backup_todb($info['MOD']['#']['SCALE']['0']['#']);
             $forum->forcesubscribe = backup_todb($info['MOD']['#']['FORCESUBSCRIBE']['0']['#']);
             $forum->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
+
+            //We have to recode the scale field
+            $scale = backup_getid($restore->backup_unique_code,"scale",$forum->scale);
+            if ($scale) {
+                $forum->scale = $scale->new_id;
+            }
 
             //The structure is equal to the db, so insert the forum
             $newid = insert_record ("forum",$forum);

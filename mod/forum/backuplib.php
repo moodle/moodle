@@ -51,6 +51,7 @@
                 fwrite ($bf,full_tag("INTRO",4,false,$forum->intro));
                 fwrite ($bf,full_tag("OPEN",4,false,$forum->open));
                 fwrite ($bf,full_tag("ASSESSED",4,false,$forum->assessed));
+                fwrite ($bf,full_tag("SCALE",4,false,$forum->scale));
                 fwrite ($bf,full_tag("FORCESUBSCRIBE",4,false,$forum->forcesubscribe));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$forum->timemodified));
 
