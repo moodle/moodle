@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111500)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112400)
 
 
 $string['action'] = '操作';
@@ -491,7 +491,7 @@ $string['gd2'] = 'GD 2.xインストール済';
 $string['gdneed'] = 'このグラフを表示するためにはGDのインストールが必要です。';
 $string['gdnot'] = 'GD未インストール';
 $string['go'] = 'Go';
-$string['gpl'] = 'Copyright (C) 2001-2002 Martin Dougiamas (http://dougiamas.com)
+$string['gpl'] = 'Copyright (C) 1999-2004 Martin Dougiamas (http://dougiamas.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -968,6 +968,7 @@ $string['topichide'] = '$a よりこのトピックを隠す';
 $string['topicoutline'] = 'トピックの概要';
 $string['topicshow'] = '$a にこのトピックを表示する';
 $string['total'] = '合計';
+$string['trysearching'] = '代わりに検索する。';
 $string['turneditingoff'] = '編集モード OFF';
 $string['turneditingon'] = '編集モード ON';
 $string['undecided'] = '未決定';
