@@ -38,7 +38,7 @@
                 if ($subscribemessage = forum_post_subscription($post)) {
                     $timemessage = 2;
                 }
-                redirect(forum_go_back_to("discuss.php?d=$post->discussion"), $message.$subscribemessage, $timemessage);
+                redirect(forum_go_back_to("discuss.php?d=$post->discussion#$post->id"), $message.$subscribemessage, $timemessage);
 
             } else {
                 error(get_string("couldnotupdate", "forum"), $errordestination); 
@@ -55,7 +55,7 @@
                     $timemessage = 4;
                 }
 
-                redirect(forum_go_back_to("discuss.php?d=$post->discussion"), $message.$subscribemessage, $timemessage);
+                redirect(forum_go_back_to("discuss.php?d=$post->discussion#$post->id"), $message.$subscribemessage, $timemessage);
 
             } else {
                 error(get_string("couldnotadd", "forum"), $errordestination); 
@@ -180,6 +180,7 @@
         }
 
         forum_set_return();
+        unset($SESSION->fromdiscussion);
 
     } else if (isset($edit)) {  // User is editing their own post
 
@@ -215,6 +216,7 @@
         $post->forum  = $forum->id;
 
         forum_set_return();
+        unset($SESSION->fromdiscussion);
 
 
     } else if (isset($delete)) {  // User is deleting a post

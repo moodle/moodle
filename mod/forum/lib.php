@@ -857,6 +857,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
     global $THEME, $USER, $CFG;
 
+    echo "<a name=\"$post->id\"></a>";
     if ($post->parent) {
         echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 CLASS=\"forumpost\">";
     } else {
