@@ -644,6 +644,7 @@ $string['notenrolled'] = '$a is not enrolled in this course.';
 $string['noteuserschangednonetocourse'] = 'Note: course users need to be restored when restoring user data. This setting has been changed for you.';
 $string['nothingnew'] = 'Nothing new since your last login';
 $string['notincluded'] = 'Not included';
+$string['notingroup'] = 'Sorry, but you need to be part of a group to see this activity.';
 $string['nousersmatching'] = 'No users matching \'$a\' were found';
 $string['nousersyet'] = 'There are no users yet';
 $string['now'] = 'now';

@@ -1200,8 +1200,8 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
         return false;
     }
 
-    if (!isteacheredit($course->id) and $groupmode and !$currentgroup) {
-        print_heading();
+    if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id) and !$currentgroup) {
+        print_heading(get_string('notingroup'));
         print_footer($course);
         exit;
     }
