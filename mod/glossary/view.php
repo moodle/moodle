@@ -4,6 +4,7 @@
 
     require_once("../../config.php");
     require_once("lib.php");
+    require_once("dynalink.php");
 
     require_variable($id);    // Course Module ID, or
 
@@ -242,9 +243,13 @@
 	                 }
                  }
                  if ($search) {
-                       $entry->concept = highlight($search,$concept);
-                       $entry->definition = highlight($search,$definition);
+                     $entry->concept = highlight($search,$concept);
+                     $entry->definition = highlight($search,$definition);
                  }
+                 if ( !glossary->mainglossary ) {
+                     $entry->definition = glossary_dynamic_link($course->id,$definition);
+                 }
+                 
 	             glossary_print_entry($course, $cm, $glossary, $entry,$currentview,$cat);
 
                  if ( $glossary->displayformat != 0 ) {
