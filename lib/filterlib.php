@@ -85,7 +85,7 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
 
 /// Remove tags from $text
     $tags = array();
-    preg_match_all('/<[^\#](.+?)[^\#]>/is',$text,$list_of_tags);
+    preg_match_all('/<[^\#](.*?)>/is',$text,$list_of_tags);
     foreach (array_unique($list_of_tags[0]) as $key=>$value) {
         $tags['<|'.$key.'|>'] = $value;
     }
@@ -96,7 +96,7 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
 
 /// Time to cycle through each phrase to be linked
     foreach ($link_array as $linkobject) {
-    
+
     /// Set some defaults if certain properties are missing
     /// Properties may be missing if the filterobject class has not been used to construct the object
         if (!isset($linkobject->phrase)) {
@@ -174,7 +174,7 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
             $newtagsarray[] = $newtags;
         }
         unset($newtags);
-
+    
     }
 
 
