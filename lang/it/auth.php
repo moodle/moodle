@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.2 development (2004011700)
+      // auth.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['auth_dbdescription'] = 'Questo metodo usa una tabella di una base di dati esterna per controllare se un dato username e password siano validi.  Se l\'utente è nuovo, allora le informazioni degli altri campi possono essere copiate in Moodle.';
@@ -31,6 +31,7 @@ $string['auth_ldap_memberattribute'] = 'Specifica l\'attributo del utente membro
 $string['auth_ldap_search_sub'] = 'Metti un valore &lt;&gt; 0 se preferisci cercare gli utenti da sottocontesti.';
 $string['auth_ldap_update_userinfo'] = 'Aggiorna le informazioni utente (nome, cognome, indirizzo...) da LDAP a Moodle. Guarda /auth/ldap/attr_mappings.php per le informazioni su mapping';
 $string['auth_ldap_user_attribute'] = 'L\'attributo usato per cercare gli utenti. Normalmente \'cn\'.';
+$string['auth_ldap_version'] = 'La versione del protocollo LDAP che il tuo server utilizza.';
 $string['auth_ldapdescription'] = 'Questo metodo fornisce l\'autenticazione tramite un server LDAP esterno.
 Se il nome utente e la password dati sono validi, Moodle crea un nuovo utente nella sua base dati. Questo modulo può leggere gli attributi da LDAP e precompilare i campi richiesti in Moodle. I successivi login solo il nome utente e la password vengono controllati.';
 $string['auth_ldapextrafields'] = 'Questi campi sono opzionali. Puoi scegliere di precompilare alcuni campi dell\'utente in Moodle con le informazioni dai <b>campi LDAP</b> che tu specifichi qui. <p>Se lasci questi campi vuoti, non verrà trasferito niente dal LDAP e verranno usati i dati default di Moodle.</p><p>In entrambi i casi, gli utenti possono modificare tutti questi campi dopo essersi logati.';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004040500)
+      // moodle.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['action'] = 'Azione';
@@ -42,6 +42,7 @@ $string['adminhelpcourses'] = 'Definisci corsi e categorie e assegnagli le perso
 $string['adminhelpedituser'] = 'Visualizza la lista ed modifica gli utenti ';
 $string['adminhelplanguage'] = 'Controlla ed modifica il language pack corrente';
 $string['adminhelplogs'] = 'Visualizza i log di tutte le attività in questo sito';
+$string['adminhelpmanageblocks'] = 'Gestisci i blocchi installati e le loro impostazioni';
 $string['adminhelpmanagedatabase'] = 'Accedi direttamente alla base dati (Usare con molta attenzione!)';
 $string['adminhelpmanagefilters'] = 'Scegli i filtri testuali e le relative impostazioni';
 $string['adminhelpmanagemodules'] = 'Gestisci i moduli installati e le loro impostazioni';
@@ -100,6 +101,7 @@ $string['backupsavetohelp'] = 'Percorso completo della directory dove vuoi salva
 $string['backupuserfileshelp'] = 'Scegli quali file utente (es immagini profilo) devono essere incluse nelle copie di sicurezza automatiche';
 $string['backupusershelp'] = 'Scegli se includere tutti gli utenti del sito o solo gli utenti iscritti a ogni corso.';
 $string['backupversion'] = 'Versione copia di sicurezza';
+$string['blocksuccess'] = '$a tabelle sono state correttamente impostate';
 $string['bycourseorder'] = 'Ordina per corso';
 $string['cancel'] = 'Cancella';
 $string['categories'] = 'Categorie di corso';
@@ -226,6 +228,7 @@ $string['databaseperformance'] = 'Prestazioni database';
 $string['databasesetup'] = 'Impostazione database in corso';
 $string['databasesuccess'] = 'Il database è stato aggiornato con successo';
 $string['databaseupgradebackups'] = 'La versione del backup ora é $a';
+$string['databaseupgradeblocks'] = 'La versione dei blocchi ora è $a';
 $string['databaseupgrades'] = 'Aggiornamento database';
 $string['datemostrecentfirst'] = 'Data - la più recente prima';
 $string['datemostrecentlast'] = 'Data - la più recente ultima';
@@ -538,6 +541,7 @@ $string['logs'] = 'Logs';
 $string['mainmenu'] = 'Menù Principale';
 $string['makeafolder'] = 'Crea una cartella';
 $string['makeeditable'] = 'Se tu rendi \'$a\' modificabile via ftp (es. su server  apache) allora puoi modificare questo file direttamente da questa pagina.';
+$string['manageblocks'] = 'Blocchi';
 $string['managedatabase'] = 'Gestione database';
 $string['managefilters'] = 'Filtri';
 $string['managemodules'] = 'Gestione moduli';
@@ -716,6 +720,7 @@ $string['readinginfofrombackup'] = 'Lettura informazioni dalla copia di salvatag
 $string['readme'] = 'LEGGIMI';
 $string['recentactivity'] = 'Attività recente';
 $string['recentactivityreport'] = 'Rapporto completo dell\'attività recente...';
+$string['refreshingevents'] = 'Aggiorna eventi';
 $string['registration'] = 'Registrazione di Moodle';
 $string['registrationemail'] = 'Notifica via email';
 $string['registrationinfo'] = '<p>Questa pagina ti permette di registrare il tuo sito Moodle presso moodle.org. La registrazione é gratuita. Il maggior beneficio che ottieni registrandoti sarà che verrai aggiunto a un mailing list a basso traffico per i messaggi importanti come i problemi di sicurezza e le nuove versioni di Moodle.</p>
