@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 Beta (2004022400)
+      // moodle.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['action'] = 'Tapahtuma';
@@ -133,6 +133,7 @@ Mikäli asetat tähän liian pienen arvon, palvelimen toiminta saattaa hieman hidas
 $string['configcountry'] = 'Jos asetat maan tässä, valinnasta tulee oletusasetus kaikille käyttäjille. Pakottaaksesi käyttäjät valitsemaan maansa itse, jätä tämä kohta tyhjäksi.';
 $string['configdebug'] = 'Jos valitset virheenkorjaustilan päälle, PHP:n error_reporting arvo nousee ja useampia virheilmoituksia tulostuu näytölle. Tästä asetuksesta on hyötyä vain Moodlen kehittäjille.';
 $string['configerrorlevel'] = 'PHP virheilmoitusten määrä. Normal on yleensä hyvä valinta.';
+$string['configfilteruploadedfiles'] = 'Tämän kohdan asettaminen pakottaa Moodlen prosessoimaan kaikki Moodleen ladattavat HTML- ja tekstitiedostot tekstisuotimilla ennen niiden näyttämistä.';
 $string['configforcelogin'] = 'Normaalisti sivuston etusivu ja kurssilistaukset ovat kaikkien nähtävillä. Jos haluat, että käyttäjien pitää kirjaantua ennen kuin he voivat tehdä mitään sivustollasi, sinun pitää määritellä tämä asetus.';
 $string['configframename'] = 'Jos haluat sijoittaa Moodlen sivustolle, joka käyttää kehyksiä, määritä tässä sen kehyksen nimi, jossa Moodle on. Muutoin jätä tämä ennalleen asetukseen \'_top\'';
 $string['configfullnamedisplay'] = 'Tämä määrittelee, kuinka käyttäjän koko nimi näytetään. Oletuksena käytetään \"Given names + Surname\", joka toimii tehokkaasti useimmilla yksikielisillä sivustoilla, mutta voit valita sukunimen täydellisen piilottamisen tai antaa nykyisen kielipaketin päättää asiasta.';
@@ -168,6 +169,7 @@ $string['configuration'] = 'Konfigurointi';
 $string['configvariables'] = 'Määrittele muuttujat';
 $string['configwarning'] = 'Ole varovainen muuttaessasi näitä asetuksia. Väärät asetukset voivat aiheuttaa ongelmia.';
 $string['configzip'] = 'Anna zip-ohjelman sijainti. (vain UNIX)';
+$string['confirm'] = 'Vahvista';
 $string['confirmed'] = 'Rekisteröitymisesi on vahvistettu';
 $string['confirmednot'] = 'Rekisteröitymisesi ei ole vielä vahvistettu';
 $string['continue'] = 'Jatka';
@@ -348,6 +350,7 @@ $string['files'] = 'Tiedostot';
 $string['filesfolders'] = 'Tiedostot/kansiot';
 $string['filloutallfields'] = 'Ole hyvä ja taytä lomakkeen kaikki kentät.';
 $string['findmorecourses'] = 'Etsi lisää kursseja...';
+$string['firstdayofweek'] = '0';
 $string['firstname'] = 'Etunimi';
 $string['firsttime'] = 'Jos sinulla ei ole vielä tunnusta:';
 $string['followingoptional'] = 'Seuraavat tiedot ovat vapaaehtoisia';
@@ -410,6 +413,7 @@ $string['groupmode'] = 'Ryhmätila';
 $string['groupmodeforce'] = 'Pakoita ryhmätila';
 $string['groupmy'] = 'Ryhmäni';
 $string['groupnonmembers'] = 'Ryhmättömät henkilöt';
+$string['groupnotamember'] = 'Valitettavasti et ole kyseisen ryhmän jäsen';
 $string['grouprandomassign'] = 'Liitä kaikki satunnaisesti ryhmiin';
 $string['groupremove'] = 'Poista valittu ryhmä';
 $string['groupremovemembers'] = 'Poista valitut jäsenet';
@@ -846,12 +850,14 @@ $string['uploadproblem'] = 'Tuntematon virhe tallennettaessa tiedostoa \'$a\'. (
 $string['uploadthisfile'] = 'Lähetä tämä tiedosto';
 $string['uploadusers'] = 'Lähetä käyttäjät';
 $string['user'] = 'Käyttäjä';
+$string['userconfirmed'] = 'Vahvistettu $a';
 $string['userdeleted'] = 'Tämä tunnus on poistettu';
 $string['userdescription'] = 'Kuvaus';
 $string['userfiles'] = 'Käyttäjän tiedostot';
 $string['username'] = 'Käyttäjätunnus';
 $string['usernameexists'] = 'Tämä käyttäjätunnus on jo käytössä, valitse joku muu.';
-$string['userprofilefor'] = 'Käyttäjän henkilötiedot $a';
+$string['usernotconfirmed'] = 'a$ ei voida vahvistaa';
+$string['userprofilefor'] = 'Käyttäjän $a henkilötiedot';
 $string['users'] = 'Käyttäjät';
 $string['usersnew'] = 'Uudet käyttäjät';
 $string['userzones'] = 'Käyttäjien alueet';

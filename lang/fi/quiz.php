@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2004010900)
+      // quiz.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['acceptederror'] = 'Hyväksyttävä virhe';
@@ -20,6 +20,7 @@ $string['answertoolong'] = 'Vastaus liian pitkä rivin $a jälkeen. (255 merkkiä o
 $string['aon'] = 'AON muotoilu';
 $string['attempt'] = 'Yritys $a';
 $string['attemptfirst'] = 'Ensimmäinen yritys';
+$string['attemptincomplete'] = 'Yritys (tekijä $a) ei ole vielä valmis.';
 $string['attemptlast'] = 'Viimeinen yritys';
 $string['attemptquiznow'] = 'Yritä tenttiä nyt';
 $string['attempts'] = 'Yritykset';
@@ -92,11 +93,15 @@ $string['imagemissing'] = 'Kuva ei ole saatavilla rivillä $a. Tiedostonimeä ei h
 $string['importquestions'] = 'Tuo kysymykset tiedostosta';
 $string['indivresp'] = 'Yksittäiset vastaukset jokaiselle kohteelle';
 $string['introduction'] = 'Johdanto';
+$string['itemanal'] = 'Kysymyskohtainen vastausten tilastointi';
+$string['listitems'] = 'Tentin kysymykset';
 $string['marks'] = 'Pistettä';
 $string['match'] = 'Yhteensopivat vastaukset';
 $string['matchanswer'] = 'Yhteensopiva vastaus';
+$string['missinganswer'] = 'Liian vähän :ANSWER, :Lx, :Rx kohtia kysymykselle rivillä $a. Kysymykselle pitää määritellä ainakin kaksi mahdollista vastausta.';
 $string['missingcorrectanswer'] = 'Oikea vastaus täytyy määrittää';
 $string['missingname'] = 'Puuttuva kysymyksen nimi';
+$string['missingquestion'] = 'Puuttuva kysymyksen otsikko rivin $a jälkeen';
 $string['missingquestiontext'] = 'Puuttuva kysymyksen teksti';
 $string['missingword'] = 'Puuttuva sana muoto';
 $string['modulename'] = 'Tentti';
@@ -113,12 +118,14 @@ $string['noreview'] = 'Et voi tarkastella tätä tenttiä';
 $string['noreviewuntil'] = 'Et voi tarkastella tätä tenttiä ennen $a';
 $string['notenoughsubquestions'] = 'Kysymyksiä ei ole määritelty riittävästi! <br> HAluatko palata ja korjata tämän kysymyksen?';
 $string['numerical'] = 'Numeerinen';
+$string['paragraphquestion'] = 'Kappalekysymys ei ole tuettu rivillä $a. Kysymys ohitetaan.';
 $string['percentcorrect'] = 'Prosentuaalisesti oikein';
 $string['publish'] = 'Julkaise';
 $string['qti'] = 'IMS QTI  muoto';
 $string['question'] = 'Kysymys';
 $string['questioninuse'] = 'Kysymys \'$a\' on jo käytössä:';
 $string['questionname'] = 'Kysymyksen nimi';
+$string['questionnametoolong'] = 'Liian pitkä kysymyksen otsikko rivillä $a (maksimissaan 255 merkkiä). Otsikkoa on lyhennetty.';
 $string['questions'] = 'Kysymykset';
 $string['quizavailable'] = 'Tentti on vastattavissa $a saakka.';
 $string['quizclose'] = 'Sulje tentti';
@@ -141,10 +148,11 @@ $string['rename'] = 'Uudelleennimeä';
 $string['report'] = 'Raportit';
 $string['reportfullstat'] = 'Yksityiskohtaiset tilastot';
 $string['reportmulti_percent'] = 'Moni-Prosentuaaliset';
-$string['reportmulti_resp'] = 'henkilökahtaiset vastineet';
+$string['reportmulti_q_x_student'] = 'Useamman opiskelijan valinnat';
+$string['reportmulti_resp'] = 'Henkilökohtaiset vastineet';
 $string['reportoverview'] = 'Lyhyesti';
 $string['reportregrade'] = 'Uudelleen arviointi';
-$string['reportsimplestat'] = 'Perusstatistiikka';
+$string['reportsimplestat'] = 'Perustilasto';
 $string['review'] = 'Näytä uudelleen';
 $string['save'] = 'Tallenna';
 $string['savegrades'] = 'Tallenna arvioinnit';
@@ -167,10 +175,13 @@ $string['toomanyrandom'] = 'Haluttu satunnaisten kysymysten määrä on suurempi ku
 $string['true'] = 'Tosi';
 $string['truefalse'] = 'Tosi/Epätosi';
 $string['type'] = 'Tyyppi';
+$string['unknowntype'] = 'Kysymyksen tyyppiä ei ole tuettu rivillä $a. Kysymys ohitetaan.';
 $string['viewallanswers'] = 'Katso $a suoritetut tentit';
 $string['viewallreports'] = 'Katso $a yritykset';
+$string['warningsdetected'] = '$a varoitusta havaittu';
 $string['webct'] = 'WebCT muoto';
 $string['withsummary'] = 'Yhteenlaskettujen tilastojen kanssa';
+$string['wronggrade'] = 'Väärä arvosana (rivin $a jälkeen):';
 $string['yourfinalgradeis'] = 'Lopullinen tuloksesi tästä tentistä on: $a';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2004010900)
+      // resource.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['addresource'] = 'Lisää aineisto';
@@ -18,6 +18,7 @@ $string['configpopupstatus'] = 'Näytetäänkö ponnahdusikkunoissa tilarivi?';
 $string['configpopuptoolbar'] = 'Näytetäänkö ponnahdusikkunoissa työkalurivi?';
 $string['configpopupwidth'] = 'Ponnahdusikkunoiden leveys?';
 $string['configwebsearch'] = 'Kun lisätää www-sivun tai -linkin osoite tätä osoitetta tarjotaan ensin käyttäjälle.';
+$string['directlink'] = 'Suora linkki tähän tiedostoon';
 $string['editingaresource'] = 'Aineiston muokkaus';
 $string['example'] = 'Esimerkki';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
