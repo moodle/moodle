@@ -64,6 +64,7 @@ $string['resourcetypedirectory'] = 'N‰yt‰ hakemisto';
 $string['resourcetypefile'] = 'Linkit‰  tiedostoon tai web-sivuun';
 $string['resourcetypehtml'] = 'Tee uusi web-sivu';
 $string['resourcetypelabel'] = 'Lis‰‰ otsikko';
+$string['resourcetypereference'] = 'Lis‰‰ viite';
 $string['resourcetypetext'] = 'Lis‰‰ uusi testi-sivu';
 $string['searchweb'] = 'Etsi web-sivua';
 $string['variablename'] = 'Muuttujan nimi';
