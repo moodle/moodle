@@ -3256,8 +3256,6 @@ function unzip_file ($zipfile, $destination = '') {
     //    -$zipfilename is the name of the zip file (without path)
     //    -$destpath is the destination path where the zip file will uncompressed (dir)
 
-    echo "zippath: $zippath - zipfilename: $zipfilename - destpath: $destpath <br />";  //Debug
-
     if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
 
         include_once("$CFG->libdir/pclzip/pclzip.lib.php");
@@ -3277,7 +3275,6 @@ function unzip_file ($zipfile, $destination = '') {
                     escapeshellarg($CFG->unzip).' -o '.
                     escapeshellarg(cleardoubleslashes("$zippath/$zipfilename")).' -d '.
                     escapeshellarg($destpath).$redirection;
-        echo $command;
         Exec($command,$list);
     }
 
