@@ -140,12 +140,10 @@
         print_table($table);
     }
 
-    // BEGIN EDIT
-    if($available and $quiz->timelimit) {
-        echo "<p align=\"center\">".get_string("quiztimelimit","quiz", format_time($quiz->timelimit * 60))."</p>";
-    }
-    // END EDIT
     if ($available) {
+        if ($quiz->timelimit) {
+            echo "<p align=\"center\">".get_string("quiztimelimit","quiz", format_time($quiz->timelimit * 60))."</p>";
+        }
         echo "<p align=\"center\">".get_string("quizavailable", "quiz", userdate($quiz->timeclose));
     } else if ($timenow < $quiz->timeopen) {
         echo "<p align=\"center\">".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));

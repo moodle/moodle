@@ -113,9 +113,7 @@
     <td align=right><p><b><?php print_string("timelimit", "quiz") ?>:</b></p></td>
     <td>
     <?php
-        print_timer_selector($form->timelimit);
-        echo "&nbsp;";
-        print_string("minutes","quiz");
+        print_timer_selector($form->timelimit, get_string("minutes","quiz"));
         helpbutton("timelimit", get_string("quiztimer","quiz"), "quiz");
     ?>
     </td>
