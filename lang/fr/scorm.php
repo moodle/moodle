@@ -37,6 +37,7 @@ $string['noreports'] = 'Pas de rapport à afficher';
 $string['normal'] = 'Normal';
 $string['notattempted'] = 'Aucune tentative';
 $string['mode'] = 'Mode';
+$string['organizations'] = 'Organisations';
 $string['packagedir'] = 'Erreur du système de fichier : impossible de créer le dossier du paquet';
 $string['passed'] = 'Réussi';
 $string['prev'] = 'Précédent';
