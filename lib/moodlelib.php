@@ -1347,4 +1347,5 @@ function draw_rand_array($array, $draws) {
 } 
 
 
+// vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
