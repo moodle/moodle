@@ -46,69 +46,69 @@ class CourseBlock_online_users extends MoodleBlock {
         }
         $timefrom = time()-$timetoshowusers;
 
+        //Calculate if we are in separate groups
+        $isseparategroups = ($this->course->groupmode == SEPARATEGROUPS and $this->course->groupmodeforce and
+                             !isteacheredit($this->course->id));
+
+        //Get the user current group
+        $currentgroup = $isseparategroups ? get_current_group($this->course->id) : NULL;
+
+        $groupmembers = "";
+        $groupselect = "";
+
+        //Add this to the SQL to show only group users
+        if ($currentgroup !== NULL) {
+            $groupmembers = ", {$CFG->prefix}groups_members gm ";
+            $groupselect .= " AND u.id = gm.userid AND gm.groupid = '$currentgroup'";
+        }
+
+        if (empty($this->course->category)) {  // Site-level
+            $courseselect = '';
+            $timeselect = "AND (s.timeaccess > $timefrom OR u.lastaccess > $timefrom)";
+        } else {
+            $courseselect = "AND s.course = '".$this->course->id."'";
+            $timeselect = "AND s.timeaccess > $timefrom";
+        }
+
         $users = array();
 
+        if ($students = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, s.timeaccess
+                                     FROM {$CFG->prefix}user u,
+                                          {$CFG->prefix}user_students s
+                                          $groupmembers
+                                     WHERE u.id = s.userid $courseselect $groupselect $timeselect 
+                                  ORDER BY s.timeaccess DESC")) {
+            foreach ($students as $student) {
+                $student->fullname = fullname($student);
+                $users[$student->id] = $student;
+            }
+        }
+
         if (!$this->course->category and $CFG->allusersaresitestudents) {
-            if ($users = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess
+            if ($siteusers = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess
                                      FROM {$CFG->prefix}user u
-                                     WHERE u.lastaccess > $timefrom
+                                     WHERE u.lastaccess > $timefrom AND u.username <> 'guest'
                                   ORDER BY u.lastaccess DESC")) {
-                foreach ($users as $user) {
-                    $user->fullname = '<b>'.fullname($user).'</b>';
-                    $users[$user->id] = $user;
-                }
-            }
-
-        } else { 
-
-            //Calculate if we are in separate groups
-            $isseparategroups = ($this->course->groupmode == SEPARATEGROUPS and $this->course->groupmodeforce and
-                                 !isteacheredit($this->course->id));
-
-            //Get the user current group
-            $currentgroup = $isseparategroups ? get_current_group($this->course->id) : NULL;
-
-            $groupmembers = "";
-            $groupselect = "";
-
-            //Add this to the SQL to show only group users
-            if ($currentgroup !== NULL) {
-                $groupmembers = ", {$CFG->prefix}groups_members gm ";
-                $groupselect .= " AND u.id = gm.userid AND gm.groupid = '$currentgroup'";
-            }
-
-            if (empty($this->course->category)) {  // Site-level
-                $courseselect = '';
-                $timeselect = "AND (s.timeaccess > $timefrom OR u.lastaccess > $timefrom)";
-            } else {
-                $courseselect = "AND s.course = '".$this->course->id."'";
-                $timeselect = "AND s.timeaccess > $timefrom";
-            }
-
-            if ($students = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, s.timeaccess
-                                         FROM {$CFG->prefix}user u,
-                                              {$CFG->prefix}user_students s
-                                              $groupmembers
-                                         WHERE u.id = s.userid $courseselect $groupselect $timeselect 
-                                      ORDER BY s.timeaccess DESC")) {
-                foreach ($students as $student) {
-                    $student->fullname = fullname($student);
-                    $users[$student->id] = $student;
-                }
-            }                                 
-
-            if ($teachers = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, s.timeaccess
-                                         FROM {$CFG->prefix}user u,
-                                              {$CFG->prefix}user_teachers s
-                                              $groupmembers
-                                         WHERE u.id = s.userid $courseselect $groupselect $timeselect
-                                      ORDER BY s.timeaccess DESC")) {
-                foreach ($teachers as $teacher) {
-                    $teacher->fullname = '<b>'.fullname($teacher).'</b>';
-                    $users[$teacher->id] = $teacher;
+                foreach ($siteusers as $siteuser) {
+                    $siteuser->fullname = fullname($siteuser);
+                    $siteuser->timeaccess = $siteuser->lastaccess;
+                    $users[$siteuser->id] = $siteuser;
                 }
             }
         }
+
+        if ($teachers = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, s.timeaccess
+                                     FROM {$CFG->prefix}user u,
+                                          {$CFG->prefix}user_teachers s
+                                          $groupmembers
+                                     WHERE u.id = s.userid $courseselect $groupselect $timeselect
+                                  ORDER BY s.timeaccess DESC")) {
+            foreach ($teachers as $teacher) {
+                $teacher->fullname = '<b>'.fullname($teacher).'</b>';
+                $users[$teacher->id] = $teacher;
+            }
+        }
+
 
         //Calculate minutes
         $minutes  = floor($timetoshowusers/60);
