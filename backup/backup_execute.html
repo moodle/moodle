@@ -159,17 +159,46 @@
         }
         
         //Print logs if selected
-        if ($preferences->backup_logs) {  
-            echo "<li>Writing logs info";
-            //User info
-            if ($status) {
+        if ($status) {
+            if ($preferences->backup_logs) {  
+                echo "<li>Writing logs info";
                 $status = backup_log_info($backup_file,$preferences);
             }
         }
 
-        //Module info
-
-
+        //Module info, this unique function makes all the work!!
+        //db export and module fileis copy
+        if ($status) {
+            $mods_to_backup = false;
+            //Check if we have any mod to backup
+            foreach ($preferences->mods as $module) {
+                if ($module->backup) { 
+                    $mods_to_backup = true;
+                }    
+            }
+            //If we have to backup some module
+            if ($mods_to_backup) {
+                echo "<li>Writing modules info";
+                //Start modules tag
+                $status = backup_modules_start ($backup_file,$preferences);
+                //Open ul for module list
+                echo "<ul>";
+                //Iterate over modules and call backupa
+                foreach ($preferences->mods as $module) {
+                    if ($module->backup and $status) {
+                        echo "<li>".$module->name;
+                        $status = backup_module($backup_file,$preferences,$module->name);
+                    }
+                }
+                //Close ul for module list
+                echo "</ul>";
+                //Close modules tag
+                $status = backup_modules_end ($backup_file,$preferences);
+            }
+        }
+        
+        
+        
 
 
 

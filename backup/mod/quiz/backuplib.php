@@ -55,7 +55,7 @@
     }
 
    ////Return an array of info (name,value)
-   function quiz_check_backup_mods($course,$user_data=false,$backup_unique_code) {
+   function NO_quiz_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //Deletes data from mdl_backup_ids (categories section)
         delete_category_ids ($backup_unique_code);
         //Create date into mdl_backup_ids (categories section)

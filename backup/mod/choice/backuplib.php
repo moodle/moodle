@@ -26,7 +26,7 @@
     }
    
    ////Return an array of info (name,value)
-   function choice_check_backup_mods($course,$user_data=false,$backup_unique_code) {
+   function NO_choice_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //First the course data
         $info[0][0] = get_string("modulenameplural","choice");
         if ($ids = choice_ids ($course)) {

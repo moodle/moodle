@@ -26,7 +26,7 @@
     //
     //-----------------------------------------------------------
 
-    function pgassignment_backup_mods($course,$user_data=false,$backup_unique_code) {
+    function NO_pgassignment_backup_mods($course,$user_data=false,$backup_unique_code) {
         print "hola";
     }
 

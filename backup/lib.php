@@ -287,6 +287,19 @@
         return $status;
     }
 
+    //Function to check and create the needed moddata dir to
+    //save all the mod backup files. We always name it moddata
+    //to be able to restore it, but in restore we check for
+    //$CFG->moddata !!
+    function check_and_create_moddata_dir($backup_unique_code) {
+  
+        global $CFG;
+
+            $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/moddata",true);
+
+        return $status;
+    }
+
     //Function to delete all the directory contents recursively
     //Copied from admin/delete.php
     function delete_dir_contents ($rootdir) {
@@ -780,7 +793,7 @@
   
         $status = true;
 
-        $logs = get_records ("log","course",$preferences->backup_course);
+        $logs = get_records ("log","course",$preferences->backup_course,"time");
 
         //We have logs
         if ($logs) {
@@ -790,11 +803,12 @@
             foreach ($logs as $log) {
                 //See if it is a valid module to backup
                 if ($log->module == "course" or 
-                    $log->module == "user") {
+                    $log->module == "user" or
+                    $preferences->mods[$log->module]->backup == 1) {
                     //Begin log tag
                      fwrite ($bf,start_tag("LOG",3,true));
 
-                    //Output log data
+                    //Output log tag
                     fwrite ($bf,full_tag("ID",4,false,$log->id));
                     fwrite ($bf,full_tag("TIME",4,false,$log->time));
                     fwrite ($bf,full_tag("USERID",4,false,$log->userid));
@@ -804,15 +818,90 @@
                     fwrite ($bf,full_tag("URL",4,false,$log->url));
                     fwrite ($bf,full_tag("INFO",4,false,$log->info));
 
-                    //End log data
+                    //End log tag
                      fwrite ($bf,end_tag("LOG",3,true));
                 }
             }
+            //End logs tag
             $status = fwrite ($bf,end_tag("LOGS",2,true));
         }
+        return $status;
+    }
+
+    //Start the modules tag
+    function backup_modules_start ($bf,$preferences) {
+      
+        return fwrite ($bf,start_tag("MODULES",2,true));
+    }
+
+    //End the modules tag
+    function backup_modules_end ($bf,$preferences) {
+
+        return fwrite ($bf,end_tag("MODULES",2,true));
+    }
+
+    //This function makes all the necesary calls to every mod
+    //to export itself and its files !!!
+    function backup_module($bf,$preferences,$module) {
+         
+        global $CFG;
+
+        $status = true;
+
+        //First, re-check if necessary functions exists
+        $modbackup = $module."_backup_mods";
+        if (function_exists($modbackup)) {
+            //Call the function
+            $status = $modbackup($bf,$preferences);
+        } else {
+            //Something was wrong. Function should exist.
+            $status = false;
+        }
+   
+        return $status; 
+        
+    }
+
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //This functions are used to copy any file or directory ($from_file)
+    //to a new file or directory ($to_file). It works recursively and
+    //mantains file perms.
+    //I've copied it from: http://www.php.net/manual/en/function.copy.php
+    //Little modifications done
+  
+    function backup_copy_file ($from_file,$to_file) {
+        if (is_file($from_file)) {
+            $perms=fileperms($from_file);
+            return copy($from_file,$to_file) && chmod($to_file,$perms);
+        }
+        else if (is_dir($from_file)) {
+            return backup_copy_dir($from_file,$to_file);
+        }
+        else{
+            return false;
+        }
+    }
+
+    function backup_copy_dir($from_file,$to_file) {
+        if (!is_dir($to_file)) {
+            mkdir($to_file);
+            chmod("$to_file",0777);
+        }
+        $dir = opendir($from_file);
+        while ($file=readdir($dir)) {
+            if ($file=="." || $file=="..") {
+                continue;
+            }
+            return backup_copy_file ("$from_file/$file","$to_file/$file");
+        }
+        return closedir($dir);
+    }
+    ///Ends copy file/dirs functions
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         
 
-        return $status;
-    }
+
 ?>
