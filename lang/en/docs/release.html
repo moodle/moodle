@@ -11,7 +11,7 @@
 <BODY BGCOLOR="#FFFFFF">
 <H2>Release notes</H2>
 
-<H3> New in Moodle 1.0.9 (in development) :</H3>
+<H3> New in Moodle 1.0.9 (Due for release 29th May, 2003) :</H3>
 <UL><DL>
 <DT> General</DT>
 <DD> 
@@ -31,14 +31,14 @@
 <DD> 
     <LI>8 new language packs!   Argentinian Spanish, Czech, Portuguese, Slovakian, Romanian, Danish, Russian and Polish.
     <LI>Fixes and upgrades to almost all language packs
-    <LI>Language can be specified for the current session (see menu on home page and login page) and can be changed on any page by adding something to the url:  ?lang=en 
+    <LI>Language can be specified for the current session (see menu on home page and login page) and can be changed on any page by something to the url, eg:  http://moodle.org/?lang=ru 
     <LI>Truetype fonts are now part of the language packs
     <LI>ALL dates/times can now be reformatted as part of the language pack
 </DD>
 
 <DT> Developers</DT>
 <DD> 
-    <LI>Debug variable for more feedback
+    <LI>Global debug variable gives more feedback about uninitialised variables and the like
     <LI>Various fixes to tidy up and further standardise some of the PHP code
     <LI>Various fixes for robustness (ensuring variables are always initialised)
 </DD>
@@ -54,7 +54,7 @@
 
 <DT> Courses</DT>
 <DD> 
-    <LI>Activities on the course page can be hidden from students
+    <LI>Activities on the course page now have a little button to hide/show that activity to students
     <LI>Some paging on the display of participants, to cope with very large classes
     <LI>Zip/Unzip is now supported by an internal zip library, removing 
        the dependence on external programs to do this.  This also means that 
@@ -69,10 +69,10 @@
 
 <DT> Forums</DT>
 <DD> 
-    <LI>Improved display of forums, when listing discussions
+    <LI>Display of forum discussions list is greatly improved
     <LI>Whole discussions can be moved to any other forum with a single click
     <LI>Date/time of posts is now "last modified", not "created"
-    <LI>Blank subject-lines or messages is now prevented
+    <LI>Blank subject-lines or messages are now prevented
     <LI>More intelligent parsing and display of text in posts
     <LI>Force Subscribe now works on the "Site News" forum (mails all active students/teachers)
 </DD>
@@ -106,8 +106,8 @@
 <DT> Custom Themes</DT>
 <DD> 
     <LI>A number of new styles have been added to all built-in themes.  Some of these are essential 
-        to viewing some of the new features.  If you are using a local custom theme then 
-        have a close look at theme/standard/styles.php to see the new additions.
+        to viewing some of the new features.  <B>If you are using a local custom theme then 
+        have a close look at theme/standard/styles.php to see the new additions.</B>
 
     <LI>Custom themes now have the capability to alter the little button graphics.  
         There is a new entry in theme/x/config.php ($THEME->custompix) and a new  
