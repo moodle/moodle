@@ -933,7 +933,7 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
 
     if (!empty($CFG->unicode)) {
         $encoding = "utf-8";
-    } else if (!empty($SESSION->encoding)) {
+    } else if (!empty($SESSION->encoding) and empty($CFG->courselang)) {
         $encoding = $SESSION->encoding;
     } else {
         $encoding = get_string("thischarset");
