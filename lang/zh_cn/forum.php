@@ -1,0 +1,119 @@
+<?PHP // $Id$
+
+#------------------------------------------------------------
+$string['modulename'] = "讨论区";
+$string['modulenameplural'] = "讨论区";
+#------------------------------------------------------------
+
+$string['addanewdiscussion'] = "添加一个新的讨论话题";
+$string['allowchoice'] = "允许每个人选择";
+$string['allowdiscussions'] = "允许一个 \$a 在此讨论区发贴吗？";
+$string['allowratings'] = "允许对贴子评分吗？";
+$string['allowsdiscussions'] = "该讨论区允许每个人发起新话题。";
+$string['anyfile'] = "任何文件";
+$string['attachment'] = "附件";
+$string['bynameondate'] = "按 \$a->name - \$a->date";
+$string['couldnotadd'] = "由于一个未知的错误，你的贴子无法发表";
+$string['couldnotdeleteratings'] = "抱歉，已经被打分的贴子不能删除";
+$string['couldnotdeletereplies'] = "抱歉，已经有跟贴的贴子不能删除";
+$string['couldnotupdate'] = "由于一个未知的错误，你的贴子无法更新";
+$string['delete'] = "删除";
+$string['deleteddiscussion'] = "讨论话题已被删除";
+$string['deletedpost'] = "贴子已被删除";
+$string['deletesure'] = "你确定要删除该贴吗？";
+$string['discussion'] = "讨论";
+$string['discussions'] = "讨论";
+$string['discussionsstartedby'] = "讨论由 \$a 发起";
+$string['discussthistopic'] = "讨论这个话题";
+$string['eachuserforum'] = "每个人发表一个论题";
+$string['edit'] = "编辑";
+$string['editing'] = "正在编辑";
+$string['emptymessage'] = "你的贴子有点错误。大概是你没有填写内容，或附件太大。你的更改<B>没有</B>保存。";
+$string['everyonecanchoose'] = "每个人均可选择订阅";
+$string['everyoneissubscribed'] = "每个都订阅该讨论区";
+$string['forcesubscribe'] = "强制每个人都订阅";
+$string['forcesubscribeq'] = "强制每个人都订阅吗？";
+$string['forum'] = "讨论区";
+$string['forumintro'] = "讨论区简介";
+$string['forumname'] = "讨论区名称";
+$string['forums'] = "讨论区";
+$string['forumtype'] = "讨论区类型";
+$string['generalforum'] = "一般用途的标准讨论区";
+$string['generalforums'] = "普通讨论区";
+$string['inforum'] = "在 \$a 里";
+$string['intronews'] = "普通新闻与通告";
+$string['introsocial'] = "一个开放的讨论区，可以随便聊聊";
+$string['introteacher'] = "一个教师专用讨论区";
+$string['learningforums'] = "学习讨论区";
+$string['maxtimehaspassed'] = "抱歉，编辑该贴的时间限制（\$a）已过！";
+$string['message'] = "讯息";
+$string['modeflatoldestfirst'] = "列表显示回贴，旧贴在前";
+$string['modeflatnewestfirst'] = "列表显示回贴，新贴在前";
+$string['modenested'] = "嵌套显示回贴";
+$string['modethreaded'] = "树状显示回贴";
+$string['more'] = "更多";
+$string['namenews'] = "新闻讨论区";
+$string['namesocial'] = "公众讨论区";
+$string['nameteacher'] = "教师讨论区";
+$string['newforumposts'] = "新贴子";
+$string['nodiscussions'] = "该讨论区尚无讨论话题";
+$string['noguestpost'] = "抱歉，访客不允许发贴";
+$string['noposts'] = "没有贴子";
+$string['nopostscontaining'] = "找不到包含‘\$a’的贴子";
+$string['nosubscribers'] = "该讨论区尚无订阅";
+$string['nownotsubscribed'] = "\$a->name 将<B>不</B>会收到 '\$a->forum' 复件的电子邮件。";
+$string['nowsubscribed'] = "\$a->name 将收到 '\$a->forum' 复件的电子邮件。";
+$string['numposts'] = "\$a 个贴子";
+$string['olderdiscussions'] = "旧的讨论话题";
+$string['openmode0'] = "No discussions, no replies";
+$string['openmode1'] = "No discussions, but replies are allowed";
+$string['openmode2'] = "Discussions and replies are allowed";
+$string['parentofthispost'] = "Parent of this post";
+$string['postadded'] = "你的贴子已经发表了。<P>如果你想修改，在 \$a 时间内是允许的。";
+$string['postincontext'] = "在上下文中看此贴";
+$string['postmailinfo'] = "这是一份来自 \$a 网站的贴子。
+要在网站上回贴，请点击这个链接：";
+
+$string['postingtip'] = "<B>发贴提示：</B>
+在回贴时：
+<UL>
+<LI>设身处地，仔细认真地读别人的贴子
+<LI>想想你能给予什么回答
+</UL>
+
+在写贴时：
+<UL>
+<LI>让你的贴子简短，且避免离题
+<LI>清楚解释你的观点
+<LI>想想你要问的问题
+</UL>";
+
+$string['postrating1'] = "Shows mostly SEPARATE knowing";
+$string['postrating2'] = "Equally separate and connected";
+$string['postrating3'] = "Shows mostly CONNECTED knowing";
+$string['postupdated'] = "你的贴子已经更新";
+$string['processingpost'] = "正在处理贴子 \$a";
+$string['rate'] = "评分";
+$string['ratings'] = "评分";
+$string['readtherest'] = "阅读该主题的其它贴子";
+$string['re'] = "回复：";    // Put in front of subjects that are replies to another post
+$string['repliesmany'] = "迄今有 \$a 个回贴";
+$string['repliesone'] = "迄今有 \$a 个回贴";
+$string['reply'] = "答复";
+$string['search'] = "搜索";
+$string['searchresults'] = "搜索结果";
+$string['searchforums'] = "搜索讨论区";
+$string['sendinratings'] = "呈送我的最新评分";
+$string['showsubscribers'] = "显示订阅者";
+$string['singleforum'] = "A single simple discussion";
+$string['subject'] = "主题";
+$string['subscribe'] = "订阅该讨论区";
+$string['subscribed'] = "订阅";
+$string['subscribers'] = "订阅者";
+$string['subscribersto'] = "订阅 ‘\$a’ 者";
+$string['unsubscribe'] = "不再订阅该讨论区";
+$string['youratedthis'] = "你对此评分";
+$string['yournewtopic'] = "你的新讨论话题";
+$string['yourreply'] = "你的答复";
+
+?>

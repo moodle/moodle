@@ -1,0 +1,29 @@
+<?PHP // $Id$
+
+#------------------------------------------------------------
+$string['modulename'] = "杂志";
+$string['modulenameplural'] = "杂志";
+#------------------------------------------------------------
+
+
+$string['alwaysopen'] = "总是开放";
+$string['blankentry'] = "空白条目";
+$string['daysavailable'] = "可看天数";
+$string['editingends'] = "编辑期结束";
+$string['editingended'] = "编辑期已经结束";
+$string['journalname'] = "杂志名称";
+$string['journalquestion'] = "杂志问题";
+$string['journalrating1'] = "不满意";
+$string['journalrating2'] = "满意";
+$string['journalrating3'] = "出色";
+$string['newjournalentries'] = "新杂志条目";
+$string['noentry'] = "没有条目";
+$string['notopenuntil'] = "这个杂志不能打开,直到";
+$string['notstarted'] = "你还没有启动这个杂志";
+$string['noratinggiven'] = "没有评分可得";
+$string['overallrating'] = "全部的评分";
+$string['rate'] = "评分";
+$string['startoredit'] = "启动或编辑我的杂志条目";
+$string['viewallentries'] = "查看\$a个杂志条目";
+
+?>
