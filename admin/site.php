@@ -2,7 +2,11 @@
 
 	require("../config.php");
 
-    $course = get_site();
+    if ($course = get_site()) {
+        if (!isadmin()) {
+            error("You need to be admin to edit this page");
+        }
+    }
     $course->format = "social";   // override
 
 /// If data submitted, then process and store.
