@@ -348,4 +348,11 @@
 
         return $status;
     }
+
+    //This function is used to add slashes and decode from UTF-8
+    //It's used intensivelly when restoring modules and saving them in db
+    function backup_todb ($data) {
+        return addslashes(utf8_decode($data));
+    }
+
 ?>
