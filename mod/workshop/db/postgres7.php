@@ -67,7 +67,7 @@ function workshop_upgrade($oldversion) {
         table_column("workshop", "", "teacherloading", "INTEGER", "4", "unsigned", "5", "NOT NULL", "mailed");
         table_column("workshop", "", "assessmentstodrop", "INTEGER", "4", "unsigned", "0", "NOT NULL", "");
         table_column("workshop_assessments", "", "donotuse", "INTEGER", "4", "unsigned", "0", "NOT NULL", "resubmission");
-        execute_sql("CREATE INDEX {$CFG->prefix}workshop_grades_assesmentid_idx (assessmentid)");
+        execute_sql("CREATE INDEX {$CFG->prefix}workshop_grades_assesmentid_idx ON {$CFG->prefix}workshop_grades (assessmentid)");
     }
 
     if ($oldversion < 2004052100) {
@@ -87,6 +87,32 @@ function workshop_upgrade($oldversion) {
         execute_sql("ALTER TABLE {$CFG->prefix}workshop DROP COLUMN teacherloading");
         execute_sql("ALTER TABLE {$CFG->prefix}workshop DROP COLUMN assessmentstodrop");
     }
+
+    if ($oldversion < 2004092400) {
+		table_column("workshop", "", "nattachments", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "nelements");
+		table_column("workshop_submissions", "", "description", "TEXT", "", "", "", "", "mailed");
+        execute_sql("CREATE INDEX {$CFG->prefix}workshop_submissions_userid_idx ON {$CFG->prefix}workshop_submissions (userid)");
+        execute_sql("CREATE INDEX {$CFG->prefix}workshop_assessments_submissionid_idx ON {$CFG->prefix}workshop_assessments (submissionid)");
+        execute_sql("CREATE INDEX {$CFG->prefix}workshop_assessments_userid_idx ON {$CFG->prefix}workshop_assessments (userid)");
+    }
+
+    if ($oldversion < 2004092700) {
+		table_column("workshop", "", "wtype", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "description");
+		table_column("workshop", "", "usepassword", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL");
+		table_column("workshop", "", "password", "VARCHAR", "32", "", "", "NOT NULL");
+		table_column("workshop_submissions", "", "late", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL");
+
+        // update wkey value
+        if ($workshops = get_records("workshop")) {
+            foreach ($workshops as $workshop) {
+                $wtype = 0; // 3 phases, no grading grades
+                if ($workshop->includeself or $workshop->ntassessments) $wtype = 1; // 3 phases with grading grades
+                if ($workshop->nsassessments) $wtype = 2; // 5 phases with grading grades 
+                set_field("workshop", "wtype", $wtype, "id", $workshop->id);
+            }
+        }
+    }
+
 
     
     return true;
