@@ -1606,14 +1606,13 @@ function display_size($size) {
 
 function clean_filename($string) {
 /// Cleans a given filename by removing suspicious or troublesome characters
-    $string = stripslashes($string);
-    $string = eregi_replace("\.\.", "", $string);
-    $string = eregi_replace("[^(-|[:alnum:]|\.)]", "_", $string);
-    $string = eregi_replace(",", "_", $string);
-    $string = eregi_replace("/", "_", $string);
-    $string = eregi_replace("\(", "_", $string);
-    $string = eregi_replace("\)", "_", $string);
-    return    eregi_replace("_+", "_", $string);
+/// Only these are allowed:
+///    alphanumeric _ - . 
+
+    $string = eregi_replace("\.\.+", "", $string);
+    $string = preg_replace('/[^\.\w-]/','_', $string ); // only allowed chars
+    $string = eregi_replace("_+", "_", $string);
+    return    $string;
 }
 
 
