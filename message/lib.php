@@ -904,17 +904,23 @@ function message_get_history($user1, $user2) {
 }
 
 function message_format_message(&$message, &$user, $format='', $keywords='') {
-    if (empty($format)) {
-        $format = get_string('strftimedaytime');
+
+    static $dateformat;
+
+    if (empty($dateformat)) {
+        if ($format) {
+            $dateformat = $format;
+        } else {
+            $format = get_string('strftimedaytime');
+        }
     }
-    $time = userdate($message->timecreated, $format);
+    $time = userdate($message->timecreated, $dateformat);
     $options->para = false;
     $messagetext = format_text($message->message, $message->format, $options);
     if ($keywords) {
         $messagetext = highlight($keywords, $messagetext);
     }
-    return '<p><a name="m'.$message->id.'"></a><font size="-1"><strong>'.s($user->firstname).'</strong> ['.$time.']: '.
-            $messagetext.'</font></p>';
+    return '<div class="message"><a name="m'.$message->id.'"></a><span class="author">'.s(fullname($user)).'</span> <span class="time">['.$time.']</span>: <span class="content">'.$messagetext.'</span></div>';
 }
 
 /*

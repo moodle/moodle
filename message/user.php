@@ -88,7 +88,7 @@
             }
             echo '</font>';
             echo '<br />';
-            echo '<div class="message_users">';
+            echo '<div class="users">';
             if ($contact = get_record('message_contacts', 'userid', $USER->id, 'contactid', $user->id)) {
                  if ($contact->blocked) {
                      message_contact_link($user->id, 'add', false, 'user.php?id='.$user->id.'&amp;frame=info'); 
@@ -134,17 +134,17 @@
             header("Refresh: $CFG->message_chat_refresh; url=user.php?id=$user->id&frame=refresh");
 
             echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'."\n";
-            echo '<html><head>';
+            echo '<html><head><title> </title>';
             echo '<script type="text/javascript">'."\n";
             echo '<!--'."\n";
             echo 'if (parent.messages.document.getElementById("messagestarted") == null) {'."\n";
             echo '  parent.messages.document.close();'."\n";
             echo '  parent.messages.document.open("text/html","replace");'."\n";
-            echo '  parent.messages.document.write("<html><head>");'."\n";
+            echo '  parent.messages.document.write("<html><head><title> <\/title>");'."\n";
             echo '  parent.messages.document.write("<meta http-equiv=\"content-type\" content=\"text/html; charset='.get_string('thischarset').'\" />");'."\n";
-            echo '  parent.messages.document.write("<base target=\"_blank\">");'."\n";
+            echo '  parent.messages.document.write("<base target=\"_blank\" />");'."\n";
             echo '  parent.messages.document.write("'.addslashes($stylesheetshtml).'");'."\n";
-            echo '  parent.messages.document.write("</head><body><div style=\"display: none\" id=\"messagestarted\">&nbsp;</div>");'."\n";
+            echo '  parent.messages.document.write("<\/head><body><div style=\"display: none\" id=\"messagestarted\">&nbsp;<\/div>");'."\n";
             echo '}'."\n";
 
             if ($messages = get_records_select('message', "useridto = '$USER->id' AND useridfrom = '$user->id'", 
@@ -158,9 +158,12 @@
                     $printmessage = format_text($message->message, $message->format, $options, 0);
                     $printmessage = str_replace("\r", ' ', $printmessage);
                     $printmessage = str_replace("\n", ' ', $printmessage);
-                    $printmessage = '<p><font size="-1"><b>'.$user->firstname.' ['.$time.']</b>: '.
-                               $printmessage.'</font></p>';
-                    echo "parent.messages.document.write('".addslashes($printmessage)."\\n');\n";
+                    $printmessage = '<div class="message"><span class="author">'.fullname($user).'</span> '.
+                                    '<span class="time">['.$time.']</span>: '.
+                                    '<span class="content">'.$printmessage.'</span></div>';
+                    $printmessage = addslashes($printmessage);                 // So Javascript can write it
+                    $printmessage = str_replace('</', '<\/', $printmessage);   // XHTML compliance
+                    echo "parent.messages.document.write('".$printmessage."');\n";
                     
                     /// Move the entry to the other table
                     $message->timeread = time();
@@ -197,11 +200,20 @@
             echo '-->'."\n";
             echo '</script>'."\n";
             echo '</head>'."\n";
+            echo '<body>'."\n";
             if (!empty($playbeep)) {
-                echo '<body>'."\n";
                 echo '<embed src="bell.wav" autostart="true" hidden="true" name="bell" />';
-                echo '</body>'."\n";
             }
+
+            sleep($CFG->message_chat_refresh);
+            // Javascript for Mozilla to cope with the redirect bug from editor being on in this page
+            echo '<script type="text/javascript">'."\n";
+            echo '<!--'."\n";
+            echo "document.location.replace('$CFG->wwwroot/message/user.php?id=$user->id&frame=refresh');\n";
+            echo '-->'."\n";
+            echo '</script>'."\n";
+
+            echo '</body>'."\n";
             echo '</html>'."\n";
         break;
 
@@ -226,15 +238,19 @@
                 $options->para = false;
                 $options->newlines = true;
                 $message = format_text($message, $format, $options, 0);
+
                 $message = str_replace("\r", ' ', $message);
                 $message = str_replace("\n", ' ', $message);
+                $time = userdate(time(), get_string('strftimedaytime'));
+                $message = '<div class="message"><span class="author">'.fullname($USER).'</span> '.
+                           '<span class="time">['.$time.']</span>: '.
+                           '<span class="content">'.$message.'</span></div>';
+                $message = addslashes($message);                 // So Javascript can write it
+                $message = str_replace('</', '<\/', $message);   // XHTML compliance
 
             /// Then write it to our own screen immediately
-                $time = userdate(time(), get_string('strftimedaytime'));
-                $message = '<p><font size="-1"><b>'.$USER->firstname.' ['.$time.']</b>: '.$message.'</font></p>';
-
                 $script  = "<script>\n";
-                $script .= "parent.messages.document.write('".addslashes($message)."\\n');\n";
+                $script .= "parent.messages.document.write('".$message."\\n');\n";
                 $script .= "parent.messages.scroll(1,5000000);\n";
                 $script .= "</script>\n\n";
 
