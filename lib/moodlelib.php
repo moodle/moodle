@@ -932,6 +932,14 @@ function add_teacher($userid, $courseid, $editall=1, $role="", $timestart=0, $ti
     $teacher->course  = $courseid;
     $teacher->editall = $editall;
     $teacher->role    = $role;
+    $teacher->timemodified = time();
+    $newteacher->timestart = $timestart;
+    $newteacher->timeend = $timeend;
+    if ($student = get_record("user_students", "userid", $userid, "course", $courseid)) {
+        $teacher->timestart = $student->timestart;
+        $teacher->timeend = $student->timeend;
+        $teacher->timeaccess = $student->timeaccess;
+    }
 
     if (record_exists("user_teachers", "course", $courseid)) {
         $teacher->authority = 2;
