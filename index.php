@@ -53,7 +53,7 @@
          if ($sections[0]->sequence or isediting($site->id)) {
              get_all_mods($site->id, $mods, $modnames, $modnamesplural, $modnamesused);
              print_section_block(get_string("mainmenu"), $site, $sections[0], 
-                                 $mods, $modnames, $modnamesused, true, $side, isediting($site->id));
+                                 $mods, $modnames, $modnamesused, true, $side);
          }
 
          if (isadmin()) {

@@ -551,9 +551,18 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
 }
 
 function print_section_block($heading, $course, $section, $mods, $modnames, $modnamesused, 
-                             $absolute=true, $width="100%", $isediting=false) {
+                             $absolute=true, $width="100%") {
 
     global $CFG;
+    static $isteacher;
+    static $isediting;
+
+    if (!isset($isteacher)) {
+        $isteacher = isteacher($course->id);
+    }
+    if (!isset($isediting)) {
+        $isediting = isediting($course->id);
+    }
 
     $modinfo = unserialize($course->modinfo);
     $moddata = array();
@@ -565,19 +574,25 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
         $sectionmods = explode(",", $section->sequence);
 
         foreach ($sectionmods as $modnumber) {
+            if (empty($mods[$modnumber])) {
+                continue;
+            }
             $mod = $mods[$modnumber];
             if ($isediting) {
                 $editbuttons = make_editing_buttons($mod->id, $absolute, $mod->visible);
             }
-            if ($mod->visible or isteacher($course->id)) {
+            if ($mod->visible or $isteacher) {
                 $instancename = urldecode($modinfo[$modnumber]->name);
                 if ($mod->visible) {
                     $link_css = "";
                 } else {
                     $link_css = " class=\"dimmed\" ";
                 }
-                $modicon[] = "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\" height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
-                $moddata[] = "<a title=\"$mod->modfullname\" $link_css href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a><BR>$editbuttons";
+                $modicon[] = "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\"".
+                             " height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
+                $moddata[] = "<a title=\"$mod->modfullname\" $link_css ".
+                             "href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a>".
+                             "<br />$editbuttons";
             }
         }
     }
@@ -594,7 +609,17 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
 
 
 function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%") {
+/// Prints a section full of activity modules
     global $CFG;
+    static $isteacher;
+    static $isediting;
+
+    if (!isset($isteacher)) {
+        $isteacher = isteacher($course->id);
+    }
+    if (!isset($isediting)) {
+        $isediting = isediting($course->id);
+    }
 
     $modinfo = unserialize($course->modinfo);
 
@@ -608,22 +633,23 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 continue;
             }
             $mod = $mods[$modnumber];
-            if ($mod->visible or isteacher($course->id)) {
+            if ($mod->visible or $isteacher) {
                 $instancename = urldecode($modinfo[$modnumber]->name);
                 if ($mod->visible) {
                     $link_css = "";
                 } else {
                     $link_css = " class=\"dimmed\" ";
                 }
-                echo "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\" height=16 width=16 alt=\"$mod->modfullname\">";
-                echo " <font size=2><a title=\"$mod->modfullname\" $link_css";
-                echo "   href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a></font>";
+                echo "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\"".
+                     " height=16 width=16 alt=\"$mod->modfullname\">".
+                     " <font size=2><a title=\"$mod->modfullname\" $link_css ".
+                     " href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a></font>";
             }
             if (isediting($course->id)) {
                 echo "&nbsp;&nbsp;";
                 echo make_editing_buttons($mod->id, $absolute, $mod->visible);
             }
-            if ($mod->visible or isteacher($course->id)) {
+            if ($mod->visible or $isteacher) {
                 echo "<br />\n";
             }
         }

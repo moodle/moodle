@@ -28,7 +28,7 @@
 
 /// Then, print all the available resources (Section 0)
       print_section_block(get_string("activities"), $course, $sections[0], 
-                          $mods, $modnames, $modnamesused, true, "100%", isediting($course->id));
+                          $mods, $modnames, $modnamesused, true, "100%");
 
 
 /// Print all the recent activity
