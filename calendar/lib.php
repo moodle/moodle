@@ -487,8 +487,6 @@ function calendar_top_controls($type, $data) {
         case 'frontpage':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
-            //$nextlink = calendar_get_link_tag('&gt;&gt;', 'index.php?id='.$data['id'].'&amp;', 0, $nextmonth, $nextyear);
-            //$prevlink = calendar_get_link_tag('&lt;&lt;', 'index.php?id='.$data['id'].'&amp;', 0, $prevmonth, $prevyear);
             $nextlink = calendar_get_link_tag('&gt;&gt;', 'index.php?', 0, $nextmonth, $nextyear);
             $prevlink = calendar_get_link_tag('&lt;&lt;', 'index.php?', 0, $prevmonth, $prevyear);
             $content .= '<table class="generaltable" style="width: 100%;"><tr>';
@@ -879,6 +877,9 @@ function calendar_overlib_html() {
     return $html;
 }
 
+// OBSOLETE, now that we have the blocks system in place.
+// Keeping it for a few revisions, just in case.
+/*
 function calendar_print_side_blocks($forcecourse = NULL) {
     // WARNING: Keep in mind that using $forcecourse will override the $SESSION
     // filters, and thus not respect the user's filter settings. Use it sparingly.
@@ -952,6 +953,7 @@ function calendar_print_side_blocks($forcecourse = NULL) {
         }
     }
 }
+*/
 
 function calendar_set_referring_course($courseid) {
     global $SESSION;
@@ -1104,30 +1106,6 @@ function calendar_get_default_courses() {
     }
     return $courses;
 }
-
-// NOTE: This function is obsolete. But let's not kill it just yet.
-/*
-function calendar_print_preferences_menu() {
-
-    // Guests have no preferences
-    if(isguest()) {
-        return;
-    }
-
-    print_side_block_start(get_string('preferences', 'calendar'), '', 'mycalendar');
-    echo '<div style="text-align: center;"><table style="margin: auto; text-align: center;"><tr>';
-    $prefs = array(
-        'startwday' => get_string('pref_startwday', 'calendar'),
-        'maxevents' => get_string('pref_maxevents', 'calendar'),
-        'lookahead' => get_string('pref_lookahead', 'calendar'),
-    );
-    foreach($prefs as $name => $description) {
-        echo '<td style="padding: 0px 20px;"><a href="preferences.php?edit='.$name.'"><img src="images/'.$name.'.gif" alt="'.$description.'" title="'.$description.'" /><div style="font-size: 0.6em;">'.$description.'</div></a></td>';
-    }
-    echo '</tr></table></div>';
-    print_side_block_end();
-}
-*/
 
 function calendar_get_tz_offset() {
     global $USER, $CFG;
