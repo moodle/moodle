@@ -2892,7 +2892,7 @@ function print_group_menu($groups, $groupmode, $currentgroup, $urlroot) {
     echo ':';
     echo '</td><td nowrap="nowrap" align="left">';
     popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', $currentgroup, '', '', '', false, 'self');
-    echo '</tr></table>';
+    echo '</td></tr></table>';
 
 }
 
