@@ -445,14 +445,14 @@
                 $tab[$elem][1] = get_string("no");
             }
             $elem++;
-            //Messages info
-            $tab[$elem][0] = "<b>".get_string('messages','message').":</b>";
+            //Messages info (only showed if present)
             if ($info->backup_messages == 'true') {
+                $tab[$elem][0] = "<b>".get_string('messages','message').":</b>";
                 $tab[$elem][1] = get_string('yes');
+                $elem++;
             } else {
-                $tab[$elem][1] = get_string('no');
+                //Do nothing
             }
-            $elem++;
             $table->data = $tab;
             //Print title
             print_heading(get_string("backupdetails").":");
