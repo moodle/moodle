@@ -1,0 +1,177 @@
+<head>
+<title>Moodle Docs: Teachers Manual</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<meta http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>教師マニュアル</h1>
+<p>このページはMoodleでオンラインコースを作成する為のクイックガイドです。
+ここでは、利用可能な主要な機能に関して概要を説明しています。同時にあなたが決定する必要のある事柄に関しても説明しています。</p>
+<p>この文書の項目:</p>
+<ol>
+  <li><a href="#started">はじめに</a></li>
+  <li><a href="#settings">コース設定</a></li>
+  <li><a href="#upload">ファイルのアップロード</a></li>
+  <li><a href="#activities">活動の設定</a></li>
+  <li><a href="#course">コース運営</a></li>
+  <li><a href="#further">その他の情報</a></li>
+</ol>
+<h3 class="sectionheading"><a name="started"></a>はじめに</h3>
+<blockquote> 
+  <p>この文書は、サイト管理者がMoodleのセットアップを完了して、あなたに無設定のコースを与えることを前提としています。
+     また、あなたが教師用アカウントでコースにログインしていることも前提としています。</p>
+  <p>Moodleを使い始めるための3つのヒントです。</p>
+  <ol>
+    <li><strong>経験することを恐れないでください:</strong>
+      <blockquote>自由にあちこちを触ったり変更してください。Moodleのコースを壊すことは簡単ではありません。もし壊れても、普通は簡単に直すことが出来ます。
+      </blockquote>
+    <li><strong>小さなアイコンに注意してください:</strong> 
+      <blockquote> 
+        <p>&nbsp;<img src="../pix/i/edit.gif"> - <strong>編集アイコン</strong>
+          の次にあるものはどんなものでも編集することが出来ます。</p>
+        <p><img src="../pix/help.gif" width="22" height="17"> - <strong>ヘルプアイコン</strong>
+          は<a target="helpwindow" href="../help.php?file=index.html">ポップアップヘルプウインドウ</a>を提供します。</p>
+        <p>&nbsp;<img src="../pix/i/hide.gif" width="16" height="16"> - the <strong>開いた目アイコン</strong>
+         は学生から何かを隠したい時に使います。</p>
+        <p>&nbsp;<img src="../pix/i/show.gif" width="16" height="16"> - the <strong>閉じた目アイコン</strong>
+         は隠していたものを見えるようにします。</p>
+      </blockquote>
+    </li>
+    <li><strong>それぞれのページ上部にあるナビゲーションバーを使ってください</strong>
+      <blockquote>ナビゲーションバーで、あなたがどこにいるのか分かります。また、迷子になるのを防ぎます。
+    </blockquote>
+    </li>
+  </ol>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="settings"></a>コース設定</h3>
+<blockquote> 
+  <p>まず最初に「管理メニュー」の下にある「<strong>設定...</strong>」をクリックしてください(このリンク及び管理セクションは、あなたとサイト管理者のみが使用出来ます。学生には表示されることもありません。)。</p>
+  <p>設定ページではコース名から開始日まで様々な設定を変更することが出来ます。それぞれの項目の横にあるヘルプアイコンをクリックすることで詳細に関する説明を閲覧出来ますので、ここでは詳細に述べません。しかしながら、一番大切な項目 - <strong>コースフォーマット</strong>に関して説明します。</p>
+  <p>あなたが選択するコースフォーマットは、テンプレートのようにコースの基本的なレイアウトを決定します。Moodleバージョン 1.0には3つのフォーマットがあります - 将来的には増える可能性があります(新しいアイディアを <a href="mailto:martin@moodle.org">martin@moodle.org</a>にお送りください!)</p>
+  <p>3つのコースフォーマットを適用した、3つのサンプルコースです。(サイト管理者によりサイト全体に設定される色の違いは無視してください):</p>
+  <p align="center"><strong>ウイークリーフォーマット:</strong></p>
+  <p align="center"><img src="pix/weekly.jpg" width="570" height="527"></p>
+  <p align="center">&nbsp;</p>
+  <p align="center"><strong>トピックフォーマット:</strong></p>
+  <p align="center"><img src="pix/topics.jpg" width="570" height="463"></p>
+  <p align="center">&nbsp;</p>
+  <p align="center"><strong>ソーシャルフォーマット:</strong></p>
+  <p align="center"><img src="pix/social.jpg" width="570" height="429"></p>
+  <p>&nbsp;</p>
+  <p>ウイークリーフォーマットとトピックフォーマットは構造的に類似しています。主な違いは、トピックフォーマットがカバーする週が任意であるのに対して、ウイークリーフォーマットは正確に1週をカバーします。ソーシャルフォーマットは、多くのコンテンツを使用せずに1つのフォーラムをベースとします。このフォーラムはメインページに表示されます。</p>
+  <p>詳細は、コース設定ページにあるヘルプボタンをクリックしてください。</p>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="upload"></a>ファイルのアップロード</h3>
+<blockquote> 
+  <p>コースに追加したいウェブページ、オーディオファイル、ビデオファイル、ワードドキュメント、フラッシュアニメーション等をお持ちのことでしょう。どのような種類のファイルでも、あなたのコース内にアップロードすることが出来ます。アップロードしたファイルはサーバに保存されます。ファイルがサーバ上にある間は、移動、リネーム、編集、削除することが出来ます。</p>
+  <p>全ての処理は管理メニューの<strong>ファイル</strong>リンクより行うことが出来ます。ファイルセクションは下記のようになります:</p>
+  <p align="center"><img src="pix/files.jpg" width="400" height="347"></p>
+  <p>&nbsp;</p>
+  <p>このインターフェースは教師のみが使用出来ます - 学生には必要ありません。ここのファイルは後で学生に公開されます(リソース」として - 次のセクションをご覧ください)。</p>
+  <p>スクリーンショットでご覧のように、ファイルはサブディレクトリと同列に表示されます。ファイルを整理するために幾つでもサブディレクトリを作成することが出来ます。また、ファイルをディレクトリから別のディレクトリへ移動することも出来ます。</p>
+  <p>現在、ファイルのアップロードは1回につき1個に制限されています。1度に多くのファイルをアップロードしたい場合(例えばサイト全体)は、<strong>zipプログラム</strong>を使用して複数のファイルを1つに圧縮した後に、zipファイルをアップロードして、サーバで解凍する方法が簡単です(zip書庫の隣に「unzip」リンクが表示されます)。</p>
+  <p>ファイル名をクリックすることで、アップロードしたファイルをプレビューすることが出来ます。ブラウザが自動的に表示するか、コンピュータにダウンロードするか判断します。</p>
+  <p>HTML及びテキストファイルはオンラインで編集することが出来ます。他のファイルはローカルコンピュータで編集した後に再度アップロードする必要があります。既存のファイルと同じ名前でファイルをアップロードした場合、ファイルは自動的に上書きされます。</p>
+  <p>最後に: もしコンテンツがMoodleサイト以外にある場合は、ファイルのアップロードを行う必要はありません。コースの中からコンテンツにリンクを張ることが出来ます(詳細はリソースモジュール及び次のセクションをご覧ください)。</p>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="activities"></a>活動の設定</h3>
+<blockquote> 
+  <p>コースを作成するには、学生が使用する順番に従って、コース活動モジュールをメインページに追加する必要があります。モジュールの並び順はいつでも好きなように変更することが出来ます。</p>
+  <p>編集するには、管理メニューの下にある「編集モード ON」をクリックしてください。このトグルスイッチにより、メインコースページを変更する特別なメニューの表示・非表示を行うことが出来ます。上記の一番目のスクリーンショット(ウイークリーフォーマット)では、「編集モード ON」にされています。</p>
+  <p>新しい活動を追加する場合は、週、トピック、セクション画面の何れかにアクセスして、ポップアップメニューより追加したい活動のタイプを選択してください。Moodle 1.0の標準的な全活動の解説です:</p>
+  <dl>
+    <dt><strong>課題</strong></dt>
+    <dd>課題では、提出期限及び最大評価を持ったタスクを設定します。学生は要求を満たしたファイルを1つアップロードすることが出来ます。ファイルをアップロードした日時は記録されます。その後、それぞれのファイル(及び提出の早い遅い)を一覧出来るページが用意されますので、評価及びコメントの投稿を行ってください。評価を行った30分後に、評価を行った学生宛てにMoodleから自動的に通知メールが送信されます。</dd>
+    <br>
+    <br>
+    <dt><strong>選択</strong></dt>
+    <dd>選択は、質問をしてそれに対する返答の選択を設定するシンプルな活動です。学生は選択を行うことが出来ます。あなたには学生の選択結果が表示されるレポート画面が用意されます。私は学生の意見を集めるときに選択を使用しますが、簡単な投票やクラス投票に使用することも出来ます。</dd>
+    <br>
+    <br>
+    <dt><strong>フォーラム</strong></dt>
+    <dd>フォーラムは、この中で議論が行われる一番大切なモジュールです。フォーラムを追加する場合、「単一ディスカッション」「標準フォーラム」「ディスカッションを1件投稿」の中からタイプを選択することが出来ます。</dd>
+    <br>
+    <br>
+    <dt><strong>日誌</strong></dt>
+    <dd>それぞれの日誌活動は、コース全体に関わる日誌の1エントリーです。それぞれの日誌には、学生が何を書くべきかを導く、自由回答の出来る質問を設定することが出来ます。同時に日誌の利用可能な時間枠(ウイークリーコースフォーマットのみ)を設定することが出来ます。一般的な目安として、1週当り1つの日誌を作成してください。学生が熟考して批評的に書けるように、日誌はあなたと学生のみが利用出来ます。その後、その週又はトピック全てのエントリーの評価及びコメントの投稿を行うことが出来ます。学生は、あなたのフィードバックが行われた旨の通知メールを自動的に受け取ります。日誌は継続的に登録されるように設計されていませんので、必要な場合は更に日誌活動を追加してください。</dd>
+    <br>
+    <br>
+    <dt><strong>リソース</strong></dt>
+    <dd>リソースはコースのコンテンツです。アップロード又はURLを使用したリンクにより、どのようなファイルでもリソースにすることが出来ます。フォームに直接入力して、シンプルなテキストベースのページを保存することも出来ます。</dd>
+    <br>
+    <br>
+    <dt><strong>小テスト</strong></dt>
+    <dd>This module allows you to design and set quiz tests, consisting of multiple 
+      choice, true-false, and short answer questions. These questions are kept 
+      in a categorised database, and can be re-used within courses and even between 
+      courses. Quizzes can allow multiple attempts. Each attempt is automatically 
+      marked, and the teacher can choose whether to give feedback or to show correct 
+      answers. This module includes grading facilities. </dd>
+    <br>
+    <br>
+    <dt><strong>調査</strong></dt>
+    <dd>The survey module provides a number of predefined survey instruments that 
+      are useful in evaluating and understanding your class. Currently they include 
+      the COLLES and the ATTLS instruments. They can be given to students early 
+      in the course as a diagnostic tool and at the end of the course as an evaluation 
+      tool (I use one every week in my courses).</dd>
+  </dl>
+  <br>
+  <p>After adding your activities you can move them up and down in your course 
+    layout by clicking on the little arrow icons (<img src="../pix/t/up.gif" width="9" height="10"> 
+    <img src="../pix/t/down.gif" width="9" height="10">) next to each one. You 
+    can also delete them using the cross icon <img src="../pix/t/delete.gif" width="10" height="10">, 
+    and re-edit them using the edit icon <img src="../pix/t/edit.gif" width="10" height="11">.</p>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="course"></a>コース運営</h3>
+<blockquote> 
+  <p>There are some big plans to extend this document into a more comprehensive 
+    tutorial. Until then here are a few ideas:</p>
+  <ol>
+    <li>Subscribe yourself to all the forums so you keep in touch with your class 
+      activity. </li>
+    <li>Encourage all the students fill out their user profile (including photos) 
+      and read them all - this will help provide some context to their later writings 
+      and help you to respond in ways that are tailored to their own needs.</li>
+    <li>Keep notes to yourself in the private &quot;<strong>Teacher's Forum</strong>&quot; 
+      (under Administration). This is especially useful when team teaching.</li>
+    <li>Use the &quot;<strong>Logs</strong>&quot; link (under Administration) 
+      to get access to complete, raw logs. In there you'll see a link to a popup 
+      window that updates every sixty seconds and shows the last hour of activity. 
+      This is useful to keep open on your desktop all day so you can feel in touch 
+      with what's going on in the course.</li>
+    <li>Use the &quot;<strong>Activity Reports</strong>&quot; (next to each name 
+      in the list of all people, or from any user profile page). These provide 
+      a great way to see what any particular person has been up to in the course.</li>
+    <li>Respond quickly to students. Don't leave it for later - do it right away. 
+      Not only is it easy to become overwhelmed with the volume that can be generated, 
+      but it's a crucial part of building and maintaining a community feel in 
+      your course.</li>
+  </ol>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="further"></a>その他の情報</h3>
+<blockquote> 
+  <p>If you have any particular problems with your site, you should contact your 
+    local site administrator.</p>
+  <p>If you have some great ideas for improvements to Moodle, or even some good 
+    stories, come over to <a href="http://moodle.org/" target="_top">moodle.org</a> 
+    and join us in the course called "<a href="http://moodle.org/course/view.php?id=5" target=_top >Using 
+    Moodle</a>". We'd love to hear from you, and you can help Moodle improve.</p>
+  <p>If you want to contribute to coding new modules, or writing documentation, 
+    or papers, contact me: <a href="http://moodle.org/user/view.php?id=1&course=1" target="_top">Martin 
+    Dougiamas</a> or browse the &quot;bug tracker&quot; site for Moodle, at <a href="http://moodle.org/bugs/" target="_top">moodle.org/bugs</a></p>
+  <p>Finally, remember to use the help icons - here is an <a target="helpwindow" href="../help.php?file=index.html">index of all the help files in Moodle</a>.</p>
+  <p align="center">Thanks for using Moodle - and good luck with your teaching!</p>
+  <hr>
+  <p>&nbsp;</p>
+</blockquote>
+<p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id: teacher.html,v 1.4 2002/08/18 10:00:01 
+  martin Exp $</font></p>
+</body>
