@@ -2956,12 +2956,12 @@ function forum_print_recent_mod_activity($activity, $course, $detail=false) {
 
     if ($detail) {
         echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-             "height=\"16\" width=\"16\" alt=\"$activity->name\" />  ";
+             "height=\"16\" width=\"16\" alt=\"".strip_tags(format_string($activity->name,true))."\" />  ";
     }
     echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=" . $activity->content->discussion
          . "#" . $activity->content->id . "\">";
 
-    echo $activity->content->subject;
+    echo format_string($activity->content->subject,true);
     echo "</a>$closeformat";
 
     echo "<br /><font size=\"2\">";

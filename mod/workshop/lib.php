@@ -1087,7 +1087,7 @@ function workshop_print_recent_mod_activity($activity, $course, $detail=false) {
 
     echo '<table border="0" cellpadding="3" cellspacing="0">';
 
-    if ($activity->content->parent) {
+    if (!empty($activity->content->parent)) {
         $openformat = "<font size=\"2\"><i>";
         $closeformat = "</i></font>";
     } else {
@@ -1101,7 +1101,7 @@ function workshop_print_recent_mod_activity($activity, $course, $detail=false) {
 
     if ($detail) {
         echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-            "height=\"16\" width=\"16\" alt=\"$activity->name\" />  ";
+            "height=\"16\" width=\"16\" alt=\"".strip_tags(format_string($activity->name,true))."\" />  ";
     }
     echo "<a href=\"$CFG->wwwroot/mod/workshop/view.php?" 
         . "#" . $activity->content->id . "\">".$activity->content->title;

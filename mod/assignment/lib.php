@@ -753,12 +753,11 @@ function assignment_print_recent_mod_activity($activity, $course, $detail=false)
     print_user_picture($activity->user->userid, $course, $activity->user->picture);
     echo "</td><td width=\"100%\"><font size=2>";
 
-
     if ($detail) {
         echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
              "height=16 width=16 alt=\"$activity->type\">  ";
         echo "<a href=\"$CFG->wwwroot/mod/assignment/view.php?id=" . $activity->instance . "\">"
-             . $activity->name . "</a> - ";
+             . format_string($activity->name,true) . "</a> - ";
 
     }
 
