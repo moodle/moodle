@@ -521,4 +521,3 @@ $string['yourself'] = "Vy sám";
 $string['yourteacher'] = "Vá¹ \$a";
 
 ?>
-
