@@ -197,6 +197,13 @@ function error ($message, $link="") {
     die;
 }
 
+function helpbutton ($info, $type="file") {
+    global $CFG;
+    $url = "/help.php?$type=help.$info.php";
+    $image = "<IMG BORDER=0 ALT=help SRC=\"$CFG->wwwroot/pix/help.gif\">";
+    link_to_popup_window ($url, "popup", $image, $height=400, $width=500);
+}
+
 function notice ($message, $link="") {
     global $THEME, $HTTP_REFERER;
 
