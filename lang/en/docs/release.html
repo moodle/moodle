@@ -17,6 +17,66 @@
 <body bgcolor="#FFFFFF">
 <h1>Latest Release notes</h1>
 
+
+<h3> Moodle 1.4.2   (1st October, 2004)</h3>
+
+<ul>
+  <dl>
+    <dt>A few small new things</dt>
+    <dd> 
+      <ul>
+        <li>New PAM authentication module for direct authentication on Unix/Linux</li>
+        <li>Course creators can now restore to new or existing courses</li>
+        <li>Forum posts now include detailed headers to allow correct threading in mail clients</li>
+      </ul>
+    </dd>
+
+    <dt>Some important security fixes</dt>
+    <dd> 
+      <ul>
+        <li>Better checking/cleaning of script parameters used in quite a few areas 
+            within Moodle (a big thanks to Petr Skoda for his recent security audit!)</li>
+        <li>Quoted some SQL parameters in the glossary module to prevent possible injection</li>
+      </ul>
+    </dd>
+
+    <dt>And a bunch of other bug fixes</dt>
+    <dd> 
+      <ul>
+        <li>Backup is now more able to cope with errors (eg if backup is interrupted) 
+            and can clean up uncompleted files</li>
+        <li>Fix for database authentication against a PostgreSQL database</li>
+        <li>Fixes for some parts of installation to PostgreSQL</li>
+        <li>Forum subject lines are now only broken up in recent activity display</li>
+        <li>Database-based enrolments now actually work  :-)</li>
+        <li>SQL fixes for creation of RSS feeds from PostgreSQL</li>
+        <li>Added rtsp to the list of allowed protocols in cleaned HTML text</li>
+        <li>User profile and profile editing page can be called without parameters</li>
+        <li>Upgraded xmlize library to latest version</li>
+        <li>Upgraded phpmailer library to latest version</li>
+        <li>Various small code-only cleanups</li>
+        <li>Admin menu now allows backup/restore of the "site course" (front page)</li>
+        <li>Fixed a display bug in the forums index which only showed in PHP5</li>
+        <li>Highlighting function (eg after search) was stripping backslashes</li>
+        <li>Info from LDAP is now decoded from utf8</li>
+        <li>Course listings now work better with very large amounts of courses</li>
+        <li>Two SCORM bugs fixed (a typo and a problem with onbeforeunload)</li>
+        <li>Some cleanups when printing text, headers and variables in Lesson</li>
+        <li>Calendar now functions as expected even when you login as someone else</li>
+        <li>Fixed a few remaining short PHP tags</li>
+        <li>Better randomness for random questions (fix for bug introduced in 1.4)</li>
+        <li>When a teacher is removed from a course, they are now also removed from all groups in that course</li>
+        <li>Fixed strip_pages bug in Wiki</li>
+        <li>Fixes for charset detection in backups and multilang filter under PHP5</li>
+      </ul>
+    </dd>
+
+  </dl>
+</ul>
+
+<p>&nbsp;</p>
+
+
 <h3> Moodle 1.4.1   (12th September, 2004)</h3>
 
 <ul><dl>
