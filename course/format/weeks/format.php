@@ -72,7 +72,7 @@
         $stractivityclipboard = strip_tags(get_string("activityclipboard", "", addslashes($USER->activitycopyname)));
         $strcancel= get_string("cancel");
         echo "<tr>";
-        echo "<td colspan=\"3\" valign=\"top\" bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlineclip\" width=\"100%\">";
+        echo "<td colspan=\"3\" valign=\"top\" class=\"weeklyoutlineclip\" width=\"100%\">";
         echo "<p><font size=\"2\">";
         echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"mod.php?cancelcopy=true&amp;sesskey=$USER->sesskey\">$strcancel</a>)";
         echo "</font></p>";
@@ -88,8 +88,8 @@
 
     if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
         echo "<tr>";
-        echo "<td nowrap=\"nowrap\" bgcolor=\"$THEME->cellheading\" class=\"weeklyoutlineside\" valign=\"top\" width=\"20\">&nbsp;</td>";
-        echo "<td valign=\"top\" bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontent\" width=\"100%\">";
+        echo "<td nowrap=\"nowrap\" class=\"weeklyoutlineside\" valign=\"top\" width=\"20\">&nbsp;</td>";
+        echo "<td valign=\"top\" class=\"weeklyoutlinecontent\" width=\"100%\">";
 
         $summaryformatoptions->noclean = true;
         echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
@@ -107,7 +107,7 @@
         }
 
         echo "</td>";
-        echo "<td nowrap=\"nowrap\" bgcolor=\"$THEME->cellheading\" class=\"weeklyoutlineside\" valign=\"top\" align=\"center\" width=\"10\">";
+        echo "<td nowrap=\"nowrap\" class=\"weeklyoutlineside\" valign=\"top\" align=\"center\" width=\"10\">";
         echo "&nbsp;</td></tr>";
         echo "<tr><td colspan=\"3\"><img src=\"../pix/spacer.gif\" width=\"1\" height=\"1\" alt=\"\" /></td></tr>";
     }
@@ -158,14 +158,14 @@
             $currentweek = (($weekdate <= $timenow) && ($timenow < $nextweekdate));
 
             if (!$thissection->visible) {
-                $colorsides = "bgcolor=\"$THEME->hidden\" class=\"weeklyoutlinesidehidden\"";
-                $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontenthidden\"";
+                $colorsides = "class=\"weeklyoutlinesidehidden\"";
+                $colormain  = "class=\"weeklyoutlinecontenthidden\"";
             } else if ($currentweek) {
-                $colorsides = "bgcolor=\"$THEME->cellheading2\" class=\"weeklyoutlinesidehighlight\"";
-                $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontenthighlight\"";
+                $colorsides = "class=\"weeklyoutlinesidehighlight\"";
+                $colormain  = "class=\"weeklyoutlinecontenthighlight\"";
             } else {
-                $colorsides = "bgcolor=\"$THEME->cellheading\" class=\"weeklyoutlineside\"";
-                $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontent\"";
+                $colorsides = "class=\"weeklyoutlineside\"";
+                $colormain  = "class=\"weeklyoutlinecontent\"";
             }
 
             echo "<tr>";

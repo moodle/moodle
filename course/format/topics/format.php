@@ -82,7 +82,7 @@
         $stractivityclipboard = strip_tags(get_string("activityclipboard", "", addslashes($USER->activitycopyname)));
         $strcancel= get_string("cancel");
         echo "<tr>";
-        echo "<td colspan=\"3\" valign=\"top\" bgcolor=\"$THEME->cellcontent\" class=\"topicoutlineclip\" width=\"100%\">";
+        echo "<td colspan=\"3\" valign=\"top\" class=\"topicoutlineclip\" width=\"100%\">";
         echo "<p><font size=\"2\">";
         echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"mod.php?cancelcopy=true&amp;sesskey=$USER->sesskey\">$strcancel</a>)";
         echo "</font></p>";
@@ -99,16 +99,16 @@
 
     if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
         echo '<tr id="section_0">';
-        echo "<td nowrap=\"nowrap\" bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=\"top\" width=\"20\">&nbsp;</td>";
-        echo "<td valign=\"top\" bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\" width=\"100%\">";
+        echo '<td nowrap="nowrap" class="topicsoutlineside" valign="top" width="20">&nbsp;</td>';
+        echo '<td valign="top"  class="topicsoutlinecontent" width="100%">';
 
         $summaryformatoptions->noclean = true;
         echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
 
         if (isediting($course->id)) {
-            echo "<a title=\"$streditsummary\" ".
-                 " href=\"editsection.php?id=$thissection->id\"><img src=\"$CFG->pixpath/t/edit.gif\" ".
-                 " height=\"11\" width=\"11\" border=\"0\" alt=\"$streditsummary\" /></a><br /><br />";
+            echo '<a title="'.$streditsummary.'" '.
+                 ' href="editsection.php?id='.$thissection->id.'"><img src="'.$CFG->pixpath.'/t/edit.gif" '.
+                 ' height="11" width="11" border="0" alt="'.$streditsummary.'" /></a><br /><br />';
         }
 
         print_section($course, $thissection, $mods, $modnamesused);
@@ -117,10 +117,10 @@
             print_section_add_menus($course, $section, $modnames);
         }
 
-        echo "</td>";
-        echo "<td nowrap=\"nowrap\" bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=\"top\" align=\"center\" width=\"10\">";
-        echo "&nbsp;</td></tr>";
-        echo "<tr><td colspan=\"3\"><img src=\"../pix/spacer.gif\" width=\"1\" height=\"1\" alt=\"\" /></td></tr>";
+        echo '</td>';
+        echo '<td nowrap="nowrap" class="topicsoutlineside" valign="top" align="center" width="10">';
+        echo '&nbsp;</td></tr>';
+        echo '<tr><td colspan="3"><img src="../pix/spacer.gif" width="1" height="1" alt="" /></td></tr>';
     }
 
 
@@ -170,14 +170,14 @@
             $currenttopic = ($course->marker == $section);
 
             if (!$thissection->visible) {
-                $colorsides = "bgcolor=\"$THEME->hidden\" class=\"topicsoutlinesidehidden\"";
-                $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontenthidden\"";
+                $colorsides = 'class="topicsoutlinesidehidden"';
+                $colormain  = 'class="topicsoutlinecontenthidden"';
             } else if ($currenttopic) {
-                $colorsides = "bgcolor=\"$THEME->cellheading2\" class=\"topicsoutlinesidehighlight\"";
-                $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontenthighlight\"";
+                $colorsides = 'class="topicsoutlinesidehighlight"';
+                $colormain  = 'class="topicsoutlinecontenthighlight"';
             } else {
-                $colorsides = "bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\"";
-                $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\"";
+                $colorsides = 'class="topicsoutlineside"';
+                $colormain  = 'class="topicsoutlinecontent"';
             }
 
             echo "<tr>";
