@@ -2612,15 +2612,16 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
         echo '<p>Error: Could not insert a new entry to the Moodle log</p>';  // Don't throw an error
     }
     if (!$user and isset($USER->id)) {
-        if ($courseid == SITEID) {
-            $db->Execute('UPDATE '. $CFG->prefix .'user SET lastIP=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
+        $db->Execute('UPDATE '. $CFG->prefix .'user SET lastIP=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
                      WHERE id = \''. $USER->id .'\' ');
-        } else if (isstudent($courseid)) {
-            $db->Execute('UPDATE '. $CFG->prefix .'user_students SET timeaccess = \''. $timenow .'\' '.
-                         'WHERE course = \''. $courseid .'\' AND userid = \''. $userid .'\'');
-        } else if (isteacher($courseid, false, false)) {
-            $db->Execute('UPDATE '. $CFG->prefix .'user_teachers SET timeaccess = \''. $timenow .'\' '.
-                         'WHERE course = \''. $courseid .'\' AND userid = \''. $userid .'\'');
+        if ($courseid != SITEID) {
+            if (isstudent($courseid)) {
+                $db->Execute('UPDATE '. $CFG->prefix .'user_students SET timeaccess = \''. $timenow .'\' '.
+                             'WHERE course = \''. $courseid .'\' AND userid = \''. $userid .'\'');
+            } else if (isteacher($courseid, false, false)) {
+                $db->Execute('UPDATE '. $CFG->prefix .'user_teachers SET timeaccess = \''. $timenow .'\' '.
+                             'WHERE course = \''. $courseid .'\' AND userid = \''. $userid .'\'');
+            }
         }
     }
 }
