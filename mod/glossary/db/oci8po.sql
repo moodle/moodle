@@ -17,6 +17,9 @@ CREATE TABLE prefix_glossary (
   allowduplicatedentries number(2) default '0' not null,
   displayformat number(2) default '0' not null,
   mainglossary number(2) default '0' not null,
+  showspecial number(2) default '1' not null,
+  showall number(2) default '1' not null,
+  showalphabet number(2) default '1' not null,
   timecreated number(10) default '0' not null,
   timemodified number(10) default '0' not null
 );
@@ -36,10 +39,10 @@ create or replace trigger p_glossary_trig
 .
 /
 
-insert into prefix_glossary(course,name,studentcanpost,allowduplicatedentries,displayformat,mainglossary,timecreated,timemodified) values(1,'1',1,1,1,1,1,1);
-insert into prefix_glossary(course,name,studentcanpost,allowduplicatedentries,displayformat,mainglossary,timecreated,timemodified) values(2,'2',2,2,2,2,2,2);
-insert into prefix_glossary(course,name,studentcanpost,allowduplicatedentries,displayformat,mainglossary,timecreated,timemodified) values(3,'3',3,3,3,3,3,3);
-insert into prefix_glossary(course,name,studentcanpost,allowduplicatedentries,displayformat,mainglossary,timecreated,timemodified) values(4,'4',4,4,4,4,4,4);
+insert into prefix_glossary(course,name,studentcanpost,allowduplicatedentries,displayformat,mainglossary,showspecial,showall,showalphabet,timecreated,timemodified) values(1,'1',1,1,1,1,1,1,1,1,1);
+insert into prefix_glossary(course,name,studentcanpost,allowduplicatedentries,displayformat,mainglossary,showspecial,showall,showalphabet,timecreated,timemodified) values(2,'2',2,2,2,2,2,2,2,2,2);
+insert into prefix_glossary(course,name,studentcanpost,allowduplicatedentries,displayformat,mainglossary,showspecial,showall,showalphabet,timecreated,timemodified) values(3,'3',3,3,3,3,3,3,3,3,3);
+insert into prefix_glossary(course,name,studentcanpost,allowduplicatedentries,displayformat,mainglossary,showspecial,showall,showalphabet,timecreated,timemodified) values(4,'4',4,4,4,4,4,4,4,4,4);
 
 select * from prefix_glossary order by 1,2;
 
@@ -55,6 +58,7 @@ CREATE TABLE prefix_glossary_entries (
   concept varchar2(255) default '' not null,
   definition varchar2(1024) NOT NULL,
   format number(2) default '0' not null,
+  attachment varchar2(100) default '' not null,
   timecreated number(10) default '0' not null,
   timemodified number(10) default '0' not null,
   teacherentry number(2) default '0' not null
@@ -75,13 +79,75 @@ create or replace trigger p_glossary_entries_trig
 .
 /
 
-insert into prefix_glossary_entries(glossaryid,userid,concept,definition,format,timecreated,timemodified,teacherentry) values(1,1,'1','1',1,1,1,1);
-insert into prefix_glossary_entries(glossaryid,userid,concept,definition,format,timecreated,timemodified,teacherentry) values(2,2,'2','2',2,2,2,2);
-insert into prefix_glossary_entries(glossaryid,userid,concept,definition,format,timecreated,timemodified,teacherentry) values(3,3,'3','3',3,3,3,3);
-insert into prefix_glossary_entries(glossaryid,userid,concept,definition,format,timecreated,timemodified,teacherentry) values(4,4,'4','4',4,4,4,4);
+insert into prefix_glossary_entries(glossaryid,userid,concept,definition,format,attachment,timecreated,timemodified,teacherentry) values(1,1,'1','1',1,'1',1,1,1);
+insert into prefix_glossary_entries(glossaryid,userid,concept,definition,format,attachment,timecreated,timemodified,teacherentry) values(2,2,'2','2',2,'2',2,2,2);
+insert into prefix_glossary_entries(glossaryid,userid,concept,definition,format,attachment,timecreated,timemodified,teacherentry) values(3,3,'3','3',3,'3',3,3,3);
+insert into prefix_glossary_entries(glossaryid,userid,concept,definition,format,attachment,timecreated,timemodified,teacherentry) values(4,4,'4','4',4,'4',4,4,4);
 
 col format format 99
 select * from prefix_glossary_entries order by 1,2;
+
+rem
+rem Table structure for table glossary_cageories
+rem
+
+drop TABLE prefix_glossary_categories;
+CREATE TABLE prefix_glossary_categories (
+     id number(10) primary key,
+     glossaryid number(10) default '0' not null,
+     name varchar(255) default '' not null
+);
+
+COMMENT on table prefix_glossary_categories is 'all categories for glossary entries';
+
+drop sequence p_glossary_categories_seq;
+create sequence p_glossary_categories_seq;
+
+create or replace trigger p_glossary_categories_trig
+  before insert on prefix_glossary_categories
+  referencing new as new_row
+  for each row
+  begin
+    select p_glossary_categories_seq.nextval into :new_row.id from dual;
+  end;
+.
+/
+
+insert into prefix_glossary_categories(glossaryid,name) values(1,'1');
+insert into prefix_glossary_categories(glossaryid,name) values(2,'2');
+insert into prefix_glossary_categories(glossaryid,name) values(3,'3');
+insert into prefix_glossary_categories(glossaryid,name) values(4,'4');
+
+rem
+rem Table structure for table glossary_entries_category
+rem
+
+drop TABLE mdl_glossary_entries_categories;
+CREATE TABLE mdl_glossary_entries_categories (
+     id number(10) primary key,
+     categoryid number(10) default '0' not null,
+     entryid number(10) default '0' not null
+);
+
+COMMENT on table mdl_glossary_entries_categories is 'categories of each glossary entry';
+
+drop sequence pg_entries_categories;
+create sequence pg_entries_categories_seq;
+
+create or replace trigger pg_entries_categories_trig
+  before insert on mdl_glossary_categories_categories
+  referencing new as new_row
+  for each row
+  begin
+    select pg_categories_categories_seq.nextval into :new_row.id from dual;
+  end;
+.
+/
+
+insert into mdl_glossary_categories(categoryid,entryid) values(1,1);
+insert into mdl_glossary_categories(categoryid,entryid) values(2,2);
+insert into mdl_glossary_categories(categoryid,entryid) values(3,3);
+insert into mdl_glossary_categories(categoryid,entryid) values(4,4);
 
 rem
 rem Dumping data for table log_display
