@@ -135,7 +135,7 @@
             }
         } else {
             $scale->id = 0;
-            $scale->courseid = 0;
+            $scale->courseid = $course->id;
             $scale->name = "";
             $scale->scale = "";
             $scale->description = "";
