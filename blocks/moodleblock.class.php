@@ -95,6 +95,14 @@ class MoodleBlock {
     }
 
     /**
+     * Fake constructor to keep PHP5 happy
+     *
+     */
+    function __construct() {
+        $this->MoodleBlock();
+    }
+
+    /**
      * Returns the block name, as present in the class name,
      * the database, the block directory, etc etc.
      *
