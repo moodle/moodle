@@ -15,7 +15,9 @@
     </tr>
     <tr>
         <td>&nbsp;</td>
-        <td colspan="2"><input type="checkbox" name="mycourses" alt="<?php print_string('onlymycourses', 'message') ?>" /><?php print_string('onlymycourses', 'message') ?></td>
+        <td colspan="2">
+            <input type="hidden" name="mycourses" value="0" />
+            <input type="checkbox" name="mycourses" alt="<?php print_string('onlymycourses', 'message') ?>" /><?php print_string('onlymycourses', 'message') ?></td>
     </tr>
     
     <tr><td colspan="3"><hr /></td></tr>
@@ -32,7 +34,9 @@
     
     <tr>
         <td>&nbsp;</td>
-        <td colspan="2"><input type="checkbox" name="includeblocked" alt="<?php print_string('includeblockedusers', 'message') ?>" /><?php print_string('includeblockedusers', 'message') ?></td>
+        <td colspan="2">
+            <input type="hidden" name="includeblocked" value="0" />
+            <input type="checkbox" name="includeblocked" alt="<?php print_string('includeblockedusers', 'message') ?>" /><?php print_string('includeblockedusers', 'message') ?></td>
     </tr>
     
     <tr><td colspan="3"><input type="radio" name="keywordsoption" alt="<?php print_string('onlytome', 'message') ?>" value="tome" checked="checked" /><?php print_string('onlytome', 'message') ?></td></tr>

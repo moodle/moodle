@@ -116,7 +116,7 @@
         case 'edit':      /// Print the bottom frame with the text editor
 
             /// Check that the user is not blocking us!!
-            if ($contact = get_record('message_contacts', 'userid', $user->id, 'contact', $USER->id)) {
+            if ($contact = get_record('message_contacts', 'userid', $user->id, 'contactid', $USER->id)) {
                 if ($contact->blocked) {
                     print_heading(get_string('userisblockingyou', 'message'));
                     exit;

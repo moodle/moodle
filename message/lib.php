@@ -17,13 +17,13 @@ function message_print_contacts() {
 
     
     /// get lists of contacts and unread messages
-    $onlinecontacts = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture
+    $onlinecontacts = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture, mc.blocked
                                        FROM {$CFG->prefix}user u, {$CFG->prefix}message_contacts mc
                                        WHERE mc.userid='$USER->id' AND u.id=mc.contactid AND u.lastaccess>=$timefrom 
                                          AND mc.blocked='0' 
                                        ORDER BY u.lastaccess DESC");
 
-    $offlinecontacts = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture
+    $offlinecontacts = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture, mc.blocked
                                        FROM {$CFG->prefix}user u, {$CFG->prefix}message_contacts mc
                                        WHERE mc.userid='$USER->id' AND u.id=mc.contactid AND u.lastaccess<$timefrom
                                          AND mc.blocked='0' 
@@ -157,7 +157,7 @@ function message_print_contacts() {
         /// link to add to contact list
             
             $strcontact .= message_contact_link($messageuser->useridfrom, 'add', true);
-            $strblock   .= message_contact_link($messageuser->useridfrom, 'block', true);
+            $strblock   = message_contact_link($messageuser->useridfrom, 'block', true);
             
             echo '<tr><td class="message_pic">';
             print_user_picture($messageuser->useridfrom, SITEID, $messageuser->picture, 20, false, false);
@@ -197,7 +197,7 @@ function message_count_messages($messagearray, $field='', $value='') {
 
 
 function message_print_search() {
-    global $USER;
+    global $ME, $USER;
     
     if ($frm = data_submitted()) {
     
@@ -307,7 +307,7 @@ function message_get_contact($contactid) {
 
 
 function message_print_search_results($frm) {
-    global $USER;
+    global $ME, $USER;
 
     echo '<div align="center">';
 
@@ -591,9 +591,10 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
     }
 
     $select = 'u.deleted = \'0\' AND u.confirmed = \'1\'';
+    $fields = 'u.id, u.firstname, u.lastname, u.picture';
 
     if (!$courseid or $courseid == SITEID) {
-        return get_records_sql("SELECT u.id, u.firstname, u.lastname
+        return get_records_sql("SELECT $fields
                       FROM {$CFG->prefix}user u
                       WHERE $select
                           AND ($fullname $LIKE '%$searchtext%')
@@ -601,7 +602,7 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
     } else {
 
 
-        if (!$teachers = get_records_sql("SELECT u.id, u.firstname, u.lastname
+        if (!$teachers = get_records_sql("SELECT $fields
                       FROM {$CFG->prefix}user u,
                            {$CFG->prefix}user_teachers s
                       WHERE $select AND s.course = '$courseid' AND s.userid = u.id
@@ -609,7 +610,7 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
                           $except $order")) {
             $teachers = array();
         }
-        if (!$students = get_records_sql("SELECT u.id, u.firstname, u.lastname
+        if (!$students = get_records_sql("SELECT $fields
                       FROM {$CFG->prefix}user u,
                            {$CFG->prefix}user_students s
                       WHERE $select AND s.course = '$courseid' AND s.userid = u.id
