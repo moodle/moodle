@@ -12,7 +12,6 @@
             error(get_string("filloutallfields"), $HTTP_REFERER);
         }
 
-
         $SESSION->modform = $modform;    // Save the form in the current session
         save_session("SESSION");
 
@@ -42,7 +41,7 @@
 
     // Now, check for commands on this page and modify variables as necessary
 
-    if ($up) { //------------------------------------------------------------
+    if ($up) { /// Move the given question up a slot
         $questions = explode(",", $modform->questions);
         if ($questions[0] <> $up) {
             foreach ($questions as $key => $question) {
@@ -57,7 +56,7 @@
         }
     }
 
-    if ($down) { //----------------------------------------------------------
+    if ($down) { /// Move the given question down a slot
         $questions = explode(",", $modform->questions);
         if ($questions[count($questions)-1] <> $down) {
             foreach ($questions as $key => $question) {
@@ -72,25 +71,29 @@
         }
     }
 
-    if ($add) { //-----------------------------------------------------------
+    if ($add) { /// Add a question to the current quiz
         $rawquestions = $HTTP_POST_VARS;
-        $questions = explode(",", $modform->questions);
+        if ($modform->questions) {
+            $questions = explode(",", $modform->questions);
+        }
         foreach ($rawquestions as $key => $value) {    // Parse input for question ids
             if (substr($key, 0, 1) == "q") {
                 $key = substr($key,1);
-                foreach ($questions as $question) {
-                    if ($question == $key) {
-                        continue 2;
+                if ($questions) {
+                    foreach ($questions as $question) {
+                        if ($question == $key) {
+                            continue 2;
+                        }
                     }
                 }
                 $questions[] = $key;
-                $modform->grades[$key] = 1;
+                $modform->grades[$key] = 1;   // default score
             }
         }
         $modform->questions = implode(",", $questions);
     }
 
-    if ($delete) { //--------------------------------------------------------
+    if ($delete) { /// Delete a question from the list 
         $questions = explode(",", $modform->questions);
         foreach ($questions as $key => $question) {
             if ($question == $delete) {
@@ -101,7 +104,7 @@
         $modform->questions = implode(",", $questions);
     }
 
-    if ($grade) { //---------------------------------------------------------
+    if ($grade) { /// The grades have been updated, so update our internal list
         $rawgrades = $HTTP_POST_VARS;
         foreach ($rawgrades as $key => $value) {    // Parse input for question -> grades
             if (substr($key, 0, 1) == "q") {
@@ -123,6 +126,13 @@
         }
     }
 
+    $modform->sumgrades = 0;
+    if ($modform->grades) {
+        foreach ($modform->grades as $grade) {
+            $modform->sumgrades += $grade;
+        }
+    }
+
     $SESSION->modform = $modform;
     save_session("SESSION");
 
@@ -136,7 +146,7 @@
     // Print basic page layout.
 
     echo "<TABLE BORDER=0 WIDTH=\"100%\" CELLPADDING=2 CELLSPACING=0>";
-    echo "<TR><TD WIDTH=50%>";
+    echo "<TR><TD WIDTH=50% VALIGN=TOP>";
         print_simple_box_start("CENTER", "100%", $THEME->body);
         print_heading($modform->name);
         quiz_print_question_list($modform->questions, $modform->grades); 

@@ -36,7 +36,7 @@ function quiz_add_instance($quiz) {
         return false;  // some error occurred
     }
 
-    // The grades for each question in this quiz are stored in an array
+    // The grades for every question in this quiz are stored in an array
     if ($quiz->grades) {
         foreach ($quiz->grades as $question => $grade) {
             $questiongrade->quiz = $quiz->id;
@@ -65,7 +65,7 @@ function quiz_update_instance($quiz) {
     }
 
 
-    // The grades for each question in this quiz are stored in an array
+    // The grades for every question in this quiz are stored in an array
     // Insert or update records as appropriate
 
     $existing = get_records("quiz_question_grades", "quiz", $quiz->id, "", "question,grade,id");
@@ -105,7 +105,25 @@ function quiz_delete_instance($id) {
 
     $result = true;
 
-    # Delete any dependent records here #
+    if ($attempts = get_record("quiz_attempts", "quiz", "$quiz->id")) {
+        foreach ($attempts as $attempt) {
+            if (! delete_records("quiz_responses", "attempt", "$attempt->id")) {
+                $result = false;
+            }
+        }
+    }
+
+    if (! delete_records("quiz_attempts", "quiz", "$quiz->id")) {
+        $result = false;
+    }
+
+    if (! delete_records("quiz_grades", "quiz", "$quiz->id")) {
+        $result = false;
+    }
+
+    if (! delete_records("quiz_question_grades", "quiz", "$quiz->id")) {
+        $result = false;
+    }
 
     if (! delete_records("quiz", "id", "$quiz->id")) {
         $result = false;
@@ -253,13 +271,15 @@ function quiz_print_quiz_questions($quiz, $results=NULL) {
 // Prints a whole quiz on one page.
 
     if (!$quiz->questions) {
-        error("No questions have been defined!", "view.php?id=$cm->id");
+        notify("No questions have been defined!", "view.php?id=$cm->id");
+        return false;
     }
 
     $questions = explode(",", $quiz->questions);
 
     if (!$grades = get_records_list("quiz_question_grades", "question", $quiz->questions, "", "question,grade")) {
-        error("No grades were found for these questions!");
+        notify("No grades were found for these questions!");
+        return false;
     }
 
     echo "<FORM METHOD=POST ACTION=attempt.php>";
@@ -272,6 +292,8 @@ function quiz_print_quiz_questions($quiz, $results=NULL) {
     }
     echo "<CENTER><INPUT TYPE=submit VALUE=\"".get_string("savemyanswers", "quiz")."\"></CENTER>";
     echo "</FORM>";
+
+    return true;
 }
  
 function quiz_get_default_category($courseid) {
@@ -282,8 +304,8 @@ function quiz_get_default_category($courseid) {
     }
 
     // Otherwise, we need to make one
-    $category->name = get_string("miscellaneous", "quiz");
-    $category->info = get_string("miscellaneous", "quiz");
+    $category->name = get_string("default", "quiz");
+    $category->info = get_string("defaultinfo", "quiz");
     $category->course = $courseid;
     $category->publish = 0;
 
@@ -308,7 +330,7 @@ function quiz_print_category_form($course, $current) {
     }
     $strcategory = get_string("category", "quiz");
     $strshow = get_string("show", "quiz");
-    $strrename = get_string("rename", "quiz");
+    $stredit = get_string("edit");
     $strdelete = get_string("delete");
     $strnew = get_string("new");
 
@@ -316,8 +338,8 @@ function quiz_print_category_form($course, $current) {
     echo "<B>$strcategory:</B>&nbsp;";
     choose_from_menu($categories, "cat", "$current");
     echo "<INPUT TYPE=submit NAME=catshow VALUE=\"$strshow\">";
-    echo "<INPUT TYPE=submit NAME=catrename VALUE=\"$strrename\">";
-    echo "<INPUT TYPE=submit NAME=catdelete VALUE=\"$strdelete\">";
+    echo "<INPUT TYPE=submit NAME=catedit VALUE=\"$stredit\">";
+    echo "<INPUT TYPE=submit NAME=catdelete VALUE=\"$strdelete\">&nbsp;";
     echo "<INPUT TYPE=submit NAME=catnew VALUE=\"$strnew\">";
     echo "</FORM>";
 }
@@ -374,7 +396,7 @@ function quiz_print_question_list($questionlist, $grades) {
     $strmovedown = get_string("movedown");
     $strsavegrades = get_string("savegrades", "quiz");
 
-    for ($i=100; $i>=0; $i--) {
+    for ($i=10; $i>=0; $i--) {
         $gradesmenu[$i] = $i;
     }
     $count = 0;
@@ -382,7 +404,7 @@ function quiz_print_question_list($questionlist, $grades) {
     $total = count($order);
     echo "<FORM METHOD=post ACTION=edit.php>";
     echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2 WIDTH=\"100%\">";
-    echo "<TR><TH COLSPAN=3>$strorder</TH><TH align=left>$strquestionname</TH><TH>$strgrade</TH><TH>$stredit</TH></TR>";
+    echo "<TR><TH WIDTH=10 COLSPAN=3>$strorder</TH><TH align=left WIDTH=\"100%\">$strquestionname</TH><TH WIDTH=10>$strgrade</TH><TH WIDTH=10>$stredit</TH></TR>";
     foreach ($order as $qnum) {
         $count++;
         echo "<TR BGCOLOR=\"$THEME->cellcontent\">";
@@ -419,6 +441,8 @@ function quiz_print_question_list($questionlist, $grades) {
     echo "</TD><TD></TD></TR>";
     echo "</TABLE>";
     echo "</FORM>";
+
+    return $sumgrade;
 }
 
 
@@ -427,6 +451,7 @@ function quiz_print_cat_question_list($categoryid) {
 
     global $THEME, $QUIZ_QUESTION_TYPE;
 
+    $strcategory = get_string("category", "quiz");
     $strquestion = get_string("question", "quiz");
     $strnoquestions = get_string("noquestions", "quiz");
     $strselect = get_string("select", "quiz");
@@ -447,9 +472,10 @@ function quiz_print_cat_question_list($categoryid) {
         notify("Category not found!");
         return;
     }
-    echo "<P>$category->info</P>";
+    echo "<P><B>$strcategory:</B> $category->name</P>\n";
+    echo text_to_html($category->info);
 
-    echo "<FORM METHOD=POST ACTION=question.php>"; 
+    echo "<FORM METHOD=GET ACTION=question.php>"; 
     echo "<B>$strquestion:</B>&nbsp;";
     choose_from_menu($QUIZ_QUESTION_TYPE, "type", "", "");
     echo "<INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
@@ -463,21 +489,30 @@ function quiz_print_cat_question_list($categoryid) {
         return;
     }
 
+    $canedit = isteacher($category->course);
+
     echo "<FORM METHOD=post ACTION=edit.php>";
     echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2 WIDTH=\"100%\">";
-    echo "<TR><TH width=10>$strselect</TH><TH width=* align=left>$strquestionname</TH><TH width=10>$stredit</TH></TR>";
+    echo "<TR><TH width=10>$strselect</TH><TH width=* align=left>$strquestionname</TH>";
+    if ($canedit) {
+        echo "<TH width=10>$stredit</TH>";
+    }
+    echo "</TR>";
     foreach ($questions as $question) {
         echo "<TR BGCOLOR=\"$THEME->cellcontent\">";
         echo "<TD ALIGN=CENTER>";
         echo "<INPUT TYPE=CHECKBOX NAME=q$question->id VALUE=\"1\">";
         echo "</TD>";
         echo "<TD>".$question->name."</TD>";
-        echo "<TD>";
-            echo "<A TITLE=\"$strdelete\" HREF=\"question.php?delete=$question->id\"><IMG 
-                 SRC=\"../../pix/t/delete.gif\" BORDER=0></A>&nbsp;";
-            echo "<A TITLE=\"$stredit\" HREF=\"question.php?id=$question->id\"><IMG 
-                 SRC=\"../../pix/t/edit.gif\" BORDER=0></A>";
-        echo "</TD></TR>";
+        if ($canedit) {
+            echo "<TD>";
+                echo "<A TITLE=\"$strdelete\" HREF=\"question.php?delete=$question->id\"><IMG 
+                     SRC=\"../../pix/t/delete.gif\" BORDER=0></A>&nbsp;";
+                echo "<A TITLE=\"$stredit\" HREF=\"question.php?id=$question->id\"><IMG 
+                     SRC=\"../../pix/t/edit.gif\" BORDER=0></A>";
+            echo "</TD></TR>";
+        }
+        echo "</TR>";
     }
     echo "<TR><TD COLSPAN=3>";
     echo "<INPUT TYPE=hidden NAME=add VALUE=\"1\">";
@@ -733,6 +768,7 @@ function quiz_grade_attempt_results($quiz, $questions) {
         if ($grade < 0.0) {   // No negative grades
             $grade = 0.0;
         }
+
         $result->grades[$question->id] = $grade;
         $result->sumgrades += $grade;
         $result->feedback[$question->id] = $feedback;

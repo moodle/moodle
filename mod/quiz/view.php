@@ -106,12 +106,13 @@
 
     $mygrade = quiz_get_best_grade($quiz->id, $USER->id);
 
-    if ($numattempts < $quiz->attempts) { 
+    if ($numattempts < $quiz->attempts or !$quiz->attempts) { 
         if ($available) {
-            $options["id"] = $quiz->id;
+            $options["id"] = $cm->id;
             if ($numattempts) {
                 print_heading("Your best grade so far is $mygrade / $quiz->grade.");
             }
+            echo "<BR>";
             echo "<DIV align=CENTER>";
             print_single_button("attempt.php", $options, $label="Attempt quiz now");
             echo "</P>";

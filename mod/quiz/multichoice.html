@@ -1,0 +1,46 @@
+<FORM name="theform" method="post" action="question.php">
+<CENTER>
+<TABLE cellpadding=5>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("questionname", "quiz") ?>:</B></P></TD>
+    <TD>
+        <INPUT type="text" name="name" size=40 value="<? p($question->name) ?>">
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("question", "quiz") ?>:</B></P></TD>
+    <TD>
+        <textarea name="intro" rows=5 cols=50 wrap="virtual"><? p($question->question) ?></textarea>
+        <? helpbutton("text", get_string("helptext")); ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("category", "quiz") ?>:</B></P></TD>
+    <TD>
+    <?
+        choose_from_menu($categories, "category", "$question->category", "");
+     ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("attemptsallowed", "quiz") ?>:</B></P></TD>
+    <TD>
+    <?
+        $options[0] = get_string("answersingleno", "quiz");
+        $options[1] = get_string("answersingleyes", "quiz");
+        choose_from_menu($options, "single", "$options->single", "");
+     ?>
+    </TD>
+</TR>
+</TABLE>
+<INPUT type="hidden" name=id value="<? p($question->id) ?>">
+<INPUT type="hidden" name=type value="<? p($question->type) ?>">
+<INPUT type="hidden" name=category value="<? p($question->category) ?>">
+<INPUT type="submit" value="<? print_string("savechanges") ?>">
+
+
+
+answers go here ...
+
+</CENTER>
+</FORM>

@@ -3,8 +3,6 @@
 
 <? include_once("$CFG->dirroot/mod/quiz/lib.php") ?>
 
-<H1 ALIGN=CENTER><FONT COLOR=RED>This module is not ready for use</FONT></H1>
-
 <FORM name="form" method="post" action="<?=$CFG->wwwroot?>/mod/quiz/edit.php">
 <CENTER>
 <TABLE cellpadding=5>
@@ -95,7 +93,7 @@
     <TD align=right><P><B><? print_string("maximumgrade") ?>:</B></P></TD>
     <TD>
     <?
-        for ($i=100; $i>=0; $i--) {
+        for ($i=100; $i>=1; $i--) {
             $grades[$i] = $i;
         }
         choose_from_menu($grades, "grade", "$form->grade", "");

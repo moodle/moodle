@@ -58,8 +58,10 @@
         $numattempts = 1;
     }
 
-    if ($numattempts > $quiz->attempts) {
-        error("Sorry, you've had $quiz->attempts attempts already.", "view.php?id=$cm->id");
+    if ($quiz->attempts) {
+        if ($numattempts > $quiz->attempts) {
+            error("Sorry, you've had $quiz->attempts attempts already.", "view.php?id=$cm->id");
+        }
     }
 
     if ($course->format == "weeks" and $quiz->days) {
@@ -115,7 +117,7 @@
             error("Sorry! Could not calculate your best grade!");
         }
 
-        print_heading(get_string("grade", "quiz").": $result->grade/$quiz->grade  ($result->sumgrades / $quiz->sumgrades = $percent %)");
+        print_heading(get_string("grade", "quiz").": $result->grade/$quiz->grade  ($result->sumgrades / $quiz->sumgrades = $result->percentage %)");
 
         print_continue("view.php?id=$cm->id");
 
@@ -139,7 +141,7 @@
         error("Sorry, this quiz is not available", "view.php?id=$cm->id");
     }
 
-    print_heading("Attempt $numattempts out of $quiz->attempts");
+    print_heading(get_string("attempt", "quiz", $numattempts));
 
     print_simple_box($quiz->intro, "CENTER");
 
@@ -148,7 +150,9 @@
 
     echo "<BR>";
 
-    quiz_print_quiz_questions($quiz);
+    if (! quiz_print_quiz_questions($quiz)) {
+        print_continue("view.php?id=$cm->id");
+    }
 
 
 /// Finish the page
