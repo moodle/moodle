@@ -123,7 +123,7 @@ function forum_upgrade($oldversion) {
                                 `postid` int(11) unsigned default 0 NOT NULL,
                                 PRIMARY KEY  (`id`),
                                 KEY `user` (userid),
-                                KEY `post` (postid),
+                                KEY `post` (postid)
                               ) TYPE=MyISAM COMMENT='For keeping track of posts that will be mailed in digest form';");
   }
 
