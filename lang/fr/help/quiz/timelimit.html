@@ -2,11 +2,14 @@
 
 <p align="center"><strong>Temps disponible</strong></p>
 
-<p>En fixant le temps diponible pour un test, il est possible
-de contr&ocirc;ler le temps &agrave; disposition de l'&eacute;tudiant pour terminer
-un test. D&egrave;s que la limite est d&eacute;pass&eacute;e, le test est
-automatiquement envoy&eacute;, avec les r&eacute;ponses actuelles. Si
-l'&eacute;tudiant n'effectue pas le test et revient une fois la limite
-de temps &eacute;chue, une note de 0 lui est attribu&eacute;e.</p>
+<p>Par d&eacute;faut, le temps disponible pour effectuer un test est illimit&eacute;, ce qui laisse tout le temps &agrave; l'&eacute;tudiant pour terminer le test.</p>
 
-<p>Une valeur z&eacute;ro pour le temps disponible signifie aucune limite.</p>
+<p>Si vous sp&eacute;cifiez un temps disponible pour un test, diff&eacute;rentes actions sont effectu&eacute;es pour s'assurer que les tests sont termin&eacute;s avant l'&eacute;ch&eacute;ance de cette dur&eacute;e.</p>
+
+<ul>
+	<li>Le support de Javascript du navigateur devient obligatoire, ce qui permet au chronom&egrave;tre de fonctionner correctement</li>
+	<li>Une fen&ecirc;tre s'affiche avec un compte &agrave; rebours</li>
+	<li>Lorsque le temps disponible est &eacute;chu, le test est automatiquement envoy&eacute; avec les r&eacute;ponses donn&eacute;es jusqu'&agrave; cet instant</li>
+	<li>Si un &eacute;tudiant tente de tricher et prend plus que 60 secondes de plus que la dur&eacute;e allou&eacute;e, une note de 0 lui est automatiquement attribu&eacute;e
+	</li>
+</ul>
