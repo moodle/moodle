@@ -52,6 +52,7 @@
 
         print_simple_box_start("center");
         echo "<center>";
+        echo "<br />";
         echo $searchform;
         echo "<br /><p>";
         print_string("searchhelp");
