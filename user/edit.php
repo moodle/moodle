@@ -202,6 +202,7 @@
 /// FUNCTIONS ////////////////////
 
 function find_form_errors(&$user, &$usernew, &$err) {
+    global $CFG;
 
     if (isadmin()) {
         if (empty($usernew->username)) {
@@ -211,10 +212,12 @@ function find_form_errors(&$user, &$usernew, &$err) {
                 $err["username"] = get_string("usernameexists");
 
         } else {
-            $string = eregi_replace("[^(-\.[:alnum:][À-ÖØ-öø-ÿ])]", "", $usernew->username);
-
-            if (strcmp($usernew->username, $string)) 
-                $err["username"] = get_string("alphanumerical");
+            if (empty($CFG->extendedusernamechars)) {
+                $string = eregi_replace("[^(-\.[:alnum:])]", "", $usernew->username);
+                if (strcmp($usernew->username, $string)) {
+                    $err["username"] = get_string("alphanumerical");
+                }
+            }
         }
 
         if (empty($usernew->newpassword) and empty($user->password) and is_internal_auth() )

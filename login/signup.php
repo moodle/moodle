@@ -81,6 +81,7 @@
 
 function validate_form($user, &$err) {
     global $CFG;
+
     if (empty($user->username)){
         $err->username = get_string("missingusername");
     } else{
@@ -88,9 +89,11 @@ function validate_form($user, &$err) {
         if (record_exists("user", "username", $user->username)){
             $err->username = get_string("usernameexists");
         } else {
-            $string = eregi_replace("[^(-\.[:alnum:][À-ÖØ-öø-ÿ])]", "", $user->username);
-            if (strcmp($user->username, $string)) {
-                $err->username = get_string("alphanumerical");
+            if (empty($CFG->extendedusernamechars)) {
+                $string = eregi_replace("[^(-\.[:alnum:])]", "", $user->username);
+                if (strcmp($user->username, $string)) {
+                    $err->username = get_string("alphanumerical");
+                }
             }
         }
     }

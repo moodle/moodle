@@ -129,6 +129,9 @@ $CFG->admin = 'admin';
 // 7. OTHER MISCELLANEOUS SETTINGS (ignore these for new installations)
 //=========================================================================
 //
+// These are additional tweaks for which no GUI exists in Moodle yet.
+//
+//
 // Prevent users from updating their profile images
 //      $CFG->disableuserimages = true;  
 //
@@ -151,7 +154,11 @@ $CFG->admin = 'admin';
 //
 // Setting this to true will force a non-guest login to see the user pages 
 // eg the teachers linked from course descriptions or site news
-//      $CFG->forceloginforprofiles
+//      $CFG->forceloginforprofiles = true;
+//
+// Setting this variable will make Moodle allow anything as a username,
+// rather than alphanumerical characters only.
+//      $CFG->extendedusernamechars = true;
 //
 // This setting will put Moodle in Unicode mode.  It's very new and 
 // most likely doesn't work yet.   THIS IS FOR DEVELOPERS ONLY, IT IS
