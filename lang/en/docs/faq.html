@@ -66,6 +66,7 @@
 <p class="questionlink"><a href="#failedopen">I keep getting this error: Failed opening required '/web/moodle/lib/setup.php'</a></p>
 <p class="questionlink"><a href="#quotes">Any text I add with an apostrophe (') or a quote (&quot;) causes errors or comes up with a slash added</a></p>
 <p class="questionlink"><a href="#sessiontmp">I keep getting error messages about session_start</a></p>
+<p class="questionlink"><a href="#fixdirroot">When I go to the admin page, I get told to make dirroot blank!</a></p>
 <p class="questionlink">&nbsp;</p>
 <h3 class="question"><a name="filenotfound"></a>Whenever I try to access or view 
   a file that I uploaded, I get an error &quot;File not Found&quot;</h3>
@@ -150,6 +151,8 @@
 <p class="answer">See the section on <a href="http://moodle.org/doc/?file=install.html#webserver">webserver 
   configuration</a> in the Installation docs for more details.</p>
 
+
+
 <h4 class="question"><a name="sessiontmp"></a>I keep getting error messages about session_start</h4>
 <p class="answer">If you see errors like this:</p>
 <p class="answercode">Warning: session_start() [function.session-start]: open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) failed: No such file or directory (2) in G:\web\moodle\lib\setup.php on line 123</p>
@@ -165,6 +168,23 @@
 <p class="answercode">session.save_path = C:\temp</p>
 <p class="answer">or otherwise in a .htaccess file in your main moodle directory:</p>
 <p class="answercode">php_value session.save_path "/home/moodle/sessions"</p>
+
+<h4 class="question"><a name="fixdirroot"></a>When I go to the admin page, I get told to make dirroot blank!</h4>
+<p class="answer">If you see errors like this in Moodle 1.0.9:</p>
+
+<table class=generalbox cellSpacing=0 cellPadding=5 align=center border=0>
+<tbody>
+<tr>
+<td bgColor=#ffbbbb>Please fix your settings in config.php: 
+<p>You have: 
+<p>$CFG-&gt;dirroot = "/home/users/fred/public_html/moodle"; 
+<p>but it should be: 
+<p>$CFG-&gt;dirroot = "";</p></td></tr></tbody></table>
+
+<p class="answer">then you have encountered a small bug that occurs on some servers. The problem is with the error-checking mechanism, not with your actual path.  To fix it, find this line (line 66) in the file admin/index.php: </p>
+<p class="answercode">if ($dirroot != $CFG->dirroot) {</p>
+<p class="answer">and change it to this:</p>
+<p class="answercode">if (!empty($dirroot) and $dirroot != $CFG->dirroot) {</p>
 
 
 <h2>&nbsp;</h2>
