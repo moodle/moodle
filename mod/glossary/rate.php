@@ -26,7 +26,10 @@
                 continue;
             }
             if ($oldrating = get_record("glossary_ratings", "userid", $USER->id, "entryid", $entry)) {
-                if ($rating != $oldrating->rating) {
+                //Check if we must delete the rate
+                if ($rating == -999) {
+                    delete_records('glossary_ratings','userid',$oldrating->userid, 'entryid',$oldrating->entryid);
+                } else if ($rating != $oldrating->rating) {
                     $oldrating->rating = $rating;
                     $oldrating->time = time();
                     if (! update_record("glossary_ratings", $oldrating)) {

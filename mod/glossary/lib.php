@@ -2056,14 +2056,14 @@ function glossary_print_rating_menu($entryid, $userid, $scale) {
     static $strrate;
 
     if (!$rating = get_record("glossary_ratings", "userid", $userid, "entryid", $entryid)) {
-        $rating->rating = 0;
+        $rating->rating = -999;
     }
 
     if (empty($strrate)) {
         $strrate = get_string("rate", "glossary");
     }
 
-    choose_from_menu($scale, $entryid, $rating->rating, "$strrate...");
+    choose_from_menu($scale, $entryid, $rating->rating, "$strrate...",'',-999);
 }
 
 
