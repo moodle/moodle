@@ -37,4 +37,6 @@ $string[uploadnotregistered] = "'\$a' s'ha penjat correctament, però no es pot r
 $string[uploadsuccess] = "'\$a' penjat correctament";
 $string[viewfeedback] = "Veure les qualificacions de les tasques i els comentaris";
 
+$string[allowresubmit] = "Permetre de tornar a enviar";
+
 ?>

@@ -502,4 +502,16 @@ $string[updatethis] = "Actualitzar aquest \$a";
 
 $string[showrecent] = "Mostrar activitat recent";
 
+$string[authentication] = "Autenticació";
+$string[department] = "Departament";
+$string[hits] = "Peticions";
+$string[hitsoncourse] = "Peticions en \$a->coursename per \$a->username";
+$string[hitsoncoursetoday] = "Peticions avui en \$a->coursename per \$a->username";
+$string[language] = "Idioma";
+$string[passwordrecovery] = "Sí, ajuda'm a connectar-me";
+$string[show] = "Mostrar";
+$string[hide] = "Ocultar";
+$string[someerrorswerefound] = "Falta informació, o és incorrecta. Detalls més avall.";
+$string[unusedaccounts] = "Els comptes no utilitzats durant \$a dies o més es desconnecten del curs automàticament.";
+
 ?>
