@@ -1651,6 +1651,10 @@ function isadmin($userid=0) {
         $userid = $USER->id;
     }
 
+    if (!empty($USER->id) and ($userid == $USER->id)) {  // Check session cache
+        return !empty($USER->admin);
+    }
+
     if (in_array($userid, $admins)) {
         return true;
     } else if (in_array($userid, $nonadmins)) {
@@ -1682,22 +1686,27 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
         if (empty($USER) or empty($USER->id)) {     // not logged in so can't be a teacher
             return false;
         }
-        if (!empty($USER->teacher) and $courseid) { // look in session cache
-            return !empty($USER->teacher[$courseid]);
+        if (!empty($USER->teacher) and $courseid) {   // look in session cache
+            if (!empty($USER->teacher[$courseid])) {  // Explicitly a teacher, good
+                return true;
+            }
         }
-        $userid = $USER->id;
+        $userid = $USER->id;                        // we need to make further checks
     }
 
-    if ($includeadmin and isadmin($userid)) {  // admins can do anything the teacher can
+    if ($includeadmin and isadmin($userid)) {   // admins can do anything the teacher can
         return true;
     }
 
-    if (empty($courseid)) {
+    if (empty($courseid)) {                     // should not happen, but we handle it
         if (isadmin() or $CFG->debug > 7) {
-            notify('Coding error: isteacher() should not be used without a valid course id as argument.  Please notify a developer.');
+            notify('Coding error: isteacher() should not be used without a valid course id '.
+                   'as argument.  Please notify the developer for this module.');
         }
         return isteacherinanycourse($userid, $includeadmin);
     }
+
+/// Last resort, check the database
 
     return record_exists('user_teachers', 'userid', $userid, 'course', $courseid);
 }
@@ -1717,6 +1726,9 @@ function isteacherinanycourse($userid=0, $includeadmin=true) {
     if (empty($userid)) {
         if (empty($USER) or empty($USER->id)) {
             return false;
+        }
+        if (!empty($USER->teacher)) {   // look in session cache
+            return true;
         }
         $userid = $USER->id;
     }
