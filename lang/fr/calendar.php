@@ -39,6 +39,7 @@ $string['hidden'] = 'cachés';
 $string['manyevents'] = '$a événements ';
 $string['monthlyview'] = 'Vue mensuelle';
 $string['newevent'] = 'Nouvel événement';
+$string['noupcomingevents'] = 'Il n\'y a pas d\'événement à venir';
 $string['oneevent'] = '1 événement';
 $string['pref_lookahead'] = 'Anticipation des événements à venir';
 $string['pref_maxevents'] = 'Nombre maximal d\'événements à venir';
