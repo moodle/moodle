@@ -1,0 +1,142 @@
+<h2>Kuinka k‰yt‰n Wiki‰?</h2>
+<p>
+Moodlen wiki perustuu
+
+<a href="http://erfurtwiki.sourceforge.net/?id=ErfurtWiki" target="_blank">ErfurtWikiin</a>,
+joka on toteutus
+<a href="http://c2.com/cgi/wiki?WikiWikiWeb" target="_blank">WikiWikiWeb</a>
+hypertekstisysteemist‰. Se mahdollistaa yksinkertaisen yhteiskirjoittamisen ja verkkosivujen luomisen. </p>
+<p>
+<ul>
+<li>opi <a href="#createpages">luomaan sivuja</a></li>
+<li>klikkaa <img src="pix/t/edit.gif"> tai valitse "Muokkaa t‰t‰ sivua" alasvetovalikosta sivun sis‰llˆn muuttamiseen
+</li>
+<li>muokkaa sivuja k‰ytt‰m‰ll‰ <a href="#wikimarkup">Wikin kuvauskielt‰</a> tai HTML:‰‰ (jos wikiin on mahdollistettu se vaihtoehto)
+</li>
+<li>etsi sivuilta tai mene Uusien sivujen listaan
+</li>
+<li>tutustu listoihin Eniten katsotuista sivuista, Eniten muokatuista sivuista ja Viimeaikoina P‰ivitetyist‰ sivuista
+</li>
+</ul>
+<p></p>
+<p>
+<a name="createpages"></a><b>Luo sivuja</b>:<br />
+Voit luoda sivun nime‰m‰ll‰ sen olemassaolevan sivun tekstiss‰. Wikisivu nimet‰‰n k‰ytt‰m‰ll‰ ns.
+<a href="#camelcase">KameliKirjasimia</a> tai liitt‰m‰ll‰ sivun nimi hakasulkeiden sis‰‰n( [] ).</p>
+<p>
+Esimerkiksi:
+<ul>
+<li>MinunWikiSivuni (KameliKirjasimet)</li>
+<li>[Minun Wiki Sivuni] (hakasulkeiden sis‰ll‰)</li>
+</ul><p></p>
+<p>
+Tekstin, jolle on annettu wikisivunimi, per‰‰n tulee '?' -merkki. Klikkaamalla '?' -merkki‰ avautuu sivun muokkaustila. Kirjota teksti, tallenna, ja sinulla on uusi wikisivu.
+</p>
+<p><a name="wikimarkup"></a><b>Wikin kuvauskieli</b>:<br />
+Sivuja voi Wikin sis‰ll‰ muokata helposti wikin kuvauskielen avulla.
+
+</p>
+<h4> Kappaleet</h4>
+  <ul type="circle">
+  <li> erilliset kappaleet tekstin sis‰‰n tyhjill‰ riveill‰ erotettuina </li>
+  <li> rivinvaihto saadaan aikaiseksi kolmea prosenttimerki‰ %%<em></em>% k‰ytt‰m‰ll‰</li>
+  <li> teksti sisennet‰‰n laittamalla v‰lilyˆntej‰ tai sarkainmerkkej‰ ennen sisennett‰v‰‰ teksti‰ </li>
+  </ul>
+
+<h4> !! Otsikot</h4>
+  <ul type="circle">
+  <li> huutomerkki ! rivin alussa luo pienen otsikon</li>
+  <li> !! keskikokoisen</li>
+  <li> !!! ison otsikon  </li>
+  </ul>
+
+<h4> Tyylit</h4>
+  <ul type="circle">
+  <li> jos teksti‰ halutaan <em>korostaa </em> se laitetaan kahden heittomerkin v‰liin '' (yleens‰ n‰kyy kursivoituna)</li>
+  <li> <strong>teksti lihavoidaan</strong> kahdella alleviivauksella __ (tai kahden t‰htimerkin v‰liin laitettuna **)</li>
+  <li> <big> teksti‰ voi suurentaa</big> laittamalla sen kahden ristikkomerkin v‰liin ##</li>
+  <li> samoin <small> teksti‰ voi pienent‰‰ </small> k‰ytt‰m‰ll‰ merkkej‰ "µµ" </li>
+  <li>  <tt>konekirjoitusta muistuttavaa teksti‰</tt> saa aikaiseksi laittamalla tekstin kahden yht‰suuruusmerkin v‰liin == </li>
+  </ul>
+
+<h4> Luettelo</h4>
+
+  <ul type="circle">
+  <li> luettelo aloitetaan laittamalla rivin alkuun t‰htimerkki * </li>
+  <li> numeroitu luettelo luodaan k‰ytt‰m‰ll‰ ristikkomerkki‰ # 
+    <ol>
+    <li> alaluetteloita voi myˆs luoda</li>
+    <li> luettelon muut kohdat aloitetaan samalla tavalla merkkej‰ * tai # k‰ytt‰en </li>
+    </ol>
+  </li>
+  </ul>
+
+<h4> HyperLinkit</h4>
+
+  <ul type="circle">
+  <li> lis‰‰ KameliKirjasimilla WikiSana tekstiin uuden HyperLinkin luomiseksi </li>
+  <li> HyperLinkin voi myˆs luoda laittamalla <b>sanoja hakasulkeiden sis‰‰n</b></li>
+  <li> internet-osoitteet (jotka alkavat <a href="http://">http://</a>) kuten http://www.esimerkki.com/ tekstin joukossa muutetaan klikattaviksi automaagisesti
+  </li>
+  <li> verkko-osoite tai wikilinkki voidaan liitt‰‰ hakasulkeiden sis‰‰n [<a href="http://www.moodle.org/">Moodle</a>] ja sille voi antaa n‰pp‰r‰sti nimen k‰ytt‰m‰ll‰ lainausmerkkej‰ " " tai putkimerkki‰ | 
+    <ul type="circle">
+    <li> [otsikko | http://esimerkki.com]</li>
+    <li> [WikiSana "otsikko"] or ["Otsikko" WikiLinkki]    </li>
+    </ul>
+  </li>
+  <li> jos WikiSanasta tai !http://osoiteesta (tai [mist‰‰n] hakasulkeissa olevasta) ei haluta HyperLinkki‰, sen eteen on laitettava huutomerkki ! tai tilde ~
+  
+    <ul type="circle">
+    <li> !EiHyperLinkki‰, ~EiHyperLinkki‰/li>
+    <li> ![ei hyperlinkki‰], !!http://eilinkki‰.org/    </li>
+    </ul>
+  </li>
+  </ul>
+
+<h4> Taulukoita k‰ytt‰m‰ll‰ | merkki‰ </h4>
+<table cellpadding="2" border="1" cellspacing="0">
+<tr>
+<td> liitt‰m‰ll‰ </td>
+<td> asioita ajatusviivalla</td>
+<td> toisiinsa </td>
+</tr><tr>
+<td> voi luoda</td>
+<td> taulukon  </td>
+</tr><tr>
+<td> selaimet yleens‰ </td>
+<td> j‰tt‰v‰t puuttuvat solut </td>
+<td> n‰ytt‰m‰tt‰ </td>
+</tr>
+</table>
+
+
+<p>
+Ennen taulukkoa ja sen j‰lkeen on laitettava tyhj‰ rivi, jotta taulukko eroaa muusta tekstist‰ omaksi kappaleekseen.
+
+</p>
+
+<h4> Kuvat</h4>
+
+  <ul type="circle">
+  <li> kuva liitet‰‰n sivulle kirjoittamalla sen absoluuttinen www-osoite hakasulkuihin, esimerkiksi [http://www.esimerkki.com/kuvat/valokuva.png]
+ </li>
+  <li> toinen vaihtoehto on k‰ytt‰‰ KuvanL‰hetys-funktiota.
+  </li>
+  </ul>
+
+<h4>Lis‰tietoja</h4>
+Wiki kuvauskieless‰ on muitakin vaihtoehtoja. Lis‰tietoja tarjolla:
+ <a href="http://erfurtwiki.sourceforge.net" target=_new>Erfurt Wiki Homepage</a>.
+
+<p>
+<a name="camelcase"></a><b>Lamelikirjasimet</b>:<br />
+Kamelikirjasimet kuvailevat milt‰ WikiSanat n‰ytt‰v‰t. Jos useampia sanoja pit‰‰ liitt‰‰ yhteen, ne liitet‰‰n ilman v‰lilyˆntej‰ ja sanav‰lit ilmaistaan kirjasinkoon muutoksilla. Isot ja pienet kirjaimet yhdess‰ muistuttavat kamelin kyttyrˆit‰.
+</p>
+<p>
+T‰st‰ sanojen linkitysmenetelm‰st‰ k‰ytet‰‰n myˆs termi‰ sekakastikirjaimet.
+</p>
+<p>
+Kielipuritaanit eiv‰t pid‰ wikil‰isist‰ t‰m‰n nime‰mistavan vuoksi, mutta sen k‰yttˆ on hyvin tavallista tietokonemaailmassa ja useimmat ohjelmoijat tuntevat tavan.
+</p>
+
+
