@@ -52,9 +52,11 @@ $CFG->dbhost    = 'localhost';   // eg localhost or db.isp.com
 $CFG->dbname    = 'moodle';      // database name, eg moodle
 $CFG->dbuser    = 'username';    // your database username
 $CFG->dbpass    = 'password';    // your database password
-$CFG->dbpersist = false;         // "false" is the most stable setting
-                                 // "true" can improve performance sometimes
 $CFG->prefix    = 'mdl_';        // Prefix to use for all table names
+
+$CFG->dbpersist = false;         // Should database connections be reused?
+                                 // "false" is the most stable setting
+                                 // "true" can improve performance sometimes
 
 
 //=========================================================================
