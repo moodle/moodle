@@ -791,6 +791,54 @@ function validate_email($address) {
 }
 
 /**
+ * Extracts file argument either from file parameter or PATH_INFO
+ *
+ * @param string $scriptname name of the calling script
+ * @return string file path (only safe characters)
+ */
+function get_file_argument($scriptname) {
+    global $_SERVER;
+
+    $relativepath = FALSE;
+
+    // first try normal parameter (compatible method == no relative links!)
+    $relativepath = optional_param('file', FALSE, PARAM_PATH);
+
+    // then try extract file from PATH_INFO (slasharguments method)
+    if (!$relativepath and !empty($_SERVER['PATH_INFO'])) {
+        $path_info = $_SERVER['PATH_INFO'];
+        // check that PATH_INFO works == must not contain the script name
+        if (!strpos($path_info, $scriptname)) {
+            $relativepath = clean_param(rawurldecode($path_info), PARAM_PATH);
+            if ($relativepath === '/test') {
+                print_header();
+                notice ('Slasharguments work - using PATH_INFO parameter :-D');
+                print_footer();
+                die;
+            }
+        }
+    }
+
+    // now if both fail try the old way
+    // (for compatibility with misconfigured or older buggy php implementations)
+    if (!$relativepath) {
+        $arr = explode($scriptname, me());
+        if (!empty($arr[1])) {
+            $path_info = strip_querystring($arr[1]);
+            $relativepath = clean_param(rawurldecode($path_info), PARAM_PATH);
+            if ($relativepath === '/test') {
+                print_header();
+                notice ('Slasharguments work - using compatibility hack :-|');
+                print_footer();
+                die;
+            }
+        }
+    }
+
+    return $relativepath;
+}
+
+/**
  * Check for bad characters ?
  *
  * @param string $string ?
