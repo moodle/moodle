@@ -100,6 +100,7 @@ $string['savemyanswers'] = "Save my answers";
 $string['savequiz'] = "Save this whole quiz";
 $string['score'] = "Raw score";
 $string['select'] = "Select";
+$string['selectall'] = "Select all";
 $string['selectcategoryabove'] = "Select a category above";
 $string['shortanswer'] = "Short Answer";
 $string['show'] = "Show";
