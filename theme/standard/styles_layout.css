@@ -448,6 +448,7 @@ td.cal_event_description {
     padding:10px;
 }
 
+/* block_quiz_results.php */
 #block_quiz_results {
     text-align: center;
 }
@@ -474,4 +475,25 @@ td.cal_event_description {
     font-weight: bold;
     font-size: 1.2em;
     margin: 4px;
+}
+
+/*****************************
+***
+*** Doc
+***
+******************************/
+
+/* contents.php */
+
+body#doc-contents h1 {
+    font-size: 1em;
+    margin: 1em 0px 0px 0px;
+}
+
+body#doc-contents ul {
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+    font-size: 0.8em;
+    width: 90%; /* try it on IE without this and see what happens */
 }
