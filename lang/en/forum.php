@@ -40,7 +40,6 @@ $string['forums'] = "Forums";
 $string['forumtype'] = "Forum type";
 $string['generalforum'] = "Standard forum for general use";
 $string['generalforums'] = "General forums";
-$string['helpreading'] = "Read carefully";
 $string['generalforums'] = "General forums";
 $string['inforum'] = "in \$a";
 $string['intronews'] = "General news and announcements";
@@ -75,21 +74,6 @@ $string['postadded'] = "Your post was successfully added.<P>You have \$a to edit
 $string['postincontext'] = "See this post in context";
 $string['postmailinfo'] = "This is a copy of a message posted on the \$a website.
 To add your reply via the website, click on this link:";
-
-$string['postingtip'] = "<b>Posting tips:</b><br \>
-When replying:
-<ul>
-<li>read their post carefully and empathically
-<li>look for things you can comment on
-</ul>
-
-While writing:
-<ul>
-<li>keep your posts short and on-topic
-<li>explain your own ideas clearly
-<li>think of questions you can ask
-</ul>";
-
 $string['postrating1'] = "Shows mostly SEPARATE knowing";
 $string['postrating2'] = "Equally separate and connected";
 $string['postrating3'] = "Shows mostly CONNECTED knowing";
