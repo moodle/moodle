@@ -8,6 +8,13 @@ function auth_user_login ($username, $password) {
 
     global $CFG;
 
+    // This is a hack to workaround what seems to be a bug in ADOdb with accessing 
+    // two databases of the same kind ... it seems to get confused when trying to access
+    // the first database again, after having accessed the second.
+    // The following hack will make the database explicit which keeps it happy
+    $CFG->prefix = "$CFG->dbname.$CFG->prefix";
+
+    // Connect to the external database
     $authdb = &ADONewConnection($CFG->auth_dbtype);         
     $authdb->PConnect($CFG->auth_dbhost,$CFG->auth_dbuser,$CFG->auth_dbpass,$CFG->auth_dbname); 
 
@@ -38,6 +45,7 @@ function auth_get_userinfo($username){
 // then returns it in an array
 
     global $CFG;
+
     $config = (array) $CFG;
 
     ADOLoadCode($CFG->auth_dbtype);          
