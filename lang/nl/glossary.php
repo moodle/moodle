@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3 Beta (2004051100)
+      // glossary.php - created with Moodle 1.3 Beta + (2004051300)
 
 
 $string['addcomment'] = 'Voeg commentaar toe';
@@ -68,7 +68,8 @@ $string['displayformat5'] = 'Toon bijhorende gegevens, zonder auteur';
 $string['displayformat6'] = 'Itemlijst';
 $string['displayformatcontinuous'] = 'Volledige lijst zonder auteur';
 $string['displayformatdefault'] = 'Eenvoudig, stijl woordenboek';
-$string['displayformats'] = 'Kies opmaakmogelijkheden';
+$string['displayformats'] = 'Bekijk opmaakmogelijkheden';
+$string['displayformatssetup'] = 'Instellingen van de opmaakmogelijkheden';
 $string['duplicateentry'] = 'Dupliceer item';
 $string['editcategories'] = 'Bewerk categoriën';
 $string['editentry'] = 'Bewerk item';
@@ -82,6 +83,7 @@ $string['entryapproved'] = 'Dit item is goedgekeurd';
 $string['entrydeleted'] = 'Item verwijderd';
 $string['entryexported'] = 'Item met succes geëxporteerd';
 $string['entryishidden'] = '(dit item is verborgen)';
+$string['entryleveldefaultsettings'] = 'Standaard instellingen invoer';
 $string['entryusedynalink'] = 'Dit item wordt<br>automatisch gelinkt';
 $string['explainaddentry'] = 'Voeg een nieuwe invoer toe in deze woordenlijst<br>Zowel concept als definitie moeten ingevuld worden.';
 $string['explainall'] = 'Toon ALLE items op één pagina';
@@ -98,6 +100,7 @@ $string['filetoimport'] = 'Te importeren bestand';
 $string['fillfields'] = 'Concept en definitie zijn verplichte velden.';
 $string['filtername'] = 'Automatisch links maken van de woordenlijst';
 $string['fullmatch'] = 'Alleen volledige woorden gebruiken<br><small>(wanneer automatisch gelinkt)</small>';
+$string['glossaryleveldefaultsettings'] = 'Standaard instellingen woordenlijst';
 $string['glossarytype'] = 'Type woordenlijst';
 $string['glosssaryexported'] = 'De woordenlijst is geëxporteerd';
 $string['importcategories'] = 'Importeer categorieën';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.2 development (2003122600)
+      // survey.php - created with Moodle 1.3 Beta + (2004051300)
 
 
 $string['actual'] = 'Werkelijk';
@@ -59,10 +59,15 @@ $string['attlsm3'] = 'Gescheiden leren';
 $string['attlsmintro'] = 'In discussie ...';
 $string['attlsname'] = 'ATTLS (versie met 20 beweringen)';
 $string['ciq1'] = 'Op welk moment van de les was je het meest betrokken als leerling?';
+$string['ciq1short'] = 'Meest betrokken';
 $string['ciq2'] = 'Op welk moment van de les had je de meeste afstand als een leerling?';
+$string['ciq2short'] = 'Meeste afstand';
 $string['ciq3'] = 'Welke actie van iemand in de forums vond je het meest helpend of bemoedigend?';
+$string['ciq3short'] = 'Hulpgevend moment';
 $string['ciq4'] = 'Welke actie van iemand in de forums vond je het meest verwarrend of onbegrijpelijk?';
+$string['ciq4short'] = 'Verwarrend moment';
 $string['ciq5'] = 'Door welke gebeurtenis werd je het meest verrast?';
+$string['ciq5short'] = 'Verrassend moment';
 $string['ciqintro'] = 'Beantwoord de onderstaande vragen terwijl je terug kijkt naar de gebeurtenissen tijdens de lessen van de afgelopen week.';
 $string['ciqname'] = 'Kritieke gebeurtenissen';
 $string['clicktocontinue'] = 'Klik hier om door te gaan';

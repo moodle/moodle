@@ -1,36 +1,75 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.3 development (2004042703)
+      // wiki.php - created with Moodle 1.3 Beta (2004051100)
 
 
 $string['00empty'] = 'Lege Wiki';
 $string['action'] = '- - Acties - -';
+$string['administration'] = 'Beheer';
 $string['attachments'] = 'Bijlage';
 $string['backlinks'] = 'Verwijzende pagina\'s';
+$string['checklinks'] = 'Controleer links';
+$string['checklinksnotice'] = 'Wees geduldig terwijl deze pagina de links controleert';
+$string['chooseadministration'] = '- - Beheer - -';
 $string['choosewikilinks'] = '- - Kies Wiki Links - -';
+$string['deletemewikiword'] = 'VerwijderMij';
+$string['deletemewikiwordfound'] = '$a gevonden op de pagina';
+$string['deleteversions'] = 'Verwijder versies';
+$string['disabledpage'] = 'Afgesloten pagina';
+$string['dumppages'] = 'Verwijder pagina';
 $string['editthispage'] = 'Bewerk deze pagina';
+$string['emptypage'] = 'Lege pagina';
+$string['errorbinandtxt'] = 'Foutvlag:  BIN en TXT pagina';
+$string['errorhtml'] = 'HTML pagina';
+$string['errornotype'] = 'Foutvlag: geen BIN of TXT';
+$string['errororreason'] = 'Fout of reden';
+$string['errorroandwr'] = 'Foutvlag: pagina is beschrijfbaar en alleen lezen';
+$string['errorsize'] = 'Pagina is groter dan 64k';
 $string['ewikiacceptbinary'] = 'Laat binaire bestanden toe';
 $string['ewikidefault'] = 'ErfurtWiki Standaard';
 $string['ewikiprinttitle'] = 'Zet de titel op elke Wikipagina';
 $string['filedownload'] = 'Bestand downloaden';
+$string['flagsset'] = 'zet';
 $string['formattingrules'] = 'Opmaakregels';
 $string['htmlmode'] = 'HTML modus';
 $string['htmlonly'] = 'Uitsluitend HTML';
 $string['initialcontent'] = 'Wiki inhoud bij start';
+$string['linkdead'] = 'Dode link';
+$string['linkok'] = 'OK';
+$string['listall'] = 'Toon alles';
 $string['modulename'] = 'Wiki';
 $string['modulenameplural'] = 'Wikis';
 $string['mostoftenchangedpages'] = 'Meest gewijzigde pagina\'s';
 $string['mostvisitedpages'] = 'Meest bezochte pagina\'s';
 $string['newestpages'] = 'Nieuwste pagina\'s';
+$string['noadministrationaction'] = 'Geen beheersactie gegeven';
 $string['nohtml'] = 'Geen HTML';
+$string['nolinksfound'] = 'Geen links gevonden op de pagina';
+$string['notadministratewiki'] = 'Je hebt onvoldoende rechten om deze wiki te beheren!';
+$string['notchanged'] = 'niet gewijzigd';
 $string['nowikicreated'] = 'Je kunt hier geen wiki maken en er is nog geen gemaakt om te bekijken.';
+$string['offline'] = 'OFFLINE';
+$string['orphanedpage'] = 'Ongelinkte pagina';
 $string['orphanedpages'] = 'Ongelinkte pagina\'s';
 $string['otherwikis'] = 'Andere Wikis';
 $string['pageactions'] = 'Pagina activiteiten';
 $string['pageindex'] = 'Index pagina';
 $string['pageinfo'] = 'Pagina informatie';
+$string['pagename'] = 'Pagina naam';
+$string['purging'] = 'Leeg maken';
+$string['readonly'] = 'Alleen lezen pagina';
+$string['removenotice'] = 'Merk op dat alleen pagina\'s zonder referentie in deze lijst voorkomen. Omdat Ewiki slechts beperkte tests doet op pagina\'s met referenties, zou het kunnen dat er sommige pagina\'s ontbreken.<br>Als je echter een pagina eerst leeg maakt, zal die ook in deze lijst verschijnen. Er worden nog verschillende andere analyses van de databank gedaan.';
+$string['removepages'] = 'Verwijder pagina\'s';
+$string['removeselectedpages'] = 'Verwijder de geselecteerde pagina\'s';
+$string['revertpages'] = 'Terug naar vorige versie';
 $string['safehtml'] = 'Veilige HTML';
 $string['searchwiki'] = 'Zoeken in Wiki';
+$string['setpageflags'] = 'Zet pagina vlaggen';
+$string['strippages'] = 'Pagina\'s opruimen';
+$string['submit'] = 'Stuur in';
 $string['updatedpages'] = 'Gewijzigde pagina\'s';
+$string['version'] = 'Versie';
+$string['versionrangetoobig'] = 'Je kunt niet alle versies van een pagina verwijderen! De laatste versie moet blijven.';
+$string['versions'] = 'Versies';
 $string['viewpage'] = 'Bekijk pagina';
 $string['wantedpages'] = 'Te maken pagina\'s';
 $string['wikidefaultpagename'] = 'StartPagina';
@@ -38,5 +77,6 @@ $string['wikilinks'] = 'Wiki links';
 $string['wikiname'] = 'Naam pagina';
 $string['wikistartederror'] = 'Er zit al inhoud in de Wiki - de gevraagde wijziging kan niet meer';
 $string['wikitype'] = 'Type';
+$string['wrongversionrange'] = '$a is geen juist bereik!';
 
 ?>
