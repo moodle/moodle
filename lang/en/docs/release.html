@@ -22,6 +22,106 @@
 <body>
 <h1>Latest Release notes</h1>
 
+<h3>Moodle 1.4.4 (7th March, 2005)</h3>
+
+<p>(Because this release contains important security fixes, we highly advise that sites using any 
+    previous version of Moodle upgrade to this version as soon as possible.)</p>
+
+
+  <dl>
+    <dt>Some important security fixes</dt>
+    <dd>
+      <ul>
+        <li>Added strong URL validation functions.</li>
+	<li>Preventative measures against tampering of config settings.</li>
+	<li>Tighter input validation in Quiz, HTML editor and course edit.</li>
+	<li>More control over user's language settings.</li>
+	<li>Safer cleaning of HTML-formatted input.</li>
+      </ul>
+    </dd>
+
+    <dt>A few new things</dt>
+    <dd>
+      <ul>
+        <li>New MP3 content filter with Flash-based mp3 player.</li>
+	<li>Better display of options in the Choice module.</li>
+	<li>UI enhancements in HTML Editor's table editor.</li>
+	<li>$CFG settings in config.php now override database settings.</li>
+        <li>Enabled garbage collection for Debian systems, with the option to disable it. Fixes stale session problems.</li>
+      </ul>
+    </dd>
+	
+   <dt>Performance improvements</dt>
+    <dd>
+      <ul>
+        <li>Serious performance optimizations in forums code.</li>
+        <li>Various optimizations by removing unnecessary database retrievals and sorting.</li>
+	<li>Major improvements in handling session locking. Downloading large files or monitoring the live logs will no longer slow down navigation in other windows.</li>
+      </ul>
+    </dd>
+
+    <dt>Other bug fixes</dt>
+    <dd>
+      <ul>
+	<li>Installer: Many fixes and updates from HEAD (including #2625) .</li>
+	<li>Installer: We now check for allow_url_fopen() before trying to validate our own URL.</li>
+
+        <li>Fixed some forum search problems.</li>
+	<li>Fixed sorting bug on forums (#2613).</li>
+
+        <li>Fixed problems in user searches with trailing spaces.</li>
+        <li>Fixed some instances of hardcoded /admin path.</li>
+	<li>Fixed some groups-related bugs (#2133, #2550, #2363)</li>
+	<li>Don't send HTML digests to people who want plain text email.</li>
+
+	<li>SCORM module &mdash; fixed navbar error.</li>
+
+        <li>Chat: Increased maximum socket read size to prevent  empty pages and repeated messages</li>
+	<li>Files: added a &quot;Parent Folder&quot; icon, (#2491).</li>
+
+	<li>Postgres support: consistency fix in mdl_log table.</li>
+
+	<li>Auth plugins: Better cleanup and truncation of data.</li>
+	<li>Auth plugins: Fixed external authentication problem &mdash; if logged in as guest, logging in as external auth user fails if it is the first login ever for the account. </li>
+	<li>Auth LDAP: Fixed a regression from 1.4.2 where a trailing semicolon in some config fields would break authentication.</li>
+        <li>Auth DB: Database Authentication not fetching user data fields correctly (#2319).</li>
+
+        <li>Paypal Enrolment plugin: Now text sent to PayPal can
+	  be 'sanitised' to avoid some diacritics (Spanish for now) which break the
+	  enrol process.  Only German and French diacritics are supported for
+	  now by PayPal.  This functionality can be easily expanded to other
+	  characters. </li>
+
+	<li>Backup/restore: If the user isn't admin and the restored course hasn't teachers, add teacher (#2381)</li>
+	<li>Backup/restore: Fixed errors with courses with apostrophes in the fullname.</li>
+	<li>Backup/restore: Now group members are
+	  only included (backup and restore) if we have selected to have
+	  users (#2486).</li>
+	<li>Backup/Restore: General tidyup.</li>
+
+	<li>Glossary: Now 0 rates are supported in glossary (#2582) and better PHP5 support (#2581).</li>
+	<li>Glossary & Blackboard: import fixes (#2310).</li>
+
+	<li>Calendar: more robust handling of bad data.</li>
+	<li>Calendar: HTML fixes in calendar (#2350).</li>
+
+	<li>Course sortorder was broken in 1.4.3 and would sometimes prevent course creation &mdash; all the known problems with sortorder are now fixed. Includes some related fixes in get_categories() calls that would sometimes show up in &quot;My Courses&quot; listings.</li>
+
+	<li>Wiki: Several fixes.</li>
+	<li>Loglive now has an appropriate page footer.</li>
+
+	<li>Plus general cleanup and tidyups of the code.</li>
+      </ul>
+    </dd>
+
+ 
+
+  </dl>
+
+
+<p>&nbsp;</p>
+
+
 <h3>Moodle 1.4.3 (21st December, 2004)</h3>
 
 <p>(Because this release contains important security fixes, we highly advise that sites using any 
