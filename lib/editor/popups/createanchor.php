@@ -60,7 +60,7 @@ border-bottom: 1px solid black; letter-spacing: 2px;
     <td align="right">
     <br />
     <button onclick="return onOK();" type="button"><?php print_string("ok","editor");?></button>&nbsp;<button onclick="return onCancel();" type="button"><?php print_string("cancel","editor");?></button>&nbsp;
-    <button type="button" onclick="javascript: void(0); alert('This only creates an anchor.\nYou still need to create a link manually.');">Help</button></td>
+    <button type="button" onclick="javascript: void(0); alert('<?php print_string("anchorhelp","editor");?>');"><?php print_string("help");?></button></td>
 </tr>
 </table>
 </form>

@@ -136,7 +136,7 @@ select, input, button { font: 11px Tahoma,Verdana,sans-serif; }
 button { width: 70px; }
 table .label { text-align: right; width: 8em; }
 
-.title { background: #ddf; color: #000; font-weight: bold; font-size: 120%; padding: 3px 10px; margin-bottom: 10px;
+.title { background: #ddf; color: #000; font-weight: bold; font-size: 120%; padding: 3px 10px; margin-bottom: 3px;
 border-bottom: 1px solid black; letter-spacing: 2px;
 }
 
@@ -148,7 +148,6 @@ border-bottom: 1px solid black; letter-spacing: 2px;
 </head>
 <body onload="Init()">
 <div class="title"><?php print_string("insertlink","editor");?></div>
-
 <table border="0" style="width: 100%;">
   <tr>
     <td class="label"><?php print_string("linkurl","editor");?>:</td>
