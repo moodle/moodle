@@ -986,15 +986,15 @@ function print_category_info($category, $depth) {
                 echo "</td>\n<td align=\"right\" valign=\"top\" nowrap>";
                 if ($course->guest ) {
                     echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                    echo "<img alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a> ";
+                    echo "<img hspace=2 alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>";
                 }
                 if ($course->password) {
                     echo "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                    echo "<img alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a> ";
+                    echo "<img hspace=2 alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
                 }
                 if ($course->summary) {
                     link_to_popup_window ("/course/info.php?id=$course->id", "courseinfo", 
-                                          "<img alt=\"info\" height=16 width=16 border=0 src=\"$pixpath/i/info.gif\">", 
+                                          "<img hspace=2 alt=\"info\" height=16 width=16 border=0 src=\"$pixpath/i/info.gif\">", 
                                            400, 500, $strsummary);
                 }
                 echo "</td></tr>\n";
