@@ -94,6 +94,7 @@ $string['postrating1'] = 'Muy individualista';
 $string['postrating2'] = 'Término medio';
 $string['postrating3'] = 'Muy comunicativo';
 $string['posts'] = 'Mensajes';
+$string['posttoforum'] = 'Enviar al foro';
 $string['postupdated'] = 'Su mensaje se ha actualizado';
 $string['processingpost'] = 'Procesando $a';
 $string['prune'] = 'Partir';
