@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 alpha (2004081500)
+      // quiz.php - created with Moodle 1.4 beta (2004082300)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -50,8 +50,8 @@ $string['choosedatasetproperties'] = 'Kies de eigenschappen van de gegevensset';
 $string['close'] = 'Sluit weergavetest';
 $string['confirmstartattempt'] = 'Deze test heeft een tijdsduurbeperking. Ben je klaar om te beginnen?';
 $string['correctanswer'] = 'Het goede antwoord';
-$string['correctanswerformula'] = 'Juist antwoordformule';
-$string['correctanswerlength'] = 'Belangrijke afbeeldingen';
+$string['correctanswerformula'] = 'Juiste antwoordformule';
+$string['correctanswerlength'] = 'Aantal beduidende cijfers';
 $string['correctanswers'] = 'Goede antwoorden';
 $string['corrresp'] = 'Juiste reactie';
 $string['countdown'] = 'Aftellen';
@@ -229,7 +229,7 @@ $string['shuffleanswers'] = 'Mix de antwoorden';
 $string['shufflequestions'] = 'Mix de vragen';
 $string['significantfigures'] = 'met $a';
 $string['subneterror'] = 'Deze test is zo beveiligd dat hij alleen toegankelijk is vanop bepaalde plaatsen. Jouw computer staat niet in de lijst met toegelaten machines om deze test te maken.';
-$string['substitutedby'] = 'zla vervangen worden door';
+$string['substitutedby'] = 'zal vervangen worden door';
 $string['time'] = 'Tijd  ';
 $string['timecompleted'] = 'Voltooid';
 $string['timeleft'] = 'Resterende tijd';
