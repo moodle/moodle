@@ -1,0 +1,23 @@
+To Do
+=====
+
+Use a better method to measure bias in peer grades, probably based on the
+	percentage difference rather the relative difference used at present.
+
+When there are many peer gradings the grade comments page needs to be
+	broken into manageable chunks. **DONE**
+
+Allow teacher to add a set of submissions (from say a previous cohort) for the
+	students to grade. **Probably better as a separate module**
+	
+Add option to allow the teacher's grade and mean peer grade to be merged in
+	the final grades table (to avoid disputes!).
+
+Add alternative grading strategies: Simple Grading (= assignment style grading);
+	Accumulative Grading (current strategy); Criteria Grading; and Error Banding.
+
+	
+Ray Kingdon
+06 Feb 2003
+
+

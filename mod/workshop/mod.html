@@ -1,0 +1,189 @@
+<?
+    if ($usehtmleditor = can_use_richtext_editor()) {
+        $defaultformat = FORMAT_HTML;
+        $onsubmit = "onsubmit=\"copyrichtext(document.form.description);\"";
+    } else {
+        $defaultformat = FORMAT_MOODLE;
+        $onsubmit = "";
+    }
+?>
+
+<form name="form" method="post" <?=$onsubmit ?> action="<?=$ME ?>">
+<table cellpadding=5>
+<tr valign=top>
+    <td align=right><P><B><? print_string("title", "workshop") ?>:</B></P></TD>
+    <td>
+        <input type="text" name="name" size=60 value="<? p($form->name) ?>">
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><P><B><? print_string("description", "workshop") ?>:</B></P></TD>
+    <td>
+    <? 
+       print_textarea($usehtmleditor, 20, 60, 595, 400, "description", $form->description);
+    
+       if ($usehtmleditor) { 
+           helpbutton("richtext", get_string("helprichtext"));
+       } else { 
+           helpbutton("text", get_string("helptext"));
+       }
+       echo "<P align=right>";
+       print_string("formattexttype");
+       echo ":&nbsp;";
+       if (!$form->format) {
+           $form->format = $defaultformat;
+       }
+       choose_from_menu(format_text_menu(), "format", $form->format, ""); 
+       helpbutton("textformat", get_string("formattexttype"));
+       echo "</P>";
+    ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><? print_string("maximumgrade") ?>:</B></P></TD>
+    <td>
+        <?
+        for ($i=100; $i>=0; $i--) {
+            $grades[$i] = $i;
+        }
+        choose_from_menu($grades, "grade", "$form->grade", "");
+        ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><? print_string("gradingstrategy", "workshop") ?>:</B></P></TD>
+    <td>
+    <?PHP
+       require("$CFG->dirroot/mod/workshop/lib.php");
+	   if (!isset($form->gradingstrategy)) {
+		   $form->gradingstrategy = 1;  // default
+		   }
+       choose_from_menu($WORKSHOP_TYPE, "gradingstrategy", $form->gradingstrategy, "");
+       helpbutton("gradingstrategy", get_string("gradingstrategy", "workshop"), "workshop");
+    ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><? print_string("numberofassessmentelements", "workshop") ?>:</B></P></TD>
+    <td>
+        <?
+        for ($i=20; $i>=0; $i--) {
+            $numbers[$i] = $i;
+        }
+        choose_from_menu($numbers, "nelements", "$form->nelements", "");
+       helpbutton("nelements", get_string("numberofassessmentelements", "workshop"), "workshop");
+        ?>
+    </td>
+</tr>
+
+<tr>
+    <td align=right><P><B><? print_string("allowresubmit", "workshop") ?>:</B></P></TD>
+    <td>
+    <?PHP 
+        $options[0] = get_string("no"); $options[1] = get_string("yes");
+        choose_from_menu($options, "resubmit", $form->resubmit, "");
+        helpbutton("resubmit", get_string("allowresubmit", "workshop"), "workshop");
+    ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><? print_string("numberofassessmentsofteachersexamples", "workshop") ?>:</B></P></TD>
+    <td>
+		<?PHP
+		for ($i=20; $i>=0; $i--) {
+			$numbers[$i] = $i;
+		}
+		choose_from_menu($numbers, "ntassessments", $form->ntassessments, "");
+       helpbutton("nassessmentsofteachersexamples", get_string("numberofassessmentsofteachersexamples", "workshop"), "workshop");
+		?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><? print_string("numberofassessmentsofstudentsubmissions", "workshop") ?>:</B></P></TD>
+    <td>
+		<?PHP
+		for ($i=20; $i>=0; $i--) {
+			$numbers[$i] = $i;
+		}
+		choose_from_menu($numbers, "nsassessments", $form->nsassessments, "");
+       helpbutton("nassessmentsofstudentsubmissions", get_string("numberofassessmentsofstudentsubmissions", "workshop"), "workshop");
+		?>
+    </td>
+</tr>
+
+<tr>
+    <td align=right><P><B><? print_string("selfassessment", "workshop") ?>:</B></P></TD>
+    <td>
+    <?PHP 
+        $options[0] = get_string("no"); $options[1] = get_string("yes");
+        choose_from_menu($options, "includeself", $form->includeself, "");
+        helpbutton("selfassessment", get_string("selfassessment", "workshop"), "workshop");
+    ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><? print_string("maximumsize", "workshop") ?>:</B></P></TD>
+    <td>
+        <?
+        $sizelist = array("10Kb", "50Kb", "100Kb", "500Kb", "1Mb", "2Mb", "5Mb", "10Mb", "20Mb", "50Mb");
+        $maxsize = get_max_upload_file_size();
+        $sizeinlist = false;
+        foreach ($sizelist as $size) {
+            $sizebytes = get_real_size($size);
+            if ($sizebytes < $maxsize) {
+                $filesize[$sizebytes] = $size;
+            }
+            if ($form->maxbytes == $sizebytes) {
+                $sizeinlist = true;
+            }
+        }
+        $filesize[$maxsize] = display_size($maxsize);
+        if (!$sizeinlist) {
+            $form->maxbytes = get_real_size("500K");
+        }
+        ksort($filesize, SORT_NUMERIC);
+        choose_from_menu($filesize, "maxbytes", "$form->maxbytes", "");
+        ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><? print_string("deadline", "workshop") ?>:</B></td>
+    <td><?
+           print_date_selector("deadlineday", "deadlinemonth", "deadlineyear", $form->deadline);
+           echo "&nbsp;-&nbsp;";
+           print_time_selector("deadlinehour", "deadlineminute", $form->deadline);
+           formerr($err["deadline"]);
+    ?></td>
+</tr>
+
+</table>
+<BR>
+<CENTER>
+<input type="hidden" name=course     value="<? p($form->course) ?>">
+<input type="hidden" name=coursemodule  value="<? p($form->coursemodule) ?>">
+<input type="hidden" name=section       value="<? p($form->section) ?>">
+<input type="hidden" name=module     value="<? p($form->module) ?>">
+<input type="hidden" name=modulename value="<? p($form->modulename) ?>">
+<input type="hidden" name=instance   value="<? p($form->instance) ?>">
+<input type="hidden" name=mode       value="<? p($form->mode) ?>">
+<input type="submit" value="<? print_string("savechanges") ?>">
+<input type="submit" name=cancel value="<? print_string("cancel") ?>">
+<p>
+<p><?PHP notify(get_string("noteonassessmentelements", "workshop")); ?>
+
+</CENTER>
+</FORM>
+
+<? 
+   if ($usehtmleditor) { 
+       print_richedit_javascript("form", "description", "no");
+   }
+?>
+
