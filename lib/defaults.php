@@ -15,7 +15,7 @@
        "lang"             => "en",
        "langdir"          => "LTR",
        "langmenu"         =>  1,
-       "langhide"         => "",
+       "langlist"         => "",
        "locale"           => "en",
        "loglifetime"      =>  0,
        "longtimenosee"    =>  100,
