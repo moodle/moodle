@@ -8,7 +8,6 @@ $string['allcategories'] = "全てのカテゴリ";
 $string['allentries'] = "全て";
 $string['allowcomments'] = "エントリーへのコメントを許可する";
 $string['allowduplicatedentries'] = "重複エントリーを許可する";
-$string['alphabet'] = "A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z";
 $string['areyousuredelete'] = "本当にこのエントリーを削除しても宜しいですか?";
 $string['areyousuredeletecomment'] = "本当にこのコメントを削除しても宜しいですか?";
 $string['attachment'] = "添付";

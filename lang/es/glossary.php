@@ -8,7 +8,6 @@ $string['allcategories'] = "Todas las categorías";
 $string['allentries'] = "TODAS";
 $string['allowcomments'] = "Permitir comentar las entradas";
 $string['allowduplicatedentries'] = "Permitir entradas duplicadas";
-$string['alphabet'] = "A|B|C|D|E|F|G|H|I|J|K|L|M|N|Ñ|O|P|Q|R|S|T|U|V|W|X|Y|Z";
 $string['areyousuredelete'] = "¿Está seguro que desea borrarla?";
 $string['areyousuredeletecomment'] = "¿Está seguro que desea borrar este comentario?";
 $string['attachment'] = "Adjunto";

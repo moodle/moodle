@@ -55,6 +55,7 @@ $string['allow'] = "Tillad";
 $string['allowguests'] = "Dette kursus tillader gæster";
 $string['allownot'] = "Tillad ikke";
 $string['allparticipants'] = "Alle deltagere";
+$string['alphabet'] = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,Æ,Ø,Å ";
 $string['alphanumerical'] = "Kan kun indeholde bogstaver eller tal";
 $string['alreadyconfirmed'] = "Registrering er allerede bekræftet";
 $string['answer'] = "Svar";

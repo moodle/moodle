@@ -8,7 +8,6 @@ $string['allcategories'] = "Alle categorieën";
 $string['allentries'] = "Alles";
 $string['allowcomments'] = "Commentaar toevoegen toelaten";
 $string['allowduplicatedentries'] = "Woord meerdere keren invoegen toelaten";
-$string['alphabet'] = "A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z";
 $string['answer'] = "Antwoord";
 $string['approve'] = "Goedkeuren";
 $string['areyousuredelete'] = "Wil je dit woord echt verwijderen ?";

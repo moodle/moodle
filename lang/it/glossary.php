@@ -6,7 +6,6 @@ $string['addentry'] = "Aggiungi termine";
 $string['allcategories'] = "Tutte le Categorie";
 $string['allentries'] = "TUTTI";
 $string['allowduplicatedentries'] = "Termini duplicati permessi";
-$string['alphabet'] = "A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z";
 $string['areyousuredelete'] = "Sei sicuro di voler rimuovere questo termine?";
 $string['attachment'] = "Allegato";
 $string['back'] = "Indietro";

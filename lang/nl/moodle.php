@@ -55,6 +55,7 @@ $string['allow'] = "Sta toe";
 $string['allowguests'] = "In dit vak zijn gasten toegestaan";
 $string['allownot'] = "Sta niet toe";
 $string['allparticipants'] = "Alle deelnemers";
+$string['alphabet'] = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z";
 $string['alphanumerical'] = "Mag alleen maar alphabetische letters of nummers bevatten";
 $string['alreadyconfirmed'] = "De registratie is al bevestigd";
 $string['answer'] = "Antwoord";

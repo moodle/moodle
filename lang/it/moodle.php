@@ -55,6 +55,7 @@ $string['allow'] = "Permettere";
 $string['allowguests'] = "Questo corso permette l'accesso ad utenti ospiti";
 $string['allownot'] = "Non permettere";
 $string['allparticipants'] = "Tutti i partecipanti";
+$string['alphabet'] = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z";
 $string['alphanumerical'] = "Puo' contenere solo lettere dell'alfabeto o numeri";
 $string['alreadyconfirmed'] = "La registrazione è già stata confermata";
 $string['answer'] = "Risposta";

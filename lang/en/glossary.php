@@ -8,7 +8,6 @@ $string['allentries'] = "ALL";
 $string['allcategories'] = "All Categories";
 $string['allowcomments'] = "Allow comments on entries";
 $string['allowduplicatedentries'] = "Duplicated entries allowed";
-$string['alphabet'] = "A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z";
 $string['answer'] = "Answer";
 $string['areyousuredelete'] = "Are you sure you want to delete this entry?";
 $string['areyousuredeletecomment'] = "Are you sure you want to delete this comment?";

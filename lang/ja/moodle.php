@@ -55,6 +55,7 @@ $string['allow'] = "許可する";
 $string['allowguests'] = "このコースはゲストユーザも利用できます。";
 $string['allownot'] = "許可しない";
 $string['allparticipants'] = "全参加者";
+$string['alphabet'] = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z";
 $string['alphanumerical'] = "半角英数字のみ入力";
 $string['alreadyconfirmed'] = "登録作業は既に完了しています";
 $string['answer'] = "回答";

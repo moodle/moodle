@@ -8,7 +8,6 @@ $string['allcategories'] = "Alle kategorier";
 $string['allentries'] = "ALLE";
 $string['allowcomments'] = "Tillad kommentare til opslagsord";
 $string['allowduplicatedentries'] = "Ens opslagsord er tilladt";
-$string['alphabet'] = "A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|Æ|Ø|Å ";
 $string['answer'] = "Svar";
 $string['approve'] = "Godkend";
 $string['areyousuredelete'] = "Er du sikker på at du vil slette dette opslagsord?";
