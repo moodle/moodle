@@ -1049,11 +1049,9 @@ function delete_records_select($table, $select='') {
  * @uses $db
  * @uses $CFG
  * @param string $table The database table to be checked against.
- * @param array $dataobject An associative array with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
+ * @param array $dataobject A data object with values for one or more fields in the record
  * @param boolean $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
- * @param string $primarykey Defaults to 'id'. The primary key to use against the specified table when inserting the contents of $dataobject.
- * @return int|false Returns the id for the new record created or false if an error occured.
- * @todo Finish documenting this function. Dataobject is actually an associateive array, correct?
+ * @param string $primarykey The primary key of the table we are inserting into (almost always "id")
  */
 function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
@@ -1100,10 +1098,8 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         return true;
     }
 
-/// We already know the record PK
-/// if it's been passed explicitly,
-/// or if we've retrieved it from a
-/// sequence (Postgres).
+/// We already know the record PK if it's been passed explicitly,
+/// or if we've retrieved it from a sequence (Postgres).
     if (isset($dataobject->{$primarykey})) {
         return $dataobject->{$primarykey};
     }
@@ -1120,12 +1116,12 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
             trigger_error("Retrieved $primarykey from oid on table $table because we could not find the sequence.");
             return (integer)$rs->fields[0];
         } 
-        trigger_error('Failed to retrieve primary key after insert: SELECT '. $primarykey .' FROM '. $CFG->prefix . $table .' WHERE oid = '. $id);
+        trigger_error('Failed to retrieve primary key after insert: SELECT '. $primarykey .
+                      ' FROM '. $CFG->prefix . $table .' WHERE oid = '. $id);
         return false;
     }
 
     return (integer)$id;
-    
 }
 
 
