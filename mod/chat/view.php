@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 /// This page prints a particular instance of chat
 
@@ -51,12 +51,12 @@
     $strnextsession  = get_string("nextsession", "chat");
 
     print_header_simple("$chat->name", "",
-                 "<A HREF=index.php?id=$course->id>$strchats</A> -> $chat->name", 
+                 "<a href=\"index.php?id=$course->id\">$strchats</a> -> $chat->name", 
                   "", "", true, update_module_button($cm->id, $course->id, $strchat), 
                   navmenu($course, $cm));
 
     if (($chat->studentlogs or isteacher($course->id)) and !isguest()) {
-        echo "<p align=right><a href=\"report.php?id=$cm->id\">".
+        echo "<p align=\"right\"><a href=\"report.php?id=$cm->id\">".
               get_string("viewreport", "chat")."</a></p>";
     }
 
@@ -134,11 +134,11 @@
         echo "<table width=\"100%\">";
         foreach ($chatusers as $chatuser) {
             $lastping = $timenow - $chatuser->lastmessageping;
-            echo "<tr><td width=35>";
+            echo "<tr><td width=\"35\">";
             echo "<a href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&course=$chat->course\">";
             print_user_picture($chatuser->id, 0, $chatuser->picture, false, false, false);
-            echo "</a></td><td valign=center>";
-            echo "<p><font size=1>";
+            echo "</a></td><td valign=\"center\">";
+            echo "<p><font size=\"1\">";
             echo fullname($chatuser).'<br />';
             echo "<font color=\"#888888\">$stridle: ".format_time($lastping)."</font>";
             echo "</font></p>";

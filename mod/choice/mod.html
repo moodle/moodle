@@ -51,17 +51,17 @@
 ?>
 <form name="form" method="post" action="mod.php">
 
-<table cellpadding=5>
+<table cellpadding="5">
 
-<tr valign=top>
-    <td align=right><p><b><?php print_string("choicename","choice") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("choicename","choice") ?>:</b></p></td>
     <td>
-        <input type="text" name="name" size=30 value="<?php p($form->name) ?>">
+        <input type="text" name="name" size="30" value="<?php p($form->name) ?>">
     </td>
 </tr>
 
-<tr valign=top>
-    <td align=right><p><b><?php print_string("choicetext","choice") ?>:</b></p>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("choicetext","choice") ?>:</b></p>
     <font size="1">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
@@ -84,7 +84,7 @@
        if ($usehtmleditor) {
            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
        } else {
-           echo "<p align=right>";
+           echo "<p align=\"right\">";
            helpbutton("textformat", get_string("formattexttype"));
            print_string("formattexttype");
            echo ":&nbsp;";
@@ -98,53 +98,53 @@
     </td>
 </tr>
 
-<tr valign=top>
-    <td align=right><p><b><?php print_string("choice","choice","1") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("choice","choice","1") ?>:</b></p></td>
     <td>
-        <input type="text" name="answer1" size=60 value="<?php p($form->answer1) ?>">
+        <input type="text" name="answer1" size="60" value="<?php p($form->answer1) ?>">
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
 
-<tr valign=top>
-    <td align=right><p><b><?php print_string("choice","choice","2") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("choice","choice","2") ?>:</b></p></td>
     <td>
-        <input type="text" name="answer2" size=60 value="<?php p($form->answer2) ?>">
+        <input type="text" name="answer2" size="60" value="<?php p($form->answer2) ?>">
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
 
-<tr valign=top>
-    <td align=right><p><b><?php print_string("choice","choice","3") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("choice","choice","3") ?>:</b></p></td>
     <td>
-        <input type="text" name="answer3" size=60 value="<?php p($form->answer3) ?>">
+        <input type="text" name="answer3" size="60" value="<?php p($form->answer3) ?>">
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("choice","choice","4") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("choice","choice","4") ?>:</b></p></td>
     <td>
-        <input type="text" name="answer4" size=60 value="<?php p($form->answer4) ?>">
+        <input type="text" name="answer4" size="60" value="<?php p($form->answer4) ?>">
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("choice","choice","5") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("choice","choice","5") ?>:</b></p></td>
     <td>
-        <input type="text" name="answer5" size=60 value="<?php p($form->answer5) ?>">
+        <input type="text" name="answer5" size="60" value="<?php p($form->answer5) ?>">
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("choice","choice","6") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("choice","choice","6") ?>:</b></p></td>
     <td>
-        <input type="text" name="answer6" size=60 value="<?php p($form->answer6) ?>">
+        <input type="text" name="answer6" size="60" value="<?php p($form->answer6) ?>">
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
 
-<tr valign=top>
-    <td align=right><p><b><?php print_string("timerestrict", "choice") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("timerestrict", "choice") ?>:</b></p></td>
     <td>
         <script>
             var timeitems = ['openday','openmonth','openyear','openhour', 'openminute', 'closeday','closemonth','closeyear','closehour','closeminute'];
@@ -156,7 +156,7 @@
      ?>
     </td>
 </tr>
-<tr valign=top>
+<tr valign="top">
     <td><p>&nbsp;</p></td>
     <td>
 
@@ -181,7 +181,7 @@
                 </td>
             </tr>
             <tr>
-                <td align=right><p><b><?php print_string("choiceclose", "choice") ?>:</b></p></td>
+                <td align="right"><p><b><?php print_string("choiceclose", "choice") ?>:</b></p></td>
                 <td>
                 
     <?php
@@ -213,8 +213,8 @@
     </td>
 </tr>
 
-<tr valign=top>
-    <td align=right><P><B><?php print_string("publish","choice") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("publish","choice") ?>:</b></p></td>
     <td>
         <?php
         require_once("$CFG->dirroot/mod/choice/lib.php");
@@ -224,8 +224,8 @@
     </td>
 </tr>
 
-<tr valign=top>
-    <td align=right><P><B><?php print_string("privacy","choice") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("privacy","choice") ?>:</b></p></td>
     <td>
         <?php
         require_once("$CFG->dirroot/mod/choice/lib.php");
@@ -236,8 +236,8 @@
 </tr>
 
 
-<tr valign=top>
-    <td align=right><P><B><?php print_string("allowupdate","choice") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("allowupdate","choice") ?>:</b></p></td>
     <td>
         <?php
         $options[0] = get_string("no");
@@ -249,8 +249,8 @@
 </tr>
 
 
-<tr valign=top>
-    <td align=right><P><B><?php print_string("showunanswered","choice") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("showunanswered","choice") ?>:</b></p></td>
     <td>
         <?php
         $options[0] = get_string("no");
@@ -264,14 +264,14 @@
 </table>
 
 <center>
-<input type="hidden" name=course     value="<?php p($form->course) ?>">
-<input type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
-<input type="hidden" name=section       value="<?php p($form->section) ?>">
-<input type="hidden" name=module     value="<?php p($form->module) ?>">
-<input type="hidden" name=modulename value="<?php p($form->modulename) ?>">
-<input type="hidden" name=instance   value="<?php p($form->instance) ?>">
-<input type="hidden" name=mode       value="<?php p($form->mode) ?>">
+<input type="hidden" name="course"     value="<?php p($form->course) ?>">
+<input type="hidden" name="coursemodule"  value="<?php p($form->coursemodule) ?>">
+<input type="hidden" name="section"       value="<?php p($form->section) ?>">
+<input type="hidden" name="module"     value="<?php p($form->module) ?>">
+<input type="hidden" name="modulename" value="<?php p($form->modulename) ?>">
+<input type="hidden" name="instance"   value="<?php p($form->instance) ?>">
+<input type="hidden" name="mode"       value="<?php p($form->mode) ?>">
 <input type="submit" value="<?php print_string("savechanges") ?>">
-<input type="submit" name=cancel value="<?php print_string("cancel") ?>">
+<input type="submit" name="cancel" value="<?php print_string("cancel") ?>">
 </center>
 </form>

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 $CHOICE_MAX_NUMBER = 6;
 

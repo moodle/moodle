@@ -34,7 +34,7 @@ if ($arsc_my = arsc_getdatafromsid($arsc_sid))
   <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
   <html>
    <body>
-    <?php echo arsc_filter_posting("System", date("H:i:s"), "<font size=4><b>".$arsc_message."</b></font>", $arsc_room, 0); ?>
+    <?php echo arsc_filter_posting("System", date("H:i:s"), "<font size=\"4\"><b>".$arsc_message."</b></font>", $arsc_room, 0); ?>
    </body>
   </html>
   <?php
@@ -63,7 +63,7 @@ if ($arsc_my = arsc_getdatafromsid($arsc_sid))
     </title>
    </head>
    <body>
-    <form action="../shared/chatins.php" METHOD="POST">
+    <form action="../shared/chatins.php" method="POST">
      <a href="index.php?arsc_sid=<?php echo $arsc_sid; ?>&arsc_lastid=<?php echo $arsc_lastid; ?>"><?php echo $arsc_lang["refreshmessages"]; ?></a>
      <input type="hidden" name="arsc_sid" value="<?php echo $arsc_sid; ?>">
      <input type="hidden" name="arsc_lastid" value="<?php echo $arsc_lastid; ?>">

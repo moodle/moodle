@@ -44,7 +44,7 @@ if ($arsc_my = arsc_getdatafromsid($arsc_sid))
   header("Cache-Control: no-cache, must-revalidate");
   header("Pragma: no-cache");
   header("Content-Type: text/html");
-  header("Refresh: 4; URL=chatmsg.php?arsc_sid=".$arsc_sid."&arsc_lastid=".$arsc_lastid."&dummy=".time()."#end");
+  header("Refresh: 4; url=chatmsg.php?arsc_sid=".$arsc_sid."&arsc_lastid=".$arsc_lastid."&dummy=".time()."#end");
   echo $arsc_parameters["htmlhead"];
   
   set_magic_quotes_runtime(0);

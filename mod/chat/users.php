@@ -66,7 +66,7 @@ header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
 header("Cache-Control: no-cache, must-revalidate");
 header("Pragma: no-cache");
 header("Content-Type: text/html");
-header("Refresh: $CFG->chat_refresh_userlist; URL=users.php?chat_sid=$chat_sid&groupid=$groupid");
+header("Refresh: $CFG->chat_refresh_userlist; url=users.php?chat_sid=$chat_sid&groupid=$groupid");
 
 print_header();
 
@@ -94,11 +94,11 @@ if (!$chatusers = chat_get_users($chatuser->chatid, $groupid)) {
 echo "<table width=\"100%\">";
 foreach ($chatusers as $chatuser) {
     $lastping = $timenow - $chatuser->lastmessageping;
-    echo "<tr><td width=35>";
+    echo "<tr><td width=\"35\">";
     echo "<a target=\"_new\" onClick=\"return openpopup('/user/view.php?id=$chatuser->id&course=$chat->course','user$chatuser->id','');\" href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&course=$chat->course\">";
     print_user_picture($chatuser->id, 0, $chatuser->picture, false, false, false);
-    echo "</a></td><td valign=center>";
-    echo "<p><font size=1>";
+    echo "</a></td><td valign=\"center\">";
+    echo "<p><font size=\"1\">";
     echo fullname($chatuser)."<br />";
     echo "<font color=\"#888888\">$stridle: ".format_time($lastping, $str)."</font>";
     echo " <a href=\"users.php?chat_sid=$chat_sid&beep=$chatuser->id&groupid=$groupid\">$strbeep</a>";

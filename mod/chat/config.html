@@ -1,17 +1,17 @@
 <form method="post" action="module.php" name="form">
 
-<table cellpadding=9 cellspacing=0 >
+<table cellpadding="9" cellspacing="0" >
 
 <tr>
-  <td colspan=3 align=center>
+  <td colspan="3" align="center">
      <div><b><?php print_string('generalconfig', 'chat')?></b></div>
      <div style="font-size: 0.8em;">(<?php print_string('explaingeneralconfig', 'chat')?>)</div>
   </td>
 </tr>
 
 
-<tr valign=top>
-	<td align=right><p>chat_method:</td>
+<tr valign="top">
+	<td align="right"><p>chat_method:</td>
 	<td>
     <?php
        unset($options);
@@ -24,19 +24,19 @@
     <?php print_string("configmethod", "chat") ?>
     </td>
 </tr>
-<tr valign=top>
-	<td align=right><p>chat_refresh_userlist:</td>
+<tr valign="top">
+	<td align="right"><p>chat_refresh_userlist:</td>
 	<td>
-    <input name=chat_refresh_userlist type=text size=5 value="<?php p($CFG->chat_refresh_userlist) ?>">
+    <input name="chat_refresh_userlist" type="text" size="5" value="<?php p($CFG->chat_refresh_userlist) ?>">
     </td>
     <td>
     <?php print_string("configrefreshuserlist", "chat") ?>
     </td>
 </tr>
-<tr valign=top>
-	<td align=right><p>chat_old_ping:</td>
+<tr valign="top">
+	<td align="right"><p>chat_old_ping:</td>
 	<td>
-    <input name=chat_old_ping type=text size=5 value="<?php p($CFG->chat_old_ping) ?>">
+    <input name="chat_old_ping" type="text" size="5" value="<?php p($CFG->chat_old_ping) ?>">
     </td>
     <td>
     <?php print_string("configoldping", "chat") ?>
@@ -44,16 +44,16 @@
 </tr>
 
 <tr>
-  <td colspan=3 align=center><hr />
+  <td colspan="3" align="center"><hr />
      <div><b><?php print_string('methodnormal', 'chat')?></b></div>
      <div style="font-size: 0.8em;">(<?php print_string('explainmethodnormal', 'chat')?>)</div>
   </td>
 </tr>
 
-<tr valign=top>
-	<td align=right><p>chat_refresh_room:</td>
+<tr valign="top">
+	<td align="right"><p>chat_refresh_room:</td>
 	<td>
-    <input name=chat_refresh_room type=text size=5 value="<?php p($CFG->chat_refresh_room) ?>">
+    <input name="chat_refresh_room" type="text" size="5" value="<?php p($CFG->chat_refresh_room) ?>">
     </td>
     <td>
     <?php print_string("configrefreshroom", "chat") ?>
@@ -61,43 +61,43 @@
 </tr>
 
 <tr>
-  <td colspan=3 align=center><hr />
+  <td colspan="3" align="center"><hr />
      <div><b><?php print_string('methoddaemon', 'chat')?></b></div>
      <div style="font-size: 0.8em;">(<?php print_string('explainmethoddaemon', 'chat')?>)</div>
   </td>
 </tr>
 
-<tr valign=top>
-	<td align=right><p>chat_serverhost:</td>
+<tr valign="top">
+	<td align="right"><p>chat_serverhost:</td>
 	<td>
-    <input name=chat_serverhost type=text size=20 value="<?php p($CFG->chat_serverhost) ?>">
+    <input name="chat_serverhost" type="text" size="20" value="<?php p($CFG->chat_serverhost) ?>">
     </td>
     <td>
     <?php print_string("configserverhost", "chat") ?>
     </td>
 </tr>
-<tr valign=top>
-	<td align=right><p>chat_serverip:</td>
+<tr valign="top">
+	<td align="right"><p>chat_serverip:</td>
 	<td>
-    <input name=chat_serverip type=text size=16 value="<?php p($CFG->chat_serverip) ?>">
+    <input name="chat_serverip" type="text" size="16" value="<?php p($CFG->chat_serverip) ?>">
     </td>
     <td>
     <?php print_string("configserverip", "chat") ?>
     </td>
 </tr>
-<tr valign=top>
-	<td align=right><p>chat_serverport:</td>
+<tr valign="top">
+	<td align="right"><p>chat_serverport:</td>
 	<td>
-    <input name=chat_serverport type=text size=5 value="<?php p($CFG->chat_serverport) ?>">
+    <input name="chat_serverport" type="text" size="5" value="<?php p($CFG->chat_serverport) ?>">
     </td>
     <td>
     <?php print_string("configserverport", "chat") ?>
     </td>
 </tr>
-<tr valign=top>
-	<td align=right><p>chat_servermax:</td>
+<tr valign="top">
+	<td align="right"><p>chat_servermax:</td>
 	<td>
-    <input name=chat_servermax type=text size=5 value="<?php p($CFG->chat_servermax) ?>">
+    <input name="chat_servermax" type="text" size="5" value="<?php p($CFG->chat_servermax) ?>">
     </td>
     <td>
     <?php print_string("configservermax", "chat") ?>
@@ -105,7 +105,7 @@
 </tr>
 
 <tr>
-    <td colspan=3 align=center>
+    <td colspan="3" align="center">
 	<input type="submit" value="<?php print_string("savechanges") ?>"></td>
 </tr>
 </table>

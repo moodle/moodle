@@ -262,8 +262,8 @@ class ChatDaemon {
                 echo '<tr><td width="35">';
                 echo '<a target="_new" onclick="return openpopup('.$popuppar.');" href="'.$CFG->wwwroot.'/user/view.php?id='.$userinfo['chatuser']->id.'&amp;course='.$userinfo['courseid'].'">';
                 print_user_picture($userinfo['user']->id, 0, $userinfo['user']->picture, false, false, false);
-                echo "</a></td><td valign=center>";
-                echo "<p><font size=1>";
+                echo "</a></td><td valign=\"center\">";
+                echo "<p><font size=\"1\">";
                 echo fullname($userinfo['user'])."<br />";
                 echo "<font color=\"#888888\">$str->idle: ".format_time($lastping, $str)."</font> ";
                 echo '<a target="empty" href="http://'.$CFG->chat_serverhost.':'.$CFG->chat_serverport.'/?win=beep&beep='.$userinfo['user']->id.
@@ -365,7 +365,7 @@ class ChatDaemon {
 
                 // The refresh value is 2 seconds higher than the configuration variable because we are doing JS refreshes all the time.
                 // However, if the JS doesn't work for some reason, we still want to refresh once in a while.
-                $header .= "Refresh: ".(intval($CFG->chat_refresh_userlist) + 2)."; URL=http://$CFG->chat_serverhost:$CFG->chat_serverport/?win=users&".
+                $header .= "Refresh: ".(intval($CFG->chat_refresh_userlist) + 2)."; url=http://$CFG->chat_serverhost:$CFG->chat_serverport/?win=users&".
                            "chat_sid=".$sessionid."&groupid=".$this->sets_info[$sessionid]['groupid']."\n";
                 $header .= "\n";
 

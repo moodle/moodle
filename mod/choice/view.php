@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -64,7 +64,7 @@
     add_to_log($course->id, "choice", "view", "view.php?id=$cm->id", $choice->id, $cm->id);
 
     print_header_simple("$choice->name", "",
-                 "<A HREF=index.php?id=$course->id>$strchoices</A> -> $choice->name", "", "", true,
+                 "<a href=\"index.php?id=$course->id\">$strchoices</a> -> $choice->name", "", "", true,
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
 
 /// Check to see if groups are being used in this choice
@@ -80,7 +80,7 @@
         } else {
             $responsecount = 0;
         }
-        echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".get_string("viewallresponses", "choice", $responsecount)."</A></P>";
+        echo "<p align=\"right\"><a href=\"report.php?id=$cm->id\">".get_string("viewallresponses", "choice", $responsecount)."</a></p>";
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }
@@ -99,26 +99,26 @@
     if ( (!$current or $choice->allowupdate) and ($choice->timeclose >= time() or $choice->timeclose == 0) ) { 
     // They haven't made their choice yet or updates allowed and choice is open
     
-        echo "<CENTER><P><FORM name=\"form\" method=\"post\" action=\"view.php\">";
-        echo "<TABLE CELLPADDING=20 CELLSPACING=20><TR>";
+        echo "<center><p><form name=\"form\" method=\"post\" action=\"view.php\">";
+        echo "<table cellpadding=\"20\" cellspacing=\"20\"><tr>";
 
         foreach ($choice->answer as $key => $answer) {
             if ($answer) {
-                echo "<TD ALIGN=CENTER>";
-                echo "<INPUT type=radio name=answer value=\"$key\" ".$answerchecked[$key]." />";
+                echo "<td align=\"center\">";
+                echo "<input type=\"radio\" name=\"answer\" value=\"$key\" ".$answerchecked[$key]." />";
                 p($answer);
-                echo "</TD>";
+                echo "</td>";
             }
         }
     
-        echo "</TR></TABLE>";
-        echo "<INPUT type=hidden name=id value=\"$cm->id\" />";
+        echo "</tr></table>";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
         if (isstudent($course->id) or isteacher($course->id, 0, false)) {
-            echo "<INPUT type=submit value=\"".get_string("savemychoice","choice")."\" />";
+            echo "<input type=\"submit\" value=\"".get_string("savemychoice","choice")."\" />";
         } else {
             print_string('havetologin', 'choice');
         }
-        echo "</P></FORM></CENTER>";
+        echo "</p></form></center>";
 
     }
 
@@ -179,7 +179,7 @@
 
             $tablewidth = (int) (100.0 / count($useranswer));
 
-            echo "<table cellpadding=5 cellspacing=10 align=center>";
+            echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\">";
             echo "<tr>";
             foreach ($useranswer as $key => $answer) {
                 if ($key) {
@@ -196,18 +196,18 @@
         
             foreach ($useranswer as $key => $answer) {
                 if ($key) {
-                    echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$THEME->cellcontent\">";
+                    echo "<td width=\"$tablewidth%\" valign=\"top\" nowrap bgcolor=\"$THEME->cellcontent\">";
                 } else if ($choice->showunanswered) {
-                    echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$THEME->body\">";
+                    echo "<td width=\"$tablewidth%\" valign=\"top\" nowrap bgcolor=\"$THEME->body\">";
                 } else {
                     continue;
                 }
     
-                echo "<table width=100%>";
+                echo "<table width=\"100%\">";
                 foreach ($answer as $user) {
-                    echo "<tr><td width=10 nowrap>";
+                    echo "<tr><td width=\"10\" nowrap>";
                     print_user_picture($user->id, $course->id, $user->picture);
-                    echo "</td><td width=100% nowrap>";
+                    echo "</td><td width=\"100%\" nowrap>";
                     echo "<p>".fullname($user, $isteacher)."</p>";
                     echo "</td></tr>";
                 }
@@ -222,7 +222,7 @@
           case CHOICE_PUBLISH_ANONYMOUS:
             $tablewidth = (int) (100.0 / count($useranswer));
 
-            echo "<table cellpadding=5 cellspacing=10 align=center>";
+            echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\">";
             echo "<tr>";
             foreach ($useranswer as $key => $answer) {
                 if ($key) {

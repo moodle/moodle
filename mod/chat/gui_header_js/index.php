@@ -62,9 +62,9 @@
  </head>
  <frameset cols="*,200" border="5" framespacing="no" frameborder="yes" marginwidth="2" marginheight="1">
   <frameset rows="0,0,*,40" border="0" framespacing="no" frameborder="no" marginwidth="2" marginheight="1">
-   <frame src="../empty.php" NAME="empty" scrolling="no" marginwidth="0" marginheight="0">
+   <frame src="../empty.php" name="empty" scrolling="no" marginwidth="0" marginheight="0">
    <frame src="jsupdate.php?<?php echo $params ?>" scrolling="no" marginwidth="0" marginheight="0">
-   <frame src="chatmsg.php" NAME="msg" scrolling="auto" marginwidth="2" marginheight="1">
+   <frame src="chatmsg.php" name="msg" scrolling="auto" marginwidth="2" marginheight="1">
    <frame src="chatinput.php?<?php echo $params ?>" name="input" scrolling="no" marginwidth="2" marginheight="1">
   </frameset>
   <frame src="../users.php?<?php echo $params ?>" name="users" scrolling="auto" marginwidth="5" marginheight="5">

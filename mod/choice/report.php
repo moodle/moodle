@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -97,9 +97,9 @@
 
     foreach ($useranswer as $key => $answer) {
         if ($key) {
-            echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$THEME->cellcontent\">";
+            echo "<td width=\"$tablewidth%\" valign=\"top\" nowrap bgcolor=\"$THEME->cellcontent\">";
         } else {
-            echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$THEME->body\">";
+            echo "<td width=\"$tablewidth%\" valign=\"top\" nowrap bgcolor=\"$THEME->body\">";
         }
 
         echo "<table width=\"100%\">";

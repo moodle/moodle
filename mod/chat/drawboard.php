@@ -16,16 +16,16 @@ if ($arsc_a["anzahl"] == 1)
    </title>
   </head>
   <body bgcolor="#000000" topmargin="0" leftmargin="0" marginleft="0" margintop="0">
-   <APPLET CODE="drawboard/Main.class" WIDTH="<?php echo $arsc_parameters["drawboard_width"]; ?>" HEIGHT="<?php echo $arsc_parameters["drawboard_height"]; ?>">
+   <applet code="drawboard/Main.class" width="<?php echo $arsc_parameters["drawboard_width"]; ?>" height="<?php echo $arsc_parameters["drawboard_height"]; ?>">
     <param name="port" value="<?php echo $arsc_parameters["drawboard_port"]; ?>">
     <param name="bgcolor" value="FFFFFF">
-    <PARAM NAME="menubgcolor" VALUE="FAE6A6">
-    <PARAM NAME="emptythumbnailcolor" VALUE="FDF0C6">
-    <PARAM NAME="countercolor" VALUE="000000">
+    <param name="menubgcolor" value="FAE6A6">
+    <param name="emptythumbnailcolor" value="FDF0C6">
+    <param name="countercolor" value="000000">
     <param name="pencolor" value="0000FF">
-    <PARAM NAME="skindef" VALUE="abacho/abacho.def">
+    <param name="skindef" value="abacho/abacho.def">
     Unfortunatelly, your browser doesn't support Java applets. You have to use another one.
-   </APPLET>
+   </applet>
   </body>
  </html>
  <?php

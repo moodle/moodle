@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 /// Library of functions and constants for module chat
 
@@ -190,12 +190,12 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
                     print_headline(get_string("currentchats", "chat").":");
                     $outputstarted = true;
                 }
-                echo "<p><font size=1><a href=\"$CFG->wwwroot/mod/chat/view.php?c=$chat->id\">$chat->name</a></font><br />";
+                echo "<p><font size=\"1\"><a href=\"$CFG->wwwroot/mod/chat/view.php?c=$chat->id\">$chat->name</a></font><br />";
             }
             $current = $chatuser->chatid;
         }
         $fullname = fullname($chatuser);
-        echo "&nbsp;&nbsp;&nbsp;<font size=1>- $fullname</font><br />";
+        echo "&nbsp;&nbsp;&nbsp;<font size=\"1\">- $fullname</font><br />";
     }
     echo "<br />";
 
@@ -714,7 +714,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
 
     $output->text  = strip_tags($outinfo.': '.$outmain);
 
-    $output->html  = "<table><tr><td valign=top>$message->picture</td><td><font size=2>";
+    $output->html  = "<table><tr><td valign=\"top\">$message->picture</td><td><font size=\"2\">";
     $output->html .= "<font color=\"#888888\">$outinfo</font>";
     if ($outmain) {
         $output->html .= ": $outmain";
