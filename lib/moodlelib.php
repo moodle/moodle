@@ -3077,6 +3077,7 @@ function endecrypt ($pwd, $data, $case) {
  *  <ul>
  *    <li><b>$event->name</b> - Name for the event
  *    <li><b>$event->description</b> - Description of the event (defaults to '')
+ *    <li><b>$event->format</b> - Format for the description (using formatting types defined at the top of weblib.php)
  *    <li><b>$event->courseid</b> - The id of the course this event belongs to (0 = all courses)
  *    <li><b>$event->groupid</b> - The id of the group this event belongs to (0 = no group)
  *    <li><b>$event->userid</b> - The id of the user this event belongs to (0 = no user)
@@ -3086,6 +3087,7 @@ function endecrypt ($pwd, $data, $case) {
  *             be used by calendar plugins to decide how to display event
  *    <li><b>$event->timestart</b>- Timestamp for start of event
  *    <li><b>$event->timeduration</b> - Duration (defaults to zero)
+ *    <li><b>$event->>visible</b> - 0 if the event should be hidden (e.g. because the activity that created it is hidden)
  *  </ul>
  * @return int The id number of the resulting record
  * @todo Finish documenting this function
