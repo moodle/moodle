@@ -111,7 +111,7 @@
 
             $post->subject = $fullsubject;
 
-            $fulllink = "<p align=\"right\"><a href=\"discuss.php?d=$post->discussion&parent=$post->id\">".get_string("postincontext", "forum")."</a></p>";
+            $fulllink = "<p align=\"right\"><a href=\"discuss.php?d=$post->discussion#$post->id\">".get_string("postincontext", "forum")."</a></p>";
             forum_print_post($post, $course->id, false, false, false, false, $fulllink, $search);
 
             echo "<br />";
