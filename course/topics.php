@@ -86,8 +86,7 @@
 /// Start main column
     echo "</TD><TD WIDTH=\"*\">";
 
-    print_simple_box(get_string("topicoutline"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
-    
+    print_heading_block(get_string("topicoutline"));
 
 
     echo "<TABLE BORDER=0 CELLPADDING=8 CELLSPACING=0 WIDTH=100%>";
@@ -210,7 +209,7 @@
         /// Print all the news items.
 
         if ($news) {
-            print_simple_box(get_string("latestnews"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+            print_heading_block(get_string("latestnews"));
             print_simple_box_start("CENTER", "100%", $THEME->cellcontent, 3, 0);
             echo "<FONT SIZE=1>";
             forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "DESC", false);
@@ -221,7 +220,7 @@
         
         /// Print all the recent activity
         if ($course->showrecent) {
-            print_simple_box(get_string("recentactivity"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+            print_heading_block(get_string("recentactivity"));
             print_simple_box_start("CENTER", "100%", $THEME->cellcontent, 3, 0);
             print_recent_activity($course);
             print_simple_box_end();
