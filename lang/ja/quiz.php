@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 Beta ++ (2004031100)
+      // quiz.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -47,7 +47,7 @@ $string['correctanswer'] = '正解';
 $string['correctanswers'] = '正解';
 $string['corrresp'] = '正答';
 $string['countdown'] = 'カウントダウン';
-$string['countdownfinished'] = '小テストは終了します、回答を送信してください。';
+$string['countdownfinished'] = '小テストは終了します、解答を送信してください。';
 $string['countdowntenminutes'] = '小テストは10分後に終了します。';
 $string['coursetestmanager'] = 'コーステストマネージャーフォーマット';
 $string['createmultiple'] = 'マルチ質問を作成する';
@@ -168,7 +168,7 @@ $string['shortanswer'] = '記述式';
 $string['show'] = '表示';
 $string['showcorrectanswer'] = 'フィードバックの中に正解を表示しますか?';
 $string['showfeedback'] = '解答後にフィードバックを表示しますか?';
-$string['shuffleanswers'] = '回答を混ぜる';
+$string['shuffleanswers'] = '解答を混ぜる';
 $string['shufflequestions'] = '質問を混ぜる';
 $string['time'] = '時間';
 $string['timecompleted'] = '解答日時';
