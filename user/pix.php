@@ -1,13 +1,17 @@
 <?PHP // $Id$
       // This function fetches user pictures from the data directory
-      // Syntax:   file.php/userid/f1.jpg
+      // Syntax:   pix.php/userid/f1.jpg or pix.php/userid/f2.jpg
+      //     OR:   ?file=userid/f1.jpg or ?file=userid/f2.jpg
 
     require("../config.php");
 
     $lifetime = 86400;
 
-    if (!$PATH_INFO) {
-        error("This script DEPENDS on $PATH_INFO being available.  Read the README.");
+    if (isset($file)) {
+        $PATH_INFO = $file;
+
+    } else if (!$PATH_INFO) {
+        $PATH_INFO = "";       // Will just show default picture
     }
 
     $args = get_slash_arguments();
@@ -16,12 +20,11 @@
     if ($numargs == 2) {
         $userid = (integer)$args[0];
         $image  = $args[1];
+        $pathname = "$CFG->dataroot/users/$userid/$image";
     } else {
-        $userid = 0;
-        $image  = "f1.jpg";
+        $pathname = "$CFG->dirroot/user/default/f1.jpg";
     }
 
-    $pathname = "$CFG->dataroot/users/$userid/$image";
     $lastmodified = filemtime($pathname);
 
     header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");

@@ -100,6 +100,8 @@
                                         "<A HREF=\"../user/edit.php?id=$user->id&course=$site->id\">$stredit</A>");
             }
             print_table($table);
+
+            print_heading("<A HREF=\"user.php?newuser=true\">".get_string("addnewuser")."</A>");
         } else {
             error("No users found!");
             

@@ -124,7 +124,11 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
         $size = 35;
     }
     if ($picture) {
-        $output .= "<IMG SRC=\"$CFG->wwwroot/user/pix.php/$userid/$file\" BORDER=0 WIDTH=$size HEIGHT=$size ALT=\"\">";
+        if (iswindows()) { // Workaround for a PATH_INFO problem on Windows PHP
+            $output .= "<IMG SRC=\"$CFG->wwwroot/user/pix.php?file=/$userid/$file\" BORDER=0 WIDTH=$size HEIGHT=$size ALT=\"\">";
+        } else {           // Use this method if possible for better caching
+            $output .= "<IMG SRC=\"$CFG->wwwroot/user/pix.php/$userid/$file\" BORDER=0 WIDTH=$size HEIGHT=$size ALT=\"\">";
+        }
     } else {
         $output .= "<IMG SRC=\"$CFG->wwwroot/user/default/$file\" BORDER=0 WIDTH=$size HEIGHT=$size ALT=\"\">";
     }
@@ -1574,6 +1578,14 @@ function get_list_of_modules() {
         $mods[] = $mod;
     }
     return $mods;
+}
+
+function iswindows() {
+// True if this is Windows, False if not.
+
+   global $WINDIR;
+
+   return empty($WINDIR);
 }
 
 
