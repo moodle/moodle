@@ -58,7 +58,7 @@
 
 /// If data submitted, then process and store.
 
-    if ($form = data_submitted()) { 
+    if ($form = data_submitted() and confirm_sesskey()) { 
 
         if (empty($form->name)) {
             $edit = true;
@@ -92,6 +92,8 @@
         } else {
             $defaultformat = FORMAT_MOODLE;
         }
+
+        $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
         include('group-edit.html');
 
