@@ -946,9 +946,9 @@ function get_user_info_from_db($field, $value) {
     }
 
     if ($groups = get_records("groups_members", "userid", $user->id)) {
-        foreach ($groups as $group) {
-            $courseid = get_field("groups", "courseid", "id", $group->id);
-            $user->groupmember[$courseid] = $group->id;
+        foreach ($groups as $groupmember) {
+            $courseid = get_field("groups", "courseid", "id", $groupmember->groupid);
+            $user->groupmember[$courseid] = $groupmember->groupid;
         }
     }
 
