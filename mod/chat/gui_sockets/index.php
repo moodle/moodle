@@ -62,11 +62,11 @@
  </head>
  <frameset cols="*,200" border="5" framespacing="no" frameborder="yes" marginwidth="2" marginheight="1">
   <frameset rows="0,*,40" border="0" framespacing="no" frameborder="no" marginwidth="2" marginheight="1">
-   <frame id="f_empty" src="empty.php" name="empty" scrolling="auto" noresize marginwidth="2" marginheight="0">
-   <frame id="f_channel" src="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport?win=chat&amp;$params"; ?>" NAME="msg" scrolling="auto" noresize marginwidth="2" marginheight="0">
-   <frame id="f_input" src="chatinput.php?<?php echo $params ?>" name="input" scrolling="no" marginwidth="2" marginheight="1">
+   <frame src="empty.php" name="empty" scrolling="auto" noresize marginwidth="2" marginheight="0">
+   <frame src="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport?win=chat&amp;$params"; ?>" NAME="msg" scrolling="auto" noresize marginwidth="2" marginheight="0">
+   <frame src="chatinput.php?<?php echo $params ?>" name="input" scrolling="no" marginwidth="2" marginheight="1">
   </frameset>
-  <frame id="f_users" src="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport?win=users&amp;$params"; ?>" name="users" scrolling="auto" marginwidth="5" marginheight="5">
+  <frame src="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport?win=users&amp;$params"; ?>" name="users" scrolling="auto" marginwidth="5" marginheight="5">
   <!--
   <frame src="../users.php?<?php echo $params ?>" name="users" scrolling="auto" marginwidth="5" marginheight="5">
   -->

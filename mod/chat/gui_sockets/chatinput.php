@@ -68,6 +68,22 @@ function empty_field_and_submit() {
     <input type="hidden" name="groupid" value="<?php echo $groupid ?>" />
 </form>
 
+<script type="text/javascript">
+<!--
+var frm = window.parent.frames;
+for(i = 0; i < frm.length; ++i) {
+    if(frm(i).name == "users") {
+        window.userFrame = frm(i);
+        window.setTimeout("reloadusers();", 4000);
+    }
+}
+function reloadusers() {
+    window.userFrame.location.reload();
+    window.setTimeout("reloadusers();", 4000);
+}
+-->
+</script>
+
 </body>
 
 </html>

@@ -3,7 +3,7 @@
 
 define('QUIRK_CHUNK_UPDATE', 0x0001);
 
-echo "Moodle chat daemon v1.0  (\$Id$)\n\n";
+echo "Moodle chat daemon v1.0 on PHP ".phpversion()." (\$Id$)\n\n";
 
 /// Set up all the variables we need   /////////////////////////////////////
 
@@ -74,6 +74,10 @@ class ChatDaemon {
         $this->_beepsoundsrc        = $GLOBALS['CFG']->wwwroot.'/mod/chat/beep.wav';
         $this->_freq_update_records = 15;
         $this->_stdout = fopen('php://stdout', 'w');
+        if($this->_stdout) {
+            // Avoid double traces for everything
+            $this->_trace_to_console = false;
+        }
     }
 
     function query_start() {
