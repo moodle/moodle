@@ -38,72 +38,72 @@
 //                                                                         //
 /////////////////////////////////////////////////////////////////////////////
 
-	require_once('../config.php');
-	require_once('lib.php');
+    require_once('../config.php');
+    require_once('lib.php');
 
-	require_login();
+    require_login();
 
-	require_variable($_GET['from']);
-	require_variable($_GET['var']);
-	optional_variable($_GET['value']);
-	optional_variable($_GET['id']);
-	optional_variable($_GET['cal_d']);
-	optional_variable($_GET['cal_m']);
-	optional_variable($_GET['cal_y']);
+    require_variable($_GET['from']);
+    require_variable($_GET['var']);
+    optional_variable($_GET['value']);
+    optional_variable($_GET['id']);
+    optional_variable($_GET['cal_d']);
+    optional_variable($_GET['cal_m']);
+    optional_variable($_GET['cal_y']);
 
-	switch($_GET['var']) {
-		case 'setcourse':
-			$id = intval($_GET['id']);
-			if($id == 0) {
-				$SESSION->cal_courses_shown = array();
-			}
-			else if($id == 1) {
-				$SESSION->cal_courses_shown = calendar_get_default_courses(true);
-			}
-			else {
-			    // We don't check for membership anymore: if(isstudent($id, $USER->id) || isteacher($id, $USER->id)) {
-				$SESSION->cal_courses_shown = $id;
-			}
-		break;
-		case 'showgroups':
-			$SESSION->cal_show_groups = !$SESSION->cal_show_groups;
-		break;
-		case 'showcourses':
-		    $SESSION->cal_show_course = !$SESSION->cal_show_course;
-		break;
-		case 'showglobal':
-			$SESSION->cal_show_global = !$SESSION->cal_show_global;
-		break;
-		case 'showuser':
-			if($SESSION->cal_show_user) {
-				$SESSION->cal_show_user = false;
-			}
-			else {
-				$SESSION->cal_show_user = $USER->id;
-			}
-		break;
-	}
+    switch($_GET['var']) {
+        case 'setcourse':
+            $id = intval($_GET['id']);
+            if($id == 0) {
+                $SESSION->cal_courses_shown = array();
+            }
+            else if($id == 1) {
+                $SESSION->cal_courses_shown = calendar_get_default_courses(true);
+            }
+            else {
+                // We don't check for membership anymore: if(isstudent($id, $USER->id) || isteacher($id, $USER->id)) {
+                $SESSION->cal_courses_shown = $id;
+            }
+        break;
+        case 'showgroups':
+            $SESSION->cal_show_groups = !$SESSION->cal_show_groups;
+        break;
+        case 'showcourses':
+            $SESSION->cal_show_course = !$SESSION->cal_show_course;
+        break;
+        case 'showglobal':
+            $SESSION->cal_show_global = !$SESSION->cal_show_global;
+        break;
+        case 'showuser':
+            if($SESSION->cal_show_user) {
+                $SESSION->cal_show_user = false;
+            }
+            else {
+                $SESSION->cal_show_user = $USER->id;
+            }
+        break;
+    }
 
-	switch($_GET['from']) {
-	    case 'prefs':
-	    redirect($CFG->wwwroot.'/calendar/preferences.php?edit='.$_GET['pref']);
-	    break;
-		case 'month':
-	    redirect($CFG->wwwroot.'/calendar/view.php?view=month&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
-		break;
-		case 'upcoming':
-		redirect($CFG->wwwroot.'/calendar/view.php?view=upcoming&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
-		break;
-		case 'event':
-		redirect($CFG->wwwroot.'/calendar/view.php?view=event&id='.$_GET['id']);
-		break;
-		case 'day':
-		redirect($CFG->wwwroot.'/calendar/view.php?view=day&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
-		break;
-		case 'course':
-		redirect($CFG->wwwroot.'/course/view.php?id='.intval($_GET['id']));
-		break;
-		default:
+    switch($_GET['from']) {
+        case 'prefs':
+        redirect($CFG->wwwroot.'/calendar/preferences.php?edit='.$_GET['pref']);
+        break;
+        case 'month':
+        redirect($CFG->wwwroot.'/calendar/view.php?view=month&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
+        break;
+        case 'upcoming':
+        redirect($CFG->wwwroot.'/calendar/view.php?view=upcoming&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
+        break;
+        case 'event':
+        redirect($CFG->wwwroot.'/calendar/view.php?view=event&id='.$_GET['id']);
+        break;
+        case 'day':
+        redirect($CFG->wwwroot.'/calendar/view.php?view=day&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
+        break;
+        case 'course':
+        redirect($CFG->wwwroot.'/course/view.php?id='.intval($_GET['id']));
+        break;
+        default:
 
-	}
+    }
 ?>

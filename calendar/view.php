@@ -99,13 +99,7 @@
         calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
     }
     else {
-        if($_GET['view'] == 'upcoming') {
-            $defaultcourses = calendar_get_default_courses();
-            calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses, false);
-        }
-        else {
-            calendar_set_filters($courses, $groups, $users);
-        }
+        calendar_set_filters($courses, $groups, $users);
     }
 
     // Let's see if we are supposed to provide a referring course link
@@ -165,7 +159,7 @@
     print_side_block_start(get_string('monthlyview', 'calendar'), '', 'sideblockmain');
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
-    $getvars = 'from=month&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
+    $getvars = 'cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
     echo calendar_filter_controls($_GET['view'], $getvars);
     echo '<p>';
     echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
@@ -207,6 +201,8 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
         list($d, $m, $y) = array(intval($now['mday']), intval($now['mon']), intval($now['year']));
     }
 
+    $getvars = 'from=day&amp;cal_d='.$d.'&amp;cal_m='.$m.'&amp;cal_y='.$y; // For filtering
+
     $starttime = make_timestamp($y, $m, $d);
     $endtime = $starttime + SECS_IN_DAY - 1;
     $whereclause = calendar_sql_where($starttime, $endtime, $users, $groups, $courses);
@@ -220,10 +216,10 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
 
     // New event button
     if(isguest()) {
-        $text = get_string('dayview', 'calendar');
+        $text = get_string('dayview', 'calendar').': '.calendar_course_filter_selector($getvars);
     }
     else {
-        $text = '<div style="float: left;">'.get_string('dayview', 'calendar').'</div><div style="float: right;">';
+        $text = '<div style="float: left;">'.get_string('dayview', 'calendar').': '.calendar_course_filter_selector($getvars).'</div><div style="float: right;">';
         $text.= '<form style="display: inline;" action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<input type="hidden" name="action" value="new" />';
         $text.= '<input type="hidden" name="cal_m" value="'.$m.'" />';
@@ -337,10 +333,10 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
 
     // New event button
     if(isguest()) {
-        $text = get_string('detailedmonthview', 'calendar');
+        $text = get_string('detailedmonthview', 'calendar').': '.calendar_course_filter_selector($getvars);
     }
     else {
-        $text = '<div style="float: left;">'.get_string('detailedmonthview', 'calendar').'</div><div style="float: right;">';
+        $text = '<div style="float: left;">'.get_string('detailedmonthview', 'calendar').': '.calendar_course_filter_selector($getvars).'</div><div style="float: right;">';
         $text.= '<form style="display: inline;" action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<input type="hidden" name="action" value="new" />';
         $text.= '<input type="hidden" name="cal_m" value="'.$m.'" />';
@@ -350,33 +346,6 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     }
 
     print_side_block_start($text, '', 'mycalendar');
-
-    if(isadmin($USER->id)) {
-        $coursesdata = get_courses('all', 'c.shortname');
-    }
-    elseif(!isguest($USER->id)) {
-        $coursesdata = get_my_courses($USER->id, 'shortname');
-    }
-    else {
-        $coursesdata = get_record('course', 'id', $SESSION->cal_course_referer);
-    }
-    $coursesdata = array_diff_assoc($coursesdata, array(1 => 1));
-
-    if(!isguest($USER->id)) {
-        echo '<p style="text-align: center; margin: 1em;"><strong>'.get_string('eventsfromcourse', 'calendar').': ';
-        echo '<select name="course" onchange="document.location.href=\''.CALENDAR_URL.'set.php?var=setcourse&amp;'.$getvars.'&amp;id=\' + this.value;">';
-        echo '<option value="1">'.get_string('all')."</option>\n";
-        if($coursesdata !== false) {
-            foreach($coursesdata as $coursedata) {
-                echo "\n<option value='$coursedata->id'";
-                if(is_numeric($SESSION->cal_courses_shown) && $coursedata->id == $SESSION->cal_courses_shown) {
-                    echo ' selected';
-                }
-                echo '>'.$coursedata->shortname."</option>\n";
-            }
-        }
-        echo '</select></strong></p>';
-    }
 
     echo calendar_top_controls('month', array('m' => $m, 'y' => $y));
 
@@ -560,7 +529,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
         return;
     }
 
-    print_side_block_start(get_string('upcomingevents', 'calendar'), '', 'mycalendar');
+    print_side_block_start(get_string('upcomingevents', 'calendar').': '.calendar_course_filter_selector('from=upcoming'), '', 'mycalendar');
     for($i = 0; $i < $numevents; ++$i) {
         echo '<p>';
         if(!empty($events[$i]->icon)) {
@@ -571,7 +540,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
         }
         echo '<span class="cal_event">'.$events[$i]->name.":</span>\n";
         echo '<span class="cal_event_date">'.$events[$i]->time.'</span>';
-        echo '<br />'.$events[$i]->description.'<br />';
+        echo '<div style="margin-top: -1em; padding-left: 20px;">'.$events[$i]->description.'</div>';
         if($i < $numevents - 1) {
             echo '<hr />';
         }
@@ -668,6 +637,52 @@ function calendar_print_event_table($event, $starttime, $endtime, &$coursecache,
 
     echo '</td><td class="cal_event_description">'.$event->description.'</td></tr>'."\n";
     echo "</tbody>\n</table>\n";
+}
+
+
+function calendar_course_filter_selector($getvars = '') {
+    global $USER, $SESSION;
+
+    if(isadmin($USER->id)) {
+        $coursesdata = get_courses('all', 'c.shortname');
+    }
+    elseif(!isguest($USER->id)) {
+        $coursesdata = get_my_courses($USER->id, 'shortname');
+    }
+    else {
+        $coursesdata = get_record('course', 'id', $SESSION->cal_course_referer);
+    }
+    $coursesdata = array_diff_assoc($coursesdata, array(1 => 1));
+
+    $selector = '';
+
+    if(!isguest($USER->id)) {
+        $selector .= '<form method="get" action="set.php" style="display: inline;"><span>';
+        $selector .= '<input type="hidden" name="var" value="setcourse" />';
+        if(!empty($getvars)) {
+            $getarray = explode('&amp;', $getvars);
+            foreach($getarray as $getvar) {
+                $selector .= '<input type="hidden" name="'.strtok($getvar, '=').'" value="'.strtok('=').'" />';
+            }
+        }
+        $selector .= '<select name="id" onchange="form.submit();">';
+        $selector .= '<option value="1">'.get_string('fulllistofcourses')."</option>\n";
+        if($coursesdata !== false) {
+            foreach($coursesdata as $coursedata) {
+                $selector .= "\n<option value='$coursedata->id'";
+                if(is_numeric($SESSION->cal_courses_shown) && $coursedata->id == $SESSION->cal_courses_shown) {
+                    $selector .= ' selected';
+                }
+                $selector .= '>'.$coursedata->shortname."</option>\n";
+            }
+        }
+        $selector .= '</select>';
+        $selector .= '<noscript id="cal_noscript" style="display: inline;"> <input type="submit" value="'.get_string('show').'" /></noscript>';
+        $selector .= '<script type="text/javascript">'."\n<!--\n".'document.getElementById("cal_noscript").style.display = "none";'."\n<!--\n".'</script>';
+        $selector .= '</span></form>';
+    }
+
+    return $selector;
 }
 
 ?>
