@@ -92,6 +92,9 @@
 
     if (empty($course->modinfo)) {       // Course cache was never made
         rebuild_course_cache($course->id);
+        if (! $course = get_record("course", "id", $course->id) ) {
+            error("That's an invalid course id");
+        }
     }
 
     if (!file_exists("$CFG->dirroot/course/format/$course->format.php")) {   // Default format is weeks
