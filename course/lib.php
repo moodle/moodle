@@ -234,17 +234,42 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
 }
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate="today",
-                                 $modname="", $modid=0, $modaction="") {
+                                 $modname="", $modid=0, $modaction="", $selectedgroup=-1) {
 
     global $USER, $CFG;
 
-
+    /// Setup for group handling.
     $isteacher = isteacher($course->id);
+    $isteacheredit = isteacheredit($course->id);
+    if ($course->groupmode == SEPARATEGROUPS and !$isteacheredit) {
+        $selectedgroup = get_current_group($course->id);
+        $showgroups = false;
+    }
+    else if ($course->groupmode) {
+        $selectedgroup = ($selectedgroup == -1) ? get_current_group($course->id) : $selectedgroup;
+        $showgroups = true;
+    }
+    else {
+        $selectedgroup = 0;
+        $showgroups = false;
+    }
+
     // Get all the possible users
     $users = array();
 
     if ($course->category) {
-        $courseusers = get_course_users($course->id);
+        /// If using a group, only get users in that group.
+        if ($selectedgroup) {
+            $sql = 'SELECT u.id as id, u.firstname, u.lastname, u.lastaccess '.
+                   'FROM '.$CFG->prefix.'user u,'.$CFG->prefix.'user_students us,'.$CFG->prefix.'groups_members gm, '.
+                        $CFG->prefix.'user_teachers ut '.
+                   'WHERE us.course='.$course->id.' AND gm.groupid='.$selectedgroup.
+                   ' AND (gm.userid=us.userid OR gm.userid=ut.userid) AND gm.userid=u.id';
+            $courseusers = get_records_sql($sql); 
+        }
+        else {
+            $courseusers = get_course_users($course->id);
+        }
     } else {
         $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname");
     }
@@ -289,7 +314,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
                 $activities["section/$mod->section"] = "-------------- $strsection $mod->section --------------";
             }
             $section = $mod->section;
-            $mod->name = strip_tags(urldecode($mod->name));
+            $mod->name = urldecode($mod->name);
             if (strlen($mod->name) > 55) {
                 $mod->name = substr($mod->name, 0, 50)."...";
             }
@@ -302,15 +327,15 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
                 $selectedactivity = "$mod->cm";
             }
         }
-	
-	if (isadmin() && !$course->category) {
-	    $activities["site_errors"] = get_string("siteerrors");
-	    if ($modid === "site_errors") {
-		$selectedactivity = "site_errors";
-	    }
-	}
+
+        if (isadmin() && !$course->category) {
+            $activities["site_errors"] = get_string("siteerrors");
+            if ($modid === "site_errors") {
+            $selectedactivity = "site_errors";
+            }
+        }
     }
-    
+
 
     $strftimedate = get_string("strftimedate");
     $strftimedaydate = get_string("strftimedaydate");
@@ -353,6 +378,15 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     } else {
         echo "<input type=hidden name=id value=\"$course->id\">";
     }
+
+    if ($showgroups) {
+        $cgroups = get_groups($course->id);
+        foreach ($cgroups as $cgroup) {
+            $groups[$cgroup->id] = $cgroup->name;
+        }
+        choose_from_menu ($groups, "group", $selectedgroup, get_string("allgroups") );
+    }
+
     choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
     choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
     choose_from_menu ($activities, "modid", $selectedactivity, get_string("allactivities"), "", "");
@@ -377,13 +411,27 @@ function make_log_url($module, $url) {
     }
 }
 
-function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100,
-                   $url="", $modname="", $modid=0, $modaction="") {
+function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100, 
+                   $url="", $modname="", $modid=0, $modaction="", $groupid=0) {
 
     // It is assumed that $date is the GMT time of midnight for that day,
     // and so the next 86400 seconds worth of logs are printed.
 
     global $CFG, $db;
+
+    /// Setup for group handling.
+    $isteacher = isteacher($course->id);
+    $isteacheredit = isteacheredit($course->id);
+
+    /// If the group mode is separate, and this user does not have editing privileges,
+    /// then only the user's group can be viewed.
+    if ($course->groupmode == SEPARATEGROUPS and !$isteacheredit) {
+        $groupid = get_current_group($course->id);
+    }
+    /// If this course doesn't have groups, no groupid can be specified.
+    else if (!$course->groupmode) {
+        $groupid = 0;
+    }
 
     $joins = array();
 
@@ -411,7 +459,24 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         $joins[] = "l.action = '$modaction'";
     }
 
-    if ($user) {
+    /// Getting all members of a group.
+    if ($groupid and !$user) {
+        if ($gusers = get_records('groups_members', 'groupid', $groupid)) {
+            $first = true;
+            foreach($gusers as $guser) {
+                if ($first) {
+                    $gselect = '(l.userid='.$guser->userid;
+                    $first = false;
+                }
+                else {
+                    $gselect .= ' OR l.userid='.$guser->userid;
+                }
+            }
+            if (!$first) $gselect .= ')';
+            $joins[] = $gselect;
+        }
+    }
+    else if ($user) {
         $joins[] = "l.userid = '$user'";
     }
 
