@@ -153,6 +153,12 @@ function forum_upgrade($oldversion) {
     
   }
 
+  if ($oldversion < 2005032900) {
+      modify_database('','CREATE INDEX prefix_forum_posts_created_idx ON prefix_forum_posts (created);');
+      modify_database('','CREATE INDEX prefix_forum_posts_mailed_idx ON prefix_forum_posts (mailed);');
+
+  }
+
   return true;
 
 }

@@ -211,6 +211,11 @@ function forum_upgrade($oldversion) {
     
   }
 
+  if ($oldversion < 2005032900) {
+      modify_database('','ALTER TABLE prefix_forum_posts ADD INDEX prefix_form_posts_created_idx (created);');
+      modify_database('','ALTER TABLE prefix_forum_posts ADD INDEX prefix_form_posts_mailed_idx (mailed);');
+  }
+
   return true;
   
 }

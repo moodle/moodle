@@ -68,7 +68,8 @@ CREATE TABLE prefix_forum_posts (
 CREATE INDEX prefix_forum_posts_discussion_idx ON prefix_forum_posts (discussion);
 CREATE INDEX prefix_forum_posts_parent_idx ON prefix_forum_posts (parent);
 CREATE INDEX prefix_forum_posts_userid_idx ON prefix_forum_posts (userid);
-
+CREATE INDEX prefix_forum_posts_created_idx ON prefix_forum_posts (created);
+CREATE INDEX prefix_forum_posts_mailed_idx ON prefix_forum_posts (mailed);
 
 # --------------------------------------------------------
 

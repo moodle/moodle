@@ -66,7 +66,9 @@ CREATE TABLE prefix_forum_posts (
   PRIMARY KEY  (id),
   KEY prefix_forum_posts_parent_idx (parent),
   KEY prefix_forum_posts_discussion_idx (discussion),
-  KEY prefix_forum_posts_userid_idx (userid)
+  KEY prefix_forum_posts_userid_idx (userid),
+  KEY prefix_forum_posts_created_idx (created),
+  KEY prefix_forum_posts_mailed_idx (mailed)
 ) COMMENT='All posts are stored in this table';
 # --------------------------------------------------------
 
