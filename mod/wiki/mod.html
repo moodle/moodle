@@ -83,7 +83,6 @@
 
 <tr valign=top>
     <TD align=right><P>
-    <?php helpbutton('wikitype', get_string('wikitype', 'wiki'), 'wiki'); ?>
     <B><?php  print_string('wikitype', "wiki") ?>:</B></P></TD>
     <TD>
     <?php
@@ -93,6 +92,7 @@
         else {
             choose_from_menu($WIKI_TYPES, 'wtype', $form->wtype, "");
         }
+        helpbutton('wikitype', get_string('wikitype', 'wiki'), 'wiki');
     ?>
     </TD>
 </tr>
@@ -107,40 +107,40 @@
 </TR>
 <TR valign=top>
     <TD align=right><P>
-    <?php helpbutton('htmlmode', get_string('htmlmode', 'wiki'), 'wiki'); ?>
     <B><?php print_string('htmlmode', 'wiki') ?>:</B></P></TD>
     <TD>
         <?php
         $htmlmodes=array( "0" => get_string("nohtml","wiki") , "1" => get_string("safehtml","wiki"), "2" => get_string("htmlonly","wiki"));
         choose_from_menu($htmlmodes, "htmlmode", $form->htmlmode, "");
+        helpbutton('htmlmode', get_string('htmlmode', 'wiki'), 'wiki');
         ?>
     </TD>
 </TR>
 <TR valign=top>
     <TD align=right><P>
-    <?php helpbutton('ewikiacceptbinary', get_string('ewikiacceptbinary', 'wiki'), 'wiki') ?>
     <B><?php print_string('ewikiacceptbinary', 'wiki') ?>:</B></P></TD>
     <TD>
         <select size="1" name="ewikiacceptbinary">
             <option value="1" <?php if ( $form->ewikiacceptbinary) { echo 'selected';  }?>><?php print_string('yes') ?></option>
             <option value="0" <?php if ( !$form->ewikiacceptbinary) { echo 'selected'; }?>><?php print_string('no') ?></option>
        </select>
+       <?php helpbutton('ewikiacceptbinary', get_string('ewikiacceptbinary', 'wiki'), 'wiki') ?>
     </TD>
 </TR>
 
 <tr valign="top">
     <td align="right">
-    <?php helpbutton('wikilinkoptions', get_string('wikilinkoptions', 'wiki'), 'wiki') ?>
     <b> <?php print_string('wikilinkoptions', 'wiki') ?>:</b></td>
     <td>
         <input type="checkbox" name="disablecamelcase" value="1" <?php echo $form->disablecamelcase?"CHECKED":""; ?> />
-        <?php print_string('disablecamel', 'wiki') ?><br />
+        <?php print_string('disablecamel', 'wiki') ?>
+        <?php helpbutton('wikilinkoptions', get_string('wikilinkoptions', 'wiki'), 'wiki') ?>
+        <br />
     </td>
 </tr>
 
 <tr valign="top">
     <td align="right">
-    <?php helpbutton('studentadminoptions', get_string('studentadminoptions', 'wiki'), 'wiki') ?>
     <b> <?php print_string('studentadminoptions', 'wiki') ?>:</b></td>
     <td>
         <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
@@ -148,11 +148,14 @@
         <input type="checkbox" name="setpageflags" value="1" <?php echo $form->setpageflags?"CHECKED":""; ?> />
         <?php print_string('allowsetpage', 'wiki') ?><br />
         <input type="checkbox" name="strippages" value="1" <?php echo $form->strippages?"CHECKED":""; ?> />
-        <?php print_string('allowstrippages', 'wiki') ?><br />
+        <?php print_string('allowstrippages', 'wiki') ?>
+        <br />
         </td>
         <td width="50%">
         <input type="checkbox" name="removepages" value="1" <?php echo $form->removepages?"CHECKED":""; ?> />
-        <?php print_string('allowremovepages', 'wiki') ?><br />
+        <?php print_string('allowremovepages', 'wiki') ?>
+        <?php helpbutton('studentadminoptions', get_string('studentadminoptions', 'wiki'), 'wiki') ?>
+        <br />
         <input type="checkbox" name="revertchanges" value="1" <?php echo $form->revertchanges?"CHECKED":""; ?> />
         <?php print_string('allowrevertchanges', 'wiki') ?><br />
         </td>
@@ -167,7 +170,6 @@
 
 <TR valign=top>
     <TD align=right><P>
-    <?php helpbutton('wikiname', get_string('wikiname', 'wiki'), 'wiki'); ?>
     <B><?php  print_string('wikiname', 'wiki') ?>:</B></P></TD>
     <TD>
         <?php
@@ -181,12 +183,12 @@
         <?php
             }
         ?>
+    <?php helpbutton('wikiname', get_string('wikiname', 'wiki'), 'wiki'); ?>
     </TD>
 </TR>
 
 <tr valign="top">
     <td align="right" nowrap>
-        <?php helpbutton('initialcontent', get_string('initialcontent', 'wiki'), 'wiki'); ?>
         <B><?php echo get_string("initialcontent", "wiki") ?>:</B></P>
     </td>
     <td>
@@ -201,6 +203,7 @@
                                         "wikifiles", $strchooseafile, 500, 750, $strchooseafile);
             }
         ?>
+        <?php helpbutton('initialcontent', get_string('initialcontent', 'wiki'), 'wiki'); ?>
     </td>
 </tr>
 
