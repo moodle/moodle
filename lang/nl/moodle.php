@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003110400)
+      // moodle.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['action'] = "Actie";
@@ -399,6 +399,7 @@ $string['languagegood'] = "Dit taal pakket is helemaal bijgewerkt! :-)
 ";
 $string['lastaccess'] = "Voor het laatst bezocht";
 $string['lastedited'] = "Voor het laatst bewerkt";
+$string['lastlogin'] = "Laatste log in";
 $string['lastmodified'] = "Voor het laatst gewijzigd";
 $string['lastname'] = "Achternaam";
 $string['latestlanguagepack'] = "Haal het meest recente taalpakket van moodle.org";
@@ -674,6 +675,7 @@ $string['showonlyweek'] = "Laat alleen week \$a zien";
 $string['showrecent'] = "Laat recente activiteiten zien";
 $string['showreports'] = "Toon activiteitenrapporten ";
 $string['showtheselogs'] = "Laat deze statistieken zien";
+$string['since'] = "Sinds";
 $string['site'] = "Site";
 $string['sitefiles'] = "Site bestanden";
 $string['sitelogs'] = "Site statistieken";

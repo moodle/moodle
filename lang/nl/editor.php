@@ -1,11 +1,14 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 development (2003110400)
+      // editor.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['about'] = "Info";
+$string['absbottom'] = "Absbottom";
+$string['absmiddle'] = "Absmiddle";
 $string['address'] = "Adres";
 $string['alignment'] = "Uitlijning";
 $string['alternatetext'] = "Alternatieve tekst";
+$string['baseline'] = "Baseline";
 $string['bold'] = "Vet";
 $string['borderthickness'] = "Randdikte";
 $string['bottom'] = "Onderaan";
@@ -62,6 +65,7 @@ $string['subscript'] = "Subscript";
 $string['superscript'] = "Superscript";
 $string['textindicator'] = "Huidige stijl";
 $string['textmode'] = "Je bent in TEKST MODUS. Gebruik de [<>] knop om terug om te schakelen naar WYSIWIG.";
+$string['texttop'] = "Texttop";
 $string['top'] = "Bovenaan";
 $string['underline'] = "Onderstrepen";
 $string['undo'] = "Ongedaan maken";

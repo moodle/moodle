@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // pix.php - created with Moodle 1.2 development (2003110400)
+      // pix.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['angry'] = "boos";

@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 development (2003110400)
+      // glossary.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['addcomment'] = "Voeg commentaar toe";
 $string['addentry'] = "Voeg een item toe";
+$string['addingcomment'] = "Commentaar toevoegen";
 $string['aliases'] = "Alias(sen)";
 $string['allcategories'] = "Alle categorieën";
 $string['allentries'] = "Alles";
@@ -13,8 +14,10 @@ $string['answer'] = "Antwoord";
 $string['approve'] = "Goedkeuren";
 $string['areyousuredelete'] = "Wil je dit woord echt verwijderen ?";
 $string['areyousuredeletecomment'] = "Wil je deze commentaar echt verwijderen ?";
+$string['areyousureexport'] = "Weet je zeker dat je dit item wil exporteren naar";
 $string['ascending'] = "(oplopend)";
 $string['attachment'] = "Bijlage";
+$string['authorview'] = "Blader op auteur";
 $string['back'] = "Terug";
 $string['cantinsertcat'] = "Kan geen categorie toevoegen";
 $string['cantinsertrec'] = "Kan geen record toevoegen";
@@ -60,6 +63,7 @@ $string['duplicateentry'] = "Dupliceer item";
 $string['editcategories'] = "Bewerk categoriën";
 $string['editentry'] = "Bewerk item";
 $string['editingcomment'] = "Bewerk commentaar";
+$string['entbypage'] = "Aantal items getoond per pagina";
 $string['entries'] = "Items";
 $string['entrieswithoutcategory'] = "Items zonder categorie";
 $string['entry'] = "Item";
@@ -88,10 +92,12 @@ $string['importcategories'] = "Importeer categorieën";
 $string['importedcategories'] = "Geïmporteerde categorieën";
 $string['importedentries'] = "Geïmporteerde items";
 $string['isglobal'] = "Is dit een globale woordenlijst?";
+$string['linkcategory'] = "Link deze categorie automatisch";
 $string['mainglossary'] = "Hoofdwoordenlijst";
 $string['maxtimehaspassed'] = "Sorry, maar de maximumtijd voor het bewerken van deze commentaar (\$a) is voorbij!";
 $string['modulename'] = "Woordenlijst";
 $string['modulenameplural'] = "Woordenlijsten";
+$string['newentries'] = "Niewe woordenlijstitems";
 $string['newglossary'] = "Nieuwe woordenlijst";
 $string['newglossarycreated'] = "De nieuwe woordenlijst is aangemaakt.";
 $string['newglossaryentries'] = "Nieuwe items in de woordenlijst:";
@@ -101,6 +107,7 @@ $string['noconceptfound'] = "Geen concept of definitie gevonden.";
 $string['noentries'] = "Geen items gevonden in dit deel";
 $string['noentry'] = "Geen item gevonden";
 $string['notcategorised'] = "Niet gecategoriseerd";
+$string['numberofentries'] = "Aantal items";
 $string['onebyline'] = "(één per lijn)";
 $string['printerfriendly'] = "Afdrukbare versie";
 $string['question'] = "Vraag";

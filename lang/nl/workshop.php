@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 development (2003101200)
+      // workshop.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['absent'] = "Afwezig";
@@ -68,6 +68,7 @@ $string['gradeforbias'] = "Graad van afwijking";
 $string['gradeforreliability'] = "Cijfer voor betrouwbaarheid";
 $string['gradeforstudentsassessment'] = "Cijfer voor de beoordeling van de leerling";
 $string['gradeofsubmission'] = "Beoordeling van bijdrage :\$a";
+$string['gradetable'] = "Beoordelingstabel";
 $string['gradingstrategy'] = "Beoordelingsstrategie";
 $string['hidegradesbeforeagreement'] = "Verberg de cijfers tot na de bevestiging";
 $string['hidenamesfromstudents'] = "Verberg de namen van \$a";
@@ -107,8 +108,10 @@ $string['numberofassessments'] = "Aantal evaluaties";
 $string['numberofassessmentsofstudentsubmissions'] = "Aantal evaluaties van leerlingenbijdragen";
 $string['numberofassessmentsofteachersexamples'] = "Aantal evaluaties van voorbeelden van de leraar";
 $string['numberofentries'] = "Aantal ingangen";
+$string['numberofnegativeresponses'] = "Aantal negatieve antwoorden";
 $string['on'] = "op \$a";
 $string['openassignment'] = "Open taak";
+$string['optionaladjustment'] = "Optionele bijsturing";
 $string['optionforpeergrade'] = "Keuze voor beoordeling door klasgenoot";
 $string['overallgrade'] = "Totaal cijfer";
 $string['overallocation'] = "Over toewijzing";
@@ -133,6 +136,7 @@ $string['pleaseassessthesestudentsubmissions'] = "Evalueer a.j.b. deze \$a bijdr
 $string['pleaseassessyoursubmissions'] = "Evalueer alsjeblieft je inzendingen";
 $string['poor'] = "Slecht";
 $string['present'] = "Huidig";
+$string['reasonforadjustment'] = "Reden voor bijsturing";
 $string['reassess'] = "Evalueer opnieuw";
 $string['reply'] = "Antwoord";
 $string['returnto'] = "Keer terug naar";
