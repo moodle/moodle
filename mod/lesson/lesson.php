@@ -697,7 +697,7 @@
 	    }
 
         $timenow = time();
-		$form = (object) $HTTP_POST_VARS;
+		$form = data_submitted();
         
         if ($form->pageid) {
             // the new page is not the first page
@@ -938,7 +938,7 @@
 	    }
 
         $timenow = time();
-        $form = (object) $HTTP_POST_VARS;
+		$form = data_submitted();
 
         $page->id = $form->pageid;
         $page->timemodified = $timenow;
