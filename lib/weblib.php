@@ -4094,10 +4094,13 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $return=false) {
     $str = '<table class="tabs" cellspacing="0">';
     $str .= '<tr><td class="left side"></td><td>';
     
+    $rowcount = count($tabrows);
 /// Cycle through the tab rows
     foreach ($tabrows as $row) {
+
+        $rowcount--;
     
-        $str .= '<table class="tabrow" cellspacing="0">';
+        $str .= '<table class="tabrow r'.$rowcount.'" cellspacing="0">';
         $str .= '<tr>';
         
         $numberoftabs = count($row);
