@@ -19,14 +19,6 @@ if(record_exists('block_instance', 'pagetype', 'course')) {
 }
 // End of dirty compatibility hack -- remove this before 1.5 goes gold
 
-/// Constants
-
-/**
- * Definition of course page type.
- */
-define('PAGE_COURSE_VIEW', 'course-view');
-define('PAGE_QUIZ_VIEW',   'mod-quiz-view');
-
 /**
  * Factory function page_create_object(). Called with a pagetype identifier and possibly with
  * its numeric ID. Returns a fully constructed page_base subclass you can work with.

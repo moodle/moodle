@@ -106,6 +106,12 @@ define('PARAM_URL',     0x0080);
 define('PARAM_LOCALURL',0x0180);  // NOT orthogonal to the others! Implies PARAM_URL!
 define('PARAM_CLEANFILE',0x0200);
 
+/**
+ * Definition of page types
+ */
+define('PAGE_COURSE_VIEW', 'course-view');
+define('PAGE_QUIZ_VIEW',   'mod-quiz-view');
+
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
 /**
