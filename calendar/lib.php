@@ -166,7 +166,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                 $popupcontent .= '<div><a href=\\\''.CALENDAR_URL.'view.php?view=event&amp;id='.$events[$eventid]->id.'\\\'>'.addslashes(htmlspecialchars($events[$eventid]->name)).'</a></div>';
             }
 
-            $popupcaption = get_string('eventsfor', 'calendar', calendar_month_name(intval($date['mon'])).' '.$day);
+            $popupcaption = get_string('eventsfor', 'calendar', strftime(get_string('strftimedayshort'), usertime($events[$eventid]->timestart)));
             $popup = 'onmouseover="return overlib(\''.$popupcontent.'\', CAPTION, \''.$popupcaption.'\');" onmouseout="return nd();"';
 
             // Class and cell content
@@ -483,11 +483,10 @@ function calendar_top_controls($type, $data) {
     if(!isset($data['d'])) {
         $data['d'] = 1;
     }
-    $time = calendar_mktime_check($data['m'], $data['d'], $data['y']);
-    $date = getdate($time);
+    $time = calendar_gmmktime_check($data['m'], $data['d'], $data['y']);
+    $date = getdate(usertime($time));
     $data['m'] = $date['mon'];
     $data['y'] = $date['year'];
-    $monthname = calendar_month_name($date['month']);
 
     switch($type) {
         case 'frontpage':
@@ -508,7 +507,7 @@ function calendar_top_controls($type, $data) {
             $prevlink = calendar_get_link_tag('&lt;&lt;', 'view.php?id='.$data['id'].'&amp;', 0, $prevmonth, $prevyear);
             $content .= '<table class="generaltable" style="width: 100%;"><tr>';
             $content .= '<td style="text-align: left; width: 12%;">'.$prevlink."</td>\n";
-            $content .= '<td style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.$monthname.' '.$data['y']."</a></td>\n";
+            $content .= '<td style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.strftime(get_string('strftimemonthyear'), $time)."</a></td>\n";
             $content .= '<td style="text-align: right; width: 12%;">'.$nextlink."</td>\n";
             $content .= '</tr></table>';
         break;
@@ -535,8 +534,8 @@ function calendar_top_controls($type, $data) {
         case 'month':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
-            $prevdate = calendar_mktime_check($prevmonth, 1, $prevyear);
-            $nextdate = calendar_mktime_check($nextmonth, 1, $nextyear);
+            $prevdate = calendar_gmmktime_check($prevmonth, 1, $prevyear);
+            $nextdate = calendar_gmmktime_check($nextmonth, 1, $nextyear);
             $content .= "<table style='width: 100%;'><tr>\n";
             $content .= '<td style="text-align: left; width: 30%;"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $prevmonth, $prevyear).'">&lt;&lt; '.strftime(get_string('strftimemonthyear'), $prevdate)."</a></td>\n";
             $content .= '<td style="text-align: center"><strong>'.strftime(get_string('strftimemonthyear'), $time)."</strong></td>\n";
@@ -649,16 +648,15 @@ function calendar_day_representation($tstamp, $now = false, $usecommonwords = tr
 
     static $shortformat;
     if(empty($shortformat)) {
-        $shortformat = strtolower(get_string('strftimedateshort'));
+        $shortformat = get_string('strftimedayshort');
     }
 
-    $days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
     if($now === false) {
         $now = time();
     }
 
     // To have it in one place, if a change is needed
-    $formal = get_string($days[userdate($tstamp, '%w')], 'calendar').' '.userdate($tstamp, $shortformat);
+    $formal = userdate($tstamp, $shortformat);
 
     // Reverse TZ compensation: make GMT stamps correspond to user's TZ
     $tzfix = calendar_get_tz_offset();
