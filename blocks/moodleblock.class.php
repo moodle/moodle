@@ -42,7 +42,7 @@ class MoodleBlock {
     var $str;
 
     /**
-     * The title of the block to be displayed in the block header area.
+     * The title of the block to be displayed in the block title area.
      * @var string $title
      */
     var $title         = NULL;
@@ -166,19 +166,6 @@ class MoodleBlock {
     function get_version() {
         // Intentionally doesn't check if a version is set. This is already done in _self_test()
         return $this->version;
-    }
-
-    /**
-     * Returns the class $header var value.
-     *
-     * Intentionally doesn't check if a header is set. 
-     * This is already done in {@link _self_test()}
-     *
-     * @return string $this->header
-     */
-    function get_header() {
-        // Intentionally doesn't check if a header is set. This is already done in _self_test()
-        return $this->header;
     }
 
     /**
@@ -404,7 +391,7 @@ class MoodleBlock {
      * @uses $THEME
      * @return boolean
      */
-    function print_config() {
+    function config_print() {
         // Default behavior: print the config_global.html file
         // You don't need to override this if you're satisfied with the above
         if (!$this->has_config()) {
@@ -421,16 +408,13 @@ class MoodleBlock {
      * Default behavior: save all variables as $CFG properties
      * You don't need to override this if you 're satisfied with the above
      *
-     * @param array $config
+     * @param array $data
      * @return boolean
      */
-    function handle_config($config) {
+    function config_save($data) {
         // Default behavior: save all variables as $CFG properties
         // You don't need to override this if you 're satisfied with the above
-        if (!$this->has_config()) {
-            return false;
-        }
-        foreach ($config as $name => $value) {
+        foreach ($data as $name => $value) {
             set_config($name, $value);
         }
         return true;
@@ -497,7 +481,6 @@ class MoodleBlock {
      */
     function specialization() {
         // Just to make sure that this method exists.
-        return;
     }
 
     /**
@@ -541,7 +524,7 @@ class MoodleBlock {
         if (!$this->instance_allow_multiple() && !$this->instance_allow_config()) {
             return false;
         }
-        global $CFG, $USER, $THEME;
+        global $CFG, $THEME;
 
         if (is_file($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html')) {
             print_simple_box_start('center', '', $THEME->cellheading);
