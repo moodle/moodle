@@ -1469,6 +1469,8 @@ function authenticate_user_login($username, $password) {
  */
 function enrol_student($userid, $courseid, $timestart=0, $timeend=0) {
 
+    global $CFG;
+
     if (!$course = get_record('course', 'id', $courseid)) {  // Check course
         return false;
     }
@@ -1482,7 +1484,7 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0) {
         return update_record('user_students', $student);
 
     } else {
-        require_once("../mod/forum/lib.php");
+        require_once("$CFG->dirroot/mod/forum/lib.php");
         forum_add_user($userid, $courseid);
 
         $student->userid = $userid;
@@ -3268,6 +3270,9 @@ function raise_memory_limit ($newlimit) {
 */
 function return_bytes($val) {
    $val = trim($val);
+   if (empty($val)) {
+       return '';
+   }
    $last = $val{strlen($val)-1};
    switch($last) {
        case 'k':
