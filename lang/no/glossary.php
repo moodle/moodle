@@ -152,6 +152,7 @@ $string['studentcanpost'] = 'Studenter kan legge til oppføringer';
 $string['totalentries'] = 'Totalt antall oppføringer';
 $string['usedynalink'] = 'Lag lenker til ordbokoppføringer automatisk';
 $string['waitingapproval'] = 'Venter på godkjenning';
+$string['warningstudentcapost'] = '(Gjelder bare dersom ordboken ikke er hovedordboken)';
 $string['writtenby'] = 'av';
 $string['youarenottheauthor'] = 'Du er ikke forfatteren av denne kommentaren, så du kan ikke redigere den.';
 
