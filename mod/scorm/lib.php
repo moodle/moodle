@@ -171,19 +171,11 @@ function scorm_randstring($len = "8")
         return $rstring;
 }
 
-function scorm_mkdirs($strPath)
-{
- global $CFG;
- if (is_dir($strPath))
- 	return true;
- $pStrPath = dirname($strPath);
- if (!scorm_mkdirs($pStrPath)) 
- 	return false;
- return mkdir($strPath, $CFG->directorypermissions);
-}
  
 function scorm_datadir($strPath, $existingdir="", $prefix = "SCORM")
 {
+    global $CFG;
+
 	if (($existingdir!="") && (is_dir($strPath.$existingdir)))
 		return $strPath.$existingdir;
 		
@@ -192,6 +184,7 @@ function scorm_datadir($strPath, $existingdir="", $prefix = "SCORM")
  			$datadir="/".$prefix.scorm_randstring();
  	 	} while (file_exists($strPath.$datadir));
  		mkdir($strPath.$datadir, $CFG->directorypermissions);
+        @chmod($strPath.$datadir, $CFG->directorypermissions);  // Just in case mkdir didn't do it
  		return $strPath.$datadir;
  	} else {
  		return false;

@@ -29,25 +29,26 @@
 	//
 	// Create a temporary directory to unzip package and validate imsmanifest
 	//
-	$basedir = $CFG->dataroot."/".$course->id;
-	$scormdir = "/moddata/scorm";	
-	if (scorm_mkdirs($basedir.$scormdir)) {
-	    if ($tempdir = scorm_datadir($basedir.$scormdir, $form->datadir)) {
-		copy ($basedir."/".$form->reference, $tempdir."/".basename($form->reference));
-		if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
-		    include_once($CFG->dirroot.'/lib/pclzip/pclzip.lib.php');
-		    $archive = new PclZip($tempdir."/".basename($form->reference));
-		    if (!$list = $archive->extract($tempdir)) {
-			error($archive->errorInfo(true));
-		    }
-		} else {
-		    $command = "cd $tempdir; $CFG->unzip -o ".basename($form->reference)." 2>&1";
-		    exec($command);
-		}
-		$result = scorm_validate($tempdir."/imsmanifest.xml");
-	    } else {
-		$result = "packagedir";
-	    }
+
+	$coursedir = "$CFG->dataroot/$course->id";
+
+	if ($scormdir = make_upload_directory("$course->id/$CFG->moddata/scorm")) {
+        if ($tempdir = scorm_datadir($scormdir, $form->datadir)) {
+            copy ("$coursedir/$form->reference", $tempdir."/".basename($form->reference));
+            if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
+                include_once($CFG->dirroot.'/lib/pclzip/pclzip.lib.php');
+                $archive = new PclZip($tempdir."/".basename($form->reference));
+                if (!$list = $archive->extract($tempdir)) {
+                    error($archive->errorInfo(true));
+                }
+            } else {
+                $command = "cd $tempdir; $CFG->unzip -o ".basename($form->reference)." 2>&1";
+                exec($command);
+            }
+            $result = scorm_validate($tempdir."/imsmanifest.xml");
+        } else {
+            $result = "packagedir";
+        }
 	} else {
 	    $result = "datadir";
 	}
@@ -85,7 +86,7 @@
 	    echo "<form name=\"theform\" method=\"post\" $onsubmit action=\"$form->destination\">\n";
 ?>
         <input type="hidden" name="reference"	value="<?php p($form->reference) ?>">
-        <input type="hidden" name="datadir"	value="<?php p(substr($tempdir,strlen($basedir)+strlen($scormdir))) ?>">
+        <input type="hidden" name="datadir"	value="<?php p(substr($tempdir,strlen($scormdir))) ?>">
         <input type="hidden" name="summary"	value="<?php p($form->summary) ?>">
         <input type="hidden" name="auto"	value="<?php p($form->auto) ?>">
         <input type="hidden" name="name"	value="<?php p($form->name) ?>">
