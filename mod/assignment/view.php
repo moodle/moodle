@@ -52,9 +52,16 @@
             echo "<a href=\"submissions.php?id=$assignment->id\">".
                   get_string("viewfeedback", "assignment")."</a>";
         } else {
-            $count = assignment_count_real_submissions($assignment);
+            $currentgroup = get_current_group($course->id);
+            if ($currentgroup and isteacheredit($course->id)) {
+                $group = get_record("groups", "id", $currentgroup);
+                $groupname = " ($group->name)";
+            } else {
+                $groupname = "";
+            }
+            $count = assignment_count_real_submissions($assignment, $currentgroup);
             echo "<a href=\"submissions.php?id=$assignment->id\">".
-                  get_string("viewsubmissions", "assignment", $count)."</a>";
+                  get_string("viewsubmissions", "assignment", $count)."</a>$groupname";
         }
         echo '</p>';
     } else if (!$cm->visible) {
