@@ -2771,7 +2771,7 @@ function reset_password_and_mail($user) {
     $site = get_site();
     $from = get_admin();
 
-    $data->firstname = $user->firstname;
+    $data->firstname = fullname($user);
     $data->sitename = $site->fullname;
     $data->link = $CFG->wwwroot .'/login/confirm.php?p='. $user->secret .'&amp;s='. $user->username;
     $data->admin = fullname($from) .' ('. $from->email .')';
