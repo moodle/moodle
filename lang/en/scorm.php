@@ -75,4 +75,7 @@ $string['validationtype'] = 'This preference set the DOMXML library used for val
 $string['validateascorm'] = 'Validate a SCORM package';
 $string['versionwarning'] = 'The manifest version is older than 1.3, warning at $a->tag tag';
 $string['viewallreports'] = 'View reports for $a attempts';
+$string['display'] = 'Display';
+$string['expcoll'] = 'Expand/Collide';
+$string['exit'] = 'Exit from SCORM course';
 ?>
