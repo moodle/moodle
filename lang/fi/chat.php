@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // chat.php - created with Moodle 1.4 development (2004072500)
 
 
 $string['beep'] = 'kutsu';
@@ -7,9 +7,14 @@ $string['chatintro'] = 'Johdanto';
 $string['chatname'] = 'Chat-huoneen nimi';
 $string['chatreport'] = 'Chat-istunnot';
 $string['chattime'] = 'Seuraavan chat-istunnon aika';
+$string['configmethod'] = 'Normaalisti chatin toiminta vaatii selaimen ottavan yhteyttä säännöllisesti palvelimeen. Tämä toimii kaikkialla ja eikä vaadi asetuksia, mutta saattaa samalla aiheuttaa kuormitusta palvelimelle. Chat-palvelu vaatiin unix-komentorivin käyttömahdollisuuden mutta skaalaantuu paremmin laajempaa käyttöön.';
 $string['configoldping'] = 'Kuinka pitkän ajan päästä käyttäjä katsotaan poistuneeksi siitä, kun hänestä ei ole kuulunut mitään?';
 $string['configrefreshroom'] = 'Kuinka usein chat-huone päivitetään (sekunteina)? Mitä lyhyempi aika, sen nopeampi huone on, mutta serverin kuormitus on silloin suurempi, kun monta käyttäjää on huoneessa samaan aikaan.';
 $string['configrefreshuserlist'] = 'Kuinka nopeasti käyttäjälista päivitetään (sekunteina)';
+$string['configserverhost'] = 'Palvelimen nimi jolla chat-palvelu sijaitsee';
+$string['configserverip'] = 'Chat-palvelun ip-osoite joka vastaa palvelimen nimeä';
+$string['configservermax'] = 'Maksimi asiakkaden määrä';
+$string['configserverport'] = 'Chat-palvelun portti';
 $string['currentchats'] = 'Aktiiviset chat-istunnot';
 $string['currentusers'] = 'Tämän hetkiset käyttäjät';
 $string['deletesession'] = 'Poista tämä istunto';
@@ -24,6 +29,8 @@ $string['messagebeepsyou'] = '$a on juuri kutsunut sinua!';
 $string['messageenter'] = '$a on juuri tullut mukaan chattiin';
 $string['messageexit'] = '$a on lopettanut chatin';
 $string['messages'] = 'Viestit';
+$string['methoddaemon'] = 'Chat-palvelu';
+$string['methodnormal'] = 'Normaali toiminta';
 $string['modulename'] = 'Chat';
 $string['modulenameplural'] = 'Chatit';
 $string['neverdeletemessages'] = 'Älä koskaan poista viestejä';

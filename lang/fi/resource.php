@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3 development (2004050200)
+      // resource.php - created with Moodle 1.4 development (2004072500)
 
 
 $string['addresource'] = 'Lisää aineisto';
@@ -21,6 +21,7 @@ $string['configwebsearch'] = 'Kun lisätää WWW-sivun tai -linkin osoite, tätä oso
 $string['directlink'] = 'Suora linkki tähän tiedostoon';
 $string['directoryinfo'] = 'Kaikki valitun hakemiston tiedostot näytetään';
 $string['editingaresource'] = 'Aineiston muokkaus';
+$string['encryptedcode'] = 'Suojaa koodi';
 $string['example'] = 'Esimerkki';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.esimerkki.fi/jokuhakemisto/jokutiedosto.html';
@@ -28,6 +29,8 @@ $string['fetchclienterror'] = 'Selaimelle tapahtui virhe sivua haettaessa (ehkä 
 $string['fetcherror'] = 'Tapahtui virhe sivua haettaessa.';
 $string['fetchservererror'] = 'Etäpalvelimella tapahtui virhe haettaessa sivua (ehkä ohjelma virhe)';
 $string['filename'] = 'Tiedoston nimi';
+$string['filtername'] = 'Aineiston automaattilinkitys';
+$string['frameifpossible'] = 'Pane aineisto kehykseen ja jätä sivuston navigointipainikkeet näkyviin.';
 $string['fulltext'] = 'Teksti';
 $string['htmlfragment'] = 'HTML';
 $string['maindirectory'] = 'Tiedostojen hakemisto';
@@ -50,17 +53,19 @@ $string['note'] = 'Huomaa';
 $string['notefile'] = 'Lisätäksesi tiedostoja kurssille (jotta ne näkysivät tässä listassa) käytä 
 <a href=\"$a\">Tiedostot</A>-työkalua.';
 $string['notypechosen'] = 'Sinun pitää valita luettavan aineiston tyyppi.  Käytä selaimen Takaisin-painiketta ja yritä uudelleen.';
+$string['pagedisplay'] = 'Näytä aineisto nykyisessä ikkunassa';
+$string['pagewindow'] = 'Samassa ikkunassa';
+$string['parameter'] = 'Asetus';
+$string['parameters'] = 'Asetukset';
 $string['popupresource'] = 'Tämän aineiston tulee näkyä ponnahdusikkunassa.';
 $string['popupresourcelink'] = 'Jos et vielä klikannut, klikkaa tässä: $a';
 $string['resourcetype'] = 'Aineiston tyyppi';
-$string['resourcetype1'] = 'Viittaus';
-$string['resourcetype2'] = 'Web-sivu';
-$string['resourcetype3'] = 'Tiedosto';
-$string['resourcetype4'] = 'Teksti';
-$string['resourcetype5'] = 'WWW-linkki';
-$string['resourcetype6'] = 'HTML';
-$string['resourcetype7'] = 'Ohjelma';
-$string['resourcetype8'] = 'Wiki-teksti';
-$string['resourcetype9'] = 'Hakemisto';
+$string['resourcetypedirectory'] = 'Näytä hakemisto';
+$string['resourcetypefile'] = 'Linkitä  tiedostoon tai web-sivuun';
+$string['resourcetypehtml'] = 'Tee uusi web-sivu';
+$string['resourcetypelabel'] = 'Lisää otsikko';
+$string['resourcetypetext'] = 'Lisää uusi testi-sivu';
+$string['searchweb'] = 'Etsi web-sivua';
+$string['variablename'] = 'Muuttujan nimi';
 
 ?>

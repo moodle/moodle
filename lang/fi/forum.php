@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 Nearly Ready (2004052000)
+      // forum.php - created with Moodle 1.4 development (2004072500)
 
 
 $string['addanewdiscussion'] = 'Lis‰‰ uusi keskustelu';
@@ -25,8 +25,13 @@ $string['delete'] = 'Poista';
 $string['deleteddiscussion'] = 'Keskustelu on poistettu';
 $string['deletedpost'] = 'Viesti on poistettu';
 $string['deletesure'] = 'Oletko varma, ett‰ haluat poistaa t‰m‰n viestin?';
+$string['digestmailheader'] = 'T‰ss‰ on t‰m‰n p‰iv‰n ker‰tyt viestit keskustelualueilta $a->sitename. Vaihtaaksesi poistitus asetuksia, k‰y ositteessa $a->userprefs. ';
+$string['digestmailprefs'] = 'asetuksesi';
+$string['digestmailsubject'] = '$a: ker‰tyt keskustelut';
+$string['digestsentusers'] = 'Ker‰tty email l‰hetetty $a k‰ytt‰j‰lle';
 $string['discussion'] = 'Keskustelu';
 $string['discussionmoved'] = 'T‰m‰ keskustelu on siirretty paikkaan \'$a\'';
+$string['discussionname'] = 'Keskustelun nimi';
 $string['discussions'] = 'Keskustelut';
 $string['discussionsstartedby'] = 'Keskustelun on aloittanut $a';
 $string['discussionsstartedbyrecent'] = 'Viimeisimm‰n keskustelun aloittaja $a';
@@ -92,8 +97,13 @@ $string['postrating1'] = 'Suurimmaksi osaksi eristyv‰‰ osaamista';
 $string['postrating2'] = 'Yht‰laisesti eristynyt ja sosiaalinen';
 $string['postrating3'] = 'Suurimmaksi osaksi sosiaalista osaamista';
 $string['posts'] = 'Viestit';
+$string['posttoforum'] = 'L‰het‰ viesti';
 $string['postupdated'] = 'Viestisi on p‰ivitetty';
+$string['processingdigest'] = 'Ker‰t‰‰n viestej‰ k‰ytt‰j‰lle $a';
 $string['processingpost'] = 'K‰sitell‰‰n viesti‰ $a';
+$string['prune'] = 'Jaa';
+$string['prunedpost'] = 'Uusi keskustelu on luotu t‰st‰ viestist‰';
+$string['pruneheading'] = 'Jaa keskustelu ja siirr‰ t‰m‰ viesti uuteen keskusteluun';
 $string['rate'] = 'Arvio';
 $string['rating'] = 'Arviointi';
 $string['ratingeveryone'] = 'Kaikki voivat arvioida';
