@@ -1593,8 +1593,8 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/lang/en.php\"></script>\n";
         echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/popupwin.js\"></script>\n";
 
-        if ($rows < 20) {
-            $rows = 20;
+        if ($rows < 10) {
+            $rows = 10;
         }
         if ($cols < 65) {
             $cols = 65;
