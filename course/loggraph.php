@@ -34,7 +34,7 @@
 
      case "usercourse.png":
 
-       $timestart = $course->startdate;
+       $timestart = usergetmidnight($course->startdate);
        $i = 0;
        while ($timestart < $timenow) {
            $timefinish = $timestart + (3600 * 24);
@@ -44,7 +44,7 @@
                $logs[$i] = 0;
            }
            $logs[$i] = $logcount->count;
-           $days[$i] = date("j M", $timestart);
+           $days[$i] = userdate($timestart, "%a %e %b");
            $i++;
            $timestart = $timefinish;
        }
@@ -53,12 +53,12 @@
 
 
        $graph = new graph(750, 400);
-       $graph->parameter['title'] = "Rough usage of $course->shortname by $user->firstname $user->lastname";
+       $graph->parameter['title'] = "Hits on $course->shortname by $user->firstname $user->lastname";
 
        $graph->x_data           = $days;
 
        $graph->y_data['logs']   = $logs;
-       $graph->y_format['logs'] = array('colour' => 'blue','bar' => 'fill','legend' =>'actual','bar_size' => 0.4);
+       $graph->y_format['logs'] = array('colour' => 'blue','bar' => 'fill','legend' =>'actual','bar_size' => 0.9);
        $graph->y_label_left     = "Hits";
        $graph->label_size       = "6";
 
@@ -73,11 +73,42 @@
 
      case "userday.png":
 
-       if (! $date) {
-           error("Must specify a date if you use userday.png format");
+       if ($date) {
+           $timestart = usergetmidnight($date);
+       } else {
+           $timestart = usergetmidnight(time());
+       }
+       while ($timestart < $timenow) {
+           $timefinish = $timestart + 3600;
+           if (! $logcount = get_record_sql("SELECT COUNT(*) as count FROM log
+                                             WHERE user = '$user->id' AND course = '$course->id'
+                                               AND `time` > '$timestart' AND `time` < '$timefinish'")) {
+               $logs[$i] = 0;
+           }
+           $logs[$i] = $logcount->count;
+           $hours[$i] = userdate($timestart, "%I %p");
+           $i++;
+           $timestart = $timefinish;
        }
 
-       // XXX still to be done.  The day was getting long!
+       $maxlogs = max($logs);
+
+       $graph = new graph(750, 400);
+       $graph->parameter['title'] = "Today's hits on $course->shortname by $user->firstname $user->lastname";
+
+       $graph->x_data           = $hours;
+
+       $graph->y_data['logs']   = $logs;
+       $graph->y_format['logs'] = array('colour' => 'blue','bar' => 'fill','legend' =>'actual','bar_size' => 0.9);
+       $graph->y_label_left     = "Hits";
+       $graph->label_size       = "6";
+
+       $graph->y_order = array('logs');
+
+       
+       $graph->parameter['shadow']          = 'none';
+
+       $graph->draw_stack();
 
        break;
 
