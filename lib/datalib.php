@@ -1116,26 +1116,35 @@ function get_recent_enrolments($courseid, $timestart) {
 * @param	type description
 */
 function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, $recordsperpage=99999,
-                             $firstinitial="", $lastinitial="", $group=NULL) {
+                             $firstinitial="", $lastinitial="", $group=NULL, $search="") {
 
     global $CFG;
 
     switch ($CFG->dbtype) {
         case "mysql":
+             $fullname = " CONCAT(firstname,\" \",lastname) ";
              $limit = "LIMIT $page,$recordsperpage";
              $LIKE = "LIKE";
              break;
         case "postgres7":
+             $fullname = " firstname||' '||lastname ";
              $limit = "LIMIT $recordsperpage OFFSET ".($page);
              $LIKE = "ILIKE";
              break;
         default: 
+             $fullname = " firstname||\" \"||lastname ";
              $limit = "LIMIT $recordsperpage,$page";
              $LIKE = "ILIKE";
     }
 
     $groupmembers = '';
-    $select = "s.course = '$courseid' AND s.userid = u.id AND u.deleted = '0' ";
+    $userstudents = '';
+    $userstudentcolumns = '';
+    $select = " u.deleted = '0' ";
+
+    if ($search) {
+        $search = " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
+    }
 
     if ($firstinitial) {
         $select .= " AND u.firstname $LIKE '$firstinitial%' ";
@@ -1153,16 +1162,24 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
         $select .= " AND u.id = gm.userid AND gm.groupid = '$group'";
     }
 
+    if ($courseid != 0) {
+        $userstudents = ", {$CFG->prefix}user_students s ";
+        $select .= " AND s.course = '$courseid' AND s.userid = u.id";
+        $userstudentcolumns = ", s.timeaccess as lastaccess";
+    } else {
+        $userstudentcolumns = ", u.lastlogin as lastaccess";
+    }
+
+
     if ($sort) {
         $sort = " ORDER BY $sort ";
     }
 
-    return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
-                            u.email, u.city, u.country, u.lastlogin, u.picture, u.department, u.institution,
-                            u.emailstop, u.lang, u.timezone, s.timeaccess as lastaccess
-                            FROM {$CFG->prefix}user u, 
-                                 {$CFG->prefix}user_students s $groupmembers
-                            WHERE $select $sort $dir $limit");
+    return get_records_sql("SELECT u.id, u.confirmed, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
+                            u.email, u.city, u.country, u.picture, u.department, u.institution,
+                            u.emailstop, u.lang, u.timezone $userstudentcolumns
+                            FROM {$CFG->prefix}user u $userstudents $groupmembers
+                            WHERE $select $search $sort $dir $limit");
 }
 
 /**
@@ -1182,8 +1199,11 @@ function count_course_students($course, $search="", $firstinitial="", $lastiniti
              $LIKE = "ILIKE";
     }
 
+    
     $groupmembers = "";
-    $select = "s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'";
+    $userstudents = "";
+        
+    $select = " u.deleted = '0'";
 
     if ($search) {
         $select .= " AND u.firstname $LIKE '%$search%' OR u.lastname $LIKE '%$search%'";
@@ -1203,10 +1223,14 @@ function count_course_students($course, $search="", $firstinitial="", $lastiniti
         $select .= " AND u.id = gm.userid AND gm.groupid = '$group'";
     }
 
-    return count_records_sql("SELECT COUNT(*) FROM {$CFG->prefix}user u,
-                                                   {$CFG->prefix}user_students s $groupmembers
-                                                   WHERE $select");
+    if ($course->id != 0) {
+        $userstudents = ", {$CFG->prefix}user_students s ";
+        $select .= " AND s.course = '$course->id' AND s.userid = u.id";
+    }
 
+    return count_records_sql("SELECT COUNT(*) 
+                              FROM {$CFG->prefix}user u $userstudents $groupmembers
+                              WHERE $select");
 }
 
 
