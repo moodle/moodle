@@ -1,9 +1,11 @@
 <?PHP // $Id$
 
-/// CONSTANTS /////////////////////////////////////////////////////////////
-$site=get_site();
-define('SITEID',$site->id);
-
+/// GLOBAL CONSTANTS /////////////////////////////////////////////////////////
+if ($SITE = get_site()) {
+    define('SITEID', $SITE->id);
+} else {
+    define('SITEID', 1);
+}
 
 
 /// FUNCTIONS FOR DATABASE HANDLING  ////////////////////////////////
