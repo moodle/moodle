@@ -122,7 +122,8 @@
   $T = get_string("tardyshort","attendance");
   $P = get_string("presentshort","attendance");  
   
-  foreach ($students as $student) {
+
+  if ($students) foreach ($students as $student) {
     echo "<tr><td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$student->lastname."</td>\n";
     echo "<td align=\"left\" nowrap class=\"generaltablecell\"  style=\"border-top: 1px solid;\">".$student->firstname."</td>\n";
     $studentid=(($student->idnumber != "") ? $student->idnumber : "&nbsp");
