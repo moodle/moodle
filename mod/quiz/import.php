@@ -59,15 +59,18 @@
             $format = new quiz_file_format();
 
             if (! $format->importpreprocess($category)) {             // Do anything before that we need to
-                error("Error occurred during pre-processing!");
+                error("Error occurred during pre-processing!", 
+                      "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
             }
 
             if (! $format->importprocess($newfile['tmp_name'])) {     // Process the uploaded file
-                error("Error occurred during processing!");
+                error("Error occurred during processing!", 
+                      "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
             }
 
             if (! $format->importpostprocess()) {                     // In case anything needs to be done after
-                error("Error occurred during post-processing!");
+                error("Error occurred during post-processing!", 
+                      "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
             }
 
             echo "<hr>";
