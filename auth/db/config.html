@@ -1,8 +1,37 @@
+<?PHP
+    if (!isset($config->auth_dbhost)) {
+        $config->auth_dbhost = "localhost";
+    }
+    if (!isset($config->auth_dbtype)) {
+        $config->auth_dbtype = "mysql";
+    }
+    if (!isset($config->auth_dbname)) {
+        $config->auth_dbname = "";
+    }
+    if (!isset($config->auth_dbuser)) {
+        $config->auth_dbuser = "";
+    }
+    if (!isset($config->auth_dbpass)) {
+        $config->auth_dbpass = "";
+    }
+    if (!isset($config->auth_dbtable)) {
+        $config->auth_dbtable = "";
+    }
+    if (!isset($config->auth_dbfielduser)) {
+        $config->auth_dbfielduser = "";
+    }
+    if (!isset($config->auth_dbfieldpass)) {
+        $config->auth_dbfieldpass = "";
+    }
+    if (!isset($config->auth_dbpasstype)) {
+        $config->auth_dbpasstype = "plaintext";
+    }
+?>
 <tr valign="top"  BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_dbhost:</TD>
 	<TD>
         <INPUT name=auth_dbhost TYPE=text SIZE=30 VALUE="<?=$config->auth_dbhost?>">
-	<? formerr($err["auth_dbhost"]); ?>
+	<? if (isset($err["auth_dbhost"])) formerr($err["auth_dbhost"]); ?>
 	</TD>
     <TD>
     <? print_string("auth_dbhost","auth") ?>
@@ -29,7 +58,7 @@
 	<TD ALIGN=RIGHT><P>auth_dbname:</TD>
 	<TD>
     <INPUT name=auth_dbname TYPE=text SIZE=30 VALUE="<?=$config->auth_dbname?>">
-    <? formerr($err["auth_dbname"]); ?>
+    <? if (isset($err["auth_dbname"]))formerr($err["auth_dbname"]); ?>
     </TD>
     <TD>
     <? print_string("auth_dbname","auth") ?>
@@ -40,7 +69,7 @@
 	<TD ALIGN=RIGHT><P>auth_dbuser:</TD>
 	<TD>
     <INPUT name=auth_dbuser TYPE=text SIZE=30 VALUE="<?=$config->auth_dbuser?>">
-    <? formerr($err["auth_dbuser"]); ?>
+    <? if (isset($err["auth_dbuser"])) formerr($err["auth_dbuser"]); ?>
     </TD>
     <TD>
     <? print_string("auth_dbuser","auth") ?>
@@ -51,7 +80,7 @@
 	<TD ALIGN=RIGHT><P>auth_dbpass:</TD>
 	<TD>
     <INPUT name="auth_dbpass" TYPE="text" SIZE="30" VALUE="<?=$config->auth_dbpass?>">
-    <? formerr($err["auth_dbpass"]); ?>
+    <? if (isset($err["auth_dbpass"])) formerr($err["auth_dbpass"]); ?>
     </TD>
     <TD>
     <? print_string("auth_dbpass","auth") ?>
@@ -62,7 +91,7 @@
 	<TD ALIGN=RIGHT><P>auth_dbtable:</TD>
 	<TD>
     <INPUT name="auth_dbtable" TYPE="text" SIZE="30" VALUE="<?=$config->auth_dbtable?>">
-    <? formerr($err["auth_dbtable"]); ?>
+    <? if (isset($err["auth_dbtable"])) formerr($err["auth_dbtable"]); ?>
     </TD>
     <TD>
     <? print_string("auth_dbtable","auth") ?>
@@ -73,7 +102,7 @@
 	<TD ALIGN=RIGHT><P>auth_dbfielduser:</TD>
 	<TD>
     <INPUT name="auth_dbfielduser" TYPE="text" SIZE="30" VALUE="<?=$config->auth_dbfielduser?>">
-    <? formerr($err["auth_dbfielduser"]); ?>
+    <? if (isset($err["auth_dbfielduser"])) formerr($err["auth_dbfielduser"]); ?>
     </TD>
     <TD>
     <? print_string("auth_dbfielduser","auth") ?>
@@ -84,12 +113,27 @@
 	<TD ALIGN=RIGHT><P>auth_dbfieldpass:</TD>
 	<TD>
     <INPUT name="auth_dbfieldpass" TYPE="text" SIZE="30" VALUE="<?=$config->auth_dbfieldpass?>">
-    <? formerr($err["auth_dbfieldpass"]); ?>
+    <? if (isset($err["auth_dbfieldpass"])) formerr($err["auth_dbfieldpass"]); ?>
     </TD>
     <TD>
     <? print_string("auth_dbfieldpass","auth") ?>
     </TD>
 </TR>
+
+<TR VALIGN=TOP  BGCOLOR="<?=$THEME->cellheading2 ?>">
+	<TD ALIGN=RIGHT><P>auth_dbpasstype:</TD>
+	<TD>
+    <? $passtype["plaintext"] = get_string("plaintext", "auth");
+       $passtype["md5"]       = get_string("md5", "auth");
+       choose_from_menu($passtype, "auth_dbpasstype", $config->auth_dbpasstype, "");
+    ?>
+      
+    </TD>
+    <TD>
+    <? print_string("auth_dbpasstype","auth") ?>
+    </TD>
+</TR>
+
 
 <TR>
 	<TD ALIGN=RIGHT><P><? print_string("firstname") ?>:</TD>

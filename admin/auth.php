@@ -59,6 +59,20 @@
     if (! isset($config->guestloginbutton)) {
         $config->guestloginbutton = 1;
     }
+    if (! isset($config->auth_instructions)) {
+        $config->auth_instructions = "";
+    }
+    if (! isset($config->changepassword)) {
+        $config->changepassword = "";
+    }
+    $user_fields = array("firstname", "lastname", "email", "phone1", "phone2", "department", "address", "city", "country", "description", "idnumber", "lang");
+
+    foreach ($user_fields as $user_field) {
+        $user_field = "auth_user_$user_field";
+        if (! isset($config->$user_field)) {
+            $config->$user_field = "";
+        }
+    }
 
     if (empty($focus)) {
         $focus = "";

@@ -1,8 +1,28 @@
+<?PHP
+    if (!isset($config->ldap_host_url)) {
+        $config->ldap_host_url = "";
+    }
+    if (!isset($config->ldap_contexts)) {
+        $config->ldap_contexts = "";
+    }
+    if (!isset($config->ldap_user_attribute)) {
+        $config->ldap_user_attribute = "";
+    }
+    if (!isset($config->ldap_search_sub)) {
+        $config->ldap_search_sub = "";
+    }
+    if (!isset($config->ldap_bind_dn)) {
+        $config->ldap_bind_dn = "";
+    }
+    if (!isset($config->ldap_bind_pw)) {
+        $config->ldap_bind_pw = "";
+    }
+?>
 <tr valign="top" BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>ldap_host_url:</TD>
 	<TD>
         <INPUT name=ldap_host_url TYPE=text SIZE=30 VALUE="<?=$config->ldap_host_url?>">
-	<? formerr($err["ldap_host_url"]); ?>
+	<? if (isset($err["ldap_host_url"])) formerr($err["ldap_host_url"]); ?>
 	</TD>
     <TD>
     <? print_string("auth_ldap_host_url","auth") ?>
@@ -10,10 +30,10 @@
 </TR>
 
 <TR VALIGN=TOP BGCOLOR="<?=$THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>ldap_user_context:</TD>
+	<TD ALIGN=RIGHT><P>ldap_contexts:</TD>
 	<TD>
     <INPUT name=ldap_contexts TYPE=text SIZE=30 VALUE="<?=$config->ldap_contexts?>">
-    <? formerr($err["ldap_contexts"]); ?>
+    <? if (isset($err["ldap_contexts"])) formerr($err["ldap_contexts"]); ?>
     </TD>
     <TD>
     <? print_string("auth_ldap_contexts","auth") ?>
@@ -24,7 +44,7 @@
 	<TD ALIGN=RIGHT><P>ldap_user_attribute:</TD>
 	<TD>
     <INPUT name=ldap_user_attribute TYPE=text SIZE=30 VALUE="<?=$config->ldap_user_attribute?>">
-    <? formerr($err["ldap_user_attribute"]); ?>
+    <? if (isset($err["ldap_user_attribute"])) formerr($err["ldap_user_attribute"]); ?>
     </TD>
     <TD>
     <? print_string("auth_ldap_user_attribute","auth") ?>
@@ -35,7 +55,7 @@
 	<TD ALIGN=RIGHT><P>ldap_search_sub:</TD>
 	<TD>
     <INPUT name=ldap_search_sub TYPE=text SIZE=1 VALUE="<?=$config->ldap_search_sub?>">
-    <? formerr($err["ldap_search_sub"]); ?>
+    <? if (isset($err["ldap_search_sub"])) formerr($err["ldap_search_sub"]); ?>
     </TD>
     <TD>
     <? print_string("auth_ldap_search_sub","auth") ?>
@@ -46,17 +66,17 @@
 	<TD ALIGN=RIGHT><P>ldap_bind_dn:</TD>
 	<TD>
     <INPUT name=ldap_bind_dn TYPE=text SIZE=30 VALUE="<?=$config->ldap_bind_dn?>">
-    <? formerr($err["ldap_bind_dn"]); ?>
+    <? if (isset($err["ldap_bind_dn"])) formerr($err["ldap_bind_dn"]); ?>
     </TD><TD>
     <? print_string("auth_ldap_bind_dn","auth") ?>
     </TD>
 </TR>
 
 <TR VALIGN=TOP BGCOLOR="<?=$THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>ldap_bind_password:</TD>
+	<TD ALIGN=RIGHT><P>ldap_bind_pw:</TD>
 	<TD>
     <INPUT name=ldap_bind_pw TYPE=text SIZE=30 VALUE="<?=$config->ldap_bind_pw?>">
-    <? formerr($err["ldap_bind_pw"]); ?>
+    <? if (isset($err["ldap_bind_pw"])) formerr($err["ldap_bind_pw"]); ?>
     </TD><TD>
     <? print_string("auth_ldap_bind_pw","auth") ?>
     </TD>

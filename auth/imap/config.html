@@ -1,8 +1,19 @@
+<?PHP
+    if (!isset($config->auth_imaphost)) {
+        $config->auth_imaphost = "127.0.0.1";
+    }
+    if (!isset($config->auth_imaptype)) {
+        $config->auth_imaptype = "imap";
+    }
+    if (!isset($config->auth_imapport)) {
+        $config->auth_imapport = "143";
+    }
+?>
 <tr valign="top" BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_imaphost:</TD>
 	<TD>
         <INPUT name=auth_imaphost TYPE=text SIZE=30 VALUE="<?=$config->auth_imaphost?>">
-	<? formerr($err["ldap_host_url"]); ?>
+	<? if (isset($err["auth_imaphost"])) formerr($err["auth_imaphost"]); ?>
 	</TD>
     <TD>
     <? print_string("auth_imaphost","auth") ?>
@@ -28,7 +39,7 @@
 	<TD ALIGN=RIGHT><P>auth_imapport:</TD>
 	<TD>
     <INPUT name=auth_imapport TYPE=text SIZE=6 VALUE="<?=$config->auth_imapport?>">
-    <? formerr($err["auth_imapport"]); ?>
+    <? if (isset($err["auth_imapport"])) formerr($err["auth_imapport"]); ?>
     </TD>
     <TD>
     <? print_string("auth_imapport","auth") ?>

@@ -9,6 +9,7 @@ $string['auth_dbfielduser'] = "Name of the field containing usernames";
 $string['auth_dbhost'] = "The computer hosting the database server.";
 $string['auth_dbname'] = "Name of the database itself";
 $string['auth_dbpass'] = "Password matching the above username";
+$string['auth_dbpasstype'] = "Specify the format that the password field is using.  MD5 encryption is useful for connecting to other common web applications like PostNuke";
 $string['auth_dbtable'] = "Name of the table in the database";
 $string['auth_dbtitle'] = "Use an external database";
 $string['auth_dbtype'] = "The database type (See the <A HREF=../lib/adodb/readme.htm#drivers>ADOdb documentation</A> for details)";
@@ -52,6 +53,8 @@ $string['changepassword'] = "Change password URL";
 $string['changepasswordhelp'] = "Here you can specify a location at which your users can recover or change their username/password if they've forgotten it.  This will be provided to users as a button on the login page and their user page.  if you leave this blank the button will not be printed.";
 $string['chooseauthmethod'] = "Choose an authentication method: ";
 $string['guestloginbutton'] = "Guest login button";
+$string['md5'] = "MD5 encryption";
+$string['plaintext'] = "Plain text";
 $string['showguestlogin'] = "You can hide or show the guest login button on the login page.";
 
 ?>

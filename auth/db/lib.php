@@ -1,9 +1,6 @@
 <?PHP  // $Id$
        // Authentication by looking up an external database table
 
-// This code is completely untested so far - IT NEEDS TESTERS!
-// Looks like it should work though ...
-
 
 function auth_user_login ($username, $password) {
 // Returns true if the username and password work
@@ -15,6 +12,11 @@ function auth_user_login ($username, $password) {
     $authdb = &ADONewConnection();         
     $authdb->PConnect($CFG->auth_dbhost,$CFG->auth_dbuser,$CFG->auth_dbpass,$CFG->auth_dbname); 
 
+    switch ($CFG->auth_dbpasstype) {   // Re-format password accordingly
+        case "md5":
+            $password = md5($password);
+        break;
+    }
 
     $rs = $authdb->Execute("SELECT * FROM $CFG->auth_dbtable 
                             WHERE $CFG->auth_dbfielduser = '$username' 
