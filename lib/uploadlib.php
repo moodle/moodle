@@ -1,37 +1,78 @@
 <?php
+
+/**
+ * uploadlib.php - This class handles all aspects of fileuploading
+ *
+ * @author ?
+ * @version 1.5
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package moodlecore
+ */
+
 error_reporting(E_ALL ^ E_NOTICE);
 /**
- * This class handles all aspects of fileuploading 
+ * This class handles all aspects of fileuploading
  */
 class upload_manager {
 
-    var $files; // array to hold local copies of stuff in $_FILES
-    var $config; // holds all configuration stuff.
-    var $status; // keep track of if we're ok (errors for each file are kept in $files['whatever']['uploadlog']
-    var $course; // the course this file has been uploaded for (for logging and virus notifications)
-    var $inputname; // if we're only getting one file.
-    var $notify; // if we're given silent=true in the constructor, this gets built up to hold info about the process.
+   /**
+    * Array to hold local copies of stuff in $_FILES
+    * @var array $files 
+    */
+    var $files;
+   /**
+    * Holds all configuration stuff
+    * @var array $config 
+    */
+    var $config;
+   /**
+    * Keep track of if we're ok
+    * (errors for each file are kept in $files['whatever']['uploadlog']
+    * @var boolean $status
+    */
+    var $status;
+   /**
+    * The course this file has been uploaded for. {@link $COURSE}
+    * (for logging and virus notifications)
+    * @var course $course 
+    */
+    var $course;
+   /**
+    * If we're only getting one file.
+    * (for logging and virus notifications)
+    * @var string $inputname 
+    */
+    var $inputname;
+   /**
+    * If we're given silent=true in the constructor, this gets built 
+    * up to hold info about the process.
+    * @var string $notify 
+    */
+    var $notify;
 
     /**
      * Constructor, sets up configuration stuff so we know how to act.
+     *
      * Note: destination not taken as parameter as some modules want to use the insertid in the path and we need to check the other stuff first.
-     * @param $inputname - if this is given the upload manager will only process the file in $_FILES with this name.
-     * @param $deleteothers - whether to delete other files in the destination directory (optional,defaults to false)
-     * @param $handlecollisions - whether to use handle_filename_collision() or not. (optional, defaults to false)
-     * @param $course - the course the files are being uploaded for (for logging and virus notifications)
-     * @param $recoverifmultiple - if we come across a virus, or if a file doesn't validate or whatever, do we continue? optional, defaults to true.
-     * @param $modbytes - max bytes for this module - this and $course->maxbytes are used to get the maxbytes from get_max_upload_file_size().
-     * @param $silent - whether to notify errors or not.
-     * @param $allownull - whether we care if there's no file when we've set the input name.
+     *
+     * @uses $CFG
+     * @param string $inputname If this is given the upload manager will only process the file in $_FILES with this name.
+     * @param boolean $deleteothers Whether to delete other files in the destination directory (optional, defaults to false)
+     * @param boolean $handlecollisions Whether to use {@link handle_filename_collision()} or not. (optional, defaults to false)
+     * @param course $course The course the files are being uploaded for (for logging and virus notifications) {@link $COURSE}
+     * @param boolean $recoverifmultiple If we come across a virus, or if a file doesn't validate or whatever, do we continue? optional, defaults to true.
+     * @param int $modbytes Max bytes for this module - this and $course->maxbytes are used to get the maxbytes from {@link get_max_upload_file_size()}.
+     * @param boolean $silent Whether to notify errors or not.
+     * @param boolean $allownull Whether we care if there's no file when we've set the input name.
      */
-    function upload_manager($inputname='',$deleteothers=false,$handlecollisions=false,$course=null,$recoverifmultiple=false,$modbytes=0,$silent=false,$allownull=false) {
+    function upload_manager($inputname='', $deleteothers=false, $handlecollisions=false, $course=null, $recoverifmultiple=false, $modbytes=0, $silent=false, $allownull=false) {
         
         global $CFG;
         
         $this->config->deleteothers = $deleteothers;
         $this->config->handlecollisions = $handlecollisions;
         $this->config->recoverifmultiple = $recoverifmultiple;
-        $this->config->maxbytes = get_max_upload_file_size($CFG->maxbytes,$course->maxbytes,$modbytes);
+        $this->config->maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes, $modbytes);
         $this->config->silent = $silent;
         $this->config->allownull = $allownull;
         $this->files = array();
@@ -44,8 +85,12 @@ class upload_manager {
     }
     
     /** 
-     * Gets all entries out of $_FILES and stores them locally in $files
-     * Checks each one against get_max_upload_file_size and calls cleanfilename and scans them for viruses etc.
+     * Gets all entries out of $_FILES and stores them locally in $files and then
+     * checks each one against {@link get_max_upload_file_size()} and calls {@link cleanfilename()} 
+     * and scans them for viruses etc.
+     * @uses $CFG
+     * @uses $_FILES
+     * @return boolean
      */
     function preprocess_files() {
         global $CFG;
@@ -70,7 +115,7 @@ class upload_manager {
                             notify(get_string('uploadfailednotrecovering','moodle',$a));
                         }
                         else {
-                            $this->notify .= "<br />".get_string('uploadfailednotrecovering','moodle',$a);
+                            $this->notify .= '<br />'. get_string('uploadfailednotrecovering','moodle',$a);
                         }
                         $this->status = false;
                         return false;
@@ -80,7 +125,7 @@ class upload_manager {
                             notify($this->files[$name]['uploadlog']);
                         }
                         else {
-                            $this->notify .= "<br />".$this->files[$name]['uploadlog'];
+                            $this->notify .= '<br />'. $this->files[$name]['uploadlog'];
                         }
                         $this->status = false;
                         return false;
@@ -91,7 +136,7 @@ class upload_manager {
                     if ($newname != $this->files[$name]['name']) {
                         $a->oldname = $this->files[$name]['name'];
                         $a->newname = $newname;
-                        $this->files[$name]['uploadlog'] .= get_string('uploadrenamedchars','moodle',$a);
+                        $this->files[$name]['uploadlog'] .= get_string('uploadrenamedchars','moodle', $a);
                     }
                     $this->files[$name]['name'] = $newname;
                     $this->files[$name]['clear'] = true; // ok to save.
@@ -107,9 +152,9 @@ class upload_manager {
 
     /**
      * Validates a single file entry from _FILES
-     * @param $file - the entry from _FILES to validate
-     * @param $allowempty - this is to allow module owners to control which files are compulsory if this function is being called straight from the module.
-     * @return true if ok.
+     *
+     * @param object $file The entry from _FILES to validate
+     * @return boolean True if ok.
      */
     function validate_file(&$file) {
         if (empty($file)) {
@@ -120,7 +165,7 @@ class upload_manager {
             return false;
         }
         if ($file['size'] > $this->config->maxbytes) {
-            $file['uploadlog'] .= "\n".get_string("uploadedfiletoobig", "moodle", $this->config->maxbytes);
+            $file['uploadlog'] .= "\n". get_string('uploadedfiletoobig', 'moodle', $this->config->maxbytes);
             return false;
         }
         return true;
@@ -128,31 +173,34 @@ class upload_manager {
 
     /** 
      * Moves all the files to the destination directory.
-     * @param $destination - the destination directory.
-     * @return status;
+     *
+     * @uses $CFG
+     * @uses $USER
+     * @param string $destination The destination directory.
+     * @return boolean status;
      */
     function save_files($destination) {
-        global $CFG,$USER;
+        global $CFG, $USER;
         
         if (!$this->status) { // preprocess_files hasn't been run
             $this->preprocess_files();
         }
         if ($this->status) {
-            if (!(strpos($destination,$CFG->dataroot) === false)) {
+            if (!(strpos($destination, $CFG->dataroot) === false)) {
                 // take it out for giving to make_upload_directory
-                $destination = substr($destination,strlen($CFG->dataroot)+1);
+                $destination = substr($destination, strlen($CFG->dataroot)+1);
             }
 
-            if ($destination{strlen($destination)-1} == "/") { // strip off a trailing / if we have one
-                $destination = substr($destination,0,-1);
+            if ($destination{strlen($destination)-1} == '/') { // strip off a trailing / if we have one
+                $destination = substr($destination, 0, -1);
             }
 
-            if (!make_upload_directory($destination,true)) { //TODO maybe put this function here instead of moodlelib.php now.
+            if (!make_upload_directory($destination, true)) { //TODO maybe put this function here instead of moodlelib.php now.
                 $this->status = false;
                 return false;
             }
             
-            $destination = $CFG->dataroot.'/'.$destination; // now add it back in so we have a full path
+            $destination = $CFG->dataroot .'/'. $destination; // now add it back in so we have a full path
 
             $exceptions = array(); //need this later if we're deleting other files.
 
@@ -164,21 +212,21 @@ class upload_manager {
                 }
 
                 if ($this->config->handlecollisions) {
-                    $this->handle_filename_collision($destination,$this->files[$i]);
+                    $this->handle_filename_collision($destination, $this->files[$i]);
                 }
                 if (move_uploaded_file($this->files[$i]['tmp_name'], $destination.'/'.$this->files[$i]['name'])) {
-                    chmod($destination.'/'.$this->files[$i]['name'], $CFG->directorypermissions);
+                    chmod($destination .'/'. $this->files[$i]['name'], $CFG->directorypermissions);
                     $this->files[$i]['fullpath'] = $destination.'/'.$this->files[$i]['name'];
                     $this->files[$i]['uploadlog'] .= "\n".get_string('uploadedfile');
                     $this->files[$i]['saved'] = true;
                     $exceptions[] = $this->files[$i]['name'];
                     // now add it to the log (this is important so we know who to notify if a virus is found later on)
-                    clam_log_upload($this->files[$i]['fullpath'],$this->course);
+                    clam_log_upload($this->files[$i]['fullpath'], $this->course);
                     $savedsomething=true;
                 }
             }
             if ($savedsomething && $this->config->deleteothers) {
-                $this->delete_other_files($destination,$exceptions);
+                $this->delete_other_files($destination, $exceptions);
             }
         }
         if (!$savedsomething) {
@@ -189,9 +237,10 @@ class upload_manager {
     }
     
     /**
-     * Wrapper function that calls preprocess_files and viruscheck_files and then save_files
+     * Wrapper function that calls {@link preprocess_files()} and {@link viruscheck_files()} and then {@link save_files()}
      * Modules that require the insert id in the filepath should not use this and call these functions seperately in the required order.
-     * @parameter $destination - where to save the uploaded files to.
+     * @parameter string $destination Where to save the uploaded files to.
+     * @return boolean
      */ 
     function process_file_uploads($destination) {
         if ($this->preprocess_files()) {
@@ -202,14 +251,15 @@ class upload_manager {
 
     /** 
      * Deletes all the files in a given directory except for the files in $exceptions (full paths)
-     * @param $destination - the directory to clean up.
-     * @param $exceptions - array of full paths of files to KEEP.
+     *
+     * @param string $destination The directory to clean up.
+     * @param array $exceptions Full paths of files to KEEP.
      */
-    function delete_other_files($destination,$exceptions=null) {
+    function delete_other_files($destination, $exceptions=null) {
         if ($filestodel = get_directory_list($destination)) {
             foreach ($filestodel as $file) {
-                if (!is_array($exceptions) || !in_array($file,$exceptions)) {
-                    unlink("$destination/$file");
+                if (!is_array($exceptions) || !in_array($file, $exceptions)) {
+                    unlink($destination .'/'. $file);
                     $deletedsomething = true;
                 }
             }
@@ -219,40 +269,45 @@ class upload_manager {
                 notify(get_string('uploadoldfilesdeleted'));
             }
             else {
-                $this->notify .= "<br />".get_string('uploadoldfilesdeleted');
+                $this->notify .= '<br />'. get_string('uploadoldfilesdeleted');
             }
         }
     }
     
     /**
      * Handles filename collisions - if the desired filename exists it will rename it according to the pattern in $format
-     * @param $destination - destination directory (to check existing files against)
-     * @param $file - the current file from $files we're processing.
-     * @param $format - the printf style format to rename the file to (defaults to filename_number.extn)
-     * @return new filename.
+     * @param string $destination Destination directory (to check existing files against)
+     * @param object $file Passed in by reference. The current file from $files we're processing.
+     * @param string $format The printf style format to rename the file to (defaults to filename_number.extn)
+     * @return string The new filename.
+     * @todo verify return type - this function does not appear to return anything since $file is passed in by reference
      */
-    function handle_filename_collision($destination,&$file,$format='%s_%d.%s') {
-        $bits = explode('.',$file['name']);
+    function handle_filename_collision($destination, &$file, $format='%s_%d.%s') {
+        $bits = explode('.', $file['name']);
         // check for collisions and append a nice numberydoo.
-        if (file_exists($destination.'/'.$file['name'])) {
+        if (file_exists($destination .'/'. $file['name'])) {
             $a->oldname = $file['name'];
             for ($i = 1; true; $i++) {
-                $try = sprintf($format,$bits[0],$i,$bits[1]);
-                if ($this->check_before_renaming($destination,$try,$file)) {
+                $try = sprintf($format, $bits[0], $i, $bits[1]);
+                if ($this->check_before_renaming($destination, $try, $file)) {
                     $file['name'] = $try;
                     break;
                 }
             }
             $a->newname = $file['name'];
-            $file['uploadlog'] .= "\n".get_string('uploadrenamedcollision','moodle',$a);
+            $file['uploadlog'] .= "\n". get_string('uploadrenamedcollision','moodle', $a);
         }
     }
     
     /**
      * This function checks a potential filename against what's on the filesystem already and what's been saved already.
+     * @param string $destination Destination directory (to check existing files against)
+     * @param string $nametocheck The filename to be compared.
+     * @param object $file The current file from $files we're processing.
+     * return boolean
      */
-    function check_before_renaming($destination,$nametocheck,$file) {
-        if (!file_exists($destination.'/'.$nametocheck)) {
+    function check_before_renaming($destination, $nametocheck, $file) {
+        if (!file_exists($destination .'/'. $nametocheck)) {
             return true;
         }
         if ($this->config->deleteothers) {
@@ -269,7 +324,13 @@ class upload_manager {
         return false;
     }
 
-    
+    /**
+     * ?
+     *
+     * @param object $file Passed in by reference. The current file from $files we're processing.
+     * @return string
+     * @todo Finish documenting this function
+     */
     function get_file_upload_error(&$file) {
         
         switch ($file['error']) {
@@ -309,9 +370,9 @@ class upload_manager {
      */
     function print_upload_log($return=false) {
         foreach (array_keys($this->files) as $i => $key) {
-            $str .= '<b>'.get_string('uploadfilelog','moodle',$i+1).' '
+            $str .= '<strong>'. get_string('uploadfilelog', 'moodle', $i+1) .' '
                 .((!empty($this->files[$key]['originalname'])) ? '('.$this->files[$key]['originalname'].')' : '')
-                .'</b> :'.nl2br($this->files[$key]['uploadlog']).'<br />';
+                .'</strong> :'. nl2br($this->files[$key]['uploadlog']) .'<br />';
         }
         if ($return) {
             return $str;
@@ -321,6 +382,7 @@ class upload_manager {
 
     /**
      * If we're only handling one file (if inputname was given in the constructor) this will return the (possibly changed) filename of the file.
+     @return boolean
      */
     function get_new_filename() {
         if (!empty($this->inputname) && count($this->files) == 1) {
@@ -331,6 +393,7 @@ class upload_manager {
 
     /** 
      * If we're only handling one file (if input name was given in the constructor) this will return the full path to the saved file.
+     * @return boolean
      */
     function get_new_filepath() {
         if (!empty($this->inputname) && count($this->files) == 1) {
@@ -341,6 +404,7 @@ class upload_manager {
 
     /** 
      * If we're only handling one file (if inputname was given in the constructor) this will return the ORIGINAL filename of the file.
+     * @return boolean
      */
     function get_original_filename() {
         if (!empty($this->inputname) && count($this->files) == 1) {
@@ -350,10 +414,11 @@ class upload_manager {
     }
 
     /** 
-     * This function returns any errors wrapped up in red
+     * This function returns any errors wrapped up in red.
+     * @return string
      */
     function get_errors() {
-        return '<p style="color:red;">'.$this->notify.'</p>';
+        return '<p style="color:red;">'. $this->notify .'</p>';
     }
 }
 
@@ -365,29 +430,31 @@ UPLOAD_PRINT_FORM_FRAGMENT DOESN'T REALLY BELONG IN THE CLASS BUT CERTAINLY IN T
 
 
 /**
- * This function prints out a number of upload form elements
- * @param $numfiles - the number of elements required (optional, defaults to 1)
- * @param $names - array of element names to use (optional, defaults to FILE_n)
- * @param $descriptions - array of strings to be printed out before each file bit.
- * @param $uselabels - whether to output text fields for file descriptions or not (optional, defaults to false)
- * @param $labelnames - array of element names to use for labels (optional, defaults to LABEL_n)
- * @param $coursebytes 
- * @param $modbytes - these last two are used to calculate upload max size ( using get_max_upload_file_size)
- * @param $return - whether to return the string (defaults to false - string is echoed)
+ * This function prints out a number of upload form elements.
+ *
+ * @param int $numfiles The number of elements required (optional, defaults to 1)
+ * @param array $names Array of element names to use (optional, defaults to FILE_n)
+ * @param array $descriptions Array of strings to be printed out before each file bit.
+ * @param boolean $uselabels -Whether to output text fields for file descriptions or not (optional, defaults to false)
+ * @param array $labelnames Array of element names to use for labels (optional, defaults to LABEL_n)
+ * @param int $coursebytes $coursebytes and $maxbytes are used to calculate upload max size ( using {@link get_max_upload_file_size})
+ * @param int $modbytes $coursebytes and $maxbytes are used to calculate upload max size ( using {@link get_max_upload_file_size})
+ * @param boolean $return -Whether to return the string (defaults to false - string is echoed)
+ * @return string Form returned as string if $return is true
  */ 
-function upload_print_form_fragment($numfiles=1,$names=null,$descriptions=null,$uselabels=false,$labelnames=null,$coursebytes=0,$modbytes=0,$return=false) {
+function upload_print_form_fragment($numfiles=1, $names=null, $descriptions=null, $uselabels=false, $labelnames=null, $coursebytes=0, $modbytes=0, $return=false) {
     global $CFG;
-    $maxbytes = get_max_upload_file_size($CFG->maxbytes,$coursebytes,$modbytes);
-    $str = '<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxbytes.'" />'."\n";
+    $maxbytes = get_max_upload_file_size($CFG->maxbytes, $coursebytes, $modbytes);
+    $str = '<input type="hidden" name="MAX_FILE_SIZE" value="'. $maxbytes .'" />'."\n";
     for ($i = 0; $i < $numfiles; $i++) {
         if (is_array($descriptions) && !empty($descriptions[$i])) {
-            $str .= '<b>'.$descriptions[$i].'</b><br />';
+            $str .= '<strong>'. $descriptions[$i] .'</strong><br />';
         }
         $name = ((is_array($names) && !empty($names[$i])) ? $names[$i] : 'FILE_'.$i);
-        $str .= '<input type="file" size="50" name="'.$name.'" alt="'.$name.'" /><br />'."\n";
+        $str .= '<input type="file" size="50" name="'. $name .'" alt="'. $name .'" /><br />'."\n";
         if ($uselabels) {
             $lname = ((is_array($labelnames) && !empty($labelnames[$i])) ? $labelnames[$i] : 'LABEL_'.$i);
-            $str .= get_string('uploadlabel').' <input type="text" size="50" name="'.$lname.'" alt="'.$lname
+            $str .= get_string('uploadlabel').' <input type="text" size="50" name="'. $lname .'" alt="'. $lname
                 .'" /><br /><br />'."\n";
         }
     }
@@ -403,60 +470,64 @@ function upload_print_form_fragment($numfiles=1,$names=null,$descriptions=null,$
 /**
  * Deals with an infected file - either moves it to a quarantinedir 
  * (specified in CFG->quarantinedir) or deletes it.
+ *
  * If moving it fails, it deletes it.
- * @param file full path to the file
- * @param userid - if not used, defaults to $USER->id (there in case called from cron)
- * @param basiconly - admin level reporting or user level reporting.
- * @return a string of what it did.
+ *
+ *@uses $CFG
+ * @uses $USER
+ * @param string $file Full path to the file
+ * @param int $userid If not used, defaults to $USER->id (there in case called from cron)
+ * @param boolean $basiconly Admin level reporting or user level reporting.
+ * @return string Details of what the function did.
  */
-function clam_handle_infected_file($file,$userid=0,$basiconly=false) {
+function clam_handle_infected_file($file, $userid=0, $basiconly=false) {
     
-    global $CFG,$USER;
+    global $CFG, $USER;
     if ($USER && !$userid) {
         $userid = $USER->id;
     }
     $delete = true;
     if (file_exists($CFG->quarantinedir) && is_dir($CFG->quarantinedir) && is_writable($CFG->quarantinedir)) {
         $now = date('YmdHis');
-        if (rename($file,$CFG->quarantinedir.'/'.$now.'-user-'.$userid.'-infected')) { 
+        if (rename($file, $CFG->quarantinedir .'/'. $now .'-user-'. $userid .'-infected')) { 
             $delete = false;
-            clam_log_infected($file,$CFG->quarantinedir.'/'.$now.'-user-'.$userid.'-infected',$userid);
+            clam_log_infected($file, $CFG->quarantinedir.'/'. $now .'-user-'. $userid .'-infected', $userid);
             if ($basiconly) {
-                $notice .= "\n".get_string('clammovedfilebasic');
+                $notice .= "\n". get_string('clammovedfilebasic');
             }
             else {
-                $notice .= "\n".get_string('clammovedfile','moodle',$CFG->quarantinedir.'/'.$now.'-user-'.$userid.'-infected');
+                $notice .= "\n". get_string('clammovedfile', 'moodle', $CFG->quarantinedir.'/'. $now .'-user-'. $userid .'-infected');
             }
         }
         else {
             if ($basiconly) {
-                $notice .= "\n".get_string('clamdeletedfile');
+                $notice .= "\n". get_string('clamdeletedfile');
             }
             else {
-                $notice .= "\n".get_string('clamquarantinedirfailed','moodle',$CFG->quarantinedir);
+                $notice .= "\n". get_string('clamquarantinedirfailed', 'moodle', $CFG->quarantinedir);
             }
         }
     }
     else {
         if ($basiconly) {
-            $notice .= "\n".get_string('clamdeletedfile');
+            $notice .= "\n". get_string('clamdeletedfile');
         }
         else {
-            $notice .= "\n".get_string('clamquarantinedirfailed','moodle',$CFG->quarantinedir);
+            $notice .= "\n". get_string('clamquarantinedirfailed', 'moodle', $CFG->quarantinedir);
         }
     }
     if ($delete) {
         if (unlink($file)) {
-            clam_log_infected($file,'',$userid);
-            $notice .= "\n".get_string('clamdeletedfile');
+            clam_log_infected($file, '', $userid);
+            $notice .= "\n". get_string('clamdeletedfile');
         }
         else {
             if ($basiconly) {
                 // still tell the user the file has been deleted. this is only for admins.
-                $notice .= "\n".get_string('clamdeletedfile');
+                $notice .= "\n". get_string('clamdeletedfile');
             }
             else {
-                $notice .= "\n".get_string('clamdeletedfilefailed');
+                $notice .= "\n". get_string('clamdeletedfilefailed');
             }
         }
     }
@@ -464,16 +535,19 @@ function clam_handle_infected_file($file,$userid=0,$basiconly=false) {
 }
 
 /**
- * Replaces the given file with a string to notify that the original file had a virus.
+ * Replaces the given file with a string.
+ *
+ * The replacement string is used to notify that the original file had a virus
  * This is to avoid missing files but could result in the wrong content-type.
- * @param file - full path to the file.
+ * @param string $file Full path to the file.
+ * @return boolean
  */
 function clam_replace_infected_file($file) {
     $newcontents = get_string('virusplaceholder');
-    if (!$f = fopen($file,'w')) {
+    if (!$f = fopen($file, 'w')) {
         return false;
     }
-    if (!fwrite($f,$newcontents)) {
+    if (!fwrite($f, $newcontents)) {
         return false;
     }
     return true;
@@ -481,13 +555,15 @@ function clam_replace_infected_file($file) {
 
 
 /**
- * If $CFG->runclamonupload is set, we scan a given file. (called from preprocess_files)
+ * If $CFG->runclamonupload is set, we scan a given file. (called from {@link preprocess_files()})
+ *
  * This function will add on a uploadlog index in $file.
- * @param $file - the file to scan from $files. or an absolute path to a file.
- * @return 1 if good, 0 if something goes wrong (opposite from actual error code from clam)
+ * @param mixed $file The file to scan from $files. or an absolute path to a file.
+ * @param course $course {@link $COURSE}
+ * @return int 1 if good, 0 if something goes wrong (opposite from actual error code from clam)
  */ 
-function clam_scan_file(&$file,$course) {
-    global $CFG,$USER;
+function clam_scan_file(&$file, $course) {
+    global $CFG, $USER;
 
     if (is_array($file) && is_uploaded_file($file['tmp_name'])) { // it's from $_FILES
         $appendlog = true; 
@@ -504,26 +580,26 @@ function clam_scan_file(&$file,$course) {
 
     if (!$CFG->pathtoclam || !file_exists($CFG->pathtoclam) || !is_executable($CFG->pathtoclam)) {
         $newreturn = 1;
-        $notice = get_string('clamlost','moodle',$CFG->pathtoclam);
+        $notice = get_string('clamlost', 'moodle', $CFG->pathtoclam);
         if ($CFG->clamfailureonupload == 'actlikevirus') {
-            $notice .= "\n".get_string('clamlostandactinglikevirus');
-            $notice .= "\n".clam_handle_infected_file($fullpath);
+            $notice .= "\n". get_string('clamlostandactinglikevirus');
+            $notice .= "\n". clam_handle_infected_file($fullpath);
             $newreturn = false; 
         }
         clam_mail_admins($notice);
         if ($appendlog) {
-            $file['uploadlog'] .= "\n".get_string('clambroken');
+            $file['uploadlog'] .= "\n". get_string('clambroken');
             $file['clam'] = 1;
         }
         return $newreturn; // return 1 if we're allowing clam failures
     }
     
-    $cmd = $CFG->pathtoclam.' '.$fullpath." 2>&1";
+    $cmd = $CFG->pathtoclam .' '. $fullpath ." 2>&1";
     
     // before we do anything we need to change perms so that clamscan can read the file (clamdscan won't work otherwise)
     chmod($fullpath,0644);
     
-    exec($cmd,$output,$return);
+    exec($cmd, $output, $return);
     
     
     switch ($return) {
@@ -536,29 +612,29 @@ function clam_scan_file(&$file,$course) {
         else {
             $info->course = 'No course';
         }
-        $info->user = $USER->firstname.' '.$USER->lastname;
-        $notice = get_string('virusfound','moodle',$info);
-        $notice .= "\n\n".implode("\n",$output);
-        $notice .= "\n\n".clam_handle_infected_file($fullpath); 
+        $info->user = $USER->firstname .' '. $USER->lastname;
+        $notice = get_string('virusfound', 'moodle', $info);
+        $notice .= "\n\n". implode("\n", $output);
+        $notice .= "\n\n". clam_handle_infected_file($fullpath); 
         clam_mail_admins($notice);
         if ($appendlog) {
             $info->filename = $file['originalname'];
-            $file['uploadlog'] .= "\n".get_string('virusfounduser','moodle',$info);
+            $file['uploadlog'] .= "\n". get_string('virusfounduser', 'moodle', $info);
             $file['virus'] = 1;
         }
         return false; // in this case, 0 means bad.
     default: 
         // error - clam failed to run or something went wrong
-        $notice .= get_string('clamfailed','moodle',get_clam_error_code($return));
-        $notice .= "\n\n".implode("\n",$output);
+        $notice .= get_string('clamfailed', 'moodle', get_clam_error_code($return));
+        $notice .= "\n\n". implode("\n", $output);
         $newreturn = true;
         if ($CFG->clamfailureonupload == 'actlikevirus') {
-            $notice .= "\n".clam_handle_infected_file($fullpath);
+            $notice .= "\n". clam_handle_infected_file($fullpath);
             $newreturn = false;
         }
         clam_mail_admins($notice);
         if ($appendlog) {
-            $file['uploadlog'] .= "\n".get_string('clambroken');
+            $file['uploadlog'] .= "\n". get_string('clambroken');
             $file['clam'] = 1;
         }
         return $newreturn; // return 1 if we're allowing failures.
@@ -566,21 +642,28 @@ function clam_scan_file(&$file,$course) {
 }
 
 /**
- * emails admins about a clam outcome
- * @param notice - the body of the email.
+ * Emails admins about a clam outcome
+ *
+ * @param string $notice The body of the email to be sent.
  */
 function clam_mail_admins($notice) {
     
     $site = get_site();
         
-    $subject = get_string('clamemailsubject','moodle',$site->fullname);
+    $subject = get_string('clamemailsubject', 'moodle', $site->fullname);
     $admins = get_admins();
     foreach ($admins as $admin) {
-        email_to_user($admin,get_admin(),$subject,$notice);
+        email_to_user($admin, get_admin(), $subject, $notice);
     }
 }
 
 
+/**
+ * Returns the string equivalent of a numeric clam error code
+ *
+ * @param int $returncode The numeric error code in question.
+ * return string The definition of the error code
+ */
 function get_clam_error_code($returncode) {
     $returncodes = array();
     $returncodes[0] = 'No virus found.';
@@ -610,67 +693,77 @@ function get_clam_error_code($returncode) {
 }
 
 /**
- * adds a file upload to the log table so that clam can resolve the filename to the user later if necessary
+ * Adds a file upload to the log table so that clam can resolve the filename to the user later if necessary
+ *
+ * @uses $CFG
+ * @uses $USER
+ * @param string $newfilepath ?
+ * @param course $course {@link $COURSE}
+ * @param boolean $nourl ?
+ * @todo Finish documenting this function
  */
-function clam_log_upload($newfilepath,$course=null,$nourl=false) {
-    global $CFG,$USER;
+function clam_log_upload($newfilepath, $course=null, $nourl=false) {
+    global $CFG, $USER;
     // get rid of any double // that might have appeared
-    $newfilepath = preg_replace('/\/\//','/',$newfilepath);
-    if (strpos($newfilepath,$CFG->dataroot) === false) {
-        $newfilepath = $CFG->dataroot.'/'.$newfilepath;
+    $newfilepath = preg_replace('/\/\//', '/', $newfilepath);
+    if (strpos($newfilepath, $CFG->dataroot) === false) {
+        $newfilepath = $CFG->dataroot .'/'. $newfilepath;
     }
     $courseid = 0;
     if ($course) {
         $courseid = $course->id;
     }
-    add_to_log($courseid,"upload","upload",((!$nourl) ? substr($_SERVER['HTTP_REFERER'],0,100) : ''),$newfilepath);
+    add_to_log($courseid, 'upload', 'upload', ((!$nourl) ? substr($_SERVER['HTTP_REFERER'], 0, 100) : ''), $newfilepath);
 }
 
 /**
  * This function logs to error_log and to the log table that an infected file has been found and what's happened to it.
- * @param $oldfilepath - full path to the infected file before it was moved.
- * @param $newfilepath - full path to the infected file since it was moved to the quarantine directory (if the file was deleted, leave empty).
- * @param $userid - id of user who uploaded the file.
+ *
+ * @param string $oldfilepath Full path to the infected file before it was moved.
+ * @param string $newfilepath Full path to the infected file since it was moved to the quarantine directory (if the file was deleted, leave empty).
+ * @param int $userid The user id of the user who uploaded the file.
  */
-function clam_log_infected($oldfilepath='',$newfilepath='',$userid=0) {
+function clam_log_infected($oldfilepath='', $newfilepath='', $userid=0) {
 
-    add_to_log(0,"upload","infected",$_SERVER['HTTP_REFERER'],$oldfilepath,0,$userid);
+    add_to_log(0, 'upload', 'infected', $_SERVER['HTTP_REFERER'], $oldfilepath, 0, $userid);
     
-    $user = get_record('user','id',$userid);
+    $user = get_record('user', 'id', $userid);
     
     $errorstr = 'Clam AV has found a file that is infected with a virus. It was uploaded by '
-        . ((empty($user) ? ' an unknown user ' : $user->firstname. ' '.$user->lastname))
+        . ((empty($user) ? ' an unknown user ' : $user->firstname . ' '. $user->lastname))
         . ((empty($oldfilepath)) ? '. The infected file was caught on upload ('.$oldfilepath.')' 
-           : '. The original file path of the infected file was '.$oldfilepath)
-        . ((empty($newfilepath)) ? '. The file has been deleted ' : '. The file has been moved to a quarantine directory and the new path is '.$newfilepath);
+           : '. The original file path of the infected file was '. $oldfilepath)
+        . ((empty($newfilepath)) ? '. The file has been deleted ' : '. The file has been moved to a quarantine directory and the new path is '. $newfilepath);
 
     error_log($errorstr);
 }
 
 
 /**
- * some of the modules allow moving attachments (glossary), in which case we need to hunt down an original log and change the path.
- * @param oldpath - the old path to the file (should be in the log)
- * @param newpath - new path 
- * @param update - if true, will overwrite old record (used for forum moving etc).
+ * Some of the modules allow moving attachments (glossary), in which case we need to hunt down an original log and change the path.
+ *
+ * @uses $CFG
+ * @param string $oldpath The old path to the file (should be in the log)
+ * @param string $newpath The new path to the file 
+ * @param boolean $update If true this function will overwrite old record (used for forum moving etc).
  */
-function clam_change_log($oldpath,$newpath,$update=true) {
+function clam_change_log($oldpath, $newpath, $update=true) {
     global $CFG;
     
-    if (!$record = get_record("log","info",$oldpath,"module","upload")) {
-        error_log("couldn't find record");
+    if (!$record = get_record('log', 'info', $oldpath, 'module', 'upload')) {
+        error_log('couldn\'t find record');
         return false;
     }
     $record->info = $newpath;
     if ($update) {
-        if (update_record("log",$record)) {
-            error_log("updated record");
+        if (update_record('log', $record)) {
+            error_log('updated record');
         }
     }
     else {
         unset($record->id);
-        if (insert_record("log",$record)) {
-            error_log("inserted record");
+        if (insert_record('log', $record)) {
+            error_log('inserted record');
         }
     }
 }
