@@ -245,7 +245,7 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here", $hei
 
     echo "\n<SCRIPT language=\"Javascript\">";
     echo "\n<!--";
-    echo "\ndocument.write('<A TITLE=\"$title\" HREF=javascript:openpopup(\"$url\",\"$name\",\"$height\",\"$width\") >$linkname</A>');";
+    echo "\ndocument.write('<A TITLE=\"$title\" HREF=javascript:openpopup(\"$url\",\"$name\",\"$height\",\"$width\") >".addslashes($linkname)."</A>');";
     echo "\n//-->";
     echo "\n</SCRIPT>";
     echo "\n<NOSCRIPT>\n<A TARGET=\"$name\" TITLE=\"$title\" HREF=\"$CFG->wwwroot/$url\">$linkname</A>\n</NOSCRIPT>\n";
