@@ -56,7 +56,7 @@ $string['newwindowopen'] = 'Visualizza questa risorsa in una nuova finestra';
 $string['note'] = 'Nota';
 $string['notefile'] = 'Per trasferire altri files nell\'archivio del
 
-corso (come quelli che compaiono in questa lista) usa il <A HREF=$a >File Manager</A>.';
+corso (come quelli che compaiono in questa lista) usa il <a href=\"$a\" >File Manager</a>.';
 $string['notypechosen'] = 'È necessario che tu scelga un tipo. Usa il
 
 pulsante indietro per ritornare alla pagina precedente e riprovare.';

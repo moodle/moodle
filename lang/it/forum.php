@@ -91,7 +91,7 @@ $string['openmode1'] = 'Discussioni non permesse ma risposte consentite';
 $string['openmode2'] = 'Discussioni e risposte sono permesse';
 $string['parent'] = 'Mostra superiore';
 $string['parentofthispost'] = 'Padre di questo messaggio';
-$string['postadded'] = 'Il tuo messaggio è stato aggiunto con successo.<P>Hai $a  a disposizione se desideri apportare delle modifiche.';
+$string['postadded'] = 'Il tuo messaggio è stato aggiunto con successo.<br />Hai $a  a disposizione se desideri apportare delle modifiche.';
 $string['postincontext'] = 'Vedi questo messaggio nel contesto';
 $string['postmailinfo'] = 'Questa è una copia del messaggio postato su $a .
 Per aggiungere la tua risposta via internet, clicca su questo link:';

@@ -208,7 +208,7 @@ $string['confignoreplyaddress'] = 'Le mail a volte sono spedite a nome di un ute
 $string['confignotifyloginfailures'] = 'Se sono stati registrati accessi falliti, una mail di notifica può essere spedita. Chi deve ricevere queste notifiche?';
 $string['confignotifyloginthreshold'] = 'Se la notifica sugli accessi falliti è attiva, dopo quanti tentativi falliti per utente o per indirizzo IP la notifica deve essere inviata?';
 $string['configopentogoogle'] = 'Se abilitate questa impostazione, Google potrà entrare nel vostro sito come Ospite. Inoltre, chi arriverà al vostro sito tramite Google verrà automaticamente autenticato come Ospite. Nota che questa impostazione fornisce un accesso trasparente solo ai corsi che già permettono l\'accesso agli ospiti.';
-$string['configproxyhost'] = 'Se questo <B>server</B> necessita di un proxy (ad esempio un firewall) per accedere a Internet, allora indicare qui il nome del server (hostname) e il numero della porta di accesso. In caso contrario, lascia vuoto questo campo.';
+$string['configproxyhost'] = 'Se questo <b>server</b> necessita di un proxy (ad esempio un firewall) per accedere a Internet, allora indicare qui il nome del server (hostname) e il numero della porta di accesso. In caso contrario, lascia vuoto questo campo.';
 $string['configsecureforms'] = 'Moodle può utilizzare un ulteriore livello di sicurezza quando accetta dati da web form. Se questo é abilitato, la variabile del browser HTTP_REFERER é confrontata con l\'indirizzo del form attuale. In alcuni rari casi questo può causare problemi se l\'utente sta utilizzando un firewall (es. Zonealarm) configurato per controllare HTTP_REFERER nel suo traffico web. Uno dei sintomi é rimanere \'incollato\' a un form. Se gli utenti hanno avuto problemi con la pagina di login (per esempio) potresti voler disabilitare questo impostazione, questo può esporre il tuo sito ad attacchi di password per forza bruta. Se sei in dubbio, lascialo a \'Si\'.';
 $string['configsessioncookie'] = 'Questa impostazione personalizza il nome dei cookie usati per le sessoni di Moodle. Questa impostazione è opzionale, ed è utile solamente se più di una copia di Moodle viene esegueta sullo stesso sito web.';
 $string['configsessiontimeout'] = 'Se le persone loggate in questo sito sono inattive da molto tempo (senza caricare pagine) viene automaticamente terminata la loro sessione. Questa variabile specifica quanto deve essere questo tempo.';
@@ -370,9 +370,9 @@ Per confermare il tuo nuovo account, devi cliccare sul seguente link:
 In molti programmi di posta, questo dovrebbe apparire come un link colorato di blu sul quale è sufficiente cliccare. Se in questo modo non dovesse funzionare, allora taglia e incolla il link nella finestra degli indirizzi in alto nel tuo browser e premi invio.
 Saluti dall\'amministratore $a->admin';
 $string['emailconfirmationsubject'] = '$a: conferma iscrizione';
-$string['emailconfirmsent'] = '<P>Una email è stata inviata al tuo indirizzo <B>$a</B>
-<P> Essa contiene semplici istruzioni per completare la tua registrazione.
-<P> Se continui ad avere difficoltà contatta l\'amministrare del sito.';
+$string['emailconfirmsent'] = '<p>Una email è stata inviata al tuo indirizzo <b>$a</b></p>
+<p> Essa contiene semplici istruzioni per completare la tua registrazione.</p>
+<p> Se continui ad avere difficoltà contatta l\'amministrare del sito.</p>';
 $string['emaildigest'] = 'Tipo di raccolta email';
 $string['emaildigestcomplete'] = 'Completa (giornalmente invia i messaggi completi)';
 $string['emaildigestoff'] = 'Nessuna raccolta (ogni messaggio viene spedito via mail)';
@@ -415,7 +415,7 @@ $string['emailpasswordsent'] = 'Grazie per aver confermato il cambiamento di pas
 
 <p>Una email contenente la tua nuova password é stata spedita al tuo indirizzo presso <b>$a->email</b>.</p>
 
-<p>La nuova password é stata generata in modo automatico - se tu vuoi, puoi <a href=$a->link>cambiare la password</a> con qualcosa che sia più facile da ricordare.';
+<p>La nuova password é stata generata in modo automatico - se tu vuoi, puoi <a href=\"$a->link\">cambiare la password</a> con qualcosa che sia più facile da ricordare.';
 $string['enable'] = 'Abilita';
 $string['encryptedcode'] = 'Codice criptato';
 $string['enrolledincourse'] = 'Iscritto al corso ';
@@ -620,28 +620,27 @@ Ogni corso può anche avere una chiave di accesso, da usare solo al primo accesso
 
 Questi sono i passi per aprire il tuo account:
 
-<OL size=2>
+<ol>
 
-<LI>Compila il form <A HREF=$a>Nuovo Utente</A> con i tuoi dati.
+<li>Compila il form <A HREF=$a>Nuovo Utente</A> con i tuoi dati.</li>
 
-<LI>Un email verrà spedita al tuo indirizzo di posta elettronica.
+<li>Un email verrà spedita al tuo indirizzo di posta elettronica.</li>
 
-<LI>Leggi l\'email e clicca sul link che essa contiene.
+<li>Leggi l\'email e clicca sul link che essa contiene.</li>
 
-<LI>La tua registrazione sarà confermata e sarai riconosciuto dal sistema come utente registrato.
+<li>La tua registrazione sarà confermata e sarai riconosciuto dal sistema come utente registrato.</li>
 
-<LI>Adesso, seleziona il corso a cui intendi partecipare.
+<li>Adesso, seleziona il corso a cui intendi partecipare.</li>
 
-<LI>Se è richiesta una \"chiave di accesso\" - chiedine
+<li>Se è richiesta una \"chiave di accesso\" - chiedine
+l\'invio al tuo insegnante. Questa chiave ti \"iscriverà\" al corso.</li>
 
-l\'invio al tuo insegnante. Questa chiave ti \"iscriverà\" al corso.
-
-<LI>Puoi adesso accedere pienamente al corso. Da ora avrai solo bisogno
+<li>Puoi adesso accedere pienamente al corso. Da ora avrai solo bisogno
 
 del tuo username e della tua password (nel form di questa pagina)
 
-per aver accesso al corso in cui ti sei iscritto.   </OL>';
-$string['loginstepsnone'] = 'Salve! <P> per un pieno accesso ai corsi avrai bisogno di creare un account.<P> Ciò di cui hai bisogno è di creare un username e una password e di usarli nel form di questa pagina!<P> Se qualcuno ha già scelto il tuo username, allora dovrai riprovare scegliendo un username diverso.';
+per aver accesso al corso in cui ti sei iscritto.  </li> </ol>';
+$string['loginstepsnone'] = '<p>Salve!</p> <p> per un pieno accesso ai corsi avrai bisogno di creare un account.</p><p> Ciò di cui hai bisogno è di creare un username e una password e di usarli nel form di questa pagina!</p><p> Se qualcuno ha già scelto il tuo username, allora dovrai riprovare scegliendo un username diverso.</p>';
 $string['loginto'] = 'Accesso a $a';
 $string['loginusing'] = 'Accedi qui utilizzando il tuo username e la password';
 $string['logout'] = 'Esci';
@@ -805,17 +804,17 @@ $string['passwordconfirmchange'] = 'Conferma il cambiamento di password';
 $string['passwordrecovery'] = 'Si per favore aiutatemi per il login';
 $string['passwordsdiffer'] = 'Queste password non corrispondono';
 $string['passwordsent'] = 'La password è stata spedita';
-$string['passwordsenttext'] = '<P>Un email è stato spedito a $a->email.
-<P><B> Per favore controlla la tua posta per avere la nuova passworf</B>
-<P>La nuova password è stata generata automaticamente, perciò potresti voler andare a
-<A HREF=$a->link> per cambiarla in una più facile da ricordare</A>.
-<P><B>Controlla la tua casella email per la nuova password</B>
+$string['passwordsenttext'] = '<p>Un email è stato spedito a $a->email.</p>
+<p><b> Per favore controlla la tua posta per avere la nuova passworf</b></p>
+<p>La nuova password è stata generata automaticamente, perciò potresti voler andare a
+<a href=\"$a->link\"> per cambiarla in una più facile da ricordare</a>.
+<p><b>Controlla la tua casella email per la nuova password</b></p>
 
-<P>La nuova password è stata generata automaticamente, quindi dirigiti a questo link 
+<p>La nuova password è stata generata automaticamente, quindi dirigiti a questo link 
 
- <A HREF=$a->link> 
+ <a href=\"$a->link\"> 
 
-per cambiarla con una che sia, per te, più facile da ricordare</A>.';
+per cambiarla con una che sia, per te, più facile da ricordare</a>.</p>';
 $string['pathnotexists'] = 'Il percorso non esiste sul vostro server!';
 $string['pathslasherror'] = 'Il percorso non può terminare con uno slash!!';
 $string['paymentinstant'] = 'Utilizza il bottone sottostante per pagare ed essere registrato in pochi minuti!';
@@ -854,7 +853,7 @@ $string['registrationinfo'] = '<p>Questa pagina ti permette di registrare il tuo
 
 <p>Se tu vuoi, puoi permettere al nome del tuo sito, stato e URL di essre aggiunto alla lista pubblica dei siti di Moodle.</p>
 
-<p>Tutte le nuove registrazioni sono verificate manualmente prima di essere aggiunte alla lista, ma una volta aggiunta puoi aggiornare la tua registrazione (e aggiungerti alla lista pubblica) quando vuoi rispedendo questo form.';
+<p>Tutte le nuove registrazioni sono verificate manualmente prima di essere aggiunte alla lista, ma una volta aggiunta puoi aggiornare la tua registrazione (e aggiungerti alla lista pubblica) quando vuoi rispedendo questo form.</p>';
 $string['registrationno'] = 'No, non voglio ricevere email';
 $string['registrationsend'] = 'Manda le informazioni di registrazione a moodle.org';
 $string['registrationyes'] = 'Si, inviatemi informazioni sulle cose importanti';
@@ -894,7 +893,7 @@ $string['scheduledbackupstatus'] = 'Stato copia di sicurezza programmato';
 $string['search'] = 'Cerca';
 $string['searchagain'] = 'Cerca ancora';
 $string['searchcourses'] = 'Cerca corsi';
-$string['searchhelp'] = 'Puoi ricercare con più chiavi.<p>chiave : trova ogni occorrenza di questa chiave nel testo.</br>+chiave : solo le esatte corrispondenze della chiave verranno trovate.</br>-chiave : non include i risultati che contengono questa chiave.';
+$string['searchhelp'] = 'Puoi ricercare con più chiavi.<br />chiave : trova ogni occorrenza di questa chiave nel testo.</br>+chiave : solo le esatte corrispondenze della chiave verranno trovate.</br>-chiave : non include i risultati che contengono questa chiave.';
 $string['searchresults'] = 'Risultati della ricerca';
 $string['sec'] = 'secondo';
 $string['secs'] = 'secondi';

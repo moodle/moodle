@@ -5,7 +5,7 @@
 $string['auth_common_settings'] = 'Impostazioni tipiche';
 $string['auth_data_mapping'] = 'Mappatura dei dati';
 $string['auth_dbdescription'] = 'Questo metodo usa una tabella di una base di dati esterna per controllare se un dato username e password siano validi.  Se l\'utente è nuovo, allora le informazioni degli altri campi possono essere copiate in Moodle.';
-$string['auth_dbextrafields'] = 'Questi campi sono facoltativi. Potete scegliere pre compilare alcuni campi dell\'utente di Moodle con le informazioni dei <B>campi della base di dati esterna</B> che voi specificate qui.  < P>Se lasciate questi vuoti, saranno usati quelli di default.<P>In entrambi i casi, l\'utente potrà modificare tutti questi campi dopo la registrazione.';
+$string['auth_dbextrafields'] = 'Questi campi sono facoltativi. Potete scegliere pre compilare alcuni campi dell\'utente di Moodle con le informazioni dei <b>campi della base di dati esterna</b> che voi specificate qui.  <br />Se lasciate questi vuoti, saranno usati quelli di default.<br />In entrambi i casi, l\'utente potrà modificare tutti questi campi dopo la registrazione.';
 $string['auth_dbfieldpass'] = 'Nome del campo che contiene le password';
 $string['auth_dbfielduser'] = 'Nome del campo che contiene gli username';
 $string['auth_dbhost'] = 'Il computer su cui si trova la base dati';
@@ -14,7 +14,7 @@ $string['auth_dbpass'] = 'Password corrisponde al suddetto username';
 $string['auth_dbpasstype'] = 'Specifica il formato usato per il campo password. La criptatura MD5 é utile per connettersi con altre applicazioni web come PostNuke';
 $string['auth_dbtable'] = 'Nome della tabella della base dati';
 $string['auth_dbtitle'] = 'Usa un database esterno';
-$string['auth_dbtype'] = 'Il tipo di base di dati (guarda la <A HREF=../lib/adodb/readme.htm#drivers>documentazione ADOdb</A> per i dettagli)';
+$string['auth_dbtype'] = 'Il tipo di base di dati (guarda la <a href=\"../lib/adodb/readme.htm#drivers\">documentazione ADOdb</a> per i dettagli)';
 $string['auth_dbuser'] = 'Nome utente con diritti di lettura nella base dati';
 $string['auth_editlock'] = 'Blocca valore';
 $string['auth_editlock_expl'] = '<p><b>Blocca valore:</b> Se abilitato, evita che gli utenti di Moodle e gli amministratori modifichino il campo direttamente. Utilizza questa opzione se gestisci questi dati con un sistema di autenticazione esterno.</p>';
@@ -57,7 +57,7 @@ $string['auth_ldap_user_type'] = 'Seleziona come gli utenti sono salvati su LDAP
 $string['auth_ldap_version'] = 'La versione del protocollo LDAP che il tuo server utilizza.';
 $string['auth_ldapdescription'] = 'Questo metodo fornisce l\'autenticazione tramite un server LDAP esterno.
 Se il nome utente e la password dati sono validi, Moodle crea un nuovo utente nella sua base dati. Questo modulo può leggere gli attributi da LDAP e precompilare i campi richiesti in Moodle. I successivi login solo il nome utente e la password vengono controllati.';
-$string['auth_ldapextrafields'] = 'Questi campi sono opzionali. Puoi scegliere di precompilare alcuni campi dell\'utente in Moodle con le informazioni dai <b>campi LDAP</b> che tu specifichi qui. <p>Se lasci questi campi vuoti, non verrà trasferito niente dal LDAP e verranno usati i dati default di Moodle.</p><p>In entrambi i casi, gli utenti possono modificare tutti questi campi dopo essersi logati.';
+$string['auth_ldapextrafields'] = 'Questi campi sono opzionali. Puoi scegliere di precompilare alcuni campi dell\'utente in Moodle con le informazioni dai <b>campi LDAP</b> che tu specifichi qui. <p>Se lasci questi campi vuoti, non verrà trasferito niente dal LDAP e verranno usati i dati default di Moodle.</p><p>In entrambi i casi, gli utenti possono modificare tutti questi campi dopo essersi logati.</p>';
 $string['auth_ldaptitle'] = 'Usa un server LDAP';
 $string['auth_manualdescription'] = 'Questo metodo rimuove ogni possibilità agli utenti di iscriversi. Tutte le iscrizioni devono essere create a mano da un amministratore.';
 $string['auth_manualtitle'] = 'Solo iscrizione manuale';
