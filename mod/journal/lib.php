@@ -193,7 +193,7 @@ function journal_print_user_entry($course, $user, $entry, $teachers) {
         if ($entry->timemarked) {
             echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($entry->timemarked)."</FONT>";
         }
-        echo "<BR><TEXTAREA NAME=\"c$entry->id\" ROWS=4 COLS=60 WRAP=virtual>";
+        echo "<BR><TEXTAREA NAME=\"c$entry->id\" ROWS=6 COLS=60 WRAP=virtual>";
         p($entry->comment);
         echo "</TEXTAREA><BR>";
         echo "</TD></TR>";
