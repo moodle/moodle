@@ -22,12 +22,17 @@
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
     }
+
+    $strsurveys = get_string("modulenameplural", "survey");
+
     print_header("$course->shortname: $survey->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>Surveys</A> -> $survey->name", "", "", true,
+                 "$navigation <A HREF=index.php?id=$course->id>$strsurveys</A> -> $survey->name", "", "", true,
                   update_module_icon($cm->id, $course->id));
 
     if (isteacher($course->id)) {
-        echo "<P align=right><A HREF=\"report.php?id=$cm->id\">View all responses</A></P>";
+        $numusers = survey_count_responses($survey->id);
+        echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".
+              get_string("viewsurveyresponses", "survey", $numusers)."</A></P>";
     }
 
 
@@ -35,9 +40,9 @@
 
     if (survey_already_done($survey->id, $USER->id)) {
         add_to_log($course->id, "survey", "view graph", "view.php?id=$cm->id", "$survey->id");
-        print_heading("You've completed this survey.  The graph below shows a summary of your results compared to the class averages.");
+        print_heading(get_string("surveycompleted", "survey"));
         $numusers = survey_count_responses($survey->id);
-        print_heading("$numusers people have completed the survey so far");
+        print_heading(get_string("peoplecompleted", "survey", $numusers));
         echo "<CENTER>";
         echo "<IMG SRC=\"$CFG->wwwroot/mod/survey/graph.php?id=$cm->id&sid=$USER->id&type=student.png\">";
         echo "</CENTER>";

@@ -82,22 +82,6 @@ function survey_already_done($survey, $user) {
    return record_exists_sql("SELECT * FROM survey_answers WHERE survey='$survey' AND user='$user'");
 }
 
-function survey_get_status($survey) {
-
-    $timenow = time();
-    if ($survey->locked) {
-        if (($survey->timeopen <= $timenow) && ($timenow <= $survey->timeclose)) {
-            return "released";
-        } else if ($survey->timenow >= $survey->timeclose) {
-            return "finished";
-        } else {
-            return "error";
-        }
-    } else {
-        return "editing";
-    }
-
-}
 
 function survey_get_responses($survey) {
     return get_records_sql("SELECT a.time as time, count(*) as numanswers, u.*
@@ -185,7 +169,7 @@ function survey_user_outline($course, $user, $mod, $survey) {
 
         $lastanswer = array_pop($answers);
 
-        $result->info = "Done";
+        $result->info = get_string("done", "survey");
         $result->time = $lastanswer->time;
         return $result;
     }
@@ -199,7 +183,7 @@ function survey_user_complete($course, $user, $mod, $survey) {
     if (survey_already_done($survey->id, $user->id)) {
         echo "<IMG SRC=\"$CFG->wwwroot/mod/survey/graph.php?id=$mod->id&sid=$user->id&type=student.png\">";
     } else {
-        echo "Not done yet";
+        print_string("notdone", "survey");
     }
 }
 
@@ -208,6 +192,8 @@ function survey_print_multi($question) {
     GLOBAL $db, $qnum, $checklist, $THEME;
 
 
+    $stripreferthat = get_string("ipreferthat", "survey");
+    $strifoundthat = get_string("ifoundthat", "survey");
     echo "<P>&nbsp</P>\n";
 	echo "<P><FONT SIZE=4><B>$question->text</B></FONT></P>";
 
@@ -252,7 +238,7 @@ function survey_print_multi($question) {
         
         } else {
             echo "<TD WIDTH=10 VALIGN=middle rowspan=2><P><B>$qnum</B></P></TD>";
-            echo "<TD WIDTH=10% NOWRAP><P><FONT SIZE=1>I prefer that&nbsp;</FONT></P></TD>";
+            echo "<TD WIDTH=10% NOWRAP><P><FONT SIZE=1>$stripreferthat&nbsp;</FONT></P></TD>";
             echo "<TD WIDTH=40% VALIGN=middle rowspan=2><P>$q->text</P></TD>";
             for ($i=1;$i<=$numoptions;$i++) {
                 echo "<TD WIDTH=10% ALIGN=CENTER><INPUT TYPE=radio NAME=qP$q->id VALUE=$i></TD>";
@@ -261,7 +247,7 @@ function survey_print_multi($question) {
             echo "</TR>";
 
             echo "<TR BGCOLOR=$bgcolor>";
-            echo "<TD WIDTH=10% NOWRAP><P><FONT SIZE=1>I found that&nbsp;</P></TD>";
+            echo "<TD WIDTH=10% NOWRAP><P><FONT SIZE=1>$strifoundthat&nbsp;</P></TD>";
             for ($i=1;$i<=$numoptions;$i++) {
                 echo "<TD WIDTH=10% ALIGN=CENTER><INPUT TYPE=radio NAME=q$q->id VALUE=$i></TD>";
             }
@@ -295,8 +281,9 @@ function survey_print_single($question) {
         echo "<TEXTAREA ROWS=3 COLS=30 WRAP=virtual NAME=\"$question->id\">$question->options</TEXTAREA>";
 
     } else if ($question->type > 0) {     // Choose one of a number
+        $strchoose = get_string("choose");
         echo "<SELECT NAME=$question->id>";
-        echo "<OPTION VALUE=0 SELECTED>Choose...</OPTION>";
+        echo "<OPTION VALUE=0 SELECTED>$strchoose...</OPTION>";
         $options = explode( ",", $question->options);
         foreach ($options as $key => $val) {
             $key++;

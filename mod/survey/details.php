@@ -15,20 +15,27 @@
             error("You can't modify this course!");
         }
 
-        print_header("$course->shortname: Editing a survey", "$course->shortname: Editing a survey",
-                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
-                      Editing a survey", "");
+        $streditingasurvey = get_string("editingasurvey", "survey");
+
+        print_header("$course->shortname: $streditingasurvey", "$course->fullname",
+                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
+                       -> $streditingasurvey");
+
+        if (!$form->name or !$form->template) {
+            error(get_string("filloutallfields"), $HTTP_REFERER);
+        }
 
         print_simple_box_start("center", "", "$THEME->cellheading");
         ?>
         <FORM NAME=form METHOD=post ACTION="<? p($form->destination)?>">
         <TABLE CELLPADDING=5 ALIGN=CENTER>
-        <TR><TD ALIGN=right NOWRAP><P><B>Name:</B></P></TD>
+        <TR><TD ALIGN=right NOWRAP><P><B><? print_string("name") ?>:</B></P></TD>
             <TD><P><? p($form->name) ?></P></A></TD></TR>
 
         <TR VALIGN=top>
             <TD ALIGN=right NOWRAP>
-                <P><B>Introduction Text:</B></P>
+                <P><B><? print_string("introtext", "survey") ?>:</B></P><BR>
+                <? helpbutton("text", get_string("helptext")) ?>
             </TD>
             <TD>
                 <TEXTAREA NAME="intro" ROWS=20 COLS=50 WRAP="virtual"><? 
@@ -52,13 +59,15 @@
         <input type="hidden" name=instance   value="<? p($form->instance) ?>">
         <input type="hidden" name=mode       value="<? p($form->mode) ?>">
         <CENTER>
-        <input type="submit" value="Save these settings">
+        <input type="submit" value="<? print_string("savechanges") ?>">
         </CENTER>
         </FORM>
         <?
         print_simple_box_end();
         print_footer($course);
 
+     } else {
+        error("You can't use this page like that!");
      }
 
 ?>

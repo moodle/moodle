@@ -1,17 +1,18 @@
 <form name="form" method="post" action="<?=$CFG->wwwroot ?>/mod/survey/details.php">
 <table cellpadding=5>
 <tr valign=top>
-    <td align=right><P><B>Survey Name:</B></P></TD>
+    <td align=right><P><B><? print_string("surveyname", "survey") ?>:</B></P></TD>
     <td>
         <input type="text" name="name" size=30 value="<? p($form->name) ?>">
     </td>
 </tr>
 <tr>
-    <td align=right><P><B>Survey Type:</B></P></TD>
+    <td align=right><P><B><? print_string("surveytype", "survey") ?>:</B></P></TD>
     <td>
     <?
         if ($options = get_records_sql_menu("SELECT id, name FROM survey WHERE template='0'")) {
             choose_from_menu($options, "template", $form->template);
+            helpbutton("surveys", get_string("helpsurveys", "survey"));
         } else {
             echo "No surveys to choose from!";
         }
@@ -30,6 +31,6 @@
 <input type="hidden" name=modulename value="<? p($form->modulename) ?>">
 <input type="hidden" name=instance   value="<? p($form->instance) ?>">
 <input type="hidden" name=mode       value="<? p($form->mode) ?>">
-<input type="submit" value="Save these settings">
+<input type="submit" value="<? print_string("savechanges") ?>">
 </CENTER>
 </FORM>

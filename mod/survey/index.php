@@ -16,37 +16,45 @@
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
     }
-    print_header("$course->shortname: Surveys", "$course->fullname", "$navigation Surveys", "");
 
+    $strsurveys = get_string("modulenameplural", "survey");
+    $strweek = get_string("week");
+    $strtopic = get_string("topic");
+    $strname = get_string("name");
+    $strstatus = get_string("status");
+    $strdone  = get_string("done", "survey");
+    $strnotdone  = get_string("notdone", "survey");
+
+    print_header("$course->shortname: $strsurveys", "$course->fullname", "$navigation $strsurveys", "");
 
     if (! $surveys = get_all_instances_in_course("survey", $course->id, "cw.section ASC")) {
         notice("There are no surveys.", "../../course/view.php?id=$course->id");
     }
     
     if ($course->format == "weeks") {
-        $table->head  = array ("Week", "Name", "Status");
+        $table->head  = array ($strweek, $strname, $strstatus);
         $table->align = array ("CENTER", "LEFT", "LEFT");
     } else if ($course->format == "topics") {
-        $table->head  = array ("Topic", "Name", "Status");
+        $table->head  = array ($strtopic, $strname, $strstatus);
         $table->align = array ("CENTER", "LEFT", "LEFT");
     } else {
-        $table->head  = array ("Name", "Status");
+        $table->head  = array ($strname, $strstatus);
         $table->align = array ("LEFT", "LEFT");
     }
 
     foreach ($surveys as $survey) {
         if (survey_already_done($survey->id, $USER->id)) {
-            $ss = "Done";
+            $ss = $strdone;
         } else {
-            $ss = "<A HREF=\"view.php?id=$survey->coursemodule\">Not done yet</A>";
+            $ss = $strnotdone;
         }
         if ($course->format == "weeks" or $course->format == "topics") {
             $table->data[] = array ("$survey->section", 
                                     "<A HREF=\"view.php?id=$survey->coursemodule\">$survey->name</A>",
-                                    "$ss");
+                                    "<A HREF=\"view.php?id=$survey->coursemodule\">$ss</A>");
         } else {
             $table->data[] = array ("<A HREF=\"view.php?id=$survey->coursemodule\">$survey->name</A>",
-                                    "$ss");
+                                    "<A HREF=\"view.php?id=$survey->coursemodule\">$ss</A>");
         }
     }
 

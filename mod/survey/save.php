@@ -33,7 +33,7 @@
     add_to_log($course->id, "survey", "submit", "view.php?id=$cm->id", "$survey->id");
 
     if (survey_already_done($survey->id, $USER->id)) {
-        notice("You've already submitted this survey!", $HTTP_REFERER);
+        notice(get_string("alreadysubmitted", "survey"), $HTTP_REFERER);
         exit;
     }
 
@@ -73,12 +73,15 @@
 
 // Print the page and finish up.
 
-	print_header("$course->shortname: Survey sent", "$course->fullname", 
+    $strsurveys = get_string("modulenameplural", "survey");
+    $strsurveysaved = get_string("surveysaved", "survey");
+
+	print_header("$course->shortname: $strsurveysaved", "$course->fullname", 
         "<A HREF=/course/view.php?id=$course->id>$course->shortname</A> ->
-         <A HREF=index.php?id=$course->id>Surveys</A> -> $survey->name -> Survey sent", "");
+         <A HREF=index.php?id=$course->id>$strsurveys</A> -> $survey->name -> $strsurveysaved", "");
 
 
-    notice("Thanks for your answers, $USER->firstname.", "$CFG->wwwroot/course/view.php?id=$course->id");
+    notice(get_string("thanksforanswers","survey", $USER->firstname), "$CFG->wwwroot/course/view.php?id=$course->id");
    
     exit;
     
