@@ -1392,6 +1392,7 @@ function send_password_change_confirmation_email($user) {
 
 /// FILE HANDLING  /////////////////////////////////////////////
 
+
 function make_upload_directory($directory) {
 /// $directory = a string of directory names under $CFG->dataroot
 /// eg  stuff/assignment/1
@@ -1409,14 +1410,8 @@ function make_upload_directory($directory) {
             return false;
         }
     }
-    $currdir = mdl_mkdir($currdir, $directory); 
-    return $currdir;
-}
 
-function mdl_mkdir($currdir, $directory) {
-//Makes directory (or multiple directorys at once)
-
-    $dirarray = explode("/", $directory); 
+    $dirarray = explode("/", $directory);
 
     foreach ($dirarray as $dir) {
         $currdir = "$currdir/$dir";
@@ -1431,6 +1426,8 @@ function mdl_mkdir($currdir, $directory) {
 
     return $currdir;
 }
+
+
 function make_mod_upload_directory($courseid) {
 /// Makes an upload directory for a particular module
     global $CFG;
