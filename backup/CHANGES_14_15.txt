@@ -34,8 +34,10 @@ Now I show the specific detailed status of every item in the process:
           mimic it.
 21. TODO: Review the workshop module completely! Check the upgrade process to
           mimic it.
-22. TODO: Review the wiki module fully (if possible, try to make binary
-          uploaded contents to work).
+22. PROG: Review the wiki module fully. Now the wiki backup & restore seems to
+          be working fine. About binary contents loaded directly to DB, I
+          haven't found HOW TO LOAD them. I've opened Bug 2634 to see if
+          somebody can tell me how to reproduce it!
 23. DONE: Add support for metacourses in backup and restore. Show a new option
           to decide what to do (ignore, process).
 24. DONE: Take out THEME from backup directory.
