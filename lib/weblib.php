@@ -436,20 +436,21 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
 
     switch ($format) {
         case FORMAT_HTML:
-            $text = replace_smilies($text);
+            replace_smilies($text);
             return $text;
             break;
 
         case FORMAT_PLAIN:
             $text = htmlentities($text);
-            $text = replace_smilies($text);
+            replace_smilies($text);
+            convert_urls_into_links($text);
             $text = nl2br($text);
             return $text;
             break;
 
         case FORMAT_WIKI:
             $text = wiki_to_html($text);
-            $text = replace_smilies($text);
+            replace_smilies($text);
             return $text;
             break;
 
@@ -512,7 +513,7 @@ function clean_text($text, $format) {
     }
 }
 
-function replace_smilies($text) {
+function replace_smilies(&$text) {
 /// Replaces all known smileys in the text with image equivalents
     global $CFG;
 
@@ -552,7 +553,7 @@ function replace_smilies($text) {
         $runonce = true;
     }
 
-    return str_replace($e, $img, $text);
+    $text = str_replace($e, $img, $text);
 }
 
 function text_to_html($text, $smiley=true, $para=true) {
@@ -566,20 +567,14 @@ function text_to_html($text, $smiley=true, $para=true) {
     $text = eregi_replace("([\n\r])<", " <", $text);
     $text = eregi_replace(">([\n\r])", "> ", $text);
 
-/// Make lone URLs into links.   eg http://moodle.com/
-    $text = eregi_replace("([[:space:]]|^|\(|\[|\<)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])",
-                          "\\1<a href=\"\\2://\\3\\4\" TARGET=\"newpage\">\\2://\\3\\4</a>", $text);
-
-/// eg www.moodle.com
-    $text = eregi_replace("([[:space:]]|^|\(|\[|\<)www\.([^[:space:]]*)([[:alnum:]#?/&=])", 
-                          "\\1<a href=\"http://www.\\2\\3\" TARGET=\"newpage\">www.\\2\\3</a>", $text);
+    convert_urls_into_links($text);
 
 /// Make returns into HTML newlines.
     $text = nl2br($text);
 
 /// Turn smileys into images.
     if ($smiley) {
-        $text = replace_smilies($text);
+        replace_smilies($text);
     }
 
 /// Wrap the whole thing in a paragraph tag if required
@@ -597,6 +592,18 @@ function wiki_to_html($text) {
 
     $wiki = new Wiki;
     return $wiki->format($text);
+}
+
+function convert_urls_into_links(&$text) {
+/// Given some text, it converts any URLs it finds into HTML links.
+
+/// Make lone URLs into links.   eg http://moodle.com/
+    $text = eregi_replace("([[:space:]]|^|\(|\[|\<)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])",
+                          "\\1<a href=\"\\2://\\3\\4\" TARGET=\"newpage\">\\2://\\3\\4</a>", $text);
+
+/// eg www.moodle.com
+    $text = eregi_replace("([[:space:]]|^|\(|\[|\<)www\.([^[:space:]]*)([[:alnum:]#?/&=])", 
+                          "\\1<a href=\"http://www.\\2\\3\" TARGET=\"newpage\">www.\\2\\3</a>", $text);
 }
 
 function highlight($needle, $haystack) {
