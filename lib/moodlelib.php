@@ -376,6 +376,9 @@ function isadmin($userid=0) {
     }
 
     if (empty($userid)) {
+        if (!empty($USER->admin)) {
+            return true;
+        }
         return record_exists("user_admins", "userid", $USER->id);
     }
 
