@@ -80,6 +80,8 @@ function quiz_add_instance($quiz) {
         }
     }
 
+    delete_records('event', 'modulename', 'quiz', 'instance', $quiz->id);  // Just in case
+
     $event = NULL;
     $event->name        = $quiz->name;
     $event->description = $quiz->intro;
@@ -90,6 +92,7 @@ function quiz_add_instance($quiz) {
     $event->instance    = $quiz->id;
     $event->eventtype   = 'open';
     $event->timestart   = $quiz->timeopen;
+    $event->visible     = instance_is_visible('quiz', $quiz->id);
     $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
 
     if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Long durations create two events
@@ -161,57 +164,36 @@ function quiz_update_instance($quiz) {
         }
     }
 
-    if ($events = get_records_select('event', "modulename = 'quiz' AND instance = '$quiz->id' ORDER BY timestart")) {
+    delete_records('event', 'modulename', 'quiz', 'instance', $quiz->id);  // Delete old and add new
 
-        $event = array_shift($events);
-        if (!empty($events)) {
-            $event2old = array_shift($events);
-            if (!empty($events)) {
-                foreach ($events as $badevent) {
-                    delete_records('event', 'id', $badevent->id);
-                }
-            }
-        } else {
-            $event2old = NULL;
-        }
+    $event = NULL;
+    $event->name        = $quiz->name;
+    $event->description = $quiz->intro;
+    $event->courseid    = $quiz->course;
+    $event->groupid     = 0;
+    $event->userid      = 0;
+    $event->modulename  = 'quiz';
+    $event->instance    = $quiz->id;
+    $event->eventtype   = 'open';
+    $event->timestart   = $quiz->timeopen;
+    $event->visible     = instance_is_visible('quiz', $quiz->id);
+    $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
 
-        $event->name        = $quiz->name;
-        $event->description = $quiz->intro;
-        $event->courseid    = $quiz->course;
-        $event->groupid     = 0;
-        $event->userid      = 0;
-        $event->modulename  = 'quiz';
-        $event->instance    = $quiz->id;
-        $event->visible     = instance_is_visible('quiz', $quiz->id);
-        $event->timestart   = $quiz->timeopen;
-        $event->eventtype   = 'open';
-        $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
+    if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Long durations create two events
+        $event2 = $event;
 
-        if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Set up two events
+        $event->name         .= ' ('.get_string('quizopens', 'quiz').')';
+        $event->timeduration  = 0;
 
-            $event2 = $event;
+        $event2->timestart    = $quiz->timeclose;
+        $event2->eventtype    = 'close';
+        $event2->timeduration = 0;
+        $event2->name        .= ' ('.get_string('quizcloses', 'quiz').')';
 
-            $event->name         = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
-            $event->timeduration = 0;
-
-            $event2->name        = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
-            $event2->timestart   = $quiz->timeclose;
-            $event2->eventtype   = 'close';
-            $event2->timeduration = 0;
-
-            if (empty($event2old->id)) {
-                unset($event2->id);
-                add_event($event2);
-            } else {
-                $event2->id = $event2old->id;
-                update_event($event2);
-            }
-        } else if (!empty($event2->id)) {
-            delete_event($event2->id);
-        }
-
-        update_event($event);
+        add_event($event2);
     }
+
+    add_event($event);
 
     return true;
 }
