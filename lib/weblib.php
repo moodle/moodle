@@ -1265,8 +1265,8 @@ function update_category_button($categoryid) {
         } else {
             $string = get_string("turneditingon");
             $edit = "on";
-        }
-        return "<form target=_parent method=get action=\"$CFG->wwwroot/course/category.php\">".
+        } 
+        return "<form method=get action=\"$CFG->wwwroot/course/category.php\">".
                "<input type=hidden name=id value=\"$categoryid\">".
                "<input type=hidden name=edit value=\"$edit\">".
                "<input type=submit value=\"$string\"></form>";

@@ -69,7 +69,7 @@
 	        print_header("$site->shortname: $category->name", "$site->fullname", 
                          "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
                          "<a href=\"index.php\">$strcategories</a> -> $category->name",
-                         "", "", true, $updatebutton);
+                         "", "", true, $navbaritem);
         } else {
 	        print_header("$site->shortname: $category->name", "$site->fullname", 
                          "<a href=\"index.php\">$strcourses</a> -> $category->name", "", "", true, $navbaritem);
@@ -269,8 +269,8 @@
             echo "<tr>";
             echo "<td><a $linkcss href=\"view.php?id=$course->id\">$course->fullname</a></td>";
             if ($creatorediting) {
-                echo "<td>";
                 if ($adminediting) {
+                    echo "<td>";
                     echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/course/teacher.php?id=$course->id\"><img".
                          " src=\"$pixpath/t/user.gif\" height=11 width=11 border=0></a> ";
                     echo "<a title=\"$strdelete\" href=\"delete.php?id=$course->id\"><img".
