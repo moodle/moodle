@@ -204,6 +204,7 @@ $string['questionname'] = '問題名';
 $string['questionnametoolong'] = '$a 行の問題名が長過ぎます ( 最大、半角255文字 )。問題名を省略しました。';
 $string['questions'] = '問題';
 $string['questionsperpage'] = '1ページあたりの最大問題数';
+$string['questiontypesetupoptions'] = '問題タイプのオプション設定';
 $string['quizavailable'] = '小テストは $a まで利用できます。';
 $string['quizclose'] = '小テスト終了日';
 $string['quizclosed'] = 'この小テストは $a に終了しました。';

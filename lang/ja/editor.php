@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+<?PHP // $Id$ 
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
 
 
 $string['about'] = 'エディタに関して';
@@ -29,7 +29,10 @@ $string['createlink'] = 'リンクの挿入';
 $string['cut'] = '選択したものを切り取る';
 $string['delete'] = '削除';
 $string['filebrowser'] = 'ファイルブラウザ';
+$string['fontname'] = 'フォント名';
+$string['fontsize'] = 'フォントサイズ';
 $string['forecolor'] = 'フォント色';
+$string['formatblock'] = 'フォーマット';
 $string['fullscreen'] = 'フルスクリーンエディタ';
 $string['heading'] = 'Heading';
 $string['height'] = '高さ';
@@ -95,9 +98,6 @@ $string['superscript'] = '上付き文字';
 $string['textindicator'] = '現在のスタイル';
 $string['textmode'] = '現在テキストモードです。WYSIWYGモードに戻る場合は[<>]ボタンを押してください。 ';
 $string['texttop'] = 'Texttop';
-$string['thischarset'] = 'EUC-JP';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 $string['top'] = 'トップ';
 $string['type'] = 'タイプ';
 $string['underline'] = 'アンダーライン';
