@@ -4,13 +4,13 @@
 
     //This is the "graphical" structure of the glossary mod:
     //
-    //                     glossary                                      
-    //                    (CL,pk->id)
-    //                        |
-    //                        |
-    //                        |
-    //                  glossary_entries 
-    //         (UL,pk->id, fk->glossaryid, files)
+    //                     glossary ---------------------- glossary_categories
+    //                    (CL,pk->id)                  (CL,pk->id,fk->glossaryid)
+    //                        |                                       |
+    //                        |                                       |
+    //                        |                                       |
+    //                  glossary_entries -------------- glossary_entries_categories
+    //         (UL,pk->id, fk->glossaryid, files)      (UL, [pk->categoryid,entryid]
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -19,7 +19,7 @@
     //          UL->user level info
     //          files->table may have files)
     //
-    //-----------------------------------------------------------
+    //----------------------------------------------------------------------------------
 
     function glossary_backup_mods($bf,$preferences) {
         
@@ -46,12 +46,53 @@
                 fwrite ($bf,full_tag("SHOWALL",4,false,$glossary->showall));
                 fwrite ($bf,full_tag("TIMECREATED",4,false,$glossary->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$glossary->timemodified));
-
+                
                 backup_glossary_entries($bf,$preferences,$glossary->id, $preferences->mods["glossary"]->userinfo);
+
+                backup_glossary_categories($bf,$preferences,$glossary->id, $preferences->mods["glossary"]->userinfo);
 
                 //End mod
                 $status =fwrite ($bf,end_tag("MOD",3,true));
             }
+        }
+        return $status;
+    }
+
+    //Backup glossary_categories and entries_categories contents (executed from glossary_backup_mods)
+    function backup_glossary_categories ($bf,$preferences,$glossary, $userinfo) {
+
+        global $CFG;
+
+        $status = true;
+
+        $glossary_categories = get_records("glossary_categories","glossaryid",$glossary,"id");
+        //If there is submissions
+        if ($glossary_categories) {
+            $status =fwrite ($bf,start_tag("CATEGORIES",4,true));
+
+            //Iterate over each category
+            foreach ($glossary_categories as $glo_cat) {
+                //Start category
+                //Print submission contents
+               $status =fwrite ($bf,start_tag("CATEGORY",5,true));
+
+               fwrite ($bf,full_tag("ID",6,false,$glo_cat->id));
+               fwrite ($bf,full_tag("GLOSSARYID",6,false,$glo_cat->glossaryid));
+               fwrite ($bf,full_tag("NAME",6,false,$glo_cat->name));
+
+                    $entries = get_records("glossary_entries_categories","categoryid",$glo_cat->id,"glossaryid");
+                    if ($entries) {
+                         $status =fwrite ($bf,start_tag("ENTRIES",6,true));
+                         foreach ($entries -> $entry) {
+                              fwrite ($bf,full_tag("ENTRYID",7,false,$entry->entryid));
+                         }
+                         $status =fwrite ($bf,end_tag("ENTRIES",6,true));
+                    }
+               $status =fwrite ($bf,end_tag("CATEGORY",5,true));
+
+            }
+               //Write end tag
+ 	       $status =fwrite ($bf,end_tag("CATEGORIES",4,true));
         }
         return $status;
     }
