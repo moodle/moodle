@@ -21,12 +21,76 @@
     //
     //-----------------------------------------------------------
 
-    function journal_backup_mods($course,$user_data=false,$backup_unique_code) {
-        print "hola";
+    function journal_backup_mods($bf,$preferences) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Iterate over journal table
+        $journals = get_records ("journal","course",$preferences->backup_course,"id");
+        if ($journals) {
+            foreach ($journals as $journal) {
+                //Start mod
+                fwrite ($bf,start_tag("MOD",3,true));
+                //Print journal data
+                fwrite ($bf,full_tag("ID",4,false,$journal->id));
+                fwrite ($bf,full_tag("MODTYPE",4,false,"journal"));
+                fwrite ($bf,full_tag("NAME",4,false,$journal->name));
+                fwrite ($bf,full_tag("INTRO",4,false,$journal->intro));
+                fwrite ($bf,full_tag("DAYS",4,false,$journal->days));
+                fwrite ($bf,full_tag("ASSESSED",4,false,$journal->assessed));
+                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$journal->timemodified));
+
+                //if we've selected to backup users info, then execute backup_journal_entries
+                if ($preferences->mods["journal"]->userinfo) {
+                    $status = backup_journal_entries($bf,$preferences,$journal->id);
+                }
+                //End mod
+                $status =fwrite ($bf,end_tag("MOD",3,true));
+            }
+        }
+        return $status;
     }
-   
+
+    //Backup journal_entries contents (executed from journal_backup_mods)
+    function backup_journal_entries ($bf,$preferences,$journal) {
+
+        global $CFG;
+
+        $status = true;
+
+        $journal_entries = get_records("journal_entries","journal",$journal,"id");
+        //If there is entries
+        if ($journal_entries) {
+            //Write start tag
+            $status =fwrite ($bf,start_tag("ENTRIES",4,true));
+            //Iterate over each entry
+            foreach ($journal_entries as $jou_ent) {
+                //Start entry
+                $status =fwrite ($bf,start_tag("ENTRY",5,true));
+                //Print journal_entries contents
+                fwrite ($bf,full_tag("ID",6,false,$jou_ent->id));
+                fwrite ($bf,full_tag("USERID",6,false,$jou_ent->userid));
+                fwrite ($bf,full_tag("MODIFIED",6,false,$jou_ent->modified));
+                fwrite ($bf,full_tag("TEXT",6,false,$jou_ent->text));
+                fwrite ($bf,full_tag("FORMAT",6,false,$jou_ent->format));
+                fwrite ($bf,full_tag("RATING",6,false,$jou_ent->rating));
+                fwrite ($bf,full_tag("COMMENT",6,false,$jou_ent->comment));
+                fwrite ($bf,full_tag("TEACHER",6,false,$jou_ent->teacher));
+                fwrite ($bf,full_tag("TIMEMARKED",6,false,$jou_ent->timemarked));
+                fwrite ($bf,full_tag("MAILED",6,false,$jou_ent->mailed));
+                //End entry
+                $status =fwrite ($bf,end_tag("ENTRY",5,true));
+            }
+            //Write end tag
+            $status =fwrite ($bf,end_tag("ENTRIES",4,true));
+        }
+        return $status;
+    }
+ 
    ////Return an array of info (name,value)
-   function NO_journal_check_backup_mods($course,$user_data=false,$backup_unique_code) {
+   function journal_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //First the course data
         $info[0][0] = get_string("modulenameplural","journal");
         if ($ids = journal_ids ($course)) {
