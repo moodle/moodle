@@ -1180,19 +1180,6 @@ function make_table($table) {
     return $output;
 }
 
-
-function print_editing_switch($courseid) {
-    global $CFG, $USER;
-
-    if (isteacheredit($courseid)) {
-        if ($USER->editing) {
-            echo "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=off\">turn editing off</a>";
-        } else {
-            echo "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=on\">turn editing on</a>";
-        }
-    }
-}
-
 function print_textarea($richedit, $rows, $cols, $width, $height, $name, $value="") {
 /// Prints a richtext field or a normal textarea
     global $CFG, $THEME;
