@@ -247,11 +247,15 @@ table.formtable td {
 
 #course-view .section .left {
     border-right:0px;
+    text-align:center;
     font-style:bold;
+    width: 1.5em;
 }
 
 #course-view .section .right {
     border-left:0px;
+    text-align:center;
+    width: 1.5em;
 }
 
 #course-view .current .side{
