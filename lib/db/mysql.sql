@@ -11,6 +11,19 @@
 # --------------------------------------------------------
 
 #
+# Table structure for table `config`
+#
+
+CREATE TABLE `config` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL default '',
+  `value` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `name` (`name`)
+) TYPE=MyISAM COMMENT='Moodle configuration variables';
+# --------------------------------------------------------
+
+#
 # Table structure for table `course`
 #
 
