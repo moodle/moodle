@@ -20,10 +20,12 @@
     <LI>Richtext editor can now be used in more text-editing fields</LI>
     <LI>New format "Plain text format", useful when posting code or HTML.</LI>
     <LI>New format "Wiki format", allows Wiki-style tagging in most places</LI>
+    <LI>New popup allows emoticons/smilies to be inserted by clicking on images</LI>
     <LI>Ability to specify permissions of new folders and files created on the server</LI>
     <LI>Some fixes for servers running in Safe Mode (some file problems remain)</LI>
     <LI>Various fixes for cleaning some external text of quotes, etc</LI>
     <LI>Various fixes for PostgreSQL 7.3 compatibility</LI>
+    <LI>Many changes to themes - authors of custom themes should read <A HREF="http://moodle.org/theme/UPGRADE.txt">theme/UPGRADE.txt</A> </LI>
 </DD>
 
 <DT> Languages</DT>
@@ -44,10 +46,13 @@
 
 <DT> Admin</DT>
 <DD> 
-    <LI>Better checking of PHP environment during installation, with warnings</LI>
+    <LI>Some new options in config-dist.php (if upgrading, compare with your current config.php)</LI>
     <LI>Admin directory can be moved from /admin to something else (see config-dist.php)</LI>
     <LI>User listing is now paged, and can now be searched for strings</LI>
+    <LI>Module management: activity modules can now be individually disabled or deleted completely</LI>
     <LI>Improvements to the language editing page</LI>
+    <LI>Better checking of PHP environment during installation, with warnings</LI>
+    <LI>Cleaner installation procedure.</LI>
 </DD>
 
 <DT> User management</DT>
@@ -120,9 +125,9 @@
 <DT> Custom Themes</DT>
 <DD> 
     <LI>A number of new styles have been added to all built-in themes.  Some of these are <BLINK>essential</BLINK> 
-        to viewing some of the new features.  <B>PLEASE SEE 
+        to viewing some of the new features.  PLEASE SEE 
         <A HREF="http://moodle.org/theme/UPGRADE.txt">theme/UPGRADE.txt</A> 
-        TO SEE THE CHANGES YOU WILL HAVE TO MAKE TO OLDER THEMES</B></LI>
+        TO SEE THE CHANGES YOU WILL HAVE TO MAKE TO OLDER THEMES.</LI>
 
     <LI>Custom themes now have the capability to re-define all the little button graphics.  
         There is a new entry in theme/x/config.php ($THEME->custompix) and a new  
