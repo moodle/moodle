@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.3 - (2004052400)
+      // lesson.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['actionaftercorrectanswer'] = '正解後の動作';
@@ -81,5 +81,6 @@ $string['usemean'] = '平均値を使用';
 $string['youhaveseen'] = 'あなたは既にこのレッスンを1ページ以上閲覧しました。<br />あなたが見た最後のページから始めますか?';
 $string['youranswer'] = 'あなたの解答';
 $string['yourcurrentgradeis'] = '現在の成績は $a です';
+$string['youshouldview'] = '少なくとも $a 回閲覧してください';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.3 - (2004052400)
+      // quiz.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -44,6 +44,7 @@ $string['categorymove'] = 'カテゴリー $a->name には $a->count の質問があります。
 $string['categorymoveto'] = 'このカテゴリーに移動する';
 $string['choice'] = '選択';
 $string['choices'] = '利用可能な選択';
+$string['confirmstartattempt'] = 'このクイズには時間制限が設けられています。本当にスタートしても宜しいですか?';
 $string['correctanswer'] = '正解';
 $string['correctanswers'] = '正解';
 $string['corrresp'] = '正答';
@@ -77,6 +78,10 @@ $string['editingshortanswer'] = '記述式問題を編集する';
 $string['editingtruefalse'] = '多肢選択式問題を編集する';
 $string['editquestions'] = '質問の編集';
 $string['errorsdetected'] = '$a のエラーが見つかりました';
+$string['exportfilename'] = 'クイズ';
+$string['exportname'] = 'ファイル名';
+$string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
+$string['exportquestions'] = '質問をファイルにエクスポートする';
 $string['false'] = '×';
 $string['feedback'] = 'フィードバック';
 $string['fileformat'] = 'ファイルフォーマット';
@@ -104,6 +109,7 @@ $string['listitems'] = '小テストのアイテム一覧';
 $string['marks'] = '得点';
 $string['match'] = '組み合わせ';
 $string['matchanswer'] = '答えを組合わせる';
+$string['minutes'] = '分';
 $string['missingcorrectanswer'] = '正しい答えを設定してください';
 $string['missingname'] = '質問名が見つかりません';
 $string['missingquestion'] = '$a 以降に質問ラベルがありません';
@@ -121,9 +127,12 @@ $string['noquestions'] = '質問が作成されていません';
 $string['noresponse'] = '返答無し';
 $string['noreview'] = 'この小テストの復習を許可されていません';
 $string['noreviewuntil'] = '$a までこの小テストの復習は出来ません';
+$string['noscript'] = '続けるにはJavaスクリプトを使用可にしてください!';
+$string['notenoughanswers'] = 'このタイプの質問には少なくとも $a の解答が必要です';
 $string['notenoughsubquestions'] = '十分な副質問が定義されていません！<br>
 この質問を修正しますか？';
 $string['numerical'] = '数字方式';
+$string['percentcorrect'] = '正答率';
 $string['publish'] = '公開';
 $string['qti'] = 'IMS QTIフォーマット';
 $string['question'] = '質問';
@@ -137,6 +146,8 @@ $string['quizclosed'] = 'この小テストは $a に閉じられます';
 $string['quizcloses'] = '小テスト終了日';
 $string['quiznotavailable'] = '小テストは  $a まで利用できません';
 $string['quizopen'] = '小テスト公開日';
+$string['quiztimelimit'] = '時間制限: $a';
+$string['quiztimer'] = 'クイズタイマー';
 $string['random'] = 'ランダム方式';
 $string['randomcreate'] = 'ランダム方式を作成する';
 $string['randomsamatch'] = 'ランダム記述組み合わせ問題';
@@ -174,6 +185,9 @@ $string['shuffleanswers'] = '解答を混ぜる';
 $string['shufflequestions'] = '質問を混ぜる';
 $string['time'] = '時間';
 $string['timecompleted'] = '解答日時';
+$string['timeleft'] = '残り時間';
+$string['timelimit'] = '制限時間';
+$string['timelimitexeeded'] = '申し訳ございません! クイズの制限時間を経過しました!';
 $string['timetaken'] = '所要時間';
 $string['toomanyrandom'] = '要求されたランダム方式の質問数は、このカテゴリに含まれている数($a)より多くなっています！';
 $string['true'] = '○';

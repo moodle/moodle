@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 development (2004050500)
+      // forum.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -16,6 +16,7 @@ $string['configenablerssfeeds'] = 'ここでは全フォーラムのRSS使用設定を行います。
 $string['configlongpost'] = 'この文字長以上の長さ(HTMLは含まない)は長いと考えられます。';
 $string['configmanydiscussions'] = 'フォーラムページに表示されるディスカッションの最大数';
 $string['configmaxbytes'] = '全てのフォーラム添付ファイルに関するデフォルトの最大サイズ(コース制限及び他のローカル設定に従います)';
+$string['configreplytouser'] = 'フォーラムの投稿がメール送信される場合、受信者がフォーラムを通さずに個人的に返信できるように、メールにユーザメールアドレスを表示した方が良いですか?　\'Yes\'に設定した場合でも、ユーザはプロフィール内のメールアドレスを隠すことが出来ます。';
 $string['configshortpost'] = 'この文字長以下の長さ(HTMLは含まない)は短いと考えられます。';
 $string['couldnotadd'] = 'エラーのため投稿出来ませんでした';
 $string['couldnotdeleteratings'] = '申し訳ございません、評価済みのため削除出来ませんでした';
@@ -25,8 +26,13 @@ $string['delete'] = '削除';
 $string['deleteddiscussion'] = 'ディスカッショントピックが削除されました';
 $string['deletedpost'] = '投稿が削除されました';
 $string['deletesure'] = 'この投稿を削除してもよろしいですか?';
+$string['digestmailheader'] = 'これは、 $a->sitename フォーラムに投稿された内容のデイリーダイジェストです。メールアドレスを変更する場合は、 $a->userprefs にて設定してください。 ';
+$string['digestmailprefs'] = 'ユーザプロフィール';
+$string['digestmailsubject'] = '$a: フォーラムダイジェスト';
+$string['digestsentusers'] = 'メールダイジェストが  $a 名のユーザに送信されました。';
 $string['discussion'] = 'ディスカッション';
 $string['discussionmoved'] = 'ディスカッションは \'$a\' に移動されました。';
+$string['discussionname'] = 'ディスカッション名';
 $string['discussions'] = 'ディスカッション';
 $string['discussionsstartedby'] = '$a さんより開始されたディスカッション';
 $string['discussionsstartedbyrecent'] = '$a さんより最近開始されたディスカッション';
@@ -91,8 +97,12 @@ $string['postrating1'] = '主に分離認識の傾向がある';
 $string['postrating2'] = '分離認識と関連認識を同等に持っている';
 $string['postrating3'] = '主に関連認識の傾向がある';
 $string['posts'] = '投稿';
+$string['posttoforum'] = 'フォーラムに投稿';
 $string['postupdated'] = '投稿が更新されました';
+$string['processingdigest'] = '$a のメールダイジェストを処理中';
 $string['processingpost'] = '投稿 $a を処理中';
+$string['prune'] = '中断';
+$string['pruneheading'] = '投稿の中断及び新しいディスカッションへの移動';
 $string['rate'] = '評価';
 $string['rating'] = '評価';
 $string['ratingeveryone'] = '誰でも投稿を評価できる';
@@ -111,10 +121,8 @@ $string['repliesmany'] = '$a 件の返信があります';
 $string['repliesone'] = '$a 件の返信があります';
 $string['reply'] = '返信';
 $string['replyforum'] = 'フォーラムに返信';
-$string['rssarticles'] = 'RSSの最近の記事数';
 $string['rsssubscriberssdiscussions'] = '\'$a\'  件のディスカッションに関してRSSフィードを表示';
 $string['rsssubscriberssposts'] = '\'$a\'  件の投稿に関してRSSフィードを表示';
-$string['rsstype'] = 'フォーラムのRSSフィード';
 $string['search'] = '検索';
 $string['searchforums'] = 'フォーラムを検索';
 $string['searcholderposts'] = '過去の投稿を検索 ...';
