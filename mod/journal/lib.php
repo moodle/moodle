@@ -234,8 +234,7 @@ function journal_grades($journalid) {
         $return->maxgrade = $journal->assessed;
 
     } else if ($journal->assessed == 0) {
-        $return->grades = NULL;
-        $return->maxgrade = 0;
+        return NULL;
 
     } else {
         if ($scale = get_record("scale", "id", - $journal->assessed)) {
