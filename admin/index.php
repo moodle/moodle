@@ -31,10 +31,6 @@
         error("The PHP server variable 'magic_quotes_runtime' should be Off - $documentationlink");
     }
 
-    if (!ini_get_bool('magic_quotes_gpc')) {
-        error("The PHP server variable 'magic_quotes_gpc' is not turned On - $documentationlink");
-    }
-
     if (!ini_get_bool('file_uploads')) {
         error("The PHP server variable 'file_uploads' is not turned On - $documentationlink");
     }
