@@ -3092,7 +3092,7 @@ function get_string($identifier, $module='', $a=NULL) {
 /// First check all the normal locations for the string in the current language
 
     foreach ($locations as $location) {
-        $langfile = $location.'/'.$lang.'/'.$module.'.php';
+        $langfile = $location.$lang.'/'.$module.'.php';
         if (file_exists($langfile)) {
             if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
                 eval($result);
@@ -3109,15 +3109,17 @@ function get_string($identifier, $module='', $a=NULL) {
 /// Is a parent language defined?  If so, try to find this string in a parent language file
 
     foreach ($locations as $location) {
-        $langfile = $location.'/'.$lang.'/moodle.php';
-        if ($result = get_string_from_file('parentlanguage', $langfile, "\$parentlang")) {
-            eval($result);
-            if (!empty($parentlang)) {   // found it!
-                $langfile = $location.'/'.$parentlang.'/'.$module.'.php';
-                if (file_exists($langfile)) {
-                    if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
-                        eval($result);
-                        return $resultstring;
+        $langfile = $location.$lang.'/moodle.php';
+        if (file_exists($langfile)) {
+            if ($result = get_string_from_file('parentlanguage', $langfile, "\$parentlang")) {
+                eval($result);
+                if (!empty($parentlang)) {   // found it!
+                    $langfile = $location.$parentlang.'/'.$module.'.php';
+                    if (file_exists($langfile)) {
+                        if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
+                            eval($result);
+                            return $resultstring;
+                        }
                     }
                 }
             }
@@ -3127,7 +3129,7 @@ function get_string($identifier, $module='', $a=NULL) {
 /// Our only remaining option is to try English
 
     foreach ($locations as $location) {
-        $langfile = $location.'/en/'.$module.'.php';
+        $langfile = $location.'en/'.$module.'.php';
 
         if (file_exists($langfile)) {
             if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
