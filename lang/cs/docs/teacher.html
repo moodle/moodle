@@ -1,0 +1,264 @@
+<html>
+<head>
+<title>Dokumentace Moodlu: Příručka učitele</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Příručka učitele</h1>
+<p>Tato stránka slouží jako rychlý průvodce pro vytváření on-line kurzů v 
+systému Moodle. Jsou zde nastíněny jeho základní funkce a také některá důležitá 
+rozhodnutí, která budete muset udělat.</p>
+<p>Oddíly dokumentu:</p>
+<ol>
+  <li><a href="#started">Úvodem</a></li>
+  <li><a href="#settings">Nastavení kurzu</a></li>
+  <li><a href="#upload">Vkládání souborů</a></li>
+  <li><a href="#activities">Nastavení činností</a></li>
+  <li><a href="#course">Vedení kurzu</a></li>
+  <li><a href="#further">Dodatečné informace</a></li>
+</ol>
+
+<h3 class="sectionheading"><a name="started"></a>Úvodem</h3>
+
+<blockquote> 
+  <p>Budeme předpokládat, že vám administrátor Moodle nainstaloval, že máte 
+  k&nbsp;dispozici nový, prázdný kurz a že jste se do něj přihlásili pomocí 
+  svého učitelského účtu.</p>
+  <p>Zde jsou na úvod tři obecné tipy, které by vám měly usnadnit práci.</p>
+  <ol>
+    <li><strong>Nebojte se experimentovat!</strong>
+      <blockquote>Neváhejte se v kurzu porozhlédnout a vyzkoušet si co nejvíce 
+      funkcí a možností. V systému Moodle lze jen těžko něco pokazit, a i kdyby 
+se něco takového stalo, dá se to většinou snadno napravit.
+    </blockquote>
+    <li><strong>Seznamte se s těmito ikonami a používejte je</strong>: 
+      <blockquote> 
+        <p>&nbsp;<img src="../pix/i/edit.gif"> - ikona <strong>editace</strong> 
+        vám umožňuje editovat položku, vedle níž je zobrazena</p>
+        <p><img src="../pix/help.gif" width="22" height="17"> - ikona <strong>
+        nápovědy</strong> vám otevře <a target="helpwindow" 
+href="../help.php?file=index.html">nové okno s nápovědou</a></p>
+        <p>&nbsp;<img src="../pix/i/hide.gif" width="16" height="16"> - ikona 
+        <strong>otevřeného oka</strong> umožňuje skrýt položku před studenty</p>
+        <p>&nbsp;<img src="../pix/i/show.gif" width="16" height="16"> - ikona 
+        <strong>zavřeného oka</strong> označuje skrytou položku a umožňuje ji 
+zpřístupnit</p>
+      </blockquote>
+    </li>
+    <li><strong>Používejte navigační lištu v záhlaví každé stránky.</strong>
+	  <blockquote>Lišta vám napovídá, kde se právě nacházíte, takže se nebudete 
+    v&nbsp;systému ztrácet.
+    </blockquote>
+    </li>
+  </ol>
+  <p>&nbsp;</p>
+</blockquote>
+
+<h3 class="sectionheading"><a name="settings"></a>Nastavení kurzu</h3>
+
+<blockquote> 
+  <p>Ze všeho nejdříve byste měli na domovské stránce kurzu v sekci Správa 
+  kliknout na odkaz <strong>Nastavení</strong>. (Tento odkaz, a vůbec celá 
+  administrativní sekce, jsou přístupné pouze vám a správci stránek; studenti je 
+  nevidí.)</p>
+  <p>Na stránce Nastavení můžete měnit několik parametrů kurzu, od jeho názvu 
+  až po den, kdy kurz začíná. O všech se zde zmiňovat nebudu, protože u každého 
+  najdete ikonu nápovědy, která vše podrobně vysvětluje. Zmíním se jen o tom 
+  nejdůležitějším - o <strong>uspořádání kurzu</strong>.</p>
+  <p>Na zvoleném uspořádání kurzu závisí jeho základní rozložení - je to jakási 
+  šablona. Moodle ve verzi 1.0 nabízí tři možná uspořádání; v budoucnu jich bude 
+  zřejmě mnohem více (nové nápady zasílejte prosím na adresu 
+  <a href="mailto:martin@moodle.org">martin@moodle.org</a>).</p>
+  <p>Zde jsou ukázky tří kurzů, každý v jednom ze tří formátů (nevšímejte si 
+  různých barev; ty ve skutečnosti nastavuje správce a jsou pro všechny kurzy 
+v systému stejné):</p>
+  <p align="center"><strong>Týdenní uspořádání:</strong></p>
+  <p align="center"><img src="pix/weekly.jpg" width="570" height="527"></p>
+  <p align="center">&nbsp;</p>
+  <p align="center"><strong>Tematické uspořádání:</strong></p>
+  <p align="center"><img src="pix/topics.jpg" width="570" height="463"></p>
+  <p align="center">&nbsp;</p>
+  <p align="center"><strong>Diskusní uspořádání:</strong></p>
+  <p align="center"><img src="pix/social.jpg" width="570" height="429"></p>
+  <p>&nbsp;</p>
+  <p>Jak vidíte, struktura týdenního a tematického uspořádání je velice podobná. 
+  Liší se pouze v tom, že v týdenním uspořádání odpovídá každé pole právě 
+  jednomu týdnu, kdežto v tematickém můžete pole použít zcela podle svého. 
+  Diskusní uspořádání téměř nepracuje s předem připraveným obsahem a je založeno 
+  na jediném fóru, zobrazeném na hlavní stránce.</p>
+  <p>Pro bližší informace použijte tlačítka nápovědy na stránce Nastavení kurzu.</p>
+  <p>&nbsp;</p>
+</blockquote>
+
+<h3 class="sectionheading"><a name="upload"></a>Vkládání souborů</h3>
+
+<blockquote> 
+  <p>Pravděpodobně máte již existující materiály, které byste chtěli v&nbsp;kurzu 
+  použít, například webové stránky, zvukové soubory, video soubory, textové 
+  dokumenty nebo flash animace. Systém umožňuje vložit do kurzu jakýkoliv typ 
+  souboru a uložit jej na server. Tyto soubory lze poté přemísťovat, přejmenovávat, 
+  editovat a mazat.</p>
+  <p>K tomu slouží odkaz <strong>Soubory</strong> v sekci Správa. Stránka pro 
+  správu souborů vypadá takto:</p>
+  <p align="center"><img src="pix/files.jpg" width="400" height="347"></p>
+  <p>&nbsp;</p>
+  <p>Toto rozhraní je přístupné pouze učitelům, studenti k němu přístup nemají. 
+  Jednotlivé soubory jsou studentům zpřístupněny později (jako Studijní materiál 
+  - viz následující oddíl).</p>
+  <p>Jak vidíte na ukázce, kromě souborů jsou na výpisu také podadresáře. Těch 
+  lze pro přehledné uspořádání souborů vytvořit libovolný počet a soubory mezi 
+  nimi libovolně přesouvat.</p>
+  <p>Vkládat soubory přes internet lze v současné době pouze po jednom. Pokud 
+  chcete vložit více souborů najednou (například celou webovou stránku), je 
+  vhodnější použít <strong>archivační program</strong>, kterým je zkomprimujete 
+  do jednoho souboru, ten vložíte na server a tam opět rozbalíte (vedle 
+  archivního souboru se zobrazí odkaz Rozbalit).</p>
+  <p>Pro náhled jakéhokoliv souboru stačí kliknout na jeho jméno; váš internetový 
+  prohlížeč vám dá vybrat, zda jej chcete zobrazit, nebo uložit do počítače.</p>
+  <p>Textové a HTML soubory lze upravovat online přímo na stránce kurzu. Soubory 
+  ostatních typů je nutno upravovat na lokálním počítači a vždy znovu uložit na 
+  server. Pokud na serveru soubor stejného jména již existuje, dojde k jeho 
+  automatickému přepsání.</p>
+  <p>Závěrečná poznámka: pokud již jsou vaše materiály vystaveny kdekoliv na 
+  internetu, není třeba je do kurzu vkládat - můžete na ně odkázat přímo 
+  z&nbsp;kurzu (viz modul Studijní materiál a následující oddíl).</p>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="activities"></a>Nastavení činností</h3>
+<blockquote> 
+  <p>Vytváření kurzu spočívá v umísťování modulů činností na hlavní stránku 
+  v&nbsp;tom pořadí, v jakém s nimi budou studenti pracovat. Jejich pořadí můžete 
+  kdykoliv podle potřeby měnit.</p>
+  <p>Chcete-li kurz editovat, klikněte na odkaz &quot;Zapnout režim úprav&quot; 
+  v&nbsp;rubrice Správa. Tento odkaz slouží jako přepínač pro zobrazení či skrytí 
+  dalších ovládacích prvků, které vám umožní manipulovat s hlavní stránkou kurzu. 
+  Na první ukázce nahoře (týdenní uspořádání) si všimněte již přístupných 
+  editovacích prvků.</p>
+  <p>Pro přidání činnosti jednoduše přejděte do té týdenní či tematické sekce, 
+  kam chcete činnost vložit, a zvolte si z roletové nabídky příslušnou činnost. 
+  Moodle 1.0 nabízí tyto standardní činnosti:</p>
+  <dl>
+    <dt><strong>Úkol</strong></dt>
+    <dd>Používá se k zadání úkolu, doplněného termínem odevzdání a nejvyšším 
+    možným hodnocením. Studenti budou moci do systému vložit jeden soubor se 
+    splněným zadáním; datum vložení souboru bude zaznamenáno. Jako učitel pak 
+    máte k dispozici jednu souhrnnou stránku, ze které můžete nahlížet do všech 
+    odevzdaných souborů a kde k nim můžete připojit hodnocení a komentář. Půl 
+    hodiny poté, co práci studenta ohodnotíte, mu systém odešle e-mailem upozornění.</dd>
+    <br>
+    <br>
+    <dt><strong>Hlasování</strong></dt>
+    <dd>Činnost Hlasování je velice jednoduchá - položíte otázku a stanovíte 
+    možné odpovědi. Studenti si vyberou variantu odpovědi, a vy máte 
+k&nbsp;dispozici přehlednou stránku se záznamem výsledků. Hlasování lze využít 
+jako rychlého dotazníku či třídních voleb nebo například k získání souhlasu 
+studentů s jejich zařazením do výzkumu.</dd>
+    <br>
+    <br>
+    <dt><strong>Fórum</strong></dt>
+    <dd>Tento modul je zdaleka nejdůležitější - právě zde se odehrává diskuse. 
+Když přidáváte nové fórum, máte na výběr několik možností: jednoduchou diskusi 
+na jedno téma, volnou diskusi nebo diskusi, do níž smí každý účastník přispět 
+pouze jednou.</dd>
+    <br>
+    <br>
+    <dt><strong>Poznámkový deník</strong></dt>
+    <dd>Student si v průběhu kurzu může vést poznámkový deník. Každý záznam v deníku iniciuje 
+    učitel zařazením činnosti Poznámky s uvedením společné otázky pro všechny 
+    studenty kurzu. V týdenním uspořádání kurzu lze také stanovit časové rozmezí, 
+    po které bude daný zápis přístupný. Obecně lze doporučit, aby učitel zadával 
+    v&nbsp;každém týdnu jeden zápis do deníku. Studenty povzbuzujte k tomu, aby 
+    deník psali reflexívně a kriticky, protože je přístupný pouze jim a vám. Učitel 
+    pak může ke každému zápisu v daném týdnu nebo tématu připojit hodnocení či 
+    komentář; student je na to upozorněn e-mailem. Deník není určen k průběžnému 
+    doplňování již vložených zápisů; chcete-li, aby studenti přispívali do deníku 
+    opakovaně, vložte činnost Poznámky vícekrát.</dd>
+    <br>
+    <br>
+    <dt><strong>Studijní materiály</strong></dt>
+    <dd>Studijní materiály tvoří vlastní obsah kurzu. Může jimi být jakýkoliv 
+    soubor, který do Moodlu vložíte, nebo odkaz na internet. Můžete si však také 
+založit a udržovat jednoduché textové stránky psané přímo do připraveného okna.</dd>
+    <br>
+    <br>
+    <dt><strong>Test</strong></dt>
+    <dd>Tento modul umožňuje vytvářet a zadávat testy sestávající z otázek s 
+    různými typy odpovědí: výběr odpovědi z daných možností, odpověď 
+    "správně/špatně", krátká tvořená odpověď. Otázky jsou uchovávány v kategorizované 
+    databázi a mohou být použity vícekrát, a to i v různých kurzech. U testu lze 
+    povolit opakování pokusů. Každý pokus je automaticky ohodnocen. Učitel může 
+    nastavit, zda se studentům zobrazí komentář k jednotlivým odpovědím, resp. 
+    správná odpověď. Modul také obsahuje nástroje pro hodnocení.</dd>
+    <br>
+    <br>
+    <dt><strong>Dotazník</strong></dt>
+    <dd>Modul Dotazník obsahuje několik předdefinovaných dotazníkových nástrojů, 
+    které lze použít např. k&nbsp;získání představy o složení kurzu a očekávání 
+    jeho účastníků. V současné době zde najdete nástroje COLLES a ATTLS. Použít 
+    je můžete například na začátku kurzu jako diagnostické nástroje a na konci 
+    pro evaluaci kurzu (ale podle potřeby i častěji).</dd>
+  </dl>
+  <br>
+  <p>Činnosti, které jste do kurzu přidali, můžete v rozvrhu kurzu přesouvat 
+  nahoru či dolů kliknutím na malé směrové ikony (<img src="../pix/t/up.gif" 
+  width="9" height="10"> <img src="../pix/t/down.gif" width="9" height="10">) 
+  vedle každé z nich. Činnosti lze také mazat kliknutím na ikonu křížku 
+  <img src="../pix/t/delete.gif" width="10" height="10"> nebo upravovat pomocí 
+  editační ikony <img src="../pix/t/edit.gif" width="10" height="11">.</p>
+  <p>&nbsp;</p>
+</blockquote>
+
+<h3 class="sectionheading"><a name="course"></a>K vedení kurzu</h3>
+
+<blockquote> 
+  <p>Tato stránka bude jednoho dne rozšířena do podoby obsáhlejšího průvodce. 
+  Než k&nbsp;tomu dojde, nabízíme alespoň několik námětů:</p>
+  <ol>
+    <li>Zapište se do všech fór a udržujte si tak přehled o činnosti studentů. </li>
+    <li>Nabádejte studenty k tomu, aby vyplnili co nejvíce údajů ve svém 
+    uživatelském profilu (včetně fotografie) a seznamovali se s profily ostatních 
+    - získají tak orientaci ve skupině potřebnou pro svou pozdější práci, a vám 
+    to umožní reagovat s ohledem na individuální potřeby každého studenta.</li>
+    <li>Ukládejte si v sekci Učitelské fórum (v oddíle Správa) své poznámky ke 
+    kurzu. To je zvláště užitečné při týmové spolupráci učitelů.</li>
+    <li>Používejte odkaz Protokoly (v oddíle Správa), který vám nabízí přístup 
+    k&nbsp;plné verzi protokolů. Zde také najdete odkaz na okno, které bude 
+    zobrazovat aktivitu za poslední hodinu a jehož obsah se každou minutu obnoví. 
+    Je užitečné mít ho po celý den zapnuté na pracovní ploše a být tak 
+    v&nbsp;kontaktu s&nbsp;děním v kurzu.</li>
+    <li>Používejte funkci Záznam činností (odkaz Činnost vedle jména v&nbsp;seznamu 
+    studentů nebo v uživatelském profilu). Umožňuje snadno sledovat, jak si daný 
+    člen kurzu vede.</li>
+    <li>Studentům odpovídejte rychle. Nenechávejte nic na později, reagujte ihned. 
+    Jednak by vás přibývající produkce kurzu mohla zahltit, a především se jedná 
+    o rozhodující moment v&nbsp;budování a udržování kolektivního ducha v&nbsp;kurzu.</li>
+    <!-- s posledni vetou jsme si nevedeli rady -->
+  </ol>
+  <p>&nbsp;</p>
+</blockquote>
+
+<h3 class="sectionheading"><a name="further"></a>Další informace</h3>
+
+<blockquote> 
+  <p>Pokud máte se systémem problémy, kontaktujte svého místního správce.</p>
+  <p>Máte-li nápad na vylepšení Moodlu nebo zajímavé zkušenosti, navštivte 
+  <a href="http://moodle.org/" target="_top">moodle.org</a> a přidejte se k&nbsp;nám 
+  jako účastníci kurzu "<a href="http://moodle.org/course/view.php?id=5" target=_top >Using Moodle</a>". 
+  Budete vítáni - a můžete pomoci Moodle vylepšit.</p>
+  <p>Pokud byste chtěli pomoci s psaním dokumentace nebo kódu pro nové moduly, 
+  kontaktujte mě (<a href="http://moodle.org/user/view.php?id=1&course=1" 
+  target="_top">Martin Dougiamas</a>) nebo se podívejte na stránku pro 
+  &quot;vychytávání much&quot; na <a href="http://moodle.org/bugs/" target="_top">moodle.org/bugs</a>.</p>
+  <p>A nezapomeňte používat ikony nápovědy - tady je 
+  <a target="helpwindow" href="../help.php?file=index.html">rejstřík všech 
+  souborů nápovědy v&nbsp;Moodlu</a>.</p>
+  <p align="center">Děkujeme, že používáte Moodle - a hodně štěstí při výuce!</p>
+  <hr>
+  <p>&nbsp;</p>
+</blockquote>
+<p align="CENTER"><font size="1"><a href="." target="_top">Dokumentace Moodle</a></font></p>
+<p align="CENTER"><font size="1">Verze: $Id$</font></p>
+</body>
+</html>
