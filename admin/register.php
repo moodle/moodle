@@ -101,7 +101,7 @@
 
     echo "<tr valign=top>\n";
     echo "<td align=right><p>".get_string("administrator").":</td>\n";
-    echo "<td><p><input size=50 type=\"text\" name=\"adminname\" value=\"$admin->firstname $admin->lastname\"></td>\n";
+    echo "<td><p><input size=50 type=\"text\" name=\"adminname\" value=\"".fullname($admin, true)."\"></td>\n";
     echo "</tr>\n";
 
     echo "<tr valign=top>\n";

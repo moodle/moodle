@@ -135,9 +135,9 @@
                     unenrol_student($user->id);  // From all courses
                     remove_teacher($user->id);   // From all courses
                     remove_admin($user->id);
-                    notify(get_string("deletedactivity", "", "$user->firstname $user->lastname"));
+                    notify(get_string("deletedactivity", "", fullname($user, true) );
                 } else {
-                    notify(get_string("deletednot", "", "$user->firstname $user->lastname"));
+                    notify(get_string("deletednot", "", fullname($user, true));
                 }
             }
         }
@@ -256,7 +256,8 @@
             } else {
                 $strlastaccess = get_string("never");
             }
-            $table->data[] = array ("<a href=\"../user/view.php?id=$user->id&course=$site->id\">$user->firstname $user->lastname</a>",
+            $fullname = fullname($user, true);
+            $table->data[] = array ("<a href=\"../user/view.php?id=$user->id&course=$site->id\">$fullname</a>",
                              "$user->email",
                              "$user->city",
                              "$user->country",

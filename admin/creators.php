@@ -127,9 +127,10 @@
         }
 
         foreach ($users as $user) {
+            $fullname = fullname($user, TRUE);
             echo "<p align=left><a href=\"{$_SERVER['PHP_SELF']}?add=$user->id\"".
                    "title=\"$straddcreator\"><img src=\"../pix/t/left.gif\"".
-                   "border=0></a>&nbsp;&nbsp;$user->firstname $user->lastname, $user->email";
+                   "border=0></a>&nbsp;&nbsp;$fullname, $user->email";
         }
     }
 
