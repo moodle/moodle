@@ -1,0 +1,185 @@
+<?PHP //$Id$
+    //This page prints the restore form to select everything yo want
+    //to restore. Form is dinamically buid, depending of "info" object
+    //that contains the backup contents and depending of every mod
+    //capabilities.
+
+    //Get objects from session
+    $info = $SESSION->info;
+    $course_header = $SESSION->course_header;
+
+    //Check that we have all we need
+    //backup_unique_code
+    require_variable($backup_unique_code);
+    //file
+    require_variable($file);
+    //info
+    require_variable($info);
+    //course_header
+    require_variable($course_header);
+
+    //Check login
+    require_login();
+
+    //Check admin
+    if (!isadmin()) {
+        error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+    }
+
+    //Check site
+    if (!$site = get_site()) {
+        error("Site not found!");
+    } 
+
+   //Checks for the required files/functions to restore every mod
+    //And check if there is data about it 
+    $count = 0;
+    if ($allmods = get_records("modules") ) {
+        foreach ($allmods as $mod) {
+            $modname = $mod->name;
+            $modfile = "$mods_home/$modname/restorelib.php";
+            $modrestore = $modname."_restore_mods";
+            $modcheckrestore = $modname."_check_restore_mods";
+            if (file_exists($modfile)) {
+               include_once($modfile);
+               if (function_exists($modrestore) and function_exists($modcheckrestore)) {
+                   $var = "exists_".$modname;
+                   $$var = true;
+                   $count++;
+               }
+            }
+            //Check data
+            //Check module info
+            $var = "restore_".$modname;
+            if (!isset($$var)) {
+                $$var = 1;
+            }
+            //Check include user info
+            $var = "restore_user_info_".$modname;
+            if (!isset($$var)) {
+                $$var = 1;
+            }
+        }
+    }
+
+    //Check other parameters
+    if (!isset($restore_users)) {
+        $restore_users = 1;
+    }
+   
+    if (!isset($restore_logs)) {
+        $restore_logs = 1;
+    }
+
+    if (!isset($restore_user_files)) {
+        $restore_user_files = 1;
+    }
+
+    if (!isset($restore_course_files)) {
+        $restore_course_files = 1;
+    }
+
+    if (!isset($restore_restoreto)) {
+        $restore_restoreto = 1;
+    }
+
+    if ($count == 0) {
+        notice("No restorable modules are installed!");
+    }
+
+?>
+
+<form name="form" method="post" <?=$onsubmit ?> action="<?=$ME ?>">
+<table cellpadding=5>
+<?
+
+    //First, course destination
+    //Print the full tr
+    echo "<tr>";
+    echo "<td align=\"right\"><P><b>";
+    echo get_string("restoreto").":</b>";
+    echo "</td><td>";
+    $restore_restoreto_options[0] = get_string("existingcourse");
+    $restore_restoreto_options[1] = get_string("newcourse"); 
+    choose_from_menu($restore_restoreto_options, "restore_restoreto", $restore_restoreto, "");
+    echo "</td></tr>";
+    //Line
+    echo "<tr><td colspan=\"2\"><hr noshade size=\"1\"></td></tr>";
+    //Now, check modules and info and show posibilities
+    if ($allmods = get_records("modules") ) {
+        foreach ($allmods as $mod) {
+            $modname = $mod->name;
+            $modrestore = $modname."_restore_mods";
+            //If exists the lib & function
+            $var = "exists_".$modname;
+            if ($$var) {
+                //Print the full tr
+                echo "<tr>";
+                echo "<td align=\"right\"><P><B>";
+                echo get_string("include")." ". get_string("modulenameplural",$modname).":";
+                echo "</td><td>";
+                $restore_options[0] = get_string("no"); 
+                $restore_options[1] = get_string("yes");
+                $var = "restore_".$modname;
+                choose_from_menu($restore_options, $var, $$var, "");
+                $restore_user_options[0] = get_string("withoutuserdata"); 
+                $restore_user_options[1] = get_string("withuserdata");
+                $var = "restore_user_info_".$modname;
+                choose_from_menu($restore_user_options, $var, $$var, "");
+                echo "</td></tr>";
+            }
+        }
+        //Line
+        echo "<tr><td colspan=\"2\"><hr noshade size=\"1\"></td></tr>";
+
+        //Now print the Users tr
+        echo "<tr>";
+        echo "<td align=\"right\"><P><B>";
+        echo get_string("users").":";
+        echo "</td><td>";
+        $user_options[0] = get_string("all");
+        $user_options[1] = get_string("course");
+        //$user_options[2] = get_string("needed");-->NOT IMPLEMENTED
+        choose_from_menu($user_options, "restore_users", $restore_users, "");
+        echo "</td></tr>";
+
+        //Now print the Logs tr
+        echo "<tr>";
+        echo "<td align=\"right\"><P><B>";
+        echo get_string("logs").":";                                               
+        echo "</td><td>";
+        $log_options[0] = get_string("no");
+        $log_options[1] = get_string("yes"); 
+        choose_from_menu($log_options, "restore_logs", $restore_logs, ""); 
+        echo "</td></tr>";
+
+        //Now print the User Files tr
+        echo "<tr>";
+        echo "<td align=\"right\"><P><B>";
+        echo get_string ("userfiles").":";
+        echo "</td><td>";
+        $user_file_options[0] = get_string("no"); 
+        $user_file_options[1] = get_string("yes"); 
+        choose_from_menu($user_file_options, "restore_user_files", $restore_user_files, "");
+        echo "</td></tr>";
+
+        //Now print the Course Files tr
+        echo "<tr>";
+        echo "<td align=\"right\"><P><B>";
+        echo get_string ("coursefiles").":";
+        echo "</td><td>";
+        $course_file_options[0] = get_string("no");
+        $course_file_options[1] = get_string("yes");
+        choose_from_menu($course_file_options, "restore_course_files", $restore_course_files, "");
+        echo "</td></tr>";
+    }
+?>
+</table>
+<BR>
+<CENTER>
+<input type="hidden" name=id     value="<? p($id) ?>">
+<input type="hidden" name=launch value="check">
+<input type="submit" value="<? print_string("continue") ?>">
+<input type="submit" name=cancel value="<? print_string("cancel") ?>">
+</CENTER>
+</FORM>
