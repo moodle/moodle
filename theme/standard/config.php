@@ -20,8 +20,8 @@ $THEME->standardsheets = true;
 /// filenames from the *STANDARD* theme.  If the 
 /// array exists, it will be used to choose the 
 /// files to include in the standard style sheet.
-/// When false or non-existent, then no files are used.
-/// When true, then ALL standard files are used.
+/// When false, then no files are used.
+/// When true or NON-EXISTENT, then ALL standard files are used.
 /// This parameter can be used, for example, to prevent 
 /// having to override too many classes.
 /// Note that the trailing .css should not be included
