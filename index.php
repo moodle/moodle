@@ -57,7 +57,7 @@
          }
 
          if ($site->newsitems > 0 ) {
-             print_simple_box(get_string("courses"), "CENTER", "100%", "$THEME->cellheading");
+             print_simple_box(get_string("courses"), "CENTER", $side, "$THEME->cellheading");
              print_all_courses($cat=1, "minimal", 10);
          } 
          print_spacer(1,$side);

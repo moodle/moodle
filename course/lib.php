@@ -481,7 +481,7 @@ function print_section($courseid, $section, $mods, $modnamesused, $absolute=fals
     echo "</TD></TR></TABLE><BR>\n\n";
 }
 
-function print_side_block($heading="", $list=NULL, $footer="", $icons=NULL, $width=190) {
+function print_side_block($heading="", $list=NULL, $footer="", $icons=NULL, $width=180) {
     
     echo "<TABLE WIDTH=\"$width\">\n";
     echo "<TR><TD COLSPAN=2><P><B><FONT SIZE=2>$heading</TD></TR>\n";
@@ -530,7 +530,7 @@ function print_admin_links ($siteid, $width=180) {
     echo "<IMG SRC=\"$CFG->wwwroot/pix/spacer.gif\" WIDTH=\"$width\" HEIGHT=1><BR>";
 }
 
-function print_course_admin_links($courseid, $width=190) {
+function print_course_admin_links($courseid, $width=180) {
     global $THEME, $CFG;
 
     echo "<BR>";
