@@ -502,18 +502,18 @@
                     notify($archive->errorInfo(true));
 
                 } else {
-                    echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\" width=\"640\">";
-                    echo "<tr><th align=\"left\">$strname</th><th align=\"right\">$strsize</th><th align=\"right\">$strmodified</th></tr>";
+                    echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\" width=\"640\" class=\"files\">";
+                    echo "<tr class=\"file\"><th align=\"left\" class=\"header name\">$strname</th><th align=\"right\" class=\"header size\">$strsize</th><th align=\"right\" class=\"header date\">$strmodified</th></tr>";
                     foreach ($list as $item) {
                         echo "<tr>";
-                        print_cell("left", $item['filename']);
+                        print_cell("left", $item['filename'], 'name');
                         if (! $item['folder']) {
-                            print_cell("right", display_size($item['size']));
+                            print_cell("right", display_size($item['size']), 'size');
                         } else {
                             echo "<td>&nbsp;</td>";
                         }
                         $filedate  = userdate($item['mtime'], get_string("strftimedatetime"));
-                        print_cell("right", $filedate);
+                        print_cell("right", $filedate, 'date');
                         echo "</tr>";
                     }
                     echo "</table>";
@@ -646,12 +646,11 @@ function printfilelist($filelist) {
 }
 
 
-function print_cell($alignment="center", $text="&nbsp;") {
-    echo "<td align=\"$alignment\" nowrap=\"nowrap\">";
-    echo "<font size=\"-1\" face=\"Arial, Helvetica\">";
-    echo "$text";
-    echo "</font>";
-    echo "</td>\n";
+function print_cell($alignment='center', $text='&nbsp;', $class='') {
+    if ($class) {
+        $class = ' class="'.$class.'"';
+    }
+    echo '<td align="'.$alignment.'" nowrap="nowrap"'.$class.'>'.$text.'</td>';
 }
 
 function displaydir ($wdir) {
@@ -700,13 +699,13 @@ function displaydir ($wdir) {
     echo "<form action=\"index.php\" method=\"post\" name=\"dirform\">";
     echo '<input type="hidden" name="choose" value="'.$choose.'">';
     echo "<hr width=\"640\" align=\"center\" noshade=\"noshade\" size=\"1\" />";
-    echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" width=\"640\">";    
+    echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" width=\"640\" class=\"files\">";    
     echo "<tr>";
     echo "<th width=\"5\"></th>";
-    echo "<th align=\"left\">$strname</th>";
-    echo "<th align=\"right\">$strsize</th>";
-    echo "<th align=\"right\">$strmodified</th>";
-    echo "<th align=\"right\">$straction</th>";
+    echo "<th align=\"left\" class=\"header name\">$strname</th>";
+    echo "<th align=\"right\" class=\"header size\">$strsize</th>";
+    echo "<th align=\"right\" class=\"header date\">$strmodified</th>";
+    echo "<th align=\"right\" class=\"header commands\">$straction</th>";
     echo "</tr>\n";
 
     if ($wdir == "/") {
@@ -721,28 +720,28 @@ function displaydir ($wdir) {
     if (!empty($dirlist)) {
         asort($dirlist);
         foreach ($dirlist as $dir) {
-            echo "<tr>";
+            echo "<tr class=\"folder\">";
 
-            if($dir == '..') {
+            if ($dir == '..') {
                 $fileurl = rawurlencode(dirname($wdir));
                 print_cell();
-                print_cell('left', '<a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'"><img src="'.$CFG->pixpath.'/f/parent.gif" height="16" width="16" alt="'.get_string('parentfolder').'" /></a> <a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'">'.get_string('parentfolder').'</a>');
+                print_cell('left', '<a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'"><img src="'.$CFG->pixpath.'/f/parent.gif" height="16" width="16" alt="'.get_string('parentfolder').'" /></a> <a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'">'.get_string('parentfolder').'</a>', 'name');
                 print_cell();
                 print_cell();
                 print_cell();
-            }
-            else {
+
+            } else {
                 $count++;
                 $filename = $fullpath."/".$dir;
                 $fileurl  = rawurlencode($wdir."/".$dir);
                 $filesafe = rawurlencode($dir);
                 $filesize = display_size(get_directory_size("$fullpath/$dir"));
                 $filedate = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
-                print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" />");
-                print_cell("left", "<a href=\"index.php?id=$id&amp;wdir=$fileurl&amp;choose=$choose\"><img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" border=\"0\" alt=\"Folder\" /></a> <a href=\"index.php?id=$id&amp;wdir=$fileurl&amp;choose=$choose\">".htmlspecialchars($dir)."</a>");
-                print_cell("right", "<b>$filesize</b>");
-                print_cell("right", $filedate);
-                print_cell("right", "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=rename&amp;choose=$choose\">$strrename</a>");
+                print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" />", 'checkbox');
+                print_cell("left", "<a href=\"index.php?id=$id&amp;wdir=$fileurl&amp;choose=$choose\"><img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" border=\"0\" alt=\"Folder\" /></a> <a href=\"index.php?id=$id&amp;wdir=$fileurl&amp;choose=$choose\">".htmlspecialchars($dir)."</a>", 'name');
+                print_cell("right", $filesize, 'size');
+                print_cell("right", $filedate, 'date');
+                print_cell("right", "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=rename&amp;choose=$choose\">$strrename</a>", 'commands');
             }
     
             echo "</tr>";
@@ -769,10 +768,10 @@ function displaydir ($wdir) {
                 $selectfile = $fileurl;
             }
 
-            echo "<tr>";
+            echo "<tr class=\"file\">";
 
-            print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" />");
-            echo "<td align=\"left\" nowrap=\"nowrap\">";
+            print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" />", 'checkbox');
+            echo "<td align=\"left\" nowrap=\"nowrap\" class=\"name\">";
             if ($CFG->slasharguments) {
                 $ffurl = "/file.php/$id$fileurl";
             } else {
@@ -781,15 +780,15 @@ function displaydir ($wdir) {
             link_to_popup_window ($ffurl, "display", 
                                   "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" border=\"0\" alt=\"File\" />", 
                                   480, 640);
-            echo " <font size=\"-1\" face=\"Arial, Helvetica\">";
+            echo '&nbsp;';
             link_to_popup_window ($ffurl, "display", 
                                   htmlspecialchars($file),
                                   480, 640);
-            echo "</font></td>";
+            echo "</td>";
 
             $file_size = filesize($filename);
-            print_cell("right", display_size($file_size));
-            print_cell("right", $filedate);
+            print_cell("right", display_size($file_size), 'size');
+            print_cell("right", $filedate, 'date');
 
             if ($choose) {
                 $edittext = "<b><a onMouseDown=\"return set_value('$selectfile')\" href=\"\">$strchoose</a></b>&nbsp;";
@@ -808,7 +807,7 @@ function displaydir ($wdir) {
                 }
             }
 
-            print_cell("right", "$edittext <a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=rename&amp;choose=$choose\">$strrename</a>");
+            print_cell("right", "$edittext <a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=rename&amp;choose=$choose\">$strrename</a>", 'commands');
     
             echo "</tr>";
         }
