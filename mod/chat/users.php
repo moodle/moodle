@@ -44,7 +44,7 @@ if (isset($_GET['beep'])) {
         error("Could not insert a chat message!");
     }
 
-    $chatuser->lastping = time();          // A beep is a ping  ;-)
+    $chatuser->lastmessageping = time();          // A beep is a ping  ;-)
     update_record("chat_users", $chatuser);
 }
 
