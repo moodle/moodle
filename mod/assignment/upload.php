@@ -32,7 +32,7 @@
                   "", "", true);
 
     if ($submission = assignment_get_submission($assignment, $USER)) {
-        if ($submission->grade) {
+        if ($submission->grade and !$assignment->resubmit) {
             error("You've already been graded - there's no point in uploading anything");
         }
     }

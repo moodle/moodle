@@ -85,6 +85,9 @@ function assignment_upgrade($oldversion) {
     if ($oldversion < 2002110302) {
         execute_sql(" UPDATE `assignment` SET `type` = '1'");
     }
+    if ($oldversion < 2002111500) {
+        execute_sql(" ALTER TABLE `assignment` ADD `resubmit` TINYINT(2) UNSIGNED DEFAULT '0' NOT NULL AFTER `format` ");
+    }
 
     return true;
 }

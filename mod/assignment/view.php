@@ -100,7 +100,8 @@
             if ($submission and $submission->timemarked) {
                 print_heading(get_string("submissionfeedback", "assignment").":", "CENTER");
                 assignment_print_feedback($course, $submission);
-            } else {
+            }
+            if (!$submission->timemarked or $assignment->resubmit) {
                 if ($submission and $submission->timemodified) {
                     echo "<P ALIGN=CENTER>".get_string("overwritewarning", "assignment")."</P>";
                 }

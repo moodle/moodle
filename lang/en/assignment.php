@@ -2,6 +2,7 @@
       // assignment.php - created with Moodle 1.0.5 dev (2002092300)
 
 
+$string['allowresubmit'] = "Allow resubmitting";
 $string['assignmentdetails'] = "Assignment details";
 $string['assignmentname'] = "Assignment name";
 $string['assignmenttype'] = "Assignment type";

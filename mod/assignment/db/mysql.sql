@@ -8,6 +8,7 @@ CREATE TABLE `assignment` (
   `name` varchar(255) NOT NULL default '',
   `description` text NOT NULL,
   `format` tinyint(2) unsigned NOT NULL default '0',
+  `resubmit` tinyint(2) unsigned NOT NULL default '0',
   `type` int(10) unsigned NOT NULL default '1',
   `maxbytes` int(10) unsigned NOT NULL default '100000',
   `timedue` int(10) unsigned NOT NULL default '0',
