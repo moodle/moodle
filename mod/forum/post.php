@@ -13,6 +13,13 @@
     require_login(0, false);   // Script is useless unless they're logged in
 
     if ($post = data_submitted()) {
+        if (!empty($post->course)) {
+            if ($course = get_record('course', 'id', $post->course)) {
+                if (!empty($course->lang)) {
+                    $CFG->courselang = $course->lang;
+                }
+            }
+        }
 
         if (empty($SESSION->fromurl)) {
             $errordestination = "$CFG->wwwroot/mod/forum/view.php?f=$post->forum";
@@ -268,6 +275,13 @@
         }
         if (($post->userid <> $USER->id) and !isteacher($forum->course)) {
             error("You can't delete other people's posts!");
+        }
+        if (!empty($forum->course)) {
+            if ($course = get_record('course', 'id', $forum->course)) {
+                if (!empty($course->lang)) {
+                    $CFG->courselang = $course->lang;
+                }
+            }
         }
 
         if (isset($confirm)) {    // User has confirmed the delete
