@@ -321,7 +321,7 @@ CREATE TABLE prefix_user (
    lang varchar(10) NOT NULL default '',
    theme varchar(50) NOT NULL default '',
    timezone float NOT NULL default '99',
-   dstpreset integer NOT NULL default '0',
+   timezonename varchar(100) NOT NULL default '',
    firstaccess integer NOT NULL default '0',
    lastaccess integer NOT NULL default '0',
    lastlogin integer NOT NULL default '0',

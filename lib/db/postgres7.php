@@ -944,6 +944,11 @@ function main_upgrade($oldversion=0) {
         table_column('user', '', 'skype', 'varchar', '50', '', '', '', 'icq');
     }
 
+    if ($oldversion < 2005032300) {
+        table_column('user', 'dstpreset', 'timezonename', 'varchar', '100');
+        execute_sql('UPDATE `'.$CFG->prefix.'user` SET timezonename = \'\'');
+    }
+
     return $result;
 }
 
