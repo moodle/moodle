@@ -264,7 +264,6 @@
         error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
     }
 
-
 /// At this point everything is set up and the user is an admin, so print menu
 
     $stradministration = get_string("administration");
@@ -276,6 +275,12 @@
         print_simple_box(get_string("upgrade$CFG->upgrade", "admin", 
                                     "$CFG->wwwroot/$CFG->admin/upgrade$CFG->upgrade.php"), "center");
         print_spacer(10,10);
+    }
+
+/// If no recently cron run
+    $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
+    if (time() - $lastcron > 3600 * 24) {
+        print_simple_box(get_string('cronwarning', 'admin') , 'center');
     }
 
     $table->tablealign = "right";
