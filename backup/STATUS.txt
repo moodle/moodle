@@ -115,7 +115,10 @@ Backup Details:
    - Browse backup files........................................DONE
    - Download backup files......................................DONE
    - Delete backup files........................................DONE
-   - Program automatic backups..................................NO EXISTS
+   - Program scheduled backups..................................IN PROGRESS
+      - Build a configuration inteface..........................IN PROGRESS
+      - Create the script.......................................NOT EXISTS
+      - Integrate it in cron....................................NOT EXISTS
 
 Restore Details:
 ===============
