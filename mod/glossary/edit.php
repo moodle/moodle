@@ -193,7 +193,7 @@ if ( $confirm ) {
         $newentry->fullmatch = $form->fullmatch;
         $newentry->aliases = "";
         $newentry->userid = $form->userid;
-        $newentry->timemodified = $form->timemodified;
+        $newentry->timecreated = $form->timecreated;
 
         if ( $aliases = get_records("glossary_alias","entryid",$e) ) {
             foreach ($aliases as $alias) {
@@ -234,8 +234,8 @@ if (!isset($newentry->fullmatch)) {
 if (!isset($newentry->definition)) {
     $newentry->definition = "";
 }
-if (!isset($newentry->timemodified)) {
-    $newentry->timemodified = 0;
+if (!isset($newentry->timecreated)) {
+    $newentry->timecreated = 0;
 }
 $strglossary = get_string("modulename", "glossary");
 $strglossaries = get_string("modulenameplural", "glossary");
