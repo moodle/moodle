@@ -13,6 +13,7 @@ $string['binimgtoolarge'] = 'El archivo de imagen es demasiado grande';
 $string['binnoimg'] = 'Este formato de archivo es inaceptable';
 $string['browse'] = 'Navegar';
 $string['canceledit'] = 'Cancelar';
+$string['cannotchangepage'] = 'Esta página no puede modificarse.';
 $string['changes'] = '$a cambios';
 $string['changesfield'] = 'Dentro de cuántas horas desde el último cambio';
 $string['changesfielderror'] = 'Por favor, introduzca un número de horas correcto.';
