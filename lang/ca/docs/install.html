@@ -152,8 +152,8 @@ session.auto_start = 0
 session.bug_compat_warn = 0
 </pre>
   </blockquote>
-  <p>Si no teniu acc&eacute;s a l'httpd.conf i al php.ini del vostre servidor, o si altres aplicacions del mateix servidor necessiten par&agrave;metres diferents, no us amo&iuml;neu: podeu definir els par&agrave;metres en el directori de Moodle.
-  <p>Per a fer-ho, heu de crear un fitxer anomenat <b>.htaccess</b> en el directori principal de Moodle que contingui les definicions d'aquests par&agrave;metres. Per&ograve; aix&ograve; nom&eacute;s funcionar&agrave; en servidors Apache que permetin Overrides.
+  <p>Si no teniu acc&eacute;s a l'httpd.conf i al php.ini del vostre servidor, o si altres aplicacions del mateix servidor necessiten par&agrave;metres diferents, no us amo&iuml;neu: podeu definir els par&agrave;metres en el directori de Moodle.</p?
+  <p>Per a fer-ho, heu de crear un fitxer anomenat <b>.htaccess</b> en el directori principal de Moodle que contingui les definicions d'aquests par&agrave;metres. Per&ograve; aix&ograve; nom&eacute;s funcionar&agrave; en servidors Apache que permetin Overrides.</p>
      
   <blockquote>
     <pre>
@@ -169,7 +169,7 @@ php_flag file_uploads 1
 php_flag session.auto_start 0
 php_flag session.bug_compat_warn 0</pre>
   </blockquote>
-  <p>Tamb&eacute; podeu definir la mida m&agrave;xima dels fitxers que es pengin:
+  <p>Tamb&eacute; podeu definir la mida m&agrave;xima dels fitxers que es pengin:</p>
      
   <blockquote>
     <pre>
@@ -178,7 +178,7 @@ php_value upload_max_filesize 2M
 php_value post_max_size 2M
      </pre>
   </blockquote>
-  <p>La via m&eacute;s f&agrave;cil &eacute;s copiar el fitxer de mostra lib/htaccess i editar-lo adequadament a les vostres necessitats. Cont&eacute; instruccions addicionals. Per exemple, en l'int&egrave;rpret d'ordres de Unix:
+  <p>La via m&eacute;s f&agrave;cil &eacute;s copiar el fitxer de mostra lib/htaccess i editar-lo adequadament a les vostres necessitats. Cont&eacute; instruccions addicionals. Per exemple, en l'int&egrave;rpret d'ordres de Unix:</p>
   <blockquote>
     <pre>cp lib/htaccess .htaccess</pre>
   </blockquote>
@@ -196,7 +196,7 @@ php_value post_max_size 2M
 <h3 class="sectionheading"><a name="admin"></a>8. P&agrave;gina d'administraci&oacute;</h3>
 <blockquote> 
   <p>La p&agrave;gina d'administraci&oacute; hauria d'estar en funcionament en l'adre&ccedil;a: <u>http://example.com/moodle/admin</u>. Si proveu a anar la p&agrave;gina inicial del lloc tamb&eacute; anireu a parar all&ograve; autom&agrave;ticament. La primera vegada que accediu a la p&agrave;gina d'administraci&oacute; se us presentar&agrave; un contracte GPL &quot;empaquetat&quot; que heu d'acceptarbans de prosseguir la configuraci&oacute;.</p>
-  <p>(Moodle tamb&eacute; intentar&agrave; definir algunes galetes en el vostre navegador. Si teniu configurat el navegador de manera que us permeti triar si accepteu les galetes, alheshores obligat&ograve;riament <b>heu</b> d'acceptar les galetes de Moodle, o si no Moodle no funcionar&agrave; correctament.) 
+  <p>(Moodle tamb&eacute; intentar&agrave; definir algunes galetes en el vostre navegador. Si teniu configurat el navegador de manera que us permeti triar si accepteu les galetes, alheshores obligat&ograve;riament <b>heu</b> d'acceptar les galetes de Moodle, o si no Moodle no funcionar&agrave; correctament.) </p>
   <p>Ara Moodle comen&ccedil;ar&agrave; a configurar la base de dades i a crear taules per emmagatzemar les dades. Primer es creen les taules principals de la base de dades. Haur&iacute;eu de veure una llista de declaracions SQL seguides de missatges d'estat (en verd o en vermell) amb un aspecte semblant a aquest:</p>
   <blockquote> 
     <p>CREATE TABLE course ( id int(10) unsigned NOT NULL auto_increment, category 
@@ -292,6 +292,6 @@ que fa molt senzill tot aix&ograve;. Tamb&eacute; podeu explorar la caracter&iac
   <p>Per a m&eacute;s informaci&oacute; sobre creaci&oacute; de cursos, consulteu el &quot;<a href="./?file=teacher.html">Manual del professorat </a>&quot;.</p>
 </blockquote>
 <p>&nbsp;</p>
-<p align="CENTER"><font size="1"><a href="." target="_top">Documentaci&oacute; de Moodle</a></font></p>
-<p align="CENTER"><font size="1">Version: $Id$</font></p>
+<p align="center"><font size="1"><a href="." target="_top">Documentaci&oacute; de Moodle</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
 </body>

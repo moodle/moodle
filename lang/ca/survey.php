@@ -126,7 +126,7 @@ Les teves  respostes, pensades cuidadosament, ens ajudaran a millorar la manera 
 Moltes gràcies.';
 $string['collesaname'] = 'COLLES (Real)';
 $string['collesapintro'] = 'El propòsit d’aquest qüestionari és ajudar-nos a entendre fins a quin punt la presentació en línia d’aquesta unitat et va facilitar l’aprenentatge.
-Cada una de les declaracions següents et demanaran que comparis la teva experiència <B>favorita</B> (ideal) y la teva experiència <B>real</B> en aquesta unitat. Les teves  respostes seran tractades amb alt grau de confidencialitat i no afectaran la teva avaluació.
+Cada una de les declaracions següents et demanaran que comparis la teva experiència <b>favorita</b> (ideal) y la teva experiència <b>real</b> en aquesta unitat. Les teves  respostes seran tractades amb alt grau de confidencialitat i no afectaran la teva avaluació.
 Les teves  respostes, pensades cuidadosament, ens ajudaran a millorar la manera de presentar aquesta unitat en el futur.
 Moltes gràcies per la teva col·laboració.';
 $string['collesapname'] = 'COLLES (preferit i real)';
@@ -144,7 +144,7 @@ $string['collesm6'] = 'Interpretació';
 $string['collesm6short'] = 'Interpretació';
 $string['collesmintro'] = 'En aquesta unitat en línia...';
 $string['collespintro'] = 'El propòsit d’aquesta enquesta es ajudar-nos a entendre el que tu valores en una experiència d’aprenentatge en línia.
-Cada una de les 24 declaracions següents l’interroguen sobre la teva experiència <B>favorita</B> (ideal) en aquesta unitat.
+Cada una de les 24 declaracions següents l’interroguen sobre la teva experiència <b>favorita</b> (ideal) en aquesta unitat.
 No existeixen respostes \'correctes\' o \'equivocades\', sòls ens interessa la teva opinió. Les teves  respostes seran tractades amb alt grau de confidencialitat i no afectaran la teva avaluació.
 Les teves respostes, pensades cuidadosament, ens ajudaran a millorar la manera de presentar aquesta unitat en el futur.
 Moltes gràcies per la teva col·laboració.';

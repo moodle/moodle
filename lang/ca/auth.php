@@ -5,7 +5,7 @@
 $string['auth_common_settings'] = 'Paràmetres comuns';
 $string['auth_data_mapping'] = 'Mapatge de dades';
 $string['auth_dbdescription'] = 'Aquest mètode utilitza una taula d\'una base de dades externa per comprovar si un nom d\'usuari i una contrasenya són vàlids. Si el compte és nou, aleshores també es pot copiar en Moodle informació d\'altres camps.';
-$string['auth_dbextrafields'] = 'Aquests camps són opcionals. Podeu triar d\'omplir alguns camps d\'usuari del Moodle amb informació dels <B>camps de la base de dades externa</B> especificats aquí. <P>Si els deixeu en blanc s\'utilitzaran valors per defecte.<P>En tot cas, l\'usuari podrà editar tots aquests camps quan es connecti.';
+$string['auth_dbextrafields'] = 'Aquests camps són opcionals. Podeu triar d\'omplir alguns camps d\'usuari del Moodle amb informació dels <b>camps de la base de dades externa</b> especificats aquí. <p>Si els deixeu en blanc s\'utilitzaran valors per defecte.<p>En tot cas, l\'usuari podrà editar tots aquests camps quan es connecti.';
 $string['auth_dbfieldpass'] = 'Nom del camp que conté la contrasenya';
 $string['auth_dbfielduser'] = 'Nom del camp que conté el nom d\'usuari';
 $string['auth_dbhost'] = 'L\'ordinador que allotja el servidor de la base de dades.';
@@ -56,7 +56,7 @@ $string['auth_ldapdescription'] = 'Aquest mètode proporciona autenticació contra
                                   els camps corresponents de Moodle. En connexions successives només es comproven  
 
                                   el nom d\'usuari i la contrasenya.';
-$string['auth_ldapextrafields'] = 'Aquests camps són opcionals. Podeu triar d\'omplir alguns camps d\'usuari de Moodle amb informació dels <B>camps LDAP</B> especificats aquí. <P>Si els deixeu en blanc, aleshores s\'utilitzaran valors per defecte.<P>En tot cas, l\'usuari podrà editar tots aquests camps quan es connecti.';
+$string['auth_ldapextrafields'] = 'Aquests camps són opcionals. Podeu triar d\'omplir alguns camps d\'usuari de Moodle amb informació dels <b>camps LDAP</b> especificats aquí. <p>Si els deixeu en blanc, aleshores s\'utilitzaran valors per defecte.<p>En tot cas, l\'usuari podrà editar tots aquests camps quan es connecti.';
 $string['auth_ldaptitle'] = 'Utilitza un servidor LDAP';
 $string['auth_manualdescription'] = 'Aquest mètode impedeix que els usuaris puguin crear-se comptes. Tots els comptes han de ser creats manualment per l\'usuari administrador.';
 $string['auth_manualtitle'] = 'Només comptes manuals';

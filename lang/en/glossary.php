@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // glossary.php - created with Moodle 1.2 development (2003111400)
+<?PHP // $Id$ 
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['addcomment'] = 'Add comment';
@@ -32,16 +32,16 @@ $string['cnfallowcomments'] = 'Define if a glossary will accept comments on entr
 $string['cnfallowdupentries'] = 'Define if a glossary will allows duplicated entries by default';
 $string['cnfapprovalstatus'] = 'Define the approval status by default of an entry posted by a student';
 $string['cnfcasesensitive'] = 'Define if an entry, when linked, is case sensitive by default';
+$string['cnfdefaulthook'] = 'Select the default selection to show when the glossary is first viewed';
+$string['cnfdefaultmode'] = 'Select the default frame to show when the glossary is first viewed.';
 $string['cnffullmatch'] = 'Define if an entry, when linked, should match the case in the target text by default';
 $string['cnflinkentry'] = 'Define if an entry should be automatically linked by default';
 $string['cnflinkglossaries'] = 'Define if a glossary should be automatically linked by default';
-$string['cnfstudentcanpost'] = 'Define if the students can or cannot post entries by default';
 $string['cnfrelatedview'] = 'Select the display format to be used for automatic linking and entry view.';
-$string['cnfdefaultmode'] = 'Select the default frame to show when the glossary is first viewed.';
-$string['cnfdefaulthook'] = 'Select the default selection to show when the glossary is first viewed';
-$string['cnfsortkey']     = 'Select the sorting key by default.';
-$string['cnfsortorder']   = 'Select the sorting order by default.';
-$string['cnfshowgroup']   = 'Specify if the group break should be shown or not.';
+$string['cnfshowgroup'] = 'Specify if the group break should be shown or not.';
+$string['cnfsortkey'] = 'Select the sorting key by default.';
+$string['cnfsortorder'] = 'Select the sorting order by default.';
+$string['cnfstudentcanpost'] = 'Define if the students can or cannot post entries by default';
 $string['comment'] = 'Comment';
 $string['commentdeleted'] = 'The comment has been deleted.';
 $string['comments'] = 'Comments';
@@ -61,7 +61,6 @@ $string['deletingnoneemptycategory'] = 'Deleting this category will not delete t
 $string['descending'] = '(descending)';
 $string['destination'] = 'Destination';
 $string['displayformat'] = 'Display format';
-$string['displayformats'] = 'Display formats';
 $string['displayformatcontinuous'] = 'Continuous without author';
 $string['displayformatdictionary'] = 'Simple, dictionary style';
 $string['displayformatencyclopedia'] = 'Encyclopedia';
@@ -69,6 +68,7 @@ $string['displayformatentrylist'] = 'Entry list';
 $string['displayformatfaq'] = 'FAQ';
 $string['displayformatfullwithauthor'] = 'Full with author';
 $string['displayformatfullwithoutauthor'] = 'Full without author';
+$string['displayformats'] = 'Display formats';
 $string['displayformatssetup'] = 'Display Formats Setup';
 $string['duplicateentry'] = 'Duplicate entry';
 $string['editalways'] = 'Edit always';
@@ -92,17 +92,16 @@ $string['explainaddentry'] = 'Add a new entry to the current glossary.<br />Conc
 $string['explainall'] = 'Shows ALL entries on one page';
 $string['explainalphabet'] = 'Browse the glossary using this index';
 $string['explainexport'] = 'A file has been generated.<br />Download it and keep it safe. You can import it anytime you wish in this or other course.';
-$string['explainimport'] = 'You must specify the file to import and define the criteria of the process.<p>Submit your request and review the results.';
+$string['explainimport'] = 'You must specify the file to import and define the criteria of the process.<p>Submit your request and review the results.</p>';
 $string['explainspecial'] = 'Shows entries that do not begin with a letter';
 $string['exportedentry'] = 'Exported entry';
 $string['exportedfile'] = 'Exported file';
 $string['exportentries'] = 'Export entries';
 $string['exportglossary'] = 'Export glossary';
-$string['exportentries'] = 'Export entries';
 $string['exporttomainglossary'] = 'Export to main glossary';
 $string['filetoimport'] = 'File to import';
-$string['filtername'] = 'Glossary Auto-linking';
 $string['fillfields'] = 'Concept and definition are mandatory fields.';
+$string['filtername'] = 'Glossary Auto-linking';
 $string['fullmatch'] = 'Match whole words only';
 $string['globalglossary'] = 'Global glossary';
 $string['glossaryleveldefaultsettings'] = 'Glossary Level Default Settings';

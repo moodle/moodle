@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112300)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['action'] = 'Acció';
@@ -208,7 +208,7 @@ $string['confignotifyloginfailures'] = 'Si es registren els intents d\'entrada f
 $string['confignotifyloginthreshold'] = 'Si s\'activen les notificacions sobre intents d\'entrada fracassats, quants intents d\'un usuari o adreça IP cal registrar per enviar la notificació.';
 $string['configopentogoogle'] = 'Si habiliteu aquest paràmetre, llavors Google podrà entrar al vostre lloc com a Visitant. A més a més, la gent que vagi a parar al vostre lloc a través d\'una recerca en Google, hi entrarà automàticament com a Visitant. Adoneu-vos que això només proporciona accés transparent als cursos que permeten l\'accés als visitants. ';
 $string['configpathtoclam'] = 'Camí de Clam AV. Probablement /usr/bin/clamscan o /usr/clamdscan o quelcom semblant. Cal definir aquest paràmetre per tal d\'executar Clam AV.';
-$string['configproxyhost'] = 'Si aquest <B>servidor</B> accedeix a la xarxa a través d\'un intermediari (<i>proxy</i>, p. e. un tallafocs), escriviu aquí el nom del servidor intermediari i el port. En cas contrari deixeu-lo en blanc.';
+$string['configproxyhost'] = 'Si aquest <b>servidor</b> accedeix a la xarxa a través d\'un intermediari (<i>proxy</i>, p. e. un tallafocs), escriviu aquí el nom del servidor intermediari i el port. En cas contrari deixeu-lo en blanc.';
 $string['configquarantinedir'] = 'Si voleu que Clam AV mogui els fitxers infectats a un directori de quarantena, introduïu-lo aquí. El servidor web ha de tenir-hi permís d\'escriptura. Si deixeu aquest camp en blanc o introduïu un directori inexistent o no s\'hi pot escriure, els fitxers infectats se suprimiran. No poseu la barra final.';
 $string['configrunclamonupload'] = 'Cal executar Clam AV quan es penja un fitxer? Heu de definir un camí correcte en pathtoclam perquè funcioni. (Clam AV és un escanejador de virus gratuït que podeu obtenir en http://www.clamav.net/)';
 $string['configsecureforms'] = 'Moodle pot fer servir un nivell addicional de seguretat a l\'hora d\'acceptar dades dels formularis web. Si habiliteu aquesta opció, la variable HTTP_REFERER del navegador es compara amb l\'adreça real del formulari. Això pot causar problemes en molt pocs casossi l\'usuari fa servir un tallafocs (p. e. Zonealarm) configurat per eliminar l\'HTTP_REFERER del tràfic web. Els símptomes són que us quedeu encallats en un formulari. Si els vostres usuaris tenen problemes amb la pàgina d\'entrada, per exemple, potser vodreu inhabilitar aquest paràmetre, tot i que això podria deixar el vostre lloc més obert als atacs de força bruta que intenten esbrinar una contrasenya. En cas de dubte deixeu aquest paràmetre configurat com \'Sí\'.';
@@ -379,9 +379,9 @@ de la finestra del vostre navegador web.
 Si necessiteu ajuda, si us plau contacteu amb l\'administrador del lloc,
 $a->admin,';
 $string['emailconfirmationsubject'] = '$a: confirmació de compte';
-$string['emailconfirmsent'] = '<P>S\'ha enviat un correu a la vostra adreça <B>$a</B>
-<P>Conté instruccions senzilles per completar el registre.
-<P>Si seguiu tenint problemes, contacteu amb l\'administrador del lloc.';
+$string['emailconfirmsent'] = '<p>S\'ha enviat un correu a la vostra adreça <b>$a</b></p>
+<p>Conté instruccions senzilles per completar el registre.</p>
+<p>Si seguiu tenint problemes, contacteu amb l\'administrador del lloc.</p>';
 $string['emaildigest'] = 'Tipus de resum de correu';
 $string['emaildigestcomplete'] = 'Complet (correu diari amb missatges complets)';
 $string['emaildigestoff'] = 'Sense resum (un correu per cada missatge dels fòrums)';
@@ -416,15 +416,15 @@ Si necessiteu ajuda, si us plau contacteu amb l\'administrador del lloc,
 $a->admin,';
 $string['emailpasswordconfirmationsubject'] = '$a: confirmació de canvi de contrasenya';
 $string['emailpasswordconfirmsent'] = 'Se us ha enviat un correu a la vostra adreça <b>$a</b>.
-<p>Conté instruccions molt senzilles per confirmar i completar el canvi de contrasenya.
+<br />Conté instruccions molt senzilles per confirmar i completar el canvi de contrasenya.
 Si seguiu tenint problemes, contacteu amb l\'administrador del lloc.';
 $string['emailpasswordsent'] = 'Gràcies per confirmar el canvi de contrasenya.
-<p>Se us ha enviat un correu amb la contrasenya nova a la vostra adreça: <b>$a->email</b>.
-<p>La contrasenya nova s\'ha generat automàticament - potser voldreu <a href=$a->link>canviar-la</a> per una altra més fàcil de recordar.';
+<br />Se us ha enviat un correu amb la contrasenya nova a la vostra adreça: <b>$a->email</b>.
+<br />La contrasenya nova s\'ha generat automàticament - potser voldreu <a href=\"$a->link\">canviar-la</a> per una altra més fàcil de recordar.';
 $string['enable'] = 'Habilita';
 $string['encryptedcode'] = 'Codi xifrat';
-$string['enrolledincourse'] = 'Inscrit al curs ';
-$string['enrolledincoursenot'] = 'No inscrit al curs ';
+$string['enrolledincourse'] = 'Inscrit al curs \"$a\"';
+$string['enrolledincoursenot'] = 'No inscrit al curs  \"$a\"';
 $string['enrollfirst'] = 'Per poder usar aquestes activitats del lloc abans heu d\'estar inscrits en algun dels cursos';
 $string['enrolmentconfirmation'] = 'Aneu a inscriure-us en aquest curs.<br />Esteu segur que voleu fer això?';
 $string['enrolmentkey'] = 'Clau d\'inscripció';
@@ -626,18 +626,18 @@ $string['loginas'] = 'Entra com';
 $string['loginguest'] = 'Entra com a visitant';
 $string['loginsite'] = 'Entra en aquest lloc';
 $string['loginsteps'] = 'Hola! L\'accés complet als cursos requereix que dediqueu un minut a la creació d\'un nou compte d\'usuari vàlid en aquest lloc web. Cada curs pot requerir també una \"clau d\'inscripció\" que no necessitareu fins més tard. Els passos que heu de donar són els següents:
-<OL size=2>
-<LI>Ompliu el formulari de <A HREF=\"$a\">Nou compte</A> amb les vostres dades.</li>
-<LI>Se us enviarà inmediatament un correu a la vostra adreça electrònica.</li>
-<LI>Llegiu el correu i feu clic en l\'enllaç web inclòs.</li>
-<LI>Es confirmarà el vostre compte i podreu entrar-hi.</li>
-<LI>Llavors, seleccioneu el curs en el qual voleu participar.</li>
-<LI>Si se us demana una \"clau d\'inscripció\", utilitzeu la que us ha donat el professor. Amb això quedareu inscrit al curs.</li>
-<LI>En aquest moment ja tindreu accés complet al curs. En endavant només haureu d\'introduir el vostre nom d\'usuari i la contrasenya (en el formulari d\'aquesta pàgina) per tal d\'entrar i tenir accés a qualsevol curs en el qual estigueu inscrit.</li>
-</OL>';
-$string['loginstepsnone'] = '<P>Per tal de tenir accés complet als cursos us heu de crear un compte d\'usuari.
-<P>Consisteix simplement a triar un nom d\'usuari i una contrasenya amb els quals us identificareu, després, en aquesta pàgina.
-<P>Si algú ja ha triat abans el mateix nom d\'usuari, n\'haureu de provar un altre diferent.</P>';
+<ol size=\"2\">
+<li>Ompliu el formulari de <a href=\"$a\">Nou compte</a> amb les vostres dades.</li>
+<li>Se us enviarà inmediatament un correu a la vostra adreça electrònica.</li>
+<li>Llegiu el correu i feu clic en l\'enllaç web inclòs.</li>
+<li>Es confirmarà el vostre compte i podreu entrar-hi.</li>
+<li>Llavors, seleccioneu el curs en el qual voleu participar.</li>
+<li>Si se us demana una \"clau d\'inscripció\", utilitzeu la que us ha donat el professor. Amb això quedareu inscrit al curs.</li>
+<li>En aquest moment ja tindreu accés complet al curs. En endavant només haureu d\'introduir el vostre nom d\'usuari i la contrasenya (en el formulari d\'aquesta pàgina) per tal d\'entrar i tenir accés a qualsevol curs en el qual estigueu inscrit.</li>
+</ol>';
+$string['loginstepsnone'] = '<p>Per tal de tenir accés complet als cursos us heu de crear un compte d\'usuari.</p>
+<p>Consisteix simplement a triar un nom d\'usuari i una contrasenya amb els quals us identificareu, després, en aquesta pàgina.</p>
+<p>Si algú ja ha triat abans el mateix nom d\'usuari, n\'haureu de provar un altre diferent.</p>';
 $string['loginto'] = 'Entrar en $a';
 $string['loginusing'] = 'Entreu aquí amb el vostre nom d\'usuari i la contrasenya corresponent';
 $string['logout'] = 'Sortida';
@@ -803,9 +803,9 @@ $string['passwordconfirmchange'] = 'Confirma el canvi de la contrasenya';
 $string['passwordrecovery'] = 'Sí, ajuda\'m a entrar-hi';
 $string['passwordsdiffer'] = 'Les contrasenyes no coincideixen';
 $string['passwordsent'] = 'S\'ha enviat la contrasenya';
-$string['passwordsenttext'] = '<P>S\'ha enviat un correu a la vostra adreça electrònica $a->email.
-<P><B>Si us plau, busqueu la contrasenya nova al correu</B>
-<P>Aquesta contrasenya nova s\'ha generat automàticament, de manera que potser voldreu <A HREF=$a->link>canviar-la per una altra més fàcil de recordar</A>.';
+$string['passwordsenttext'] = '<p>S\'ha enviat un correu a la vostra adreça electrònica $a->email.</p>
+<p><b>Si us plau, busqueu la contrasenya nova al correu</b></p>
+<p>Aquesta contrasenya nova s\'ha generat automàticament, de manera que potser voldreu <A href=\"$a->link\">canviar-la per una altra més fàcil de recordar</a>.</p>';
 $string['pathnotexists'] = 'Aquest camí no existeix al servidor';
 $string['pathslasherror'] = 'El camí no pot acabar amb una barra';
 $string['paymentinstant'] = 'Utilitzeu el botó de baix per pagar i inscriure-us.';
@@ -839,10 +839,10 @@ $string['refreshingevents'] = 'S\'estan refrescant els esdeveniments';
 $string['registration'] = 'Registre de Moodle';
 $string['registrationemail'] = 'Notificacions per correu';
 $string['registrationinfo'] = '<p>Aquesta pàgina us permet registrar el vostre lloc  Moodle en moodle.org.  El registre és gratuït.
-El principal benefici del registre és que se us afegirà a una llista de correu de poc tràfic per rebre les notificacions més importants, com ara alertes de seguretat o l\'aparició de noves versions de Moodle.
+El principal benefici del registre és que se us afegirà a una llista de correu de poc tràfic per rebre les notificacions més importants, com ara alertes de seguretat o l\'aparició de noves versions de Moodle.</p>
 <p>Per defecte la vostra informació serà privada i mai no es vendrà o cedirà a ningú més. L\'única raó per recollir aquesta informació és per motius de suport i per ajudar a construir una imatge estadística de la comunitat Moodle com un tot.
-<p>Si ho trieu així, el nom del vostre lloc, el país i l\'adreça web s\'afegiran a la llista pública de llocs Moodle.
-<p>Tots el registres nous són verificats manualment abans d\'afegir-se a la llista, però un cop afegits podeu modificar el vostre registre i les dades de la llista pública en el moment en què ho desitgeu tot reenviant aquest formulari.';
+<p>Si ho trieu així, el nom del vostre lloc, el país i l\'adreça web s\'afegiran a la llista pública de llocs Moodle.</p>
+<p>Tots el registres nous són verificats manualment abans d\'afegir-se a la llista, però un cop afegits podeu modificar el vostre registre i les dades de la llista pública en el moment en què ho desitgeu tot reenviant aquest formulari.</p>';
 $string['registrationno'] = 'No, no vull rebre correu electrònic';
 $string['registrationsend'] = 'Envia la informació de registre a moodle.org';
 $string['registrationyes'] = 'Sí, vull rebre notificacions d\'assumptes importants';
@@ -882,7 +882,7 @@ $string['scheduledbackupstatus'] = 'Estat de la còpia de seguretat programada';
 $string['search'] = 'Cerca';
 $string['searchagain'] = 'Torna a cercar';
 $string['searchcourses'] = 'Cerca cursos';
-$string['searchhelp'] = 'Podeu cercar diverses paraules de cop.<p>paraula : cerca qualsevol coincidència d\'aquesta paraula al text.<b /r>+paraula : cerca només coincidències exactes.<br /> /-paraula : exclou els resultats que continguin aquesta paraula.';
+$string['searchhelp'] = 'Podeu cercar diverses paraules de cop.<br /><br />paraula : cerca qualsevol coincidència d\'aquesta paraula al text.<br />+paraula : cerca només coincidències exactes.<br /> /-paraula : exclou els resultats que continguin aquesta paraula.';
 $string['searchresults'] = 'Resultats de la recerca';
 $string['sec'] = 'segon';
 $string['secs'] = 'segons';

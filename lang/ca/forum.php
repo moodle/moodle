@@ -91,7 +91,7 @@ $string['openmode1'] = 'Debats no, però respostes sí';
 $string['openmode2'] = 'Debats i respostes sí';
 $string['parent'] = 'Mostra missatge original';
 $string['parentofthispost'] = 'Missatge original';
-$string['postadded'] = 'S\'ha afegit el vostre missatge. <P>Teniu $a per editar-lo si voleu fer algun canvi.';
+$string['postadded'] = 'S\'ha afegit el vostre missatge. <p>Teniu $a per editar-lo si voleu fer algun canvi.';
 $string['postincontext'] = 'Mostra aquest missatge en el seu context';
 $string['postmailinfo'] = 'Això és una còpia d\'un missatge enviat al lloc web $a.
 Per afegir la vostra resposta via web, feu clic en aquest enllaç:';
