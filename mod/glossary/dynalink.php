@@ -62,6 +62,7 @@
     }
     
     function glossary_link_concepts($text,$concept,$href_tag_begin,$href_tag_end = "</a>",$casesensitive,$fullmatch) {
+        $concept = str_replace("/", "\/", $concept);
         $list_of_words_cp = $concept;
 
         if ($list_of_words_cp{0}=="|") {
