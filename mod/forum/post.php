@@ -526,7 +526,7 @@
     }
     echo "</center>";
 
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start("center");
     require("post.html");
     print_simple_box_end();
 

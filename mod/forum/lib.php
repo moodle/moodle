@@ -195,7 +195,7 @@ function forum_cron () {
 /// Finds all posts that have yet to be mailed out, and mails them
 /// out to all subscribers
 
-    global $CFG, $USER, $THEME;
+    global $CFG, $USER;
     static $strforums = NULL;
 
     if ($strforums === NULL) {
@@ -417,12 +417,7 @@ function forum_cron () {
                 $headerdata->userprefs = '<a target="_blank" href="'.$headerdata->userprefs.'">'.get_string('digestmailprefs', 'forum').'</a>';
 
                 $posthtml = "<head><link rel=\"stylesheet\" type=\"text/css\" href=\"".$CFG->stylesheet."\" /></head>\n";
-                $posthtml .= "<body bgcolor=\"$THEME->cellcontent2\">";
-                $posthtml .= "<style> <!--";       /// Inline styles for autolinks
-                $posthtml .= "a.autolink:link {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
-                $posthtml .= "a.autolink:visited {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
-                $posthtml .= "a.autolink:hover {text-decoration: underline; color: red}\n";
-                $posthtml .= "--> </style>\n\n";
+                $posthtml .= "<body>";
                 $posthtml .= '<p>'.get_string('digestmailheader', 'forum', $headerdata).'</p><br /><hr size="1" noshade="noshade" />';
 
                 foreach($thesediscussions as $discussionid) {
@@ -597,11 +592,7 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
 
         $posthtml = '';
         $posthtml .= "<head><link rel=\"stylesheet\" type=\"text/css\" href=\"".$CFG->stylesheet."\" /></head>\n";
-        $posthtml .= "<body><style> <!--";       /// Inline styles for autolinks
-        $posthtml .= "a.autolink:link {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
-        $posthtml .= "a.autolink:visited {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
-        $posthtml .= "a.autolink:hover {text-decoration: underline; color: red}\n";
-        $posthtml .= "--> </style>\n\n";
+        $posthtml .= "<body>\n\n";
 
         $posthtml .= "<p><font face=\"sans-serif\">".
         "<a target=\"_blank\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> &raquo; ".
@@ -1334,7 +1325,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 // Given the data about a posting, builds up the HTML to display it and
 // returns the HTML in a string.  This is designed for sending via HTML email.
 
-    global $THEME, $CFG;
+    global $CFG;
 
     static $formattedtext;        // Cached version of formatted text for a post
     static $formattedtextid;      // The ID number of the post
@@ -1348,14 +1339,14 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     $output .= '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
 
-    $output .= "<tr><td bgcolor=\"$THEME->cellcontent2\" width=\"35\" valign=\"top\" class=\"forumpostpicture\">";
+    $output .= "<tr><td width=\"35\" valign=\"top\" class=\"forumpostpicture\">";
     $output .= print_user_picture($user->id, $course->id, $user->picture, false, true);
     $output .= "</td>";
 
     if ($post->parent) {
-        $output .= "<td nowrap=\"nowrap\" bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
+        $output .= "<td nowrap=\"nowrap\" class=\"forumpostheader\">";
     } else {
-        $output .= "<td nowrap=\"nowrap\" bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\">";
+        $output .= "<td nowrap=\"nowrap\" class=\"forumpostheadertopic\">";
     }
     $output .= "<p>";
     $output .= "<font size=\"3\"><b>$post->subject</b></font><br />";
@@ -1367,9 +1358,9 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output .= get_string("bynameondate", "forum", $by);
 
     $output .= "</font></p></td></tr>";
-    $output .= "<tr><td bgcolor=\"$THEME->cellcontent2\" width=\"10\" class=\"forumpostside\">";
+    $output .= "<tr><td width=\"10\" class=\"forumpostside\">";
     $output .= "&nbsp;";
-    $output .= "</td><td bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">\n";
+    $output .= "</td><td class=\"forumpostmessage\">\n";
 
     if ($post->attachment) {
         $post->course = $course->id;
@@ -1424,7 +1415,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false,
                           $ratings=NULL, $footer="", $highlight="") {
 
-    global $THEME, $USER, $CFG;
+    global $USER, $CFG;
 
     static $stredit, $strdelete, $strreply, $strparent, $strprune, $strpruneheading, $threadedmode, $isteacher, $adminedit;
 
@@ -1447,14 +1438,14 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         echo '<table border="0" cellpadding="3" cellspacing="0" class="forumpost" width="100%">';
     }
 
-    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
+    echo "<tr><td class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
     print_user_picture($post->userid, $courseid, $post->picture);
     echo "</td>";
 
     if ($post->parent) {
-        echo "<td bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\" width=\"100%\">";
+        echo "<td class=\"forumpostheader\" width=\"100%\">";
     } else {
-        echo "<td bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\" width=\"100%\">";
+        echo "<td class=\"forumpostheadertopic\" width=\"100%\">";
     }
 
     if (!empty($CFG->filterall)) {      /// Put the subject through the filters
@@ -1470,13 +1461,13 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     print_string("bynameondate", "forum", $by);
 
     echo "</font></p></td></tr>";
-    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" valign=\"top\" class=\"forumpostside\" width=\"10\">";
+    echo "<tr><td valign=\"top\" class=\"forumpostside\" width=\"10\">";
     if ($group = user_group($courseid, $post->userid)) {
         print_group_picture($group, $courseid, false, false, true);
     } else {
         echo "&nbsp;";
     }
-    echo "</td><td bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">\n";
+    echo "</td><td class=\"forumpostmessage\">\n";
 
     if ($post->attachment) {
         $post->course = $courseid;
@@ -1594,7 +1585,7 @@ function forum_print_discussion_header(&$post, $forum, $datestring="") {
 /// that calls this one
 ///   forum_print_latest_discussions()
 
-    global $THEME, $USER, $CFG;
+    global $USER, $CFG;
 
     if (!empty($CFG->filterall)) {
         $post->subject = filter_text("<nolink>$post->subject</nolink>", $forum->course);
@@ -1603,28 +1594,28 @@ function forum_print_discussion_header(&$post, $forum, $datestring="") {
     echo "<tr class=\"forumpostheader\">";
 
     // Topic
-    echo "<td bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\" width=\"100%\">";
+    echo "<td class=\"forumpostheadertopic\" width=\"100%\">";
     echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">$post->subject</a>";
     echo "</td>\n";
 
     // Picture
-    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderpicture\" width=\"35\">";
+    echo "<td class=\"forumpostheaderpicture\" width=\"35\">";
     print_user_picture($post->userid, $forum->course, $post->picture);
     echo "</td>\n";
 
     // User name
     $fullname = fullname($post, isteacher($forum->course));
-    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheadername\" align=\"left\" nowrap=\"nowrap\">";
+    echo "<td class=\"forumpostheadername\" align=\"left\" nowrap=\"nowrap\">";
     echo "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&amp;course=$forum->course\">$fullname</a>";
     echo "</td>\n";
 
     if ($forum->open or $forum->type == "teacher") {   // Show the column with replies
-        echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderreplies\" align=\"center\" nowrap=\"nowrap\">";
+        echo "<td class=\"forumpostheaderreplies\" align=\"center\" nowrap=\"nowrap\">";
         echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">$post->replies</a>";
         echo "</td>\n";
     }
 
-    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderdate\" align=\"right\" nowrap=\"nowrap\">";
+    echo "<td class=\"forumpostheaderdate\" align=\"right\" nowrap=\"nowrap\">";
     $usedate = (empty($post->timemodified)) ? $post->modified : $post->timemodified;  // Just in case
     $parenturl = (empty($post->lastpostid)) ? '' : '&amp;parent='.$post->lastpostid;
     $usermodified->firstname = $post->umfirstname;
@@ -2786,7 +2777,7 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
 
 function forum_print_recent_mod_activity($activity, $course, $detail=false) {
 
-    global $CFG, $THEME;
+    global $CFG;
 
     echo '<table border="0" cellpadding="3" cellspacing="0">';
 
@@ -2798,7 +2789,7 @@ function forum_print_recent_mod_activity($activity, $course, $detail=false) {
         $closeformat = "</b>";
     }
 
-    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
+    echo "<tr><td class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
     print_user_picture($activity->user->userid, $course, $activity->user->picture);
     echo "</td><td>$openformat";
 

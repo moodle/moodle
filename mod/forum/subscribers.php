@@ -70,13 +70,13 @@
 
             echo '<table align="center" cellpadding="5" cellspacing="5">';
             foreach ($users as $user) {
-                echo "<tr><td>";
+                echo '<tr><td>';
                 print_user_picture($user->id, $course->id, $user->picture);
-                echo "</td><td bgcolor=\"$THEME->cellcontent\">";
+                echo '</td><td>';
                 echo fullname($user);
-                echo "</td><td bgcolor=\"$THEME->cellcontent\">";
-                echo "$user->email";
-                echo "</td></tr>";
+                echo '</td><td>';
+                echo $user->email;
+                echo '</td></tr>';
             }
             echo "</table>";
         }

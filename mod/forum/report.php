@@ -52,9 +52,9 @@
         echo "<th><a href=\"report.php?id=$post->id&amp;sort=r.time\">$strtime</a>";
         foreach ($ratings as $rating) {
             if (isteacher($discussion->course, $rating->id)) {
-                echo "<tr bgcolor=\"$THEME->cellcontent2\">";
+                echo '<tr class="forumpostheadertopic">';
             } else {
-                echo "<tr bgcolor=\"$THEME->cellcontent\">";
+                echo '<tr class="forumpostheader">';
             }
             echo "<td>";
             print_user_picture($rating->id, $forum->course, $rating->picture);
