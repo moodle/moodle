@@ -359,6 +359,7 @@ global $THEME;
                 if ($USER = get_user_info_from_db("username", "w3cvalidator")) {
                     $USER->loggedin = true;
                     $USER->site = $CFG->wwwroot;
+                    $USER->ignoresesskey = true;
                 } else {
                     $USER = guest_user();
                 }
