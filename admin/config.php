@@ -2,8 +2,8 @@
        // config.php - allows admin to edit all configuration variables
 
 
-    if (isset($phpinfo)) {    // For debugging purposes, protected by password
-        if (md5($phpinfo) == "caf9b6b99962bf5c2264824231d7a40c") {
+    if (isset($_GET['phpinfo'])) {    // For debugging purposes, protected by password
+        if (md5($_GET['phpinfo']) == "caf9b6b99962bf5c2264824231d7a40c") {
             phpinfo();
             exit;
         }
