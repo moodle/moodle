@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.1.1 (2003091111)
+      // survey.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['actual'] = "Faktisk";
@@ -12,7 +12,7 @@ $string['analysisof'] = "Analys av \$a";
 $string['answers'] = "Svar";
 $string['attls1'] = "När jag värderar vad någon säger så fokuserar jag på kvaliteten i deras argument och inte på personen som säger det.";
 $string['attls10'] = "Det är viktigt för mig att förhålla mig så objektiv som möjligt till det jag analyserar något.";
-$string['attls10short'] = "fortsätta att föhålla sig objektivt";
+$string['attls10short'] = "fortsätta att förhålla sig objektivt";
 $string['attls11'] = "Jag försöker tänka MED människor istället för MOT dem.";
 $string['attls11short'] = "tänka MED människor";
 $string['attls12'] = "Jag har särskilda kriterier som jag använder när jag värderar argument.";
@@ -27,7 +27,7 @@ $string['attls16'] = "Man kunde kalla mitt sätt att analysera saker för 'sätta d
 $string['attls16short'] = "sätta på prov";
 $string['attls17'] = "Jag värderar användningen av logik och förnuft framför att tänka på mina egna preferenser när jag löser problem.";
 $string['attls17short'] = "jag värderar logik högst";
-$string['attls18'] = "genom empati kan jag få insikt i åsikter, som skiljer sig från mina, .";
+$string['attls18'] = "genom empati kan jag få insikt i åsikter, som skiljer sig från mina.";
 $string['attls18short'] = "insikt genom empati";
 $string['attls19'] = "när jag träffar på människor vars åsikter verkar främmande för mig, gör jag en medveten ansträngning för att 'utvidga' mig själv till den personen, för att försöka se hur de kan ha dessa åsikter.";
 $string['attls19short'] = "försöker att utvidga";
@@ -36,12 +36,12 @@ $string['attls2'] = "jag gillar att spela 'djävulens advokat' - genom att argume
 $string['attls20'] = "jag lägger ner tid på att försöka förstå vad det är som är 'fel' med saker. Till exempel, jag söker efter något i en litterär tolkning som man inte har argumenterat tillräckligt bra för.";
 $string['attls20short'] = "vad är fel?";
 $string['attls2short'] = "spela 'djävulens advokat'";
-$string['attls3'] = "jag gillar att förstå var andra personer 'kommer från', vilka erfarenheter som har lett dem till att uppleva/uppfatta saker så som de gör.";
+$string['attls3'] = "jag gillar att förstå var andra personer \\\"kommer från\\\", vilka erfarenheter som har lett dem till att uppleva/uppfatta saker så som de gör.";
 $string['attls3short'] = "varifrån människor kommer";
 $string['attls4'] = "Den viktigaste delen i min utbildning har varit att lära mig förstå människor som är mycket olika mig.";
 $string['attls4short'] = "förstår olika människor";
 $string['attls5'] = "jag känner att det bästa sättet för mig att skaffa min egen identitet är att interagera med olika sorters människor.";
-$string['attls5short'] = "interagera med variation";
+$string['attls5short'] = "interagerar med variation";
 $string['attls6'] = "jag gillar att höra andra åsikter från personer som har andra bakgrunder än min - det hjälper mig att förstå hur man kan uppfatta samma sak på så olika sätt.";
 $string['attls6short'] = "uppskattar att  höra åsikter";
 $string['attls7'] = "jag märker att jag kan stärka min egen position genom att argumentera mot någon som inte håller med mig.";
@@ -84,13 +84,13 @@ $string['colles17'] = "andra studenter/elever/deltagare/lärande uppmuntrar mitt 
 $string['colles17short'] = "studenter/elever/deltagare/lärande uppmuntrar mig";
 $string['colles18'] = "andra studenter/elever/deltagare/lärande berömmer mina bidrag.";
 $string['colles18short'] = "studenter/elever/deltagare/lärande berömmer mig";
-$string['colles19'] = "andra studenter/elever/deltagare/lärande värderar  mina bidrag.";
+$string['colles19'] = "andra studenter/elever/deltagare/lärande värderar mina bidrag.";
 $string['colles19short'] = "studenter/elever/deltagare/lärande  värderar mig";
 $string['colles1short'] = "fokuserar  på intressanta frågor";
 $string['colles2'] = "det  jag lär mig är viktigt för min yrkesutövning.";
 $string['colles20'] = "andra studenter/elever/deltagare/lärande har medkänsla med mina försök att lära.";
 $string['colles20short'] = "studenter/elever/deltagare/lärande medkänsla";
-$string['colles21'] = "jag förstår  andra studenters/elevers/deltagares/lärandes meddelanden bra.";
+$string['colles21'] = "jag förstår andra studenters/elevers/deltagares/lärandes meddelanden bra.";
 $string['colles21short'] = "jag förstår andra studenter/elever/deltagare/lärande";
 $string['colles22'] = "andra studenter/elever/deltagare/lärande förstår  mina meddelanden bra.";
 $string['colles22short'] = "studenterna/eleverna/deltagare/de lärande förstår mig";

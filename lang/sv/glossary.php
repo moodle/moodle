@@ -95,6 +95,7 @@ $string['exportglossary'] = "Exportera ord- och begreppslista";
 $string['exporttomainglossary'] = "Exportera till den övergripande (förklarande) ord- och begreppslistan";
 $string['filetoimport'] = "Fil att importera";
 $string['fillfields'] = "'Begrepp' och definition' är obligatoriska fält";
+$string['filtername'] = "Länka ord- och begreppslista automatiskt ";
 $string['fullmatch'] = "Matcha hela ord bara<br /><small>när de är automatiskt länkade</small>";
 $string['glossarytype'] = "Typ av ord- och begreppslista";
 $string['glosssaryexported'] = "Ord- och begreppslistan har exporterats";

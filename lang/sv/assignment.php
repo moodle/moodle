@@ -17,6 +17,7 @@ $string['description'] = "Beskrivning";
 $string['duedate'] = "Stoppdatum/tid";
 $string['duedateno'] = "Inget stoppdatum/tid";
 $string['early'] = "\$a tidigt";
+$string['existingfiledeleted'] = "Befintlig fil har tagits bort: &a";
 $string['failedupdatefeedback'] = "Uppdateringen av återkopplingen för det inskickade bidraget av användaren \$a fungerade inte";
 $string['feedback'] = "Återkoppling";
 $string['feedbackupdated'] = "Återkopplingen för inskickade bidrag för \$a användare har uppdaterats";

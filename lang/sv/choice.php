@@ -8,6 +8,7 @@ $string['choicename'] = "Opinionsundersökningens namn";
 $string['choicetext'] = "Opinionsundersökningens text";
 $string['modulename'] = "Opinionsundersökning";
 $string['modulenameplural'] = "Opinionsundersökningar";
+$string['mustchooseone'] = "Du måste välja ett svar innan Du kan svara. Ingenting sparades.";
 $string['notanswered'] = "Inte ännu besvarad";
 $string['publish'] = "Publicera resultaten";
 $string['publishanonymous'] = "Publicera anonyma resultat, visa inte studenternas/elevernas/deltagarnas/de lärandes namn.";
@@ -16,6 +17,7 @@ $string['publishnot'] = "Publicera inte resultaten för  studenterna/eleverna/del
 $string['responses'] = "Svar";
 $string['responsesto'] = "Svar till \$a";
 $string['savemychoice'] = "Spara min opinionsundersökning";
+$string['showunanswered'] = "Visa kolumn för icke besvarade";
 $string['viewallresponses'] = "Visa \$a svar";
 
 ?>

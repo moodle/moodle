@@ -1,3 +1,9 @@
+Log för redigering och komplettering av språkpaketet för svenska i Moodle 
+version 4.0 2004-03-03
+Anders Berggren anders@ikt-pedagogen.se
+Alla strängar i programfilerna fr o m 2004-02-27 är översatta. Några enstaka hjälpfiler är fortfarande på engelska.
+
+
 Log för redigering och komplettering av språkpaketet för svenska i Moodle  
 version 3.0 2003-12-19
 Anders Berggren anders@ikt-pedagogen.se

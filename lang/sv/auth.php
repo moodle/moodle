@@ -36,6 +36,7 @@ $string['auth_ldapextrafields'] = "Dessa fält är valfria.  Du kan välja att på f
 $string['auth_ldaptitle'] = "Använd en LDAP-server";
 $string['auth_manualdescription'] = "Den här metoden gör det omöjligt för användare att skapa sina egna konton. Alla konton måste skapas manuellt av administratören.";
 $string['auth_manualtitle'] = "Endast manuellt skapade konton";
+$string['auth_multiplehosts'] = "Du kan ange flera värdar(t ex host1.com;host2.com;host3.com)  ";
 $string['auth_nntpdescription'] = "Denna metod använder en NNTP-server för att kontrollera huruvida ett givet användarnamn och lösenord är giltiga.";
 $string['auth_nntphost'] = "NNTP-serverns adress.  Använd IP-nummer, inte DNS-namn.";
 $string['auth_nntpport'] = "Serverport (119 är den vanligaste)";

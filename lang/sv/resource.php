@@ -18,6 +18,7 @@ $string['configpopupstatus'] = "Ska det förinställda standardvalet vara att nya 
 $string['configpopuptoolbar'] = "Ska det förinställda standardvalet vara att nya 'popup'-fönster  visar verktygsraden?";
 $string['configpopupwidth'] = "Vilket ska det förinställda standardvalet för bredden på nya 'popup'-fönster vara? ";
 $string['configwebsearch'] = "När Du lägger till en URL som en webbsida eller en webblänk så erbjuds användaren denna plats som en webbsajt. Detta för att hjälpa användaren att hitta det denne söker. ";
+$string['directlink'] = "Direktlänk till den här filen";
 $string['editingaresource'] = "Redigera en resurs";
 $string['example'] = "Exempel";
 $string['examplereference'] = "Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.";
@@ -46,6 +47,8 @@ $string['newwindowopen'] = "Visa den här resursen i ett nytt 'pop-up'-fönster";
 $string['note'] = "OBS";
 $string['notefile'] = "För att ladda upp fler filer till kursen (så att de uppträder i denna lista) använd <A HREF=\$a >Filhanteraren</A>.";
 $string['notypechosen'] = "Du måste välja typ.  Använd tillbakaknappen för att gå tillbaka och försöka igen.";
+$string['popupresource'] = "Den här resursen bör dyka upp i ett snabbfönster.";
+$string['popupresourcelink'] = "Om den inte gjorde det, klicka här: \$a";
 $string['resourcetype'] = "Typ av resurs";
 $string['resourcetype1'] = "Referens";
 $string['resourcetype2'] = "Webbsida";
