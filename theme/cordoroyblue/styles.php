@@ -230,3 +230,25 @@ form {
 
 .forumpostmessage {
 }
+
+
+.siteinfo {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.siteinfocontent {
+}
+
+
+.generalbox {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.generalboxcontent {
+    background-image: none;
+    background-color: <?PHP echo $THEME->cellcontent?>;
+}
