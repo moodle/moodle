@@ -1185,17 +1185,40 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
 }
 
 
-function get_my_courses($userid, $sort="c.fullname ASC") {
+function get_my_courses($userid, $sort="fullname ASC") {
+
     global $CFG;
 
-    return get_records_sql("SELECT c.* 
-                              FROM {$CFG->prefix}course c, 
-                                   {$CFG->prefix}user_students s, 
-                                   {$CFG->prefix}user_teachers t 
-                             WHERE (s.userid = '$userid' AND s.course = c.id)
-                                OR (t.userid = '$userid' AND t.course = c.id)
-                             GROUP BY c.id 
-                             ORDER BY $sort");
+    $course = array();
+
+    if ($students = get_records("user_students", "userid", $userid, "", "id, course")) {
+        foreach ($students as $student) {
+            $course[$student->course] = $student->course;
+        }
+    }
+    if ($teachers = get_records("user_teachers", "userid", $userid, "", "id, course")) {
+        foreach ($teachers as $teacher) {
+            $course[$teacher->course] = $teacher->course;
+        }
+    }
+    if (empty($course)) {
+        return $course;
+    }
+
+    $courseids = implode(',', $course);
+
+    return get_records_list("course", "id", $courseids, $sort);
+
+//  The following is correct but VERY slow with large datasets
+//
+//    return get_records_sql("SELECT c.* 
+//                              FROM {$CFG->prefix}course c, 
+//                                   {$CFG->prefix}user_students s, 
+//                                   {$CFG->prefix}user_teachers t 
+//                             WHERE (s.userid = '$userid' AND s.course = c.id)
+//                                OR (t.userid = '$userid' AND t.course = c.id)
+//                             GROUP BY c.id 
+//                             ORDER BY $sort");
 }
 
 
