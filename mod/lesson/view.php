@@ -336,7 +336,7 @@
                     // in normal lesson mode...
                     if (!$newpageid = get_field("lesson_pages", "nextpageid", "id", $pageid)) {
                         // this is the last page - flag end of lesson
-                        $newpageid = EOL;
+                        $newpageid = LESSON_EOL;
                     }
                 }
                 echo "<input type=\"hidden\" name=\"pageid\" value=\"$newpageid\">\n";
