@@ -674,18 +674,18 @@
                         $sca->description = backup_todb($info['SCALE']['#']['DESCRIPTION']['0']['#']);
                         $sca->timemodified = backup_todb($info['SCALE']['#']['TIMEMODIFIED']['0']['#']);
 
-                        //Now search if that scale exists (by scale field)
-                        $sca_db = get_record("scale","scale",$sca->scale);
+                        //Now search if that scale exists (by scale field) in course 0 (Standar scale)
+                        //or in restore->course_id course (Personal scale)
+                        if ($sca->courseid == 0) {
+                            $course_to_search = 0;
+                        } else {
+                            $course_to_search = $restore->course_id;
+                        }
+                        $sca_db = get_record("scale","scale",$sca->scale,"courseid",$course_to_search);
                         //If it doesn't exist, create
                         if (!$sca_db) {
                             $create_scale = true;
-                        } else {
-                            //Exists. If the courseid in db is <> 0 and <> current course,
-                            //we must create the scale too
-                            if ($sca_db->courseid != 0 and $sca_db->courseid != $restore->course_id) {
-                                $create_scale = true;
-                            }
-                        }
+                        } 
                         //If we must create the scale
                         if ($create_scale) {
                             //Me must recode the courseid if it's <> 0 (common scale)
