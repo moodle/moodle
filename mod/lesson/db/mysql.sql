@@ -44,6 +44,7 @@ CREATE TABLE `prefix_lesson_answers` (
   `pageid` int(10) unsigned NOT NULL default '0',
   `jumpto` int(11) NOT NULL default '0',
   `grade` tinyint(3) unsigned NOT NULL default '0',
+  `flags` tinyint(3) unsigned NOT NULL default '0',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   `answer` text NOT NULL default '',

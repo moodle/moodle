@@ -35,7 +35,11 @@ function lesson_upgrade($oldversion) {
 		execute_sql(" ALTER TABLE `{$CFG->prefix}lesson` ADD `usegrademax` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER grade");
 		execute_sql(" ALTER TABLE `{$CFG->prefix}lesson` ADD `minquestions` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER nextpagedefault");
     }
-    
+ 
+    if ($oldversion < 2004032700) {
+		table_column("lesson_answers", "", "flags", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "grade");
+    }
+     
     return true;
 }
 

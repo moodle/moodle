@@ -53,12 +53,7 @@ if (!defined("LESSON_NUMERICAL")) {
 if (!defined("LESSON_MULTIANSWER")) {
     define("LESSON_MULTIANSWER",   "9");
 }
-if (!defined("LESSON_BRANCHTABLE")) {
-    define("LESSON_BRANCHTABLE",   "20");
-}
-if (!defined("LESSON_ENDOFBRANCH")) {
-    define("LESSON_ENDOFBRANCH",   "21");
-}
+
 $LESSON_QUESTION_TYPE = array ( LESSON_MULTICHOICE => get_string("multichoice", "quiz"),
                               LESSON_TRUEFALSE     => get_string("truefalse", "quiz"),
                               LESSON_SHORTANSWER   => get_string("shortanswer", "quiz"),
@@ -70,7 +65,19 @@ $LESSON_QUESTION_TYPE = array ( LESSON_MULTICHOICE => get_string("multichoice", 
 //                            LESSON_MULTIANSWER   => get_string("multianswer", "quiz"),
                               );
 
+if (!defined("LESSON_BRANCHTABLE")) {
+    define("LESSON_BRANCHTABLE",   "20");
+}
+if (!defined("LESSON_ENDOFBRANCH")) {
+    define("LESSON_ENDOFBRANCH",   "21");
+}
 
+if (!defined("LESSON_ANSWER_EDITOR")) {
+    define("LESSON_ANSWER_EDITOR",   "1");
+}
+if (!defined("LESSON_RESPONSE_EDITOR")) {
+    define("LESSON_RESPONSE_EDITOR",   "2");
+}
 /*******************************************************************/
 function lesson_choose_from_menu ($options, $name, $selected="", $nothing="choose", $script="", $nothingvalue="0", $return=false) {
 /// Given an array of value, creates a popup menu to be part of a form

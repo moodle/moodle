@@ -200,6 +200,7 @@
                 // the absolute jumps will need fixing
                 $answer->jumpto = backup_todb($answer_info['#']['JUMPTO']['0']['#']);
                 $answer->grade = backup_todb($answer_info['#']['GRADE']['0']['#']);
+                $answer->flags = backup_todb($answer_info['#']['FLAGS']['0']['#']);
                 $answer->timecreated = backup_todb($answer_info['#']['TIMECREATED']['0']['#']);
                 $answer->timemodified = backup_todb($answer_info['#']['TIMEMODIFIED']['0']['#']);
                 $answer->answer = backup_todb($answer_info['#']['ANSWERTEXT']['0']['#']);

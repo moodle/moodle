@@ -187,6 +187,7 @@
             print_heading($page->title);
             print_simple_box(format_text($page->contents), 'center');
             echo "<br />\n";
+            // get the answers in a set order, the id order
             if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
                 echo "<form name=\"answerform\" method =\"post\" action=\"lesson.php\">";
                 echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">";
@@ -294,9 +295,49 @@
                 echo "<form name=\"pageform\" method =\"post\" action=\"view.php\">\n";
                 echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
                 echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";
-                if (!$newpageid = get_field("lesson_pages", "nextpageid", "id", $pageid)) {
-                    // this is the last page - flag end of lesson
-                    $newpageid = EOL;
+                if ($lesson->nextpagedefault) {
+                    // in Flash Card mode...
+                    // ...first get number of retakes
+                    $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
+                    // ...then get the page ids (lessonid the 5th param is needed to make get_records play)
+                    $allpages = get_records("lesson_pages", "lessonid", $lesson->id, "id", "id,lessonid");
+                    shuffle ($allpages);
+                    $found = false;
+                    if ($lesson->nextpagedefault == LESSON_UNSEENPAGE) {
+                        foreach ($allpages as $thispage) {
+                            if (!count_records("lesson_attempts", "pageid", $thispage->id, "userid", 
+                                        $USER->id, "retry", $nretakes)) {
+                                $found = true;
+                                break;
+                            }
+                        }
+                    } elseif ($lesson->nextpagedefault == LESSON_UNANSWEREDPAGE) {
+                        foreach ($allpages as $thispage) {
+                            if (!count_records_select("lesson_attempts", "pageid = $thispage->id AND
+                                        userid = $USER->id AND correct = 1 AND retry = $nretakes")) {
+                                $found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if ($found) {
+                        $newpageid = $thispage->id;
+                        if ($lesson->maxpages) {
+                            // check number of pages viewed (in the lesson)
+                            if (count_records("lesson_attempts", "lessonid", $lesson->id, "userid", $USER->id,
+                                    "retry", $nretakes) >= $lesson->maxpages) {
+                                $newpageid = LESSON_EOL;
+                            }
+                        }
+                    } else {
+                        $newpageid = LESSON_EOL;
+                    }
+                } else {
+                    // in normal lesson mode...
+                    if (!$newpageid = get_field("lesson_pages", "nextpageid", "id", $pageid)) {
+                        // this is the last page - flag end of lesson
+                        $newpageid = EOL;
+                    }
                 }
                 echo "<input type=\"hidden\" name=\"pageid\" value=\"$newpageid\">\n";
                 echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
@@ -396,6 +437,7 @@
             echo "<tr><td><b>";
             echo get_string("pagecontents", "lesson").":</b><br />\n";
             print_textarea($usehtmleditor, 25, 70, 630, 400, "contents");
+            use_html_editor("contents");
             echo "</td></tr>\n";
             echo "<tr><td><b>".get_string("questiontype", "lesson").":</b> \n";
             choose_from_menu($LESSON_QUESTION_TYPE, "qtype", LESSON_MULTICHOICE, "");
@@ -407,10 +449,10 @@
             for ($i = 0; $i < $lesson->maxanswers; $i++) {
                 $iplus1 = $i + 1;
                 echo "<tr><td><b>".get_string("answer", "lesson")." $iplus1:</b><br />\n";
-                print_textarea($usehtmleditor, 20, 70, 630, 100, "answer[$i]");
+                print_textarea(false, 6, 70, 630, 100, "answer[$i]");
                 echo "</td></tr>\n";
                 echo "<tr><td><b>".get_string("response", "lesson")." $iplus1:</b><br />\n";
-                print_textarea($usehtmleditor, 20, 70, 630, 100, "response[$i]");
+                print_textarea(false, 6, 70, 630, 100, "response[$i]");
                 echo "</td></tr>\n";
                 if ($i) {
                     // answers 2,3,4... jump to this page
@@ -420,7 +462,6 @@
                     echo "<input type=\"hidden\" name=\"jumpto[$i]\" value =\"".LESSON_NEXTPAGE."\">\n";
                 }
             }
-            use_html_editor();
             // close table and form
             ?>
             </table><br />
@@ -444,7 +485,7 @@
                     get_string("importquestions", "lesson")."</a> | ".
                     "<a href=\"lesson.php?id=$cm->id&action=addbranchtable&pageid=0\">".
                     get_string("addabranchtable", "lesson")."</a> | ".
-                    "<a href=\"lesson.php?id=$cm->id&action=addendofbranch&pageid=0\">".
+                    "<a href=\"lesson.php?id=$cm->id&action=addpage&pageid=0\">".
                     get_string("addaquestionpage", "lesson")." ".get_string("here","lesson").
                     "</a></small></td></tr>\n";
             }
@@ -465,52 +506,49 @@
                 echo "<tr><td colspan=\"2\">\n";
                 print_simple_box(format_text($page->contents), "center");
                 echo "</td></tr>\n";
+                // get the answers in a set order, the id order
                 if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
+                    echo "<tr><td bgcolor=\"$THEME->cellheading2\" colspan=\"2\" align=\"center\"><b>\n";
+                    switch ($page->qtype) {
+                        case LESSON_SHORTANSWER :
+                            echo $LESSON_QUESTION_TYPE[$page->qtype];
+                            if ($page->qoption) {
+                                echo " - ".get_string("casesensitive", "lesson");
+                            }
+                            break;
+                        case LESSON_MULTICHOICE :
+                            echo $LESSON_QUESTION_TYPE[$page->qtype];
+                            if ($page->qoption) {
+                                echo " - ".get_string("multianswer", "lesson");
+                            }
+                            break;
+                        case LESSON_MATCHING :
+                            echo $LESSON_QUESTION_TYPE[$page->qtype];
+                            if (!lesson_iscorrect($page->id, $answer->jumpto)) {
+                                echo " - ".get_string("firstanswershould", "lesson");
+                            }
+                            break;
+                        case LESSON_TRUEFALSE :
+                        case LESSON_NUMERICAL :
+                            echo $LESSON_QUESTION_TYPE[$page->qtype];
+                            break;
+                        case LESSON_BRANCHTABLE :    
+                            echo get_string("branchtable", "lesson");
+                            break;
+                        case LESSON_ENDOFBRANCH :
+                            echo get_string("endofbranch", "lesson");
+                            break;
+                    }
+                    echo "</td></tr>\n";
                     $i = 1;
                     foreach ($answers as $answer) {
-                        echo "<tr><td bgcolor=\"$THEME->cellheading2\" colspan=\"2\" align=\"center\"><b>\n";
-                        if ($i == 1) {
-                            switch ($page->qtype) {
-                                case LESSON_SHORTANSWER :
-                                    echo $LESSON_QUESTION_TYPE[$page->qtype];
-                                    if ($page->qoption) {
-                                        echo " - ".get_string("casesensitive", "lesson");
-                                    }
-                                    break;
-                                case LESSON_MULTICHOICE :
-                                    echo $LESSON_QUESTION_TYPE[$page->qtype];
-                                    if ($page->qoption) {
-                                        echo " - ".get_string("multianswer", "lesson");
-                                    }
-                                    break;
-                                case LESSON_MATCHING :
-                                    echo $LESSON_QUESTION_TYPE[$page->qtype];
-                                    if (!lesson_iscorrect($page->id, $answer->jumpto)) {
-                                        echo " - ".get_string("firstanswershould", "lesson");
-                                    }
-                                    break;
-                                case LESSON_TRUEFALSE :
-                                case LESSON_NUMERICAL :
-                                    echo $LESSON_QUESTION_TYPE[$page->qtype];
-                                    break;
-                                case LESSON_BRANCHTABLE :    
-                                    echo get_string("branchtable", "lesson");
-                                    break;
-                                case LESSON_ENDOFBRANCH :
-                                    echo get_string("endofbranch", "lesson");
-                                    break;
-                            }
-                        } else {
-                            echo "&nbsp;";
-                        }
-                        echo "</b></td></tr>\n";
                         switch ($page->qtype) {
                             case LESSON_MULTICHOICE:
                             case LESSON_TRUEFALSE:
                             case LESSON_SHORTANSWER:
                             case LESSON_NUMERICAL:
                             case LESSON_MATCHING:
-                                echo "<tr><td align=\"right\" valign=\"top\" width=\"20%\">\n";
+                                echo "<tr><td bgcolor=\"$THEME->cellheading2\" align=\"right\" valign=\"top\" width=\"20%\">\n";
                                 if (lesson_iscorrect($page->id, $answer->jumpto)) {
                                     // underline correct answers
                                     echo "<b><u>".get_string("answer", "lesson")." $i:</u></b> \n";
@@ -544,7 +582,7 @@
                                 $jumptitle = "<b>".get_string("notdefined", "lesson")."</b>";
                             }
                         }
-                        echo "<tr><td align=\"right\" width=\"20%\"><b>".get_string("jumpto", "lesson").": ";
+                        echo "<tr><td align=\"right\" width=\"20%\"><b>".get_string("jump", "lesson")." $i:";
                         echo "</b></td><td width=\"80%\">\n";
                         echo "$jumptitle</td></tr>\n";
                         $i++;

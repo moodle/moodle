@@ -35,7 +35,11 @@ function lesson_upgrade($oldversion) {
 		table_column("lesson", "", "usegrademax", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "grade");
 		table_column("lesson", "", "minquestions", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "nextpagedefault");
     }
-    
+ 
+    if ($oldversion < 2004032700) {
+		table_column("lesson_answers", "", "flags", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "grade");
+    }
+     
     return true;
 }
 

@@ -125,7 +125,8 @@
 
         $status = true;
 
-        $lesson_answers = get_records("lesson_answers", "pageid", $pageno);
+        // get the answers in a set order, the id order
+        $lesson_answers = get_records("lesson_answers", "pageid", $pageno, "id");
 
         //If there is lesson_answers
         if ($lesson_answers) {
@@ -138,6 +139,7 @@
                 //Print answer contents
                 fwrite ($bf,full_tag("JUMPTO",8,false,$answer->jumpto));
                 fwrite ($bf,full_tag("GRADE",8,false,$answer->grade));
+                fwrite ($bf,full_tag("FLAGS",8,false,$answer->flags));
                 fwrite ($bf,full_tag("TIMECREATED",8,false,$answer->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",8,false,$answer->timemodified));
                 fwrite ($bf,full_tag("ANSWERTEXT",8,false,$answer->answer));

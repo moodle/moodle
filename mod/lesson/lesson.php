@@ -110,7 +110,7 @@
             echo "<tr><td><b>".get_string("description", "lesson")." $iplus1:</b><br />\n";
             print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$i]");
             echo "</td></tr>\n";
-            echo "<tr><td><B>".get_string("jumpto", "lesson").":</b> \n";
+            echo "<tr><td><B>".get_string("jump", "lesson")." $iplus1:</b> \n";
             if ($i) {
                 // answers 2, 3, 4... jumpto this page
                 lesson_choose_from_menu($jump, "jumpto[$i]", 0, "");
@@ -118,7 +118,7 @@
                 // answer 1 jumpto next page
                 lesson_choose_from_menu($jump, "jumpto[$i]", LESSON_NEXTPAGE, "");
             }
-            helpbutton("jumpto", get_string("jumpto", "lesson"), "lesson");
+            helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
             echo "</td></tr>\n";
         }
         use_html_editor();
@@ -240,6 +240,7 @@
         echo "<tr><td><b>";
         echo get_string("pagecontents", "lesson").":</b><br />\n";
         print_textarea($usehtmleditor, 25,70, 630, 400, "contents");
+        use_html_editor("contents");
         echo "</td></tr>\n";
         echo "<tr><td><b>".get_string("questiontype", "lesson").":</b> \n";
         choose_from_menu($LESSON_QUESTION_TYPE, "qtype", LESSON_MULTICHOICE, "");
@@ -251,12 +252,12 @@
         for ($i = 0; $i < $lesson->maxanswers; $i++) {
             $iplus1 = $i + 1;
             echo "<tr><td><b>".get_string("answer", "lesson")." $iplus1:</b><br />\n";
-            print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$i]");
+            print_textarea(false, 6, 70, 630, 300, "answer[$i]");
             echo "</td></tr>\n";
             echo "<tr><td><b>".get_string("response", "lesson")." $iplus1:</b><br />\n";
-            print_textarea($usehtmleditor, 20, 70, 630, 300, "response[$i]");
+            print_textarea(false, 6, 70, 630, 300, "response[$i]");
             echo "</td></tr>\n";
-            echo "<tr><td><B>".get_string("jumpto", "lesson").":</b> \n";
+            echo "<tr><td><B>".get_string("jump", "lesson")." $iplus1:</b> \n";
             if ($i) {
                 // answers 2, 3, 4... jumpto this page
                 lesson_choose_from_menu($jump, "jumpto[$i]", 0, "");
@@ -264,10 +265,9 @@
                 // answer 1 jumpto next page
                 lesson_choose_from_menu($jump, "jumpto[$i]", LESSON_NEXTPAGE, "");
             }
-            helpbutton("jumpto", get_string("jumpto", "lesson"), "lesson");
+            helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
             echo "</td></tr>\n";
         }
-        use_html_editor();
         // close table and form
         ?>
         </table><br />
@@ -409,6 +409,7 @@
                         $noanswer = true;
                         break;
                     }
+                    // get the answers in a set order, the id order
                     if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
                         error("Continue: No answers found");
                     }
@@ -582,14 +583,14 @@
             $newpageid = $pageid; // display same page again
             print_simple_box(get_string("noanswer", "lesson"), "center");
         } else {
-            $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
+            $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
             if (isstudent($course->id)) {
                 // record student's attempt
                 $attempt->lessonid = $lesson->id;
                 $attempt->pageid = $pageid;
                 $attempt->userid = $USER->id;
                 $attempt->answerid = $answerid;
-                $attempt->retry = $ntries;
+                $attempt->retry = $nretakes;
                 $attempt->correct = $correctanswer;
                 $attempt->timeseen = time();
                 if (!$newattemptid = insert_record("lesson_attempts", $attempt)) {
@@ -599,11 +600,14 @@
                     // wrong answer and student is stuck on this page - check how many attempts 
                     // the student has had at this page/question
                     $nattempts = count_records("lesson_attempts", "pageid", $pageid, "userid", $USER->id,
-                        "retry", $ntries);
+                        "retry", $nretakes);
 
                     if ($nattempts >= $lesson->maxattempts) {
-                        print_heading(get_string("maximumnumberofattempts", "lesson")."<br />".
-                                get_string("movingtonextpage", "lesson"));
+                        if ($lesson->maxattempts > 1) { // don't bother with message if only one attempt
+                            echo "<p align=\"center\">(".get_string("maximumnumberofattempts", "lesson").
+                                " ".get_string("reached", "lesson")." - ".
+                                get_string("movingtonextpage", "lesson").")</p>\n";
+                        }
                         $newpageid = LESSON_NEXTPAGE;
                     }
                 }
@@ -621,7 +625,7 @@
                     if ($lesson->nextpagedefault == LESSON_UNSEENPAGE) {
                         foreach ($allpages as $thispage) {
                             if (!count_records("lesson_attempts", "pageid", $thispage->id, "userid", 
-                                        $USER->id, "retry", $ntries)) {
+                                        $USER->id, "retry", $nretakes)) {
                                 $found = true;
                                 break;
                             }
@@ -629,7 +633,7 @@
                     } elseif ($lesson->nextpagedefault == LESSON_UNANSWEREDPAGE) {
                         foreach ($allpages as $thispage) {
                             if (!count_records_select("lesson_attempts", "pageid = $thispage->id AND
-                                        userid = $USER->id AND correct = 1 AND retry = $ntries")) {
+                                        userid = $USER->id AND correct = 1 AND retry = $nretakes")) {
                                 $found = true;
                                 break;
                             }
@@ -640,7 +644,7 @@
                         if ($lesson->maxpages) {
                             // check number of pages viewed (in the lesson)
                             if (count_records("lesson_attempts", "lessonid", $lesson->id, "userid", $USER->id,
-                                    "retry", $ntries) >= $lesson->maxpages) {
+                                    "retry", $nretakes) >= $lesson->maxpages) {
                                 $newpageid = LESSON_EOL;
                             }
                         }
@@ -771,10 +775,11 @@
         
         // give teacher a proforma
         ?>
-        <form name="form" method="post" action="lesson.php">
+        <form name="editpage" method="post" action="lesson.php">
         <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
         <input type="hidden" name="action" value="updatepage">
         <input type="hidden" name="pageid" value="<?PHP echo $_GET['pageid'] ?>">
+        <input type="hidden" name="redisplay" value="0">
         <center><table cellpadding=5 border=1>
         <tr><td align="center">
         <tr valign="top">
@@ -785,6 +790,7 @@
         echo "<tr><td><b>";
         echo get_string("pagecontents", "lesson").":</b><br />\n";
         print_textarea($usehtmleditor, 25, 70, 630, 400, "contents", $page->contents);
+        use_html_editor("contents"); // always the editor
         echo "</td></tr>\n";
         $n = 0;
         switch ($page->qtype) {
@@ -792,24 +798,24 @@
                 echo "<tr><td><b>".get_string("questiontype", "lesson").":</b> \n";
                 choose_from_menu($LESSON_QUESTION_TYPE, "qtype", $page->qtype, "");
                 echo "&nbsp;&nbsp;";
+                echo " <b>".get_string("casesensitive", "lesson").":</b> \n";
                 if ($page->qoption) {
                     echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\" checked=\"checked\"/>";
                 } else {
                     echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\"/>";
                 }
-                echo " <b>".get_string("casesensitive", "lesson")."</b>\n";
                 helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson");
                 break;
             case LESSON_MULTICHOICE :
                 echo "<tr><td><b>".get_string("questiontype", "lesson").":</b> \n";
                 choose_from_menu($LESSON_QUESTION_TYPE, "qtype", $page->qtype, "");
                 echo "&nbsp;&nbsp;";
+                echo " <b>".get_string("multianswer", "lesson").":</b> \n";
                 if ($page->qoption) {
                     echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\" checked=\"checked\"/>";
                 } else {
                     echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\"/>";
                 }
-                echo " <b>".get_string("multianswer", "lesson")."</b>\n";
                 helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson");
                 break;
             case LESSON_TRUEFALSE :
@@ -829,8 +835,10 @@
                 break;                
         }       
         echo "</td></tr>\n";
+        // get the answers in a set order, the id order
         if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
             foreach ($answers as $answer) {
+                $flags = intval($answer->flags); // force into an integer
                 $nplus1 = $n + 1;
                 echo "<input type=\"hidden\" name=\"answerid[$n]\" value=\"$answer->id\">\n";
                 switch ($page->qtype) {
@@ -839,22 +847,63 @@
                     case LESSON_SHORTANSWER:
                     case LESSON_NUMERICAL:
                     case LESSON_MATCHING:
-                        echo "<tr><td><b>".get_string("answer", "lesson")." $nplus1:</b><br />\n";
-                        print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
+                        echo "<tr><td><b>".get_string("answer", "lesson")." $nplus1:</b>\n";
+                        if ($flags & LESSON_ANSWER_EDITOR) {
+                            echo " [".get_string("useeditor", "lesson").": ".
+                                "<input type=\"checkbox\" name=\"answereditor[$n]\" value=\"1\" 
+                                checked=\"checked\">";
+                            helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                            echo "]<br />\n";
+                            print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
+                            use_html_editor("answer[$n]"); // switch on the editor
+                        } else {
+                            echo " [".get_string("useeditor", "lesson").": ".
+                                "<input type=\"checkbox\" name=\"answereditor[$n]\" value=\"1\">";
+                            helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                            echo "]<br />\n";
+                            print_textarea(false, 6, 70, 630, 300, "answer[$n]", $answer->answer);
+                        }
                         echo "</td></tr>\n";
-                        echo "<tr><td><b>".get_string("response", "lesson")." $nplus1:</b><br />\n";
-                        print_textarea($usehtmleditor, 20, 70, 630, 300, "response[$n]", $answer->response);
+                        echo "<tr><td><b>".get_string("response", "lesson")." $nplus1:</b>\n";
+                        if ($flags & LESSON_RESPONSE_EDITOR) {
+                            echo " [".get_string("useeditor", "lesson").": ".
+                                "<input type=\"checkbox\" name=\"responseeditor[$n]\" value=\"1\" 
+                                checked=\"checked\">";
+                            helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                            echo "]<br />\n";
+                            print_textarea($usehtmleditor, 20, 70, 630, 300, "response[$n]", $answer->response);
+                            use_html_editor("response[$n]"); // switch on the editor
+                        } else {
+                            echo " [".get_string("useeditor", "lesson").": ".
+                                "<input type=\"checkbox\" name=\"responseeditor[$n]\" value=\"1\">";
+                            helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                            echo "]<br />\n";
+                            print_textarea(false, 6, 70, 630, 300, "response[$n]", $answer->response);
+                        }
                         echo "</td></tr>\n";
                         break;
                     case LESSON_BRANCHTABLE:
-                        echo "<tr><td><b>".get_string("description", "lesson")." $nplus1:</b><br />\n";
-                        print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
+                        echo "<tr><td><b>".get_string("description", "lesson")." $nplus1:</b>\n";
+                        if ($flags & LESSON_ANSWER_EDITOR) {
+                            echo " [".get_string("useeditor", "lesson").": ".
+                                "<input type=\"checkbox\" name=\"answereditor[$n]\" value=\"1\" 
+                                checked=\"checked\">";
+                            helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                            echo "]<br />\n";
+                            print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
+                        } else {
+                            echo " [".get_string("useeditor", "lesson").": ".
+                                "<input type=\"checkbox\" name=\"answereditor[$n]\" value=\"1\">";
+                            helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                            echo "]<br />\n";
+                            print_textarea(false, 10, 70, 630, 300, "answer[$n]", $answer->answer);
+                        }
                         echo "</td></tr>\n";
                         break;
                 }
-                echo "<tr><td><b>".get_string("jumpto", "lesson").":</b> \n";
+                echo "<tr><td><b>".get_string("jump", "lesson")." $nplus1:</b> \n";
                 lesson_choose_from_menu($jump, "jumpto[$n]", $answer->jumpto, "");
-                helpbutton("jumpto", get_string("jumpto", "lesson"), "lesson");
+                helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                 echo "</td></tr>\n";
                 $n++;
             }
@@ -869,29 +918,42 @@
                     case LESSON_SHORTANSWER:
                     case LESSON_NUMERICAL:
                     case LESSON_MATCHING:
-                        echo "<tr><td><b>".get_string("answer", "lesson")." $iplus1:</b><br />\n";
-                        print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$i]");
+                        echo "<tr><td><b>".get_string("answer", "lesson")." $iplus1:</b>\n";
+                        echo " [".get_string("useeditor", "lesson").": ".
+                            "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\">";
+                        helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                        echo "]<br />\n";
+                        print_textarea(false, 10, 70, 630, 300, "answer[$i]");
                         echo "</td></tr>\n";
-                        echo "<tr><td><b>".get_string("response", "lesson")." $iplus1:</b><br />\n";
-                        print_textarea($usehtmleditor, 20, 70, 630, 300, "response[$i]");
+                        echo "<tr><td><b>".get_string("response", "lesson")." $iplus1:</b>\n";
+                        echo " [".get_string("useeditor", "lesson").": ".
+                            "<input type=\"checkbox\" name=\"responseeditor[$i]\" value=\"1\">";
+                        helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                        echo "]<br />\n";
+                        print_textarea(false, 10, 70, 630, 300, "response[$i]");
                         echo "</td></tr>\n";
                         break;
                     case LESSON_BRANCHTABLE:
-                        echo "<tr><td><b>".get_string("description", "lesson")." $iplus1:</b><br />\n";
-                        print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$i]");
+                        echo "<tr><td><b>".get_string("description", "lesson")." $iplus1:</b>\n";
+                        echo " [".get_string("useeditor", "lesson").": ".
+                            "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\">";
+                        helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                        echo "]<br />\n";
+                        print_textarea(false, 10, 70, 630, 300, "answer[$i]");
                         echo "</td></tr>\n";
                         break;
                 }
-                echo "<tr><td><B>".get_string("jumpto", "lesson").":</b> \n";
+                echo "<tr><td><B>".get_string("jump", "lesson")." $iplus1:</b> \n";
                 lesson_choose_from_menu($jump, "jumpto[$i]", 0, "");
-                helpbutton("jumpto", get_string("jumpto", "lesson"), "lesson");
+                helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                 echo "</td></tr>\n";
             }
         }
-        use_html_editor();
         // close table and form
         ?>
         </table><br />
+        <input type="button" value="<?php print_string("redisplaypage", "lesson") ?>" 
+            onclick="document.editpage.redisplay.value=1;document.editpage.submit();">
         <input type="submit" value="<?php  print_string("savepage", "lesson") ?>">
         <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
         </center>
@@ -1186,9 +1248,14 @@
         } else {
             // it's an "ordinary" page
             for ($i = 0; $i < $lesson->maxanswers; $i++) {
-                if (trim(strip_tags($form->answer[$i]))) { // strip_tags because the HTML gives <p><br />...
+                // strip tags because the editor gives <p><br />...
+                // also save any answers where the editor is (going to be) used
+                if (trim(strip_tags($form->answer[$i])) or $form->answereditor[$i] or $form->responseeditor[$i]) {
                     if ($form->answerid[$i]) {
+                        unset($oldanswer);
                         $oldanswer->id = $form->answerid[$i];
+                        $oldanswer->flags = $form->answereditor[$i] * LESSON_ANSWER_EDITOR +
+                            $form->responseeditor[$i] * LESSON_RESPONSE_EDITOR;
                         $oldanswer->timemodified = $timenow;
                         $oldanswer->answer = trim($form->answer[$i]);
                         if (isset($form->response[$i])) {
@@ -1203,6 +1270,8 @@
                         unset($newanswer); // need to clear id if more than one new answer is ben added
                         $newanswer->lessonid = $lesson->id;
                         $newanswer->pageid = $page->id;
+                        $newanswer->flags = $form->answereditor[$i] * LESSON_ANSWER_EDITOR +
+                            $form->responseeditor[$i] * LESSON_RESPONSE_EDITOR;
                         $newanswer->timecreated = $timenow;
                         $newanswer->answer = trim($form->answer[$i]);
                         if (isset($form->response[$i])) {
@@ -1224,7 +1293,11 @@
                 }
             }
         }
-   		redirect("view.php?id=$cm->id", get_string("ok"));
+        if ($form->redisplay) {
+            redirect("lesson.php?id=$cm->id&action=editpage&pageid=$page->id");
+        } else {
+       		redirect("view.php?id=$cm->id", get_string("ok"));
+        }
     }
 	
 

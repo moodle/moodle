@@ -42,6 +42,7 @@ CREATE TABLE prefix_lesson_answers (
   pageid INT8  NOT NULL default '0',
   jumpto INT8 NOT NULL default '0',
   grade INT8  NOT NULL default '0',
+  flags INT8  NOT NULL default '0',
   timecreated INT8  NOT NULL default '0',
   timemodified INT8  NOT NULL default '0',
   answer text NOT NULL default '',
