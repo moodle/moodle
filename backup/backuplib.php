@@ -1266,46 +1266,17 @@
         $basedir = cleardoubleslashes($CFG->dataroot."/temp/backup/".$preferences->backup_unique_code);
         //Backup zip file name
         $name = $preferences->backup_name;
-        //List base_dir files and directories
+        //List of files and directories
         $filelist = list_directories_and_files ($basedir);
 
-        if (empty($CFG->zip)) {    // Use built-in php-based zip function
-            //echo "<br />Using pclzip";                                    //Debug
-            $files = array();
-            foreach ($filelist as $file) {
-                //If directory, append "/"
-                //Commented. Not needed wit version 2.0 of pclzip !!
-                //if (is_dir($basedir."/".$file)) {
-                //    $file = $file."/";
-                //}
-                //Include into array
-                //echo "<br />Adding file/dir ".$file;                       //Debug
-                $files[] = cleardoubleslashes($basedir."/".$file);
-            }
-            include_once("$CFG->dirroot/lib/pclzip/pclzip.lib.php");
-            //include_once("$CFG->dirroot/lib/pclzip/pclerror.lib.php");   //Debug
-            //include_once("$CFG->dirroot/lib/pclzip/pcltrace.lib.php");   //Debug
-            //PclTraceOn(2);                                               //Debug
-            $archive = new PclZip(cleardoubleslashes("$basedir/$name"));
-            if (($list = $archive->create($files,PCLZIP_OPT_REMOVE_PATH,rtrim(cleardoubleslashes($basedir), "/"))) == 0) {
-                error($archive->errorInfo(true));
-                $status = false;
-            } 
-            //PclTraceDisplay();                                           //Debug
-            //PclTraceOff();                                               //Debug
-        } else {                   // Use external zip program
-            //echo "<br />Using external zip";                               //Debug
-            $files = "";
-            foreach ($filelist as $file) {
-                $files .= basename($file);
-                $files .= " ";
-            }
-            $command = "cd $basedir ; $CFG->zip -r $name $files";
-            //echo "<br />Executing command: ".$command;                     //Debug
-            $status = Exec($command);
+        //Convert them to full paths
+        foreach ($filelist as $file) {
+           $files[] = "$basedir/$file";
         }
 
-        //echo "<br />Status: ".$status;                                     //Debug
+        $status = zip_files($files, "$basedir/$name");
+
+        //echo "<br>Status: ".$status;                                     //Debug
         return $status;
 
     } 
