@@ -55,7 +55,7 @@
             }
             
             // register success changing password
-            set_user_preference('auth_forcepasswordchange', false);
+            unset_user_preference('auth_forcepasswordchange');
             
             $USER = $user;
             $USER->loggedin = true;

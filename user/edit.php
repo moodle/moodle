@@ -90,7 +90,6 @@
             $user = $usernew;
 
         } else {
-        $db->debug = true;
             $timenow = time();
 
             if (!$usernew->picture = save_profile_image($user->id,$um,'users')) {
@@ -120,10 +119,10 @@
                     }
                 }
                 // store forcepasswordchange in user's preferences
-                if (isset($usernew->forcepasswordchange)){
+                if (!empty($usernew->forcepasswordchange)){
                     set_user_preference('auth_forcepasswordchange', 1, $user->id);
                 } else {
-                    set_user_preference('auth_forcepasswordchange', 0, $user->id);
+                    unset_user_preference('auth_forcepasswordchange', $user->id);
                 }
             } else {
                 if (isset($usernew->newpassword)) {

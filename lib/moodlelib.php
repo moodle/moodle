@@ -152,7 +152,7 @@ function reload_user_preferences() {
  * @todo Add a better description and include usage examples.
  * @param string $name The key to set as preference for the specified user
  * @param string $value The value to set forthe $name key in the specified user's record
- * @param object $user A moodle user object
+ * @param integer $userid A moodle user ID
  * @todo Add inline links to $USER and user functions in above line.
  * @return boolean
  */
@@ -190,8 +190,29 @@ function set_user_preference($name, $value, $userid=NULL) {
 }
 
 /**
+ * Unsets a preference completely by deleting it from the database
+ * Optionally, can set a preference for a different user id
+ * @uses $USER
+ * @param string  $name The key to unset as preference for the specified user
+ * @param integer $userid A moodle user ID
+ * @return boolean
+ */
+function unset_user_preference($name, $userid=NULL) {
+
+    global $USER;
+
+    if (empty($userid)){ 
+        $userid = $USER->id;
+    }
+
+    return delete_records('user_preferences', 'userid', $userid, 'name', $name);
+}
+
+
+/**
  * Sets a whole array of preferences for the current user
  * @param array $prefarray An array of key/value pairs to be set
+ * @param integer $userid A moodle user ID
  * @return boolean
  */
 function set_user_preferences($prefarray, $userid=NULL) {
@@ -225,6 +246,7 @@ function set_user_preferences($prefarray, $userid=NULL) {
  * otherwise NULL.
  * @param string $name Name of the key to use in finding a preference value
  * @param string $default Value to be returned if the $name key is not set in the user preferences
+ * @param integer $userid A moodle user ID
  * @uses $USER
  * @return string
  */
