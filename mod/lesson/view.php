@@ -21,7 +21,7 @@
         error("Course module is incorrect");
     }
 
-    require_login($course->id, false, $cm);
+    require_login($course->id, false);
 
 
 /// Print the page header
@@ -46,6 +46,8 @@
     if (empty($action)) {
         if (isteacher($course->id)) {
             $action = 'teacherview';
+        } else if (!$cm->visible) {
+            notice(get_string("activityiscurrentlyhidden"));
         } else {
             $action = 'navigation';
         }
