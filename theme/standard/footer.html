@@ -3,9 +3,9 @@
 <!-- START OF FOOTER -->
 <div id="footer">
 
-<?php if (!$home and $heading) {  // Most pages with heading, except home page ?>
+<?php if ($navigation) { ?>
     <div class="navbar">
-        <div class="breadcrumb"><?php print_navigation("$navigation"); ?></div>
+        <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
         <div class="menu"><?php echo $menu; ?></div>
     </div>
     <div class="clearer">&nbsp;</div>
