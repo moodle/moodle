@@ -941,13 +941,23 @@
         $scales = get_records_sql("SELECT id, courseid, userid, name, scale, description, timemodified
                                    FROM {$CFG->prefix}scale
                                    WHERE courseid = '0' or courseid = $preferences->backup_course");
-      
-        //Pring scales header
+
+        //Copy only used scales to $backupscales. They will be in backup (unused no). See Bug 1223.
+        $backupscales = array();
         if ($scales) {
+            foreach ($scales as $scale) {
+                if (course_scale_used($preferences->backup_course, $scale->id)) {
+                    $backupscales[] = $scale;
+                }
+            }
+        }
+
+        //Pring scales header
+        if ($backupscales) {
             //Pring scales header
             fwrite ($bf,start_tag("SCALES",2,true));
             //Iterate
-            foreach ($scales as $scale) {
+            foreach ($backupscales as $scale) {
                 //Begin scale tag
                 fwrite ($bf,start_tag("SCALE",3,true));
                 //Output scale tag
