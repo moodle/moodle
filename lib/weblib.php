@@ -1491,7 +1491,7 @@ function highlightfast($needle, $haystack) {
 function print_header ($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
 
-    global $USER, $CFG, $THEME, $SESSION;
+    global $USER, $CFG, $THEME, $SESSION, $ME;
 
     global $course;                // This is a bit of an ugly hack to be gotten rid of later
     if (!empty($course->lang)) {
@@ -1623,9 +1623,30 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
         }
     }
 
+    // Clean up the title
+
     $title = str_replace('"', '&quot;', $title);
     $title = strip_tags($title);
 
+    // Create class and id for this page
+
+    $path = str_replace($CFG->wwwroot.'/', '', $ME);
+    $path = str_replace('.php', '', $path);
+    if (substr($path, -1) == '/') {
+        $path .= 'index';
+    }
+    if (empty($path)) {
+        $pageid    = 'index';
+        $pageclass = 'course-view';
+    } else {
+        $pageid    = str_replace('/', '-', $path);
+        $pageclass = explode('-', $pageid);
+        array_pop($pageclass);
+        $pageclass = implode('-', $pageclass);
+    }
+
+    $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
+    
     include ($CFG->dirroot .'/theme/'. $CFG->theme .'/header.html');
 
     echo message_popup_window();
@@ -3105,7 +3126,8 @@ function emoticonhelpbutton($form, $field) {
 
     $SESSION->inserttextform = $form;
     $SESSION->inserttextfield = $field;
-    $imagetext = '<img src="' . $CFG->pixpath . '/s/smiley.gif" border="0" align="middle" width="15" height="15" alt="" />';
+    $imagetext = '<img src="' . $CFG->pixpath . '/s/smiley.gif" border="0" align="middle" width="15" height="15" alt=""
+    style="margin-left: 7px" />';
 
     helpbutton('emoticons', get_string('helpemoticons'), 'moodle', true, true, '', false, $imagetext);
 }
