@@ -529,19 +529,18 @@ function calendar_top_controls($type, $data) {
             */
         break;
         case 'display':
-            $content .= '<div style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.$monthname.' '.$data['y']."</a></div>\n";
+            $content .= '<div style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.strftime(get_string('strftimemonthyear'), $time)."</a></div>\n";
+
         break;
         case 'month':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
-            $prevdate = getdate(calendar_mktime_check($prevmonth, 1, $prevyear));
-            $nextdate = getdate(calendar_mktime_check($nextmonth, 1, $nextyear));
-            $prevname = calendar_month_name($prevdate['month']);
-            $nextname = calendar_month_name($nextdate['month']);
+            $prevdate = calendar_mktime_check($prevmonth, 1, $prevyear);
+            $nextdate = calendar_mktime_check($nextmonth, 1, $nextyear);
             $content .= "<table style='width: 100%;'><tr>\n";
-            $content .= '<td style="text-align: left; width: 30%;"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $prevmonth, $prevyear).'">&lt;&lt; '.$prevname.' '.$prevyear."</a></td>\n";
+            $content .= '<td style="text-align: left; width: 30%;"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $prevmonth, $prevyear).'">&lt;&lt; '.strftime(get_string('strftimemonthyear'), $prevdate)."</a></td>\n";
             $content .= '<td style="text-align: center"><strong>'.strftime(get_string('strftimemonthyear'), $time)."</strong></td>\n";
-            $content .= '<td style="text-align: right; width: 30%;"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $nextmonth, $nextyear).'">'.$nextname.' '.$nextyear." &gt;&gt;</a></td>\n";
+            $content .= '<td style="text-align: right; width: 30%;"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $nextmonth, $nextyear).'">'.strftime(get_string('strftimemonthyear'), $nextdate)." &gt;&gt;</a></td>\n";
             $content .= "</tr></table>\n";
         break;
         case 'day':
