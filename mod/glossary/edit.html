@@ -2,7 +2,7 @@
     global $CFG;
 ?>
 <center>
-<form name="form" method="post" <?=$onsubmit ?> action="edit.php" enctype="multipart/form-data">
+<form name="form" method="post"  action="edit.php" enctype="multipart/form-data">
 <table  class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
 <?PHP
 if (isset($errors)) {
@@ -181,7 +181,7 @@ if (isset($errors)) {
 
 <?PHP 
    if ($usehtmleditor) { 
-       print_richedit_javascript("form", "text", "yes");
+       use_html_editor("text");
    }
 ?>
 

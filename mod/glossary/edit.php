@@ -195,12 +195,10 @@ $strglossary = get_string("modulename", "glossary");
 $strglossaries = get_string("modulenameplural", "glossary");
 $stredit = get_string("edit");
 
-if ($usehtmleditor = can_use_richtext_editor()) {
+if ($usehtmleditor = can_use_html_editor()) {
     $defaultformat = FORMAT_HTML;
-    $onsubmit = "onsubmit=\"copyrichtext(form.text);\"";
 } else {
     $defaultformat = FORMAT_MOODLE;
-    $onsubmit = "";
 }
 
 print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
