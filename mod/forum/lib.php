@@ -43,6 +43,10 @@ if (!isset($CFG->forum_maxbytes)) {
     set_config("forum_maxbytes", 512000);  // Default maximum size for all forums
 }
 
+if (!isset($CFG->forum_replytouser)) {
+    set_config("forum_replytouser", true);  // Default maximum size for all forums
+}
+
 
 
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
