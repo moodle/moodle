@@ -165,10 +165,6 @@
             }
             $fullurl = "$CFG->wwwroot$relativeurl";
 
-            if ($CFG->resource_filterexternalpages and $resourcetype == "html") {
-                $fullurl = "$CFG->wwwroot/mod/resource/fetch.php?id=$cm->id&file=/$course->id/$resource->reference";
-            }
-
 
             /// Check whether this is supposed to be a popup, but was called directly
 
