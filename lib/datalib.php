@@ -1037,11 +1037,11 @@ function get_admins() {
 
     global $CFG;
 
-    return get_records_sql("SELECT u.* 
+    return get_records_sql("SELECT u.*, a.id as adminid 
                               FROM {$CFG->prefix}user u, 
                                    {$CFG->prefix}user_admins a
                              WHERE a.userid = u.id
-                             ORDER BY u.id ASC");
+                             ORDER BY a.id ASC");
 }
 
 /**
