@@ -1,4 +1,4 @@
-<?PHP  // $Id: lib.php,v 1.0 14 Aug 2003
+<?PHP  // $Id: lib.php,v 1.1 22 Aug 2003
 
 /*************************************************
 	ACTIONS handled are:
@@ -688,72 +688,74 @@
 		
 		// show the final grades as stored in the tables...
 		print_heading_with_help(get_string("displayoffinalgrades", "workshop"), "finalgrades", "workshop");
-		echo "<CENTER><TABLE BORDER=1 WIDTH=\"90%\"><TR>
-			<TD BGCOLOR=\"$THEME->cellheading2\"><B>".$course->student."</B></TD>";
-		echo "<TD BGCOLOR=\"$THEME->cellheading2\"><B>".get_string("submissions", "workshop")."</B></TD>";
+		echo "<center><table border=\"1\" width=\"90%\"><tr>
+			<td bgcolor=\"$THEME->cellheading2\"><b>".$course->student."</b></td>";
+		echo "<td bgcolor=\"$THEME->cellheading2\"><b>".get_string("submissions", "workshop")."</b></td>";
 		if ($useteachersgrades) {
-			echo "<TD BGCOLOR=\"$THEME->cellheading2\"><B>".get_string("assessmentsby", "workshop", $course->teachers)."</B></TD>";
+			echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsby", "workshop", $course->teachers)."</b></td>";
 			}
 		if ($usepeergrades) {
-			echo "<TD BGCOLOR=\"$THEME->cellheading2\"><B>".get_string("assessmentsby", "workshop", $course->students)."</B></TD>";
+			echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsby", "workshop", $course->students)."</b></td>";
 			}
-		echo "<TD BGCOLOR=\"$THEME->cellheading2\"><B>".get_string("assessmentsdone", "workshop")."</B></TD>";
+		echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsdone", "workshop")."</b></td>";
 		if ($usebiasgrades) {
-			echo "<TD BGCOLOR=\"$THEME->cellheading2\"><B>".get_string("gradeforbias", "workshop")."</B></TD>";
+			echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforbias", "workshop")."</b></td>";
 			}
 		if ($usereliabilitygrades) {
-			echo "<TD BGCOLOR=\"$THEME->cellheading2\"><B>".get_string("gradeforreliability", "workshop")."</B></TD>";
+			echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforreliability", "workshop")."</b></td>";
 			}
 		if ($usegradinggrades) {
-			echo "<TD BGCOLOR=\"$THEME->cellheading2\"><B>".get_string("gradeforassessments", "workshop")."</B></TD>";
+			echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforassessments", "workshop")."</b></td>";
 			}
-		echo "<TD BGCOLOR=\"$THEME->cellheading2\"><B>".get_string("overallgrade", "workshop")."</B></TD></TR>\n";
+		echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("overallgrade", "workshop")."</b></td></TR>\n";
 		// now the weights
-		echo "<TR><TD BGCOLOR=\"$THEME->cellheading2\"><B>".get_string("weights", "workshop")."</B></TD>";
-		echo "<TD BGCOLOR=\"$THEME->cellheading2\"><B>&nbsp;</B></TD>\n";
+		echo "<TR><td bgcolor=\"$THEME->cellheading2\"><b>".get_string("weights", "workshop")."</b></td>";
+		echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>&nbsp;</b></td>\n";
 		if ($useteachersgrades) {
-			echo "<TD BGCOLOR=\"$THEME->cellheading2\"><B>$WORKSHOP_FWEIGHTS[$teacherweight]</B></TD>\n";
+			echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$WORKSHOP_FWEIGHTS[$teacherweight]</b></td>\n";
 			}
 		if ($usepeergrades) {
-			echo "<TD BGCOLOR=\"$THEME->cellheading2\"><B>$WORKSHOP_FWEIGHTS[$peerweight]</B></TD>\n";
+			echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$WORKSHOP_FWEIGHTS[$peerweight]</b></td>\n";
 			}
-		echo "<TD BGCOLOR=\"$THEME->cellheading2\"><B>&nbsp;</B></TD>\n";
+		echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>&nbsp;</b></td>\n";
 		if ($usebiasgrades) {
-			echo "<TD BGCOLOR=\"$THEME->cellheading2\"><B>$WORKSHOP_FWEIGHTS[$biasweight]</B></TD>\n";
+			echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$WORKSHOP_FWEIGHTS[$biasweight]</b></td>\n";
 			}
 		if ($usereliabilitygrades) {
-			echo "<TD BGCOLOR=\"$THEME->cellheading2\"><B>$WORKSHOP_FWEIGHTS[$reliabilityweight]</B></TD>\n";
+			echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$WORKSHOP_FWEIGHTS[$reliabilityweight]</b></td>\n";
 			}
 		if ($usegradinggrades) {
-			echo "<TD BGCOLOR=\"$THEME->cellheading2\"><B>$WORKSHOP_FWEIGHTS[$gradingweight]</B></TD>\n";
+			echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$WORKSHOP_FWEIGHTS[$gradingweight]</b></td>\n";
 			}
-		echo "<TD BGCOLOR=\"$THEME->cellheading2\"><B>&nbsp;</B></TD></TR>\n";
+		echo "<td bgcolor=\"$THEME->cellheading2\"><b>&nbsp;</b></td></tr>\n";
 		foreach ($users as $user) {
 			if ($submissions = workshop_get_user_submissions($workshop, $user)) {
 				foreach ($submissions as $submission) {
-					echo "<TR><TD>$user->firstname $user->lastname</TD>";
-					echo "<TD>".workshop_print_submission_title($workshop, $submission)."</TD>\n";
+					echo "<tr><td>$user->firstname $user->lastname</td>";
+					echo "<td>".workshop_print_submission_title($workshop, $submission)."</td>\n";
 					if ($useteachersgrades) {
-						echo "<TD>".workshop_print_submission_assessments($workshop, $submission, "teacher")."</TD>";
+						echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, "teacher")."</td>";
 						}
 					if ($usepeergrades) {
-						echo "<TD>".workshop_print_submission_assessments($workshop, $submission, "student")."</TD>";
+						echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, "student")."</td>";
 						}
-					echo "<TD>".workshop_print_user_assessments($workshop, $user)."</TD>";
+					echo "<td align=\"center\">".workshop_print_user_assessments($workshop, $user)."</td>";
 					if ($usebiasgrades) {
-						echo "<TD>$submission->biasgrade</TD>";
+						echo "<td align=\"center\">$submission->biasgrade</td>";
 						}
 					if ($usereliabilitygrades) {
-						echo "<TD>$submission->reliabilitygrade</TD>";
+						echo "<td align=\"center\">$submission->reliabilitygrade</td>";
 						}
 					if ($usegradinggrades) {
-						echo "<TD>$submission->gradinggrade</TD>";
+						echo "<td align=\"center\">$submission->gradinggrade</td>";
 						}
-					echo "<TD>$submission->finalgrade</TD></TR>\n";
+					echo "<td align=\"center\">$submission->finalgrade</td></tr>\n";
 					}
 				}
 			}
-		echo "</TABLE><BR CLEAR=ALL>\n";
+		echo "</table><br clear=\"all\">\n";
+		workshop_print_league_table($workshop);
+		echo "<br clear=\"all\">\n";
 		print_string("allgradeshaveamaximumof", "workshop", $workshop->grade);
 		print_continue("view.php?a=$workshop->id");
 		}
@@ -790,9 +792,9 @@
 			// now show the weights used in the final grades
 			print_heading_with_help(get_string("calculationoffinalgrades", "workshop"), "calculatingfinalgrade", "workshop");
 			echo "<TABLE WIDTH=\"50%\" BORDER=\"1\">\n";
-			echo "<TR><TD COLSPAN=\"2\" BGCOLOR=\"$THEME->cellheading2\"><CENTER><B>".
+			echo "<TR><td COLSPAN=\"2\" bgcolor=\"$THEME->cellheading2\"><CENTER><B>".
 				get_string("weightsusedforfinalgrade", "workshop")."</B></CENTER></TD></TR>\n";
-			echo "<TR><TD ALIGN=\"right\">".get_string("weightforteachersassessment", "workshop").":</TD>\n";
+			echo "<tr><td align=\"right\">".get_string("weightforteacherassessments", "workshop", $course->teacher).":</td>\n";
 			echo "<TD>";
 			workshop_choose_from_menu($WORKSHOP_FWEIGHTS, "teacherweight", $teacherweight, "");
 			echo "</TD></TR>\n";
@@ -812,7 +814,7 @@
 			echo "<TD>";
 			workshop_choose_from_menu($WORKSHOP_FWEIGHTS, "gradingweight", $gradingweight, "");
 			echo "</TD></TR>\n";
-			echo "<TR><TD COLSPAN=\"2\" BGCOLOR=\"$THEME->cellheading2\"><CENTER><B>".
+			echo "<TR><TD COLSPAN=\"2\" bgcolor=\"$THEME->cellheading2\"><CENTER><B>".
 				get_string("optionforpeergrade", "workshop")."</B></CENTER></TD></TR>\n";
 			echo "<TR><TD ALIGN=\"right\">".get_string("includeteachersgrade", "workshop").":</TD>\n";
 			echo "<TD>";

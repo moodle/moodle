@@ -1,4 +1,4 @@
-<?PHP  // $Id: view.php, v1.1 21 Aug 2003
+<?PHP  // $Id: view.php, v1.1 22 Aug 2003
 
 /*************************************************
 	ACTIONS handled are:
@@ -156,68 +156,68 @@
 		// show the final grades as stored in the tables...
 		print_heading_with_help(get_string("displayoffinalgrades", "workshop"), "finalgrades", "workshop");
 		if ($submissions = workshop_get_user_submissions($workshop, $USER)) { // any submissions from user?
-			echo "<CENTER><TABLE BORDER=1 WIDTH=\"90%\"><TR>";
-			echo "<TD><B>".get_string("submissions", "workshop")."</B></TD>";
+			echo "<center><table border=\"1\" width=\"90%\"><tr>";
+			echo "<td><b>".get_string("submissions", "workshop")."</b></td>";
 			if ($useteachersgrades) {
-				echo "<TD><B>".get_string("teachersassessment", "workshop")."</B></TD>";
+				echo "<td align=\"center\"><b>".get_string("teacherassessments", "workshop", $course->teacher)."</b></td>";
 				}
 			if ($usepeergrades) {
-				echo "<TD><B>".get_string("studentsassessment", "workshop")."</B></TD>";
+				echo "<td align=\"center\"><b>".get_string("studentassessments", "workshop", $course->student)."</b></td>";
 				}
-			echo "<TD><B>".get_string("assessmentsdone", "workshop")."</B></TD>";
+			echo "<td align=\"center\"><b>".get_string("assessmentsdone", "workshop")."</b></td>";
 			if ($usebiasgrades) {
-				echo "<TD><B>".get_string("gradeforbias", "workshop")."</B></TD>";
+				echo "<td align=\"center\"><b>".get_string("gradeforbias", "workshop")."</b></td>";
 				}
 			if ($usereliabilitygrades) {
-				echo "<TD><B>".get_string("gradeforreliability", "workshop")."</B></TD>";
+				echo "<td align=\"center\"><b>".get_string("gradeforreliability", "workshop")."</b></td>";
 				}
 			if ($usegradinggrades) {
-				echo "<TD><B>".get_string("gradeforassessments", "workshop")."</B></TD>";
+				echo "<td align=\"center\"><b>".get_string("gradeforassessments", "workshop")."</b></td>";
 				}
-			echo "<TD><B>".get_string("overallgrade", "workshop")."</B></TD></TR>\n";
+			echo "<td align=\"center\"><b>".get_string("overallgrade", "workshop")."</b></td></TR>\n";
 			// now the weights
-			echo "<TR><TD><B>".get_string("weights", "workshop")."</B></TD>";
+			echo "<TR><td><b>".get_string("weights", "workshop")."</b></td>";
 			if ($useteachersgrades) {
-				echo "<TD><B>$workshop_FWEIGHTS[$teacherweight]</B></TD>\n";
+				echo "<td align=\"center\"><b>$WORKSHOP_FWEIGHTS[$teacherweight]</b></td>\n";
 				}
 			if ($usepeergrades) {
-				echo "<TD><B>$workshop_FWEIGHTS[$peerweight]</B></TD>\n";
+				echo "<td align=\"center\"><b>$WORKSHOP_FWEIGHTS[$peerweight]</b></td>\n";
 				}
-			echo "<TD><B>&nbsp;</B></TD>\n";
+			echo "<td><b>&nbsp;</b></td>\n";
 			if ($usebiasgrades) {
-				echo "<TD><B>$workshop_FWEIGHTS[$biasweight]</B></TD>\n";
+				echo "<td align=\"center\"><b>$WORKSHOP_FWEIGHTS[$biasweight]</b></td>\n";
 				}
 			if ($usereliabilitygrades) {
-				echo "<TD><B>$workshop_FWEIGHTS[$reliabilityweight]</B></TD>\n";
+				echo "<td align=\"center\"><b>$WORKSHOP_FWEIGHTS[$reliabilityweight]</b></td>\n";
 				}
 			if ($usegradinggrades) {
-				echo "<TD><B>$workshop_FWEIGHTS[$gradingweight]</B></TD>\n";
+				echo "<td align=\"center\"><b>$WORKSHOP_FWEIGHTS[$gradingweight]</b></td>\n";
 				}
-			echo "<TD><B>&nbsp;</B></TD></TR>\n";
+			echo "<td><b>&nbsp;</b></td></TR>\n";
 			foreach ($submissions as $submission) {
-				echo "<TR><TD>".workshop_print_submission_title($workshop, $submission)."</TD>\n";
+				echo "<TR><td>".workshop_print_submission_title($workshop, $submission)."</td>\n";
 				if ($useteachersgrades) {
-					echo "<TD>".workshop_print_submission_assessments($workshop, $submission, "teacher")."</TD>";
+					echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, "teacher")."</td>";
 					}
 				if ($usepeergrades) {
-					echo "<TD>".workshop_print_submission_assessments($workshop, $submission, "student")."</TD>";
+					echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, "student")."</td>";
 					}
-				echo "<TD>".workshop_print_user_assessments($workshop, $USER)."</TD>";
+				echo "<td align=\"center\">".workshop_print_user_assessments($workshop, $USER)."</td>";
 				if ($usebiasgrades) {
-					echo "<TD>$submission->biasgrade</TD>";
+					echo "<td align=\"center\">$submission->biasgrade</td>";
 					}
 				if ($usereliabilitygrades) {
-					echo "<TD>$submission->reliabilitygrade</TD>";
+					echo "<td align=\"center\">$submission->reliabilitygrade</td>";
 					}
 				if ($usegradinggrades) {
-					echo "<TD>$submission->gradinggrade</TD>";
+					echo "<td align=\"center\">$submission->gradinggrade</td>";
 					}
-				echo "<TD>$submission->finalgrade</TD></TR>\n";
+				echo "<td align=\"center\">$submission->finalgrade</td></TR>\n";
 				}
 			}
 		echo "</TABLE><BR CLEAR=ALL>\n";
+		workshop_print_league_table($workshop);
 		print_string("allgradeshaveamaximumof", "workshop", $workshop->grade);
-		print_continue("view.php?a=$workshop->id");
 		}
 
 
@@ -332,12 +332,12 @@
 				// list previous submissions
 				print_heading(get_string("submissions", "workshop"));
 				workshop_list_user_submissions($workshop, $USER);
-				echo "<HR SIZE=1 NOSHADE>";
+				echo "<hr size=\"1\" noshade>";
 				if ($workshop->resubmit) {
 					// if resubmissions allowed print upload form
 					print_heading(get_string("submitassignment", "assignment").":");
 					workshop_print_upload_form($workshop);
-					echo "<HR SIZE=1 NOSHADE>";
+					echo "<hr size=\"1\" noshade>";
 					}
 				// allow user to list their submissions and assessments in a general way????
 				// print_heading("<A HREF=\"submissions.php?action=listallsubmissions&id=$cm->id\">".
@@ -396,7 +396,7 @@
 			}
 
 		print_heading_with_help(get_string("managingassignment", "workshop"), "managing", "workshop");
-		$tabs->names = array("1. ".get_string("phase1", "workshop"), "2. ".get_string("phase2", "workshop"), 
+		$tabs->names = array("1. ".get_string("phase1", "workshop"), "2. ".get_string("phase2", "workshop", $course->student), 
 			"3. ".get_string("phase3", "workshop"), "4. ".get_string("phase4", "workshop"));
 		$tabs->urls = array("view.php?id=$cm->id&action=setupassignment", 
 			"view.php?id=$cm->id&action=openworkshop",

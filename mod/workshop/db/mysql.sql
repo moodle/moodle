@@ -101,7 +101,7 @@ CREATE TABLE `prefix_workshop_elements` (
 CREATE TABLE `prefix_workshop_rubrics` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `workshopid` int(10) unsigned NOT NULL default '0',
-  `elementid` int(10) unsigned NOT NULL default '0',
+  `elementno` int(10) unsigned NOT NULL default '0',
   `rubricno` tinyint(3) unsigned NOT NULL default '0',
   `description` text NOT NULL,
   PRIMARY KEY  (`id`)

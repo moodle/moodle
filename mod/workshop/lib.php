@@ -1,4 +1,4 @@
-<?PHP  // $Id: lib.php,v 1.1 21 Aug 2003
+<?PHP  // $Id: lib.php,v 1.1 22 Aug 2003
 
 include_once("$CFG->dirroot/files/mimetypes.php");
 
@@ -9,7 +9,8 @@ error_reporting(15);
 $WORKSHOP_TYPE = array (0 => get_string("notgraded", "workshop"),
                           1 => get_string("accumulative", "workshop"),
                           2 => get_string("errorbanded", "workshop"),
-                          3 => get_string("criteria", "workshop") );
+                          3 => get_string("criterion", "workshop"),
+						  4 => get_string("rubric", "workshop") );
 
 $WORKSHOP_SHOWGRADES = array (0 => get_string("dontshowgrades", "workshop"),
                           1 => get_string("showgrades", "workshop") );
@@ -29,7 +30,7 @@ $WORKSHOP_SCALES = array(
 $WORKSHOP_EWEIGHTS = array(  0 => -4.0, 1 => -2.0, 2 => -1.5, 3 => -1.0, 4 => -0.75, 5 => -0.5,  6 => -0.25, 
 											7 => 0.0, 8 => 0.25, 9 => 0.5, 10 => 0.75, 11=> 1.0, 12 => 1.5, 13=> 2.0, 14 => 4.0); 
 
-$WORKSHOP_FWEIGHTS = array(  0 => 0, 1 => 0.1, 2 => 0.25, 3 => 0.5, 4 => 0.75, 5 => 1,  6 => 1.5, 
+$WORKSHOP_FWEIGHTS = array(  0 => 0, 1 => 0.1, 2 => 0.25, 3 => 0.5, 4 => 0.75, 5 => 1.0,  6 => 1.5, 
 											7 => 2.0, 8 => 3.0, 9 => 5.0, 10 => 7.5, 11=> 10.0); 
 
 if (!defined("COMMENTSCALE")) {
@@ -702,6 +703,7 @@ function workshop_print_assessments_by_user_for_admin($workshop, $user) {
 function workshop_print_assessments_for_admin($workshop, $submission) {
 function workshop_print_difference($time) {
 function workshop_print_feedback($course, $submission) {
+function workshop_print_league_table($workshop) {
 function workshop_print_submission_assessments($workshop, $submission, $type) {
 function workshop_print_submission_title($workshop, $user) {
 function workshop_print_tabbed_table($table) {
@@ -1074,7 +1076,10 @@ function workshop_get_student_submissions($workshop, $order = "title") {
 	if ($order == "name") {
 		$order = "a.firstname, a.lastname";
 		}
-    return get_records_sql("SELECT s.* FROM {$CFG->prefix}workshop_submissions s, {$CFG->prefix}user_students u,
+	if ($order == "grade") {
+		$order = "$workshop->teacherweight * s.teachergrade + $workshop->peerweight * s.peergrade DESC";
+		}
+	return get_records_sql("SELECT s.* FROM {$CFG->prefix}workshop_submissions s, {$CFG->prefix}user_students u,
 							{$CFG->prefix}user a 
                             WHERE u.course = $workshop->course
                               AND s.userid = u.userid
@@ -1644,7 +1649,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
 						$title .= " {-";
 						}
 					if ($assessment->timegraded) {
-						$title .= "/".number_format($assessment->gradinggrade*100/COMMENTSCALE,0)."%";
+						$title .= "/".number_format($assessment->gradinggrade * 100 / COMMENTSCALE, 0)."%";
 						}
 					$title .= "} ";
 					if ($realassessments = workshop_count_user_assessments_done($workshop, $user)) {
@@ -1976,6 +1981,9 @@ function workshop_list_ungraded_assessments($workshop, $stype) {
 	
 
 function workshop_list_user_submissions($workshop, $user) {
+	global $CFG;
+
+	$timenow = time();
 	$table->head = array (get_string("title", "workshop"),  get_string("action", "workshop"),
 		get_string("submitted", "assignment"),  get_string("assessments", "workshop"));
 	$table->align = array ("LEFT", "LEFT", "LEFT", "LEFT");
@@ -1985,8 +1993,8 @@ function workshop_list_user_submissions($workshop, $user) {
 
 	if ($submissions = workshop_get_user_submissions($workshop, $user)) {
 		foreach ($submissions as $submission) {
-			// allow user to delete submissions if there is more than one submission 
-			if (count($submissions) > 1) {
+			// allow user to delete submissions if there is more than one submission or if it's fresh
+			if ((count($submissions) > 1) or (($timenow - $submission->timecreated) < $CFG->maxeditingtime)) {
 				$action = "<a href=\"submissions.php?action=userconfirmdelete&a=$workshop->id&sid=$submission->id\">".
 					get_string("delete", "workshop")."</a>";
 				}
@@ -2093,7 +2101,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
 		// only show the grade if grading strategy > 0 and the grade is positive
 		if ($showgrades and $assessment->grade >= 0) { 
 			echo "<CENTER><B>".get_string("thegradeis", "workshop").": ".number_format($assessment->grade, 2)."% (".
-				get_string("maximumgrade")." ".number_format($workshop->grade)."%)</B></CENTER><BR CLEAR=ALL>\n";
+				get_string("maximumgrade")." ".number_format($workshop->grade, 0)."%)</B></CENTER><BR CLEAR=ALL>\n";
 			}
 		}
 		
@@ -2177,7 +2185,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
 				echo "	<TD align=right><P><B>". get_string("element","workshop")." $iplus1:</B></P></TD>\n";
 				echo "	<TD>".text_to_html($elements[$i]->description);
 				echo "<P align=right><FONT size=1>Weight: "
-					.number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight],2)."</FONT>\n";
+					.number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</FONT>\n";
 				echo "</TD></TR>\n";
 				if ($showgrades) {
 					echo "<TR valign=top>\n";
@@ -2259,7 +2267,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
 				echo "	<TD align=right><P><B>". get_string("element","workshop")." $iplus1:</B></P></TD>\n";
 				echo "	<TD>".text_to_html($elements[$i]->description);
 				echo "<P align=right><FONT size=1>Weight: "
-					.number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight],2)."</FONT>\n";
+					.number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</FONT>\n";
 				echo "</TD></TR>\n";
 				echo "<TR valign=top>\n";
 				echo "	<TD align=right><P><B>". get_string("grade"). ":</B></P></TD>\n";
@@ -2407,12 +2415,71 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
 				choose_from_menu($numbers, "grade[1]", 0, "");
 				}
 			echo "</TD></TR>\n";
+			break;
+			
+		case 4: // rubric grading
+			// now run through the elements...
+			for ($i=0; $i < count($elements); $i++) {
+				$iplus1 = $i+1;
+				echo "<TR valign=\"top\">\n";
+				echo "<TD align=\"right\"><b>".get_string("element", "workshop")." $iplus1:</b></TD>\n";
+				echo "<TD>".text_to_html($elements[$i]->description).
+					 "<P align=\"right\"><font size=\"1\">Weight: "
+					.number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</font></TD></tr>\n";
+				echo "<TR valign=\"top\">\n";
+				echo "	<TD BGCOLOR=\"$THEME->cellheading2\" align=\"center\"><B>".get_string("select", "workshop")."</B></TD>\n";
+				echo "	<TD BGCOLOR=\"$THEME->cellheading2\"><B>". get_string("criterion","workshop")."</B></TD></tr>\n";
+				if (isset($grades[$i])) {
+					$selection = $grades[$i]->grade;
+					} else {
+					$selection = 0;
+					}
+				// ...and the rubrics
+				if ($rubricsraw = get_records_select("workshop_rubrics", "workshopid = $workshop->id AND 
+						elementno = $i", "rubricno ASC")) {
+					unset($rubrics);
+					foreach ($rubricsraw as $rubic) {
+						$rubrics[] = $rubic;   // to renumber index 0,1,2...
+						}
+					for ($j=0; $j<5; $j++) {
+						if (empty($rubrics[$j]->description)) {
+							break; // out of inner for loop
+							}
+						echo "<TR valign=top>\n";
+						if ($selection == $j) {
+							echo "	<TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED></TD>\n";
+							}else {
+							echo "	<TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\"></TD>\n";
+							}
+						echo "<TD>".text_to_html($rubrics[$j]->description)."</TD>\n";
+						}
+					echo "<TR valign=top>\n";
+					echo "	<TD align=right><P><B>". get_string("feedback").":</B></P></TD>\n";
+					echo "	<TD>\n";
+					if ($allowchanges) {
+						echo "		<textarea name=\"feedback[]\" rows=3 cols=75 wrap=\"virtual\">\n";
+						if (isset($grades[$i]->feedback)) {
+							echo $grades[$i]->feedback;
+							}
+						echo "</textarea>\n";
+						}
+					else {
+						echo text_to_html($grades[$i]->feedback);
+						}
+					echo "	</td>\n";
+					echo "</tr>\n";
+					echo "<tr valign=\"top\">\n";
+					echo "	<td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</TD>\n";
+					echo "</tr>\n";
+					}
+				}
+			break;
 		} // end of outer switch
 	
 	// now get the general comment (present in all types)
-	echo "<TR valign=top>\n";
-	echo "	<TD align=right><P><B>". get_string("generalcomment", "workshop").":</B></P></TD>\n";
-	echo "	<TD>\n";
+	echo "<tr valign=\"top\">\n";
+	echo "	<td align=\"right\"><P><B>". get_string("generalcomment", "workshop").":</B></P></TD>\n";
+	echo "	<td>\n";
 	if ($allowchanges) {
 		echo "		<textarea name=\"generalcomment\" rows=5 cols=75 wrap=\"virtual\">\n";
 		if (isset($assessment->generalcomment)) {
@@ -2430,53 +2497,53 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
 			print_string("yourfeedbackgoeshere", "workshop");
 			}
 		}
-	echo "&nbsp;</TD>\n";
-	echo "</TR>\n";
-	echo "<TR valign=top>\n";
-	echo "	<TD colspan=2 BGCOLOR=\"$THEME->cellheading2\">&nbsp;</TD>\n";
-	echo "</TR>\n";
+	echo "&nbsp;</td>\n";
+	echo "</tr>\n";
+	echo "<tr valign=\"top\">\n";
+	echo "	<td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</TD>\n";
+	echo "</tr>\n";
 	
 	$timenow = time();
 	// now show the teacher's comment if available...
 	if ($assessment->timegraded and (($timenow - $assessment->timegraded) > $CFG->maxeditingtime)) {
-		echo "<TR valign=top>\n";
-		echo "	<TD align=right><P><B>". get_string("teacherscomment", "workshop").":</B></P></TD>\n";
-		echo "	<TD>\n";
+		echo "<tr valign=top>\n";
+		echo "	<td align=\"right\"><p><b>". get_string("teacherscomment", "workshop").":</b></p></td>\n";
+		echo "	<td>\n";
 		echo text_to_html($assessment->teachercomment);
-		echo "&nbsp;</TD>\n";
-		echo "</TR>\n";
+		echo "&nbsp;</td>\n";
+		echo "</tr>\n";
 		// only show the grading grade if it's the teacher
 		if (isteacher($course->id)) {
-			echo "<TR valign=top>\n";
-			echo "	<TD align=right><P><B>". get_string("teachersgrade", "workshop").":</B></P></TD>\n";
-			echo "	<TD>\n";
-			echo number_format($assessment->gradinggrade*100/COMMENTSCALE,0)."%";
-			echo "&nbsp;</TD>\n";
+			echo "<tr valign=\"top\">\n";
+			echo "	<td align=\"right\"><p><b>". get_string("teachersgrade", "workshop").":</b></p></td>\n";
+			echo "	<td>\n";
+			echo number_format($assessment->gradinggrade * 100 / COMMENTSCALE, 0)."%";
+			echo "&nbsp;</td>\n";
+			echo "</tr>\n";
 			}
-		echo "</TR>\n";
-		echo "<TR valign=top>\n";
-		echo "	<TD colspan=2 BGCOLOR=\"$THEME->cellheading2\">&nbsp;</TD>\n";
-		echo "</TR>\n";
+		echo "<tr valign=\"top\">\n";
+		echo "<td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+		echo "</tr>\n";
 		}
 		
 	// ...and close the table, show submit button if needed...
-	echo "</TABLE>\n";
+	echo "</table>\n";
 	if ($assessment) {
 		if ($allowchanges) {  
-			echo "<INPUT TYPE=\"submit\" VALUE=\"".get_string("savemyassessment", "workshop")."\">\n";
+			echo "<input type=\"submit\" VALUE=\"".get_string("savemyassessment", "workshop")."\">\n";
 			}
 		// ...if user is author, assessment not agreed, there's no comments, the showcommentlinks flag is set and 
 		// it's not self assessment then show some buttons!
 		if (($submission->userid == $USER->id) and !$assessment->timeagreed and !$comments and $showcommentlinks and 
 				$submission->userid != $assessment->userid) {
-			echo "<INPUT TYPE=button VALUE=\"".get_string("agreetothisassessment", "workshop")."\" 
-				ONCLICK=\"document.assessmentform.action.value='agreeassessment';document.assessmentform.submit();\">\n";
-			echo "<INPUT TYPE=submit VALUE=\"".get_string("disagreewiththisassessment", "workshop")."\"
-				ONCLICK=\"document.assessmentform.action.value='addcomment';document.assessmentform.submit();\">\n";
+			echo "<input type=button VALUE=\"".get_string("agreetothisassessment", "workshop")."\" 
+				onclick=\"document.assessmentform.action.value='agreeassessment';document.assessmentform.submit();\">\n";
+			echo "<input type=submit value=\"".get_string("disagreewiththisassessment", "workshop")."\"
+				onclick=\"document.assessmentform.action.value='addcomment';document.assessmentform.submit();\">\n";
 			}
 		}
-	echo "</CENTER>";
-	echo "</FORM>\n";
+	echo "</center>";
+	echo "</form>\n";
 	}
 
 
@@ -2553,6 +2620,36 @@ function workshop_print_feedback($course, $submission) {
 }
 
 
+function workshop_print_league_table($workshop) {
+	// print an order table of (student) submissions showing teacher's and student's assessments
+	if (! $course = get_record("course", "id", $workshop->course)) {
+		error("Print league table: Course is misconfigured");
+	}
+	$table->head = array (get_string("title", "workshop"),  get_string("name"),
+		get_string("teacherassessments", "workshop", $course->teacher),  
+		get_string("studentassessments", "workshop",	$course->student), get_string("overallgrade", "workshop"));
+	$table->align = array ("left", "left", "center", "center", "center");
+	$table->size = array ("*", "*", "*", "*", "*");
+	$table->cellpadding = 2;
+	$table->cellspacing = 0;
+
+	if ($submissions = workshop_get_student_submissions($workshop, "grade")) {
+		foreach ($submissions as $submission) {
+			if (!$user = get_record("user", "id", $submission->userid)) {
+				error("Print league table: user not found");
+				}
+			$table->data[] = array(workshop_print_submission_title($workshop, $submission), $user->firstname." ".
+				$user->lastname, workshop_print_submission_assessments($workshop, $submission, "teacher"),
+				workshop_print_submission_assessments($workshop, $submission, "student"),
+				number_format(($workshop->teacherweight * $submission->teachergrade + $workshop->peerweight *
+					$submission->peergrade) / ($workshop->teacherweight + $workshop->peerweight), 1)) ;
+			}
+		print_heading(get_string("leaguetable", "workshop"));
+		print_table($table);
+		}
+	}
+	
+
 function workshop_print_submission_assessments($workshop, $submission, $type) {
 	// Returns the teacher or peer grade and a hyperlinked list of grades for this submission
 	
@@ -2568,7 +2665,7 @@ function workshop_print_submission_assessments($workshop, $submission, $type) {
 						$str .= "<A HREF=\"assessments.php?action=viewassessment&a=$workshop->id&aid=$assessment->id\">[";
 						$str .= number_format($assessment->grade, 0)."%";
 						if ($assessment->gradinggrade) { // funny, teacher is grading self!
-							$str .= "/".number_format($assessment->gradinggrade*100/COMMENTSCALE,0)."%";
+							$str .= "/".number_format($assessment->gradinggrade*100/COMMENTSCALE, 0)."%";
 							}
 						$str .= "]</A> ";
 						}
@@ -2583,13 +2680,16 @@ function workshop_print_submission_assessments($workshop, $submission, $type) {
 						$str .= "<A HREF=\"assessments.php?action=viewassessment&a=$workshop->id&aid=$assessment->id\">{";
 						$str .= number_format($assessment->grade, 0)."%";
 						if ($assessment->gradinggrade) {
-							$str .= "/".number_format($assessment->gradinggrade*100/COMMENTSCALE,0)."%";
+							$str .= "/".number_format($assessment->gradinggrade*100/COMMENTSCALE, 0)."%";
 							}
 						$str .= "}</A> ";
 						}
 					}
 				break;
 			}
+		}
+	if (!$str) {
+		$str = "&nbsp;";   // be kind to Mozilla browsers!
 		}
     return $str;
 }

@@ -1,4 +1,4 @@
-<?PHP  // $Id: lib.php,v 1.0 14 Aug 2003
+<?PHP  // $Id: lib.php,v 1.1 22 Aug 2003
 
 /*************************************************
 	ACTIONS handled are:
@@ -315,6 +315,7 @@
 			if (!isset($elements[$i])) {
 				$elements[$i]->description = '';
 				$elements[$i]->scale =0;
+				$elements[$i]->maxscore = 0;
 				$elements[$i]->weight = 11;
 				}
 			}
@@ -362,17 +363,6 @@
 				break;
 				
 			case 2: // error banded grading
-				if ($elementsraw = get_records("workshop_elements", "workshopid", $workshop->id, "elementno ASC" )) {
-					foreach ($elementsraw as $element) {
-						$elements[] = $element;   // to renumber index 0,1,2...
-						}
-					}
-				else { // set up the elements array with default values
-					for ($i=0; $i<=$workshop->nelements; $i++) {
-						$elements[$i]->description = '';
-						$elements[$i]->maxscore =0;
-						}
-					}
 				for ($i=0; $i<$workshop->nelements; $i++) {
 					$iplus1 = $i+1;
 					echo "<TR valign=top>\n";
@@ -401,24 +391,17 @@
 					}
 				for ($i=0; $i<=$workshop->nelements; $i++) {
 					echo "<TR><TD ALIGN=\"CENTER\">$i</TD><TD ALIGN=\"CENTER\">";
+					if (!isset($elements[$i])) {  // the "last one" will be!
+						$elements[$i]->description = "";
+						$elements[$i]->maxscore = 0;
+						}
 					choose_from_menu($numbers, "maxscore[$i]", $elements[$i]->maxscore, "");
 					echo "</TD></TR>\n";
 					}
 				echo "</TABLE></CENTER>\n";
 				break;
 				
-			case 3: // criteria grading
-				if ($elementsraw = get_records("workshop_elements", "workshopid", $workshop->id, "elementno ASC" )) {
-					foreach ($elementsraw as $element) {
-						$elements[] = $element;   // to renumber index 0,1,2...
-						}
-					}
-				else { // set up the elements array with default values
-					for ($i=0; $i<=$workshop->nelements; $i++) {
-						$elements[$i]->description = '';
-						$elements[$i]->maxscore =0;
-						}
-					}
+			case 3: // criterion grading
 				for ($j = 100; $j >= 0; $j--) {
 					$numbers[$j] = $j;
 					}
@@ -431,6 +414,42 @@
 					echo "<TR><TD><B>". get_string("suggestedgrade", "workshop").":</B></TD><TD>\n";
 					choose_from_menu($numbers, "maxscore[$i]", $elements[$i]->maxscore, "");
 					echo "</TD></TR>\n";
+					echo "<TR valign=top>\n";
+					echo "	<TD colspan=2 BGCOLOR=\"$THEME->cellheading2\">&nbsp;</TD>\n";
+					echo "</TR>\n";
+					}
+				break;
+
+			case 4: // rubric
+				for ($j = 100; $j >= 0; $j--) {
+					$numbers[$j] = $j;
+					}
+				if ($rubricsraw = get_records("workshop_rubrics", "workshopid", $workshop->id)) {
+					foreach ($rubricsraw as $rubric) {
+						$rubrics[$rubric->elementno][$rubric->rubricno] = $rubric->description;   // reindex 0,1,2...
+						}
+					}
+				for ($i=0; $i<$workshop->nelements; $i++) {
+					$iplus1 = $i+1;
+					echo "<TR valign=top>\n";
+					echo "	<TD ALIGN=RIGHT><P><B>". get_string("element","workshop")." $iplus1:</B></TD>\n";
+					echo "<TD><textarea name=\"description[$i]\" rows=3 cols=75 wrap=\"virtual\">".$elements[$i]->description."</textarea>\n";
+					echo "	</TD></TR>\n";
+					echo "<TR valign=top><TD ALIGN=RIGHT><B>".get_string("elementweight", "workshop").":</B></TD><TD>\n";
+					workshop_choose_from_menu($WORKSHOP_EWEIGHTS, "weight[]", $elements[$i]->weight, "");
+					echo "		</TD>\n";
+					echo "</TR>\n";
+
+					for ($j=0; $j<5; $j++) {
+						$jplus1 = $j+1;
+						if (empty($rubrics[$i][$j])) {
+							$rubrics[$i][$j] = "";
+							}
+						echo "<TR valign=top>\n";
+						echo "	<TD ALIGN=RIGHT><P><B>". get_string("grade","workshop")." $j:</B></TD>\n";
+						echo "<TD><textarea name=\"rubric[$i][$j]\" rows=3 cols=75 wrap=\"virtual\">".$rubrics[$i][$j]."</textarea>\n";
+						echo "	</TD></TR>\n";
+						}
 					echo "<TR valign=top>\n";
 					echo "	<TD colspan=2 BGCOLOR=\"$THEME->cellheading2\">&nbsp;</TD>\n";
 					echo "</TR>\n";
@@ -471,7 +490,7 @@
 			}
 		// get the teacher's assessment first
 		if ($teachersassessment = workshop_get_submission_assessment($submission, $USER)) {
-			echo "<P><CENTER><B>".get_string("teachersassessment", "workshop")."</B></CENTER>\n";
+			echo "<P><CENTER><B>".get_string("teacherassessments", "workshop", $course->teacher)."</B></CENTER>\n";
 			workshop_print_assessment($workshop, $teachersassessment);
 			}
 		// now the student's assessment (don't allow changes)
@@ -590,7 +609,7 @@
 				break;
 				
 			case 2: // error banded grading...
-			case 3: // ...and criteria grading
+			case 3: // ...and criterion grading
 				// Insert all the elements that contain something, the number of descriptions is one less than the number of grades
 				foreach ($form->maxscore as $key => $themaxscore) {
 					unset($element);
@@ -605,6 +624,42 @@
 						}
 					if (!$element->id = insert_record("workshop_elements", $element)) {
 						error("Could not insert workshop element!");
+						}
+					}
+				break;
+				
+			case 4: // ...and criteria grading
+				// Insert all the elements that contain something
+				foreach ($form->description as $key => $description) {
+					unset($element);
+					$element->workshopid = $workshop->id;
+					$element->elementno = $key;
+					$element->description   = $description;
+					$element->weight = $form->weight[$key];
+					for ($j=0;$j<5;$j++) {
+						if (empty($form->rubric[$key][$j]))
+							break;
+						}
+					$element->maxscore = $j - 1;
+					if (!$element->id = insert_record("workshop_elements", $element)) {
+						error("Could not insert workshop element!");
+						}
+					}
+				// let's not fool around here, dump the junk!
+				delete_records("workshop_rubrics", "workshopid", $workshop->id);
+				for ($i=0;$i<$workshop->nelements;$i++) {
+					for ($j=0;$j<5;$j++) {
+						unset($element);
+						if (empty($form->rubric[$i][$j])) {  // OK to have an element with fewer than 5 items
+							 break;
+							 }
+						$element->workshopid = $workshop->id;
+						$element->elementno = $i;
+						$element->rubricno = $j;
+						$element->description   = $form->rubric[$i][$j];
+						if (!$element->id = insert_record("workshop_rubrics", $element)) {
+							error("Could not insert workshop element!");
+							}
 						}
 					}
 				break;
@@ -766,6 +821,35 @@
 					error("Could not insert workshop element!");
 					}
 				$grade = ($elements[$form->grade[0]]->maxscore + $form->grade[1]) * $workshop->grade / 100;
+				break;
+
+			case 4: // rubric grading (identical to accumulative grading)
+				// Insert all the elements that contain something
+				foreach ($form->grade as $key => $thegrade) {
+					unset($element);
+					$element->workshopid = $workshop->id;
+					$element->assessmentid = $assessment->id;
+					$element->elementno = $key;
+					$element->feedback   = $form->feedback[$key];
+					$element->grade = $thegrade;
+					if (!$element->id = insert_record("workshop_grades", $element)) {
+						error("Could not insert workshop element!");
+						}
+					}
+				// now work out the grade...
+				$rawgrade=0;
+				$totalweight=0;
+				foreach ($form->grade as $key => $grade) {
+					$maxscore = $elements[$key]->maxscore;
+					$weight = $WORKSHOP_EWEIGHTS[$elements[$key]->weight];
+					if ($weight > 0) { 
+						$totalweight += $weight;
+						}
+					$rawgrade += ($grade / $maxscore) * $weight;
+					}
+				$grade = $workshop->grade * ($rawgrade / $totalweight);
+				break;
+
 			} // end of switch
 			
 		// update the time of the assessment record (may be re-edited)...

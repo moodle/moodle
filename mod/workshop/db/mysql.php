@@ -45,6 +45,13 @@ function workshop_upgrade($oldversion) {
         ");
         
 		}
+		
+	if ($oldversion < 2003082200) {
+	
+		execute_sql(" ALTER TABLE `{$CFG->prefix}workshop_rubrics` CHANGE `elementid` `elementno` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+		
+		}
+		
     return true;
 }
 
