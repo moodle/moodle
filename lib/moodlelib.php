@@ -887,7 +887,6 @@ function calculate_user_dst_table() {
         if(empty($USER->dstoffsets)) {
             $USER->dstoffsets = array(0 => NULL);
             foreach($presetrecords as $presetrecord) {
-                print_object("calc changes");
                 $changes = dst_changes_for_year($presetrecord->year, $presetrecord);
                 
                 if($changes === NULL) {
