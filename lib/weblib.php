@@ -3785,7 +3785,7 @@ function page_id_and_class(&$getid, &$getclass) {
         if (substr($path, -1) == '/') {
             $path .= 'index';
         }
-        if (empty($path) || $path == '/index') {
+        if (empty($path) || $path == 'index') {
             $id    = 'site-index';
             $class = 'course';
         } else {
