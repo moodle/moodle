@@ -207,7 +207,7 @@
             echo '<td class="'.$colorsides.' right">';
 
             if ($displaysection == $section) {      // Show the zoom boxes
-                echo '<a href="view.php?id='.$course->id.'&amp;topic=all" title="'.$strshowalltopics.'">'.
+                echo '<a href="view.php?id='.$course->id.'&amp;topic=all#'.$section.'" title="'.$strshowalltopics.'">'.
                      '<img src="'.$CFG->pixpath.'/i/all.gif" height="25" width="16" border="0" /></a><br />';
             } else {
                 $strshowonlytopic = get_string('showonlytopic', '', $section);
@@ -217,18 +217,18 @@
 
             if (isediting($course->id)) {
                 if ($course->marker == $section) {  // Show the "light globe" on/off
-                    echo '<a href="view.php?id='.$course->id.'&amp;marker=0&amp;sesskey='.$USER->sesskey.'" title="'.$strmarkedthistopic.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;marker=0&amp;sesskey='.$USER->sesskey.'#'.$section.'" title="'.$strmarkedthistopic.'">'.
                          '<img src="'.$CFG->pixpath.'/i/marked.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
                 } else {
-                    echo '<a href="view.php?id='.$course->id.'&amp;marker='.$section.'&amp;sesskey='.$USER->sesskey.'" title="'.$strmarkthistopic.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;marker='.$section.'&amp;sesskey='.$USER->sesskey.'#'.$section.'" title="'.$strmarkthistopic.'">'.
                          '<img src="'.$CFG->pixpath.'/i/marker.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
                 }
 
                 if ($thissection->visible) {        // Show the hide/show eye
-                    echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.$USER->sesskey.'" title="'.$strtopichide.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.$USER->sesskey.'#'.$section.'" title="'.$strtopichide.'">'.
                          '<img src="'.$CFG->pixpath.'/i/hide.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
                 } else {
-                    echo '<a href="view.php?id='.$course->id.'&amp;show='.$section.'&amp;sesskey='.$USER->sesskey.'" title="'.$strtopichide.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;show='.$section.'&amp;sesskey='.$USER->sesskey.'#'.$section.'" title="'.$strtopichide.'">'.
                          '<img src="'.$CFG->pixpath.'/i/show.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
                 }
 
