@@ -21,7 +21,7 @@
 $version = 2002092700;   // The current version is a date (YYYYMMDDXX) where 
                          //    XX is a number that increments during the day
 
-$release = "1.0.5 beta 2";      // For humans only, not used for the upgrade process
+$release = "1.0.5";      // For humans only, not used for the upgrade process
 
 function upgrade_moodle($oldversion=0) {
 
