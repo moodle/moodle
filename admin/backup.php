@@ -73,7 +73,7 @@
         }
         if ($status) {
             //get courses
-            if ($courses = get_records("course")) {
+            if ($courses = get_records('course', '', '', '', 'id,shortname')) {
                 //For each course, we check (insert, update) the backup_course table
                 //with needed data
                 foreach ($courses as $course) {
