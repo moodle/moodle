@@ -1,4 +1,4 @@
-<?PHP  // $Id: lib.php,v 1.0 14 Aug 2003
+<?PHP  // $Id: lib.php,v 1.1 21 Aug 2003
 
 include_once("$CFG->dirroot/files/mimetypes.php");
 
@@ -2760,22 +2760,20 @@ function workshop_test_user_assessments($workshop, $user) {
 	// see if user has assessed required number of assessments of teachers submissions...
 	global $CFG;
 	
-	$result = false;
+	$result = true;
 	$n = 0;
 	$timenow =time();
-	if ($workshop->ntassessments) { // they have to pass some!
-		if ($submissions = workshop_get_teacher_submissions($workshop)) {
-			foreach ($submissions as $submission) {
-				if ($assessment = workshop_get_submission_assessment($submission, $user)) {
-					// ...the date stamp on the assessment should be in the past 
-					if ($assessment->timecreated < $timenow) {
-						$n++;
-						}
+	if ($submissions = workshop_get_teacher_submissions($workshop)) {
+		foreach ($submissions as $submission) {
+			if ($assessment = workshop_get_submission_assessment($submission, $user)) {
+				// ...the date stamp on the assessment should be in the past 
+				if ($assessment->timecreated < $timenow) {
+					$n++;
 					}
 				}
 			}
-		if ($n >= min($workshop->ntassessments, workshop_count_teacher_submissions($workshop))) {
-			$result = true; 
+		if ($n < min($workshop->ntassessments, workshop_count_teacher_submissions($workshop))) {
+			$result = false; 
 			}
 		}
 	return $result;

@@ -1,4 +1,4 @@
-<?PHP  // $Id: view.php, v1.0 14 Aug 2003
+<?PHP  // $Id: view.php, v1.1 21 Aug 2003
 
 /*************************************************
 	ACTIONS handled are:
@@ -287,8 +287,9 @@
 		echo format_text($workshop->description, $workshop->format);
 		print_simple_box_end();
 		echo "<br />";
-		// in Stage 1? - assess teacher's submissions ("satisfactory level" dropped 14/8/03)
-		if (!workshop_test_user_assessments($workshop, $USER)) {
+		// in Stage 1? - are there any teacher's submissions? and...
+		// ...has student assessed the required number of the teacher's submissions ("satisfactory level" dropped 14/8/03)
+		if ($workshop->ntassessments and (!workshop_test_user_assessments($workshop, $USER))) {
 			print_heading(get_string("pleaseassesstheseexamplesfromtheteacher", "workshop", $course->teacher));
 			workshop_list_teacher_submissions($workshop, $USER);
 			}
