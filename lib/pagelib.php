@@ -12,12 +12,19 @@
  * @package pages
  */
 
+
+// Start of dirty compatibility hack -- this will be here for a couple of weeks
+if(record_exists('block_instance', 'pagetype', 'course')) {
+    execute_sql('UPDATE '.$GLOBALS['CFG']->prefix.'block_instance SET pagetype = \'course-view\' WHERE pagetype = \'course\'', false);
+}
+// End of dirty compatibility hack -- remove this before 1.5 goes gold
+
 /// Constants
 
 /**
  * Definition of course page type.
  */
-define('MOODLE_PAGE_COURSE',    'course');
+define('PAGE_COURSE_VIEW', 'course-view');
 
 /**
  * Factory function page_create_object(). Called with a pagetype identifier and possibly with
@@ -59,7 +66,7 @@ function page_map_class($type, $classname = NULL) {
     
     if ($mappings === NULL) {
         $mappings = array(
-            MOODLE_PAGE_COURSE => 'page_course'
+            PAGE_COURSE_VIEW => 'page_course'
         );
     }
 
@@ -385,11 +392,11 @@ class page_course extends page_base {
     // This is hardwired here so the factory function page_create_object() can be sure there was no mistake.
     // Also, it doubles as a way to let others inquire about our type.
     function get_type() {
-        return MOODLE_PAGE_COURSE;
+        return PAGE_COURSE_VIEW;
     }
 
-    // This is like the "category" of a page of this "type". For example, if the type is MOODLE_PAGE_COURSE
-    // the format_name is the actual name of the course format. If the type were MOODLE_PAGE_ACTIVITY, then
+    // This is like the "category" of a page of this "type". For example, if the type is PAGE_COURSE_VIEW
+    // the format_name is the actual name of the course format. If the type were PAGE_ACTIVITY_VIEW, then
     // the format_name might be that activity's name etc.
     function get_format_name() {
         $this->init_full();

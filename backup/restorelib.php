@@ -590,12 +590,12 @@
 
         $status = true;
 
-        delete_records('block_instance', 'pageid', $restore->course_id, 'pagetype', MOODLE_PAGE_COURSE);
+        delete_records('block_instance', 'pageid', $restore->course_id, 'pagetype', PAGE_COURSE_VIEW);
         if (empty($backup_block_format)) {     // This is a backup from Moodle < 1.5
             if (empty($blockinfo)) {
                 echo ' (pre 1.3)';                                 //debug
                 // Looks like it's from Moodle < 1.3. Let's give the course default blocks...
-                $newpage = page_create_object(MOODLE_PAGE_COURSE, $restore->course_id);
+                $newpage = page_create_object(PAGE_COURSE_VIEW, $restore->course_id);
                 blocks_repopulate_page($newpage);
             } else {
                 echo ' (1.3-1.4)';                                 //debug
@@ -622,7 +622,7 @@
                         }
                         $blockinstance->blockid  = $blockrecords[$blockname]->id;
                         $blockinstance->pageid   = $restore->course_id;
-                        $blockinstance->pagetype = MOODLE_PAGE_COURSE;
+                        $blockinstance->pagetype = PAGE_COURSE_VIEW;
                         $blockinstance->position = $blockposition;
                         $blockinstance->weight   = $blockweight;
                         if(!$status = insert_record('block_instance', $blockinstance)) {

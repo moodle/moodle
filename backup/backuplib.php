@@ -616,7 +616,7 @@
         // Read all of the block table
         $blocks = blocks_get_record();
 
-        $page = page_create_object(MOODLE_PAGE_COURSE, $preferences->backup_course);
+        $page = page_create_object(PAGE_COURSE_VIEW, $preferences->backup_course);
 
         if ($instances = blocks_get_by_page($page)) {
             //Blocks open tag

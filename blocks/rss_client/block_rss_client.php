@@ -70,7 +70,7 @@ class block_rss_client extends block_base {
 
         $isteacher = false;
         $courseid = '';
-        if ($this->instance->pagetype == MOODLE_PAGE_COURSE) {
+        if ($this->instance->pagetype == PAGE_COURSE_VIEW) {
             $isteacher = isteacher($this->instance->pageid);
             $courseid = $this->instance->pageid;
         }

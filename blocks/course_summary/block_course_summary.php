@@ -8,7 +8,7 @@ class block_course_summary extends block_base {
     }
 
     function specialization() {
-        if($this->instance->pagetype == MOODLE_PAGE_COURSE && $this->instance->pageid != SITEID) {
+        if($this->instance->pagetype == PAGE_COURSE_VIEW && $this->instance->pageid != SITEID) {
             $this->title = get_string('coursesummary', 'block_course_summary');
         }
     }

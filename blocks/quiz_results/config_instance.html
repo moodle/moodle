@@ -1,5 +1,5 @@
 <table cellpadding="9" cellspacing="0">
-<?php if($this->instance->pagetype == MOODLE_PAGE_COURSE) { ?>
+<?php if($this->instance->pagetype == PAGE_COURSE_VIEW) { ?>
 <tr valign="top">
     <td align="right">
         <?php print_string('config_select_quiz', 'block_quiz_results') ?>
@@ -21,7 +21,7 @@
         ?>
     </td>
 </tr>
-<?php } // end if($this->instance->pagetype == MOODLE_PAGE_COURSE) ?>
+<?php } // end if($this->instance->pagetype == PAGE_COURSE_VIEW) ?>
 <tr valign="top">
     <td align="right">
         <?php print_string('config_show_best', 'block_quiz_results') ?>

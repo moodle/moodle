@@ -26,7 +26,7 @@ class block_quiz_results extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
 
-        if($this->instance->pagetype == MOODLE_PAGE_COURSE) {
+        if($this->instance->pagetype == PAGE_COURSE_VIEW) {
             // We need to see if we are monitoring a quiz 
             $quizid   = empty($this->config->quizid) ? 0 : $this->config->quizid;
             $courseid = $this->instance->pageid;

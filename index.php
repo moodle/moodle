@@ -56,7 +56,7 @@
         $langmenu = popup_form ($CFG->wwwroot .'/index.php?lang=', $langs, 'chooselang', $currlang, '', '', '', true);
     }
 
-    $PAGE = page_create_object(MOODLE_PAGE_COURSE, SITEID);
+    $PAGE = page_create_object(PAGE_COURSE_VIEW, SITEID);
 
     $editing = $PAGE->user_is_editing();
 
