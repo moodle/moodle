@@ -666,13 +666,13 @@ function clean_text($text, $format=FORMAT_MOODLE) {
         case FORMAT_MOODLE:
         case FORMAT_HTML:
         case FORMAT_WIKI:
-        /// Remove javascript: label
+        /// Remove tags that are not allowed
             $text = strip_tags($text, $ALLOWED_TAGS);
-        /// Remove javascript/VBScript
-            $text = str_ireplace("javascript:", "xxx", $text);           
+        /// Munge javascript: label
+            $text = str_ireplace("javascript:", "Xjavascript:", $text);           
         /// Remove script events
-            $text = eregi_replace("([^a-z])language([[:space:]]*)=", "xxx", $text);    
-            $text = eregi_replace("([^a-z])on([a-z]+)([[:space:]]*)=", "xxx", $text);  
+            $text = eregi_replace("([^a-z])language([[:space:]]*)=", "\\1Xlanguage=", $text);    
+            $text = eregi_replace("([^a-z])on([a-z]+)([[:space:]]*)=", "\\1Xon\\2=", $text);  
             return $text;
 
         case FORMAT_PLAIN:
