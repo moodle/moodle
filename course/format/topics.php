@@ -136,9 +136,14 @@
     while ($section <= $course->numsections) {
 
         if (!empty($displaysection) and $displaysection != $section) {
-            $strsummary= "";
             if (!empty($sections[$section])) {
-                $strsummary = " - ".substr($sections[$section]->summary, 0, 60);
+                if (strlen($sections[$section]->summary < 57)) {
+                    $strsummary = " - ".$sections[$section]->summary;
+                } else {
+                    $strsummary = " - ".substr($sections[$section]->summary, 0, 60)."...";
+                }
+            } else {
+                $strsummary = "";
             }
             $sectionmenu["topic=$section"] = "$section$strsummary";
             $section++;
