@@ -560,65 +560,69 @@ function calendar_top_controls($type, $data) {
 function calendar_filter_controls($type) {
     global $CFG, $SESSION;
 
-    $content = '';
+    $groupevents = true;
     switch($type) {
-        // A quick check reveals this is not used at all
-        // case 'upcoming':
-        //     if(!isset($getvars)) {
-        //         global $day, $mon, $yr;
-        //         $getvars = 'from=upcoming&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr;
-        //     }
-
         case 'event':
-            if(!isset($getvars)) {
-                global $day, $mon, $yr;
-                $getvars = 'from=event&amp;id='.$_GET['id'];
-            }
-
+            global $day, $mon, $yr;
+            $getvars = 'from=event&amp;id='.$_GET['id'];
+        break;
         case 'day':
-            if(!isset($getvars)) {
-                global $day, $mon, $yr;
-                $getvars = 'from=day&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr;
-            }
-
+            global $day, $mon, $yr;
+            $getvars = 'from=day&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr;
+        break;
         case 'course':
-            if(!isset($getvars)) {
-                global $course;
-                $getvars = 'from=course&amp;id='.$course->id;
+            global $course;
+            $getvars = 'from=course&amp;id='.$course->id;
+            if($course->groupmode == NOGROUPS && $course->groupmodeforce) {
+                $groupevents = false;
             }
-
-            $content .= '<table class="cal_controls" style="width: 98%;">';
-
-            $content .= '<tr>';
-            if($SESSION->cal_show_global) {
-                $content .= '<td class="cal_event_global" style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showglobal&amp;'.$getvars.'" title="'.get_string('tt_hideglobal', 'calendar').'">'.get_string('globalevents', 'calendar').'</a></td>'."\n";
-            }
-            else {
-                $content .= '<td style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showglobal&amp;'.$getvars.'" title="'.get_string('tt_showglobal', 'calendar').'">'.get_string('globalevents', 'calendar').'</a></td>'."\n";
-            }
-            if($SESSION->cal_show_course) {
-                $content .= '<td class="cal_event_course" style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showcourses&amp;'.$getvars.'" title="'.get_string('tt_hidecourse', 'calendar').'">'.get_string('courseevents', 'calendar').'</a></td>'."\n";
-            }
-            else {
-                $content .= '<td style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showcourses&amp;'.$getvars.'" title="'.get_string('tt_showcourse', 'calendar').'">'.get_string('courseevents', 'calendar').'</a></td>'."\n";
-            }
-            $content .= "</tr>\n";
-            $content .= '<tr>';
-            if($SESSION->cal_show_groups) {
-                $content .= '<td class="cal_event_group" style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showgroups&amp;'.$getvars.'" title="'.get_string('tt_hidegroups', 'calendar').'">'.get_string('groupevents', 'calendar').'</a></td>'."\n";
-            }
-            else {
-                $content .= '<td style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showgroups&amp;'.$getvars.'" title="'.get_string('clickshowgroups', 'calendar').'">'.get_string('groupevents', 'calendar').'</a></td>'."\n";
-            }
-            if($SESSION->cal_show_user) {
-                $content .= '<td class="cal_event_user" style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showuser&amp;'.$getvars.'" title="'.get_string('tt_hideuser', 'calendar').'">'.get_string('userevents', 'calendar').'</a></td>'."\n";
-            }
-            else {
-                $content .= '<td style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showuser&amp;'.$getvars.'" title="'.get_string('clickshowuser', 'calendar').'">'.get_string('userevents', 'calendar').'</a></td>'."\n";
-            }
-            $content .= "</tr>\n</table>\n";
         break;
     }
+
+    $content = '<table class="cal_controls" style="width: 98%;">';
+
+    $content .= '<tr>';
+    if($SESSION->cal_show_global) {
+        $content .= '<td class="cal_event_global" style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showglobal&amp;'.$getvars.'" title="'.get_string('tt_hideglobal', 'calendar').'">'.get_string('globalevents', 'calendar').'</a></td>'."\n";
+    }
+    else {
+        $content .= '<td style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showglobal&amp;'.$getvars.'" title="'.get_string('tt_showglobal', 'calendar').'">'.get_string('globalevents', 'calendar').'</a></td>'."\n";
+    }
+    if($SESSION->cal_show_course) {
+        $content .= '<td class="cal_event_course" style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showcourses&amp;'.$getvars.'" title="'.get_string('tt_hidecourse', 'calendar').'">'.get_string('courseevents', 'calendar').'</a></td>'."\n";
+    }
+    else {
+        $content .= '<td style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showcourses&amp;'.$getvars.'" title="'.get_string('tt_showcourse', 'calendar').'">'.get_string('courseevents', 'calendar').'</a></td>'."\n";
+    }
+    $content .= "</tr>\n";
+    $content .= '<tr>';
+
+    if($groupevents) {
+        // This course MIGHT have group events defined, so show the filter
+        if($SESSION->cal_show_groups) {
+            $content .= '<td class="cal_event_group" style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showgroups&amp;'.$getvars.'" title="'.get_string('tt_hidegroups', 'calendar').'">'.get_string('groupevents', 'calendar').'</a></td>'."\n";
+        }
+        else {
+            $content .= '<td style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showgroups&amp;'.$getvars.'" title="'.get_string('clickshowgroups', 'calendar').'">'.get_string('groupevents', 'calendar').'</a></td>'."\n";
+        }
+        if($SESSION->cal_show_user) {
+            $content .= '<td class="cal_event_user" style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showuser&amp;'.$getvars.'" title="'.get_string('tt_hideuser', 'calendar').'">'.get_string('userevents', 'calendar').'</a></td>'."\n";
+        }
+        else {
+            $content .= '<td style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showuser&amp;'.$getvars.'" title="'.get_string('clickshowuser', 'calendar').'">'.get_string('userevents', 'calendar').'</a></td>'."\n";
+        }
+    }
+    else {
+        // This course CANNOT have group events, so lose the filter
+        if($SESSION->cal_show_user) {
+            $content .= '<td class="cal_event_user" style="width: 8px;"></td><td colspan="3"><a href="'.CALENDAR_URL.'set.php?var=showuser&amp;'.$getvars.'" title="'.get_string('tt_hideuser', 'calendar').'">'.get_string('userevents', 'calendar').'</a></td>'."\n";
+        }
+        else {
+            $content .= '<td style="width: 8px;"></td><td colspan="3"><a href="'.CALENDAR_URL.'set.php?var=showuser&amp;'.$getvars.'" title="'.get_string('clickshowuser', 'calendar').'">'.get_string('userevents', 'calendar').'</a></td>'."\n";
+        }
+    }
+    $content .= "</tr>\n</table>\n";
+
     return $content;
 }
 
