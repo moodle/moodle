@@ -34,9 +34,7 @@ $string['newwidth'] = 'Default window width (in pixels)';
 $string['newwindow'] = 'New window';
 $string['newwindowopen'] = 'Display this resource in a new popup window';
 $string['note'] = 'Note';
-$string['notefile'] = 'To upload more files into the course (so they appear in this list) use the 
-
-<A HREF="$a">File Manager</A>.';
+$string['notefile'] = 'To upload more files into the course (so they appear in this list) use the <a href="$a">File Manager</a>.';
 $string['notypechosen'] = 'You need to choose a type.  Use your back button to go back and retry.';
 $string['resourcetype'] = 'Type of resource';
 $string['resourcetype1'] = 'Reference';
