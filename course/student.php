@@ -35,11 +35,18 @@
     $strsearchresults  = get_string("searchresults");
     $strsearchagain   = get_string("searchagain");
     $strtoomanytoshow   = get_string("toomanytoshow");
+    $strstudents   = get_string("students");
 
     if ($search) {
         $searchstring = $strsearchagain;
     } else {
         $searchstring = $strsearch;
+    }
+
+    if ($course->students != $strstudents) {
+        $parastudents = " ($course->students)";
+    } else {
+        $parastudents = "";
     }
 
 	print_header("$course->shortname: $strassignstudents", 
@@ -67,7 +74,7 @@
     if (empty($add) and empty($remove)) {
         $note = get_string("assignstudentsnote");
         if ($course->password) {
-            $note .= "<p>".get_string("assignstudentspass", "", $course->password);
+            $note .= "<p>".get_string("assignstudentspass", "", "<a href=\"edit.php?id=$course->id\">$course->password</a>");
         }
         print_simple_box($note, "center", "50%");
     }
@@ -78,7 +85,7 @@
 /// Print the lists of existing and potential students
 
     echo "<table cellpadding=2 cellspacing=10 align=center>";
-    echo "<tr><th width=50%>$strexistingstudents</th><th width=50%>$strpotentialstudents</th></tr>";
+    echo "<tr><th width=50%>$strexistingstudents$parastudents</th><th width=50%>$strpotentialstudents</th></tr>";
     echo "<tr><td width=50% nowrap valign=top>";
 
 /// First, show existing students for this course
