@@ -64,11 +64,11 @@
     calendar_session_vars();
     $now = usergetdate(time());
     $nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;', $now['mday'], $now['mon'], $now['year']);
+    $day = intval($now['mday']);
+    $mon = intval($now['mon']);
+    $yr = intval($now['year']);
 
-    // Minor hack to default to FORMAT_MOODLE and no html editor for now
-    // maybe in the future...
-
-    if ($usehtmleditor = can_use_richtext_editor() && false) {
+    if ($usehtmleditor = can_use_richtext_editor()) {
         $defaultformat = FORMAT_HTML;
     } else {
         $defaultformat = FORMAT_MOODLE;
@@ -99,8 +99,7 @@
             if($form = data_submitted()) {
 
                 $form->name = strip_tags($form->name);  // Strip all tags
-                $form->description = strip_tags($form->description);  // Strip all tags
-                //$form->description = clean_text($form->description , $form->format);   // Clean up any bad tags
+                $form->description = clean_text($form->description , $form->format);   // Clean up any bad tags
 
                 $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
                 if($form->duration == 1) {
@@ -137,8 +136,7 @@
             if(!empty($form) && $form->type == 'defined') {
 
                 $form->name = strip_tags($form->name);  // Strip all tags
-                $form->description = strip_tags($form->description);  // Strip all tags
-                //$form->description = clean_text($form->description , $form->format);   // Clean up any bad tags
+                $form->description = clean_text($form->description , $form->format);   // Clean up any bad tags
 
                 $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
                 if($form->duration == 1) {
@@ -189,53 +187,7 @@
 
     /// Layout the whole page as three big columns.
     echo '<table border="0" cellpadding="3" cellspacing="0" width="100%"><tr valign="top">';
-
-    $sections = get_all_sections($site->id);
-
-    if ($site->newsitems > 0 or $sections[0]->sequence or isediting($site->id) or isadmin()) {
-        echo "<td width=\"$side\" valign='top nowrap'>";
-        $firstcolumn=true;
-
-        if ($sections[0]->sequence or isediting($site->id)) {
-            get_all_mods($site->id, $mods, $modnames, $modnamesplural, $modnamesused);
-            print_section_block(get_string("mainmenu"), $site, $sections[0],
-                                 $mods, $modnames, $modnamesused, true, $side);
-        }
-
-    print_courses_sideblock(0, $side);
-        if ($site->newsitems) {
-            if ($news = forum_get_course_forum($site->id, "news")) {
-                print_side_block_start(get_string("latestnews"), $side, "sideblocklatestnews");
-                echo "<font size=\"-2\">";
-                forum_print_latest_discussions($news->id, $site->newsitems, "minimal", "", false);
-                echo "</font>";
-                print_side_block_end();
-            }
-        }
-        print_spacer(1,$side);
-    }
-
-    if (iscreator()) {
-        if (!$firstcolumn) {
-            echo "<td width=\"$side\" valign=top nowrap>";
-            $firstcolumn=true;
-        }
-        print_admin_links($site->id, $side);
-    }
-
-    if ($firstcolumn) {
-        echo '</td>';
-        echo '<td valign="top\">';
-    }
-    else {
-        echo '<td valign="top">';
-    }
-
-    $text = '<div style="float: left;">'.get_string('calendarheading', 'calendar', strip_tags($site->shortname)).'</div><div style="float: right;">';
-    $text.= calendar_get_preferences_menu();
-    $text.= '</div>';
-    print_heading_block($text);
-    print_spacer(8, 1);
+    echo '<td valign="top" width="100%">';
 
     switch($_REQUEST['action']) {
         case 'delete':
@@ -423,9 +375,29 @@
             print_side_block_end();
         break;
     }
+    echo '</td>';
 
+    // START: Last column (3-month display)
+    echo '<td valign="top" width="'.$side.'">';
+    print_side_block_start(get_string('monthlyview', 'calendar'), '', 'sideblockmain');
+    list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
+    list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
+    echo calendar_filter_controls($_GET['view']);
+    echo '<p>';
+    echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
+    echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
+    echo '</p><p>';
+    echo calendar_top_controls('display', array('m' => $mon, 'y' => $yr));
+    echo calendar_get_mini($courses, $groups, $users, $mon, $yr);
+    echo '</p><p>';
+    echo calendar_top_controls('display', array('m' => $nextmon, 'y' => $nextyr));
+    echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
+    echo '</p>';
+    print_side_block_end();
+    print_spacer(1, $side);
+    echo '</td>';
 
-    echo '</td></table>';
+    echo '</tr></table>';
 
     if ($usehtmleditor) {
         use_html_editor();
