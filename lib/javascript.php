@@ -15,11 +15,15 @@ function fillmessagebox(text) {
   document.form.message.value = text;
 }
 
-function openpopup(url,name,height,width) {
+function openpopup(url,name,options,fullscreen) {
   fullurl = "<?php echo $CFG->wwwroot ?>" + url;
-  options = "menubar=0,location=0,scrollbars,resizable,width="+width+",height="+height;
-  windowobj = window.open(fullurl,name, options);
+  windowobj = window.open(fullurl,name,options);
+  if (fullscreen) {
+     windowobj.moveTo(0,0);
+     windowobj.resizeTo(screen.availWidth,screen.availHeight); 
+  }
   windowobj.focus();
+  return false;
 }
 
 function copyrichtext(textname) { 
@@ -43,13 +47,38 @@ function inserttext(text) {
     }
     echo "  text = ' ' + text + ' ';\n";
     echo "  if ( $insertfield.createTextRange && $insertfield.caretPos) {\n";
-    echo "      var caretPos = $insertfield.caretPos;\n";
-    echo "      caretPos.text = caretPos.text.charAt(caretPos.text.length - 1) == ' ' ? text + ' ' : text;\n";
+    echo "    var caretPos = $insertfield.caretPos;\n";
+    echo "    caretPos.text = caretPos.text.charAt(caretPos.text.length - 1) == ' ' ? text + ' ' : text;\n";
     echo "  } else {\n";
-    echo "      $insertfield.value  += text;\n";
+    echo "    $insertfield.value  += text;\n";
     echo "  }\n";
     echo "  $insertfield.focus();\n";
 ?>
+}
+
+function lockoptions(form, master, subitems) {
+  // subitems is an array of names of sub items
+  // requires that each item in subitems has a 
+  // companion hidden item in the form with the 
+  // same name but prefixed by "h"
+  if (eval("document."+form+"."+master+".checked")) {
+    for (i=0; i<subitems.length; i++) {
+      unlockoption(form, subitems[i]);
+    }
+  } else {
+    for (i=0; i<subitems.length; i++) {
+      lockoption(form, subitems[i]);
+    }
+  }
+  return(true);
+}
+function lockoption(form,item) {
+  eval("document."+form+"."+item+".disabled=true");/* IE thing */
+  eval("document."+form+".h"+item+".value=1");
+}
+function unlockoption(form,item) {
+  eval("document."+form+"."+item+".disabled=false");/* IE thing */
+  eval("document."+form+".h"+item+".value=0");
 }
 
 <?php if ($focus) { echo "function setfocus() { document.$focus.focus() }\n"; } ?>

@@ -438,6 +438,7 @@ function get_array_of_activities($courseid) {
 //  section - the number of the section (eg week or topic)
 //  name - the name of the instance
 //  visible - is the instance visible or not
+//  extra - contains extra string to include in any link
 
     $mod = array();
 
@@ -458,6 +459,19 @@ function get_array_of_activities($courseid) {
                    $mod[$seq]->section = $section->section;
                    $mod[$seq]->name = urlencode(get_field($rawmods[$seq]->modname, "name", "id", $rawmods[$seq]->instance));
                    $mod[$seq]->visible = $rawmods[$seq]->visible;
+                   $mod[$seq]->extra = "";
+                   
+                   // This part is an ugly hack that doesn't belong here//
+                   if ($mod[$seq]->mod == "resource") {
+                       if ($resource = get_record("resource", "id", $rawmods[$seq]->instance)) {
+                           if ($resource->type == 5 and $resource->alltext) {
+                               $mod[$seq]->extra = urlencode("onClick=\"return ".
+                                                   "openpopup('/mod/resource/view.php?id=".
+                                                   $mod[$seq]->cm.
+                                                   "','resource','$resource->alltext');\"");
+                           }
+                       }
+                   }
                }
             }
         }
@@ -650,10 +664,15 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                          " href=\"mod.php?moveto=$mod->id\">$strmovehere</a></font><br />\n";
                 }
                 $instancename = urldecode($modinfo[$modnumber]->name);
+                if (!empty($modinfo[$modnumber]->extra)) {
+                    $extra = urldecode($modinfo[$modnumber]->extra);
+                } else {
+                    $extra = "";
+                }
                 $link_css = $mod->visible ? "" : " class=\"dimmed\" ";
                 echo "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\"".
                      " height=16 width=16 alt=\"$mod->modfullname\">".
-                     " <font size=2><a title=\"$mod->modfullname\" $link_css ".
+                     " <font size=2><a title=\"$mod->modfullname\" $link_css $extra".
                      " href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a></font>";
             }
             if (isediting($course->id)) {

@@ -73,7 +73,134 @@
                 break;
 
             case WEBPAGE:
+                $strexampleurl = get_string("exampleurl", "resource");
+                ?>
+                <tr valign="top">
+                    <td align="right" nowrap>
+                        <p><b><?=$strtypename?>:</b></p>
+                    </td>
+                    <td>
+                        <input name="reference" size="100" value="<? p($form->reference) ?>">
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td align="right" nowrap>&nbsp;
+                    </td>
+                    <td>
+                        <p><?php echo "($strexample) $strexampleurl" ?></p>
+                    </td>
+                </tr>
+
+                <?
+                break;
+
             case WEBLINK:
+
+                $strexampleurl    = get_string("exampleurl", "resource");
+                $strnewwindow     = get_string("newwindow", "resource");
+                $strnewwindowopen = get_string("newwindowopen", "resource");
+
+                foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
+                    $stringname = "str$optionname";
+                    $$stringname = get_string("new$optionname", "resource");
+                    $window->$optionname = "";
+                    $jsoption[] = "\"$optionname\"";
+                }
+                $alljsoptions = implode(",", $jsoption);
+
+                if ($form->instance) {     // Re-editing
+                    if (!$form->alltext) {
+                        $newwindow = "";
+                    } else {
+                        $newwindow = "checked";
+                        $rawoptions = explode(',', $form->alltext); 
+                        foreach ($rawoptions as $rawoption) {
+                            $option = explode('=', trim($rawoption));
+                            $optionname = $option[0];
+                            $optionvalue = $option[1];
+                            if ($optionname == "height" or $optionname == "width") {
+                                $window->$optionname = $optionvalue;
+                            } else if ($optionvalue) {
+                                $window->$optionname = "checked";
+                            }
+                        }
+                    }
+                } else {
+                    $newwindow = "checked";
+                    $window->resizable = "checked";
+                    $window->scrollbars = "checked";
+                    $window->status = "checked";
+                    $window->location = "checked";
+                    $window->width = 620;
+                    $window->height = 450;
+                }
+
+                echo $alloptions;
+
+                ?>
+
+                <tr valign="top">
+                    <td align="right" nowrap>
+                        <p><b><?php p($strtypename) ?>:</b></p>
+                    </td>
+                    <td>
+                        <input name="reference" size="100" value="<?php p($form->reference) ?>">
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td align="right" nowrap>&nbsp;
+                    </td>
+                    <td>
+                        <p><?php echo "($strexample) $strexampleurl" ?></p>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td align="right" nowrap>
+                        <p><b><?php p($strnewwindow) ?></b></p>
+                    </td>
+                    <td>
+                      <script>
+                          var subitems = [<?php echo $alljsoptions; ?>];
+                      </script>
+                      <input name="setnewwindow" type=hidden value=1>
+                      <input name="newwindow" type=checkbox value=1 <?php p($newwindow) ?> 
+                        onclick="return lockoptions('theform','newwindow', subitems)"> 
+                      <?php p($strnewwindowopen) ?>
+                    <ul>
+                      <?php
+                          foreach ($window as $name => $value) {
+                              if ($name == "height" or $name == "width") {
+                                  continue;
+                              }
+                              echo "<input name=\"h$name\" type=hidden value=0>";
+                              echo "<input name=\"$name\" type=checkbox value=1 ".$window->$name.">";
+                              $stringname = "str$name";
+                              echo $$stringname."<br />";
+                          }
+                      ?>
+
+                      <input name="hwidth" type=hidden value=0>
+                      <input name="width" type=text size=4 value="<?php p($window->width) ?>">
+                        <?php p($strwidth) ?><br />
+
+                      <input name="hheight" type=hidden value=0>
+                      <input name="height" type=text size=4 value="<?php p($window->height) ?>">
+                        <?php p($strheight) ?><br />
+                      <?php
+                        if (!$newwindow) {
+                            echo "<script>";
+                            echo "lockoptions('theform','newwindow', subitems);";
+                            echo "</script>";
+                        }
+                      ?>
+                    </ul>
+                    </p>
+                    </td>
+                </tr>
+
+                <?
+                break;
+
             case PROGRAM:
                 $strexampleurl = get_string("exampleurl", "resource");
                 ?>
@@ -86,12 +213,10 @@
                     </td>
                 </tr>
                 <tr valign="top">
-                    <td align="right" nowrap>
-                        <p><b>(<?=$strexample?>)</b></p>
+                    <td align="right" nowrap>&nbsp;
                     </td>
                     <td>
-                    <p><?=$strexampleurl?>
-                    </p>
+                        <p><?php echo "($strexample) $strexampleurl" ?></p>
                     </td>
                 </tr>
 

@@ -20,6 +20,8 @@ $RESOURCE_TYPE = array (REFERENCE    => get_string("resourcetype1", "resource"),
 
 $RESOURCE_FRAME_SIZE = 130;
 
+$RESOURCE_WINDOW_OPTIONS = array("resizable", "scrollbars", "directories", "location", 
+                                 "menubar", "toolbar", "status", "height", "width");
 
 function resource_add_instance($resource) {
 // Given an object containing all the necessary data, 
@@ -27,7 +29,19 @@ function resource_add_instance($resource) {
 // will create a new instance and return the id number 
 // of the new instance.
 
+    global $RESOURCE_WINDOW_OPTIONS;
+
     $resource->timemodified = time();
+
+    if (isset($resource->setnewwindow)) {
+        $optionlist = array();
+        foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
+            if (isset($resource->$option)) {
+                $optionlist[] = $option."=".$resource->$option;
+            }
+        }
+        $resource->alltext = implode(',', $optionlist);
+    }
 
     return insert_record("resource", $resource);
 }
@@ -38,8 +52,20 @@ function resource_update_instance($resource) {
 // (defined by the form in mod.html) this function 
 // will update an existing instance with new data.
 
+    global $RESOURCE_WINDOW_OPTIONS;
+
     $resource->id = $resource->instance;
     $resource->timemodified = time();
+
+    if (isset($resource->setnewwindow)) {
+        $optionlist = array();
+        foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
+            if (isset($resource->$option)) {
+                $optionlist[] = $option."=".$resource->$option;
+            }
+        }
+        $resource->alltext = implode(',', $optionlist);
+    }
 
     return update_record("resource", $resource);
 }

@@ -247,7 +247,8 @@ function frmchecked(&$var, $true_value = "checked", $false_value = "") {
 }
 
 
-function link_to_popup_window ($url, $name="popup", $linkname="click here", $height=400, $width=500, $title="Popup window") {
+function link_to_popup_window ($url, $name="popup", $linkname="click here", 
+                               $height=400, $width=500, $title="Popup window") {
 /// This will create a HTML link that will work on both 
 /// Javascript and non-javascript browsers.
 /// Relies on the Javascript function openpopup in javascript.php
@@ -255,21 +256,29 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here", $hei
 
     global $CFG;
 
-    echo "\n<script language=\"javascript\">";
-    echo "\n<!--";
-    echo "\ndocument.write('<a title=\"".addslashes($title)."\" href=javascript:openpopup(\"$url\",\"$name\",\"$height\",\"$width\") >".addslashes($linkname)."</a>');";
-    echo "\n//-->";
-    echo "\n</script>";
-    echo "\n<noscript>\n<a target=\"$name\" title=\"$title\" href=\"$CFG->wwwroot/$url\">$linkname</a>\n</noscript>\n";
+    $options = "menubar=0,location=0,scrollbars,resizable,width=$width,height=$height";
+    $fullscreen = 0;
 
+    echo "<a target=\"$name\" title=\"$title\" href=\"$CFG->wwwroot/$url\" ".
+         "onClick=\"return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>\n";
 }
+
 
 function close_window_button() {
 /// Prints a simple button to close a window
 
-    echo "<form><center>";
-    echo "<input type=button onClick=\"self.close();\" value=\"".get_string("closewindow")."\">";
-    echo "</center></form>";
+    echo "<center>\n";
+    echo "<script>\n";
+    echo "<!--\n";
+    echo "document.write('<form>');\n";
+    echo "document.write('<input type=button onClick=\"self.close();\" value=\"".get_string("closewindow")."\">');\n";
+    echo "document.write('</form>');\n";
+    echo "-->\n";
+    echo "</script>\n";
+    echo "<noscript>\n";
+    echo "<a href=\"".$_SERVER['HTTP_REFERER']."\"><---</a>\n";
+    echo "</noscript>\n";
+    echo "</center>\n";
 }
 
 
