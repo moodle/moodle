@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.3.2 (2004052502)
+      // scorm.php - created with Moodle 1.4 (2004083100)
 
 
 $string['asset'] = 'Tillgång';
@@ -23,7 +23,7 @@ $string['coursestruct'] = 'Struktur på kurs';
 $string['datadir'] = 'Fel i filsystemet: det går inte att skapa en datakatalog för kursen';
 $string['domxml'] = 'DOMXML externt bibliotek';
 $string['entercourse'] = 'Mata in en SCORM-kurs';
-$string['errorlogs'] = 'Log över fel';
+$string['errorlogs'] = 'Logg över fel';
 $string['failed'] = 'Det fungerade inte';
 $string['found'] = 'Manifestet hittades';
 $string['gradeaverage'] = 'Medelbetyg/omdöme';

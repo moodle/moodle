@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.3.2 (2004052502)
+      // install.php - created with Moodle 1.4 (2004083100)
 
 
 $string['admindirerror'] = 'Den katalog för administration som är angiven är felaktig';
@@ -19,8 +19,7 @@ $string['databasesettings'] = 'Nu behöver Du konfigurera den databas där det mes
 <b>Namn:</b> namn på databasen, t ex moodle<br />
 <b>Användare:</b> Ditt användarnamn för tillgång till databasen<br />
 <b>Lösenord:</b> Ditt lösenord för tillgång till databasen<br />
-<b>Prefix för tabeller:</b> ett valfritt prefix som kopplas till alla namn på tabeller
-';
+<b>Prefix för tabeller:</b> ett valfritt prefix som kopplas till alla namn på tabeller';
 $string['dataroot'] = 'katalog för data';
 $string['datarooterror'] = 'Den \"katalog för data\" som Du har angivit gick inte att hitta eller skapa. Du får antingen korrigera sökvägen eller skapa katalogen manuellt.';
 $string['dbconnectionerror'] = 'Det gick inte att ansluta till den databas som Du har angivit. Var snäll och kontrollera inställningarna till Din databas.';
@@ -38,8 +37,7 @@ Ta inte inte med något avslutande vänsterslutat snedstreck \"/\".</p>
 Ange den fullständiga sökvägen till den här installationen. Kontrollera att det stämmer med sådant som är skiftlägeskänsligt (stor/liten bokstav).
 </p>
 <p><b>Katalogen för data</b>
-Du behöver ett utrymme där Moodle kan spara uppladdade filer. Till denna katalog bör det finnas läs- OCH SKRIV-rättigheter för användaren av webbservern (vanligtvis \'nobody\' eller  \'apache\') men katalogen bör inte vara tillgänglig direkt via webben. 
-';
+Du behöver ett utrymme där Moodle kan spara uppladdade filer. Till denna katalog bör det finnas läs- OCH SKRIV-rättigheter för användaren av webbservern (vanligtvis \'nobody\' eller  \'apache\') men katalogen bör inte vara tillgänglig direkt via webben. ';
 $string['dirroot'] = 'Katalogen för Moodle';
 $string['dirrooterror'] = 'Inställningarna för \"Katalogen för Moodle\" tycks vara felaktiga - det går inte att hitta någon installation av Moodle där. Värdet här nedan har återställts.';
 $string['download'] = 'Ladda ner';
@@ -71,8 +69,8 @@ $string['memorylimithelp'] = '<p>Minnesbegränsningen för PHP på Din server är f 
 <li>Om Du har tillgång till Din php.ini-fil så kan Du ändra inställningen för <b>memory limit</b> till något i stil med 16M. Om Du inte har tillgång själv så kan Du kanske be Din systemadministratör att göra detta åt Dig.</li>
 <li>På en del PHP-servrar kan Du skapa en .htaccess-fil i Moodle-katalogen som innehåller den här raden: <blockquote>php_value memory_limit 16M</blockquote>.<br />Detta kan dock på en del servrar leda till att <b>inga</b> PHP-sidor fungerar. (Du får Error-sidor istället för de riktiga) så då får Du ta bort .htaccess-filen.</ol>
 </li><li></li>
-</ol>
-';
+</ol>';
+$string['mysqlextensionisnotpresentinphp'] = 'PHP har inte konfigurerats på det sätt som måste i förhållande till MySQL-extensionen för att kunna kommunicera med MySQL. Var snäll och kontrollera Din php.ini-fil eller kompilera om PHP.';
 $string['pass'] = 'Pass';
 $string['phpversion'] = 'PHP-version';
 $string['phpversionerror'] = 'PHP-versionen måste vara minst 4.1.0';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3.2 (2004052502)
+      // glossary.php - created with Moodle 1.4 (2004083100)
 
 
 $string['addcomment'] = 'Lägg till kommentarer';
@@ -85,6 +85,8 @@ $string['entrydeleted'] = 'Bidraget är borttaget';
 $string['entryexported'] = 'Bidraget har framgångsrikt exporterats';
 $string['entryishidden'] = '(det här bidraget är f n dolt)';
 $string['entryleveldefaultsettings'] = 'Standardval för inställningar på nivån bidrag';
+$string['entrysaved'] = 'Det här bidraget har sparats';
+$string['entryupdated'] = 'Det här bidraget har uppdaterats';
 $string['entryusedynalink'] = 'Det här bidraget bör<br /> vara automatiskt länkat';
 $string['explainaddentry'] = 'Lägg till ett nytt bidrag till den aktuella ord- och begreppslistan.<br />\'Begrepp\' och \'definition\' är obligatoriska fält.';
 $string['explainall'] = '<b>ALLA</b> kommer att visa alla bidrag på en sida';

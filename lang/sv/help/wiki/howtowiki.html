@@ -1,0 +1,136 @@
+<h2>Hur Du anv&auml;nder Wiki</h2>
+<p>
+Moodles wiki &auml;r baserad p&aring; 
+<a href="http://erfurtwiki.sourceforge.net/?id=ErfurtWiki" target="_blank">ErfurtWiki</a>,
+som &auml;r en implementation av <a href="http://c2.com/cgi/wiki?WikiWikiWeb" target="_blank">WikiWikiWeb </a>
+hypertext system.
+<br /> Med det kan Du p&aring; ett enkelt s&auml;tt erbjuda samarbetsinriktad redigering och skapande av webbsidor.</p>
+
+<ul>
+<li>L&auml;r Dig hur Du<a href="#createpages"> skapar sidor</a></li>
+<li>klicka bara p&aring; <img src="pix/t/edit.gif"> eller v&auml;lj "Redigera den h&auml;r sidan" 
+fr&aring;n den utf&auml;llbara menyn om Du vill &auml;ndra p&aring; inneh&aring;llet p&aring; en sida.</li>
+<li>Du kan formattera Dina sidor med <a href="#wikimarkup">uppm&auml;rkningskod f&ouml;r wiki</a>, eller med HTML 
+(om det alternativet &auml;r aktiverat f&ouml;r wikin)</li>
+<li>S&ouml;k sidor eller g&aring; till listan &ouml;ver de nyaste sidorna</li>
+<li>det finns ocks&aring; listor &ouml;ver de mest bes&ouml;kta sidorna,
+de mest &auml;ndrade sidorna och &ouml;ver nyligen uppdaterade sidor.</li>
+</ul>
+
+<p>
+<a name="createpages"></a><strong>Skapa sidor</strong>:<br />
+Du skapar en sida genom att ge den ett namn inne i texten p&aring; en existerande sida.<br /> N&auml;r Du namnger en wikisida f&ouml;ljer Du formatet
+<a href="#camelcase">KamelStavning</a> eller ocks&aring; skriver Du in det inom hakparenteser[].</p>
+
+Till exempel:
+<ul>
+<li>MinWikiSida (KamelStavning)</li>
+<li>[Min wikisida ] (inom hakparenteser)</li>
+</ul>
+<p>
+Text som har f&aring;tt ett namn som en wikisida kommer att f&aring; ett '?' efter sig.<br /> Genom att klicka p&aring; '?', kan Du g&aring; in
+redigeringsl&auml;ge f&ouml;r den sida. <br />Skriv in Din text, spara och Du har skapat en ny wikisida.</p>
+<p><a name="wikimarkup"></a><strong>Uppm&auml;rkningskod f&ouml;r wiki</strong>:<br />
+Du  kan enkelt redigera varje enskild sida inom en wiki genom att anv&auml;nda uppm&auml;rkningskod f&ouml;r wiki.
+
+</p>
+<h4>%%% Stycken</h4>
+  <ul>
+  <li> f&ouml;r att skapa separata stycken inne i texten med blankrader mellan
+  <br /> anv&auml;nder Du tre procenttecken <strong>%%%</strong>. Det &aring;stadkommer en radmatning</li>
+  <li> om Du l&auml;gger in tomma utrymmen eller tabbar i texten s&aring; kan Du skapa indrag  </li>
+  </ul>
+
+<h4> !! Rubriker</h4>
+  <ul>
+  <li> <strong>!</strong> inled en rad med utropstecken f&ouml;r att skapa en rubrik</li>
+  <li> <strong>!!</strong> f&ouml;r medelstora rubriker </li>
+  <li> <strong>!!!</strong> f&ouml;r stora rubriker  </li>
+  </ul>
+
+<h4> Stil p&aring; text </h4>
+  <ul>
+  <li> <strong>' '</strong> om Du vill <em>ge eftertryck &aring;t text</em> s&aring; kan Du placera den mellan tv&aring; enkla apostrofer (resultatet blir oftast kursiv stil)</li>
+  <li> <strong>__ </strong>  om Du vill att <strong>texten ska bli fet </strong> kan Du placera den mellan tv&aring; understrykningstecken (eller mellan tv&aring; asterisker <strong>**</strong>)</li>
+  <li><strong>##</strong> om Du vill ha <big>stor text</big> s&aring; kan Du placera den mellan tv&aring; "grind"-tecken</li>
+  <li> <strong>"&micro;&micro;"</strong> om Du vill ha<small>mindre text </small>kan Du placera den mellan tv&aring; &micro;&micro;-tecken</li>
+  <li> <strong>== </strong>om Du vill ha <tt>ett skrivmaskinsliknande typsnitt</tt></li> s&aring; kan Du placera den mellan tv&aring; likhetstecken.
+  </ul>
+
+<h4> Listor</h4>
+
+  <ul>
+  <li><strong>*</strong> inled en rad med f&ouml;r att skapa en punktlista </li>
+  <li> <strong>#</strong> inled med ett "grind"-tecken ist&auml;llet om Du vill ha en numrerad lista
+    <ol>
+    <li> Du kan ocks&aring; skapa underlistor</li>
+    <li> underlistor inleder Du med samma blandning av <strong>*</strong> och <strong>#</strong>    </li>
+    </ol>
+  </li>
+  </ul>
+
+<h4> Hyperl&auml;nkar</h4>
+
+  <ul>
+  <li> Skriv bara in ett Wikiord med KamelStavning inne i Din text om Du vill skapa en ny hyperl&auml;nk</li>
+  <li> eller, placera <strong>n&aring;gra ord mellan hakparenteser</strong> f&ouml;r att skapa en ny hyperl&auml;nk</li>
+  <li> alla giltiga Internetadresser (som inleds med <a href="http://">http://</a>) som http://www.exempel.com/<br />  inne i texten 
+  kommer automatiskt att bli klickbara </li>
+  <li> placera en  www-adress eller en WikiL&auml;nk mellan hakparenteser [<a href="http://www.moodle.org/">Moodle</a>]<br />  och ge den en 
+  bra titel och placera den mellan citattecken eller |-tecknet</li>
+  <li> [titel | http://exempel.com]</li>
+    <li> [WikiOrd "titel"] or ["titel p&aring;" WikiL&auml;nk]</li>
+  <li> om Du inte vill ha ett WikiOrd eller en !http://www-adress (eller [n&aring;gonting] mellan hakparenteser)
+  	<br />  ska bli en hyperl&auml;nk s&aring; kan Du bara l&aring;ta den f&ouml;reg&aring;s av ett utropstecken
+	<br />  eller ett tilde-tecken "~".</li>
+   <li> !IngenL&auml;nk, ~IngenL&auml;nk</li>
+   <li> ![ingen l&auml;nk], !!http://ingenl&auml;nk.org/    </li>
+  </ul>
+
+<h4> Tabeller med |</h4>
+<table cellpadding="2" border="1" cellspacing="0">
+<tr>
+<td> placera bara</td>
+<td> saker inom detta  </td>
+<td> tecken | | </td>
+</tr><tr>
+<td> f&ouml;r att bygga  </td>
+<td> en tabellstruktur  </td>
+</tr><tr>
+<td> webbl&auml;sarna  </td>
+<td> visar i regel inte de saknade</td>
+<td> cellerna </td>
+</tr>
+</table>
+
+<p>
+Var sn&auml;ll och l&auml;gg alltid till en tom rad f&ouml;re och efter en tabell<br />
+s&aring; att det finns ett utrymme i f&ouml;rh&aring;llande till den omgivande texten.
+</p>
+
+<h4> Bilder</h4>
+
+  <ul>
+  <li> F&ouml;r att ta med en bild p&aring; sidan s&aring; placerar Du dess absoluta webbadress<br /> 
+  mellan hakparenteser, som [http://www.exempel.com/bilder/bild.png] </li>
+  <li> alternativt kan Du anv&auml;nda funktionen f&ouml;r uppladdning av bilder</li>
+  </ul>
+
+<h4>Rekommenderad f&ouml;rdjupad l&auml;sning</h4>
+Det finns fler m&ouml;jligheter med uppm&auml;rkningskod f&ouml;r wiki.
+<br /> Bes&ouml;k g&auml;rna <a href="http://erfurtwiki.sourceforge.net" target="_blank">hemsidan f&ouml;r Erfurt Wiki</a> f&ouml;r mer information.
+
+<p>
+<a name="camelcase"></a><strong>KamelStavning</strong>:<br />
+KamelStavning beskriver hur WikiOrd ser ut. Ett flertal ord, 
+<br />som &auml;r sammankopplade utan tomma utrymmen (mellanslag),<br />
+och som ist&auml;llet &aring;tskiljs med stor bokstav p&aring; varje enskilt ord.<br /> 
+V&auml;xlingen mellan stor och liten bokstav f&aring;r l&auml;saren att t&auml;nka 
+<br />p&aring; pucklarna p&aring; ryggen p&aring; en kamel.<br /> 
+</p>
+<p>
+&Auml;ven om spr&aring;kliga purister tycker illa om namnkonventionen i wiki
+<br /> s&aring; den en vanlig och v&auml;lk&auml;nd praktik f&ouml;r programmerare.
+</p>
+
+

@@ -95,11 +95,11 @@ $string['postadded'] = 'Ditt inlägg har lagts till.<p>Du har $a för att redigera
 $string['postincontext'] = 'Se detta inlägg i sitt sammanhang';
 $string['postmailinfo'] = 'Detta är en kopia på ett meddelande inlagt på $a webbplats.
 För att lägga till Ditt svar via webbplatsen, klicka på denna länk:';
-$string['postrating1'] = 'Visa mest enskilt, (rationellt) inriktat  vetande (kunskap)';
-$string['postrating2'] = 'Enskilt, (rationellt) inriktat  vetande (kunskap) och socialt, (empatiskt) inriktat vetande (kunskap)';
-$string['postrating3'] = 'Visa mest socialt, (empatiskt) inriktat vetande (kunskap)';
+$string['postrating1'] = 'Visar mest enskilt,(rationellt) inriktat  vetande (kunskap)';
+$string['postrating2'] = 'Enskilt,(rationellt) inriktat  vetande (kunskap) och socialt, (empatiskt) inriktat vetande (kunskap)';
+$string['postrating3'] = 'Visar mest socialt, (empatiskt) inriktat vetande (kunskap)';
 $string['posts'] = 'Inlägg';
-$string['posttoforum'] = 'Inlägg i forum';
+$string['posttoforum'] = 'Publicera inlägget i forumet';
 $string['postupdated'] = 'Ditt inlägg har blivit uppdaterat';
 $string['potentialsubscribers'] = 'Möjliga prenumeranter';
 $string['processingdigest'] = 'Bearbetar sammanfattande e-postmeddelande för användare $a';
