@@ -104,9 +104,13 @@ form {
 }
 
 .sideblocklatestnews {
+    background-image: url(<?PHP echo "$themeurl"?>/leftside.jpg);
+    background-repeat: repeat-y;
 }
 
 .sideblockrecentactivity {
+    background-image: url(<?PHP echo "$themeurl"?>/leftside.jpg);
+    background-repeat: repeat-y;
 }
 
 .outlineheadingblock {
@@ -314,5 +318,62 @@ a.dimmed:hover {
 }
 
 .coursename {
+}
+
+.coursebox {
+}
+
+.courseboxcontent {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.courseboxinfo {
+}
+
+.courseboxsummary {
+}
+
+a.autolink:link {
+    text-decoration: none;
+    color: #000000;
+    background-color: <?PHP echo $THEME->autolink?>;
+}
+
+a.autolink:visited {
+    text-decoration: none;
+    color: #000000;
+    background-color: <?PHP echo $THEME->autolink?>;
+}
+
+a.autolink:hover {
+    text-decoration: underline;
+    color: red;
+}
+
+.userinfobox {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    margin-bottom: 5px;
+}
+
+.userinfoboxside {
+}
+
+.userinfoboxcontent {
+}
+
+.userinfoboxsummary {
+}
+
+.userinfoboxlinkcontent {
+}
+
+.generaltab {
+}
+
+.generaltabselected {
 }
 
