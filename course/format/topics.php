@@ -70,8 +70,10 @@
     $modicon = array();
     if ($modnamesused) {
         foreach ($modnamesused as $modname => $modfullname) {
-            $moddata[] = "<a href=\"../mod/$modname/index.php?id=$course->id\">".$modnamesplural[$modname]."</a>";
-            $modicon[] = "<img src=\"$CFG->modpixpath/$modname/icon.gif\" height=16 width=16 alt=\"\">";
+            if ($modname != "label") {
+                $moddata[] = "<a href=\"../mod/$modname/index.php?id=$course->id\">".$modnamesplural[$modname]."</a>";
+                $modicon[] = "<img src=\"$CFG->modpixpath/$modname/icon.gif\" height=16 width=16 alt=\"\">";
+            }
         }
     }
     print_side_block($stractivities, "", $moddata, $modicon);
