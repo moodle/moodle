@@ -120,6 +120,8 @@ if ( $confirm ) {
             error("Could not update this glossary entry because this concept already exist.");
         }
     } else {
+
+echo "Creating!!!!!";
         $newentry->userid = $USER->id;
         $newentry->timecreated = $timenow;
         $newentry->sourceglossaryid = 0;
@@ -201,8 +203,38 @@ if ( $confirm ) {
         }
     }
 }
-/// Otherwise fill and print the form.
-
+//Fill and print the form. 
+//We check every field has a default values here!!
+if (!isset($newentry->concept)) {
+    $newentry->concept = "";
+}
+if (!isset($newentry->aliases)) {
+    $newentry->aliases = "";
+}
+if (!isset($newentry->usedynalink)) {
+    if (isset($CFG->glossary_linkentries)) {
+        $newentry->usedynalink = $CFG->glossary_linkentries;
+    } else {
+        $newentry->usedynalink = 0;
+    }
+}
+if (!isset($newentry->casesensitive)) {
+    if (isset($CFG->glossary_casesensitive)) {
+        $newentry->casesensitive = $CFG->glossary_casesensitive;
+    } else {
+        $newentry->casesensitive = 0;
+    }         
+}
+if (!isset($newentry->fullmatch)) {
+    if (isset($CFG->glossary_fullmatch)) {
+        $newentry->fullmatch = $CFG->glossary_fullmatch;
+    } else {
+        $newentry->fullmatch = 0;
+    }  
+}
+if (!isset($newentry->definition)) {
+    $newentry->definition = "";
+}
 $strglossary = get_string("modulename", "glossary");
 $strglossaries = get_string("modulenameplural", "glossary");
 $stredit = get_string("edit");
