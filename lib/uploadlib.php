@@ -80,6 +80,9 @@ class upload_manager {
                 }
             }
         }
+        if (!is_array($_FILES) || count($_FILES) == 0) {
+            return false;
+        }
         $this->status = true;
         return true; // if we've got this far it means that we're recovering so we want status to be ok.
     }

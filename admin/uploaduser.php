@@ -52,7 +52,11 @@
 
 /// If a file has been uploaded, then process it
 
-    if ($filename = valid_uploaded_file($_FILES['userfile'])) {
+
+    require_once($CFG->dirroot.'/lib/uploadlib.php');
+    $um = new upload_manager('userfile',false,false,null,false,0);
+    if ($um->preprocess_files()) {
+        $filename = $um->files['userfile']['tmp_name'];
 
         //Fix mac/dos newlines
         $text = my_file_get_contents($filename);
