@@ -71,19 +71,16 @@
    // chat_display_version("box", $browser);
    // chat_display_version("text", $browser);
 
-    echo "<br /><br />";
-    notify("(Note: This chat module is an early alpha version)");
-    echo "<br /><br />";
+    print_simple_box( text_to_html($chat->intro) , "center");
+
+    print_spacer(20,20);
 
     print_simple_box_start("center");
-
-
     link_to_popup_window ("/mod/chat/gui_$chatversion/index.php?id=$chat->id", 
                           "chat$chat->id", "$strenterchat", 500, 700, $strchat);
-
     print_simple_box_end();
 
-    echo "<br /><br /><br /><br />";
+    print_spacer(50,50);
 
 
 /// Finish the page
