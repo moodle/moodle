@@ -201,6 +201,14 @@ function assignment_cron () {
     $cutofftime = time() - $CFG->maxeditingtime;
 
     if ($submissions = assignment_get_unmailed_submissions($cutofftime)) {
+
+        foreach ($submissions as $key => $submission) {
+            if (! set_field("assignment_submissions", "mailed", "1", "id", "$submission->id")) {
+                echo "Could not update the mailed field for id $submission->id.  Not mailed.\n";
+                unset($submissions[$key]);
+            }
+        }
+
         $timenow = time();
 
         foreach ($submissions as $submission) {
@@ -266,9 +274,6 @@ function assignment_cron () {
 
             if (! email_to_user($user, $teacher, $postsubject, $posttext, $posthtml)) {
                 echo "Error: assignment cron: Could not send out mail for id $submission->id to user $user->id ($user->email)\n";
-            }
-            if (! set_field("assignment_submissions", "mailed", "1", "id", "$submission->id")) {
-                echo "Could not update the mailed field for id $submission->id\n";
             }
         }
     }
