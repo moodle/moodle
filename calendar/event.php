@@ -216,7 +216,7 @@
     }
 
     print_header($site->shortname.': '.$strcalendar.': '.$title, $strcalendar, $nav.' -> '.$title,
-                 $focus, '', true, '', '<p class="logininfo">'.user_login_string($site).'</p>');
+                 $focus, '', true, '', user_login_string($site));
 
     echo calendar_overlib_html();
 

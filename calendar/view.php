@@ -123,7 +123,7 @@
 
     // Print title and header
     print_header("$site->shortname: $strcalendar: $pagetitle", $strcalendar, $nav,
-                 '', '', true, $prefsbutton, '<p class="logininfo">'.user_login_string($site).'</p>');
+                 '', '', true, $prefsbutton, user_login_string($site));
 
     echo calendar_overlib_html();
 

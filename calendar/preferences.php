@@ -66,7 +66,7 @@
 
 
     print_header("$site->shortname: $strcalendar: $strpreferences", $strcalendar, $navigation,
-                 '', '', true, '', '<p class="logininfo">'.user_login_string($site).'</p>');
+                 '', '', true, '', user_login_string($site));
 
 
     print_heading($strpreferences);
