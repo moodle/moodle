@@ -11,7 +11,86 @@ dd {margin-bottom:1em;}
 </head>
 <body bgcolor="#FFFFFF">
 <h1>Notes de mise &agrave; jour actuelles</h1>
+
+<h3>Nouveaut&eacute;s de 1.3 <font color="#FF9933">B&ecirc;ta</font> (10 mai 2004)</h3>
+  	 <p align="center"><font size="-1">Veuillez noter que les versions b&ecirc;ta ne sont pas test&eacute;es <br />
+  	   exhaustivement et peuvent contenir plus de bogues qu'une version finale.<br />
+  	   Merci de nous aider &agrave; tester cette version et rapportez vos bogues &agrave; <a href="http://moodle.org/bugs/" target="_top">http://moodle.org/bugs/</a></font></p>
+  	 <ul>
+  	   <dl>
+  	     <dt>Nouveaut&eacute;s majeures</dt>
+  	     <dd>
+  	       <ul>
+  	         <li>Nouvelle fonction de <strong>Calendrier</strong> (merci &agrave; Jon Papaioannou et au r&eacute;seau des &eacute;coles grecques&nbsp;!)</li>
+  	         <li>Nouveau support des <strong>Blocs</strong>, permettant d'ajouter et de d&eacute;placer des blocs sur les pages de cours (merci &agrave; Jon Papaioannou, Eloy Lafuente et d'autres&nbsp;!)</li>
+  	         <li>Nouveau syst&egrave;me <strong>RSS</strong> permettant de publier des canaux RSS pour les Forums et les Glossaires (et beint&ocirc;t pour d'autres modules) (merci &agrave; Eloy&nbsp;!)</li>
+  	         <li>Le filtre <strong>Mediaplugin</strong> permet l'incorporation de fichiers Quicktime, Flash, et Windows Media.</li>
+  	       </ul>
+  	     </dd>
+  	     <dt>Autres nouveaut&eacute;s</dt>
+  	     <dd>
+  	       <ul>
+  	         <li>Nouveau type de ressource &laquo;&nbsp;Dossier&nbsp;&raquo; pour afficher un dossier complet de fichiers d&eacute;pos&eacute;s</li>
+  	         <li>Les ressources sous forme de fichiers (d&eacute;pos&eacute;s ou pages web) affichent maintenant une ic&ocirc;ne ad&eacute;quate sur les pages de cours</li>
+  	         <li>La plupart des liens HTML internes sont maintenant pr&eacute;serv&eacute;s lors des sauvegardes et restaurations</li>
+  	         <li>Il est maintenant possible de passer des arguments &agrave; des fichiers dans la section Fichiers. Ceci permet d'utiliser du HTML ou du Flash plus &eacute;labor&eacute; dans les ressources</li>
+  	         <li>$CFG-&gt;forceloginforprofiles peut &ecirc;tre activ&eacute;e pour &eacute;viter que les utilisateurs invit&eacute;s (y compris Google) ne voient les profils des utilisateurs au niveau sup&eacute;rieur du site</li>
+  	         <li>Les sessions sont maintenant enregistr&eacute;es dans un dossier interne du dossier de donn&eacute;es de Moodle - Cela permet &agrave; Moodle de mieux fonctionner sur les clusters de machines et r&eacute;sout quelques probl&egrave;mes d'expiration de d&eacute;lai lors de l'utilisation de Moodle sur les h&ocirc;tes web distribu&eacute;s</li>
+  	         <li>Les images des utilisateurs peuvent &ecirc;tre maintenant facilement supprim&eacute;es depuis la page du profil de l'utilisateur</li>
+  	         <li>Les discussions dans le Chat apparaissent maintenant dans le journal d'activit&eacute;s principal</li>
+  	         <li>Les sections cach&eacute;es des cours peuvent maintenant &ecirc;tre compl&egrave;tement masqu&eacute;es pour les &eacute;tudiants (r&eacute;glage de cours)</li>
+  	         <li>Am&eacute;lioration des textes des graphiques pour quelques langues, en utilisant Unicode. Essayez d'ajouter &agrave; votre Moodle une <a href="ftp://ftp.netscape.com/pub/communicator/extras/fonts/windows/Cyberb">police de caract&egrave;res Unicode</a>, sous le nom &laquo;&nbsp;lib/default.ttf&nbsp;&raquo;</li>
+  	         <li>Tous les &eacute;tudiants peuvent maintenant &ecirc;tre d&eacute;sinscrits d'un cours d'un seul clic (sur la page &Eacute;tudiants)</li>
+  	         <li>Les abonn&eacute;s des Forums peuvent maintenant &ecirc;tre inscrits ou d&eacute;sinscrits manuellement en groupes</li>
+  	         <li>Meilleur traitement de quelques caract&egrave;res europ&eacute;ens dans les noms de fichiers et d'utilisateurs</li>
+  	         <li>Les remarques des devoirs cach&eacute;s ne sont pas envoy&eacute;es par courriel jusqu'&agrave; ce que le devoir soit &agrave; nouveau visible</li>
+  	         <li>Support de l'importation des tests Blackboard am&eacute;lior&eacute;</li>
+  	         <li><b>Nouvelles langues</b>&nbsp;: Letton, Norv&eacute;gien (&eacute;cole primaire), version Unicode du chinois traditionnel</li>
+  	       </ul>
+  	     </dd>
+  	     <dt>Corrections de bogues</dt>
+  	     <dd>
+  	       <ul>
+  	         <li>Trop nombreux pour &ecirc;tre mentionn&eacute;s ici&nbsp;! <br />
+  	         De nombreux d&eacute;tails ont &eacute;t&eacute; corrig&eacute;s dans tous les domaines, en g&eacute;n&eacute;ral pour am&eacute;liorer la lisibilit&eacute; et la robustesse</li>
+  	       </ul>
+  	       <p>&nbsp;</p>
+  	     </dd>
+  	     <dt>N'oubliez pas de jeter un oeil aux <a href="http://moodle.org/download/modules/" target="_blank">nombreux nouveaux modules en d&eacute;veloppement</a>&nbsp;!</dt>
+  	   </dl>
+  	 </ul>
+  	 
+  	 <br />
+  	 
+<h3>Nouveaut&eacute;s de  1.2.1 (25 mars 2004)</h3>
+<ul>
+  <dl>
+    <dt>Diverses corrections de bogues</dt>
+    <dd> 
+      <ul>
+        <li>Correction de divers bogues emp&ecirc;chant parfois l'affichage des graphiques et des r&eacute;sultats des consultations p&eacute;dagogiques</li>
+        <li>Am&eacute;lioration de la s&eacute;curit&eacute; du script de cron</li>
+        <li>Correction de l'importation des tests WebCT pour permettre de traiter les images manquantes, les r&eacute;ponses courtes et les caract&egrave;res encod&eacute;s avec caract&egrave;re d'&eacute;chappement</li>
+        <li>Correction du formatage de la bo&icirc;te permettant d'ins&eacute;rer des liens dans l'&eacute;diteur WISYWIG</li>
+        <li>Les glossaires ne peuvent plus ajouter des liens dans les noms d'activit&eacute;s qui sont d&eacute;j&agrave; des liens</li>
+        <li>Correction des calculs de fuseau horaires lorsque l'utilisateur n'est pas pr&eacute;sent</li>
+        <li>Les caracters comme :( ne sont plus convertis en binettes dans le code JavaScript des textes HTML filtr&eacute;s</li>
+        <li>Am&eacute;lioration de la gestion des &eacute;valuations des messages dans les forums lorsque l'option secureforms est activ&eacute;e</li>
+        <li>La cr&eacute;ation des questions &agrave; choix multiples est r&eacute;gl&eacute;e par d&eacute;faut &agrave; une seule r&eacute;ponse correcte</li>
+        <li>Les utilisateurs invit&eacute;s ne peuvent plus voir les adresses de courriel d'un utilisateur si l'option &laquo; Seuls les membres du cours sont autoris&eacute;s &agrave; voir mon adresse de courriel&nbsp;&raquo; a &eacute;t&eacute; choisie par cet utilisateur</li>
+        <li>L'administrateur principal poss&egrave;de maintenant l'entr&eacute;e la plus petite dans user_admins&nbsp;; ce n'est plus l'administrateur avec le plus petit userid</li>
+        <li>Plugin flash MP3 modifi&eacute; pour am&eacute;liorer la luminosit&eacute; du bouton Jouer sur les &eacute;crans sombres</li>
+        <li>Diverses am&eacute;liorations dans de nombreux fichiers de langues</li>
+      </ul>
+    </dd>
+  </dl>
+</ul>
+
+<br />
+
+
 <h3>Nouveaut&eacute;s de Moodle 1.2 (20 mars 2004)</h3> 
+
 <ul>
 <dl>
 <dt>
