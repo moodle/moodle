@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.2 Beta (2004022400)
+      // exercise.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['absent'] = 'Afwezig';
@@ -37,7 +37,7 @@ $string['displayoffinalgrades'] = 'Toon de totalen';
 $string['doubleupload'] = 'Waarschuwing: deze inzending is waarschijnlijk twee keer verzonden. Ga naar de Beheerpagina en controleer op twee inzendingen van deze gebruiker binnen een korte tijdsspanne. Verwijder één van deze inzendingen voor je verder gaat.';
 $string['duedate'] = 'Inleverdatum';
 $string['edit'] = 'Bewerk';
-$string['editingassessmentelements'] = 'bewerken van de elementen van de beoordeling';
+$string['editingassessmentelements'] = 'Bewerken van de elementen van de beoordeling';
 $string['element'] = 'Element';
 $string['elementweight'] = 'Weging element';
 $string['entriessaved'] = 'Inzending bewaard';
@@ -51,7 +51,7 @@ $string['good'] = 'Goed';
 $string['gradeassessment'] = 'Beoordelingscijfer';
 $string['gradeforassessment'] = 'Cijfer voor de beoordeling';
 $string['gradeforstudentsassessment'] = 'Cijfer voor $a beoordeling';
-$string['gradeforsubmission'] = 'Cijfer boor inzending';
+$string['gradeforsubmission'] = 'Cijfer voor inzending';
 $string['gradetable'] = 'Cijfertabel';
 $string['gradingstrategy'] = 'Beoordelingsstrategie';
 $string['handlingofmultiplesubmissions'] = 'Behandeling van meerdere inzendingen';
@@ -154,7 +154,7 @@ $string['typeofscale'] = 'Schaal';
 $string['ungradedstudentassessments'] = '$a evaluatie van een leerling zonder cijfer';
 $string['usemaximum'] = 'Gebruik het beste cijfer';
 $string['usemean'] = 'Gebruik het gemiddelde cijfer';
-$string['verypoor'] = 'erg zwak';
+$string['verypoor'] = 'Erg zwak';
 $string['view'] = 'Bekijk';
 $string['viewassessment'] = 'Bekijk de evaluatie';
 $string['warningonamendingelements'] = 'WAARSCHUWING: Er zijn al evaluaties ingestuurd.<br/>Wijzig het aantal elementen, de evaluatieschaal of de weging van de elementen NIET.';
