@@ -10,10 +10,10 @@
 			if ($user->username == $s) {
 
                 if ($user->confirmed) {
-				    print_header("Registration already confirmed", "Already confirmed", "Confirmed", "");
-				    echo "<CENTER><H3>Thanks, ". $USER->firstname ." ". $USER->lastname . "</H3>\n";
-        		    echo "<H4>Your registration has already been confirmed.</H4>\n";
-        		    echo "<H3><A HREF=\"$CFG->wwwroot/course/\">Proceed to the courses</A></H3>\n";
+				    print_header(get_string("alreadyconfirmed"), get_string("alreadyconfirmed"), "", "");
+				    echo "<CENTER><H3>".get_string("thanks").", ". $USER->firstname ." ". $USER->lastname . "</H3>\n";
+        		    echo "<H4>".get_string("alreadyconfirmed")."</H4>\n";
+        		    echo "<H3><A HREF=\"$CFG->wwwroot/course/\">".get_string("courses")."</A></H3>\n";
 				    print_footer();
                     exit;
                 }
@@ -25,7 +25,9 @@
 				$rs = $db->Execute("UPDATE user SET confirmed=1, lastIP='$REMOTE_ADDR', 
 													firstaccess='$timenow', lastaccess='$timenow'
 									WHERE id = '$USER->id' ");
-				if (!$rs) error("Could not update this user while confirming");
+				if (!$rs) {
+                    error("Could not update this user while confirming");
+                }
 
 				set_moodle_cookie($USER->username);
 
@@ -37,11 +39,12 @@
 					redirect("$goto");
         		}
  
-				print_header("Registration confirmed", "Confirmed", "Confirmed", "");
-				echo "<CENTER><H3>Thanks, ". $USER->firstname ." ". $USER->lastname . "</H3>\n";
-        		echo "<H4>Your registration is now confirmed.</H4>\n";
-        		echo "<H3><A HREF=\"$CFG->wwwroot/course/\">Show me the courses</A></H3>\n";
+				print_header(get_string("confirmed"), get_string("confirmed"), "", "");
+				echo "<CENTER><H3>".get_string("thanks").", ". $USER->firstname ." ". $USER->lastname . "</H3>\n";
+        		echo "<H4>".get_string("confirmed")."</H4>\n";
+        		echo "<H3><A HREF=\"$CFG->wwwroot/course/\">".get_string("courses")."</A></H3>\n";
 				print_footer();
+
 			} else {
 				error("Invalid confirmation data");
 			}

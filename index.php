@@ -6,7 +6,7 @@
     include("mod/reading/lib.php"); 
     include("mod/forum/lib.php");
 
-    if (! $site = get_record("course", "category", 0)) {
+    if (! $site = get_site()) {
         redirect("$CFG->wwwroot/admin/");
     }
 

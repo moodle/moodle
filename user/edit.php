@@ -123,26 +123,28 @@
     
 /// Otherwise fill and print the form.
 
+    $editmyprofile = get_string("editmyprofile");
+    $participants = get_string("participants");
+
     if ($course->category) {
-	    print_header("Edit user profile", "Edit user profile", 
+	    print_header($editmyprofile, $editmyprofile, 
                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
-                    -> <A HREF=\"index.php?id=$course->id\">Participants</A>
+                    -> <A HREF=\"index.php?id=$course->id\">$participants</A>
                     -> <A HREF=\"view.php?id=$USER->id&course=$course->id\">$USER->firstname $USER->lastname</A> 
-                    -> Edit profile", "");
+                    -> $editmyprofile", "");
     } else {
-	    print_header("Edit user profile", "Edit user profile", 
+	    print_header($editmyprofile, $editmyprofile,
                      "<A HREF=\"view.php?id=$USER->id&course=$course->id\">$USER->firstname $USER->lastname</A> 
-                      -> Edit profile", "");
+                      -> $editmyprofile", "");
     }
 
     $teacher = strtolower($course->teacher);
     $teacheronly = "(".get_string("teacheronly", "", $teacher).")";
 
     print_simple_box_start("center", "", "$THEME->cellheading");
-    echo "<H2>User profile for $user->firstname $user->lastname</H2>";
+    print_heading( get_string("userprofilefor", "", "$user->firstname $user->lastname") );
 	include("edit.html");
     print_simple_box_end();
-
     print_footer($course);
 
 
@@ -153,20 +155,20 @@
 function find_form_errors(&$user, &$usernew, &$err) {
 
     if (empty($usernew->email))
-        $err["email"] = "Missing email address";
+        $err["email"] = get_string("missingemail");
 
     if (empty($usernew->city))
-        $err["city"] = "Missing city or town";
+        $err["city"] = get_string("missingcity");
 
     if (empty($usernew->country))
-        $err["country"] = "Missing country";
+        $err["country"] = get_string("missingcountry");
 
     else if (! validate_email($usernew->email))
-        $err["email"] = "Invalid email address, check carefully";
+        $err["email"] = get_string("invalidemail");
 
     else if ($otheruser = get_record("user", "email", $usernew->email)) {
         if ($otheruser->id <> $user->id) {
-            $err["email"] = "Email address already in use by someone else.";
+            $err["email"] = get_string("emailexists");
         }
     }
 

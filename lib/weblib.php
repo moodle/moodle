@@ -6,29 +6,7 @@
 //
 //
 
-function nvl(&$var, $default="") {
-// if $var is undefined, return $default, otherwise return $var 
-
-	return isset($var) ? $var : $default;
-}
-
-function ov(&$var) {
-// returns $var with the HTML characters (like "<", ">", etc.) properly quoted,
-// or if $var is undefined, will return an empty string.  note this function
-// must be called with a variable, for normal strings or functions use o() 
-
-	return isset($var) ? htmlSpecialChars(stripslashes($var)) : "";
-}
-
-function pv(&$var) {
-// prints $var with the HTML characters (like "<", ">", etc.) properly quoted,
-// or if $var is undefined, will print an empty string.  note this function
-// must be called with a variable, for normal strings or functions use p()
-
-	echo isset($var) ? htmlSpecialChars(stripslashes($var)) : "";
-}
-
-function o($var) {
+function s($var) {
 // returns $var with HTML characters (like "<", ">", etc.) properly quoted,
 // or if $var is empty, will return an empty string. 
 
@@ -42,6 +20,11 @@ function p($var) {
 	echo empty($var) ? "" : htmlSpecialChars(stripslashes($var));
 }
 
+function nvl(&$var, $default="") {
+// if $var is undefined, return $default, otherwise return $var 
+
+    return isset($var) ? $var : $default;
+}
 
 function strip_querystring($url) {
 // takes a URL and returns it without the querystring portion 
@@ -56,10 +39,9 @@ function strip_querystring($url) {
 function get_referer() {
 // returns the URL of the HTTP_REFERER, less the querystring portion 
 
-	$HTTP_REFERER = getenv("HTTP_REFERER");
-	return strip_querystring(nvl($HTTP_REFERER));
+    $HTTP_REFERER = getenv("HTTP_REFERER");
+    return strip_querystring(nvl($HTTP_REFERER));
 }
-
 
 function me() {
 // returns the name of the current script, WITH the querystring portion.

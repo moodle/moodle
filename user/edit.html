@@ -1,7 +1,7 @@
 <FORM METHOD="post" ENCTYPE="multipart/form-data" action="edit.php">
 <table cellpadding=9 cellspacing=0 >
 <tr valign=top>
-	<td><P><? echo get_string("newpicture") ?>:</td>
+	<td><P><? print_string("newpicture") ?>:</td>
 	<td>
     <INPUT type="hidden" name="MAX_FILE_SIZE" value="4000000">
     <input type="file" name="imagefile" size=40> ( .jpg / .png ) <? helpbutton("picture") ?>
@@ -9,19 +9,19 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? echo get_string("userdescription") ?>:</td>
-	<td><TEXTAREA NAME=description COLS=50 ROWS=10 WRAP=virtual><?=$user->description ?></TEXTAREA> 
+	<td><P><? print_string("userdescription") ?>:</td>
+	<td><TEXTAREA NAME=description COLS=50 ROWS=10 WRAP=virtual><? p($user->description) ?></TEXTAREA> 
     <? helpbutton("text") ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? echo get_string("email") ?>:</td>
-	<td><input type="text" name="email" size=30 value="<?=$user->email ?>">
+	<td><P><? print_string("email") ?>:</td>
+	<td><input type="text" name="email" size=30 value="<? p($user->email) ?>">
 	<? formerr($err["email"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? echo get_string("emailformat") ?>:</td>
+	<td><P><? print_string("emailformat") ?>:</td>
 	<td><? 
     $choices["0"] = get_string("textformat");
     $choices["1"] = get_string("htmlformat");
@@ -29,55 +29,55 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? echo get_string("webpage") ?>:</td>
-	<td><input type="text" name="url" size=30 value="<?=$user->url ?>">
+	<td><P><? print_string("webpage") ?>:</td>
+	<td><input type="text" name="url" size=30 value="<? p($user->url) ?>">
 	<? formerr($err["url"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? echo get_string("icqnumber") ?>:</td>
-	<td><input type="text" name="icq" size=25 value="<?=$user->icq ?>">
+	<td><P><? print_string("icqnumber") ?>:</td>
+	<td><input type="text" name="icq" size=25 value="<? p($user->icq) ?>">
 	<? formerr($err["icq"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? echo get_string("idnumber") ?>:</td>
-	<td><input type="text" name="idnumber" size=25 value="<?=$user->idnumber ?>"> <?=$teacheronly ?>
+	<td><P><? print_string("idnumber") ?>:</td>
+	<td><input type="text" name="idnumber" size=25 value="<? p($user->idnumber) ?>"> <? p($teacheronly) ?>
 	<? formerr($err["idnumber"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? echo get_string("phone") ?> 1:</td>
-	<td><input type="text" name="phone1" size=25 value="<?=$user->phone1 ?>"> <?=$teacheronly ?>
+	<td><P><? print_string("phone") ?> 1:</td>
+	<td><input type="text" name="phone1" size=25 value="<? p($user->phone1) ?>"> <? p($teacheronly) ?>
 	<? formerr($err["phone1"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? echo get_string("phone") ?> 2:</td>
-	<td><input type="text" name="phone2" size=25 value="<?=$user->phone2 ?>"> <?=$teacheronly ?>
+	<td><P><? print_string("phone") ?> 2:</td>
+	<td><input type="text" name="phone2" size=25 value="<? p($user->phone2) ?>"> <? p($teacheronly) ?>
 	<? formerr($err["phone2"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? echo get_string("address") ?>:</td>
-	<td><input type="text" name="address" size=25 value="<?=$user->address ?>"> <?=$teacheronly ?>
+	<td><P><? print_string("address") ?>:</td>
+	<td><input type="text" name="address" size=25 value="<? p($user->address) ?>"> <? p($teacheronly) ?>
 	<? formerr($err["address"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? echo get_string("city") ?>:</td>
-	<td><input type="text" name="city" size=25 value="<?=$user->city ?>">
+	<td><P><? print_string("city") ?>:</td>
+	<td><input type="text" name="city" size=25 value="<? p($user->city) ?>">
 	<? formerr($err["city"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? echo get_string("country") ?>:</td>
+	<td><P><? print_string("country") ?>:</td>
 	<td><? choose_from_menu ($COUNTRIES, "country", $user->country, get_string("selectacountry")."...", "", "") ?>
 	<? formerr($err["country"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? echo get_string("timezone") ?>:</td>
+	<td><P><? print_string("timezone") ?>:</td>
 	<td><?
        if (abs($user->timezone) > 12) {
            $user->timezone = 99;
@@ -104,8 +104,8 @@
 </tr>
 <tr>
 	<td></td>
-	<td><input type="submit" value="<? echo get_string("updatemyprofile") ?>"></td>
+	<td><input type="submit" value="<? print_string("updatemyprofile") ?>"></td>
 </TABLE>
-<INPUT type="hidden" name="course" value="<?=$course->id ?>">
-<INPUT type="hidden" name="id" value="<?=$user->id ?>"> 
+<INPUT type="hidden" name="course" value="<? p($course->id) ?>">
+<INPUT type="hidden" name="id" value="<? p($user->id) ?>"> 
 </FORM>

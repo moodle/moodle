@@ -28,8 +28,9 @@
 
 			reset_login_count();
 
-			print_header("Changed password", "Password changed successfully", "Changed Password", "");
-			notice("Password changed successfully", "$CFG->wwwroot/course/");
+            $passwordchanged = get_string("passwordchanged");
+			print_header($passwordchanged, $passwordchanged, $passwordchanged, "");
+			notice($passwordchanged, "$CFG->wwwroot/course/");
 			print_footer();
 			exit;
 		}
@@ -46,8 +47,8 @@
     	$focus = "form.username";
 	}
 
-
-	print_header("Change password", "Change Password", "Change Password", "$focus");
+    $changepassword = get_string("changepassword");
+	print_header($changepassword, $changepassword, $changepassword, $focus);
     print_simple_box_start("center", "", $THEME->cellheading);
 	include("change_password_form.html");
     print_simple_box_end();
@@ -62,22 +63,22 @@
 function validate_form($frm, &$err) {
 
     if (empty($frm->username))
-        $err->username = "Missing username";
+        $err->username = get_string("missingusername");
 
     else if (empty($frm->password))
-        $err->password = "Missing password";
+        $err->password = get_string("missingpassword");
 
     else if (!verify_login($frm->username, $frm->password))
-		$err->password = "Incorrect password for this username";
+		$err->password = get_string("wrongpassword");
 
     if (empty($frm->newpassword1))
-        $err->newpassword1 = "Missing new password";
+        $err->newpassword1 = get_string("missingnewpassword");
 
     if (empty($frm->newpassword2))
-        $err->newpassword2 = "Missing new password";
+        $err->newpassword2 = get_string("missingnewpassword");
 
     else if ($frm->newpassword1 <> $frm->newpassword2)
-        $err->newpassword2 = "Passwords not the same";
+        $err->newpassword2 = get_string("passwordsdiffer");
 
     return;
 }

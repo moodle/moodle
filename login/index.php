@@ -30,6 +30,7 @@
             if (! $user->confirmed ) {       // they never confirmed via email 
                 print_header(get_string("mustconfirm"), get_string("mustconfirm") ); 
                 include("index_confirm.html");
+                print_footer();
                 die;
             }
     
@@ -79,8 +80,8 @@
     $loginsite = get_string("loginsite");
 
     print_header($loginsite, $loginsite, get_string("login"), $focus); 
-
     include("index_form.html");
+    print_footer();
 
     exit;
 
