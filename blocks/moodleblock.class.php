@@ -461,7 +461,11 @@ class block_base {
         if (!empty($instance->configdata)) {
             $this->config = unserialize(base64_decode($instance->configdata));
         }
-        unset($instance->configdata);
+        // [pj] This line below is supposed to be an optimization (we don't need configdata anymore)
+        // but what it does is break in PHP5 because the same instance object will be passed to
+        // this function twice in each page view, and the second time it won't have any configdata
+        // so it won't work correctly. Thus it's commented out.
+        // unset($instance->configdata);
         $this->instance = $instance;
         $this->specialization();
     }
