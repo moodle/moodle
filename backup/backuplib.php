@@ -1270,6 +1270,7 @@
         $filelist = list_directories_and_files ($basedir);
 
         //Convert them to full paths
+        $files = array();
         foreach ($filelist as $file) {
            $files[] = "$basedir/$file";
         }
