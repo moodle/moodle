@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1.1 (2003091000)
+      // forum.php - created with Moodle 1.2 development (2004020900)
 
 
 $string['addanewdiscussion'] = 'Afegeix un nou tema de debat';
@@ -14,6 +14,7 @@ $string['bynameondate'] = 'per $a->name - $a->date';
 $string['configdisplaymode'] = 'El mode de visualització per defecte dels debats si no se\'n tria un.';
 $string['configlongpost'] = 'Qualsevol missatge per damunt d\'aquesta mida (exclòs l\'HTML) es considerarà massa llarg.';
 $string['configmanydiscussions'] = 'Nombre màxim de debats per pàgina';
+$string['configmaxbytes'] = 'Mida màxima per defecte per a tots els fitxers adjuntats als fòrums d\'aquest lloc (valor subjecte als límits de cada curs i altres paràmetres locals)';
 $string['configshortpost'] = 'Qualsevol missatge per sota d\'aquesta mida (exclòs l\'HTML) es considerarà massa breu.';
 $string['couldnotadd'] = 'Un error desconegut ha impedit afegir el vostre missatge';
 $string['couldnotdeleteratings'] = 'Disculpeu, no es pot esborrar perquè ja l\'han valorat altres persones';
@@ -50,6 +51,7 @@ $string['introsocial'] = 'Un fòrum obert per xerrar sobre qualsevol cosa que vul
 $string['introteacher'] = 'Un fòrum només per notes i debats del professorat';
 $string['lastpost'] = 'Darrer missatge';
 $string['learningforums'] = 'Fòrums d\'aprenentatge';
+$string['maxattachmentsize'] = 'Mida màxima dels fitxers adjunts';
 $string['maxtimehaspassed'] = 'Disculpeu, ha passat el temps màxim per editar aquest missatge! ($a)';
 $string['message'] = 'Missatge';
 $string['modeflatnewestfirst'] = 'Mostra llista plana de rèpliques començant per la més nova';
@@ -78,6 +80,7 @@ $string['olderdiscussions'] = 'Debats anteriors';
 $string['openmode0'] = 'Debats no, respostes no';
 $string['openmode1'] = 'Debats no, però respostes sí';
 $string['openmode2'] = 'Debats i respostes sí';
+$string['parent'] = 'Mostra missatge original';
 $string['parentofthispost'] = 'Missatge original';
 $string['postadded'] = 'S\'ha afegit el vostre missatge.<P>Teniu $a per editar-lo si voleu fer algun canvi.';
 $string['postincontext'] = 'Veure aquest missatge en el seu context';
@@ -94,6 +97,8 @@ $string['rating'] = 'Valoració';
 $string['ratingeveryone'] = 'Qualsevol pot valorar els missatges';
 $string['ratingno'] = 'Sense valorar';
 $string['ratingonlyteachers'] = 'Només el $a pot valorar els missatges';
+$string['ratingpublic'] = '$a pot veure les valoracions de tots';
+$string['ratingpublicnot'] = '$a només pot veure les seves valoracions';
 $string['ratings'] = 'Valoracions';
 $string['ratingssaved'] = 'Valoracions guardades';
 $string['ratingsuse'] = 'Utilitzar valoracions';
@@ -104,6 +109,7 @@ $string['replies'] = 'Respostes';
 $string['repliesmany'] = '$a respostes fins ara';
 $string['repliesone'] = '$a resposta fins ara';
 $string['reply'] = 'Contesta';
+$string['replyforum'] = 'Contesta al fòrum';
 $string['search'] = 'Busca';
 $string['searchforums'] = 'Busca en els fòrums';
 $string['searcholderposts'] = 'Busca missatges anteriors...';

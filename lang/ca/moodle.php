@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2004020300)
+      // moodle.php - created with Moodle 1.2 development (2004020900)
 
 
 $string['action'] = 'Acció';
@@ -86,8 +86,12 @@ $string['backupfilename'] = 'backup';
 $string['backupfinished'] = 'Completada amb èxit la còpia de seguretat';
 $string['backupincludemoduleshelp'] = 'Trieu si voleu incloure els mòduls del curs, amb o sense dades d\'usuari, a les còpies de seguretat automàtiques.';
 $string['backupkeephelp'] = 'Quantes còpies de seguretat recents de cada curs voleu conservar? (les més velles s\'esborraran automàticament).';
+$string['backuplogshelp'] = 'Si activeu aquesta opció, les còpies de seguretat automàtiques inclouran els registres d\'activitat del curs.';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backuporiginalname'] = 'Nom de la còpia';
+$string['backupsavetohelp'] = 'Camí complet del directori on voleu desar els fitxers de còpies de seguretat<br />(deixeu en blanc per desar-los al directori per defecte del curs)';
+$string['backupuserfileshelp'] = 'Trieu si voleu que els fitxers dels usuaris (p. e. la imatge del perfil) s\'incloguin a les còpies de seguretat automàtiques';
+$string['backupusershelp'] = 'Trieu si voleu incloure a cada curs tots els usuaris del servidor o només els que calguin.';
 $string['backupversion'] = 'Versió de la còpia';
 $string['cancel'] = 'Cancel·la';
 $string['categories'] = 'Categories de cursos';
