@@ -180,10 +180,10 @@ Restore Details:
                  + course data..................................DONE
                  + user data....................................DONE
                  + files.(ARE COURSE FILES !!!).................DONE
-              x surveys.........................................IN PROGRESS
-                 + course data..................................IN PROGRESS
-                 + user data....................................IN PROGRESS
-                 + files.(NOT EXISTS)...........................IN PROGRESS
+              x surveys.........................................DONE
+                 + course data..................................DONE
+                 + user data....................................DONE
+                 + files.(NOT EXISTS)...........................DONE
    - User files from temp.......................................DONE
    - Course files from temp.....................................DONE
    - Log entries................................................NO EXISTS
