@@ -737,11 +737,13 @@ function is_internal_auth($auth='') {
     return ($method == "email" || $method == "none" || $method == "manual");
 }
 
-function create_user_record($username, $password) {
+function create_user_record($username, $password, $auth='') {
 /// Creates a bare-bones user record
     global $REMOTE_ADDR, $CFG;
+
     //just in case check text case
     $username = trim(moodle_strtolower($username));
+
     if (function_exists('auth_get_userinfo')) {
         if ($newinfo = auth_get_userinfo($username)) {
             foreach ($newinfo as $key => $value){
@@ -750,7 +752,7 @@ function create_user_record($username, $password) {
         }
     }
 
-    $newuser->auth = $CFG->auth;
+    $newuser->auth = (empty($auth)) ? $CFG->auth : $auth;
     $newuser->username = $username;
     $newuser->password = md5($password);
     $newuser->lang = $CFG->lang;
@@ -802,25 +804,30 @@ function authenticate_user_login($username, $password) {
 
     if (empty($user->auth)) {      // For some reason it isn't set yet
         if (isadmin($user->id) or isguest($user->id)) {
-            $user->auth = 'manual';    // Always assume these guys are internal
+            $auth = 'manual';    // Always assume these guys are internal
         } else {
-            $user->auth = $CFG->auth;  // Normal users default to site method
+            $auth = $CFG->auth;  // Normal users default to site method
         }
+    } else {
+        $auth = $user->auth;
     }
     
-    if (!file_exists("$CFG->dirroot/auth/$user->auth/lib.php")) {
-        $user->auth = "manual";    // Can't find auth module, default to internal
+    if (!file_exists("$CFG->dirroot/auth/$auth/lib.php")) {
+        $auth = "manual";    // Can't find auth module, default to internal
     }
 
-    require_once("$CFG->dirroot/auth/$user->auth/lib.php");
+    require_once("$CFG->dirroot/auth/$auth/lib.php");
 
     if (auth_user_login($username, $password)) {  // Successful authentication
-        if ($user) {
+        if ($user) {                              // User already exists in database
+            if (empty($user->auth)) {             // For some reason auth isn't set yet
+                set_field('user', 'auth', $auth, 'username', $username);
+            }
             if ($md5password <> $user->password) {   // Update local copy of password for reference
-                set_field("user", "password", $md5password, "username", $username);
+                set_field('user', 'password', $md5password, 'username', $username);
             }
         } else {
-            $user = create_user_record($username, $password);
+            $user = create_user_record($username, $password, $auth);
         }
 
         if (function_exists('auth_iscreator')) {    // Check if the user is a creator
