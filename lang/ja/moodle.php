@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003011600)
+      // moodle.php - created with Moodle 1.0.9 development (2003012000)
 
 
 $string['action'] = "操作";
@@ -442,12 +442,12 @@ $string['startsignup'] = "新しいアカウントを作成する";
 $string['status'] = "状態";
 $string['strftimedate'] = "%%Y年 %%m月 %%d日";
 $string['strftimedateshort'] = "%%m/%%d";
-$string['strftimedatetime'] = "%%Y年 %%m月 %%d日, %%I:%%M %%p";
+$string['strftimedatetime'] = "%%Y年 %%m月 %%d日, %%p%%I:%%M";
 $string['strftimedaydate'] = "%%Y年 %%m月 %%d日(%%A)";
-$string['strftimedaydatetime'] = "%%Y年 %%m月 %%d日(%%A) %%I:%%M %%p";
+$string['strftimedaydatetime'] = "%%Y年 %%m月 %%d日(%%A) %%p%%I:%%M";
 $string['strftimerecent'] = "%%m月 %%d日, %%H:%%M";
-$string['strftimerecentfull'] = "%%Y年 %%m月 %%d日(%%a) %%I:%%M %%p";
-$string['strftimetime'] = "%%I:%%M %%p";
+$string['strftimerecentfull'] = "%%Y年 %%m月 %%d日(%%a) %%p%%I:%%M";
+$string['strftimetime'] = "%%p%%I:%%M";
 $string['stringsnotset'] = "下記の文字は \$a で定義されていません。";
 $string['studentnotallowed'] = "申し訳ございません。このコースには '\$a' で入ることは出来ません。";
 $string['success'] = "成功";
