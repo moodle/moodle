@@ -72,7 +72,7 @@ $string['trackingloose'] = '警告: SCORMデータのトラッキングデータは消滅します!';
 $string['validateascorm'] = 'SCORMパッケージの確認';
 $string['validation'] = '確認結果';
 $string['validationtype'] = 'ここではSCORMマニフェストファイルを確認するDOMXMLライブラリを設定します。分からない場合は、このままにしてください。';
-$string['versionwarning'] = 'マニフェストファイルのバージョンが1.3より古い為、$a->tag タグに警告があります。';
+$string['versionwarning'] = 'マニフェストファイルのバージョンが1.3より古いため、$a->tag タグに警告があります。';
 $string['viewallreports'] = '$a 回分のレポートを表示';
 
 ?>

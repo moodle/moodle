@@ -18,7 +18,7 @@
   <h3 class="sectionheading"><a name="host" id="host"></a>ホスティングサービス</h3>
   <blockquote>
     <p>残念ながらホスティングサービスの内容は多岐に渡ります。中にはMoodleをインストールしてくれるサービスもあります。</p>
-    <p>殆どのホスティングサービスでは、サイトを管理する為にウェブベースのコントロールパネルを提供しています。コントロールパネルではデータベースを作成したりcronの設定を行うことができます。またコマンドシェルで作業を行えるように、sshを利用したターミナルアクセスを提供するホスティングサービスもあります。</p>
+    <p>殆どのホスティングサービスでは、サイトを管理するためにウェブベースのコントロールパネルを提供しています。コントロールパネルではデータベースを作成したりcronの設定を行うことができます。またコマンドシェルで作業を行えるように、sshを利用したターミナルアクセスを提供するホスティングサービスもあります。</p>
     <p><a href="./?file=install.html">インストールガイド</a>に準じてそれぞれの作業を行ってください。不明な点はホスティングプロバイダにお聞きください。</p>
     <p>&nbsp;</p>
   </blockquote>
@@ -35,7 +35,7 @@
   </blockquote>
   <h3 class="sectionheading"><a name="redhat"></a>Redhat Linux</h3>
   <blockquote>
-    <p>Apache、PHP、MySQLに関して全てのRPMパッケージをインストールしてください。しばしば忘れられるのが、MySQL連携する為に必要なphp-mysqlパッケージです。</p>
+    <p>Apache、PHP、MySQLに関して全てのRPMパッケージをインストールしてください。しばしば忘れられるのが、MySQL連携するために必要なphp-mysqlパッケージです。</p>
     <p>これらのパッケージがインストールされた後は、通常の<a href="./?file=install.html">インストールガイド</a>通りに作業が進みます。</p>
     <p>より詳細な説明はこちらをご覧ください: <a href="http://moodle.org/wiki/index.php/InstallingMoodle">http://moodle.org/wiki/index.php/InstallingMoodle</a></p>
   </blockquote>
@@ -62,7 +62,7 @@
       <li>データベースにアクセスできるユーザを作成することもできます。初めての方には、この作業は若干難しいと思いますので、Moodleの設定には既に作成されているユーザ&quot;root&quot;をパスワード無しで使用してください。Moodleの設定は後で変更可能です。</li>
       <li>Moodleをインストールする準備ができました! 最新版のMoodleを<a href="http://moodle.org/download" target="_blank">http://moodle.org/download</a>よりダウンロードして、圧縮ファイルを解凍してください。</li>
       <li>Moodleファイルを<strong>C:\Program Files\EasyPHP\www</strong>にコピーしてください。Moodleの全ディレクトリ(例 C:\Program Files\EasyPHP\www\moodle)をコピーすることもできますし、Moodleディレクトリの<em>コンテンツ</em>をコピーすることもできます。2番目の方法を取った場合、     Moodleホームページにhttp://localhost/moodle/とアクセスする代わりに、http://localhost/とアクセスする事ができます。</li>
-      <li>Moodleでアップロードファイルを保存する為の空のフォルダを作成してください。例:<strong>C:\moodledata</strong></li>
+      <li>Moodleでアップロードファイルを保存するための空のフォルダを作成してください。例:<strong>C:\moodledata</strong></li>
       <li>Moodleフォルダに入ってください。フォルダ内のconfig-dist.phpをconfig.phpにコピーしてください。</li>
       <li>config.phpをテキストエディタで編集してください(ノートパッドで編集できますが、末尾にスペースが入らないように気をつけてください)。</li>
       <li>新しいデータベースに関して全ての情報を入力してください:<br />
@@ -78,8 +78,8 @@
       $CFG-&gt;dirroot = 'C:\Program Files\EasyPHP\www\moodle'; <br />
       $CFG-&gt;dataroot = 'C:\moodledata';</li>
       <li>config.phpを保存してください - 他に設定がある場合は無視して結構です。</li>
-      <li>もうすぐ終わりです! 残りはウェブベースの設定です。 ブラウザで設定を続ける為に<a href="http://localhost/moodle/admin/" target="_blank">http://localhost/moodle/admin/</a>にアクセスしてください。</li>
-      <li>Moodleでzipファイル(例えばバックアップにzipを使う場合)を使用する為に&quot;zlib&quot;を使用してください。EasyPHPディレクトリ(<strong>C:\Program Files\EasyPHP</strong>)内のphpini.exeを実行しても同じ設定を行うこともできます。&quot;zlib.dll&quot;の隣にあるチェックボックスをチェックしてください。 ウィンドウを閉じて、ツールバーにある黒いEに戻ります。右クリックをしてメニューより&quot;Restart&quot;を選択してください。</li>
+      <li>もうすぐ終わりです! 残りはウェブベースの設定です。 ブラウザで設定を続けるために<a href="http://localhost/moodle/admin/" target="_blank">http://localhost/moodle/admin/</a>にアクセスしてください。</li>
+      <li>Moodleでzipファイル(例えばバックアップにzipを使う場合)を使用するために&quot;zlib&quot;を使用してください。EasyPHPディレクトリ(<strong>C:\Program Files\EasyPHP</strong>)内のphpini.exeを実行しても同じ設定を行うこともできます。&quot;zlib.dll&quot;の隣にあるチェックボックスをチェックしてください。 ウィンドウを閉じて、ツールバーにある黒いEに戻ります。右クリックをしてメニューより&quot;Restart&quot;を選択してください。</li>
       <li>最後に、cronを設定する必要があります。詳細は<a href="./?file=install.html">インストールガイド</a>をご覧ください。</li>
     </ol>
     <p>EasyPHPを使えない場合、PHPが正常に設定されているか確認して一般的な問題を回避する方法があります:</p>
