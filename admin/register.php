@@ -13,6 +13,10 @@
         redirect("index.php");
     }
 
+    if (!confirm_sesskey()) {
+        error(get_string('confirmsesskeybad', 'error'));
+    }
+
     if (!$admin = get_admin()) {
         error("No admins");
     }
@@ -35,7 +39,7 @@
 	print_header("$site->shortname: $strregistration", "$site->fullname", 
                  "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> $strregistration");
 
-    print_heading($strmanagemodules);
+    print_heading($strregistration);
 
     print_simple_box($strregistrationinfo, "center", "70%");
     echo "<br />";

@@ -354,7 +354,8 @@
     echo "</td>";
 
     echo "<td align=center width=33%>";
-    print_single_button("register.php", NULL, get_string("registration"));
+    $options['sesskey'] = $USER->sesskey;
+    print_single_button("register.php", $options, get_string("registration"));
     echo "</td>";
     echo "<tr></table>";
 
