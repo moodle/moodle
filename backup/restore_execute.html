@@ -107,6 +107,7 @@
                 $coursecreator_count = 0;
                 $admin_count = 0;
                 $other_count = 0;
+                $counter = 0;
                 //Iterate, filling counters
                 foreach ($recs as $rec) {
                     //Get full record, using backup_getids
@@ -127,6 +128,15 @@
                         $coursecreator_count++;
                     } else if ($record->info == "new" or $record->info == "exists") {
                         $other_count++;
+                    }
+                    //Do some output
+                    $counter++;
+                    if ($counter % 10 == 0) {
+                        echo ".";
+                        if ($counter % 200 == 0) {
+                            echo "<br>";
+                        }
+                        backup_flush(300);
                     }
                 }
                 //Now print information gathered
@@ -232,5 +242,9 @@
     if (!$status) {
         error ("An error has ocurred");
     }
+
+    //Print final message
+    print_simple_box(get_string("restorefinished"),"CENTER");
+    print_continue($moodle_home."/course/view.php?id=".$restore->course_id);
 
 ?>
