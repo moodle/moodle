@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004060100)
+      // wiki.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['action'] = '-- Acción --';
@@ -31,8 +31,10 @@ $string['deletepage'] = 'Eliminar página';
 $string['deleteversions'] = 'Eliminar cuántas versiones últimas';
 $string['deleteversionserror'] = 'Por favor, introduzca un número de versión correcto.';
 $string['diff'] = 'Diferencias';
+$string['differences'] = 'Distingue entre la versión $a->new_ver y $a->old_ver de $a->pagename.';
 $string['disabledpage'] = 'Esta página ya no está disponible.';
 $string['doesnotexist'] = 'Esta página aún no existe: por favor, haga clic en el botón Editar si desea crearla.';
+$string['downloadaszip'] = 'Archivo zip descargable';
 $string['downloadtimes'] = 'Descargado $a veces';
 $string['dwnlnofiles'] = 'Aún no se han subido archivos.';
 $string['dwnlsection'] = 'Descargar sección';
@@ -50,6 +52,9 @@ $string['errversionsave'] = 'Lo sentimos, mientras usted editaba esta página alg
 $string['ewikiacceptbinary'] = 'Permitir archivos binarios';
 $string['ewikiprinttitle'] = 'Imprimir el título en cada página Wiki';
 $string['export'] = 'Exportar.';
+$string['exportformats'] = 'Formatos de exportación';
+$string['exportsuccessful'] = 'Exportación exitosa.';
+$string['exportto'] = 'Exportar a';
 $string['fetchback'] = 'Volver';
 $string['file'] = 'Archivo';
 $string['filedownload'] = 'Descargar archivos';
@@ -69,8 +74,10 @@ $string['groups'] = 'Grupos';
 $string['hits'] = '$a visitas';
 $string['howtooperate'] = 'Cómo operar';
 $string['howtowiki'] = 'Cómo escribir wiki';
+$string['html'] = 'Formato HTML';
 $string['htmlmode'] = 'Modo HTML';
 $string['htmlonly'] = 'Sólo HTML';
+$string['index'] = 'Índice';
 $string['infoaboutpage'] = 'Información sobre la página';
 $string['initialcontent'] = 'Contenido Wiki inicial';
 $string['invalidroot'] = 'Usted no está autorizado a acceder a la página raíz actual, por lo que no se puede crear un mapa del sitio.';
@@ -82,6 +89,7 @@ $string['linkschecked'] = 'Enlaces comprobados';
 $string['listall'] = 'Listar todo';
 $string['listcandidates'] = 'Listar candidatos';
 $string['meta'] = 'Meta datos';
+$string['moduledirectory'] = 'Directorio de módulos';
 $string['modulename'] = 'Wiki';
 $string['modulenameplural'] = 'Wikis';
 $string['mostoftenchangedpages'] = 'Páginas cambiadas con más frecuencia';
@@ -101,6 +109,7 @@ $string['offline'] = 'FUERA DE LÍNEA';
 $string['orphanedpage'] = 'Página huérfana';
 $string['orphanedpages'] = 'Páginas huérfanas';
 $string['otherwikis'] = 'Otros Wikis';
+$string['ownerunknown'] = 'desconocido';
 $string['pageactions'] = 'Acciones de página';
 $string['pageindex'] = 'Índice de la página';
 $string['pageinfo'] = 'Información de la página';
@@ -110,6 +119,7 @@ $string['pageslinkingto'] = 'Páginas con enlaces a esta página';
 $string['pagesremoved'] = 'Páginas eliminadas.';
 $string['pagesreverted'] = 'Cambios eliminados';
 $string['pagesstripped'] = 'Páginas arrancadas.';
+$string['plaintext'] = 'Texto plano';
 $string['preview'] = 'Ver';
 $string['readonly'] = 'Página de sólo lectura';
 $string['refs'] = 'Referencias';
@@ -137,6 +147,7 @@ $string['thanksforcontribution'] = 'Gracias por su contribución';
 $string['thispageisntlinkedfromanywhereelse'] = 'Esta página no tiene ningún enlace.';
 $string['updatedpages'] = 'Páginas actualizadas';
 $string['uplerror'] = 'Lo sentimos, pero se produjo un error durante la subida del archivo.';
+$string['uplinsect'] = 'Cargar en';
 $string['uplnewnam'] = 'Guardar con otro nombre';
 $string['upload0'] = 'Utilice este formulario para subir un fichero binario arbitrario al wiki:';
 $string['uploadedon'] = 'Subido el';
@@ -150,12 +161,15 @@ $string['viewpage'] = 'Ver página';
 $string['viewsmfor'] = 'Ver mapa del sitio para';
 $string['wantedpages'] = 'Páginas deseadas';
 $string['wikidefaultpagename'] = 'Primera Página';
-$string['wikidump'] = 'Aquí puede ajustar su WikiDump según sus necesidades. Cuando esté listo, haga clic en el botón \"Exportar\".';
+$string['wikiexport'] = 'Exportar páginas';
+$string['wikiexportcomment'] = 'Aquí puede configurar la exportación de acuerdo con sus necesidades.';
 $string['wikilinks'] = 'Enlaces Wiki';
 $string['wikiname'] = 'Nombre de la página';
 $string['wikistartederror'] = 'Wiki ya tiene entradas: no puede cambiarse.';
 $string['wikitype'] = 'Tipo';
 $string['wikiusage'] = 'Uso de Wiki';
+$string['withbinaries'] = 'Incluir contenido binario';
+$string['withvirtualpages'] = 'Incluir enlaces Wiki';
 $string['wrongversionrange'] = '$a no es un rango correcto';
 
 ?>
