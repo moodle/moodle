@@ -27,13 +27,13 @@
                 $USER->editing = false;
             }
         }
-        $updatebutton = update_category_button($category->id);
+        $navbaritem = update_category_button($category->id);
 
         $creatorediting = !empty($USER->editing);
         $adminediting = (isadmin() and $creatorediting);
 
     } else {
-        $updatebutton = "";
+        $navbaritem = print_course_search("", true, "navbar");
         $adminediting = false;
     }
 
@@ -72,11 +72,11 @@
                          "", "", true, $updatebutton);
         } else {
 	        print_header("$site->shortname: $category->name", "$site->fullname", 
-                         "<a href=\"index.php\">$strcourses</a> -> $category->name", "", "", true, $updatebutton);
+                         "<a href=\"index.php\">$strcourses</a> -> $category->name", "", "", true, $navbaritem);
         }
     } else {
 	    print_header("$site->shortname: $category->name", "$site->fullname", 
-                     "<a href=\"index.php\">$strcourses</a> -> $category->name", "", "", true, $updatebutton);
+                     "<a href=\"index.php\">$strcourses</a> -> $category->name", "", "", true, $navbaritem);
     }
 
 

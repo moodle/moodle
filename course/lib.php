@@ -1147,7 +1147,6 @@ function print_course_search($value="", $return=false, $format="plain") {
         $output .= "<form name=\"coursesearch\" action=\"$CFG->wwwroot/course/search.php\" method=\"get\">";
         $output .= "<input type=\"text\" size=20 name=\"search\" value=\"$value\">";
         $output .= "<input type=\"submit\" value=\"$strsearchcourses\">";
-        $output .= "<input name=id type=hidden value=\"$course->id\">";
         $output .= "</form>";
         $output .= "</td></tr></table>";
     }
