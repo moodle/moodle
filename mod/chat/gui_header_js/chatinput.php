@@ -5,6 +5,7 @@ require("../lib.php");
 
 require_variable($chat_sid);
 optional_variable($groupid);
+optional_variable($chat_pretext, '');
 
 if (!$chatuser = get_record("chat_users", "sid", $chat_sid)) {
     echo "Not logged in!";
