@@ -434,7 +434,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
                 /// Check whether this is belongs to a discussion in a group that
                 /// should NOT be accessible to the current user
 
-                if (!$isteacheredit) {   /// Because editing teachers can see everything anyway
+                if (!$isteacheredit and $post->groupid != -1) {   /// Editing teachers or open discussions
                     if (!isset($cm[$post->forum])) {
                         $cm[$forum->id] = get_coursemodule_from_instance("forum", $forum->id, $course->id);
                         $groupmode[$forum->id] = groupmode($course, $cm[$forum->id]);
@@ -2369,14 +2369,14 @@ function forum_print_posts_nested($parent, $course, $ratings, $reply) {
     return $ratingsmenuused;
 }
 
-function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $forum="0", $user="", $groupid="") {
+function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $cmid="0", $user="", $groupid="") {
 // Returns all forum posts since a given time.  If forum is specified then
 // this restricts the results
 
     global $CFG;
 
-    if ($forum) {
-        $forumselect = " AND cm.id = '$forum'";
+    if ($cmid) {
+        $forumselect = " AND cm.id = '$cmid'";
     } else {
         $forumselect = "";
     }
@@ -2397,39 +2397,44 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
                               WHERE p.modified > '$sincetime' $forumselect
                                 AND p.userid = u.id $userselect
                                 AND d.course = '$courseid'
-                                AND p.discussion = d.id $groupselect
+                                AND p.discussion = d.id 
                                 AND cm.instance = f.id
                                 AND cm.course = d.course
                                 AND cm.course = f.course
                                 AND f.id = d.forum
                               ORDER BY d.id");
 
-    if (empty($posts))
-      return;
+    if (empty($posts)) {
+        return;
+    }
+
+    $isteacheredit = isteacheredit($courseid);
 
     foreach ($posts as $post) {
 
-        if (empty($groupid) || ismember($groupid, $post->userid)) {
-            $tmpactivity->type = "forum";
-            $tmpactivity->defaultindex = $index;
-            $tmpactivity->instance = $post->instance;
-            $tmpactivity->name = $post->name;
-            $tmpactivity->section = $post->section;
-
-            $tmpactivity->content->id = $post->id;
-            $tmpactivity->content->discussion = $post->discussion;
-            $tmpactivity->content->subject = $post->subject;
-            $tmpactivity->content->parent = $post->parent;
-
-            $tmpactivity->user->userid = $post->userid;
-            $tmpactivity->user->fullname = fullname($post);
-            $tmpactivity->user->picture = $post->picture;
-
-            $tmpactivity->timestamp = $post->modified;
-            $activities[] = $tmpactivity;
-
-            $index++;
+        if ($groupid and ($post->groupid != -1 and $groupid != $post->groupid and !$isteacheredit)) {
+            continue;
         }
+
+        $tmpactivity->type = "forum";
+        $tmpactivity->defaultindex = $index;
+        $tmpactivity->instance = $post->instance;
+        $tmpactivity->name = $post->name;
+        $tmpactivity->section = $post->section;
+
+        $tmpactivity->content->id = $post->id;
+        $tmpactivity->content->discussion = $post->discussion;
+        $tmpactivity->content->subject = $post->subject;
+        $tmpactivity->content->parent = $post->parent;
+
+        $tmpactivity->user->userid = $post->userid;
+        $tmpactivity->user->fullname = fullname($post);
+        $tmpactivity->user->picture = $post->picture;
+
+        $tmpactivity->timestamp = $post->modified;
+        $activities[] = $tmpactivity;
+
+        $index++;
     }
 
     return;
