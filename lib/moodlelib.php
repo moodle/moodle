@@ -2845,18 +2845,37 @@ function current_language() {
 }
 
 /**
- * Given a string to translate - prints it out.
+ * Prints out a translated string.
  *
- * @param string $identifier ?
- * @param string $module ?
- * @param mixed $a ?
- */
+ * Prints out a translated string using the return value from the {@link get_string()} function.
+ *
+ * Example usage of this function when the string is in the moodle.php file:<br>
+ * <code>
+ * echo '<strong>';
+ * print_string('wordforstudent');
+ * echo '</strong>';
+ * </code>
+ *
+ * Example usage of this function when the string is not in the moodle.php file:<br>
+ * <code>
+ * echo '<h1>';
+ * print_string('typecourse', 'calendar');
+ * echo '</h1>';
+ * </code>
+ *
+ * @param string $identifier The key identifier for the localized string
+ * @param string $module The module where the key identifier is stored. If none is specified then moodle.php is used.
+ * @param mixed $a An object, string or number that can be used
+ * within translation strings
+ */ 
 function print_string($identifier, $module='', $a=NULL) {
     echo get_string($identifier, $module, $a);
 }
 
 /**
- * Return the translated string specified by $identifier as
+ * Returns a localized string.
+ *
+ * Returns the translated string specified by $identifier as
  * for $module.  Uses the same format files as STphp.
  * $a is an object, string or number that can be used
  * within translation strings
@@ -2864,12 +2883,46 @@ function print_string($identifier, $module='', $a=NULL) {
  * eg "hello \$a->firstname \$a->lastname"
  * or "hello \$a"
  *
+ * If you would like to directly echo the localized string use
+ * the function {@link print_string()}
+ *
+ * Example usage of this function involves finding the string you would
+ * like a local equivalent of and using its identifier and module information
+ * to retrive it.<br>
+ * If you open moodle/lang/en/moodle.php and look near line 1031
+ * you will find a string to prompt a user for their word for student
+ * <code>
+ * $string['wordforstudent'] = 'Your word for Student';
+ * </code>
+ * So if you want to display the string 'Your word for student' 
+ * in any language that supports it on your site 
+ * you just need to use the identifier 'wordforstudent'
+ * <code>
+ * $mystring = '<strong>'. get_string('wordforstudent') .'</strong>';
+or
+ * </code>
+ * If the string you want is in another file you'd take a slightly 
+ * different approach. Looking in moodle/lang/en/calendar.php you find 
+ * around line 75:
+ * <code>
+ * $string['typecourse'] = 'Course event';
+ * </code>
+ * If you want to display the string "Course event" in any language 
+ * supported you would use the identifier 'typecourse' and the module 'calendar' 
+ * (because it is in the file calendar.php):
+ * <code>
+ * $mystring = '<h1>'. get_string('typecourse', 'calendar') .'</h1>';
+ * </code>
+ *
+ * As a last resort, should the identifier fail to map to a string
+ * the returned string will be [[ $identifier ]]
+ *
  * @uses $CFG
- * @param string $identifier ?
- * @param string $module ?
- * @param mixed $a ?
- * @return string
- * @todo Finish documenting this function
+ * @param string $identifier The key identifier for the localized string
+ * @param string $module The module where the key identifier is stored. If none is specified then moodle.php is used.
+ * @param mixed $a An object, string or number that can be used
+ * within translation strings
+ * @return string The localized string.
  */
 function get_string($identifier, $module='', $a=NULL) { 
 
