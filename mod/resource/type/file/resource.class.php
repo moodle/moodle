@@ -209,6 +209,7 @@ function display() {
     $resourcetype = '';
     $embedded = false;
     $mimetype = mimeinfo("type", $this->resource->reference);
+    $pagetitle = strip_tags($this->course->shortname.': '.$this->resource->name);
 
     if ($this->resource->options != "frame") {
         if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
@@ -279,8 +280,6 @@ function display() {
     /// Check whether this is supposed to be a popup, but was called directly
 
     if ($this->resource->popup and !$inpopup) {    /// Make a page and a pop-up window
-
-        $pagetitle = strip_tags($this->course->shortname.': '.$this->resource->name);
 
         print_header($pagetitle, $this->course->fullname, "$navigation {$this->resource->name}", "", "", true, update_module_button($this->cm->id, $this->course->id, $strresource), navmenu($this->course, $this->cm));
 
