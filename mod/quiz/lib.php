@@ -204,13 +204,30 @@ class quiz_default_questiontype {
     }
 
     function print_question_number_and_grading_details
-            ($number, $grade, $actualgrade=false, $recentlyadded=false) {
+            ($number, $grade, $actualgrade=false, $recentlyadded=false, $questionid=0, $courseid=0) {
 
         /// Print question number and grade:
 
-        echo '<center><b>' . $number . '</b></center>';
+        global $CFG;
+
+        static $streditquestions, $strmarks, $strrecentlyaddedquestion;
+
+        if (!isset($streditquestions)) {
+            $streditquestions         = get_string('editquestions', 'quiz');
+            $strmarks                 = get_string('marks', 'quiz');
+            $strrecentlyaddedquestion = get_string('recentlyaddedquestion', 'quiz');
+        }
+
+        echo '<center><b>' . $number . '</b>';
+        if ($questionid and isteacher($courseid)) {
+            echo '<br /><font size="1">( ';
+            link_to_popup_window ($CFG->wwwroot.'//mod/quiz/question.php?id='.$questionid, 
+                                  'editquestion', '#'.$questionid, 450, 550, $streditquestions);
+            echo ')</font>';
+        }
+        echo '</center>';
+
         if (false !== $grade) {
-            $strmarks  = get_string("marks", "quiz");
             //echo '<p align="center"><font size="1">';
             echo '<br /><center><font size="1">';
             if (false !== $actualgrade) {
@@ -226,9 +243,7 @@ class quiz_default_questiontype {
         if ($recentlyadded) {
             echo '</td><td valign="top" align="right">';
             // Notify the user of this recently added question
-            echo '<font color="red">';
-            echo get_string('recentlyaddedquestion', 'quiz');
-            echo '</font>';
+            echo '<font color="red">'.$strrecentlyaddedquestion.'</font>';
             echo '</td></tr><tr><td></td><td valign="top">';
 
         } else { // The normal case
@@ -249,7 +264,8 @@ class quiz_default_questiontype {
                 ($currentnumber,
                  $quiz->grade ? $question->maxgrade : false,
                  empty($resultdetails) ? false : $resultdetails->grade,
-                 isset($question->recentlyadded) ? $question->recentlyadded : false);
+                 isset($question->recentlyadded) ? $question->recentlyadded : false,
+                 $question->id, $quiz->course);
         
         $this->print_question_formulation_and_controls(
                 $question, $quiz, $readonly,
