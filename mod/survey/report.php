@@ -41,11 +41,11 @@
     $strseemoredetail = get_string("seemoredetail", "survey");
     $strnotes = get_string("notes", "survey");
 
-    if (!$action) {
+    if (empty($action)) {
         $display = "summary";
     }
 
-    if ($display)  { // Display the frame containing something.
+    if (!empty($display))  { // Display the frame containing something.
         add_to_log($course->id, "survey", "view report", "report.php?id=$cm->id", "$survey->id");
         echo "<HEAD><TITLE>$course->shortname: $strreport: $survey->name</TITLE>\n";
         echo "<FRAMESET ROWS=70,* BORDER=1> ";

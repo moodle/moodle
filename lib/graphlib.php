@@ -762,6 +762,12 @@ function init_x_ticks() {
   //print "xStep: $xStep <BR>";
   // if numeric x axis then calculate x coords for each data point. this is seperate from x ticks.
   $gridX = $gridLeft;
+  if (empty($this->calculated['x_axis']['factor'])) {
+      $this->calculated['x_axis']['factor'] = 0;
+  }
+  if (empty($this->calculated['x_axis']['min'])) {
+      $this->calculated['x_axis']['min'] = 0;
+  }
   $factor = $this->calculated['x_axis']['factor'];
   $min = $this->calculated['x_axis']['min'];
 

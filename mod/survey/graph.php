@@ -119,6 +119,8 @@
            $count1[$i] = 0;
            $count2[$i] = 0;
            $indexof[$val] = $i;
+           $stdev1[$i] = 0;
+           $stdev2[$i] = 0;
        }
 
        $aaa = get_records_select("survey_answers", "((survey = $cm->instance) AND (question in ($question->multi)))");
@@ -396,6 +398,8 @@
            $studbuckets2[$i] = 0.0;
            $studcount1[$i] = 0;
            $studcount2[$i] = 0;
+           $stdev1[$i] = 0.0;
+           $stdev2[$i] = 0.0;
 
            $subquestions = $question[$i]->multi;   // otherwise next line doesn't work
            $aaa = get_records_select("survey_answers","((survey = $cm->instance) AND (question in ($subquestions)))");
@@ -541,6 +545,8 @@
            $studbuckets2[$i] = 0.0;
            $studcount1[$i] = 0;
            $studcount2[$i] = 0;
+           $stdev1[$i] = 0.0;
+           $stdev2[$i] = 0.0;
        }
 
        $aaa = get_records_select("survey_answers", "((survey = $cm->instance) AND (question in ($question->multi)))");
@@ -649,7 +655,7 @@
        $graph->y_tick_labels = $options;
 
        if (($maxbuckets1 > 0.0) && ($maxbuckets2 > 0.0)) {
-              $graph->y_order = array('stdev1', 'stdev2', 'answers1', 'answers2', 'studanswers1', 'studanswers2');
+           $graph->y_order = array('stdev1', 'stdev2', 'answers1', 'answers2', 'studanswers1', 'studanswers2');
        } else if ($maxbuckets1 > 0.0) {
            $graph->y_order = array('stdev1', 'answers1', 'studanswers1');
        } else {

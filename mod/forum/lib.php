@@ -1326,7 +1326,7 @@ function forum_print_user_discussions($courseid, $userid) {
             if (($discussion->forumtype == "teacher") and !isteacher($courseid)) {
                 continue;
             }
-            if ($replies[$discussion->discussion]) {
+            if (!empty($replies[$discussion->discussion])) {
                 $discussion->replies = $replies[$discussion->discussion]->replies;
             } else {
                 $discussion->replies = 0;

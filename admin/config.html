@@ -4,9 +4,7 @@
 <TR VALIGN=TOP>
 	<TD ALIGN=RIGHT><P>lang:</TD>
 	<TD>
-    <? choose_from_menu (get_list_of_languages(), "lang", $config->lang, "", "", "");
-       formerr($err["lang"]);
-    ?>
+    <? choose_from_menu (get_list_of_languages(), "lang", $config->lang, "", "", ""); ?>
     </TD>
     <TD>
     <? print_string("configlang") ?>
@@ -30,7 +28,6 @@
 	<TD ALIGN=RIGHT><P>locale:</TD>
 	<TD>
     <INPUT NAME=locale TYPE=text SIZE=10 VALUE="<?=$config->locale?>">
-    <? formerr($err["locale"]); ?>
     </TD>
     <TD>
     <? print_string("configlocale") ?>
@@ -48,7 +45,6 @@
 	<TD ALIGN=RIGHT><P>smtphosts:</TD>
 	<TD>
     <INPUT NAME=smtphosts TYPE=text SIZE=30 VALUE="<?=$config->smtphosts?>">
-    <? formerr($err["smtphosts"]); ?>
     </TD>
     <TD>
     <? print_string("configsmtphosts") ?>
@@ -58,7 +54,6 @@
 	<TD ALIGN=RIGHT><P>smtpuser:</TD>
 	<TD>
     <INPUT NAME=smtpuser TYPE=text SIZE=10 VALUE="<?=$config->smtpuser?>">
-    <? formerr($err["smtpuser"]); ?>
     </TD>
     <TD ROWSPAN=2>
     <? print_string("configsmtpuser") ?>
@@ -68,7 +63,6 @@
 	<TD ALIGN=RIGHT><P>smtppass:</TD>
 	<TD>
     <INPUT NAME=smtppass TYPE=text SIZE=10 VALUE="<?=$config->smtppass?>">
-    <? formerr($err["smtppass"]); ?>
     </TD>
 </TR>
 <TR VALIGN=TOP>
@@ -95,7 +89,6 @@
        $options[0] = get_string("allownot");
        $options[1] = get_string("allow");
        choose_from_menu ($options, "htmleditor", $config->htmleditor, "", "", "");
-       formerr($err["htmleditor"]);
     ?>
     </TD>
     <TD>
@@ -145,7 +138,6 @@
 	<TD ALIGN=RIGHT><P>zip:</TD>
 	<TD>
     <INPUT name=zip TYPE=text SIZE=30 VALUE="<?=$config->zip?>">
-    <? formerr($err["zip"]); ?>
     </TD>
     <TD>
     <? print_string("configzip") ?>
@@ -155,7 +147,6 @@
 	<TD ALIGN=RIGHT><P>unzip:</TD>
 	<TD>
     <INPUT name=unzip TYPE=text SIZE=30 VALUE="<?=$config->unzip?>">
-    <? formerr($err["unzip"]); ?>
     </TD>
     <TD>
     <? print_string("configunzip") ?>
@@ -181,7 +172,6 @@
 	<TD ALIGN=RIGHT><P>proxyhost:</TD>
 	<TD>
     <INPUT name=proxyhost TYPE=text SIZE=30 VALUE="<?=$config->proxyhost?>">
-    <? formerr($err["proxyhost"]); ?>
     </TD>
     <TD ROWSPAN=2>
     <? print_string("configproxyhost") ?>
@@ -191,7 +181,20 @@
 	<TD ALIGN=RIGHT><P>proxyport:</TD>
 	<TD>
     <INPUT name=proxyport TYPE=text SIZE=5 VALUE="<?=$config->proxyport?>">
-    <? formerr($err["proxyport"]); ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>debug:</TD>
+	<TD>
+    <? $options[7]  = get_string("no");
+       $options[15] = get_string("yes");
+
+       choose_from_menu ($options, "debug", $config->debug, "", "", "");
+       unset($options);
+    ?>
+    </TD>
+    <TD>
+    <? print_string("configdebug") ?>
     </TD>
 </TR>
 

@@ -105,6 +105,8 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
 // It is assumed that $date is the GMT time of midnight for that day, 
 // and so the next 86400 seconds worth of logs are printed.
 
+    global $CFG;
+
     if ($course->category) {
         $selector = "WHERE l.course='$course->id' AND l.userid = u.id";
 
@@ -152,7 +154,7 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
         echo "<TD NOWRAP ALIGN=right><FONT SIZE=2>".userdate($log->time, "%A")."</TD>";
         echo "<TD NOWRAP><FONT SIZE=2>".userdate($log->time, "%d %B %Y, %I:%M %p")."</TD>";
         echo "<TD NOWRAP><FONT SIZE=2>";
-        link_to_popup_window("$CFG->wwwroot/lib/ipatlas/plot.php?address=$log->ip&user=$log->userid", "ipatlas","$log->ip", 400, 700);
+        link_to_popup_window("/lib/ipatlas/plot.php?address=$log->ip&user=$log->userid", "ipatlas","$log->ip", 400, 700);
         echo "</TD>";
         echo "<TD NOWRAP><FONT SIZE=2><A HREF=\"../user/view.php?id=$log->userid&course=$log->course\"><B>$log->firstname $log->lastname</B></TD>";
         echo "<TD NOWRAP><FONT SIZE=2>";
@@ -325,7 +327,7 @@ function print_recent_activity($course) {
                     break;
                     case "update mod":
                        $strupdated = get_string("updated", "moodle", get_string("modulename", $info[0]));
-                       if (! $changelist["$log->info"]) {
+                       if (empty($changelist["$log->info"])) {
                            $changelist["$log->info"] = array ("operation" => "update", "text" => "$strupdated:<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
                        }
                     break;
@@ -477,6 +479,8 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
         $editmenu = popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=0&add=", 
                    $modnames, "section0", "", get_string("add")."...", "mods", get_string("activities"), true);
         $editmenu = "<DIV ALIGN=right>$editmenu</DIV>";
+    } else {
+        $editmenu = "";
     }
 
     print_side_block($heading, "", $moddata, $modicon, $editmenu, $width);

@@ -1,6 +1,6 @@
 <?PHP // $Id$
 
-	require("../config.php");
+    require("../config.php");
 
     if ($site = get_site()) {
         if (!isadmin()) {
@@ -11,7 +11,7 @@
 
 /// If data submitted, then process and store.
 
-	if (match_referer() && isset($HTTP_POST_VARS)) {
+    if (match_referer() && isset($HTTP_POST_VARS)) {
 
         $form = (object)$HTTP_POST_VARS;
 
@@ -23,7 +23,7 @@
 
             if ($form->id) {
                 if (update_record("course", $form)) {
-		            redirect("index.php", get_string("changessaved"));
+                    redirect("index.php", get_string("changessaved"));
                 } else {
                     error("Serious Error! Could not update the site record! (id = $form->id)");
                 }
@@ -31,7 +31,7 @@
                 if ($newid = insert_record("course", $form)) {
                     $cat->name = get_string("miscellaneous");
                     if (insert_record("course_categories", $cat)) {
-		                redirect("index.php", get_string("changessaved"), "1");
+                        redirect("index.php", get_string("changessaved"), "1");
                     } else {
                         error("Serious Error! Could not set up a default course category!");
                     }
@@ -39,23 +39,27 @@
                     error("Serious Error! Could not set up the site!");
                 }
             }
-		    die;
+            die;
 
         } else {
             foreach ($err as $key => $value) {
                 $focus = "form.$key";
             }
         }
-	}
+    }
 
 /// Otherwise fill and print the form.
 
-    if ($site && !$form) {
+    if ($site and empty($form)) {
         $form = $site;
     } else {
         $form->category = 0;
         $form->format = "social";
         $form->newsitems = 0;
+    }
+
+    if (empty($focus)) {
+        $focus = "form.fullname";
     }
 
     $stradmin = get_string("administration");
@@ -66,7 +70,7 @@
 
     print_heading($strsitesettings);
     print_simple_box_start("center", "", "$THEME->cellheading");
-	include("site.html");
+    include("site.html");
     print_simple_box_end();
     print_footer();
 
