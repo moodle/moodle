@@ -261,8 +261,6 @@ function process_config($config) {
 
     $return = true;
 
-    print_object($config);
-
     foreach ($config as $name => $value) {
         if (!set_config($name, $value)) {
             $return = false;
