@@ -963,6 +963,11 @@ function main_upgrade($oldversion=0) {
         fix_course_sortorder(0, 1, 1);
     }   
 
+    if ($oldversion < 2004083134) {
+        // Expand module column to max 20 chars
+        table_column('log','module','module','varchar','20','','','not null');
+    }
+
     return $result;
     
 }

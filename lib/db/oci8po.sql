@@ -260,7 +260,7 @@ CREATE TABLE prefix_log (
   userid number(10) default '0' not null,
   ip varchar2(15) default '' not null,
   course number(10) default '0' not null,
-  module varchar2(10) default '' not null,
+  module varchar2(20) default '' not null,
   action varchar2(15) default '' not null,
   url varchar2(100) default '' not null,
   info varchar2(255) default '' not null
