@@ -46,6 +46,10 @@ function main_upgrade($oldversion=0) {
                                   userid int8  NOT NULL default '0'
                                   )");
 	}
+
+	if ($oldversion < 2003041400) {
+        table_column("course_modules", "", "visible", "integer", "1", "unsigned", "1", "not null", "score");
+    }
 	
     return true;
 }

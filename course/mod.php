@@ -118,6 +118,38 @@
         redirect($_SERVER["HTTP_REFERER"]);
         exit;
 
+    } else if (isset($hide)) {
+
+        if (! $cm = get_record("course_modules", "id", $hide)) {
+            error("This course module doesn't exist");
+        }
+   
+        hide_course_module($hide);
+
+        $modinfo = serialize(get_array_of_activities($cm->course));
+        if (!set_field("course", "modinfo", $modinfo, "id", $cm->course)) {
+            error("Could not cache module information!");
+        }
+
+        redirect($_SERVER["HTTP_REFERER"]);
+        exit;
+
+    } else if (isset($show)) {
+
+        if (! $cm = get_record("course_modules", "id", $show)) {
+            error("This course module doesn't exist");
+        }
+   
+        show_course_module($show);
+
+        $modinfo = serialize(get_array_of_activities($cm->course));
+        if (!set_field("course", "modinfo", $modinfo, "id", $cm->course)) {
+            error("Could not cache module information!");
+        }
+
+        redirect($_SERVER["HTTP_REFERER"]);
+        exit;
+
     } else if (isset($delete)) {   // value = course module
 
         if (! $cm = get_record("course_modules", "id", $delete)) {

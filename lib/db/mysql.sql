@@ -77,6 +77,7 @@ CREATE TABLE `prefix_course_modules` (
   `added` int(10) unsigned NOT NULL default '0',
   `deleted` tinyint(1) unsigned NOT NULL default '0',
   `score` tinyint(4) NOT NULL default '0',
+  `visible` tinyint(1) NOT NULL default '1',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`)
 ) TYPE=MyISAM;

@@ -998,6 +998,13 @@ function get_all_instances_in_course($modulename, $courseid, $sort="cw.section")
 
     global $CFG;
 
+    // Hide non-visible instances from students
+    if (isteacher($courseid)) {
+        $showvisible = "";
+    } else {
+        $showvisible = "AND cm.visible = '1'";
+    }
+
     return get_records_sql("SELECT m.*,cw.section,cm.id as coursemodule 
                             FROM {$CFG->prefix}course_modules cm, {$CFG->prefix}course_sections cw, 
                                  {$CFG->prefix}modules md, {$CFG->prefix}$modulename m 
@@ -1006,7 +1013,7 @@ function get_all_instances_in_course($modulename, $courseid, $sort="cw.section")
                                   cm.deleted = '0' AND
                                   cm.section = cw.id AND 
                                   md.name = '$modulename' AND 
-                                  md.id = cm.module
+                                  md.id = cm.module $showvisible
                             ORDER BY $sort");
 
 }

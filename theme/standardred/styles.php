@@ -190,3 +190,18 @@ form {
 .feedbacktext {
     color: <?PHP echo $THEME->cellheading2?>;
 }
+
+a.dimmed:link {
+    text-decoration: none; 
+    color: #AAAAAA;
+}
+
+a.dimmed:visited {
+    text-decoration: none;
+    color: #AAAAAA;
+}
+
+a.dimmed:hover {
+    text-decoration: underline;
+    color: red;
+}

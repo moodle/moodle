@@ -40,7 +40,8 @@ CREATE TABLE prefix_course_modules (
    section integer NOT NULL default '0',
    added integer NOT NULL default '0',
    deleted integer NOT NULL default '0',
-   score integer NOT NULL default '0'
+   score integer NOT NULL default '0',
+   visible integer NOT NULL default '1'
 );
 
 CREATE TABLE prefix_course_sections (

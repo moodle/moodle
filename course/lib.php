@@ -467,7 +467,9 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
         foreach($rawmods as $mod) {    // Index the mods
             $mods[$mod->id] = $mod;
             $mods[$mod->id]->modfullname = $modnames[$mod->modname];
-            $modnamesused[$mod->modname] = $modnames[$mod->modname];
+            if ($mod->visible or isteacher($courseid)) {
+                $modnamesused[$mod->modname] = $modnames[$mod->modname];
+            }
         }
         asort($modnamesused);
     }
@@ -498,11 +500,18 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
         foreach ($sectionmods as $modnumber) {
             $mod = $mods[$modnumber];
             if ($isediting) {
-                $editbuttons = make_editing_buttons($mod->id, $absolute);
+                $editbuttons = make_editing_buttons($mod->id, $absolute, $mod->visible);
             }
-            $instancename = urldecode($modinfo[$modnumber]->name);
-            $modicon[] = "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\" height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
-            $moddata[] = "<a title=\"$mod->modfullname\" href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a><BR>$editbuttons";
+            if ($mod->visible or isteacher($course->id)) {
+                $instancename = urldecode($modinfo[$modnumber]->name);
+                if ($mod->visible) {
+                    $link_css = "";
+                } else {
+                    $link_css = " class=\"dimmed\" ";
+                }
+                $modicon[] = "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\" height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
+                $moddata[] = "<a title=\"$mod->modfullname\" $link_css href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a><BR>$editbuttons";
+            }
         }
     }
     if ($isediting) {
@@ -532,15 +541,24 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 continue;
             }
             $mod = $mods[$modnumber];
-            $instancename = urldecode($modinfo[$modnumber]->name);
-            echo "<IMG SRC=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
-            echo " <FONT SIZE=2><A TITLE=\"$mod->modfullname\"";
-            echo "   HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</A></FONT>";
+            if ($mod->visible or isteacher($course->id)) {
+                $instancename = urldecode($modinfo[$modnumber]->name);
+                if ($mod->visible) {
+                    $link_css = "";
+                } else {
+                    $link_css = " class=\"dimmed\" ";
+                }
+                echo "<IMG SRC=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
+                echo " <FONT SIZE=2><A TITLE=\"$mod->modfullname\" $link_css";
+                echo "   HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</A></FONT>";
+            }
             if (isediting($course->id)) {
                 echo "&nbsp;&nbsp;";
-                echo make_editing_buttons($mod->id, $absolute);
+                echo make_editing_buttons($mod->id, $absolute, $mod->visible);
             }
-            echo "<BR>\n";
+            if ($mod->visible or isteacher($course->id)) {
+                echo "<BR>\n";
+            }
         }
     }
     echo "</TD></TR></TABLE><BR>\n\n";
@@ -828,6 +846,14 @@ function add_mod_to_section($mod) {
     }
 }
 
+function hide_course_module($mod) {
+    return set_field("course_modules", "visible", 0, "id", $mod);
+}
+
+function show_course_module($mod) {
+    return set_field("course_modules", "visible", 1, "id", $mod);
+}
+
 function delete_course_module($mod) {
     return set_field("course_modules", "deleted", 1, "id", $mod);
 }
@@ -975,27 +1001,40 @@ function move_module($cm, $move) {
     }
 }
 
-function make_editing_buttons($moduleid, $absolute=false) {
+function make_editing_buttons($moduleid, $absolute=false, $visible=true, $str=NULL) {
     global $CFG;
 
-    $delete   = get_string("delete");
-    $moveup   = get_string("moveup");
-    $movedown = get_string("movedown");
-    $update   = get_string("update");
+    if (empty($str)) {
+        $str->delete   = get_string("delete");
+        $str->moveup   = get_string("moveup");
+        $str->movedown = get_string("movedown");
+        $str->update   = get_string("update");
+        $str->hide     = get_string("hide");
+        $str->show     = get_string("show");
+    }
 
     if ($absolute) {
         $path = "$CFG->wwwroot/course/";
     } else {
         $path = "";
     }
-    return "<A TITLE=\"$delete\" HREF=\"".$path."mod.php?delete=$moduleid\"><IMG 
+
+    if ($visible) {
+        $hideshow = " <A TITLE=\"$str->hide\" HREF=\"".$path."mod.php?hide=$moduleid\"><IMG 
+                        SRC=".$path."../pix/t/hide.gif BORDER=0></A>";
+    } else {
+        $hideshow = " <A TITLE=\"$str->show\" HREF=\"".$path."mod.php?show=$moduleid\"><IMG 
+                        SRC=".$path."../pix/t/show.gif BORDER=0></A>";
+    }
+
+    return "<A TITLE=\"$str->delete\" HREF=\"".$path."mod.php?delete=$moduleid\"><IMG 
              SRC=".$path."../pix/t/delete.gif BORDER=0></A>
-          <A TITLE=\"$moveup\" HREF=\"".$path."mod.php?id=$moduleid&move=-1\"><IMG 
+          <A TITLE=\"$str->moveup\" HREF=\"".$path."mod.php?id=$moduleid&move=-1\"><IMG 
              SRC=".$path."../pix/t/up.gif BORDER=0></A>
-          <A TITLE=\"$movedown\" HREF=\"".$path."mod.php?id=$moduleid&move=1\"><IMG 
+          <A TITLE=\"$str->movedown\" HREF=\"".$path."mod.php?id=$moduleid&move=1\"><IMG 
              SRC=".$path."../pix/t/down.gif BORDER=0></A>
-          <A TITLE=\"$update\" HREF=\"".$path."mod.php?update=$moduleid\"><IMG 
-             SRC=".$path."../pix/t/edit.gif BORDER=0></A>";
+          <A TITLE=\"$str->update\" HREF=\"".$path."mod.php?update=$moduleid\"><IMG 
+             SRC=".$path."../pix/t/edit.gif BORDER=0></A> $hideshow";
 }
 
 ?>
