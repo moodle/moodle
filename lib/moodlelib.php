@@ -86,7 +86,10 @@ function reload_user_preferences() {
         foreach ($preferences as $preference) {
             $USER->preference[$preference->name] = $preference->value;
         }
-    }
+    } else {
+            //return empty preference array to hold new values
+            $USER->preference = array();
+    }        
 }
 
 function set_user_preference($name, $value, $user=NULL) {
@@ -388,7 +391,7 @@ function require_login($courseid=0, $autologinguest=true) {
 
     // check whether the user should be changing password
     reload_user_preferences();
-    if ($USER->preference['auth_forcepasswordchange']){
+    if (isset($USER->preference['auth_forcepasswordchange'])){
         if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
             redirect("$CFG->wwwroot/login/change_password.php");
         } elseif($CFG->changepassword) {
