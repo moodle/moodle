@@ -82,7 +82,7 @@ function choice_add_instance($choice) {
         }
     }
     if ($choice->addmorechoices > 0) { //make sure the page is reloaded if the user wants to add more choices.
-       redirect('mod.php?update='.$choice->coursemodule.'&return=true&addmore='.$choice->addmorechoices.'&sesskey='.$choice->sesskey);
+       redirect('mod.php?update='.$choice->coursemodule.'&return=true&addmore='.$choice->addmorechoices.'&sesskey='.sesskey());
     } else {        
        return $result; 
     }    

@@ -8,6 +8,9 @@
     if (empty($form->format)) {
         $form->format = 0;
     }
+    if (empty($form->display)) {
+        $form->display = 0;
+    }
     if (empty($form->timeopen)) {
         $form->timeopen = "";
         $form->timerestrict = 0;
@@ -32,6 +35,9 @@
     if (!(empty($form->addmorechoices))) {
         error("not submitted!");
     }
+    if (empty($addmore)) {
+        $addmore = 0;
+    }
 
 ?>
 <form name="form" method="post" action="mod.php">
@@ -46,7 +52,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><b><?php print_string("choicetext","choice") ?>:</b><br /><br />
+    <td align="right"><strong><?php print_string("choicetext","choice") ?>:</strong><br /><br />
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
         echo "<br />";
@@ -82,41 +88,44 @@
 </tr>
 
 <?php
-$choiceqs = get_records_menu("choice_answers","choice", $form->instance,"id","id ,answer");
-foreach ($choiceqs as $current=>$answer) { 
-?>
+$standardblanks = 5;
+if ($choiceqs = get_records_menu('choice_answers','choice', $form->instance, 'id', 'id,answer')) {
+    foreach ($choiceqs as $id => $answer) { 
+    ?>
 
-<tr valign=top>
-    <td align=right><p><strong><?php print_string("choice","choice") ?>:</strong></p></td>
-    <td>
-        <input type="text" name="choiceanswer<?php p($current) ?>" size=60 value="<?php p($answer) ?>" ID="Textq<?php p($current) ?>">
-        <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
-    </td>
-</tr>
-<?php
-} 
-for ($i = 1; $i < ($addmore + 5); $i++) {
-?>
-<tr valign=top>
-    <td align="right"><p><strong><?php print_string("choice","choice") ?>:</strong></p></td>
-    <td>
-        <input type="text" name="newanswer<?php p($i) ?>" size=60 value="" ID="Textqm<?php p($current) ?>">
-        <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
-    </td>
-</tr>
-<?php
+    <tr valign=top>
+        <td align="right"><strong><?php print_string("choice","choice") ?>:</strong></td>
+        <td>
+            <input type="text" name="choiceanswer<?php p($id) ?>" size="60" value="<?php p($answer) ?>" id="Textq<?php p($id) ?>">
+            <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
+        </td>
+    </tr>
+    <?php
+    } 
+    $standardblanks = 2;
+}
+for ($i=1; $i <= ($addmore + $standardblanks); $i++) {
+    ?>
+    <tr valign=top>
+        <td align="right"><strong><?php print_string("choice","choice") ?>:</strong></td>
+        <td>
+            <input type="text" name="newanswer<?php p($i) ?>" size="60" value="" id="Textqm<?php p($i) ?>">
+            <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
+        </td>
+    </tr>
+    <?php
 }
 ?>
 <tr valign="top">
-    <td align="right"><p><strong><?php print_string("addmorechoices","choice") ?>:</strong></p></td>
+    <td align="right"><strong><?php print_string("addmorechoices","choice") ?>:</strong></td>
     <td>
         <input name="addmorechoices" type="text" value="0" size="3" />
-        <input type="submit" value="add"/>
+        <input type="submit" value="add" />
     </td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><b><?php print_string("timerestrict", "choice") ?>:</b></td>
+    <td align="right"><strong><?php print_string("timerestrict", "choice") ?>:</strong></td>
     <td>
         <script type="text/javascript">
             var timeitems = ['openday','openmonth','openyear','openhour', 'openminute', 'closeday','closemonth','closeyear','closehour','closeminute'];

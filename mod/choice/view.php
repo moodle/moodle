@@ -23,7 +23,7 @@
         $answerchecked[$i] = '';
     }
     if (isset($USER->id) and $current = get_record("choice_responses", "choice", $choice->id, "userid", $USER->id)) {
-        $answerchecked[$current->answer] = 'CHECKED';
+        $answerchecked[$current->answerid] = 'CHECKED';
     } else {
         $current = false;
     }
