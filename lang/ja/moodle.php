@@ -159,6 +159,7 @@ $string['enrolmentkeyhint'] = "「登録キー」が違います。再度入力してください。<br
 $string['entercourse'] = "Enterをクリックしてください。";
 $string['enteremailaddress'] = "パスワードをリセットして新しいパスワードを受け取るために、メールアドレスを入力してください";
 $string['error'] = "エラー";
+$string['errortoomanylogins'] = "ログイン失敗回数の上限に達しました。ブラウザを再起動してください。";
 $string['existingadmins'] = "管理者一覧";
 $string['existingteachers'] = "教師一覧";
 $string['feedback'] = "フィードバック";
