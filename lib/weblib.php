@@ -516,7 +516,7 @@ function validate_email ($address) {
 }
 
 function detect_munged_arguments($string) {
-    if (ereg('\.\.', $string)) { // check for parent URLs
+    if (substr_count($string, '..') > 1) {   // We allow one '..' in a URL
         return true;
     }
     if (ereg('[\|\`]', $string)) {  // check for other bad characters
@@ -927,7 +927,7 @@ function highlightfast($needle, $haystack) {
 /// STANDARD WEB PAGE PARTS ///////////////////////////////////////////////////
 
 function print_header ($title="", $heading="", $navigation="", $focus="", $meta="",
-                       $cache=true, $button="&nbsp;", $menu="", $usexml=false) {
+                       $cache=true, $button="&nbsp;", $menu="", $usexml=false, $bodytags="") {
 // $title - appears top of window
 // $heading - appears top of page
 // $navigation - premade navigation string
@@ -937,6 +937,8 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
 // $button - HTML code for a button (usually for module editing)
 // $menu - HTML code for a popup menu
 // $usexml - use XML for this page
+// $bodytags - this text will be included verbatim in the <body> tag (useful for onload() etc)
+
     global $USER, $CFG, $THEME, $SESSION;
 
     global $course;                // This is a bit of an ugly hack to be gotten rid of later
