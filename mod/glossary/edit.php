@@ -52,7 +52,7 @@ if ( $confirm ) {
     $newentry->usedynalink = $form->usedynalink;
     $newentry->casesensitive = $form->casesensitive;
     $newentry->fullmatch = $form->fullmatch;
-    $newentry->timemodified = $timenow;		
+    $newentry->timemodified = $timenow;
     $newentry->approved = 0;
     if ( $glossary->defaultapproval or isteacher($course->id) ) {
         $newentry->approved = 1;
@@ -73,8 +73,8 @@ if ( $confirm ) {
         }
 
         print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
-             "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
-              <A HREF=\"index.php?id=$course->id\">$strglossaries</A> -> 
+             "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
+              <A HREF=\"index.php?id=$course->id\">$strglossaries</A> ->
               <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "form.text",
               "", true, "", navmenu($course, $cm));
 
@@ -88,7 +88,7 @@ if ( $confirm ) {
 
     if ($e) {
         $newentry->id = $e;
-    
+
         $permissiongranted = 1;
         if ( !$glossary->allowduplicatedentries ) {
             if ($dupentries = get_records("glossary_entries","UCASE(concept)", strtoupper($newentry->concept))) {
@@ -102,7 +102,7 @@ if ( $confirm ) {
                 }
             }
         }
-    
+
         if ( $permissiongranted ) {
             $newentry->attachment = $_FILES["attachment"];
             if ($newfilename = glossary_add_attachment($newentry, $newentry->attachment)) {
@@ -115,7 +115,7 @@ if ( $confirm ) {
                 error("Could not update your glossary");
             } else {
                 add_to_log($course->id, "glossary", "update entry", "view.php?id=$cm->id&mode=entry&hook=$newentry->id", $newentry->id,$cm->id);
-           	}
+            }
         } else {
             error("Could not update this glossary entry because this concept already exist.");
         }
@@ -125,7 +125,7 @@ if ( $confirm ) {
         $newentry->timecreated = $timenow;
         $newentry->sourceglossaryid = 0;
         $newentry->teacherentry = isteacher($course->id);
-        
+
         $permissiongranted = 1;
         if ( !$glossary->allowduplicatedentries ) {
             if ($dupentries = get_record("glossary_entries","UCASE(concept)", strtoupper($newentry->concept), "glossaryid", $glossary->id)) {
@@ -203,7 +203,7 @@ if ( $confirm ) {
         }
     }
 }
-//Fill and print the form. 
+//Fill and print the form.
 //We check every field has a default values here!!
 if (!isset($newentry->concept)) {
     $newentry->concept = "";
@@ -223,14 +223,14 @@ if (!isset($newentry->casesensitive)) {
         $newentry->casesensitive = $CFG->glossary_casesensitive;
     } else {
         $newentry->casesensitive = 0;
-    }         
+    }
 }
 if (!isset($newentry->fullmatch)) {
     if (isset($CFG->glossary_fullmatch)) {
         $newentry->fullmatch = $CFG->glossary_fullmatch;
     } else {
         $newentry->fullmatch = 0;
-    }  
+    }
 }
 if (!isset($newentry->definition)) {
     $newentry->definition = "";
@@ -248,8 +248,8 @@ if ($usehtmleditor = can_use_richtext_editor()) {
 }
 
 print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
-             "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
-              <A HREF=\"index.php?id=$course->id\">$strglossaries</A> -> 
+             "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
+              <A HREF=\"index.php?id=$course->id\">$strglossaries</A> ->
               <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "",
               "", true, "", navmenu($course, $cm));
 
@@ -272,6 +272,12 @@ include("edit.html");
 
 echo '</center>';
 glossary_print_tabbed_table_end();
+
+    // Lets give IE more time to load the whole page
+    // before trying to load the editor.
+    if ($usehtmleditor) {
+       use_html_editor("text");
+    }
 
 print_footer($course);
 
