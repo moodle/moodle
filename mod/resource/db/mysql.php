@@ -46,7 +46,10 @@ function resource_upgrade($oldversion) {
         modify_database("", "UPDATE prefix_resource SET type='file' WHERE type='7';");
         modify_database("", "UPDATE prefix_resource SET type='text', options='3' WHERE type='8';");
         modify_database("", "UPDATE prefix_resource SET type='directory' WHERE type='9';");
+    }
 
+    if ($oldversion < 2004080801) {
+        modify_database("", "UPDATE prefix_resource SET alltext=reference,type='html' WHERE type='reference';");
         rebuild_course_cache();
     }
 

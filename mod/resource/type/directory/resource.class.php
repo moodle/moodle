@@ -70,7 +70,7 @@ function display() {
             get_string("editfiles")."...</a></div>";
     }
 
-    if (trim($this->resource->summary)) {
+    if (trim(strip_tags($this->resource->summary))) {
         print_simple_box(text_to_html($this->resource->summary), "center");
         print_spacer(10,10);
     }

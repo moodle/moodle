@@ -53,9 +53,15 @@
                     $resource->popup = $resource->alltext;
                     $resource->alltext = '';
                 }
+                //Move reference to alltext for references
+                if ($resource->type == 1) {
+                    $resource->popup = '';
+                    $resource->alltext = $resource->reference;
+                    $resource->reference = '';
+                }
                 //Reencode the type field to its new values and fill the options field as needed
                 //Array 1-9 of new types
-                $types = array ('','reference','file','file','text','file',
+                $types = array ('','html','file','file','text','file',
                                    'html','file','text','directory');
                 //Array 1-9 of corresponding options
                 $options = array ('','','frame','','0','',
@@ -64,6 +70,12 @@
                 $oldtype = $resource->type;
                 $resource->type = $types[$oldtype];
                 $resource->options = $options[$oldtype];
+            }
+
+            if ($resource->type == 'reference') {   // Obsolete type of resource
+                $resource->type == 'html';
+                $resource->alltext = $resource->reference;
+                $resource->reference = '';
             }
  
             //The structure is equal to the db, so insert the resource

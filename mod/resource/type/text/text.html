@@ -15,10 +15,74 @@
         <p><b><?php print_string("formattexttype") ?>:</b></p><br />
     </td>
     <td>
-        <?php choose_from_menu($format_array, "options", $form->options, '') ?>
-        <font size="1">
-            <?php  helpbutton("textformat", get_string("formattexttype")) ?><br />
-        </font>
+        <?php 
+            choose_from_menu($format_array, "options", $form->options, '');
+            helpbutton("textformat", get_string("formattexttype"));
+        ?>
     </td>
 </tr> 
+
+<tr><td colspan="2"><hr /></td></tr>
+
+<tr valign="top">
+    <td align="right" nowrap>
+        <p><b><?php print_string("pagewindow", "resource") ?>:</b></p>
+    </td>
+
+    <td>
+        <script>
+            var popupitems = [<?php echo $popupoptions; ?>];
+            var allitems = [<?php echo $alloptions; ?>];
+        </script>
+        <input type="checkbox" name="windowpage" value=1 <?php echo ($windowtype == "page") ? "checked" : "" ?> onClick="document.form.windowpopup.checked=false; return lockoptions('form', 'windowpopup', popupitems);">
+        <?php print_string("pagedisplay", "resource") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+    <td align="right" nowrap>
+        <p><b><?php p($strnewwindow) ?>:</b></p>
+    </td>
+    
+    <td>
+        <input name="setnewwindow" type=hidden value=1>
+        <input name="windowpopup" type=checkbox value=1 onclick="lockoptions('form','windowpopup', popupitems); document.form.windowpage.checked=false;">
+        <?php p($strnewwindowopen) ?>
+        <ul>
+        <?php
+            foreach ($window as $name => $value) {
+                if ($name == "height" or $name == "width") {
+                    continue;
+                }
+                echo "<input name=\"h$name\" type=hidden value=0>";
+                echo "<input name=\"$name\" type=checkbox value=1 ".$window->$name.">";
+                $stringname = "str$name";
+                echo $$stringname."<br />";
+            }
+        ?>
+
+        <input name="hwidth" type=hidden value=0>
+        <input name="width" type=text size=4 value="<?php p($window->width) ?>">
+        <?php p($strwidth) ?><br />
+
+        <input name="hheight" type=hidden value=0>
+        <input name="height" type=text size=4 value="<?php p($window->height) ?>">
+        <?php p($strheight) ?><br />
+        <?php
+            if ($windowtype == "page") {
+                echo "<script>";
+                echo "lockoptions('form','windowpopup', popupitems);";
+                echo "document.form.windowpage.checked=true;";
+                echo "document.form.windowpopup.checked=false;";
+                echo "</script>";
+            } else {
+                echo "<script>";
+                echo "document.form.windowpopup.checked=true;";
+                echo "document.form.windowpage.checked=false;";
+                echo "</script>";
+            }
+        ?>
+        </ul>
+    </td>
+</tr>
 

@@ -20,12 +20,12 @@ if (!isset($CFG->resource_secretphrase)) {
     set_config("resource_secretphrase", random_string(20));
 }  
 
-$RESOURCE_WINDOW_OPTIONS = array("resizable", "scrollbars", "directories", "location", 
-                                 "menubar", "toolbar", "status", "height", "width");
-
 if (!isset($CFG->resource_popup)) {
     set_config("resource_popup", "");
 }  
+
+$RESOURCE_WINDOW_OPTIONS = array("resizable", "scrollbars", "directories", "location", 
+                                 "menubar", "toolbar", "status", "height", "width");
 
 foreach ($RESOURCE_WINDOW_OPTIONS as $popupoption) {
     $popupoption = "resource_popup$popupoption";
@@ -484,7 +484,7 @@ function resource_get_resource_types() {
     $resources = array();
 
     /// Standard resource types
-    $standardresources = array('text','html','file','directory','reference');
+    $standardresources = array('text','html','file','directory');
     foreach ($standardresources as $resourcetype) {
         $resources[$resourcetype] = get_string("resourcetype$resourcetype", 'resource');
     }

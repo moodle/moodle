@@ -290,7 +290,7 @@ function display() {
         echo "\n-->\n";
         echo '</script>';
 
-        if (trim($this->resource->summary)) {
+        if (trim(strip_tags($this->resource->summary))) {
             print_simple_box(text_to_html($this->resource->summary), "center");
         }
 
@@ -446,6 +446,8 @@ function display() {
 function setup($form) {
     global $CFG, $usehtmleditor, $RESOURCE_WINDOW_OPTIONS;
 
+    parent::setup($form);
+
     $this->set_parameters(); // set the parameter array for the form
 
     
@@ -517,8 +519,6 @@ function setup($form) {
         }
     }
 
-
-    parent::setup($form);
 
     include("$CFG->dirroot/mod/resource/type/file/file.html");
 
