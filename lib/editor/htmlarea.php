@@ -2165,14 +2165,15 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
 HTMLArea.prototype.stripBaseURL = function(string) {
     var baseurl = this.config.baseURL;
 
+    return string;    // Moodle addition to skip this whole routine
+
     // strip to last directory in case baseurl points to a file
     baseurl = baseurl.replace(/[^\/]+$/, '');
     var basere = new RegExp(baseurl);
     string = string.replace(basere, "");
 
     // strip host-part of URL which is added by MSIE to links relative to server root
-    // commented out for moodle
-    //baseurl = baseurl.replace(/^(https?:\/\/[^\/]+)(.*)$/, '$1');
+    baseurl = baseurl.replace(/^(https?:\/\/[^\/]+)(.*)$/, '$1');
     basere = new RegExp(baseurl);
     return string.replace(basere, "");
 };
