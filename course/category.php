@@ -101,7 +101,7 @@
     
     make_categories_list($displaylist, $parentlist, "");
     
-    echo "<table align=center><tr><td align=\"right\">";
+    echo '<table align="center"><tr><td align="right">';
     echo "<p>$strcategories:</p>";
     echo "</td><td>";
     popup_form("category.php?id=", $displaylist, "switchcategory", "$category->id", "", "", "", false);
@@ -213,19 +213,19 @@
     } // End of editing stuff
 
 /// Print out all the sub-categories
-
     if ($subcategories = get_records("course_categories", "parent", $category->id, "sortorder ASC")) {
         $firstentry = true;
         foreach ($subcategories as $subcategory) {
             if ($subcategory->visible or iscreator()) {
                 if ($firstentry) {
-                    echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=4 class=\"generalbox\">";
-                    echo "<tr><th>".get_string("subcategories")."</th></tr>";
-                    echo "<tr><td nowrap>";
+                    echo '<table align="center" border="0" cellspacing="2" cellpadding="4" class="generalbox">';
+                    echo '<tr><th>'.get_string('subcategories').'</th></tr>';
+                    echo '<tr><td nowrap="nowrap">';
                     $firstentry = false;
                 }
                 $catlinkcss = $subcategory->visible ? "" : " class=\"dimmed\" ";
-                echo "<a $catlinkcss href=\"category.php?id=$subcategory->id\">$subcategory->name</a><br />";
+                echo '<a '.$catlinkcss.' href="category.php?id='.$subcategory->id.'">'.
+                     $subcategory->name.'</a><br />';
             }
         }
         if (!$firstentry) {
@@ -273,8 +273,8 @@
             $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
         }
 
-        echo "<form name=\"movecourses\" action=\"category.php\" method=\"post\">";
-        echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=4 class=\"generalbox\"><tr>";
+        echo '<form name="movecourses" action="category.php" method="post">';
+        echo '<table align="center" border="0" cellspacing="2" cellpadding="4" class="generalbox"><tr>';
         echo "<th>$strcourses</th>";
         if ($creatorediting) {
             echo "<th>$stredit</th>";
@@ -297,68 +297,79 @@
 
             $linkcss = $acourse->visible ? "" : " class=\"dimmed\" ";
             echo "<tr>";
-            echo "<td><a $linkcss href=\"view.php?id=$acourse->id\">$acourse->fullname</a></td>";
+            echo '<td><a '.$linkcss.' href="view.php?id='.$acourse->id.'">'.$acourse->fullname.'</a></td>';
             if ($creatorediting) {
                 if ($adminediting) {
                     echo "<td>";
-                    echo "<a title=\"$strsettings\" href=\"$CFG->wwwroot/course/edit.php?id=$acourse->id\"><img".
-                         " src=\"$pixpath/t/edit.gif\" height=11 width=11 border=0></a> ";
-                    echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/course/teacher.php?id=$acourse->id\"><img".
-                         " src=\"$pixpath/t/user.gif\" height=11 width=11 border=0></a> ";
-                    echo "<a title=\"$strdelete\" href=\"delete.php?id=$acourse->id\"><img".
-                         " src=\"$pixpath/t/delete.gif\" height=11 width=11 border=0></a> ";
+                    echo '<a title="'.$strsettings.'" href="'.$CFG->wwwroot.'/course/edit.php?id='.
+                         $acourse->id.'">'.
+                         '<img src="'.$pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="" /></a> ';
+                    echo '<a title="'.$strassignteachers.'" href="'.$CFG->wwwroot.'/course/teacher.php?id='.
+                         $acourse->id.'">'.
+                         '<img src="'.$pixpath.'/t/user.gif" height="11" width="11" border="0" alt="" /></a> ';
+                    echo '<a title="'.$strdelete.'" href="delete.php?id='.$acourse->id.'">'.
+                         '<img src="'.$pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="" /></a> ';
                     if (!empty($acourse->visible)) {
-                        echo "<a title=\"$strhide\" href=\"category.php?id=$category->id&hide=$acourse->id\"><img".
-                             " src=\"$pixpath/t/hide.gif\" height=11 width=11 border=0></a> ";
+                        echo '<a title="'.$strhide.'" href="category.php?id='.$category->id.
+                             '&amp;hide='.$acourse->id.'">'.
+                             '<img src="'.$pixpath.'/t/hide.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
-                        echo "<a title=\"$strshow\" href=\"category.php?id=$category->id&show=$acourse->id\"><img".
-                             " src=\"$pixpath/t/show.gif\" height=11 width=11 border=0></a> ";
+                        echo '<a title="'.$strshow.'" href="category.php?id='.$category->id.
+                             '&amp;show='.$acourse->id.'">'.
+                             '<img src="'.$pixpath.'/t/show.gif" height="11" width="11" border="0" alt="" /></a> ';
                     }
     
-                    echo "<a title=\"$strbackup\" href=\"../backup/backup.php?id=$acourse->id\"><img".
-                         " src=\"$pixpath/t/backup.gif\" height=11 width=11 border=0></a> ";
+                    echo '<a title="'.$strbackup.'" href="../backup/backup.php?id='.$acourse->id.'">'.
+                         '<img src="'.$pixpath.'/t/backup.gif" height="11" width="11" border="0" alt="" /></a> ';
 
-                        echo "<a title=\"$strrestore\" href=\"../files/index.php?id=$acourse->id&wdir=/backupdata\"><img".
-                             " src=\"$pixpath/t/restore.gif\" height=11 width=11 border=0></a> ";
+                        echo '<a title="'.$strrestore.'" href="../files/index.php?id='.$acourse->id.
+                             '&amp;wdir=/backupdata">'.
+                             '<img src="'.$pixpath.'/t/restore.gif" height="11" width="11" border="0" alt="" /></a> ';
             
                     if ($up) {
-                        echo "<a title=\"$strmoveup\" href=\"category.php?id=$category->id&moveup=$acourse->id\"><img".
-                             " src=\"$pixpath/t/up.gif\" height=11 width=11 border=0></a> ";
+                        echo '<a title="'.$strmoveup.'" href="category.php?id='.$category->id.
+                             '&amp;moveup='.$acourse->id.'">'.
+                             '<img src="'.$pixpath.'/t/up.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
-                        echo "<img src=\"$CFG->wwwroot/pix/spacer.gif\" height=11 width=11 border=0></a> ";
+                        echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /></a> ';
                     }
         
                     if ($down) {
-                        echo "<a title=\"$strmovedown\" href=\"category.php?id=$category->id&movedown=$acourse->id\"><img".
-                             " src=\"$pixpath/t/down.gif\" height=11 width=11 border=0></a> ";
+                        echo '<a title="'.$strmovedown.'" href="category.php?id='.$category->id.
+                             '&amp;movedown='.$acourse->id.'">'.
+                             '<img src="'.$pixpath.'/t/down.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
-                        echo "<img src=\"$CFG->wwwroot/pix/spacer.gif\" height=11 width=11 border=0></a> ";
+                        echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /></a> ';
                     }
     
                     echo "</td>";
                     echo "<td align=\"center\">";
-                    echo "<input type=\"checkbox\" name=\"c$acourse->id\">";
+                    echo '<input type="checkbox" name="c'.$acourse->id.'" />';
                     $abletomovecourses = true;
 
                 } else if (isteacheredit($acourse->id)) {
                     echo "<td>";
-                    echo "<a title=\"$strsettings\" href=\"$CFG->wwwroot/course/edit.php?id=$acourse->id\"><img".
-                         " src=\"$pixpath/t/edit.gif\" height=11 width=11 border=0></a> ";
-                    echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/course/teacher.php?id=$acourse->id\"><img".
-                         " src=\"$pixpath/t/user.gif\" height=11 width=11 border=0></a> ";
+                    echo '<a title="'.$strsettings.'" href="'.$CFG->wwwroot.'/course/edit.php?id='.$acourse->id.'">'.
+                         '<img src="'.$pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="" /></a> ';
+                    echo '<a title="'.$strassignteachers.'" href="'.$CFG->wwwroot.'/course/teacher.php?id='.$acourse->id.'">'.
+                         '<img src="'.$pixpath.'/t/user.gif" height="11" width="11" border="0" alt="" /></a> ';
                 }
                 echo "</td>";
             } else {
                 echo "<td align=\"right\">";
                 if ($acourse->guest ) {
-                    echo "<a href=\"view.php?id=$acourse->id\"><img hspace=2 title=\"$strallowguests\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>";
+                    echo '<a href="view.php?id='.$acourse->id.'"><img hspace="2" title="'.
+                         $strallowguests.'" alt="" height="16" width="16" border="0" src="'.
+                         $pixpath.'/i/user.gif" /></a>';
                 }
                 if ($acourse->password) {
-                    echo "<a href=\"view.php?id=$acourse->id\"><img hspace=2 title=\"$strrequireskey\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
+                    echo '<a href="view.php?id='.$acourse->id.'"><img hspace="2" title="'.
+                         $strrequireskey.'" alt="" height="16" width="16" border="0" src="'.
+                         $pixpath.'/i/key.gif" /></a>';
                 }
                 if ($acourse->summary) {
                     link_to_popup_window ("/course/info.php?id=$acourse->id", "courseinfo", 
-                                          "<img hspace=2 alt=\"info\" height=16 width=16 border=0 src=\"$pixpath/i/info.gif\">", 
+                                          '<img hspace="2" alt="info" height="16" width="16" border="0" src="'.$pixpath.'/i/info.gif" />', 
                                            400, 500, $strsummary);
                 }
                 echo "</td>";
@@ -371,7 +382,7 @@
             echo "<br />";
             unset($displaylist[$category->id]);
             choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "javascript:document.movecourses.submit()");
-            echo "<input type=\"hidden\" name=\"id\" value=\"$category->id\">";
+            echo '<input type="hidden" name="id" value="'.$category->id.'" />';
             echo "</td></tr>";
         }
     
@@ -398,10 +409,10 @@
 
     if (isadmin()) {           /// Print form to rename the category
         $strrename= get_string("rename");
-        echo "<form name=\"renameform\" action=\"category.php\" method=\"post\">";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$category->id\">";
-        echo "<input type=\"text\" size=30 name=\"rename\" value=\"".s($category->name)."\">";
-        echo "<input type=\"submit\" value=\"$strrename\">";
+        echo '<form name="renameform" action="category.php" method="post">';
+        echo '<input type="hidden" name="id" value="'.$category->id.'" />';
+        echo '<input type="text" size="30" name="rename" value="'.s($category->name).'" />';
+        echo '<input type="submit" value="'.$strrename.'" />';
         echo "</form>";
         echo "<br />";
     }
