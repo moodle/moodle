@@ -119,6 +119,7 @@ $string['showalphabet'] = "Show alphabet";
 $string['showall'] = "Show 'ALL' link";
 $string['special'] = "Special";
 $string['sortchronogically'] = "Sort chronologically";
+$string['sortby'] = "Sort by";
 $string['sortbycreation'] = "By creation date";
 $string['sortbylastupdate'] = "By last update";
 $string['standardview'] = "Browse by alphabet";
