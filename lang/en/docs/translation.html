@@ -167,6 +167,21 @@ making sure not to modify any code in the file (there usually is no
 code, just HTML-tags). (DON'T USE A WORDPROCESSOR to write the
 help-files because these programs add too much rubbish to the files).</p>
 
+<p style="margin-left: 80px;">Take care to write the helpfiles XHTML-compliant. This means in short:</p>
+<ul style="margin-left: 80px;">
+  <li>All tags should be closed: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span>lalala<span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
+  <li>All elements should be nested: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span> lalala <span style="color:rgb(0, 0, 255);" >&lt;em&gt;</span>lalala<span style="color:rgb(0, 0, 255);" >&lt;/em&gt;</span> <span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
+  <li>All elements and attributes must be lower case</li>
+  <li>All atributes should be written in full and with quotes : <span style="color:rgb(255, 0, 0);" >&lt;p align=&quot;right&quot;&gt;</span> lalala &lt;/p&gt;</li>
+  <li>Empty elements must end with /&gt;: <span style="color:rgb(255, 0, 0);" >&lt;br /&gt; &lt;hr /&gt;</span>. You should add an extra space before the "/" symbol.</li>
+  <li>An &lt;img should have an alt (it can be empty) like <span style="color:rgb(255, 0, 0);" >&lt;img alt   src="picture.gif"></span></li>
+  <li><span style="color:rgb(255, 0, 0);" >&lt;?=</span> and <span style="color:rgb(255, 0, 0);" >&lt;?</span> should be <span style="color:rgb(255, 0, 0);" >&lt;?php</span></li>
+  <li>There should not be ANY font tags at all. <span style="color:rgb(255, 0, 0);" > &lt;p&gt;&lt;em&gt; &lt;h1&gt; &lt;h2&gt;</span> etc should be enough for the language files ...</li>
+  <li>The language name in the languagepack ($string['thislanguage']  in moodle.php) should generally use Unicode Numeric Character References (NCR) if possible, because this allows the name to work within ANY encoding context (see the Chinese pack for example).</li>
+</ul>
+<p style="margin-left: 80px;">None of the files in the help folder need a doc type, html, body, head opening and closing tags - these files are included with help.php. The script will take care of welforming the pages. This means also there is not much room for HTML creativity! Please stick to the English example.</p>
+<p style="margin-left: 80px;">The files in the docs folder must be completely XHTML compliant, including doc type, header etc.</p>
+
  
 <p style="margin-left: 80px;">Clicking on "Check for missing strings"
 in the language administration screen will also show you what files you
