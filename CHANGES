@@ -1,3 +1,282 @@
+2002-09-25 Wednesday 15:41  martin
+
+	* lang/pt_br/help/: choice/options.html,
+	forum/allowdiscussions.html, forum/attachment.html,
+	forum/forumtype.html, forum/ratings.html, forum/subscription.html,
+	reading/readingtype.html, reading/summary.html: 
+	
+	Unfinished files
+
+2002-09-25 Wednesday 15:40  martin
+
+	* version.php: 
+	
+	updated version numbers for beta 1 release
+
+2002-09-25 Wednesday 15:38  martin
+
+	* lang/fi/README: 
+	
+	README contains author etc
+
+2002-09-25 Wednesday 15:37  martin
+
+	* lang/pt_br/README: 
+	
+	Added README with author
+
+2002-09-25 Wednesday 15:35  martin
+
+	* lang/fr/README: 
+	
+	Author stored in README
+
+2002-09-25 Wednesday 15:33  martin
+
+	* admin/lang.php: 
+	
+	In compare mode you can now EDIT language files directly.  This
+	should make language development much easier.
+	
+	Based on code sent to me by Petri Asikainen
+
+2002-09-25 Wednesday 15:31  martin
+
+	* lang/en/assignment.php: 
+	
+	Cough typo
+
+2002-09-25 Wednesday 15:30  martin
+
+	* lang/en/assignment.php: 
+	
+	Edited using language editor
+
+2002-09-25 Wednesday 15:19  martin
+
+	* lang/en/moodle.php: 
+	
+	New string
+
+2002-09-25 Wednesday 12:20  martin
+
+	* mod/reading/view.php: 
+	
+	Add last modified dates to some readings
+
+2002-09-24 Tuesday 20:45  martin
+
+	* user/view.php: 
+	
+	Fix for ICQ display (they've changed their URLs)
+
+2002-09-24 Tuesday 17:20  martin
+
+	* login/signup_form.php: 
+	
+	Hide password during registration
+
+2002-09-24 Tuesday 17:06  martin
+
+	* mod/journal/view.php: 
+	
+	Prevent guests even seeing the edit button
+
+2002-09-24 Tuesday 17:02  martin
+
+	* mod/: assignment/view.php, choice/view.php: 
+	
+	Prevent guests from submitting choices or assignments
+
+2002-09-24 Tuesday 16:54  martin
+
+	* doc/credits.html: 
+	
+	Updated Sebastien's address to seb@gaia.anet.fr
+
+2002-09-24 Tuesday 09:28  martin
+
+	* login/change_password.php: 
+	
+	Make sure site security is added when logging in via change
+	password
+
+2002-09-23 Monday 23:42  martin
+
+	* theme/: index.php, standard/header.html,
+	standardblue/header.html, standardgreen/header.html,
+	standardred/header.html: 
+	
+	Newly formatted header.html files in themes ... still works the
+	same just might be easier to edit now.	index.php uses new
+	set_config function
+
+2002-09-23 Monday 23:41  martin
+
+	* index.php: 
+	
+	Special "navigation" for home page - "home" value sets off
+	different header in themes
+
+2002-09-23 Monday 23:40  martin
+
+	* lib/moodlelib.php: 
+	
+	New set_config() and better use of $CFG->version
+
+2002-09-23 Monday 23:38  martin
+
+	* theme/standardlogo/: config.php, favicon.ico, footer.html,
+	header.html, styles.css: 
+	
+	New standardlogo theme ... like standard but with a logo
+
+2002-09-23 Monday 23:37  martin
+
+	* theme/standardlogo/logo.jpg: 
+	
+	Sample logo
+
+2002-09-23 Monday 15:02  martin
+
+	* lib/moodlelib.php: 
+	
+	Fixed up default-sized tables again
+
+2002-09-23 Monday 14:49  martin
+
+	* mod/forum/lib.php: 
+	
+	Whoops teacher checking was back to front
+
+2002-09-23 Monday 12:04  martin
+
+	* doc/credits.html: 
+	
+	Personal mentions
+
+2002-09-23 Monday 10:11  martin
+
+	* lang/: en/moodle.php, fr/moodle.php: 
+	
+	Change to name of language
+
+2002-09-23 Monday 10:08  martin
+
+	* lang/pt_br/moodle.php: 
+	
+	Updated name of language
+
+2002-09-23 Monday 10:04  martin
+
+	* lang/pt_br/: assignment.php, choice.php, forum.php, journal.php,
+	moodle.php, reading.php, survey.php, docs/module_files.txt,
+	help/coursecategory.html, help/courseformats.html,
+	help/coursefullname.html, help/coursenewsitems.html,
+	help/coursenumsections.html, help/courseshortname.html,
+	help/coursestartdate.html, help/enrolmentkey.html,
+	help/guestaccess.html, help/html.html, help/picture.html,
+	help/questions.html, help/surveys.html, help/teachers.html,
+	help/text.html: 
+	
+	Added Portuguese (Brazilian) by Fabricio Valadares,  Thanks!
+
+2002-09-23 Monday 09:47  martin
+
+	* doc/credits.html: 
+	
+	Updated credits
+
+2002-09-23 Monday 00:24  martin
+
+	* user/edit.html: 
+	
+	Saner format for editing profile
+
+2002-09-23 Monday 00:19  martin
+
+	* user/edit.html: 
+	
+	Bolder title
+
+2002-09-23 Monday 00:17  martin
+
+	* user/index.php: 
+	
+	Forgot country display change
+
+2002-09-23 Monday 00:16  martin
+
+	* user/index.php: 
+	
+	Better country sorting on user index in a course
+
+2002-09-23 Monday 00:12  martin
+
+	* admin/user.php: 
+	
+	Better way of sorting countries
+
+2002-09-23 Monday 00:03  martin
+
+	* admin/user.php: 
+	
+	Fixes to country sorting
+
+2002-09-22 Sunday 23:57  martin
+
+	* admin/user.php: 
+	
+	Better handling of country sorting
+
+2002-09-22 Sunday 22:42  martin
+
+	* admin/user.php: 
+	
+	Don't delete a user if already deleted (reloading page, say)
+
+2002-09-22 Sunday 22:39  martin
+
+	* version.php: 
+	
+	Updated version
+
+2002-09-22 Sunday 22:33  martin
+
+	* admin/cron.php, course/unenrol.php, lib/moodlelib.php: 
+	
+	Fixes to unenrolling students,	and unenrol_student() and
+	remove_teacher() now remove forum_subscriptions correctly
+
+2002-09-22 Sunday 22:11  martin
+
+	* admin/user.php, lib/moodlelib.php, user/index.php: 
+	
+	Fixes to table widths
+
+2002-09-22 Sunday 22:07  martin
+
+	* user/index.php: 
+	
+	Arrghh ... foget to remove the debugging thing
+
+2002-09-22 Sunday 22:06  martin
+
+	* admin/user.php, course/enrol.php, course/lib.php,
+	course/teacher.php, course/unenrol.php, lang/en/moodle.php,
+	lib/moodlelib.php, user/edit.html, user/index.php: 
+	
+	Major cleanup of user administration and display, including
+	sortable listings, confirmation on deletions, removing deleted user
+	from all student lists, teacher lists and subscription lists and
+	freeing up their username and email to be used again.
+
+2002-09-22 Sunday 14:49  martin
+
+	* CHANGES: 
+	
+	Changes (getting close to 1.0.5 now)
+
 2002-09-22 Sunday 14:47  martin
 
 	* mod/: README, newmodule_template.zip: 
