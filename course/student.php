@@ -128,14 +128,14 @@
         }
 
         foreach ($users as $user) {
-            echo "<p align=left><a href=\"{$_SERVER['PHP_SELF']}?id=$course->id&add=$user->id\"".
+            echo "<p align=left><a href=\"student.php?id=$course->id&add=$user->id\"".
                    "title=\"$straddstudent\"><img src=\"../pix/t/left.gif\"".
                    "border=0></a>&nbsp;&nbsp;$user->firstname $user->lastname, $user->email";
         }
     }
 
     if ($search or $usercount > MAX_USERS_PER_PAGE) {
-        echo "<form action={$_SERVER['PHP_SELF']} method=post>";
+        echo "<form action=student.php method=post>";
         echo "<input type=hidden name=id value=\"$course->id\">";
         echo "<input type=text name=search size=20>";
         echo "<input type=submit value=\"$searchstring\">";
