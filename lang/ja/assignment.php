@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.9 development (2003051200)
+      // assignment.php - created with Moodle 1.1 development (2003070400)
 
 
 $string['allowresubmit'] = "再提出を許可する";
@@ -26,6 +26,7 @@ $string['maximumsize'] = "最大サイズ";
 $string['modulename'] = "課題";
 $string['modulenameplural'] = "課題";
 $string['newsubmissions'] = "課題が提出されました";
+$string['notgradedyet'] = "未評価";
 $string['notsubmittedyet'] = "未提出";
 $string['overwritewarning'] = "注意:再度アップロードすることにより現在の提出物は置き換えられます";
 $string['saveallfeedback'] = "フィードバックを保存する";

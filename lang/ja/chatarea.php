@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chatarea.php - created with Moodle 1.1 development (2003053000)
+      // chatarea.php - created with Moodle 1.1 development (2003070400)
 
 
 $string['allrooms'] = "全ての部屋を使用可、部屋の作成は不可";
@@ -11,8 +11,8 @@ $string['defaultprivaterooms'] = "プライベートチャットルームの名称";
 $string['firstroom'] = "最初の部屋のみ使用可(部屋の作成不可)";
 $string['html_tags_keep'] = "HTMLタグの使用を許可する";
 $string['html_tags_show'] = "削除されたHTMLタグを表示する";
-$string['modulename'] = "チャット";
-$string['modulenameplural'] = "チャット";
+$string['modulename'] = "チャットエリア";
+$string['modulenameplural'] = "チャットエリア";
 $string['msg_del'] = "ここで設定した時間の後に記事を削除する";
 $string['msg_nb'] = "チャットページの記事数";
 $string['msg_order'] = "記事の順番";

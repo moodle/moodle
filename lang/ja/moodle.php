@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.1 development (2003062000)
+      // moodle.php - created with Moodle 1.1 development (2003070400)
 
 
 $string['action'] = "操作";
@@ -8,6 +8,7 @@ $string['activity'] = "活動";
 $string['activityiscurrentlyhidden'] = "申し訳ございません、この活動は現在非表示にされています";
 $string['activitymodule'] = "活動モジュール";
 $string['activityreport'] = "活動報告";
+$string['activitysince'] = "\$a 以来の活動";
 $string['add'] = "追加";
 $string['addadmin'] = "管理者を追加";
 $string['addcreator'] = "コース作成者を追加";
@@ -48,6 +49,7 @@ $string['backupdate'] = "バックアップデータ";
 $string['backupdetails'] = "バックアップ詳細";
 $string['backupdir'] = "バックアップデータ";
 $string['backupfilename'] = "バックアップ";
+$string['backupfinished'] = "バックアップが完了しました";
 $string['backupnameformat'] = "%%Y%%m%%d-%%H%%M";
 $string['backuporiginalname'] = "バックアップ名";
 $string['backupversion'] = "バックアップバージョン";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.1 development (2003053000)
+      // quiz.php - created with Moodle 1.1 development (2003070400)
 
 
 $string['addingquestions'] = "この部分ではデータベース内の質問を管理します。質問は整理しやすいようにカテゴリー毎に保存されます。質問はコース内の全てのクイズに利用出来ます。「公開」を選んだ場合は他のコースでも利用出来ます。<br /><br />質問のカテゴリーを選択又は作成した後に質問を作成・編集してください。このページの反対側にあるクイズにどの質問でも追加することが出来ます。
@@ -46,7 +46,9 @@ $string['default'] = "デフォルト";
 $string['defaultgrade'] = "評価の初期値";
 $string['defaultinfo'] = "質問の標準カテゴリー";
 $string['deletequestioncheck'] = " '\$a' を本当に削除してよろしいですか?";
+$string['description'] = "説明";
 $string['editcategories'] = "カテゴリーを編集する";
+$string['editingdescription'] = "説明を編集する";
 $string['editingmatch'] = "マッチング解答方式を編集する";
 $string['editingmultichoice'] = "複数解答方式を編集する";
 $string['editingquestion'] = "質問を編集する";
