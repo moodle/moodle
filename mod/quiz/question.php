@@ -68,14 +68,18 @@
 
     if (match_referer() and isset($HTTP_POST_VARS)) {    // question submitted
 
+        redirect("edit.php");
+
     } 
 
     $grades = array(100,90,80,75,70,66.66,60,50,40,33.33,30,25,20,10,5);
     foreach ($grades as $grade) {
-        $gradeoptions[$grade] = $grade;
-        $gradeoptions[-$grade] = -$grade;
+        $gradeoptions[$grade] = "$grade %";
+        $gradeoptionsfull[$grade] = "$grade %";
+        $gradeoptionsfull[-$grade] = -$grade." %";
     }
     arsort($gradeoptions, SORT_NUMERIC);
+    arsort($gradeoptionsfull, SORT_NUMERIC);
 
     if (!$categories = get_records_sql_menu("SELECT id,name FROM quiz_categories 
                                              WHERE course='$course->id' OR publish = '1'
@@ -88,8 +92,13 @@
     switch ($type) {
         case SHORTANSWER:
             $options = get_record("quiz_shortanswer", "question", "$question->id");// OK to fail
-            $answer  = get_record("quiz_answers", "id", "$options->answer");       // OK to fail
+            $answersraw = get_records_list("quiz_answers", "id", "$options->answers");// OK to fail
             print_heading(get_string("editingshortanswer", "quiz"));
+            if ($answersraw) {
+                foreach ($answersraw as $answer) {
+                    $answers[] = $answer;   // to renumber index 0,1,2...
+                }
+            }
             require("shortanswer.html");
         break;
 
@@ -97,6 +106,11 @@
             $options = get_record("quiz_truefalse", "question", "$question->id");  // OK to fail
             $true    = get_record("quiz_answers", "id", "$options->true");         // OK to fail
             $false   = get_record("quiz_answers", "id", "$options->false");        // OK to fail
+            if ($true->fraction > $false->fraction) {
+                $question->answer = 1;
+            } else {
+                $question->answer = 0;
+            }
             print_heading(get_string("editingtruefalse", "quiz"));
             require("truefalse.html");
         break;
