@@ -112,7 +112,7 @@
             if($form = data_submitted()) {
 
                 $form->name = strip_tags($form->name);  // Strip all tags
-                $form->description = clean_text($form->description , $form->format);   // Clean up any bad tags
+                //$form->description = clean_text($form->description , $form->format);   // Clean up any bad tags
 
                 $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
                 if($form->duration == 1) {
@@ -152,7 +152,7 @@
             if(!empty($form) && $form->type == 'defined') {
 
                 $form->name = strip_tags($form->name);  // Strip all tags
-                $form->description = clean_text($form->description , $form->format);   // Clean up any bad tags
+                //$form->description = clean_text($form->description , $form->format);   // Clean up any bad tags
 
                 $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
                 if($form->duration == 1) {

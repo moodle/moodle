@@ -410,10 +410,7 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
     }
     else if($users === false) {
         // No user at all
-        if(!empty($whereclause)) {
-            $whereclause .= ' OR';
-        }
-        $whereclause .= ' 0';
+        // No need to do anything
     }
     if(is_array($groups) && !empty($groups)) {
         // Events from a number of groups
@@ -440,10 +437,7 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         }
         else {
             // This means NO courses, not that we don't care!
-            if(!empty($whereclause)) {
-                $whereclause .= ' OR';
-            }
-            $whereclause .= ' 0';
+            // No need to do anything
         }
     }
     else if(is_numeric($courses)) {
@@ -477,7 +471,7 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         $whereclause = $timeclause;
     }
 
-    return $whereclause;
+    return empty($whereclause) ? false : $whereclause;
 }
 
 function calendar_top_controls($type, $data) {
@@ -1169,10 +1163,10 @@ function calendar_format_event_time($event, $now, $morehref, $usecommonwords = t
         // Set printable representation
         $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).' ('.$time.')';
     }
-    
+
     return $eventtime;
 }
-            
+
 if(!function_exists('array_diff_assoc')) {
     // PHP < 4.3.0
     function array_diff_assoc($source, $diff) {
