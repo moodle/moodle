@@ -204,6 +204,7 @@
                 }
             }
         }
+        echo "</ul>";
 
         return $status;
 
