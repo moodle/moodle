@@ -3,7 +3,7 @@
 # Table structure for table blocks
 # 
 
-CREATE TABLE prefix_blocks (
+CREATE TABLE prefix_block (
   id SERIAL8 PRIMARY KEY,
   name varchar(40) NOT NULL default '',
   version INT8 NOT NULL default '0',
