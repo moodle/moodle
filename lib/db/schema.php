@@ -16,23 +16,25 @@ print_r($rs->GetRows());
 print "</pre>"; 
 rs2html($rs,'border=2 cellpadding=3',array('Deptno','DName','Loc'));
 $dict = NewDataDictionary($db);
+
+echo "<h3>schemaConfig.xml</h3>";
 $rs = $db->Execute('drop table config');
 $rs = $db->Execute('drop sequence SEQ_config');
-$rs = $db->Execute('drop table course');
-$rs = $db->Execute('drop sequence SEQ_course');
-echo "<h3>schemaConfig</h3>";
 $schema = new adoSchema($db);
 $sql = $schema->ParseSchema("schemaConfig.xml");
 $result = $schema->ExecuteSchema( $sql );
-$sql = "insert into config(id,name,value) values (2,'2','2')";
+$sql = "insert into config values (2,'2','2')";
 $rs = $db->Execute($sql);
-$sql = "insert into config(id,name,value) values (3,'3','3')";
+$sql = "insert into config values (3,'3','3')";
 $rs = $db->Execute($sql);
 $rs = $db->Execute('select * from config');
 rs2html($rs,'border=2 cellpadding=3',array('id','name','value'));
-echo "<h3>schemaCourse</h3>";
+echo "<h3>schemaCourse.xml</h3>";
+
 $schema = new adoSchema($db);
 $sql = $schema->ParseSchema("schemaCourse.xml");
+$rs = $db->Execute('drop table course');
+$rs = $db->Execute('drop sequence SEQ_course');
 $result = $schema->ExecuteSchema( $sql );
 $sql = "insert into course values (2,2,2,'2','2','2','2','2',2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2)";
 $rs = $db->Execute($sql);
@@ -40,4 +42,164 @@ $sql = "insert into course values (3,3,3,'3','3','3','3','3',3,3,3,3,3,3,3,3,3,3
 $rs = $db->Execute($sql);
 $rs = $db->Execute('select * from course');
 rs2html($rs,'border=2 cellpadding=3',array('id','category','sortorder','password','fullname','shortname','summary','format','showgrades','modinfo','newsitems','teacher','teachers','student','students','guest','startdate','numsections','showrecent','marker','maxbytes','showreports','visible','timecreated','timemodified'));
+
+echo "<h3>schemaCourse_categories.xml</h3>";
+$rs = $db->Execute('drop table course_categories');
+$rs = $db->Execute('drop sequence SEQ_course_categories');
+$schema = new adoSchema($db);
+$sql = $schema->ParseSchema("schemaCourse_categories.xml");
+$result = $schema->ExecuteSchema( $sql );
+$sql = "insert into Course_categories values (2,'2','2',2,2,2,2,2)";
+$rs = $db->Execute($sql);
+$sql = "insert into Course_categories values (3,'3','3',3,3,3,3,3)";
+$rs = $db->Execute($sql);
+$rs = $db->Execute('select * from Course_categories');
+rs2html($rs,'border=2 cellpadding=3',array('id','name','description','parent','sortorder','coursecount','visible','timemodified'));
+
+echo "<h3>schemaCourse_display.xml</h3>";
+$rs = $db->Execute('drop table course_display');
+$rs = $db->Execute('drop sequence SEQ_course_display');
+$schema = new adoSchema($db);
+$sql = $schema->ParseSchema("schemaCourse_display.xml");
+$result = $schema->ExecuteSchema( $sql );
+$sql = "insert into Course_display values (2,2,2,2)";
+$rs = $db->Execute($sql);
+$sql = "insert into Course_display values (3,3,3,3)";
+$rs = $db->Execute($sql);
+$rs = $db->Execute('select * from Course_display');
+rs2html($rs,'border=2 cellpadding=3',array('id','course','userid','display'));
+
+echo "<h3>schemaCourse_modules.xml</h3>";
+$rs = $db->Execute('drop table course_modules');
+$rs = $db->Execute('drop sequence SEQ_course_modules');
+$schema = new adoSchema($db);
+$sql = $schema->ParseSchema("schemaCourse_modules.xml");
+$result = $schema->ExecuteSchema( $sql );
+$sql = "insert into Course_modules values (2,2,2,2,2,2,2,2,2,2)";
+$rs = $db->Execute($sql);
+$sql = "insert into Course_modules values (3,3,3,3,3,3,3,3,3,3)";
+$rs = $db->Execute($sql);
+$rs = $db->Execute('select * from Course_modules');
+rs2html($rs,'border=2 cellpadding=3',array('id','course','module','instance','section','added','deleted','score','indent','visible'));
+
+echo "<h3>schemaCourse_sections.xml</h3>";
+$rs = $db->Execute('drop table course_sections');
+$rs = $db->Execute('drop sequence SEQ_course_sections');
+$schema = new adoSchema($db);
+$sql = $schema->ParseSchema("schemaCourse_sections.xml");
+$result = $schema->ExecuteSchema( $sql );
+$sql = "insert into Course_sections values (2,2,2,2,2,2)";
+$rs = $db->Execute($sql);
+$sql = "insert into Course_sections values (3,3,3,3,3,3)";
+$rs = $db->Execute($sql);
+$rs = $db->Execute('select * from Course_sections');
+rs2html($rs,'border=2 cellpadding=3',array('id','course','section','summary','sequence','visible'));
+
+echo "<h3>schemaCourse_groups.xml</h3>";
+$rs = $db->Execute('drop table course_groups');
+$rs = $db->Execute('drop sequence SEQ_course_groups');
+$schema = new adoSchema($db);
+$sql = $schema->ParseSchema("schemaCourse_groups.xml");
+$result = $schema->ExecuteSchema( $sql );
+$sql = "insert into Course_groups values (2,2,2,2,2,2,2,2)";
+$rs = $db->Execute($sql);
+$sql = "insert into Course_groups values (3,3,3,3,3,3,3,3)";
+$rs = $db->Execute($sql);
+$rs = $db->Execute('select * from Course_groups');
+rs2html($rs,'border=2 cellpadding=3',array('id','courseid','name','description','lang','picture','timecreated','timemodified'));
+
+echo "<h3>schemaCourse_groups_members.xml</h3>";
+$rs = $db->Execute('drop table course_groups_members');
+$rs = $db->Execute('drop sequence SEQ_course_groups_members');
+$schema = new adoSchema($db);
+$sql = $schema->ParseSchema("schemaCourse_groups_members.xml");
+$result = $schema->ExecuteSchema( $sql );
+$sql = "insert into Course_groups_members values (2,2,2,2)";
+$rs = $db->Execute($sql);
+$sql = "insert into Course_groups_members values (3,3,3,3)";
+$rs = $db->Execute($sql);
+$rs = $db->Execute('select * from Course_groups_members');
+rs2html($rs,'border=2 cellpadding=3',array('id','courseid','name','description','lang','picture','timecreated','timemodified'));
+
+echo "<h3>schemaLog.xml</h3>";
+$rs = $db->Execute('drop table log');
+$rs = $db->Execute('drop sequence SEQ_log');
+$schema = new adoSchema($db);
+$sql = $schema->ParseSchema("schemaLog.xml");
+$result = $schema->ExecuteSchema( $sql );
+$sql = "insert into log values (2,2,2,2,2,2,2,2,2)";
+$rs = $db->Execute($sql);
+$sql = "insert into log values (3,3,3,3,3,3,3,3,3)";
+$rs = $db->Execute($sql);
+$rs = $db->Execute('select * from log');
+rs2html($rs,'border=2 cellpadding=3',array('id','time','userid','ip','course','module','action','url','info'));
+
+echo "<h3>schemaLog_display.xml</h3>";
+$rs = $db->Execute('drop table log_display');
+$rs = $db->Execute('drop sequence SEQ_log_display');
+$schema = new adoSchema($db);
+$sql = $schema->ParseSchema("schemalog_display.xml");
+$result = $schema->ExecuteSchema( $sql );
+$sql = "insert into log_display values (2,2,2,2)";
+$rs = $db->Execute($sql);
+$sql = "insert into log_display values (3,3,3,3)";
+$rs = $db->Execute($sql);
+$rs = $db->Execute('select * from log_display');
+rs2html($rs,'border=2 cellpadding=3',array('id','time','userid','ip','course','module','action','url','info'));
+
+echo "<h3>schemaModules.xml</h3>";
+$rs = $db->Execute('drop table modules');
+$rs = $db->Execute('drop sequence SEQ_modules');
+$schema = new adoSchema($db);
+$sql = $schema->ParseSchema("schemamodules.xml");
+$result = $schema->ExecuteSchema( $sql );
+$sql = "insert into modules values (2,2,2,2,2,2,2)";
+$rs = $db->Execute($sql);
+$sql = "insert into modules values (3,3,3,3,3,3,3)";
+$rs = $db->Execute($sql);
+$rs = $db->Execute('select * from modules');
+rs2html($rs,'border=2 cellpadding=3',array('id','name','version','cron','lastcron','search','visible'));
+
+echo "<h3>schemaScale.xml</h3>";
+$rs = $db->Execute('drop table scale');
+$rs = $db->Execute('drop sequence SEQ_scale');
+$schema = new adoSchema($db);
+$sql = $schema->ParseSchema("schemaScale.xml");
+$result = $schema->ExecuteSchema( $sql );
+$sql = "insert into scale values (2,2,2,2,2,2,2)";
+$rs = $db->Execute($sql);
+$sql = "insert into scale values (3,3,3,3,3,3,3)";
+$rs = $db->Execute($sql);
+$rs = $db->Execute('select * from scale');
+rs2html($rs,'border=2 cellpadding=3',array('id','courseid','userid','name','scale','description','timemodified'));
+
+echo "<h3>schemaUser.xml</h3>";
+$rs = $db->Execute('drop table m_user');
+$rs = $db->Execute('drop sequence SEQ_m_user');
+$schema = new adoSchema($db);
+$sql = $schema->ParseSchema("schemaUser.xml");
+$result = $schema->ExecuteSchema( $sql );
+$sql = "insert into m_user values (2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2)";
+
+$rs = $db->Execute($sql);
+$sql = "insert into m_user values (3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3)";
+$rs = $db->Execute($sql);
+$rs = $db->Execute('select * from m_user');
+rs2html($rs,'border=2 cellpadding=3',array('id','confirmed','deleted','m_username','password','idnumber','firstname','lastname','email','icq','phone1','phone2','institution','department','address','city','country','lang','timezone','firstaccess','lastaccess','lastlogin','currentlogin','lastIP','secret','picture','url','description','mailformat','maildisplay','htmleditor','autosubscribe','timemodified'));
+
+
+echo "<h3>schemaUser_admins.xml</h3>";
+$rs = $db->Execute('drop table user_admins');
+$rs = $db->Execute('drop sequence SEQ_user_admins');
+$schema = new adoSchema($db);
+$sql = $schema->ParseSchema("schemaUser_admins.xml");
+$result = $schema->ExecuteSchema( $sql );
+$sql = "insert into user_admins values (2,2)";
+
+$rs = $db->Execute($sql);
+$sql = "insert into user_admins values (3,3)";
+$rs = $db->Execute($sql);
+$rs = $db->Execute('select * from user_admins');
+rs2html($rs,'border=2 cellpadding=3',array('id','userid'));
+
 ?>
