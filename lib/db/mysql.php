@@ -17,7 +17,7 @@
 //
 // This file is tailored to MySQL
 
-function upgrade_moodle($oldversion=0) {
+function main_upgrade($oldversion=0) {
 
     if ($oldversion == 0) {
         execute_sql("

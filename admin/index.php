@@ -68,7 +68,7 @@
             print_header($strdatabasechecking, $strdatabasechecking, $strdatabasechecking);
             notify($strdatabasechecking);
             $db->debug=true;
-            if (upgrade_moodle($CFG->version)) {
+            if (main_upgrade($CFG->version)) {
                 $db->debug=false;
                 if (set_config("version", $version)) {
                     notify($strdatabasesuccess);
@@ -95,7 +95,7 @@
             die;
         } else {
             $db->debug=true;
-            if (upgrade_moodle(0)) {
+            if (main_upgrade(0)) {
                 print_continue("index.php");
             } else {
                 error("A problem occurred inserting current version into databases");

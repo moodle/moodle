@@ -17,7 +17,7 @@
 //
 // This file is tailored to PostgreSQL 7
 
-function upgrade_moodle($oldversion=0) {
+function main_upgrade($oldversion=0) {
 
     return true;
 }
