@@ -355,6 +355,11 @@ a.dimmed:hover {
     font-weight: bold;
 }
 
+.categorynumber {
+    font-size: larger;
+    font-weight: bold;
+}
+
 .coursename {
 }
 
@@ -431,3 +436,9 @@ a.autolink:hover {
     border-style: solid;
 }
 
+.smallinfo {
+}
+
+.smallinfohead {
+    color: #555555;
+}

@@ -436,3 +436,9 @@ a.autolink:hover {
     border-style: solid;
 }
 
+.smallinfo {
+}
+
+.smallinfohead {
+    color: #555555;
+}

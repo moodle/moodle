@@ -154,3 +154,10 @@ a.autolink:hover {}
 /* Specific style for the category numbers (was categoryname) */
 
 .categorynumber {}
+
+
+/* Style for the header and message of the smallinfo displays 
+   on the side like "Latest News" and "Recent Activity" etc */
+
+.smallinfo {}
+.smallinfohead {}
