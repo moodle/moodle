@@ -521,7 +521,7 @@ function writequestion( $question ) {
         $expout .= "// CLOZE type is not supported\n";
         break;
     default:
-        error( "No handler for qtype $question->qtype for GIFT export" );
+        notify("No handler for qtype $question->qtype for GIFT export" );
     }
     // add empty line to delimit questions
     $expout .= "\n";
