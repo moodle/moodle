@@ -8,7 +8,7 @@
 // The script can either be invoked via the web server or via a standalone
 // version of PHP compiled for CGI.
 //
-// eg   wget -q -O /dev/null 'http://moodle.dougiamas.net/admin/cron.php'
+// eg   wget -q -O /dev/null 'http://moodle.somewhere.edu/admin/cron.php'
 // or   php /web/moodle/admin/cron.php 
 
     require("../config.php");
@@ -21,11 +21,16 @@
 
     if ($mods = get_records_sql("SELECT * FROM modules WHERE cron > 0 AND (($timenow - lastcron) > cron)")) {
         foreach ($mods as $mod) {
-            $cronfile = "$CFG->dirroot/mod/$mod->name/cron.php";
-            if (file_exists($cronfile)) {
-                include($cronfile);
-                if (! set_field("modules", "lastcron", $timenow, "id", $mod->id)) {
-                    echo "Error: could not update timestamp for $mod->fullname\n";
+            $libfile = "$CFG->dirroot/mod/$mod->name/lib.php";
+            if (file_exists($libfile)) {
+                include_once($libfile);
+                $cron_function = $mod->name."_cron";
+                if (function_exists($cron_function)) {
+                    if ($cron_function()) {
+                        if (! set_field("modules", "lastcron", $timenow, "id", $mod->id)) {
+                            echo "Error: could not update timestamp for $mod->fullname\n";
+                        }
+                    }
                 }
             }
         }
