@@ -255,11 +255,18 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
         /// If using a group, only get users in that group.
         if ($selectedgroup) {
             $sql = 'SELECT u.id as id, u.firstname, u.lastname, u.lastaccess '.
-                   'FROM '.$CFG->prefix.'user u,'.$CFG->prefix.'user_students us,'.$CFG->prefix.'groups_members gm, '.
-                        $CFG->prefix.'user_teachers ut '.
-                   'WHERE us.course='.$course->id.' AND gm.groupid='.$selectedgroup.
-                   ' AND (gm.userid=us.userid OR gm.userid=ut.userid) AND gm.userid=u.id';
-            $courseusers = get_records_sql($sql); 
+                       'FROM '.$CFG->prefix.'user u '.
+                       ' JOIN '.$CFG->prefix.'groups_members gm ON gm.userid=u.id '.
+                       ' JOIN '.$CFG->prefix.'user_teachers  ut ON gm.userid=ut.userid '.
+                       'WHERE ut.course='.$course->id.' AND gm.groupid='.$selectedgroup;
+                 $courseusers = get_records_sql($sql); 
+                // students
+                $sql = 'SELECT u.id as id, u.firstname, u.lastname, u.lastaccess '.
+                       'FROM '.$CFG->prefix.'user u '.
+                       ' JOIN '.$CFG->prefix.'groups_members gm ON gm.userid=u.id '.
+                       ' JOIN '.$CFG->prefix.'user_students  us ON gm.userid=us.userid '.
+                       'WHERE us.course='.$course->id.' AND gm.groupid='.$selectedgroup;
+                $courseusers = array_merge($couseusers, get_records_sql($sql)); 
         } else {
             $courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname');
         }
@@ -279,7 +286,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     if (isadmin()) {
         if ($ccc = get_records("course", "", "", "fullname","id,fullname,category")) {
             foreach ($ccc as $cc) {
-                if ($cc->category) {
+                if (!empty($cc->category)) {
                     $courses["$cc->id"] = "$cc->fullname";
                 } else {
                     $courses["$cc->id"] = " $cc->fullname (Site)";
