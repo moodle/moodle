@@ -1641,6 +1641,9 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
             $displaycount++;
             $currpage++;
         }
+        if ($currpage < $lastpage) {
+            echo "&nbsp...";
+        }
         $pagenum = $page + 1;
         if ($pagenum != $displaypage) {
             echo "&nbsp;&nbsp;(<a href=\"{$baseurl}page=$pagenum\">".get_string("next")."</a>)";
