@@ -66,6 +66,9 @@
     }
 
     print_table($table);
+    echo "<DIV ALIGN=CENTER>";
+    print_discussion_search_form($course, $search);
+    echo "</DIV>";
 
     print_footer($course);
 
