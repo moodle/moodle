@@ -716,6 +716,12 @@ function main_upgrade($oldversion=0) {
         modify_database("","CREATE INDEX {$CFG->prefix}user_students_enrol_idx ON {$CFG->prefix}user_students (enrol);");
         modify_database("","CREATE INDEX {$CFG->prefix}user_teachers_enrol_idx ON {$CFG->prefix}user_teachers (enrol);");
     } 
+
+    if ($oldversion < 2004112300) { // update log display to use correct postgres friendly sql
+        execute_sql("UPDATE {$CFG->prefix}log_display SET field='firstname||\' \'||lastname' WHERE module='user' AND action='view' AND mtable='user'");
+        execute_sql("UPDATE {$CFG->prefix}log_display SET field='firstname||\' \'||lastname' WHERE module='course' AND action='user report' AND mtable='user'");
+    }
+
     return $result;
 }
 
