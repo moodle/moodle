@@ -69,7 +69,7 @@
 
     print_heading($quiz->name);
 
-    print_simple_box(text_to_html($quiz->intro), "CENTER");
+    print_simple_box(format_text($quiz->intro), "CENTER");
 
 
     if (isguest()) {
