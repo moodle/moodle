@@ -68,6 +68,14 @@
             $glossary->assesstimefinish = backup_todb($info['MOD']['#']['ASSESSTIMEFINISH']['0']['#']);
             $glossary->scale = backup_todb($info['MOD']['#']['SCALE']['0']['#']);
 
+            //We have to recode the scale field if it's <0 (positive is a grade, not a scale)
+            if ($glossary->scale < 0) {
+                $scale = backup_getid($restore->backup_unique_code,"scale",abs($glossary->scale));
+                if ($scale) {
+                    $glossary->scale = -($scale->new_id);
+                }
+            }
+
             //The structure is equal to the db, so insert the glossary
             $newid = insert_record ("glossary",$glossary);
 
