@@ -256,6 +256,7 @@ $string['createaccount'] = 'Créer mon compte';
 $string['createfolder'] = 'Créer un dossier dans $a';
 $string['createuserandpass'] = 'Créer un nouveau compte pour vous connecter';
 $string['createziparchive'] = 'Créer une archive compactée zip';
+$string['creatingblocks'] = 'Création des blocs';
 $string['creatingcategoriesandquestions'] = 'Création des catégories et des questions';
 $string['creatingcoursemodules'] = 'Création des modules de cours';
 $string['creatingevents'] = 'Création du calendrier';
