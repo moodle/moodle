@@ -20,6 +20,8 @@ CREATE TABLE prefix_forum (
   rssarticles integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );
+
+CREATE INDEX prefix_forum_course_idx ON prefix_forum (course);
 # --------------------------------------------------------
 
 #
@@ -38,6 +40,10 @@ CREATE TABLE prefix_forum_discussions (
   timemodified integer NOT NULL default '0',
   usermodified integer NOT NULL default '0'
 );
+
+CREATE INDEX prefix_forum_discussions_forum_idx ON prefix_forum_discussions (forum);
+CREATE INDEX prefix_forum_discussions_userid_idx ON prefix_forum_discussions (userid);
+
 # --------------------------------------------------------
 
 #
@@ -58,6 +64,12 @@ CREATE TABLE prefix_forum_posts (
   attachment VARCHAR(100) NOT NULL default '',
   totalscore integer NOT NULL default '0'
 );
+
+CREATE INDEX prefix_forum_posts_discussion_idx ON prefix_forum_posts (discussion);
+CREATE INDEX prefix_forum_posts_parent_idx ON prefix_forum_posts (parent);
+CREATE INDEX prefix_forum_posts_userid_idx ON prefix_forum_posts (userid);
+
+
 # --------------------------------------------------------
 
 #
@@ -71,6 +83,9 @@ CREATE TABLE prefix_forum_queue (
   postid integer default 0 NOT NULL
 );
 
+CREATE INDEX prefix_forum_queue_userid_idx ON prefix_forum_queue (userid);
+CREATE INDEX prefix_forum_queue_discussion_idx ON prefix_forum_queue (discussionid);
+CREATE INDEX prefix_forum_queue_postid_idx ON prefix_forum_queue (postid);
 
 # --------------------------------------------------------
 
@@ -85,6 +100,10 @@ CREATE TABLE prefix_forum_ratings (
   time integer NOT NULL default '0',
   rating integer NOT NULL default '0'
 );
+
+CREATE INDEX prefix_forum_ratings_userid_idx ON prefix_forum_ratings (userid);
+CREATE INDEX prefix_forum_ratings_post_idx ON prefix_forum_ratings (post);
+
 # --------------------------------------------------------
 
 #
@@ -96,6 +115,10 @@ CREATE TABLE prefix_forum_subscriptions (
   userid integer NOT NULL default '0',
   forum integer NOT NULL default '0'
 );
+
+CREATE INDEX prefix_forum_subscriptions_userid_idx ON prefix_forum_subscriptions (userid);
+CREATE INDEX prefix_forum_subscriptions_forum_idx ON prefix_forum_subscriptions (forum);
+
 # --------------------------------------------------------
 
 #

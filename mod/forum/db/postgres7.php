@@ -67,6 +67,40 @@ function forum_upgrade($oldversion) {
   }
 
 
+  if ($oldversion < 2004111700) {
+      execute_sql(" DROP INDEX {$CFG->prefix}forum_posts_parent_idx;",false);
+      execute_sql(" DROP INDEX {$CFG->prefix}forum_posts_discussion_idx;",false);
+      execute_sql(" DROP INDEX {$CFG->prefix}forum_posts_userid_idx;",false);
+      execute_sql(" DROP INDEX {$CFG->prefix}forum_discussions_forum_idx;",false);
+      execute_sql(" DROP INDEX {$CFG->prefix}forum_discussions_userid_idx;",false);
+
+      execute_sql(" CREATE INDEX {$CFG->prefix}forum_posts_parent_idx ON {$CFG->prefix}forum_posts (parent) ");
+      execute_sql(" CREATE INDEX {$CFG->prefix}forum_posts_discussion_idx ON {$CFG->prefix}forum_posts (discussion) ");
+      execute_sql(" CREATE INDEX {$CFG->prefix}forum_posts_userid_idx ON {$CFG->prefix}forum_posts (userid) ");
+      execute_sql(" CREATE INDEX {$CFG->prefix}forum_discussions_forum_idx ON {$CFG->prefix}forum_discussions (forum) ");
+      execute_sql(" CREATE INDEX {$CFG->prefix}forum_discussions_userid_idx ON {$CFG->prefix}forum_discussions (userid) ");
+  }
+
+  if ($oldversion < 2004111200) {
+      execute_sql("DROP INDEX {$CFG->prefix}forum_course_idx;",false);
+      execute_sql("DROP INDEX {$CFG->prefix}forum_queue_userid_idx;",false);
+      execute_sql("DROP INDEX {$CFG->prefix}forum_queue_discussion_idx;",false); 
+      execute_sql("DROP INDEX {$CFG->prefix}forum_queue_postid_idx;",false); 
+      execute_sql("DROP INDEX {$CFG->prefix}forum_ratings_userid_idx;",false); 
+      execute_sql("DROP INDEX {$CFG->prefix}forum_ratings_post_idx;",false);
+      execute_sql("DROP INDEX {$CFG->prefix}forum_subscriptions_userid_idx;",false);
+      execute_sql("DROP INDEX {$CFG->prefix}forum_subscriptions_forum_idx;",false);
+
+      modify_database('','CREATE INDEX prefix_forum_course_idx ON prefix_forum (course);');
+      modify_database('','CREATE INDEX prefix_forum_queue_userid_idx ON prefix_forum_queue (userid);');
+      modify_database('','CREATE INDEX prefix_forum_queue_discussion_idx ON prefix_forum_queue (discussionid);');
+      modify_database('','CREATE INDEX prefix_forum_queue_postid_idx ON prefix_forum_queue (postid);');
+      modify_database('','CREATE INDEX prefix_forum_ratings_userid_idx ON prefix_forum_ratings (userid);');
+      modify_database('','CREATE INDEX prefix_forum_ratings_post_idx ON prefix_forum_ratings (post);');
+      modify_database('','CREATE INDEX prefix_forum_subscriptions_userid_idx ON prefix_forum_subscriptions (userid);');
+      modify_database('','CREATE INDEX prefix_forum_subscriptions_forum_idx ON prefix_forum_subscriptions (forum);');
+  }
+
   return true;
 
 }

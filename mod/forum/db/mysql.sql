@@ -20,7 +20,8 @@ CREATE TABLE prefix_forum (
   rssarticles tinyint(2) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
-  UNIQUE KEY id (id)
+  UNIQUE KEY id (id),
+  KEY course (course)
 ) COMMENT='Forums contain and structure discussion';
 # --------------------------------------------------------
 
@@ -39,7 +40,9 @@ CREATE TABLE prefix_forum_discussions (
   assessed tinyint(1) NOT NULL default '1',
   timemodified int(10) unsigned NOT NULL default '0',
   usermodified int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (id)
+  PRIMARY KEY  (id),
+  KEY prefix_forum_discussions_forum_idx (forum),
+  KEY prefix_forum_discussions_userid_idx (userid)
 ) COMMENT='Forums are composed of discussions';
 # --------------------------------------------------------
 
@@ -60,7 +63,10 @@ CREATE TABLE prefix_forum_posts (
   format tinyint(2) NOT NULL default '0',
   attachment VARCHAR(100) NOT NULL default '',
   totalscore tinyint(4) NOT NULL default '0',
-  PRIMARY KEY  (id)
+  PRIMARY KEY  (id),
+  KEY prefix_forum_posts_parent_idx (parent),
+  KEY prefix_forum_posts_discussion_idx (discussion),
+  KEY prefix_forum_posts_userid_idx (userid)
 ) COMMENT='All posts are stored in this table';
 # --------------------------------------------------------
 
@@ -89,7 +95,9 @@ CREATE TABLE prefix_forum_ratings (
   post int(10) unsigned NOT NULL default '0',
   time int(10) unsigned NOT NULL default '0',
   rating tinyint(4) NOT NULL default '0',
-  PRIMARY KEY  (id)
+  PRIMARY KEY  (id),
+  KEY userid (userid),
+  KEY post (post)
 ) COMMENT='Contains user ratings for individual posts';
 # --------------------------------------------------------
 
@@ -102,7 +110,9 @@ CREATE TABLE prefix_forum_subscriptions (
   userid int(10) unsigned NOT NULL default '0',
   forum int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
-  UNIQUE KEY id (id)
+  UNIQUE KEY id (id),
+  KEY userid (userid),
+  KEY forum (forum)
 ) COMMENT='Keeps track of who is subscribed to what forum';
 # --------------------------------------------------------
 

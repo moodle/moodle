@@ -130,9 +130,37 @@ function forum_upgrade($oldversion) {
   if ($oldversion < 2004070700) {    // This may be redoing it from STABLE but that's OK
       table_column("forum_discussions", "groupid", "groupid", "integer", "10", "", "0", "");
   }
+  
+  if ($oldversion < 2004111700) {
+      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_posts` DROP INDEX {$CFG->prefix}forum_posts_parent_idx;",false);
+      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_posts` DROP INDEX {$CFG->prefix}forum_posts_discussion_idx;",false);
+      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_posts` DROP INDEX {$CFG->prefix}forum_posts_userid_idx;",false);
+      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_discussions` DROP INDEX {$CFG->prefix}forum_discussions_forum_idx;",false); 
+      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_discussions` DROP INDEX {$CFG->prefix}forum_discussions_userid_idx;",false);
+
+      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_posts` ADD INDEX {$CFG->prefix}forum_posts_parent_idx (parent) ");
+      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_posts` ADD INDEX {$CFG->prefix}forum_posts_discussion_idx (discussion) ");
+      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_posts` ADD INDEX {$CFG->prefix}forum_posts_userid_idx (userid) ");
+      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_discussions` ADD INDEX {$CFG->prefix}forum_discussions_forum_idx (forum) ");
+      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_discussions` ADD INDEX {$CFG->prefix}forum_discussions_userid_idx (userid) ");
+  }
+
+  if ($oldversion < 2004111700) {
+      execute_sql("ALTER TABLE {$CFG->prefix}forum DROP INDEX course;",false);
+      execute_sql("ALTER TABLE {$CFG->prefix}forum_ratings DROP INDEX userid;",false);
+      execute_sql("ALTER TABLE {$CFG->prefix}forum_ratings DROP INDEX post;",false);
+      execute_sql("ALTER TABLE {$CFG->prefix}forum_subscriptions DROP INDEX userid;",false);
+      execute_sql("ALTER TABLE {$CFG->prefix}forum_subscriptions DROP INDEX forum;",false);
+
+      modify_database('','ALTER TABLE prefix_forum ADD INDEX course (course);');
+      modify_database('','ALTER TABLE prefix_forum_ratings ADD INDEX userid (userid);');
+      modify_database('','ALTER TABLE prefix_forum_ratings ADD INDEX post (post);');
+      modify_database('','ALTER TABLE prefix_forum_subscriptions ADD INDEX userid (userid);');
+      modify_database('','ALTER TABLE prefix_forum_subscriptions ADD INDEX forum (forum);');
+  }
 
   return true;
-
+  
 }
 
 
