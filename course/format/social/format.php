@@ -1,5 +1,5 @@
 <?php
-    // social.php - course format featuring social forum
+    // format.php - course format featuring social forum
     //              included from view.php
 
     require_once("$CFG->dirroot/mod/forum/lib.php");
