@@ -8,7 +8,7 @@
     require_variable($eid);            // Entry ID
     optional_variable($cid,0);         // Comment ID
 
-    optional_variable($action,"add");     // Action to perform
+    optional_variable($action,"edit");     // Action to perform
     optional_variable($confirm,0);     // Confirm the action
 
     $action = strtolower($action);
@@ -49,13 +49,17 @@
     switch ( $action ){
         case "add":
             $straction = get_string("addingcomment","glossary");
-        break;
+            break;
         case "edit":
             $straction = get_string("editingcomment","glossary");
-        break;
+            break;
         case "delete":
             $straction = get_string("deletingcomment","glossary");
-        break;
+            break;
+        default:
+            $action = "edit";
+            $straction = get_string("editingcomment","glossary");
+            break;
     }
     $strglossaries = get_string("modulenameplural", "glossary");
     $strglossary = get_string("modulename", "glossary");
