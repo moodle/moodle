@@ -1786,7 +1786,7 @@ function truncate_userinfo($info) {
     // define the limits
     $limit = array(
                     'username'    => 100,
-                    'idnumber'    =>  12,
+                    'idnumber'    =>  64,
                     'firstname'   =>  20,
                     'lastname'    =>  20,
                     'email'       => 100,

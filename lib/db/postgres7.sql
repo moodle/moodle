@@ -276,7 +276,12 @@ CREATE TABLE prefix_cache_text (
 
 CREATE INDEX prefix_cache_text_md5key_idx ON prefix_cache_text (md5key);
 
-
+#
+# Table structure for table `user`
+#
+# When updating field length, modify
+# truncate_userinfo() in moodlelib.php
+#
 CREATE TABLE prefix_user (
    id SERIAL PRIMARY KEY,
    auth varchar(20) NOT NULL default 'manual',

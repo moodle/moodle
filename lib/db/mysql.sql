@@ -409,7 +409,9 @@ CREATE TABLE `prefix_sessions` (
 #
 # Table structure for table `user`
 #
-
+# When changing prefix_user, you may need to update
+# truncate_userinfo() in moodlelib.php
+#
 CREATE TABLE `prefix_user` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `auth` varchar(20) NOT NULL default 'manual',
