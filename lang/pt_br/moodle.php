@@ -2,6 +2,7 @@
 // Traduzido por Fabricio Valadares - Três Corações - MG - Brasil
 // Webdesigner da Universidade Vale do Rio Verde
 $string[thislanguage] = "Português - Brasil";  // Francais, Italiano, etc etc
+$string['thischarset'] = "iso-8859-1";
 
 $string[action] = "Ação";
 $string[activity] = "Atividade";

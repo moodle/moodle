@@ -1,6 +1,7 @@
 <?PHP // $Id$ 
 
 $string[thislanguage] = "Suomi";  // Francais, Italiano, etc etc
+$string[thischarset] = "iso-8859-1";
 
 $string[action] = "Toiminta";
 $string[activity] = "Tapahtuma";
