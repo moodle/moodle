@@ -1014,7 +1014,7 @@ body#mod-forum-search .introcontent {
   padding-left: 3px;
   padding-right: 3px;
 }
-#mod-forum-discuss .unread .forumpost .content {
+#mod-forum-discuss .forumpost.unread .content {
   border-style: solid;
   border-width: 2px;
 }

@@ -587,9 +587,10 @@ table.message_search_results td {
   background: none;
 }
 
-#mod-forum-discuss .unread .forumpost .content {
+#mod-forum-discuss .forumpost.unread .content {
   border-color: #FFD991; 
 } 
+
 #mod-forum-discuss .forumthread .unread {
 } 
 
