@@ -79,33 +79,27 @@
         		}
         	}
 
-        	foreach ($sco_users as $sco_user) {
-        		$user_data=scorm_get_scoes_records($sco_user);
-        		$userpict = "";
-        		if (isset($user_data->picture)) {
-        		    $userpict = $user_data->picture;
-        		}
-            		$picture = print_user_picture($sco_user->userid, $course->id, $userpict, false, true);
-            		$row="";
-    			$row[] = $picture;
-    			if (is_array($user_data)) {
-    				$data = current($user_data);
-    				$row[] = "<a href=\"$CFG->wwwroot/user/view.php?id=$data->userid&course=$course->id\">".
-    					 "$data->firstname $data->lastname</a>";
-    				foreach ($user_data as $data) {
-    				    $scoreview = "";
-    				    if ($data->cmi_core_score_raw > 0)
-    				    	$scoreview = "<br />".get_string("score","scorm").":&nbsp;".$data->cmi_core_score_raw;
-    				    if ( $data->cmi_core_lesson_status == "")
-    		    			$data->cmi_core_lesson_status = "not attempted";
-        		    	    $row[]="<img src=\"pix/".scorm_remove_spaces($data->cmi_core_lesson_status).".gif\" 
-    						   alt=\"".get_string(scorm_remove_spaces($data->cmi_core_lesson_status),"scorm")."\"
-    						   title=\"".get_string(scorm_remove_spaces($data->cmi_core_lesson_status),"scorm")."\">&nbsp;"
-    						   .$data->cmi_core_total_time.$scoreview;
-        			}
-        		}
-            		$table->data[] = $row; 
-        	}
+            foreach ($sco_users as $sco_user) {
+                $user_data = scorm_get_scoes_records($sco_user);
+
+                $row = array();
+                $data = current($user_data);
+                $row[] = print_user_picture($sco_user->userid, $course->id, $data->picture, false, true);
+                $row[] = "<a href=\"$CFG->wwwroot/user/view.php?id=$data->userid&course=$course->id\">".
+                         "$data->firstname $data->lastname</a>";
+                foreach ($user_data as $data) {
+                    $scoreview = "";
+                    if ($data->cmi_core_score_raw > 0)
+                        $scoreview = "<br />".get_string("score","scorm").":&nbsp;".$data->cmi_core_score_raw;
+                    if ( $data->cmi_core_lesson_status == "")
+                        $data->cmi_core_lesson_status = "not attempted";
+                    $row[]="<img src=\"pix/".scorm_remove_spaces($data->cmi_core_lesson_status).".gif\" 
+                        alt=\"".get_string(scorm_remove_spaces($data->cmi_core_lesson_status),"scorm")."\"
+                        title=\"".get_string(scorm_remove_spaces($data->cmi_core_lesson_status),"scorm")."\">&nbsp;"
+                        .$data->cmi_core_total_time.$scoreview;
+                }
+                $table->data[] = $row; 
+            }
     
         	print_table($table);
         

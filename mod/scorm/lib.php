@@ -572,7 +572,7 @@ function scorm_get_scoes_records($sco_user) {
                                  {$CFG->prefix}user u
                             WHERE su.scormid = '$sco_user->scormid'
                               AND su.userid = u.id
-                              AND su.userid = $sco_user->userid
+                              AND su.userid = '$sco_user->userid'
                               ORDER BY scoid");
 }
 
