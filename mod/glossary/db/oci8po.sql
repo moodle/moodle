@@ -123,32 +123,32 @@ rem
 rem Table structure for table glossary_entries_category
 rem
 
-drop TABLE mdl_glossary_entries_categories;
-CREATE TABLE mdl_glossary_entries_categories (
+drop TABLE prefix_glossary_entries_catego;
+CREATE TABLE prefix_glossary_entries_catego (
      id number(10) primary key,
      categoryid number(10) default '0' not null,
      entryid number(10) default '0' not null
 );
 
-COMMENT on table mdl_glossary_entries_categories is 'categories of each glossary entry';
+COMMENT on table prefix_glossary_entries_catego is 'categories of each glossary entry';
 
-drop sequence pg_entries_categories;
-create sequence pg_entries_categories_seq;
+drop sequence pg_entries_catego_seq;
+create sequence pg_entries_catego_seq;
 
-create or replace trigger pg_entries_categories_trig
-  before insert on mdl_glossary_categories_categories
+create or replace trigger pg_entries_catego_trig
+  before insert on prefix_glossary_entries_catego
   referencing new as new_row
   for each row
   begin
-    select pg_categories_categories_seq.nextval into :new_row.id from dual;
+    select pg_entries_catego_seq.nextval into :new_row.id from dual;
   end;
 .
 /
 
-insert into mdl_glossary_categories(categoryid,entryid) values(1,1);
-insert into mdl_glossary_categories(categoryid,entryid) values(2,2);
-insert into mdl_glossary_categories(categoryid,entryid) values(3,3);
-insert into mdl_glossary_categories(categoryid,entryid) values(4,4);
+insert into prefix_glossary_entries_catego(categoryid,entryid) values(1,1);
+insert into prefix_glossary_entries_catego(categoryid,entryid) values(2,2);
+insert into prefix_glossary_entries_catego(categoryid,entryid) values(3,3);
+insert into prefix_glossary_entries_catego(categoryid,entryid) values(4,4);
 
 rem
 rem Dumping data for table log_display
