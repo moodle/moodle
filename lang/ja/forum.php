@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004062600)
+      // forum.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -76,7 +76,7 @@ $string['newforumposts'] = '新規投稿';
 $string['nodiscussions'] = 'トピックはありません';
 $string['noguestpost'] = '申し訳ございません、ゲストは投稿できません';
 $string['nomorepostscontaining'] = 'これ以上 \'$a\'  を含んだ投稿はありません';
-$string['nonews'] = '新しいニュースは投稿されていません';
+$string['nonews'] = '新しいニュースはありません';
 $string['noposts'] = '投稿がありません';
 $string['nopostscontaining'] = ' $a が含まれる投稿は見つかりませんでした';
 $string['nosubscribers'] = 'このフォーラムには登録者はいません';
