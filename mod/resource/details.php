@@ -70,6 +70,9 @@
             case WEBPAGE:
                 $strexampleurl = get_string("exampleurl", "resource");
                 $strsearch     = get_string("search");
+                if (empty($form->reference)) {
+                    $form->reference = $CFG->resource_defaulturl;
+                }
                 ?>
                 <tr valign="top">
                     <td align="right" nowrap>
@@ -102,6 +105,10 @@
                 $strnewwindow     = get_string("newwindow", "resource");
                 $strnewwindowopen = get_string("newwindowopen", "resource");
                 $strsearch        = get_string("search");
+
+                if (empty($form->reference)) {
+                    $form->reference = $CFG->resource_defaulturl;
+                }
 
                 foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
                     $stringname = "str$optionname";

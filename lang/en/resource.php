@@ -4,6 +4,7 @@
 
 $string['addresource'] = 'Add resource';
 $string['chooseafile'] = 'Choose or upload a file';
+$string['configdefaulturl'] = 'This value is used to prefill the URL form when creating a new URL-based resource.';
 $string['configframesize'] = 'When a web page or an uploaded file is displayed within a frame, this value is the size (in pixels) of the top frame (which contains the navigation).';
 $string['configwebsearch'] = 'When adding a URL as a webpage or weblink, this location is offered as a site to help the user search for the URL they want.';
 $string['editingaresource'] = 'Editing a resource';

@@ -26,6 +26,10 @@ if (!isset($CFG->resource_websearch)) {
     set_config("resource_websearch", "http://google.com/");
 } 
 
+if (!isset($CFG->resource_defaulturl)) {
+    set_config("resource_defaulturl", "http://");
+} 
+
 $RESOURCE_WINDOW_OPTIONS = array("resizable", "scrollbars", "directories", "location", 
                                  "menubar", "toolbar", "status", "height", "width");
 
