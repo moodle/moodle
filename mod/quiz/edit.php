@@ -159,7 +159,7 @@
 
     echo "<TABLE BORDER=0 WIDTH=\"100%\" CELLPADDING=2 CELLSPACING=0>";
     echo "<TR><TD WIDTH=50% VALIGN=TOP>";
-        print_simple_box_start("CENTER", "100%", $THEME->body);
+        print_simple_box_start("CENTER", "100%", $THEME->cellcontent2);
         print_heading($modform->name);
         quiz_print_question_list($modform->questions, $modform->grades); 
         ?>
@@ -174,13 +174,13 @@
         <?php
         print_simple_box_end();
     echo "</TD><TD VALIGN=top WIDTH=50%>";
-        print_simple_box_start("CENTER", "100%", $THEME->body);
+        print_simple_box_start("CENTER", "100%", $THEME->cellcontent2);
         quiz_print_category_form($course, $modform->category);
         print_simple_box_end();
         
         print_spacer(5,1);
 
-        print_simple_box_start("CENTER", "100%", $THEME->body);
+        print_simple_box_start("CENTER", "100%", $THEME->cellcontent2);
         quiz_print_cat_question_list($modform->category);
         print_simple_box_end();
     echo "</TD></TR>";
