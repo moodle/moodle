@@ -7,12 +7,12 @@
     require_once("mod/forum/lib.php");
 
     if (! $site = get_site()) {
-        redirect("$CFG->wwwroot/admin/index.php");
+        redirect("$CFG->wwwroot/$CFG->admin/index.php");
     }
 
     if (isadmin()) {
         if (moodle_needs_upgrading()) {
-            redirect("$CFG->wwwroot/admin/index.php");
+            redirect("$CFG->wwwroot/$CFG->admin/index.php");
         }
     }
 
@@ -39,7 +39,7 @@
     $side = 175;
 
     if (isediting($site->id)) {
-        $site->summary .= "<br><center><a href=\"admin/site.php\"><img src=\"pix/i/edit.gif\" border=0></a>";
+        $site->summary .= "<br><center><a href=\"$CFG->admin/site.php\"><img src=\"pix/i/edit.gif\" border=0></a>";
     }
 
     if ($site->summary) {
