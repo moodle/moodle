@@ -178,9 +178,9 @@
         
             foreach ($useranswer as $key => $answer) {
                 if ($key) {
-                    echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$theme->cellcontent\">";
+                    echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$THEME->cellcontent\">";
                 } else if ($choice->showunanswered) {
-                    echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$theme->body\">";
+                    echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$THEME->body\">";
                 } else {
                     continue;
                 }
