@@ -29,7 +29,9 @@ $string['newwindowopen'] = "Mostrar el material en una nueva ventana (popup)";
 $string['note'] = "Nota";
 $string['notefile'] = "Para subir más de un archivo (y se puedan ver en la lista) utilice el 
 
-<A HREF=\$a >Gerenciador de archivos</A>.";
+
+
+<A HREF=\$a >Administrador de archivos</A>.";
 $string['notypechosen'] = "Necesita elegir un texto. Regrese y trate nuevamente.";
 $string['resourcetype'] = "Tipo de material";
 $string['resourcetype1'] = "Referencia";
