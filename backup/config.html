@@ -127,7 +127,10 @@
                 } else {
                     $strchecked = "";
                 }
-                $check_names[] = "<input type=\"checkbox\" name=\"dayofweek_$i\" value=\"1\"$strchecked>";
+                //Calculate standard day of week (0=Sunday......6=Saturday)
+                //to store info in that exact order in DB
+                $stddayofweek = ($i+$firstdayofweek) % 7;
+                $check_names[] = "<input type=\"checkbox\" name=\"dayofweek_$stddayofweek\" value=\"1\"$strchecked>";
                 $i++;
             }
             $table->align = array("center","center","center","center","center","center","center");
