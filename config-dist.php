@@ -70,14 +70,12 @@ $CFG->wwwroot   = 'http://example.com/moodle';
 // 3. SERVER FILES LOCATION
 //=========================================================================
 // Next, specify the full OS directory path to this same location
-// For Windows this might be something like this:
+// Make sure the upper/lower case is correct.  Some examples:
 //
-//    $CFG->dirroot = 'C:\Program Files\Easyphp\www\moodle';
-//
-// NOTE: Make sure all the upper/lower case is EXACTLY the same as it is 
-// on your computer otherwise you may experience some problems (bug in PHP)
+//    $CFG->dirroot = 'C:\FoxServ\www\moodle';    // Windows
+//    $CFG->dirroot = '/var/www/html/moodle';     // Redhat Linux
 
-$CFG->dirroot   = '/web/moodle';
+$CFG->dirroot   = '/var/www/html/moodle';
 
 
 //=========================================================================
@@ -110,7 +108,6 @@ $CFG->dataroot  = '/home/moodledata';
 $CFG->directorypermissions = 0777;
 
 
-
 //=========================================================================
 // 6. DIRECTORY LOCATION  (most people can just ignore this setting)
 //=========================================================================
@@ -127,7 +124,12 @@ $CFG->admin = 'admin';
 // ALL DONE!  To continue your setup, visit your Moodle web page.
 //=========================================================================
 
-require_once("$CFG->dirroot/lib/setup.php");       // Do not change this
+if (! @include_once("$CFG->dirroot/lib/setup.php"))  {    // Do not change this
+    echo "<p>Error detected in config.php</p>";
+    echo "<p>Error in: \$CFG->dirroot = '$CFG->dirroot';</p>";
+    echo "<p>Try this: \$CFG->dirroot = '".dirname(__FILE__)."';";
+    die;
+}
 
 // MAKE SURE WHEN YOU EDIT THIS FILE THAT THERE ARE NO SPACES, BLANK LINES, 
 // RETURNS, OR ANYTHING ELSE AFTER THE TWO CHARACTERS ON THE NEXT LINE.
