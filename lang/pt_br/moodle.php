@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
-# Traduzido por Fabricio Valadares - Três Corações - MG - Brasil
-# Webdesigner da Universidade Vale do Rio Verde
-$string[thislanguage] = "Brazilian";  // Francais, Italiano, etc etc
+// Traduzido por Fabricio Valadares - Três Corações - MG - Brasil
+// Webdesigner da Universidade Vale do Rio Verde
+$string[thislanguage] = "Português - Brasil";  // Francais, Italiano, etc etc
 
 $string[action] = "Ação";
 $string[activity] = "Atividade";
