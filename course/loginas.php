@@ -17,7 +17,7 @@
         require_login($course->id);
     }
 
-    if ($USER->realuser) {   /// Reset user back to their real self
+    if (isset($USER->realuser)) {   /// Reset user back to their real self
         $USER = get_user_info_from_db("id", $USER->realuser);
         $USER->loggedin = true;
         $USER->site = $CFG->wwwroot;
