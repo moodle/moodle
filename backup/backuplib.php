@@ -104,17 +104,13 @@
 
         global $CFG;
 
-        //Execute the insert
-        $status = execute_sql($sql_insert,false);
+        //Now execute the count
+        $ids = count_records("log","course",$course);
 
-        //Now execute the select
-        $ids = get_records_sql("SELECT DISTINCT l.id,l.course
-                                FROM {$CFG->prefix}log l
-                                WHERE l.course = '$course'");
         //Gets the user data
         $info[0][0] = get_string("logs");
         if ($ids) {
-            $info[0][1] = count($ids);
+            $info[0][1] = $ids;
         } else {
             $info[0][1] = 0;
         }
