@@ -335,7 +335,7 @@ function forum_cron () {
                     $USER->lang     = $userto->lang;
                     $USER->timezone = $userto->timezone;
 
-                    $postsubject = "$course->shortname: $post->subject";
+                    $postsubject = "$course->shortname: ".format_string($post->subject,true);
                     $posttext = forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto);
                     $posthtml = forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto);
 
@@ -344,11 +344,11 @@ function forum_cron () {
                         mtrace("Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id".
                              " ($userto->email) .. not trying again.");
                         add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#$post->id",
-                                   substr($post->subject,0,30), $cm->id, $userto->id);
+                                   substr(format_string($post->subject,true),0,30), $cm->id, $userto->id);
                         $errorcount++;
                     } else if ($mailresult === 'emailstop') {
                         add_to_log($course->id, 'forum', 'mail blocked', "discuss.php?d=$discussion->id#$post->id",
-                                   substr($post->subject,0,30), $cm->id, $userto->id);
+                                   substr(format_string($post->subject,true),0,30), $cm->id, $userto->id);
                     } else {
                         $mailcount++;
 
@@ -516,11 +516,11 @@ function forum_cron () {
                             $by = New stdClass;
                             $by->name = fullname($userfrom);
                             $by->date = userdate($post->modified);
-                            $posttext .= "\n".$post->subject.' '.get_string("bynameondate", "forum", $by);
+                            $posttext .= "\n".format_string($post->subject,true).' '.get_string("bynameondate", "forum", $by);
                             $posttext .= "\n---------------------------------------------------------------------";
 
                             $by->name = "<a target=\"_blank\" href=\"$CFG->wwwroot/user/view.php?id=$userfrom->id&amp;course=$course->id\">$by->name</a>";
-                            $posthtml .= '<div><a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id.'#'.$post->id.'">'.$post->subject.'</a> '.get_string("bynameondate", "forum", $by).'</div>';
+                            $posthtml .= '<div><a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id.'#'.$post->id.'">'.format_string($post->subject,true).'</a> '.get_string("bynameondate", "forum", $by).'</div>';
 
                         } else {
                             // The full treatment
@@ -626,7 +626,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
     }
 
     $posttext .= "\n---------------------------------------------------------------------\n";
-    $posttext .= $post->subject;
+    $posttext .= format_string($post->subject,true);
     if($bare) {
         $posttext .= " ($CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id#$post->id)";
     }
@@ -794,10 +794,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
             echo $date.'</span> - <span class="name">'.fullname($post, $isteacher);
             echo '</span></div><div class="info'.$subjectclass.'">';
             echo '"<a href="'.$CFG->wwwroot.'/mod/forum/'.str_replace('&', '&amp;', $log->url).'">';
-            $post->subject = break_up_long_words($post->subject);
-            if (!empty($CFG->filterall)) {
-                $post->subject = filter_text('<nolink>'.$post->subject.'</nolink>', $course->id);
-            }
+            $post->subject = break_up_long_words(format_string($post->subject,true));
             echo $post->subject;
             echo '</a>"</div>';
         }
@@ -1434,7 +1431,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
         $output .= "<td nowrap=\"nowrap\" class=\"forumpostheadertopic\">";
     }
     $output .= "<p>";
-    $output .= "<font size=\"3\"><b>$post->subject</b></font><br />";
+    $output .= "<font size=\"3\"><b>".format_string($post->subject)."</b></font><br />";
     $output .= "<font size=\"2\">";
 
     $fullname = fullname($user, isteacher($course->id));
@@ -1736,9 +1733,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
         $rowcount = ($rowcount + 1) % 2;
     }
 
-    if (!empty($CFG->filterall)) {
-        $post->subject = filter_text('<span class="nolink">'.$post->subject.'</span>', $forum->course);
-    }
+    $post->subject = format_string($post->subject,true);
 
     echo "\n\n";
     echo '<tr class="discussion r'.$rowcount.'">';
@@ -2808,7 +2803,7 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
                     $style = '<span class="forumthread">';
                 }
                 echo $style."<a name=\"$post->id\"></a>".
-                     "<a href=\"discuss.php?d=$post->discussion&amp;parent=$post->id\">$post->subject</a> ";
+                     "<a href=\"discuss.php?d=$post->discussion&amp;parent=$post->id\">".format_string($post->subject,true)."</a> ";
                 print_string("bynameondate", "forum", $by);
                 echo "</span>";
             }

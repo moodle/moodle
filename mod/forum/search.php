@@ -176,7 +176,7 @@
         if ($forum->type != 'single') {
             $fullsubject .= " -> <a href=\"discuss.php?d=$discussion->id\">$discussion->name</a>";
             if ($post->parent != 0) {
-                $fullsubject .= " -> <a href=\"discuss.php?d=$post->discussion&amp;parent=$post->id\">$post->subject</a>";
+                $fullsubject .= " -> <a href=\"discuss.php?d=$post->discussion&amp;parent=$post->id\">".format_string($post->subject,true)."</a>";
             }
         }
 

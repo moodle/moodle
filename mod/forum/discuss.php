@@ -104,7 +104,7 @@
     }
 
     if (empty($navtail)) {
-        $navtail = "<a href=\"discuss.php?d=$discussion->id\">$discussion->name</a> -> $post->subject";
+        $navtail = "<a href=\"discuss.php?d=$discussion->id\">$discussion->name</a> -> ".format_string($post->subject);
     }
 
     $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">".get_string("forums", "forum")."</a> -> <a href=\"../forum/view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";

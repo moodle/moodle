@@ -38,10 +38,10 @@
     $strname = get_string("name");
     $strtime = get_string("time");
 
-    print_header("$strratings: $post->subject");
+    print_header("$strratings: ".format_string($post->subject));
 
     if (!$ratings = forum_get_ratings($post->id, $sort)) {
-        error("No ratings for this post: \"$post->subject\"");
+        error("No ratings for this post: \"".format_string($post->subject)."\"");
 
     } else {
         echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" width=\"100%\">";

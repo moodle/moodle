@@ -465,10 +465,10 @@
 
             $course = get_record('course', 'id', $forum->course);
             $strforums = get_string("modulenameplural", "forum");
-            print_header_simple("$discussion->name: $post->subject", "",
+            print_header_simple("$discussion->name: ".format_string($post->subject), "",
                          "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> ->
                           <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a> ->
-                          <a href=\"discuss.php?d=$discussion->id\">$post->subject</a> -> ".
+                          <a href=\"discuss.php?d=$discussion->id\">".format_string($post->subject,true)."</a> -> ".
                           get_string("prune", "forum"), '', "", true, "", navmenu($course, $cm));
 
             print_heading(get_string('pruneheading', 'forum'));
@@ -516,9 +516,9 @@
     }
 
     if ($post->parent) {
-        $navtail = "<a href=\"discuss.php?d=$discussion->id\">$toppost->subject</a> -> ".get_string("editing", "forum");
+        $navtail = "<a href=\"discuss.php?d=$discussion->id\">".format_string($toppost->subject,true)."</a> -> ".get_string("editing", "forum");
     } else {
-        $navtail = "$toppost->subject";
+        $navtail = format_string($toppost->subject);
     }
 
     if (empty($post->edit)) {
@@ -535,12 +535,12 @@
     }
 
     if ($course->category) {
-        print_header("$course->shortname: $discussion->name: $toppost->subject", "$course->fullname",
+        print_header("$course->shortname: $discussion->name: ".format_string($toppost->subject), "$course->fullname",
                  "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                   $navmiddle -> $navtail", $formstart, "", true, "", navmenu($course, $cm));
 
     } else {
-        print_header("$course->shortname: $discussion->name: $toppost->subject", "$course->fullname",
+        print_header("$course->shortname: $discussion->name: ".format_string($toppost->subject), "$course->fullname",
                  "$navmiddle -> $navtail", "$formstart", "", true, "", navmenu($course, $cm));
 
     }
