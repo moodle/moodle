@@ -64,18 +64,18 @@ function schedule_backup_cron() {
                 if ($backup_course->nextstarttime > 0 && $backup_course->nextstarttime < $now) {
                     //Set laststarttime
                     $starttime = time();
-                    set_field("backup_courses","laststarttime",$starttime,"id",$backup_course->courseid);
+                    set_field("backup_courses","laststarttime",$starttime,"courseid",$backup_course->courseid);
                     //Launch backup
                     $course_status = schedule_backup_launch_backup($course,$starttime);
                     //We have to send a email because we have included at least one backup
                     $emailpending = true;
                     //Set lastendtime
-                    set_field("backup_courses","lastendtime",time(),"id",$backup_course->courseid);
+                    set_field("backup_courses","lastendtime",time(),"courseid",$backup_course->courseid);
                     //Set laststatus
                     if ($course_status) {
-                        set_field("backup_courses","laststatus","1","id",$backup_course->courseid);
+                        set_field("backup_courses","laststatus","1","courseid",$backup_course->courseid);
                     } else {
-                        set_field("backup_courses","laststatus","0","id",$backup_course->courseid);
+                        set_field("backup_courses","laststatus","0","courseid",$backup_course->courseid);
                     }
                 }
 
