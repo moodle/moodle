@@ -49,7 +49,12 @@
         header("Content-disposition: inline; filename=$filename");
         header("Content-length: ".filesize($pathname));
         header("Content-type: $mimetype");
-        readfile("$pathname");
+
+        if ($mimetype == "text/html") {
+            echo format_text(implode('', file($pathname)), FORMAT_HTML);  // Filter HTML files
+        } else {
+            readfile("$pathname");
+        }
     } else {
         error("Sorry, but the file you are looking for was not found ($pathname)", "course/view.php?id=$courseid");
     }
