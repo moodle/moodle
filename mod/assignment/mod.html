@@ -30,7 +30,7 @@
     </td>
     <td>
     <? 
-       print_textarea($usehtmleditor, 20, 60, 595, 400, "description", $form->description);
+       print_textarea($usehtmleditor, 20, 60, 680, 400, "description", $form->description);
     
        echo "<P align=right>";
        print_string("formattexttype");
@@ -127,7 +127,7 @@
 
 <? 
    if ($usehtmleditor) { 
-       print_richedit_javascript("form", "description", "no");
+       print_richedit_javascript("form", "description", "yes");
    }
 ?>
 
