@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.0.6.4 (2002112400)
+      // resource.php - created with Moodle 1.0.8 dev (2002122301)
 
 
 $string['addresource'] = "資料を追加する";
@@ -23,5 +23,6 @@ $string['resourcetype3'] = "ファイル";
 $string['resourcetype4'] = "プレインテキスト";
 $string['resourcetype5'] = "リンク";
 $string['resourcetype6'] = "HTMLテキスト";
+$string['resourcetype7'] = "プログラム";
 
 ?>
