@@ -293,6 +293,22 @@ function dialogue_user_outline($course, $user, $mod, $dialogue) {
 // SQL FUNCTIONS ///////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////////
+function dialogue_count_all_needing_replies_self($user = '') {
+// count [conversations] needing replies [from] self for all dialogues
+// function requested by Williams Castillo 17 Oct 2003 
+    global $USER;
+    
+    if ($user) {	
+    	return count_records_select("dialogue_conversations", "(userid = $user->id OR 
+            recipientid = $user->id) AND lastid != $user->id AND closed = 0");
+    } else {
+    	return count_records_select("dialogue_conversations", "(userid = $USER->id OR 
+            recipientid = $USER->id) AND lastid != $USER->id AND closed = 0");
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
 function dialogue_count_closed($dialogue, $user) {
 	
 	return count_records_select("dialogue_conversations", "dialogueid = $dialogue->id AND 
@@ -318,7 +334,7 @@ function dialogue_count_open($dialogue, $user) {
 	
 	return count_records_select("dialogue_conversations", "dialogueid = $dialogue->id AND 
         (userid = $user->id OR recipientid = $user->id) AND closed = 0");
-	}
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -326,7 +342,7 @@ function dialogue_count_needing_replies_other($dialogue, $user) {
 // count [conversations] needing replies [from] other [person]	
 	return count_records_select("dialogue_conversations", "dialogueid = $dialogue->id AND 
         (userid = $user->id OR recipientid = $user->id) AND lastid = $user->id AND closed = 0");
-	}
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -335,7 +351,7 @@ function dialogue_count_needing_replies_self($dialogue, $user) {
 	
 	return count_records_select("dialogue_conversations", "dialogueid = $dialogue->id AND 
         (userid = $user->id OR recipientid = $user->id) AND lastid != $user->id AND closed = 0");
-	}
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////
