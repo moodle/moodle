@@ -62,6 +62,8 @@ function check_entry($form, $course) {
 function get_access_icons($course) {
     global $CFG;
 
+    $str = '';
+
     if ( (float) $course->cost < 0) {
         $cost = (float) $CFG->enrol_cost;
     } else {
@@ -70,18 +72,22 @@ function get_access_icons($course) {
 
     if (abs($cost) < 0.01) {
         $str = parent::get_access_icons($course);
+
     } else {
     
         $strrequirespayment = get_string("requirespayment");
-        
-        if (! file_exists("$CFG->dirroot/pix/m/$CFG->enrol_paypalcurrency.gif")) {
-            $icon = "$CFG->pixpath/m/USD.gif";
-        } else {
-            $icon = "$CFG->pixpath/m/$CFG->enrol_paypalcurrency.gif";
+        $strcost = get_string("cost");
+
+        switch ($CFG->enrol_paypalcurrency) {
+           case 'EUR': $currency = '&euro;'; break;
+           case 'CAD': $currency = '$'; break;
+           case 'GBP': $currency = '&pound;'; break;
+           case 'JPY': $currency = '&yen;'; break;
+           default:    $currency = '$'; break;
         }
         
-        $str .= "<a title=\"$strrequirespayment\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-        $str .= "<img vspace=4 alt=\"$strrequirespayment\" height=16 width=16 border=0 src=\"$icon\"></a>";
+        $str .= "<p>$strcost: <a title=\"$strrequirespayment\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+        $str .= "$currency $cost</a></p>";
         
     }
 
