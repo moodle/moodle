@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
 
 
 $string['action'] = '-- アクション --';
@@ -71,7 +71,7 @@ $string['flaghtm'] = 'HTM';
 $string['flagoff'] = 'OFF';
 $string['flagro'] = 'RO';
 $string['flags'] = 'フラグ';
-$string['flagsset'] = 'フラグが変更されました';
+$string['flagsset'] = 'フラグが変更されました。';
 $string['flagtxt'] = 'TXT';
 $string['flagwr'] = 'WR';
 $string['forbidden'] = 'このページにアクセスする権限がありません。';
