@@ -265,7 +265,6 @@
         echo '<tr>';
         
         echo '<td>';
-        helpbutton('howtowiki', get_string('howtowiki', 'wiki'), 'wiki');
         if ($canedit) {
           $iconstr="";
           $editicon= '<img hspace=1 alt="'.get_string("editthispage","wiki").'" height=16 width=16 border=0 src="'.$CFG->pixpath.'/t/edit.gif">';
@@ -309,12 +308,10 @@
         }
         
         /// Formatting Rules
-        if($wiki->htmlmode!=2) {
-          echo '<td align="center">';          
-          helpbutton('wikiusage', get_string('wikiusage', 'wiki'), 'wiki');
-          echo get_string("wikiusage","wiki");
-          echo '</td>';
-        }
+        echo '<td align="center">';          
+        helpbutton('howtowiki', get_string('howtowiki', 'wiki'), 'wiki');
+        echo get_string('howtowiki','wiki');
+        echo '</td>';
         
         echo '</tr></table>';
     }
