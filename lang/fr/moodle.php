@@ -60,7 +60,7 @@ $string['alreadyconfirmed'] = "L'enregistrement a déjà été confirmé";
 $string['answer'] = "Réponse";
 $string['areyousuretorestorethis'] = "Voulez-vous vraiment restaurer ce backup ?";
 $string['areyousuretorestorethisinfo'] = "Vous aurez plus tard la possibilité d'ajouter ce backup à un cours existant ou de créer un nouveau cours avec ces données.";
-$string['assessment'] = "Appréciation";
+$string['assessment'] = "Évaluation";
 $string['assignadmins'] = "Choisir les administrateurs";
 $string['assigncreators'] = "Choisir les responsables de cours";
 $string['assignstudents'] = "Choisir les élèves";
@@ -112,20 +112,20 @@ $string['configerrorlevel'] = "Choisir la quantité d'avertissement PHP que vous 
 $string['configframename'] = "Si vous intégrez Moodle dans un cadre (frame), inscrivez ici le nom de ce cadre. Dans le cas contraire, cette valeur doit rester « _top »";
 $string['configgdversion'] = "Indiquer la version de la librairie GD qui est installée. La version selectionnée par défaut est celle qui a été détectée. Ne pas modifier cette valeur à moins de savoir réellement ce qu'il en découle.";
 $string['confightmleditor'] = "Choisir d'autoriser ou non l'utilisation de l'éditeur HTML intégré. Cependant, même s'il est activé, il n'apparaît que si l'utilisateur utilise un navigateur compatible Internet Explorer 5.5 ou plus. Chaque utilisateur peut également choisir de ne pas l'activer.";
-$string['configidnumber'] = "Cette option précise si (a) les utilisateurs doivent indiquer un numéro d'identification non vide ; (b) les utilisateurs doivent indiquer un numéro d'identification qui peut être vide ; (c) les utilisateurs n'ont pas besoin d'indiquer de numéro d'identification. Le cas échéant, le numéro d'identification est affiché dans le profil de l'utilisateur.";
+$string['configidnumber'] = "Cette option précise si (a) les utilisateurs doivent indiquer un numéro de connexion non vide ; (b) les utilisateurs doivent indiquer un numéro de connexion qui peut être vide ; (c) les utilisateurs n'ont pas besoin d'indiquer de numéro de connexion. Le cas échéant, le numéro de connexion est affiché dans le profil de l'utilisateur.";
 $string['configintro'] = "Cette page permet de configurer un certain nombre de variables de configuration permettront à Moodle de fonctionner correctement sur ce serveur. Inutile de trop s'en inquiéter, les paramètres par défaut devraient, la plupart du temps, convenir et il est toujours possible de revenir plus tard sur cette page pour les modifier.";
 $string['configintroadmin'] = "Cette page permet de configurer votre compte administrateur principal qui aura le contrôle total du site. Assurez-vous de lui donner un nom et un mot de passe sûrs, ainsi qu'une adresse de courriel valable. Vous pourrez créer plus tard d'autres comptes administrateur.";
 $string['configintrosite'] = "Cette page permet de configurer la page d'accueil et le nom de votre site. Vous pourrez modifier ces paramètres en tout temps en utilisant le lien « Configuration du site » sur la page d'accueil.";
 $string['configlang'] = "Choisir une langue par défaut pour l'ensemble du site. Les utilisateurs ont la possibilité d'en choisir une autre plus tard.";
 $string['configlangdir'] = "La plupart des langues sont écrites de gauche à droite excepté certaines, comme l'Arabe ou l'Hébreu, qui le sont de droite à gauche";
 $string['configlanglist'] = "Laisser ce champ vide pour permettre le choix d'une langue de cette installation de Moodle. Vous pouvez abréger le menu des langues en spécifiant une liste de codes des langues désirées, par exemple: fr,de,en,it";
-$string['configlangmenu'] = "Déterminer si vous voulez afficher ou non le menu du choix de la langue sur la page d'accueil, la page de login, etc. Les utilisateurs peuvent sélectionner leur langue préférée dans leur propre profil indépendamment de ce réglage.";
+$string['configlangmenu'] = "Déterminer si vous voulez afficher ou non le menu du choix de la langue sur la page d'accueil, la page de connexion, etc. Les utilisateurs peuvent sélectionner leur langue préférée dans leur propre profil indépendamment de ce réglage.";
 $string['configlocale'] = "Choisir un environnement pour l'affichage des dates. Les données de cet environnement doivent être installées sur le serveur. Laisser vide en cas de doute.";
 $string['configloglifetime'] = "Ce champ permet de spécifier la durée de conservation des journaux d'activité des utilisateurs. Il est conseillé de choisir une durée aussi longue que possible. Si votre serveur est très fréquenté et que la performance se dégrade, il peut être judicieux de diminuer cette durée.";
 $string['configlongtimenosee'] = "Si les étudiants ne se connectent pas au serveur durant ce laps de temps, leur inscription aux cours est automatiquement annulée.";
 $string['configmaxeditingtime'] = "Ce paramètre indique la durée pendant laquelle les utilisateurs ont la possibilité de modifier un article qu'ils ont écrit. Habituellement, 30 minutes est une bonne valeur.";
 $string['configproxyhost'] = "Si le serveur qui héberge le site Moodle a besoin d'utiliser un proxy (dans le cas, par exemple, où il existe un firewall sur le réseau), indiquer ici le nom de ce proxy et son numéro de port. Sinon laisser vide.";
-$string['configsecureforms'] = "Moodle peut utiliser un niveau additionnel de sécurité pour la gestion des formulaires web. Si cette option est activée, la variable HTTP_REFERRER du navigateur est comparée à l'adresse du formulaire. Cela peut poser des problèmes lors de l'utilisation d'un firewall (p. ex. Zonealarm) configuré pour ôter HTTP_REFERRER de leur traffic web. Le symptôme est alors le « gel » du formulaire. Si vos utilisateurs ont des problèmes de connexion, par exemple sur la page de login, désactiver cette option. Dans le doute, réglez cette option sur « Oui ».";
+$string['configsecureforms'] = "Moodle peut utiliser un niveau additionnel de sécurité pour la gestion des formulaires web. Si cette option est activée, la variable HTTP_REFERRER du navigateur est comparée à l'adresse du formulaire. Cela peut poser des problèmes lors de l'utilisation d'un firewall (p. ex. Zonealarm) configuré pour ôter HTTP_REFERRER de leur traffic web. Le symptôme est alors le « gel » du formulaire. Si vos utilisateurs ont des problèmes de connexion, par exemple sur la page de connexion, désactiver cette option. Dans le doute, réglez cette option sur « Oui ».";
 $string['configsessiontimeout'] = "Les utilisateurs connectés seront automatiquement déconnectés (leur session sera terminée) après le laps de temps d'inactivités spécifié dans ce champ.";
 $string['configslasharguments'] = "Les fichiers (images, fichiers téléchargés, etc.) sont transmis via un script qui utilise les « slash arguments ». Cette méthode permet à ces fichiers d'être plus facilement pris en compte par le système  de cache des navigateurs Web, proxy, etc. Cependant certains serveurs PHP n'autorisent pas cette méthode. Par conséquent il est nécessaire d'utiliser la première valeur de ce paramètre si des problèmes d'affichage des fichiers ou images téléchargés sont rencontrés.";
 $string['configsmtphosts'] = "Indiquer le nom complet d'un ou plusieurs serveurs SMTP locaux que Moodle devra utiliser pour envoyer des courriels (par exemple, « mail.a.com » ou « mail.a.com;mail.b.com »). Si ce paramètre est laissé vide, Moodle utilisera la méthode par défaut de PHP pour envoyer des courriels.";
@@ -163,7 +163,7 @@ $string['courseupdates'] = "Modifications du cours";
 $string['create'] = "Créer";
 $string['createaccount'] = "Créer mon compte";
 $string['createfolder'] = "Créer un dossier dans \$a";
-$string['createuserandpass'] = "Créer un nouveau compte pour vous identifier";
+$string['createuserandpass'] = "Créer un nouveau compte pour vous connecter";
 $string['createziparchive'] = "Créer une archive zip";
 $string['creatingcategoriesandquestions'] = "Création des catégories et des questions";
 $string['creatingcoursemodules'] = "Création des modules de cours";
@@ -307,7 +307,7 @@ $string['firstname'] = "Prénom";
 $string['firsttime'] = "Première visite sur ce site ?";
 $string['followingoptional'] = "Les éléments suivants sont facultatifs";
 $string['followingrequired'] = "Les éléments suivants sont requis";
-$string['forgotten'] = "Vous avez oublié votre login et/ou mot de passe ?";
+$string['forgotten'] = "Vous avez oublié votre nom d'utilisateur et/ou votre mot de passe";
 $string['format'] = "Format du cours";
 $string['formathtml'] = "Format HTML";
 $string['formatplain'] = "Format texte pur";
@@ -380,7 +380,7 @@ $string['htmleditordisabledadmin'] = "L'administrateur a désactivé l'utilisation
 $string['htmleditordisabledbrowser'] = "L'éditeur HTML n'est pas disponible car vous n'utilisez pas un navigateur qui le permet";
 $string['htmlformat'] = "Format HTML";
 $string['icqnumber'] = "Identifiant ICQ";
-$string['idnumber'] = "Identifiant";
+$string['idnumber'] = "Numéro de connexion";
 $string['include'] = "Inclure";
 $string['includeallusers'] = "Inclure tous les utilisateurs";
 $string['includecoursefiles'] = "Inclure les fichiers de cours";
@@ -390,7 +390,7 @@ $string['includelogentries'] = "Inclure les journaux d'événements";
 $string['includeneededusers'] = "Inclure les utilisateurs s'il y a lieu";
 $string['includeuserfiles'] = "Inclure les fichiers des utilisateurs";
 $string['invalidemail'] = "Adresse de courriel incorrecte";
-$string['invalidlogin'] = "Login incorrect, merci d'essayer de nouveau";
+$string['invalidlogin'] = "La connexion a échoué, merci d'essayer de nouveau";
 $string['jumpto'] = "Aller à...";
 $string['langltr'] = "La langue est écrite de gauche à droite";
 $string['langrtl'] = "La langue est écrite de droite à gauche";
@@ -413,9 +413,9 @@ $string['location'] = "Emplacement";
 $string['loggedinas'] = "« \$a » connecté";
 $string['loggedinnot'] = "Non connecté.";
 $string['login'] = "Connexion";
-$string['loginas'] = "Connexion sous le nom";
-$string['loginguest'] = "Connexion en visiteur anonyme";
-$string['loginsite'] = "S'identifier sur le site";
+$string['loginas'] = "Connecté sous le nom";
+$string['loginguest'] = "Connecté en tant que visiteur anonyme";
+$string['loginsite'] = "Se connecter sur le site";
 $string['loginsteps'] = "Bonjour. Pour un accès complet aux cours, prenez une minute pour vous créer un compte personnel sur ce site.<BR>
 Chaque cours peut également nécessiter une clef d'inscription à usage unique dont vous n'avez pas besoin pour l'instant.<BR>
 
@@ -425,17 +425,17 @@ Voici les étapes à suivre :
    <LI>Remplir le formulaire <A HREF=\$a>nouveau compte</A>.
    <LI>Un message vous sera immédiatement adressé par courriel.
    <LI>Récupérer ce message et cliquer sur le lien Web qu'il contient.
-   <LI>Votre inscription sera alors confirmée et vous serez identifié.
+   <LI>Votre inscription sera alors confirmée et vous serez connecté.
    <LI>Vous pourrez ensuite choisir le cours auquel vous souhaitez vous inscrire.
    <LI>Si une clef d'inscription vous est demandée, utilisez celle que votre professeur vous aura communiquée.
-   <LI>Vous aurez alors un accès au cours complet. À votre prochaine visite il vous suffira d'entrer votre nom d'utilisateur et mot de passe (dans le formulaire ci-contre) afin de vous identifier et d'accéder à tous les cours auxquels vous serez inscrit.
+   <LI>Vous aurez alors un accès au cours complet. À votre prochaine visite il vous suffira d'entrer votre nom d'utilisateur et mot de passe (dans le formulaire ci-contre) afin de vous connecter et d'accéder à tous les cours auxquels vous serez inscrit.
    </OL>";
 $string['loginstepsnone'] = "Bonjour !<p>
 Pour un accès complet aux cours vous devez vous créer un compte.<p>
-Pour cela, vous avez seulement besoin de choisir un login et un mot de passe à entrer dans le formulaire de cette page.<p>
-Si ce login est déjà utilisé, il vous sera demandé d'en choisir un autre.";
-$string['loginto'] = "S'identifier sur \$a";
-$string['loginusing'] = "Identifiez-vous ici en utilisant votre nom d'utilisateur<br>et mot de passe";
+Pour cela, vous avez seulement besoin de choisir un nom d'utilisateur et un mot de passe à entrer dans le formulaire de cette page.<p>
+Si ce nom d'utilisateur est déjà utilisé, il vous sera demandé d'en choisir un autre.";
+$string['loginto'] = "Se connecter sur \$a";
+$string['loginusing'] = "Connectez-vous ici en utilisant votre nom d'utilisateur<br>et mot de passe";
 $string['logout'] = "Déconnexion";
 $string['logs'] = "Journal des événements";
 $string['mainmenu'] = "Menu principal";
@@ -506,7 +506,7 @@ $string['newpasswordtext'] = "Bonjour \$a->firstname,
 
 Le mot de passe de votre compte sur « \$a->sitename  » a été remplacé par un nouveau mot de passe temporaire.
 
-Les informations pour vous identifier sont désormais :
+Les informations pour vous connecter sont désormais :
 
 nom d'utilisateur : \$a->username
 mot de passe : \$a->newpassword
