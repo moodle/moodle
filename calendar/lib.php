@@ -321,63 +321,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 break;
             }
 
-            $startdate = usergetdate($event->timestart);
-            $enddate = usergetdate($event->timestart + $event->timeduration);
-            $usermidnightstart = usergetmidnight($event->timestart);
-
-            if($event->timeduration) {
-                // To avoid doing the math if one IF is enough :)
-                $usermidnightend = usergetmidnight($event->timestart + $event->timeduration);
-            }
-            else {
-                $usermidnightend = $usermidnightstart;
-            }
-
-            // OK, now to get a meaningful display...
-            // First of all we have to construct a human-readable date/time representation
-
-            if($event->timestart + $event->timeduration < $now) {
-                // It has expired, so we don't care about duration
-                $day = calendar_day_representation($event->timestart + $event->timeduration, $now);
-                $time = calendar_time_representation($event->timestart + $event->timeduration);
-
-                // This var always has the printable time representation
-                $eventtime = '<span class="dimmed_text"><a class="dimmed" href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).'">'.$day.'</a> ('.$time.')</span>';
-
-            }
-            else if($event->timeduration) {
-                // It has a duration
-                if($usermidnightstart == $usermidnightend) {
-                    // But it's all on the same day
-                    $day = calendar_day_representation($event->timestart, $now);
-                    $timestart = calendar_time_representation($event->timestart);
-                    $timeend = calendar_time_representation($event->timestart + $event->timeduration);
-
-                    // Set printable representation
-                    $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
-                        ' ('.$timestart.' -> '.$timeend.')';
-                }
-                else {
-                    // It spans two or more days
-                    $daystart = calendar_day_representation($event->timestart, $now);
-                    $dayend = calendar_day_representation($event->timestart + $event->timeduration, $now);
-                    $timestart = calendar_time_representation($event->timestart);
-                    $timeend = calendar_time_representation($event->timestart + $event->timeduration);
-
-                    // Set printable representation
-                    $eventtime = calendar_get_link_tag($daystart, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).
-                        ' ('.$timestart.') -> '.calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
-                        ' ('.$timeend.')';
-                }
-            }
-            else {
-                // It's an "instantaneous" event
-                $day = calendar_day_representation($event->timestart, $now);
-                $time = calendar_time_representation($event->timestart);
-
-                // Set printable representation
-                $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).' ('.$time.')';
-            }
+            $eventtime = calendar_format_event_time($event, $now, $morehref);
 
             $outkey = count($output);
 
@@ -1167,6 +1111,68 @@ function calendar_preferences_button() {
            "<input type=\"submit\" value=\"".get_string("preferences", "calendar")." ...\" /></form>";
 }
 
+function calendar_format_event_time($event, $now, $morehref, $usecommonwords = true) {
+    $startdate = usergetdate($event->timestart);
+    $enddate = usergetdate($event->timestart + $event->timeduration);
+    $usermidnightstart = usergetmidnight($event->timestart);
+
+    if($event->timeduration) {
+        // To avoid doing the math if one IF is enough :)
+        $usermidnightend = usergetmidnight($event->timestart + $event->timeduration);
+    }
+    else {
+        $usermidnightend = $usermidnightstart;
+    }
+
+    // OK, now to get a meaningful display...
+    // First of all we have to construct a human-readable date/time representation
+
+    if($event->timestart + $event->timeduration < $now) {
+        // It has expired, so we don't care about duration
+        $day = calendar_day_representation($event->timestart + $event->timeduration, $now, $usecommonwords);
+        $time = calendar_time_representation($event->timestart + $event->timeduration);
+
+        // This var always has the printable time representation
+        $eventtime = '<span class="dimmed_text"><a class="dimmed" href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).'">'.$day.'</a> ('.$time.')</span>';
+
+    }
+    else if($event->timeduration) {
+        // It has a duration
+        if($usermidnightstart == $usermidnightend) {
+            // But it's all on the same day
+            $day = calendar_day_representation($event->timestart, $now, $usecommonwords);
+            $timestart = calendar_time_representation($event->timestart);
+            $timeend = calendar_time_representation($event->timestart + $event->timeduration);
+
+            // Set printable representation
+            $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
+                ' ('.$timestart.' -> '.$timeend.')';
+        }
+        else {
+            // It spans two or more days
+            $daystart = calendar_day_representation($event->timestart, $now, $usecommonwords);
+            $dayend = calendar_day_representation($event->timestart + $event->timeduration, $now, $usecommonwords);
+            $timestart = calendar_time_representation($event->timestart);
+            $timeend = calendar_time_representation($event->timestart + $event->timeduration);
+
+            // Set printable representation
+            $eventtime = calendar_get_link_tag($daystart, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).
+                ' ('.$timestart.') -> '.calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
+                ' ('.$timeend.')';
+        }
+    }
+    else {
+        // It's an "instantaneous" event
+        $day = calendar_day_representation($event->timestart, $now, $usecommonwords);
+        $time = calendar_time_representation($event->timestart);
+
+        // Set printable representation
+        $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).' ('.$time.')';
+    }
+    
+    return $eventtime;
+}
+            
 if(!function_exists('array_diff_assoc')) {
     // PHP < 4.3.0
     function array_diff_assoc($source, $diff) {

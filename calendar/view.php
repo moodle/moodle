@@ -227,16 +227,16 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
         foreach ($events as $event) {
             if ($event->timestart >= $starttime && $event->timestart <= $endtime) {  // Print it now
 
-/*
-                print_object($event->time);
 
+/*
                 $dayend = calendar_day_representation($event->timestart + $event->timeduration);
                 $timeend = calendar_time_representation($event->timestart + $event->timeduration);
                 $enddate = usergetdate($event->timestart + $event->timeduration);
                 // Set printable representation
                 echo calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).' ('.$timeend.')';
 */
-                unset($event->time);
+                //unset($event->time);
+                $event->time = calendar_format_event_time($event, time(), '', false);
                 calendar_print_event($event);
 
             } else {                                                                 // Save this for later
@@ -248,6 +248,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
         if (!empty($underway)) {
             echo '<p style="text-align: center;"><strong>'.get_string('spanningevents', 'calendar').':</strong></p>';
             foreach ($underway as $event) {
+                $event->time = calendar_format_event_time($event, time(), '', false);
                 calendar_print_event($event);
             }
         }
