@@ -253,17 +253,17 @@ Markdown段落、リスト、ヘッダのどこでも使用することができ
 
 </code></pre>
 
-<p>atxスタイルヘッダを「閉じる」こともできます。これは純粋に装飾的なものです - 見た目が良くなる場合は使ってください。ハッシュの数はヘッダを開始する時に使用するハッシュの数に合致する必要はありません。( ヘッダを開始する時のハッシュ数は、ヘッダレベルを決定します。):</p>
+<p>Atxスタイルヘッダを「閉じる」こともできます。これは純粋に装飾的なものです - 見た目が良くなる場合は使ってください。ハッシュの数はヘッダを開始する時に使用するハッシュの数に合致する必要はありません。( ヘッダを開始する時のハッシュ数は、ヘッダレベルを決定します。):</p>
 
-<pre><code># This is an H1 #
-
-
-
-## This is an H2 ##
+<pre><code># これは H1 です。 #
 
 
 
-### This is an H3 ######
+## これは H2 です。 ##
+
+
+
+### これは H3 です。 ######
 
 </code></pre>
 
@@ -273,13 +273,9 @@ Markdown段落、リスト、ヘッダのどこでも使用することができ
 
 
 
-<p>Markdown uses email-style <code>&gt;</code> characters for blockquoting. If you&#8217;re
-
-familiar with quoting passages of text in an email message, then you
-
-know how to create a blockquote in Markdown. It looks best if you hard
-
-wrap the text and put a <code>&gt;</code> before every line:</p>
+<p>Markdownでは、E-メールと同じように <code>&gt;</code> を引用に使用します。
+もし、あなたがメールメッセージの引用に慣れているのでしたら、Markdownでどのように引用を作成すればよいか分かるでしょう。
+ハードラップにして、各行の前に <code>&gt;</code> を付けることで見栄えが最良になります:</p>
 
 
 
@@ -299,9 +295,7 @@ wrap the text and put a <code>&gt;</code> before every line:</p>
 
 
 
-<p>Markdown allows you to be lazy and only put the <code>&gt;</code> before the first
-
-line of a hard-wrapped paragraph:</p>
+<p>Markdownでは、ハードラップした段落の最初の行のみに <code>&gt;</code> コードを付けることもできます:</p>
 
 
 
@@ -321,43 +315,38 @@ id sem consectetuer libero luctus adipiscing.
 
 
 
-<p>Blockquotes can be nested (i.e. a blockquote-in-a-blockquote) by
-
-adding additional levels of <code>&gt;</code>:</p>
+<p>更に <code>&gt;</code> コードを付けることで、引用をネスト ( 例 引用の中の引用 ) することができます:</p>
 
 
-
-<pre><code>&gt; This is the first level of quoting.
+<pre><code>&gt; これは最初の階層の引用です。
 
 &gt;
 
-&gt; &gt; This is nested blockquote.
+&gt; &gt; これはネストした引用です。
 
 &gt;
 
-&gt; Back to the first level.
+&gt; 最初の階層に戻ります。
 
 </code></pre>
 
 
 
-<p>Blockquotes can contain other Markdown elements, including headers, lists,
-
-and code blocks:</p>
+<p>引用は、ヘッダー、リスト、コードブロック等、他のMarkdown要素を含むことができます:</p>
 
 
 
-<pre><code>&gt; ## This is a header.
+<pre><code>&gt; ## これはヘッダーです。
 
 &gt; 
 
-&gt; 1.   This is the first list item.
+&gt; 1.   これは最初のリストアイテムです。
 
-&gt; 2.   This is the second list item.
+&gt; 2.   これは2番目のリストアイテムです。
 
 &gt; 
 
-&gt; Here's some example code:
+&gt; サンプルコードです:
 
 &gt; 
 
@@ -366,62 +355,50 @@ and code blocks:</p>
 </code></pre>
 
 
+<p>優れたテキストエディタでは、どれでもE-メールスタイルの引用を簡単に付けることができます。
+例えば、BBEditではテキストを選択して、テキストメニューより引用の階層レベルを増やすことができます。</p>
 
-<p>Any decent text editor should make email-style quoting easy. For
+<h3 id="list">リスト</h3>
 
-example, with BBEdit, you can make a selection and choose Increase
+<p>Markdownは、番号付きリスト(番号) と 番号無しリスト(黒丸) をサポートします。</p>
 
-Quote Level from the Text menu.</p>
-
-
-
-<h3 id="list">Lists</h3>
+<p>番号無しリストは、アスタリスク、プラス、ハイフンのどれかで記述します:</p>
 
 
 
-<p>Markdown supports ordered (numbered) and unordered (bulleted) lists.</p>
+<pre><code>*   赤
 
+*   緑
 
-
-<p>Unordered lists use asterisks, pluses, and hyphens &#8212; interchangably
-
-&#8212; as list markers:</p>
-
-
-
-<pre><code>*   Red
-
-*   Green
-
-*   Blue
+*   青
 
 </code></pre>
 
 
 
-<p>is equivalent to:</p>
+<p>は下記と同じです:</p>
 
 
 
-<pre><code>+   Red
+<pre><code>+   赤
 
-+   Green
++   緑
 
-+   Blue
++   青
 
 </code></pre>
 
 
 
-<p>and:</p>
+<p>そして下記とも同じです:</p>
 
 
 
-<pre><code>-   Red
+<pre><code>-   赤
 
--   Green
+-   緑
 
--   Blue
+-   青
 
 </code></pre>
 
