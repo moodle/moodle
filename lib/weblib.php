@@ -1781,17 +1781,18 @@ function print_footer($course=NULL, $usercourse=NULL) {
             $home  = false;
         } else if ($course == 'home') {   // special case for site home page - please do not remove
             $course = get_site();
-            $homelink  = '<a title="moodle '. $CFG->release .' ('. $CFG->version .')" href="http://moodle.org/" target="_blank">';
-            $homelink .= '<br /><img width="100" height="30" src="pix/moodlelogo.gif" border="0" alt="moodlelogo" /></a>';
+            $homelink  = '<div class="sitelink">'.
+               '<a title="moodle '. $CFG->release .' ('. $CFG->version .')" href="http://moodle.org/" target="_blank">'.
+               '<br /><img width="100" height="30" src="pix/moodlelogo.gif" border="0" alt="moodlelogo" /></a></div>';
             $home  = true;
         } else {
-            $homelink = '<a target="'.$CFG->framename.'" href="'.$CFG->wwwroot.
-                        '/course/view.php?id='.$course->id.'">'.$course->shortname.'</a>';
+            $homelink = '<div class="homelink"><a target="'.$CFG->framename.'" href="'.$CFG->wwwroot.
+                        '/course/view.php?id='.$course->id.'">'.$course->shortname.'</a></div>';
             $home  = false;
         }
     } else {
         $course = get_site();  // Set course as site course by default
-        $homelink = '<a target="'.$CFG->framename.'" href="'.$CFG->wwwroot.'/">'.get_string('home').'</a>';
+        $homelink = '<div class="homelink"><a target="'.$CFG->framename.'" href="'.$CFG->wwwroot.'/">'.get_string('home').'</a></div>';
         $home  = false;
     }
 
