@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.6 dev (2002100200)
+      // assignment.php - created with Moodle 1.0.6 dev (2002101001)
 
 
 $string['assignmentdetails'] = "Aufgabendetails";
@@ -20,6 +20,7 @@ $string['notsubmittedyet'] = "Noch nicht eingetragen";
 $string['overwritewarning'] = "Hinweis: erneutes Hochladen ERSETZT Ihren gegenwärtigen Eintrag ";
 $string['submissionfeedback'] = "Eintragsmeldung";
 $string['submissions'] = "Einträge";
+$string['submitassignment'] = "Tragen Sie Ihre Aufgabe ein unter Verwendung dieses Formulars";
 $string['submitted'] = "Eingetragen";
 $string['typeuploadsingle'] = "Laden Sie einzige Datei hoch, Wert zwischen 0 - 100 Punkten";
 $string['uploadedfiles'] = "hochgeladene Dateien";
