@@ -13,7 +13,7 @@ if (!isset($_SESSION["test"])) {   // First time you call it.
     $_SESSION["test"] = "welcome back!";
 
 } else {                           // Subsequent times you call it
-    echo "<P>Session found (".$_SESSION["test"].")!";
+    echo "<P>Session found - ".$_SESSION["test"];
     echo "<P>Sessions are working correctly</P>";
 }
 
