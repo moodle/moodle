@@ -44,7 +44,7 @@
 
     $format = new quiz_file_format();
 
-    if (! $format->exportpreprocess($category)) {             // Do anything before that we need to
+    if (! $format->exportpreprocess($category, $course)) {             // Do anything before that we need to
 	error("Error occurred during pre-processing!", 
 	      "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
     }
@@ -109,7 +109,7 @@
     echo "<tr><td align=\"right\">";
     print_string("exportname", "quiz" );
     echo ":</td><td>";
-    echo "<input type=\"text\" name=\"exportfilename\" value=\"$exportfilename\">";
+    echo "<input type=\"text\" size=\"40\" name=\"exportfilename\" value=\"$exportfilename\">";
     echo "</td></tr>";
 
     echo "<tr><td align=\"center\">";
