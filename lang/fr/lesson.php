@@ -46,6 +46,7 @@ $string['correctanswerscore'] = 'Score des réponses correctes';
 $string['correctresponse'] = 'Feedback réponse correcte';
 $string['customscoring'] = 'Score personnalisé';
 $string['deadline'] = 'À faire jusqu\'au';
+$string['defaultessayresponse'] = 'Votre composition sera évaluée par un enseignant de ce cours.';
 $string['deleteattempts'] = 'Supprimer les tentatives des étudiants pour cette leçon (user id)';
 $string['deletedpage'] = 'Page supprimée';
 $string['deleting'] = 'En cours de suppression';
