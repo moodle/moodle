@@ -160,32 +160,6 @@ CREATE TABLE `prefix_course_sections` (
 ) TYPE=MyISAM;
 # --------------------------------------------------------
 
-# 
-# Table structure for table `dst_preset`
-# 
-
-CREATE TABLE `prefix_dst_preset` (
-  `id` int(10) NOT NULL auto_increment,
-  `name` char(48) NOT NULL default '',
-  `family` varchar(100) NOT NULL default '',
-  `year` int(10) NOT NULL default '0',
-  `apply_offset` tinyint(3) NOT NULL default '0',
-  `activate_index` tinyint(2) NOT NULL default '1',
-  `activate_day` tinyint(2) NOT NULL default '1',
-  `activate_month` tinyint(2) NOT NULL default '1',
-  `activate_time` char(5) NOT NULL default '03:00',
-  `deactivate_index` tinyint(2) NOT NULL default '1',
-  `deactivate_day` tinyint(2) NOT NULL default '1',
-  `deactivate_month` tinyint(2) NOT NULL default '2',
-  `deactivate_time` char(5) NOT NULL default '03:00',
-  `last_change` int(10) NOT NULL default '0',
-  `next_change` int(10) NOT NULL default '0',
-  `current_offset` tinyint(3) NOT NULL default '0',
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM;
-
-# --------------------------------------------------------
-
 #
 # Table structure for table `event`
 #

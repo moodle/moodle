@@ -105,25 +105,6 @@ CREATE TABLE prefix_course_sections (
 
 CREATE INDEX prefix_course_sections_coursesection_idx ON prefix_course_sections (course,section);
 
-CREATE TABLE prefix_dst_preset (
-   id SERIAL PRIMARY KEY,
-   name varchar(48) NOT NULL default '',
-   family varchar(100) NOT NULL default '',
-   year integer NOT NULL default '0',
-   apply_offset integer NOT NULL default '0',
-   activate_index integer NOT NULL default '1',
-   activate_day integer NOT NULL default '1',
-   activate_month integer NOT NULL default '1',
-   activate_time char(5) NOT NULL default '03:00',
-   deactivate_index integer NOT NULL default '1',
-   deactivate_day integer NOT NULL default '1',
-   deactivate_month integer NOT NULL default '2',
-   deactivate_time char(5) NOT NULL default '03:00',
-   last_change integer NOT NULL default '0',
-   next_change integer NOT NULL default '0',
-   current_offset integer NOT NULL default '0'
-);
-
 CREATE TABLE prefix_event (
    id SERIAL PRIMARY KEY,
    name varchar(255) NOT NULL default '',
