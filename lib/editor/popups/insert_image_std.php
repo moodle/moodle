@@ -2,12 +2,12 @@
 
     include("../../../config.php");
 
-	require_variable($id);
+    require_variable($id);
 
     if (!$course = get_record("course", "id", $id)) {
         $course->fullname = "";   // Just to keep display happy, though browsing may fail
     }
-    
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -23,6 +23,15 @@ var preview_window = null;
 
 function Init() {
   __dlg_init();
+  var param = window.dialogArguments;
+  if (param) {
+      var alt = param["f_url"].substring(param["f_url"].lastIndexOf('/') + 1);
+      document.getElementById("f_url").value = param["f_url"];
+      document.getElementById("f_alt").value = param["f_alt"] ? param["f_alt"] : alt;
+      document.getElementById("f_border").value = parseInt(param["f_border"] || 0);
+      document.getElementById("f_vert").value = param["f_vert"] != -1 ? param["f_vert"] : 0;
+      document.getElementById("f_horiz").value = param["f_horiz"] != -1 ? param["f_horiz"] : 0;
+  }
   document.getElementById("f_url").focus();
 };
 
