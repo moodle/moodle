@@ -5,6 +5,7 @@
 
 	addpage
     confirmdelete
+    continue
 	delete
    	editpage
     insertpage

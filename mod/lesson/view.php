@@ -175,28 +175,73 @@
             print_simple_box_start("center");
             $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
             if (isstudent($course->id)) {
-                $ncorrect = count_records_select("lesson_attempts", "lessonid = $lesson->id AND
-                        userid = $USER->id AND retry = $ntries AND correct = 1");
-                $nviewed = count_records("lesson_attempts", "lessonid", $lesson->id, "userid", $USER->id,
-                        "retry", $ntries);
-                if ($nviewed) {
-                    $thegrade = intval(100 * $ncorrect / $nviewed);
+                // do a sanity check on the user's path through the lesson
+                if ($attempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND
+                        userid = $USER->id AND retry = $ntries", "timeseen ASC")) {
+                    $check = true;
+                    if (!$thispageid = get_field("lesson_pages", "id", "lessonid", $lesson->id,
+                                "prevpageid", 0)) {
+                        error("Navigation Check: first page not found");
+                    }
+                    foreach ($attempts as $attempt) {
+                        // skip any page without answers
+                        while (!$answers = get_records("lesson_answers", "pageid", $thispageid)) {
+                            if (!$thispageid = get_field("lesson_pages", "nextpageid", "id", $thispageid)) {
+                                error("Navigation Check: nextpageid not found");
+                            }
+                        }
+                        if ($attempt->pageid != $thispageid) {
+                            // something odd
+                            // echo "<p>\$thispageid: $thispageid; \$attempt->pageid: $attempt->pageid</p>\n";
+                            $check = false;
+                            break;
+                        }
+                        if (!$answer = get_record("lesson_answers", "id", $attempt->answerid)) {
+                            error("Navigation Check: answer not found");
+                        }
+                        if ($answer->jumpto) {
+                            if ($answer->jumpto == NEXTPAGE) {
+                                if (!$thispageid = get_field("lesson_pages", "nextpageid", "id", 
+                                            $thispageid)) {
+                                    $thispageid = EOL; // end of foreach loop should have been reached
+                                }
+                            } else {
+                                $thispageid = $answer->jumpto;
+                            }
+                        }
+                    }
+                    if ($check) {
+                        $ncorrect = count_records_select("lesson_attempts", "lessonid = $lesson->id AND
+                                userid = $USER->id AND retry = $ntries AND correct = 1");
+                        $nviewed = count_records("lesson_attempts", "lessonid", $lesson->id, "userid", 
+                                $USER->id, "retry", $ntries);
+                        if ($nviewed) {
+                            $thegrade = intval(100 * $ncorrect / $nviewed);
+                        } else {
+                            $thegrade = 0;
+                        }
+                        echo "<p align=\"center\">".get_string("numberofpagesviewed", "lesson", $nviewed).
+                            "</p>\n";
+                        echo "<p align=\"center\">".get_string("numberofcorrectanswers", "lesson", $ncorrect).
+                            "</p>\n";
+                        echo "<p align=\"center\">".get_string("gradeis", "lesson", 
+                                number_format($thegrade * $lesson->grade / 100, 1)).
+                            " (".get_string("outof", "lesson", $lesson->grade).")</p>\n";
+                        $grade->lessonid = $lesson->id;
+                        $grade->userid = $USER->id;
+                        $grade->grade = $thegrade;
+                        $grade->completed = time();
+                        if (!$newgradeid = insert_record("lesson_grades", $grade)) {
+                            error("Navigation: grade not inserted");
+                        }
+                    } else {
+                        print_string("sanitycheckfailed", "lesson");
+                        delete_records("lesson_attempts", "lessonid", $lesson->id, "userid", $USER->id,
+                                "retry", $ntries);
+                    }
                 } else {
-                    $thegrade = 0;
-                }
-                echo "<p align=\"center\">".get_string("numberofpagesviewed", "lesson", $nviewed)."</p>\n";
-                echo "<p align=\"center\">".get_string("numberofcorrectanswers", "lesson", $ncorrect).
-                    "</p>\n";
-                echo "<p align=\"center\">".get_string("gradeis", "lesson", 
-                        number_format($thegrade * $lesson->grade / 100, 1)).
-                        " (".get_string("outof", "lesson", $lesson->grade).")</p>\n";
-                $grade->lessonid = $lesson->id;
-                $grade->userid = $USER->id;
-                $grade->grade = $thegrade;
-                $grade->completed = time();
-                if (!$newgradeid = insert_record("lesson_grades", $grade)) {
-                    error("Navigation: grade not inserted");
-                }
+                    print_string("noattemptrecordsfound", "lesson");
+                }   
             } else { 
                 // display for teacher
                 echo "<p align=\"center\">".get_string("displayofgrade", "lesson")."</p>\n";
@@ -272,7 +317,7 @@
         } else {
             // print the pages
             echo "<center><table cellpadding=\"5\" border=\"0\" width=\"80%\">\n";
-            if (isteacheredit($course>id)) {
+            if (isteacheredit($course->id)) {
                 echo "<tr><td align=\"right\"><a href=\"lesson.php?id=$cm->id&action=addpage&pageid=0\"><small>".
                     get_string("addpagehere", "lesson")."</small></a></td></tr>\n";
             }
