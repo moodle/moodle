@@ -24,7 +24,24 @@ function assignment_add_instance($assignment) {
     $assignment->timedue = make_timestamp($assignment->dueyear, $assignment->duemonth, $assignment->dueday, 
                                           $assignment->duehour, $assignment->dueminute);
 
-    return insert_record("assignment", $assignment);
+    if ($returnid = insert_record("assignment", $assignment)) {
+
+        $event = NULL;
+        $event->name        = $assignment->name;
+        $event->description = $assignment->description;
+        $event->courseid    = $assignment->course;
+        $event->groupid     = 0;
+        $event->userid      = 0;
+        $event->modulename  = 'assignment';
+        $event->instance    = $returnid;
+        $event->eventtype   = 'due';
+        $event->timestart   = $assignment->timedue;
+        $event->timeduration = 0;
+
+        add_event($event);
+    }
+
+    return $returnid;
 }
 
 
@@ -38,7 +55,22 @@ function assignment_update_instance($assignment) {
                                           $assignment->duehour, $assignment->dueminute);
     $assignment->id = $assignment->instance;
 
-    return update_record("assignment", $assignment);
+
+    if ($returnid = update_record("assignment", $assignment)) {
+
+        $event = NULL;
+
+        if ($event->id = get_field('event', 'id', 'modulename', 'assignment', 'instance', $assignment->id)) {
+
+            $event->name        = $assignment->name;
+            $event->description = $assignment->description;
+            $event->timestart   = $assignment->timedue;
+
+            update_event($event);
+        }
+    }
+
+    return $returnid;
 }
 
 
@@ -63,6 +95,39 @@ function assignment_delete_instance($id) {
 
     return $result;
 }
+
+function assignment_refresh_events() {
+// This standard function will check all instances of this module
+// and make sure there are up-to-date events created for each of them.
+
+    if (! $assignments = get_records("assignment")) {
+        return true;
+    }
+
+    foreach ($assignments as $assignment) {
+        $event = NULL;
+        $event->name        = $assignment->name;
+        $event->description = $assignment->description;
+        $event->timestart   = $assignment->timedue;
+
+        if ($event->id = get_field('event', 'id', 'modulename', 'assignment', 'instance', $assignment->id)) {
+            update_event($event);
+
+        } else {
+            $event->courseid    = $assignment->course;
+            $event->groupid     = 0;
+            $event->userid      = 0;
+            $event->modulename  = 'assignment';
+            $event->instance    = $assignment->id;
+            $event->eventtype   = 'due';
+            $event->timeduration = 0;
+
+            add_event($event);
+        }
+    }
+    return true;
+}
+
 
 function assignment_user_outline($course, $user, $mod, $assignment) {
     if ($submission = assignment_get_submission($assignment, $user)) {
