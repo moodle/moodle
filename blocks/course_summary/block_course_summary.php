@@ -2,7 +2,11 @@
 
 class CourseBlock_course_summary extends MoodleBlock {
     function CourseBlock_course_summary ($course) {
-        $this->title = get_string('blockname','block_course_summary');
+        if (empty($course->category)) {   // Site level
+            $this->title = get_string('frontpagedescription');
+        } else {
+            $this->title = get_string('blockname','block_course_summary');
+        }
         $this->content_type = BLOCK_TYPE_TEXT;
         $this->course = $course;
         $this->version = 2004052600;
