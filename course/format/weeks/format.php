@@ -131,13 +131,6 @@
         $weekday = userdate($weekdate, $strftimedateshort);
         $endweekday = userdate($weekdate+518400, $strftimedateshort);
 
-        if (!empty($displaysection) and $displaysection != $section) {  // Check this week is visible
-            $sectionmenu["week=$section"] = s("$strweek $section |     $weekday - $endweekday");
-            $section++;
-            $weekdate = $nextweekdate;
-            continue;
-        }
-
         if (!empty($sections[$section])) {
             $thissection = $sections[$section];
 
@@ -153,6 +146,15 @@
         }
 
         $showsection = (isteacher($course->id) or $thissection->visible or !$course->hiddensections);
+
+        if (!empty($displaysection) and $displaysection != $section) {  // Check this week is visible
+            if ($showsection) {
+                $sectionmenu["week=$section"] = s("$strweek $section |     $weekday - $endweekday");
+            }
+            $section++;
+            $weekdate = $nextweekdate;
+            continue;
+        }
 
         if ($showsection) {
 

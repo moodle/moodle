@@ -129,22 +129,6 @@
 
     while ($section <= $course->numsections) {
 
-        if (!empty($displaysection) and $displaysection != $section) {
-            if (empty($sections[$section])) {
-                $strsummary = '';
-            } else {
-                $strsummary = ' - '.strip_tags($sections[$section]->summary);
-                if (strlen($strsummary) < 57) {
-                    $strsummary = ' - '.$strsummary;
-                } else {
-                    $strsummary = ' - '.substr($strsummary, 0, 60).'...';
-                }
-            }
-            $sectionmenu['topic='.$section] = s($section.$strsummary);
-            $section++;
-            continue;
-        }
-
         if (!empty($sections[$section])) {
             $thissection = $sections[$section];
 
@@ -160,6 +144,20 @@
         }
 
         $showsection = (isteacher($course->id) or $thissection->visible or !$course->hiddensections);
+
+        if (!empty($displaysection) and $displaysection != $section) {
+            if ($showsection) {
+                $strsummary = ' - '.strip_tags($thissection->summary);
+                if (strlen($strsummary) < 57) {
+                    $strsummary = ' - '.$strsummary;
+                } else {
+                    $strsummary = ' - '.substr($strsummary, 0, 60).'...';
+                }
+                $sectionmenu['topic='.$section] = s($section.$strsummary);
+            }
+            $section++;
+            continue;
+        }
 
         if ($showsection) {
 
