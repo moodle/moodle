@@ -31,15 +31,14 @@ class CourseBlock_online_users extends MoodleBlock {
             return $this->content;
         }
 
-        if (empty($this->course)) {
-            $this->content = '';
-            return $this->content;
-        }
-    
-        $this->content = New object;
+        $this->content = New stdClass;
         $this->content->text = '';
         $this->content->footer = '';
         
+        if (empty($this->course)) {
+            return $this->content;
+        }
+    
         $timetoshowusers = 300; //Seconds default
         if (isset($CFG->block_online_users_timetosee)) {
             $timetoshowusers = $CFG->block_online_users_timetosee * 60;
