@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004070800)
+      // forum.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['addanewdiscussion'] = 'Добавить тему для обсуждения';
@@ -38,6 +38,7 @@ $string['editing'] = 'Редактирование';
 $string['emptymessage'] = 'Произошла ошибка при обработке Вашего сообщения. Вероятнее всего, вы оставили его пустым или превысили допустимый размер вложения.  <BR><B>Сообщение не было сохранено.</B>';
 $string['everyonecanchoose'] = 'Все могут подписаться на этот форум';
 $string['everyoneissubscribed'] = 'Все подписаны на этот форум';
+$string['existingsubscribers'] = 'Текущие подписчики';
 $string['forcesubscribe'] = 'Подписать всех на этот форум';
 $string['forcesubscribeq'] = 'Обязательная подписка';
 $string['forum'] = 'Форум';
@@ -94,6 +95,7 @@ $string['postrating3'] = 'Представляет хорошо связанную область знаний';
 $string['posts'] = 'Сообщения';
 $string['posttoforum'] = 'Отправить в форум';
 $string['postupdated'] = 'Ваше сообщение было изменено';
+$string['potentialsubscribers'] = 'Потенциальные подписчики';
 $string['processingpost'] = 'Обрабатывается сообщение $a...';
 $string['prune'] = 'Отделить';
 $string['prunedpost'] = 'Из сообщения было создано новон обсуждение';
@@ -140,6 +142,8 @@ $string['subscriptions'] = 'Подписки';
 $string['unsubscribe'] = 'Аннулировать подписку';
 $string['unsubscribed'] = 'Не подписаны';
 $string['unsubscribeshort'] = 'Отписать';
+$string['yesforever'] = 'Да, всегда';
+$string['yesinitially'] = 'Да, только в первый раз';
 $string['youratedthis'] = 'Ваша оценка сохранена';
 $string['yournewtopic'] = 'Тема для обсуждений';
 $string['yourreply'] = 'Ваш ответ';

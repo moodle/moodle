@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3 (2004052500)
+      // resource.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['addresource'] = 'Добавить ресурс';
 $string['chooseafile'] = 'Выбрать или загрузить файл';
+$string['chooseparameter'] = 'Выберите параметр';
 $string['configdefaulturl'] = 'Это значение используется как префикс для URL формы, когда создается новый ресурс на основе URL.';
 $string['configfilterexternalpages'] = 'Предоставление возможности настроек внешних ресурсов (веб-страниц, загруженные HTML файлы)посредством выбора фильтров для сайта (таких как глоссарий с автоматической установкой связей). Если Вы сделаете такой выбор то Ваши страницы курса будут медленнее загружаться - поэтому используйте это только в случае крайней необходимости.';
 $string['configframesize'] = 'При отображении web-страницы или загруженного файла внутри фрейма, это значение определяет размер (в пикселях) основного фрейма (который содержит навигацию).';
@@ -20,15 +21,17 @@ $string['configpopupwidth'] = 'Какой по умолчанию должна быть ширина для нового 
 $string['configwebsearch'] = 'При добавлении URL как webpage или weblink, это местоположение предлагается как сайт, чтобы помочь пользователю искать URL.';
 $string['directlink'] = 'Прямая ссылка на этот файл';
 $string['directoryinfo'] = 'Все файлы в выбранной директории будут показаны.';
+$string['display'] = 'Окно';
 $string['editingaresource'] = 'Редактировать ресурс';
+$string['encryptedcode'] = 'Зашифрованный код';
 $string['example'] = 'Пример';
-$string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.example.com/somedirectory/somefile.html';
 $string['fetchclienterror'] = 'Ошибка была найдена у вашего веб - клиента  при попытке восстановить веб - страницу  (возможно неправильный URL).';
 $string['fetcherror'] = 'Ошибка была найдена при попытке восстановить веб - страницу.';
 $string['fetchservererror'] = 'Ошибка была найдена на удаленном сервере при попытке восстановить веб - страницу (возможно ошибка программы). </p>';
 $string['filename'] = 'Имя файла';
 $string['filtername'] = 'Авто - связывание ресурса';
+$string['frameifpossible'] = 'Поместить ресурс в фрейм чтобы навигация сайта была доступна';
 $string['fulltext'] = 'Полный текст';
 $string['htmlfragment'] = 'HTML-фрагмент';
 $string['maindirectory'] = 'Главная файловая директория';
@@ -50,6 +53,10 @@ $string['newwindowopen'] = 'Показывать ресурс в всплывающем (popup) окне';
 $string['note'] = 'Заметка';
 $string['notefile'] = 'Чтобы загрузить  большое количество файлов используйте <A HREF=$a >Файл-менеджер</A>.';
 $string['notypechosen'] = 'Необходимо выбрать тип. Воспользуйтесь кнопкой назад для повтора.';
+$string['pagedisplay'] = 'Показывать данный ресурс вместо текущего окна';
+$string['pagewindow'] = 'Аналогичное окно';
+$string['parameter'] = 'Параметр';
+$string['parameters'] = 'Параметры';
 $string['popupresource'] = 'Этот ресурс должен появиться во всплывающем (popup) окне.';
 $string['popupresourcelink'] = 'Если это не сделано, щелкните здесь: $a';
 $string['resourcetype'] = 'Тип ресурса';
@@ -61,6 +68,13 @@ $string['resourcetype5'] = 'Web-ссылка';
 $string['resourcetype6'] = 'HTML-текст';
 $string['resourcetype7'] = 'Программа';
 $string['resourcetype8'] = 'WIKI-текст';
-$string['resourcetype9'] = 'Директория';
+$string['resourcetype9'] = 'Каталог';
+$string['resourcetypedirectory'] = 'Показать каталог';
+$string['resourcetypefile'] = 'Ссылка на файл или веб-сайт';
+$string['resourcetypehtml'] = 'Создать веь-страницу';
+$string['resourcetypelabel'] = 'Вставить надпись';
+$string['resourcetypetext'] = 'Создать текстовую страницу';
+$string['searchweb'] = 'Искать веб-страницу';
+$string['variablename'] = 'Изменяемое имя';
 
 ?>
