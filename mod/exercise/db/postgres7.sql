@@ -22,6 +22,9 @@ CREATE TABLE prefix_exercise (
   password VARCHAR(32) NOT NULL default ''
 
 );
+
+CREATE INDEX prefix_exercise_course_idx ON prefix_exercise (course);
+
 # --------------------------------------------------------
 
 #
@@ -39,6 +42,8 @@ CREATE TABLE prefix_exercise_submissions (
   isexercise INT  NOT NULL default '0'
 );
 CREATE INDEX prefix_exercise_submissions_userid_idx ON prefix_exercise_submissions (userid);
+CREATE INDEX prefix_exercise_submissions_exerciseid_idx ON prefix_exercise_submissions (exerciseid);
+
 # --------------------------------------------------------
 
 #
@@ -61,6 +66,7 @@ CREATE TABLE prefix_exercise_assessments (
 # --------------------------------------------------------
 CREATE INDEX prefix_exercise_assessments_submissionid_idx ON prefix_exercise_assessments (submissionid);
 CREATE INDEX prefix_exercise_assessments_userid_idx ON prefix_exercise_assessments (userid);
+CREATE INDEX prefix_exercise_assessments_exerciseid_idx ON prefix_exercise_assessments (exerciseid);
 
 # Table structure for table exercise_elements
 #
@@ -88,6 +94,9 @@ CREATE TABLE prefix_exercise_rubrics (
   rubricno INT  NOT NULL default '0',
   description text NOT NULL
 );
+
+CREATE INDEX prefix_exercise_rubrics_exerciseid_idx ON prefix_exercise_rubrics (exerciseid);
+
 # --------------------------------------------------------
 
 #
@@ -104,6 +113,8 @@ CREATE TABLE prefix_exercise_grades (
 );
 
 CREATE INDEX prefix_exercise_grades_assessmentid_idx ON prefix_exercise_grades (assessmentid);
+CREATE INDEX prefix_exercise_grades_exerciseid_idx ON prefix_exercise_grades (exerciseid);
+
 # --------------------------------------------------------
 
         

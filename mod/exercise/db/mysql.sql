@@ -20,7 +20,8 @@ CREATE TABLE `prefix_exercise` (
   `showleaguetable` tinyint(3) unsigned NOT NULL default '0',
   `usepassword` tinyint(3) unsigned NOT NULL default '0',
   `password` varchar(32) NOT NULL default '',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `course` (`course`)
 ) COMMENT='Defines exercise';
 # --------------------------------------------------------
 
@@ -39,7 +40,8 @@ CREATE TABLE `prefix_exercise_submissions` (
   `isexercise` tinyint(3) unsigned NOT NULL default '0',
   `late` tinyint(3) unsigned NOT NULL default '0',
    PRIMARY KEY  (`id`),
-   INDEX `userid` (`userid`) 
+   INDEX `userid` (`userid`),
+   INDEX `exerciseid` (`exerciseid`)
 ) COMMENT='Info about submitted work from teacher and students';
 # --------------------------------------------------------
 
@@ -61,7 +63,8 @@ CREATE TABLE `prefix_exercise_assessments` (
   `teachercomment` text NOT NULL default '',
    PRIMARY KEY  (`id`),
    INDEX (`submissionid`),
-   INDEX (`userid`) 
+   INDEX (`userid`),
+   INDEX (`exerciseid`)
   ) COMMENT='Info about assessments by teacher and students';
 # --------------------------------------------------------
 
@@ -77,7 +80,8 @@ CREATE TABLE `prefix_exercise_elements` (
   `scale` tinyint(3) unsigned NOT NULL default '0',
   `maxscore` tinyint(3) unsigned NOT NULL default '1',
   `weight` tinyint(3) unsigned NOT NULL default '11',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `exerciseid` (`exerciseid`)
 ) COMMENT='Info about marking scheme of assignment';
 # --------------------------------------------------------
 
@@ -92,7 +96,8 @@ CREATE TABLE `prefix_exercise_rubrics` (
   `elementno` int(10) unsigned NOT NULL default '0',
   `rubricno` tinyint(3) unsigned NOT NULL default '0',
   `description` text NOT NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `exerciseid` (`exerciseid`)
 ) COMMENT='Info about the rubrics marking scheme';
 # --------------------------------------------------------
 
@@ -108,7 +113,8 @@ CREATE TABLE `prefix_exercise_grades` (
   `feedback` text NOT NULL default '',
   `grade` tinyint(3) NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  INDEX (`assessmentid`)
+  INDEX (`assessmentid`),
+  INDEX `exerciseid` (`exerciseid`)
 ) COMMENT='Info about individual grades given to each element';
 # --------------------------------------------------------
 
