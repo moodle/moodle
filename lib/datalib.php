@@ -492,7 +492,11 @@ function insert_record($table, $dataobject, $returnid=true) {
                 if ($data[$column->name] == "" and !empty($column->has_default)) {
                     $ddd[$column->name] = $column->default_value;
                 } else {
-                    $ddd[$column->name] = $data[$column->name];
+			        if (empty($column->not_null)) {
+                   	    $ddd[$column->name] = null;
+                    } else {
+                        $ddd[$column->name] = $data[$column->name];
+                    }
                 }
             } else {
                 if (!empty($column->has_default)) {
@@ -514,14 +518,15 @@ function insert_record($table, $dataobject, $returnid=true) {
     $select = "";
 
     foreach ($ddd as $key => $value) {
-        $count++;
-        $inscolumns .= "$key";
-        $insvalues .= "'$value'";
-        $select .= "$key = '$value'";
-        if ($count < $numddd) {
-            $inscolumns .= ", ";
-            $insvalues .= ", ";
-            $select .= " AND ";
+        if (!is_null($value)){
+            if ($select) {
+                $inscolumns .= ", ";
+                $insvalues .= ", ";
+                $select .= " AND ";
+            }
+            $inscolumns .= "$key";
+            $insvalues .= "'$value'";
+            $select .= "$key = '$value'";
         }
     }
 
