@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+<?PHP // $Id$ 
+      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['absent'] = '欠席';
@@ -64,7 +64,7 @@ $string['comparisonofassessments'] = '評価の比較';
 $string['confirmdeletionofthisitem'] = '$a の削除を確定する';
 $string['correct'] = '正解';
 $string['count'] = 'カウント';
-$string['criterion'] = '目標規準方式';
+$string['criterion'] = '目標規準';
 $string['currentphase'] = '現在のフェーズ';
 $string['date'] = '日時';
 $string['datestr'] = '%%Y/%%m/%%d<br />%%H:%%M';
@@ -178,7 +178,7 @@ $string['notgraded'] = '評価無し';
 $string['notitle'] = '題名無し';
 $string['notitlegiven'] = '題名がありません。';
 $string['nowork'] = '提出期限が終了しました。<br />あなたは課題を提出していません。';
-$string['numberofassessmentelements'] = '目標規準のコメント数、評価要素数、評価の幅、規準数<br />または評価基準表のカテゴリ数';
+$string['numberofassessmentelements'] = '目標規準のコメント数、評価要素数、評価の幅、規準数<br />またはルブリックのカテゴリ数';
 $string['numberofassessments'] = '評価数';
 $string['numberofassessmentschanged'] = '変更された評価数: $a';
 $string['numberofassessmentsdropped'] = '下げられた評価数: $a';
@@ -230,7 +230,7 @@ $string['repeatanalysis'] = '分析を繰り返す';
 $string['reply'] = '返事';
 $string['returnto'] = '戻る';
 $string['returntosubmissionpage'] = '登録ページに戻る';
-$string['rubric'] = '評価基準方式';
+$string['rubric'] = 'ルブリック';
 $string['savedok'] = '正常に保存されました。';
 $string['saveleaguetableoptions'] = 'リーグテーブルオプションを保存';
 $string['savemyassessment'] = '評価を保存';
