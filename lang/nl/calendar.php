@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004040500)
+      // calendar.php - created with Moodle 1.3 development (2004042600)
 
 
 $string['april'] = 'April';
@@ -38,6 +38,7 @@ $string['expired'] = 'Verloopt';
 $string['explain_lookahead'] = 'Met deze instelling stel in hoeveel dagen vooruit je activiteiten op de kalender worden weergegeven. Activiteiten die later gebeuren, worden niet getoond. Merk op dat <strong> er geen garantie is </strong> dat alle activiteiten in dit tijdskader getoond zullen worden; als er teveel zijn (meer dan de \"maximum aantal getoonde activiteiten \" instelling) dan zullen de activiteiten het verst in de toekomst niet getoond worden.';
 $string['explain_maxevents'] = 'Deze instelling stelt het maximum aantal getoonde activiteiten in. Als je hier een groot getal ingeeft, dan is het mogelijk dat het tonen van de komende activiteiten een groot deel van je scherm innemen.';
 $string['explain_startwday'] = 'Deze instelling configureert de manier waarop de maandkalenders getoond worden. Gebruik ze om die te tonen zoals je gewoon bent ze te zien.';
+$string['explain_timeformat'] = 'Met deze instelling kun je bepalen hoe de tijd getoond wordt in de kalender. Je kunt kiezen tussen 12 of 24 uur opmaak. Als je voor de standaardinstelling kiest, dan zal de opmaak automatisch gekozen worden volgens de taal die je gebruikt op je site.';
 $string['february'] = 'Februari';
 $string['fri'] = 'Vr';
 $string['friday'] = 'Vrijdag';
@@ -61,6 +62,7 @@ $string['oneevent'] = '1 activiteit';
 $string['pref_lookahead'] = 'Kijk naar komende activiteiten';
 $string['pref_maxevents'] = 'Maximum aantal getoonde activiteiten';
 $string['pref_startwday'] = 'Eerste dag van de week';
+$string['pref_timeformat'] = 'Tijdsweergave';
 $string['preferences'] = 'Voorkeuren';
 $string['preferences_available'] = 'Persoonlijke voorkeuren';
 $string['sat'] = 'Za';
@@ -72,6 +74,8 @@ $string['sun'] = 'Zo';
 $string['sunday'] = 'Zondag';
 $string['thu'] = 'Do';
 $string['thursday'] = 'Donderdag';
+$string['timeformat_12'] = '12-uur (am/pm)';
+$string['timeformat_24'] = '24-uur';
 $string['today'] = 'Vandaag';
 $string['tomorrow'] = 'Morgen';
 $string['tt_deleteevent'] = 'Wis activiteit';

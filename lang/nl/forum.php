@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 development (2004041800)
+      // forum.php - created with Moodle 1.3 development (2004042600)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
@@ -121,12 +121,14 @@ $string['searchforums'] = 'Zoeken in forums';
 $string['searcholderposts'] = 'Doorzoek oudere berichten...';
 $string['searchresults'] = 'Zoekresultaten';
 $string['sendinratings'] = 'Bewaar mijn beoordelingen';
-$string['showsubscribers'] = 'Toon leden';
+$string['showsubscribers'] = 'Toon / wijzig leden';
 $string['singleforum'] = 'Eén eenvoudige discussie';
 $string['startedby'] = 'Begonnen door';
 $string['subject'] = 'Onderwerp  ';
 $string['subscribe'] = 'Wordt lid van dit forum';
+$string['subscribeall'] = 'Maak alle deelnemers van het vak lid van dit forum';
 $string['subscribed'] = 'Lid';
+$string['subscribenone'] = 'Zeg lidmaatschap van alle leden van dit forum op';
 $string['subscribers'] = 'Leden';
 $string['subscribersto'] = 'Leden van \'$a\'';
 $string['subscribestart'] = 'Stuur me een kopie per e-mail wanneer iemand post op dit forum';
@@ -135,6 +137,7 @@ $string['subscription'] = 'Lid worden';
 $string['subscriptions'] = 'Inschrijvingen';
 $string['unsubscribe'] = 'Zeg het lidmaatschap van dit forum op';
 $string['unsubscribed'] = 'Lidmaatschap opgezegd';
+$string['unsubscribeshort'] = 'Lidmaatschap opzeggen';
 $string['youratedthis'] = 'Je beoordeelde dit';
 $string['yournewtopic'] = 'Je nieuwe discussie onderwerp';
 $string['yourreply'] = 'Jouw antwoord';
