@@ -43,7 +43,7 @@ if (isset($errors)) {
           </td>
         </tr>
       </table></td>
-    <td valign="top"><table border="0" width="100%" border="0" cellspacing="0" cellpadding="5">
+    <td valign="top"><table border="1" width="100%" border="0" cellspacing="0" cellpadding="5">
         <tr>
           <td valign="top" align=right><p><b>
             <?php 
@@ -72,7 +72,9 @@ if (isset($errors)) {
             $selected = "";
         }
         echo '<input type="checkbox" name="usedynalink" value=1 ' . $selected . ' onclick="return lockoptions(\'form\',\'usedynalink\', items)"> ';
+        echo '<font size="-1">';
         print_string("entryusedynalink","glossary");
+        echo '</font>';
         echo helpbutton("usedynalink", strip_tags(get_string("usedynalink", "glossary")), "glossary"); 
         echo '<br />';
 
@@ -82,7 +84,9 @@ if (isset($errors)) {
             $selected = "";
         }
         echo '<input type="checkbox" name="casesensitive" value=1 ' . $selected . '> ';
+        echo '<font size="-1">';
         print_string("casesensitive","glossary");
+        echo '</font>';
         echo helpbutton("casesensitive", strip_tags(get_string("casesensitive", "glossary")), "glossary");
         echo '<br />';
 
@@ -93,7 +97,9 @@ if (isset($errors)) {
             $selected = "";
         }
         echo '<input type="checkbox" name="fullmatch" value=1 ' . $selected . '> ';
+        echo '<font size="-1">';
         print_string("fullmatch","glossary");
+        echo '</font>';
         echo helpbutton("fullmatch", strip_tags(get_string("fullmatch", "glossary")), "glossary");
         echo '<br />';
     }
