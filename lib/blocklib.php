@@ -706,7 +706,7 @@ function blocks_get_courses_using_block_by_id($blockid) {
 
     $num = 0;
 
-    if ($courses = get_records("course")) {
+    if ($courses = get_records("course",false,false,false,'id,blockinfo')) {
         foreach($courses as $course) {
             $blocks = str_replace(":",",",$course->blockinfo);
             $blocksarr = explode(",",$blocks);
