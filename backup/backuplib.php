@@ -946,8 +946,9 @@
     function backup_groups_info($bf,$preferences) {
     
         global $CFG;
-        
+
         $status = true;
+        $status2 = true;
 
         //Get groups 
         $groups = get_records("groups","courseid",$preferences->backup_course);
