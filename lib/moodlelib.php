@@ -1549,8 +1549,14 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     $mail->WordWrap = 79;                               // set word wrap
 
-    if (!empty($from->precedence)) {
-        $mail->Precedence = $from->precedence;          // set precedence level eg "bulk" "list" or "junk"
+    if (!empty($from->customheaders)) {                 // Add custom headers
+        if (is_array($from->customheaders)) {
+            foreach ($from->customheaders as $customheader) {
+                $mail->AddCustomHeader($customheader);
+            }
+        } else {
+            $mail->AddCustomHeader($from->customheaders);
+        }
     }
 
     if ($messagehtml) {
