@@ -289,7 +289,7 @@ CREATE TABLE prefix_user_students (
    timeaccess integer NOT NULL default '0'
 );
 
-CREATE INDEX prefix_user_students_courseuserid_idx ON prefix_user_students (course,userid);
+CREATE UNIQUE INDEX prefix_user_students_courseuserid_uk ON prefix_user_students (course,userid);
 CREATE INDEX prefix_user_students_userid_idx ON prefix_user_students (userid);
 CREATE INDEX prefix_user_students_timeaccess_idx ON prefix_user_students (timeaccess);
 
@@ -306,7 +306,7 @@ CREATE TABLE prefix_user_teachers (
    timeaccess integer NOT NULL default '0'
 );
 
-CREATE INDEX prefix_user_teachers_courseuserid_idx ON prefix_user_teachers (course,userid);
+CREATE UNIQUE INDEX prefix_user_teachers_courseuserid_uk ON prefix_user_teachers (course,userid);
 CREATE INDEX prefix_user_teachers_userid_idx ON prefix_user_teachers (userid);
 
 CREATE TABLE prefix_user_coursecreators (

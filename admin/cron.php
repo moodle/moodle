@@ -99,19 +99,6 @@
         }
         flush();
     
-    
-        /// Delete duplicate enrolments (don't know what causes these yet - expired sessions?)
-    
-        if ($users = get_records_select("user_students", "userid > 0 GROUP BY course, userid ".
-                                        "HAVING count(*) > 1", "", "max(id) as id, userid, course ,count(*)")) {
-            foreach ($users as $user) {
-                delete_records_select("user_students", "userid = '$user->userid' ".
-                                     "AND course = '$user->course' AND id <> '$user->id'");
-            }
-        }
-        flush();
-    
-    
         /// Delete old logs to save space (this might need a timer to slow it down...)
     
         if (!empty($CFG->loglifetime)) {  // value in days

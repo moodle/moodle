@@ -416,7 +416,7 @@ CREATE TABLE `prefix_user_students` (
   `timeaccess` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),
-  KEY `courseuserid` (course,userid),
+  UNIQUE KEY `courseuserid` (course,userid),
   KEY `userid` (userid),
   KEY `timeaccess` (timeaccess)
 ) TYPE=MyISAM;
@@ -439,7 +439,7 @@ CREATE TABLE `prefix_user_teachers` (
   `timeaccess` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),
-  KEY `courseuserid` (course,userid),
+  KEY UNIQUE `courseuserid` (course,userid),
   KEY `userid` (userid)
 ) TYPE=MyISAM COMMENT='One record per teacher per course';
 

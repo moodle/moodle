@@ -666,7 +666,35 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2004083130) { // update log display to use correct postgres friendly sql
         execute_sql("UPDATE {$CFG->prefix}log_display SET field='firstname||\' \'||lastname' WHERE module='user' AND action='view' AND mtable='user'");
         execute_sql("UPDATE {$CFG->prefix}log_display SET field='firstname||\' \'||lastname' WHERE module='course' AND action='user report' AND mtable='user'");
-    }
+
+        /// Delete duplicate enrolments 
+        /// and then tell the database course,userid is a unique combination
+        if ($users = get_records_select("user_students", "userid > 0 GROUP BY course, userid ".
+                                        "HAVING count(*) > 1", "", "max(id) as id, userid, course ,count(*)")) {
+            foreach ($users as $user) {
+                delete_records_select("user_students", "userid = '$user->userid' ".
+                                     "AND course = '$user->course' AND id <> '$user->id'");
+            }
+        }
+        flush();
+        
+        modify_database('','DROP INDEX prefix_user_students_courseuserid_idx;');
+        modify_database('','CREATE UNIQUE INDEX prefix_user_students_courseuserid_uk ON prefix_user_students (course,userid);');        
+
+        /// Delete duplicate teacher enrolments 
+        /// and then tell the database course,userid is a unique combination
+        if ($users = get_records_select("user_teachers", "userid > 0 GROUP BY course, userid ".
+                                        "HAVING count(*) > 1", "", "max(id) as id, userid, course ,count(*)")) {
+            foreach ($users as $user) {
+                delete_records_select("user_teachers", "userid = '$user->userid' ".
+                                     "AND course = '$user->course' AND id <> '$user->id'");
+            }
+        }
+        flush();
+        
+        modify_database('','DROP INDEX prefix_user_teachers_courseuserid_idx;');
+        modify_database('','CREATE UNIQUE INDEX prefix_user_teachers_courseuserid_uk ON prefix_user_teachers (course,userid);');        
+    } 
     
     return $result;
 }

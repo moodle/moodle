@@ -929,6 +929,36 @@ function main_upgrade($oldversion=0) {
     }
 
     
+    if ($oldversion < 2004083130) {
+        /// Delete duplicate enrolments 
+        /// and then tell the database course,userid is a unique combination
+        if ($users = get_records_select("user_students", "userid > 0 GROUP BY course, userid ".
+                                        "HAVING count(*) > 1", "", "max(id) as id, userid, course ,count(*)")) {
+            foreach ($users as $user) {
+                delete_records_select("user_students", "userid = '$user->userid' ".
+                                     "AND course = '$user->course' AND id <> '$user->id'");
+            }
+        }
+        flush();
+        
+        modify_database('','ALTER TABLE prefix_user_students DROP INDEX courseuserid;');
+        modify_database('','ALTER TABLE prefix_user_students ADD UNIQUE INDEX courseuserid(course,userid);');        
+
+        /// Delete duplicate teacher enrolments 
+        /// and then tell the database course,userid is a unique combination
+        if ($users = get_records_select("user_teachers", "userid > 0 GROUP BY course, userid ".
+                                        "HAVING count(*) > 1", "", "max(id) as id, userid, course ,count(*)")) {
+            foreach ($users as $user) {
+                delete_records_select("user_teachers", "userid = '$user->userid' ".
+                                     "AND course = '$user->course' AND id <> '$user->id'");
+            }
+        }
+        flush();
+        
+        modify_database('','ALTER TABLE prefix_user_teachers DROP INDEX courseuserid;');
+        modify_database('','ALTER TABLE prefix_user_teachers ADD UNIQUE INDEX courseuserid(course,userid);');        
+    } 
+       
     return $result;
     
 }
