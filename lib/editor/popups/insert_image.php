@@ -2,12 +2,14 @@
 
     include("../../../config.php");
 
-	require_variable($id);
+    require_variable($id);
 
     if (!$course = get_record("course", "id", $id)) {
         $course->fullname = "";   // Just to keep display happy, though browsing may fail
     }
-    
+
+    $upload_max_filesize = get_max_upload_file_size($CFG->maxbytes);
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -265,11 +267,11 @@ form { margin-bottom: 0px; margin-top: 0px; }
           print "";
       }?><br />
       <?php print(isteacher($id))?
-	  "<iframe id=\"ibrowser\" name=\"ibrowser\" src=\"".$CFG->wwwroot."/lib/editor/coursefiles.php?usecheckboxes=true&id=".$course->id."\" style=\"width: 100%; height: 200px;\"></iframe>":
-	  "";?>
+      "<iframe id=\"ibrowser\" name=\"ibrowser\" src=\"".$CFG->wwwroot."/lib/editor/coursefiles.php?usecheckboxes=true&id=".$course->id."\" style=\"width: 100%; height: 200px;\"></iframe>":
+      "";?>
       </td>
       <td width="45%" valign="top"><?php print_string("preview","editor");?>:<br />
-	  <iframe id="ipreview" name="ipreview" src="about:blank" style="width: 100%; height: 200px;"></iframe>
+      <iframe id="ipreview" name="ipreview" src="about:blank" style="width: 100%; height: 200px;"></iframe>
       </td>
     </tr>
   </table>
@@ -304,10 +306,10 @@ form { margin-bottom: 0px; margin-top: 0px; }
           <div class="space"></div>
           &nbsp;&nbsp;<?php print_string("size","editor");?>: 
           <input type="text" id="isize" name="isize" size="10" style="background: transparent; border: none;" />
-	  <?php print_string("type","editor");?>: <input type="text" id="itype" name="itype" size="10" style="background: transparent; border: none;" />
-	  <div class="space"></div>
-	  <div class="space"></div>
-	  </fieldset></td>
+      <?php print_string("type","editor");?>: <input type="text" id="itype" name="itype" size="10" style="background: transparent; border: none;" />
+      <div class="space"></div>
+      <div class="space"></div>
+      </fieldset></td>
     </tr>
     <tr> 
       <td height="22"><?php
@@ -321,7 +323,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
           </form>
           <div class="space"></div>
           <form action="../coursefiles.php?id=<?php print($course->id);?>" method="post" enctype="multipart/form-data" name="uploader" target="ibrowser" id="uploader">
-		  <input type="hidden" name="MAX_FILE_SIZE" value="<?php print($upload_max_filesize);?>" />
+          <input type="hidden" name="MAX_FILE_SIZE" value="<?php print($upload_max_filesize);?>" />
           <input type="hidden" name="id" VALUE="<?php print($course->id);?>" />
           <input type="hidden" name="wdir" value="" />
           <input type="hidden" name="action" value="upload" />
