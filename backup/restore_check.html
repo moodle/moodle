@@ -116,18 +116,18 @@
     }
  
     //Depending the selected restoreto:
-    // If user is a teacher (and nor admin):
+    // If user is a teacher (and not creator):
     //    0-Current course, deleting: Put $restore->course_id and $restore->deleting (true), create the restore object
     //    1-Current course, adding: Put $restore->course_id and $restore->deleting (false), create the restore object
-    // If the uses is an admin:
+    // If the uses is a creator:
     //    0-Existing course, deleting: Select the destination course and launch the check again, then
     //        put $restore->course_id and $restore->deleting (true), create the restore object.
     //    1-Existing course, adding: Select the destination course and launch the check again, then
     //        put $restore->course_id and $restore->deleting (false), create the restore object.
     //    2-New course: Create the restore object and launch the execute.
 
-    //If the user is a teacher and not an admin
-    if (isteacher($id) and !isadmin()) {
+    //If the user is a teacher and not a creator
+    if (isteacheredit($id) and !iscreator()) {
         $restore->course_id = $id;
         if ($restore->restoreto == 0) {
             $restore->deleting = true;
@@ -136,8 +136,8 @@
         }
     }
 
-    //If the user is an admin
-    if (isadmin()) {
+    //If the user is a creator (or admin)
+    if (iscreator()) {
         //Set restore->deleting as needed
         if ($restore->restoreto == 0) {
             $restore->deleting = true;
@@ -147,7 +147,7 @@
     }
 
     //Now, select the course if needed
-    if (($restore->restoreto == 0 or $restore->restoreto == 1) and ($restore->course_id == 0) and (isadmin())) {
+    if (($restore->restoreto == 0 or $restore->restoreto == 1) and ($restore->course_id == 0) and (iscreator())) {
         if ($courses = get_courses("all","c.fullname")) {
             print_heading(get_string("choosecourse"));
             print_simple_box_start("CENTER");
