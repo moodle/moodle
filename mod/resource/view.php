@@ -70,7 +70,7 @@
             } else {
                 add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
                 echo "<head><title>$course->shortname: $resource->name</title></head>\n";
-                echo "<frameset rows=$resource_frame_size,*>";
+                echo "<frameset rows=$RESOURCE_FRAME_SIZE,*>";
                 echo "<frame src=\"view.php?id=$cm->id&frameset=top\">";
                 echo "<frame src=\"$resource->reference\">";
                 echo "</frameset>";
