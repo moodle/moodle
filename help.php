@@ -14,8 +14,8 @@
 
   print_header();
 
-  if (ereg("\\.\\.", $file)) {
-      error("Filenames can not contain \"..\"");
+  if (detect_munged_arguments("$module/$file")) {
+      error("Filenames contain illegal characters!");
   }
 
   if ($file) {
@@ -28,7 +28,7 @@
         if (file_exists("$filepath")) {
             require_once("$filepath");           // Chosen language
 
-        } else {                            // Fall back to English
+        } else {                                 // Fall back to English
             if ($module == "moodle") {
                 $filepath = "$CFG->dirroot/lang/en/help/$file";
             } else {
@@ -43,13 +43,13 @@
             }
         }
     } else {
-        echo "<P>";
+        echo "<p>";
         echo $text;
-        echo "</P>";
+        echo "</p>";
     }
 
     close_window_button();
 ?>
-</BODY>
-</HTML>
+</body>
+</html>
 
