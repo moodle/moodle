@@ -2028,6 +2028,10 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
             continue;
         }
 
+        if ($mod->section > $course->numsections) {   /// Don't show excess hidden sections
+            break;
+        }
+
         if ($mod->section > 0 and $section <> $mod->section) {
             $thissection = $sections[$mod->section];
 
