@@ -1,6 +1,6 @@
 <form name="theform" method="post" action="edit.php">
-<table><tr>
-    <td align=right>
+<table cellpadding=10 cellspacing=0 class=generalbox>
+  <tr><td align=right bgcolor="<?php echo $THEME->cellheading2 ?>">
     <font size="1">
      <?PHP
         helpbutton("reading", get_string("helpreading"), "moodle", true, true);
@@ -15,15 +15,12 @@
       ?>
      <br />
     </font>
-    </td>
-</tr></table>
-
-<table><tr><td>
+</td></tr>
+<tr><td align=center bgcolor="<?php echo $THEME->cellheading2 ?>">
 <?php  print_textarea($usehtmleditor, 20, 60, 630, 400, "text", $entry->text); ?>
-</td></tr></table>
-
-<p align=center>
-<?PHP
+</td></tr>
+<tr><td align=center bgcolor="<?php echo $THEME->cellheading2 ?>">
+<?php
    print_string("formattexttype");
    echo ":&nbsp;";
    choose_from_menu(format_text_menu(), "format", $entry->format, "");
@@ -31,13 +28,11 @@
    helpbutton("textformat", get_string("helpformatting"));
    echo "</font>";
 ?>
-</p>
-
-<p align=center>
+</td></tr>
+<tr><td align=center bgcolor="<?php echo $THEME->cellheading2 ?>" class=generalboxcontent>
 <input type="hidden" name=id value="<?php echo $cm->id ?>">
 <input type="submit" value="<?php  print_string("savechanges") ?>">
 <input type="reset" value="<?php  print_string("revert") ?>">
-</p>
+</td></tr></table>
 </form>
-
 
