@@ -2805,7 +2805,7 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
 
 /// Add the forum id to the argument list, for use in 'forum_print_post'.
 /// Add the user_read_array to the argument list.
-function forum_print_posts_flat($discussion, $course, $direction, $ratings, $reply, &$user_read_array, $forumid=0) {
+function forum_print_posts_flat($discussion, $courseid, $direction, $ratings, $reply, &$user_read_array, $forumid=0) {
     global $USER, $CFG;
 
     $link  = false;
@@ -2828,7 +2828,7 @@ function forum_print_posts_flat($discussion, $course, $direction, $ratings, $rep
             }
 
             $ownpost = ($USER->id == $post->userid);
-            if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings,
+            if (forum_print_post($post, $courseid, $ownpost, $reply, $link, $ratings,
                                  '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
                 $ratingsmenuused = true;
             }
@@ -2840,7 +2840,7 @@ function forum_print_posts_flat($discussion, $course, $direction, $ratings, $rep
 
 /// Add the forum id to the argument list, for use in 'forum_print_post'.
 /// Add the user_read_array to the argument list.
-function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply, &$user_read_array, $forumid=0) {
+function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply, &$user_read_array, $forumid=0) {
     global $USER, $CFG;
 
     $link  = false;
@@ -2859,13 +2859,13 @@ function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply, 
                     $post->forum = 0;
                 }
 
-                if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings,
+                if (forum_print_post($post, $courseid, $ownpost, $reply, $link, $ratings,
                                      '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
                     $ratingsmenuused = true;
                 }
                 echo "<br />";
             } else {
-                $by->name = fullname($post, isteacher($course));
+                $by->name = fullname($post, isteacher($courseid));
                 $by->date = userdate($post->modified);
 
                 if ($CFG->forum_trackreadposts) {
@@ -2883,7 +2883,7 @@ function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply, 
                 echo "</span>";
             }
 
-            if (forum_print_posts_threaded($post->id, $course, $depth-1, $ratings, $reply,
+            if (forum_print_posts_threaded($post->id, $courseid, $depth-1, $ratings, $reply,
                                            $user_read_array, $forumid)) {
                 $ratingsmenuused = true;
             }
@@ -2895,7 +2895,7 @@ function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply, 
 
 /// Add the forum id to the argument list, for use in 'forum_print_post'.
 /// Add the user_read_array to the argument list.
-function forum_print_posts_nested($parent, $course, $ratings, $reply, &$user_read_array, $forumid=0) {
+function forum_print_posts_nested($parent, $courseid, $ratings, $reply, &$user_read_array, $forumid=0) {
     global $USER, $CFG;
 
     $link  = false;
@@ -2918,12 +2918,12 @@ function forum_print_posts_nested($parent, $course, $ratings, $reply, &$user_rea
                 $post->forum = 0;
             }
 
-            if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings,
+            if (forum_print_post($post, $courseid, $ownpost, $reply, $link, $ratings,
                                  '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
                 $ratingsmenuused = true;
             }
             echo "<br />";
-            if (forum_print_posts_nested($post->id, $course, $ratings, $reply, $user_read_array, $forumid)) {
+            if (forum_print_posts_nested($post->id, $courseid, $ratings, $reply, $user_read_array, $forumid)) {
                 $ratingsmenuused = true;
             }
             echo "</div>\n";
