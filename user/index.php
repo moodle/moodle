@@ -72,7 +72,7 @@
     if ($showteachers) {
         if ($teachers = get_course_teachers($course->id)) {
             echo "<h2 align=\"center\">$course->teachers";
-            if (isadmin() or ($course->category and (iscreator() or ($isteacheredit and !empty($CFG->teacherassignteachers))))) {
+            if (isadmin() or ($course->category and (iscreator() or (isteacheredit($course->id) and !empty($CFG->teacherassignteachers))))) {
                 echo ' <a href="../course/teacher.php?id='.$course->id.'">';
                 echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt="" /></a>';
             }
