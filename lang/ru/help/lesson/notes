@@ -1,0 +1,14 @@
+$string['showanunseenpage'] = 'Показать непросмотренную страницу';
+$string['showanunansweredpage'] = 'Показать страницу оставшуюся без ответа';
+$string['addaquestionpage'] = 'Добавить страницу с вопросом';
+$string['checkbranchtable'] = 'Проверить Таблицу Содержания';
+$string['checknavigation'] = 'Проверить навигацию';
+$string['checkquestion'] = 'Проверить ответ ';
+$string['canretake'] = '$a может пересдать';
+$string['handlingofretakes'] = 'Настройка попыток пересдач';
+$string['pleasematchtheabovepairs'] = 'Пожалуйста поставте в соответсвие вышеуказанные пары';
+$string['youshouldview'] = 'Вы должны посмотреть по крайней мере: $a';
+$string['questionoption'] = 'Опции вопроса';
+$string['thatsthecorrectanswer'] = 'Правильный ответ';
+$string['thatsthewronganswer'] = 'Не правильный ответ';
+$string['redisplaypage'] = 'Обновить страницу';
