@@ -714,7 +714,7 @@ function main_upgrade($oldversion=0) {
         table_column('user_students', '', 'enrol', 'varchar', '20', '', '', 'not null');
         table_column('user_teachers', '', 'enrol', 'varchar', '20', '', '', 'not null');
         modify_database("","CREATE INDEX {$CFG->prefix}user_students_enrol_idx ON {$CFG->prefix}user_students (enrol);");
-        modify_database("","CREATE INDEX {$CFG->prefix}user_teachers_enrolidx ON {$CFG->prefix}user_teachers (enrol);");
+        modify_database("","CREATE INDEX {$CFG->prefix}user_teachers_enrol_idx ON {$CFG->prefix}user_teachers (enrol);");
     } 
     return $result;
 }
