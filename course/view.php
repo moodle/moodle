@@ -86,6 +86,10 @@
         }
     }
 
+    if (!file_exists("format/$course->format.php")) {   // Default format is weeks
+        $course->format = "weeks";
+    }
+
     require("format/$course->format.php");  // Include the actual course format
 
     print_footer();
