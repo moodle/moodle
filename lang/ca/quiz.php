@@ -1,17 +1,14 @@
-<?PHP // $Id$
+<?PHP // $Id$ 
+      // quiz.php - created with Moodle 1.0.8 dev (2002122700)
 
-#------------------------------------------------------------
-$string['modulename'] = "Qüestionari";
-$string['modulenameplural'] = "Qüestionaris";
-#------------------------------------------------------------
 
 $string['addselectedtoquiz'] = "Afegir la selecció al qüestionari";
-$string['alwaysavailable'] = "Disponible sempre";
 $string['alreadysubmitted'] = "Sembla que ja has enviat aquest qüestionari";
+$string['alwaysavailable'] = "Disponible sempre";
 $string['answer'] = "Resposta";
 $string['answerhowmany'] = "Una resposta o múltiples respostes?";
+$string['answersingleno'] = "Múltiples respostes";
 $string['answersingleyes'] = "Només una resposta";
-$string['answersingleno']  = "Múltiples respostes";
 $string['attempt'] = "Intent \$a";
 $string['attemptfirst'] = "Primer intent";
 $string['attemptlast'] = "Darrer intent";
@@ -21,9 +18,9 @@ $string['attemptsallowed'] = "Intents permesos";
 $string['attemptsunlimited'] = "Intents il·limitats";
 $string['backtoquiz'] = "Tornar a l'edició del qüestionari";
 $string['bestgrade'] = "Millor nota";
+$string['caseno'] = "No distingir majúscules i minúscules";
 $string['casesensitive'] = "Majúscules i minúscules";
 $string['caseyes'] = "Distingir majúscules i minúscules";
-$string['caseno'] = "No distingir majúscules i minúscules";
 $string['categories'] = "Categories";
 $string['category'] = "Categoria";
 $string['categoryinfo'] = "Informació sobre la categoria";
@@ -39,11 +36,11 @@ $string['default'] = "Per defecte";
 $string['defaultinfo'] = "La categoria per defecte per a les preguntes.";
 $string['deletequestioncheck'] = "Estàs absolutament segur que vols esborrar '\$a'?";
 $string['editcategories'] = "Editar categories";
-$string['editingquiz'] = "Editar qüestionari";
+$string['editingmultichoice'] = "Editar una pregunta de múltiples opcions";
 $string['editingquestion'] = "Editar una pregunta";
+$string['editingquiz'] = "Editar qüestionari";
 $string['editingshortanswer'] = "Editar una pregunta de resposta breu";
 $string['editingtruefalse'] = "Editar una pregunta de vertader/fals";
-$string['editingmultichoice'] = "Editar una pregunta de múltiples opcions";
 $string['false'] = "Fals";
 $string['feedback'] = "Comentari";
 $string['filloutoneanswer'] = "Has d'emplenar almenys una possible resposta. Les respostes en blanc no compten.";
@@ -61,6 +58,8 @@ $string['guestsno'] = "Ho lamentem, els invitats no poden veure els qüestionaris
 $string['imagedisplay'] = "Imatge que es mostrarà";
 $string['introduction'] = "Introducció";
 $string['marks'] = "Marques";
+$string['modulename'] = "Qüestionari";
+$string['modulenameplural'] = "Qüestionaris";
 $string['multichoice'] = "Opcions múltiples";
 $string['noanswers'] = "No s'ha seleccionat cap resposta!";
 $string['noattempts'] = "Aquest qüestionari no s'ha contestat";
@@ -69,13 +68,13 @@ $string['noquestions'] = "Encara no s'han afegit preguntes";
 $string['publish'] = "Publicar";
 $string['question'] = "Pregunta";
 $string['questioninuse'] = "La pregunta '\$a' s'està utilitzant actualment:";
-$string['questions'] = "Preguntes";
 $string['questionname'] = "Títol de la pregunta";
+$string['questions'] = "Preguntes";
 $string['quizavailable'] = "El qüestionari està disponible fins: \$a";
 $string['quizclose'] = "Tancar el qüestionari";
 $string['quizclosed'] = "Aquest qüestionari es va tancar el \$a";
-$string['quizopen'] = "Obrir el qüestionari";
 $string['quiznotavailable'] = "Aquest qüestionari estarà disponible a partir de: \$a";
+$string['quizopen'] = "Obrir el qüestionari";
 $string['random'] = "Selecció aleatòria";
 $string['regrade'] = "Recalcular les qualificacions";
 $string['regradecomplete'] = "S'han recalculat totes les qualificacions";
@@ -91,13 +90,15 @@ $string['select'] = "Seleccionar";
 $string['selectcategoryabove'] = "Seleccionar una categoria";
 $string['shortanswer'] = "Resposta breu";
 $string['show'] = "Mostrar";
-$string['showfeedback'] = "Mostrar comentaris al final?";
 $string['showcorrectanswer'] = "Incloure la resposta correcta amb els comentaris?";
+$string['showfeedback'] = "Mostrar comentaris al final?";
 $string['time'] = "Temps";
-$string['timetaken'] = "Temps emprat";
 $string['timecompleted'] = "Completat";
+$string['timetaken'] = "Temps emprat";
 $string['true'] = "Vertader";
 $string['truefalse'] = "Vertader/Fals";
 $string['type'] = "Tipus";
 $string['viewallanswers'] = "Veure \$a qüestionaris completats";
 $string['yourfinalgradeis'] = "La teva qualificació final en aquest qüestionari és \$a";
+
+?>

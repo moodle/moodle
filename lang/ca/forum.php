@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.5 beta 1 (2002092500)
+      // forum.php - created with Moodle 1.0.8 dev (2002122700)
 
 
 $string['addanewdiscussion'] = "Afegir un tema de debat";
@@ -10,7 +10,6 @@ $string['allowsdiscussions'] = "Aquest fòrum permet a cadascú començar un tema d
 $string['anyfile'] = "Qualsevol fitxer";
 $string['attachment'] = "Fitxer adjunt";
 $string['bynameondate'] = "per \$a->name - \$a->date";
-$string['canstudentsstart'] = "Pot un \$a començar un nou debat?";
 $string['couldnotadd'] = "Un error desconegut ha impedit afegir el teu missatge";
 $string['couldnotdeleteratings'] = "Ho lamentem, no es pot esborrar perquè ja l'han valorat altres";
 $string['couldnotdeletereplies'] = "Ho lamentem, no es pot esborrar perquè ja ha tingut contestacions";
@@ -59,38 +58,18 @@ $string['newforumposts'] = "Nous enviaments als fòrums";
 $string['nodiscussions'] = "Encara no hi ha cap tema de debat en aquest fòrum";
 $string['noguestpost'] = "Ho lamentem, els usuaris invitats no poden enviar missatges";
 $string['noposts'] = "No hi ha missatges";
+$string['nopostscontaining'] = "No s'ha trobat cap missatge que continga '\$a'";
 $string['nosubscribers'] = "Encara no hi ha subscriptors en aquest fòrum";
 $string['nownotsubscribed'] = "\$a->name NO rebrrà còpies de '\$a->forum' per correu electrònic.";
 $string['nowsubscribed'] = "\$a->name rebrà còpies de '\$a->forum' per correu electrònic.";
 $string['numposts'] = "\$a missatges";
 $string['olderdiscussions'] = "Debats anteriors";
+$string['openmode0'] = "Debats no, respostes no";
+$string['openmode1'] = "Debats no, però respostes sí";
+$string['openmode2'] = "Debats i respostes sí";
 $string['parentofthispost'] = "Missatge original";
 $string['postadded'] = "S'ha afegit el teu missatge.<P>Tens \$a per a editar-lo si vols fer algun canvi.";
-$string['postingtip'] = "<B>Suggeriments:</B>
-
-Quan envies una resposta:
-
-<UL>
-
-<LI>llegeix el missatge original amb molt de compte i practica l'empatia
-
-<LI>busca els aspectes que pugues comentar
-
-</UL>
-
-
-
-Mentre escrius:
-
-<UL>
-
-<LI>mira que les teues respostes siguen curtes i centra't en el tema
-
-<LI>explica les teus idees clarament
-
-<LI>pensa preguntes que podries fer
-
-</UL>";
+$string['postincontext'] = "Veure aquest missatge en el seu context";
 $string['postmailinfo'] = "Açò és una còpia d'un missatge enviat al lloc web \$a.
 
 Per a afegir la teua resposta via web, fes clic en aquest enllaç:";
@@ -108,6 +87,7 @@ $string['repliesone'] = "\$a resposta fins ara";
 $string['reply'] = "Contestar";
 $string['search'] = "Buscar";
 $string['searchforums'] = "Buscar en els fòrums";
+$string['searchresults'] = "Resultats de la recerca";
 $string['sendinratings'] = "Enviar les meues últimes valoracions";
 $string['showsubscribers'] = "Mostra els subscriptors";
 $string['singleforum'] = "Un debat simple";
@@ -120,12 +100,5 @@ $string['unsubscribe'] = "Cancel·lar la subscripció a aquest fòrum";
 $string['youratedthis'] = "La teua valoració";
 $string['yournewtopic'] = "Nou tema de debat";
 $string['yourreply'] = "La teua resposta";
-
-$string[nopostscontaining] = "No s'ha trobat cap missatge que continga '\$a'";
-$string[openmode0] = "Debats no, respostes no";
-$string[openmode1] = "Debats no, però respostes sí";
-$string[openmode2] = "Debats i respostes sí";
-$string[postincontext] = "Veure aquest missatge en el seu context";
-$string[searchresults] = "Resultats de la recerca";
 
 ?>
