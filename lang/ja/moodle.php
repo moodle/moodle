@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 Beta ++ (2004031100)
+      // moodle.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['action'] = '操作';
@@ -705,7 +705,7 @@ $string['restorecancelled'] = 'リストアがキャンセルされました';
 $string['restorecoursenow'] = 'このコースをリストア!';
 $string['restorefinished'] = 'リストアが完了しました';
 $string['restoreto'] = 'リストア';
-$string['returningtosite'] = 'アカウントを持ちの方ですか?';
+$string['returningtosite'] = 'アカウントをお持ちの方ですか?';
 $string['revert'] = 'クリア';
 $string['role'] = '任務';
 $string['savechanges'] = '変更を保存';
