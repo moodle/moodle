@@ -1713,7 +1713,8 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
 
     $select = 'username <> \'guest\' AND deleted = 0';
 
-    if ($search) {
+    if (!empty($search)){
+        $search = trim($search);
         $select .= " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
     }
 
@@ -1787,7 +1788,8 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
 
     $select = 'deleted <> 1';
 
-    if ($search) {
+    if (!empty($search)) {
+        $search = trim($search);
         $select .= " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
     }
 
