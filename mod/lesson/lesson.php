@@ -715,6 +715,8 @@
                     $noanswer = true;
                     break;
                 }
+				$useranswer = stripslashes_safe($useranswer);
+				
 	            if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
                     error("Continue: No answers found");
                 }
@@ -730,7 +732,7 @@
 				$userresponse->score = 0;
 				$userresponse->answer = $useranswer;
 				$userresponse->response = "";
-				$userresponse = serialize($userresponse);
+				$userresponse = addslashes(serialize($userresponse));
 				
 			 	break;
 			/// CDC-FLAG ///
@@ -740,6 +742,8 @@
                     break;
                 }
 				$userresponse = $useranswer;
+				$useranswer = stripslashes_safe($useranswer);
+				
                 if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
                     error("Continue: No answers found");
                 }
