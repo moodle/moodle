@@ -49,6 +49,9 @@
                         set_user_preference('calendar_lookahead', $value);
                     }
                 break;
+                case 'persistflt':
+                    set_user_preference('calendar_persistflt', intval($value));
+                break;
             }
         }
         redirect('view.php', get_string('changessaved'), 1);
@@ -81,6 +84,7 @@
     $prefs->startwday  = get_user_preferences('calendar_startwday', CALENDAR_STARTING_WEEKDAY);
     $prefs->maxevents  = get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS);
     $prefs->lookahead  = get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS);
+    $prefs->persistflt = get_user_preferences('calendar_persistflt', 0);
 
 	include('./preferences.html');
     print_simple_box_end();

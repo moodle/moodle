@@ -885,12 +885,18 @@ function calendar_session_vars() {
         unset($SESSION->cal_users_shown);
         unset($SESSION->cal_courses_shown);
         $SESSION->cal_loggedinas = true;
+        if(intval(get_user_preferences('calendar_persistflt', 0))) {
+            calendar_set_filters_status(get_user_preferences('calendar_savedflt', 0xff));
+        }
     }
     else if(!empty($USER->id) && !isset($USER->realuser) && isset($SESSION->cal_loggedinas)) {
         // We just logged back to our real self, update again
         unset($SESSION->cal_users_shown);
         unset($SESSION->cal_courses_shown);
         unset($SESSION->cal_loggedinas);
+        if(intval(get_user_preferences('calendar_persistflt', 0))) {
+            calendar_set_filters_status(get_user_preferences('calendar_savedflt', 0xff));
+        }
     }
 
     if(!isset($SESSION->cal_course_referer)) {
@@ -996,14 +1002,9 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
         foreach($groupcourses as $courseid) {
             // If the user is an editing teacher in there,
             if(!empty($USER->id) && isteacheredit($courseid, $USER->id)) {
-                if (isset($courses[$courseid])) {
-                    $checkcourse = $courses[$courseid];
-                    if (!empty($checkcourse->groupmode)) {
-                        // Show events from all groups
-                        if(($grouprecords = get_groups($courseid)) !== false) {
-                            $grouparray = array_merge($grouparray, array_keys($grouprecords));
-                        }
-                    }
+                // Show events from all groups
+                if(($grouprecords = get_groups($courseid)) !== false) {
+                    $grouparray = array_merge($grouparray, array_keys($grouprecords));
                 }
             }
             // Otherwise show events from the group he is a member of
@@ -1079,16 +1080,6 @@ function calendar_get_default_courses($ignoreref = false) {
         $courses = $USER->teacher;
     }
     return $courses;
-}
-
-function calendar_preferences_array() {
-    return array(
-        'dstpreset'  => get_string('pref_dstpreset', 'calendar'),
-        'startwday'  => get_string('pref_startwday', 'calendar'),
-        'maxevents'  => get_string('pref_maxevents', 'calendar'),
-        'lookahead'  => get_string('pref_lookahead', 'calendar'),
-        'timeformat' => get_string('pref_timeformat', 'calendar'),
-    );
 }
 
 function calendar_preferences_button() {
@@ -1231,44 +1222,55 @@ function calendar_find_day_in_month($index, $weekday, $month, $year) {
 }
 
 function calendar_dst_update_preset($dstpreset) {
-    $now  = time();
 
     // What's the date according to our user right now?
+    $now  = time();
     $date = usergetdate($now);
 
-    $monthdayactivate   = calendar_find_day_in_month($dstpreset->activate_index, $dstpreset->activate_day, $dstpreset->activate_month, $date['year']);
-    $monthdaydeactivate = calendar_find_day_in_month($dstpreset->deactivate_index, $dstpreset->deactivate_day, $dstpreset->deactivate_month, $date['year']);
-
-    $timeactivate   = make_timestamp($date['year'], $dstpreset->activate_month, $monthdayactivate, $dstpreset->activate_hour, $dstpreset->activate_minute);
-    $timedeactivate = make_timestamp($date['year'], $dstpreset->deactivate_month, $monthdaydeactivate, $dstpreset->deactivate_hour, $dstpreset->deactivate_minute);
+    $changes = calendar_dst_changes_for_year($date['year'], $dstpreset);
 
     // Great... let's see where exactly we are now.
-    if($now < $timeactivate) {
+    if($now < $changes['activate']) {
         print_object("<<");
         // DST has not been turned on this year
-        $dstpreset->next_change = $timeactivate;
+        $dstpreset->next_change = $changes['activate'];
         // For the last change, we need to fetch the previous year's DST deactivation timestamp
-        $monthdaydeactivate  = calendar_find_day_in_month($dstpreset->deactivate_index, $dstpreset->deactivate_day, $dstpreset->deactivate_month, $date['year'] - 1);
-        $timedeactivate      = make_timestamp($date['year'] - 1, $dstpreset->deactivate_month, $monthdaydeactivate, $dstpreset->deactivate_hour, $dstpreset->deactivate_minute);
-        $dstpreset->last_change = $timedeactivate;
+        $prevchanges = calendar_dst_changes_for_year($date['year'] - 1, $dstpreset);
+        $dstpreset->last_change = $prevchanges['deactivate'];
+        $dstpreset->current_offset = 0;
     }
-    else if($now < $timedeactivate) {
+    else if($now < $changes['deactivate']) {
         print_object("<>");
         // DST is on for this year right now
-        $dstpreset->last_change = $timeactivate;
-        $dstpreset->next_change = $timedeactivate;
+        $dstpreset->last_change = $changes['activate'];
+        $dstpreset->next_change = $changes['deactivate'];
+        $dstpreset->current_offset = $dstpreset->apply_offset;
     }
     else {
         print_object(">>");
         // DST has already been turned off; we are nearing the end of the year
-        $dstpreset->last_change = $timedeactivate;
+        $dstpreset->last_change = $changes['deactivate'];
         // For the next change, we need to fetch next year's DST activation timestamp
-        $monthdayactivate    = calendar_find_day_in_month($dstpreset->activate_index, $dstpreset->activate_day, $dstpreset->activate_month, $date['year'] + 1);
-        $timeactivate        = make_timestamp($date['year'] + 1, $dstpreset->activate_month, $monthdayactivate, $dstpreset->activate_hour, $dstpreset->activate_minute);
-        $dstpreset->next_change = $timeactivate;
+        $nextchanges = calendar_dst_changes_for_year($date['year'] + 1, $dstpreset);
+        $dstpreset->next_change = $nextchanges['activate'];
+        $dstpreset->current_offset = 0;
     }
 
     return $dstpreset;
+}
+
+function calendar_dst_changes_for_year($year, $dstpreset) {
+    $monthdayactivate   = calendar_find_day_in_month($dstpreset->activate_index,   $dstpreset->activate_day,   $dstpreset->activate_month,   $year);
+    $monthdaydeactivate = calendar_find_day_in_month($dstpreset->deactivate_index, $dstpreset->deactivate_day, $dstpreset->deactivate_month, $year);
+
+    list($activate_hour, $activate_minute)     = explode(':', $dstpreset->activate_time);
+    list($deactivate_hour, $deactivate_minute) = explode(':', $dstpreset->deactivate_time);
+    
+    $timezone       = get_user_timezone(99);
+    $timeactivate   = make_timestamp($year, $dstpreset->activate_month,   $monthdayactivate,   $activate_hour,   $activate_minute,   0, $timezone, false);
+    $timedeactivate = make_timestamp($year, $dstpreset->deactivate_month, $monthdaydeactivate, $deactivate_hour, $deactivate_minute, 0, $timezone, false);
+
+    return array('activate' => $timeactivate, 0 => $timeactivate, 'deactivate' => $timedeactivate, 1 => $timedeactivate);
 }
 
 function calendar_print_month_selector($name, $selected) {
@@ -1280,6 +1282,40 @@ function calendar_print_month_selector($name, $selected) {
     }
 
     choose_from_menu($months, $name, $selected, '');
+}
+
+function calendar_get_filters_status() {
+    global $SESSION;
+
+    $status = 0;
+    if($SESSION->cal_show_global) {
+        $status += 1;
+    }
+    if($SESSION->cal_show_course) {
+        $status += 2;
+    }
+    if($SESSION->cal_show_groups) {
+        $status += 4;
+    }
+    if($SESSION->cal_show_user) {
+        $status += 8;
+    }
+    return $status;
+}
+
+function calendar_set_filters_status($packed_bitfield) {
+    global $SESSION, $USER;
+
+    if(!isset($USER) || empty($USER->id)) {
+        return false;
+    }
+
+    $SESSION->cal_show_global = ($packed_bitfield & 1);
+    $SESSION->cal_show_course = ($packed_bitfield & 2);
+    $SESSION->cal_show_groups = ($packed_bitfield & 4);    
+    $SESSION->cal_show_user   = ($packed_bitfield & 8);
+
+    return true;
 }
 
 ?>

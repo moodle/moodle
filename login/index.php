@@ -102,6 +102,12 @@
             unset($SESSION->lang);
             $SESSION->justloggedin = true;
 
+            // Restore the calendar filters, if saved
+            if(intval(get_user_preferences('calendar_persistflt', 0))) {
+                include_once($CFG->dirroot.'/calendar/lib.php');
+                calendar_set_filters_status(get_user_preferences('calendar_savedflt', 0xff));
+            }
+
             //Select password change url
             if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
                 $passwordchangeurl=$CFG->wwwroot.'/login/change_password.php';

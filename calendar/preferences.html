@@ -101,6 +101,16 @@
     </td>
 </tr>
 
+<tr valign="top">
+	<td nowrap="nowrap" align="right"><?php print_string('pref_persistflt', 'calendar')?>:</td>
+	<td>
+    <?php choose_from_menu (array(0 => get_string('no'), 1 => get_string('yes')), 'persistflt', $prefs->persistflt, '', '', ''); ?>
+    </td>
+    <td>
+    <?php print_string('explain_persistflt', 'calendar'); ?>
+    </td>
+</tr>
+
 <tr>
     <td colspan="3" align="center">
 	<input type="submit" value="<?php print_string("savechanges") ?>" /></td>
