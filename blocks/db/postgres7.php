@@ -44,6 +44,7 @@ global $CFG;
         require_once($CFG->dirroot.'/lib/blocklib.php');
         $site = get_site();
         blocks_get_default_blocks($site->id, BLOCKS_DEFAULT_SITE);
+        delete_records('config', 'name', 'siteblocksadded');
     }
 
     //Finally, return result
