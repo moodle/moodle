@@ -1,0 +1,60 @@
+<?php
+    if (!isset($form->name)) {
+        $form->name = "";
+    }
+    if (!isset($form->intro)) {
+        $form->intro = "";
+    }
+    if (!isset($form->messages)) {
+        $form->messages = 1000;
+    }
+?>
+<form name="form" method="post" <?php echo $onsubmit ?> action="mod.php">
+<table cellpadding=5>
+<tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("chatname", "chat")?>:</b></p></td>
+    <td>
+        <input type="text" name="name" size=30 value="<?php p($form->name) ?>">
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("chatintro", "chat")?>:</b></p>
+    <font size="1">
+     <?php
+        helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
+        echo "<br />";
+        helpbutton("questions", get_string("helpquestions"), "moodle", true, true);
+        echo "<br />";
+        emoticonhelpbutton("form", "intro");
+        echo " <br />";
+      ?>
+    </font>
+    </td>
+    <td>
+        <textarea name="intro" rows=4 cols=50 wrap="virtual"><?php p($form->intro) ?></textarea>
+    </td>
+</tr>
+<tr valign=top>
+	<td align=right><p><b><?php print_string("savemessages", "chat")?>:</b></p>
+	<td>
+    <?php 
+       $options = array(5000, 1000, 500, 100);
+       choose_from_menu ($options, "messages", $form->messages, "", "", "");
+    ?>
+    </td>
+</tr>
+
+</table>
+<center>
+<input type="hidden" name=course     value="<? p($form->course) ?>">
+<input type="hidden" name=coursemodule  value="<? p($form->coursemodule) ?>">
+<input type="hidden" name=section       value="<? p($form->section) ?>">
+<input type="hidden" name=module     value="<? p($form->module) ?>">
+<input type="hidden" name=modulename value="<? p($form->modulename) ?>">
+<input type="hidden" name=instance   value="<? p($form->instance) ?>">
+<input type="hidden" name=mode       value="<? p($form->mode) ?>">
+<input type="submit" value="<? print_string("savechanges") ?>">
+<input type="submit" name=cancel value="<? print_string("cancel") ?>">
+</center>
+</form>
