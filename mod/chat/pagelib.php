@@ -30,7 +30,7 @@ class page_chat extends page_generic_activity {
 
         $this->init_full();
         $replacements = array(
-            '%fullname%' => $this->activityrecord->name
+            '%fullname%' => format_string($this->activityrecord->name)
         );
         foreach($replacements as $search => $replace) {
             $title = str_replace($search, $replace, $title);
@@ -44,7 +44,7 @@ class page_chat extends page_generic_activity {
         }
 
         $breadcrumbs[get_string('modulenameplural', 'chat')] = $CFG->wwwroot.'/mod/chat/index.php?id='.$this->courserecord->id;
-        $breadcrumbs[$this->activityrecord->name]            = $CFG->wwwroot.'/mod/chat/view.php?id='.$this->modulerecord->id;
+        $breadcrumbs[format_string($this->activityrecord->name)]            = $CFG->wwwroot.'/mod/chat/view.php?id='.$this->modulerecord->id;
 
         if(!empty($morebreadcrumbs)) {
             $breadcrumbs = array_merge($breadcrumbs, $morebreadcrumbs);

@@ -82,7 +82,7 @@
               get_string('viewreport', 'chat').'</a></p>';
     }
 
-    print_heading($chat->name);
+    print_heading(format_string($chat->name));
 
 /// Check to see if groups are being used here
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used

@@ -52,7 +52,7 @@
             $newid = insert_record ("chat",$chat);
 
             //Do some output     
-            echo "<li>".get_string("modulename","chat")." \"".$chat->name."\"</li>";
+            echo "<li>".get_string("modulename","chat")." \"".format_string(stripslashes($chat->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {

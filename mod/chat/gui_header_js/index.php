@@ -59,7 +59,7 @@
  <head>
   <meta http-equiv="content-type" content="text/html; charset=<?php echo get_string('thischarset'); ?>" />
   <title>
-   <?php echo "$strchat: $course->shortname: $chat->name$groupname" ?>
+   <?php echo "$strchat: $course->shortname: ".format_string($chat->name,true)."$groupname" ?>
   </title>
  </head>
  <frameset cols="*,200" border="5" framespacing="no" frameborder="yes" marginwidth="2" marginheight="1">

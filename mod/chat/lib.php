@@ -203,7 +203,7 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
                     print_headline(get_string('currentchats', 'chat').':');
                     $outputstarted = true;
                 }
-                echo '<div class="room"><p class="head"><a href="'.$CFG->wwwroot.'/mod/chat/view.php?c='.$chat->id.'">'.$chat->name.'</a></p><ul>';
+                echo '<div class="room"><p class="head"><a href="'.$CFG->wwwroot.'/mod/chat/view.php?c='.$chat->id.'">'.format_string($chat->name,true).'</a></p><ul>';
             }
             $current = $chatuser->chatid;
         }

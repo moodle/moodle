@@ -43,9 +43,9 @@
 
     if ($start and $end and !$confirmdelete) {   // Show a full transcript
 
-        print_header_simple("$chat->name: $strchatreport", '',
+        print_header_simple(format_string($chat->name).": $strchatreport", '',
                      "<a href=\"index.php?id=$course->id\">$strchats</a> ->
-                     <a href=\"view.php?id=$cm->id\">$chat->name</a> ->
+                     <a href=\"view.php?id=$cm->id\">".format_string($chat->name,true)."</a> ->
                      <a href=\"report.php?id=$cm->id\">$strchatreport</a>",
                       '', '', true, '', navmenu($course, $cm));
 
@@ -95,12 +95,12 @@
 
 /// Print the Sessions display
 
-    print_header_simple("$chat->name: $strchatreport", '',
+    print_header_simple(format_string($chat->name).": $strchatreport", '',
                  "<a href=\"index.php?id=$course->id\">$strchats</a> ->
-                 <a href=\"view.php?id=$cm->id\">$chat->name</a> -> $strchatreport",
+                 <a href=\"view.php?id=$cm->id\">".format_string($chat->name,true)."</a> -> $strchatreport",
                   '', '', true, '', navmenu($course, $cm));
 
-    print_heading($chat->name.': '.get_string('sessions', 'chat'));
+    print_heading(format_string($chat->name).': '.get_string('sessions', 'chat'));
 
 
 /// Check to see if groups are being used here

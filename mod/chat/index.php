@@ -53,10 +53,10 @@
     foreach ($chats as $chat) {
         if (!$chat->visible) {
             //Show dimmed if the mod is hidden
-            $link = "<a class=\"dimmed\" href=\"view.php?id=$chat->coursemodule\">$chat->name</a>";
+            $link = "<a class=\"dimmed\" href=\"view.php?id=$chat->coursemodule\">".format_string($chat->name,true)."</a>";
         } else {
             //Show normal if the mod is visible
-            $link = "<a href=\"view.php?id=$chat->coursemodule\">$chat->name</a>";
+            $link = "<a href=\"view.php?id=$chat->coursemodule\">".format_string($chat->name,true)."</a>";
         }
         $printsection = '';
         if ($chat->section !== $currentsection) {
