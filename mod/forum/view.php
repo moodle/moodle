@@ -36,6 +36,8 @@
         require_login($course->id);
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->
                        <A HREF=\"index.php?id=$course->id\">Forums</A> ->";
+    } else {
+        $navigation = "<A HREF=\"index.php?id=$course->id\">Forums</A> ->";
     }
 
     if ($forum->type == "teacher") {
@@ -53,11 +55,14 @@
     if ($USER) {
         $SESSION->fromdiscuss = "$FULLME";
         if (is_subscribed($USER->id, $forum->id)) {
-            $subtext = "Unsubscribe from this forum";
+            $subtext = "Unsubscribe me from this forum";
         } else {
-            $subtext = "Subscribe to this forum";
+            $subtext = "Subscribe me to this forum";
         }
         echo "<DIV ALIGN=RIGHT><FONT SIZE=1><A HREF=\"subscribe.php?id=$forum->id\">$subtext</A></FONT></DIV>";
+        if (isteacher($course->id)) {
+            echo "<DIV ALIGN=RIGHT><FONT SIZE=1><A HREF=\"subscribers.php?id=$forum->id\">Show subscribers</A></FONT></DIV>";
+        }
     }
 
     print_simple_box(text_to_html($forum->intro), "CENTER");
