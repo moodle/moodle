@@ -29,6 +29,7 @@
     $strassignments = get_string("modulenameplural", "assignment");
     $strassignment  = get_string("modulename", "assignment");
     $strsubmissions = get_string("submissions", "assignment");
+    $strsaveallfeedback = get_string("saveallfeedback", "assignment");
 
     print_header("$course->shortname: $assignment->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strassignments</A> -> 
@@ -122,7 +123,7 @@
 
     echo "<CENTER>";
     echo "<INPUT TYPE=hidden NAME=id VALUE=\"$assignment->id\">";
-    echo "<INPUT TYPE=submit VALUE=\"Save all my feedback\">";
+    echo "<INPUT TYPE=submit VALUE=\"$strsaveallfeedback\">";
     echo "</CENTER>";
     echo "</FORM>";
     
