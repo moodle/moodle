@@ -66,10 +66,13 @@ var $resource;
 *
 * Constructor for the base resource class.
 * If cmid is set create the cm, course, resource objects.
+* and do some checks to make sure people can be here, and so on.
 *
 * @param cmid   integer, the current course module id - not set for new resources
 */
 function resource_base($cmid=0) {
+
+    global $CFG;
 
     if ($cmid) {
         if (! $this->cm = get_record("course_modules", "id", $cmid)) {
@@ -80,48 +83,37 @@ function resource_base($cmid=0) {
             error("Course is misconfigured");
         }
 
+        require_course_login($this->course);
+
         if (! $this->resource = get_record("resource", "id", $this->cm->instance)) {
             error("Resource ID was incorrect");
+        }
+
+        $this->strresource  = get_string("modulename", "resource");
+        $this->strresources = get_string("modulenameplural", "resource");
+
+        if ($this->course->category) {
+            require_login($this->course->id);
+            $this->navigation = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/course/view.php?id={$this->course->id}\">{$this->course->shortname}</a> -> ".
+                                "<a target=\"{$CFG->framename}\" href=\"index.php?id={$this->course->id}\">$this->strresources</a> ->";
+        } else {
+            $this->navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id={$this->course->id}\">$this->strresources</a> ->";     
+        }
+
+        if (!$this->cm->visible and !isteacher($this->course->id)) {
+            $pagetitle = strip_tags($this->course->shortname.': '.$this->strresource);
+            print_header($pagetitle, $this->course->fullname, "$this->navigation $this->strresource", "", "", true, '', navmenu($this->course, $this->cm));
+            notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id={$this->course->id}");
         }
     } 
 }
 
 
 /**
-* Display function in base class sets up a few things and makes checks
-*
-* Nothing is actually displayed by the base class, but the children call it
-* to make some checks and setup common things.
+* Display function does nothing in the base class
 */
 function display() {
 
-    global $CFG;
-
-    if ($this->resource) {  /// Make sure that the user can be here
-
-        $this->strresource  = get_string("modulename", "resource");
-        $this->strresources = get_string("modulenameplural", "resource");
-
-        $cm = $this->cm;              // Shortcut
-        $course = $this->course;      // Shortcut
-        $resource = $this->resource;  // Shortcut
-
-        require_course_login($course);
-
-        if ($course->category) {
-            require_login($course->id);
-            $this->navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id={$course->id}\">{$course->shortname}</a> -> ".
-                                "<a target=\"{$CFG->framename}\" href=\"index.php?id={$course->id}\">$this->strresources</a> ->";
-        } else {
-            $this->navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id={$course->id}\">$this->strresources</a> ->";     
-        }
-
-        if (!$cm->visible and !isteacher($course->id)) {
-            $pagetitle = strip_tags("$course->shortname: $this->strresource");
-            print_header($pagetitle, "$course->fullname", "$this->navigation $this->strresource", "", "", true, '', navmenu($course, $cm));
-            notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id=$course->id");
-        }
-    }
 }
 
 
