@@ -12,6 +12,50 @@
 define("FORMAT_MOODLE", "0");
 define("FORMAT_HTML", "1");
 
+$SMILEY_TEXT[]  = ":-)";
+$SMILEY_IMAGE[] = "<IMG ALT=\":-)\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/smiley.gif\">";
+$SMILEY_TEXT[]  = ":)";
+$SMILEY_IMAGE[] = "<IMG ALT=\":-)\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/smiley.gif\">";
+$SMILEY_TEXT[]  = ":-D";
+$SMILEY_IMAGE[] = "<IMG ALT=\":-D\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/biggrin.gif\">";
+$SMILEY_TEXT[]  = ";-)";
+$SMILEY_IMAGE[] = "<IMG ALT=\";-)\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/wink.gif\">";
+$SMILEY_TEXT[]  = ":-/";
+$SMILEY_IMAGE[] = "<IMG ALT=\":-/\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/mixed.gif\">";
+$SMILEY_TEXT[]  = "V-.";
+$SMILEY_IMAGE[] = "<IMG ALT=\"V-.\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/thoughtful.gif\">";
+$SMILEY_TEXT[]  = ":-P";
+$SMILEY_IMAGE[] = "<IMG ALT=\":-P\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/tongueout.gif\">";
+$SMILEY_TEXT[]  = "B-)";
+$SMILEY_IMAGE[] = "<IMG ALT=\"B-)\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/cool.gif\">";
+$SMILEY_TEXT[]  = "^-)";
+$SMILEY_IMAGE[] = "<IMG ALT=\"^-)\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/approve.gif\">";
+$SMILEY_TEXT[]  = "8-)";
+$SMILEY_IMAGE[] = "<IMG ALT=\"8-)\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/wideeyes.gif\">";
+$SMILEY_TEXT[]  = ":o)";
+$SMILEY_IMAGE[] = "<IMG ALT=\":o)\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/clown.gif\">";
+$SMILEY_TEXT[]  = ":-(";
+$SMILEY_IMAGE[] = "<IMG ALT=\":-(\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/sad.gif\">";
+$SMILEY_TEXT[]  = ":(";
+$SMILEY_IMAGE[] = "<IMG ALT=\":-(\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/sad.gif\">";
+$SMILEY_TEXT[]  = "8-.";
+$SMILEY_IMAGE[] = "<IMG ALT=\"8-.\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/shy.gif\">";
+$SMILEY_TEXT[]  = ":-I";
+$SMILEY_IMAGE[] = "<IMG ALT=\":-I\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/blush.gif\">";
+$SMILEY_TEXT[]  = ":-X";
+$SMILEY_IMAGE[] = "<IMG ALT=\":-X\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/kiss.gif\">";
+$SMILEY_TEXT[]  = "8-o";
+$SMILEY_IMAGE[] = "<IMG ALT=\"8-o\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/surprise.gif\">";
+$SMILEY_TEXT[]  = "P-|";
+$SMILEY_IMAGE[] = "<IMG ALT=\"P-|\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/blackeye.gif\">";
+$SMILEY_TEXT[]  = "8-[";
+$SMILEY_IMAGE[] = "<IMG ALT=\"8-[\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/angry.gif\">";
+$SMILEY_TEXT[]  = "xx-P";
+$SMILEY_IMAGE[] = "<IMG ALT=\"xx-P\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/dead.gif\">";
+$SMILEY_TEXT[]  = "|-.";
+$SMILEY_IMAGE[] = "<IMG ALT=\"|-.\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/sleepy.gif\">";
+$SMILEY_TEXT[]  = "}-]";
+$SMILEY_IMAGE[] = "<IMG ALT=\"}-]\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/evil.gif\">";
 
 /// Functions
 
@@ -282,6 +326,12 @@ function format_text($text, $format, $options=NULL) {
 
     switch ($format) {
         case FORMAT_MOODLE:
+            if (!isset($options->smiley)) {
+                $options->smiley=true;
+            }
+            if (!isset($options->para)) {
+                $options->smiley=true;
+            }
             return text_to_html($text, $options->smiley, $options->para);
             break;
 
@@ -312,7 +362,7 @@ function clean_text($text, $format) {
 function text_to_html($text, $smiley=true, $para=true) {
 // Given plain text, makes it into HTML as nicely as possible.
 
-    global $CFG;
+    global $CFG, $SMILEY_TEXT, $SMILEY_IMAGE;
 
     // Remove any whitespace that may be between HTML tags
     $text = eregi_replace(">([[:space:]]+)<", "><", $text);
@@ -333,18 +383,8 @@ function text_to_html($text, $smiley=true, $para=true) {
     $text = nl2br($text);
 
     // Turn smileys into images.
-
     if ($smiley) {
-        $text = ereg_replace(":)",  "<IMG ALT=\"{smile}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/smiley.gif\">", $text);
-        $text = ereg_replace(":-)", "<IMG ALT=\"{smile}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/smiley.gif\">", $text);
-        $text = ereg_replace(":-D", "<IMG ALT=\"{grin}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/biggrin.gif\">", $text);
-        $text = ereg_replace(";-)", "<IMG ALT=\"{wink}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/wink.gif\">", $text);
-        $text = ereg_replace("8-)", "<IMG ALT=\"{wide-eyed}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/wideeyes.gif\">", $text);
-        $text = ereg_replace(":-\(","<IMG ALT=\"{sad}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/sad.gif\">", $text);
-        $text = ereg_replace(":-P", "<IMG ALT=\"{tongue-out}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/tongueout.gif\">", $text);
-        $text = ereg_replace(":-/", "<IMG ALT=\"{mixed}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/mixed.gif\">", $text);
-        $text = ereg_replace(":-o", "<IMG ALT=\"{surprised}\" WIDTH=29 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/surprise.gif\">", $text);
-        $text = ereg_replace("B-)", "<IMG ALT=\"{cool}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/cool.gif\">", $text);
+        $text = str_replace($SMILEY_TEXT, $SMILEY_IMAGE, $text);
     }
 
     if ($para) {
