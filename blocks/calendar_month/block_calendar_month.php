@@ -58,7 +58,7 @@ class block_calendar_month extends block_base {
             $this->content->text .= calendar_get_mini($courses, $group, $user, $_GET['cal_m'], $_GET['cal_y']);
             // No filters for now
 
-        } else {
+        } elseif (!empty($courseshown)) {
             // For any other course
             $this->content->text .= calendar_overlib_html();
             $this->content->text .= calendar_top_controls('course', array('id' => $courseshown, 'm' => $_GET['cal_m'], 'y' => $_GET['cal_y']));
