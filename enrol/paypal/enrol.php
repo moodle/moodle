@@ -145,3 +145,5 @@ function process_config($config) {
 
 
 } // end of class definition
+
+?>
