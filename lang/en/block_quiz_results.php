@@ -1,8 +1,12 @@
 <?php // $Id$
 
+$string['bestgrade'] = 'The highest grade:';
 $string['bestgrades'] = 'The $a highest grades:';
+$string['bestgroupgrade'] = 'The group with the highest average:';
 $string['bestgroupgrades'] = 'The $a groups with the highest average:';
+$string['worstgrade'] = 'The lowest grade:';
 $string['worstgrades'] = 'The $a lowest grades:';
+$string['worstgroupgrade'] = 'The group with the lowest average:';
 $string['worstgroupgrades'] = 'The $a groups with the lowest average:';
 $string['formaltitle'] = 'Quiz Results';
 $string['config_select_quiz'] = 'Which quiz should this block display results from?';

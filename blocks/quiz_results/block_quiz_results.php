@@ -169,7 +169,9 @@ class block_quiz_results extends block_base {
 
             $rank = 0;
             if(!empty($best)) {
-                $this->content->text .= '<table class="grades"><caption>'.get_string('bestgroupgrades', 'block_quiz_results', $numbest).'</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
+                $this->content->text .= '<table class="grades"><caption>';
+                $this->content->text .= ($numbest == 1?get_string('bestgroupgrade', 'block_quiz_results'):get_string('bestgroupgrades', 'block_quiz_results', $numbest));
+                $this->content->text .= '</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
                 foreach($best as $groupid => $averagegrade) {
                     $this->content->text .= '<tr><td>'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/course/group.php?group='.$groupid.'&amp;id='.$courseid.'">'.$groupgrades[$groupid]['group'].'</a></td><td>';
                     switch($gradeformat) {
@@ -192,7 +194,9 @@ class block_quiz_results extends block_base {
             $rank = 0;
             if(!empty($worst)) {
                 $worst = array_reverse($worst, true);
-                $this->content->text .= '<table class="grades"><caption>'.get_string('worstgroupgrades', 'block_quiz_results', $numworst).'</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
+                $this->content->text .= '<table class="grades"><caption>';
+                $this->content->text .= ($numworst == 1?get_string('worstgroupgrade', 'block_quiz_results'):get_string('worstgroupgrades', 'block_quiz_results', $numworst));
+                $this->content->text .= '</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
                 foreach($worst as $groupid => $averagegrade) {
                     $this->content->text .= '<tr><td>'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/course/group.php?group='.$groupid.'&amp;id='.$courseid.'">'.$groupgrades[$groupid]['group'].'</a></td><td>';
                     switch($gradeformat) {
@@ -277,7 +281,9 @@ class block_quiz_results extends block_base {
 
             $rank = 0;
             if(!empty($best)) {
-                $this->content->text .= '<table class="grades"><caption>'.get_string('bestgrades', 'block_quiz_results', $numbest).'</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
+                $this->content->text .= '<table class="grades"><caption>';
+                $this->content->text .= ($numbest == 1?get_string('bestgrade', 'block_quiz_results'):get_string('bestgrades', 'block_quiz_results', $numbest));
+                $this->content->text .= '</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
                 foreach($best as $userid => $gradeid) {
                     $this->content->text .= '<tr><td>'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.$courseid.'">'.fullname($users[$userid]).'</a></td><td>';
                     switch($gradeformat) {
@@ -300,7 +306,9 @@ class block_quiz_results extends block_base {
             $rank = 0;
             if(!empty($worst)) {
                 $worst = array_reverse($worst, true);
-                $this->content->text .= '<table class="grades"><caption>'.get_string('worstgrades', 'block_quiz_results', $numworst).'</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
+                $this->content->text .= '<table class="grades"><caption>';
+                $this->content->text .= ($numworst == 1?get_string('worstgrade', 'block_quiz_results'):get_string('worstgrades', 'block_quiz_results', $numworst));
+                $this->content->text .= '</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
                 foreach($worst as $userid => $gradeid) {
                     $this->content->text .= '<tr><td>'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.$courseid.'">'.fullname($users[$userid]).'</a></td><td>';
                     switch($gradeformat) {
