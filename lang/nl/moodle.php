@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.1 Beta + (2003082300)
+      // moodle.php - created with Moodle 1.2 development (2003092900)
 
 
 $string['action'] = "Actie";
@@ -790,6 +790,6 @@ $string['youaregoingtorestorefrom'] = "Je gaat een reservekopie terugzetten van"
 $string['yourlastlogin'] = "Je laatste login was";
 $string['yourself'] = "Jezelf";
 $string['yourteacher'] = "Jouw \$a";
-$string['zippingbackup'] = "Bacup zippen";
+$string['zippingbackup'] = "Backup zippen";
 
 ?>
