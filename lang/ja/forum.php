@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 development (2003042104)
+      // forum.php - created with Moodle 1.0.9 development (2003042701)
 
 
 $string['addanewdiscussion'] = "トピックを追加";
@@ -52,6 +52,7 @@ $string['modethreaded'] = "返信をスレッド表示";
 $string['modulename'] = "フォーラム";
 $string['modulenameplural'] = "フォーラム";
 $string['more'] = "詳細";
+$string['movethisdiscussionto'] = "このディスカッションを移動 ...";
 $string['namenews'] = "ニュースフォーラム";
 $string['namesocial'] = "一般フォーラム";
 $string['nameteacher'] = "教師用フォーラム";

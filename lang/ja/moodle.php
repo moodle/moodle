@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003042104)
+      // moodle.php - created with Moodle 1.0.9 development (2003042701)
 
 
 $string['action'] = "操作";
@@ -69,8 +69,9 @@ $string['configlangdir'] = "ほとんどの言語は左から右に記述されますが、アラビア語
 $string['configlocale'] = "全体に適用されるロケールを選択してください。これは日付の書式と言語に影響します。指定した言語が表示される為には、OSに言語データがインストールされている必要があります。(例 en-英語 es-スペイン語)
 
 もし分からない場合は空白のままにしてください。";
+$string['configloglifetime'] = "ここではユーザの活動に関するログの保持期間を設定します。指定した値より古いろログは自動的に削除されます。可能な限り長い間ログを保持する方が良いのですが、アクセス件数が多く、サーバのパフォーマンスに問題がある場合は、短い期間に設定してください。";
 $string['configlongtimenosee'] = "もし学生が長期間ログインしていない場合は、自動的にコースから削除されます。この値は削除期限を決定します。";
-$string['configmaxeditingtime'] = "この値はフォーラムの投稿や日誌等を編集可能な時間を決定します。通常30分が適切な値です。";
+$string['configmaxeditingtime'] = "ここではフォーラムの投稿や日誌等を編集可能な時間を設定します。通常30分が適切な値です。";
 $string['configproxyhost'] = "<B>サーバ</B>のインターネットアクセスにプロクシ(例 ファイアーウォール)が必要な場合は、プロクシのホスト名とポート番号を入力してください。必要でない場合は空白にしてください。";
 $string['configsessiontimeout'] = "このサイトにログインして長時間何もしない(ページを更新しない)場合、自動的にログアウト(セッションを終了)させます。この変数はログアウトさせるまでの時間を設定します。";
 $string['configslasharguments'] = "ファイル(画像、アップロード等)は/=スラッシュ(ここでは2つ目のオプション)を使ってプログラムに受け渡されます。この方法により簡単にブラウザ内やプロクシに画像を一時保存させることが可能です。いくつかのPHPサーバではこの方法が取れない場合があります。もしファイルや画像(例 ユーザの顔写真等)のアップロードに問題がある場合は最初のオプションを選択してください。";
@@ -181,6 +182,7 @@ $string['followingrequired'] = "下記は必須入力項目です";
 $string['forgotten'] = "ユーザ名またはパスワードを忘れましたか?";
 $string['format'] = "フォーマット";
 $string['formathtml'] = "HTMLフォーマット";
+$string['formatplain'] = "プレインテキストフォーマット";
 $string['formatsocial'] = "一般フォーマット";
 $string['formattext'] = "Moodleオートフォーマット";
 $string['formattexttype'] = "フォーマット";
@@ -332,6 +334,7 @@ $string['namesocial'] = "セクション";
 $string['nametopics'] = "トピック";
 $string['nameweeks'] = "週";
 $string['never'] = "無し";
+$string['neverdeletelogs'] = "ログを削除しない";
 $string['new'] = "新しい";
 $string['newaccount'] = "新規アカウント";
 $string['newpassword'] = "新規パスワード";
