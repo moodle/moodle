@@ -19,12 +19,14 @@ if (!isset($CFG->scorm_popup)) {
 }
 if (!isset($CFG->scorm_validate)) {
     $scorm_validate = 'none';
-    if (extension_loaded('domxml')) {
-        $scorm_validate = 'domxml';
-    }
-    if (version_compare(phpversion(),'5.0.0','>=')) {
-        $scorm_validate = 'php5';
-    }
+    //I've commented this out for Moodle 1.4, as I've seen errors in 
+    //SCORM packages even though the actual package worked fine. -- Martin Dougiamas
+    //if (extension_loaded('domxml') && version_compare(phpversion(),'5.0.0','<')) {
+    //    $scorm_validate = 'domxml';
+    //}
+    //if (version_compare(phpversion(),'5.0.0','>=')) {
+    //    $scorm_validate = 'php5';
+    //}
     set_config('scorm_validate', $scorm_validate);
 }
 
@@ -366,15 +368,12 @@ function scorm_validate($manifest)
     }
 }
 
-function scorm_delete_files($directory)
-{
-    if (is_dir($directory))
-    {
-        $handle=opendir($directory);
-        while (($file = readdir($handle)) != '')
-        {
-            if ($file != '.' && $file != '..')
-            {
+function scorm_delete_files($directory) {
+    if (is_dir($directory)) {
+        $files=scorm_scandir($directory);
+        //print_r($files);
+        foreach($files as $file) {
+            if (($file != '.') && ($file != '..')) {
             	if (!is_dir($directory.'/'.$file)) {
             	    //chmod($directory.'/'.$file,0777);
                     unlink($directory.'/'.$file);
@@ -384,6 +383,21 @@ function scorm_delete_files($directory)
             }
         }
         rmdir($directory);
+    }
+}
+
+function scorm_scandir($directory) {
+    if (version_compare(phpversion(),'5.0.0','>=')) {
+   	return scandir($directory);
+    } else {
+        $files = null;
+	if ($dh = opendir($directory)) {
+	    while (($file = readdir($dh)) !== false) {
+           	$files[] = $file;
+	    }
+	    closedir($dh);
+	}
+	return $files;
     }
 }
 
@@ -465,7 +479,7 @@ function scorm_endElement($parser, $name) {
 
 function scorm_characterData($parser, $data) {
     global $datacontent;
-    $datacontent = $data;
+    $datacontent = utf8_decode($data);
 }
 
 function scorm_parse($basedir,$file,$scorm_id) {
