@@ -217,13 +217,12 @@ function print_course($course) {
     echo "<TD VALIGN=top WIDTH=50%>";
     echo "<P><FONT SIZE=3><B><A TITLE=\"".get_string("entercourse")."\" 
               HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A></B></FONT></P>";
-    if ($teachers = get_records_sql("SELECT u.* FROM user u, user_teachers t 
-                                     WHERE u.id = t.user AND t.course = '$course->id' 
-                                     ORDER BY t.authority ASC")) {
-
+    if ($teachers = get_course_teachers($course->id)) {
         echo "<P><FONT SIZE=1>\n";
         foreach ($teachers as $teacher) {
-            echo "$course->teacher: <A HREF=\"$CFG->wwwroot/user/view.php?id=$teacher->id&course=$site->id\">$teacher->firstname $teacher->lastname</A><BR>";
+            if ($teacher->authority > 0) {
+                echo "$course->teacher: <A HREF=\"$CFG->wwwroot/user/view.php?id=$teacher->id&course=$site->id\">$teacher->firstname $teacher->lastname</A><BR>";
+            }
         }
         echo "</FONT></P>";
     }
