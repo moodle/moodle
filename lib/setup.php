@@ -53,9 +53,6 @@
 
     $CFG->wordlist    = "$CFG->libdir/wordlist.txt";
     $CFG->javascript  = "$CFG->libdir/javascript.php";
-    $CFG->stylesheet  = "$CFG->wwwroot/theme/$CFG->theme/styles.php";
-    $CFG->header      = "$CFG->dirroot/theme/$CFG->theme/header.html";
-    $CFG->footer      = "$CFG->dirroot/theme/$CFG->theme/footer.html";
     $CFG->moddata     = "moddata";
 
 
@@ -65,6 +62,10 @@
         $CFG->theme = "standard";
     }
     require("$CFG->dirroot/theme/$CFG->theme/config.php");
+
+    $CFG->stylesheet  = "$CFG->wwwroot/theme/$CFG->theme/styles.php";
+    $CFG->header      = "$CFG->dirroot/theme/$CFG->theme/header.html";
+    $CFG->footer      = "$CFG->dirroot/theme/$CFG->theme/footer.html";
 
 
 
