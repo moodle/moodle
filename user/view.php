@@ -159,15 +159,20 @@
        ($user->maildisplay == 2 and $course->category and !isguest()) or
        isteacher($course->id)) {
 
+        $emailswitch = '';
+
         if (isteacheredit($course->id) or $currentuser) {   /// Can use the enable/disable email stuff
-            if (!empty($_GET['enable'])) {     /// Recieved a paramter to enable the email address
+            if (!empty($_GET['enable'])) {     /// Recieved a parameter to enable the email address
                 set_field('user', 'emailstop', 0, 'id', $user->id);
                 $user->emailstop = 0;
             }
-            if (!empty($_GET['disable'])) {     /// Recieved a paramter to disable the email address
+            if (!empty($_GET['disable'])) {     /// Recieved a parameter to disable the email address
                 set_field('user', 'emailstop', 1, 'id', $user->id);
                 $user->emailstop = 1;
             }
+        }
+
+        if (isteacheredit($course->id)) {   /// Can use the enable/disable email stuff
             if ($user->emailstop) {
                 $switchparam = 'enable';
                 $switchtitle = get_string('emaildisable');
@@ -180,10 +185,18 @@
                 $switchpix   = 'email.gif';
             }
             $emailswitch = "&nbsp<a title=\"$switchclick\" ".
-                           "href=\"view.php?id=$user->id&course=$course->id&$switchparam=$user->id\">".
+                           "href=\"view.php?id=$user->id&course=$course->id&$switchparam=1\">".
                            "<img border=\"0\" width=11 height=11 src=\"$CFG->pixpath/t/$switchpix\"></a>";
-        } else {
-            $emailswitch = '';
+
+        } else if ($currentuser) {         /// Can only re-enable an email this way
+            if ($user->emailstop) {   // Include link that tells how to re-enable their email
+                $switchparam = 'enable';
+                $switchtitle = get_string('emaildisable');
+                $switchclick = get_string('emailenableclick');
+
+                $emailswitch = "&nbsp(<a title=\"$switchclick\" ".
+                               "href=\"view.php?id=$user->id&course=$course->id&enable=1\">$switchtitle</a>)";
+            }
         }
 
         print_row(get_string("email").":", obfuscate_mailto($user->email, '', $user->emailstop)."$emailswitch");
