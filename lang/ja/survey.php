@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.8 dev (2002121200)
+      // survey.php - created with Moodle 1.0.9 development (2003032500)
 
 
 $string['actual'] = "実体験";
@@ -64,6 +64,13 @@ $string['attlsm2'] = "関連学習";
 $string['attlsm3'] = "分離学習";
 $string['attlsmintro'] = "議論している時 ...";
 $string['attlsname'] = "ATTLS (20項目バージョン)";
+$string['ciq1'] = "学習者として、どのような時が一番クラスに関わっていると感じましたか。";
+$string['ciq2'] = "学習者として、どのような時が一番クラスと距離があると感じましたか。";
+$string['ciq3'] = "フォーラムの中でどのような行動が一番肯定的又は有益だと感じましたか。";
+$string['ciq4'] = "フォーラムの中でどのような行動が一番困惑する又は困ると感じましたか。";
+$string['ciq5'] = "どのような事に一番驚きましたか。";
+$string['ciqintro'] = "今までのクラスの中での出来事を思い出して、下の質問に答えてください。";
+$string['ciqname'] = "重要な出来事";
 $string['clicktocontinue'] = "続ける";
 $string['clicktocontinuecheck'] = "確認して続ける";
 $string['colles1'] = "興味があることに集中します。";
