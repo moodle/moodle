@@ -4,14 +4,6 @@
 
     include_once("$CFG->dirroot/mod/forum/lib.php");
 
-    if (! $sections = get_all_sections($course->id)) {
-        $section->course = $course->id;   // Create a default section.
-        $section->section = 0;
-        $section->id = insert_record("course_sections", $section);
-        if (! $sections = get_all_sections($course->id) ) {
-            error("Error finding or creating section structures for this course");
-        }
-    }
 
     if (isset($week)) {
         if ($week == "all") {

@@ -54,7 +54,15 @@
                   update_course_icon($course->id));
 
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused, $modsectioncounts);
-    $sections = get_all_sections($course->id);
+
+    if (! $sections = get_all_sections($course->id)) {
+        $section->course = $course->id;   // Create a default section.
+        $section->section = 0;
+        $section->id = insert_record("course_sections", $section);
+        if (! $sections = get_all_sections($course->id) ) {
+            error("Error finding or creating section structures for this course");
+        }
+    }
 
     switch ($course->format) {
         case "weeks":
