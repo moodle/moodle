@@ -24,7 +24,11 @@ function display() {
 
     add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
 
+
     if ($resource->reference) {
+        if (detect_munged_arguments($resource->reference, 0)) {
+            error("The filename contains illegal characters!");
+        }
         $relativepath = "{$course->id}/{$resource->reference}";
     } else {
         $relativepath = "{$course->id}";
