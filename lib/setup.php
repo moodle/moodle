@@ -26,6 +26,7 @@
     if (!isset($CFG->prefix)) {   // Just in case it isn't defined in config.php
         $CFG->prefix = "";
     }
+    $CFG->prefix = "$CFG->dbname.$CFG->prefix";
 
 
 
