@@ -1010,7 +1010,7 @@ function get_string($identifier, $module="", $a=NULL) {
 
     } else {
         if ($lang == "en") {
-            return "[['$identifier']]";
+            return "[[$identifier]]";
 
         } else {   // Try looking in the english file.
             $langfile = "$langpath/en/$module.php";
@@ -1021,7 +1021,7 @@ function get_string($identifier, $module="", $a=NULL) {
                 eval($result);
                 return $resultstring;
             } else {
-                return "[['$identifier']]";
+                return "[[$identifier]]";
             }
         }
     }
