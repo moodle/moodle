@@ -15,6 +15,14 @@ function exercise_upgrade($oldversion) {
 		table_column("exercise", "", "assessmentcomps", "INTEGER", "4", "UNSIGNED", "2", "NOT NULL", "usemaximum");
     }
 
+    if ($oldversion < 2004111200) {
+        modify_database('','CREATE INDEX prefix_exercise_course_idx ON prefix_exercise (course);');
+        modify_database('','CREATE INDEX prefix_exercise_submissions_exerciseid_idx ON prefix_exercise_submissions (exerciseid);');
+        modify_database('','CREATE INDEX prefix_exercise_assessments_exerciseid_idx ON prefix_exercise_assessments (exerciseid);');
+        modify_database('','CREATE INDEX prefix_exercise_rubrics_exerciseid_idx ON prefix_exercise_rubrics (exerciseid);');
+        modify_database('','CREATE INDEX prefix_exercise_grades_exerciseid_idx ON prefix_exercise_grades (exerciseid);');
+    }
+        
     return true;
 }
 
