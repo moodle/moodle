@@ -67,7 +67,7 @@
                     }
 
                     print_simple_box_start("center","40%", "#FFBBBB");
-                    echo "<center>$entrydeleted"; //CAMBIAR
+                    echo "<center>$entrydeleted"; 
                     echo "</center>";
                     print_simple_box_end();
                 }
