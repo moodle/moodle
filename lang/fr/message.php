@@ -39,6 +39,7 @@ $string['onlyfromme'] = 'Uniquement mes messages envoyés';
 $string['onlymycourses'] = 'Uniquement dans mes cours';
 $string['onlytome'] = 'Uniquement mes messages reçus';
 $string['pagerefreshes'] = 'Cette page se rafraîchit automatiquement toutes les $a secondes';
+$string['readmessages'] = '$a messages lus';
 $string['removecontact'] = 'Supprimer ce contact';
 $string['savemysettings'] = 'Enregistrer mes réglages';
 $string['search'] = 'Recherche';

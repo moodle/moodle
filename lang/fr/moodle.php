@@ -213,6 +213,7 @@ $string['creatingcoursemodules'] = 'Création des modules de cours';
 $string['creatingevents'] = 'Création du calendrier';
 $string['creatinggroups'] = 'Création des groupes';
 $string['creatinglogentries'] = 'Création des historiques';
+$string['creatingmessagesinfo'] = 'Création des informations des messages';
 $string['creatingmetacoursedata'] = 'Creating des informations du méta-cours';
 $string['creatingnewcourse'] = 'Création d\'un nouveau cours';
 $string['creatingscales'] = 'Création des barèmes';
