@@ -1,3 +1,923 @@
+2002-10-22 Tuesday 18:56  moodler
+
+	* lang/en/quiz.php, mod/quiz/report.php: 
+	
+	More concise feedback on grading, and more efficiency (only update
+	attempt grades that have changed)
+
+2002-10-22 Tuesday 18:38  moodler
+
+	* lang/en/help/quiz/attempts.html,
+	lang/en/help/quiz/categories.html,
+	lang/en/help/quiz/correctanswers.html,
+	lang/en/help/quiz/feedback.html,
+	lang/en/help/quiz/grademethod.html,
+	lang/en/help/quiz/maxgrade.html,
+	lang/en/help/quiz/multichoice.html,
+	lang/en/help/quiz/questiontypes.html,
+	lang/en/help/quiz/random.html, lang/en/help/quiz/shortanswer.html,
+	lang/en/help/quiz/timeopen.html, lang/en/help/quiz/truefalse.html,
+	mod/quiz/attempt.php, mod/quiz/category.php, mod/quiz/lib.php,
+	mod/quiz/mod.html, mod/quiz/question.php, mod/quiz/report.php: 
+	
+	Added help pages to quiz module.
+	
+	A few little cleanups, such as trim() on shortanswers
+
+2002-10-22 Tuesday 17:54  moodler
+
+	* lib/moodlelib.php: 
+	
+	new function print_heading_with_help() to print a heading with a
+	helpbutton
+
+2002-10-22 Tuesday 15:03  moodler
+
+	* mod/quiz/report.php: 
+	
+	Display tweaks to table of attempts
+
+2002-10-22 Tuesday 14:52  moodler
+
+	* lang/en/quiz.php, mod/quiz/attempt.php, mod/quiz/lib.php,
+	mod/quiz/report.php, mod/quiz/view.php: 
+	
+	Teacher can now regrade (recalculate grades) of all quiz attempts
+	(in case the quiz changed somehow)
+
+2002-10-22 Tuesday 13:37  compuproggy
+
+	* lang/de/: moodle.php, quiz.php: 
+	
+	[no log message]
+
+2002-10-22 Tuesday 12:25  moodler
+
+	* mod/quiz/: lib.php, report.php: 
+	
+	Teacher can now view student attempts
+
+2002-10-22 Tuesday 10:48  moodler
+
+	* lang/de/moodle.php: 
+	
+	German should be Deutsche
+
+2002-10-22 Tuesday 10:34  moodler
+
+	* lang/de/forum.php: 
+	
+	Fixed name/date variables (don't translate variables!)
+
+2002-10-22 Tuesday 10:30  moodler
+
+	* lang/de/moodle.php: 
+	
+	Removed unnecessary mentions of sel@ction
+
+2002-10-21 Monday 23:00  moodler
+
+	* lang/en/quiz.php, mod/quiz/lib.php, mod/quiz/question.php,
+	mod/quiz/report.php: 
+	
+	Can now delete questions.  It checks that the question doesn't
+	belong to any quizzes first (if it's in a published category then
+	it checks all quizzes on the server).
+
+2002-10-21 Monday 22:57  moodler
+
+	* mod/quiz/: version.php, db/mysql.php, db/mysql.sql: 
+	
+	Added log_display entries for quiz
+
+2002-10-21 Monday 21:13  moodler
+
+	* mod/quiz/: lib.php, view.php: 
+	
+	Display tweaks
+
+2002-10-21 Monday 21:02  moodler
+
+	* mod/quiz/lib.php: 
+	
+	Round $bestgrade when storing it to avoid insert_record problems
+
+2002-10-21 Monday 20:49  moodler
+
+	* mod/quiz/attempt.php: 
+	
+	Print intro as HTML
+
+2002-10-21 Monday 20:48  moodler
+
+	* mod/quiz/lib.php: 
+	
+	Bugfix on calculating correct answers for multichoice questions
+
+2002-10-21 Monday 20:39  moodler
+
+	* mod/quiz/lib.php: 
+	
+	Some error checking
+
+2002-10-21 Monday 19:41  moodler
+
+	* mod/quiz/view.php: 
+	
+	Convert intro text to HTML
+
+2002-10-21 Monday 17:16  moodler
+
+	* lib/weblib.php: 
+	
+	Added some more allowed HTML tags
+
+2002-10-21 Monday 16:44  moodler
+
+	* mod/forum/: lib.php, report.php: 
+	
+	Allow teachers to look at ratings for anyone
+
+2002-10-21 Monday 16:36  moodler
+
+	* mod/forum/lib.php: 
+	
+	Fixed up rating retrieval ... now gets them all seperate
+
+2002-10-21 Monday 16:32  moodler
+
+	* mod/forum/lib.php: 
+	
+	Fix in forum_grades
+
+2002-10-21 Monday 16:19  moodler
+
+	* course/grades.php, mod/forum/lib.php, mod/forum/mod.html: 
+	
+	Don't show column grade when there's nothing to show
+
+2002-10-21 Monday 16:10  moodler
+
+	* mod/forum/lib.php: 
+	
+	Rearranged functions to match other modules, and added
+	forum_grades()
+
+2002-10-21 Monday 16:06  compuproggy
+
+	* lang/de/moodle.php: 
+	
+	[no log message]
+
+2002-10-21 Monday 16:02  compuproggy
+
+	* lang/de/moodle.php: 
+	
+	[no log message]
+
+2002-10-21 Monday 15:58  compuproggy
+
+	* lang/de/moodle.php: 
+	
+	[no log message]
+
+2002-10-21 Monday 15:45  compuproggy
+
+	* lang/de/: moodle.php, help/mods.html: 
+	
+	[no log message]
+
+2002-10-21 Monday 14:55  moodler
+
+	* course/grades.php: 
+	
+	Grades are not always numbers, so take care in XLS writing
+
+2002-10-21 Monday 14:51  moodler
+
+	* lib/moodlelib.php: 
+	
+	Table header aligns to top
+
+2002-10-21 Monday 14:42  moodler
+
+	* mod/journal/lib.php: 
+	
+	Added journal_grades() so journals show up in the Grades page
+
+2002-10-21 Monday 13:42  moodler
+
+	* lib/rte/: README_MOODLE, richedit.html, rte.js: 
+	
+	Changes to toolbar to position color pickers better, and
+	reintroduce the "select all" button.  Unfortnately, I had to remove
+	the "About richtext" button to make room
+
+2002-10-21 Monday 12:12  moodler
+
+	* lib/weblib.php: 
+	
+	Added paragraphs to allowed HTML tags
+
+2002-10-21 Monday 11:23  moodler
+
+	* lang/en/help/mods.html: 
+	
+	Modified language so that it speaks to students as well as teachers
+
+2002-10-21 Monday 11:04  moodler
+
+	* doc/teacher.html: 
+	
+	Added quizzes
+
+2002-10-21 Monday 11:00  moodler
+
+	* help.php, course/lib.php, course/social.php, course/topics.php,
+	course/weeks.php, lang/en/moodle.php, lang/en/help/mods.html,
+	lib/moodlelib.php, lib/weblib.php: 
+	
+	Improvements to help, and addition of new "Activity modules" help
+	for teachers adding new modules.
+
+2002-10-21 Monday 02:06  moodler
+
+	* auth/README: 
+	
+	Some more clues for new admins ...
+
+2002-10-21 Monday 02:02  compuproggy
+
+	* lang/de/quiz.php: 
+	
+	[no log message]
+
+2002-10-21 Monday 01:50  moodler
+
+	* version.php, mod/quiz/version.php: 
+	
+	Updated versions
+
+2002-10-21 Monday 01:42  moodler
+
+	* mod/quiz/pix/: mc.gif, rs.gif, sa.gif, tf.gif: 
+	
+	Whoops, forgot to check in these new icons
+
+2002-10-21 Monday 01:41  moodler
+
+	* mod/quiz/: lib.php, question.php: 
+	
+	Fixes for display of public categories
+
+2002-10-21 Monday 01:15  moodler
+
+	* lang/en/quiz.php, lib/moodlelib.php, mod/quiz/category.php,
+	mod/quiz/lib.php, mod/quiz/multichoice.html, mod/quiz/question.php,
+	mod/quiz/shortanswer.html, mod/quiz/truefalse.html: 
+	
+	
+	Category editing in quizzes is now supported.  Some other little
+	cleanups along the way ...
+
+2002-10-20 Sunday 18:13  moodler
+
+	* mod/quiz/: attempt.php, view.php: 
+	
+	Guests can no longer see or attempt quizzes
+
+2002-10-20 Sunday 18:12  moodler
+
+	* lang/en/quiz.php: 
+	
+	New and fixed strings
+
+2002-10-20 Sunday 18:12  moodler
+
+	* lib/moodlelib.php: 
+	
+	Strip slashes from print_simple_box (just in case)
+
+2002-10-20 Sunday 13:35  moodler
+
+	* mod/assignment/index.php: 
+	
+	Fixed display of "done" assignments
+
+2002-10-20 Sunday 13:35  moodler
+
+	* mod/quiz/: attempt.php, lib.php, question.php: 
+	
+	Now shows correct answers, plus some small bug fixes
+
+2002-10-19 Saturday 12:58  moodler
+
+	* lib/weblib.php: 
+	
+	Cleaned up format a little, plus added better error checking of
+	server variables so that at least people will get feedback if they
+	are missing
+
+2002-10-19 Saturday 03:19  compuproggy
+
+	* lang/de/help/textformat.html: 
+	
+	[no log message]
+
+2002-10-19 Saturday 01:20  compuproggy
+
+	* lang/de/: moodle.php, quiz.php, help/coursecategory.html: 
+	
+	[no log message]
+
+2002-10-19 Saturday 01:17  moodler
+
+	* RELEASE.html: 
+	
+	Added stuff about the text editing
+
+2002-10-19 Saturday 01:05  moodler
+
+	* lib/weblib.php: 
+	
+	Find URLs at the beginning of lines ...
+
+2002-10-19 Saturday 00:05  moodler
+
+	* lang/en/quiz.php, mod/quiz/attempt.php, mod/quiz/index.php,
+	mod/quiz/lib.php, mod/quiz/question.php, mod/quiz/version.php,
+	mod/quiz/view.php, mod/quiz/db/mysql.php, mod/quiz/db/mysql.sql: 
+	
+	
+	Quiz attempts are now timed.  This is done by starting the
+	quiz_attempts record upon showing the quiz, and completing it upon
+	submit.
+	
+	Two new fields in quiz_attempts... should be upgrade friendly. 
+	(Old attempts will show up as being of duration zero)
+	
+	Also some small fixes here and there.
+
+2002-10-19 Saturday 00:02  moodler
+
+	* lang/en/help/textformat.html: 
+	
+	Some tidy ups
+
+2002-10-19 Saturday 00:01  moodler
+
+	* doc/credits.html: 
+	
+	Added RTE etc
+
+2002-10-18 Friday 19:27  moodler
+
+	* lang/en/: moodle.php, help/richtext.html: 
+	
+	Improved the documentation (it has some live feedback on the state
+	of the Richtext functionality)
+
+2002-10-18 Friday 17:40  moodler
+
+	* lang/en/help/textformat.html: 
+	
+	Cleanup
+
+2002-10-18 Friday 17:38  moodler
+
+	* mod/: assignment/mod.html, forum/post.html, journal/edit.html: 
+	
+	Better help with text formats
+
+2002-10-18 Friday 17:35  moodler
+
+	* lang/en/help/textformat.html: 
+	
+	Improved the help page
+
+2002-10-18 Friday 17:29  moodler
+
+	* lang/en/: moodle.php, help/richtext.html, help/textformat.html: 
+	
+	Language changes and help documentation additions to clearer
+	explain richtext, html and moodle auto-format
+
+2002-10-18 Friday 17:09  moodler
+
+	* lang/en/moodle.php: 
+	
+	Revised string for formattext to make more sense
+
+2002-10-18 Friday 17:09  moodler
+
+	* lib/weblib.php: 
+	
+	OK, I've rationalised the text formatting now.	Basically, both
+	Moodle and HTML text allow the same range of HTML tags (so it
+	doesn't matter is you switch from one to the other).
+	
+	<IMG> and <A> are now ALLOWED in Moodle text.  However, the
+	clean_text function now checks for and removes any embedded
+	javascript triggers to avoid cross-site scripting attacks that way.
+	
+	clean_text() should be called on ANY text that comes in from
+	students.
+
+2002-10-18 Friday 17:00  moodler
+
+	* lib/moodlelib.php: 
+	
+	Whoops ... typo.
+
+2002-10-18 Friday 16:52  moodler
+
+	* lib/moodlelib.php: 
+	
+	Also set default language on new user created by external
+	authentication
+
+2002-10-18 Friday 16:48  moodler
+
+	* admin/user.php: 
+	
+	New users created by admin also now default to site language
+
+2002-10-18 Friday 16:46  moodler
+
+	* login/signup.php, user/edit.html: 
+	
+	Default language for users is now the same as the site language.
+
+2002-10-18 Friday 14:05  moodler
+
+	* lib/: languages.php, moodlelib.php, weblib.php: 
+	
+	Allow <IMG> tags in Moodle format text.  Not having it can really
+	mess up smileys etc if the text has been edited at any stage using
+	the richtext editor.
+	
+	I realise it's possible for students to really mess up forums
+	display etc if they wanted to include a huge picture ... I'm not
+	sure if there are any cross-site scripting attacks possible with
+	images in there.
+	
+	But there is also now the HTML format for most things, which is
+	editable using an ordinary form, so this problem is currently
+	already exposed.
+	
+	I think it's OK as long as can find a filter to strip all
+	javascript out of ANY format text in Moodle.
+
+2002-10-18 Friday 13:41  moodler
+
+	* mod/quiz/question.php: 
+	
+	Fixed the setting of answers for true-false questions
+
+2002-10-18 Friday 08:18  moodler
+
+	* RELEASE.html: 
+	
+	Just some better formatting and info
+
+2002-10-18 Friday 07:49  moodler
+
+	* pix/t/: delete.gif, edit.gif: 
+	
+	Made transparent
+
+2002-10-17 Thursday 23:32  moodler
+
+	* lang/pt_br/: reading.php, resource.php,
+	help/resource/resourcetype.html, help/resource/summary.html: 
+	
+	Changes related to new module 'resource'
+
+2002-10-17 Thursday 23:28  moodler
+
+	* lang/it/: help/resource/resourcetype.html,
+	help/resource/summary.html, reading.php, resource.php: 
+	
+	Changes related to new module 'resource'
+
+2002-10-17 Thursday 23:14  moodler
+
+	* lang/fr/: reading.php, resource.php,
+	help/resource/resourcetype.html, help/resource/summary.html: 
+	
+	Changes due to new module 'resource'
+
+2002-10-17 Thursday 23:10  moodler
+
+	* lang/fi/: reading.php, resource.php,
+	help/resource/resourcetype.html, help/resource/summary.html: 
+	
+	Changes due to new resource module
+
+2002-10-17 Thursday 23:07  moodler
+
+	* lang/de/help/resource/: resourcetype.html, summary.html: 
+	
+	Resulting from module name change
+
+2002-10-17 Thursday 23:03  moodler
+
+	* lang/de/: reading.php, resource.php: 
+	
+	Changed reading.php to resource.php
+
+2002-10-17 Thursday 22:32  moodler
+
+	* lang/en/help/resource/: resourcetype.html, summary.html: 
+	
+	Moved from reading module
+
+2002-10-17 Thursday 22:28  moodler
+
+	* lang/en/resource.php, mod/resource/lib.php: 
+	
+	Changed string neverread to neverseen
+
+2002-10-17 Thursday 22:03  moodler
+
+	* RELEASE.html, index.php, version.php, course/lib.php,
+	course/social.php, doc/developer.html, doc/features.html,
+	doc/future.html, doc/teacher.html, lang/en/reading.php,
+	lang/en/resource.php, lib/moodlelib.php, lib/db/mysql.php,
+	mod/resource/details.php, mod/resource/icon.gif,
+	mod/resource/index.php, mod/resource/lib.php,
+	mod/resource/mod.html, mod/resource/version.php,
+	mod/resource/view.php, mod/resource/db/mysql.php,
+	mod/resource/db/mysql.sql: 
+	
+	
+	
+	***NOTE NOTE NOTE
+	**********************************************************
+	
+	THIS IS A BIG CHANGE!
+	
+	I've renamed the "reading" module to "resource".
+	
+	This meant changing quite a few references throughout Moodle.
+	
+	The automatic upgrade process should work OK (it worked OK on my
+	development server) and there shouldn't be any problems.
+	
+	BUT PLEASE PROCEED WITH CAUTION AND KEEP BACKUPS OF EVERYTHING
+	UNTIL I HAVE A FEW MORE TESTS!	 If you upgrade please let me know.
+	
+	One thing that will break are any hard-coded links within forum
+	messages.
+	
+	What I will be doing to fix this on my apache server is to add this
+	to httpd.conf:
+	
+	Redirect /mod/reading/ http://moodle.com/mod/resource/
+	
+	Sorry about any inconvenience, but it's better this is done sooner
+	than later.
+
+2002-10-17 Thursday 20:25  moodler
+
+	* user/view.php: 
+	
+	Added a 'change password' button
+
+2002-10-17 Thursday 20:21  moodler
+
+	* login/: change_password.php, change_password_form.html: 
+	
+	
+	Changed headers so that it works seamlessly when called from user
+	page.
+
+2002-10-17 Thursday 18:34  moodler
+
+	* RELEASE.html, version.php, course/grades.php, lang/en/moodle.php:
+	
+	
+	
+	The grades page now supports downloading of grade data!  :-)
+
+2002-10-17 Thursday 18:33  moodler
+
+	* mod/choice/lib.php: 
+	
+	Removed some blank lines that were causing output
+
+2002-10-17 Thursday 16:32  moodler
+
+	* pix/i/grades.gif: 
+	
+	Grr added transparency back again ...
+
+2002-10-17 Thursday 16:30  moodler
+
+	* course/grades.php, pix/i/grades.gif: 
+	
+	Re-adding to overcome CVS strangeness (and my own indecision!)
+
+2002-10-17 Thursday 16:28  moodler
+
+	* course/grades.php, lang/en/moodle.php, mod/assignment/lib.php,
+	mod/quiz/lib.php, pix/i/grades.gif: 
+	
+	Better grade reports
+
+2002-10-17 Thursday 15:58  moodler
+
+	* lang/en/moodle.php: 
+	
+	Some new strings
+
+2002-10-17 Thursday 15:55  moodler
+
+	* course/grades.php, mod/assignment/lib.php, mod/quiz/lib.php: 
+	
+	Now includes maximum grades
+
+2002-10-17 Thursday 15:23  moodler
+
+	* mod/: assignment/lib.php, quiz/lib.php: 
+	
+	Added new grading functions to work with course/grades.php
+
+2002-10-17 Thursday 15:23  moodler
+
+	* course/grades.php, course/lib.php, pix/i/grades.gif: 
+	
+	
+	Added a new grading tool for teachers to see all grades on one
+	page.
+	
+	Grades are collected from each module using the module_grades
+	function in each mod/*/lib.php.
+
+2002-10-16 Wednesday 23:52  moodler
+
+	* mod/quiz/: attempt.php, lib.php: 
+	
+	Feedback fixes
+
+2002-10-16 Wednesday 23:48  moodler
+
+	* lib/moodlelib.php: 
+	
+	Alt text on moodle logo
+
+2002-10-16 Wednesday 18:42  compuproggy
+
+	* lang/de/: moodle.php, quiz.php: 
+	
+	[no log message]
+
+2002-10-16 Wednesday 18:36  compuproggy
+
+	* lang/de/help/richtext.html: 
+	
+	[no log message]
+
+2002-10-16 Wednesday 18:24  compuproggy
+
+	* lang/de/: moodle.php, quiz.php: 
+	
+	[no log message]
+
+2002-10-16 Wednesday 17:35  moodler
+
+	* mod/quiz/: attempt.php, edit.php, lib.php, mod.html: 
+	
+	Various fixes and additions.  It now does quiz feedback pretty well
+	(though it doesn't show correct answers yet).
+
+2002-10-16 Wednesday 17:31  compuproggy
+
+	* lang/de/: assignment.php, choice.php, forum.php, journal.php,
+	moodle.php, quiz.php, reading.php, survey.php: 
+	
+	[no log message]
+
+2002-10-16 Wednesday 16:48  compuproggy
+
+	* lang/de/: README, assignment.php, choice.php, forum.php,
+	journal.php, moodle.php, quiz.php, reading.php, survey.php: 
+	
+	[no log message]
+
+2002-10-16 Wednesday 15:18  moodler
+
+	* mod/journal/lib.php: 
+	
+	Actually, let's include journals that have no feedback yet as well.
+
+2002-10-16 Wednesday 15:15  moodler
+
+	* mod/journal/lib.php: 
+	
+	When a teacher is giving feedback, entries that have been modified
+	since the last time a teacher has given feedback are highlighted.
+
+2002-10-16 Wednesday 13:31  moodler
+
+	* mod/assignment/: mod.html, version.php, view.php, db/mysql.php,
+	db/mysql.sql: 
+	
+	Teacher can now use the richtext editor to edit the assignment text
+
+2002-10-16 Wednesday 12:53  moodler
+
+	* course/mod.php, lang/en/moodle.php, lib/moodlelib.php: 
+	
+	Changes related to module editing buttons
+
+2002-10-16 Wednesday 12:52  moodler
+
+	* user/edit.html: 
+	
+	Don't show htmleditor preference if it's disabled by admin
+
+2002-10-16 Wednesday 12:51  moodler
+
+	* mod/: quiz/view.php, assignment/mod.html,
+	assignment/submissions.php, assignment/view.php, choice/mod.html,
+	choice/view.php, forum/discuss.php, forum/mod.html, forum/view.php,
+	journal/mod.html, journal/view.php, survey/mod.html,
+	survey/view.php: 
+	
+	Cleaned up some buttons ...
+
+2002-10-16 Wednesday 01:32  moodler
+
+	* mod/quiz/: edit.php, lib.php: 
+	
+	
+	Small bugfixes ... (yawn)
+
+2002-10-16 Wednesday 01:13  moodler
+
+	* mod/quiz/: lib.php, db/mysql.sql: 
+	
+	Fixes for grades
+
+2002-10-16 Wednesday 00:49  moodler
+
+	* version.php: 
+	
+	Just updated the number
+
+2002-10-16 Wednesday 00:48  moodler
+
+	* RELEASE.html, lang/en/quiz.php: 
+	
+	Some additions
+
+2002-10-16 Wednesday 00:47  moodler
+
+	* lib/moodlelib.php: 
+	
+	Got rid of the wimpy icons in the top-right corner of pages and put
+	some manly buttons there.  ;-)	 I think this will be much clearer
+	for novices, as well as being a bigger target for experts!
+
+2002-10-16 Wednesday 00:45  moodler
+
+	* mod/quiz/lib.php: 
+	
+	Bit of a clean up of the edit interface ...
+
+2002-10-16 Wednesday 00:22  moodler
+
+	* lang/en/moodle.php, lang/en/quiz.php, mod/quiz/lib.php,
+	mod/quiz/mod.html, mod/quiz/multichoice.html,
+	mod/quiz/shortanswer.html, mod/quiz/truefalse.html,
+	mod/quiz/view.php, mod/quiz/db/mysql.sql: 
+	
+	Added timeopen and timeclose (instead of days) and did a few
+	cleanups
+
+2002-10-16 Wednesday 00:04  moodler
+
+	* admin/delete.php: 
+	
+	
+	Admin script to brutally delete every file and directory from the
+	Moodle data directory.	Will be useful for those on hosting servers
+	without root access.
+
+2002-10-15 Tuesday 20:54  moodler
+
+	* lang/en/moodle.php, lang/en/quiz.php, mod/quiz/attempt.php,
+	mod/quiz/edit.php, mod/quiz/index.php, mod/quiz/lib.php,
+	mod/quiz/multichoice.html, mod/quiz/report.php,
+	mod/quiz/shortanswer.html, mod/quiz/view.php,
+	mod/quiz/db/mysql.sql: 
+	
+	OK, it seems reliable enough now for alpha testing.
+	
+	If you have existing quizzes, delete them all, then drop all the
+	quiz tables and delete the quiz line from the modules table.
+	
+	Things to do still:
+	
+	  - add/edit/remove categories
+	  - display question feedback on submissions ...
+	  - record the time they started the quiz, as well as the
+	completion.
+	  - place time limits between attempts
+	  - add full specification of quiz open time and quiz close time
+
+2002-10-15 Tuesday 18:04  moodler
+
+	* mod/quiz/: edit.php, lib.php, multichoice.html, question.php,
+	shortanswer.html, truefalse.html: 
+	
+	Can now create and re-edit all three types of questions.
+	
+	Still working on grading ...
+
+2002-10-15 Tuesday 13:31  moodler
+
+	* lang/en/quiz.php: 
+	
+	New strings
+
+2002-10-15 Tuesday 13:29  moodler
+
+	* mod/quiz/: multichoice.html, question.php, shortanswer.html,
+	truefalse.html: 
+	
+	Forms now done, more or less
+
+2002-10-15 Tuesday 11:48  moodler
+
+	* doc/install.html: 
+	
+	A little more explicit about PHP requirements
+
+2002-10-15 Tuesday 00:06  moodler
+
+	* course/mod.php: 
+	
+	Fix to clear the modform variable just in case there's one from one
+	module that later affects another module.
+
+2002-10-15 Tuesday 00:00  moodler
+
+	* CHANGES, RELEASE.html, course/mod.php, doc/credits.html,
+	lib/moodlelib.php, lib/weblib.php: 
+	
+	
+	Miscellaneous little changes from today ...
+
+2002-10-14 Monday 23:58  moodler
+
+	* lang/en/quiz.php: 
+	
+	New strings
+
+2002-10-14 Monday 23:57  moodler
+
+	* mod/quiz/: attempt.php, edit.php, lib.php, mod.html,
+	multichoice.html, question.php, shortanswer.html, truefalse.html,
+	view.php: 
+	
+	
+	Checking in what I got so far .... Not working yet but I'm going to
+	bed.
+
+2002-10-14 Monday 20:21  moodler
+
+	* mod/quiz/: edit.php, lib.php: 
+	
+	Quiz generation is working now.  Just need question and category
+	editors.
+
+2002-10-14 Monday 17:07  moodler
+
+	* mod/quiz/: category.php, edit.php, lib.php, mod.html,
+	question.php: 
+	
+	Many new additions - code not quite usable yet, but getting close
+
+2002-10-14 Monday 17:04  moodler
+
+	* lang/en/: moodle.php, quiz.php: 
+	
+	New strings
+
+2002-10-13 Sunday 21:51  moodler
+
+	* mod/quiz/: lib.php, report.php, view.php: 
+	
+	Added a basic report and some clean-ups
+
+2002-10-13 Sunday 18:06  moodler
+
+	* help.php: 
+	
+	Now uses real current language (may not be the same as $CFG->lang)
+
 2002-10-13 Sunday 15:17  moodler
 
 	* mod/quiz/: attempt.php, lib.php, version.php, view.php,
@@ -19,8 +939,7 @@
 
 2002-10-12 Saturday 23:01  moodler
 
-	* mod/: forum/post.html, journal/edit.html, journal/lib.php,
-	reading/details.php: 
+	* mod/: forum/post.html, journal/edit.html, journal/lib.php: 
 	
 	Tweaks to use new javascript-printing function etc
 
@@ -43,8 +962,7 @@
 	help/surveys.html, help/teachers.html, help/text.html,
 	help/choice/options.html, help/forum/allowdiscussions.html,
 	help/forum/attachment.html, help/forum/forumtype.html,
-	help/forum/ratings.html, help/forum/subscription.html,
-	help/reading/readingtype.html, help/reading/summary.html: 
+	help/forum/ratings.html, help/forum/subscription.html: 
 	
 	First version of German (Deutsch) translation, by
 	Holger.Schadeck@webdesign-forum.de
@@ -53,8 +971,7 @@
 
 2002-10-12 Saturday 15:23  moodler
 
-	* lib/moodlelib.php, mod/forum/post.html, mod/journal/edit.html,
-	mod/reading/details.php: 
+	* lib/moodlelib.php, mod/forum/post.html, mod/journal/edit.html: 
 	
 	Moved the object code out into a function print_textarea
 
@@ -77,9 +994,9 @@
 	
 	Some notes about the other new stuff.
 
-2002-10-12 Saturday 13:42  moodler
+2002-10-12 Saturday 13:43  moodler
 
-	* mod/: reading/details.php, forum/post.html: 
+	* mod/forum/post.html: 
 	
 	Added help buttons about the richtext editor (when active)
 
@@ -187,12 +1104,6 @@
 	
 	Modified all smilies and added some new ones.
 
-2002-10-11 Friday 16:47  moodler
-
-	* mod/reading/details.php: 
-	
-	Works better on roundtrips now (use p() to stripslashes)
-
 2002-10-11 Friday 13:20  moodler
 
 	* mod/forum/lib.php: 
@@ -243,9 +1154,8 @@
 
 2002-10-10 Thursday 15:27  moodler
 
-	* mod/: forum/lib.php, forum/post.html, forum/post.php,
-	forum/version.php, forum/db/mysql.php, forum/db/mysql.sql,
-	reading/details.php, reading/lib.php: 
+	* mod/forum/: lib.php, post.html, post.php, version.php,
+	db/mysql.php, db/mysql.sql: 
 	
 	Initial attempt at adding html text editor features to these forms.
 
@@ -453,8 +1363,8 @@
 	* mod/: quiz/version.php, assignment/version.php,
 	assignment/db/mysql.php, choice/version.php, choice/db/mysql.php,
 	forum/version.php, forum/db/mysql.php, journal/version.php,
-	journal/db/mysql.php, quiz/db/mysql.php, reading/version.php,
-	reading/db/mysql.php, survey/version.php, survey/db/mysql.php: 
+	journal/db/mysql.php, quiz/db/mysql.php, survey/version.php,
+	survey/db/mysql.php: 
 	
 	Moved upgrade functions into db/mysql.sql
 
@@ -653,8 +1563,7 @@
 	help/teachers.html, help/text.html, help/choice/options.html,
 	help/forum/allowdiscussions.html, help/forum/attachment.html,
 	help/forum/forumtype.html, help/forum/ratings.html,
-	help/forum/subscription.html, help/reading/readingtype.html,
-	help/reading/summary.html: 
+	help/forum/subscription.html: 
 	
 	Checked in initial Italian version by Davide Suraci, with help from
 	others
@@ -1010,8 +1919,7 @@
 
 	* lang/pt_br/help/: choice/options.html,
 	forum/allowdiscussions.html, forum/attachment.html,
-	forum/forumtype.html, forum/ratings.html, forum/subscription.html,
-	reading/readingtype.html, reading/summary.html: 
+	forum/forumtype.html, forum/ratings.html, forum/subscription.html: 
 	
 	Unfinished files
 
@@ -1065,12 +1973,6 @@
 	* lang/en/moodle.php: 
 	
 	New string
-
-2002-09-25 Wednesday 12:20  martin
-
-	* mod/reading/view.php: 
-	
-	Add last modified dates to some readings
 
 2002-09-24 Tuesday 20:45  martin
 
@@ -1431,8 +2333,7 @@
 	help/enrolmentkey.html, help/guestaccess.html, help/picture.html,
 	help/questions.html, help/surveys.html, help/text.html,
 	help/forum/allowdiscussions.html, help/forum/forumtype.html,
-	help/forum/ratings.html, help/forum/subscription.html,
-	help/reading/readingtype.html, help/reading/summary.html: 
+	help/forum/ratings.html, help/forum/subscription.html: 
 	
 	Initial (incomplete) version of French translation by Sebastien
 	Nameche <snameche@virtual-net.fr>
@@ -1452,8 +2353,7 @@
 	help/teachers.html, help/text.html, help/choice/options.html,
 	help/forum/allowdiscussions.html, help/forum/attachment.html,
 	help/forum/forumtype.html, help/forum/ratings.html,
-	help/forum/subscription.html, help/reading/readingtype.html,
-	help/reading/summary.html: 
+	help/forum/subscription.html: 
 	
 	Initial version of Finnish translation, as done by Petri Asikainen
 	<paca@sci.fi>
@@ -1662,12 +2562,6 @@
 	
 	Can now specify current language on a per-user basis
 
-2002-09-13 Friday 18:33  martin
-
-	* mod/reading/view.php: 
-	
-	Consistent display of text
-
 2002-09-13 Friday 18:22  martin
 
 	* lang/en/help/html.html: 
@@ -1676,9 +2570,7 @@
 
 2002-09-13 Friday 18:21  martin
 
-	* version.php, lang/en/moodle.php, lang/en/reading.php,
-	lang/en/help/reading/readingtype.html, mod/reading/details.php,
-	mod/reading/lib.php, mod/reading/mod.html, mod/reading/view.php: 
+	* version.php, lang/en/moodle.php, lang/en/reading.php: 
 	
 	Added a new reading type "html text".  It's similar to "plain text"
 	except none of the auto-formatting is done, and all HTML code is
@@ -2159,7 +3051,7 @@
 	* index.php, admin/site.php, course/lib.php, course/teacher.php,
 	lang/en/forum.php, lang/en/moodle.php,
 	login/forgot_password_form.html, login/index.php,
-	mod/forum/lib.php, mod/forum/post.php, mod/reading/details.php: 
+	mod/forum/lib.php, mod/forum/post.php: 
 	
 	Language fixes, added english strings etc
 
@@ -2402,7 +3294,7 @@
 
 	* lang/en/moodle.php, lang/en/docs/module_files.txt,
 	lib/moodlelib.php, lib/setup.php, mod/assignment/lib.php,
-	mod/assignment/version.php, mod/reading/details.php: 
+	mod/assignment/version.php: 
 	
 	Moved uploaded assignment files into a subdirectory called moddata,
 	where data from other modules can also live later on.
@@ -2471,7 +3363,7 @@
 2002-08-26 Monday 17:48  martin
 
 	* CHANGES, config-dist.php, file.php, index.php, files/index.php,
-	lib/moodlelib.php, mod/assignment/lib.php, mod/reading/view.php: 
+	lib/moodlelib.php, mod/assignment/lib.php: 
 	
 	Changes to use a new configuration variable: CFG->slasharguments
 	
@@ -2706,7 +3598,7 @@
 
 	* version.php, mod/assignment/version.php, mod/choice/version.php,
 	mod/forum/version.php, mod/journal/version.php,
-	mod/reading/version.php, mod/survey/version.php: 
+	mod/survey/version.php: 
 	
 	Updated versions in preparation for 1.0 release tomorrow
 
@@ -2731,16 +3623,9 @@
 	Added help link to course pages (for teachers) and tidied up the
 	course admin links in general (new fucntion and reorder)
 
-2002-08-18 Sunday 23:57  martin
-
-	* lang/en/help/reading/: readingtype.html, summary.html: 
-	
-	New help files for readings
-
 2002-08-18 Sunday 23:56  martin
 
-	* lang/en/reading.php, mod/reading/details.php,
-	mod/reading/mod.html, mod/reading/view.php: 
+	* lang/en/reading.php: 
 	
 	Improvements to reading definition - help buttons and language
 	fixes
@@ -3128,12 +4013,6 @@
 	
 	More translating ...
 
-2002-08-12 Monday 22:44  martin
-
-	* mod/reading/details.php: 
-	
-	Better error checking for empty fields
-
 2002-08-12 Monday 21:45  martin
 
 	* lang/en/moodle.php, lang/en/reading.php, lib/moodlelib.php,
@@ -3142,13 +4021,6 @@
 	theme/standardred/header.html: 
 	
 	Minor tweaking and cleaning up
-
-2002-08-12 Monday 21:45  martin
-
-	* mod/reading/: details.php, index.php, lib.php, mod.html,
-	view.php: 
-	
-	Language fixes and minor tweaks
 
 2002-08-12 Monday 17:38  martin
 
@@ -3713,7 +4585,7 @@
 2002-08-05 Monday 00:42  martin
 
 	* mod/: choice/version.php, forum/version.php, journal/version.php,
-	reading/version.php, survey/version.php: 
+	survey/version.php: 
 	
 	Updated version numbers
 
@@ -3852,8 +4724,8 @@
 	lang/en/forum.php, lang/en/moodle.php, mod/choice/index.php,
 	mod/choice/view.php, mod/forum/discuss.php, mod/forum/index.php,
 	mod/forum/search.php, mod/forum/view.php, mod/journal/index.php,
-	mod/journal/view.php, mod/reading/index.php, mod/reading/view.php,
-	mod/survey/index.php, mod/survey/view.php, pix/i/course.gif: 
+	mod/journal/view.php, mod/survey/index.php, mod/survey/view.php,
+	pix/i/course.gif: 
 	
 	Lots of work on site display, over many files.	Improved front page
 	and display of site modules.
@@ -3884,8 +4756,7 @@
 	* course/mod.php, mod/README, mod/assignment/lib.php,
 	mod/assignment/mod.php, mod/choice/lib.php, mod/choice/mod.php,
 	mod/forum/lib.php, mod/forum/mod.php, mod/journal/lib.php,
-	mod/journal/mod.php, mod/reading/lib.php, mod/reading/mod.php,
-	mod/survey/lib.php, mod/survey/mod.php: 
+	mod/journal/mod.php, mod/survey/lib.php, mod/survey/mod.php: 
 	
 	Moved all mod.php functions from modules into lib.php, and updated
 	course/mod.php to use them there.  No longer need module/mod.php
@@ -3906,8 +4777,7 @@
 
 	* version.php, lib/db/mysql.sql, mod/assignment/version.php,
 	mod/choice/version.php, mod/forum/version.php,
-	mod/journal/version.php, mod/reading/version.php,
-	mod/survey/version.php: 
+	mod/journal/version.php, mod/survey/version.php: 
 	
 	Removed fullname and search fields from modules table.	Fullname is
 	now derived from the string 'modulename' in the lang files for each
@@ -4070,12 +4940,6 @@
 	
 	Clean up - modernised choice mod.php
 
-2002-08-01 Thursday 13:27  martin
-
-	* mod/reading/: details.php, lib.php, mod.php: 
-	
-	Clean ups to reading module and modernisation of mod.php
-
 2002-08-01 Thursday 13:18  martin
 
 	* mod/survey/: graph.php, lib.php, mod.php, view.php: 
@@ -4229,8 +5093,7 @@
 	mod/forum/search.php, mod/forum/subscribe.php,
 	mod/forum/subscribers.php, mod/forum/version.php,
 	mod/forum/view.php, mod/forum/db/mysql.sql, mod/journal/module.php,
-	mod/journal/version.php, mod/reading/module.php,
-	mod/reading/version.php, mod/survey/module.php,
+	mod/journal/version.php, mod/survey/module.php,
 	mod/survey/version.php, user/view.php: 
 	
 	OK, some massive changes with many files removed or changed.
@@ -4524,7 +5387,7 @@
 2002-07-27 Saturday 14:07  martin
 
 	* mod/: assignment/module.php, choice/module.php, forum/module.php,
-	journal/module.php, reading/module.php, survey/module.php: 
+	journal/module.php, survey/module.php: 
 	
 	Changes to suit new upgrading procedure (admin/index.html)
 
@@ -4543,8 +5406,7 @@
 2002-07-25 Thursday 21:48  martin
 
 	* mod/: choice/lib.php, forum/lib.php, journal/lib.php,
-	journal/user.php, reading/lib.php, reading/user.php,
-	survey/lib.php: 
+	journal/user.php, survey/lib.php: 
 	
 	Got rid of the user.php code fragments and implemented much cleaner
 	system which certain-named functions in lib.php ... called from
@@ -4600,7 +5462,7 @@
 
 2002-07-24 Wednesday 01:04  martin
 
-	* course/user.php, mod/journal/user.php, mod/reading/user.php: 
+	* course/user.php, mod/journal/user.php: 
 	
 	Fixes to Activity reports
 
@@ -4610,17 +5472,11 @@
 	
 	Improvements to activity reports
 
-2002-07-24 Wednesday 00:25  martin
-
-	* mod/reading/user.php: 
-	
-	typo
-
 2002-07-24 Wednesday 00:24  martin
 
 	* course/lib.php, course/topics.php, course/user.php,
 	course/view.php, course/weeks.php, lang/en/strings.php,
-	mod/journal/user.php, mod/reading/user.php: 
+	mod/journal/user.php: 
 	
 	Part of "contributions" overhaul in course/user.php
 
@@ -4630,18 +5486,6 @@
 	user/edit.html: 
 	
 	Improvements to the help system
-
-2002-07-21 Sunday 03:11  martin
-
-	* mod/reading/view.php: 
-	
-	More tweaks to summary display
-
-2002-07-21 Sunday 03:08  martin
-
-	* mod/reading/view.php: 
-	
-	tweaking summary display on frames
 
 2002-07-21 Sunday 02:50  martin
 
@@ -4653,7 +5497,7 @@
 
 	* course/topics.php, course/weeks.php, lib/moodlelib.php,
 	mod/choice/index.php, mod/forum/index.php, mod/journal/index.php,
-	mod/reading/index.php, mod/survey/index.php: 
+	mod/survey/index.php: 
 	
 	Slight formatting tweaks (forum index)
 
@@ -4662,12 +5506,6 @@
 	* mod/forum/: index.php, lib.php, db/mysql.sql: 
 	
 	Changed listing of forums
-
-2002-07-21 Sunday 01:20  martin
-
-	* mod/reading/view.php: 
-	
-	Trying summaries back again in frameset
 
 2002-07-21 Sunday 00:04  martin
 
@@ -4831,7 +5669,7 @@
 2002-07-04 Thursday 15:48  martin
 
 	* mod/: choice/view.php, forum/view.php, journal/view.php,
-	reading/view.php, survey/view.php: 
+	survey/view.php: 
 	
 	Fix to update_module_icon (to pass the courseid)
 
@@ -4930,10 +5768,8 @@
 	course/user.php, course/view.php, course/weeks.php,
 	lib/db/mysql.sql, mod/choice/index.php, mod/choice/mod.html,
 	mod/forum/mod.html, mod/journal/index.php, mod/journal/mod.html,
-	mod/journal/user.php, mod/journal/view.php,
-	mod/reading/details.php, mod/reading/index.php,
-	mod/reading/mod.html, mod/survey/details.php, mod/survey/index.php,
-	mod/survey/mod.html: 
+	mod/journal/user.php, mod/journal/view.php, mod/survey/details.php,
+	mod/survey/index.php, mod/survey/mod.html: 
 	
 	Major changes throughout to change "week" notation to "section"
 	notation.  Sections covers "weeks", "topics" and anything else that
@@ -5246,13 +6082,6 @@
 	
 	More tweaks and simplification when possible
 
-2002-06-10 Monday 21:11  martin
-
-	* mod/reading/: details.php, lib.php, mod.html, view.php: 
-	
-	new reading type: "Web Address" is now Web Page and Web Link, which
-	simply redirects to the external link (no frame)
-
 2002-06-10 Monday 19:35  martin
 
 	* index.php: 
@@ -5384,8 +6213,8 @@
 2002-06-08 Saturday 14:52  martin
 
 	* course/view.php, mod/choice/view.php, mod/journal/view.php,
-	mod/reading/view.php, mod/survey/view.php,
-	theme/standard/header.html, theme/standardblue/header.html: 
+	mod/survey/view.php, theme/standard/header.html,
+	theme/standardblue/header.html: 
 	
 	Changes to put update/edit icons in the headers of module and
 	course pages
@@ -5505,7 +6334,7 @@
 2002-06-05 Wednesday 11:22  martin
 
 	* course/new.php, course/social.php, mod/journal/new.php,
-	mod/reading/new.php, user/new.php: 
+	user/new.php: 
 	
 	Old new.php system is replaced by print_recent_activity() in
 	course/lib.php
@@ -5516,7 +6345,6 @@
 	lib/moodlelib.php, lib/weblib.php, lib/db/mysql.sql,
 	mod/choice/report.php, mod/journal/lib.php, mod/journal/new.php,
 	mod/journal/report.php, mod/journal/user.php, mod/journal/view.php,
-	mod/reading/index.php, mod/reading/new.php,
 	mod/survey/download.php, mod/survey/report.php, user/edit.html,
 	user/edit.php, user/index.php, user/lib.php: 
 	
@@ -5616,24 +6444,6 @@
 	* theme/standard/styles.css: 
 	
 	Fixed for Internet Explorer?
-
-2002-06-01 Saturday 22:11  martin
-
-	* mod/reading/view.php: 
-	
-	Added TITLE to link to fullscreen reading
-
-2002-06-01 Saturday 22:00  martin
-
-	* mod/reading/view.php: 
-	
-	Minor frameset adjustments
-
-2002-06-01 Saturday 21:57  martin
-
-	* mod/reading/view.php: 
-	
-	Slight alterations to layout of frames.
 
 2002-06-01 Saturday 21:47  martin
 
@@ -5796,7 +6606,7 @@
 2002-05-31 Friday 17:14  martin
 
 	* mod/: choice/db/mysql.sql, journal/db/mysql.sql,
-	reading/db/mysql.sql, survey/db/mysql.sql: 
+	survey/db/mysql.sql: 
 	
 	Added new entries for log_display table.  These are used to define
 	what to display for any given logged item.
@@ -5806,12 +6616,10 @@
 	* mod/: choice/index.php, choice/install.sql, choice/mod.html,
 	choice/report.php, choice/view.php, journal/edit.php,
 	journal/index.php, journal/install.sql, journal/mod.html,
-	journal/report.php, journal/view.php, reading/details.php,
-	reading/index.php, reading/install.sql, reading/mod.html,
-	reading/view.php, survey/details.php, survey/download.php,
-	survey/edit.php, survey/index.php, survey/install.sql,
-	survey/mod.html, survey/report.php, survey/save.php,
-	survey/view.php: 
+	journal/report.php, journal/view.php, survey/details.php,
+	survey/download.php, survey/edit.php, survey/index.php,
+	survey/install.sql, survey/mod.html, survey/report.php,
+	survey/save.php, survey/view.php: 
 	
 	Various small fixes across all modules.  Most notable was the
 	revised use of add_to_log, and the new logging format.
@@ -5819,7 +6627,7 @@
 2002-05-31 Friday 17:03  martin
 
 	* mod/: choice/db/mysql.sql, journal/db/mysql.sql,
-	reading/db/mysql.sql, survey/db/mysql.sql: 
+	survey/db/mysql.sql: 
 	
 	This is the new format for database schema.  Each module has a db
 	directory with one file per database.  All these are called from
@@ -6268,12 +7076,6 @@
 	
 	Small change
 
-2002-02-26 Tuesday 14:36  martin
-
-	* mod/reading/lib.php: 
-	
-	Changes to list function - now returns list of links
-
 2002-02-26 Tuesday 14:35  martin
 
 	* index.php: 
@@ -6298,12 +7100,6 @@
 	header.html, styles.css: 
 	
 	New blue theme
-
-2002-02-26 Tuesday 11:27  martin
-
-	* mod/reading/lib.php: 
-	
-	Fixed case where course <> 0
 
 2002-02-01 Friday 10:56  martin
 
@@ -6373,23 +7169,11 @@
 	
 	Added stuff about scaling for large classes
 
-2001-12-06 Thursday 14:55  martin
-
-	* mod/reading/view.php: 
-	
-	bit more work on URL view ...
-
 2001-12-06 Thursday 12:32  martin
 
 	* course/mod.php: 
 	
 	Fixed headers
-
-2001-12-06 Thursday 12:27  martin
-
-	* mod/reading/view.php: 
-	
-	Altered URL frameset size
 
 2001-12-06 Thursday 12:23  martin
 
@@ -6527,7 +7311,6 @@
 2001-11-25 Sunday 23:48  martin
 
 	* config.php, file.php, course/view.php, lib/moodlelib.php,
-	mod/reading/lib.php, mod/reading/view.php,
 	theme/standard/footer.html: 
 	
 	Several changes related to the front page, so that it now works OK.
@@ -6595,10 +7378,6 @@
 	mod/journal/install.sql, mod/journal/lib.php, mod/journal/mod.html,
 	mod/journal/mod.php, mod/journal/module.php, mod/journal/new.php,
 	mod/journal/report.php, mod/journal/user.php, mod/journal/view.php,
-	mod/reading/details.php, mod/reading/icon.gif,
-	mod/reading/index.php, mod/reading/install.sql,
-	mod/reading/lib.php, mod/reading/mod.html, mod/reading/mod.php,
-	mod/reading/module.php, mod/reading/new.php, mod/reading/view.php,
 	mod/survey/details.php, mod/survey/download.php,
 	mod/survey/edit.php, mod/survey/edit_form.html,
 	mod/survey/edit_form.phtml, mod/survey/edit_new.html,
@@ -6663,10 +7442,6 @@
 	mod/journal/install.sql, mod/journal/lib.php, mod/journal/mod.html,
 	mod/journal/mod.php, mod/journal/module.php, mod/journal/new.php,
 	mod/journal/report.php, mod/journal/user.php, mod/journal/view.php,
-	mod/reading/details.php, mod/reading/icon.gif,
-	mod/reading/index.php, mod/reading/install.sql,
-	mod/reading/lib.php, mod/reading/mod.html, mod/reading/mod.php,
-	mod/reading/module.php, mod/reading/new.php, mod/reading/view.php,
 	mod/survey/details.php, mod/survey/download.php,
 	mod/survey/edit.php, mod/survey/edit_form.html,
 	mod/survey/edit_form.phtml, mod/survey/edit_new.html,
