@@ -82,6 +82,11 @@
 /// Check password access
     if ($quiz->password) {
         if (empty($_POST['quizpassword'])) {
+    
+            print_heading($quiz->name);
+            print_heading(get_string("attempt", "quiz", $attemptnumber));
+            print_simple_box(format_text($quiz->intro), "CENTER");
+            echo "<br />\n";
         
             echo "<form name=\"passwordform\" method=\"post\" action=\"attempt.php?q=$quiz->id\">\n";
             print_simple_box_start("center");
