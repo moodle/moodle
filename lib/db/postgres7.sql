@@ -171,7 +171,9 @@ CREATE TABLE prefix_user_teachers (
    userid integer NOT NULL default '0',
    course integer NOT NULL default '0',
    authority integer NOT NULL default '3',
-   role varchar(40) NOT NULL default ''
+   role varchar(40) NOT NULL default '',
+   editall integer NOT NULL default '1',
+   timemodified integer NOT NULL default '0'
 );
 
 CREATE INDEX prefix_user_teachers_courseuserid_idx ON prefix_user_teachers (course,userid);

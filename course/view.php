@@ -26,7 +26,7 @@
 
     add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
 
-    if (isteacher($course->id) and iscreator()) {
+    if (isteacheredit($course->id)) {
         if (isset($edit)) {
             if ($edit == "on") {
                 $USER->editing = true;

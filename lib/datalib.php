@@ -779,6 +779,9 @@ function get_user_info_from_db($field, $value) {
     if ($teachers = get_records("user_teachers", "userid", $user->id)) {
         foreach ($teachers as $teacher) {
             $user->teacher[$teacher->course] = true;
+            if ($teacher->editall) {
+                $user->teacheredit[$teacher->course] = true;
+            }
         }
     }
 
@@ -909,7 +912,7 @@ function get_course_teachers($courseid, $sort="t.authority ASC") {
 
     global $CFG;
 
-    return get_records_sql("SELECT u.*,t.authority,t.role 
+    return get_records_sql("SELECT u.*,t.authority,t.role,t.editall
                             FROM {$CFG->prefix}user u, 
                                  {$CFG->prefix}user_teachers t
                             WHERE t.course = '$courseid' AND t.userid = u.id AND u.deleted = '0'

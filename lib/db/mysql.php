@@ -481,6 +481,10 @@ function main_upgrade($oldversion=0) {
         get_scales_menu(0);    // Just to force the default scale to be created
     }
 
+    if ($oldversion < 2003081600) {
+        table_column("user_teachers", "", "editall", "integer", "1", "unsigned", "1", "", "role");
+        table_column("user_teachers", "", "timemodified", "integer", "10", "unsigned", "0", "", "editall");
+    }
 
     return $result;
 

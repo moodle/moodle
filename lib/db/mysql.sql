@@ -274,6 +274,8 @@ CREATE TABLE `prefix_user_teachers` (
   `course` int(10) unsigned NOT NULL default '0',
   `authority` int(10) NOT NULL default '3',
   `role` varchar(40) NOT NULL default '',
+  `editall` int(1) unsigned NOT NULL default '1',
+  `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),
   KEY `courseuserid` (course,userid)

@@ -268,7 +268,7 @@ function require_login($courseid=0) {
 /// whether they are "logged in" or allowed to be in a particular course.
 /// If not, then it redirects them to the site login or course enrolment.
 
-    global $CFG, $SESSION, $USER, $FULLME, $PHPSESSID;
+    global $CFG, $SESSION, $USER, $FULLME, $MoodleSession;
       
     // First check that the user is logged in to the site.
     if (! (isset($USER->loggedin) and $USER->confirmed and ($USER->site == $CFG->wwwroot)) ) { // They're not
@@ -277,11 +277,7 @@ function require_login($courseid=0) {
             $SESSION->fromurl  = $_SERVER["HTTP_REFERER"];
         }
         $USER = NULL;
-        if ($PHPSESSID) { // Cookies not enabled.
-            redirect("$CFG->wwwroot/login/index.php?PHPSESSID=$PHPSESSID");
-        } else {
-            redirect("$CFG->wwwroot/login/index.php");
-        }
+        redirect("$CFG->wwwroot/login/index.php");
         die;
     }
 
@@ -414,6 +410,21 @@ function isteacher($courseid, $userid=0) {
     }
 
     return record_exists("user_teachers", "userid", $userid, "course", $courseid);
+}
+
+function isteacheredit($courseid, $userid=0) {
+/// Is the user allowed to edit this course?
+    global $USER;
+
+    if (isadmin($userid)) {  // admins can do anything 
+        return true;
+    }
+
+    if (!$userid) {
+        return !empty($USER->teacheredit[$courseid]);
+    }
+
+    return get_field("user_teachers", "editall", "userid", $userid, "course", $courseid);
 }
 
 function iscreator ($userid=0) {

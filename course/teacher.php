@@ -34,6 +34,12 @@
     $strsearchresults  = get_string("searchresults");
     $strsearchagain   = get_string("searchagain");
     $strtoomanytoshow   = get_string("toomanytoshow");
+    $strname   = get_string("name");
+    $strorder   = get_string("order");
+    $strrole   = get_string("role");
+    $stredit   = get_string("edit");
+    $stryes   = get_string("yes");
+    $strno   = get_string("no");
 
     if ($search) {
         $searchstring = $strsearchagain;
@@ -78,6 +84,7 @@
             }
             $teacher->role = $vals['r'];
             $teacher->authority = $vals['a'];
+            $teacher->editall = $vals['e'];
             if (!update_record("user_teachers", $teacher)) {
                 error("Could not update teacher entry id = $teacher->id");
             }
@@ -111,6 +118,7 @@
 
         $teacher->userid   = $user->id;
         $teacher->course = $course->id;
+        $teacher->editall = 1;
         if (!empty($teachers)) {
             $teacher->authority = 2;
         } else {
@@ -121,6 +129,7 @@
             error("Could not add that teacher to this course!");
         }
         $user->authority = $teacher->authority;
+        $user->editall = $teacher->editall;
         $teachers[] = $user;
 
     }
@@ -153,14 +162,19 @@
 
     } else {
 
-        $table->head  = array ("", get_string("name"), get_string("order"), get_string("role"), "&nbsp");
-        $table->align = array ("right", "left", "center", "center", "center");
-        $table->size  = array ("35", "", "", "", "");
+        $table->head  = array ("", $strname, $strorder, $strrole, $stredit, "&nbsp");
+        $table->align = array ("right", "left", "center", "center", "center", "center");
+        $table->size  = array ("35", "", "", "", "10", "");
     
-        $option[0] = get_string("hide");
+        $ordermenu = NULL;
+        $ordermenu[0] = get_string("hide");
         for ($i=1; $i<=8; $i++) {
-            $option[$i] = $i;
+            $ordermenu[$i] = $i;
         }
+
+        $editmenu = NULL;
+        $editmenu[0] = $strno;
+        $editmenu[1] = $stryes;
 
         $teacherarray = array();
     
@@ -170,7 +184,13 @@
     
             $picture = print_user_picture($teacher->id, $course->id, $teacher->picture, false, true);
     
-            $authority = choose_from_menu ($option, "a$teacher->id", $teacher->authority, "", "", "", true);
+            $authority = choose_from_menu ($ordermenu, "a$teacher->id", $teacher->authority, "", "", "", true);
+
+            if ($USER->id == $teacher->id) {
+                $editall = "<input name=\"e$teacher->id\" type=\"hidden\" value=\"1\">$stryes";
+            } else {
+                $editall = choose_from_menu ($editmenu, "e$teacher->id", $teacher->editall, "", "", "", true);
+            }
     
             $removelink = "<a href=\"teacher.php?id=$course->id&remove=$teacher->id\">$strremoveteacher</a>";
 
@@ -180,7 +200,7 @@
     
             $table->data[] = array ($picture, "$teacher->firstname $teacher->lastname", $authority,
                                     "<input type=text name=\"r$teacher->id\" value=\"$teacher->role\" size=30>",
-                                    $removelink);
+                                    $editall, $removelink);
         }
         $teacherlist = implode(",",$teacherarray);
         unset($teacherarray);
