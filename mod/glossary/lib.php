@@ -233,7 +233,7 @@ function glossary_search_entries($searchterms, $glossary, $includedefinition) {
 
     if (!isteacher($glossary->course)) {
         $glossarymodule = get_record("modules", "name", "glossary");
-        $onlyvisible = " AND f.id = cm.instance AND cm.visible = 1 AND cm.module = $glossarymodule->id";
+        $onlyvisible = " AND g.id = cm.instance AND cm.visible = 1 AND cm.module = $glossarymodule->id";
         $onlyvisibletable = ", {$CFG->prefix}course_modules cm";
     } else {
 
