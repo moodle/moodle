@@ -16,10 +16,14 @@
 
         if ($password == $course->password) {
 
-            if (! enrol_student_in_course($USER->id, $course->id)) {
-                error("An error occurred while trying to enrol you.");
+            if (isguest()) {
+                add_to_log($course->id, "course", "guest", "view.php?id=$course->id", "$USER->id");
+            } else {
+                if (! enrol_student_in_course($USER->id, $course->id)) {
+                    error("An error occurred while trying to enrol you.");
+                }
+                add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
             }
-            add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
 
             $USER->student["$id"] = true;
             
@@ -44,11 +48,15 @@
     }
 
     if ($course->password == "") {   // no password, so enrol
-        if (! enrol_student_in_course($USER->id, $course->id)) {
-            error("An error occurred while trying to enrol you.");
+        
+        if (isguest()) {
+            add_to_log($course->id, "course", "guest", "view.php?id=$course->id", "$USER->id");
+        } else {
+            if (! enrol_student_in_course($USER->id, $course->id)) {
+                error("An error occurred while trying to enrol you.");
+            }
+            add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
         }
-
-        add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
 
         $USER->student["$id"] = true;
         

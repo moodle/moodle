@@ -10,6 +10,10 @@
         error("You are not supposed to use this script like that.");
     }
 
+    if (isguest()) {
+        error("Guests are not allowed to answer surveys", $HTTP_REFERER);
+    }
+
     require_variable($id);    // Course Module ID
 
     if (! $cm = get_record("course_modules", "id", $id)) {

@@ -43,6 +43,21 @@
         $USER->loggedin = true;
         $USER->admin = true;
         $USER->teacher["$course->id"] = true;
+
+        // This is also a good time to make the Guest User
+
+        $user = NULL;
+        $user->firstname = "Guest";
+        $user->lastname  = "User";
+        $user->username  = "guest";          // This user is identified by this
+        $user->password  = md5("guest");
+        $user->email     = "root@localhost";
+        $user->confirmed = 1;
+        $user->timemodified = time();
+
+        if (! $guest->user = insert_record("user", $user)) {
+            notify("Could not create guest user record !!!");
+        }
     }
 
     require_login();

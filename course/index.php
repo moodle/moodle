@@ -9,7 +9,7 @@
 
     if ($courses = get_records("course", "category", $cat, "fullname ASC")) {
    
-        foreach ($courses as $key => $course) {
+        foreach ($courses as $course) {
             print_course($course);
             echo "<BR>\n";
         }

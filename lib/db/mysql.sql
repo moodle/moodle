@@ -14,20 +14,21 @@
 # Table structure for table `course`
 #
 
-CREATE TABLE course (
-  id int(10) unsigned NOT NULL auto_increment,
-  category int(10) unsigned NOT NULL default '0',
-  password varchar(50) NOT NULL default '',
-  fullname varchar(254) NOT NULL default '',
-  shortname varchar(15) NOT NULL default '',
-  summary text NOT NULL,
-  format tinyint(4) NOT NULL default '1',
-  teacher varchar(100) NOT NULL default 'Teacher',
-  student varchar(100) NOT NULL default 'Student',
-  startdate int(10) unsigned NOT NULL default '0',
-  enddate int(10) unsigned NOT NULL default '0',
-  timemodified int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (id)
+CREATE TABLE `course` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `category` int(10) unsigned NOT NULL default '0',
+  `password` varchar(50) NOT NULL default '',
+  `fullname` varchar(254) NOT NULL default '',
+  `shortname` varchar(15) NOT NULL default '',
+  `summary` text NOT NULL,
+  `format` tinyint(4) NOT NULL default '1',
+  `teacher` varchar(100) NOT NULL default 'Teacher',
+  `student` varchar(100) NOT NULL default 'Student',
+  `guest` tinyint(1) unsigned NOT NULL default '0',
+  `startdate` int(10) unsigned NOT NULL default '0',
+  `enddate` int(10) unsigned NOT NULL default '0',
+  `timemodified` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`)
 ) TYPE=MyISAM;
 # --------------------------------------------------------
 
@@ -165,11 +166,11 @@ CREATE TABLE user (
 # Table structure for table `user_admins`
 #
 
-CREATE TABLE user_admins (
-  id int(10) unsigned NOT NULL auto_increment,
-  user int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (id),
-  UNIQUE KEY id (id)
+CREATE TABLE `user_admins` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `user` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `id` (`id`)
 ) TYPE=MyISAM COMMENT='One record per administrator user';
 # --------------------------------------------------------
 

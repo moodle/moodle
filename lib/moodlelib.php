@@ -705,13 +705,14 @@ function update_user_in_db() {
    }
 }
 
-function require_login($course=0) {
-// if they aren't already logged in, then send them off to login
-// $course is optional - if left out then it just requires that 
-// that they have an account on the system.
+function require_login($courseid=0) {
+// This function checks that the current user is logged in, and optionally
+// whether they are "logged in" or allowed to be in a particular course.
+// If not, then it redirects them to the site login or course enrolment.
 
     global $CFG, $SESSION, $USER, $FULLME, $HTTP_REFERER, $PHPSESSID;
       
+    // First check that the user is logged in to the site.
     if (! (isset( $USER->loggedin ) && $USER->confirmed) ) { 
         $SESSION->wantsurl = $FULLME;
         $SESSION->fromurl = $HTTP_REFERER;
@@ -721,20 +722,28 @@ function require_login($course=0) {
             redirect("$CFG->wwwroot/login/");
         }
         die;
- 
-    } else if ($course) {
-        if (! ($USER->student[$course] || $USER->teacher[$course] || $USER->admin ) ) {
-            if (!record_exists("course", "id", $course)) {
-                error("That course doesn't exist");
-            }
-
-            $SESSION->wantsurl = $FULLME;
-            redirect("$CFG->wwwroot/course/enrol.php?id=$course");
-            die;
-        }
     }
+    
+    // Next, check if the user can be in a particular course
+    if ($courseid) {
+        if ($USER->student[$courseid] || $USER->teacher[$courseid] || $USER->admin) {
+            update_user_in_db();
+            return;   // user is a member of this course.
+        }
+        if (! $course = get_record("course", "id", $courseid)) {
+            error("That course doesn't exist");
+        }
+        if ($course->guest && ($USER->username == "guest")) {
+            update_user_in_db();
+            return;   // user is a guest and this course allows guests
+        }
 
-    update_user_in_db();
+        // Not allowed in the course, so see if they want to enrol
+
+        $SESSION->wantsurl = $FULLME;
+        redirect("$CFG->wwwroot/course/enrol.php?id=$courseid");
+        die;
+    }
 }
 
 
@@ -792,6 +801,16 @@ function isstudent($course, $userid=0) {
     $timenow = time();   // todo:  add time check below
 
     return record_exists_sql("SELECT * FROM user_students WHERE user='$userid' AND course='$course'");
+}
+
+function isguest($userid=0) {
+    global $USER;
+
+    if (!$userid) {
+        return ($USER->username == "guest");
+    }
+
+    return record_exists_sql("SELECT * FROM user WHERE user='$userid' AND username = 'guest' ");
 }
 
 

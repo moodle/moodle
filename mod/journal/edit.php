@@ -14,6 +14,10 @@
 
     require_login($course->id);
 
+    if (isguest()) {
+        error("Guests are not allowed to edit journals", $HTTP_REFERER);
+    }
+
     if (! $journal = get_record("journal", "id", $cm->instance)) {
         error("Course module is incorrect");
     }

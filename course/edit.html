@@ -13,15 +13,23 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Password:</td>
+	<td><P>Summary:</td>
+	<td><TEXTAREA NAME=summary COLS=50 ROWS=10 WRAP=virtual><? p($form->summary) ?></TEXTAREA>
+	<? formerr($err["summary"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P>Entry Key:</td>
 	<td><input type="text" name="password" size=25 value="<? p($form->password) ?>">
 	<? formerr($err["password"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Summary:</td>
-	<td><TEXTAREA NAME=summary COLS=50 ROWS=10 WRAP=virtual><? p($form->summary) ?></TEXTAREA>
-	<? formerr($err["summary"]) ?>
+	<td><P>Open to guests?:</td>
+	<td><?
+    $choices["0"] = "No, only students are allowed";
+    $choices["1"] = "Yes, allow \"guest\" student in";
+    choose_from_menu ($choices, "guest", $form->guest, "") ?>
 	</td>
 </tr>
 <tr valign=top>

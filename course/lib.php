@@ -124,7 +124,8 @@ function print_course($course) {
     print_simple_box_start("CENTER", "80%");
 
     echo "<TABLE WIDTH=100%>";
-    echo "<TR VALIGN=top><TD VALIGN=top WIDTH=50%>";
+    echo "<TR VALIGN=top>";
+    echo "<TD VALIGN=top WIDTH=50%>";
     echo "<P><FONT SIZE=3><B><A HREF=\"view.php?id=$course->id\">$course->fullname</A></B></FONT></P>";
     if ($teachers = get_records_sql("SELECT u.* FROM user u, user_teachers t 
                                      WHERE u.id = t.user AND t.course = '$course->id' 
@@ -135,13 +136,23 @@ function print_course($course) {
             echo "$course->teacher: <A HREF=\"../user/view.php?id=$teacher->id&course=$site->id\">$teacher->firstname $teacher->lastname</A><BR>";
         }
         echo "</FONT></P>";
-     }
-     echo "</TD><TD VALIGN=top WIDTH=50%>";
-     echo "<P><FONT SIZE=2>".text_to_html($course->summary)."</FONT></P>";
-     echo "</TD></TR>";
-     echo "</TABLE>";
+    }
+    if ($course->guest or ($course->password == "")) {
+        echo "<A TITLE=\"Guest user allowed\" HREF=\"view.php?id=$course->id\">";
+        echo "<IMG VSPACE=4 ALT=\"\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"../user/user.gif\"></A>&nbsp;&nbsp;";
+    }
+    if ($course->password) {
+        echo "<A TITLE=\"Requires a Course entry key\" HREF=\"view.php?id=$course->id\">";
+        echo "<IMG VSPACE=4 ALT=\"\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"../pix/i/key.gif\"></A>";
+    }
 
-     print_simple_box_end();
+
+    echo "</TD><TD VALIGN=top WIDTH=50%>";
+    echo "<P><FONT SIZE=2>".text_to_html($course->summary)."</FONT></P>";
+    echo "</TD></TR>";
+    echo "</TABLE>";
+
+    print_simple_box_end();
 }
 
 function print_headline($text, $size=2) {

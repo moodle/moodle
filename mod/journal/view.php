@@ -15,7 +15,6 @@
 
     require_login($course->id);
 
-
     if (! $journal = get_record("journal", "id", $cm->instance)) {
         error("Course module is incorrect");
     }
@@ -50,7 +49,6 @@
     }
 
     if ($timenow > $timestart) {
-
 
         print_simple_box_start("center");
 
