@@ -54,12 +54,11 @@
                  "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
 
     if (isteacher($course->id)) {
-        if ($allanswers = get_records("quiz_grades", "quiz", $quiz->id)) {
-            $answercount = count($allanswers);
-        } else {
-            $answercount = 0;
-        }
-        echo "<p align=right><a href=\"report.php?id=$cm->id\">".get_string("viewallreports","quiz",$answercount)."</a></p>";
+        $attemptcount = count_records_select("quiz_attempts", "quiz = '$quiz->id' AND timefinish > 0");
+        $usercount = count_records("quiz_grades", "quiz", "$quiz->id");
+        $strusers  = get_string("users");
+        $strviewallanswers  = get_string("viewallanswers","quiz",$attemptcount);
+        echo "<p align=right><a href=\"report.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a></p>";
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }
