@@ -2,11 +2,15 @@
       // chat.php - created with Moodle 1.1 development (2003070400)
 
 
+$string['beep'] = "ビープ";
 $string['chatintro'] = "紹介文";
 $string['chatname'] = "チャットルーム名";
 $string['enterchat'] = "クリックしてチャットに入室";
 $string['idle'] = "アイドル";
+$string['messagebeepseveryone'] = "\$a が全員にビープします!";
+$string['messagebeepsyou'] = "\$a があなたにビープしました!";
 $string['messageenter'] = "\$a が入室しました";
+$string['messageexit'] = "\$a が退室しました";
 $string['modulename'] = "チャット";
 $string['modulenameplural'] = "チャット";
 $string['savemessages'] = "保存するメッセージ数";
