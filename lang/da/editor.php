@@ -1,0 +1,76 @@
+<?PHP // $Id$ 
+      // editor.php - created with Moodle 1.2 development (2003121500)
+
+
+$string['about'] = 'Om denne editor';
+$string['absbottom'] = 'Absolut Bund';
+$string['absmiddle'] = 'Absolut midt';
+$string['address'] = 'Adresse';
+$string['alignment'] = 'Placering';
+$string['alternatetext'] = 'Alternativ tekst';
+$string['baseline'] = 'grundlinie';
+$string['bold'] = 'Fed';
+$string['borderthickness'] = 'Kanttykkelse';
+$string['bottom'] = 'Bund';
+$string['browse'] = 'Gennemse';
+$string['cancel'] = 'Annuller';
+$string['cellpadding'] = 'Cellekant';
+$string['cellspacing'] = 'Celleadskillelse';
+$string['choosechar'] = 'Vælg karakter';
+$string['chooseicon'] = 'Vælg en ikon der skal indsættes';
+$string['close'] = 'Luk';
+$string['cols'] = 'Kolonner';
+$string['copy'] = 'Kopier markeret tekst';
+$string['createlink'] = 'Indsæt weblink';
+$string['cut'] = 'Klip markeret tekst';
+$string['forecolor'] = 'Bogstavsfarve';
+$string['heading'] = 'Overskrift';
+$string['hilitecolor'] = 'Baggrundsfarve';
+$string['horizontal'] = 'Horisontal';
+$string['horizontalrule'] = 'Horisontal linie';
+$string['htmlmode'] = 'Skift mellem WYSIWYG og HTMLkode';
+$string['imageurl'] = 'Billede URL';
+$string['indent'] = 'Større margin';
+$string['insertchar'] = 'Indsæt special karakter';
+$string['insertimage'] = 'indsæt billede';
+$string['insertsmile'] = 'Indsæt smiley';
+$string['inserttable'] = 'Indsæt tabel';
+$string['italic'] = 'Skrå skrift';
+$string['justifycenter'] = 'Centreret tekst';
+$string['justifyfull'] = 'Fast linjebredde';
+$string['justifyleft'] = 'Venstrestillet tekst';
+$string['justifyright'] = 'Højrestillet tekst';
+$string['layout'] = 'Layout';
+$string['left'] = 'Venstre';
+$string['middle'] = 'Midten';
+$string['normal'] = 'Normal';
+$string['notset'] = 'Ikke sat';
+$string['ok'] = 'OK';
+$string['orderedlist'] = 'Ordnet liste';
+$string['outdent'] = 'Mindre margin';
+$string['paste'] = 'Indsæt fra udklipsholder';
+$string['path'] = 'Sti';
+$string['percent'] = 'Procent';
+$string['pixels'] = 'Pixels';
+$string['popupeditor'] = 'Forstør editor';
+$string['preformatted'] = 'Preformateret';
+$string['preview'] = 'Se resultat';
+$string['redo'] = 'Gendan dine sidste ændringer';
+$string['right'] = 'Højre';
+$string['rows'] = 'Rækker';
+$string['showhelp'] = 'Hjælp i brugen af editoren';
+$string['spacing'] = 'Mellemrum';
+$string['strikethrough'] = 'Overstreget';
+$string['subscript'] = 'Sænket skrift';
+$string['superscript'] = 'Hævet skrift';
+$string['textindicator'] = 'Nuværende stil';
+$string['textmode'] = 'Du er i TEKST mode. Brug [<>] knappen til at gå tilbage til WYSIWYG mode.';
+$string['texttop'] = 'Teksttop';
+$string['top'] = 'Top';
+$string['underline'] = 'Understreget';
+$string['undo'] = 'Fortryd dine sidste handlinger';
+$string['unorderedlist'] = 'Punktliste';
+$string['vertical'] = 'Vertikal';
+$string['width'] = 'Bredde';
+
+?>
