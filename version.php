@@ -5,7 +5,7 @@
 // database to determine whether upgrades should
 // be performed (see lib/db/*.php)
 
-$version = 2002111900;   // The current version is a date (YYYYMMDDXX)
+$version = 2002112001;   // The current version is a date (YYYYMMDDXX)
 
 $release = "1.0.6.4 beta";  // User-friendly version number
 
