@@ -176,6 +176,7 @@ $string['frontpagedescription'] = "Front page 說明";
 $string['frontpageformat'] = "Front page 格式";
 $string['fulllistofcourses'] = "所有課程";
 $string['fullname'] = "名稱";
+$string['fullnamedisplay'] = '$a->lastname $a->firstname';
 $string['fullprofile'] = "個人完整資料";
 $string['fullsitename'] = "網站名稱";
 $string['gd1'] = "GD 1.x is installed";

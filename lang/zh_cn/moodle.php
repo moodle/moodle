@@ -248,6 +248,7 @@ $string['frontpagedescription'] = "首页说明";
 $string['frontpageformat'] = "首页格式";
 $string['fulllistofcourses'] = "所有课程";
 $string['fullname'] = "全名";
+$string['fullnamedisplay'] = '$a->lastname $a->firstname';
 $string['fullprofile'] = "个人详细资料";
 $string['fullsitename'] = "网站全名";
 $string['gd1'] = "GD 1.x已经安装";
