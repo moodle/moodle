@@ -56,6 +56,7 @@ $string['countdown'] = 'Compte à rebours';
 $string['countdownfinished'] = 'Le test se termine, vous devez envoyer vos réponses maintenant.';
 $string['countdowntenminutes'] = 'Le test se terminera dans 10 minutes.';
 $string['coursetestmanager'] = 'Format CTM';
+$string['createfirst'] = 'Vous devez d\'abord créer quelques questions à réponse courte.';
 $string['createmultiple'] = 'Créer plusieurs questions';
 $string['createnewquestion'] = 'Créer une question';
 $string['custom'] = 'Format personnalisé';
