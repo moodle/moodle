@@ -12,6 +12,9 @@
         error("Only the admin can use this page");
     }
 
+    if (!confirm_sesskey()) {
+        error(get_string('confirmsesskeybad', 'error'));
+    }
 
 /// If data submitted, then process and store.
 
@@ -27,7 +30,7 @@
                     notify("Problem saving config $name as $value");
                 }
             }
-            redirect("auth.php", get_string("changessaved"), 1);
+            redirect("auth.php?sesskey=$USER->sesskey", get_string("changessaved"), 1);
             exit;
 
         } else {
@@ -94,9 +97,10 @@
 
     echo "<center><p><b>";
     echo "<form target=\"{$CFG->framename}\" name=\"authmenu\" method=\"post\" action=\"auth.php\">";
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">";
     print_string("chooseauthmethod","auth");
 
-    choose_from_menu ($options, "auth", $auth, "","document.location='auth.php?auth='+document.authmenu.auth.options[document.authmenu.auth.selectedIndex].value", "");
+    choose_from_menu ($options, "auth", $auth, "","document.location='auth.php?sesskey=$USER->sesskey&auth='+document.authmenu.auth.options[document.authmenu.auth.selectedIndex].value", "");
 
     echo "</b></p></center>";
         
