@@ -41,10 +41,10 @@ class CourseBlock_course_list extends MoodleBlock {
 
         if (empty($THEME->custompix)) {
             $icon  = "<img src=\"$CFG->wwwroot/pix/i/course.gif\"".
-                     " height=\"16\" width=\"16\" alt=\"".get_string("course")."\">";
+                     " height=\"16\" width=\"16\" alt=\"".get_string("course")."\" />";
         } else {
             $icon  = "<img src=\"$CFG->wwwroot/theme/$CFG->theme/pix/i/course.gif\"".
-                     " height=\"16\" width=\"16\" alt=\"".get_string("course")."\">";
+                     " height=\"16\" width=\"16\" alt=\"".get_string("course")."\" />";
         }
         
         $adminseesall = true;

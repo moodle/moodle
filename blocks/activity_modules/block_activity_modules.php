@@ -27,7 +27,7 @@ class CourseBlock_activity_modules extends MoodleBlock {
             foreach ($modnamesused as $modname => $modfullname) {
                 if ($modname != 'label') {
                     $this->content->items[] = '<a href="'.$CFG->wwwroot.'/mod/'.$modname.'/index.php?id='.$this->course->id.'">'.$modnamesplural[$modname].'</a>';
-                    $this->content->icons[] = '<img src="'.$CFG->modpixpath.'/'.$modname.'/icon.gif" height="16" width="16" alt="">';
+                    $this->content->icons[] = '<img src="'.$CFG->modpixpath.'/'.$modname.'/icon.gif" height="16" width="16" alt="" />';
                 }
             }
         }

@@ -29,18 +29,18 @@ class CourseBlock_participants extends MoodleBlock {
 
         if ($this->course->category or $CFG->showsiteparticipantslist > 1 or ($CFG->showsiteparticipantslist == 1 and isteacher()) or isteacher(SITEID)) {
             $this->content->items[]='<a title="'.get_string('listofallpeople').'" href="'.$CFG->wwwroot.'/user/index.php?id='.$this->course->id.'">'.get_string('participants').'</a>';
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="">';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
         }
 
         if ($this->course->groupmode or !$this->course->groupmodeforce) {
             if ($this->course->groupmode == VISIBLEGROUPS or isteacheredit($this->course->id)) {
                 $this->content->items[]='<a title="'.$strgroups.'" href="'.$CFG->wwwroot.'/course/groups.php?id='.$this->course->id.'">'.$strgroups.'</a>';
-                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/group.gif" height="16" width="16" alt="">';
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/group.gif" height="16" width="16" alt="" />';
             } else if ($this->course->groupmode == SEPARATEGROUPS and $this->course->groupmodeforce) {
                 // Show nothing
             } else if ($currentgroup = get_current_group($this->course->id)) {
                 $this->content->items[]='<a title="'.$strgroupmy.'" href="'.$CFG->wwwroot.'/course/group.php?id='.$this->course->id.'">'.$strgroupmy.'</a>';
-                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/group.gif" height="16" width="16" alt="">';
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/group.gif" height="16" width="16" alt="" />';
             }
         }
 
@@ -52,7 +52,7 @@ class CourseBlock_participants extends MoodleBlock {
             } else {
                 $this->content->items[]= $editmyprofile." <blink>*</blink>";
             }
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" height="16" width="16" alt="">';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" height="16" width="16" alt="" />';
         }
 
         return $this->content;

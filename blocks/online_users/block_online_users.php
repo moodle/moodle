@@ -122,12 +122,12 @@ class CourseBlock_online_users extends MoodleBlock {
                 $this->content->text .= '<div style="text-align: left; font-size: 0.75em; padding-top: 5px;">';
                 $timeago = format_time(time() - max($user->timeaccess, $user->lastaccess)); //bruno to calculate correctly on frontpage 
                 if ($user->picture==0) {
-                    $this->content->text .= '<img src="'.$CFG->pixpath.'/i/user.gif" style="height: 16px; width=16px; vertical-align: middle;" alt=""> ';
+                    $this->content->text .= '<img src="'.$CFG->pixpath.'/i/user.gif" style="height: 16px; width=16px; vertical-align: middle;" alt="" /> ';
                 } else {
                     if ($CFG->slasharguments) {
-                        $imgtag = '<img src="'.$CFG->wwwroot.'/user/pix.php/'.$user->id.'/f2.jpg" style="height: 16px; width=16px; vertical-align: middle;" alt=""> ';
+                        $imgtag = '<img src="'.$CFG->wwwroot.'/user/pix.php/'.$user->id.'/f2.jpg" style="height: 16px; width=16px; vertical-align: middle;" alt="" /> ';
                     } else {
-                        $imgtag = '<img src="'.$CFG->wwwroot.'/user/pix.php?file=/'.$user->id.'/f2.jpg" style="height: 16px; width=16px; vertical-align: middle;" alt=""> ';
+                        $imgtag = '<img src="'.$CFG->wwwroot.'/user/pix.php?file=/'.$user->id.'/f2.jpg" style="height: 16px; width=16px; vertical-align: middle;" alt="" /> ';
                     }
                     $this->content->text .= $imgtag;
                 }
@@ -137,7 +137,7 @@ class CourseBlock_online_users extends MoodleBlock {
                 $table->align = array("right","left");
                 $table->cellpadding = 1;
                 $table->cellspacing = 1;
-                $table->data[] = array("<img src=\"$CFG->pixpath/i/user.gif\" height=\"16\" width=\"16\" alt=\"\">",$user->fullname);
+                $table->data[] = array("<img src=\"$CFG->pixpath/i/user.gif\" height=\"16\" width=\"16\" alt=\"\" />",$user->fullname);
             }
             // Slightly hacky way to do it but...
             ob_start();

@@ -49,7 +49,7 @@ class CourseBlock_social_activities extends MoodleBlock {
         $editbuttons = '';
 
         if ($ismoving) {
-            $this->content->icons[] = '&nbsp;<img align="bottom" src="'.$CFG->pixpath.'/t/move.gif" height="11" width="11">';
+            $this->content->icons[] = '&nbsp;<img align="bottom" src="'.$CFG->pixpath.'/t/move.gif" height="11" width="11" />';
             $this->content->items[] = $USER->activitycopyname.'&nbsp;(<a href="'.$CFG->wwwroot.'/course/mod.php?cancelcopy=true">'.$strcancel.'</a>)';
         }
 
@@ -79,7 +79,7 @@ class CourseBlock_social_activities extends MoodleBlock {
                             continue;
                         }
                         $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'">'.
-                            '<img height="16" width="80" src="'.$CFG->pixpath.'/movehere.gif" alt="'.$strmovehere.'" border="0"></a>';
+                            '<img height="16" width="80" src="'.$CFG->pixpath.'/movehere.gif" alt="'.$strmovehere.'" border="0" /></a>';
                         $this->content->icons[] = '';
                     }
                     $instancename = urldecode($modinfo[$modnumber]->name);
@@ -104,7 +104,7 @@ class CourseBlock_social_activities extends MoodleBlock {
                     } else {
                         $this->content->items[] = '<a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
                             ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.$instancename.'</a>'.$editbuttons;
-                        $this->content->icons[] = '<img src="'.$icon.'" height="16" width="16" alt="'.$mod->modfullname.'">';
+                        $this->content->icons[] = '<img src="'.$icon.'" height="16" width="16" alt="'.$mod->modfullname.'" />';
                     }
                 }
             }
@@ -112,7 +112,7 @@ class CourseBlock_social_activities extends MoodleBlock {
 
         if ($ismoving) {
             $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'">'.
-                                      '<img height="16" width="80" src="'.$CFG->pixpath.'/movehere.gif" alt="'.$strmovehere.'" border="0"></a>';
+                                      '<img height="16" width="80" src="'.$CFG->pixpath.'/movehere.gif" alt="'.$strmovehere.'" border="0" /></a>';
             $this->content->icons[] = '';
         }
 

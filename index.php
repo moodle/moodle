@@ -38,9 +38,9 @@
         } else {
             $wwwroot = str_replace('http','https',$CFG->wwwroot);
         }
-        $loginstring = "<font size=2><a href=\"$wwwroot/login/index.php\">".get_string("login")."</a></font>";
+        $loginstring = "<font size=\"2\"><a href=\"$wwwroot/login/index.php\">".get_string("login")."</a></font>";
     } else {
-        $loginstring = "<font size=1>".user_login_string($site)."</font>";
+        $loginstring = "<font size=\"1\">".user_login_string($site)."</font>";
     }
 
     if (empty($CFG->langmenu)) {
@@ -171,7 +171,7 @@
         /// If currently moving a file then show the current clipboard
         if (ismoving($site->id)) {
             $stractivityclipboard = strip_tags(get_string("activityclipboard", "", addslashes($USER->activitycopyname)));
-            echo "<p><font size=2>";
+            echo "<p><font size=\"2\">";
             echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"course/mod.php?cancelcopy=true\">".get_string("cancel")."</a>)";
             echo "</font></p>";
         }
@@ -192,7 +192,7 @@
             $streditsummary = get_string('editsummary');
             echo "<a title=\"$streditsummary\" ".
                  " href=\"course/editsection.php?id=$section->id\"><img src=\"$CFG->pixpath/t/edit.gif\" ".
-                 " height=11 width=11 border=0 alt=\"$streditsummary\"></a><br />";
+                 " height=\"11\" width=\"11\" border=\"0\" alt=\"$streditsummary\" /></a><br />";
         }
 
         echo '<br clear="all">';
@@ -220,9 +220,9 @@
                 } else {
                     $subtext = get_string("subscribe", "forum");
                 }
-                $headertext = "<table border=0 width=100% cellpadding=0 cellspacing=0 class=headingblockcontent><tr>
+                $headertext = "<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" class=\"headingblockcontent\"><tr>
                                <td>$newsforum->name</td>
-                               <td align=right><font size=1>
+                               <td align=\"right\"><font size=\"1\">
                                <a href=\"mod/forum/subscribe.php?id=$newsforum->id\">$subtext</a>
                                </td></tr></table>";
             } else {
