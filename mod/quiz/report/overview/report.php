@@ -207,7 +207,7 @@ class quiz_report extends quiz_default_report {
                 $table->add_data($row);
             }
 
-            echo '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/quiz/report/overview/utility.js" />';
+            echo '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/quiz/report/overview/utility.js"></script>';
             echo '<form id="attemptsform" method="post" action="report.php" onsubmit="var menu = document.getElementById(\'actionmenu\'); return confirm_if(menu.options[menu.selectedIndex].value == \'delete\', \''.$strreallydel.'\');">';
             echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
 
