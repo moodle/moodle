@@ -33,8 +33,10 @@
 
         if ($countcategories > 1) {
             $strcourses = get_string("courses");
-            print_header($strcourses, $strcourses, $strcourses, "", "", true, update_categories_button());
-            print_heading(get_string("categories"));
+            $strcategories = get_string("categories");
+            print_header("$site->shortname: $strcategories", $strcourses, 
+                          $strcategories, "", "", true, update_categories_button());
+            print_heading($strcategories);
             print_simple_box_start("center", "50%", "#FFFFFF", 5, "categorybox");
             print_whole_category_list();
             print_simple_box_end();

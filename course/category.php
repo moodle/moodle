@@ -73,11 +73,11 @@
                          "", "", true, $navbaritem);
         } else {
 	        print_header("$site->shortname: $category->name", "$site->fullname", 
-                         "<a href=\"index.php\">$strcourses</a> -> $category->name", "", "", true, $navbaritem);
+                         "<a href=\"index.php\">$strcategories</a> -> $category->name", "", "", true, $navbaritem);
         }
     } else {
 	    print_header("$site->shortname: $category->name", "$site->fullname", 
-                     "<a href=\"index.php\">$strcourses</a> -> $category->name", "", "", true, $navbaritem);
+                     "<a href=\"index.php\">$strcategories</a> -> $category->name", "", "", true, $navbaritem);
     }
 
 
@@ -88,7 +88,9 @@
     
     make_categories_list($displaylist, $parentlist, "");
     
-    echo "<table align=center><tr><td>";
+    echo "<table align=center><tr><td align=\"right\">";
+    echo "<p>$strcategories:</p>";
+    echo "</td><td>";
     popup_form("category.php?id=", $displaylist, "switchcategory", "$category->id", "", "", "", false);
     echo "</td></tr></table><br />";
 
