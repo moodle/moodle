@@ -12,7 +12,8 @@ CREATE TABLE `prefix_chat` (
   `chattime` int(10) unsigned NOT NULL default '0',
   `schedule` int(4) NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `course` (`course`)
 ) TYPE=MyISAM COMMENT='Each of these is a chat room';
 # --------------------------------------------------------
 
@@ -29,7 +30,10 @@ CREATE TABLE `prefix_chat_messages` (
   `message` text NOT NULL,
   `timestamp` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  KEY `timemodifiedchat` (`timestamp`,`chatid`)
+  KEY `timemodifiedchat` (`timestamp`,`chatid`),
+  KEY `chatid` (`chatid`),
+  KEY `userid` (`userid`),
+  KEY `groupid` (`groupid`)
 ) TYPE=MyISAM COMMENT='Stores all the actual chat messages';
 # --------------------------------------------------------
 
@@ -50,7 +54,9 @@ CREATE TABLE `prefix_chat_users` (
   `sid` varchar(32) NOT NULL default '',
   PRIMARY KEY  (`id`),
   KEY `userid` (`userid`),
-  KEY `lastping` (`lastping`)
+  KEY `lastping` (`lastping`),
+  KEY `chatid` (`chatid`),
+  KEY `groupid` (`groupid`)
 ) TYPE=MyISAM COMMENT='Keeps track of which users are in which chat rooms';
 
 
