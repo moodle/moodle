@@ -94,31 +94,45 @@ function validate_form($user, &$err) {
     }         
 
 
-    if (empty($user->password)) 
+    if (empty($user->password)) {
         $err->password = get_string("missingpassword");
+    }
 
-    if (empty($user->firstname))
+    if (empty($user->firstname)) {
         $err->firstname = get_string("missingfirstname");
+    }
         
-    if (empty($user->lastname))
+    if (empty($user->lastname)) {
         $err->lastname = get_string("missinglastname");
+    }
         
 
-    if (empty($user->email))
+    if (empty($user->email)) {
         $err->email = get_string("missingemail");
         
-    else if (! validate_email($user->email))
+    } else if (! validate_email($user->email)) {
         $err->email = get_string("invalidemail");
     
-    else if (record_exists("user", "email", $user->email)) 
+    } else if (record_exists("user", "email", $user->email)) {
         $err->email = get_string("emailexists")." <A HREF=forgot_password.php>".get_string("newpassword")."?</A>";
+    }
+    
+
+    if (empty($user->email2)) {
+        $err->email2 = get_string("missingemail");
+
+    } else if ($user->email2 != $user->email) {
+        $err->email2 = get_string("invalidemail");
+    }
 
 
-    if (empty($user->city)) 
+    if (empty($user->city)) {
         $err->city = get_string("missingcity");
+    }
 
-    if (empty($user->country)) 
+    if (empty($user->country)) {
         $err->country = get_string("missingcountry");
+    }
 
     return;
 }

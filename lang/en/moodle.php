@@ -238,6 +238,7 @@ $string['editthisactivity'] = 'Edit this activity';
 $string['editthiscategory'] = 'Edit this category';
 $string['edituser'] = 'Edit user accounts';
 $string['email'] = 'Email address';
+$string['emailagain'] = 'Email (again)';
 $string['emailconfirm'] = 'Confirm your account';
 $string['emailconfirmation'] = 'Hi $a->firstname,
 
@@ -620,6 +621,7 @@ $string['potentialteachers'] = 'Potential teachers';
 $string['preferredlanguage'] = 'Preferred language';
 $string['preview'] = 'Preview';
 $string['previeworchoose'] = 'Preview or choose a theme';
+$string['previous'] = 'Previous';
 $string['publicdirectory'] = 'Public directory';
 $string['publicdirectory0'] = 'Please do not publish this site';
 $string['publicdirectory1'] = 'Publish the site name only';
