@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 development (2003110400)
+      // workshop.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['absent'] = "·çÀÊ";
@@ -68,6 +68,7 @@ $string['gradeforbias'] = "¥Ð¥¤¥¢¥¹¤ËÂÐ¤¹¤ëÉ¾²Á";
 $string['gradeforreliability'] = "¿®ÍêÀ­¤ËÂÐ¤¹¤ëÉ¾²Á";
 $string['gradeforstudentsassessment'] = "³ØÀ¸¤ÎÉ¾²Á¤ËÂÐ¤¹¤ëÉ¾²Á";
 $string['gradeofsubmission'] = "Äó½ÐÊª¤ÎÉ¾²Á¡§ \$a";
+$string['gradetable'] = "É¾²Á¥Æ¡¼¥Ö¥ë";
 $string['gradingstrategy'] = "É¾²ÁÊýË¡";
 $string['hidegradesbeforeagreement'] = "Æ±°Õ¤ÎÁ°¤ËÉ¾²Á¤ò±£¤¹";
 $string['hidenamesfromstudents'] = "\$a ¤è¤êÌ¾Á°¤ò±£¤¹";
@@ -119,8 +120,10 @@ $string['numberofassessments'] = "É¾²Á¿ô";
 $string['numberofassessmentsofstudentsubmissions'] = "³ØÀ¸¤ÎÄó½ÐÊª¤ËÂÐ¤¹¤ëÉ¾²Á¿ô";
 $string['numberofassessmentsofteachersexamples'] = "¶µ»Õ¤ÎÌÏÈÏ²òÅú¤ËÂÐ¤¹¤ëÉ¾²Á¿ô";
 $string['numberofentries'] = "¥¨¥ó¥È¥ê¿ô";
+$string['numberofnegativeresponses'] = "ÈÝÄêÅª¤ÊÊÖÅú¿ô";
 $string['on'] = "\$a";
 $string['openassignment'] = "²ÝÂê¤ò³«¤¯";
+$string['optionaladjustment'] = "¥ª¥×¥·¥ç¥óÄ´À°";
 $string['optionforpeergrade'] = "Áê¸ßÉ¾²Á¥ª¥×¥·¥ç¥ó";
 $string['overallgrade'] = "Áí¹çÉ¾²Á";
 $string['overallocation'] = "¥ª¡¼¥Ð¡¼¥¢¥í¥±¡¼¥·¥ç¥ó";
@@ -145,6 +148,7 @@ $string['pleaseassessthesestudentsubmissions'] = "¤³¤ì¤é¤Î \$a ¤ÎÄó½ÐÊª¤òÉ¾²Á¤·¤
 $string['pleaseassessyoursubmissions'] = "¤¢¤Ê¤¿¤ÎÄó½ÐÊª¤òÉ¾²Á¤·¤Æ¤¯¤À¤µ¤¤";
 $string['poor'] = "°­¤¤";
 $string['present'] = "½ÐÀÊ";
+$string['reasonforadjustment'] = "Ä´À°ÍýÍ³";
 $string['reassess'] = "ºÆÉ¾²Á";
 $string['reply'] = "ÊÖ»ö";
 $string['returnto'] = "Ìá¤ë";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003110400)
+      // moodle.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['action'] = "操作";
@@ -399,6 +399,7 @@ $string['language'] = "言語";
 $string['languagegood'] = "この言語パックは最新版です! :-)";
 $string['lastaccess'] = "最終アクセス";
 $string['lastedited'] = "最終編集日時";
+$string['lastlogin'] = "最終ログイン";
 $string['lastmodified'] = "最終更新日時";
 $string['lastname'] = "名字";
 $string['latestlanguagepack'] = "moodle.orgで最新の言語パックを確認";
@@ -667,6 +668,7 @@ $string['showonlyweek'] = "第 \$a 週のみ表示";
 $string['showrecent'] = "最新の活動を表示";
 $string['showreports'] = "活動レポートを表示";
 $string['showtheselogs'] = "ログを表示";
+$string['since'] = "Since";
 $string['site'] = "サイト";
 $string['sitefiles'] = "サイトファイル";
 $string['sitelogs'] = "サイトログ";
