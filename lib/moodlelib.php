@@ -2279,7 +2279,7 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
  */
 function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true) {
 
-    global $CFG, $_SERVER;
+    global $CFG, $FULLME;
 
     global $course;                // This is a bit of an ugly hack to be gotten rid of later
     if (!empty($course->lang)) {   // Course language is defined
@@ -2382,7 +2382,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         return true;
     } else {
         mtrace('ERROR: '. $mail->ErrorInfo);
-        add_to_log(SITEID, 'library', 'mailer', $_SERVER['REQUEST_URI'], 'ERROR: '. $mail->ErrorInfo);
+        add_to_log(SITEID, 'library', 'mailer', $FULLME, 'ERROR: '. $mail->ErrorInfo);
         return false;
     }
 }
