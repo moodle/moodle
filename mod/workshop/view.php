@@ -64,6 +64,7 @@
                   "", "", true, update_module_button($cm->id, $course->id, $strworkshop), navmenu($course, $cm));
 
 	// ...and if necessary set default action 
+	
 	optional_variable($action);
     if (isteacher($course->id)) {
 		if (empty($action)) { // no action specified, either go straight to elements page else the admin page
@@ -273,25 +274,7 @@
 	
 	/*********************** student's view could be in 1 of 4 stages ***********************/
 	elseif ($action == 'studentsview') {
-		// print standard assignment heading
-		$strdifference = format_time($workshop->deadline - time());
-		if (($workshop->deadline - time()) < 0) {
-			$strdifference = "<font color=\"red\">$strdifference</font>";
-		}
-		$strduedate = userdate($workshop->deadline)." ($strdifference)";
-		print_simple_box_start("CENTER");
-		print_heading($workshop->name, "CENTER");
-		print_simple_box_start("CENTER");
-		echo "<b>".get_string("duedate", "assignment")."</b>: $strduedate<br />";
-		echo "<b>".get_string("maximumgrade")."</b>: $workshop->grade<br />";
-		echo "<b>".get_string("detailsofassessment", "workshop")."</b>: 
-			<a href=\"assessments.php?id=$cm->id&action=displaygradingform\">".
-			get_string("specimenassessmentform", "workshop")."</a><br />";
-		print_simple_box_end();
-		echo "<br />";
-		echo format_text($workshop->description, $workshop->format);
-		print_simple_box_end();
-		echo "<br />";
+		workshop_print_assignment_info($workshop);
 		// in Stage 1? - are there any teacher's submissions? and...
 		// ...has student assessed the required number of the teacher's submissions ("satisfactory level" dropped 14/8/03)
 		if ($workshop->ntassessments and (!workshop_test_user_assessments($workshop, $USER))) {

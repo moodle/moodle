@@ -2,6 +2,9 @@
 
 include_once("$CFG->dirroot/files/mimetypes.php");
 
+// reset error reporting
+error_reporting($CFG->debug);
+
 /*** Constants **********************************/
 
 $WORKSHOP_TYPE = array (0 => get_string("notgraded", "workshop"),
@@ -707,7 +710,7 @@ function workshop_list_user_submissions($workshop, $user) {
 function workshop_print_assessment($workshop, $assessment, $allowchanges, $showcommentlinks)
 function workshop_print_assessments_by_user_for_admin($workshop, $user) {
 function workshop_print_assessments_for_admin($workshop, $submission) {
-function workshop_print_assignment_info($workshop) {
+function workshop_print_assignment_info($cm, $workshop) {
 function workshop_print_difference($time) {
 function workshop_print_feedback($course, $submission) {
 function workshop_print_league_table($workshop) {
@@ -2593,8 +2596,21 @@ function workshop_print_assessments_for_admin($workshop, $submission) {
 
 
 function workshop_print_assignment_info($workshop) {
+
+	if (! $course = get_record("course", "id", $workshop->course)) {
+        error("Course is misconfigured");
+        }
+    if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
+        error("Course Module ID was incorrect");
+		}
+	// print standard assignment heading
+	$strdifference = format_time($workshop->deadline - time());
+	if (($workshop->deadline - time()) < 0) {
+		$strdifference = "<font color=\"red\">$strdifference</font>";
+	}
+	$strduedate = userdate($workshop->deadline)." ($strdifference)";
 	print_simple_box_start("center");
-	print_heading($workshop->name);
+	print_heading($workshop->name, "center");
 	print_simple_box_start("center");
 	echo "<b>".get_string("duedate", "assignment")."</b>: $strduedate<br />";
 	echo "<b>".get_string("maximumgrade")."</b>: $workshop->grade<br />";
@@ -2605,7 +2621,7 @@ function workshop_print_assignment_info($workshop) {
 	echo "<br />";
 	echo format_text($workshop->description, $workshop->format);
 	print_simple_box_end();
-	echo "<br />";
+	echo "<br />";	
 	}
 
 
