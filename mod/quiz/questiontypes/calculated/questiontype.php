@@ -537,11 +537,12 @@ function quiz_qtype_calculated_find_formula_errors($formula) {
         $formula = str_replace($regs[0], '1', $formula);
     }
 
-    // Strip away empty space
-    $formula = str_replace(' ', '', $formula);
+    // Strip away empty space and lowercase it
+    $formula = strtolower(str_replace(' ', '', $formula));
 
     $safeoperatorchar = '-+/*%>:^~<?=&|!';
     $operatorornumber = "[$safeoperatorchar.0-9eE]";
+
 
     while (ereg("(^|[$safeoperatorchar,(])([a-z0-9_]*)\\(($operatorornumber+(,$operatorornumber+((,$operatorornumber+)+)?)?)?\\)",
             $formula, $regs)) {
