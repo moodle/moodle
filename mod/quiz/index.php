@@ -105,7 +105,11 @@
                 $gradecol = "";
             }
         } else { 
-            $gradecol = "$bestgrade / $quiz->grade";
+            if ($bestgrade === "" or $quiz->grade == 0) {
+                $gradecol = "";
+            } else {
+                $gradecol = "$bestgrade / $quiz->grade";
+            }
         }
 
         if ($course->format == "weeks" or $course->format == "topics") {

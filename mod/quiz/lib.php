@@ -1426,7 +1426,7 @@ function quiz_get_user_attempts_string($quiz, $attempts, $bestgrade) {
 function quiz_get_best_grade($quizid, $userid) {
 /// Get the best current grade for a particular user in a quiz
     if (!$grade = get_record("quiz_grades", "quiz", $quizid, "userid", $userid)) {
-        return 0;
+        return "";
     }
 
     return (round($grade->grade,0));
