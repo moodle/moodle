@@ -371,6 +371,7 @@ $string['emailpasswordsent'] = 'Thank you for confirming the change of password.
 <p>The new password was automatically generated - you might like to
 <a href=$a->link>change your password</a> to something easier to remember.';
 $string['enable'] = 'Enable';
+$string['encryptedcode'] = 'Encrypted code';
 $string['enrolledincourse'] = 'Enrolled in course \"$a\"';
 $string['enrolledincoursenot'] = 'Not enrolled in course \"$a\"';
 $string['enrolmentconfirmation'] = 'You are about to enroll yourself as a member of this course.<br />Are you sure you wish to do this?';
