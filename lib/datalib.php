@@ -2456,7 +2456,6 @@ function get_course_mods($courseid) {
                             FROM {$CFG->prefix}modules m,
                                  {$CFG->prefix}course_modules cm
                             WHERE cm.course = '$courseid'
-                            AND cm.deleted = '0'
                             AND cm.module = m.id ");
 }
 
@@ -2482,7 +2481,6 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
                                 {$CFG->prefix}modules md,
                                 {$CFG->prefix}$modulename m
                            WHERE $courseselect
-                                 cm.deleted = '0' AND
                                  cm.instance = m.id AND
                                  md.name = '$modulename' AND
                                  md.id = cm.module AND
@@ -2518,7 +2516,6 @@ function get_all_instances_in_course($modulename, $course) {
                                  {$CFG->prefix}$modulename m
                             WHERE cm.course = '$course->id' AND
                                   cm.instance = m.id AND
-                                  cm.deleted = '0' AND
                                   cm.section = cw.id AND
                                   md.name = '$modulename' AND
                                   md.id = cm.module")) {
