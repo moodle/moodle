@@ -860,7 +860,7 @@ function ewiki_script($asid="", $id=false, $params="", $bin=0, $html=1, $script=
 
    #-- fin
    if ($html) {
-      $url = str_replace("&", "&amp;", $url);
+      $url = preg_replace("/&(?![A-Za-z]{0,4}\w{2,3};|#[0-9]{2,5};)/","&uml;", $url);
    }
    return($url);
 }
