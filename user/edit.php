@@ -192,7 +192,7 @@ function find_form_errors(&$user, &$usernew, &$err) {
                 $err["username"] = get_string("alphanumerical");
         }
 
-        if (empty($usernew->newpassword) and empty($user->password))
+        if (empty($usernew->newpassword) and empty($user->password) and is_internal_auth() )
             $err["newpassword"] = get_string("missingpassword");
 
         if (($usernew->newpassword == "admin") or ($user->password == md5("admin") and empty($usernew->newpassword)) ) {

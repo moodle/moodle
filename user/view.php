@@ -131,7 +131,7 @@
     echo "</TD></TR></TABLE></TABLE>";
 
     $internalpassword = false;
-    if ($CFG->auth == "email" or $CFG->auth == "none" or $CFG->auth == "manual") {
+    if (is_internal_auth()) {
         $internalpassword = "$CFG->wwwroot/login/change_password.php";
     }
 
