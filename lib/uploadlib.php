@@ -10,6 +10,7 @@ class upload_manager {
     var $status; // keep track of if we're ok (errors for each file are kept in $files['whatever']['uploadlog']
     var $course; // the course this file has been uploaded for (for logging and virus notifications)
     var $inputname; // if we're only getting one file.
+    var $notify; // if we're given silent=true in the constructor, this gets built up to hold info about the process.
 
     /**
      * Constructor, sets up configuration stuff so we know how to act.
@@ -19,9 +20,10 @@ class upload_manager {
      * @param $handlecollisions - whether to use handle_filename_collision() or not. (optional, defaults to false)
      * @param $course - the course the files are being uploaded for (for logging and virus notifications)
      * @param $recoverifmultiple - if we come across a virus, or if a file doesn't validate or whatever, do we continue? optional, defaults to true.
-     * @param $modbytes - max bytes for this module - this and $course->maxbytes are used to get the maxbytes to use (lowest) from get_max_upload_file_size().
+     * @param $modbytes - max bytes for this module - this and $course->maxbytes are used to get the maxbytes from get_max_upload_file_size().
+     * @param $silent - whether to notify errors or not.
      */
-    function upload_manager($inputname='',$deleteothers=false,$handlecollisions=false,$course=null,$recoverifmultiple=false,$modbytes=0) {
+    function upload_manager($inputname='',$deleteothers=false,$handlecollisions=false,$course=null,$recoverifmultiple=false,$modbytes=0,$silent=false) {
         
         global $CFG;
         
@@ -29,6 +31,7 @@ class upload_manager {
         $this->config->handlecollisions = $handlecollisions;
         $this->config->recoverifmultiple = $recoverifmultiple;
         $this->config->maxbytes = get_max_upload_file_size($CFG->maxbytes,$course->maxbytes,$modbytes);
+        $this->config->silent = $silent;
         $this->files = array();
         $this->status = false; 
         $this->course = $course;
@@ -58,12 +61,22 @@ class upload_manager {
                     if (!$this->config->recoverifmultiple && count($this->files) > 1) {
                         $a->name = $this->files[$name]['originalname'];
                         $a->problem = $this->files[$name]['uploadlog'];
-                        notify(get_string('uploadfailednotrecovering','moodle',$a));
+                        if (!$this->config->silent) {
+                            notify(get_string('uploadfailednotrecovering','moodle',$a));
+                        }
+                        else {
+                            $this->notify .= "<br />".get_string('uploadfailednotrecovering','moodle',$a);
+                        }
                         $this->status = false;
                         return false;
                     }
                     else if (count($this->files) == 1) {
-                        notify($this->files[$name]['uploadlog']);
+                        if (!$this->config->silent) {
+                            notify($this->files[$name]['uploadlog']);
+                        }
+                        else {
+                            $this->notify .= "<br />".$this->files[$name]['uploadlog'];
+                        }
                         $this->status = false;
                         return false;
                     }
@@ -200,7 +213,12 @@ class upload_manager {
             }
         }
         if ($deletedsomething) {
-            notify(get_string('uploadoldfilesdeleted'));
+            if (!$this->config->silent) {
+                notify(get_string('uploadoldfilesdeleted'));
+            }
+            else {
+                $this->notify .= "<br />".get_string('uploadoldfilesdeleted');
+            }
         }
     }
     
@@ -305,6 +323,16 @@ class upload_manager {
     function get_new_filename() {
         if (!empty($this->inputname) && count($this->files) == 1) {
             return $this->files[$this->inputname]['name'];
+        }
+        return false;
+    }
+
+    /** 
+     * If we're only handling one file (if input name was given in the constructor) this will return the full path to the saved file.
+     */
+    function get_new_filepath() {
+        if (!empty($this->inputname) && count($this->files) == 1) {
+            return $this->files[$this->inputname]['fullpath'];
         }
         return false;
     }

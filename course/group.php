@@ -65,11 +65,11 @@
             $err['name'] = get_string("missingname");
 
         } else {
-            if (!empty($_FILES['imagefile'])) {
+            require_once($CFG->dirroot.'/lib/uploadlib.php');
+            $um = new upload_manager('imagefile',false,false,null,false,0,false);
+            if ($um->preprocess_files()) {
                 require_once("$CFG->libdir/gdlib.php");
-                if ($filename = valid_uploaded_file($_FILES['imagefile'])) { 
-                    $group->picture = save_profile_image($group->id, $filename, 'groups');
-                }
+                $group->picture = save_profile_image($group->id, $um, 'groups');
             }
             $group->name        = $form->name;
             $group->description = $form->description;
@@ -77,7 +77,8 @@
             if (!update_record("groups", $group)) {
                 notify("A strange error occurred while trying to save ");
             } else {
-                redirect("group.php?id=$course->id&group=$group->id", get_string("changessaved"));
+                notify(get_string('changessaved'));
+                print_continue("group.php?id=$course->id&group=$group->id");
             }
         }
     }

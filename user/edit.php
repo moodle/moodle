@@ -64,13 +64,12 @@
             $usernew->username = trim(moodle_strtolower($usernew->username));
         }
 
-        if (empty($_FILES['imagefile'])) {
-            $_FILES['imagefile'] = NULL;    // To avoid using uninitialised variable later
-        }
 
-        if (find_form_errors($user, $usernew, $err)) {
-            if ($filename = valid_uploaded_file($_FILES['imagefile'])) { 
-                $usernew->picture = save_profile_image($user->id, $filename);
+        require_once($CFG->dirroot.'/lib/uploadlib.php');
+        $um = new upload_manager('imagefile',false,false,null,false,0,true);
+
+        if (find_form_errors($user, $usernew, $err,$um)) {
+            if (empty($err['imagefile']) && $usernew->picture = save_profile_image($user->id, $um,'users')) {
                 set_field('user', 'picture', $usernew->picture, 'id', $user->id);  /// Note picture in DB
             } else {
                 if (!empty($usernew->deletepicture)) {
@@ -83,10 +82,8 @@
 
         } else {
             $timenow = time();
-
-            if ($filename = valid_uploaded_file($_FILES['imagefile'])) { 
-                $usernew->picture = save_profile_image($user->id, $filename);
-            } else {
+            
+            if (!$usernew->picture = save_profile_image($user->id,$um,'users')) {
                 if (!empty($usernew->deletepicture)) {
                     set_field('user', 'picture', 0, 'id', $user->id);  /// Delete picture
                     $usernew->picture = 0;
@@ -94,9 +91,9 @@
                     $usernew->picture = $user->picture;
                 }
             }
-    
+            
             $usernew->timemodified = time();
-
+            
             if (isadmin()) {
                 if (!empty($usernew->newpassword)) {
                     $usernew->password = md5($usernew->newpassword);
@@ -203,7 +200,7 @@
 
 /// FUNCTIONS ////////////////////
 
-function find_form_errors(&$user, &$usernew, &$err) {
+function find_form_errors(&$user, &$usernew, &$err, &$um) {
     global $CFG;
 
     if (isadmin()) {
@@ -261,6 +258,9 @@ function find_form_errors(&$user, &$usernew, &$err) {
         if ($error = email_is_not_allowed($usernew->email)) {
             $err["email"] = $error;
         }
+    }
+    if (!$um->preprocess_files()) {
+        $err['imagefile'] = $um->notify;
     }
 
     $user->email = $usernew->email;

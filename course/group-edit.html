@@ -34,9 +34,9 @@
 <tr valign="top">
     <td align="right"><p><?php print_string("newpicture") ?>:</td>
     <td>
-    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $maxbytes ?>" />
-    <input type="file" name="imagefile" size="40" />
     <?php helpbutton("picture", get_string("helppicture"));
+       require_once($CFG->dirroot.'/lib/uploadlib.php');
+       upload_print_form_fragment(1,array('imagefile'),null,false,null,0,0,false);
        print_string("maxsize", "", display_size($maxbytes)); 
        if (isset($err["imagefile"])) formerr($err["imagefile"]);
     ?>

@@ -46,13 +46,17 @@ function ImageCopyBicubic ($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $
     } 
 }
 
-function save_profile_image($id, $filename, $dir="users") {
-// Given a filename to a known image, this function scales and crops
+function save_profile_image($id, $uploadmanager, $dir="users") {
+// Given an upload manager with the right settings, this function performs a virus scan, and then scales and crops
 // it and saves it in the right place to be a "user" or "group" image.
 
     global $CFG;
 
     if (empty($CFG->gdversion)) {
+        return false;
+    }
+
+    if (!$uploadmanager) {
         return false;
     }
 
@@ -69,14 +73,13 @@ function save_profile_image($id, $filename, $dir="users") {
             return false;
         }
     }
-    
-    $originalfile = "$CFG->dataroot/$dir/$id/original";
 
-    if (!move_uploaded_file($filename, $originalfile)) {
+    $destination = "$CFG->dataroot/$dir/$id";
+    if (!$uploadmanager->save_files($destination)) {
         return false;
     }
 
-    @chmod($originalfile, 0666);
+    $originalfile = $uploadmanager->get_new_filepath();
 
     $imageinfo = GetImageSize($originalfile);
     
