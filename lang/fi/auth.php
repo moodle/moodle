@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
 
 
 $string['auth_common_settings'] = 'Yleiset asetukset';
 $string['auth_data_mapping'] = 'Tietojen yhdistäminen';
 $string['auth_dbdescription'] = 'Tämä moduli tarkistaa ulkoisen tietokannan taulusta käyttäjätunnuksen ja salasanan. Jos käyttäjätunnus on uusi, myös muita tietoja voidaan kopioda Moodleen.';
-$string['auth_dbextrafields'] = 'Nämä kentät ovat valinnaisia. Voit asettaa Moodlen hakemaan valmiiksi joitakin käyttäjätietoja <b>ulkoisesta tietokannasta</b>.<p>Jos jätät nämä kentät tyhjiksi, käytetään oletusasetusarvoja.</p> Käyttäjä voi joka tapauksessa muuttaa omia henkilötietojaan myöhemmin.';
+$string['auth_dbextrafields'] = 'Nämä kentät ovat valinnaisia. Voit asettaa Moodlen hakemaan valmiiksi joitakin käyttäjätietoja <b>ulkoisesta tietokannasta</b>.<p>Jos jätät nämä kentät tyhjiksi, käytetään oletusasetusarvoja.</p> <p>Käyttäjä voi joka tapauksessa muuttaa omia henkilötietojaan myöhemmin.</p>';
 $string['auth_dbfieldpass'] = 'Salasanakentän nimi';
 $string['auth_dbfielduser'] = 'Käyttäjätunnuskentän nimi';
 $string['auth_dbhost'] = 'Tietokantapalvelin';
@@ -14,7 +14,7 @@ $string['auth_dbpass'] = 'Salasana käyttäjätunnukselle';
 $string['auth_dbpasstype'] = 'Määritä salasanakentän käyttämä muoto. MD5-salaus on hyödyllinen, jos haluat käyttää muita web-sovelluksia kuten PostNukea.';
 $string['auth_dbtable'] = 'Tietokannan taulun nimi';
 $string['auth_dbtitle'] = 'Käytä ulkoista tietokantaa';
-$string['auth_dbtype'] = 'Tietokannan tyyppi (Katso <A HREF=../lib/adodb/readme.htm#drivers>ADOdb dokumentoinnista</A> yksityiskohdat)';
+$string['auth_dbtype'] = 'Tietokannan tyyppi (Katso <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb dokumentoinnista</a> yksityiskohdat)';
 $string['auth_dbuser'] = 'Käyttäjätunnus tietokantaan lukuoikeuksin';
 $string['auth_editlock'] = 'Lukitse arvo';
 $string['auth_editlock_expl'] = '<p><b>Lukitse arvo:</b> Estää tiedon muokaamisen Moodlen sisältä. </p>';

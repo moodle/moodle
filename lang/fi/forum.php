@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005022400)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
 
 
 $string['addanewdiscussion'] = 'Lis‰‰ uusi keskustelu';
@@ -93,7 +93,7 @@ $string['openmode1'] = 'Ei keskusteluja, mutta vastaaminen sallitaan';
 $string['openmode2'] = 'Keskustelut ja vastaukset sallitaan';
 $string['parent'] = 'Nayt‰ aiempi';
 $string['parentofthispost'] = 'T‰m‰n viestin alku';
-$string['postadded'] = 'Viestisi on lis‰tty.<P>Sinulla $a aikaa muokata viesti‰ jos haluat muuttaa sit‰.';
+$string['postadded'] = '<p>Viestisi on lis‰tty.</p><p>Sinulla $a aikaa muokata viesti‰ jos haluat muuttaa sit‰.</p>';
 $string['postincontext'] = 'Katso t‰t‰ viesti‰ asiayhteydess‰‰n';
 $string['postmailinfo'] = 'T‰m‰ on kopio viestist‰ sivustolla $a.
 Lis‰t‰ksesi vastauksen viestiin suoraan sivustolle, klikkaa seuraavaa linkki‰:';

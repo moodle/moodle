@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
 
 
 $string['addresource'] = 'Lisää aineisto';
@@ -55,7 +55,7 @@ $string['newwindow'] = 'Uusi ikkuna';
 $string['newwindowopen'] = 'Näytä linkki uudessa ikkunassa';
 $string['note'] = 'Huomaa';
 $string['notefile'] = 'Lisätäksesi tiedostoja kurssille (jotta ne näkysivät tässä listassa) käytä 
-<a href=\"$a\">Tiedostot</A>-työkalua.';
+<a href=\"$a\">Tiedostot</a>-työkalua.';
 $string['notypechosen'] = 'Sinun pitää valita luettavan aineiston tyyppi.  Käytä selaimen Takaisin-painiketta ja yritä uudelleen.';
 $string['pagedisplay'] = 'Näytä aineisto nykyisessä ikkunassa';
 $string['pagewindow'] = 'Samassa ikkunassa';

@@ -1,12 +1,11 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.3.3 + (2004052503)
+      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
 
 
 $string['absent'] = 'Puuduv';
 $string['accumulative'] = 'Kogunev';
 $string['action'] = 'Tegevus';
 $string['ago'] = '$ tagasi';
-$string['allgradeshaveamaximumof'] = 'Kõik hinded on maksimaalselt: $a';
 $string['amend'] = 'Paranda';
 $string['amendassessmentelements'] = 'Paranda hindamise elemente';
 $string['amendtitle'] = 'Paranda pealkiri';
@@ -20,7 +19,6 @@ $string['assessmentofthissubmission'] = 'Esitise hindamine';
 $string['assessments'] = 'Hindamised';
 $string['atthisstageyou'] = 'Oled praeguseks lõpetanud hindamise.<br />Võid oma töö selle hinnangu põhjal üle vaadata.<br />Seda tehes paranda hiljem ka oma hinnangut.<br />Võid teha seda vajutades allpool toodud Uuesti hindamise linki.';
 $string['awaitingassessmentbythe'] = 'Ootab hindamist $a poolt';
-$string['awaitingfeedbackfromthe'] = 'Ootab tagasisidet $a poolt';
 $string['clearlateflag'] = 'Kustuta hilinemise märge';
 $string['comment'] = 'Kommentaar';
 $string['confirmdeletionofthisitem'] = 'Kinnita $a kustutamine';
@@ -77,7 +75,6 @@ $string['noteonassessmentelements'] = 'Võta teadmiseks, et hindamine on jaotatud
 $string['noteonstudentassessments'] = '{Hinne õpilaselt / Hinnangu hinne õpetajalt}';
 $string['notgraded'] = 'Ei ole hinnatud';
 $string['notitlegiven'] = 'Pealkirja pole';
-$string['nowpleasemakeyourownassessment'] = 'Nüüd palun tee oma enda hinnang tööle $a poolt.<br />Pane tähele, et hindamise vormi pannakse algul samad hinded, mis õpilase vormi. Peaksid tegema kõik muudatused mida vajalikuks pead ja siis vajutama lehe jaluses olevat nuppu';
 $string['numberofassessmentelements'] = 'Kommentaaride, Hindamise elementide, Hinnete märgistuste, Kriteeriumite või Kategooriate arv rubriigis';
 $string['numberofentries'] = 'Kirjete arv';
 $string['numberofnegativeresponses'] = 'Negatiivsete vastuste arv';
@@ -144,7 +141,6 @@ $string['usemaximum'] = 'Kasuta maksimumi';
 $string['usemean'] = 'Kasuta keskmist';
 $string['verypoor'] = 'Väga halb';
 $string['view'] = 'Vaata';
-$string['viewassessment'] = 'Vaata hinnangut';
 $string['warningonamendingelements'] = 'HOIATUS: On esitatud hinnangud. <br /> ÄRA muuda elementide arvu, skaalade tüüpi või elementide kaalukust.';
 $string['weightederrorcount'] = 'Kaalutud vigade arv: $a';
 $string['weightforgradingofassessments'] = 'Hindamise hinnete kaalukus';

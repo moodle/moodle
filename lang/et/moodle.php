@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3.3 + (2004052503)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
 
 
 $string['action'] = 'Toiming';
@@ -136,47 +136,7 @@ $string['clicktochange'] = 'muutmiseks kliki';
 $string['closewindow'] = 'Sulge aken';
 $string['comparelanguage'] = 'Võrdle ja redigeeri kasutatavat keelt';
 $string['complete'] = 'Lõpeta';
-$string['configallowunenroll'] = 'Kui see on seatud \'Jah\' peale on õpilastel lubatud end õppeainest igal ajal välja registreeruda. Vastasel juhul on see protsess vaid õpetajate ja administraatorite kontrollida.';
-$string['configautologinguests'] = 'Kas peaks tundmatud kasutajad sisse logima külaliskasutajana?';
-$string['configcachetext'] = 'Suurematel lehtedel, mis kasutavad tekstifiltreid võib see seade asju kiirendada. Teksti koopiaid hoitakse töödeldavas vormis siin määratud aja jooksul. Seades aja liiga väikseks võib see asju isegi veidi aeglustada, kuid liiga suureks määrates võtab teksti uuendus liiga kaua aega (nt uute linkide puhul)';
-$string['configcountry'] = 'Kui siia sisestada riik, siis saab seda riiki vaikimisi valida uutele kasutajakontodele. Et kasutajat sundida riiki valima, jäta see sisestamata.';
-$string['configdebug'] = 'Kui see sisse lülida, siis PHP veateadete hulk suureneb, nii et trükitakse rohkem hoiatusi. See on vajalik üksnes tarkvaraarendajale.';
-$string['configdeleteunconfirmed'] = 'Kui kasutusel on emaili kaudu autentimine siis siin määratud ajavahemiku jooksul aksepteeritakse kasutajate vastuseid. Peale seda aega vanad kinnitamata kontod kustutatakse';
-$string['configerrorlevel'] = 'Vali PHP hoiatuste hulk, mida soovid kuvada. Parim valik on enamasti Normal.';
-$string['configfilteruploadedfiles'] = 'Selle seade lubamisel laseb Moodle enne näitamist kõik üleslaetud HTML ja tekstifailid läbi filtrite';
-$string['configforcelogin'] = 'Tavaliselt on avaleht ja kursuste nimekirjad (mitte kurused ise) nähatavad ka sisselogimata. Kui tahad, et kasutajad enne ÜKSKÕIK mis tegevust sisse logiksid, luba see seade';
-$string['configframename'] = 'Kui sisestad Moodle\'i veebilehe freimis, siis pane selle freimi nimi siia. Vastasel juhul peaks selle väärtuseks jääma \'_top\'';
-$string['configfullnamedisplay'] = 'See määrab ära kuidas kuvatakse täielikud nimed. Enamustele üks-keelsetele lehtedele on parim valik vaikeväärtus \"Eesnimi + Perenimi\", kuid võid peita perenimed või jätta selle keelepaketi otsustada (mõnedel keeltel on erinevad viisid)';
-$string['configgdversion'] = 'Osuta installeeritud GD versioonile. Vaikimisi näha olev versioon on see, mis on  automaatselt tuvastatud. Ära seda muuda, kui pole kindlalt veendunud selles, mida teed.';
-$string['confightmleditor'] = 'Vali, kas lubada või mitte manustatud HTML tekstiredaktorit. Isegi kui seda lubad, ilmub see redaktor üksnes siis, kui kasutaja kasutab ühilduvat brauserit (IE 5.5 või uuemat). Kasutajatel on võimalus seda ka mitte kasutada.';
-$string['configidnumber'] = 'See seade määrab kas (a) Kasutajatelt ei küsita ID numbrit üldse,(b) Kasutajatelt küsitakse ID numbrit, kuid nad saavad selle tühjaks jätta või (c) Kasutajatelt küsitakse ID numbrit ja välja ei saa tühjaks jätta. Kasutajate ID numbrit näidatakse tema profiilis, kui nii on seadistatud.';
-$string['configintro'] = 'Sellel lehel võid täpsustada konfiguratsioonide muutujate hulka, mis panevad Moodle\'i sinu serveris korralikult tööle. Ära liialt pabista - vaikeseaded töötavad enamasti hästi sa võid alati sellele lehele tagasi tulla ja seadeid muuta.';
-$string['configintroadmin'] = 'Sellel lehel sa peaksid konfigureerima peamise administraatori konto, mis kontrollib kogu saiti. Veendu, et kasutajanimi ja salasõna on turvalised ning meiliaadress kehtib. Hiljem võid administraatori kontosid veel luua.';
-$string['configintrosite'] = 'See leht võimaldab konfigureerida selle uue saidi esilehte ja nime. Võid hiljem siia igal ajal tagasi tulla, et seadeid muuta, klikkides kodulehel lingile \"Saidi seaded\".';
-$string['configlang'] = 'Vali vaikeseade keel kogu saidi jaoks. Kasutajad võivad seda seadet hiljem oma äranägemise järgi muuta.';
-$string['configlangdir'] = 'Enamikes keeltes kirjutatakse vasakult paremale, kuid mõnedes, nagu araabia ja heebrea keeles kirjutatakse paremalt vasakule.';
-$string['configlanglist'] = 'Jäta see lünk tühjaks, et võimaldada kasutajal valida keelte hulgast, mis on sinu  Moodle\'i installatsioonis. Keelte menüüd võid siiski lühendada, sisestades komaga eraldatud nimekirja keelte koodidest, mida soovid kasutada. Näiteks:  en,es_es,fr,it';
-$string['configlangmenu'] = 'Vali, kas üldist keelte menüüd kodulehel, logimislehel jne kuvada või mitte. See valik ei mõjuta kasutajate võimalust valida eelistatud keelt nende oma profiilis.';
-$string['configlocale'] = 'Vali kogu saidi geograafiline asukoht - see mõjutab kuupäevade formaati ja keelt. Sul peab olema see lokaalandmestik installeeritud operatsioonisüsteemi. (nt en_US või es_ES). Kui sa ei tea, mida valida, jäta see tühjaks.';
-$string['configloglifetime'] = 'See määrab ajavahemiku pikkuse, mille jooksul soovid säilitada logifaili kasutaja tegevuse kohta. Logimisandmed, mis on sellest varasemad, kustutatakse automaatselt. Parim lahendus on hoida logifaile nii kaua kui võimalik, juhuks, kui neid vaja läheb, kuid väga koormatud serveri ja toimimisprobleemide puhul võiks logifailide eluiga lühendada.';
-$string['configlongtimenosee'] = 'Kui õpilased pole pikka aega sisse loginud, siis nad kustutatakse automaatselt kursuste nimekirjast. See parameeter seab ajapiirangu.';
-$string['configmaxbytes'] = 'Määrab üleslaaditavate failide maksimaalse suuruse üle terve lehe. See seade on piiratud PHP seade upload_max_filesize ja Apache seade LimitRequestBody poolt. \'maxbytes\' omakorda piirab kursuse ja mooduli  juures valitavat suuruste vahemikku.';
-$string['configmaxeditingtime'] = 'Määrab aja, mille jooksul peavad inimesed redigeerima foorumi postitusi, päeviku tagasisidet jne. Enamasti on 30 minutit piisav väärtus.';
-$string['configopentogoogle'] = 'Google\'l lubatakse leheküljele siseneda kui külaline. Lisaks logitakse kõik Google otsingu kaudu leheni jõudnud inimesed sisse külalistena. See pakub vaid ligipääsu juba külaliste juurdepääsuga kursustele';
-$string['configproxyhost'] = 'Kui sellel <B>serveril</B> on tarvis kasutada puhverarvutit (näiteks tulemüüri) internetti pääsemiseks, siis varusta see puhver-kasutajanime ja pordiga. Vastasel juhul jäta  tühjaks.';
-$string['configsecureforms'] = 'Moodle saab kasutada lisaturvatasandit, võttes vastu andmeid erinevatelt veebiblankettidelt. Kui see on lubatud, siis brauseri HTTP_REFERER muutujat kontrollitakse praeguse blanketi aadressiga võrreldes. Mõnel üksikul juhul võib see põhjustada probleeme, kui kasutaja kasutab tulemüüri (näiteks Zonealarm) , mis on konfigureeritud HTTP_REFERER oma võrguliiklusest vöötima/maha võtma.  Sümptomiteks on vormi \"kinni kiilumine\". Kui sinu kasutajatel on selliseid probleeme (näiteks) logimislehega, siis võid sa tahta seda seadet ilmselt blokeeerida, ehkki see võib jätta sinu saidi kaitsetuks jõulistele salasõna-rünnakutele. Kui kahtled, jäta siia seadeks \"Jah\".';
-$string['configsessioncookie'] = 'See seade kohandab Moodle\'i sessiooni küpsiste nime. Valikuline ja kasulik vaid siis kui samal lehel jookseb mitu Moodle\'i koopiat ja küpsised võivad segamini minna.';
-$string['configsessiontimeout'] = 'Kui saidile sisse loginud inimesed on kauemat aega tegevuseta (lehti ei laadi), siis nad logitakse automaatselt välja (nende seanss lõpetatakse). See muutuja määrab, kui pika aja jooksul see peaks juhtuma ';
-$string['configslasharguments'] = 'Failide (kujutistr, üleslaaditud materjali jne)hankimine toimub läbi skripti, mis kasutab slash arguments \"kärbitud väiteid\" (siin teine valik). See meetod võimaldab faile lihtsamalt veebibrauserite, puhverserverite jne vahemällu salvestada. Kahjuks mõned PHP serverid seda meetodit ei võimalda, nii et kui esineb probleeme üleslaetud failide või kujutiste (näiteks kasutaja piltide) vaatamisel, säti see muutuja esimeseks variandiks.';
-$string['configsmtphosts'] = 'Anna ühe või mitme kohaliku SMTP serveri täielik nimi, mida Moodle peaks kasutama, et saata meile (näit. \'mail.a.com\' või \'mail.a.com;mail.b.com\'). Kui jätad selle tühjaks, kasutab Moodle PHP vaikeseadet meilide saatmiseks.';
-$string['configsmtpuser'] = 'Kui oled täpsustanud ülalnimetatud SMPT serveri ja server nõuab autentsuse tõendamist, siis sisesta siia kasutajanimi ja salasõna.';
-$string['configteacherassignteachers'] = 'Kas tavalistel õpetajatel on õigus määrata õpetajaid oma kursusele? Kui \'Ei\', siis saavad õpetajaid määrata vaid kursuse looja ja administraatorid';
-$string['configtimezone'] = 'Määra vaikimisi seatud ajavöönd siin. See on vaid vaikeväärtus kuupäevade näitamiseks. Iga kasutaja saab määrata oma profiilis sobiva ajavööndi. \"Server time\" siin määrab Moodle\'i kella vastavalt operatsioonisüsteemi seadele, kuid \"Server time\" kasutaja profiilis seab kasutajale selle sama ajavööndi mis serveris';
-$string['configunzip'] = 'Osuta oma lahtipakkimisprogrammi asukoht (ainult  Unix). Seda läheb vaja serveris kokku pakitud arhiivide lahtipakkimisel..';
 $string['configuration'] = 'Konfiguratsioon';
-$string['configvariables'] = 'Konfigureeri muutujad';
-$string['configwarning'] = 'Ole ettevaatlik nende seadistuste muutmisel - valed väärtused võivad tekitada tõsiseid probleeme.';
-$string['configzip'] = 'Määratle oma pakkimisprogrammi asukoht (ainult Unix). Seda läheb vaja serverisse pakitud arhiivi tekitamiseks.';
 $string['confirm'] = 'Kinnitan';
 $string['confirmed'] = 'Teie registreerumine on kinnitatud';
 $string['confirmednot'] = 'Teie registreerumist pole veel kinnitatud!';
@@ -303,9 +263,9 @@ Enamikus meiliprogrammides peaks see ilmuma veebilingi kujul, millele võib lihts
 Kui vajad abi, võta kontakti saidi administraatoriga,
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: konto kinnitus';
-$string['emailconfirmsent'] = '<P>Teie meiliaadressile <B>$a</B>
-saadeti kiri mis sisaldab lihtsaid juhendeid, kuidas registreeruda.
-<P>Kui olete jätkuvalt raskustes, võtke kontakti saidi administraatoriga.';
+$string['emailconfirmsent'] = '<p>Teie meiliaadressile <b>$a</b>
+saadeti kiri mis sisaldab lihtsaid juhendeid, kuidas registreeruda.</p>
+<p>Kui olete jätkuvalt raskustes, võtke kontakti saidi administraatoriga.</p>';
 $string['emaildisable'] = 'See emaili aadress on keelatud';
 $string['emaildisplay'] = 'Emaili kuva';
 $string['emaildisplaycourse'] = 'Luba ainult teistel kursusel osalejatel mu emaili aadressi näha';
@@ -331,9 +291,9 @@ $string['emailpasswordconfirmationsubject'] = '$a: muuda salasõna kinnitus ';
 $string['emailpasswordconfirmsent'] = 'Teie meiliaadressile <b>$a</b> saadeti kiri mis sisaldab lihtsaid juhiseid, kuidas kinnitada ja lõpetada selle salasõna muutmist.
 Kui teil on jätkuvalt probleeme, võtke kontakti saidi administraatoriga.';
 $string['emailpasswordsent'] = 'Täname, et kinnitasite salasõna muutmise..
-  <p>Teie aadressile <b>$a->email</b>.on saadetud email, mis sisaldab teie uut salasõna 
-  <p>Uus salasõna tekitati automaatselt - ehk meeldib teile
-  <a href=$a->link>muuda salasõna</a> millekski lihtsamini meeldejäävaks.';
+  <br />Teie aadressile <b>$a->email</b>.on saadetud email, mis sisaldab teie uut salasõna 
+  <br />Uus salasõna tekitati automaatselt - ehk meeldib teile
+  <a href=\"$a->link\">muuda salasõna</a> millekski lihtsamini meeldejäävaks.';
 $string['enable'] = 'Lubatud';
 $string['enrolledincourse'] = 'Registreeritud õppeainele $a';
 $string['enrolledincoursenot'] = 'Registreeritud õppeainele $a';
@@ -511,16 +471,19 @@ $string['loginas'] = 'Logi kui';
 $string['loginguest'] = 'Logi kui külaline';
 $string['loginsite'] = 'Logi saidile';
 $string['loginsteps'] = 'Tere! Et kursustele pääseda, võta minut aega,et tekitada omale konto sellele veebilehele. Igal eraldi kursusel võib samuti olla ühekordne \", osalejaks registreerimise võti key\", mida läheb vaja alles hiljem. Tee järgmised sammud:
-   <OL size=2>
-   <LI>Täida lüngad <A HREF=$a>Uue Konto</A> blanketil oma isikuandmetega.
-   <LI>Sinu aadressile saadetakse kohe email.
-   <LI>Loe email läbi ja kliki selles sisalduvale lingile.
-   <LI>Sinu konto kinnitatakse ja sind logitakse sisse.
-   <LI>Nüüd vali kursus, millel soovid osaleda.
-   <LI>Kui sinult küsitakse \"osalejaks registreerimise võtit\" - kasuta seda, mille õpetaja sulle andis. See \"registreerib su \" kursusel osalejaks.
-   <LI>Nüüd on sul juurdepääs tervele kursusele.Edaspidi pead sisetama üksnes oam kasutajanime ja salasõna (sellel leheküljel asuval blanketil), et logida sisse ja pääseda mistahes kursusele, kus kavatsed osaleda.
-   </OL>';
-$string['loginstepsnone'] = 'Tere!<P>Et pääseda kõigile kursustele, pead tekitama omale konto.<P>Sul tuleb vaid mõelda välja kasutajanime ja salasõna, mida sellel leheküljel blanketil kasutada.!<P>Kui keegi on sellise kasutajanime juba valinud, siis proovi uut kasutajanime varianti.';
+   <ol>
+   <li>Täida lüngad <a href=\"$a\">Uue Konto</a> blanketil oma isikuandmetega.</li>
+   <li>Sinu aadressile saadetakse kohe email.
+   <li>Loe email läbi ja kliki selles sisalduvale lingile.</li>
+   <li>Sinu konto kinnitatakse ja sind logitakse sisse.</li>
+   <li>Nüüd vali kursus, millel soovid osaleda.</li>
+   <li>Kui sinult küsitakse \"osalejaks registreerimise võtit\" - kasuta seda, mille õpetaja sulle andis. See \"registreerib su \" kursusel osalejaks.</li>
+   <li>Nüüd on sul juurdepääs tervele kursusele.Edaspidi pead sisetama üksnes oam kasutajanime ja salasõna (sellel leheküljel asuval blanketil), et logida sisse ja pääseda mistahes kursusele, kus kavatsed osaleda.</li>
+   </ol>';
+$string['loginstepsnone'] = '<p>Tere!</p>
+<p>Et pääseda kõigile kursustele, pead tekitama omale konto.</p>
+<p>Sul tuleb vaid mõelda välja kasutajanime ja salasõna, mida sellel leheküljel blanketil kasutada.!</p>
+<p>Kui keegi on sellise kasutajanime juba valinud, siis proovi uut kasutajanime varianti.</p>';
 $string['loginto'] = 'Logi sisse $a';
 $string['loginusing'] = 'Logi sisse oma kasutajanime ja salasõna abil  ';
 $string['logout'] = 'Logi välja';
@@ -672,10 +635,10 @@ $string['passwordconfirmchange'] = 'Kinnita salasõna muutmine ';
 $string['passwordrecovery'] = 'Jah, aita mul sisse logida';
 $string['passwordsdiffer'] = 'Need salasõnad ei sobi omavahel';
 $string['passwordsent'] = 'Salasõna on saadetud';
-$string['passwordsenttext'] = '<P>Teie aadressile $a->email.on saadetud email
-<P><B>Palun kontrolli uut salasõna oma meili aadressilt</B>
-<P>uus salasõna tekitati automaatselt , te võite muuta selle mõneks kergemini meelde jäävaks <A HREF=$a->link>
- </A>.';
+$string['passwordsenttext'] = '<p>Teie aadressile $a->email.on saadetud email</p>
+<p><b>Palun kontrolli uut salasõna oma meili aadressilt</b></p>
+<p>uus salasõna tekitati automaatselt , te võite muuta selle mõneks kergemini meelde jäävaks <a href=\"$a->link\">
+ </a>.</p>';
 $string['paymentrequired'] = 'See kursus on tasuline.';
 $string['people'] = 'Inimesed';
 $string['personalprofile'] = 'Personaalne profiil';
@@ -704,10 +667,10 @@ $string['refreshingevents'] = 'Sündmuste värskendamine';
 $string['registration'] = 'Moodle registreerumine';
 $string['registrationemail'] = 'Emaili teated';
 $string['registrationinfo'] = '<p> See leht võimaldab registreeruda oma Moodle\'i saidi moodle.org.  Registreerumine on tasuta.
-  Registreerumise põhihüveks on see, et liitute väikesemahulise meililistiga oluliste teadete edastamiseks, nagu turvahoiatused ja teated Moodle\'i uute versioonide kohta.
-  <p>Vaikimisi hoitakse teie informatsiooni privaatselt ega jagata ega müüda kunagi kellelegi teisele. Ainus põhjus seda infot koguda on toetus eeesmärgil ning et aidata konstrueerida terviklikku pilti Moodle\'I kooslusest.
-        <p>Soovi korral võite lubada oam saidi nime, riiki ja URL lisada Moodle\'I saitide avalikku loendisse.
- <p>Kõiki uued registreerumisi kontrollitakse ükshaaval enne, kui nad loendisse lisatakse, kuid juba loendis olles võite täpsustada oma registreerumisandmeid (ning oma sissekannet avalikus loendis)suvalisel ajal, kui esitate uuesti selle blanketi.';
+  Registreerumise põhihüveks on see, et liitute väikesemahulise meililistiga oluliste teadete edastamiseks, nagu turvahoiatused ja teated Moodle\'i uute versioonide kohta.</p>
+  <p>Vaikimisi hoitakse teie informatsiooni privaatselt ega jagata ega müüda kunagi kellelegi teisele. Ainus põhjus seda infot koguda on toetus eeesmärgil ning et aidata konstrueerida terviklikku pilti Moodle\'I kooslusest.</p>
+        <p>Soovi korral võite lubada oam saidi nime, riiki ja URL lisada Moodle\'I saitide avalikku loendisse.</p>
+ <p>Kõiki uued registreerumisi kontrollitakse ükshaaval enne, kui nad loendisse lisatakse, kuid juba loendis olles võite täpsustada oma registreerumisandmeid (ning oma sissekannet avalikus loendis)suvalisel ajal, kui esitate uuesti selle blanketi.</p>';
 $string['registrationno'] = 'Ei, ma ei soovi posti saada';
 $string['registrationsend'] = 'Saada registreerumisinfo aadressil moodle.org';
 $string['registrationyes'] = 'Jah, palun teatage mulle tähtsatest asjaoludest';
@@ -744,7 +707,7 @@ $string['scheduledbackupstatus'] = 'Ajastatud varundamise olek';
 $string['search'] = 'Otsi';
 $string['searchagain'] = 'Otsi uuesti';
 $string['searchcourses'] = 'Otsi õppeaineid';
-$string['searchhelp'] = 'Sa saad otsida mitmeid sõnu korraga. <p>sõna: otsi igat vastet sellele sõnale teksti seast.<br />+sõna: leitakse ainult täpne vaste otsitavale sõnale.<br />-sõna: ei lisata vastet mis sisaldab seda sõna.';
+$string['searchhelp'] = 'Sa saad otsida mitmeid sõnu korraga. <br /><br />sõna: otsi igat vastet sellele sõnale teksti seast.<br />+sõna: leitakse ainult täpne vaste otsitavale sõnale.<br />-sõna: ei lisata vastet mis sisaldab seda sõna.';
 $string['searchresults'] = 'Otsingutulemused';
 $string['sec'] = 'sekund';
 $string['secs'] = 'sekundit';

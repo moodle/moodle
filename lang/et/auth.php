@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.3.3 + (2004052503)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
 
 
 $string['auth_dbdescription'] = 'See meetod kasutab välise andmebaasi tabelit, et kontrollida, kas antud kasutajanimi ja salasõna kehtivad. Kui tegemist on uue kontoga, siis võib Moodle\'isse kopeerida infot ka mujalt.';
-$string['auth_dbextrafields'] = 'Need väljad on valikulised. Otsustage, kas soovite eeltäita mõned Moodle\'i väljad infoga <B>välisandmebaasidest väljadelt</B> mida täpsustate siin. <P>Kui jätate need tühjaks, kasutatatkse vaikeseadeid.<P>Mõlemal juhul on kasutajal võimalus redigeerida kõiki välju, kui ta on sisse loginud.';
+$string['auth_dbextrafields'] = 'Need väljad on valikulised. Otsustage, kas soovite eeltäita mõned Moodle\'i väljad infoga <b>välisandmebaasidest väljadelt</b> mida täpsustate siin. <p>Kui jätate need tühjaks, kasutatatkse vaikeseadeid.</p><p>Mõlemal juhul on kasutajal võimalus redigeerida kõiki välju, kui ta on sisse loginud.</p>';
 $string['auth_dbfieldpass'] = 'Salasõna sisaldava välja nimi';
 $string['auth_dbfielduser'] = 'Kasutajanime sisaldava välja nimi';
 $string['auth_dbhost'] = 'Andmebaasi serveri arvuti.';
@@ -12,7 +12,7 @@ $string['auth_dbpass'] = 'Antud kasutajanimega sobiv salasõna.';
 $string['auth_dbpasstype'] = 'Täpsusta formaati, mida salasõna väli kasutab.  MD5 krüpteerimine on kasulik, et ühendada teiste tavaliste veebirakendustega nagu PostNuke';
 $string['auth_dbtable'] = 'Tabeli nimi andmebaasis';
 $string['auth_dbtitle'] = 'Välise andmebaasi kasutamine';
-$string['auth_dbtype'] = 'Andmebaasi tüüp(Vaata <A HREF=../lib/adodb/readme.htm#drivers>ADOdb dokumentatsiooni</A>, et detaile täpsustada)';
+$string['auth_dbtype'] = 'Andmebaasi tüüp(Vaata <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb dokumentatsiooni</a>, et detaile täpsustada)';
 $string['auth_dbuser'] = 'Kasutajanimi andmebaasist lugemiseks';
 $string['auth_emaildescription'] = 'Emaili kinnitus on vaikimisi autentsuse kontrolli meetod. Kui kasutaja registreerub, valides omale uue kasutajanime ja salasõna, saadetakse tema emaili aadressile kinnituskiri. See email sisaldab turvalist linki lehele, kus kasutaja saab oma konto kinnitada. Edasipidised logimised üksnes kontrollivad kasutajanime ja salasõna, võrreldes neid Moodle\'i andmebaasis säilitatavatega.';
 $string['auth_emailtitle'] = 'Emailil põhinev autentsuse kontroll';
@@ -34,7 +34,7 @@ $string['auth_ldap_user_attribute'] = 'Atribuut kasutajate nimetamiseks / otsimi
 $string['auth_ldap_version'] = 'Sinu serveri LDAP protokolli versioon.';
 $string['auth_ldapdescription'] = 'See meetod tagab autentsuse kontrolli võrreldes välise LDAP serveriga.
 Kui antud kasutajanimi ja salasõna kehtivad, tekitab Moodle uue kasutajakande oma andmebaasi.See moodul oskab lugeda kasutaja atribuute LDAP-ist ja eeltäita soovitud väljad Moodle\'is.  Logied jälgimiseks kontrollitakse üksnes kasutajanime ja salasõna.';
-$string['auth_ldapextrafields'] = 'Need väljad pole kohustuslikud. Võid otsustada eeltäita mõned Moodle\'I kasutajaväljad infoga <B>LDAP väljadelt</B> mille täpsustad siin. <P> Kui jätad need väljad tühjaks, ei kanta LDAP\'ist midagi üle ja selle asemel kasutatakse Moodle\'I vaikeseadeid. <P> Mõlemil puhul tohib kasutaja redigeerida kõiki neid välju, kui ta on sisse loginud.';
+$string['auth_ldapextrafields'] = 'Need väljad pole kohustuslikud. Võid otsustada eeltäita mõned Moodle\'I kasutajaväljad infoga <b>LDAP väljadelt</b> mille täpsustad siin. <p> Kui jätad need väljad tühjaks, ei kanta LDAP\'ist midagi üle ja selle asemel kasutatakse Moodle\'I vaikeseadeid. </p><p> Mõlemil puhul tohib kasutaja redigeerida kõiki neid välju, kui ta on sisse loginud.</p>';
 $string['auth_ldaptitle'] = 'Kasuta LDAP serverit';
 $string['auth_manualdescription'] = 'See meetod võtab kasutajatelt igasuguse võimaluse ise endale kontosid tekitada. Kõik kontod tuleb tekitada käsitsi admin. kasutaja poolt.';
 $string['auth_manualtitle'] = 'Kontod ainult käsitsi';

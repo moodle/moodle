@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
 
 
 $string['admindirerror'] = 'Yll‰pitohakemisto on m‰‰ritetty v‰‰rin';
 $string['admindirname'] = 'Yll‰pitohakemisto';
 $string['admindirsetting'] = 'Jotkut webpalvelut k‰ytt‰v‰t /admin hakemistoa yll‰pitotarkoituksiin tms. Valitettavasti t‰m‰ on ristiriidassa Moodlen yll‰pitosivujen normaalin paikan kanssa. Voit korjata t‰m‰n nime‰m‰ll‰ asennuksesi yll‰pitohakemiston uudelleen, ja laittamalla uuden nimen t‰h‰n. Esimerkiksi: 
-<br/> <br /><b>moodleadmin</b><br /> <br />
+<br /> <br /><b>moodleadmin</b><br /> <br />
 T‰m‰ korjaa yll‰pito linkit Moodlessa.';
 $string['caution'] = 'Varoitus';
 $string['chooselanguage'] = 'Valitse kieli';
@@ -14,7 +14,7 @@ $string['configfilenotwritten'] = 'Asennus ei pystynyt luomaan automaattisesti c
 $string['configfilewritten'] = 'config.php on luotu.';
 $string['configurationcomplete'] = 'Asetukset suoritettu';
 $string['database'] = 'Tietokanta';
-$string['databasesettings'] = 'Nyt sinun t‰ytyy valita tietokanta miss‰ suurin osa Moodlen tiedoista s‰ilytet‰‰n. T‰m‰n tietokannan t‰ytyy jo valmiiksi olla luotu, kuten myˆs k‰ytt‰j‰nimen ja salasanan, joilla siihen p‰‰st‰‰n. .<br/>
+$string['databasesettings'] = 'Nyt sinun t‰ytyy valita tietokanta miss‰ suurin osa Moodlen tiedoista s‰ilytet‰‰n. T‰m‰n tietokannan t‰ytyy jo valmiiksi olla luotu, kuten myˆs k‰ytt‰j‰nimen ja salasanan, joilla siihen p‰‰st‰‰n. .<br />
 <br /> <br />
 <b>Tyyppi:</b> mysql or postgres7<br />
 <b>Is‰nt‰:</b> localhost or db.isp.com<br />
@@ -49,7 +49,7 @@ $string['fileuploads'] = 'Tiedostojen l‰hett‰minen';
 $string['fileuploadserror'] = 'T‰m‰n pit‰isi olla p‰‰ll‰';
 $string['fileuploadshelp'] = '<p>Tiedostojen l‰hett‰minen ei n‰ytt‰isi olevan k‰ytˆss‰ palvelimellasi.</p>
 
-<p>Moodle voidaan silti asentaa, mutta ilman t‰t‰ kyky‰, et pysty lataamaan kurssitiedostoja tai uuden k‰ytt‰j‰n profiili kuvia.
+<p>Moodle voidaan silti asentaa, mutta ilman t‰t‰ kyky‰, et pysty lataamaan kurssitiedostoja tai uuden k‰ytt‰j‰n profiili kuvia.</p>
 
 <p>Mahdollistaaksesi tiedostojen latauksen sinun (tai systeemisi yll‰pit‰j‰n) t‰ytyy muokata varusohjelmien php.ini tiedosto systeemiisi ja muuttaa asetus <b>file_uploads</b> to \'1\'.</p>';
 $string['gdversion'] = 'GD versio';
@@ -76,25 +76,25 @@ $string['memorylimit'] = 'Muistiraja';
 $string['memorylimiterror'] = 'PHP muistiraja on asetettu aika alas... Se saattaa aiheuttaa ongelmia myˆhemmin.';
 $string['memorylimithelp'] = '<p>PHP muistiraja palvelimellesi on t‰ll‰ hetkell‰ asetettu $a:han.</p>
 
-<p>T‰m‰ saattaa aiheuttaa Moodlelle muistiongelmia myˆhemmin, varsinkin jos sinulla on paljon mahdollisia moduuleita ja/tai paljon k‰ytt‰ji‰.
+<p>T‰m‰ saattaa aiheuttaa Moodlelle muistiongelmia myˆhemmin, varsinkin jos sinulla on paljon mahdollisia moduuleita ja/tai paljon k‰ytt‰ji‰.</p>
 
 <p>Suosittelemme, ett‰ valitset asetuksiksi PHP:n korkeimmalla mahdollisella raja-arvolla, esimerkiksi 16M.
-On olemassa monia tapoja joilla voit yritt‰‰ tehd‰ t‰m‰n:
+On olemassa monia tapoja joilla voit yritt‰‰ tehd‰ t‰m‰n:</p>
 <ol>
 <li>Jos pystyt, uudelleenk‰‰nn‰ PHP <i>--enable-memory-limit</i>. :ll‰.
-T‰m‰ sallii Moodlen asettaa muistirajan itse.
-<li>Jos sinulla on p‰‰sy php.ini tiedostoosi, voit muuttaa <b>memory_limit</b> setuksen siell‰ johonkin kuten 16M. Jos sinulla ei ole p‰‰syoikeutta, voit kenties pyyt‰‰ yll‰pit‰j‰‰ tekem‰‰n t‰m‰n puolestasi.
+T‰m‰ sallii Moodlen asettaa muistirajan itse.</li>
+<li>Jos sinulla on p‰‰sy php.ini tiedostoosi, voit muuttaa <b>memory_limit</b> setuksen siell‰ johonkin kuten 16M. Jos sinulla ei ole p‰‰syoikeutta, voit kenties pyyt‰‰ yll‰pit‰j‰‰ tekem‰‰n t‰m‰n puolestasi.</li>
 <li>Joillain PHP palvelimilla voit luoda a .htaccess tiedoston Moodle hakemistossa, sis‰lt‰en t‰m‰n rivin:
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
-<p>Kuitenkin, joillain palvelimilla t‰m‰ est‰‰  <b>kaikkia</b> PHP sivuja toimimasta (n‰et virheet, kun katsot sivuja), joten sinun t‰ytyy poistaa .htaccess tiedosto.
+<p>Kuitenkin, joillain palvelimilla t‰m‰ est‰‰  <b>kaikkia</b> PHP sivuja toimimasta (n‰et virheet, kun katsot sivuja), joten sinun t‰ytyy poistaa .htaccess tiedosto.</p></li>
 </ol>';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP:t‰ ei ole kunnolla valittu asetukseksi MySQL laajennuksen kanssa, jotta se voisi kommunikoida MySQL:n kanssa. Tarkista php.ini tiedostosi tai k‰‰nn‰ PHP uudelleen.';
 $string['pass'] = 'Tarkastettu';
 $string['phpversion'] = 'PHP versio';
 $string['phpversionerror'] = 'PHP version t‰ytyy olla v‰hint‰‰n 4.1.0';
 $string['phpversionhelp'] = '<p>Moodle vaatii v‰hint‰‰n PHP version 4.1.0.</p>
-<p>K‰yt‰t parhaillaan versiota $a<p>
-<p>Sinun t‰ytyy p‰ivitt‰‰ PHP tai siirt‰‰ is‰nt‰ uudemman PHP version kanssa!<p>';
+<p>K‰yt‰t parhaillaan versiota $a</p>
+<p>Sinun t‰ytyy p‰ivitt‰‰ PHP tai siirt‰‰ is‰nt‰ uudemman PHP version kanssa!</p>';
 $string['safemode'] = 'Safe mode';
 $string['safemodeerror'] = 'Moodlella saattaa olla ongelmia PHP:n  Safe Moden ollessa p‰‰ll‰';
 $string['safemodehelp'] = '<p>Moodlella saattaa olla lukuisia ongelmia Safe Moden ollessa p‰‰ll‰, joista v‰h‰isin ei ole se, ettei se todenn‰kˆisesti pysty luomaan uusia tiedostoja.</p> 

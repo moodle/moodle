@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
 
 
 $string['accesscontrol'] = 'Saatavuus';
@@ -60,12 +60,12 @@ $string['displayinleftmenu'] = 'Näytä vasemmassa valikossa?';
 $string['displayleftmenu'] = 'Näytä vasen valikko';
 $string['displayofgrade'] = 'Arvosanan näyttäminen (vain opiskelijoille)';
 $string['displayreview'] = 'Näytä arvostelu näppäin';
-$string['displayscorewithessays'] = 'Olet ansainnut $a->score $a->tempmaxgrade :sta automaattisesti arvostelluista kysymyksistä.<br> Sinun $a->essayquestions essee kysymykset arvioidaan ja lisätään<br>lopulliseen tulokseesi myöhempänä päivänä.<br><br>Tämän hetkinen tuloksesi ilman esseekysymyksiä on $a->score $a->grade :stä. ';
+$string['displayscorewithessays'] = 'Olet ansainnut $a->score $a->tempmaxgrade :sta automaattisesti arvostelluista kysymyksistä.<br /> Sinun $a->essayquestions essee kysymykset arvioidaan ja lisätään<br />lopulliseen tulokseesi myöhempänä päivänä.<br /><br />Tämän hetkinen tuloksesi ilman esseekysymyksiä on $a->score $a->grade :stä. ';
 $string['displayscorewithoutessays'] = 'Tuloksesi on $a->score ($a->grade:sta).';
 $string['editlessonsettings'] = 'Muokkaa tämän oppitunnin asetuksia';
 $string['editpagecontent'] = 'Muokkaa tämän sivun osia';
 $string['email'] = 'Sähköposti';
-$string['emailallgradedessays'] = 'Lähetä kaikki<br/>arvostellut esseet';
+$string['emailallgradedessays'] = 'Lähetä kaikki<br />arvostellut esseet';
 $string['emailgradedessays'] = 'Lähetä arvostellut eseet';
 $string['emailsuccess'] = 'Lähettäminen onnistui';
 $string['endofbranch'] = 'Haaran pääte';

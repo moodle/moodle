@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.3.3 + (2004052503)
+      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
 
 
 $string['addmynewentries'] = 'Lisa minu uued kirjed';
@@ -9,7 +9,7 @@ $string['allowmultiple'] = 'Luba rohkem kui ¸ks dialoog sama inimesega';
 $string['allowstudentdialogues'] = 'Luba ’pilane-’pilane dialoogi';
 $string['close'] = 'Sulge';
 $string['closed'] = 'Suletud';
-$string['confirmclosure'] = 'Oled sulgemas dialoogi kasutajaga $a. Suletud dialooge ei saa uuesti avada. Kui Sa suled selle dialoogi siis Sa saad seda vaadata, aga mitte sinna lisada ja pead avama uue dialoogi, et j‰tkata selle inimesega r‰‰kimist.<br/><br/>Oled kindel, et tahad dialoogi sulgeda?';
+$string['confirmclosure'] = 'Oled sulgemas dialoogi kasutajaga $a. Suletud dialooge ei saa uuesti avada. Kui Sa suled selle dialoogi siis Sa saad seda vaadata, aga mitte sinna lisada ja pead avama uue dialoogi, et j‰tkata selle inimesega r‰‰kimist.<br /><br />Oled kindel, et tahad dialoogi sulgeda?';
 $string['deleteafter'] = 'Kustuta suletud dialoogid peale (P‰evade arv)';
 $string['dialogueclosed'] = 'Dialoog suletud';
 $string['dialogueintro'] = 'Dialoogi tutvustus';
@@ -18,7 +18,7 @@ $string['dialoguemail'] = '$a->userfrom on lisanud uue kirje Sinu dialoogikirjes
 Vıid n‰ha seda lisatuna oma dialoogi kirjesse:
 
 $a->url';
-$string['dialoguemailhtml'] = '$a->userfrom on lisanud uue kirje Sinu dialoogikirjesse \'<i>$a->dialogue</i>\' jaoks<br/><br/>
+$string['dialoguemailhtml'] = '$a->userfrom on lisanud uue kirje Sinu dialoogikirjesse \'<i>$a->dialogue</i>\' jaoks<br /><br />
 Vıid n‰ha seda lisatuna oma <a href=\"$a->url\">dialoogi</a>.';
 $string['dialoguename'] = 'Dialoogi nimi';
 $string['dialogueopened'] = 'Avati dialoog kasutajaga $a';

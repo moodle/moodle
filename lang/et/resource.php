@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3.3 + (2004052503)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
 
 
 $string['addresource'] = 'Lisa õppematerjal';
@@ -22,11 +22,10 @@ $string['directlink'] = 'Otsene link sellele failile';
 $string['directoryinfo'] = 'Valitud kataloogis näidatakse kõiki faile.';
 $string['editingaresource'] = 'Õppematerjali redigeerimine';
 $string['example'] = 'Näide';
-$string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.example.com/somedirectory/somefile.html';
 $string['fetchclienterror'] = 'Veebilehe avamisel tekkis viga veebikliendis (arvatavasti vale URL)';
 $string['fetcherror'] = 'Veebilehe avamisel tekkis viga';
-$string['fetchservererror'] = 'Veebilehe avamisel tekkis viga serveris (arvatavasti programmi viga).</p>';
+$string['fetchservererror'] = 'Veebilehe avamisel tekkis viga serveris (arvatavasti programmi viga).';
 $string['filename'] = 'Faili nimi';
 $string['fulltext'] = 'Kogu tekst';
 $string['htmlfragment'] = 'HTML fragment';
@@ -48,7 +47,7 @@ $string['newwindow'] = 'Uus aken';
 $string['newwindowopen'] = 'Ava õppematerjal hüpikaknas';
 $string['note'] = 'Märkus';
 $string['notefile'] = 'Kui soovid kursusele rohkem faile üles laadida (nagu nad listis esinevad), kasuta
-<A HREF=$a >File Manager</A>.';
+<a href=\"$a\" >File Manager</a>.';
 $string['notypechosen'] = 'Pead valima tüübi. Vajuta \"tagasi\" klahvile ja proovi uuesti.';
 $string['popupresource'] = 'See õppematerjal avaneb hüpikaknas';
 $string['popupresourcelink'] = 'Kui ei saanud, kliki siia: $a';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
 
 
 $string['action'] = 'Tapahtuma';
@@ -330,7 +330,7 @@ Jos tämä ei toimi, kopioi ja liitä osoite selaimen osoitekenttään.
 Terveisin \'$a->sitename\' pääkäyttäjä,
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: tunnuksen vahvistaminen';
-$string['emailconfirmsent'] = '   <p>Vahvistusviesti on lähetetty osoitteesi <B>$a</B></p>
+$string['emailconfirmsent'] = '   <p>Vahvistusviesti on lähetetty osoitteesi <b>$a</b></p>
    <p>Se sisältää ohjeet, kuinka voit vahvistaa käyttäjätunnuksesi.</p>
    <p>Jos vahvistuksessa on ongelmia, ota yhteyttä ylläpitäjään.</p>';
 $string['emaildigest'] = 'Postin keräilytyyppi';
@@ -363,7 +363,7 @@ Jos tarvitset apua, ota yhteyttä sivuston ylläpitäjään,
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: salasanan vahvistus';
 $string['emailpasswordconfirmsent'] = 'Sinulle on lähetty vahvistusviesti osoitteeseen: <b>$a</b>.
-Viesti sisältää ohjeet, kuinka voit vahvistaa salasanasi vaihdon.
+<br />Viesti sisältää ohjeet, kuinka voit vahvistaa salasanasi vaihdon.
 Jos salasanan vaihdossa on ongelmia, ota yhteyttä sivuston ylläpitoon.';
 $string['emailpasswordsent'] = 'Kiitos salasananvaihdon varmistamisesta.
 Uusi salasanasi on lähetty sähköpostilla osoitteeseen: $a->email.';
@@ -381,7 +381,7 @@ $string['enrolmentkeyhint'] = 'Tarjottu \'avain\' ei kelpaa, yritä uudelleen<br 
 $string['enrolmentnew'] = 'Uusi rekisteröityminen kurssille $a';
 $string['enrolmentnewuser'] = '$a->user on rekisteröitynyt kursille \"$a->course\"';
 $string['enrolmentnointernal'] = 'Rekisteröityminen ei ole tällä hetkellä sallittua';
-$string['enrolmentnotyet'] = 'Pahus, et voi päästä kursille ennen <br> $a';
+$string['enrolmentnotyet'] = 'Pahus, et voi päästä kursille ennen <br /> $a';
 $string['enrolments'] = 'Rekisteröityminen';
 $string['enrolperiod'] = 'Rekisteröitymisjakso';
 $string['entercourse'] = 'Klikkaa päästäksesi kurssille';
@@ -585,7 +585,7 @@ $string['loginsteps'] = 'Hei! Käytä hetki aikaa luodaksesi itsellesi käyttäjätun
    <li>Jos kurssi vaatii  \"avaimen\", käytä sitä, jonka sait opettajaltasi.</li>
    <li>Nyt voit käyttää järjestelmää vapaasti. Vastaisuudessa kirjaudut vain antamalla käyttäjätunnuksen ja salasanan vieressä oleviin kenttiin.</li>
    </ol>';
-$string['loginstepsnone'] = 'Hei! 
+$string['loginstepsnone'] = '<p>Hei!</p> 
 <p>Jotta voisit käyttää kursseja, sinun pitää luoda itsellesi
 käyttäjätunnus. Täytät vain itsellesi käyttätunnuksen ja salasanan, sitten käytät niitä tällä sivulla. Jos käyttäjätunnus on jo varattu, sinun pitää valita toinen käyttätunnus.</p>';
 $string['loginto'] = 'Kirjaudu $a';
@@ -841,7 +841,7 @@ $string['screenshot'] = 'Näyttökuva';
 $string['search'] = 'Hae';
 $string['searchagain'] = 'Hae uudelleen';
 $string['searchcourses'] = 'Etsi kursseja';
-$string['searchhelp'] = 'Voit hakea useampaa sanaa kerrallaan. <p>sana : etsi mikä tahansa täsmäävä sana.<br />+sana : kaikkien sanojen tulee löytyä.<br />-sana : jätä pois kyseisen sanan sisältävät.</p>';
+$string['searchhelp'] = 'Voit hakea useampaa sanaa kerrallaan. <br  /><br />sana : etsi mikä tahansa täsmäävä sana.<br />+sana : kaikkien sanojen tulee löytyä.<br />-sana : jätä pois kyseisen sanan sisältävät.';
 $string['searchresults'] = 'Hakutulokset';
 $string['sec'] = 'sekunti';
 $string['secs'] = 'sekuntia';
