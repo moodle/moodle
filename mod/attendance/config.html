@@ -4,18 +4,18 @@
 <tr valign=top>
 	<td align=right><p>attendance_dynsection:</td>
 	<td>
-		<? $optds[0] = "No";$optds[1] = "Yes";
+		<?php  $optds[0] = "No";$optds[1] = "Yes";
 		choose_from_menu($optds, "attendance_dynsection", $CFG->attendance_dynsection, ""); ?>
   </td>
     <td>
-		<? p(get_string("defaultdynamicsection","attendance")) ?>
+		<?php  p(get_string("defaultdynamicsection","attendance")) ?>
 	</td>
 </tr>
 
 <tr valign=top>
 	<td align=right><p>attendance_default_hours:</td>
 	<td>
-		<? for ($i=1;$i<=24;$i++){ $opt[$i] = $i; }
+		<?php  for ($i=1;$i<=24;$i++){ $opt[$i] = $i; }
 		choose_from_menu($opt, "attendance_default_hours", $CFG->attendance_default_hours, ""); ?>
     </td>
     <td>
@@ -26,7 +26,7 @@
 <tr valign=top>
 	<td align=right><p>attendance_tardies_per_absence:</td>
 	<td>
-		<? for ($i=1;$i<=24;$i++){ $opt2[$i] = $i; }
+		<?php  for ($i=1;$i<=24;$i++){ $opt2[$i] = $i; }
 		choose_from_menu($opt2, "attendance_tardies_per_absence", $CFG->attendance_tardies_per_absence, "none","","0"); ?>
     </td>
     <td>
@@ -37,7 +37,7 @@
 <tr valign=top>
 	<td align=right><p>attendance_hours_in_full_report:</td>
 	<td>
-		<? for ($i=10;$i<=24;$i++){ $opt3[$i] = $i; }
+		<?php  for ($i=10;$i<=24;$i++){ $opt3[$i] = $i; }
 		choose_from_menu($opt3, "attendance_hours_in_full_report", $CFG->attendance_tardies_per_absence, ""); ?>
     </td>
     <td>
@@ -48,7 +48,7 @@
 <tr valign=top>
 	<td align=right><p>attendance_default_student_status:</td>
 	<td>
-		<?
+		<?php
       $A = get_string("absentlong","attendance");
       $T = get_string("tardylong","attendance");
       $P = get_string("presentlong","attendance");  
@@ -76,29 +76,29 @@
 <tr valign=top>
 	<td align=right><p>attendance_autoattend:</td>
 	<td>
-		<? $optaa[0] = "No";$optaa[1] = "Yes";
+		<?php  $optaa[0] = "No";$optaa[1] = "Yes";
 		choose_from_menu($optaa, "attendance_autoattend", $CFG->attendance_autoattend, ""); ?>
     </td>
     <td>
-		<? p(get_string("defaultautoattend","attendance")) ?>
+		<?php  p(get_string("defaultautoattend","attendance")) ?>
 	</td>
 </tr>
 
 <tr valign=top>
 	<td align=right><p>attendance_grade:</td>
 	<td>
-		<? $optgr[0] = "No";$optgr[1] = "Yes";
+		<?php  $optgr[0] = "No";$optgr[1] = "Yes";
 		choose_from_menu($optgr, "attendance_grade", $CFG->attendance_grade, ""); ?>
     </td>
     <td>
-		<? p(get_string("defaultgrade","attendance")) ?>
+		<?php  p(get_string("defaultgrade","attendance")) ?>
 	</td>
 </tr>
 
 <tr valign=top>
 	<td align=right><p>attendance_maxgrade:</td>
 	<td>
-		<? for ($i=0;$i<=100;$i++){ $opt4[$i] = $i; }
+		<?php  for ($i=0;$i<=100;$i++){ $opt4[$i] = $i; }
 		choose_from_menu($opt4, "attendance_maxgrade", $CFG->attendance_maxgrade, ""); ?>
     </td>
     <td>

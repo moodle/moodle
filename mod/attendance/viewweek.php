@@ -1,4 +1,4 @@
-sou<?  // $Id$
+<?php   // $Id$
 /// This page prints all instances of attendance in a given week
 
     require_once("../../config.php");

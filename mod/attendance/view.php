@@ -1,4 +1,4 @@
-<?  // $Id$
+<?php   // $Id$
 /// This page prints a particular instance of attendance
     require_once("../../config.php");
     require_once("lib.php" );

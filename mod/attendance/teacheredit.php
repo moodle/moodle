@@ -111,8 +111,8 @@ if (empty($form->id)) {
     ?>
 <FORM name="form" method="post" action="<?php echo "$CFG->wwwroot/course/mod.php"; ?>">
 <CENTER>
-<INPUT type="submit" value="<? print_string("savechanges") ?>">
-<INPUT type="submit" name="cancel" value="<? print_string("cancel") ?>">
+<INPUT type="submit" value="<?php  print_string("savechanges") ?>">
+<INPUT type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
 
 <?php  // if we're modifying an existing instance of attendance instead 
     //   of creating a new one

@@ -18,16 +18,16 @@ if (empty($form->id)) {
  	$form->notes = "";
 }
     ?>
-<FORM name="form" method="post" action="<?=$ME ?>">
+<FORM name="form" method="post" action="<?php echo $ME ?>">
 <CENTER>
-<INPUT type="submit" value="<? print_string("savechanges") ?>">
-<INPUT type="submit" name="cancel" value="<? print_string("cancel") ?>">
+<INPUT type="submit" value="<?php  print_string("savechanges") ?>">
+<INPUT type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
 <TABLE cellpadding=5>
 
-<!-- <? $options[0] = get_string("no"); $options[1] = get_string("yes"); ?> -->
+<!-- <?php  $options[0] = get_string("no"); $options[1] = get_string("yes"); ?> -->
 <!-- <TR valign=top> -->
-<!--     <TD align=right><P><B><? print_string("takeroll", "attendance") ?>:</B></P></TD> -->
-<!--     <TD align=left><? choose_from_menu($options, "roll", $form->roll, "") ?></td> -->
+<!--     <TD align=right><P><B><?php  print_string("takeroll", "attendance") ?>:</B></P></TD> -->
+<!--     <TD align=left><?php  choose_from_menu($options, "roll", $form->roll, "") ?></td> -->
 <!-- </tr> -->
 <tr valign=top>
     <td align=right><p><b><?php print_string("notes", "attendance") ?>:</b></p></td>
