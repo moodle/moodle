@@ -69,6 +69,8 @@ CREATE TABLE `prefix_lesson_grades` (
 # --------------------------------------------------------
 
 
+INSERT INTO prefix_log_display VALUES ('lesson', 'add', 'lesson', 'name');
+INSERT INTO prefix_log_display VALUES ('lesson', 'update', 'lesson', 'name');
 INSERT INTO prefix_log_display VALUES ('lesson', 'start', 'lesson', 'name');
 INSERT INTO prefix_log_display VALUES ('lesson', 'end', 'lesson', 'name');
 INSERT INTO prefix_log_display VALUES ('lesson', 'view', 'lesson_pages', 'title');

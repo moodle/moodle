@@ -107,6 +107,8 @@
             //print_object ($GLOBALS['traverse_array']);                                           //Debug
             //$GLOBALS['traverse_array']="";                                                       //Debug
 
+            //We'll need this later!!
+            $oldid = backup_todb($page_info['#']['PAGEID']['0']['#']);
            
             //Now, build the lesson_pages record structure
             $page->lessonid = $lessonid;
@@ -116,7 +118,7 @@
             $page->title = backup_todb($page_info['#']['TITLE']['0']['#']);
             $page->contents = backup_todb($page_info['#']['CONTENTS']['0']['#']);
 
-            //The structure is equal to the db, so insert the lesson_elements
+            //The structure is equal to the db, so insert the lesson_pages
             $newid = insert_record ("lesson_pages",$page);
 
             // save the new pageids (needed to fix the absolute jumps in the answers)
@@ -140,6 +142,8 @@
             }
 
             if ($newid) {
+                //We have the newid, update backup_ids (restore logs will use it!!)
+                backup_putid($restore->backup_unique_code,"lesson_pages", $oldid, $newid);
                 //We have to restore the lesson_answers table now (a page level table)
                 $status = lesson_answers_restore($lessonid,$newid,$page_info,$restore);
             } else {
@@ -326,4 +330,81 @@
         return $status;
     }
 
+    //This function returns a log record with all the necessay transformations
+    //done. It's used by restore_log_module() to restore modules log.
+    function lesson_restore_logs($restore,$log) {
+                
+        $status = false;
+            
+        //Depending of the action, we recode different things
+        switch ($log->action) {
+        case "add":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the info field)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "view.php?id=".$log->cmid;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        case "update":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the info field)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "view.php?id=".$log->cmid;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        case "view all":
+            $log->url = "index.php?id=".$log->course;
+            $status = true;
+            break;
+        case "start":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the info field)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "view.php?id=".$log->cmid;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        case "end":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the info field)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "view.php?id=".$log->cmid;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        case "view":
+            if ($log->cmid) {
+                //Get the new_id of the page (to recode the url field)
+                $pag = backup_getid($restore->backup_unique_code,"lesson_pages",$log->info);
+                if ($pag) {
+                    $log->url = "view.php?id=".$log->cmid."&action=navigation&pageid=".$pag->new_id;
+                    $log->info = $pag->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        default:
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
+            break;
+        }
+
+        if ($status) {
+            $status = $log;
+        }
+        return $status;
+    }
 ?>
