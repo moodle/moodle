@@ -95,6 +95,7 @@
     }
 
     $timelimit = (int)$quiz->timelimit * 60;
+    $overtime = 0;
 
     if ($timetaken = ($attempt->timefinish - $attempt->timestart)) {
         if($timelimit && $timetaken > ($timelimit + 60)) {
