@@ -166,7 +166,7 @@
                     case SEPARATEGROUPS :  $groupid = mygroupid($course->id); break;
                     case VISIBLEGROUPS  :  
                                            if ($selectedgroup == "allgroups") {
-                                               $groupid == "";
+                                               $groupid = "";
                                            } else {
                                                $groupid = $selectedgroup;
                                            } 
