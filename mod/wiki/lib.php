@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 /// Library of functions and constants for module wiki
 /// (replace wiki with the name of your module and delete this line)
@@ -165,13 +165,37 @@ function wiki_grades($wikiid) {
 }
 
 function wiki_get_participants($wikiid) {
-//Must return an array of user records (all data) who are participants
-//for a given instance of wiki. Must include every user involved
-//in the instance, independient of his role (student, teacher, admin...)
-//See other modules as example.
+//Returns the users with data in one wiki
+//(users with records in wiki_pages and wiki_entries)
 
-    return false;
+    global $CFG;
+
+    //Get users from wiki_pages
+    $st_pages = get_records_sql("SELECT DISTINCT u.id, u.id
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}wiki_entries e,
+                                      {$CFG->prefix}wiki_pages p
+                                 WHERE e.wikiid = '$wikiid' and
+                                       p.wiki = e.id and
+                                       u.id = p.userid");
+
+    //Get users from wiki_entries
+    $st_entries = get_records_sql("SELECT DISTINCT u.id, u.id
+                                   FROM {$CFG->prefix}user u,
+                                        {$CFG->prefix}wiki_entries e
+                                   WHERE e.wikiid = '$wikiid' and
+                                         u.id = e.userid");
+
+    //Add entries to pages
+    if ($st_entries) {
+        foreach ($st_entries as $st_entry) {
+            $st_pages[$st_entry->id] = $st_entry;
+        }
+    }
+
+    return $st_pages;
 }
+
 
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other wiki functions go here.  Each of them must have a name that
