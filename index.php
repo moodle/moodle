@@ -8,7 +8,7 @@
     }
 
     print_header("$site->fullname", "$site->fullname", "", "",
-                 "<META NAME=\"Description\" CONTENT=\"$site->summary\">");
+                 "<META NAME=\"Description\" CONTENT=\"".stripslashes(strip_tags($site->summary))."\">");
 
 
 ?>
@@ -25,6 +25,8 @@
 
       <? include("mod/reading/lib.php"); 
          list_all_readings();
+         echo "<P>";
+         print_editing_switch($site->id); 
       ?>
 
     </TD>
@@ -44,10 +46,6 @@
     </TD>
   </TR>
 </TABLE>
-
-<CENTER><P>
-<? print_editing_switch($site->id); ?>
-</P><CENTER>
 
 <? include("$CFG->dirroot/theme/$CFG->theme/footer.html"); ?>
 
