@@ -1,6 +1,6 @@
 <?php  // $Id$
 
-require_once("$CFG->dirroot/files/mimetypes.php");
+require_once($CFG->libdir.'/filelib.php');
 
 define("OFFLINE",      "0");
 define("UPLOADSINGLE", "1");

@@ -3151,7 +3151,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
             $mail->AddAddress($adminuser->email, fullname($adminuser) );
             $mail->AddStringAttachment('Error in attachment.  User attempted to attach a filename with a unsafe name.', 'error.txt', '8bit', 'text/plain');
         } else {
-            include_once($CFG->dirroot .'/files/mimetypes.php');
+            require_once($CFG->libdir.'/filelib.php');
             $mimetype = mimeinfo('type', $attachname);
             $mail->AddAttachment($CFG->dataroot .'/'. $attachment, $attachname, 'base64', $mimetype);
         }

@@ -3,7 +3,7 @@
 /// Library of functions and constants for module glossary
 /// (replace glossary with the name of your module and delete this line)
 
-require_once("$CFG->dirroot/files/mimetypes.php");
+require_once($CFG->libdir.'/filelib.php');
 
 define("GLOSSARY_SHOW_ALL_CATEGORIES", 0);
 define("GLOSSARY_SHOW_NOT_CATEGORISED", -1);

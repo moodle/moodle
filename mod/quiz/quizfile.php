@@ -4,7 +4,7 @@
       // It is supposed to be used by the quiz module only
 
     require_once('../../config.php');
-    require_once('../../files/mimetypes.php');
+    require_once($CFG->libdir.'/filelib.php');
     require_once('locallib.php');
 
     if (empty($CFG->filelifetime)) {

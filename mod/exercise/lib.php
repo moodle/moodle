@@ -3,7 +3,7 @@
 // exercise constants and standard moodle functions plus those functions called directly
 // see locallib.php for other non-standard exercise functions
 
-include_once("$CFG->dirroot/files/mimetypes.php");
+require_once($CFG->libdir.'/filelib.php');
 
 /*** Constants **********************************/
 

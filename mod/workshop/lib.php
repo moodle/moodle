@@ -5,7 +5,7 @@
 
 // see also locallib.php for other non-standard workshop functions
 
-include_once("$CFG->dirroot/files/mimetypes.php");
+require_once($CFG->libdir.'/filelib.php');
 
 /*** Constants **********************************/
 

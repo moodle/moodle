@@ -12,7 +12,7 @@
 //  USER is a persistent variable using sessions
 
     require("../../config.php");
-    require("../../files/mimetypes.php");
+    require_once($CFG->libdir.'/filelib.php');
 
     $id      = required_param('id', PARAM_INT);
     $file    = optional_param('file', '', PARAM_PATH);

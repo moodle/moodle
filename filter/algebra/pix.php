@@ -6,7 +6,7 @@
     $nomoodlecookie = true;     // Because it interferes with caching
 
     require_once('../../config.php');
-    require_once('../../files/mimetypes.php');
+    require_once($CFG->libdir.'/filelib.php');
 
     $CFG->texfilterdir     = 'filter/tex';
     $CFG->algebrafilterdir = 'filter/algebra';

@@ -7,8 +7,8 @@
 //  Must define:  USER, basedir, baseweb, html_header and html_footer
 //  USER is a persistent variable using sessions
 
-    require("../config.php");
-    require("mimetypes.php");
+    require('../config.php');
+    require($CFG->libdir.'/filelib.php');
 
     $id      = required_param('id', PARAM_INT);
     $file    = optional_param('file', '', PARAM_PATH);

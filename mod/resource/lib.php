@@ -366,7 +366,7 @@ function resource_get_coursemodule_info($coursemodule) {
                             "','resource$resource->id','$resource->popup');\"");
        }
 
-       require_once("$CFG->dirroot/files/mimetypes.php");
+       require_once($CFG->libdir.'/filelib.php');
 
        if ($resource->type == 'file') {
            $icon = mimeinfo("icon", $resource->reference);
