@@ -31,25 +31,20 @@
 
     $searchform = forum_print_search_form($course, "", true, "plain");
 
-    if ($course->category) {
-        print_header("$course->shortname: $strforums", "$course->fullname",
-                    "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> $strforums",
-                    "", "", true, $searchform, navmenu($course));
-    } else {
-        print_header("$course->shortname: $strforums", "$course->fullname", "$strforums", 
-                    "", "", true, $searchform, navmenu($course));
+
+    // Build up the tables
+
+    $generaltable->head  = array ($strforum, $strdescription, $strdiscussions);
+    $generaltable->align = array ("LEFT", "LEFT", "CENTER");
+
+    if ($can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin())) {
+        $generaltable->head[] = $strsubscribed;
+        $generaltable->align[] = "CENTER";
     }
 
+    $learningtable = $generaltable;   // Headers etc are the same
 
-    $table->head  = array ($strforum, $strdescription, $strdiscussions);
-    $table->align = array ("LEFT", "LEFT", "CENTER");
-
-    $can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin());
-
-    if ($can_subscribe) {
-        $table->head[] = $strsubscribed;
-        $table->align[] = "CENTER";
-    }
+    // Parse the forums
 
     if ($forums = get_records("forum", "course", $id, "name ASC")) {
         foreach ($forums as $forum) {
@@ -70,6 +65,57 @@
                         $generalforums[] = $forum;
                     }
                     break;
+            }
+        }
+    }
+
+    if ($course->category) {    // Only real courses have learning forums
+        // Add extra field for section number, at the front
+        array_unshift($learningtable->head, "");
+        array_unshift($learningtable->align, "center");
+    
+        if ($learningforums = get_all_instances_in_course("forum", $course)) {
+            foreach ($learningforums as $key => $forum) {
+                if ($forum->type == "news" or $forum->type == "social") {
+                    unset($learningforums[$key]);  // Remove these
+                }
+            }
+        }
+        if ($learningforums) {
+            foreach ($learningforums as $forum) {
+                $count = count_records("forum_discussions", "forum", "$forum->id");
+    
+                $forum->intro = forum_shorten_post($forum->intro);
+                replace_smilies($forum->intro);
+    
+                if (!$forum->section) {     // forums in the "0" section => generaltable
+                    $generalforums[] = $forum;
+                    continue;
+                }
+
+                if ($forum->visible) {
+                    $forumlink = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
+                } else {
+                    $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">$forum->name</a>";
+                }
+    
+                if ($can_subscribe) {
+                    if (forum_is_forcesubscribed($forum->id)) {
+                        $sublink = get_string("yes");
+                    } else {
+                        if (forum_is_subscribed($USER->id, $forum->id)) {
+                            $subscribed = get_string("yes");
+                            $subtitle = get_string("unsubscribe", "forum");
+                        } else {
+                            $subscribed = get_string("no");
+                            $subtitle = get_string("subscribe", "forum");
+                        }
+                        $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
+                    }
+                    $learningtable->data[] = array ("$forum->section", $forumlink, "$forum->intro", "$count", "$sublink");
+                } else {
+                    $learningtable->data[] = array ("$forum->section", $forumlink, "$forum->intro", "$count");
+                }
             }
         }
     }
@@ -100,68 +146,30 @@
                     }
                     $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
                 }
-                $table->data[] = array ($forumlink, "$forum->intro", "$count", $sublink);
+                $generaltable->data[] = array ($forumlink, "$forum->intro", "$count", $sublink);
             } else {
-                $table->data[] = array ($forumlink, "$forum->intro", "$count");
+                $generaltable->data[] = array ($forumlink, "$forum->intro", "$count");
             }
         }
-        print_heading(get_string("generalforums", "forum"));
-        print_table($table);
-        unset($table->data);
     } 
 
-    if ($course->category) {    // Only real courses have learning forums
-        // Add extra field for section number, at the front
-        array_unshift($table->head, "");
-        array_unshift($table->align, "center");
-    
-        if ($learningforums = get_all_instances_in_course("forum", $course)) {
-            foreach ($learningforums as $key => $forum) {
-                if ($forum->type == "news" or $forum->type == "social") {
-                    unset($learningforums[$key]);  // Remove these
-                }
-            }
-        }
-        if ($learningforums) {
-            foreach ($learningforums as $forum) {
-                $count = count_records("forum_discussions", "forum", "$forum->id");
-    
-                $forum->intro = forum_shorten_post($forum->intro);
-                replace_smilies($forum->intro);
-    
-                if (!$forum->section) {     // some forums are in the "0" section
-                    $forum->section = "";
-                }
 
-                if ($forum->visible) {
-                    $forumlink = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
-                } else {
-                    $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">$forum->name</a>";
-                }
-    
-                if ($can_subscribe) {
-                    if (forum_is_forcesubscribed($forum->id)) {
-                        $sublink = get_string("yes");
-                    } else {
-                        if (forum_is_subscribed($USER->id, $forum->id)) {
-                            $subscribed = get_string("yes");
-                            $subtitle = get_string("unsubscribe", "forum");
-                        } else {
-                            $subscribed = get_string("no");
-                            $subtitle = get_string("subscribe", "forum");
-                        }
-                        $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
-                    }
-                    $table->data[] = array ("$forum->section", $forumlink, "$forum->intro", "$count", "$sublink");
-                } else {
-                    $table->data[] = array ("$forum->section", $forumlink, "$forum->intro", "$count");
-                }
-            }
-            print_heading(get_string("learningforums", "forum"));
-            print_table($table);
-        }
+    /// Output the page
+
+    if ($course->category) {
+        print_header("$course->shortname: $strforums", "$course->fullname",
+                    "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> $strforums",
+                    "", "", true, $searchform, navmenu($course));
+    } else {
+        print_header("$course->shortname: $strforums", "$course->fullname", "$strforums", 
+                    "", "", true, $searchform, navmenu($course));
     }
 
+    print_heading(get_string("generalforums", "forum"));
+    print_table($generaltable);
+
+    print_heading(get_string("learningforums", "forum"));
+    print_table($learningtable);
 
     print_footer($course);
 
