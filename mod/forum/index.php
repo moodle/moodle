@@ -44,23 +44,23 @@
     // Start of the table for General Forums
 
     $generaltable->head  = array ($strforum, $strdescription, $strdiscussions);
-    $generaltable->align = array ("left", "left", "right");
+    $generaltable->align = array ('left', 'left', 'center');
 
     if ($CFG->forum_trackreadposts) {
         $generaltable->head[] = $strunreadposts;
-        $generaltable->align[] = "right";
+        $generaltable->align[] = 'center';
     }
 
     if ($can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin())) {
         $generaltable->head[] = $strsubscribed;
-        $generaltable->align[] = "center";
+        $generaltable->align[] = 'center';
     }
 
     if ($show_rss = (($can_subscribe || $course->id == SITEID) && 
                      isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
                      $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds)) {
         $generaltable->head[] = $strrss;
-        $generaltable->align[] = "center";
+        $generaltable->align[] = 'center';
     }
 
 
@@ -220,19 +220,19 @@
 
     if ($CFG->forum_trackreadposts) {
         $learningtable->head[] = $strunreadposts;
-        $learningtable->align[] = 'right';
+        $learningtable->align[] = 'center';
     }
 
     if ($can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin())) {
         $learningtable->head[] = $strsubscribed;
-        $learningtable->align[] = "center";
+        $learningtable->align[] = 'center';
     }
 
     if ($show_rss = (($can_subscribe || $course->id == SITEID) && 
                      isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
                      $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds)) {
         $learningtable->head[] = $strrss;
-        $learningtable->align[] = "center";
+        $learningtable->align[] = 'center';
     }
 
     /// Now let's process the learning forums
