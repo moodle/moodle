@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004062600)
+      // moodle.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['action'] = 'Actie';
@@ -348,7 +348,7 @@ $a->link
 In de meeste e-mail programma\'s zou dit moeten verschijnen als een blauwe link waarop je kunt klikken. Als dat niet werkt, knip en plak het adres dan in de adresbalk van je browser.
 
 Als je hulp nodig hebt, neem dan contact op met de site-beheerder, $a->admin';
-$string['emailpasswordconfirmationsubject'] = '$a: bevestiging van de wijziging van het paswoord';
+$string['emailpasswordconfirmationsubject'] = '$a: bevestiging van de wijziging van het wachtwoord';
 $string['emailpasswordconfirmsent'] = 'Er is een e-mail verstuurd naar jouw adres: <b>$a</b>.
 <p>Indien je moeilijkheden blijft ondervinden, neem dan contact op met je site-beheerder.';
 $string['emailpasswordsent'] = 'Bedankt voor de bevestiging van de wijziging van je wachtwoord.
