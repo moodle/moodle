@@ -118,8 +118,11 @@ function workshop_cron () {
     // if there any ungraded assessments run the grading routine
     if ($workshops = get_records("workshop")) {
         foreach ($workshops as $workshop) {
-            if (workshop_count_ungraded_assessments($workshop)) {
-                workshop_grade_assessments($workshop);
+            // automatically grade assessments if workshop has examples and/or peer assessments
+            if ($workshop->ntassessments or $workshop->nsassessments) {
+                if (workshop_count_ungraded_assessments($workshop)) {
+                    workshop_grade_assessments($workshop);
+                }
             }
         }
     }
@@ -617,8 +620,8 @@ global $CFG;
             if ($students = get_course_students($workshop->course)) {
                 foreach ($students as $student) {
                     $gradinggrade = workshop_gradinggrade($workshop, $student);
+                    $bestgrade = 0;
                     if ($submissions = workshop_get_user_submissions($workshop, $student)) {
-                        $bestgrade = 0;
                         foreach ($submissions as $submission) {
                             $grade = workshop_submission_grade($workshop, $submission);
                             if ($grade > $bestgrade) {
@@ -1183,12 +1186,19 @@ function workshop_compare_assessments($workshop, $assessment1, $assessment2) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_count_ungraded_assessments($workshop) {
-    // function returns the number of ungraded assessments (assessments must be warm or cold)
+    // function returns the number of ungraded assessments by students
     
-    $timenow = time();
-    return count_records_select("workshop_assessments", "workshopid = $workshop->id AND 
-            timecreated < $timenow AND timegraded = 0") ;
+    $n = 0;
+    if ($assessments = get_records_select("workshop_assessments", "workshopid = $workshop->id AND 
+            timegraded = 0")) {
+        foreach ($assessments as $assessment) {
+            if (isstudent($workshop->course, $assessment->userid)) {
+                $n++;
+            }
+        }
     }
+    return $n;
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -1341,7 +1351,9 @@ function workshop_get_student_submissions($workshop, $order = "title") {
     if ($order == "name") {
         $order = "a.lastname, a.firstname";
         }
-
+    if ($order == "time") {
+        $order = "s.timecreated ASC";
+    }
     // make sure it works on the site course
     $select = "u.course = '$workshop->course' AND";
     $site = get_site();
@@ -1548,7 +1560,11 @@ function workshop_grade_assessments($workshop) {
             }
         }
         for ($i = 0; $i < $workshop->nelements; $i++) {
-            $sd[$i] = sqrt($var[$i] / ($n - 1));
+            if ($n > 1) {
+                $sd[$i] = sqrt($var[$i] / ($n - 1));
+            } else {
+                $sd[$i] = 0;
+            }
             echo "<p align=\"center\">".get_string("standarddeviationofelement", "workshop", $i+1)." $sd[$i]<br />";
             if ($sd[$i] <= $minvar) {
                 print_string("standarddeviationnote", "workshop")."<br />\n";
@@ -1564,8 +1580,8 @@ function workshop_grade_assessments($workshop) {
         }
 
         // ...if there are three or more assessments calculate the variance of each assessment.
-        // Use the variance to find the "best" assessment. (When there are two assessments they 
-        // are both "best", we cannot distinguish between them.)
+        // Use the variance to find the "best" assessment. (When there is only one or two assessments they 
+        // are not altered by this routine.)
         foreach ($submissions as $submission) {
             if ($nassessments[$submission->id] > 2) {
                 if ($assessments = workshop_get_assessments($submission)) {
@@ -1605,7 +1621,7 @@ function workshop_grade_assessments($workshop) {
         $ndrop = 0;
         foreach ($submissions as $submission) {
             if ($assessments = workshop_get_assessments($submission)) {
-                if ($nassessments[$submission->id] > 2) {
+                if ($nassessments[$submission->id] > 2) { // only alter if there are three or more assessments
                     if (!$best = get_record("workshop_assessments", "id", $bestassessment[$submission->id])) {
                         error("Workshop assessment analysis: cannot find best assessment");
                     }
@@ -1624,11 +1640,6 @@ function workshop_grade_assessments($workshop) {
                                 $ndrop++;
                             }
                         }
-                    }
-                } else { // only one or two assessments, set it/both as "best"
-                    foreach ($assessments as $assessment) {
-                        set_field("workshop_assessments", "gradinggrade", 100, "id", $assessment->id);
-                        set_field("workshop_assessments", "timegraded", $timenow, "id", $assessment->id);
                     }
                 }       
             }

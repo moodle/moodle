@@ -8,6 +8,7 @@ CREATE TABLE `prefix_workshop` (
   `name` varchar(255) NOT NULL default '',
   `description` text NOT NULL,
   `nelements` tinyint(3) unsigned NOT NULL default '1',
+  `nattachments` tinyint(3) unsigned NOT NULL default '0',
   `phase` tinyint(2) unsigned NOT NULL default '0',
   `format` tinyint(2) unsigned NOT NULL default '0',
   `gradingstrategy` tinyint(2) unsigned NOT NULL default '1',
@@ -42,6 +43,7 @@ CREATE TABLE `prefix_workshop_submissions` (
   `title` varchar(100) NOT NULL default '',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `mailed` tinyint(2) unsigned NOT NULL default '0',
+  `description` text NOT NULL,
   `teachergrade` int(3) unsigned NOT NULL default '0',
   `peergrade` int(3) unsigned NOT NULL default '0',
   `biasgrade` int(3) unsigned NOT NULL default '0',
@@ -49,7 +51,7 @@ CREATE TABLE `prefix_workshop_submissions` (
   `gradinggrade` int(3) unsigned NOT NULL default '0',
   `finalgrade` int(3) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  INDEX `title` (`title`) 
+  INDEX `userid` (`userid`) 
 ) COMMENT='Info about submitted work from teacher and students';
 # --------------------------------------------------------
 
@@ -72,7 +74,9 @@ CREATE TABLE `prefix_workshop_assessments` (
   `donotuse` tinyint(3) unsigned NOT NULL default '0',
   `generalcomment` text NOT NULL,
   `teachercomment` text NOT NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  INDEX (`submissionid`),
+  INDEX (`userid`)
   ) COMMENT='Info about assessments by teacher and students';
 # --------------------------------------------------------
 
@@ -118,7 +122,8 @@ CREATE TABLE `prefix_workshop_grades` (
   `elementno` int(10) unsigned NOT NULL default '0',
   `feedback` text NOT NULL default '',
   `grade` tinyint(3) NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  INDEX (`assessmentid`)
 ) COMMENT='Info about individual grades given to each element';
 # --------------------------------------------------------
 

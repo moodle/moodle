@@ -22,6 +22,9 @@
     if (!isset($form->nelements)) {
         $form->nelements = 1;
     }
+    if (!isset($form->nattachments)) {
+        $form->nattachments = 0;
+    }
     if (empty($form->resubmit)) {
         $form->resubmit = "";
     }
@@ -151,6 +154,20 @@
         }
         choose_from_menu($numbers, "nelements", "$form->nelements", "");
        helpbutton("nelements", get_string("numberofassessmentelements", "workshop"), "workshop");
+        ?>
+    </td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><p><b><?php  print_string("numberofattachments", "workshop") ?>:</b></p></td>
+    <td valign="middle">
+        <?php
+        unset($numbers);
+        for ($i=5; $i>=0; $i--) {
+            $numbers[$i] = $i;
+        }
+        choose_from_menu($numbers, "nattachments", "$form->nattachments", "");
+       helpbutton("nattachments", get_string("numberofaattachments", "workshop"), "workshop");
         ?>
     </td>
 </tr>

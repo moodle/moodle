@@ -95,7 +95,7 @@
                 }
             }
         }
-        else {
+        else { // no submission
             $submitted = get_string("no");
             $due = userdate($workshop->deadline);
             if (!$workshop->visible) {
@@ -104,6 +104,9 @@
             } else {
                 //Show normal if the mod is visible
                 $link = "<a href=\"view.php?id=$workshop->coursemodule\">$workshop->name</a>";
+            }
+            if (isstudent($course->id)) {
+                $info = '0';
             }
             if ($course->format == "weeks" or $course->format == "topics") {
                     $table->data[] = array ($workshop->section, $link, $info, $submitted, $due);

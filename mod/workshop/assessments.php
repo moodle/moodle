@@ -19,6 +19,7 @@
 	listungradedstudentsubmissions (for teachers)
 	listungradedteachersubmissions (for teachers)
 	listteachersubmissions
+    regradestudentassessments (for teachers)
 	updateassessment
 	updatecomment
 	updategrading
@@ -204,30 +205,41 @@
 		if (! $submission = get_record("workshop_submissions", "id", $sid)) {
 			error("Assess submission is misconfigured - no submission record!");
 			}
-		
+        
 		// there can be an assessment record (for teacher submissions), if there isn't...
 		if (!$assessment = get_record("workshop_assessments", "submissionid", $submission->id, "userid", 
                     $USER->id)) {
-			$yearfromnow = time() + 365 * 86400;
-			// ...create one and set timecreated way in the future, this is reset when record is updated
-			$assessment->workshopid = $workshop->id;
-			$assessment->submissionid = $submission->id;
-			$assessment->userid = $USER->id;
-			$assessment->grade = -1; // set impossible grade
-			$assessment->timecreated = $yearfromnow;
-			$assessment->timegraded = 0;
-			$assessment->timeagreed = 0;
-			$assessment->resubmission = 0;
-			if (!$assessment->id = insert_record("workshop_assessments", $assessment)) {
-				error("Could not insert workshop assessment!");
-				}
-			}
+            // if it's the teacher see if the user has done a self assessment if so copy it
+            if (isteacher($course->id) and ($assessment = get_record("workshop_assessments", "submissionid", 
+                            $submission->id, "userid", $submission->userid))) {
+                $assessment = workshop_copy_assessment($assessment, $submission, true);
+                // need to set owner of assessment
+                set_field("workshop_assessments", "userid", $USER->id, "id", $assessment->id);
+                $assessment->resubmission = 0; // not set by workshop_copy_assessment
+                $assessment->timegraded = 0; // not set by workshop_copy_assessment
+                $assessment->timeagreed = 0; // not set by workshop_copy_assessment
+            } else {
+                $yearfromnow = time() + 365 * 86400;
+                // ...create one and set timecreated way in the future, this is reset when record is updated
+                $assessment->workshopid = $workshop->id;
+                $assessment->submissionid = $submission->id;
+                $assessment->userid = $USER->id;
+                $assessment->timecreated = $yearfromnow;
+                $assessment->grade = -1; // set impossible grade
+    			$assessment->timegraded = 0;
+	    		$assessment->timeagreed = 0;
+		    	$assessment->resubmission = 0;
+			    if (!$assessment->id = insert_record("workshop_assessments", $assessment)) {
+				    error("Could not insert workshop assessment!");
+                }
+            }
+		}
 		
 		print_heading_with_help(get_string("assessthissubmission", "workshop"), "grading", "workshop");
 		
 		// show assessment and allow changes
 		workshop_print_assessment($workshop, $assessment, true, $allowcomments, $_SERVER["HTTP_REFERER"]);
-		}
+    }
 
 
 	/*************** display grading form (viewed by student) *********************************/
@@ -709,6 +721,36 @@
 	}
 
 
+    /******************* regrade student assessments ************************************/
+    elseif ($action == 'regradestudentassessments' ) {
+
+        $timenow = time();
+        if (!isteacher($course->id)) {
+            error("Only teachers can look at this page");
+        }
+        // get all the teacher assessments
+        if ($assessments = workshop_get_teacher_assessments($workshop)) {
+            foreach ($assessments as $teacherassessment) {
+                if (!$submission = get_record("workshop_submissions", "id", $teacherassessment->submissionid)) {
+                    error("Regrade student assessments: submission not found");
+                }
+                // run through the student assessments of this submission
+                if ($studentassessments = get_records("workshop_assessments", "submissionid", $submission->id)) {
+                    foreach ($studentassessments as $studentassessment) {
+                        if (!isstudent($course->id, $studentassessment->userid)) {
+                            continue; // not a student assessment - skip
+                        }
+                        $newgrade = workshop_compare_assessments($workshop, $studentassessment, $teacherassessment);
+                        set_field("workshop_assessments", "gradinggrade", $newgrade, "id", $studentassessment->id);
+                        set_field("workshop_assessments", "timegraded", $timenow, "id", $studentassessment->id);
+                    }
+                } 
+            }
+        }
+        redirect("submissions.php?id=$cm->id&amp;action=adminlist");
+    }
+    
+
     /*************** update assessment (by teacher or student) ***************************/
     elseif ($action == 'updateassessment') {
 
@@ -734,7 +776,7 @@
         // don't fiddle about, delete all the old and add the new!
 		delete_records("workshop_grades", "assessmentid",  $assessment->id);
 		
-		$form = (object)$HTTP_POST_VARS;
+		$form = data_submitted("nomatch"); // probably always come from the same page, change this statement
 		
 		//determine what kind of grading we have
 		switch ($workshop->gradingstrategy) {
@@ -881,12 +923,40 @@
 			set_field("workshop_assessments", "timeagreed", $timenow, "id", $assessment->id);
 		}
 		
+        // set grade...
 		set_field("workshop_assessments", "grade", $grade, "id", $assessment->id);
-		// ...and clear any grading of this assessment...
+        // ...and clear the timegraded but set the graddinggrade to maximum, may to reduced subsequently...
 		set_field("workshop_assessments", "timegraded", 0, "id", $assessment->id);
-		set_field("workshop_assessments", "gradinggrade", 0, "id", $assessment->id);
+		set_field("workshop_assessments", "gradinggrade", 100, "id", $assessment->id);
 		// ...and the resubmission flag
         set_field("workshop_assessments", "resubmission", 0, "id", $assessment->id);
+
+        // now see if there's a corresponding assessment so that the gradinggrade can be set
+        if (isteacher($course->id)) {
+                // see if there's are student assessments, if so set their gradinggrade
+                if ($assessments = workshop_get_assessments($submission)) {
+                    foreach($assessments as $studentassessment) {
+                        // skip if it's not a student assessment
+                        if (!isstudent($course->id, $studentassessment->userid)) {
+                            continue;
+                        }
+                        $gradinggrade = workshop_compare_assessments($workshop, $assessment, $studentassessment);
+        		        set_field("workshop_assessments", "timegraded", $timenow, "id", $studentassessment->id);
+                		set_field("workshop_assessments", "gradinggrade", $gradinggrade, "id", $studentassessment->id);
+                    }
+                }
+        } else { //it's a student assessment, see if there's a corresponding teacher's assessment
+            if ($assessments = workshop_get_assessments($submission)) {
+                foreach($assessments as $teacherassessment) {
+                    if (isteacher($course->id, $teacherassessment->userid)) {
+                        $gradinggrade = workshop_compare_assessments($workshop, $assessment, $teacherassessment);
+        		        set_field("workshop_assessments", "timegraded", $timenow, "id", $assessment->id);
+                		set_field("workshop_assessments", "gradinggrade", $gradinggrade, "id", $assessment->id);
+                        break; // only look for the first teacher assessment
+                    }
+                }
+            }
+        }
         
         // any comment?
 		if (!empty($form->generalcomment)) {

@@ -259,14 +259,22 @@
                 workshop_list_user_submissions($workshop, $USER);
                 // are resubmissions allowed and the workshop is in submission phases (2 and 3)?
                 if ($workshop->resubmit and ($workshop->phase < 4)) {
-                    // see if there are any cold (warm included as well) assessments of the last submission
+                    // see if there are any cold assessments of the last submission
                     // if there are then print upload form
                     if ($submissions = workshop_get_user_submissions($workshop, $USER)) {
                         foreach ($submissions as $submission) {
                             $lastsubmission = $submission;
                             break;
                         }
-                        if (workshop_count_assessments($lastsubmission)) {
+                        $n = 0; // number of cold assessments (not include self assessments)
+                        if ($assessments = workshop_get_assessments($lastsubmission)) {
+                            foreach ($assessments as $assessment) {
+                                if ($assessment->userid <> $USER->id) {
+                                    $n++;
+                                }
+                            }
+                        }
+                        if ($n) {
                             echo "<hr size=\"1\" noshade=\"noshade\" />";
                             print_heading(get_string("submitrevisedassignment", "workshop").":");
                             workshop_print_upload_form($workshop);
@@ -274,9 +282,6 @@
                         }
                     }
 				}
-				// allow user to list their submissions and assessments in a general way????
-				// print_heading("<a href=\"submissions.php?action=listallsubmissions&id=$cm->id\">".
-				// 	get_string("listofallsubmissions", "workshop"));
 			}
 		}
 	}

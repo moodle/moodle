@@ -40,6 +40,7 @@ workshop_get_student_submission($workshop, $user) { ---> in lib.php
 workshop_get_student_submission_assessments($workshop) {
 workshop_get_student_submissions($workshop) { ---> in lib.php
 workshop_get_submission_assessment($submission, $user) {
+workshop_get_teacher_assessments($workshop) {
 workshop_get_teacher_submission_assessments($workshop) {
 workshop_get_teacher_submissions($workshop) {
 workshop_get_ungraded_assessments($workshop) {
@@ -296,6 +297,10 @@ function workshop_count_student_submissions_for_assessment($workshop, $user) {
                 if (!ismember($groupid, $submission->userid)) {
                     continue; // skip this user
                 }
+            }
+            // check if submission is cold
+            if (($submission->timecreated + $CFG->maxeditingtime) > $timenow) {
+                continue; // skip this submission
             }
             // teacher assessed this submission
             if (! count_records_select("workshop_assessments", "submissionid = $submission->id AND 
@@ -571,6 +576,20 @@ function workshop_get_submission_assessment($submission, $user) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////
+function workshop_get_teacher_assessments($workshop) {
+// Return all teacher assessments, ordered by timecreated, oldest first
+    global $CFG;
+    
+    return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_assessments a, 
+                            {$CFG->prefix}user_teachers u
+                            WHERE u.course = $workshop->course
+                              AND a.userid = u.userid
+                              AND a.workshopid = $workshop->id 
+                              ORDER BY a.timecreated");
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
 function workshop_get_teacher_submission_assessments($workshop) {
 // Return all assessments on the teacher submissions, order by youngest first, oldest last
     global $CFG;
@@ -603,7 +622,7 @@ function workshop_get_teacher_submissions($workshop) {
 function workshop_get_ungraded_assessments($workshop) {
     global $CFG;
     // Return all assessments which have not been graded or just graded
-    $cutofftime =time() - $CFG->maxeditingtime;
+    $cutofftime = time() - $CFG->maxeditingtime;
     return get_records_select("workshop_assessments", "workshopid = $workshop->id AND (timegraded = 0 OR 
                 timegraded > $cutofftime)", "timecreated"); 
     }
@@ -831,8 +850,9 @@ function workshop_list_all_ungraded_assessments($workshop) {
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_list_assessed_submissions($workshop, $user) {
     // list the submissions that have been assessed by this user and are COLD
-    global $CFG;
+    global $CFG, $USER;
     
+    $timenow = time();
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
         error("Course Module ID was incorrect");
     }
@@ -847,7 +867,6 @@ function workshop_list_assessed_submissions($workshop, $user) {
     $table->cellspacing = 0;
 
     if ($assessments = workshop_get_student_assessments($workshop, $user)) {
-        $timenow = time();
         foreach ($assessments as $assessment) {
             $comment = "";
             $submission = get_record("workshop_submissions", "id", $assessment->submissionid);
@@ -865,10 +884,12 @@ function workshop_list_assessed_submissions($workshop, $user) {
                         $action .= " | <a href=\"assessments.php?action=assesssubmission&amp;id=$cm->id&amp;sid=$submission->id\">".
                             get_string("reassess", "workshop")."</a>";
                     } else {
-                        $action = "";
+                        $action = "<a href=\"assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id&".
+                            "allowcomments=false\">".get_string("view", "workshop")."</a>";
                     }
                 } else {
-                    if ($assessment->timegraded) {
+                    // if it been graded allow student to re-assess, except if it's a self assessment
+                    if ($assessment->timegraded and !($USER->id == $assessment->userid)) {
                         $action = "<a href=\"assessments.php?action=assesssubmission&amp;id=$cm->id&amp;sid=$submission->id\">".
                             get_string("reassess", "workshop")."</a>";
                     } else {
@@ -891,7 +912,7 @@ function workshop_list_assessed_submissions($workshop, $user) {
                             number_format($assessment->gradinggrade * $workshop->gradinggrade / 100, 0)).
                             " / $workshop->gradinggrade";
                 }
-                // if peer agrrements show whether agreement has been reached
+                // if peer agreements show whether agreement has been reached
                 if ($workshop->agreeassessments) {
                     if ($assessment->timeagreed) {
                         $comment .= "; ".get_string("assessmentwasagreedon", "workshop", 
@@ -992,6 +1013,7 @@ function workshop_list_self_assessments($workshop, $user) {
     // list  user's submissions for the user to assess
     global $CFG;
     
+    $timenow = time();
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
         error("Course Module ID was incorrect");
     }
@@ -1008,24 +1030,29 @@ function workshop_list_self_assessments($workshop, $user) {
     // get the user's submissions 
     if ($submissions = workshop_get_user_submissions($workshop, $user)) {
         foreach ($submissions as $submission) {
-            $comment = "";
+            $comment = get_string("ownwork", "workshop"); // just in case they don't know!
             if (!$assessment = get_record_select("workshop_assessments", "submissionid = $submission->id AND
                     userid = $user->id")) {
-                if ($submission->userid == $user->id) { // this will always be true
-                    $comment = get_string("ownwork", "workshop"); // just in case they don't know!
-                    }
                 $action = "<a href=\"assessments.php?action=assesssubmission&amp;id=$cm->id&amp;sid=$submission->id\">".
                     get_string("assess", "workshop")."</a>";
                 $table->data[] = array(workshop_print_submission_title($workshop, $submission), $action, $comment);
+            } else {
+                // may still be warm
+                if (($assessment->timecreated + $CFG->maxeditingtime) > $timenow) {
+                    $action = "<a href=\"assessments.php?action=assesssubmission&amp;id=$cm->id&amp;sid=$submission->id\">".
+                        get_string("reassess", "workshop")."</a>";
+                    $table->data[] = array(workshop_print_submission_title($workshop, $submission), $action, $comment);
                 }
             }
+        
         }
+    }
     if (isset($table->data)) {
         echo "<p><center><b>".get_string("pleaseassessyoursubmissions", "workshop", $course->student).
             "</b></center><br />\n";
         print_table($table);
-        }
     }
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -1253,19 +1280,24 @@ function workshop_list_submissions_for_admin($workshop, $order) {
                         error("Workshop_list_submissions_for_admin: Submission record not found!");
                     }
                     $title .= $submission->title;
-                    if ($assessment->timegraded) {
+                    if ($workshop->agreeassessments and !$assessment->timeagreed and 
+                            isstudent($workshop->course, $submission->userid)) { // agreements for student work only
+                        $title .= " &lt;&lt;".number_format($assessment->grade * $workshop->grade / 100, 0)." (".
+                            number_format($assessment->gradinggrade * $workshop->gradinggrade / 100, 0).")&gt;&gt; ";
+                    } elseif ($assessment->timegraded) {
                         if ($assessment->gradinggrade) {
                             // a good assessment
                             $title .= " {".number_format($assessment->grade * $workshop->grade / 100, 0)." (".
                                 number_format($assessment->gradinggrade * $workshop->gradinggrade / 100, 0).")} ";
                         } else { 
                             // a poor assessment
-                            $title .= " <".number_format($assessment->grade * $workshop->grade / 100, 0)." (".
-                                number_format($assessment->gradinggrade * $workshop->gradinggrade / 100, 0).")> ";
+                            $title .= " &lt;".number_format($assessment->grade * $workshop->grade / 100, 0)." (".
+                                number_format($assessment->gradinggrade * $workshop->gradinggrade / 100, 0).")&gt; ";
                         }
                     } else {
                         // not yet graded
-                        $title .= " {".number_format($assessment->grade * $workshop->grade / 100, 0)." (-)} ";
+                        $title .= " {".number_format($assessment->grade * $workshop->grade / 100, 0)." ((".
+                            number_format($assessment->gradinggrade * $workshop->gradinggrade / 100, 0)."))} ";
                     }
                     if ($realassessments = workshop_count_user_assessments_done($workshop, $user)) {
                         $action = "<a href=\"assessments.php?action=adminlistbystudent&amp;id=$cm->id&amp;userid=$user->id\">".
@@ -1308,6 +1340,10 @@ function workshop_list_submissions_for_admin($workshop, $order) {
                     number_format($stats->min* $workshop->gradinggrade / 100, 1));
             print_heading(get_string("gradinggrade", "workshop")." ".get_string("analysis", "workshop"));
             print_table($table);
+            echo "<p align=\"center\"><a href=\"assessments.php?id=$cm->id&amp;action=regradestudentassessments\">".
+                    get_string("regradestudentassessments", "workshop")."</a> ";
+            helpbutton("regrading", get_string("regradestudentassessments", "workshop"), "workshop");
+            echo "</p>\n";
         }
     }
 
@@ -1431,6 +1467,9 @@ function workshop_list_teacher_assessments($workshop, $user) {
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_list_teacher_submissions($workshop, $user) {
     global $CFG;
+
+    // set threshold on re-assessments
+    $reassessthreshold = 80;
     
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
         error("Course Module ID was incorrect");
@@ -1500,12 +1539,12 @@ function workshop_list_teacher_submissions($workshop, $user) {
                     $action = "<a href=\"assessments.php?action=assesssubmission&amp;id=$cm->id&amp;sid=$submission->id\">".
                         get_string("assess", "workshop")."</a>";
                 }
-                elseif ($assessment->timegraded) { 
-                    // allow student to improve on their assessment once it's been graded
+                elseif ($assessment->timegraded and ($assessment->gradinggrade < $reassessthreshold)) { 
+                    // allow student to improve on their assessment once it's been graded and is below threshold
                     $action = "<a href=\"assessments.php?action=assesssubmission&amp;id=$cm->id&amp;sid=$submission->id\">".
                         get_string("reassess", "workshop")."</a>";
                 } else {
-                    // allow student  just to see their assessment if it hasn't been graded
+                    // allow student  just to see their assessment if it hasn't been graded (or above threshold)
                     $action = "<a href=\"assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id\">".
                         get_string("view", "workshop")."</a>";
                 }
@@ -1531,6 +1570,7 @@ function workshop_list_unassessed_student_submissions($workshop, $user) {
     // list the student submissions not assessed by this user
     global $CFG;
     
+    $timenow = time();
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
         error("Course Module ID was incorrect");
     }
@@ -1545,13 +1585,13 @@ function workshop_list_unassessed_student_submissions($workshop, $user) {
     }
 
     $table->head = array (get_string("title", "workshop"), get_string("submittedby", "workshop"),
-        get_string("action", "workshop"), get_string("comment", "workshop"));
-    $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT");
-    $table->size = array ("*", "*", "*", "*");
+        get_string("submitted", "workshop"), get_string("action", "workshop"), get_string("comment", "workshop"));
+    $table->align = array ("left", "left", "left", "left", "left");
+    $table->size = array ("*", "*", "*", "*", "*");
     $table->cellpadding = 2;
     $table->cellspacing = 0;
 
-    if ($submissions = workshop_get_student_submissions($workshop)) {
+    if ($submissions = workshop_get_student_submissions($workshop, 'time')) { // oldest first 
         foreach ($submissions as $submission) {
             // check group membership, if necessary
             if ($groupid) {
@@ -1560,18 +1600,22 @@ function workshop_list_unassessed_student_submissions($workshop, $user) {
                     continue; // skip this user
                 }
             }
+            // see if submission is cold
+            if (($submission->timecreated +$CFG->maxeditingtime) > $timenow) {
+                continue; // skip this submission
+            }
             $comment = "";
+            $timegap = get_string("ago", "workshop", format_time($submission->timecreated - $timenow));
             // see if user already graded this assessment
             if ($assessment = get_record_select("workshop_assessments", "submissionid = $submission->id
                     AND userid = $user->id")) {
-                $timenow = time();
                 if (($timenow - $assessment->timecreated < $CFG->maxeditingtime)) {
                     // last chance salon
                     $submissionowner = get_record("user", "id", $submission->userid);
                     $action = "<a href=\"assessments.php?action=assesssubmission&amp;id=$cm->id&amp;sid=$submission->id\">".
                         get_string("edit", "workshop")."</a>";
                     $table->data[] = array(workshop_print_submission_title($workshop, $submission), 
-                        fullname($submissionowner), $action, $comment);
+                        fullname($submissionowner), $timegap, $action, $comment);
                     }
                 }
             else { // no assessment
@@ -1579,7 +1623,7 @@ function workshop_list_unassessed_student_submissions($workshop, $user) {
                 $action = "<a href=\"assessments.php?action=assesssubmission&amp;id=$cm->id&amp;sid=$submission->id\">".
                     get_string("assess", "workshop")."</a>";
                 $table->data[] = array(workshop_print_submission_title($workshop, $submission), 
-                    fullname($submissionowner), $action, $comment);
+                    fullname($submissionowner), $timegap, $action, $comment);
                 }
             }
         if (isset($table->data)) {
@@ -1702,7 +1746,9 @@ function workshop_list_user_submissions($workshop, $user) {
         foreach ($submissions as $submission) {
             // allow user to delete a submission if it's warm
             if ($submission->timecreated > ($timenow - $CFG->maxeditingtime)) {
-                $action = "<a href=\"submissions.php?action=userconfirmdelete&amp;id=$cm->id&amp;sid=$submission->id\">".
+                $action = "<a href=\"submissions.php?action=editsubmission&amp;id=$cm->id&amp;sid=$submission->id\">".
+                    get_string("edit", "workshop")."</a> | ".
+                    "<a href=\"submissions.php?action=userconfirmdelete&amp;id=$cm->id&amp;sid=$submission->id\">".
                     get_string("delete", "workshop")."</a>";
             }
             else {
@@ -1754,7 +1800,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
         if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {
             error ("Workshop_print_assessment: Submission record not found");
             }
-        echo workshop_print_submission_title($workshop, $submission);
+        echo workshop_print_submission($workshop, $submission);
         echo "</td></tr></table><br clear=\"all\" />\n";
     
         // see if this is a pre-filled assessment for a re-submission...
@@ -2402,18 +2448,16 @@ function workshop_print_key($workshop) {
     if (!$course = get_record("course", "id", $workshop->course)) {
         error("Print key: course not found");
     }
-    echo "<table align=\"center\">\n";
-    echo "<tr><td><small>{}</small></td><td><small>".get_string("assessmentby", "workshop", $course->student).
-        ";&nbsp;&nbsp; </small></td>\n";
-    echo "<td><small>[]</small></td><td><small>".get_string("assessmentby", "workshop", $course->teacher).
-        ";&nbsp;&nbsp; </small></td>\n";
-    echo "<td><small>&lt;&gt;</small></td><td><small>".get_string("assessmentdropped", "workshop").
-        ";&nbsp;&nbsp; </small></td>\n";
-    echo "<td><small>()</small></td><td><small>".get_string("gradegiventoassessment", "workshop").
-        ".</small></td></tr>\n";
-    echo "<tr><td colspan=\"8\" align=\"center\"><small>".get_string("gradesforsubmissionsare", "workshop", $workshop->grade)."; ".
-        get_string("gradesforassessmentsare", "workshop", $workshop->gradinggrade).".</small></td></tr>\n";
-    echo "</table><br />\n";
+    echo "<div align=\"center\">\n";
+    echo "<p><small>{} ".get_string("assessmentby", "workshop", $course->student).";&nbsp;&nbsp;\n";
+    echo "[] ".get_string("assessmentby", "workshop", $course->teacher).";&nbsp;&nbsp;\n";
+    echo "&lt;&gt; ".get_string("assessmentdropped", "workshop").";\n";
+    if ($workshop->agreeassessments) echo "&lt;&lt;&gt;&gt; ".get_string("assessmentnotyetagreed", "workshop").";\n";
+    echo "<br />() ".get_string("gradegiventoassessment", "workshop").";&nbsp;&nbsp;\n";
+    echo "(()) ".get_string("assessmentnotyetgraded", "workshop").".\n";
+    echo "<br />".get_string("gradesforsubmissionsare", "workshop", $workshop->grade).";&nbsp;&nbsp;\n";
+    echo get_string("gradesforassessmentsare", "workshop", $workshop->gradinggrade).".</small></p>\n";
+    echo "</div>\n";
     return;    
 }
     
@@ -2496,6 +2540,42 @@ function workshop_print_league_table($workshop) {
     
 
 //////////////////////////////////////////////////////////////////////////////////////
+function workshop_print_submission($workshop, $submission) {
+    // prints the submission with optional attachments
+    global $CFG;
+
+    if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
+            error("Course Module ID was incorrect");
+    }
+    print_simple_box(format_text($submission->description), 'center');
+    if ($workshop->nattachments) {
+        $n = 1;
+        echo "<table align=\"center\">\n";
+        $filearea = workshop_file_area_name($workshop, $submission);
+        if ($basedir = workshop_file_area($workshop, $submission)) {
+            if ($files = get_directory_list($basedir)) {
+                foreach ($files as $file) {
+                    $icon = mimeinfo("icon", $file);
+                    if ($CFG->slasharguments) {
+                        $ffurl = "file.php/$filearea/$file";
+                    } else {
+                        $ffurl = "file.php?file=/$filearea/$file";
+                    }
+                    echo "<tr><td><b>".get_string("attachment", "workshop")." $n:</b> \n";
+                    echo "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" 
+                        border=\"0\" alt=\"File\" />".
+                        "&nbsp;<a target=\"uploadedfile\" href=\"$CFG->wwwroot/$ffurl\">$file</a></td></tr>";
+                    $n++;
+                }
+            }
+        }
+        echo "</table>\n";
+    }
+    return;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
 function workshop_print_submission_assessments($workshop, $submission, $type) {
     // Returns the teacher or peer grade and a hyperlinked list of grades for this submission
 
@@ -2519,7 +2599,9 @@ function workshop_print_submission_assessments($workshop, $submission, $type) {
                                 $str .= "&lt;".number_format($assessment->grade, 0)." (0)&gt;</a> ";
                             }
                         } else {
-                            $str .= "[".number_format($assessment->grade, 0)." (-)]</a> ";
+                            $str .= "[".number_format($assessment->grade, 0)." ((".
+                                    number_format($assessment->gradinggrade * $workshop->gradinggrade / 100, 0).
+                                    "))]</a> ";
                         }
                     }
                 }
@@ -2528,7 +2610,12 @@ function workshop_print_submission_assessments($workshop, $submission, $type) {
                 foreach ($assessments as $assessment) {
                     if (isstudent($workshop->course, $assessment->userid)) {
                         $str .= "<a href=\"assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id\">";
-                        if ($assessment->timegraded) {
+                        if ($workshop->agreeassessments and !$assessment->timeagreed and 
+                                isstudent($workshop->course, $submission->userid)) { // agreement on student work only
+                            $str .= "&lt;&lt;".number_format($assessment->grade * $workshop->grade / 100, 0)." (".
+                                number_format($assessment->gradinggrade * $workshop->gradinggrade / 100, 0).
+                                ")&gt;&gt;</a> ";
+                        } elseif ($assessment->timegraded) {
                             if ($assessment->gradinggrade) {
                                 $str .= "{".number_format($assessment->grade * $workshop->grade / 100, 0)." (".
                                     number_format($assessment->gradinggrade * $workshop->gradinggrade / 100, 0).
@@ -2538,7 +2625,8 @@ function workshop_print_submission_assessments($workshop, $submission, $type) {
                                     " (0)&gt;</a> ";
                             }
                         } else {
-                            $str .= "{".number_format($assessment->grade * $workshop->grade / 100, 0)." (-)}</a> ";
+                            $str .= "{".number_format($assessment->grade * $workshop->grade / 100, 0)." ((".
+                                number_format($assessment->gradinggrade * $workshop->gradinggrade / 100, 0)."))}</a> ";
                         }
                     }
                 }
@@ -2556,26 +2644,14 @@ function workshop_print_submission_assessments($workshop, $submission, $type) {
 function workshop_print_submission_title($workshop, $submission) {
 // Arguments are objects
 
-    global $CFG;
+    if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
+            error("Course Module ID was incorrect");
+    }
     
     if (!$submission->timecreated) { // a "no submission"
         return $submission->title;
     }
-
-    require_once("$CFG->dirroot/files/mimetypes.php");
-    $filearea = workshop_file_area_name($workshop, $submission);
-    if ($basedir = workshop_file_area($workshop, $submission)) {
-        if (list($file) = get_directory_list($basedir)) {
-            $icon = mimeinfo("icon", $file);
-            if ($CFG->slasharguments) {
-                $ffurl = "file.php/$filearea/$file";
-            } else {
-                $ffurl = "file.php?file=/$filearea/$file";
-            }
-            return "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" border=\"0\" alt=\"File\" />".
-                "&nbsp;<a target=\"uploadedfile$submission->id\" href=\"$CFG->wwwroot/$ffurl\">$submission->title</a>";
-        }
-    }
+    return "<a href=\"submissions.php?id=$cm->id&action=showsubmission&sid=$submission->id\">$submission->title</a>";
 }
 
 
@@ -2677,8 +2753,6 @@ function workshop_print_time_to_deadline($time) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_print_upload_form($workshop) {
-// Arguments are objects, needs title coming in
-
     global $CFG;
 
     if (! $course = get_record("course", "id", $workshop->course)) {
@@ -2687,13 +2761,30 @@ function workshop_print_upload_form($workshop) {
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
         error("Course Module ID was incorrect");
     }
+    $usehtmleditor = can_use_html_editor();
 
     echo "<div align=\"center\">";
     echo "<form enctype=\"multipart/form-data\" method=\"POST\" action=\"upload.php\">";
     echo " <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
-    upload_print_form_fragment(1,array('newfile'),null,true,array('title'),$course->maxbytes,$workshop->maxbytes,false);
-    echo " <input type=\"submit\" name=\"save\" value=\"".get_string("uploadthisfile")."\" />";
+    echo "<table celpadding=\"5\" border=\"1\" align=\"center\">\n";
+    // now get the submission
+    echo "<tr valign=\"top\"><td><b>". get_string("title", "workshop").":</b>\n";
+    echo "<input type=\"text\" name=\"title\" size=\"60\" maxlength=\"100\" value=\"\" />\n";
+    echo "</td></tr><tr><td><b>".get_string("submission", "workshop").":</b><br />\n";
+    print_textarea($usehtmleditor, 25,70, 630, 400, "description");
+    use_html_editor("description");
+    echo "</td></tr><tr><td>\n";
+    if ($workshop->nattachments) {
+        require_once($CFG->dirroot.'/lib/uploadlib.php');
+        for ($i=0; $i < $workshop->nattachments; $i++) {
+            $iplus1 = $i + 1;
+            $tag[$i] = get_string("attachment", "workshop")." $iplus1:";
+        }
+        upload_print_form_fragment($workshop->nattachments,null,$tag,false,null,$course->maxbytes,
+                $workshop->maxbytes,false);
+    }
+    echo "</td></tr></table>\n";
+    echo " <input type=\"submit\" name=\"save\" value=\"".get_string("submitassignment","workshop")."\" />";
     echo "</form>";
     echo "</div>";
 }

@@ -54,6 +54,7 @@
                 fwrite ($bf,full_tag("NAME",4,false,$workshop->name));
                 fwrite ($bf,full_tag("DESCRIPTION",4,false,$workshop->description));
                 fwrite ($bf,full_tag("NELEMENTS",4,false,$workshop->nelements));
+                fwrite ($bf,full_tag("NATTACHMENTS",4,false,$workshop->nattachments));
                 fwrite ($bf,full_tag("PHASE",4,false,$workshop->phase));
                 fwrite ($bf,full_tag("FORMAT",4,false,$workshop->format));
                 fwrite ($bf,full_tag("GRADINGSTRATEGY",4,false,$workshop->gradingstrategy));
@@ -178,6 +179,7 @@
                 fwrite ($bf,full_tag("TITLE",6,false,$wor_sub->title));       
                 fwrite ($bf,full_tag("TIMECREATED",6,false,$wor_sub->timecreated));       
                 fwrite ($bf,full_tag("MAILED",6,false,$wor_sub->mailed));       
+                fwrite ($bf,full_tag("DESCRIPTION",6,false,$wor_sub->description));       
                 fwrite ($bf,full_tag("TEACHERGRADE",6,false,$wor_sub->teachergrade));       
                 fwrite ($bf,full_tag("PEERGRADE",6,false,$wor_sub->peergrade));       
                 fwrite ($bf,full_tag("BIASGRADE",6,false,$wor_sub->biasgrade));       

@@ -94,6 +94,14 @@ function workshop_upgrade($oldversion) {
         execute_sql("ALTER TABLE `{$CFG->prefix}workshop` DROP COLUMN `assessmentstodrop`");
     }
 
+    if ($oldversion < 2004092400) {
+		table_column("workshop", "", "nattachments", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "nelements");
+		table_column("workshop_submissions", "", "description", "TEXT", "", "", "", "", "mailed");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop_submissions` ADD INDEX (`userid`)");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop_assessments` ADD INDEX (`submissionid`)");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop_assessments` ADD INDEX (`userid`)");
+    }
+
     
     return true;
 }

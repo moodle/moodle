@@ -57,6 +57,7 @@
             $workshop->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $workshop->description = backup_todb($info['MOD']['#']['DESCRIPTION']['0']['#']);
             $workshop->nelements = backup_todb($info['MOD']['#']['NELEMENTS']['0']['#']);
+            $workshop->nattachments = backup_todb($info['MOD']['#']['NATTACHMENTS']['0']['#']);
             $workshop->phase = backup_todb($info['MOD']['#']['PHASE']['0']['#']);
             $workshop->format = backup_todb($info['MOD']['#']['FORMAT']['0']['#']);
             $workshop->gradingstrategy = backup_todb($info['MOD']['#']['GRADINGSTRATEGY']['0']['#']);
@@ -230,6 +231,7 @@
             $submission->title = backup_todb($sub_info['#']['TITLE']['0']['#']);
             $submission->timecreated = backup_todb($sub_info['#']['TIMECREATED']['0']['#']);
             $submission->mailed = backup_todb($sub_info['#']['MAILED']['0']['#']);
+            $submission->description = backup_todb($sub_info['#']['DESCRIPTION']['0']['#']);
             $submission->teachergrade = backup_todb($sub_info['#']['TEACHERGRADE']['0']['#']);
             $submission->peergrade = backup_todb($sub_info['#']['PEERGRADE']['0']['#']);
             $submission->biasgrade = backup_todb($sub_info['#']['BIASGRADE']['0']['#']);
