@@ -152,7 +152,7 @@
 
         $settings = ''; // By default, no configuration
         if($blockobject->has_config()) {
-            $settings = '<a href="block.php?block='.$blockid.'">'.$strsettings.'</a>';
+            $settings = '<a href="block.php?block='.$blockid.'&sesskey='.$USER->sesskey.'">'.$strsettings.'</a>';
         }
 
         $count = blocks_get_courses_using_block_by_id($blockid);

@@ -14,6 +14,10 @@
         error("Site isn't defined!");
     }
 
+    if (!confirm_sesskey()) {
+        error(get_string('confirmsesskeybad', 'error'));
+    }
+
     require_variable($_REQUEST['block']);
     $blockid = intval($_REQUEST['block']);
 
@@ -28,13 +32,13 @@
 
 /// If data submitted, then process and store.
 
-	if ($config = data_submitted()) {
-	    unset($config['block']); // This will always be set if we have reached this point
-	    $block->handle_config($config);
+    if ($config = data_submitted()) {
+        unset($config->block); // This will always be set if we have reached this point
+        $block->handle_config($config);
         print_header();
         redirect("$CFG->wwwroot/$CFG->admin/blocks.php", get_string("changessaved"), 1);
         exit;
-	}
+    }
 
 /// Otherwise print the form.
 
