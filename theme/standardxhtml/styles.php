@@ -1,7 +1,8 @@
 <?PHP /*  $Id$ */
 
-/// We use PHP so we can load groups of CSS files
-/// because it's so much easier to work with the editor's CSS highlighting
+/// This PHP script is used because it provides a place for setting 
+/// up any necessary variables, and lets us include raw CSS files.
+/// The output of this script should be a completely standard CSS file.
 
     if (!isset($themename)) {
         $themename = NULL;
@@ -9,11 +10,12 @@
 
     $nomoodlecookie = true;
     require_once("../../config.php");
-    $themeurl = style_sheet_setup(filemtime("styles.php"), 300, $themename);
 
-    include ("./styles_layout.css");
-    include ("./styles_typography.css");
-    include ("./styles_color.css");
-    include ("./styles_moz.css");
+    $themeurl = style_sheet_setup(filemtime("styles.php"), 600, $themename);
+
+    include('styles_layout.css');
+    include('styles_fonts.css');
+    include('styles_color.css');
+    include('styles_moz.css');
 
 ?>
