@@ -479,11 +479,15 @@ a.autolink:hover {
 .generaltab {
     -moz-border-radius-topleft: 15px;
     -moz-border-radius-topright: 15px;
+    background: none;
+    background-color: <?PHP echo $THEME->cellheading?>;
 }
 
 .generaltabselected {
     -moz-border-radius-topleft: 15px;
     -moz-border-radius-topright: 15px;
+    background: none;
+    background-color: <?PHP echo $THEME->cellheading2?>;
 }
 
 .forumheaderlist {
