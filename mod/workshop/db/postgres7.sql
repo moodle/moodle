@@ -20,6 +20,7 @@ CREATE TABLE prefix_workshop (
   includeself INT2  NOT NULL default '0',
   maxbytes INT8  NOT NULL default '100000',
   deadline INT8  NOT NULL default '0',
+  releasegrades INT8 NOT NULL "0",
   grade INT8 NOT NULL default '0',
   gradinggrade INT4 NOT NULL default '0',
   ntassessments INT  NOT NULL default '0',
@@ -46,13 +47,11 @@ CREATE TABLE prefix_workshop_submissions (
   timecreated INT8  NOT NULL default '0',
   mailed INT2  NOT NULL default '0',
   description TEXT,
-  teachergrade INT  NOT NULL default '0',
-  peergrade INT  NOT NULL default '0',
-  biasgrade INT  NOT NULL default '0',
-  reliabilitygrade INT  NOT NULL default '0',
   gradinggrade INT  NOT NULL default '0',
   late INT NOT NULL DEFAULT '0',
-  inalgrade INT  NOT NULL default '0'
+  inalgrade INT  NOT NULL default '0',
+  nassessments INT8 NOT NULL default 0 
+
 );
 CREATE INDEX prefix_workshop_submissions_title_idx on prefix_workshop_submissions (title);
 CREATE INDEX prefix_workshop_submissions_userid_idx ON prefix_workshop_submissions (userid);
@@ -78,6 +77,7 @@ CREATE TABLE prefix_workshop_assessments (
   donotuse int4 NOT NULL default '0',
   generalcomment text NOT NULL default '',
   teachercomment text NOT NULL default ''
+
   );
 # --------------------------------------------------------
 
@@ -87,7 +87,7 @@ CREATE INDEX prefix_workshop_assessments_userid_idx ON prefix_workshop_assessmen
 #
 # Table structure for table workshop_elements
 #
-
+ 
 CREATE TABLE prefix_workshop_elements (
   id SERIAL PRIMARY KEY,
   workshopid INT8  NOT NULL default '0',
@@ -95,7 +95,9 @@ CREATE TABLE prefix_workshop_elements (
   description text NOT NULL default '',
   scale INT  NOT NULL default '0',
   maxscore INT  NOT NULL default '1',
-  weight float NOT NULL default '1.0'
+  weight INT4 NOT NULL default '11',
+  stddev FLOAT NOT NULL default "0",
+  totalrassesments INT8 NOT NULL DEFAULT "0"
 );
 
 # --------------------------------------------------------
@@ -131,7 +133,14 @@ CREATE TABLE prefix_workshop_comments (
   mailed int2  NOT NULL default '0',
   comments text NOT NULL default ''
 );
-
+#---------------------------------------------------------
+CREATE TABLE prefix_workshop_stockcomments (
+  id SERIAL PRIMARY KEY,
+  workshopid INT8 NOT NULL default '0', 
+  elementno INT8 NOT NULL default '0',
+  comments text NOT NULL
+); 
+ 
 INSERT INTO prefix_log_display VALUES ('workshop', 'assessments', 'workshop', 'name');
 INSERT INTO prefix_log_display VALUES ('workshop', 'close', 'workshop', 'name');
 INSERT INTO prefix_log_display VALUES ('workshop', 'display', 'workshop', 'name');
