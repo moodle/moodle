@@ -119,6 +119,29 @@ function workshop_upgrade($oldversion) {
         }
     }
 
+    if ($oldversion < 2004102800) {
+		table_column("workshop", "", "releasegrades", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "deadline");
+		execute_sql("
+        CREATE TABLE `{$CFG->prefix}workshop_stockcomments` (
+          `id` int(10) unsigned NOT NULL auto_increment,
+		  `workshopid` int(10) unsigned NOT NULL default '0', 
+          `elementno` int(10) unsigned NOT NULL default '0',
+          `comments` text NOT NULL,
+          PRIMARY KEY  (`id`)
+        ) COMMENT='Defines stockcomments, the teacher comment bank'
+        ");
+	}
+
+    if ($oldversion < 2004111000) {
+		table_column("workshop_elements", "", "stddev", "FLOAT", "", "", "0", "NOT NULL");
+		table_column("workshop_elements", "", "totalassessments", "INTEGER", "10", "", "0", "NOT NULL");
+		execute_sql(" ALTER TABLE `{$CFG->prefix}workshop_elements` CHANGE `weight` `weight` INT(4) UNSIGNED NOT NULL DEFAULT '11'");
+        table_column("workshop_submissions", "", "nassessments", "INTEGER", "10", "", "0", "NOT NULL");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop_submissions` DROP COLUMN `teachergrade`");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop_submissions` DROP COLUMN `peergrade`");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop_submissions` DROP COLUMN `biasgrade`");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop_submissions` DROP COLUMN `reliabilitygrade`");
+    }
     
     return true;
 }

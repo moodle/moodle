@@ -69,6 +69,7 @@
             $workshop->includeself = backup_todb($info['MOD']['#']['INCLUDESELF']['0']['#']);
             $workshop->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
             $workshop->deadline = backup_todb($info['MOD']['#']['DEADLINE']['0']['#']);
+            $workshop->releasegrades = backup_todb($info['MOD']['#']['RELEASEGRADES']['0']['#']);
             $workshop->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
             $workshop->gradinggrade = backup_todb($info['MOD']['#']['GRADINGGRADE']['0']['#']);
             $workshop->ntassessments = backup_todb($info['MOD']['#']['NTASSESSMENTS']['0']['#']);
@@ -137,6 +138,8 @@
             $element->scale = backup_todb($ele_info['#']['SCALE']['0']['#']);
             $element->maxscore = backup_todb($ele_info['#']['MAXSCORE']['0']['#']);
             $element->weight = backup_todb($ele_info['#']['WEIGHT']['0']['#']);
+            $element->stddev = backup_todb($ele_info['#']['STDDEV']['0']['#']);
+            $element->totalassessments = backup_todb($ele_info['#']['TOTALASSESSMENTS']['0']['#']);
 
             //The structure is equal to the db, so insert the workshop_elements
             $newid = insert_record ("workshop_elements",$element);
@@ -153,6 +156,8 @@
             if ($newid) {
                 //We have to restore the workshop_rubrics table now (course level table)
                 $status = workshop_rubrics_restore_mods($workshop_id,$element->elementno,$ele_info,$restore);
+                //We have to restore the workshop_stockcomment table now (course level table)
+                $status = workshop_stockcomments_restore_mods($workshop_id,$element->elementno,$ele_info,$restore);
             } else {
                 $status = false;
             }
@@ -207,6 +212,50 @@
     }
 
 
+    //This function restores the workshop_stockcomments
+    function workshop_stockcomments_restore_mods($new_workshop_id, $elementno, $info, $restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the stockcomments array (optional)
+        if (isset($info['#']['STOCKCOMMENTS']['0']['#']['STOCKCOMMENT'])) {
+            $stockcomments = $info['#']['STOCKCOMMENTS']['0']['#']['STOCKCOMMENT'];
+
+            //Iterate over stock comments
+            for($i = 0; $i < sizeof($stockcomments); $i++) {
+                $com_info = $stockcomments[$i];
+                //traverse_xmlize($com_info);                            //Debug
+                //print_object ($GLOBALS['traverse_array']);             //Debug
+                //$GLOBALS['traverse_array']="";                         //Debug
+
+                //Now, build the WORKSHOP_STOCKCOMMENTS record structure
+                $stockcomment->workshopid = $new_workshop_id;
+                $stockcomment->elementno = $elementno;
+                $stockcomment->comments = backup_todb($com_info['#']['COMMENT_TEXT']['0']['#']);
+
+                //The structure is equal to the db, so insert the workshop_comment
+                $newid = insert_record ("workshop_stockcomments",$stockcomment);
+
+                //Do some output
+                if (($i+1) % 50 == 0) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br />";
+                    }
+                    backup_flush(300);
+                }
+
+                if (!$newid) {
+                    $status = false;
+                }
+            }
+        }
+
+        return $status;
+    }
+
     //This function restores the workshop_submissions
     function workshop_submissions_restore_mods($old_workshop_id, $new_workshop_id,$info,$restore) {
 
@@ -235,13 +284,10 @@
             $submission->timecreated = backup_todb($sub_info['#']['TIMECREATED']['0']['#']);
             $submission->mailed = backup_todb($sub_info['#']['MAILED']['0']['#']);
             $submission->description = backup_todb($sub_info['#']['DESCRIPTION']['0']['#']);
-            $submission->teachergrade = backup_todb($sub_info['#']['TEACHERGRADE']['0']['#']);
-            $submission->peergrade = backup_todb($sub_info['#']['PEERGRADE']['0']['#']);
-            $submission->biasgrade = backup_todb($sub_info['#']['BIASGRADE']['0']['#']);
-            $submission->reliabilitygrade = backup_todb($sub_info['#']['RELIABILITYGRADE']['0']['#']);
             $submission->gradinggrade = backup_todb($sub_info['#']['GRADINGGRADE']['0']['#']);
             $submission->finalgrade = backup_todb($sub_info['#']['FINALGRADE']['0']['#']);
             $submission->late = backup_todb($sub_info['#']['LATE']['0']['#']);
+            $submission->nassessments = backup_todb($sub_info['#']['NASSESSMENTS']['0']['#']);
 
             //We have to recode the userid field
             $user = backup_getid($restore->backup_unique_code,"user",$olduserid);

@@ -367,6 +367,16 @@
     ?></td>
 </tr>
 
+<tr valign="top">
+    <td align="right"><p><b><?php  print_string("releaseteachergrades", "workshop") ?>:</b></td>
+    <td><?php
+            print_date_selector("releaseday", "releasemonth", "releaseyear", $form->releasegrades);
+            echo "&nbsp;-&nbsp;";
+            print_time_selector("releasehour", "releaseminute", $form->releasegrades);
+            helpbutton("releasegrades", get_string("releaseteachergrades", "workshop"), "workshop");
+    ?></td>
+</tr>
+
 </table>
 <br />
 <center>

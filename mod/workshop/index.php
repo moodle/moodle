@@ -47,19 +47,27 @@
     }
 
     foreach ($workshops as $workshop) {
-        switch ($workshop->phase) {
-            case 0:
-            case 1: $info = get_string("phase1short", "workshop");
-                    break;
-            case 2: $info = get_string("phase2short", "workshop");
-                    break;
-            case 3: $info = get_string("phase3short", "workshop");
-                    break;
-            case 4: $info = get_string("phase4short", "workshop");
-                    break;
-            case 5: $info = get_string("phase5short", "workshop");
-                    break;
+        if (isteacher($course->id, $USER->id)) { // teacher see info (students see grade)
+            switch ($workshop->phase) {
+                case 0:
+                case 1: $info = get_string("phase1short", "workshop");
+                        break;
+                case 2: $info = get_string("phase2short", "workshop");
+                        break;
+                case 3: $info = get_string("phase3short", "workshop");
+                        break;
+                case 4: $info = get_string("phase4short", "workshop");
+                        break;
+                case 5: $info = get_string("phase5short", "workshop");
+                        break;
+            }
+            if ($workshop->phase > 1) {
+                if ($num = workshop_count_student_submissions_for_assessment($workshop, $USER)) {
+                    $info .= " [".get_string("unassessed", "workshop", $num)."]";
+                }
+            }
         }
+
         if ($submissions = workshop_get_user_submissions($workshop, $USER)) {
             foreach ($submissions as $submission) {
                 if ($submission->timecreated <= $workshop->deadline) {

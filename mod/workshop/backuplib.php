@@ -66,6 +66,7 @@
                 fwrite ($bf,full_tag("INCLUDESELF",4,false,$workshop->includeself));
                 fwrite ($bf,full_tag("MAXBYTES",4,false,$workshop->maxbytes));
                 fwrite ($bf,full_tag("DEADLINE",4,false,$workshop->deadline));
+                fwrite ($bf,full_tag("RELEASEGRADES",4,false,$workshop->releasegrades));
                 fwrite ($bf,full_tag("GRADE",4,false,$workshop->grade));
                 fwrite ($bf,full_tag("GRADINGGRADE",4,false,$workshop->gradinggrade));
                 fwrite ($bf,full_tag("NTASSESSMENTS",4,false,$workshop->ntassessments));
@@ -118,8 +119,12 @@
                 fwrite ($bf,full_tag("SCALE",6,false,$wor_ele->scale));
                 fwrite ($bf,full_tag("MAXSCORE",6,false,$wor_ele->maxscore));
                 fwrite ($bf,full_tag("WEIGHT",6,false,$wor_ele->weight));
+                fwrite ($bf,full_tag("STDDEV",6,false,$wor_ele->stddev));
+                fwrite ($bf,full_tag("TOTALASSESSMENTS",6,false,$wor_ele->totalassessments));
                 //Now we backup workshop rubrics
                 $status = backup_workshop_rubrics($bf,$preferences,$workshop,$wor_ele->elementno);
+                //Now we backup element's stock comments
+                $status = backup_workshop_stockcomments($bf,$preferences,$workshop,$wor_ele->elementno);
                 //End element
                 $status =fwrite ($bf,end_tag("ELEMENT",5,true));
             }
@@ -160,6 +165,36 @@
         return $status;
     }
 
+    //Backup workshop_stockcomments contents (executed from backup_workshop_elements)
+    function backup_workshop_stockcomments ($bf,$preferences,$workshop,$elementid) {
+
+        global $CFG;
+
+        $status = true;
+
+        $workshop_stockcomments = get_records_sql("SELECT * from {$CFG->prefix}workshop_stockcomments c
+                                              WHERE c.workshopid = '$workshop' and c.elementno = '$elementno'
+                                              ORDER BY c.id");
+
+        //If there is workshop_stockcomments
+        if ($workshop_stockcomments) {
+            //Write start tag
+            $status =fwrite ($bf,start_tag("STOCKCOMMENTS",8,true));
+            //Iterate over each comment
+            foreach ($workshop_stockcomments as $wor_com) {
+                //Start comment
+                $status =fwrite ($bf,start_tag("STOCKCOMMENT",9,true));
+                //Print comment contents
+                fwrite ($bf,full_tag("COMMENT_TEXT",10,false,$wor_com->comments));
+                //End comment
+                $status =fwrite ($bf,end_tag("STOCKCOMMENT",9,true));
+            }
+            //Write end tag
+            $status =fwrite ($bf,end_tag("STOCKCOMMENTS",8,true));
+        }
+        return $status;
+    }
+
     //Backup workshop_submissions contents (executed from workshop_backup_mods)
     function backup_workshop_submissions ($bf,$preferences,$workshop) {
 
@@ -183,13 +218,10 @@
                 fwrite ($bf,full_tag("TIMECREATED",6,false,$wor_sub->timecreated));       
                 fwrite ($bf,full_tag("MAILED",6,false,$wor_sub->mailed));       
                 fwrite ($bf,full_tag("DESCRIPTION",6,false,$wor_sub->description));       
-                fwrite ($bf,full_tag("TEACHERGRADE",6,false,$wor_sub->teachergrade));       
-                fwrite ($bf,full_tag("PEERGRADE",6,false,$wor_sub->peergrade));       
-                fwrite ($bf,full_tag("BIASGRADE",6,false,$wor_sub->biasgrade));       
-                fwrite ($bf,full_tag("RELIABILITYGRADE",6,false,$wor_sub->reliabilitygrade));       
                 fwrite ($bf,full_tag("GRADINGGRADE",6,false,$wor_sub->gradinggrade));       
                 fwrite ($bf,full_tag("FINALGRADE",6,false,$wor_sub->finalgrade));       
                 fwrite ($bf,full_tag("LATE",6,false,$wor_sub->late));       
+                fwrite ($bf,full_tag("NASSESSMENTS",6,false,$wor_sub->nassessments));       
                 //Now we backup workshop assessments
                 $status = backup_workshop_assessments($bf,$preferences,$workshop,$wor_sub->id);
                 //End submission

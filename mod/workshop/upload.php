@@ -35,7 +35,23 @@
     if (!$title = $form->title) {
         $title = get_string("notitle", "workshop");
     }
-       
+ 
+    // check that this is not a "rapid" second submission, caused by using the back button
+    // only check if a student, teachers may want to submit a set of workshop examples rapidly
+    if (isstudent($course->id)) {
+        if ($submissions = workshop_get_user_submissions($exercise, $USER)) {
+            // returns all submissions, newest on first
+            foreach ($submissions as $submission) {
+                if ($submission->timecreated > $timenow - $CFG->maxeditingtime) {
+                    // ignore this new submission
+                    redirect("view.php?id=$cm->id");
+                    print_footer($course);
+                    exit();
+                }
+            }
+        }
+    }
+        
     // get the current set of submissions
     $submissions = workshop_get_user_submissions($workshop, $USER);
     // add new submission record
@@ -101,3 +117,4 @@
     print_footer($course);
 
 ?>
+

@@ -20,6 +20,7 @@ CREATE TABLE `prefix_workshop` (
   `includeself` tinyint(2) unsigned NOT NULL default '0',
   `maxbytes` int(10) unsigned NOT NULL default '100000',
   `deadline` int(10) unsigned NOT NULL default '0',
+  `releasegrades` int(10) unsigned NOT NULL default '0',
   `grade` tinyint(3) NOT NULL default '0',
   `gradinggrade` tinyint(3) NOT NULL default '0',
   `ntassessments` tinyint(3) unsigned NOT NULL default '0',
@@ -47,13 +48,10 @@ CREATE TABLE `prefix_workshop_submissions` (
   `timecreated` int(10) unsigned NOT NULL default '0',
   `mailed` tinyint(2) unsigned NOT NULL default '0',
   `description` text NOT NULL,
-  `teachergrade` int(3) unsigned NOT NULL default '0',
-  `peergrade` int(3) unsigned NOT NULL default '0',
-  `biasgrade` int(3) unsigned NOT NULL default '0',
-  `reliabilitygrade` int(3) unsigned NOT NULL default '0',
   `gradinggrade` int(3) unsigned NOT NULL default '0',
   `finalgrade` int(3) unsigned NOT NULL default '0',
   `late` int(3) unsigned NOT NULL default '0',
+  `nassessments` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   INDEX `userid` (`userid`) 
 ) COMMENT='Info about submitted work from teacher and students';
@@ -95,7 +93,9 @@ CREATE TABLE `prefix_workshop_elements` (
   `description` text NOT NULL,
   `scale` tinyint(3) unsigned NOT NULL default '0',
   `maxscore` tinyint(3) unsigned NOT NULL default '1',
-  `weight` float NOT NULL default '1.0',
+  `weight` tinyint(3) unsigned NOT NULL default '11',
+  `stddev` float NOT NULL default '0.0',
+  `totalassessments` int(10) NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) COMMENT='Info about marking scheme of assignment';
 # --------------------------------------------------------
@@ -129,6 +129,20 @@ CREATE TABLE `prefix_workshop_grades` (
   PRIMARY KEY  (`id`),
   INDEX (`assessmentid`)
 ) COMMENT='Info about individual grades given to each element';
+# --------------------------------------------------------
+
+
+#
+# Table structure for table `workshop_stockcomments`
+#
+
+CREATE TABLE `prefix_workshop_stockcomments` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `workshopid` int(10) unsigned NOT NULL default '0', 
+  `elementno` int(10) unsigned NOT NULL default '0',
+  `comments` text NOT NULL default '',
+  PRIMARY KEY  (`id`),
+) COMMENT='Info about the teacher comment bank';
 # --------------------------------------------------------
 
 #

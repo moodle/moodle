@@ -289,9 +289,10 @@
                     workshop_list_assessed_submissions($workshop, $USER);
                 }
                 // list any assessments by teachers
-                if (workshop_count_teacher_assessments($workshop, $USER)) {
+                $timenow = time();
+                if (workshop_count_teacher_assessments_by_user($workshop, $USER) and ($timenow > $workshop->releasegrades)) {
                     print_heading(get_string("assessmentsby", "workshop", $course->teachers));
-                    workshop_list_teacher_assessments($workshop, $USER);
+                    workshop_list_teacher_assessments_by_user($workshop, $USER);
                 }
                 // ... and show peer assessments
                 if (workshop_count_peer_assessments($workshop, $USER)) {
@@ -462,6 +463,8 @@
                             workshop_count_student_submissions_for_assessment($workshop, $USER))."</a></b> \n";
                 helpbutton("gradingsubmissions", 
                         get_string("studentsubmissionsforassessment", "workshop"), "workshop");
+                print_heading("<a href=\"submissions.php?id=$cm->id&amp;action=displaycurrentgrades\">".
+                        get_string("displayofcurrentgrades", "workshop")."</a>");
                 break;
 
             case 5: // Show "Final" Grades
