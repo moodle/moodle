@@ -477,7 +477,7 @@ function forum_cron () {
                     $posttext .= "\n \n";
                     $posttext .= "$course->shortname -> $strforums -> ".format_string($forum->name,true);
                     if ($discussion->name != $forum->name) {
-                        $posttext  .= " -> $discussion->name";
+                        $posttext  .= " -> ".format_string($discussion->name,true);
                     }
                     $posttext .= "\n";
 
@@ -488,7 +488,7 @@ function forum_cron () {
                     if ($discussion->name == $forum->name) {
                         $posthtml .= "</font></p>";
                     } else {
-                        $posthtml .= " -> <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</a></font></p>";
+                        $posthtml .= " -> <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">".format_string($discussion->name,true)."</a></font></p>";
                     }
                     $posthtml .= '<p>';
 
@@ -621,7 +621,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
         $posttext  = "$course->shortname -> $strforums -> ".format_string($forum->name,true);
 
         if ($discussion->name != $forum->name) {
-            $posttext  .= " -> $discussion->name";
+            $posttext  .= " -> ".format_string($discussion->name,true);
         }
     }
 
@@ -677,7 +677,7 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
         if ($discussion->name == $forum->name) {
             $posthtml .= "</font></p>";
         } else {
-            $posthtml .= " &raquo; <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</a></font></p>";
+            $posthtml .= " &raquo; <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">".format_string($discussion->name,true)."</a></font></p>";
         }
         $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, false, false);
 
@@ -2681,6 +2681,8 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
 /// Add the forum id to the post object - used by read tracking.
     $post->forum = $forum->id;
 
+    $post->subject = format_string($post->subject);
+
     if ($CFG->forum_trackreadposts) {
         $user_read_array = forum_tp_get_discussion_read_records($USER->id, $post->discussion);
     } else {
@@ -2753,6 +2755,8 @@ function forum_print_posts_flat($discussion, $courseid, $direction, $ratings, $r
                 $post->forum = 0;
             }
 
+            $post->subject = format_string($post->subject);
+
             $ownpost = ($USER->id == $post->userid);
             if (forum_print_post($post, $courseid, $ownpost, $reply, $link, $ratings,
                                  '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
@@ -2784,6 +2788,8 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
                 } else {
                     $post->forum = 0;
                 }
+
+                $post->subject = format_string($post->subject);
 
                 if (forum_print_post($post, $courseid, $ownpost, $reply, $link, $ratings,
                                      '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
@@ -2842,6 +2848,8 @@ function forum_print_posts_nested($parent, $courseid, $ratings, $reply, &$user_r
             } else {
                 $post->forum = 0;
             }
+ 
+            $post->subject = format_string($post->subject);
 
             if (forum_print_post($post, $courseid, $ownpost, $reply, $link, $ratings,
                                  '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {

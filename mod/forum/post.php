@@ -465,7 +465,7 @@
 
             $course = get_record('course', 'id', $forum->course);
             $strforums = get_string("modulenameplural", "forum");
-            print_header_simple("$discussion->name: ".format_string($post->subject), "",
+            print_header_simple(format_string($discussion->name).": ".format_string($post->subject), "",
                          "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> ->
                           <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a> ->
                           <a href=\"discuss.php?d=$discussion->id\">".format_string($post->subject,true)."</a> -> ".
@@ -535,12 +535,12 @@
     }
 
     if ($course->category) {
-        print_header("$course->shortname: $discussion->name: ".format_string($toppost->subject), "$course->fullname",
+        print_header("$course->shortname: ".format_string($discussion->name).": ".format_string($toppost->subject), "$course->fullname",
                  "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                   $navmiddle -> $navtail", $formstart, "", true, "", navmenu($course, $cm));
 
     } else {
-        print_header("$course->shortname: $discussion->name: ".format_string($toppost->subject), "$course->fullname",
+        print_header("$course->shortname: ".format_string($discussion->name).": ".format_string($toppost->subject), "$course->fullname",
                  "$navmiddle -> $navtail", "$formstart", "", true, "", navmenu($course, $cm));
 
     }

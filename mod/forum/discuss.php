@@ -88,7 +88,7 @@
         }
     } else {
         $parent = $discussion->firstpost;
-        $navtail = "$discussion->name";
+        $navtail = format_string($discussion->name);
     }
 
     if (! $post = forum_get_post_full($parent)) {
@@ -104,7 +104,7 @@
     }
 
     if (empty($navtail)) {
-        $navtail = "<a href=\"discuss.php?d=$discussion->id\">$discussion->name</a> -> ".format_string($post->subject);
+        $navtail = "<a href=\"discuss.php?d=$discussion->id\">".format_string($discussion->name,true)."</a> -> ".format_string($post->subject);
     }
 
     $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">".get_string("forums", "forum")."</a> -> <a href=\"../forum/view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
@@ -112,11 +112,11 @@
     $searchform = forum_search_form($course);
 
     if ($course->category) {
-        print_header("$course->shortname: $discussion->name", "$course->fullname",
+        print_header("$course->shortname: ".format_string($discussion->name), "$course->fullname",
                  "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                   $navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
     } else {
-        print_header("$course->shortname: $discussion->name", "$course->fullname",
+        print_header("$course->shortname: ".format_string($discussion->name), "$course->fullname",
                  "$navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
     }
 
