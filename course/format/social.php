@@ -48,6 +48,9 @@
 /// Admin links and controls
       print_course_admin_links($course);
 
+/// My courses
+      print_courses_sideblock(0, "$leftwidth");
+
       echo "</td>";
 
       echo "<td width=\"*\" valign=\"top\">";

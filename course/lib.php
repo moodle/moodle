@@ -944,7 +944,7 @@ function print_category_info($category, $depth) {
 }
 
 function print_courses_sideblock($category=0, $width="100%") {
-    global $CFG, $THEME;
+    global $CFG, $THEME, $USER;
 
     if (empty($THEME->custompix)) {
         $icon  = "<img src=\"$CFG->wwwroot/pix/i/course.gif\"".
@@ -952,6 +952,19 @@ function print_courses_sideblock($category=0, $width="100%") {
     } else {
         $icon  = "<img src=\"$CFG->wwwroot/theme/$CFG->theme/pix/i/course.gif\"".
                  " height=\"16\" width=\"16\" alt=\"".get_string("course")."\">";
+    }
+
+    if (isset($USER->id) and !isadmin()) {    // Just print My Courses
+        if ($courses = get_my_courses($USER->id)) {
+            foreach ($courses as $course) {
+                $moddata[]="<a $linkcss title=\"$course->shortname\" ".
+                           "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
+                $modicon[]=$icon;
+            }
+            $fulllist = "<p><a href=\"$CFG->wwwroot/course/\">".get_string("fulllistofcourses")."</a>...";
+            print_side_block( get_string("mycourses"), "", $moddata, $modicon, $fulllist, $width);
+            return;
+        }
     }
 
     $categories = get_categories(0);  // Parent = 0   ie top-level categories only
@@ -980,7 +993,7 @@ function print_courses_sideblock($category=0, $width="100%") {
         }
     }
 
-    print_side_block(get_string("courses"), "", $moddata, $modicon, $fulllist, $width);
+    print_side_block( get_string("courses"), "", $moddata, $modicon, $fulllist, $width);
 }
 
     
