@@ -4,7 +4,7 @@
 //This function returns the icon (from theme) with the link to rss/file.php
 function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
 
- global $CFG, $THEME, $USER;
+    global $CFG, $USER;
 
     static $pixpath = '';
     static $rsspath = '';
@@ -21,15 +21,7 @@ function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
         $rsspath = "$CFG->wwwroot/rss/file.php?file=/$courseid/$userid/$modulename/$id/rss.xml";
     }
 
-    if (empty($pixpath)) {
-        if (empty($THEME->custompix)) {
-            $pixpath = $CFG->wwwroot .'/pix';
-        } else {
-            $pixpath = $CFG->wwwroot .'/theme/'. $CFG->theme .'/pix';
-        }
-    }
-
-    $rsspix = $pixpath .'/i/rss.gif';
+    $rsspix = $CFG->pixpath .'/i/rss.gif';
 
     return '<a href="'. $rsspath .'"><img src="'. $rsspix .'" title="'. $tooltiptext .'" alt="" /></a>';
 
@@ -132,7 +124,7 @@ function rss_file_name($modname, $mod) {
 //This function return all the common headers for every rss feed in the site
 function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
 
-    global $CFG, $THEME, $USER;
+    global $CFG, $USER;
 
     static $pixpath = '';
 
@@ -178,15 +170,7 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
         }
 
         //write image info
-        //Calculate the origin
-        if (empty($pixpath)) {
-            if (empty($THEME->custompix)) {
-                $pixpath = "$CFG->wwwroot/pix";
-            } else {
-                $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
-            }
-        }
-        $rsspix = $pixpath."/i/rsssitelogo.gif";
+        $rsspix = $CFG->pixpath."/i/rsssitelogo.gif";
 
         //write the info 
         $result .= rss_start_tag("image",2,true);
@@ -355,70 +339,53 @@ define('SUBMITTERS_ADMIN_AND_TEACHER', 2);
  * @param int $rssid .
  */
 function rss_display_feeds($rssid='none') {
-    global $db, $USER, $CFG, $THEME;
+    global $db, $USER, $CFG;
     global $blogid; //hackish, but if there is a blogid it would be good to preserve it
 
-    static $pixpath = '';
-    if (empty($pixpath)) {
-        if (empty($THEME->custompix)) {
-            $pixpath = $CFG->wwwroot .'/pix';
-        } else {
-            $pixpath = $CFG->wwwroot .'/theme/'. $CFG->theme .'/pix';
-        }
-    }
-
-    $rsspix = $pixpath .'/i/rss.gif';
+    $rsspix = $CFG->pixpath .'/i/rss.gif';
 
     $closeTable = false;
-    //Daryl Hawes note: convert this sql statement to a moodle function call
     if ($rssid != 'none'){
-        $sql = 'SELECT * FROM '. $CFG->prefix .'block_rss_client WHERE id='. $rssid;
+        $feeds = get_records('block_rss_client', 'id', $rssid);
     } else {
-        $sql = 'SELECT * FROM '. $CFG->prefix .'block_rss_client';
+        $feeds = get_records('block_rss_client');
     }
     
-    $res = $db->Execute($sql);
-//    print_object($res); //debug
-    
-    if ($res->fields){
+    if ($feeds){
         $closeTable = true;
         ?>
             <table width="100%" cellpadding="8">
-            <tr bgcolor="<?php echo $THEME->cellheading;?>" class="forumpostheadertopic">
+            <tr class="forumpostheadertopic">
                 <td><?php print_string('block_rss_feed', 'block_rss_client'); ?></td>
                 <td><?php print_string('edit'); ?></td>
                 <td><?php print_string('delete'); ?></td>
             </tr>
         <?php
-    }
-    
-    if (isset($res) && $res->fields){
-        while(!$res->EOF) {
+        foreach ($feeds as $feed) {
             $editString = '&nbsp;';
             $deleteString = '&nbsp;';
-            if ($res->fields['userid'] == $USER->id || isadmin()) {
-                $editString = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=rss_edit&rssid='. $res->fields['id'] .'&blogid='. $blogid .'">';
+            if ($feed->userid == $USER->id || isadmin()) {
+                $editString = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=rss_edit&rssid='. $feed->id .'&blogid='. $blogid .'">';
                 $editString .= '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. get_string('edit');
                 $editString .= '" title="'. get_string('edit') .'" align="absmiddle" height="16" width="16" border="0" /></a>';
 
-                $deleteString = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=delfeed&rssid='. $res->fields['id'];
+                $deleteString = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=delfeed&rssid='. $feed->id;
                 $deleteString .= '&blogid='. $blogid .'" onClick="return confirm(\''. get_string('block_rss_delete_feed_confirm', 'block_rss_client') .'\');">';
                 $deleteString .= '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. get_string('delete');
                 $deleteString .= '" title="'. get_string('delete') .'" align="absmiddle" border="0" /></a>';
             }
-            print '<tr bgcolor="'. $THEME->cellcontent .'" class="forumpostmessage"><td><strong><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=view&rssid=';
-            print $res->fields['id'] .'&blogid='. $blogid .'">'. $res->fields['title'] .'</a></strong><br />' ."\n";
-            print '<a href="'. $res->fields['url'] .'">'. $res->fields['url'] .'</a><br />'."\n";
-            print $res->fields['description'] .'<br />' ."\n";
-            print '</td>';
-            print '<td align="center">'. $editString .'</td>' ."\n";
-            print '<td align="center">'. $deleteString .'</td>' ."\n";
-            print '</tr>'."\n";
-            $res->MoveNext();
+            echo '<tr class="forumpostmessage"><td><strong><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=view&rssid=';
+            echo $feed->id .'&blogid='. $blogid .'">'. $feed->title .'</a></strong><br />' ."\n";
+            echo '<a href="'. $feed->url .'">'. $feed->url .'</a><br />'."\n";
+            echo $feed->description .'<br />' ."\n";
+            echo '</td>';
+            echo '<td align="center">'. $editString .'</td>' ."\n";
+            echo '<td align="center">'. $deleteString .'</td>' ."\n";
+            echo '</tr>'."\n";
         }
     }
     if ($closeTable){
-        print '</table>'."\n";
+        echo '</table>'."\n";
     }
 }
 

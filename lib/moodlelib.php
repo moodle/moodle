@@ -2091,7 +2091,7 @@ function remove_admin($userid) {
  */
 function remove_course_contents($courseid, $showfeedback=true) {
 
-    global $CFG, $THEME, $USER, $SESSION;
+    global $CFG, $USER, $SESSION;
 
     $result = true;
 
@@ -2245,7 +2245,6 @@ function remove_course_contents($courseid, $showfeedback=true) {
 /// of the course.
  *
  * @uses $USER
- * @uses $THEME
  * @uses $SESSION
  * @uses $CFG
  * @param int $courseid The id of the course that is being viewed
@@ -2262,7 +2261,7 @@ function remove_course_userdata($courseid, $showfeedback=true,
                                 $removestudents=true, $removeteachers=false, $removegroups=true,
                                 $removeevents=true, $removelogs=false) {
 
-    global $CFG, $THEME, $USER, $SESSION;
+    global $CFG, $USER, $SESSION;
 
     $result = true;
 
