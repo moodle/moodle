@@ -1,4 +1,4 @@
-<?php // $Id$ 
+<?php // $Id$
       // assignment.php - created with Moodle 1.2 + (2004032100)
 
 
@@ -22,13 +22,13 @@ $string['duedateno'] = 'No due date';
 $string['early'] = '$a early';
 $string['emailteachers'] = 'Email alerts to teachers';
 $string['emailteachermail'] = '
-$a->username has updated their assignment submission 
+$a->username has updated their assignment submission
 for \'$a->assignment\'
 
 It is available here:
 
     $a->url';
-$string['emailteachermailhtml'] = '$a->username has updated their assignment submission 
+$string['emailteachermailhtml'] = '$a->username has updated their assignment submission
 for <i>\'$a->assignment\'</i><br /><br />
 It is <a href=\"$a->url\">available on the web site</a>.';
 $string['existingfiledeleted'] = 'Existing file has been deleted: $a';
@@ -41,6 +41,7 @@ $string['maximumsize'] = 'Maximum size';
 $string['modulename'] = 'Assignment';
 $string['modulenameplural'] = 'Assignments';
 $string['newsubmissions'] = 'Assignments submitted';
+$string['noassignments'] = 'There are no assignments yet';
 $string['notgradedyet'] = 'Not graded yet';
 $string['notsubmittedyet'] = 'Not submitted yet';
 $string['overwritewarning'] = 'Warning: uploading again will REPLACE your current submission';

@@ -24,7 +24,7 @@
     print_header_simple($strassignments, "", $strassignments, "", "", true, "", navmenu($course));
 
     if (! $assignments = get_all_instances_in_course("assignment", $course)) {
-        notice("There are no assignments", "../../course/view.php?id=$course->id");
+        notice(get_string('noassignments', 'assignment'), "../../course/view.php?id=$course->id");
         die;
     }
 
