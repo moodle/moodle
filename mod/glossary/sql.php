@@ -167,10 +167,31 @@
 
         switch ( $mode ) {
         case 'search': 
+            //First, look in aliases (bug 2242)
+            $idaliases = '';
+            $listaliases = array();
+            $recaliases = get_records_sql ("SELECT al.id, al.entryid
+                                              FROM {$CFG->prefix}glossary_alias al,
+                                                   {$CFG->prefix}glossary_entries ge
+                                              WHERE (ge.glossaryid = '$glossary->id' OR 
+                                                     ge.sourceglossaryid = '$glossary->id') AND
+                                                    (ge.approved != 0 $userid) AND
+                                                    ge.id = al.entryid AND
+                                                    al.alias $LIKE '%$hook%'");
+            if ($recaliases) {
+                foreach ($recaliases as $recalias) {
+                    $listaliases[] = $recalias->entryid;
+                }
+                $idaliases = implode (',',$listaliases);
+            }
             $printpivot = 0;
             $where = "AND ( ge.concept $LIKE '%$hook%'";
+            //Include aliases in resultset (if any)
+            if (!empty($idaliases)) {
+                $where .= " OR ge.id IN ($idaliases)";
+            }
             if ( $fullsearch ) {
-                $where .= "OR ge.definition $LIKE '%$hook%')";
+                $where .= " OR ge.definition $LIKE '%$hook%')";
             } else {
                 $where .= ")";
             }
