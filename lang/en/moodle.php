@@ -457,6 +457,7 @@ $string['shortname'] = "Short name";
 $string['shortnametaken'] = "Short name is already used for another course (\$a)";
 $string['shortsitename'] = "Short name for site (eg single word)";
 $string['show'] = "Show";
+$string['showall'] = "Show all";
 $string['showalltopics'] = "Show all topics";
 $string['showallusers'] = "Show all users";
 $string['showallweeks'] = "Show all weeks";
