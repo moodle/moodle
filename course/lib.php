@@ -1199,11 +1199,13 @@ function print_my_moodle() {
             echo "<br />\n";
         }
 
-        echo "<table width=\"100%\"><tr><td align=\"center\">";
-        print_course_search("", false, "short");
-        echo "</td><td align=\"center\">";
-        print_single_button("$CFG->wwwroot/course/index.php", NULL, get_string("fulllistofcourses"), "get");
-        echo "</td></tr></table>\n";
+        if (count_records("course") > (count($courses) + 1) ) {  // Some courses not being displayed
+            echo "<table width=\"100%\"><tr><td align=\"center\">";
+            print_course_search("", false, "short");
+            echo "</td><td align=\"center\">";
+            print_single_button("$CFG->wwwroot/course/index.php", NULL, get_string("fulllistofcourses"), "get");
+            echo "</td></tr></table>\n";
+        }
     } else {
         if (count_records("course_categories") > 1) {
             print_simple_box_start("center", "100%", "#FFFFFF", 5, "categorybox");
