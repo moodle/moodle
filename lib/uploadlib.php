@@ -611,7 +611,7 @@ function get_clam_error_code($returncode) {
 /**
  * adds a file upload to the log table so that clam can resolve the filename to the user later if necessary
  */
-function clam_log_upload($newfilepath,$course=null) {
+function clam_log_upload($newfilepath,$course=null,$nourl=false) {
     global $CFG,$USER;
     // get rid of any double // that might have appeared
     $newfilepath = preg_replace('/\/\//','/',$newfilepath);
@@ -622,7 +622,7 @@ function clam_log_upload($newfilepath,$course=null) {
     if ($course) {
         $courseid = $course->id;
     }
-    add_to_log($courseid,"upload","upload",$_SERVER['HTTP_REFERER'],$newfilepath);
+    add_to_log($courseid,"upload","upload",((!$nourl) ? substr($_SERVER['HTTP_REFERER'],0,100) : ''),$newfilepath);
 }
 
 /**
@@ -649,10 +649,28 @@ function clam_log_infected($oldfilepath='',$newfilepath='',$userid=0) {
 
 /**
  * some of the modules allow moving attachments (glossary), in which case we need to hunt down an original log and change the path.
+ * @param oldpath - the old path to the file (should be in the log)
+ * @param newpath - new path 
+ * @param update - if true, will overwrite old record (used for forum moving etc).
  */
-function clam_change_log($oldpath,$newpath) {
+function clam_change_log($oldpath,$newpath,$update=true) {
     global $CFG;
-    $sql = "UPDATE {$CFG->prefix}log SET info = '$newpath' WHERE module = 'upload' AND info = '$oldpath'";
-    execute_sql($sql);
+    
+    if (!$record = get_record("log","info",$oldpath,"module","upload")) {
+        error_log("couldn't find record");
+        return false;
+    }
+    $record->info = $newpath;
+    if ($update) {
+        if (update_record("log",$record)) {
+            error_log("updated record");
+        }
+    }
+    else {
+        unset($record->id);
+        if (insert_record("log",$record)) {
+            error_log("inserted record");
+        }
+    }
 }
 ?>

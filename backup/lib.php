@@ -2,6 +2,8 @@
     //This file contains all the general function needed (file manipulation...)
     //not directly part of the backup/restore utility
 
+    require_once($CFG->dirroot.'/lib/uploadlib.php');
+
     //Sets a name/value pair in backup_config table
     function backup_set_config($name, $value) {
         if (get_field("backup_config", "name", "name", $name)) {
@@ -286,7 +288,11 @@
             //$perms=fileperms($from_file);
             //return copy($from_file,$to_file) && chmod($to_file,$perms);
             umask(0000);
-            return copy($from_file,$to_file) && chmod($to_file,$CFG->directorypermissions);
+            if (copy($from_file,$to_file) && chmod($to_file,$CFG->directorypermissions)) {
+                clam_log_upload($to_file,null,true);
+                return true;
+            }
+            return false;
         }
         else if (is_dir($from_file)) {
             return backup_copy_dir($from_file,$to_file);
