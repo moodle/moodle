@@ -1471,7 +1471,7 @@ function authenticate_user_login($username, $password) {
  * @return boolean
  * @todo Finish documenting this function
  */
-function enrol_student($userid, $courseid, $timestart=0, $timeend=0) {
+function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='manual') {
 
     global $CFG;
 
@@ -1485,8 +1485,9 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0) {
         $student->timestart = $timestart;
         $student->timeend = $timeend;
         $student->time = time();
+        $student->enrol = $enrol;
         return update_record('user_students', $student);
-
+        
     } else {
         require_once("$CFG->dirroot/mod/forum/lib.php");
         forum_add_user($userid, $courseid);
@@ -1496,6 +1497,7 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0) {
         $student->timestart = $timestart;
         $student->timeend = $timeend;
         $student->time = time();
+        $student->enrol = $enrol;
         return insert_record('user_students', $student);
     }
 }
@@ -1543,13 +1545,14 @@ function unenrol_student($userid, $courseid=0) {
  * @return boolean
  * @todo Finish documenting this function
  */
-function add_teacher($userid, $courseid, $editall=1, $role='', $timestart=0, $timeend=0) {
+function add_teacher($userid, $courseid, $editall=1, $role='', $timestart=0, $timeend=0, $enrol='manual') {
     global $CFG;
 
     if ($teacher = get_record('user_teachers', 'userid', $userid, 'course', $courseid)) {
         $newteacher = NULL;
         $newteacher->id = $teacher->id;
         $newteacher->editall = $editall;
+        $newteacher->enrol = $enrol;
         if ($role) {
             $newteacher->role = $role;
         }
@@ -1676,14 +1679,14 @@ function add_admin($userid) {
     if (!record_exists('user_admins', 'userid', $userid)) {
         if (record_exists('user', 'id', $userid)) {
             $admin->userid = $userid;
-
+            
             // any admin is also a teacher on the site course
             if (!record_exists('user_teachers', 'course', SITEID, 'userid', $userid)) {
                 if (!add_teacher($userid, SITEID)) {
                     return false;
                 }
             }
-
+            
             return insert_record('user_admins', $admin);
         }
         return false;
