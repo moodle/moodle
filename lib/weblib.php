@@ -146,6 +146,11 @@ function qualified_me() {
 function match_referer($good_referer = "") {
 /// returns true if the referer is the same as the good_referer.  If
 /// good_referer is not specified, use qualified_me as the good_referer 
+    global $CFG;
+
+    if ($CFG->buggy_referer) {
+        return true;
+    }
 
 	if ($good_referer == "") { 
         $good_referer = qualified_me(); 
@@ -374,7 +379,7 @@ function format_text_menu() {
                   FORMAT_HTML   => get_string("formathtml") );
 }
 
-function format_text($text, $format, $options=NULL) {
+function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
 /// Given text in a variety of format codings, this function returns 
 /// the text as safe HTML.
 ///
