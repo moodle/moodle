@@ -8,11 +8,7 @@
         error("Only admins can access this page");
     }
 
-    if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
-    }
-
-    if ($data = data_submitted()) {
+    if (($data = data_submitted()) && confirm_sesskey()) {
 
         // do we want default values?
         if (isset($data->resettodefaults)) {
@@ -25,7 +21,7 @@
                 error("Editor settings could not be updated!");
             }
         }
-        redirect("$CFG->wwwroot/$CFG->admin/editor.php?sesskey=$USER->sesskey", get_string("changessaved"), 1);
+        redirect("$CFG->wwwroot/$CFG->admin/editor.php", get_string("changessaved"), 1);
 
     } else {
         // Generate edit form
@@ -72,6 +68,7 @@ function editor_convert_to_array ($string) {
 }
 
 function editor_update_config ($data) {
+
 /// Updates the editor config values.
 
     if (!is_object($data)) {
@@ -101,6 +98,7 @@ function editor_update_config ($data) {
 
     // make array of values to update
     $updatedata = array();
+    $updatedata['htmleditor'] = !empty($data->htmleditor) ? $data->htmleditor : 0;
     $updatedata['editorbackgroundcolor'] = !empty($data->backgroundcolor) ? $data->backgroundcolor : "#ffffff";
     $updatedata['editorfontfamily'] = !empty($data->fontfamily) ? str_replace($nochars,"",$data->fontfamily) : "Times New Roman, Times";
     $updatedata['editorfontsize'] = !empty($data->fontsize) ? $data->fontsize : "";

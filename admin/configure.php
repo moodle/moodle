@@ -41,7 +41,7 @@
                                get_string('adminhelpbackup'));
     }
 
-    $table->data[]= array("<strong><a href=\"editor.php?sesskey=$USER->sesskey\">". get_string('editorsettings') ."</a></strong>",
+    $table->data[]= array("<strong><a href=\"editor.php\">". get_string('editorsettings') ."</a></strong>",
                     get_string('adminhelpeditorsettings'));
     $table->data[]= array("<strong><a href=\"calendar.php?sesskey=$USER->sesskey\">". get_string('calendarsettings', 'admin') ."</a></strong>",
                     get_string('helpcalendarsettings', 'admin'));
