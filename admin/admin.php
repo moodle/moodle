@@ -54,16 +54,16 @@
         $searchstring = $strsearch;
     }
 
-	print_header("$site->shortname: $course->shortname: $strassignadmins", 
+	print_header("$site->shortname: $strassignadmins", 
                  "$site->fullname", 
                  "<a href=\"index.php\">$stradministration</a> -> 
-                  <a href=\"{$_server['php_self']}\">$strassignadmins</a>", "");
+                  <a href=\"{$_SERVER['PHP_SELF']}\">$strassignadmins</a>", "");
 
 /// Get all existing admins
     $admins = get_admins();
 
 /// Add an admin if one is specified
-    if ($_REQUEST['add']) {
+    if ($add) {
         $user = @get_record("user", "id", $_REQUEST['add']) or
             error("That account (id = {$_REQUEST['add']}) doesn't exist");
 
@@ -81,7 +81,7 @@
     }
 
 /// Remove an admin if one is specified.
-    if ($_REQUEST['remove']) {
+    if ($remove) {
 
         $user = @get_record("user", "id", $_REQUEST['remove']) or 
             error("That account (id = {$_REQUEST['remove']}) doesn't exist");
