@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112300)
 
 
 $string['action'] = 'Acció';
@@ -118,7 +118,6 @@ $string['backupusershelp'] = 'Trieu si voleu incloure tots els usuaris del servi
 $string['backupversion'] = 'Versió de la còpia';
 $string['blockconfiga'] = 'S\'està configurant un bloc $a';
 $string['blockconfigbad'] = 'Aquest bloc no s\'ha implementat correctament i no pot proporcionar una interfície de configuració.';
-$string['blockconfigin'] = 'Curs: s\'està configurant un bloc en $a';
 $string['blockdeleteconfirm'] = 'Aneu a suprimir completament el bloc \'$a\'. Això`suprimira completament tots els registres de la base de dades associats amb aquest bloc. Esteu SEGUR que voleu continuar?';
 $string['blockdeletefiles'] = 'S\'han suprimit tots els registres de la base de dades associats amb el bloc \'$a->block\'. Per tal de completar la supressió (i impedir que el bloc es reinstal·li automàticament), ara hauríeu de suprimir aquest directori del servidor: $a->directory';
 $string['blocks'] = 'Blocs';
@@ -302,6 +301,7 @@ $string['defaultcourseteacher'] = 'Professor';
 $string['defaultcourseteachers'] = 'Professors';
 $string['delete'] = 'Suprimeix';
 $string['deleteall'] = 'Suprimeix-ho tot';
+$string['deletecategorycheck'] = 'Esteu absolutament segur que voleu suprimir completament la categoria <b>\'$a\'</b>?<br />Els cursos que contingui aquesta categoria es traslladaran a la categoria pare, si n\'hi ha, o a Miscel·lània.';
 $string['deletecheck'] = 'Suprimiu $a ?';
 $string['deletecheckfiles'] = 'Esteu absolutament segur que voleu suprimir aquests fitxers?';
 $string['deletecheckfull'] = 'Esteu absolutament segur que voleu suprimir completament $a ?';
@@ -794,6 +794,7 @@ $string['order'] = 'Ordre';
 $string['other'] = 'Altre';
 $string['outline'] = 'Esquema';
 $string['page'] = 'Pàgina';
+$string['pageheaderconfigablock'] = 'S\'està configurant un bloc en %%fullname%%';
 $string['parentlanguage'] = '<< TRADUCTORS: si voleu que Moodle faci servir un altre idioma quan faltin cadenes en el vostre idioma, especifiqueu-ne el codi aquí. Si el deixeu en blanc Moodle fara servir l\'anglès. P. ex.: es >>';
 $string['participants'] = 'Participants';
 $string['password'] = 'Contrasenya';
@@ -970,7 +971,7 @@ $string['themes'] = 'Temes';
 $string['themesaved'] = 'S\'ha desat el nou tema';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Catal&#224;';
+$string['thislanguage'] = 'Català';
 $string['time'] = 'Hora';
 $string['timezone'] = 'Zona horària';
 $string['to'] = 'A';
@@ -983,6 +984,7 @@ $string['topichide'] = 'Oculta aquest tema a $a';
 $string['topicoutline'] = 'Esquema per temes';
 $string['topicshow'] = 'Mostra aquest tema a $a';
 $string['total'] = 'Total';
+$string['trysearching'] = 'Podeu provar a cercar.';
 $string['turneditingoff'] = 'Desactiva edició';
 $string['turneditingon'] = 'Activa edició';
 $string['undecided'] = 'No decidit';
