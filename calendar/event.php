@@ -539,7 +539,7 @@ function calendar_get_allowed_types(&$allowed) {
     $allowed->courses = false; // This may change just below
     $allowed->site = isadmin($USER->id);
 
-    if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer > 1 && isteacheredit($SESSION->cal_course_referer, $USER->id)) {
+    if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer != SITEID && isteacheredit($SESSION->cal_course_referer, $USER->id)) {
         $allowed->courses = array($SESSION->cal_course_referer => 1);
         $allowed->groups = get_groups($SESSION->cal_course_referer);
     }
