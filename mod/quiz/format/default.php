@@ -10,14 +10,66 @@
 class quiz_default_format {
 
     var $displayerrors = true;
+    var $category = NULL;
+    var $questionids = array();
 
 /// Importing functions
 
     function preprocess($category) {
     /// Does any pre-processing that may be desired
 
+        $this->category = $category;  // Important
+
         return true;
     }
+
+    function process($filename) {
+    /// Processes a given file.  There's probably little need to change this
+
+        if (! $lines = $this->readdata($filename)) {
+            notify("File could not be read, or was empty");
+            return false;
+        }
+
+        if (! $questions = $this->readquestions($lines)) {   // Extract all the questions
+            notify("There are no questions in this file!");
+            return false;
+        }
+
+        notify("Importing ".count($questions)." questions");
+
+        $count = 0;
+
+        foreach ($questions as $question) {   // Process and store each question
+            $count++;
+
+            echo "<hr><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
+
+            $question->category = $this->category->id;
+
+            if (!$question->id = insert_record("quiz_questions", $question)) {
+                error("Could not insert new question!");
+            }
+
+            $this->questionids[] = $question->id;
+
+            // Now to save all the answers and type-specific options
+
+            $result = quiz_save_question_options($question);
+
+            if (!empty($result->error)) {
+                notify($result->error);
+                return false;
+            }
+
+            if (!empty($result->notice)) {
+                notify($result->notice);
+                return true;
+            }
+        }
+        return true;
+    }
+
 
     function readdata($filename) {
     /// Returns complete file with an array, one item per line
@@ -61,13 +113,13 @@ class quiz_default_format {
     /// this format, this function converts it into a question 
     /// object suitable for processing and insertion into Moodle.
 
-        echo "<p>You need to override the readquestion() function";
+        echo "<p>This quiz format has not yet been completed!</p>";
 
         return NULL;
     }
 
 
-    function postprocess($questionids) {
+    function postprocess() {
     /// Does any post-processing that may be desired
     /// Argument is a simple array of question ids that 
     /// have just been added.

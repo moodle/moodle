@@ -28,9 +28,10 @@ $QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz")
                               RANDOMSAMATCH => get_string("randomsamatch", "quiz") );
 
 $QUIZ_FILE_FORMAT = array ( "custom"   => get_string("custom", "quiz"),
-                            "webct"    => get_string("webct", "quiz"),
-                            "qti"      => get_string("qti", "quiz"),
-                            "missingword" => get_string("missingword", "quiz") );
+                            "missingword" => get_string("missingword", "quiz"),
+                            "blackboard" => get_string("blackboard", "quiz"),
+                            "aon" => "AON"
+                            );
 
 define("QUIZ_PICTURE_DEFAULT_HEIGHT", "200");
 

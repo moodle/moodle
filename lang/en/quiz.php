@@ -24,6 +24,7 @@ $string['attemptsallowed'] = "Attempts allowed";
 $string['attemptsunlimited'] = "Unlimited attempts";
 $string['backtoquiz'] = "Back to quiz editing";
 $string['bestgrade'] = "Best grade";
+$string['blackboard'] = "Blackboard";
 $string['casesensitive'] = "Case sensitivity";
 $string['caseyes'] = "Yes, case must match";
 $string['caseno'] = "No, case is unimportant";

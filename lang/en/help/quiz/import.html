@@ -1,11 +1,11 @@
 <P ALIGN=CENTER><B>Importing new questions</B></P>
 
 <P>This function allows you to import questions from 
-   external text files.  
+   external text files, uploaded through a form.  
 
-<P>Several common file formats are supported:
+<P>A number of file formats are supported:
 
-<P><B>Missing word format</B></P>
+<P><B>Missing Word</B></P>
 <UL>
 <P>This format only supports multiple choice questions.
 Each answer is separated with a tilde (~), and the correct answer is 
@@ -20,24 +20,25 @@ we become students of {=anatomy and physiology ~reflexology
 </UL>
 
 
-<P><B>IMS QTI format</B></P>
+<P><B>AON</B></P>
 <UL>
-<P>The standard format for Question and Test Interoperability, from IMS.
-<P>Not yet implemented
-
-<P>More info: <? helpbutton("formatqti", "", "quiz") ?></P>
+<P>This is the same as Missing Word Format, except that after importing 
+   the questions all Short-Answer questions are converted four at a time
+   into Matching Questions.</P>
+<p>It's named after an organisation that sponsored the development of many 
+   quiz features</p>
 </UL>
 
 
-<P><B>WebCT format</B></P>
+<P><B>Blackboard</B></P>
 <UL>
-<P>The format of files exported from WebCT.
-<P>Not yet implemented
+<P>This module can import questions saved in Blackboard's export 
+format.  It relies on XML functions being compiled into your PHP.</P>
 
-<P>More info: <? helpbutton("formatwebct", "", "quiz") ?></P>
+<P>More info: <? helpbutton("formatblackboard", "", "quiz") ?></P>
 </UL>
 
-<P><B>Custom format</B></P>
+<P><B>Custom</B></P>
 <UL>
 <P>If you have your own format that you need to import, you can 
    implement it yourself by editing mod/quiz/format/custom.php
@@ -47,3 +48,7 @@ we become students of {=anatomy and physiology ~reflexology
 
 <P>More info: <? helpbutton("formatcustom", "", "quiz") ?></P>
 </UL>
+
+
+<P>More formats are yet to come, including WebCT, IMS QTI and whatever else
+   Moodle users can contribute! </p>

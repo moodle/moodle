@@ -51,51 +51,16 @@
 
             $format = new quiz_file_format();
 
-            if (! $format->preprocess($category)) {
-                error("Error occurred during pre-processing.");
+            if (! $format->preprocess($category)) {             // Do anything before that we need to
+                error("Error occurred during pre-processing!");
             }
 
-            if (! $lines = $format->readdata($newfile['tmp_name'])) {
-                error("File could not be read, or was empty");
+            if (! $format->process($newfile['tmp_name'])) {     // Process the uploaded file
+                error("Error occurred during processing!");
             }
 
-            if (! $questions = $format->readquestions($lines)) {
-                error("There are no questions in this file!");
-            }
-
-            notify("Importing ".count($questions)." questions");
-
-            $count = 0;
-            $questionids = array();
-
-            foreach ($questions as $question) {
-                $count++;
-
-                echo "<hr><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
-
-                $question->category = $category->id;
-
-                if (!$question->id = insert_record("quiz_questions", $question)) {
-                    error("Could not insert new question!");
-                }
-
-                $questionids[] = $question->id;
-
-                // Now to save all the answers and type-specific options
-
-                $result = quiz_save_question_options($question);
-
-                if (!empty($result->error)) {
-                    error($result->error);
-                }
-
-                if (!empty($result->notice)) {
-                    notice($result->notice);
-                }
-            }
-
-            if (! $format->postprocess($category, $questionids)) {
-                error("Error occurred during post-processing.");
+            if (! $format->postprocess()) {                     // In case anything needs to be done after
+                error("Error occurred during post-processing!");
             }
 
             echo "<hr>";
@@ -114,32 +79,36 @@
     print_heading_with_help($strimportquestions, "import", "quiz");
 
     print_simple_box_start("center", "", "$THEME->cellheading");
-    echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"POST\" ACTION=import.php>";
-    echo "<TABLE cellpadding=5>";
-    echo "<TR><TD align=right>";
-    print_string("category", "quiz");
-    echo ":</TD><TD>";
-    choose_from_menu($categories, "category", "$category->id", "");
-    echo "</TR>";
+    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=import.php>";
+    echo "<table cellpadding=5>";
 
-    echo "<TR><TD align=right>";
+    echo "<tr><td align=right>";
+    print_string("category", "quiz");
+    echo ":</td><td>";
+    asort($QUIZ_FILE_FORMAT);
+    choose_from_menu($categories, "category", "$category->id", "");
+    echo "</tr>";
+
+    echo "<tr><td align=right>";
     print_string("fileformat", "quiz");
-    echo ":</TD><TD>";
+    echo ":</td><td>";
     choose_from_menu($QUIZ_FILE_FORMAT, "format", "custom", "");
     helpbutton("import", $strimportquestions, "quiz");
-    echo "</TR><TR><TD align=right>";
+    echo "</tr>";
+
+    echo "<tr><td align=right>";
     print_string("upload");
-    echo ":</TD><TD>";
-    echo " <INPUT NAME=\"newfile\" TYPE=\"file\" size=\"50\">";
-    echo "</TR><TR><TD>&nbsp;</TD><TD>";
-    echo " <INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
-    echo " <INPUT TYPE=submit NAME=save VALUE=\"".get_string("uploadthisfile")."\">";
-    echo "</TD></TR>";
-    echo "</TABLE>";
-    echo "</FORM>";
+    echo ":</td><td>";
+    echo " <input name=\"newfile\" type=\"file\" size=\"50\">";
+    echo "</tr><tr><td>&nbsp;</td><td>";
+    echo " <input type=hidden name=category value=\"$category->id\">";
+    echo " <input type=submit name=save value=\"".get_string("uploadthisfile")."\">";
+    echo "</td></tr>";
+
+    echo "</table>";
+    echo "</form>";
     print_simple_box_end();
 
     print_footer($course);
-
 
 ?>

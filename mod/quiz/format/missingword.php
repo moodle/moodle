@@ -105,14 +105,6 @@ class quiz_file_format extends quiz_default_format {
         }
     }
 
-    function postprocess($questionids) {
-    /// Does any post-processing that may be desired
-    /// Argument is a simple array of question ids that 
-    /// have just been added.
-
-        return true;
-    }
-
 }
 
 ?>

@@ -110,17 +110,17 @@ class quiz_file_format extends quiz_default_format {
         }
     }
 
-    function postprocess($category, $questionids) {
+    function postprocess() {
     /// Goes through the questionids, looking for shortanswer questions
     /// and converting random groups of 4 into matching questions.
 
     /// Doesn't handle shortanswer questions with more than one answer
 
-        global $db, $CFG;
+        global $CFG;
 
-        print_heading(count($questionids)." ".get_string("questions", "quiz"));
+        print_heading(count($this->questionids)." ".get_string("questions", "quiz"));
 
-        $questionids = implode(',', $questionids);
+        $questionids = implode(',', $this->questionids);
 
         if (!$shortanswers = get_records_select("quiz_questions", 
                                                 "id IN ($questionids) AND qtype = ".SHORTANSWER,
@@ -134,14 +134,14 @@ class quiz_file_format extends quiz_default_format {
             $shortanswerids[] = $key;
         }
         
-        $strmatch = "$category->name - ".get_string("match", "quiz");
+        $strmatch = get_string("match", "quiz")." (".$this->category->name.")";
 
         $shortanswerids = swapshuffle($shortanswerids);
         $count = $shortanswercount = count($shortanswerids);
         $i = 1;
         $matchcount = 0;
 
-        $question->category = $category->id;
+        $question->category = $this->category->id;
         $question->qtype    = MATCH;
         $question->questiontext = get_string("randomsamatchintro", "quiz");
         $question->image  = "";
@@ -208,10 +208,10 @@ class quiz_file_format extends quiz_default_format {
 
         print_heading($info);
 
-        $options['category'] = $category->id;
-        echo "<CENTER>";
+        $options['category'] = $this->category->id;
+        echo "<center>";
         print_single_button("multiple.php", $options, get_string("randomcreate", "quiz"));
-        echo "</CENTER>";
+        echo "</center>";
 
         return true;
     }
