@@ -2134,7 +2134,14 @@ function check_php_version($version="4.1.0") {
     $minversion = intval(str_replace(".", "", $version));
     $curversion = intval(str_replace(".", "", phpversion()));
     return ($curversion >= $minversion);
-//  return version_compare(phpversion(), $version, ">=");
+# below is a slightly different implementation, that is faster, but cannot check
+# versions isn't flexible in testing versions lower than 4.1.0
+//  if (function_exists(version_compare)){
+//      return version_compare(PHP_VERSION, $version, ">=");
+//  } else {
+//  # version_compare does not exist pre 4.1.0, so we know that the users version is too old.
+//      return false;
+//  }
 }
 
 function check_browser_version($brand="MSIE", $version=5.5) {
