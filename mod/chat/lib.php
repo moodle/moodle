@@ -27,8 +27,6 @@ if (!isset($CFG->chat_servermax)) {
     set_config("chat_servermax", 100);
 }
 
-define("CHAT_DRAWBOARD", false);  // Look into this later
-
 global $THEME;
 
 // The HTML head for the message window to start with (<!-- nix --> is used to get some browsers starting with output
@@ -293,6 +291,20 @@ function chat_refresh_events($courseid = 0) {
     return true;
 }
 
+function chat_force_language($lang) {
+/// This function prepares moodle to operate in given language
+/// usable when $nomoodlecookie = true;
+/// BEWARE: there must be no $course, $USER or $SESSION
+    if(!empty($CFG->courselang)) {
+        uset($CFG->courselang);
+    }
+    if(!empty($CFG->locale)) {
+        uset($CFG->locale);
+    }
+    $CFG->lang = clean_filename($lang);
+    moodle_setlocale();
+}
+
 //////////////////////////////////////////////////////////////////////
 /// Functions that require some SQL
 
@@ -343,20 +355,50 @@ function chat_get_latest_message($chatid, $groupid=0) {
 
 
 //////////////////////////////////////////////////////////////////////
+// login if not already logged in
 
-function chat_login_user($chatid, $version="header_js", $groupid=0) {
+function chat_login_user($chatid, $version, $groupid, $course) {
     global $USER;
 
-    $chatuser->chatid   = $chatid;
-    $chatuser->userid   = $USER->id;
-    $chatuser->groupid  = $groupid;
-    $chatuser->version  = $version;
-    $chatuser->ip       = $USER->lastIP;
-    $chatuser->lastping = $chatuser->firstping = $chatuser->lastmessageping = time();
-    $chatuser->sid      = random_string(32);
+    if ($chatuser = get_record_select('chat_users', "chatid='$chatid' AND userid='$USER->id' AND groupid='$groupid' LIMIT 1")) {
+        $chatuser->version  = $version;
+        $chatuser->ip       = $USER->lastIP;
+        $chatuser->lastping = time();
+        $chatuser->lang     = current_language();
 
-    if (!insert_record("chat_users", $chatuser)) {
-        return false;
+        if (($chatuser->course != $course->id)
+         or ($chatuser->userid != $USER->id)) {
+            return false;
+        }
+        if (!update_record('chat_users', $chatuser)) {
+            return false;
+        }
+
+    } else {
+        $chatuser->chatid   = $chatid;
+        $chatuser->userid   = $USER->id;
+        $chatuser->groupid  = $groupid;
+        $chatuser->version  = $version;
+        $chatuser->ip       = $USER->lastIP;
+        $chatuser->lastping = $chatuser->firstping = $chatuser->lastmessageping = time();
+        $chatuser->sid      = random_string(32);
+        $chatuser->course   = $course->id; //caching only, but needed for current_language() to work properly!
+        $chatuser->lang     = current_language();
+
+        if (!insert_record('chat_users', $chatuser)) {
+            return false;
+        }
+
+        $message->chatid    = $chatuser->chatid;
+        $message->userid    = $chatuser->userid;
+        $message->groupid   = $groupid;
+        $message->message   = 'enter';
+        $message->system    = 1;
+        $message->timestamp = time();
+
+        if (!insert_record('chat_messages', $message)) {
+            error('Could not insert a chat message!');
+        }
     }
 
     return $chatuser->sid;
@@ -370,18 +412,18 @@ function chat_delete_old_users() {
     $timeold = time() - $CFG->chat_old_ping;
     $query = "lastping < '$timeold'";
 
-    if ($oldusers = get_records_select("chat_users", $query) ) {
-        delete_records_select("chat_users", $query);
+    if ($oldusers = get_records_select('chat_users', $query) ) {
+        delete_records_select('chat_users', $query);
         foreach ($oldusers as $olduser) {
-            $message->chatid = $olduser->chatid;
-            $message->userid = $olduser->userid;
-            $message->groupid = $olduser->groupid;
-            $message->message = "exit";
-            $message->system = 1;
+            $message->chatid    = $olduser->chatid;
+            $message->userid    = $olduser->userid;
+            $message->groupid   = $olduser->groupid;
+            $message->message   = 'exit';
+            $message->system    = 1;
             $message->timestamp = time();
 
-            if (!insert_record("chat_messages", $message)) {
-                error("Could not insert a chat message!");
+            if (!insert_record('chat_messages', $message)) {
+                error('Could not insert a chat message!');
             }
         }
     }
@@ -428,182 +470,6 @@ function chat_update_chat_times($chatid=0) {
 }
 
 
-function chat_browser_detect($HTTP_USER_AGENT) {
-
- if(eregi("(opera) ([0-9]{1,2}.[0-9]{1,3}){0,1}", $HTTP_USER_AGENT, $match)
- || eregi("(opera/)([0-9]{1,2}.[0-9]{1,3}){0,1}", $HTTP_USER_AGENT, $match))
- {
-  $BName = "Opera"; $BVersion=$match[2];
- }
- elseif( eregi("(konqueror)/([0-9]{1,2}.[0-9]{1,3})", $HTTP_USER_AGENT, $match) )
- {
-  $BName = "Konqueror"; $BVersion=$match[2];
- }
- elseif( eregi("(lynx)/([0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2})", $HTTP_USER_AGENT, $match) )
- {
-  $BName = "Lynx"; $BVersion=$match[2];
- }
- elseif( eregi("(links) \(([0-9]{1,2}.[0-9]{1,3})", $HTTP_USER_AGENT, $match) )
- {
-  $BName = "Links"; $BVersion=$match[2];
- }
- elseif( eregi("(msie) ([0-9]{1,2}.[0-9]{1,3})", $HTTP_USER_AGENT, $match) )
- {
-  $BName = "MSIE"; $BVersion=$match[2];
- }
- elseif( eregi("(netscape6)/(6.[0-9]{1,3})", $HTTP_USER_AGENT, $match) )
- {
-  $BName = "Netscape"; $BVersion=$match[2];
- }
- elseif( eregi("mozilla/5", $HTTP_USER_AGENT) )
- {
-  $BName = "Netscape"; $BVersion="Unknown";
- }
- elseif( eregi("(mozilla)/([0-9]{1,2}.[0-9]{1,3})", $HTTP_USER_AGENT, $match) )
- {
-  $BName = "Netscape"; $BVersion=$match[2];
- }
- elseif( eregi("w3m", $HTTP_USER_AGENT) )
- {
-  $BName = "w3m"; $BVersion="Unknown";
- }
- else
- {
-  $BName = "Unknown"; $BVersion="Unknown";
- }
-
- if(eregi("linux", $HTTP_USER_AGENT))
- {
-  $BPlatform = "Linux";
- }
- elseif( eregi("win32", $HTTP_USER_AGENT) )
- {
-  $BPlatform = "Windows";
- }
- elseif( (eregi("(win)([0-9]{2})", $HTTP_USER_AGENT, $match) )
- ||      (eregi("(windows) ([0-9]{2})", $HTTP_USER_AGENT, $match) ))
- {
-  $BPlatform = "Windows $match[2]";
- }
- elseif( eregi("(winnt)([0-9]{1,2}.[0-9]{1,2}){0,1}", $HTTP_USER_AGENT, $match) )
- {
-  $BPlatform = "Windows NT $match[2]";
- }
- elseif( eregi("(windows nt)( ){0,1}([0-9]{1,2}.[0-9]{1,2}){0,1}", $HTTP_USER_AGENT, $match) )
- {
-  $BPlatform = "Windows NT $match[3]";
- }
- elseif( eregi("mac", $HTTP_USER_AGENT) )
- {
-  $BPlatform = "Macintosh";
- }
- elseif( eregi("(sunos) ([0-9]{1,2}.[0-9]{1,2}){0,1}", $HTTP_USER_AGENT, $match) )
- {
-  $BPlatform = "SunOS $match[2]";
- }
- elseif( eregi("(beos) r([0-9]{1,2}.[0-9]{1,2}){0,1}", $HTTP_USER_AGENT, $match) )
- {
-  $BPlatform = "BeOS $match[2]";
- }
- elseif( eregi("freebsd", $HTTP_USER_AGENT) )
- {
-  $BPlatform = "FreeBSD";
- }
- elseif( eregi("openbsd", $HTTP_USER_AGENT) )
- {
-  $BPlatform = "OpenBSD";
- }
- elseif( eregi("irix", $HTTP_USER_AGENT) )
- {
-  $BPlatform = "IRIX";
- }
- elseif( eregi("os/2", $HTTP_USER_AGENT) )
- {
-  $BPlatform = "OS/2";
- }
- elseif( eregi("plan9", $HTTP_USER_AGENT) )
- {
-  $BPlatform = "Plan9";
- }
- elseif( eregi("unix", $HTTP_USER_AGENT)
- ||      eregi("hp-ux", $HTTP_USER_AGENT) )
- {
-  $BPlatform = "Unix";
- }
- elseif( eregi("osf", $HTTP_USER_AGENT) )
- {
-  $BPlatform = "OSF";
- }
- else
- {
-  $BPlatform = "Unknown";
- }
-
- $return["name"] = $BName;
- $return["version"] = $BVersion;
- $return["platform"] = $BPlatform;
- return $return;
-}
-
-function chat_display_version($version, $browser)
-{
- GLOBAL $CFG;
-
- $checked = "";
- if (($version == "sockets") OR ($version == "push_js"))
- {
-  $checked = "checked";
- }
- if (($version == "sockets" OR $version == "push_js")
-     AND
-     ($browser["name"] == "Lynx"
-      OR
-      $browser["name"] == "Links"
-      OR
-      $browser["name"] == "w3m"
-      OR
-      $browser["name"] == "Konqueror"
-      OR
-      ($browser["name"] == "Netscape" AND substr($browser["version"], 0, 1) == "2")))
- {
-  $checked = "";
- }
- if (($version == "text")
-     AND
-     ($browser["name"] == "Lynx"
-      OR
-      $browser["name"] == "Links"
-      OR
-      $browser["name"] == "w3m"))
- {
-  $checked = "checked";
- }
- if (($version == "header")
-     AND
-     ($browser["name"] == "Konqueror"))
- {
-  $checked = "checked";
- }
- if (($version == "header_js")
-     AND
-     ($browser["name"] == "Netscape" AND substr($browser["version"], 0, 1) == "2"))
- {
-  $checked = "checked";
- }
-  ?>
-  <tr>
-   <td valign="top">
-    <input type="radio" name="chat_chatversion" value="<?php echo $version; ?>"<?php echo $checked; ?> />
-   </td>
-   <td valign="top" align="left">
-    <font face="Arial" size="2">
-     <?php echo $chat_lang["gui_".$version]; ?>
-    </font>
-   </td>
-  </tr>
-  <?php
-
-}
 
 function chat_language_override($language) {
     // Override the highest-ranking language variable from current_language()
@@ -629,7 +495,8 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     global $CFG;
 
     $output = New stdClass;
-    $output->beep = false;   // by default
+    $output->beep = false;       // by default
+    $output->refreshusers = false; // by default
 
     if(empty($language)) {
         $language = current_language();
@@ -655,6 +522,10 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $output->text = $message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender));
         $output->html  = '<table><tr><td style="vertical-align: top;">'.$message->picture.'</td><td>';
         $output->html .= '<font size="2" color="#ccaaaa">'.$output->text.'</font></td></tr></table>';
+
+        if($message->message == 'exit' or $message->message == 'enter') {
+            $output->refreshusers = true; //force user panel refresh ASAP
+        }
 
         // Don't forget to reset the language before returning!!!
         if(!empty($oldcfglang)) {
@@ -728,18 +599,16 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     return $output;
 }
 
-function chat_format_message($message, $courseid=0) {
+function chat_format_message($message, $courseid, $currentuser) {
 /// Given a message object full of information, this function
 /// formats it appropriately into text and html, then
 /// returns the formatted data.
-
-    global $CFG, $USER;
 
     if (!$user = get_record("user", "id", $message->userid)) {
         return "Error finding user id = $message->userid";
     }
 
-    return chat_format_message_manually($message, $courseid, $user, $USER);
+    return chat_format_message_manually($message, $courseid, $user, $currentuser);
 
 }
 

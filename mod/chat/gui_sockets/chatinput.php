@@ -1,31 +1,31 @@
-<?php
+<?php  // $Id$
 
-require("../../../config.php");
-require("../lib.php");
+    $nomoodlecookie = true;     // Session not needed!
 
-require_variable($chat_sid);
-optional_variable($groupid);
+    require('../../../config.php');
+    require('../lib.php');
 
-if (!$chatuser = get_record("chat_users", "sid", $chat_sid)) {
-    echo "Not logged in!";
-    die;
-}
+    $chat_sid = required_param('chat_sid', PARAM_ALPHANUM);
+    $groupid = optional_param('groupid', 0, PARAM_INT);
 
-if (!$chat = get_record("chat", "id", $chatuser->chatid)) {
-    error("No chat found");
-}
+    if (!$chatuser = get_record('chat_users', 'sid', $chat_sid)) {
+        error('Not logged in!');
+    }
 
-require_login($chat->course);
-optional_variable($chat_pretext, '');
+    chat_force_language($chatuser->lang);
 
 ?>
 
-<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
+<meta http-equiv="content-type" content="text/html; charset=<?php echo get_string('thischarset'); ?>" />
 <title>Message Input</title>
 
-<?php include("$CFG->javascript"); ?>
+<?php
+    $focus = '';
+    include("$CFG->javascript");
+?>
 
 <script type="text/javascript">
 <!--
@@ -44,9 +44,9 @@ function empty_field_and_submit() {
 function prepareusers() {
     var frm = window.parent.frames;
     for(i = 0; i < frm.length; ++i) {
-        if(frm(i).name == "users") {
-            window.userFrame = frm(i);
-            window.userHREF  = frm(i).location.href;
+        if(frm[i]).name == "users") {
+            window.userFrame = frm[i];
+            window.userHREF  = frm[i].location.href;
             window.setTimeout("reloadusers();", <?php echo $CFG->chat_refresh_userlist; ?> * 1000);
         }
     }
@@ -63,17 +63,13 @@ function reloadusers() {
 
 <body bgcolor="<?php echo $THEME->body ?>" onload="document.getElementById('inputform').chat_message.focus();document.getElementById('inputform').chat_message.select(); prepareusers();">
 
-<!--
-<form action="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport"; ?>" method="GET" target="empty" name="f" onsubmit="return empty_field_and_submit()">
--->
-<form action="../insert.php" method="get" target="empty" id="inputform" onsubmit="return empty_field_and_submit();">
-&gt;&gt; <input type="text" name="chat_message" size="60" value="<?php echo $chat_pretext; ?>" />
+<form action="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport/"; ?>" method="get" target="empty" id="inputform" onsubmit="return empty_field_and_submit();">
+&gt;&gt; <input type="text" name="chat_message" size="60" value="" />
 <?php helpbutton("chatting", get_string("helpchatting", "chat"), "chat", true, false); ?>
 </form>
 
 <form action="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport/"; ?>" method="get" target="empty" id="sendform">
     <input type="hidden" name="win" value="message" />
-    <input type="hidden" name="chat_version" value="sockets" />
     <input type="hidden" name="chat_message" value="" />
     <input type="hidden" name="chat_msgidnr" value="0" />
     <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>" />
@@ -82,4 +78,3 @@ function reloadusers() {
 </body>
 
 </html>
-

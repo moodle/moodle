@@ -53,6 +53,11 @@ function chat_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_chat_users ADD INDEX  `groupid` (`groupid`);');
     }
 
+    if ($oldversion < 2005020300) {
+        table_column('chat_users', '', 'course');
+        table_column('chat_users', '', 'lang', 'varchar', '10', '', '');
+    }
+    
     return true;
 }
 

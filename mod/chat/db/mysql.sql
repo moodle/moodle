@@ -52,6 +52,8 @@ CREATE TABLE `prefix_chat_users` (
   `lastping` int(10) unsigned NOT NULL default '0',
   `lastmessageping` int(10) unsigned NOT NULL default '0',
   `sid` varchar(32) NOT NULL default '',
+  `course` int(10) NOT NULL default '0',
+  `lang` varchar(10) NOT NULL default '', 
   PRIMARY KEY  (`id`),
   KEY `userid` (`userid`),
   KEY `lastping` (`lastping`),

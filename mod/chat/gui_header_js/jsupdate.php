@@ -1,73 +1,107 @@
-<?php
+<?php  // $Id$
 
-require("../../../config.php");
-require("../lib.php");
+    $nomoodlecookie = true;     // Session not needed!
 
-$groupid = empty($_GET['groupid']) ? 0 : $_GET['groupid'];
-$groupselect = $groupid ? " AND (groupid='$groupid' OR groupid='0') " : "";
+    require('../../../config.php');
+    require('../lib.php');
 
-if (!$chatuser = get_record("chat_users", "sid", $chat_sid)) {
-    echo "Not logged in!";
-    die;
-}
+    $chat_sid      = required_param('chat_sid', PARAM_ALPHANUM);
+    $chat_lasttime = optional_param('chat_lasttime', 0, PARAM_INT);
 
-if (!$chat = get_record("chat", "id", $chatuser->chatid)) {
-    error("No chat found");
-}
+    if (!$chatuser = get_record('chat_users', 'sid', $chat_sid)) {
+        error('Not logged in!');
+    }
 
-require_login($chat->course);
+    chat_force_language($chatuser->lang);
 
-if ($message = chat_get_latest_message($chatuser->chatid, $groupid)) {
-    $chat_newlasttime = $message->timestamp;
-} else {
-    $chat_newlasttime = 0;
-}
+    // force deleting of timed out users if there is a silence in room or just entering
+    if ((time() - $chat_lasttime) > $CFG->chat_old_ping) {
+        // must be done before chat_get_latest_message!!!
+        chat_delete_old_users();
+    }
 
-if (empty($chat_lasttime)) {
-    $chat_lasttime = 0;
-}
+    if ($message = chat_get_latest_message($chatuser->chatid, $chatuser->groupid)) {
+        $chat_newlasttime = $message->timestamp;
+    } else {
+        $chat_newlasttime = 0;
+    }
 
+    if ($chat_lasttime == 0) { //display some previous messages
+        $chat_lasttime = time() - $CFG->chat_old_ping; //TO DO - any better value??
+    }
 
-header("Expires: Sun, 28 Dec 1997 09:32:45 GMT");
-header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
-header("Cache-Control: no-cache, must-revalidate");
-header("Pragma: no-cache");
-header("Content-Type: text/html");
-header("Refresh: $CFG->chat_refresh_room; url=jsupdate.php?chat_sid=$chat_sid&chat_lasttime=$chat_newlasttime&groupid=$groupid");
+    $refreshurl = "jsupdate.php?chat_sid=$chat_sid&chat_lasttime=$chat_newlasttime"; // no &amp; in url, does not work in header!
+    $timenow    = time();
+
+    $groupselect = $chatuser->groupid ? " AND (groupid='".$chatuser->groupid."' OR groupid='0') " : "";
+
+    header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');
+    header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+    header('Cache-Control: no-cache, must-revalidate');
+    header('Pragma: no-cache');
+    header('Content-Type: text/html');
+    header("Refresh: $CFG->chat_refresh_room; url=$refreshurl");
 
 ?>
-  <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
-  <html>
-   <head>
-    <script language="Javascript">
-    <!--
-<?php
-     $beep = false;
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=<?php echo get_string('thischarset'); ?>" />
+        <script type="text/javascript">
+        <!--
+        <?php
+        $beep = false;
+        $refreshusers = false;
+        $us = array ();
+        if (($chat_lasttime != $chat_newlasttime)
+         and $messages = get_records_select("chat_messages",
+                            "chatid = '$chatuser->chatid' AND timestamp > '$chat_lasttime' $groupselect",
+                            "timestamp ASC")) {
 
-     if ($chat_lasttime) {
-         if ($messages = get_records_select("chat_messages",
-                                 "chatid = '$chatuser->chatid' AND timestamp > '$chat_lasttime' $groupselect",
-                                 "timestamp ASC")) {
-             foreach ($messages as $message) {
-                 $formatmessage = chat_format_message($message, $chat->course);
-                 if ($formatmessage->beep) {
-                     $beep = $formatmessage->beep;
-                 }
-                 echo "parent.msg.document.write('".addslashes($formatmessage->html)."\\n');";
+            if (!$currentuser = get_record('user', 'id', $chatuser->userid)) {
+                error('User does not exist!');
+            }
+            $currentuser->description = '';
+
+            foreach ($messages as $message) {
+                $formatmessage = chat_format_message($message, $chatuser->course, $currentuser);
+                if ($formatmessage->beep) {
+                     $beep = true;
+                }
+                if ($formatmessage->refreshusers) {
+                     $refreshusers = true;
+                }
+                $us[$message->userid] = $timenow - $message->timestamp;
+                echo "parent.msg.document.write('".addslashes($formatmessage->html)."\\n');\n";
              }
-         }
-     }
+        }
 
-     $chatuser->lastping = time();
-     update_record("chat_users", $chatuser);
-     ?>
-     parent.msg.scroll(1,5000000);
-    // -->
-    </script>
-   </head>
-   <body>
-   <?php if ($beep) { ?>
-           <embed src="../beep.wav" autostart="true" hidden="true" />
-   <?php } ?>
-   </body>
-  </html>
+        $chatuser->lastping = time();
+        update_record('chat_users', $chatuser);
+
+        if ($refreshusers) {
+            echo "parent.users.location.href = parent.users.document.anchors[0].href;\n";
+        } else {
+            foreach($us as $uid=>$lastping) {
+                $min = (int) ($lastping/60);
+                $sec = $lastping - ($min*60);
+                $min = $min < 10 ? '0'.$min : $min;
+                $sec = $sec < 10 ? '0'.$sec : $sec;
+                $idle = $min.':'.$sec;
+                echo "parent.users.document.getElementById('uidle{$uid}').innerHTML = '$idle';";
+            }
+        }
+        ?>
+        parent.msg.scroll(1,5000000);
+        // -->
+        </script>
+    </head>
+    <body>
+       <?php
+            if ($beep) {
+                echo '<embed src="../beep.wav" autostart="true" hidden="true" name="beep" />';
+            }
+        ?>
+       <a href="<? echo $refreshurl ?>" name="refreshlink">Refresh link</a>
+    </body>
+</html>

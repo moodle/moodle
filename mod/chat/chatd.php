@@ -531,7 +531,7 @@ class ChatDaemon {
         $this->dismiss_half($sessionid, false);
         $this->write_data($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $CHAT_HTMLHEAD_JS);
         $this->trace('Connection accepted: '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL].', SID: '.$sessionid.' UID: '.$chatuser->userid.' GID: '.intval($groupid), E_USER_WARNING);
-
+/*
         // Finally, broadcast the "entered the chat" message
 
         $msg = &New stdClass;
@@ -544,7 +544,7 @@ class ChatDaemon {
 
         insert_record('chat_messages', $msg);
         $this->message_broadcast($msg, $this->sets_info[$sessionid]['user']);
-
+*/
         return true;
     }
 
@@ -973,7 +973,7 @@ while(true) {
             if($changed > 0) {
                 // Let's see what it has to say
 
-                $data = socket_read($handle, 512);
+                $data = socket_read($handle, 2048); // should be more to prevent empty pages and repeated messages!!
                 if(empty($data)) {
                     continue;
                 }

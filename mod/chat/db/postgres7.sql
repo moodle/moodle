@@ -56,6 +56,8 @@ CREATE TABLE prefix_chat_users (
   lastping integer NOT NULL default '0',
   lastmessageping integer NOT NULL default '0',
   sid varchar(32) NOT NULL default '',
+  course integer NOT NULL default '0',
+  lang varchar(10) NOT NULL default '', 
   PRIMARY KEY  (id)
 );
 
