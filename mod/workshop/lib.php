@@ -167,12 +167,13 @@ function workshop_delete_instance($id) {
 }
 
 function workshop_user_outline($course, $user, $mod, $workshop) {
-    if ($submission = workshop_get_student_submission($workshop, $user)) {
-		$result->info = $submission->title;
-        if ($submission->finalgrade) {
-            $result->info .= ", ".get_string("grade").": $submission->finalgrade";
-        }
-        $result->time = $submission->timecreated;
+    if ($submissions = workshop_get_user_submissions($workshop, $user)) {
+		$result->info = count($submissions)." ".get_string("submissions", "workshop");
+		// workshop_get_user_submissions returns the newest one first
+		foreach ($submissions as $submission) {
+			$result->time = $submission->timecreated;
+			break;
+			}
         return $result;
     }
     return NULL;
@@ -632,9 +633,15 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
 
 function workshop_grades($workshopid) {
 /// Must return an array of grades, indexed by user, and a max grade.
+global $CFG;
 
-    $return->grades = get_records_select_menu("workshop_submissions", 
-		"workshopid = $workshopid", "", "userid, finalgrade");
+	if ($bestsubmissions = get_records_sql("SELECT userid, max(finalgrade) finalgrade FROM
+			{$CFG->prefix}workshop_submissions WHERE workshopid = $workshopid GROUP
+			BY userid")) {
+		foreach ($bestsubmissions as $bestgrade) {
+			$return->grades[$bestgrade->userid] = $bestgrade->finalgrade;
+			}
+		}		
     $return->maxgrade = get_field("workshop", "grade", "id", "$workshopid");
     return $return;
 }
@@ -955,8 +962,9 @@ function workshop_count_user_assessments_done($workshop, $user) {
 
 
 function workshop_count_user_submissions($workshop, $user) {
-	// returns the number of submissions make by this user
-	return count_records("workshop_submissions", "workshopid", $workshop->id, "userid", $user->id);
+	// returns the number of (real) submissions make by this user
+	return count_records_select("workshop_submissions", "workshopid = $workshop->id AND 
+		userid = $user->id AND timecreated > 0");
 	}
 
 
@@ -1222,9 +1230,10 @@ function workshop_get_user_assessments($workshop, $user) {
 
 
 function workshop_get_user_submissions($workshop, $user) {
-	// return submission of user newest first, oldest last
-    return get_records_select("workshop_submissions ",
-             "workshopid = $workshop->id AND userid = $user->id", "timecreated DESC" );
+	// return real submissions of user newest first, oldest last. Ignores the dummy submissions
+	// which get created to hold the final grades for users for make no submissions)
+    return get_records_select("workshop_submissions", "workshopid = $workshop->id AND 
+		userid = $user->id AND timecreated > 0", "timecreated DESC" );
 }
 
 
