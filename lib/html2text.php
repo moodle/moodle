@@ -157,12 +157,10 @@ function html2text( $badStr ) {
     $goodStr = wordwrap( $goodStr, 78 );
 
     //make sure there are no more than 3 linebreaks in a row and trim whitespace
-    $goodStr = str_replace(chr(160), ' ', $goodStr );
     $goodStr = preg_replace("/\r\n?|\f/", "\n", $goodStr);
     $goodStr = preg_replace("/\n(\s*\n){2}/", "\n\n\n", $goodStr);
     $goodStr = preg_replace("/[ \t]+(\n|$)/", "$1", $goodStr);
     $goodStr = preg_replace("/^\n*|\n*$/", '', $goodStr);
-    $goodStr = str_replace(chr(160), ' ', $goodStr );
 
     return $goodStr;
 
