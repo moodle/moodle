@@ -289,6 +289,44 @@
             }
         }
 
+        //LESSON: Decode every LESSON PAGE (contents) in the coure
+        
+        //Check we are restoring lessons
+        if ($restore->mods['lesson']->restore == 1) {
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","lesson").'</li>';           
+            //Get all course lesson pages
+            if ($pages = get_records_sql ("SELECT p.id, p.contents                                        
+                                       FROM {$CFG->prefix}lesson l,
+                                            {$CFG->prefix}lesson_pages p
+                                       WHERE l.course = $restore->course_id AND
+                                             p.lessonid = l.id")) {
+                //Iterate over each lesson page
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($pages as $page) {
+                    //Increment counter
+                    $i++;
+                    $content = $page->contents;
+                    $result = resource_decode_content_links($content,$restore);
+                    if ($result != $content) {
+                        //Update record 
+                        $page->contents = addslashes($result); 
+                        $status = update_record("lesson_pages",$page);
+                        if ($CFG->debug>7) {
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                        }
+                    }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br>";
+                        }
+                        backup_flush(300);
+                    }
+                }
+            }
+        }
+
         //RESOURCE: Decode every RESOURCE (alltext) in the coure
 
         //Check we are restoring resources
