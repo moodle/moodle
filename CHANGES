@@ -1,3 +1,291 @@
+2002-08-01 Thursday 13:44  martin
+
+	* UPGRADING: Reworded this file to make it clearer
+
+2002-08-01 Thursday 13:34  martin
+
+	* mod/choice/mod.php: Clean up - modernised choice mod.php
+
+2002-08-01 Thursday 13:27  martin
+
+	* mod/reading/: details.php, lib.php, mod.php: Clean ups to reading
+	module and modernisation of mod.php
+
+2002-08-01 Thursday 13:18  martin
+
+	* mod/survey/: graph.php, lib.php, mod.php, view.php: More cleanups
+	to survey - renamed/moved functions, modernised mod.php
+
+2002-08-01 Thursday 12:54  martin
+
+	* mod/survey/lib.php: typo
+
+2002-08-01 Thursday 12:49  martin
+
+	* mod/survey/: edit.php, edit_form.html, edit_form.phtml,
+	edit_new.html, edit_new.phtml, graph.php, lib.php, login_form.html,
+	report.php, test.php, view.php: Big clean up of survey functions
+	and removal of deadwood (more to go still though)
+
+2002-08-01 Thursday 12:05  martin
+
+	* mod/forum/lib.php: Yet more improvements to user discussion
+	listing (added forum link to each discussion printed)
+
+2002-08-01 Thursday 12:00  martin
+
+	* mod/forum/lib.php: More improvements to user discussion display
+
+2002-08-01 Thursday 11:56  martin
+
+	* mod/forum/lib.php: Whoops! Hide teacher discussions when printing
+	list of user discussions
+
+2002-08-01 Thursday 11:50  martin
+
+	* index.php, course/lib.php, course/mod.php, course/social.php,
+	course/topics.php, course/weeks.php, mod/forum/discuss.php,
+	mod/forum/lib.php, mod/forum/post.php, mod/forum/search.php,
+	mod/forum/subscribe.php, mod/forum/view.php, user/view.php: A big
+	clean up of all the forum functions (including renaming them all to
+	start with forum_ ) and all the follow-on effects that caused Some
+	miscellaneous bug fixes and code clean-ups along the way
+
+2002-08-01 Thursday 11:49  martin
+
+	* mod/assignment/: lib.php, mod.html, mod.php: Some work so far on
+	the assignment module ... NOT FINISHED YET! I just want to get it
+	out the way of some other commits
+
+2002-08-01 Thursday 01:13  martin
+
+	* lib/moodlelib.php: Slowly implementing courseid type variables
+	where i see them
+
+2002-08-01 Thursday 01:11  martin
+
+	* course/enrol.php: Better logging for guest when enrolling
+
+2002-08-01 Thursday 00:53  martin
+
+	* mod/forum/: mod.php, search.php, version.php, db/mysql.sql: Fixes
+	to logging and log display
+
+2002-08-01 Thursday 00:52  martin
+
+	* mod/forum/lib.php: Fixed up activity display for forums
+
+2002-08-01 Thursday 00:33  martin
+
+	* mod/forum/: discuss.php, subscribe.php: Fixed up some forum
+	logging
+
+2002-08-01 Thursday 00:24  martin
+
+	* course/lib.php: A fix to recent log display
+
+2002-08-01 Thursday 00:13  martin
+
+	* mod/forum/index.php: Fixed up forum sorting
+
+2002-07-31 Wednesday 23:55  martin
+
+	* mod/forum/lib.php: Tweak to add ... after shortpost
+
+2002-07-31 Wednesday 23:52  martin
+
+	* course/social.php: Tweak on readings display on social course
+
+2002-07-31 Wednesday 23:43  martin
+
+	* mod/forum/lib.php: whoops typo, forgot global
+
+2002-07-31 Wednesday 23:39  martin
+
+	* course/social.php: is_subscribed => forum_is_subscribed
+
+2002-07-31 Wednesday 23:34  martin
+
+	* mod/forum/: index.php, lib.php: Fixes for long posts ...
+
+2002-07-31 Wednesday 23:09  martin
+
+	* mod/forum/view.php: Fixed subscribe info for students
+
+2002-07-31 Wednesday 22:19  martin
+
+	* index.php, version.php, admin/index.php, course/lib.php,
+	course/mod.php, course/social.php, course/topics.php,
+	course/view.php, course/weeks.php, doc/install.html,
+	lib/moodlelib.php, mod/assignment/module.php,
+	mod/assignment/version.php, mod/choice/module.php,
+	mod/choice/version.php, mod/forum/discuss.php, mod/forum/icon.gif,
+	mod/forum/index.php, mod/forum/lib.php, mod/forum/mod.html,
+	mod/forum/mod.php, mod/forum/module.php, mod/forum/post.html,
+	mod/forum/post.php, mod/forum/rate.php, mod/forum/report.php,
+	mod/forum/search.php, mod/forum/subscribe.php,
+	mod/forum/subscribers.php, mod/forum/version.php,
+	mod/forum/view.php, mod/forum/db/mysql.sql,
+	mod/forum/lang/en/strings.php, mod/journal/module.php,
+	mod/journal/version.php, mod/reading/module.php,
+	mod/reading/version.php, mod/survey/module.php,
+	mod/survey/version.php, user/view.php: OK, some massive changes
+	with many files removed or changed.
+	
+	Basically the changes are:
+	
+	 - I've merged the 'discuss' module into the forum module
+	   which makes the interface MUCH clearer for everyone
+	 - I've added a new 'single' forum type that replicates
+	   what the old discuss course modules used to look like.
+	 - I've got rid of the "discussion" forum type - it will
+	   still exist in upgraded courses but as a normal forum.
+	 - the 'discuss' module is completely deleted - gone.
+	 - the 'chat' module is completely deleted - gone.
+	 - The upgrading system has been improved, and all code
+	   is stored in version.php.
+	 - I've put in upgrading commands to do the best I can
+	   (right now) to upgrade courses that used the discuss
+	   module.  It should mostly work, just leaving some
+	   "orphan" coursemodules on you course front page.  You
+	   can easily delete these using the little 'x'.
+	   I may have forgotten something  - I've only tested on
+	   my testing server and I'm about to test on my production
+	   server to see how it goes.
+	 - Forums have a lot of little new features and fixes.	The
+	   main one is the subscription process.  Teachers can 'force'
+	   subscriptions on any forum.	This disallows everyone from
+	   choosing their own mail subscription - it's just on.
+	 - The assignment module is half-finished and not working yet
+	
+	I've still some massive changes to do, mostly involving making all
+	the lib.php function names more standardised, so consider this is
+	an interim checkin to do some tests.
+
+2002-07-30 Tuesday 18:45  martin
+
+	* lib/setup.php: Removed version (replaced by /version.php
+
+2002-07-30 Tuesday 11:35  martin
+
+	* course/: social.php, topics.php: Fixed bug in subscribe link
+
+2002-07-29 Monday 23:45  martin
+
+	* index.php, course/social.php, course/weeks.php,
+	lib/moodlelib.php: Definition and use of new isediting() function
+	for checking whether a user is not only in editing mode, but
+	ALLOWED to be editing the current course.  Used to show editing
+	buttons etc
+
+2002-07-29 Monday 23:11  martin
+
+	* lib/moodlelib.php: Moved some functions around - no functonal
+	difference
+
+2002-07-29 Monday 23:10  martin
+
+	* course/: edit.html, edit.php: Much simpler date-setting using new
+	moodlelib functions
+
+2002-07-29 Monday 23:09  martin
+
+	* version.php, admin/index.php: Now adds the config table
+	automatically if there isn't one yet.
+
+2002-07-29 Monday 21:45  martin
+
+	* mod/forum/lib.php: Fixed link for "older topics"
+
+2002-07-29 Monday 21:10  martin
+
+	* course/view.php: Can now specify course by "short name" using
+	name parameter.  Useful for integrating with external interfaces. 
+	Thanks to dopey for the idea.
+
+2002-07-29 Monday 21:03  martin
+
+	* mod/journal/report.php: OK, this is working now
+
+2002-07-29 Monday 18:12  martin
+
+	* mod/journal/report.php: hmm wierd bug on production server but
+	not testing ... this is to test that
+
+2002-07-29 Monday 17:48  martin
+
+	* mod/journal/: lib.php, report.php: Fixes to journal reporting
+
+2002-07-29 Monday 17:17  martin
+
+	* mod/forum/: lib.php, view.php: Minor forum formatting tweaks
+
+2002-07-29 Monday 16:24  martin
+
+	* mod/forum/subscribers.php: Cleaned up subscription checking -
+	it's a bit slower but will work with the upcoming changes to forums
+	(subscribeall flag).  Code is shorter too.
+
+2002-07-29 Monday 16:11  martin
+
+	* mod/forum/view.php: edit icon always appears now, as long as a
+	coursemodule exists
+
+2002-07-29 Monday 15:26  martin
+
+	* mod/journal/lib.php: Slightly bigger textarea for teacher
+	feedback
+
+2002-07-29 Monday 15:21  martin
+
+	* mod/journal/: lib.php, report.php: Improvements to report.php ...
+	clearer code, new functions in lib.php and now the journal entries
+	are sorted with the newest at the top.
+
+2002-07-29 Monday 15:00  martin
+
+	* lib/moodlelib.php: changed function get_course_participants -->
+	get_course_users (naming consistency)
+
+2002-07-29 Monday 14:53  martin
+
+	* user/index.php: Changed to use the new functions for lists of
+	students, teachers etc
+
+2002-07-29 Monday 14:52  martin
+
+	* lib/moodlelib.php: New functions for getting lists of people in a
+	course, and some cleanups
+
+2002-07-29 Monday 14:34  martin
+
+	* mod/journal/mod.php: modernised the code to use newer database
+	functions - no change in functionality
+
+2002-07-29 Monday 14:21  martin
+
+	* lib/moodlelib.php: New functions for printing date selector forms
+	and reconstructing dates afterwards.  Also a new function for
+	counting words in a text
+
+2002-07-29 Monday 14:20  martin
+
+	* mod/journal/view.php: Added word count
+
+2002-07-29 Monday 09:38  martin
+
+	* course/loggraph.php: Slight fix for daily x-axis (nicer-looking
+	numbers)
+
+2002-07-29 Monday 00:35  martin
+
+	* index.php: Fixed bug where admin controls would be shown to
+	teachers in edit-mode (thanks dopey)
+
+2002-07-28 Sunday 15:25  martin
+
+	* CHANGES: Same
+
 2002-07-27 Saturday 21:33  martin
 
 	* course/: loggraph.php, user.php: Fixed up the graphs (one for
@@ -49,11 +337,6 @@
 	* mod/journal/: lib.php, db/mysql.sql: Implemented journal feedback
 	notification (mailouts)
 
-2002-07-27 Saturday 14:19  martin
-
-	* mod/discuss/: cron.php, lib.php: Cron stuff has been moved from
-	cron.php to a function in lib.php
-
 2002-07-27 Saturday 14:10  martin
 
 	* lib/moodlelib.php: Better error checking in update_record
@@ -71,19 +354,13 @@
 
 2002-07-27 Saturday 14:07  martin
 
-	* mod/: assignment/module.php, chat/module.php, choice/module.php,
-	discuss/module.php, forum/module.php, journal/module.php,
-	reading/module.php, survey/module.php: Changes to suit new
-	upgrading procedure (admin/index.html)
+	* mod/: assignment/module.php, choice/module.php, forum/module.php,
+	journal/module.php, reading/module.php, survey/module.php: Changes
+	to suit new upgrading procedure (admin/index.html)
 
 2002-07-26 Friday 10:15  martin
 
 	* mod/journal/mod.html: Fixed 0 days -> ALways Open
-
-2002-07-25 Thursday 22:06  martin
-
-	* mod/discuss/lang/en/strings.php: Added tip for writing (short and
-	on-topic)
 
 2002-07-25 Thursday 21:54  martin
 
@@ -91,11 +368,11 @@
 
 2002-07-25 Thursday 21:48  martin
 
-	* mod/: choice/lib.php, discuss/lib.php, discuss/user.php,
-	forum/lib.php, journal/lib.php, journal/user.php, reading/lib.php,
-	reading/user.php, survey/lib.php: Got rid of the user.php code
-	fragments and implemented much cleaner system which certain-named
-	functions in lib.php ... called from /course/user.php
+	* mod/: choice/lib.php, forum/lib.php, journal/lib.php,
+	journal/user.php, reading/lib.php, reading/user.php,
+	survey/lib.php: Got rid of the user.php code fragments and
+	implemented much cleaner system which certain-named functions in
+	lib.php ... called from /course/user.php
 
 2002-07-25 Thursday 21:47  martin
 
@@ -118,10 +395,6 @@
 
 	* course/user.php: H3 -> H4
 
-2002-07-24 Wednesday 02:18  martin
-
-	* mod/discuss/lib.php: Formatting tweak (footer)
-
 2002-07-24 Wednesday 02:11  martin
 
 	* CHANGES: Ch ch ch
@@ -137,8 +410,8 @@
 
 2002-07-24 Wednesday 01:04  martin
 
-	* course/user.php, mod/discuss/user.php, mod/journal/user.php,
-	mod/reading/user.php: Fixes to Activity reports
+	* course/user.php, mod/journal/user.php, mod/reading/user.php:
+	Fixes to Activity reports
 
 2002-07-24 Wednesday 00:48  martin
 
@@ -153,15 +426,13 @@
 
 	* course/lib.php, course/topics.php, course/user.php,
 	course/view.php, course/weeks.php, lang/en/strings.php,
-	mod/discuss/lib.php, mod/discuss/user.php, mod/journal/user.php,
-	mod/reading/user.php: Part of "contributions" overhaul in
-	course/user.php
+	mod/journal/user.php, mod/reading/user.php: Part of "contributions"
+	overhaul in course/user.php
 
 2002-07-21 Sunday 16:34  martin
 
 	* help.php, lang/en/strings.php, lang/en/page/help.questions.php,
-	lib/moodlelib.php, lib/weblib.php, mod/discuss/post.html,
-	mod/discuss/lang/en/strings.php, user/edit.html: Improvements to
+	lib/moodlelib.php, lib/weblib.php, user/edit.html: Improvements to
 	the help system
 
 2002-07-21 Sunday 03:11  martin
@@ -235,8 +506,8 @@
 
 2002-07-12 Friday 21:25  martin
 
-	* lang/en/strings.php, login/signup_form.php, mod/discuss/lib.php,
-	mod/discuss/lang/en/strings.php: Small language-related changes
+	* lang/en/strings.php, login/signup_form.php: Small
+	language-related changes
 
 2002-07-11 Thursday 13:30  martin
 
@@ -254,10 +525,6 @@
 	* admin/index.php, admin/site.php, admin/user.php, course/edit.php,
 	course/enrol.php, course/lib.php, lib/moodlelib.php: Consistent use
 	of get_site() instead of checking course->category directly
-
-2002-07-10 Wednesday 23:28  martin
-
-	* mod/discuss/search.php: Searches now respect teacher-only forums
 
 2002-07-10 Wednesday 23:26  martin
 
@@ -277,17 +544,9 @@
 
 2002-07-06 Saturday 12:07  martin
 
-	* mod/: discuss/post.html, survey/edit_form.html,
-	survey/edit_form.phtml, survey/login_form.html: Got rid of all pv()
-	functions, now consistently uses p() to print variables safely.
-
-2002-07-06 Saturday 12:06  martin
-
-	* mod/discuss/mod.php: Strips bad HTML from subjects and intro text
-
-2002-07-05 Friday 13:11  martin
-
-	* mod/discuss/post.php: "Forums" links was wrong
+	* mod/survey/: edit_form.html, edit_form.phtml, login_form.html:
+	Got rid of all pv() functions, now consistently uses p() to print
+	variables safely.
 
 2002-07-04 Thursday 16:49  martin
 
@@ -321,9 +580,8 @@
 
 	* config-dist.php, course/view.php, lang/en/strings.php,
 	lib/setup.php, login/index.php, login/index_confirm.html,
-	login/index_form.html, mod/discuss/lib.php, user/edit.html,
-	user/edit.php, user/index.php, user/view.php: Language-related
-	fixes
+	login/index_form.html, user/edit.html, user/edit.php,
+	user/index.php, user/view.php: Language-related fixes
 
 2002-07-04 Thursday 15:49  martin
 
@@ -332,21 +590,17 @@
 
 2002-07-04 Thursday 15:48  martin
 
-	* mod/: choice/view.php, discuss/view.php, forum/view.php,
-	journal/view.php, reading/view.php, survey/view.php: Fix to
-	update_module_icon (to pass the courseid)
-
-2002-07-04 Thursday 15:28  martin
-
-	* mod/discuss/post.php: Subscribe on new discussion too
+	* mod/: choice/view.php, forum/view.php, journal/view.php,
+	reading/view.php, survey/view.php: Fix to update_module_icon (to
+	pass the courseid)
 
 2002-07-02 Tuesday 15:09  martin
 
 	* help.php, index.php, lang/en/strings.php,
-	mod/assignment/lang/en/strings.php, mod/chat/README,
-	mod/choice/lang/en/strings.php, mod/forum/lang/en/strings.php,
-	mod/journal/lang/en/strings.php, mod/reading/lang/en/strings.php,
-	mod/survey/lang/en/strings.php: Further internationalisation
+	mod/assignment/lang/en/strings.php, mod/choice/lang/en/strings.php,
+	mod/forum/lang/en/strings.php, mod/journal/lang/en/strings.php,
+	mod/reading/lang/en/strings.php, mod/survey/lang/en/strings.php:
+	Further internationalisation
 
 2002-07-02 Tuesday 15:02  martin
 
@@ -367,15 +621,10 @@
 
 	* lib/languages.php: List of all 2-letter language codes (ISO 639)
 
-2002-06-29 Saturday 13:44  martin
-
-	* mod/chat/lang/en/strings.php: Added strings file, for later
-
 2002-06-27 Thursday 16:47  martin
 
 	* lang/en/help.picture.php, lang/en/help.text.php,
-	lang/en/strings.php, lib/moodlelib.php, mod/discuss/post.html,
-	mod/discuss/lang/en/strings.php, theme/standard/footer.html,
+	lang/en/strings.php, lib/moodlelib.php, theme/standard/footer.html,
 	theme/standardblue/footer.html: New languages system - get_string()
 	in moodlelib.
 
@@ -392,11 +641,6 @@
 2002-06-26 Wednesday 00:42  martin
 
 	* user/view.php: Changes to display user discussions
-
-2002-06-26 Wednesday 00:41  martin
-
-	* mod/discuss/lib.php: New function to print user discussions (for
-	user profile page)
 
 2002-06-25 Tuesday 23:40  martin
 
@@ -425,17 +669,16 @@
 	course/mod_delete.html, course/social.php, course/topics.php,
 	course/user.php, course/view.php, course/weeks.php,
 	lib/db/mysql.sql, mod/choice/index.php, mod/choice/mod.html,
-	mod/discuss/mod.html, mod/discuss/user.php, mod/forum/mod.html,
-	mod/journal/index.php, mod/journal/mod.html, mod/journal/user.php,
-	mod/journal/view.php, mod/reading/details.php,
-	mod/reading/index.php, mod/reading/mod.html,
-	mod/survey/details.php, mod/survey/index.php, mod/survey/mod.html:
-	Major changes throughout to change "week" notation to "section"
-	notation.  Sections covers "weeks", "topics" and anything else that
-	may come along.  Note, again, some databases have changed esp
-	course_weeks -> course_sections and several fields called "week"
-	are now "section.  Also course no longer has an enddate, but
-	instead has a numsections field.
+	mod/forum/mod.html, mod/journal/index.php, mod/journal/mod.html,
+	mod/journal/user.php, mod/journal/view.php,
+	mod/reading/details.php, mod/reading/index.php,
+	mod/reading/mod.html, mod/survey/details.php, mod/survey/index.php,
+	mod/survey/mod.html: Major changes throughout to change "week"
+	notation to "section" notation.  Sections covers "weeks", "topics"
+	and anything else that may come along.	Note, again, some databases
+	have changed esp course_weeks -> course_sections and several fields
+	called "week" are now "section.  Also course no longer has an
+	enddate, but instead has a numsections field.
 
 2002-06-25 Tuesday 19:46  martin
 
@@ -470,9 +713,8 @@
 
 	* index.php, course/mod.php, course/social.php, course/topics.php,
 	course/view.php, course/weeks.php, lib/moodlelib.php,
-	mod/discuss/post.php, mod/discuss/view.php, mod/forum/lib.php,
-	mod/forum/view.php: Changes related to new forum type: eachuser and
-	some general forum-related tweaking
+	mod/forum/lib.php, mod/forum/view.php: Changes related to new forum
+	type: eachuser and some general forum-related tweaking
 
 2002-06-25 Tuesday 11:32  martin
 
@@ -506,10 +748,6 @@
 	* mod/forum/db/mysql.sql: Bugfixes from move - this is now up to
 	date
 
-2002-06-20 Thursday 23:34  martin
-
-	* mod/discuss/search.php: Default to "", not 0
-
 2002-06-20 Thursday 23:24  martin
 
 	* index.php: Subscibing to forum, not discuss
@@ -518,12 +756,9 @@
 
 	* index.php, course/social.php, course/topics.php,
 	course/unenrol.php, course/weeks.php, lib/moodlelib.php,
-	mod/discuss/cron.php, mod/discuss/index.php, mod/discuss/lib.php,
-	mod/discuss/mod.php, mod/discuss/post.php, mod/discuss/search.php,
-	mod/discuss/subscribe.php, mod/discuss/view.php,
-	mod/discuss/db/mysql.sql, mod/forum/icon.gif, mod/forum/index.php,
-	mod/forum/lib.php, mod/forum/mod.html, mod/forum/mod.php,
-	mod/forum/module.php, mod/forum/subscribe.php, mod/forum/view.php,
+	mod/forum/icon.gif, mod/forum/index.php, mod/forum/lib.php,
+	mod/forum/mod.html, mod/forum/mod.php, mod/forum/module.php,
+	mod/forum/subscribe.php, mod/forum/view.php,
 	mod/forum/db/mysql.sql: Mass change related to separating forum
 	from discuss and making it a separate module (again).  This frees
 	up forums for some interesting developments.  Note that database
@@ -543,15 +778,6 @@
 	* pix/i/marker.gif: "marker" icon used by "topics" course format to
 	mark a topic
 
-2002-06-19 Wednesday 13:07  martin
-
-	* mod/discuss/lib.php: Slight formatting improvements to search box
-
-2002-06-19 Wednesday 13:06  martin
-
-	* mod/discuss/index.php: Formatting and subscribe/unsubscribe from
-	forum
-
 2002-06-19 Wednesday 13:05  martin
 
 	* mod/journal/report.php: Bugfix in crumbs
@@ -566,8 +792,8 @@
 
 2002-06-16 Sunday 17:44  martin
 
-	* index.php, mod/discuss/lib.php: Changes to add
-	subscribe/unsubscribe to site News forum
+	* index.php: Changes to add subscribe/unsubscribe to site News
+	forum
 
 2002-06-16 Sunday 11:25  martin
 
@@ -632,51 +858,23 @@
 
 	* index.php: OK, this is better (sigh)
 
-2002-06-11 Tuesday 15:29  martin
-
-	* mod/discuss/: lib.php, search.php: Formatting tweaks
-
 2002-06-11 Tuesday 15:27  martin
 
 	* course/: view.php, weeks.php: Tweaks to course format (search
 	box)
 
-2002-06-11 Tuesday 15:02  martin
-
-	* mod/discuss/search.php: Starting to look good now
-
 2002-06-11 Tuesday 15:01  martin
 
 	* lib/weblib.php: New highlight function for searches etc
-
-2002-06-11 Tuesday 14:34  martin
-
-	* mod/discuss/search.php: Only search in current course (duh)
 
 2002-06-11 Tuesday 14:28  martin
 
 	* theme/: standard/styles.css, standardblue/styles.css: New
 	"highlight" class (eg for search results)
 
-2002-06-11 Tuesday 14:27  martin
+2002-06-11 Tuesday 12:56  martin
 
-	* mod/discuss/search.php: Improved layout
-
-2002-06-11 Tuesday 13:37  martin
-
-	* mod/discuss/lib.php: Tweak
-
-2002-06-11 Tuesday 13:36  martin
-
-	* mod/discuss/search.php: Testing
-
-2002-06-11 Tuesday 13:35  martin
-
-	* mod/discuss/search.php: Layout etc ... not done yet
-
-2002-06-11 Tuesday 12:55  martin
-
-	* mod/discuss/lib.php, course/social.php: Added search form
+	* course/social.php: Added search form
 
 2002-06-11 Tuesday 12:31  martin
 
@@ -698,14 +896,6 @@
 2002-06-11 Tuesday 11:06  martin
 
 	* index.php: Removed bodgy forums link - it's not necessary
-
-2002-06-10 Monday 23:18  martin
-
-	* mod/discuss/search.php: testing
-
-2002-06-10 Monday 23:08  martin
-
-	* mod/discuss/search.php: Not finished yet, I'm just testing it
 
 2002-06-10 Monday 22:01  martin
 
@@ -817,10 +1007,9 @@
 
 	* admin/user.php, course/edit.html, course/enrol.php,
 	course/index.php, course/lib.php, lib/moodlelib.php,
-	lib/db/mysql.sql, mod/discuss/post.php, mod/discuss/rate.php,
-	mod/discuss/subscribe.php, mod/journal/edit.php,
-	mod/journal/view.php, mod/survey/save.php, pix/i/key.gif: Changes
-	to support guest user across any course (guest/guest)
+	lib/db/mysql.sql, mod/journal/edit.php, mod/journal/view.php,
+	mod/survey/save.php, pix/i/key.gif: Changes to support guest user
+	across any course (guest/guest)
 
 2002-06-09 Sunday 22:12  martin
 
@@ -828,8 +1017,8 @@
 
 2002-06-08 Saturday 14:52  martin
 
-	* course/view.php, mod/choice/view.php, mod/discuss/view.php,
-	mod/journal/view.php, mod/reading/view.php, mod/survey/view.php,
+	* course/view.php, mod/choice/view.php, mod/journal/view.php,
+	mod/reading/view.php, mod/survey/view.php,
 	theme/standard/header.html, theme/standardblue/header.html: Changes
 	to put update/edit icons in the headers of module and course pages
 
@@ -850,10 +1039,6 @@
 2002-06-07 Friday 11:54  martin
 
 	* lib/moodlelib.php: More tweaking of the mail formatting
-
-2002-06-07 Friday 11:54  martin
-
-	* mod/discuss/cron.php: More tweaking of the plain text mailouts
 
 2002-06-07 Friday 11:37  martin
 
@@ -884,10 +1069,9 @@
 2002-06-05 Wednesday 22:05  martin
 
 	* error/index.php, lib/moodlelib.php, lib/setup.php,
-	login/forgot_password.php, login/signup.php, mod/discuss/cron.php,
-	mod/discuss/lib.php: Fixes to convert mail to individual mailing
-	...  so that we can use the new preferences for mail (plain or
-	html).
+	login/forgot_password.php, login/signup.php: Fixes to convert mail
+	to individual mailing ...  so that we can use the new preferences
+	for mail (plain or html).
 
 2002-06-05 Wednesday 14:24  martin
 
@@ -925,16 +1109,15 @@
 
 2002-06-05 Wednesday 11:22  martin
 
-	* course/new.php, course/social.php, mod/discuss/new.php,
-	mod/journal/new.php, mod/reading/new.php, user/new.php: Old new.php
-	system is replaced by print_recent_activity() in course/lib.php
+	* course/new.php, course/social.php, mod/journal/new.php,
+	mod/reading/new.php, user/new.php: Old new.php system is replaced
+	by print_recent_activity() in course/lib.php
 
 2002-06-05 Wednesday 11:15  martin
 
 	* course/lib.php, course/log.php, course/new.php, files/index.php,
 	lib/moodlelib.php, lib/weblib.php, lib/db/mysql.sql,
-	mod/choice/report.php, mod/discuss/lib.php, mod/discuss/report.php,
-	mod/discuss/view.php, mod/journal/lib.php, mod/journal/new.php,
+	mod/choice/report.php, mod/journal/lib.php, mod/journal/new.php,
 	mod/journal/report.php, mod/journal/user.php, mod/journal/view.php,
 	mod/reading/index.php, mod/reading/new.php,
 	mod/survey/download.php, mod/survey/report.php, user/edit.html,
@@ -1056,11 +1239,6 @@
 	* lib/moodlelib.php: Fixed buglets in get_records_sql and
 	insert_record
 
-2002-06-01 Saturday 17:03  martin
-
-	* mod/discuss/mod.php: Modernised this to use new database
-	functions and also fixed some bugs.
-
 2002-06-01 Saturday 14:37  martin
 
 	* course/mod.php: Slight fix to change some mod->course_module to
@@ -1080,11 +1258,6 @@
 
 	* lib/weblib.php: Added lists to allowed html in cleantext
 
-2002-06-01 Saturday 11:33  martin
-
-	* mod/discuss/view.php: Checked for top-post also being an own-post
-	(hence editable).
-
 2002-05-31 Friday 21:54  martin
 
 	* doc/intro.html: Changed link to a newer and better paper on
@@ -1093,10 +1266,6 @@
 2002-05-31 Friday 21:24  martin
 
 	* error/index.php: Removed log and fixed email call
-
-2002-05-31 Friday 21:22  martin
-
-	* chat/index.php: Removed logging
 
 2002-05-31 Friday 21:20  martin
 
@@ -1156,40 +1325,32 @@
 
 2002-05-31 Friday 17:14  martin
 
-	* mod/: choice/db/mysql.sql, discuss/db/mysql.sql,
-	journal/db/mysql.sql, reading/db/mysql.sql, survey/db/mysql.sql:
-	Added new entries for log_display table.  These are used to define
-	what to display for any given logged item.
+	* mod/: choice/db/mysql.sql, journal/db/mysql.sql,
+	reading/db/mysql.sql, survey/db/mysql.sql: Added new entries for
+	log_display table.  These are used to define what to display for
+	any given logged item.
 
 2002-05-31 Friday 17:07  martin
 
-	* mod/: chat/install.sql, choice/index.php, choice/install.sql,
-	choice/mod.html, choice/report.php, choice/view.php,
-	discuss/index.php, discuss/lib.php, discuss/mod.html,
-	discuss/mod.php, discuss/post.php, discuss/subscribe.php,
-	discuss/view.php, journal/edit.php, journal/index.php,
-	journal/install.sql, journal/mod.html, journal/report.php,
-	journal/view.php, reading/details.php, reading/index.php,
-	reading/install.sql, reading/mod.html, reading/view.php,
-	survey/details.php, survey/download.php, survey/edit.php,
-	survey/index.php, survey/install.sql, survey/mod.html,
-	survey/report.php, survey/save.php, survey/view.php: Various small
-	fixes across all modules.  Most notable was the revised use of
-	add_to_log, and the new logging format.
+	* mod/: choice/index.php, choice/install.sql, choice/mod.html,
+	choice/report.php, choice/view.php, journal/edit.php,
+	journal/index.php, journal/install.sql, journal/mod.html,
+	journal/report.php, journal/view.php, reading/details.php,
+	reading/index.php, reading/install.sql, reading/mod.html,
+	reading/view.php, survey/details.php, survey/download.php,
+	survey/edit.php, survey/index.php, survey/install.sql,
+	survey/mod.html, survey/report.php, survey/save.php,
+	survey/view.php: Various small fixes across all modules.  Most
+	notable was the revised use of add_to_log, and the new logging
+	format.
 
 2002-05-31 Friday 17:03  martin
 
-	* mod/: chat/db/mysql.sql, choice/db/mysql.sql,
-	discuss/db/mysql.sql, journal/db/mysql.sql, reading/db/mysql.sql,
-	survey/db/mysql.sql: This is the new format for database schema. 
-	Each module has a db directory with one file per database.  All
-	these are called from admin/index.php and work in concert with
-	lib/db.
-
-2002-05-31 Friday 17:01  martin
-
-	* mod/discuss/db/postgres7.sql: Removed until postgres is supported
-	properly
+	* mod/: choice/db/mysql.sql, journal/db/mysql.sql,
+	reading/db/mysql.sql, survey/db/mysql.sql: This is the new format
+	for database schema.  Each module has a db directory with one file
+	per database.  All these are called from admin/index.php and work
+	in concert with lib/db.
 
 2002-05-31 Friday 17:01  martin
 
@@ -1212,12 +1373,6 @@
 2002-05-27 Monday 22:53  martin
 
 	* theme/standard/styles.css: Added style for <LI>
-
-2002-05-27 Monday 21:20  martin
-
-	* mod/discuss/: install.sql, db/mysql.sql, db/postgres7.sql: Moved
-	SQL files to a db subdirectory, similar to lib/db for core
-	databases
 
 2002-05-27 Monday 21:17  martin
 
@@ -1275,11 +1430,6 @@
 2002-05-24 Friday 14:35  martin
 
 	* lib/setup.php: Added version number for Moodle
-
-2002-05-24 Friday 14:27  martin
-
-	* mod/discuss/: cron.php, lib.php, new.php: Changes to support HTML
-	mail
 
 2002-05-19 Sunday 12:43  martin
 
@@ -1444,10 +1594,6 @@
 	* lib/moodlelib.php: Add check for admin to isteacher() rather than
 	doing checks everywhere else
 
-2002-04-02 Tuesday 14:14  martin
-
-	* mod/discuss/view.php: Slight fix-up for threaded view.
-
 2002-03-28 Thursday 13:52  martin
 
 	* mod/survey/: graph.php, view.php: If students view surveys after
@@ -1464,24 +1610,10 @@
 	* lang/en/help.text.php: Added help information about allowed HTML
 	tags
 
-2002-03-26 Tuesday 21:02  martin
-
-	* mod/discuss/post.php: $subject and $message coming from user are
-	now cleaned of bad tags
-
 2002-03-26 Tuesday 20:58  martin
 
 	* lib/weblib.php: Added cleantext function, used for cleaning
 	user-entered text of nasty tags etc
-
-2002-03-26 Tuesday 20:26  martin
-
-	* mod/discuss/post.php: new topics are now logged
-
-2002-03-26 Tuesday 20:23  martin
-
-	* mod/discuss/lib.php: When topics are listed, long ones are now
-	truncated to keep the display looking even (print_post)
 
 2002-03-16 Saturday 14:19  martin
 
@@ -1500,22 +1632,9 @@
 
 	* lang/en/help.picture.php: New help file for uploading a picture
 
-2002-03-14 Thursday 13:31  martin
-
-	* mod/discuss/lib.php: SLight formatting change on Reply
-
-2002-03-13 Wednesday 17:10  martin
-
-	* mod/discuss/index.php: id is now optional (if missing it assumes
-	the site forums)
-
 2002-03-11 Monday 11:26  martin
 
 	* lang/en/help.text.php: Help file for text
-
-2002-03-11 Monday 11:22  martin
-
-	* mod/discuss/post.html: Added a help button
 
 2002-03-11 Monday 11:21  martin
 
@@ -1558,22 +1677,6 @@
 	* login/signup_form.php: Added small warning about emails having to
 	be working ones
 
-2002-03-07 Thursday 12:50  martin
-
-	* mod/discuss/post.php: After posting a reply in a discussion, user
-	is automatically subscribed by mail Later this should be an option
-	(set by default).
-
-2002-03-07 Thursday 12:48  martin
-
-	* mod/discuss/cron.php: Old messages get marked "mailed" even when
-	noone is subscribed to get mail
-
-2002-03-04 Monday 17:04  martin
-
-	* mod/discuss/subscribe.php: Added logging for
-	subscribe/unsubscribe
-
 2002-03-02 Saturday 11:26  martin
 
 	* user/default/: f1.jpg, f2.jpg: Replaced shadowhead with something
@@ -1586,11 +1689,6 @@
 2002-02-26 Tuesday 21:40  martin
 
 	* index.php: Small change
-
-2002-02-26 Tuesday 14:37  martin
-
-	* mod/discuss/: install.sql, lib.php, subscribe.php: Some small
-	changes related to the updated social course format
 
 2002-02-26 Tuesday 14:36  martin
 
@@ -1632,11 +1730,6 @@
 
 	* login/logout.php: Changed unset($USER)  to $USER=NULL ... as
 	unset can cause problems with PHP 4.1
-
-2002-01-08 Tuesday 21:20  martin
-
-	* mod/discuss/: lib.php, user.php: Some small changes to add a
-	"parent" link to posts - this makes analysis easier
 
 2002-01-07 Monday 23:00  martin
 
@@ -1786,7 +1879,7 @@
 2001-11-25 Sunday 23:48  martin
 
 	* config.php, file.php, course/view.php, lib/moodlelib.php,
-	mod/discuss/lib.php, mod/reading/lib.php, mod/reading/view.php,
+	mod/reading/lib.php, mod/reading/view.php,
 	theme/standard/footer.html: Several changes related to the front
 	page, so that it now works OK.
 
@@ -1814,9 +1907,7 @@
 	* README, config.php, file.php, index.php, admin/cron.php,
 	admin/index.php, admin/log.php, admin/moodle-core.sql,
 	admin/site.html, admin/site.php, admin/teacher.php,
-	admin/user.html, admin/user.php, chat/DisplayArea.class,
-	chat/chatclient.class, chat/icon.gif, chat/index.php,
-	chat/simso1.au, chat/simso2.au, course/edit.html, course/edit.php,
+	admin/user.html, admin/user.php, course/edit.html, course/edit.php,
 	course/editweek.html, course/editweek.php, course/email.html,
 	course/email.php, course/index.php, course/lib.php, course/log.php,
 	course/login.html, course/login.php, course/loginas.php,
@@ -1840,18 +1931,11 @@
 	login/index.php, login/index_confirm.html, login/index_form.html,
 	login/logout.php, login/signup.php, login/signup_confirm.html,
 	login/signup_form.php, mod/assignment/README,
-	mod/assignment/module.php, mod/chat/icon.gif, mod/chat/install.sql,
-	mod/chat/module.php, mod/choice/icon.gif, mod/choice/index.php,
-	mod/choice/install.sql, mod/choice/mod.html, mod/choice/mod.php,
-	mod/choice/module.php, mod/choice/report.php, mod/choice/view.html,
-	mod/choice/view.php, mod/discuss/cron.php, mod/discuss/icon.gif,
-	mod/discuss/index.php, mod/discuss/install.sql,
-	mod/discuss/lib.php, mod/discuss/mod.html, mod/discuss/mod.php,
-	mod/discuss/module.php, mod/discuss/new.php, mod/discuss/post.html,
-	mod/discuss/post.php, mod/discuss/rate.php, mod/discuss/report.php,
-	mod/discuss/subscribe.php, mod/discuss/user.php,
-	mod/discuss/view.php, mod/journal/edit.html, mod/journal/edit.php,
-	mod/journal/icon.gif, mod/journal/index.php,
+	mod/assignment/module.php, mod/choice/icon.gif,
+	mod/choice/index.php, mod/choice/install.sql, mod/choice/mod.html,
+	mod/choice/mod.php, mod/choice/module.php, mod/choice/report.php,
+	mod/choice/view.html, mod/choice/view.php, mod/journal/edit.html,
+	mod/journal/edit.php, mod/journal/icon.gif, mod/journal/index.php,
 	mod/journal/install.sql, mod/journal/lib.php, mod/journal/mod.html,
 	mod/journal/mod.php, mod/journal/module.php, mod/journal/new.php,
 	mod/journal/report.php, mod/journal/user.php, mod/journal/view.php,
@@ -1892,9 +1976,7 @@
 	* README, config.php, file.php, index.php, admin/cron.php,
 	admin/index.php, admin/log.php, admin/moodle-core.sql,
 	admin/site.html, admin/site.php, admin/teacher.php,
-	admin/user.html, admin/user.php, chat/DisplayArea.class,
-	chat/chatclient.class, chat/icon.gif, chat/index.php,
-	chat/simso1.au, chat/simso2.au, course/edit.html, course/edit.php,
+	admin/user.html, admin/user.php, course/edit.html, course/edit.php,
 	course/editweek.html, course/editweek.php, course/email.html,
 	course/email.php, course/index.php, course/lib.php, course/log.php,
 	course/login.html, course/login.php, course/loginas.php,
@@ -1918,18 +2000,11 @@
 	login/index.php, login/index_confirm.html, login/index_form.html,
 	login/logout.php, login/signup.php, login/signup_confirm.html,
 	login/signup_form.php, mod/assignment/README,
-	mod/assignment/module.php, mod/chat/icon.gif, mod/chat/install.sql,
-	mod/chat/module.php, mod/choice/icon.gif, mod/choice/index.php,
-	mod/choice/install.sql, mod/choice/mod.html, mod/choice/mod.php,
-	mod/choice/module.php, mod/choice/report.php, mod/choice/view.html,
-	mod/choice/view.php, mod/discuss/cron.php, mod/discuss/icon.gif,
-	mod/discuss/index.php, mod/discuss/install.sql,
-	mod/discuss/lib.php, mod/discuss/mod.html, mod/discuss/mod.php,
-	mod/discuss/module.php, mod/discuss/new.php, mod/discuss/post.html,
-	mod/discuss/post.php, mod/discuss/rate.php, mod/discuss/report.php,
-	mod/discuss/subscribe.php, mod/discuss/user.php,
-	mod/discuss/view.php, mod/journal/edit.html, mod/journal/edit.php,
-	mod/journal/icon.gif, mod/journal/index.php,
+	mod/assignment/module.php, mod/choice/icon.gif,
+	mod/choice/index.php, mod/choice/install.sql, mod/choice/mod.html,
+	mod/choice/mod.php, mod/choice/module.php, mod/choice/report.php,
+	mod/choice/view.html, mod/choice/view.php, mod/journal/edit.html,
+	mod/journal/edit.php, mod/journal/icon.gif, mod/journal/index.php,
 	mod/journal/install.sql, mod/journal/lib.php, mod/journal/mod.html,
 	mod/journal/mod.php, mod/journal/module.php, mod/journal/new.php,
 	mod/journal/report.php, mod/journal/user.php, mod/journal/view.php,
