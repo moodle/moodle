@@ -1685,7 +1685,7 @@ function make_grades_menu($gradingtype) {
     return $grades;
 }
 
-function make_unique_id_code($version=1) {
+function make_unique_id_code($extra="") {
 
     $hostname = "unknownhost";
     if (!empty($_SERVER["HTTP_HOST"])) {
@@ -1702,8 +1702,11 @@ function make_unique_id_code($version=1) {
 
     $random =  random_string(6);
 
-    return "$hostname+$date+$random+$version";
-    
+    if ($extra) {
+        return "$hostname+$date+$random+$extra";
+    } else {
+        return "$hostname+$date+$random";
+    }
 }
 
 

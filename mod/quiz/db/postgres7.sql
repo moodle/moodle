@@ -183,7 +183,8 @@ CREATE TABLE prefix_quiz_questions (
   image varchar(255) NOT NULL default '',
   defaultgrade integer NOT NULL default '1',
   qtype integer NOT NULL default '0',
-  stamp varchar(255) NOT NULL default ''
+  stamp varchar(255) NOT NULL default '',
+  version integer NOT NULL default '1'
 );
 # --------------------------------------------------------
 

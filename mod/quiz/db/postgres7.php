@@ -88,7 +88,10 @@ function quiz_upgrade($oldversion) {
         table_column("quiz", "", "attemptonlast", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "attempts");
 
         table_column("quiz_questions", "", "stamp", "varchar", "255", "", "qtype");
+    }
 
+    if ($oldversion < 2003082301) {
+        table_column("quiz_questions", "", "version", "integer", "10", "", "1", "not null", "stamp");
         if ($questions = get_records("quiz_questions")) {
             foreach ($questions as $question) {
                 $stamp = make_unique_id_code();
