@@ -81,6 +81,22 @@
 
 <p style="margin-left: 80px;">Il n'y a pas encore d'&eacute;diteur int&eacute;gr&eacute; dans Moodle pour traduire les fichiers d'aide et la documentation, mais ce n'est pas vraiment difficile. Il est important d'utiliser la langue <strong>en</strong> comme langue de r&eacute;f&eacute;rence. Copiez un fichier d'aide de ce dossier au m&ecirc;me endroit dans votre propre dossier de langue. Utilisez ensuite un &eacute;diteur de texte pour modifier le fichier, en vous assurant de ne pas modifier le code qu'il contient (en g&eacute;n&eacute;ral des balises HTML). N'UTILISEZ PAS UN TRAITEMENT DE TEXTE&nbsp;pour modifier ou &eacute;crire ces fichiers. Ces programmes les font grossir inutilement&nbsp;!</p>
 
+<p style="margin-left: 80px;">Prenez la peine d'écrire des fichiers d'aide en conformité avec la norme XHTML. Ceci comprend notamment les points suivants&nbsp;:</p>
+  	 <ul style="margin-left: 80px;">
+  	   <li>toutes les balises ouvertes doivent être fermées&nbsp;: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span>lalala<span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
+  	   <li>tous les éléments doivent être correctement imbriqués&nbsp;: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span> lalala <span style="color:rgb(0, 0, 255);" >&lt;em&gt;</span>lalala<span style="color:rgb(0, 0, 255);" >&lt;/em&gt;</span> <span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
+  	   <li>tous les éléments et les attributs doivent être écrits en bas de casse (minuscules)</li>
+  	   <li>tous les attributs doivent être écrits en totalité et entre guillemets droits&nbsp;: <span style="color:rgb(255, 0, 0);" >&lt;p align=&quot;right&quot;&gt;</span> lalala <span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
+  	   <li>les éléments vides doivent être terminés par /&gt;&nbsp;: <span style="color:rgb(255, 0, 0);" >&lt;br /&gt; &lt;hr /&gt;</span>. Il faut mettre un espace avant le caractère «&nbsp;/&nbsp;».</li>
+  	   <li>chaque balise «&nbsp;img&nbsp;» doit comporter un attribut «&nbsp;alt&nbsp;» (qui peut être vide), par exemple <span style="color:rgb(255, 0, 0);" >&lt;img alt src="photo.gif"></span></li>
+  	   <li>les balises courtes du code PHP <span style="color:rgb(255, 0, 0);" >&lt;?=</span> et <span style="color:rgb(255, 0, 0);" >&lt;?</span> sont à retirer au profit de leur version normale <span style="color:rgb(255, 0, 0);" >&lt;?php</span></li>
+  	   <li>AUCUNE balise «&nbsp;font&nbsp;» ne doit figurer dans le code. Les balises <span style="color:rgb(255, 0, 0);" > &lt;p&gt; &lt;em&gt; &lt;h1&gt; &lt;h2&gt;</span> etc. sont  suffisantes pour les fichiers de langues</li>
+  	   <li>le nom de la langue (indiqué dans la variable «&nbsp;$string['thislanguage']&nbsp;» dans le fichier «&nbsp;moodle.php&nbsp;») doit être dans la mesure du possible conforme au standard «&nbsp;Unicode Numeric Character References (NCR)&nbsp;», car ceci permet un affichage correct de ce nom dans TOUS les encodages (pour un exemple, voir la langue chinoise)</li>
+  	 </ul>
+<p style="margin-left: 80px;">Aucun des fichiers du dossier «&nbsp;help&nbsp;» ne nécessite de description de document (doc type), ni des balises html, body, head (ouvrantes ou fermantes), car ces fichiers sont inclus à l'aide du fichier «&nbsp;help.php&nbsp;». Le script se chargera de composer des pages formatées correctement. Cela signifie qu'il n'y a pas beaucoup d'opportunité de laisser libre cours à votre créativité&nbsp;! Veuillez coller au plus près de l'exemple de la langue anglaise.</p>
+
+<p style="margin-left: 80px;">Les fichiers du dossier «&nbsp;docs&nbsp;» doivent en revanche être en pleine conformité avec la norme XHTML, y compris la description de document (doc type), l'entête, etc.</p>
+
 <p style="margin-left: 80px;">Si vous cliquez sur &laquo;&nbsp;V&eacute;rifier les textes manquant&nbsp;&raquo; dans la page d'administration des langues, une liste des fichiers manquant sera &eacute;galement affich&eacute;e. En lieu et place des fichiers manquant, Moodle utilisera les fichiers de la langue m&egrave;re (parentlanguage). Il n'est donc pas n&eacute;cessaire de conserver des copies non traduites des fichiers d'aide dans votre dossier de langue.</p>
 
 <h2>Offrir votre dossier de langue au projet Moodle</h2>
