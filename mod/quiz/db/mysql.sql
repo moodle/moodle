@@ -3,7 +3,7 @@
 # http://www.phpmyadmin.net/ (download page)
 #
 # Host: localhost
-# Generation Time: Oct 16, 2002 at 12:20 AM
+# Generation Time: Oct 16, 2002 at 01:12 AM
 # Server version: 3.23.49
 # PHP Version: 4.2.3
 # Database : `moodle`
@@ -43,6 +43,7 @@ CREATE TABLE `quiz_answers` (
   `answer` varchar(255) NOT NULL default '',
   `fraction` varchar(10) NOT NULL default '0.0',
   `feedback` varchar(255) NOT NULL default '',
+
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Answers, with a fractional grade (0-1) and feedback';
 # --------------------------------------------------------
@@ -56,7 +57,7 @@ CREATE TABLE `quiz_attempts` (
   `quiz` int(10) unsigned NOT NULL default '0',
   `user` int(10) unsigned NOT NULL default '0',
   `attempt` smallint(6) NOT NULL default '0',
-  `sumgrades` int(10) NOT NULL default '0',
+  `sumgrades` varchar(10) NOT NULL default '0.0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Stores various attempts on a quiz';
@@ -84,7 +85,7 @@ CREATE TABLE `quiz_grades` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `quiz` int(10) unsigned NOT NULL default '0',
   `user` int(10) unsigned NOT NULL default '0',
-  `grade` int(10) NOT NULL default '0',
+  `grade` varchar(10) NOT NULL default '0.0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Final quiz grade (may be best of several attempts)';
@@ -142,7 +143,7 @@ CREATE TABLE `quiz_responses` (
   `attempt` int(10) unsigned NOT NULL default '0',
   `question` int(10) unsigned NOT NULL default '0',
   `answer` varchar(255) NOT NULL default '',
-  `grade` int(10) NOT NULL default '0',
+  `grade` varchar(10) NOT NULL default '0.0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Stores user responses to a quiz, and percentage grades';
 # --------------------------------------------------------

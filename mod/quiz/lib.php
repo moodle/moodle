@@ -704,6 +704,7 @@ function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
     $attempt->timemodified = time();
 
     if (!$attempt->id = insert_record("quiz_attempts", $attempt)) {
+        notify("Error while saving attempt");
         return false;
     }
 
@@ -719,6 +720,7 @@ function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
             $response->answer = "";
         }
         if (!insert_record("quiz_responses", $response)) {
+            notify("Error while saving response");
             return false;
         }
     }
