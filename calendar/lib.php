@@ -168,12 +168,29 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             // OverLib popup
             $popupcontent = '';
             foreach($eventsbyday[$day] as $eventid) {
-                if(!empty($events[$eventid]->modulename)) {
-                    $popupcontent .= '<div><img height=16 width=16 src=\\\''.$CFG->modpixpath.'/'.$events[$eventid]->modulename.'/icon.gif\\\' style=\\\'vertical-align: middle; margin-right: 4px;\\\' alt=\\\''.$events[$eventid]->modulename.'\\\' /><a href=\\\''.$dayhref.'\\\'>'.addslashes(htmlspecialchars($events[$eventid]->name)).'</a></div>';
+                if (!isset($events[$eventid])) {
+                    continue;
                 }
-                else {
-                    $popupcontent .= '<div><img height=16 width=16 src=\\\''.$CFG->pixpath.'/c/event.gif\\\' style=\\\'vertical-align: middle; margin-right: 4px;\\\' alt=\\\'\\\' /><a href=\\\''.$dayhref.'\\\'>'.addslashes(htmlspecialchars($events[$eventid]->name)).'</a></div>';
+                $event = $events[$eventid];
+
+                if(!empty($event->modulename)) {
+                    $popupicon = $CFG->modpixpath.'/'.$event->modulename.'/icon.gif';
+                    $popupalt  = $event->modulename;
+
+                } else if ($event->courseid == 1) {                                // Site event
+                    $popupicon = $CFG->pixpath.'/c/site.gif';
+                    $popupalt  = '';
+                } else if ($event->courseid > 1 and empty($event->groupid)) {      // Course event
+                    $popupicon = $CFG->pixpath.'/c/course.gif';
+                    $popupalt  = '';
+                } else if ($event->groupid) {                                      // Group event
+                    $popupicon = $CFG->pixpath.'/c/group.gif';
+                    $popupalt  = '';
+                } else if ($event->userid) {                                       // User event
+                    $popupicon = $CFG->pixpath.'/c/user.gif';
+                    $popupalt  = '';
                 }
+                $popupcontent .= '<div><img height=16 width=16 src=\\\''.$popupicon.'\\\' style=\\\'vertical-align: middle; margin-right: 4px;\\\' alt=\\\''.$popupalt.'\\\' /><a href=\\\''.$dayhref.'\\\'>'.addslashes(htmlspecialchars($event->name)).'</a></div>';
             }
 
             $popupcaption = get_string('eventsfor', 'calendar', userdate($events[$eventid]->timestart, get_string('strftimedayshort')));
@@ -349,7 +366,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
             $output[$outkey] = $event;   // Grab the whole raw event by default
 
             // Now we know how to display the time, we have to see how to display the event
-            if(!empty($event->modulename)) {
+            if(!empty($event->modulename)) {                                // Activity event
 
                 // The module name is set. I will assume that it has to be displayed, and
                 // also that it is an automatically-generated event. And of course that the
@@ -377,32 +394,28 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
 
 
-            } else if($event->courseid == 1) {
+            } else if($event->courseid == 1) {                              // Site event
                 $output[$outkey]->icon = '<img height=16 width=16 src="'.$CFG->pixpath.'/c/site.gif" alt="" style="vertical-align: middle;" />';
                 $output[$outkey]->time = $eventtime;
 
 
 
-            } else if($event->courseid > 1) {
-                // Course event
+            } else if($event->courseid > 1 and !$event->groupid) {          // Course event
                 calendar_get_course_cached($coursecache, $event->courseid);
 
                 $output[$outkey]->icon = '<img height=16 width=16 src="'.$CFG->pixpath.'/c/course.gif" alt="" style="vertical-align: middle;" />';
                 $output[$outkey]->time = $eventtime;
-                $output[$outkey]->description = $event->description;
                 $output[$outkey]->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$event->courseid.'">'.$coursecache[$event->courseid]->fullname.'</a>';
 
 
 
-            } else if($event->groupid) {
-                // Group event
+            } else if ($event->groupid) {                                    // Group event
                 $output[$outkey]->icon = '<img height=16 width=16 src="'.$CFG->pixpath.'/c/group.gif" alt="" style="vertical-align: middle;" />';
                 $output[$outkey]->time = $eventtime;
 
 
 
-            } else if($event->userid) {
-                // User event
+            } else if($event->userid) {                                      // User event
                 $output[$outkey]->icon = '<img height=16 width=16 src="'.$CFG->pixpath.'/c/user.gif" alt="" style="vertical-align: middle;" />';
                 $output[$outkey]->time = $eventtime;
             }
