@@ -497,6 +497,9 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2003082101) {
         execute_sql(" ALTER TABLE `{$CFG->prefix}course` ADD INDEX category (category) ");
     }
+    if ($oldversion < 2003082702) {
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('course', 'user report', 'user', 'CONCAT(firstname,\" \",lastname)') ");
+    }
 
     return $result;
 
