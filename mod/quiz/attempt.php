@@ -12,11 +12,11 @@
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
         }
-    
+
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
         }
-    
+
         if (! $quiz = get_record("quiz", "id", $cm->instance)) {
             error("Course module is incorrect");
         }
@@ -62,8 +62,8 @@
     $strquiz  = get_string("modulename", "quiz");
 
     print_header("$course->shortname: $quiz->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strquizzes</A> -> 
-                  <A HREF=\"view.php?id=$cm->id\">$quiz->name</A> -> $strattemptnum", 
+                 "$navigation <A HREF=index.php?id=$course->id>$strquizzes</A> ->
+                  <A HREF=\"view.php?id=$cm->id\">$quiz->name</A> -> $strattemptnum",
                   "", "", true);
 
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
@@ -108,7 +108,7 @@
             print_heading(get_string("noanswers", "quiz"));
             print_continue("attempt.php?q=$quiz->id");
             exit;
-        }   
+        }
 
         if (!$questions = get_records_list("quiz_questions", "id", $quiz->questions)) {
             error("No questions found!");
@@ -127,15 +127,21 @@
 
             } else if (ereg('^q([0-9]+)r([0-9]+)$', $key, $keyregs)) { // Random-style answers
                 $questions[$keyregs[1]]->answer[] = "$keyregs[2]-$value";
-        
+
             } else if (ereg('^q([0-9]+)ma([0-9]+)$', $key, $keyregs)) { // Multi-answer questions
                 $questions[$keyregs[1]]->answer[] = "$keyregs[2]-$value";
 
             } else if ('shuffleorder' == $key) {
                 $shuffleorder = explode(",", $value);   // Actual order questions were given in
-            
+
             } else {  // Useful for debugging new question types.  Must be last.
                 error("Answer received for non-existent question ($key -> $value)");
+            }
+        }
+
+        if($timelimit > 0) {
+            if(($timelimit + 60) <= $timesincestart) {
+                $quiz->timesincestart = $timesincestart;
             }
         }
 
@@ -143,14 +149,8 @@
             error("Could not grade your quiz attempt!");
         }
 
-        if($timelimit > 0) {
-            if(($timelimit + 60) <= $timesincestart) {
-                $result->sumgrades = 0;
-            }
-        }
-
         if ($attempt = quiz_save_attempt($quiz, $questions, $result, $attemptnumber)) {
-            add_to_log($course->id, "quiz", "submit", 
+            add_to_log($course->id, "quiz", "submit",
                        "review.php?id=$cm->id&attempt=$attempt->id", "$quiz->id", $cm->id);
         } else {
             notice(get_string("alreadysubmitted", "quiz"), "view.php?id=$cm->id");
@@ -193,10 +193,10 @@
     }
 
 /// Actually seeing the questions marks the start of an attempt
- 
+
     if (!$unfinished = quiz_get_user_attempt_unfinished($quiz->id, $USER->id)) {
         if ($newattemptid = quiz_start_attempt($quiz->id, $USER->id, $attemptnumber)) {
-            add_to_log($course->id, "quiz", "attempt", 
+            add_to_log($course->id, "quiz", "attempt",
                        "review.php?id=$cm->id&attempt=$newattemptid", "$quiz->id", $cm->id);
         } else {
             error("Sorry! Could not start the quiz (could not save starting time)");
@@ -261,7 +261,7 @@
                 $result->feedback = array(); // Not to be printed
                 $result->attemptbuildsonthelast = true;
             }
-            
+
         } else {
             // No latest attempt, or latest attempt was empty - Reset to defaults
             $questions = NULL;

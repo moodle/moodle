@@ -1365,7 +1365,7 @@ function quiz_category_select_menu($courseid,$published=false,$only_editable=fal
 
 function quiz_get_category_coursename($category) {
 /// if the category is published, adds on the course
-/// name 
+/// name
     $cname=$category->name;
     if ($category->publish) {
         if ($catcourse=get_record("course","id",$category->id)) {
@@ -1593,7 +1593,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
         echo '<td width="10" valign="top" align="right">';
         helpbutton("questiontypes", $strcreatenewquestion, "quiz");
         echo '</td></tr>';
-    
+
         echo '<tr><td colspan="3" align="right">';
         echo '<form method="get" action="import.php">';
         echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
@@ -2162,6 +2162,12 @@ function quiz_grade_attempt_results($quiz, $questions) {
 
         $questionresult = quiz_grade_attempt_question_result($question,
                                                              $answers);
+        // if time limit is enabled and exceeded, return zero grades
+        if($quiz->timelimit > 0) {
+            if(($quiz->timelimit + 60) <= $quiz->timesincestart) {
+                $questionresult->grade = 0;
+            }
+        }
 
         $result->grades[$question->id] = round($questionresult->grade, 2);
         $result->sumgrades += $questionresult->grade;
@@ -2954,7 +2960,7 @@ function get_questions_category( $category ) {
     // get the list of questions for the category
     $questions = get_records("quiz_questions","category",$category->id);
 
-    // iterate through questions, getting stuff we need 
+    // iterate through questions, getting stuff we need
     foreach($questions as $question) {
         $new_question = get_question_data( $question );
         $qresults[] = $new_question;
@@ -2964,30 +2970,30 @@ function get_questions_category( $category ) {
 }
 
 // function to read single question, parameter is object view of
-// quiz_categories record, results is a combined object 
+// quiz_categories record, results is a combined object
 // defined as follows...
-// ->id		quiz_questions id
-// ->category	category
-// ->name	q name
+// ->id     quiz_questions id
+// ->category   category
+// ->name   q name
 // ->questiontext
 // ->image
-// ->qtype	see defines at the top of this file
-// ->stamp	not too sure
-// ->version	not sure
+// ->qtype  see defines at the top of this file
+// ->stamp  not too sure
+// ->version    not sure
 // ----SHORTANSWER
 // ->usecase
-// ->answers 	array of answers
+// ->answers    array of answers
 // ----TRUEFALSE
-// ->trueanswer	truefalse answer
+// ->trueanswer truefalse answer
 // ->falseanswer truefalse answer
 // ----MULTICHOICE
 // ->layout
-// ->single	many or just one correct answer
-// ->answers	array of answer objects
+// ->single many or just one correct answer
+// ->answers    array of answer objects
 function get_question_data( $question ) {
     // what to do next depends of question type (qtype)
     switch ($question->qtype)  {
-    case SHORTANSWER: 
+    case SHORTANSWER:
         $shortanswer = get_record("quiz_shortanswer","question",$question->id);
         $question->usecase = $shortanswer->usecase;
         $question->answers = array();
@@ -3001,7 +3007,7 @@ function get_question_data( $question ) {
         break;
     case MULTICHOICE:
         if (!$multichoice = get_record("quiz_multichoice","question",$question->id)) {
-	    error( "quiz_multichoice $question->id not found" );
+        error( "quiz_multichoice $question->id not found" );
             }
         $question->layout = $multichoice->layout;
         $question->single = $multichoice->single;
@@ -3014,8 +3020,8 @@ function get_question_data( $question ) {
 }
 
 // function to return single answer
-// ->id		answer id
-// ->question	question number
+// ->id     answer id
+// ->question   question number
 // ->answer
 // ->fraction
 // ->feedback
