@@ -779,7 +779,8 @@ function authenticate_user_login($username, $password) {
     $user = NULL;
     $auth = $CFG->auth;
 
-    if ($user = get_user_info_from_db("username", $username)) {
+    $user = get_user_info_from_db("username", $username);
+    if (!empty($user->auth)) {
         $auth = $user->auth;
     }
 
