@@ -214,17 +214,16 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
 /// Used for user activity reports.
 /// $return->time = the time they did it
 /// $return->info = a short text description
-    if ($grade = get_record("quiz_grades", "userid", $user->id, "quiz", $quiz->id)) {
+    if ($grade = get_record('quiz_grades', 'userid', $user->id, 'quiz', $quiz->id)) {
 
-        if ($grade->grade) {
-            $result->info = get_string("grade").": $grade->grade";
+        if (floatval($grade->grade)) {
+            $result->info = get_string('grade').': '.$grade->grade;
         }
         $result->time = $grade->timemodified;
         return $result;
     }
     return NULL;
 
-    return $return;
 }
 
 function quiz_user_complete($course, $user, $mod, $quiz) {
