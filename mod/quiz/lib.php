@@ -1124,14 +1124,19 @@ function quiz_get_category_menu($courseid, $published=false) {
 }
 
 function quiz_print_category_form($course, $current) {
-// Prints a form to choose categories
+/// Prints a form to choose categories
 
-    if (!$categories = get_records_select("quiz_categories", "course = '$course->id' OR publish = '1'", "name ASC")) {
+/// Make sure the default category exists for this course
+    if (!$categories = get_records("quiz_categories", "course", $course->id, "id ASC")) {
         if (!$category = quiz_get_default_category($course->id)) {
             notify("Error creating a default category!");
-            return false;
         }
-        $categories[$category->id] = $category;
+    }
+
+/// Get all the existing categories now
+    if (!$categories = get_records_select("quiz_categories", "course = '$course->id' OR publish = '1'", "name ASC")) {
+        notify("Could not find any question categories!");
+        return false;    // Something is really wrong
     }
     foreach ($categories as $key => $category) {
        if ($catcourse = get_record("course", "id", $category->course)) {
