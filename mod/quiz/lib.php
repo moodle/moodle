@@ -2994,13 +2994,21 @@ function get_questions_category( $category ) {
 // ->layout
 // ->single many or just one correct answer
 // ->answers    array of answer objects
+// ----NUMERIC
+// ->min	minimum answer span
+// ->max	maximum answer span
+// ->answer	single answer
+// ----MATCH
+// ->subquestions array of sub questions
+// ---->questiontext
+// ---->answertext
 function get_question_data( $question ) {
     // what to do next depends of question type (qtype)
     switch ($question->qtype)  {
     case SHORTANSWER:
         $shortanswer = get_record("quiz_shortanswer","question",$question->id);
         $question->usecase = $shortanswer->usecase;
-        $question->answers = array();
+        $question->answers = get_exp_answers( $question->id );
         break;
     case TRUEFALSE:
         if (!$truefalse = get_record("quiz_truefalse","question",$question->id)) {
@@ -3016,6 +3024,23 @@ function get_question_data( $question ) {
         $question->layout = $multichoice->layout;
         $question->single = $multichoice->single;
         $question->answers = get_exp_answers( $multichoice->question );
+        break;
+    case NUMERICAL:
+        if (!$numeric = get_record("quiz_numerical","question",$question->id)) {
+            error( "quiz_numerical $question->id not found" );
+        }
+        $question->min = $numeric->min;
+        $question->max = $numeric->max;
+        $question->answer = get_exp_answer( $numeric->answer );
+        break;
+    case MATCH:
+        if (!$subquestions = get_records("quiz_match_sub","question",$question->id)) {
+            error( "quiz_match_sub $question->id not found" );
+        }
+        $question->subquestions = $subquestions;
+        break;
+    case DESCRIPTION:
+        // nothing to do
         break;
     default:
         error("No handler for question type $question->qtype in get_question");
