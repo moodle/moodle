@@ -25,7 +25,6 @@ CREATE TABLE prefix_course (
    guest integer NOT NULL default '0',
    startdate integer NOT NULL default '0',
    numsections integer NOT NULL default '1',
-   showrecent integer NOT NULL default '1',
    marker integer NOT NULL default '0',
    maxbytes integer NOT NULL default '0',
    showreports integer NOT NULL default '0',

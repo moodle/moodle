@@ -1,16 +1,16 @@
 <?PHP  //$Id$
 //
 // This file keeps track of upgrades to Moodle.
-// 
-// Sometimes, changes between versions involve 
-// alterations to database structures and other 
-// major things that may break installations.  
+//
+// Sometimes, changes between versions involve
+// alterations to database structures and other
+// major things that may break installations.
 //
 // The upgrade function in this file will attempt
 // to perform all the necessary actions to upgrade
 // your older installtion to the current version.
 //
-// If there's something it cannot do itself, it 
+// If there's something it cannot do itself, it
 // will tell you what you need to do.
 //
 // Versions are defined by /version.php
@@ -83,7 +83,7 @@ function main_upgrade($oldversion=0) {
     }
     if ($oldversion < 2002101701) {
         execute_sql(" ALTER TABLE `reading` RENAME `resource` ");  // Small line with big consequences!
-        execute_sql(" DELETE FROM `log_display` WHERE module = 'reading'"); 
+        execute_sql(" DELETE FROM `log_display` WHERE module = 'reading'");
         execute_sql(" INSERT INTO log_display VALUES ('resource', 'view', 'resource', 'name') ");
         execute_sql(" UPDATE log SET module = 'resource' WHERE module = 'reading' ");
         execute_sql(" UPDATE modules SET name = 'resource' WHERE name = 'reading' ");
@@ -175,7 +175,7 @@ function main_upgrade($oldversion=0) {
         if ($courses = get_records_sql("SELECT * FROM course")) {
             require_once("$CFG->dirroot/course/lib.php");
             foreach ($courses as $course) {
-                
+
                 $modinfo = serialize(get_array_of_activities($course->id));
 
                 if (!set_field("course", "modinfo", $modinfo, "id", $course->id)) {
@@ -205,7 +205,7 @@ function main_upgrade($oldversion=0) {
         if ($courses = get_records_sql("SELECT * FROM course")) {
             require_once("$CFG->dirroot/course/lib.php");
             foreach ($courses as $course) {
-                
+
                 $modinfo = serialize(get_array_of_activities($course->id));
 
                 if (!set_field("course", "modinfo", $modinfo, "id", $course->id)) {
@@ -273,7 +273,7 @@ function main_upgrade($oldversion=0) {
         execute_sql(" ALTER TABLE `{$CFG->prefix}log` ADD INDEX(course) ");
         execute_sql(" ALTER TABLE `{$CFG->prefix}log` ADD INDEX(userid) ");
     }
-    
+
 	if ($oldversion < 2003041400) {
         table_column("course_modules", "", "visible", "integer", "1", "unsigned", "1", "not null", "score");
     }
@@ -302,25 +302,25 @@ function main_upgrade($oldversion=0) {
         }
     }
 
-    if ($oldversion < 2003042500) {                 
-    //  Convert all usernames to lowercase.  
-        $users = get_records_sql("SELECT id, username FROM {$CFG->prefix}user"); 
+    if ($oldversion < 2003042500) {
+    //  Convert all usernames to lowercase.
+        $users = get_records_sql("SELECT id, username FROM {$CFG->prefix}user");
         $cerrors = "";
         $rarray = array();
 
         foreach ($users as $user) {      // Check for possible conflicts
             $lcname = trim(moodle_strtolower($user->username));
             if (in_array($lcname, $rarray)) {
-                $cerrors .= $user->id."->".$lcname.'<br/>' ; 
+                $cerrors .= $user->id."->".$lcname.'<br/>' ;
             } else {
                 array_push($rarray,$lcname);
             }
         }
 
         if ($cerrors != '') {
-            notify("Error: Cannot convert usernames to lowercase. 
-                    Following usernames would overlap (id->username):<br/> $cerrors . 
-                    Please resolve overlapping errors."); 
+            notify("Error: Cannot convert usernames to lowercase.
+                    Following usernames would overlap (id->username):<br/> $cerrors .
+                    Please resolve overlapping errors.");
             $result = false;
         }
 
@@ -333,15 +333,15 @@ function main_upgrade($oldversion=0) {
                 if (!$convert) {
                     if ($cerrors){
                        $cerrors .= ", ";
-                    }   
+                    }
                     $cerrors .= $item;
                 } else {
                     echo ".";
-                }   
+                }
             }
         }
         if ($cerrors != '') {
-            notify("There were errors when converting following usernames to lowercase. 
+            notify("There were errors when converting following usernames to lowercase.
                    '$cerrors' . Sorry, but you will need to fix your database by hand.");
             $result = false;
         }
@@ -442,7 +442,7 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2003081500) {
 //        print_simple_box("Some important changes have been made to how course creators work.  Formerly, they could create new courses and assign teachers, and teachers could edit courses.  Now, ordinary teachers can no longer edit courses - they <b>need to be a teacher of a course AND a course creator</b>.  A new site-wide configuration variable allows you to choose whether to allow course creators to create new courses as well (by default this is off).  <p>The following update will automatically convert all your existing teachers into course creators, to maintain backward compatibility.  Make sure you look at your upgraded site carefully and understand these new changes.", "center", "50%", "$THEME->cellheading", "20", "noticebox");
-        
+
 //        $count = 0;
 //        $errorcount = 0;
 //        if ($teachers = get_records("user_teachers")) {
@@ -522,32 +522,32 @@ function main_upgrade($oldversion=0) {
             foreach ($courses as $course) {
                 notify("Processing $course->fullname ...", "green");
                 flush();
-                if ($users = get_records_select("user_teachers", "course = '$course->id'", 
+                if ($users = get_records_select("user_teachers", "course = '$course->id'",
                                                 "id", "id, userid, timeaccess")) {
                     foreach ($users as $user) {
                         $loginfo = get_record_sql("SELECT id, time FROM {$CFG->prefix}log                                                                                  WHERE course = '$course->id' and userid = '$user->userid'                                                               ORDER by time DESC");
                         if (empty($loginfo->time)) {
                             $loginfo->time = 0;
                         }
-                        execute_sql("UPDATE {$CFG->prefix}user_teachers                                                                                      SET timeaccess = '$loginfo->time' 
+                        execute_sql("UPDATE {$CFG->prefix}user_teachers                                                                                      SET timeaccess = '$loginfo->time'
                                      WHERE userid = '$user->userid' AND course = '$course->id'", false);
-                        
+
                     }
                 }
 
-                if ($users = get_records_select("user_students", "course = '$course->id'", 
+                if ($users = get_records_select("user_students", "course = '$course->id'",
                                                 "id", "id, userid, timeaccess")) {
                     foreach ($users as $user) {
-                        $loginfo = get_record_sql("SELECT id, time FROM {$CFG->prefix}log 
-                                                   WHERE course = '$course->id' and userid = '$user->userid' 
+                        $loginfo = get_record_sql("SELECT id, time FROM {$CFG->prefix}log
+                                                   WHERE course = '$course->id' and userid = '$user->userid'
                                                    ORDER by time DESC");
                         if (empty($loginfo->time)) {
                             $loginfo->time = 0;
                         }
-                        execute_sql("UPDATE {$CFG->prefix}user_students 
-                                     SET timeaccess = '$loginfo->time' 
+                        execute_sql("UPDATE {$CFG->prefix}user_students
+                                     SET timeaccess = '$loginfo->time'
                                      WHERE userid = '$user->userid' AND course = '$course->id'", false);
-                        
+
                     }
                 }
             }
@@ -687,7 +687,7 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2004021500) {
         table_column("groups", "", "hidepicture", "integer", "2", "unsigned", "0", "", "picture");
     }
-    
+
     if ($oldversion < 2004021700) {
         if (!empty($CFG->textfilters)) {
             $CFG->textfilters = str_replace("tex_filter.php", "filter.php", $CFG->textfilters);
@@ -746,6 +746,10 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2004042703) {
         set_config("enablerssfeeds",0);
+    }
+
+    if ($oldversion < 2004042900) {
+        execute_sql(" ALTER TABLE `{$CFG->prefix}course` DROP `showrecent` ");
     }
 
     return $result;

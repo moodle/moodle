@@ -62,12 +62,11 @@ CREATE TABLE prefix_course (
   guest number(2) default '0' not null,
   startdate number(10) default '0' not null,
   numsections number(5) default '1' not null,
-  showrecent number(5) default '1' not null,
   marker number(10) default '0' not null,
   visible number(10) default '1' not null,
   timecreated number(10) default '0' not null,
   timemodified number(10) default '0' not null
-); 
+);
 
 create index category on prefix_course(category);
 
@@ -133,7 +132,7 @@ insert into prefix_course_categories (name) values ('name4');
 
 select * from prefix_course_categories;
 
-rem 
+rem
 rem Table structure for table course_display
 rem
 
@@ -182,10 +181,10 @@ CREATE TABLE prefix_course_modules (
   module number(10) default '0' not null,
   instance number(10) default '0' not null,
   section number(10) default '0' not null,
-  added number(10) default '0' not null, 
+  added number(10) default '0' not null,
   deleted number(1) default '0' not null,
   score number(4) default '0' not null,
-  indent number(5) default '0' not null,  
+  indent number(5) default '0' not null,
   visible number(1) default '1' not null
 );
 
@@ -204,10 +203,10 @@ create or replace trigger p_course_modules_trig
 .
 /
 
-insert into prefix_course_modules (course,module,instance,section,added,deleted,score,indent,visible) values (1,1,1,1,1,1,1,1,1); 
-insert into prefix_course_modules (course,module,instance,section,added,deleted,score,indent,visible) values (2,2,2,2,2,2,2,2,2); 
-insert into prefix_course_modules (course,module,instance,section,added,deleted,score,indent,visible) values (3,3,3,3,3,3,3,3,3); 
-insert into prefix_course_modules (course,module,instance,section,added,deleted,score,indent,visible) values (4,4,4,4,4,4,4,4,4); 
+insert into prefix_course_modules (course,module,instance,section,added,deleted,score,indent,visible) values (1,1,1,1,1,1,1,1,1);
+insert into prefix_course_modules (course,module,instance,section,added,deleted,score,indent,visible) values (2,2,2,2,2,2,2,2,2);
+insert into prefix_course_modules (course,module,instance,section,added,deleted,score,indent,visible) values (3,3,3,3,3,3,3,3,3);
+insert into prefix_course_modules (course,module,instance,section,added,deleted,score,indent,visible) values (4,4,4,4,4,4,4,4,4);
 
 select * from prefix_course_modules;
 
@@ -241,10 +240,10 @@ create or replace trigger p_course_sections_trig
 .
 /
 
-insert into prefix_course_sections (course,section,summary,sequence) values (1,1,1,1); 
-insert into prefix_course_sections (course,section,summary,sequence) values (2,2,2,2); 
-insert into prefix_course_sections (course,section,summary,sequence) values (3,3,3,3); 
-insert into prefix_course_sections (course,section,summary,sequence) values (4,4,4,4); 
+insert into prefix_course_sections (course,section,summary,sequence) values (1,1,1,1);
+insert into prefix_course_sections (course,section,summary,sequence) values (2,2,2,2);
+insert into prefix_course_sections (course,section,summary,sequence) values (3,3,3,3);
+insert into prefix_course_sections (course,section,summary,sequence) values (4,4,4,4);
 
 select * from prefix_course_sections;
 
@@ -290,10 +289,10 @@ create or replace trigger p_log_trig
 .
 /
 
-insert into prefix_log (time,userid,ip,course,module,action,url,info) values (1,1,'ip1',1,'module1','action1','url1','info1'); 
-insert into prefix_log (time,userid,ip,course,module,action,url,info) values (2,2,'ip2',2,'module2','action2','url2','info2'); 
-insert into prefix_log (time,userid,ip,course,module,action,url,info) values (3,3,'ip3',3,'module3','action3','url3','info3'); 
-insert into prefix_log (time,userid,ip,course,module,action,url,info) values (4,4,'ip4',4,'module4','action4','url4','info4'); 
+insert into prefix_log (time,userid,ip,course,module,action,url,info) values (1,1,'ip1',1,'module1','action1','url1','info1');
+insert into prefix_log (time,userid,ip,course,module,action,url,info) values (2,2,'ip2',2,'module2','action2','url2','info2');
+insert into prefix_log (time,userid,ip,course,module,action,url,info) values (3,3,'ip3',3,'module3','action3','url3','info3');
+insert into prefix_log (time,userid,ip,course,module,action,url,info) values (4,4,'ip4',4,'module4','action4','url4','info4');
 
 select * from prefix_log;
 
@@ -314,10 +313,10 @@ CREATE TABLE prefix_log_display (
 COMMENT on table prefix_log_display is 'For a particular module/action, specifies a moodle table/field.';
 
 rem for testing only
-rem insert into prefix_log_display (module,action,mtable,field) values ('module1','action1','mtable1','field1'); 
-rem insert into prefix_log_display (module,action,mtable,field) values ('module2','action2','mtable2','field2'); 
-rem insert into prefix_log_display (module,action,mtable,field) values ('module3','action3','mtable3','field3'); 
-rem insert into prefix_log_display (module,action,mtable,field) values ('module4','action4','mtable4','field4'); 
+rem insert into prefix_log_display (module,action,mtable,field) values ('module1','action1','mtable1','field1');
+rem insert into prefix_log_display (module,action,mtable,field) values ('module2','action2','mtable2','field2');
+rem insert into prefix_log_display (module,action,mtable,field) values ('module3','action3','mtable3','field3');
+rem insert into prefix_log_display (module,action,mtable,field) values ('module4','action4','mtable4','field4');
 
 select * from prefix_log_display;
 
@@ -351,10 +350,10 @@ create or replace trigger p_modules_trig
 .
 /
 
-insert into prefix_modules (name,version,cron,lastcron,search) values ('name1',1,1,1,'search1'); 
-insert into prefix_modules (name,version,cron,lastcron,search) values ('name2',2,2,2,'search2'); 
-insert into prefix_modules (name,version,cron,lastcron,search) values ('name3',3,3,3,'search3'); 
-insert into prefix_modules (name,version,cron,lastcron,search) values ('name4',4,4,4,'search4'); 
+insert into prefix_modules (name,version,cron,lastcron,search) values ('name1',1,1,1,'search1');
+insert into prefix_modules (name,version,cron,lastcron,search) values ('name2',2,2,2,'search2');
+insert into prefix_modules (name,version,cron,lastcron,search) values ('name3',3,3,3,'search3');
+insert into prefix_modules (name,version,cron,lastcron,search) values ('name4',4,4,4,'search4');
 
 select * from prefix_modules;
 
@@ -404,7 +403,7 @@ CREATE TABLE prefix_user (
   id number(10) primary key,
   confirmed number(1) default '0' not null,
   deleted number(1) default '0' not null,
-  username varchar2(100) default '' not null 
+  username varchar2(100) default '' not null
     constraint unq_username unique,
   password varchar2(32) default '' not null,
   idnumber varchar2(12) default NULL,
@@ -452,7 +451,7 @@ create or replace trigger p_user_trig
 .
 /
 insert into prefix_user ( confirmed, deleted, username, password, idnumber, firstname, lastname, email, icq, phone1, phone2, institution, department, address, city, country, lang, timezone, firstaccess, lastaccess, lastlogin, currentlogin, lastIP, secret, picture, url, description, mailformat, maildisplay, htmleditor, timemodified ) values ( 1, 1, 'username1', 'password1', 'idnumber1', 'firstname1', 'lastname1', 'email1', 'icq1', 'phone11', 'phone21', 'institution1', 'department1', 'address1', 'city1', 'c1', 'lang1', 1, 1, 1, 1, 1, 'lastIP1', 'secret1', 1, 'url1', 'description1', 1, 1, 1, 1);
-insert into prefix_user ( confirmed, deleted, username, password, idnumber, firstname, lastname, email, icq, phone1, phone2, institution, department, address, city, country, lang, timezone, firstaccess, lastaccess, lastlogin, currentlogin, lastIP, secret, picture, url, description, mailformat, maildisplay, htmleditor, timemodified ) 
+insert into prefix_user ( confirmed, deleted, username, password, idnumber, firstname, lastname, email, icq, phone1, phone2, institution, department, address, city, country, lang, timezone, firstaccess, lastaccess, lastlogin, currentlogin, lastIP, secret, picture, url, description, mailformat, maildisplay, htmleditor, timemodified )
 values ( 2, 2, 'username2', 'password2', 'idnumber2', 'firstname2', 'lastname2', 'email2', 'icq2', 'phone12', 'phone22', 'institution2', 'department2', 'address2', 'city2', 'c2', 'lang2', 2, 2, 2, 2, 2, 'lastIP2', 'secret2', 2, 'url2', 'description2', 2, 2, 2, 2);
 insert into prefix_user ( confirmed, deleted, username, password, idnumber, firstname, lastname, email, icq, phone1, phone2, institution, department, address, city, country, lang, timezone, firstaccess, lastaccess, lastlogin, currentlogin, lastIP, secret, picture, url, description, mailformat, maildisplay, htmleditor, timemodified ) values ( 3, 3, 'username3', 'password3', 'idnumber3', 'firstname3', 'lastname3', 'email3', 'icq3', 'phone13', 'phone23', 'institution3', 'department3', 'address3', 'city3', 'c3', 'lang3', 3, 3, 3, 3, 3, 'lastIP3', 'secret3', 3, 'url3', 'description3', 3, 3, 3, 3);
 
@@ -487,10 +486,10 @@ create or replace trigger p_user_admins_trig
   end;
 .
 /
-insert into prefix_user_admins (userid) values (1); 
-insert into prefix_user_admins (userid) values (2); 
-insert into prefix_user_admins (userid) values (3); 
-insert into prefix_user_admins (userid) values (4); 
+insert into prefix_user_admins (userid) values (1);
+insert into prefix_user_admins (userid) values (2);
+insert into prefix_user_admins (userid) values (3);
+insert into prefix_user_admins (userid) values (4);
 
 select * from prefix_user_admins;
 
@@ -524,10 +523,10 @@ create or replace trigger p_user_students_trig
   end;
 .
 /
-insert into prefix_user_students (userid,course,timestart,timeend,time) values (1,1,1,1,1); 
-insert into prefix_user_students (userid,course,timestart,timeend,time) values (2,2,2,2,2); 
-insert into prefix_user_students (userid,course,timestart,timeend,time) values (3,3,3,3,3); 
-insert into prefix_user_students (userid,course,timestart,timeend,time) values (4,4,4,4,4); 
+insert into prefix_user_students (userid,course,timestart,timeend,time) values (1,1,1,1,1);
+insert into prefix_user_students (userid,course,timestart,timeend,time) values (2,2,2,2,2);
+insert into prefix_user_students (userid,course,timestart,timeend,time) values (3,3,3,3,3);
+insert into prefix_user_students (userid,course,timestart,timeend,time) values (4,4,4,4,4);
 
 select * from prefix_user_students;
 
@@ -565,10 +564,10 @@ create or replace trigger p_user_teachers_trig
   end;
 .
 /
-insert into prefix_user_teachers (userid,course,authority,role) values (1,1,1,'role1'); 
-insert into prefix_user_teachers (userid,course,authority,role) values (2,2,2,'role2'); 
-insert into prefix_user_teachers (userid,course,authority,role) values (3,3,3,'role3'); 
-insert into prefix_user_teachers (userid,course,authority,role) values (3,3,3,'role3'); 
+insert into prefix_user_teachers (userid,course,authority,role) values (1,1,1,'role1');
+insert into prefix_user_teachers (userid,course,authority,role) values (2,2,2,'role2');
+insert into prefix_user_teachers (userid,course,authority,role) values (3,3,3,'role3');
+insert into prefix_user_teachers (userid,course,authority,role) values (3,3,3,'role3');
 
 select * from prefix_user_teachers;
 
