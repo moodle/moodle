@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.5 beta 1 (2002092500)
+      // assignment.php - created with Moodle 1.0.5 (2002092700)
 
 
 $string['assignmentdetails'] = "Dettaglio compiti";
@@ -15,6 +15,7 @@ $string['maximumgrade'] = "Voto massimo";
 $string['maximumsize'] = "Dimensione massima";
 $string['modulename'] = "Compito";
 $string['modulenameplural'] = "Compiti";
+$string['newsubmissions'] = "Compiti consegnati";
 $string['notsubmittedyet'] = "Non ancora inviato";
 $string['overwritewarning'] = "Attenzione: trasferendo ulteriori allegati essi SOSTITUIRANNO quelli attualmente presenti.";
 $string['submissionfeedback'] = "Risposte alla consegna";

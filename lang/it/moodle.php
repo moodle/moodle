@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.5 beta 1 (2002092500)
+      // moodle.php - created with Moodle 1.0.5 (2002092700)
 
 
 $string['action'] = "Azione";
@@ -46,6 +46,7 @@ $string['chooseuser'] = "Scegli un utente";
 $string['city'] = "Paese/città";
 $string['comparelanguage'] = "Confronta ed edita la lingua corrente";
 $string['complete'] = "Completato";
+$string['configauth'] = "Scegli il modulo di autenticazione che vuoi usare. Per la massima sicurezza è impostato, di default, come 'email'. Il metodo'none' non è stato controllato e deve essere usato solo se si è consapevoli di ciò che si sta facendo esattamente ";
 $string['configerrorlevel'] = "Scegli il numero di messaggi di attenzione PHP
 che desideri vengano mostrati.  <i>Normale</i> è, di solito la scelta migliore.";
 $string['configgdversion'] = "Indica la versione della libreria GD che è installata sul tuo webserver.  La versione mostrata come predefinita è quella che è stata automaticamente rilevata.  Non cambiare questa impostazione senza che tu realmente sappia quello che stai facendo.";
@@ -231,6 +232,7 @@ Ciascuno dei corsi individuali pu&ograve; richiedere una chiave di iscrizione &q
     del tuo username e della tua password (nel form di questa pagina)
     per aver accesso al corso in cui ti sei iscritto.
    </OL>";
+$string['loginstepsnone'] = "Salve! <P> per un pieno accesso ai corsi avrai bisogno di creare un account.<P> Ciò di cui hai bisogno è di creare un username e una password e di usarli nel form di questa pagina!<P> Se qualcuno ha già scelto il tuo username, allora dovrai riprovare scegliendo un username diverso.";
 $string['loginto'] = "Login a \$a";
 $string['loginusing'] = "Fai il login qui utilizzando il tuo username e la password";
 $string['logout'] = "Esci";
@@ -267,10 +269,10 @@ $string['modified'] = "Modificato";
 $string['modulesetup'] = "Configurazione modulo tabelle";
 $string['modulesuccess'] = "\$a le tabelle sono state settate correttamente";
 $string['mostrecently'] = "molto recentemente";
-$string['movedown'] = "Trasferisci sul mio computer";
+$string['movedown'] = "Muovi giù";
 $string['movefilestohere'] = "Trasferisci i files qui";
 $string['movetoanotherfolder'] = "Trasferisci in un'altra cartella";
-$string['moveup'] = "Trasferisci sul server";
+$string['moveup'] = "Muovi sù";
 $string['mustconfirm'] = "È necessario confermare il tuo accesso";
 $string['mycourses'] = "I miei corsi";
 $string['name'] = "Nome";
@@ -279,7 +281,6 @@ $string['nametopics'] = "argomento";
 $string['nameweeks'] = "settimana";
 $string['never'] = "Mai";
 $string['newaccount'] = "Nuovo account";
-$string['newforumposts'] = "Nuovi messaggi sul forum";
 $string['newpassword'] = "Nuova password";
 $string['newpasswordtext'] = "Salve \$a->firstname,
 
@@ -308,6 +309,7 @@ $string['no'] = "No";
 $string['nocoursesyet'] = "Nessun corso in questa categoria";
 $string['noexistingteachers'] = "Nessun insegnante operativo";
 $string['nograde'] = "Nessuna valutazione";
+$string['none'] = "Nessuno";
 $string['nopotentialteachers'] = "Non ci sono potenziali insegnanti";
 $string['normal'] = "Normale";
 $string['nostudentsyet'] = "Non ci sono ancora studenti registrati in questo corso";
@@ -410,7 +412,7 @@ $string['unenrolme'] = "Cancellami da \$a";
 $string['unenrolsure'] = "Sei sicuro di volerti cancellare \$a da questo corso?";
 $string['unsafepassword'] = "Password insicura - provane un'altra";
 $string['unzip'] = "Comprimi";
-$string['update'] = "Aggiornamento";
+$string['update'] = "Modifica";
 $string['updated'] = "Aggiornato \$a";
 $string['updatemyprofile'] = "Aggiornamento profilo";
 $string['updatesevery'] = "Aggiornamenti ogni \$a secondi";
@@ -420,6 +422,7 @@ $string['updatingain'] = "Aggiornamento a \$a->what in \$a->in";
 $string['upload'] = "Trasferire sul server";
 $string['uploadafile'] = "Trasferisci un file sul server";
 $string['uploadthisfile'] = "Trasferisci questo file";
+$string['userdeleted'] = "Questo account è stato cancellato";
 $string['userdescription'] = "Descrizione";
 $string['username'] = "Username";
 $string['usernameexists'] = "Questo username è già esistente, scegline un altro";
