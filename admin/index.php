@@ -365,7 +365,7 @@
     ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO REMOVE OR MODIFY THE COPYRIGHT NOTICE BELOW ////
     $copyrighttext = "<a href=\"http://moodle.org/\">Moodle</a> ".
                      "<a href=\"../doc/?frame=release.html\">$CFG->release</a> ($CFG->version)<br />".
-                     "Copyright &copy; 1999-2004 Martin Dougiamas<br />".
+                     "Copyright &copy; 1999-2005 Martin Dougiamas<br />".
                      "<a href=\"../doc/?frame=licence.html\">GNU Public License</a>";
     echo "<center><p><font size=\"1\">$copyrighttext</font></p></center>";
     //////////////////////////////////////////////////////////////////////////////////////////////////
