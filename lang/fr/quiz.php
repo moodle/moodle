@@ -8,6 +8,7 @@ $string['addquestionstoquiz'] = 'Ajouter ces questions au test en cours';
 $string['addrandom1'] = 'Ajouter ';
 $string['addrandom2'] = 'questions aléatoires';
 $string['addselectedtoquiz'] = 'Ajouter la sélection au test';
+$string['addtoquiz'] = 'Ajouter au test';
 $string['affectedstudents'] = 'Étudiants concernés';
 $string['aiken'] = 'Format Aiken';
 $string['allinone'] = 'Illimité';
