@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 unstable development (2004090600)
+      // glossary.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['addcomment'] = 'Afegeix un comentari';
@@ -85,6 +85,8 @@ $string['entrydeleted'] = 'S\'ha suprimit l\'entrada';
 $string['entryexported'] = 'L\'entrada s\'ha exportat amb èxit';
 $string['entryishidden'] = '(aquesta entrada actualment està oculta)';
 $string['entryleveldefaultsettings'] = 'Paràmetres per defecte al nivell d\'entrada';
+$string['entrysaved'] = 'S\'ha desat aquesta entrada';
+$string['entryupdated'] = 'S\'ha actualitzat aquesta entrada';
 $string['entryusedynalink'] = 'Aquesta entrada s\'ha d\'ennllaçar automàticament';
 $string['explainaddentry'] = 'Afegiu una nova entrada al glossari actual.<br />El concepte i la definició són camps obligatoris.';
 $string['explainall'] = 'Visualitzeu TOTES les entrades en una pàgina';
@@ -127,6 +129,7 @@ $string['noentry'] = 'No s\'ha trobat cap entrada.';
 $string['notcategorised'] = 'No categoritzat';
 $string['numberofentries'] = 'Nombre d\'entrades';
 $string['onebyline'] = '(una per línia)';
+$string['parentlanguage'] = '<<  TRADUCTORS: especifiqueu aquí el codi de l\'idioma que cal fer servir quan el vostre paquet d\'idioma no contingui una cadena. Si deixeu aquest camp en blanc s\'utilitzarà l\'anglès. Per exemple: es >>';
 $string['printerfriendly'] = 'Versió per imprimir';
 $string['question'] = 'Qüestió';
 $string['rate'] = 'Valoració';
@@ -154,6 +157,9 @@ $string['sortchronogically'] = 'Ordena cronològicament';
 $string['special'] = 'Especial';
 $string['standardview'] = 'Navega alfabèticament';
 $string['studentcanpost'] = 'Els estudiants poden afegir entrades';
+$string['thischarset'] = '<< TRADUCTORS: especifiqueu aquí el conjunt de caràcters del vostre idioma. Teniu en compte que tot el text creat mentre aquest idioma sigui actiu s\'emmagatzemarà amb aquest conjunt de caràcters, de manera que és millor no tornar a canviar-lo. Per exemple: iso-8859-1 >>';
+$string['thisdirection'] = '<< TRADUCTORS: aquesta cadena especifica el sentit del text, que pot ser d\'esquerra a dreta (\'ltr\') o de dreta a esquerra (\'rtl\'). >>';
+$string['thislanguage'] = '<< TRADUCTORS: especifiqueu aquí el nom de l\'idioma. Si és possible utilitzeu referències numèriques Unicode >>';
 $string['totalentries'] = 'Total d\'entrades';
 $string['usedynalink'] = 'Enllaça automàticament les entrades del glossari';
 $string['waitingapproval'] = 'Esperant aprovació';
