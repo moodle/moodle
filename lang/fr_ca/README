@@ -1,0 +1,108 @@
+Version Français - Canada 1.0
+
+La version française de M. Sébastien Namèche a servi de point de 
+départ pour la version Français - Canada. Je tiens à le remercier 
+pour m'avoir grandement simplifié la vie par ses nombreux efforts. :-)
+
+Les buts de cette version sont :
+- Utiliser les termes en vigueur au Canada.
+- Fournir une forme d'aide par l'utilisation de termes
+  qui rendent l'utilisation de Moodle plus facile, même si 
+  cela ajoute parfois à la longueur des commandes.
+  
+Ce n'est que la première version... Il y aura des corrections puisque
+la traduction se fait sans connaître le contexte d'utilisation...
+
+Je suis ouvert à toutes suggestions! :-)
+
+Jean-François Nadeau
+jfnadeau@coll-outao.qc.ca
+Gatineau, (Qc), Canada
+
+
+French Translation
+------------------
+
+Author: Sébastien Namèche <seb@gaia.anet.fr>
+
+
+Ci-suit une liste de termes pour lesquels j'ai
+choisi une traduction dans le contexte de Moodle.
+Ils sont listés pour mémoire afin que, si une autre
+personne travaille sur la traduction de Moodle en
+Français, elle utilise les mêmes mots.
+
+Par ailleurs, la traduction de certains d'entre eux
+ne me satisfait pas complètement. Ne surtout pas
+hésiter à m'envoyer vos suggestions.
+
+account          compte
+activity         activité
+assessment       appréciation
+assignment       devoir
+attachment       pièce attachée
+authentication   authentification
+choice           question
+course category	 matière
+department       département
+download         recevoir
+email            message ou adresse émail, selon le contexte
+entry            page
+feedback         feedback
+grade            note ou niveau, selon le contexte
+guest            visiteur anonyme
+hit              requête
+journal          journal
+logs             évènements
+offline          hors-ligne
+post             message
+quiz             test
+scale            barème
+server           serveur
+social format	 informel
+submission       soumission
+survey           évaluation
+teacher          enseignant
+to login         s'identifier
+to reate         évaluer
+upload           envoyer
+user             utilisateur
+username         nom d'utilisateur
+worth            valeur
+
+
+TODO
+  Tous les « username » -> « nom d'utilisateur »
+  Tous les « email » -> « message » ou « adresse émail »
+  Finir help/questions.html
+  Finir help/surveys.html
+
+Message
+  « Socratic » ?
+  Easy changelog for lang/* files
+
+
+Voici quelques liens que j'utilise :
+  - dictionnaire des synonymes
+      http://elsap1.unicaen.fr/dicosyn.html
+  - Le grand dictionnaire terminologique
+      http://www.granddictionnaire.com/
+  - la conjugaison (Alléluia !)
+      http://www.leconjugueur.com/
+
+
+Quelques conventions :
+  - pour la ponctuation de fin de texte et les majuscules,
+  j'essaye de suivre strictement le texte anglais original ;
+  - les majuscules *sont* accentuées ;
+  - les guillements fançaises sont « ».
+
+
+Quelques liens qui traitent du constructivisme social en français :
+  - http://www.acelf.ca/revue/XXV1/articles/rxxv1-10.html
+  - http://www.schule.suedtirol.it/blikk/angebote/reformpaedagogik/rp70110b.htm
+  - http://agora.unige.ch/sred/Archive/const/ecole.html
+  - http://www2.toulouse.iufm.fr/pe/PE/FT/SocioConstructivisme.html
+  - http://www.chevaleyre.com/cc/Apprentissage/apprent4.htm
+  - http://www.esigge.ch/primaire/9-info/secteur/cours/eval-log/liens.htm
+  - http://www.edunet.ch/classes/c9/dubois/didact/theories.htm

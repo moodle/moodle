@@ -1,0 +1,149 @@
+<?PHP // $Id$ 
+      // quiz.php - created with Moodle 1.0.9 Beta 1 (2003051600)
+
+
+$string['addquestions'] = "Ajouter des questions";
+$string['addquestionstoquiz'] = "Ajouter des questions au test en cours";
+$string['addselectedtoquiz'] = "Ajouter la sélection au test";
+$string['allowreview'] = "Autoriser la relecture";
+$string['alreadysubmitted'] = "Il semble que vous ayez déjà répondu au questionnaire";
+$string['alwaysavailable'] = "Toujours disponible";
+$string['answer'] = "Réponse";
+$string['answerhowmany'] = "Une ou plusieurs réponses ?";
+$string['answersingleno'] = "Plusieurs réponses possibles";
+$string['answersingleyes'] = "Une seule réponse";
+$string['attempt'] = "Tentative \$a";
+$string['attemptfirst'] = "Première tentative";
+$string['attemptlast'] = "Dernière tentative";
+$string['attemptquiznow'] = "Faire le test maintenant";
+$string['attempts'] = "Tentatives";
+$string['attemptsallowed'] = "Nombre de tentatives autorisées";
+$string['attemptsunlimited'] = "Nombre de tentatives illimité";
+$string['backtoquiz'] = "Retour à l'édition du test";
+$string['bestgrade'] = "Meilleure note";
+$string['caseno'] = "Non, la casse des caractères n'est pas considérée";
+$string['casesensitive'] = "Casse des caractères";
+$string['caseyes'] = "Oui, la casse des caractères doit être vérifiée";
+$string['categories'] = "Catégories";
+$string['category'] = "Catégorie";
+$string['categoryinfo'] = "Information sur la catégorie";
+$string['categorymove'] = "La catégorie « \$a->name » contient \$a->count questions. Veuillez choisir une autre catégorie dans laquelle les déplacer.";
+$string['categorymoveto'] = "Les déplacer dans cette catégorie";
+$string['choice'] = "Choix";
+$string['choices'] = "Choix disponibles";
+$string['correctanswer'] = "Bonne réponse";
+$string['correctanswers'] = "Bonnes réponses";
+$string['createmultiple'] = "Créer plusieurs questions";
+$string['createnewquestion'] = "Créer une nouvelle question";
+$string['custom'] = "Format personnel";
+$string['daysavailable'] = "Jours disponibles";
+$string['default'] = "Défaut";
+$string['defaultgrade'] = "Note par défaut pour la question";
+$string['defaultinfo'] = "La catégorie par défaut pour les questions.";
+$string['deletequestioncheck'] = "Êtes-vous certain de vouloir supprimer « \$a » ?";
+$string['editcategories'] = "Modifier les catégories";
+$string['editingmatch'] = "Édition d'une question à appariements";
+$string['editingmultichoice'] = "Modifier une question à choix multiples";
+$string['editingquestion'] = "Modifier une question";
+$string['editingquiz'] = "Modifier un test";
+$string['editingrandom'] = "Édition d'une question au hasard";
+$string['editingrandomsamatch'] = "Édition d'une question à appariement de réponses courtes (ordre aléatoire)";
+$string['editingshortanswer'] = "Modifier une question à réponse courte";
+$string['editingtruefalse'] = "Modifier une question Vrai/Faux";
+$string['false'] = "Faux";
+$string['feedback'] = "Rétroaction";
+$string['fileformat'] = "Format du fichier";
+$string['filloutoneanswer'] = "Vous devez fournir au moins un choix de réponse. Les choix qui seront laissées vides ne seront pas pris en compte.";
+$string['filloutthreequestions'] = "Vous devez fournir au moins trois questions. Les questions vides ne seront pas utilisées.";
+$string['fillouttwochoices'] = "Vous devez compléter au moins deux choix de réponse.<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Ceux qui seront laissées vides ne seront pas pris en compte.";
+$string['fractionsaddwrong'] = "La somme des notes positives que vous avez choisies n'atteint pas 100%%.<br/>Elle est de \$a%%.<br/>Souhaitez-vous revenir en arrière pour corriger cela ?";
+$string['fractionsnomax'] = "L'une des réponses devrait avoir la note 100%% afin qu'il soit<br />possible d'obtenir la note maximale à cette question.<br />Souhaitez-vous revenir en arrière pour corriger cela ?";
+$string['gradeaverage'] = "Note moyenne";
+$string['gradehighest'] = "Note maximale";
+$string['grademethod'] = "Méthode de notation";
+$string['grades'] = "Notes";
+$string['guestsno'] = "Désolé, les visiteurs anonymes n'ont pas accès aux tests";
+$string['imagedisplay'] = "Image à afficher";
+$string['importquestions'] = "Importer des questions d'un fichier";
+$string['introduction'] = "Introduction";
+$string['marks'] = "Points";
+$string['match'] = "Appariement";
+$string['matchanswer'] = "Réponse correspondante";
+$string['missingname'] = "Il manque le nom de la question";
+$string['missingquestiontext'] = "Il manque le texte de la question";
+$string['missingword'] = "Il manque le format";
+$string['modulename'] = "Test";
+$string['modulenameplural'] = "Tests";
+$string['multichoice'] = "Choix multiples";
+$string['noanswers'] = "Aucune réponse n'a été sélectionnée !";
+$string['noattempts'] = "Aucune tentative n'a été réalisée pour ce test";
+$string['nomoreattempts'] = "Aucune autre tentative autorisée";
+$string['noquestions'] = "Aucune question n'a été encore ajoutée";
+$string['noreview'] = "Vous n'êtes pas autorisé à commenter ce test";
+$string['noreviewuntil'] = "Vous n'êtes pas autorisé à réviser ce test avant le \$a";
+$string['notenoughsubquestions'] = "Il n'y a pas assez de sous-questions de créées! <br /> Voulez retournez en arrière pour corriger cette question?";
+$string['publish'] = "Publier";
+$string['qti'] = "Format IMS QTI";
+$string['question'] = "Question";
+$string['questioninuse'] = "La question « \$a » est actuellement utilisée :";
+$string['questionname'] = "Titre de la question";
+$string['questions'] = "Questions";
+$string['quizavailable'] = "Le test est disponible jusqu'à : \$a";
+$string['quizclose'] = "Ne plus permettre l'accès au test";
+$string['quizclosed'] = "Ce test n'est plus disponible depuis le \$a";
+$string['quiznotavailable'] = "Ce test ne sera pas disponible avant : \$a";
+$string['quizopen'] = "Rendre disponible ce test";
+$string['random'] = "Ensemble aléatoire";
+$string['randomcreate'] = "Créer des questions dont l'ordre est aléatoire";
+$string['randomsamatch'] = "Appariement de réponses courtes (ordre aléatoire)";
+$string['randomsamatchcreate'] = "Créer des questions d'appariement de réponses courtes (ordre aléatoire)";
+$string['randomsamatchintro'] = "Pour chacune de ces questions, choisissez la bonne réponse à partir du menu.";
+$string['randomsamatchnumber'] = "Nombre de questions à choisir";
+$string['readytosend'] = "Vous êtes sur le point d'envoyer l'ensemble de votre test pour évaluation. Êtes-vous certain de vouloir continuer ?";
+$string['regrade'] = "Renoter toutes les tentatives";
+$string['regradecomplete'] = "Toutes les tentatives ont été renotées";
+$string['regradecount'] = "\$a->changed sur \$a->attempt notes ont été changées";
+$string['rename'] = "Renommer";
+$string['report'] = "Rapports";
+$string['save'] = "Enregistrer";
+$string['savegrades'] = "Enregistrer les notes";
+$string['savemyanswers'] = "Enregistrer mes réponses";
+$string['savequiz'] = "Enregistrer l'ensemble du test";
+$string['score'] = "Note brute";
+$string['select'] = "Choisir";
+$string['selectall'] = "Tout sélectionner";
+$string['selectcategoryabove'] = "Choisir une catégorie ci-dessus";
+$string['shortanswer'] = "Réponse courte";
+$string['show'] = "Montrer";
+$string['showcorrectanswer'] = "Dans la rétroaction,<br/>montrer les réponses correctes";
+$string['showfeedback'] = "Après le test, afficher la rétroaction?";
+$string['shuffleanswers'] = "Modifier l'ordre des réponses";
+$string['shufflequestions'] = "Modifier l'ordre des questions";
+$string['time'] = "Temps";
+$string['timecompleted'] = "Terminé";
+$string['timetaken'] = "Temps mis";
+$string['toomanyrandom'] = "Le nombre de questions au hasard requis dépasse le nombre de questions de cette catégorie. (\$a)";
+$string['true'] = "Vrai";
+$string['truefalse'] = "Vrai/Faux";
+$string['type'] = "Type";
+$string['viewallanswers'] = "Afficher les \$a tests terminés";
+$string['webct'] = "Format WebCT";
+$string['yourfinalgradeis'] = "Votre note finale pour ce test est \$a";
+
+?>
