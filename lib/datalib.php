@@ -6,7 +6,7 @@
  * Other main libraries:
  * - weblib.php - functions that produce web output
  * - moodlelib.php - general-purpose Moodle functions
- * @author Martin Dougiamas
+ * @author Martin Dougiamas and many others
  * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
@@ -2589,7 +2589,7 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
         $courseselect = '';
     }
 
-    return get_records_sql("SELECT floor((`time` - $coursestart)/".DAYSECS."86400) as day, count(*) as num
+    return get_records_sql("SELECT floor((`time` - $coursestart)/".DAYSECS.") as day, count(*) as num
                             FROM {$CFG->prefix}log
                            WHERE userid = '$userid'
                              AND `time` > '$coursestart' $courseselect
