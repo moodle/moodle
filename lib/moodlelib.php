@@ -4363,7 +4363,7 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
         include_once("$CFG->libdir/pclzip/pclzip.lib.php");
         $archive = new PclZip(cleardoubleslashes("$zippath/$zipfilename"));
         if (!$list = $archive->extract(PCLZIP_OPT_PATH, $destpath,
-                                       PCLZIP_CB_PRE_EXTRACT, 'unzip_approvefile')) {
+                                       PCLZIP_CB_PRE_EXTRACT, 'unzip_cleanfilename')) {
             notice($archive->errorInfo(true));
             return false;
         }
@@ -4392,15 +4392,22 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
     return true;
 }
 
-function unzip_approvefile ($p_event, &$p_header) {
+function unzip_cleanfilename ($p_event, &$p_header) {
 //This function is used as callback in unzip_file() function
-//to decide if one file in the zip file must be extracted or no
-//print_object ($p_header['filename']);
-    if (detect_munged_arguments($p_header['filename'], 0)) {
-        return 0; // do not extract file!!
+//to clean illegal characters for given platform and to prevent directory traversal.
+//Produces the same result as info-zip unzip.
+    $p_header['filename'] = ereg_replace('\.\.+', '', $p_header['filename']); //directory traversal protection
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        $p_header['filename'] = ereg_replace('[:*"?<>|]', '_', $p_header['filename']); //replace illegal chars
+        $p_header['filename'] = ereg_replace('^([a-zA-Z])_', '\1:', $p_header['filename']); //repair drive letter
     } else {
-        return 1;
-    }
+        //Add filtering for other systems here
+        // BSD: none (tested)
+        // Linux: ??
+        // MacosX: ??
+    }    
+    $p_header['filename'] = cleardoubleslashes($p_header['filename']); //normalize the slashes/backslashes
+    return 1;
 }
 
 function unzip_show_status ($list,$removepath) {
