@@ -6,7 +6,7 @@ $string[modulenameplural] = "Forums";
 #------------------------------------------------------------
 
 $string[addanewdiscussion] = "Add a new discussion topic";
-$string[bynameondate] = "by \$a->name on \$a->date";
+$string[bynameondate] = "by \$a->name - \$a->date";
 $string[delete] = "Delete";
 $string[description] = "Description";
 $string[discussion] = "Discussion";
@@ -67,6 +67,7 @@ $string[repliesmany] = "\$a replies so far";
 $string[repliesone] = "\$a reply so far";
 $string[reply] = "Reply";
 $string[search] = "Search";
+$string[sendinratings] = "Send in my latest ratings";
 $string[singleforum] = "A single simple discussion";
 $string[subject] = "Subject";
 $string[subscribe] = "Subscribe to this forum";
