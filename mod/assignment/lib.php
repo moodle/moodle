@@ -403,7 +403,7 @@ function assignment_print_submission($assignment, $user, $submission, $teachers,
     print_user_picture($user->id, $assignment->course, $user->picture);
     echo "</TD>";
     echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\">$user->firstname $user->lastname";
-    if ($submission->timemodified) {
+    if ($assignment->type != OFFLINE and $submission->timemodified) {
         echo "&nbsp;&nbsp;<FONT SIZE=1>".get_string("lastmodified").": ";
         echo userdate($submission->timemodified);
         echo assignment_print_difference($assignment->timedue - $submission->timemodified);
