@@ -89,8 +89,8 @@
 
 /// The rest is all about editing the scales
 
-    if (!iscreator() and isteacher($course->id)) {
-        error("Only course creators can modify scales !");
+    if (!isteacheredit($course->id)) {
+        error("Only editing teachers can modify scales !");
     }
 
 
