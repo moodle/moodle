@@ -67,7 +67,7 @@
 /// A form was submitted so process the input
 
     } else {
-        if (!empty($frm->add) and !empty($frm->addselect)) {
+        if (!empty($frm->add) and !empty($frm->addselect) and confirm_sesskey()) {
             if ($course->enrolperiod) {
                 $timestart = time();
                 $timeend   = $timestart + $course->enrolperiod;
@@ -79,7 +79,7 @@
                     error("Could not add student with id $addstudent to this course!");
                 }
             }
-        } else if (!empty($frm->remove) and !empty($frm->removeselect)) {
+        } else if (!empty($frm->remove) and !empty($frm->removeselect) and confirm_sesskey()) {
             foreach ($frm->removeselect as $removestudent) {
                 if (! unenrol_student($removestudent, $course->id)) {
                     error("Could not remove student with id $removestudent from this course!");
@@ -134,6 +134,8 @@
     $previoussearch = ($previoussearch) ? '1' : '0';
 
     print_simple_box_start("center", "", "$THEME->cellheading");
+
+    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
     include('student.html');
 
