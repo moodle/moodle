@@ -48,6 +48,8 @@
     }
 
     close_window_button();
+
+    echo "<center><p><a href=\"help.php?file=index.html\">".get_string("helpindex")."</a><p></center>";
 ?>
 </body>
 </html>
