@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+<?PHP // $Id$ 
+      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['asset'] = 'アセット';
@@ -21,9 +21,12 @@ $string['configpopupwidth'] = '新しいポップアップウインドウのデ�
 $string['coursepacket'] = 'コースパッケージ';
 $string['coursestruct'] = 'コース構造';
 $string['datadir'] = 'ファイルシステムエラー: コースデータディレクトリを作成できません。';
+$string['display'] = '表示';
 $string['domxml'] = 'DOMXML外部ライブラリ';
 $string['entercourse'] = 'SCORMコースの入力';
 $string['errorlogs'] = 'エラーログ';
+$string['exit'] = 'SCORMコースから抜ける';
+$string['expcoll'] = '展開する/折りたたむ';
 $string['failed'] = '失敗';
 $string['found'] = 'マニフェストファイルが見つかりました';
 $string['gradeaverage'] = '平均得点';
