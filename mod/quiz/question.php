@@ -162,6 +162,9 @@
                     error("Could not insert quiz multichoice options!");
                 }
             break;
+            case RANDOM:
+                echo "<P>Not supported yet</P>";
+            break;
             default:
                 error("Non-existent question type!");
             break;
@@ -237,6 +240,10 @@
             print_heading(get_string("editingmultichoice", "quiz"));
             require("multichoice.html");
         break;
+            case RANDOM:
+                print_heading("Not supported yet");
+                print_continue("edit.php");
+            break;
 
         default:
             error("Invalid question type");

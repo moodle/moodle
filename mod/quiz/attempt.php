@@ -115,7 +115,9 @@
         }
 
         if (! $attempt = quiz_save_attempt($quiz, $questions, $result, $numattempts)) {
-            error("Sorry! Could not save your attempt!");
+            notice(get_string("alreadysubmitted", "quiz"), "view.php?id=$cm->id");
+            print_footer($course);
+            exit;
         }
 
         if (! quiz_save_best_grade($quiz, $USER)) {
