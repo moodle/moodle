@@ -190,6 +190,7 @@ function print_file_picture($path, $courseid=0, $height="", $width="", $link="")
     }
     if (substr(strtolower($path), 0, 7) == "http://") {
         echo "<IMG BORDER=0 $height $width SRC=\"$path\">";
+
     } else if ($courseid) {
         echo "<IMG BORDER=0 $height $width SRC=\"";
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
@@ -314,6 +315,10 @@ function print_editing_switch($courseid) {
     }
 }
 
+function format_float($num, $places=0) {
+    return sprintf("%.$places"."f", $num);
+}
+
 function print_textarea($richedit, $rows, $cols, $width, $height, $name, $value="") {
     global $CFG, $THEME;
 
@@ -341,26 +346,33 @@ function print_richedit_javascript($form, $name, $source="no") {
 
 
 function update_course_icon($courseid) {
+// Used to be an icon, but it's now a simple form button
     global $CFG, $USER;
 
     if (isteacher($courseid)) {
         if ($USER->editing) {
-            return "<A TITLE=\"".get_string("turneditingoff")."\" 
-                    HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=off\"
-                    TARGET=_top><IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
+            $string = get_string("turneditingoff");
+            $edit = "off";
         } else {
-            return "<A TITLE=\"".get_string("turneditingon")."\" 
-                    HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=on\"
-                    TARGET=_top><IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
+            $string = get_string("turneditingon");
+            $edit = "on";
         }
+        return "<FORM TARGET=_parent METHOD=GET ACTION=\"$CFG->wwwroot/course/view.php\">
+                <INPUT TYPE=hidden NAME=id VALUE=\"$courseid\">
+                <INPUT TYPE=hidden NAME=edit VALUE=\"$edit\">
+                <INPUT TYPE=submit VALUE=\"$string\"></FORM>";
     }
 }
 
 function update_module_icon($moduleid, $courseid) {
+// Used to be an icon, but it's now a simple form button
     global $CFG;
 
     if (isteacher($courseid)) {
-        return "<A TITLE=\"".get_string("editthisactivity")."\" HREF=\"$CFG->wwwroot/course/mod.php?update=$moduleid&return=true\" TARGET=_top><IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
+        return "<FORM TARGET=_parent METHOD=GET ACTION=\"$CFG->wwwroot/course/mod.php\">
+                <INPUT TYPE=hidden NAME=update VALUE=\"$moduleid\">
+                <INPUT TYPE=hidden NAME=return VALUE=\"true\">
+                <INPUT TYPE=submit VALUE=\"".get_string("editthisactivity")."\"></FORM>";
     }
 }
 
@@ -1611,7 +1623,6 @@ function get_max_upload_file_size() {
     }
     return get_real_size($filesize);
 }
-
 
 function get_directory_list($rootdir, $excludefile="", $descend=true) {
 // Returns an array with all the filenames in 
