@@ -466,7 +466,7 @@ function glossary_add_attachment($entry, $newfile) {
     return $newfile_name;
 }
 
-function glossary_print_attachments($entry, $return=NULL) {
+function glossary_print_attachments($entry, $return=NULL, $align="left") {
 // if return=html, then return a html string.
 // if return=text, then return a text-only string.
 // otherwise, print HTML for non-images, and return image HTML
@@ -499,7 +499,7 @@ function glossary_print_attachments($entry, $return=NULL) {
 
                 } else {
                     if ($icon == "image.gif") {    // Image attachments don't get printed as links
-                        $imagereturn .= "<br /><img src=\"$CFG->wwwroot/$ffurl\">";
+                        $imagereturn .= "<br /><img src=\"$CFG->wwwroot/$ffurl\" align=$align>";
                     } else {
                         link_to_popup_window("/$ffurl", "attachment", $image, 500, 500, $strattachment);
                         echo "<a target=_image href=\"$CFG->wwwroot/$ffurl\">$file</a>";

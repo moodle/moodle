@@ -15,8 +15,8 @@
             if ( $entries ) {
                 foreach ( $entries as $entry ) {
 
-                    $href_tag_begin = "<a target=\"entry\" title=\"" . strip_tags("$glossary->name: $entry->concept") ."\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&eid=$entry->id\" ".
-                         "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid&eid=$entry->id', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
+                    $href_tag_begin = "<a target=\"entry\" title=\"" . strip_tags("$glossary->name: $entry->concept") ."\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$entry->concept\" ".
+                         "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid&concept=$entry->concept', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
 
                     $concept = trim(strip_tags($entry->concept));
                     
