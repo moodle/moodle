@@ -497,19 +497,30 @@ function ismoving($courseid) {
 }
 
 function fullname($user, $override=false) {
-/// Given a user object, this function returns a 
-/// string with the full name of the person.
+/// Given an object containing firstname and lastname
+/// values, this function returns a string with the 
+/// full name of the person.
 /// The result may depend on system settings
-/// or language.  Override will force both names
+/// or language.  'override' will force both names
 /// to be used even if system settings specify one.
+
     global $CFG;
 
-    /// XXX 
-    /// XXX this function is not finished yet!
-    /// XXX 
+    if ($CFG->fullnamedisplay == 'firstname lastname') {
+        return "$user->firstname $user->lastname";
 
-    return "$user->firstname $user->lastname";
+    } else if ($CFG->fullnamedisplay == 'lastname firstname') {
+        return "$user->lastname $user->firstname";
 
+    } else if ($CFG->fullnamedisplay == 'firstname') {
+        if ($override) {
+            return get_string('fullnamedisplay', '', $user);
+        } else {
+            return $user->firstname;
+        }
+    }
+
+    return get_string('fullnamedisplay', '', $user);
 }
 
 

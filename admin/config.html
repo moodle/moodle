@@ -336,6 +336,23 @@
     <?php print_string("configmaxbytes") ?>
     </td>
 </tr>
+<tr valign=top>
+	<td align=right><p>fullnamedisplay:</td>
+	<td>
+    <?php 
+       unset($options);
+       $options['language']  = get_string('language');
+       $options['firstname lastname']  = get_string('firstname') . ' + ' . get_string('lastname');
+       $options['lastname firstname']  = get_string('lastname') . ' + ' . get_string('firstname');
+       $options['firstname']  = get_string('firstname');
+
+       choose_from_menu ($options, "fullnamedisplay", $config->fullnamedisplay, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configfullnamedisplay") ?>
+    </td>
+</tr>
 
 <tr>
     <td colspan=3 align=center>
