@@ -19,18 +19,14 @@ CREATE TABLE prefix_workshop (
   maxbytes INT8  NOT NULL default '100000',
   deadline INT8  NOT NULL default '0',
   grade INT8 NOT NULL default '0',
+  gradinggrade INT4 NOT NULL default '0',
   ntassessments INT  NOT NULL default '0',
+  assessmentcomps int4 NOT NULL default '2',
   nsassessments INT  NOT NULL default '0',
   overallocation INT  NOT NULL default '0',
   timemodified INT8  NOT NULL default '0',
-  mergegrades INT  NOT NULL default '0',
-  teacherweight INT  NOT NULL default '5',
-  peerweight INT  NOT NULL default '5',
-  includeteachersgrade INT  NOT NULL default '0',
-  biasweight INT  NOT NULL default '5',
-  reliabilityweight INT  NOT NULL default '5',
-  gradingweight INT  NOT NULL default '5',
-  timeagreed INT8 NOT NULL default '0'
+  teacherweight INT  NOT NULL default '1',
+  showleaguetable INT4 NOT NULL default '0',
 );
 # --------------------------------------------------------
 
@@ -66,10 +62,12 @@ CREATE TABLE prefix_workshop_assessments (
   userid INT8  NOT NULL default '0',
   timecreated INT8  NOT NULL default '0',
   timegraded INT8  NOT NULL default '0',
+  timeagreed INT8  NOT NULL default '0',
   grade float NOT NULL default '0',
   gradinggrade INT NOT NULL default '0',
   mailed INT2  NOT NULL default '0',
   resubmission INT2  NOT NULL default '0',
+  donotuse int4 NOT NULL default '0',
   generalcomment text NOT NULL default '',
   teachercomment text NOT NULL default ''
   );
@@ -88,7 +86,17 @@ CREATE TABLE prefix_workshop_elements (
   maxscore INT  NOT NULL default '1',
   weight float NOT NULL default '1.0'
 );
+
 # --------------------------------------------------------
+CREATE TABLE prefix_workshop_rubrics (
+  id SERIAL PRIMARY KEY,
+  workshopid int8 NOT NULL default '0',
+  elementno int8  NOT NULL default '0',
+  rubricno int4  NOT NULL default '0',
+  description text NOT NULL
+) ;
+# --------------------------------------------------------
+
 
 #
 # Table structure for table workshop_grades
@@ -113,14 +121,13 @@ CREATE TABLE prefix_workshop_comments (
   comments text NOT NULL default ''
 );
 
+INSERT INTO `prefix_log_display` VALUES ('workshop', 'assessments', 'workshop', 'name');
+INSERT INTO `prefix_log_display` VALUES ('workshop', 'close', 'workshop', 'name');
+INSERT INTO `prefix_log_display` VALUES ('workshop', 'display', 'workshop', 'name');
+INSERT INTO `prefix_log_display` VALUES ('workshop', 'resubmit', 'workshop', 'name');
+INSERT INTO `prefix_log_display` VALUES ('workshop', 'set up', 'workshop', 'name');
+INSERT INTO `prefix_log_display` VALUES ('workshop', 'submissions', 'workshop', 'name');
+INSERT INTO `prefix_log_display` VALUES ('workshop', 'view', 'workshop', 'name');
+INSERT INTO `prefix_log_display` VALUES ('workshop', 'update', 'workshop', 'name');
 
-INSERT INTO prefix_log_display VALUES ('workshop', 'assess', 'workshop', 'name');
-INSERT INTO prefix_log_display VALUES ('workshop', 'close', 'workshop', 'name');
-INSERT INTO prefix_log_display VALUES ('workshop', 'display grades', 'workshop', 'name');
-INSERT INTO prefix_log_display VALUES ('workshop', 'grade', 'workshop', 'name');
-INSERT INTO prefix_log_display VALUES ('workshop', 'hide grades', 'workshop', 'name');
-INSERT INTO prefix_log_display VALUES ('workshop', 'open', 'workshop', 'name');
-INSERT INTO prefix_log_display VALUES ('workshop', 'submit', 'workshop', 'name');
-INSERT INTO prefix_log_display VALUES ('workshop', 'view', 'workshop', 'name');
-INSERT INTO prefix_log_display VALUES ('workshop', 'update', 'workshop', 'name');
 COMMIT;
