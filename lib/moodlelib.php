@@ -418,6 +418,19 @@ function require_login($courseid=0) {
     }
 }
 
+function require_course_login($course, $autologinguest=true) {
+// This is a weaker version of require_login which only requires login
+// when called from within a course rather than the site page, unless
+// the forcelogin option is turned on.
+    global $CFG;
+    if ($CFG->forcelogin) {
+      require_login();
+    }
+    if ($course->category) {
+      require_login($course->id, $autologinguest);
+    }
+}
+
 function update_user_login_times() {
     global $USER;
 
