@@ -31,14 +31,14 @@
     }
 
     $stradministration = get_string("administration");
-    $strchoosetheme = get_string("choosetheme");
+    $strthemes = get_string("themes");
     $strpreview = get_string("preview");
     $strsavechanges = get_string("savechanges");
     $strtheme = get_string("theme");
     $strthemesaved = get_string("themesaved");
 
-    print_header("$site->shortname: $strchoosetheme", $site->fullname, 
-                 "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $strchoosetheme");
+    print_header("$site->shortname: $strthemes", $site->fullname, 
+                 "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $strthemes");
 
     if ($choose) {
         if (set_config("theme", $choose)) {
