@@ -713,6 +713,10 @@ function isadmin($userid=0) {
 function isteacher($course, $userid=0) {
     global $USER;
 
+    if (isadmin($userid)) {  // admins can do anything the teacher can
+        return true;
+    }
+
     if (!$userid) {
         return $USER->teacher[$course];
     }
@@ -746,7 +750,7 @@ function set_moodle_cookie($thing) {
     $days = 60;
     $seconds = 60*60*24*$days;
 
-    setCookie ('MOODLEID');
+    setCookie ('MOODLEID', "", time() - 3600, "/");
     setCookie ('MOODLEID', rc4encrypt($thing), time()+$seconds, "/");
 }
 
