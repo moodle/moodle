@@ -318,7 +318,7 @@
 				echo "<CENTER><TABLE cellpadding=5 border=1><TR><TD ALIGN=\"CENTER\">".
 					get_string("numberofnegativeresponses", "exercise");
 				echo "</TD><TD>". get_string("suggestedgrade", "exercise")."</TD></TR>\n";
-				for ($j = 100; $j >= 0; $j--) {
+				for ($j = $exercise->grade; $j >= 0; $j--) {
 					$numbers[$j] = $j;
 				}
 				for ($i=0; $i<=$exercise->nelements; $i++) {
@@ -515,9 +515,7 @@
 				}
 				break;
 		} // end of switch
-		echo "<P>\n";
-		notice_yesno(get_string("amendassessmentelements","exercise")." ".get_string("again"), 
-			"assessments.php?id=$cm->id&action=editelements", "view.php?id=$cm->id");
+		redirect("view.php?id=$cm->id", get_string("savedok", "exercise"));
 	}
 
 
@@ -679,11 +677,12 @@
 				if (!$element->id = insert_record("exercise_grades", $element)) {
 					error("Could not insert exercise element!");
 				}
-				$grade = $elements[intval($error + 0.5)]->maxscore + $form->grade[$i];
-				// echo "<P><B>".get_string("weightederrorcount", "exercise", intval($error + 0.5)).
+				$grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i])
+                    * 100.0 / $exercise->grade;
+			    // echo "<P><B>".get_string("weightederrorcount", "exercise", intval($error + 0.5)).
 				//	" ".get_string("adjustment", "exercise").": ".$form->grade[$i]."</B>\n";
 				// check the grade for sanity!
-				if ($grade >100.0) {
+				if ($grade > 100.0) {
 					$grade = 100.0;
 				}
 				if ($grade < 0.0) {
@@ -785,8 +784,8 @@
 		// show grade if grading strategy is not zero
 		if ($exercise->gradingstrategy) {
 			redirect($returnto, "<p align=\"center\"><b>".get_string("thegradeis", "exercise").": ".
-                number_format($grade * $exercise->grade / 100.0, 1)."% (".get_string("maximumgrade").
-				" ".number_format($exercise->grade)."%)</b></p>", 1);
+                number_format($grade * $exercise->grade / 100.0, 1)." (".get_string("maximumgrade").
+				" ".number_format($exercise->grade).")</b></p>", 1);
 		}
 		else {
 			redirect($returnto);
@@ -998,8 +997,8 @@
 		// show grade if grading strategy is not zero
 		if ($exercise->gradingstrategy) {
 			redirect($returnto, "<p align=\"center\"><b>".get_string("thegradeis", "exercise").": ".
-                number_format($grade * $exercise->grade / 100.0, 1)."% (".get_string("maximumgrade").
-				" ".number_format($exercise->grade)."%)</b></p>", 1);
+                number_format($grade * $exercise->grade / 100.0, 1)." (".get_string("maximumgrade").
+				" ".number_format($exercise->grade).")</b></p>", 1);
 		}
 		else {
 			redirect($returnto);

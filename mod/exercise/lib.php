@@ -1457,10 +1457,10 @@ function exercise_list_submissions_for_admin($exercise, $order) {
 					// test for allocated assesments which have not been done
 					if ($assessment->timecreated < $timenow) {
                         // show only warm or cold assessments
-						$title .= " {".number_format($assessment->grade * $exercise->grade / 100.0, 0)."%";
+						$title .= " {".number_format($assessment->grade * $exercise->grade / 100.0, 0);
                         if ($assessment->timegraded) {
                             $title .= "/".number_format($assessment->gradinggrade * $exercise->grade / 
-                                    COMMENTSCALE, 0)."%";
+                                    COMMENTSCALE, 0);
                         }
                         $title .= "} ";
                         if ($realassessments = exercise_count_user_assessments_done($exercise, $user)) {
@@ -1546,7 +1546,7 @@ function exercise_list_submissions_for_admin($exercise, $order) {
                 count($submissions)."]", "center");
 		print_table($table);
 		echo "<center><p>".get_string("resubmitnote", "exercise", $course->student)."</p>\n";
-		echo "<p>".get_string("allgradeshaveamaximumof", "exercise", $exercise->grade)."%</p></center>\n";
+		echo "<p>".get_string("allgradeshaveamaximumof", "exercise", $exercise->grade)."</p></center>\n";
 		}
 	}
 
@@ -2073,8 +2073,8 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
 		// only show the grade if grading strategy > 0 and the grade is positive
 		if ($exercise->gradingstrategy and $assessment->grade >= 0) { 
 			echo "<CENTER><B>".get_string("thegradeis", "exercise").": ".
-				number_format($assessment->grade * $exercise->grade / 100.0, 2)."% (".
-				get_string("maximumgrade")." ".number_format($exercise->grade, 0)."%)</B></CENTER><BR CLEAR=ALL>\n";
+				number_format($assessment->grade * $exercise->grade / 100.0, 2)." (".
+				get_string("maximumgrade")." ".number_format($exercise->grade, 0).")</B></CENTER><BR CLEAR=ALL>\n";
 			}
 		}
 		
@@ -2680,8 +2680,8 @@ function exercise_print_dual_assessment_form($exercise, $assessment, $submission
 	// only show the grade if grading strategy > 0 and the grade is positive
 	if ($exercise->gradingstrategy and $assessment->grade >= 0) { 
 		echo "<CENTER><B>".get_string("thegradeis", "exercise").": ".
-			number_format($assessment->grade * $exercise->grade / 100.0, 2)."% (".
-			get_string("maximumgrade")." ".number_format($exercise->grade, 0)."%)</B></CENTER><BR CLEAR=ALL>\n";
+			number_format($assessment->grade * $exercise->grade / 100.0, 2)." (".
+			get_string("maximumgrade")." ".number_format($exercise->grade, 0).")</B></CENTER><BR CLEAR=ALL>\n";
 		}
 		
 	// now print the student's assessment form with the teacher's comments if any
@@ -3148,8 +3148,8 @@ function exercise_print_dual_assessment_form($exercise, $assessment, $submission
 	// only show the grade if grading strategy > 0 and the grade is positive
 	if ($exercise->gradingstrategy and $assessment->grade >= 0) { 
 		echo "<CENTER><B>".get_string("thegradeis", "exercise").": ".
-			number_format($assessment->grade * $exercise->grade / 100.0, 2)."% (".
-			get_string("maximumgrade")." ".number_format($exercise->grade, 0)."%)</B></CENTER><BR CLEAR=ALL>\n";
+			number_format($assessment->grade * $exercise->grade / 100.0, 2)." (".
+			get_string("maximumgrade")." ".number_format($exercise->grade, 0).")</B></CENTER><BR CLEAR=ALL>\n";
 		}
 		
 	echo "<center><table cellpadding=\"2\" border=\"1\">\n";
@@ -3641,10 +3641,10 @@ function exercise_print_submission_assessments($exercise, $submission) {
 	if ($assessments = exercise_get_assessments($submission)) {
 		foreach ($assessments as $assessment) {
 			if (isteacher($exercise->course, $assessment->userid)) {
-				$str .= "[".number_format($assessment->grade * $exercise->grade / 100.0, 0)."%] ";
+				$str .= "[".number_format($assessment->grade * $exercise->grade / 100.0, 0)."] ";
 				}
 			else { // assessment by student - shouldn't happen!
-				$str .= "{".number_format($assessment->grade * $exercise->grade / 100.0, 0)."%} ";
+				$str .= "{".number_format($assessment->grade * $exercise->grade / 100.0, 0)."} ";
 				}
 			}
 		}

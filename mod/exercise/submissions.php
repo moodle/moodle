@@ -234,7 +234,7 @@
             exercise_print_league_table($exercise);
 		    echo "<br \>\n";
         }
-        print_string("allgradeshaveamaximumof", "exercise", $exercise->grade)."%\n";
+        print_string("allgradeshaveamaximumof", "exercise", $exercise->grade)."\n";
 		print_continue("view.php?id=$cm->id");
 	}
 
