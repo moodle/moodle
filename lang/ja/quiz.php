@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2004021700)
+      // quiz.php - created with Moodle 1.2 nearly beta! (2004022400)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -95,6 +95,7 @@ $string['gradehighest'] = '最高得点';
 $string['grademethod'] = '評価方法';
 $string['guestsno'] = '申し訳ございません、ゲストユーザはクイズの閲覧及び解答が出来ません';
 $string['imagedisplay'] = '表示画像';
+$string['imagemissing'] = '$a 行の画像が使用出来ません。ファイル名は無視されます。';
 $string['importquestions'] = 'ファイルからクイズをインポートする';
 $string['introduction'] = '説明';
 $string['listitems'] = 'クイズのアイテム一覧';

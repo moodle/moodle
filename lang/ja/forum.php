@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 development (2004013101)
+      // forum.php - created with Moodle 1.2 nearly beta! (2004022400)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -73,6 +73,7 @@ $string['nonews'] = '新しいニュースは投稿されていません';
 $string['noposts'] = '投稿がありません';
 $string['nopostscontaining'] = ' $a が含まれる投稿は見つかりませんでした';
 $string['nosubscribers'] = 'このフォーラムには登録者はいません';
+$string['notingroup'] = '申し訳ございません。グループ以外の方はこのフォーラムを閲覧できません。';
 $string['nownotsubscribed'] = '$a->name 宛に「 $a->forum 」の投稿記事はメール送信されません。';
 $string['nowsubscribed'] = '$a->name 宛に「 $a->forum 」の投稿記事がメール送信されます。';
 $string['numposts'] = '$a 投稿';
