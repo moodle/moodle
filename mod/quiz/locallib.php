@@ -1415,10 +1415,9 @@ function quiz_print_cat_question_list($course, $categoryid, $quizselected=true, 
 
     $canedit = isteacheredit($category->course);
 
-    echo "<form method=\"post\" action=\"edit.php\">";
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
-    echo "<table border=\"0\" cellpadding=\"5\" cellspacing=\"2\" width=\"100%\">";
-    echo "<tr>";
+    echo '<form method="post" action="edit.php">';
+    echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'">';
+    echo '<table id="categoryquestions" cellspacing="0"><tr>';
     if ($canedit) {
         echo "<th width=\"95\" nowrap=\"nowrap\">$straction</th>";
     }
@@ -1461,9 +1460,9 @@ function quiz_print_cat_question_list($course, $categoryid, $quizselected=true, 
         echo "</tr>\n";
     }
     echo "</table>\n";
-    
-    echo '<a href="javascript:checkall();">'.$strselectall.'</a> /'.
-     ' <a href="javascript:checknone();">'.$strselectnone.'</a>';
+
+    echo '<a href="javascript:select_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectall.'</a> /'.
+     ' <a href="javascript:deselect_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectnone.'</a>';
     echo "&nbsp;<input type=\"submit\" name=\"deleteselected\" value=\"$strdeleteselected\" />\n";
     echo "<br />";
     
