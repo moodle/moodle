@@ -1,4 +1,4 @@
-<form method="post" action="site.php" name="form" <?php echo $onsubmit ?>>
+<form method="post" action="site.php" name="form">
 <table cellpadding="9" cellspacing="0" >
 <tr valign="top">
     <td align="right"><p><?php print_string("fullsitename") ?>:</td>
@@ -111,10 +111,5 @@
 <input type="hidden" name="id" value="<?php p($form->id) ?>">
 <input type="hidden" name="category" value="<?php p($form->category) ?>">
 <input type="hidden" name="format" value="<?php p($form->format) ?>">
+<input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
 </form>
-
-<?php 
-   if ($usehtmleditor) { 
-       print_richedit_javascript("form", "summary", "no");
-   }
-?>

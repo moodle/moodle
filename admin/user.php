@@ -119,7 +119,7 @@
                          "<a href=\"users.php\">$strusers</a> -> $stredituser");
         }
 
-        if ($confirmuser) {
+        if ($confirmuser and confirm_sesskey()) {
             if (!$user = get_record("user", "id", "$confirmuser")) {
                 error("No such user!");
             }
@@ -309,7 +309,7 @@
                     $strlastaccess = get_string("never");
                 }
                 if ($user->confirmed == 0) {
-                    $confirmbutton = "<a href=\"user.php?confirmuser=$user->id\">" . get_string("confirm") . "</a>";
+                    $confirmbutton = "<a href=\"user.php?confirmuser=$user->id&sesskey=$USER->sesskey\">" . get_string("confirm") . "</a>";
                 } else {
                     $confirmbutton = "";
                 }

@@ -17,7 +17,7 @@
 
     print_heading("");
 
-    if (isset($zone)) {
+    if (isset($zone) and confirm_sesskey()) {
         $db->debug = true;
         echo "<center>";
         execute_sql("UPDATE {$CFG->prefix}user SET timezone = '$zone'");
@@ -47,11 +47,12 @@
         }
     }
 
-    echo "<center><form action=\"timezone\".php method=\"get\">";
+    echo '<center><form action="timezone.php" method="get">';
     echo "$strusers ($strall): ";
     choose_from_menu ($timezones, "zone", $user->timezone, get_string("serverlocaltime"), "", "99");
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
     echo "<input type=\"submit\" value=\"$strsavechanges\">";
-    echo "</form>";
+    echo "</form></center>";
 
     print_footer();
 

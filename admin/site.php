@@ -14,6 +14,12 @@
 
 	if ($form = data_submitted()) {
 
+        if (isset($USER)) {             // Additional identity check
+            if (!confirm_sesskey()) {
+                error(get_string('confirmsesskeybad', 'error'));
+            }
+        }
+
         validate_form($form, $err);
 
         if (count($err) == 0) {
@@ -108,16 +114,21 @@
         print_heading($strsitesettings);
     }
 
-    $defaultformat = FORMAT_HTML;
-    if ($usehtmleditor = can_use_richtext_editor()) {
-        $onsubmit = "onsubmit=\"copyrichtext(form.summary);\"";
-    } else {
-        $onsubmit = "";
+    if (!isset($USER)) {
+        $USER->htmleditor = true;
     }
+    $usehtmleditor = can_use_html_editor();
+    $defaultformat = FORMAT_HTML;
+
+    $sesskey = isset($USER) ? $USER->sesskey : '';
 
     print_simple_box_start("center", "", "$THEME->cellheading");
     include("site.html");
     print_simple_box_end();
+
+    if ($usehtmleditor) { 
+        use_html_editor();
+    }
 
     if (!$firsttime) {
         print_footer();
