@@ -7,7 +7,7 @@
     require_variable($id);          // course module ID
     $timenow = time();
 
-    $newfile = $HTTP_POST_FILES["newfile"];
+    $newfile = $_FILES["newfile"];
 
     // get some esential stuff...
     if (! $cm = get_record("course_modules", "id", $id)) {

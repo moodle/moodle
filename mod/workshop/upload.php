@@ -6,7 +6,7 @@
 
     require_variable($id);          // CM ID
 
-    $newfile = $HTTP_POST_FILES["newfile"];
+    $newfile = $_FILES["newfile"];
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
