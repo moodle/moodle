@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 development (2004020903)
+      // workshop.php - created with Moodle 1.2 Beta ++ (2004031100)
 
 
 $string['absent'] = '欠席';
@@ -232,6 +232,7 @@ $string['weightforbias'] = 'バイアスに対する比重';
 $string['weightforgradingofassessments'] = '評価成績に対する比重';
 $string['weightforpeerassessments'] = '相互評価に対する比重';
 $string['weightforreliability'] = '信頼性に対する比重';
+$string['weightforteacherassessments'] = '教師の評価に対する比重';
 $string['weights'] = '比重';
 $string['weightsusedforfinalgrade'] = '最終成績に使用する比重';
 $string['weightsusedforsubmissions'] = '提出物に使用する比重';
