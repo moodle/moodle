@@ -282,6 +282,41 @@ table.formtable td {
 }
 
 
+/* user */
+.userinfobox {
+    border-width: 1px;
+    border-style: solid;
+    border-collapse: separate;    
+}
+
+.userinfobox .left {
+    padding: 10px;
+    width: 100px;
+}
+
+.userinfobox .content {
+    padding: 10px;
+    vertical-align: top;
+}
+
+.userinfobox .links {
+    padding: 5px;
+    vertical-align: bottom;
+}
+
+.userinfobox .username {
+    padding-bottom: 20px;
+}    
+
+
+table.userinfobox {
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+
+
 /*****************************
 ***
 *** Activities
@@ -350,6 +385,18 @@ table.formtable td {
     vertical-align: center;
 }
 
+.forumheaderlist .discussion .lastpost {
+    white-space: nowrap;
+}
+
+.forumheaderlist .discussion .author {
+    white-space: nowrap;
+}
+
+.paging {
+    text-align: center;
+    margin: 10px 0px 10px 0px;
+}
 
 .unread {
     padding-right:2px;

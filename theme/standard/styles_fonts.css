@@ -166,6 +166,16 @@ h4 {
 }
 
 
+/* user */
+.userinfobox .username {
+    font-weight: bold;
+}
+
+.userinfobox .links {
+    font-size: 0.7em;
+}
+
+
 
 /*****************************
 ***
