@@ -1372,7 +1372,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
     if ($quizselected) {
         echo "<tr>\n<td colspan=\"3\">";
         echo "<input type=\"submit\" name=\"add\" value=\"<< $straddselectedtoquiz\" />\n";
-        //echo "<input type=\"submit\" name=\"delete\" value=\"XX Delete selected\">";
+        // echo "<input type=\"submit\" name=\"delete\" value=\"XX Delete selected\">";
         echo "<input type=\"button\" onclick=\"checkall()\" value=\"$strselectall\" />\n";
         echo "</td></tr>";
     }
@@ -1883,5 +1883,31 @@ function quiz_categorylist($categoryid) {
         }
     }
     return $categorylist;
+}
+
+// function to determine where question is in use
+function quizzes_question_used( $id, $published=false, $courseid=0 ) {
+  // $id = question id
+  // $published = is category published
+  // $courseid = course id, required only if $published=true
+  // returns array of names of quizzes it appears in
+  if ($published) {
+    $quizzes = get_records("quiz");
+  }
+  else {
+    $quizzes = get_records("quiz","course",$courseid);
+  }
+  $beingused = array();
+  if ($quizzes) {
+    foreach ($quizzes as $quiz) {
+      $questions = explode(',', $quiz->questions);
+      foreach ($questions as $question) {
+        if ($question==$id) {
+          $beingused[] = $quiz->name;
+        }
+      }
+    }
+  }
+  return $beingused;
 }
 ?>
