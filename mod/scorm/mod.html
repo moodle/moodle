@@ -33,7 +33,7 @@
 	    <td>
 	 	<?php
 	 	    echo "<input name=\"reference\" size=\"50\" value=\"$form->reference\" />&nbsp;";
-	 	    button_to_popup_window ("/mod/scorm/coursefiles.php?id=$course->id", 
+	 	    button_to_popup_window ("/files/index.php?id=$course->id&choose=form.reference", 
 	 				    "coursefiles", $strchooseafile, 500, 750, $strchooseafile);
 	 	?>
 	    </td>

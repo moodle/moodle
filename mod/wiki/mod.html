@@ -197,7 +197,7 @@
             else {
                 $strchooseafile = get_string("chooseafile", "wiki");
                 echo "<input name=\"initialcontent\" size=\"50\" value=\"$form->initialcontent\" />&nbsp;";
-                button_to_popup_window ("/mod/wiki/wikifiles.php?id=$course->id", 
+                button_to_popup_window ("/files/index.php?choose=form.initialcontent&id=$course->id", 
                                         "wikifiles", $strchooseafile, 500, 750, $strchooseafile);
             }
         ?>
