@@ -29,6 +29,7 @@ $string['allparticipants'] = "Wszyscy uczestnicy";
 $string['alphanumerical'] = "Mo¿e zawieraæ wy³±cznie litery alfabetu i cyfry.";
 $string['alreadyconfirmed'] = "Rejestracja zosta³a ju¿ potwierdzona";
 $string['answer'] = "Odpowied¼";
+$string['assessment'] = "Ocena";
 $string['assignadmins'] = "Przypisz administratorów";
 $string['assignteachers'] = "Przypisz prowadz±cych";
 $string['authentication'] = "Autentykacja";
@@ -53,7 +54,13 @@ $string['closewindow'] = "Zamknij to okno";
 $string['comparelanguage'] = "Porównaj i popraw bie¿±cy jêzyk";
 $string['complete'] = "Zakoñcz";
 $string['configcountry'] = "Je¿eli ustawisz tutaj kraj, wówczas ten kraj bêdzie domy¶lny dla nowych u¿ytkowników. Je¿eli chcesz wymusiæ, aby u¿ytkownicy wyberali kraj samodzielnie zostaw to pole niewype³nione.";
+$string['configdebug'] = "Je¶li w³±czysz t± funkcjê to podniesiony zostanie poziom raportowania b³êdów PHP, dziêki czemu ostrzezeñ bêdzie drukowanych. Ta opcja przydatna jest tylko dla progamistów.";
+$string['configerrorlevel'] = "Wybierz ilo¶æ ostrze¿eñ z PHP, która a byæ wy¶wietlana. Zwykle najl;epszym wyborem jest Normalna";
+$string['configgdversion'] = "Wska¿ wersjê zainstalowanej biblioteki GD. Wersja wyswitlana domy¶lnie jest t±, która zosta³a wykryta automatycznie. Nie zmieniej tego ustawienia, chyba, ¿e dobrze wiesz co robisz.";
+$string['confightmleditor'] = "Ustal czy u¿ytkownicy maj± prawo wykorzystywania edytora tekstu w HTML'u. Nawet je¿eli zezwolisz na to, ten edytor bêdzie dostêny tylko je¿eli uzytkownicy bêd± u¿ywaæ kompatybilnej przegl±drki (Internet Explorer 5.5 lub pó¼niejszej). U¿ytkownik mo¿e samodzielnie zrezygnowaæ z jego wykorzystywania. ";
 $string['configlang'] = "Wybierz domy¶lny jêzyk dla tego serwisu. U¿ytkownicy mog± pó¼niej wybraæ dla siebie inne ustawienie.";
+$string['configlangdir'] = "Wiêkszo¶æ jêzyków drukuje siê od lewej do prawej, ale niektóre, jak arabski i hebrajski s± drukowane od prawej do lewej.";
+$string['configlocale'] = "Wybierz ustawienia lokalne dla serwisu. Bêd± one wp³ywa³y na format i jêzyk wyswietlanych dat. Wymagane jest posiadanie tych lokalnych danych w systemie opracyjnym. Je¿eli nie wiesz co wybraæ - zostaw to pole puste.";
 $string['configvariables'] = "Konfiguruj zmienne";
 $string['confirmed'] = "Twoja rejestracja zosta³a potwierdzona";
 $string['continue'] = "Kontynuuj";
@@ -111,7 +118,7 @@ $string['email'] = "adres e-mail";
 $string['emailconfirm'] = "Potwierd¼ Twoje konto";
 $string['emailconfirmation'] = "Witaj \$a->firstname,
 
-W serwisie '\$a->sitename' za¿±dano utworzenia nowego konta z u¿yciem twojego adresu e-mail.
+W serwisie '\$a->sitename' zg³oszono ¿±danie utworzenia nowego konta z u¿yciem twojego adresu e-mail.
 
 Aby potwierdziæ zamiar utworzenia konta przejd¼ na stronê:
 
@@ -120,9 +127,9 @@ Aby potwierdziæ zamiar utworzenia konta przejd¼ na stronê:
 W wiêkszo¶ci programów istnieje mo¿liwo¶æ przej¶cia pod powy¿szy adres poprzez klikniêcie go.
 Je¿eli to nie dzia³a skopiuj adres do pola adresowego przegl±darki internetowej i naci¶nij klawisz enter.
 
-Pozdrowienia od administraotra '\$a->sitename',
+Pozdrowienia od administratora '\$a->sitename',
 \$a->admin";
-$string['emailconfirmsent'] = "   <P>Zosta³ do Ciebie wys³any e-mail <B>\$a</B>
+$string['emailconfirmsent'] = "   <P>Zosta³ do Ciebie wys³any e-mail pod adres <B>\$a</B>
    <P>Zawiera on prost± instrukacjê jak dokoñczyæ rejestracjê.
    <P>Je¿eli nadal bêdziesz mieæ k³opoty skontaktuj siê z administratorem serwisu.";
 $string['emaildisplay'] = "Wy¶wietlanie adresu e-mail";
@@ -137,7 +144,7 @@ $string['enrolmentkeyfrom'] = "Ten kurs wymaga jednorazowego klucza, który powin
 $string['enrolmentkeyhint'] = "Ten klucz dostêpu do kursu nie jest poprawny, spróbuj ponownie <BR>
 (sugestia: klucz zaczyna siê na '\$a')";
 $string['entercourse'] = "Kliknij, aby wej¶æ na kurs";
-$string['enteremailaddress'] = "Wprowad¼ swój adres e-mail, aby automatycznie wygenerowaæ nowe has³o, które zostanie tobie przes³ane poczt± elektroniczn±.";
+$string['enteremailaddress'] = "Wprowad¼ swój adres e-mail, aby automatycznie wygenerowaæ nowe has³o, które zostanie Tobie przes³ane poczt± elektroniczn±.";
 $string['error'] = "B³±d";
 $string['errortoomanylogins'] = "Przekroczona dozwolona liczba prób logowania. Zrestartuj swoj± przegl±darkê. ";
 $string['existingadmins'] = "Istniej±cy administratorzy";
@@ -187,7 +194,7 @@ $string['helpwriting'] = "Pisz uwa¿nie";
 $string['hide'] = "Ukryj";
 $string['hits'] = "Ods³ony";
 $string['hitsoncourse'] = "Ods³on \$a->coursename przez \$a->username";
-$string['hitsoncoursetoday'] = "Dzisiejszych ods³on na $->coursename przez \$a->username ";
+$string['hitsoncoursetoday'] = "Dzisiejszych ods³on na \$a->coursename przez \$a->username ";
 $string['home'] = "Strona g³ówna";
 $string['hour'] = "godzina";
 $string['hours'] = "godziny";
@@ -216,7 +223,7 @@ $string['leavetokeep'] = "Pozostaw puste aby zachowaæ dotychczasowe has³o";
 $string['license'] = "Licenicja GPL";
 $string['listofallpeople'] = "Lista wszystkich osób";
 $string['livelogs'] = "Bie¿±ce logi z ostatniej godziny";
-$string['locale'] = "pl_PL";
+$string['locale'] = "pl";
 $string['location'] = "Po³o¿enie";
 $string['loggedinas'] = "Jeste¶ zalogowany(a) jako \$a ";
 $string['loggedinnot'] = "Nie jeste¶ zalogowany(a)";
@@ -224,14 +231,14 @@ $string['login'] = "Zaloguj siê";
 $string['loginas'] = "Zaloguj siê jako";
 $string['loginguest'] = "Zaloguj siê jako go¶æ";
 $string['loginsite'] = "Zaloguj siê do serwisu";
-$string['loginsteps'] = "   Witaj! W celu uzyskania pe³nego dostêpu do kursów musisz spêdziæ kilka minut nad stworzeniem w tym serwisie nowego konta dla siebie.
+$string['loginsteps'] = "   Witaj! W celu uzyskania pe³nego dostêpu do kursów musisz po¶wiêciæ kilka minut na stworzenie dla siebie konta w tym serwisie. 
    Ka¿dy z kursów mo¿e wymagaæ podania jednorazowego &quot;klucza&quot;, który bêdzie niezbêdny tylko przy zapisywaniu siê na kurs. Pó¼niej nie bêdzie ju¿ potrzebny.
    Oto kroki, które musisz wykonaæ:
    <OL size=2>
    <LI>Wype³nij formulrz <A HREF=\$a> Nowe konto</A> swoimi danymi.
    <LI>Niezw³ocznie zostanie wys³any do Ciebie e-mail na podany przez Ciebie adres.
    <LI>Przeczytaj e-mail i kliknij zawarty w nim link.   <LI>Twoje konto zostanie potwierdzone i zostaniesz zalogowany.   <LI>Wybierz kurs, w ktorym chcesz wzi±æ udzia³.   <LI>Je¿eli zostaniesz poproszony(a) o podanie &quot;klucza&quot; - wpisz otrzymany od prowadz±cego klucz. To spowoduje zapisanie Ciê na kurs.
-   <LI>Od tego momentu bêdziesz mieæ dostêp do kursu. Aby zalogowaæ siê i uzyskaæ dostêp do kursów, na które siê zapisa³e¶, konieczne bêdzie tylko wpisanie Twojej nazwy u¿ytkownika i has³a (w formularzu na tej stronie) </OL>";
+   <LI>Od tego momentu bêdziesz mieæ dostêp do kursu. Aby zalogowaæ siê i uzyskaæ dostêp do kursów, na które siê zapisa³e¶(a¶), konieczne bêdzie tylko wpisanie Twojej nazwy u¿ytkownika i has³a (w formularzu obok). </OL>";
 $string['loginstepsnone'] = "Dla uzyskania pe³nego dostêpu do kursów niezbêdne jest utworzenie konta.<p>Wszystko co musisz zrobiæ to wymysliæ nazwê u¿ytkownika i has³o oraz u¿yæ w formularza na tej stronie!<p>
 Je¿eli kto¶ inny wybra³ ju¿ tak± nazwê u¿ytkownika bêdziesz musia³(a) powtórzyæ operacjê u¿ywaj±c innej nazwy. ";
 $string['loginto'] = "Zaloguj do \$a";
@@ -297,7 +304,7 @@ Twoje obecne parametry logowania s± nastêpuj±ce:
 Wejd¼ na t± stronê i zmieñ swoje has³o:
    \$a->link
 
-W wiêkszo¶ci programów pocztowych powy¿szy adres jest linkiem, który mo¿esz klikn±æ przenosz±c siê automatycznie na stronê zmiany has³a. Je¿eli twój program pocztowy nie daje takiej mo¿liwo¶ci, skopiuj podany adres do pola adresowego przegl±darki internetowej i naci¶nij klawiesz ener. 
+W wiêkszo¶ci programów pocztowych powy¿szy adres jest linkiem, który mo¿esz klikn±æ przenosz±c siê automatycznie na stronê zmiany has³a. Je¿eli twój program pocztowy nie daje takiej mo¿liwo¶ci, skopiuj podany adres do pola adresowego przegl±darki internetowej i naci¶nij klawiesz enter. 
 
 Pozdrowienia od administratora '\$a->sitename',
 \$a->signoff
@@ -373,7 +380,7 @@ $string['searchresults'] = "Szukaj w rezultatach";
 $string['sec'] = "sek";
 $string['secs'] = "sek.";
 $string['section'] = "Sekcja";
-$string['selectacountry'] = "Wybie¿ kraj";
+$string['selectacountry'] = "Wybierz kraj";
 $string['senddetails'] = "Przy¶lij informacje o mnie e-mail'em";
 $string['serverlocaltime'] = "Lokalny czas serwera";
 $string['settings'] = "Ustawienia";
@@ -390,7 +397,7 @@ $string['showrecent'] = "Poka¿ ostatnie wydarzenia";
 $string['showtheselogs'] = "Poka¿ te logi";
 $string['site'] = "Serwis";
 $string['sitelogs'] = "Logi serwisu";
-$string['sitenews'] = "Wie¶ci z serwisu";
+$string['sitenews'] = "Aktualno¶ci";
 $string['sites'] = "Serwisy";
 $string['sitesettings'] = "Ustawienia serwisu";
 $string['size'] = "Rozmiar";
@@ -450,14 +457,14 @@ $string['userdescription'] = "Opis";
 $string['username'] = "Nazwa u¿ytkownika";
 $string['usernameexists'] = "Ta nazwa u¿ytkownika ju¿ istnieje, wybierz inn±.";
 $string['userprofilefor'] = "Profil u¿ytkownika dla \$a";
-$string['users'] = "U¿ytkownicy";
+$string['users'] = "U¿ytkowników";
 $string['webpage'] = "Strona WWW";
 $string['week'] = "Tydzieñ";
 $string['weeklyoutline'] = "Plan tygodniowy";
 $string['welcometocourse'] = "Witaj w \$a";
 $string['welcometocoursetext'] = "Witaj na kursie \$a->coursename!
 
-Jedn± z pierwszych rzeczy, któr± nale¿y zrobiæ jest zmodyfikowanie twojego profilu, aby inni mogli dowiedzieæ siê czego¶ o tobie:
+Jedn± z pierwszych rzeczy, któr± nale¿y zrobiæ jest zmodyfikowanie swojego profilu, aby inni mogli dowiedzieæ siê czego¶ o Tobie:
 
 \$a->profileurl";
 $string['withchosenfiles'] = "Z wybranymi plikami";
