@@ -82,9 +82,9 @@ function block_instance($blockname, $instance = NULL) {
 function block_load_class($blockname) {
     global $CFG;
 
-    @include_once($CFG->dirroot.'/blocks/moodleblock.class.php');
+    include_once($CFG->dirroot.'/blocks/moodleblock.class.php');
     $classname = 'block_'.$blockname;
-    @include_once($CFG->dirroot.'/blocks/'.$blockname.'/block_'.$blockname.'.php');
+    include_once($CFG->dirroot.'/blocks/'.$blockname.'/block_'.$blockname.'.php');
 
     // After all this, return value indicating success or failure
     return class_exists($classname);
