@@ -1,10 +1,78 @@
 <?php //$Id$
+
+/***
+ *** olson_todst ($filename)
+ ***
+ *** Parses the olson files for Zones and DST rules.
+ *** It updates the Moodle database with the Zones/DST rules
+ ***
+ *** Returns true/false
+ ***
+ */
+function olson_todst ($filename) {
+
+    $zones = olson_simple_zone_parser($filename);
+    $rules = olson_simple_rule_parser($filename);
+    
+    if (function_exists('memory_get_usage')) {
+        trigger_error("We are consuming memory: " . get_memory_usage());
+    }
+
+    /**
+     *** To translate the combined Zone & Rule changes
+     *** in the Olson files to the Moodle single ruleset
+     *** format, wwe need to trasverse every year and see
+     *** if either the Zone or the relevant Rule has a 
+     *** change. It's yuck but it yealds a rationalized
+     *** set of data, which is arguably simpler.
+     ***
+     *** Also note that I am starting at the epoch (1970)
+     *** because I don't think we'll see many events scheduled
+     *** before that, anyway. 
+     ***
+     **/
+    $maxyear = localtime(time(), true);
+    $maxyear = $maxyear['tm_year'] + 1900 + 10;
+
+    foreach ($zones as $zname=>$zbyyear) { // loop over zones
+        // loop over years
+        $lastyear = '1970';
+        $lastzone = NULL;
+        $lastrule = NULL;
+        $lastzonerule = NULL;
+
+        for ($y = 1970 ; $y < $maxyear ; $y++) {
+            /// force it to string to avoid PHP
+            /// thinking of a positional array
+            if (array_key_exists((string)$y, $zbyyear )) { // we have a zone entry for the year
+                $lastyear = $y;
+                $zentry = $zbyyear[$y];
+                $lastzone = $zentry;
+
+                print "$zname $y $zentry[rule]\n";
+            }
+            // has a tz entry
+            // has a rule entry
+        }
+        
+    }
+    /*
+      $zones = getzones
+      foreach $zones as $zone
+          foreach $year
+              offset & rule(rulename/yearstart) ... is it the same as last?
+              
+
+    */
+
+}
+
+
 /***
  *** olson_simple_rule_parser($filename)
  ***
  *** Parses the olson files for DST rules.
- *** It's a simple implementation that captures the 
- *** most up-to-date DST rule for each ruleset.
+ *** It's a simple implementation that simplifies some fields
  ***
  *** Returns a multidimensional array, or false on error
  ***
@@ -50,8 +118,12 @@ function olson_simple_rule_parser ($filename) {
 
     fclose($file);
 
-    $months = array('jan' => 1, 'feb' => 2, 'mar' => 3, 'apr' =>  4, 'may' =>  5, 'jun' =>  6,
-                    'jul' => 7, 'aug' => 8, 'sep' => 9, 'oct' => 10, 'nov' => 11, 'dec' => 12);
+    $months = array('jan' =>  1, 'feb' =>  2, 
+                    'mar' =>  3, 'apr' =>  4, 
+                    'may' =>  5, 'jun' =>  6,
+                    'jul' =>  7, 'aug' =>  8, 
+                    'sep' =>  9, 'oct' => 10, 
+                    'nov' => 11, 'dec' => 12);
 
 
     // now reformat it a bit to match Moodle's DST table
@@ -92,7 +164,8 @@ function olson_simple_rule_parser ($filename) {
     
             list($hours, $mins) = explode(':', $save);
             $save = $hours * 60 + $mins;
-            $at = olson_parse_at($at);
+            // we'll parse $at later
+            // $at = olson_parse_at($at); 
             $in = strtolower($in);
             if(!isset($months[$in])) {
                 trigger_error('Unknown month: '.$in);
@@ -122,7 +195,8 @@ function olson_simple_rule_parser ($filename) {
                  $save,
                  $letter) = $rulesthisyear['reset'];
     
-            $at = olson_parse_at($at);
+            // we'll parse $at later
+            // $at = olson_parse_at($at);
             $in = strtolower($in);
             if(!isset($months[$in])) {
                 trigger_error('Unknown month: '.$in);
@@ -204,7 +278,8 @@ function olson_simple_zone_parser ($filename) {
                 $zone['until'] = $line[5];
             }
             $zone['from'] = '1970';
-
+            
+            $zones[$zone['name']] = array();
 
         } else if (!empty($lastzone) && preg_match('/^\s+/', $line)){ 
             // looks like a credible continuation line  
@@ -242,7 +317,7 @@ function olson_simple_zone_parser ($filename) {
             $zone['rule'] = '';
         }
         
-        $zones[] = $zone;
+        $zones[$zone['name']][(string)$zone['from']] = $zone;
     }
 
     return $zones;
@@ -331,7 +406,7 @@ function olson_parse_on ($on) {
 
 
 /***
- *** olson_parse_at($on)
+ *** olson_parse_at($at)
  ***
  *** see `man zic`. This function translates
  ***
@@ -346,9 +421,11 @@ function olson_parse_on ($on) {
  ***  sal time; in the absence of an indicator, wall  clock  time  is
  ***  assumed.
  ***
- *** returns a moodle friendly $at
+ *** returns a moodle friendly $at, in GMT, which is what Moodle wants
+ ***
+ *** 
  */
-function olson_parse_at ($at, $set = 'set') {
+function olson_parse_at ($at, $set = 'set', $gmtoffset) {
 
     list($hours, $mins) = explode(':', $at);
 
@@ -364,7 +441,6 @@ function olson_parse_at ($at, $set = 'set') {
         if ($set !== 'set'){ // wall clock is on DST, assume by 1hr
             $hours = $hours-1;
         } 
-        trigger_error('TOOD turn this time to gmt');
         return sprintf('%02d:%02d', $hours, $mins);
     }
 
