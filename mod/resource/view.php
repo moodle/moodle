@@ -86,11 +86,9 @@
                              navmenu($course, $cm));
                 echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
             } else if ($frameset == "image") {
-                echo "<html><head>";
-	            echo "<link rel=\"stylesheet\" href=\"$CFG->wwwroot/theme/standard/styles.php\" type=\"text/css\">";
-                echo "</head><body bgcolor=\"$THEME->body\">";
-                echo "<div align=center class=resourceimage><img align=\"center\" src=\"$fullurl\"></div>";
-                echo "</body>";
+                print_header();
+                echo "<center><img class=\"resourceimage\" src=\"$fullurl\"></center>";
+                print_footer($course);
                 
             } else {
                 add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
