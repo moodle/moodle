@@ -52,6 +52,16 @@
         exit;
     }
 
+    //If cancel has been selected, inform and end
+    if ($cancel) {
+        print_header("$site->shortname: $strcourserestore", $site->fullname,
+                     "<A HREF=\"$moodle_home/$CFG->admin/index.php\">$stradministration</A> -> $strcourserestore");
+        print_heading(get_string("restorecancelled"));
+        print_continue("$moodle_home/$CFG->admin/index.php");
+        print_footer();
+        exit;
+    }
+
     //We are here, so me have a file.
     //Print header
     print_header("$site->shortname: $strcourserestore", $site->fullname,
