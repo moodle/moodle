@@ -306,7 +306,7 @@ $string['emailconfirmation'] = '안녕하세요 $a->firstname,
 새로운 계정을 사용하시려면 아래의 웹 주소로 가세요.
 
 만약 도움이 필요하시면, 아래 관리자에게 연락주세요.
-$a ->admin
+$a->admin
 
 $a->link
 
@@ -340,7 +340,7 @@ $string['emailpasswordconfirmsent'] = '이메일이 보내지게 됩니다.<b>$a</b>.
 $string['emailpasswordsent'] = '비밀번호 변경 확인을 해 주셔서 감사합니다.
 <p>새로운 비밀번호가 포함된 이메일이 보내졌습니다.<b>$a->email</b>.
 <p>새비밀번호는 자동으로 생성되었습니다.
-기억하기 쉽도록 <a href=$a->link>비밀번호 변경하기</a> ';
+기억하기 쉽도록 <a href=\"$a->link\">비밀번호 변경하기</a> ';
 $string['enable'] = '사용가능';
 $string['enrolledincourse'] = '배움터 \"$a\" 에  참여함';
 $string['enrolledincoursenot'] = '배움터 \"$a\" 에  참여하지 않음';
@@ -505,7 +505,7 @@ $string['loginsite'] = '사이트에 로그인';
 $string['loginsteps'] = '안녕하세요! 이 웹사이트를 충분히 이용하시려면 새로운 계정을 만들어야 합니다.
   각각의 배움터는 각각 참여키를 갖고 있습니다.
    <OL size=2>
-   <LI> <A HREF=$a>New Account</A> 만들기 양식에 채워넣기
+   <LI> <A HREF=\"$a\">New Account</A> 만들기 양식에 채워넣기
    <LI> 입력한 이메일 주소로 확인 메일이 즉시 전송됩니다.
    <LI>이메일을 읽고, 포함된 웹링크를 클릭합니다.
    <LI>당신의 계정이 등록 확인되고 로그인할 수 있습니다.
@@ -573,7 +573,7 @@ $string['movecategoryto'] = '범주를 옮기기';
 $string['movecourseto'] = '배움터를 옮기기';
 $string['movedown'] = '아래로 옮기기';
 $string['movefilestohere'] = '파일을 여기로 옮기기';
-$string['movefull'] = '$a를 여기로 옮기기';
+$string['movefull'] = '$a 를 여기로 옮기기';
 $string['movehere'] = '여기로 옮기기';
 $string['moveleft'] = '왼쪽으로 옮기기';
 $string['moveright'] = '오른쪽으로 옮기기';
@@ -800,7 +800,7 @@ $string['strftimemonthyear'] = '%%B %%Y';
 $string['strftimerecent'] = '%%d %%b, %%H:%%M';
 $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%I:%%M %%p';
 $string['strftimetime'] = '%%I:%%M %%p';
-$string['stringsnotset'] = '아래의 문자는  $a에 정의되지 않았습니다.';
+$string['stringsnotset'] = '아래의 문자는  $a 에 정의되지 않았습니다.';
 $string['studentnotallowed'] = '\'$a\' 계정으로 이 배움터에 접속할 수 없습니다.';
 $string['students'] = '학생들';
 $string['studentsandteachers'] = '학생들과 교사들';
@@ -840,8 +840,8 @@ $string['undecided'] = '결정 않됨';
 $string['unenrol'] = '탈퇴하다';
 $string['unenrolallstudents'] = '모든학생을 탈퇴시킨다';
 $string['unenrolallstudentssure'] = '이 코스의 모든학생을 탈퇴시키겠습니까?';
-$string['unenrolme'] = '$a에 탈퇴시켜주십시오';
-$string['unenrolsure'] = '$a에서 탈퇴하는 것이 확실합니까? ';
+$string['unenrolme'] = '$a 에 탈퇴시켜주십시오';
+$string['unenrolsure'] = '$a 에서 탈퇴하는 것이 확실합니까? ';
 $string['unfinished'] = '미완성';
 $string['unknowncategory'] = '등록되지 않은 범주';
 $string['unlimited'] = '제한없음';
@@ -863,7 +863,7 @@ $string['upload'] = '업로드';
 $string['uploadafile'] = '파일 업로드';
 $string['uploadedfile'] = '파일업로드 성공';
 $string['uploadedfileto'] = '업로드됨 $a->file to $a->directory';
-$string['uploadedfiletoobig'] = '죄송합니다 파일이 너무큽니다($a이상 불가)';
+$string['uploadedfiletoobig'] = '죄송합니다 파일이 너무큽니다($a 이상 불가)';
 $string['uploadlabel'] = '제목:';
 $string['uploadnofilefound'] = '파일이 선택되지 않았습니다.';
 $string['uploadnotallowed'] = '업로드 할 수 없습니다.';
