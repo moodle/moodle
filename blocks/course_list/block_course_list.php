@@ -85,7 +85,8 @@ class CourseBlock_course_list extends MoodleBlock {
                     $this->content->items[]="<a $linkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
                     $this->content->icons[]=$icon;
                 }
-                $this->content->footer = "<a href=\"$CFG->wwwroot/course/\">".get_string("searchcourses")."</a>...";
+                $this->content->footer = "<a href=\"$CFG->wwwroot/course/\">".get_string("searchcourses")."</a>...<br />".
+                                         "<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
                 $this->title = get_string('categories');
             } else {                          // Just print course names of single category
                 $category = array_shift($categories);
