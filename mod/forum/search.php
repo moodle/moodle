@@ -34,6 +34,7 @@
     $strsearch = get_string("search", "forum");
     $strsearchresults = get_string("searchresults", "forum");
     $strpage = get_string("page");
+    $strmissingsearchterms = get_string('missingsearchterms','forum');
 
     $searchform = forum_print_search_form($course, $search, true, "plain");
 
@@ -54,11 +55,11 @@
     }
 
     if ($search) {
-      $strippedsearch = str_replace("user:","",$search);
-      $strippedsearch = str_replace("subject:","",$strippedsearch);
-      $strippedsearch = str_replace("&quot;","",$strippedsearch);
-        if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
+        $strippedsearch = str_replace("user:","",$search);
+        $strippedsearch = str_replace("subject:","",$strippedsearch);
+        $strippedsearch = str_replace("&quot;","",$strippedsearch);
 
+        if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
 
             print_header_simple("$strsearchresults", "",
                      "<a href=\"index.php?id=$course->id\">$strforums</a> ->
@@ -97,7 +98,7 @@
             if (preg_match('/^\-/',$searchterm)) {
                 unset($searchterms[$key]);
             } else {
-            	$searchterms[$key] = preg_replace('/^\+/','',$searchterm);
+                $searchterms[$key] = preg_replace('/^\+/','',$searchterm);
             }
         }
 
@@ -124,25 +125,26 @@
             $post->subject = $fullsubject;
 
             /// Add the forum id to the post object - used by read tracking.
-                $post->forum = $forum->id;
+            $post->forum = $forum->id;
 
             //Indicate search terms only found in HTML markup
             //Use highlight() with nonsense tags to spot search terms in the
             //actual text content first.
             //fiedorow - 9/2/2005
             $missing_terms = "";
-            $message = highlight($strippedsearch,format_text($post->message, $post->format, NULL, $courseid),0,"<fgw9sdpq4>","</fgw9sdpq4>");
+            $message = highlight($strippedsearch,format_text($post->message, $post->format, NULL, $course->id),
+                                 0,'<fgw9sdpq4>','</fgw9sdpq4>');
             foreach ($searchterms as $searchterm) {
                if (preg_match("/$searchterm/i",$message) && !preg_match('/<fgw9sdpq4>'.$searchterm.'<\/fgw9sdpq4>/i',$message)) {
-                  $missing_terms .= " $searchterm";}
+                  $missing_terms .= " $searchterm";
+               }
             }
-            $message = preg_replace('/<fgw9sdpq4>/','<span class="highlight">',$message);
-            $message = preg_replace('/<\/fgw9sdpq4>/','</span class="highlight">',$message);
+            $message = str_replace('<fgw9sdpq4>','<span class="highlight">',$message);
+            $message = str_replace('</fgw9sdpq4>','</span>',$message);
+
             if ($missing_terms) {
-              $missing_terms_message = get_string('missingsearchterms','forum');
-              $message = "<div><p><span class=\"highlight2\">$missing_terms_message $missing_terms</span class=\"higlight2\"></p></div>" . $message;
+                $post->message = '<p class="highlight2">'.$strmissingsearchterms.' '.$missing_terms.'</p>'.$message;
             }
-            $post->message = $message;
 
             $fulllink = "<a href=\"discuss.php?d=$post->discussion#$post->id\">".get_string("postincontext", "forum")."</a>";
             //search terms already highlighted - fiedorow - 9/2/2005
