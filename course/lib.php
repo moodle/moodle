@@ -324,7 +324,6 @@ function print_recent_activity($course) {
 
     if (! $logs = get_records_select("log", "time > '$timestart' AND ".
                                             "course = '$course->id' AND ".
-                                            "module <> 'course' AND ".
                                             "module <> 'user' AND ".
                                             "action <> 'view' AND ".
                                             "action <> 'view all' ", "time ASC")) {
