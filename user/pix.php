@@ -3,6 +3,8 @@
       // Syntax:   pix.php/userid/f1.jpg or pix.php/userid/f2.jpg
       //     OR:   ?file=userid/f1.jpg or ?file=userid/f2.jpg
 
+    $nomoodlecookie = true;     // Because it interferes with caching
+
     require_once("../config.php");
 
     $lifetime = 86400;

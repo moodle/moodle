@@ -162,17 +162,19 @@
 
     class object {};
     
-    session_name('MoodleSession');
-    @session_start();
-    if (! isset($_SESSION['SESSION'])) { 
-        $_SESSION['SESSION'] = new object; 
+    if (!isset($nomoodlecookie)) {
+        session_name('MoodleSession');
+        @session_start();
+        if (! isset($_SESSION['SESSION'])) { 
+            $_SESSION['SESSION'] = new object; 
+        }
+        if (! isset($_SESSION['USER']))    { 
+            $_SESSION['USER']    = new object; 
+        }
+    
+        $SESSION = &$_SESSION['SESSION'];   // Makes them easier to reference
+        $USER    = &$_SESSION['USER'];
     }
-    if (! isset($_SESSION['USER']))    { 
-        $_SESSION['USER']    = new object; 
-    }
-
-    $SESSION = &$_SESSION['SESSION'];   // Makes them easier to reference
-    $USER    = &$_SESSION['USER'];
 
     if (isset($FULLME)) {
         $ME = $FULLME;
