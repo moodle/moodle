@@ -485,6 +485,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         $joins[] = "l.time > '$date' AND l.time < '$enddate'";
     }
 
+    $selector = '';
     for ($i = 0; $i < count($joins); $i++) {
         $selector .= $joins[$i] . (($i == count($joins)-1) ? " " : " AND ");
     }
