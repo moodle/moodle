@@ -50,6 +50,14 @@
             $assignment->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
             $assignment->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
+            //We have to recode the grade field if it is <0 (scale)
+            if ($assignment->grade < 0) {
+                $scale = backup_getid($restore->backup_unique_code,"scale",abs($assignment->grade));        
+                if ($scale) {
+                    $assignment->grade = -($scale->new_id);       
+                }
+            }
+
             //The structure is equal to the db, so insert the assignment
             $newid = insert_record ("assignment",$assignment);
 
