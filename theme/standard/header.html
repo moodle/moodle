@@ -1,11 +1,11 @@
 <HTML>
 <HEAD>
-    <TITLE><?=$title ?></TITLE>
-    <META NAME="keywords" CONTENT="Moodle, <?=$title ?> ">
-    <?=$meta ?>
-    <LINK REL="stylesheet" HREF="<?=$styles ?>">
-    <LINK REL="SHORTCUT ICON" HREF="<?=$CFG->wwwroot?>/theme/standard/favicon.ico">
-    <? include("$CFG->javascript"); ?>
+<TITLE><?=$title ?></TITLE>
+<META NAME="keywords" CONTENT="Moodle, <?=$title ?> ">
+<?=$meta ?>
+<LINK REL="stylesheet" HREF="<?=$styles ?>">
+<LINK REL="SHORTCUT ICON" HREF="<?=$CFG->wwwroot?>/theme/standard/favicon.ico">
+<? include("$CFG->javascript"); ?>
 </HEAD>
 
 <BODY <? if ($focus) { echo "onLoad=setfocus()"; } ?> bgcolor="<?=$THEME->body ?>" link="#000066" vlink="#222288">
