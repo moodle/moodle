@@ -9,10 +9,73 @@ define('BLOCK_MOVE_RIGHT',  0x02);
 define('BLOCK_MOVE_UP',     0x04);
 define('BLOCK_MOVE_DOWN',   0x08);
 
-define('COURSE_FORMAT_SITE',    0x01);
-define('COURSE_FORMAT_WEEKS',   0x02);
-define('COURSE_FORMAT_TOPICS',  0x04);
-define('COURSE_FORMAT_SOCIAL',  0x08);
+function block_formats_to_array($formatstring) {
+    $retval = array();
+
+    $formats = preg_split('/[+\-]/', $formatstring, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_OFFSET_CAPTURE);
+    if(!empty($formats)) {
+        foreach($formats as $format) {
+            if($format[1] > 0 && substr ($str, $format[1] - 1, 1) === '-') {
+                $retval[$format[0]] = false;
+            }
+            else {
+                $retval[$format[0]] = true;
+            }
+        }
+    }
+
+    return $retval;
+}
+
+function block_remove_inappropriate_from_course(&$course) {
+    $blocks = $course->blockinfo;
+
+    $delimpos = strpos($blocks, ':');
+
+    if($delimpos === false) {
+        // No ':' found, we have all left blocks
+        $leftblocks = explode(',', $blocks);
+        $rightblocks = array();
+    }
+    else if($delimpos === 0) {
+        // ':' at start of string, we have all right blocks
+        $blocks = substr($blocks, 1);
+        $leftblocks = array();
+        $rightblocks = explode(',', $blocks);
+    }
+    else {
+        // Both left and right blocks
+        $leftpart = substr($blocks, 0, $delimpos);
+        $rightpart = substr($blocks, $delimpos + 1);
+        $leftblocks = explode(',', $leftpart);
+        $rightblocks = explode(',', $rightpart);
+    }
+
+    $allblocks = get_records('blocks');
+    if(!empty($leftblocks)) {
+        foreach($leftblocks as $key => $id) {
+            $positiveid = abs($id);
+            $formats = block_method_result($allblocks[$positiveid]->name, 'applicable_formats');
+            if( !(isset($formats[$course->format]) ? $formats[$course->format] : !empty($formats['all']))) {
+                unset($leftblocks[$key]);
+            }
+        }
+    }
+    if(!empty($rightblocks)) {
+        foreach($rightblocks as $key => $id) {
+            $positiveid = abs($id);
+            $formats = block_method_result($allblocks[$positiveid]->name, 'applicable_formats');
+            if( !(isset($formats[$course->format]) ? $formats[$course->format] : !empty($formats['all']))) {
+                unset($rightblocks[$key]);
+            }
+        }
+    }
+
+    $course->blockinfo = implode(',', $leftblocks);
+    if(!empty($rightblocks)) {
+        $course->blockinfo .= ':' . implode(',', $rightblocks);
+    }
+}
 
 // Returns the case-sensitive name of the class' constructor function. This includes both
 // PHP5- and PHP4-style constructors. If no appropriate constructor can be found, returns NULL.
