@@ -1610,6 +1610,9 @@ function clean_filename($string) {
     $string = eregi_replace("\.\.", "", $string);
     $string = eregi_replace("[^(-|[:alnum:]|\.)]", "_", $string);
     $string = eregi_replace(",", "_", $string);
+    $string = eregi_replace("/", "_", $string);
+    $string = eregi_replace("\(", "_", $string);
+    $string = eregi_replace("\)", "_", $string);
     return    eregi_replace("_+", "_", $string);
 }
 
