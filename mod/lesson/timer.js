@@ -63,9 +63,10 @@
 			stopclock = 1;
 		} else {
 			timeleft = starttime + testlength - current;
-			hours = Math.floor(timeleft/(60*60));
-			minutes = Math.floor((timeleft-hours*60)/60);
-			secs = Math.floor((timeleft-hours*60*60-minutes*60));
+			dateobj = new Date(null, null, null, null, null, timeleft, null);
+			hours = dateobj.getHours();
+			minutes = dateobj.getMinutes();
+			secs = dateobj.getSeconds();
 			
 			if (secs < 10) {
 				secs = "0"+secs;
@@ -75,6 +76,9 @@
 			myclock += '<font style="color:'+myfont_color+'; font-family:'+myfont_face+'; font-size:'+myfont_size+'pt;">';
 			if (hours > 0) {
 				myclock += hours+":";
+				if (minutes < 10) {
+					minutes = "0"+minutes;
+				}
 			}
 			myclock += minutes+":"+secs;
 			myclock += '</font>';
