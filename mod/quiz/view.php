@@ -96,6 +96,8 @@
     $strgrade         = get_string("grade");
     $strbestgrade     = get_string("bestgrade", "quiz");
 
+    $mygrade = quiz_get_best_grade($quiz->id, $USER->id);
+
     if ($numattempts) { 
         $table->head = array($strattempt, $strtimetaken, $strtimecompleted, "$strgrade / $quiz->grade");
         $table->align = array("CENTER", "CENTER", "LEFT", "RIGHT");
@@ -106,10 +108,17 @@
             } else {
                 $timetaken = "-";
             }
+            $attemptgrade = format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade);
+            if ($attemptgrade == $mygrade) {
+                $attemptgrade = "<SPAN class=highlight>$attemptgrade</SPAN>";
+            }
+            if (!$available and $quiz->review) {
+                $attemptgrade = "<A HREF=\"report.php?q=$quiz->id&review=$attempt->id\">$attemptgrade</A>";
+            }
             $table->data[] = array( $attempt->attempt, 
                                     format_time($attempt->timefinish - $attempt->timestart),
                                     userdate($attempt->timefinish), 
-                                    format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade) );
+                                    $attemptgrade);
         }
         print_table($table);
     }
@@ -122,7 +131,6 @@
         echo "<P ALIGN=CENTER>".get_string("quizclosed", "quiz", userdate($quiz->timeclose));
     }
 
-    $mygrade = quiz_get_best_grade($quiz->id, $USER->id);
 
     if (!$quiz->questions) {
         print_heading(get_string("noquestions", "quiz"));

@@ -453,10 +453,10 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
                $answer = $answers[$answerid];
                $qnum = $key + 1;
 
-               if ($feedback and $response[$answerid]) {
-                   $checked = "CHECKED";
-               } else {
+               if (empty($feedback) or empty($response[$answerid])) {
                    $checked = "";
+               } else {
+                   $checked = "CHECKED";
                }
                echo "<TR><TD valign=top>";
                if ($options->single) {
@@ -465,14 +465,14 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
                    echo "<INPUT $checked TYPE=CHECKBOX NAME=q$question->id"."a$answer->id VALUE=\"$answer->id\">";
                }
                echo "</TD>";
-               if ($feedback and $correct[$answer->id]) {
-                   echo "<TD valign=top CLASS=highlight>$qnum. $answer->answer</TD>";
-               } else {
+               if (empty($feedback) or empty($correct[$answer->id])) {
                    echo "<TD valign=top>$qnum. $answer->answer</TD>";
+               } else {
+                   echo "<TD valign=top CLASS=highlight>$qnum. $answer->answer</TD>";
                }
-               if ($feedback) {
+               if (!empty($feedback)) {
                    echo "<TD valign=top>&nbsp;";
-                   if ($response[$answerid]) {
+                   if (!empty($response[$answerid])) {
                        quiz_print_comment($feedback[$answerid]);
                    }
                    echo "</TD>";
@@ -498,7 +498,7 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
 function quiz_print_quiz_questions($quiz, $results=NULL) {
 // Prints a whole quiz on one page.
 
-    if (!$quiz->questions) {
+    if (empty($quiz->questions)) {
         notify("No questions have been defined!", "view.php?id=$cm->id");
         return false;
     }
@@ -520,12 +520,20 @@ function quiz_print_quiz_questions($quiz, $results=NULL) {
         $response       = NULL;
         $actualgrades   = NULL;
         $correct        = NULL;
-        if ($results) {
-            $feedback      = $results->feedback[$questionid];
-            $response      = $results->response[$questionid];
-            $actualgrades  = $results->grades[$questionid];
+        if (!empty($results)) {
+            if (!empty($results->feedback[$questionid])) {
+                $feedback      = $results->feedback[$questionid];
+            }
+            if (!empty($results->response[$questionid])) {
+                $response      = $results->response[$questionid];
+            }
+            if (!empty($results->grades[$questionid])) {
+                $actualgrades  = $results->grades[$questionid];
+            }
             if ($quiz->correctanswers) {
-                $correct   = $results->correct[$questionid];
+                if (!empty($results->correct[$questionid])) {
+                    $correct   = $results->correct[$questionid];
+                }
             }
         }
 
@@ -536,7 +544,7 @@ function quiz_print_quiz_questions($quiz, $results=NULL) {
         echo "<BR>";
     }
 
-    if (!$results) {
+    if (empty($results)) {
         echo "<CENTER><INPUT TYPE=submit VALUE=\"".get_string("savemyanswers", "quiz")."\"></CENTER>";
     }
     echo "</FORM>";

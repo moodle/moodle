@@ -6,6 +6,7 @@ $string['modulenameplural'] = "Quizzes";
 #------------------------------------------------------------
 
 $string['addselectedtoquiz'] = "Add selected to quiz";
+$string['allowreview'] = "Allow review";
 $string['alwaysavailable'] = "Always available";
 $string['alreadysubmitted'] = "It is likely that you have already submitted this attempt";
 $string['answer'] = "Answer";
@@ -68,6 +69,8 @@ $string['noanswers'] = "No answers were selected!";
 $string['noattempts'] = "No attempts have been made on this quiz";
 $string['nomoreattempts'] = "No more attempts are allowed";
 $string['noquestions'] = "No questions have been added yet";
+$string['noreview'] = "You are not allowed to review this quiz";
+$string['noreviewuntil'] = "You are not allowed to review this quiz until \$a";
 $string['publish'] = "Publish";
 $string['question'] = "Question";
 $string['questioninuse'] = "The question '\$a' is currently being used:";

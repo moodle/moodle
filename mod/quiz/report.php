@@ -9,6 +9,7 @@
     optional_variable($q);     // quiz ID
 
     optional_variable($attempt);     // A particular attempt ID
+    optional_variable($review);      // A particular attempt ID for review by student
     optional_variable($regrade);     // Regrade all attempts
 
     if ($id) {
@@ -38,8 +39,21 @@
 
     require_login($course->id);
 
+
     if (!isteacher($course->id)) {
-        error("Only teachers can see this page");
+        if (!$quiz->review) {
+            error(get_string("noreview", "quiz"));
+        }
+        if (time() < $quiz->timeclose) {
+            error(get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
+        }
+        if (empty($review)) {
+            error("You are using this script wrongly.");
+        }
+    }
+
+    if (!empty($review)) {
+        $attempt = $review;
     }
 
     add_to_log($course->id, "quiz", "report", "report.php?id=$cm->id", "$quiz->id");
@@ -68,10 +82,16 @@
 
     print_heading($quiz->name);
 
-    if ($attempt) {  // Show a particular attempt
+    if (!empty($attempt)) {  // Show a particular attempt
 
         if (! $attempt = get_record("quiz_attempts", "id", $attempt)) {
             error("No such attempt ID exists");
+        }
+
+        if (!isteacher($course->id)) {
+            if ($attempt->userid != $USER->id) {
+                error("This is not your attempt!");
+            }
         }
 
         if (! $questions = quiz_get_attempt_responses($attempt)) {
@@ -95,18 +115,26 @@
         $table->data[] = array("$strgrade:", "$result->grade/$quiz->grade");
         print_table($table);
 
-        print_continue("report.php?q=$quiz->id");
+        if (empty($review)) {
+            print_continue("report.php?q=$quiz->id");
+        } else {
+            print_continue("view.php?q=$quiz->id");
+        }
 
         $quiz->feedback = true;
         $quiz->correctanswers = true;
         quiz_print_quiz_questions($quiz, $result);
 
-        print_continue("report.php?q=$quiz->id");
+        if (empty($review)) {
+            print_continue("report.php?q=$quiz->id");
+        } else {
+            print_continue("view.php?q=$quiz->id");
+        }
         print_footer($course);
         exit;
     }
 
-    if ($regrade) {
+    if (!empty($regrade)) {
         if (!$attempts = get_records("quiz_attempts", "quiz", $quiz->id)) {
             print_header(get_string("noattempts", "quiz"));
             print_continue("report.php?id=$cm->id");

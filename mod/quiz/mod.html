@@ -28,6 +28,9 @@
     if (empty($form->correctanswers)) {
         $form->correctanswers = "";
     }
+    if (empty($form->review)) {
+        $form->review = "";
+    }
     if (empty($form->grade)) {
         $form->grade = "";
     }
@@ -129,6 +132,18 @@
         $options[1] = get_string("yes");
         choose_from_menu($options, "correctanswers", "$form->correctanswers", "");
         helpbutton("correctanswers", get_string("showcorrectanswer","quiz"), "quiz");
+     ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("allowreview", "quiz") ?>:</B></P></TD>
+    <TD>
+    <?
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "review", "$form->review", "");
+        helpbutton("review", get_string("allowreview","quiz"), "quiz");
      ?>
     </TD>
 </TR>
