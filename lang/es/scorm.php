@@ -2,7 +2,9 @@
       // scorm.php - created with Moodle 1.4 development (2004070800)
 
 
+$string['attr_error'] = 'Valor erróneo para el atributo ($a->attr) en la marca $a->tag.';
 $string['autocontinue'] = 'Continuación automática';
+$string['badmanifest'] = 'Errores manifiestos: ver registro de errores';
 $string['browse'] = 'Navegar';
 $string['browsed'] = 'Navegado';
 $string['browsemode'] = 'Modo Navegación';
@@ -18,9 +20,20 @@ $string['configpopupwidth'] = '¿Cuál debería ser la anchura por defecto de las n
 $string['coursepacket'] = 'Paquete de curso';
 $string['coursestruct'] = 'Estructura de curso';
 $string['datadir'] = 'Error del Sistema: No se puede crear un directorio de datos del curso';
+$string['domxml'] = 'Librería externa DOMXML';
 $string['entercourse'] = 'Introducir el curso SCORM';
+$string['errorlogs'] = 'Registro de errores';
 $string['failed'] = 'Error';
+$string['found'] = 'Encontrado manifiesto';
+$string['gradeaverage'] = 'Calificación promedio';
+$string['gradehighest'] = 'Calificación más alta';
+$string['grademethod'] = 'Método de calificación';
+$string['gradescoes'] = 'Situación de scoes';
+$string['gradesum'] = 'Calificaciones sumadas';
+$string['guestsno'] = 'Los invitados no pueden ver cursos scorm';
 $string['incomplete'] = 'Incompleto';
+$string['missing_attribute'] = 'Falta atributo ($a->attr) en marca $a->tag.';
+$string['missing_tag'] = 'Falta marca $a->tag.';
 $string['mode'] = 'Modo';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms';
@@ -32,21 +45,32 @@ $string['newwidth'] = 'Anchura (en píxels) por defecto de la ventana';
 $string['newwindow'] = 'Nueva ventana';
 $string['newwindowopen'] = 'Mostrar este paquete scorm en una nueva ventana emergente';
 $string['next'] = 'Continuar';
+$string['no_attributes'] = 'La marca $a->tag debe tener atributos';
+$string['no_children'] = 'La marca $a->tag debe tener hijos';
 $string['nomanifest'] = 'Manifiesto no encontrado';
 $string['noreports'] = 'No hay informes que mostrar';
 $string['normal'] = 'Normal';
+$string['not_corr_type'] = 'No concuerda el tipo para la marca $a->tag';
 $string['notattempted'] = 'No se ha intentado';
 $string['packagedir'] = 'Error del Sistema: No se puede crear el directorio del paquete';
 $string['passed'] = 'Pasado';
+$string['php5'] = 'PHP 5 (librería nativa DOMXML)';
+$string['position_error'] = 'La marca $a->tag no puede ser hija de $a->parent tag';
 $string['prev'] = 'Anterior';
 $string['regular'] = 'Manifiesto Regular';
 $string['report'] = 'Informe';
 $string['review'] = 'Revisión';
 $string['scoes'] = 'Scoes';
 $string['score'] = 'Puntuación';
+$string['syntax'] = 'Error de sintaxis';
+$string['tag_error'] = 'Marca desconocida ($a->tag) con este contenido: $a->value';
+$string['too_many_attributes'] = 'La marca $a->tag tiene demasiados atributos';
+$string['too_many_children'] = 'La marca $a->tag tiene demasiados hijos';
 $string['trackingloose'] = 'ADVERTENCIA: ¡Los datos de rastreo de este paquete SCORM se perderán!';
 $string['validateascorm'] = 'Validar un paquete SCORM';
 $string['validation'] = 'Resultado de la validación';
+$string['validationtype'] = 'Esta preferencia ajustga la librería DOMXML usada para validar el Manifiesto SCORM. Si no sabe qué hacer, deje la opción seleccionada.';
+$string['versionwarning'] = 'La versión de manifiesto es anterior a la 1.3, cuidado con la marca $a->tag';
 $string['viewallreports'] = 'Ver informes de $a intentos';
 
 ?>

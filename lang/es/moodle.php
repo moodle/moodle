@@ -1,5 +1,6 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004062600)
+      // moodle.php - created with Moodle 1.4 development (2004070800)
+
 
 $string['action'] = 'Acción';
 $string['active'] = 'Activa';
@@ -27,7 +28,6 @@ $string['addnewuser'] = 'Agregar usuario';
 $string['address'] = 'Dirección';
 $string['addstudent'] = 'Agregar estudiante';
 $string['addteacher'] = 'Agregar profesor';
-$string['advancedfilter'] = 'Búsqueda avanzada';
 $string['admin'] = 'Admin';
 $string['adminhelpaddnewuser'] = 'Crear una nueva cuenta manualmente';
 $string['adminhelpassignadmins'] = 'Los administradores pueden hacer cualquier cosa en cualquier parte del sitio';
@@ -55,6 +55,7 @@ $string['adminhelpusers'] = 'Definir los usuarios y configurar la autenticación'
 $string['administration'] = 'Administración';
 $string['administrator'] = 'Administador';
 $string['administrators'] = 'Administradores';
+$string['advancedfilter'] = 'Búsqueda avanzada';
 $string['again'] = 'de nuevo';
 $string['all'] = 'Todos';
 $string['allactivities'] = 'Todas las actividades';
@@ -373,6 +374,7 @@ $string['enrolments'] = 'Matriculaciones';
 $string['entercourse'] = 'Haga clic aquí para entrar al curso';
 $string['enteremailaddress'] = 'Escriba su dirección de correo electrónico.
 Le enviaremos una nueva contraseña.';
+$string['entries'] = 'Entradas';
 $string['error'] = 'Error';
 $string['errortoomanylogins'] = 'Lo sentimos, ha excedido el número permitido de intentos. Reinicie su navegador para intentarlo de nuevo.';
 $string['errorwhenconfirming'] = 'Ha ocurrido un error, por lo que usted aún no ha sido confirmado. Si llegó aquí a través de un enlace en su correo electrónico, asegúrese de que esa línea  en su correo no esté rota o cortada. De ser así, tendrá que utilizar copiar y pegar para reconstruir adecuadamente el enlace.';
@@ -391,14 +393,14 @@ $string['files'] = 'Archivos';
 $string['filesfolders'] = 'Archivos/directorios';
 $string['filloutallfields'] = 'Por favor rellene todos los campos de este formulario';
 $string['findmorecourses'] = 'Encontrar más cursos...';
-$string['firstdayofweek'] = '1'; //0-Domingo, 1-Lunes,....6-Sábado
+$string['firstdayofweek'] = '1';
 $string['firstname'] = 'Nombre';
 $string['firsttime'] = '¿Es la primera vez que accede a este sitio?';
 $string['followingoptional'] = 'Los siguientes datos son opcionales';
 $string['followingrequired'] = 'Los siguientes datos son indispensables';
 $string['force'] = 'Forzar';
-$string['forcelanguage'] = 'Forzar idioma';
 $string['forcedmode'] = 'Modo forzado';
+$string['forcelanguage'] = 'Forzar idioma';
 $string['forceno'] = 'No forzar';
 $string['forgotten'] = '¿Olvidó su nombre de usuario o contraseña?';
 $string['format'] = 'Formato';
@@ -543,7 +545,7 @@ $string['loginguest'] = 'Entrar como invitado';
 $string['loginsite'] = 'Entrar al sitio';
 $string['loginsteps'] = 'Hola. Para acceder al sistema tómese un minuto para
 crear una cuenta.
-Cada curso puede disponer de una &quot;contraseña&quot;
+Cada curso puede disponer de una \"contraseña\"
 que sólo tendrá que usar la primera vez.
 Estos son los pasos:
    <OL size=2>
@@ -655,8 +657,7 @@ sobre la que puede hacer clic. Si eso no sucede, copie y
 pegue la dirección en la barra de direcciones de su navegador.
 
 Atte. El Administrador de \'$a->sitename\',
-$a->signoff
-';
+$a->signoff';
 $string['newpicture'] = 'Imagen nueva';
 $string['newsitem'] = 'ítem de noticias';
 $string['newsitems'] = 'ítems de noticias';
@@ -784,8 +785,8 @@ $string['restoreto'] = 'Restaurar a ';
 $string['returningtosite'] = '¿Ha estado antes en este sitio?';
 $string['revert'] = 'Revertir';
 $string['role'] = 'Papel';
-$string['rsstype'] = 'Canal RSS para esta actividad';
 $string['rssarticles'] = 'Número de artículos recientes RSS';
+$string['rsstype'] = 'Canal RSS para esta actividad';
 $string['savechanges'] = 'Guardar cambios';
 $string['saveto'] = 'Guardar en';
 $string['scale'] = 'Escala';
