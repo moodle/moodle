@@ -145,6 +145,11 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2003050401) {
         table_column("user", "", "lang", "VARCHAR", "5", "", "$CFG->lang" ,"NOT NULL","");
     }
+
+    if ($oldversion < 2003050900) {
+        table_column("modules", "", "visible", "integer", "1", "unsigned", "1", "", "");
+    }
+
     return $result;
 }
 ?>    

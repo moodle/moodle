@@ -379,6 +379,10 @@ function main_upgrade($oldversion=0) {
         table_column("course_sections", "", "visible", "integer", "1", "unsigned", "1", "", "");
     }
 
+    if ($oldversion < 2003050900) {
+        table_column("modules", "", "visible", "integer", "1", "unsigned", "1", "", "");
+    }
+
     return $result;
 
 }

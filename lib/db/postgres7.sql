@@ -91,7 +91,8 @@ CREATE TABLE prefix_modules (
    version integer NOT NULL default '0',
    cron integer NOT NULL default '0',
    lastcron integer NOT NULL default '0',
-   search varchar(255) NOT NULL default ''
+   search varchar(255) NOT NULL default '',
+   visible integer NOT NULL default '1'
 );
 
 CREATE TABLE prefix_user (
