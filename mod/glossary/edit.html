@@ -25,7 +25,7 @@ if (isset($errors)) {
     <?php
         $categories = get_records("glossary_categories","glossaryid",$glossary->id,'name ASC');
         echo "<select size=\"5\" name=\"categories[]\" multiple=\"yes\">";
-        echo "<option value=\"0\">" . get_string("notcategorised","glossary") . "</optioon>";
+        echo "<option value=\"0\">" . get_string("notcategorised","glossary") . "</option>";
 
         if ( $categories ) {
             foreach ( $categories as $category ) {
@@ -38,6 +38,7 @@ if (isset($errors)) {
                 echo "value=\"$category->id\">$category->name</option>\n";
             }
         }
+        echo "</select>\n";
     ?>
           </td>
         </tr>
