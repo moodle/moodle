@@ -53,6 +53,7 @@
     $strbestgrade  = get_string("bestgrade", "quiz");
     $strquizcloses = get_string("quizcloses", "quiz");
     $strattempts = get_string("attempts", "quiz");
+    $strusers  = get_string("users");
 
     if (isteacher($course->id)) {
         $gradecol = $strattempts;
@@ -95,9 +96,10 @@
 
         if (isteacher($course->id)) {
             if ($allanswers = get_records("quiz_grades", "quiz", $quiz->id)) {
-                $answercount = count($allanswers);
-                $gradecol = "<a href=\"report.php?id=$quiz->coursemodule\">" .
-                            get_string("viewallanswers","quiz",$answercount)."</a>";
+                $attemptcount = count_records_select("quiz_attempts", "quiz = '$quiz->id' AND timefinish > 0");
+                $usercount = count_records("quiz_grades", "quiz", "$quiz->id");
+                $strviewallanswers  = get_string("viewallanswers","quiz",$attemptcount);
+                $gradecol = "<a href=\"report.php?q=$quiz->id\">$strviewallanswers ($usercount $strusers)</a>";
             } else {
                 $answercount = 0;
                 $gradecol = "";
