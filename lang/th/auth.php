@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.7 (2002121000)
+      // auth.php - created with Moodle 1.0.8 (2003010601)
 
 
 $string['auth_dbdescription'] = "วิธีนี้เป็นการใช้ฐานข้อมูลนอกในการตรวจสอบ ว่า ชื่อและรหัสผ่าน นั้นถูกต้องหรือไม่ ถ้าหาก account ดังกล่าวเป็น ข้อมูลใหม่ ข้อมูลจะถูกส่งไปยังส่วนต่างๆ ใน Moodle";
@@ -9,6 +9,7 @@ $string['auth_dbfielduser'] = "ส่วนที่มีข้อมูลของ usernames";
 $string['auth_dbhost'] = "คอมพิวเตอร์ที่ใช้ เก็บฐานข้อมูล";
 $string['auth_dbname'] = "ชื่อของฐานข้อมูล";
 $string['auth_dbpass'] = "password ตรงกับ username";
+$string['auth_dbpasstype'] = "ระบุรูปแบบที่จะใช้ในช่องใส่ password  การใช้ MD5 encrption มีประโยชน์ในการติดต่อกับโปรแกรมการจัดการเว็บอื่นๆ เช่น PostNuke";
 $string['auth_dbtable'] = "ชื่อของตารางในฐานข้อมูล";
 $string['auth_dbtitle'] = "ใช้ฐานข้อมูลนอก";
 $string['auth_dbtype'] = "ประเภทของฐานข้อมูล(ดูข้อมูลเพิ่มเติมจาก  <A HREF=../lib/adodb/readme.htm#drivers>ADOdb documentation</A> )";
@@ -46,8 +47,10 @@ $string['authinstructions'] = "คุณสามารถให้ข้อมูลกับผู้ใช้ และแนะนำวิธีการใช้ ผ่
 $string['changepassword'] = "เปลี่ยนรหัส URL";
 $string['changepasswordhelp'] = "คุณสามารถระบุลิงค์ ที่ผู้ใช้สามารถจะเปลี่ยน หรือ หา ชื่อ และ รหัสผ่านได้ เมื่อมีการลืม ลิงค์ดังกล่าวจะนำผู้ใช้ไปยังหน้า ล็อกอิน และหน้าข้อมูลส่วนตัว แต่หากไม่เติมอะไร ปุ่มดังกล่าวจะไม่ปรากฎ";
 $string['chooseauthmethod'] = "เลือกวิธีการอนุมัติ";
-$string['guestloginbutton'] = "ปุ่ม Guest Login";
+$string['guestloginbutton'] = "ปุ่ม login สำหรับบุคคลทั่วไป";
 $string['instructions'] = "วิธีใช้";
-$string['showguestlogin'] = "คุณสามารถซ่อนหรือแสดงปุ่ม Guest Login ในหน้า ล็อกอินได้ ";
+$string['md5'] = "MD5  encryption ";
+$string['plaintext'] = "ตัวหนังสือธรรมดา";
+$string['showguestlogin'] = "คุณสามารถซ่อนหรือแสดงปุ่ม Login สำหรับบุคคลทั่วไปในหน้า ล็อกอินได้ ";
 
 ?>

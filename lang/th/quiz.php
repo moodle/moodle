@@ -1,15 +1,16 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.7 (2002121000)
+      // quiz.php - created with Moodle 1.0.8 (2003010601)
 
 
 $string['addselectedtoquiz'] = "เพิ่มคำถามที่เลือกไว้ลงแบบทดสอบ";
+$string['allowreview'] = "อนุญาตให้ทำแบบทดสอบใหม่";
 $string['alreadysubmitted'] = "เป็นไปได้ว่าคุณได้ส่งคำตอบไปแล้ว";
 $string['alwaysavailable'] = "ทำได้ตลอด";
 $string['answer'] = "คำตอบ";
 $string['answerhowmany'] = "คำตอบเดียวหรือหลายคำตอบ";
 $string['answersingleno'] = "มีหลายคำตอบได้";
 $string['answersingleyes'] = "คำตอบเดียวเท่านั้น";
-$string['attempt'] = "\$a ครั้ง";
+$string['attempt'] = "ครั้งที่ \$a ";
 $string['attemptfirst'] = "ตอบครั้งแรก";
 $string['attemptlast'] = "ตอบครั้งสุดท้าย";
 $string['attemptquiznow'] = "ทำแบบทดสอบตอนนี้ ";
@@ -32,7 +33,7 @@ $string['correctanswer'] = "คำตอบที่ถูกต้อง";
 $string['correctanswers'] = "คำตอบที่ถูกต้อง";
 $string['createnewquestion'] = "สร้างคำถามใหม่";
 $string['daysavailable'] = "จำนวนวันที่เปิดให้ตอบ ";
-$string['default'] = "ค่าที่ระบบตั้งไว้";
+$string['default'] = "Defauสะ";
 $string['defaultinfo'] = "ตั้งค่า ประเภท ให้เป็น default สำหรับคำถาม";
 $string['deletequestioncheck'] = "แน่ใจนะคะว่าต้องการลบ '\$a'?";
 $string['editcategories'] = "แก้ไขประเภท";
@@ -59,6 +60,8 @@ $string['guestsno'] = "ขออภัยค่ะ guest ไม่สามารถทำแบบทดสอบได้ ";
 $string['imagedisplay'] = "ภาพที่ต้องการแสดง";
 $string['introduction'] = "คำนำ";
 $string['marks'] = "คะแนน";
+$string['missingname'] = "ขาดชื่อคำถาม";
+$string['missingquestiontext'] = "ขาดเนื้อหาคำถาม";
 $string['modulename'] = "แบบทดสอบ";
 $string['modulenameplural'] = "แบบทดสอบ";
 $string['multichoice'] = "ปรนัย";
@@ -66,6 +69,8 @@ $string['noanswers'] = "คุณไม่ได้เลือกคำตอบ";
 $string['noattempts'] = "คุณไม่ได้ทำแบบทดสอบ";
 $string['nomoreattempts'] = "หมดสิทธิ์ทำแบบทดสอบแล้ว";
 $string['noquestions'] = "ยังไม่มีคำถามในแบบทดสอบ";
+$string['noreview'] = "คุณไม่ได้รับอนุญาตให้ทำแบบทดสอบนี้ใหม่";
+$string['noreviewuntil'] = "คุณไม่ได้รับอนุญาตให้ทำแบบทดสอบนี้ใหม่ จนกว่า ";
 $string['publish'] = "เผยแพร่";
 $string['question'] = "คำถาม";
 $string['questioninuse'] = "คำถาม '\$a'  กำลังถูกใช้";
@@ -80,7 +85,7 @@ $string['random'] = "แบบสุ่ม";
 $string['readytosend'] = "คุณกำลังจะส่งแบบทดสอบค่ะ  ต้องการส่งรึเปล่าคะ";
 $string['regrade'] = "ให้คะแนนแต่ละครั้งที่ทำใหม่";
 $string['regradecomplete'] = "ให้คะแนนแบบทดสอบแต่ละครั้งใหม่แล้วค่ะ";
-$string['regradecount'] = "\$a->changed out of \$a->attempt grades were changed";
+$string['regradecount'] = "คะแนน \$a->changed out of \$a->attempt  ได้รับการเปลี่ยนแปลงแล้ว";
 $string['rename'] = "เปลี่ยนชื่อ";
 $string['report'] = "รายงาน";
 $string['save'] = "บันทึก";
