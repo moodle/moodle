@@ -71,7 +71,7 @@
 
     if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $editing) {
         echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
-        blocks_print_group($PAGE, $pageblocks[BLOCK_POS_LEFT]);
+        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         echo '</td>';
     }
 
@@ -186,10 +186,7 @@
             echo '<div align="center">'.update_course_icon($SITE->id).'</div>';
             echo '<br />';
         }
-        blocks_print_group($PAGE, $pageblocks[BLOCK_POS_RIGHT]);
-        if ($editing) {
-            blocks_print_adminblock($PAGE, $pageblocks);
-        }
+        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
         echo '</td>';
     }
 ?>

@@ -202,17 +202,17 @@ function blocks_have_content(&$instances) {
 
 // This function prints one group of blocks in a page
 // Parameters passed by reference for speed; they are not modified.
-function blocks_print_group(&$page, &$instances) {
-    
-    if(empty($instances)) {
+function blocks_print_group(&$page, &$pageblocks, $position) {
+
+    if(empty($pageblocks[$position])) {
         return;
     }
 
     $isediting = $page->user_is_editing();
 
-    $maxweight = max(array_keys($instances));
+    $maxweight = max(array_keys($pageblocks[$position]));
 
-    foreach($instances as $instance) {
+    foreach($pageblocks[$position] as $instance) {
         $block = blocks_get_record($instance->blockid);
         if(!$block->visible) {
             // Disabled by the admin
@@ -250,6 +250,11 @@ function blocks_print_group(&$page, &$instances) {
             $obj->_print_block();
         }
     }
+
+    if($page->blocks_default_position() == $position) {
+        blocks_print_adminblock($page, $pageblocks);
+    }
+
 }
 
 // This iterates over an array of blocks and calculates the preferred width
