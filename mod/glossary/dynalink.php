@@ -2,28 +2,36 @@
 
     function glossary_dynamic_link($courseid, $text,$glossaryid = NULL) {
     global $CFG;
-    static $entries;
-    static $glossary;
-        if ( !$glossary ) {
-            $PermissionGranted = 1;
+    static $entries;     // to avoid repeated calls to database
+    static $glossary;    //    even when dealing with the same glossary
+    
+        if ( !$glossary and !$glossaryid ) {
+            $PermissionGranted = 1;   // if it is the first call and no glossary was specify
         } elseif ( $glossaryid ) {
-            if ( $glossary->id != $glossaryid ) {
-                $PermissionGranted = 1;
+            if ( $glossary ) {   // if it is not the first call
+                if ( $glossary->id != $glossaryid ) {   // ...and the specified glossary is different from the previous call
+                    $PermissionGranted = 1;
+                }
             } else {
+                $PermissionGranted = 1;   // if it is the first call and a glossary was specify
             }
-        } else {
-            $PermissionGranted = 1;
         }
         if ( $PermissionGranted ) {
-            if ( !$glossaryid ) {
+            if ( !$glossaryid ) {  // If no glossary was specify, fetch the main glossary of the course
                 $glossary = get_record("glossary","course",$courseid,"mainglossary",1);
-            } else {
+            } else {               // if a glossary as specify, fetch this one
                 $glossary = get_record("glossary","course",$courseid,"id",$glossaryid);
             }
         }
         if ( $glossary ) {
             if ( !$entries ) {
-                // char_lenght is compatible with PostGreSQL and MySQL. Other DBMS must be implemented
+                // char_lenght is compatible with PostgreSQL and MySQL. Other DBMS must be implemented
+                
+                /* I'm ordering the cursor by the lenght of the concept trying to avoid the bug that occurs
+                      when a concept in contained in other entry's concept (i.e. HOUSE is in DOLL HOUSE).
+                      However, I haven't find a solution yet.
+                      Will (Sept. 30, 2003)
+                */
                 if ($CFG->dbtype == "postgres7" or $CFG->dbtype == "mysql") {
                     $ORDER_BY = "CHAR_LENGTH(concept) DESC";
                 } else {
