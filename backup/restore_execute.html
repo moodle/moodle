@@ -85,7 +85,7 @@
             echo "</ul>";
             //If we have selected to restore deleting, we do it now.
             if ($restore->deleting) {
-                echo "<li>".get_string("deletingcoursedata");
+                echo "<li>".get_string("deletingolddata");
                 $status = remove_course_contents($restore->course_id,false) and 
                           delete_dir_contents($CFG->dataroot."/".$restore->course_id,"backupdata");
                 if ($status) {
