@@ -24,9 +24,21 @@
     optional_variable($rsstype);
     optional_variable($item);
     
+    $straddedit = get_string('block_rss_feeds_add_edit', 'block_rss_client');
+    if ( isadmin() ) {
+        $stradmin = get_string('administration');
+        $strconfiguration = get_string('configuration');
+        $navigation = "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradmin</a> -> ".
+        "<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">$strconfiguration</a> -> $straddedit";
+    } else if ($courseid != 'none' && $course = get_record('course', 'id', $courseid) ) {
+        $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $straddedit";
+    } else {
+        $navigation = $straddedit;
+    }
+    
     print_header(get_string('block_rss_feeds_add_edit', 'block_rss_client'), 
                  get_string('block_rss_feeds_add_edit', 'block_rss_client'), 
-                 get_string('block_rss_feeds_add_edit', 'block_rss_client') );
+                 $navigation );
 
     //check to make sure that the user is allowed to post new feeds
     $submitters = $CFG->block_rss_client_submitters;
@@ -101,11 +113,13 @@
         if ($rss === false) {
             print 'There was an error loading this rss feed. You may want to verify the url you have specified before using it.'; //Daryl Hawes note: localize this line
         } else {
-        
+            print_object($rss);
+            
             $dataobject->id = $rssid;
             if (!empty($rss->channel['description'])) {
                 $dataobject->description = addslashes($rss->channel['description']);
-            } else if (!empty($rss->channel['title'])) {
+            }
+            if (!empty($rss->channel['title'])) {
                 $dataobject->title = addslashes($rss->channel['title']);
             } 
             if (!update_record('block_rss_client', $dataobject)) {
