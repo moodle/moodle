@@ -16,7 +16,7 @@ function mimeinfo($element, $filename) {
         "wav"  => array ("type"=>"audio/wav", "icon"=>"audio.gif"),
         "mp3"  => array ("type"=>"audio/mp3", "icon"=>"audio.gif"),
         "au"   => array ("type"=>"audio/au", "icon"=>"audio.gif"),
-        "swf"  => array ("type"=>"application/x-shockwave-flash", "icon"=>"image.gif"),
+        "swf"  => array ("type"=>"application/x-shockwave-flash", "icon"=>"flash.gif"),
         "pdf"  => array ("type"=>"application/pdf", "icon"=>"pdf.gif"),
         "doc"  => array ("type"=>"application/msword", "icon"=>"word.gif"),
         "ppt"  => array ("type"=>"application/vnd.ms-powerpoint", "icon"=>"powerpoint.gif"),
