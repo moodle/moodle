@@ -656,16 +656,7 @@ function get_records($table, $field='', $value='', $sort='', $fields='*', $limit
     }
 
     if ($limitfrom !== '') {
-        switch ($CFG->dbtype) {
-            case 'mysql':
-                 $limit = 'LIMIT '. $limitfrom .','. $limitnum;
-                 break;
-            case 'postgres7':
-                 $limit = 'LIMIT '. $limitnum .' OFFSET '. $limitfrom;
-                 break;
-            default:
-                 $limit = 'LIMIT '. $limitnum .','. $limitfrom;
-        }
+        $limit = sql_paging_limit($limitfrom, $limitnum);
     } else {
         $limit = '';
     }
@@ -704,16 +695,7 @@ function get_records_select($table, $select='', $sort='', $fields='*', $limitfro
     }
 
     if ($limitfrom !== '') {
-        switch ($CFG->dbtype) {
-            case 'mysql':
-                 $limit = 'LIMIT '. $limitfrom .','. $limitnum;
-                 break;
-            case 'postgres7':
-                 $limit = 'LIMIT '. $limitnum .' OFFSET '. $limitfrom;
-                 break;
-            default:
-                 $limit = 'LIMIT '. $limitnum .','. $limitfrom;
-        }
+        $limit = sql_paging_limit($limitfrom, $limitnum);
     } else {
         $limit = '';
     }
@@ -1462,22 +1444,9 @@ function get_course_students($courseid, $sort='s.timeaccess', $dir='', $page=0, 
                           $page, $recordsperpage, $fields ? $fields : '*');
     }
 
-    switch ($CFG->dbtype) {
-        case 'mysql':
-             $fullname = ' CONCAT(firstname," ",lastname) ';
-             $limit = 'LIMIT '. $page .','. $recordsperpage;
-             $LIKE = 'LIKE';
-             break;
-        case 'postgres7':
-             $fullname = " firstname||' '||lastname ";
-             $limit = 'LIMIT '. $recordsperpage .' OFFSET '.($page);
-             $LIKE = 'ILIKE';
-             break;
-        default:
-             $fullname = ' firstname||" "||lastname ';
-             $limit = 'LIMIT '. $recordsperpage .','. $page;
-             $LIKE = 'ILIKE';
-    }
+    $limit     = sql_paging_limit($page, $recordsperpage);
+    $LIKE      = sql_ilike();
+    $fullname  = sql_fullname('u.firstname','u.lastname');
 
     $groupmembers = '';
 
@@ -1658,19 +1627,8 @@ function get_course_users($courseid, $sort='timeaccess DESC', $exceptions='', $f
 function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions='') {
     global $CFG;
 
-    switch ($CFG->dbtype) {
-        case 'mysql':
-             $fullname = ' CONCAT(u.firstname," ",u.lastname) ';
-             $LIKE = 'LIKE';
-             break;
-        case 'postgres7':
-             $fullname = " u.firstname||' '||u.lastname ";
-             $LIKE = 'ILIKE';
-             break;
-        default:
-             $fullname = ' u.firstname||" "||u.lastname ';
-             $LIKE = 'ILIKE';
-    }
+    $LIKE      = sql_ilike();
+    $fullname  = sql_fullname('u.firstname', 'u.lastname');
 
     if (!empty($exceptions)) {
         $except = ' AND u.id NOT IN ('. $exceptions .') ';
@@ -1762,22 +1720,9 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
 
     global $CFG;
 
-    switch ($CFG->dbtype) {
-        case 'mysql':
-             $limit = 'LIMIT '. $page .','. $recordsperpage;
-             $fullname = ' CONCAT(firstname," ",lastname) ';
-             $LIKE = 'LIKE';
-             break;
-        case 'postgres7':
-             $limit = 'LIMIT '. $recordsperpage .' OFFSET '.($page);
-             $fullname = " firstname||' '||lastname ";
-             $LIKE = 'ILIKE';
-             break;
-        default:
-             $limit = 'LIMIT '. $recordsperpage .','. $page;
-             $fullname = ' firstname||" "||lastname ';
-             $LIKE = 'ILIKE';
-    }
+    $limit     = sql_paging_limit($page, $recordsperpage);
+    $LIKE      = sql_ilike();
+    $fullname  = sql_fullname();
 
     $select = 'username <> \'guest\' AND deleted = 0';
 
@@ -1837,22 +1782,9 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
 
     global $CFG;
 
-    switch ($CFG->dbtype) {
-        case 'mysql':
-             $limit = 'LIMIT '. $page .','. $recordsperpage;
-             $fullname = ' CONCAT(firstname," ",lastname) ';
-             $LIKE = 'LIKE';
-             break;
-        case 'postgres7':
-             $limit = 'LIMIT '. $recordsperpage .' OFFSET '.($page);
-             $fullname = ' firstname||\' \'||lastname ';
-             $LIKE = 'ILIKE';
-             break;
-        default:
-             $limit = 'LIMIT '. $recordsperpage .','. $page;
-             $fullname = ' firstname||\' \'||lastname ';
-             $LIKE = 'LIKE';
-    }
+    $limit     = sql_paging_limit($page, $recordsperpage);
+    $LIKE      = sql_ilike();
+    $fullname  = sql_fullname();
 
     $select = 'deleted <> 1';
 
@@ -2154,16 +2086,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     }
 
     if ($limitfrom !== "") {
-        switch ($CFG->dbtype) {
-            case "mysql":
-                 $limit = "LIMIT $limitfrom,$limitnum";
-                 break;
-            case "postgres7":
-                 $limit = "LIMIT $limitnum OFFSET $limitfrom";
-                 break;
-            default:
-                 $limit = "LIMIT $limitnum,$limitfrom";
-        }
+        $limit = sql_paging_limit($limitfrom, $limitnum);
     } else {
         $limit = "";
     }
@@ -2240,16 +2163,7 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 
     global $CFG;
 
-    switch ($CFG->dbtype) {
-        case 'mysql':
-             $limit = 'LIMIT '. $page .','. $recordsperpage;
-             break;
-        case 'postgres7':
-             $limit = 'LIMIT '. $recordsperpage .' OFFSET '.$page;
-             break;
-        default:
-             $limit = 'LIMIT '. $recordsperpage .','. $page;
-    }
+    $limit = sql_paging_limit($page, $recordsperpage);
 
     //to allow case-insensitive search for postgesql
     if ($CFG->dbtype == 'postgres7') {
@@ -2739,16 +2653,7 @@ function get_logs($select, $order='l.time DESC', $limitfrom='', $limitnum='', &$
     global $CFG;
 
     if ($limitfrom !== '') {
-        switch ($CFG->dbtype) {
-            case 'mysql':
-                 $limit = 'LIMIT '. $limitfrom .','. $limitnum;
-                 break;
-            case 'postgres7':
-                 $limit = 'LIMIT '. $limitnum .' OFFSET '. $limitfrom;
-                 break;
-            default:
-                 $limit = 'LIMIT '. $limitnum .','. $limitfrom;
-        }
+        $limit = sql_paging_limit($limitfrom, $limitnum);
     } else {
         $limit = '';
     }
@@ -2869,7 +2774,53 @@ function print_object($object) {
     echo '</pre>';
 }
 
+/**
+ * Returns the proper SQL to do paging
+ *
+ */
+function sql_paging_limit($page, $recordsperpage) {
+    global $CFG;
 
+    switch ($CFG->dbtype) {
+        case 'postgres7':
+             return 'LIMIT '. $recordsperpage .' OFFSET '. $page;
+        default:
+             return 'LIMIT '. $page .','. $recordsperpage;
+    }
+}
+
+/**
+ * Returns the proper SQL to do LIKE in a case-insensitive way
+ *
+ */
+function sql_ilike() {
+    global $CFG;
+
+    switch ($CFG->dbtype) {
+        case 'mysql':
+             return 'LIKE';
+        default:
+             return 'ILIKE';
+    }
+}
+
+
+/**
+ * Returns the proper SQL to do LIKE in a case-insensitive way
+ *
+ */
+function sql_fullname($firstname='firstname',$lastname='lastname') {
+    global $CFG;
+
+    switch ($CFG->dbtype) {
+        case 'mysql':
+             return ' CONCAT('.$firstname.'," ",'.$lastname.') ';
+        case 'postgres7':
+             return " ".$firstname."||' '||".$lastname." ";
+        default:
+             return ' '.$firstname.'||" "||'.$lastname.' ';
+    }
+}
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
