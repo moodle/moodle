@@ -94,6 +94,7 @@ $string['postrating1'] = 'Mostly Separate Knowing';
 $string['postrating2'] = 'Separate and Connected';
 $string['postrating3'] = 'Mostly Connected Knowing';
 $string['posts'] = 'Posts';
+$string['posttoforum'] = 'Post to forum';
 $string['postupdated'] = 'Your post was updated';
 $string['processingpost'] = 'Processing post $a';
 $string['prune'] = 'Break off';
