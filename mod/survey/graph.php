@@ -49,6 +49,8 @@
     $strpreferredclass = get_string("preferredclass", "survey");
     $strpreferredstudent = get_string("preferredstudent", "survey", $course->student);
 
+    $virtualscales = false; //set default value for case clauses
+
     switch ($type) {
 
      case "question.png":
@@ -248,6 +250,7 @@
      case "overall.png":
 
        $qqq = get_records_list("survey_questions", "id", $survey->questions);
+       
 
        foreach ($qqq as $key => $qq) {
            if ($qq->multi) {
@@ -260,9 +263,9 @@
        }
        foreach ($qqq as $qq) {         // if any virtual, then use JUST virtual, else use JUST nonvirtual
            if ($qq->multi) {
-               if (!empty($virtualscales) && $qq->type < 0) {
+               if ($virtualscales && $qq->type < 0) {
                    $question[] = $qq;
-               } else if (empty($virtualscales) && $qq->type > 0) {
+               } else if (!$virtualscales && $qq->type > 0) {
                    $question[] = $qq;
                }
            }
