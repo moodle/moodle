@@ -385,9 +385,9 @@ function get_array_of_activities($courseid) {
                    // This part is an ugly hack that doesn't belong here//
                    if ($mod[$seq]->mod == "resource") {
                        if ($resource = get_record("resource", "id", $rawmods[$seq]->instance)) {
-                           if ($resource->type == 5 and $resource->alltext) {
+                           if (($resource->type == 3 or $resource->type == 5) and !empty($resource->alltext)) {
                                $mod[$seq]->extra = urlencode("target=\"resource$resource->id\" onClick=\"return ".
-                                                   "openpopup('/mod/resource/view.php?id=".
+                                                   "openpopup('/mod/resource/view.php?inpopup=true&id=".
                                                    $mod[$seq]->cm.
                                                    "','resource$resource->id','$resource->alltext');\"");
                            }

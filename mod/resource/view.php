@@ -86,6 +86,8 @@
                 $fullurl = "$CFG->wwwroot/file.php?file=/$course->id/$resource->reference";
             }
 
+            $inpopup = !empty($_GET["inpopup"]);
+
             $embedded = false;
 
             if (mimeinfo("icon", $fullurl) == "image.gif") {  //  It's an image
@@ -93,11 +95,20 @@
                 $resourceimage = true;
             } else {
                 $resourceimage = false;
-            }
+            } // Later, look for more things to embed
 
-            // (could check for more embeddable media here...)
+            if ($inpopup) {
+                add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
+                if ($embedded) {
+                    print_header($pagetitle);
+                    echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
+                } else {
+                    redirect($fullurl);
+                    break;
+                }
 
-            if ($frameset == "top" or $embedded) {
+            } else if ($frameset == "top" or $embedded) {
+
                 if ($frameset == "top") {
                     $targetwindow = "parent";
                 } else {
@@ -118,7 +129,9 @@
                     echo "<center><img class=\"resourceimage\" src=\"$fullurl\"></center>";
                     echo "<br />";
                 }
-                print_footer($course);
+                if (!$inpopup) {
+                    print_footer($course);
+                }
                 
             } else {               // Display resource in a frame of it's own.
                 echo "<head><title>$course->shortname: $resource->name</title></head>\n";
