@@ -15,9 +15,9 @@
           <br />
       
           <select name="iselect" size="20" id="iselect" 
-                  onclick="filters.add.disabled=true;
-                           filters.remove.disabled=false;
-                           filters.uselect.selectedIndex=-1;">
+                  onclick="document.filters.add.disabled=true;
+                           document.filters.remove.disabled=false;
+                           document.filters.uselect.selectedIndex=-1;">
           <?php 
               $runscript = "";
               foreach ($installedfilters as $filter) {
@@ -44,9 +44,9 @@
           <?php p($strinactive) ?>
           <br />
           <select name="uselect" size="20" id="select" 
-                  onclick="filters.add.disabled=false;
-                           filters.remove.disabled=true;
-                           filters.iselect.selectedIndex=-1;">
+                  onclick="document.filters.add.disabled=false;
+                           document.filters.remove.disabled=true;
+                           document.filters.iselect.selectedIndex=-1;">
           <?php
               foreach ($uninstalledfilters as $filter) {
                   if ($selectedfilter == $filter) {
