@@ -1016,8 +1016,24 @@ $string['userzones'] = 'ユーザゾーン';
 $string['usingexistingcourse'] = '既存のコースを使用する';
 $string['version'] = 'バージョン';
 $string['view'] = '表示';
-$string['virusfound'] = '管理者の方! Clam AVが、 $a->user によって course $a->course にアップロードされたファイルにウイルスを発見しました。clamscanの出力結果は次の通りです:';
+$string['virusfound'] = '管理者の方! Clam AVが、 $a->user によって course $a->course へアップロードされたファイルにウイルスを発見しました。clamscanの出力結果は次の通りです:';
+$string['virusfoundlater'] = '$a->date に、$a->filename というファイル名で、$a->course コースに、あなたがアップロードしたファイルにウイルスが発見されました。あなたのファイルに対して行われた処理の概要です:
+
+$a->action
+
+もし、これが提出した課題の場合、あなたの教師が見れるように再度提出してください。';
+$string['virusfoundlateradmin'] = '管理者の方! $a->date に、$a->filename というファイル名で、$a->course コースへユーザ $a->user によってアップロードされたファイルにウイルスが発見されました。感染ファイルに対して行われた処理の概要です:
+
+$a->action
+
+ユーザにもウイルスに感染している旨が通知されました。';
+$string['virusfoundlateradminnolog'] = '管理者の方! $a->filename というファイル名でアップロードされたファイルにウイルスが発見されました。Moodleは、アップロードされたファイルのウイルス駆除を行うことが出来ませんでした。
+
+感染ファイルに対して行われた処理の概要です:
+
+$a->action';
 $string['virusfoundsubject'] = '$a: ウイルスが見つかりました!';
+$string['virusfounduser'] = 'あなたがアップロードしたファイル $a->filename は、ウイルスチェッカーによりスキャンされ、ウイルスに感染していることが判明しました!　あなたのファイルは正常にアップロードされませんでした。';
 $string['virusplaceholder'] = 'アップロードファイルにウイルスが見つかりました。感染したファイルは移動又は削除され、ユーザにその旨の通知が送信されました。';
 $string['webpage'] = 'ウェブページ';
 $string['week'] = '週';
