@@ -476,6 +476,7 @@ $string['groupadd'] = '新しいグループを追加';
 $string['groupaddusers'] = '選択した人をグループに追加';
 $string['groupfor'] = 'グループ';
 $string['groupinfo'] = '選択したグループの情報';
+$string['groupinfoedit'] = 'グループ設定の編集';
 $string['groupinfomembers'] = '選択したメンバーの情報';
 $string['groupinfopeople'] = '選択した人の情報';
 $string['groupmembers'] = 'グループメンバー';
