@@ -35,6 +35,10 @@
            $options = array("0"  =>  get_string("frontpagenews"),
                             "1"  =>  get_string("frontpagecourselist"),
                             "2"  =>  get_string("frontpagecategorynames"));
+           if (count_records("course") > 200) {
+               unset($options[1]);
+               $form->frontpage = 2;
+           }
            choose_from_menu ($options, "frontpage", "$form->frontpage", "");
         ?>
         </td>
