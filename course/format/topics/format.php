@@ -6,7 +6,7 @@
       // courses that aren't so rigidly defined by time.
       // Included from "view.php"
 
-    require_once("$CFG->dirroot/mod/forum/lib.php");
+    require_once($CFG->dirroot.'/mod/forum/lib.php');
 
     // Bounds for block widths
     define('BLOCK_L_MIN_WIDTH', 100);
@@ -49,12 +49,12 @@
 
     if ($editing) {
         $strstudents = moodle_strtolower($course->students);
-        $strtopichide = get_string("topichide", "", $strstudents);
-        $strtopicshow = get_string("topicshow", "", $strstudents);
-        $strmarkthistopic = get_string("markthistopic");
-        $strmarkedthistopic = get_string("markedthistopic");
-        $strmoveup = get_string("moveup");
-        $strmovedown = get_string("movedown");
+        $strtopichide = get_string('topichide', '', $strstudents);
+        $strtopicshow = get_string('topicshow', '', $strstudents);
+        $strmarkthistopic = get_string('markthistopic');
+        $strmarkedthistopic = get_string('markedthistopic');
+        $strmoveup = get_string('moveup');
+        $strmovedown = get_string('movedown');
     }
 
 
@@ -75,22 +75,18 @@
     print_heading_block(get_string('topicoutline'), 'outline');
     print_spacer(8, 1, true);
 
-    echo "<table class=\"topicsoutline\" border=\"0\" cellpadding=\"8\" cellspacing=\"0\" width=\"100%\">";
+    echo '<table class="topicsoutline" width="100%">';
 
 /// If currently moving a file then show the current clipboard
     if (ismoving($course->id)) {
-        $stractivityclipboard = strip_tags(get_string("activityclipboard", "", addslashes($USER->activitycopyname)));
-        $strcancel= get_string("cancel");
-        echo "<tr>";
-        echo "<td colspan=\"3\" valign=\"top\" class=\"topicoutlineclip\" width=\"100%\">";
-        echo "<div><font size=\"2\">";
-        echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"mod.php?cancelcopy=true&amp;sesskey=$USER->sesskey\">$strcancel</a>)";
-        echo "</font></div>";
-        echo "</td>";
-        echo "</tr>";
-        echo "<tr><td colspan=\"3\"><img src=\"../pix/spacer.gif\" width=\"1\" height=\"1\" alt=\"\" /></td></tr>";
+        $stractivityclipboard = strip_tags(get_string('activityclipboard', '', addslashes($USER->activitycopyname)));
+        $strcancel= get_string('cancel');
+        echo '<tr>';
+        echo '<td colspan="3" class="topicoutlineclip">';
+        echo $stractivityclipboard.'&nbsp;&nbsp;(<a href="mod.php?cancelcopy=true&amp;sesskey='.$USER->sesskey.'">'.$strcancel.'</a>)';
+        echo '</td>';
+        echo '</tr>';
     }
-
 
 /// Print Section 0
 
@@ -98,9 +94,9 @@
     $thissection = $sections[$section];
 
     if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
-        echo '<tr id="section_0">';
-        echo '<td nowrap="nowrap" class="topicsoutlineside" valign="top" width="20">&nbsp;</td>';
-        echo '<td valign="top"  class="topicsoutlinecontent" width="100%">';
+        echo '<tr id="section-0">';
+        echo '<td class="topicsoutlineside left">&nbsp;</td>';
+        echo '<td class="topicsoutlinecontent">';
 
         $summaryformatoptions->noclean = true;
         echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
@@ -118,9 +114,9 @@
         }
 
         echo '</td>';
-        echo '<td nowrap="nowrap" class="topicsoutlineside" valign="top" align="center" width="10">';
-        echo '&nbsp;</td></tr>';
-        echo '<tr><td colspan="3"><img src="../pix/spacer.gif" width="1" height="1" alt="" /></td></tr>';
+        echo '<td class="topicsoutlineside right">&nbsp;</td>';
+        echo '</tr>';
+        echo '<tr><td colspan="3" class="topicsoutlinespacer">&nbsp;</td></tr>';
     }
 
 
@@ -135,16 +131,16 @@
 
         if (!empty($displaysection) and $displaysection != $section) {
             if (empty($sections[$section])) {
-                $strsummary = "";
+                $strsummary = '';
             } else {
-                $strsummary = " - ".strip_tags($sections[$section]->summary);
+                $strsummary = ' - '.strip_tags($sections[$section]->summary);
                 if (strlen($strsummary) < 57) {
-                    $strsummary = " - $strsummary";
+                    $strsummary = ' - '.$strsummary;
                 } else {
-                    $strsummary = " - ".substr($strsummary, 0, 60)."...";
+                    $strsummary = ' - '.substr($strsummary, 0, 60).'...';
                 }
             }
-            $sectionmenu["topic=$section"] = s("$section$strsummary");
+            $sectionmenu['topic='.$section] = s($section.$strsummary);
             $section++;
             continue;
         }
@@ -156,10 +152,10 @@
             unset($thissection);
             $thissection->course = $course->id;   // Create a new section structure
             $thissection->section = $section;
-            $thissection->summary = "";
+            $thissection->summary = '';
             $thissection->visible = 1;
-            if (!$thissection->id = insert_record("course_sections", $thissection)) {
-                notify("Error inserting new topic!");
+            if (!$thissection->id = insert_record('course_sections', $thissection)) {
+                notify('Error inserting new topic!');
             }
         }
 
@@ -170,27 +166,27 @@
             $currenttopic = ($course->marker == $section);
 
             if (!$thissection->visible) {
-                $colorsides = 'class="topicsoutlinesidehidden"';
-                $colormain  = 'class="topicsoutlinecontenthidden"';
+                $colorsides = 'topicsoutlinesidehidden';
+                $colormain  = 'topicsoutlinecontenthidden';
             } else if ($currenttopic) {
-                $colorsides = 'class="topicsoutlinesidehighlight"';
-                $colormain  = 'class="topicsoutlinecontenthighlight"';
+                $colorsides = 'topicsoutlinesidehighlight';
+                $colormain  = 'topicsoutlinecontenthighlight';
             } else {
-                $colorsides = 'class="topicsoutlineside"';
-                $colormain  = 'class="topicsoutlinecontent"';
+                $colorsides = 'topicsoutlineside';
+                $colormain  = 'topicsoutlinecontent';
             }
 
-            echo "<tr>";
-            echo "<td nowrap=\"nowrap\" $colorsides valign=\"top\" width=\"20\">";
-            echo "<div align=\"center\"><font size=\"3\"><b><a name=\"$section\">$section</a></b></font></div>";
-            echo "</td>";
+            echo '<tr id="section-'.$section.'">';
+            echo '<td class="'.$colorsides.' left">';
+            echo '<a name="'.$section.'">'.$section.'</a>';
+            echo '</td>';
 
             if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
-                echo '<td id="section_'.($section).'" style="vertical-align:top; text-align: center; width: 100%;" '.$colormain.'>';
-                echo get_string("notavailable");
-                echo "</td>";
+                echo '<td class="'.$colormain.'">';
+                echo get_string('notavailable');
+                echo '</td>';
             } else {
-                echo '<td id="section_'.($section).'" style="vertical-align:top; width: 100%;" '.$colormain.'>';
+                echo '<td class="'.$colormain.'">';
 
                 $summaryformatoptions->noclean = true;
                 echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
@@ -206,68 +202,65 @@
                     print_section_add_menus($course, $section, $modnames);
                 }
 
-                echo "</td>";
+                echo '</td>';
             }
-            echo "<td nowrap=\"nowrap\" $colorsides valign=\"top\" align=\"center\" width=\"10\">";
-            echo "<font size=\"1\">";
+            echo '<td class="'.$colorsides.' right">';
 
             if ($displaysection == $section) {      // Show the zoom boxes
-                echo "<a href=\"view.php?id=$course->id&amp;topic=all\" title=\"$strshowalltopics\">".
-                     "<img src=\"$CFG->pixpath/i/all.gif\" height=\"25\" width=\"16\" border=\"0\" /></a><br />";
+                echo '<a href="view.php?id='.$course->id.'&amp;topic=all" title="'.$strshowalltopics.'">'.
+                     '<img src="'.$CFG->pixpath.'/i/all.gif" height="25" width="16" border="0" /></a><br />';
             } else {
-                $strshowonlytopic = get_string("showonlytopic", "", $section);
-                echo "<a href=\"view.php?id=$course->id&amp;topic=$section\" title=\"$strshowonlytopic\">".
-                     "<img src=\"$CFG->pixpath/i/one.gif\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" /></a><br />";
+                $strshowonlytopic = get_string('showonlytopic', '', $section);
+                echo '<a href="view.php?id='.$course->id.'&amp;topic='.$section.'" title="'.$strshowonlytopic.'">'.
+                     '<img src="'.$CFG->pixpath.'/i/one.gif" height="16" width="16" border="0" alt="" /></a><br />';
             }
 
             if (isediting($course->id)) {
                 if ($course->marker == $section) {  // Show the "light globe" on/off
-                    echo "<a href=\"view.php?id=$course->id&amp;marker=0&amp;sesskey=$USER->sesskey\" title=\"$strmarkedthistopic\">".
-                         "<img src=\"$CFG->pixpath/i/marked.gif\" vspace=\"3\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" /></a><br />";
+                    echo '<a href="view.php?id='.$course->id.'&amp;marker=0&amp;sesskey='.$USER->sesskey.'" title="'.$strmarkedthistopic.'">'.
+                         '<img src="'.$CFG->pixpath.'/i/marked.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
                 } else {
-                    echo "<a href=\"view.php?id=$course->id&amp;marker=$section&amp;sesskey=$USER->sesskey\" title=\"$strmarkthistopic\">".
-                         "<img src=\"$CFG->pixpath/i/marker.gif\" vspace=\"3\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" /></a><br />";
+                    echo '<a href="view.php?id='.$course->id.'&amp;marker='.$section.'&amp;sesskey='.$USER->sesskey.'" title="'.$strmarkthistopic.'">'.
+                         '<img src="'.$CFG->pixpath.'/i/marker.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
                 }
 
                 if ($thissection->visible) {        // Show the hide/show eye
-                    echo "<a href=\"view.php?id=$course->id&amp;hide=$section&amp;sesskey=$USER->sesskey\" title=\"$strtopichide\">".
-                         "<img src=\"$CFG->pixpath/i/hide.gif\" vspace=\"3\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" /></a><br />";
+                    echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.$USER->sesskey.'" title="'.$strtopichide.'">'.
+                         '<img src="'.$CFG->pixpath.'/i/hide.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
                 } else {
-                    echo "<a href=\"view.php?id=$course->id&amp;show=$section&amp;sesskey=$USER->sesskey\" title=\"$strtopicshow\">".
-                         "<img src=\"$CFG->pixpath/i/show.gif\" vspace=\"3\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" /></a><br />";
+                    echo '<a href="view.php?id='.$course->id.'&amp;show='.$section.'&amp;sesskey='.$USER->sesskey.'" title="'.$strtopichide.'">'.
+                         '<img src="'.$CFG->pixpath.'/i/show.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
                 }
 
                 if ($section > 1) {                       // Add a arrow to move section up
-                    echo "<a href=\"view.php?id=$course->id&amp;section=$section&amp;move=-1&amp;sesskey=$USER->sesskey\" title=\"$strmoveup\">".
-                         "<img src=\"$CFG->pixpath/t/up.gif\" vspace=\"3\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a><br />";
+                    echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=-1&amp;sesskey='.$USER->sesskey.'" title="'.$strmoveup.'">'.
+                         '<img src="'.$CFG->pixpath.'/t/up.gif" vspace="3" height="11" width="11" border="0" alt="" /></a><br />';
                 }
 
                 if ($section < $course->numsections) {    // Add a arrow to move section down
-                    echo "<a href=\"view.php?id=$course->id&amp;section=$section&amp;move=1&amp;sesskey=$USER->sesskey\" title=\"$strmovedown\">".
-                         "<img src=\"$CFG->pixpath/t/down.gif\" vspace=\"3\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a><br />";
+                    echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=1&amp;sesskey='.$USER->sesskey.'" title="'.$strmovedown.'">'.
+                         '<img src="'.$CFG->pixpath.'/t/down.gif" vspace="3" height="11" width="11" border="0" alt="" /></a><br />';
                 }
 
             }
 
-            echo "</font>";
-            echo "</td>";
-            echo "</tr>";
-            echo "<tr><td colspan=\"3\"><img src=\"../pix/spacer.gif\" width=\"1\" height=\"1\" alt=\"\" /></td></tr>";
+            echo '</td></tr>';
+            echo '<tr><td colspan="3" class="topicsoutlinespacer">&nbsp;</td></tr>';
         }
 
         $section++;
     }
-    echo "</table>";
+    echo '</table>';
 
     if (!empty($sectionmenu)) {
-        echo "<center>";
-        echo popup_form("$CFG->wwwroot/course/view.php?id=$course->id&", $sectionmenu,
-                   "sectionmenu", "", get_string("jumpto"), "", "", true);
-        echo "</center>";
+        echo '<div align="center" class="topicsjumpmenu">';
+        echo popup_form($CFG->wwwroot.'/course/view.php?id='.$course->id.'&', $sectionmenu,
+                   'sectionmenu', '', get_string('jumpto'), '', '', true);
+        echo '</div>';
     }
 
 
-    echo "</td>";
+    echo '</td>';
 
     // The right column
     if(blocks_have_content($pageblocks[BLOCK_POS_RIGHT]) || $editing) {
@@ -279,7 +272,6 @@
         echo '</td>';
     }
 
-    echo "</tr>\n";
-    echo "</table>\n";
+    echo '</tr></table>';
 
 ?>
