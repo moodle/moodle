@@ -1,6 +1,9 @@
 <?php // $Id$
 
 function choice_upgrade($oldversion) {
+    
+    global $CFG;
+
 // This function does anything necessary to upgrade
 // older versions to match current functionality
 
