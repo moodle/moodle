@@ -3,10 +3,10 @@ require_once("$CFG->dirroot/enrol/enrol.class.php");
 
 // The following flags are set in the configuration
 // $CFG->enrol_flatfilelocation:       where is the file we are looking for?
-// $CFG->enrol_flatfilemailusers:      send email to users when they are enrolled in a course
-// $CFG->enrol_flatfilemailadmin:      email the log from the cron job to the admin
-// $CFG->enrol_flatfileallowinternal:  allow internal enrolment in courses
-
+// $CFG->enrol_allowinternal:          allow internal enrolment in courses
+// $CFG->enrol_emailstudents:          send email to students when they are enrolled in a course
+// $CFG->enrol_emailteachers:          send email to teachers when they are enrolled in a course
+// $CFG->enrol_emailadmins:            email the log from the cron job to the admin
 
 
 
@@ -18,7 +18,7 @@ class enrolment_plugin extends enrolment_base {
 function print_entry($course) {
     global $CFG;
 
-    if (! empty($CFG->enrol_flatfileallowinternal) ) {
+    if (! empty($CFG->enrol_allowinternal) ) {
         parent::print_entry($course);
     } else {
         print_header();
@@ -31,12 +31,50 @@ function print_entry($course) {
 function check_entry($form, $course) {
     global $CFG;
 
-    if (! empty($CFG->enrol_flatfileallowinternal) ) {
+    if (! empty($CFG->enrol_allowinternal) ) {
         parent::check_entry($form, $course);
     }
 }
 
 
+/// Override the base config_form() function
+function config_form($frm) {
+    global $CFG;
+    include ("$CFG->dirroot/enrol/flatfile/config.html");    
+}
+
+
+/// Override the base process_config() function
+function process_config($config) {
+
+    if (!isset($config->enrol_flatfilelocation)) {
+        $config->enrol_flatfilelocation = '';
+    }
+    set_config('enrol_flatfilelocation', $config->enrol_flatfilelocation);
+
+    if (!isset($config->enrol_mailstudents)) {
+        $config->enrol_mailstudents = '';
+    }
+    set_config('enrol_mailstudents', $config->enrol_mailstudents);
+
+    if (!isset($config->enrol_mailteachers)) {
+        $config->enrol_mailteachers = '';
+    }
+    set_config('enrol_mailteachers', $config->enrol_mailteachers);
+
+    if (!isset($config->enrol_mailadmins)) {
+        $config->enrol_mailadmins = '';
+    }
+    set_config('enrol_mailadmins', $config->enrol_mailadmins);
+
+    if (!isset($config->enrol_allowinternal)) {
+        $config->enrol_allowinternal = '';
+    }
+    set_config('enrol_allowinternal', $config->enrol_allowinternal);
+    
+    return true;
+
+}
 
 /**
 * Override the base cron() function to read in a file
@@ -181,12 +219,8 @@ function check_entry($form, $course) {
 
 
 
-                    if ( (! empty($CFG->enrol_flatfilemailusers)) and empty($elog) and ($fields[0] == "add") ) {
-                        $subject = get_string("welcometocourse", "", $course->fullname);
-                        $a->coursename = $course->fullname;
-                        $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
-                        $message = get_string("welcometocoursetext", "", $a);
-
+                    if ( empty($elog) and ($fields[0] == "add") ) {
+   
                         if ($fields[1] == "student") {
                             if (! $teacher = get_teacher($course->id)) {
                                 $teacher = get_admin();
@@ -195,9 +229,20 @@ function check_entry($form, $course) {
                             $teacher = get_admin();
                         }
 
-                        email_to_user($user, $teacher, $subject, $message);
-                    }
+                        if (!empty($CFG->enrol_mailstudents)) {
+                            $a->coursename = "$course->fullname";
+                            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
+                            email_to_user($user, $teacher, get_string("enrolmentnew", '', $course->shortname), 
+                                          get_string('welcometocoursetext', '', $a));
+                        }
 
+                        if (!empty($CFG->enrol_mailteachers)) {
+                            $a->course = "$course->fullname";
+                            $a->user = fullname($user);
+                            email_to_user($teacher, $user, get_string("enrolmentnew", '', $course->shortname), 
+                                          get_string('enrolmentnewuser', '', $a));
+                        }
+                    }
 
 
                     if (empty($elog)) {
@@ -215,7 +260,7 @@ function check_entry($form, $course) {
                 $this->log .= "Error unlinking file $filename\n";
             }
 
-            if (! empty($CFG->enrol_flatfilemailadmin)) {
+            if (!empty($CFG->enrol_mailadmins)) {
                 email_to_user(get_admin(), get_admin(), "Flatfile Enrolment Log", $this->log);
             }
 

@@ -1,7 +1,7 @@
 <div align="center">
 
 <p><?php print_string("paymentrequired") ?></p>
-<p><b><?php echo get_string("cost").": $CFG->enrol_paypalcurrency $cost"; ?></b></p>
+<p><b><?php echo get_string("cost").": $CFG->enrol_currency $cost"; ?></b></p>
 <p><?php print_string("paymentinstant") ?></p>
         
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
@@ -15,7 +15,7 @@
 <input type="hidden" name="os0" value="<?php echo fullname($USER) ?>">
 <input type="hidden" name="custom" value="<?php echo "$USER->id-$course->id" ?>">
 
-<input type="hidden" name="currency_code" value="<?php p($CFG->enrol_paypalcurrency) ?>">
+<input type="hidden" name="currency_code" value="<?php p($CFG->enrol_currency) ?>">
 <input type="hidden" name="amount" value="<?php p($cost) ?>">
 
 <input type="hidden" name="for_auction" value="false">

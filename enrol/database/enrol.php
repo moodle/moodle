@@ -1,23 +1,6 @@
-<?php
+<?php  // $Id$
+
 require_once("$CFG->dirroot/enrol/enrol.class.php");
-
-/**
- *
- * $CFG->enrol_dbtype
- * $CFG->enrol_dbhost
- * $CFG->enrol_dbname
- * $CFG->enrol_dbuser
- * $CFG->enrol_dbpass
- * $CFG->enrol_dbtable
- * $CFG->enrol_localcoursefield
- * $CFG->enrol_localuserfield
- * $CFG->enrol_remotecoursefield
- * $CFG->enrol_remoteuserfield
- */
-
-
-
-
 
 class enrolment_plugin extends enrolment_base {
 
@@ -59,7 +42,7 @@ function get_student_courses(&$user) {
             /// to the respective remote fields
             $rs = $enroldb->Execute("SELECT * FROM $CFG->enrol_dbtable 
                                      WHERE $CFG->enrol_remotecoursefield = '$localcoursevalue' 
-                                     AND $CFG->enrol_remoteuserfield = '$user->{$CFG->enrol_localuserfield}' ");
+                                     AND $CFG->enrol_remoteuserfield = '{$user->$CFG->enrol_localuserfield}' ");
 
             /// If no records existed then student has been unenrolled externally.
             /// Unenrol locally and remove entry from the $user->student array
@@ -80,7 +63,7 @@ function get_student_courses(&$user) {
 function print_entry($course) {
     global $CFG;
 
-    if (! empty($CFG->enrol_flatfileallowinternal) ) {
+    if (! empty($CFG->enrol_allowinternal) ) {
         parent::print_entry($course);
     } else {
         print_header();
@@ -93,7 +76,7 @@ function print_entry($course) {
 function check_entry($form, $course) {
     global $CFG;
 
-    if (! empty($CFG->enrol_flatfileallowinternal) ) {
+    if (! empty($CFG->enrol_allowinternal) ) {
         parent::check_entry($form, $course);
     }
 }
@@ -104,8 +87,73 @@ function get_access_icons($course) {
 }
 
 
+/// Overrise the base config_form() function
+function config_form($frm) {
+    global $CFG;
+    include("$CFG->dirroot/enrol/database/config.html");
+}
 
+/// Override the base process_config() function
+function process_config($config) {
 
+    if (!isset($config->enrol_dbtype)) {
+        $config->enrol_dbtype = 'mysql';
+    }
+    set_config('enrol_dbtype', $config->enrol_dbtype);
+
+    if (!isset($config->enrol_dbhost)) {
+        $config->enrol_dbhost = '';
+    }
+    set_config('enrol_dbhost', $config->enrol_dbhost);
+
+    if (!isset($config->enrol_dbuser)) {
+        $config->enrol_dbuser = '';
+    }
+    set_config('enrol_dbuser', $config->enrol_dbuser);
+
+    if (!isset($config->enrol_dbpass)) {
+        $config->enrol_dbpass = '';
+    }
+    set_config('enrol_dbpass', $config->enrol_dbpass);
+
+    if (!isset($config->enrol_dbname)) {
+        $config->enrol_dbname = '';
+    }
+    set_config('enrol_dbname', $config->enrol_dbname);
+
+    if (!isset($config->enrol_dbtable)) {
+        $config->enrol_dbtable = '';
+    }
+    set_config('enrol_dbtable', $config->enrol_dbtable);
+
+    if (!isset($config->enrol_localcoursefield)) {
+        $config->enrol_localcoursefield = '';
+    }
+    set_config('enrol_localcoursefield', $config->enrol_localcoursefield);
+
+    if (!isset($config->enrol_localuserfield)) {
+        $config->enrol_localuserfield = '';
+    }
+    set_config('enrol_localuserfield', $config->enrol_localuserfield);
+
+    if (!isset($config->enrol_remotecoursefield)) {
+        $config->enrol_remotecoursefield = '';
+    }
+    set_config('enrol_remotecoursefield', $config->enrol_remotecoursefield);
+
+    if (!isset($config->enrol_remoteuserfield)) {
+        $config->enrol_remoteuserfield = '';
+    }
+    set_config('enrol_remoteuserfield', $config->enrol_remoteuserfield);
+
+    if (!isset($config->enrol_allowinternal)) {
+        $config->enrol_allowinternal = '';
+    }
+    set_config('enrol_allowinternal', $config->enrol_allowinternal);
+    
+    return true;
+
+}
 
 
 } // end of class

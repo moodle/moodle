@@ -246,9 +246,7 @@ function check_entry($form, $course) {
 * @param    page  an object containing all the data for this page
 */
 function config_form($page) {
-
-    return "";
-
+    
 }
 
 
@@ -261,8 +259,17 @@ function config_form($page) {
 */
 function process_config($config) {
 
-    return true;
+    $return = true;
 
+    print_object($config);
+
+    foreach ($config as $name => $value) {
+        if (!set_config($name, $value)) {
+            $return = false;
+        }
+    }
+
+    return $return;
 }
 
 

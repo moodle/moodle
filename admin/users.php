@@ -33,7 +33,7 @@
         $table->data[] = array("<b><a href=\"$CFG->wwwroot/$CFG->admin/uploaduser.php\">".get_string("uploadusers")."</a></b>",
                                get_string("adminhelpuploadusers"));
     }
-    $table->data[] = array('', '');
+    $table->data[] = array('', '<hr />');
     $table->data[] = array("<b><a href=\"enrol.php\">".get_string("enrolments")."</a></b>",
                            get_string("adminhelpenrolments"));
     $table->data[] = array("<b><a href=\"../course/index.php?edit=off\">".get_string("assignstudents")."</a></b>",

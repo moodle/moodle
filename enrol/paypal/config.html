@@ -1,0 +1,63 @@
+<table cellspacing="0" cellpadding="5" border="0" align="center">
+
+<tr valign="top">
+	<td align="right"><p>enrol_cost:</p></td>
+	<td>
+        <input type="text" size="5" name="enrol_cost" value="<?php echo $frm->enrol_cost ?>" />
+    </td>
+    <td>
+    <?php  print_string("costdefault") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right"><p>enrol_currency:</p></td>
+	<td>
+    <?php choose_from_menu ($paypalcurrencies, "enrol_currency", $frm->enrol_currency, "","", "") ?>
+    </td>
+    <td>
+    <?php  print_string("currency") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right"><p>enrol_paypalbusiness:</p></td>
+	<td>
+        <input type="text" name="enrol_paypalbusiness" value="<?php echo $frm->enrol_paypalbusiness ?>" />
+    </td>
+    <td>
+    <?php  print_string("business", "enrol_paypal") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right"><p>enrol_mailstudents:</p></td>
+	<td>
+        <input type="checkbox" value=1 name="enrol_mailstudents" <?php if ($frm->enrol_mailstudents) echo "checked=\"true\"" ?> />
+    </td>
+    <td>
+    <?php  print_string("mailstudents") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right"><p>enrol_mailteachers:</p></td>
+	<td>
+        <input type="checkbox" value=1 name="enrol_mailteachers" <?php if ($frm->enrol_mailteachers) echo "checked=\"true\"" ?> />
+    </td>
+    <td>
+    <?php  print_string("mailteachers") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right"><p>enrol_mailadmins:</p></td>
+	<td>
+        <input type="checkbox" value=1 name="enrol_mailadmins" <?php if ($frm->enrol_mailadmins) echo "checked=\"true\"" ?> />
+    </td>
+    <td>
+    <?php  print_string("mailadmins") ?>
+    </td>
+</tr>
+
+</table>

@@ -12,7 +12,7 @@ $string['admindirsetting'] = "
 $string['caution'] = 'Caution';
 $string['chooselanguage'] = 'Choose a language';
 $string['compatibilitysettings'] = 'Checking your PHP settings ...';
-$string['configfilenotwritten'] = "The installer script was not able to automatically create a config.php file containing your chosen settings. Please copy the following code into a file named config.php within the root directory of Moodle.";
+$string['configfilenotwritten'] = "The installer script was not able to automatically create a config.php file containing your chosen settings, probably because the Moodle directory is not writeable. You can manually copy the following code into a file named config.php within the root directory of Moodle.";
 $string['configfilewritten'] = "config.php has been successfully created";
 $string['configurationcomplete'] = 'Configuration completed';
 

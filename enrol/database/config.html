@@ -1,0 +1,118 @@
+<table cellspacing="0" cellpadding="5" border="0" align="center">
+<tr valign="top">
+	<td align="right"><p>enrol_dbtype:</p></td>
+	<td>
+    <?php  $dbtypes = array("access","ado_access", "ado", "ado_mssql", "borland_ibase", "csv", "db2", "fbsql", "firebird", "ibase", "informix72", "informix", "mssql", "mysql", "mysqlt", "oci805", "oci8", "oci8po", "odbc", "odbc_mssql", "odbc_oracle", "oracle", "postgres64", "postgres7", "postgres", "proxy", "sqlanywhere", "sybase", "vfp");
+       foreach ($dbtypes as $dbtype) {
+           $dboptions[$dbtype] = $dbtype;
+       }
+       choose_from_menu($dboptions, "enrol_dbtype", $frm->enrol_dbtype, '', '', '');
+    ?>
+      
+    </td>
+    <td>
+    <?php  print_string("dbtype","enrol_database") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right"><p>enrol_dbhost:</p></td>
+	<td>
+        <input size="15" type="text" name="enrol_dbhost" value="<?php echo $frm->enrol_dbhost ?>" />
+    </td>
+    <td>
+    <?php  print_string("dbhost","enrol_database") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right"><p>enrol_dbuser:</p></td>
+	<td>
+        <input size="15" type="text" name="enrol_dbuser" value="<?php echo $frm->enrol_dbuser ?>" />
+    </td>
+    <td>
+    <?php  print_string("dbuser","enrol_database") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right"><p>enrol_dbpass:</p></td>
+	<td>
+        <input size="15" type="text" name="enrol_dbpass" value="<?php echo $frm->enrol_dbpass ?>" />
+    </td>
+    <td>
+    <?php  print_string("dbpass","enrol_database") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right"><p>enrol_dbname:</p></td>
+	<td>
+        <input size="15" type="text" name="enrol_dbname" value="<?php echo $frm->enrol_dbname ?>" />
+    </td>
+    <td>
+    <?php  print_string("dbname","enrol_database") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right"><p>enrol_dbtable:</p></td>
+	<td>
+        <input size="15" type="text" name="enrol_dbtable" value="<?php echo $frm->enrol_dbtable ?>" />
+    </td>
+    <td>
+    <?php  print_string("dbtable","enrol_database") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right"><p>enrol_localcoursefield:</p></td>
+	<td>
+        <input size="15" type="text" name="enrol_localcoursefield" value="<?php echo $frm->enrol_localcoursefield ?>" />
+    </td>
+    <td>
+    <?php  print_string("localcoursefield","enrol_database") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right"><p>enrol_localuserfield:</p></td>
+	<td>
+        <input size="15" type="text" name="enrol_localuserfield" value="<?php echo $frm->enrol_localuserfield ?>" />
+    </td>
+    <td>
+    <?php  print_string("localuserfield","enrol_database") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right"><p>enrol_remotecoursefield:</p></td>
+	<td>
+        <input size="15" type="text" name="enrol_remotecoursefield" value="<?php echo $frm->enrol_remotecoursefield ?>" />
+    </td>
+    <td>
+    <?php  print_string("remotecoursefield","enrol_database") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right"><p>enrol_remoteuserfield:</p></td>
+	<td>
+        <input size="15" type="text" name="enrol_remoteuserfield" value="<?php echo $frm->enrol_remoteuserfield ?>" />
+    </td>
+    <td>
+    <?php  print_string("remoteuserfield","enrol_database") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right"><p>enrol_allowinternal:</p></td>
+	<td>
+        <input type="checkbox" name="enrol_allowinternal" <?php if ($frm->enrol_allowinternal) echo "checked=\"true\"" ?> />
+    </td>
+    <td>
+    <?php  print_string('allowinternal') ?>
+    </td>
+</tr>
+
+</table>

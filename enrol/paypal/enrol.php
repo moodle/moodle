@@ -1,4 +1,5 @@
-<?php
+<?php  // $Id$
+       // Implements all the main code for the Paypal plugin
 
 require_once("$CFG->dirroot/enrol/enrol.class.php");
 
@@ -40,7 +41,6 @@ function print_entry($course) {
 
 
         include("$CFG->dirroot/enrol/paypal/enrol.html");
-        echo "</div>";
 
         print_simple_box_end();
         print_footer();
@@ -78,11 +78,11 @@ function get_access_icons($course) {
         $strrequirespayment = get_string("requirespayment");
         $strcost = get_string("cost");
 
-        if (empty($CFG->enrol_paypalcurrency)) {
-            $CFG->enrol_paypalcurrency = 'USD';
+        if (empty($CFG->enrol_currency)) {
+            set_config('enrol_currency', 'USD');
         }
 
-        switch ($CFG->enrol_paypalcurrency) {
+        switch ($CFG->enrol_currency) {
            case 'EUR': $currency = '&euro;'; break;
            case 'CAD': $currency = '$'; break;
            case 'GBP': $currency = '&pound;'; break;
@@ -90,7 +90,8 @@ function get_access_icons($course) {
            default:    $currency = '$'; break;
         }
         
-        $str .= "<p>$strcost: <a title=\"$strrequirespayment\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+        $str .= "<p class=\"coursecost\"><font size=-1>$strcost: ".
+                "<a title=\"$strrequirespayment\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\"></a>";
         $str .= "$currency".format_float($cost,2).'</a></p>';
         
     }
@@ -98,6 +99,56 @@ function get_access_icons($course) {
     return $str;
 }
 
+
+/// Override the base class config_form() function
+function config_form($frm) {
+    global $CFG;
+
+    $paypalcurrencies = array(  'USD' => 'US Dollars',
+                                'EUR' => 'Euros',
+                                'JPY' => 'Japanese Yen',
+                                'GBP' => 'British Pounds',
+                                'CAD' => 'Canadian Dollars'
+                             );
+
+    include("$CFG->dirroot/enrol/paypal/config.html");
+}
+
+function process_config($config) {
+
+    if (!isset($config->enrol_cost)) {
+        $config->enrol_cost = 0;
+    }
+    set_config('enrol_cost', $config->enrol_cost);
+
+    if (!isset($config->enrol_currency)) {
+        $config->enrol_currency = 'USD';
+    }
+    set_config('enrol_currency', $config->enrol_currency);
+
+    if (!isset($config->enrol_paypalbusiness)) {
+        $config->enrol_paypalbusiness = '';
+    }
+    set_config('enrol_paypalbusiness', $config->enrol_paypalbusiness);
+
+    if (!isset($config->enrol_mailstudents)) {
+        $config->enrol_mailstudents = '';
+    }
+    set_config('enrol_mailstudents', $config->enrol_mailstudents);
+
+    if (!isset($config->enrol_mailteachers)) {
+        $config->enrol_mailteachers = '';
+    }
+    set_config('enrol_mailteachers', $config->enrol_mailteachers);
+
+    if (!isset($config->enrol_mailadmins)) {
+        $config->enrol_mailadmins = '';
+    }
+    set_config('enrol_mailadmins', $config->enrol_mailadmins);
+    
+    return true;
+
+}
 
 
 } // end of class definition
