@@ -2,13 +2,18 @@
 # Traduzido por Jaime Villate - University of Porto, Portugal
 # <villate@gnu.org>
 
-#------------------------------------------------------------
-$string['modulename'] = "Trabalho";
-$string['modulenameplural'] = "Trabalhos";
-#------------------------------------------------------------
 
 $string['allowresubmit'] = "Permitir enviar novamente";
 $string['assignmentdetails'] = "Detalhes do trabalho";
+$string['assignmentmail'] = "\$a->teacher  comentou o seu trabalho
+'\$a->assignment'
+
+O comentário foi anexado no fim do seu trabalho:
+
+    \$a->url";
+$string['assignmentmailhtml'] = "\$a->teacher comentou o seu trabalho
+'<i>\$a->assignment</i>'<br /><br />
+O comentário encontra-se anexo no fim do <a href=\\\"\$a->url\\\">seu trabalho</a>.";
 $string['assignmentname'] = "Nome do trabalho";
 $string['assignmenttype'] = "Tipo de trabalho";
 $string['description'] = "Descrição";
@@ -20,7 +25,10 @@ $string['feedbackupdated'] = "Foram actualizados os comentários aos trabalhos de
 $string['late'] = "\$a tarde";
 $string['maximumgrade'] = "Nota máxima";
 $string['maximumsize'] = "Tamanho máximo";
+$string['modulename'] = "Trabalho";
+$string['modulenameplural'] = "Trabalhos";
 $string['newsubmissions'] = "Trabalhos enviados";
+$string['notgradedyet'] = "Ainda não avaliado";
 $string['notsubmittedyet'] = "Ainda não enviado";
 $string['overwritewarning'] = "Atenção: se enviar novamente, o seu envio anterior será substituído.";
 $string['saveallfeedback'] = "Gravar todos os meus comentários";

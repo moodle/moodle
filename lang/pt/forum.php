@@ -1,12 +1,10 @@
 <?PHP // $Id$ 
 # Traduzido por Jaime Villate - University of Porto, Portugal
 # <villate@gnu.org>
-#------------------------------------------------------------
-$string['modulename'] = "Fórum";
-$string['modulenameplural'] = "Fóruns";
-#------------------------------------------------------------
+
 
 $string['addanewdiscussion'] = "Adicione um novo tópico de discussão";
+$string['addanewtopic'] = "Adicionar um novo tópico";
 $string['allowchoice'] = "Permitir a todos escolher";
 $string['allowdiscussions'] = "Permitir um \$a começar novas discussões?";
 $string['allowratings'] = "Permitir classificar respostas?";
@@ -14,6 +12,10 @@ $string['allowsdiscussions'] = "Este fórum permite cada pessoa começar um tópico
 $string['anyfile'] = "Qualquer ficheiro";
 $string['attachment'] = "Anexo";
 $string['bynameondate'] = "por \$a->name - \$a->date";
+$string['configdisplaymode'] = "Modo de visualização prédefinido para as discussões se nenhum for definido.";
+$string['configlongpost'] = "Qualquer mensagem acima deste tamanho (sem incluir HTML) será considerada longa.";
+$string['configmanydiscussions'] = "Número máximo de discussões visualizadas num fórum por página";
+$string['configshortpost'] = "Qualquer mensagem abaixo deste tamanho (sem incluir HTML) será considerada curta.";
 $string['couldnotadd'] = "Não é possível adicionar o seu tópico devido a um erro desconhecido";
 $string['couldnotdeleteratings'] = "Desculpe, isso não pode ser apagado pois já alguém deu-lhe uma classificação";
 $string['couldnotdeletereplies'] = "Desculpe, isso não pode ser apagado pois já alguém envio uma resposta.";
@@ -23,8 +25,10 @@ $string['deleteddiscussion'] = "O tópico de discussão foi apagado";
 $string['deletedpost'] = "A mensagem foi apagada";
 $string['deletesure'] = "Tem certeza que quer apagar esta mensagem?";
 $string['discussion'] = "Discussão";
+$string['discussionmoved'] = "Esta discussão foi movida para '\$a'.";
 $string['discussions'] = "Discussões";
 $string['discussionsstartedby'] = "Discussões iniciadas por \$a";
+$string['discussionsstartedbyrecent'] = "Discussões iniciadas recentemente por \$a";
 $string['discussthistopic'] = "Discuta este tópico";
 $string['eachuserforum'] = "Cada pessoa envia uma discussão";
 $string['edit'] = "Editar";
@@ -45,6 +49,7 @@ $string['inforum'] = "em \$a";
 $string['intronews'] = "Notícias gerais e anúncios";
 $string['introsocial'] = "Um fórum aberto para conversar sobre qualquer coisa que quiser";
 $string['introteacher'] = "Um fórum para professores - só notas e discussão";
+$string['lastpost'] = "Última mensagem";
 $string['learningforums'] = "Fóruns de aprendizagem";
 $string['maxtimehaspassed'] = "Desculpe, mas ultrapassou o tempo máximo para editar este tópico (\$a)!";
 $string['message'] = "Mensagem";
@@ -52,13 +57,18 @@ $string['modeflatnewestfirst'] = "Listagem de respostas, com a mais nova primeir
 $string['modeflatoldestfirst'] = "Listagem de respostas, com a mais velha primeiro";
 $string['modenested'] = "Mostrar respostas em forma hierárquica";
 $string['modethreaded'] = "Mostrar respostas por fios de discussão";
+$string['modulename'] = "Fórum";
+$string['modulenameplural'] = "Fóruns";
 $string['more'] = "mais";
+$string['movethisdiscussionto'] = "Mover esta discussão para ...";
 $string['namenews'] = "Notícias";
 $string['namesocial'] = "Fórum social";
 $string['nameteacher'] = "Fórum de professores";
 $string['newforumposts'] = "Novas mensagens no fórum";
 $string['nodiscussions'] = "Não há nenhum tópico de discussão presente neste forum";
 $string['noguestpost'] = "Lamentamos informar que como visitante não pode enviar mensagens neste fórum";
+$string['nomorepostscontaining'] = "Não foram encontradas mais mensagens contendo '\$a'";
+$string['nonews'] = "Ainda não foram publicadas notícias";
 $string['noposts'] = "Nenhuma mensagem";
 $string['nopostscontaining'] = "Nenhuma mensagem '\$a' encontrada";
 $string['nosubscribers'] = "Não há nenhum subscritor ainda neste fórum";
@@ -72,35 +82,48 @@ $string['openmode2'] = "São permitidas discussões e respostas";
 $string['parentofthispost'] = "Padre desta mensagem";
 $string['postadded'] = "<p>A sua mensagem foi inserida com sucesso.</p><p>Tem \$a para a editar se quiser fazer alterações.</p>";
 $string['postincontext'] = "Veja esta mensagem no contexto";
-$string['postingtip'] = "<b>Cuidados para o envio:</b> Quando responder: <ul><li>leia a mensagem cuidadosamente</li><li>procure coisas sobre as que possa comentar</li></ul>Enquanto escreve: <ul><li>mantenha as suas mensagens curtas</li><li>explique as suas próprias ideias claramente</li><li>pense nas perguntas que pode fazer</li></ul>";
 $string['postmailinfo'] = "Esta é uma cópia de uma mensagem enviada para o servidor web \$a.
 Para subir uma resposta no sitio web, use o apontador que se segue:";
-$string['postrating1'] = "Apresenta principalmente aprendizagem INDIVIDUAL";
-$string['postrating2'] = "Isolado e conexo por igual";
-$string['postrating3'] = "Apresenta principalmente aprendizagem COLECTIVA";
+$string['postrating1'] = "Contribui principalmente para a aprendizagem INDIVIDUAL";
+$string['postrating2'] = "Aprendizagem Individual e Colectiva por igual";
+$string['postrating3'] = "Contribui principalmente para a aprendizagem COLECTIVA";
+$string['posts'] = "Mensagens";
 $string['postupdated'] = "A sua mensagem foi actualizada";
 $string['processingpost'] = "A processar a mensagem \$a";
 $string['rate'] = "Taxa";
+$string['rating'] = "Classificação";
+$string['ratingeveryone'] = "Toda a gente pode classificar mensagens";
+$string['ratingno'] = "Não há classificações";
+$string['ratingonlyteachers'] = "Apenas \$a pode classificar mensagens";
 $string['ratings'] = "Classificações";
+$string['ratingssaved'] = "As classificações foram gravadas";
 $string['re'] = "Re:";
 $string['readtherest'] = "Leia o resto deste tópico";
+$string['replies'] = "Respostas";
 $string['repliesmany'] = "\$a respostas, por enquanto";
 $string['repliesone'] = "\$a resposta, por enquanto";
 $string['reply'] = "Responder";
 $string['search'] = "Procurar";
 $string['searchforums'] = "Procurar nos fóruns";
+$string['searcholderposts'] = "Porcurar mensagens antigas...";
 $string['searchresults'] = "Procurar resultados";
 $string['sendinratings'] = "Enviar as minhas últimas classificações";
 $string['showsubscribers'] = "Mostrar subscritores";
 $string['singleforum'] = "Uma única discussão simples";
+$string['startedby'] = "Iniciado por";
 $string['subject'] = "Assunto";
 $string['subscribe'] = "Subscrever a este fórum";
 $string['subscribed'] = "Subscrito";
 $string['subscribers'] = "Subscritores";
 $string['subscribersto'] = "Subscritores para '\$a'";
+$string['subscribestart'] = "Envie-me cópias de mensagens deste fórum por email";
+$string['subscribestop'] = "Não me envie cópias de mensagens deste fórum por email";
+$string['subscription'] = "Subscrição";
+$string['subscriptions'] = "Subscrições";
 $string['unsubscribe'] = "Cancelar a subscrição a este fórum";
+$string['unsubscribed'] = "Subscrição cancelada";
 $string['youratedthis'] = "Você avaliou este";
 $string['yournewtopic'] = "Seu novo tópico de discussão";
 $string['yourreply'] = "A sua resposta";
-$string['ratingssaved'] = "As classificações foram gravadas";
+
 ?>
