@@ -524,7 +524,7 @@ function text_to_html($text, $smiley=true, $para=true) {
     $text = eregi_replace(">([\n\r])", "> ", $text);
 
 /// Make lone URLs into links.   eg http://moodle.com/
-    $text = eregi_replace("([\n\r ([])([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])", 
+    $text = eregi_replace("([[:space:]]|^)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])",
                           "\\1<A HREF=\"\\2://\\3\\4\" TARGET=\"newpage\">\\2://\\3\\4</A>", $text);
 
 /// eg www.moodle.com
