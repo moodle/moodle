@@ -1,0 +1,82 @@
+<H3> Release notes for Moodle 1.0.6</H3>
+
+<P>  Major changes in this release (since 1.0.5):   </P>
+
+<UL><DL>
+<DT> New feature - WYSIWYG Text editing!
+<DD> A WYSIWYG text editor has been added to many of the forms in Moodle.  These are currently 
+     only visible when using Microsoft Internet Explorer 5.5 or later - other browsers see the 
+     normal forms exactly as before.<BR><BR>
+
+<DT> New feature - Quiz module!
+<DD> Finally, the most requested new module is here!  Multiple choice, short answer, and true-false
+     questions with automatic marking, multiple attempts, teacher regrading and many other features.
+     Questions are stored in a categorised database, and may be "published" to other courses.<BR><BR>
+
+<DT> New feature - Grade manager!
+<DD> A new tool has been added for teachers to see all grades for a course on one page.
+     You can also download/export grades as a tab-separated text file or an Excel
+     Spreadsheet.  In future more features will be added to this page like sorting, manual 
+     columns and calculations, but it's still pretty useful right now.<BR><BR>
+
+<DT> New feature - LDAP authentication!
+<DD> Moodle can now authenticate against external directories that use the 
+     LDAP protocol (including Novell etc).  Many thanks to Petri Asikainen for
+     developing this authentication plug-in!<BR><BR>
+
+<DT> New feature - New smilies
+<DD> Many new smilies have been added, and are now also accessible using a GUI in the text editor.<BR><BR>
+
+<DT> Improved text editing
+<DD> You can now include all major HTML tags in all texts.  This is now safe because 
+     of newly added functionality that strips all Javascript and faulty tags from texts 
+     before they can cause security or display problems.<BR><BR>
+
+<DT> Languages
+<DD> German and Italian have been added!  Many thanks to the translators (see the credits).<BR><BR>
+
+<DT> Reading module => Resource module
+<DD> After much thought and a vote of support (21 "yes" to 6 "no") on the "Using Moodle" 
+     web site I changed the name of the "reading" module to "resource" (at the code level
+     and also the language packs).  It was better to do this earlier than later.
+     This more generic name will be more meaningful to more people and opens the way to 
+     some real development on a resource library.
+     But I don't want to ever change a module name again!  :-)
+     If you have any hard-coded URLs pointing to readings that you don't want to break,
+     you can add a line like this to your Apache httpd.conf to redirect them:
+     <B><CODE>Redirect /mod/reading http://yourserver.com/mod/resource</CODE></B><BR><BR>
+     <FONT COLOR=RED>Note: if upgrading to 1.0.6 you may have some "reading" errors in "Recent activity" ... logging
+     out and then logging in again will fix this</FONT><BR><BR>
+
+<DT> Other additions
+<DD> An admin script to totally delete the Moodle data directory has been included (admin/delete.php)
+     for people who need to tear down a Moodle installation but don't have root access on their
+     server.<BR><BR>
+
+<DT> Miscellaneous
+<DD> Many small improvements have been made to the interface, and many small bugs have been fixed.
+     Some examples: 
+     <UL>
+     <LI> Big "Edit this page" buttons at the top of pages (replacing the tiny icon)
+     <LI> LDAP authentication module (thanks to Petri)
+     <LI> Authentication from external sources can now import any fields
+     <LI> Student assignment list now shows submission status properly
+     <LI> Default language for users is now the site language
+     <LI> Users have a 'Change Password' button on their profile page
+     <LI> Journals that need teacher feedback are highlighted
+     <LI> More documentation and more context help buttons
+     <LI> Database-specific upgrade code
+     <LI> Uses character-set codes to make the browser do the right thing 
+     <LI> User's name in footer is now a link
+     <LI> News and social forums are now editable
+     <LI> Forums that don't allow posting don't have uneccessary "discuss" links 
+     <LI> Improved algorithm for shortening posts in forum listings
+     <LI> Choice module now allows up to six choices
+     </UL>
+
+</DL></UL>
+
+
+<P>&nbsp;</P>
+<P ALIGN="CENTER"><FONT SIZE="1"><A HREF="index.html" TARGET="_top">Moodle Documentation</A></FONT></P>
+<P ALIGN="CENTER"><FONT SIZE="1">Version: $Id$</FONT></P>
