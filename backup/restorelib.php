@@ -2505,6 +2505,9 @@
                         case "MAILFORMAT": 
                             $this->info->tempuser->mailformat = $this->getContents();
                             break;
+                        case "MAILDIGEST": 
+                            $this->info->tempuser->maildigest = $this->getContents();
+                            break;
                         case "MAILDISPLAY": 
                             $this->info->tempuser->maildisplay = $this->getContents();
                             break;

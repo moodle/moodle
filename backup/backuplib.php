@@ -748,6 +748,7 @@
                 fwrite ($bf,full_tag("URL",4,false,$user_data->url));
                 fwrite ($bf,full_tag("DESCRIPTION",4,false,$user_data->description));
                 fwrite ($bf,full_tag("MAILFORMAT",4,false,$user_data->mailformat));
+                fwrite ($bf,full_tag("MAILDIGEST",4,false,$user_data->maildigest));
                 fwrite ($bf,full_tag("MAILDISPLAY",4,false,$user_data->maildisplay));
                 fwrite ($bf,full_tag("HTMLEDITOR",4,false,$user_data->htmleditor));
                 fwrite ($bf,full_tag("AUTOSUBSCRIBE",4,false,$user_data->autosubscribe));
