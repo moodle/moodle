@@ -68,7 +68,7 @@
     <input type="hidden" name=modulename	value="<?php p($form->modulename) ?>">
     <input type="hidden" name=instance	value="<?php p($form->instance) ?>">
     <input type="hidden" name=mode		value="<?php p($form->mode) ?>">
-    <input type="hidden" name=destination	value="<?php echo $ME ?>">
+    <input type="hidden" name=destination	value="<?php p($CFG->wwwroot.'/course/mod.php') ?>">
     <center>
 	<input type="submit" value="<?php print_string("continue") ?>">
     </center>

@@ -164,7 +164,7 @@ $form->maxgrade = isset($CFG->attendance_maxgrade)?$CFG->attendance_maxgrade:0;
 $form->hours = isset($CFG->attendance_default_hours)?$CFG->attendance_default_hours:1;
 
 ?>
-<FORM name="form" method="post" action="<?php echo $ME ?>">
+<FORM name="form" method="post" action="add.php">
 <CENTER>
 <INPUT type="submit" value="<?php  print_string("savechanges") ?>">
 <INPUT type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
