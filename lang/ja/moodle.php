@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.7 (2002121000)
+      // moodle.php - created with Moodle 1.0.8 dev (2002121200)
 
 
 $string['action'] = "操作";
@@ -7,6 +7,7 @@ $string['activities'] = "活動";
 $string['activity'] = "活動";
 $string['activityreport'] = "活動報告";
 $string['add'] = "追加";
+$string['addadmin'] = "";
 $string['added'] = "\$a が追加されました";
 $string['addinganew'] = "新しい \$a を追加する";
 $string['addinganewto'] = "新しい \$a->what を \$a->to へ追加する";
@@ -29,11 +30,12 @@ $string['alphanumerical'] = "半角英数字のみ入力";
 $string['alreadyconfirmed'] = "登録作業は既に完了しています";
 $string['answer'] = "回答";
 $string['assessment'] = "評価";
+$string['assignadmins'] = "管理者の割当て";
 $string['assignteachers'] = "教師の割当て";
 $string['authentication'] = "認証オプション";
 $string['availablecourses'] = "コース一覧";
 $string['cancel'] = "キャンセル";
-$string['categories'] = "コースカテゴリーの編集";
+$string['categories'] = "コースカテゴリー";
 $string['category'] = "カテゴリー";
 $string['categoryadded'] = "「 \$a 」 が追加されました";
 $string['categorydeleted'] = "「 \$a 」 が削除されました";
@@ -154,6 +156,7 @@ $string['enrolmentkeyhint'] = "「登録キー」が違います。再度入力してください。<br
 $string['entercourse'] = "Enterをクリックしてください。";
 $string['enteremailaddress'] = "パスワードをリセットして新しいパスワードを受け取るために、メールアドレスを入力してください";
 $string['error'] = "エラー";
+$string['existingadmins'] = "";
 $string['existingteachers'] = "教師一覧";
 $string['feedback'] = "フィードバック";
 $string['filemissing'] = "\$a が見つかりません";
@@ -336,11 +339,13 @@ $string['newuser'] = "新規ユーザ";
 $string['newusers'] = "新規ユーザ";
 $string['no'] = "No";
 $string['nocoursesyet'] = "このカテゴリーにコースはありません";
+$string['noexistingadmins'] = "";
 $string['noexistingteachers'] = "教師は登録されていません";
 $string['nofilesyet'] = "コースにはファイルがアップロードされていません";
 $string['nograde'] = "評価無し";
 $string['noimagesyet'] = "コースには画像がアップロードされていません";
 $string['none'] = "無し";
+$string['nopotentialadmins'] = "";
 $string['nopotentialteachers'] = "潜在的な教師は登録されていません";
 $string['normal'] = "普通";
 $string['nostudentsyet'] = "このコースにはまだ学生が参加していません";
@@ -374,6 +379,7 @@ $string['passwordsenttext'] = "<P>メールが \$a->email 宛に送信されました。
 $string['people'] = "人";
 $string['personalprofile'] = "プロフィール";
 $string['phone'] = "電話";
+$string['potentialadmins'] = "";
 $string['potentialteachers'] = "潜在的な教師";
 $string['preferredlanguage'] = "表示言語";
 $string['preview'] = "プレビュー";
@@ -381,6 +387,7 @@ $string['previeworchoose'] = "テーマを選択してください";
 $string['question'] = "質問";
 $string['readme'] = "READMEファイル";
 $string['recentactivity'] = "最新の活動";
+$string['removeadmin'] = "";
 $string['removeteacher'] = "教師を削除する";
 $string['rename'] = "リネーム";
 $string['requireskey'] = "このコースには登録キーが必要です";
