@@ -688,6 +688,7 @@ $string['readinginfofrombackup'] = 'Info van de backup lezen';
 $string['readme'] = 'LEESME';
 $string['recentactivity'] = 'Recente activiteiten';
 $string['recentactivityreport'] = 'Volledig rapport van recente activiteiten...';
+$string['refreshingevents'] = 'Kalender bijwerken';
 $string['registration'] = 'Moodle Registratie';
 $string['registrationemail'] = 'E-mail meldingen';
 $string['registrationinfo'] = '<p>Deze pagina laat je toe om Moodle te registreren bij moodle.org.
