@@ -72,7 +72,7 @@
 	    echo get_string("commentson","glossary") . ' <b>' . glossary_print_entry_concept($entry) . '</b></td>';
 	    echo "<td width=33% align=right>";	
         if ( $glossary->allowcomments ) {	
-            echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id\"><img  alt=\"" . get_string("addcomment","glossary") . "\" src=\"comment.gif\" height=16 width=16 border=0></a> ";
+            echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id\"><img  alt=\"" . get_string("addcomment","glossary") . "\" src=\"comment.gif\" height=11 width=11 border=0></a> ";
         }
 	    echo "</td></tr></table>";
 			
