@@ -21,20 +21,8 @@ function wiki_add_instance($wiki) {
 
     # May have to add extra stuff in here #
 
-    /// If specified, decode $wiki->initialcontent as the initial page name.
-    /// Make sure its in wiki CamelHumpForm.
-    if (!empty($wiki->initialcontent)) {
-        $wiki->pagename = '';
-    }
-    /// If specified, use $wiki->pagename as the initial page name.
-    /// Make sure its in wiki CamelHumpForm.
-    else if (!empty($wiki->pagename)) {
-        $wiki->pagename = wiki_wiki_name($wiki->pagename);
-    }
-    /// Use the wiki name for the initial page name.
-    else {
-        $wiki->pagename = wiki_wiki_name($wiki->name);
-    }
+    /// Determine the pagename for this wiki and save.
+    $wiki->pagename = wiki_page_name($wiki);
     return insert_record("wiki", $wiki);
 }
 
@@ -44,20 +32,8 @@ function wiki_update_instance($wiki) {
 /// (defined by the form in mod.html) this function 
 /// will update an existing instance with new data.
 
-    /// If specified, decode $wiki->initialcontent as the initial page name.
-    /// Make sure its in wiki CamelHumpForm.
-    if (!empty($wiki->initialcontent)) {
-        $wiki->pagename = '';
-    }
-    /// If specified, use $wiki->pagename as the initial page name.
-    /// Make sure its in wiki CamelHumpForm.
-    else if (!empty($wiki->pagename)) {
-        $wiki->pagename = wiki_wiki_name($wiki->pagename);
-    }
-    /// Use the wiki name for the initial page name.
-    else {
-        $wiki->pagename = wiki_wiki_name($wiki->name);
-    }
+    /// Determine the pagename for this wiki.
+    $wiki->pagename = wiki_page_name($wiki);
 
     $wiki->timemodified = time();
     $wiki->id = $wiki->instance;
@@ -243,7 +219,7 @@ function wiki_page_name(&$wiki) {
         $pagename = $wiki->pagename;
     }
     else {
-        $pagename = wiki_wiki_name($wiki->name);
+        $pagename = $wiki->name;
     }
     return $pagename;
 }
