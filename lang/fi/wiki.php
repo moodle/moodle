@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['action'] = '-- Toiminto --';
@@ -37,7 +37,7 @@ $string['deleteversions'] = 'Kuinka monta aikaisempaa versiota poistetaan';
 $string['deleteversionserror'] = 'Ole hyvä ja anna kelvollinen versioiden määrä';
 $string['diff'] = 'Erot';
 $string['differences'] = 'Erot versioiden $a->new_ver ja $a->old_ver sivulla $a->pagename.';
-$string['disablecamel'] = 'Estä KamelinKyttyräLinkittäminen';
+$string['disablecamel'] = 'Estä KameliKirjasinLinkittäminen';
 $string['disabledpage'] = 'Tämä sivu ei ole tällä hetkellä saatavilla';
 $string['doesnotexist'] = 'Tätä sivua ei ole vielä tehty, klikkaa Muokkaa-painiketta jos haluat luoda tämän sivun';
 $string['downloadaszip'] = 'Ladattava zip-paketti';
@@ -45,7 +45,7 @@ $string['downloadtimes'] = 'Ladattu $a kertaa';
 $string['dwnlnofiles'] = 'Tiedostoja ei ole vielä lähetetty';
 $string['dwnlsection'] = 'Ladattavat tiedostot';
 $string['editform1'] = 'Älä murehdi liikaa tekstin muotoilua, voit muokata sivua aina jälkeenpäin.';
-$string['editform2'] = 'Muokkaa varovaisesti ja muista että kaikki muokkaustapahtumat kirjataan ylös.';
+$string['editform2'] = 'Muokkaa varovasti ja muista että kaikki muokkaustapahtumat kirjataan ylös.';
 $string['editthispage'] = 'Muokkataan sivua';
 $string['emptypage'] = 'Tyhjä sivu';
 $string['errorbinandtxt'] = 'Virhe: Sivu on tyypiltään BIN JA TXT';
@@ -54,7 +54,7 @@ $string['errornotype'] = 'Virhe: Sivu ei ole tyypiä  BIN EIKÄ TXT';
 $string['errororreason'] = 'Virhe tai syy';
 $string['errorroandwr'] = 'Virhe: Sivu on Muokattava ja Kirjoitussuojattu';
 $string['errorsize'] = 'Sivu on suurempi kuin 64k';
-$string['errversionsave'] = 'Pahus, sillä aikaa kun muokkasit sivua joku muu tallensi muuttuneen version. Palaa edelliselle sivulle  ja kopioi tekemäsi muutokset koneesi leikepöydälle ja liitä ne uudelleen sivulle.';
+$string['errversionsave'] = 'Pahus, sillä aikaa kun muokkasit sivua joku muu tallensi muuttuneen version. Palaa edelliselle sivulle ja kopioi tekemäsi muutokset koneesi leikepöydälle ja liitä ne uudelleen sivulle.';
 $string['ewikiacceptbinary'] = 'Salli binääritiedostot';
 $string['ewikiprinttitle'] = 'Pane wikinimi joka sivulle';
 $string['export'] = 'Vie';
@@ -101,13 +101,13 @@ $string['modulenameplural'] = 'Wikit';
 $string['mostoftenchangedpages'] = 'Eniten muokatut sivut';
 $string['mostvisitedpages'] = 'Eniten katsotut sivut';
 $string['newestpages'] = 'Uusimmat sivut';
-$string['noadministrationaction'] = 'Ylä\'pito toimintoa ei annettu';
+$string['noadministrationaction'] = 'Ylläpito toimintoa ei annettu';
 $string['nocandidatestoremove'] = 'Ei ehdotettavia sivuja poistettavaksi, valitse \'$a\' nähdäksesi kaikki sivut';
 $string['nochangestorevert'] = 'Ei muutoksia peruttavaksi';
 $string['nohtml'] = 'Ei HTML';
 $string['nolinksfound'] = 'Sivulta ei löytynyt linkkejä';
 $string['noregexp'] = 'Asetuksen  pitää olla täysi merkkijono, et voi käyttää * tai säännöllisiä lausekkeita (regex). Lisää tähän konee IP-osoite tai koneen nimi, mutta älä porttia ( se vaihtuu aina joka yhteydessä)';
-$string['notadministratewiki'] = 'Sinulla ei ole tämän wikin ylläpitooikeuksia.';
+$string['notadministratewiki'] = 'Sinulla ei ole tämän wikin ylläpito-oikeuksia.';
 $string['nothingtostrip'] = 'Ei sivuja joilla olisi useampi kuin yksi versio';
 $string['nowikicreated'] = 'Tähän wikiin ei ole luotu sivuja';
 $string['of'] = '/';
@@ -130,7 +130,7 @@ $string['plaintext'] = 'Pelkkä teksti';
 $string['preview'] = 'Esikatsele';
 $string['readonly'] = 'Kirjoitusuojattu sivu';
 $string['refs'] = 'Viittaukset';
-$string['removenotice'] = 'Huomaa että ainostaan orpo sivut ovat listattuna tässä. Ja koska wiki testaa sivujen linkityksen vain osittain, voivat jotkut linkitetytkin sivut näkyä luettelossa.';
+$string['removenotice'] = 'Huomaa että ainostaan orposivut ovat listattuna tässä. Ja koska wiki testaa sivujen linkityksen vain osittain, voivat jotkut linkitetytkin sivut näkyä luettelossa.';
 $string['removepagecheck'] = 'Oletko varma että haluat poistaa nämä sivut?';
 $string['removepages'] = 'Poista sivuja';
 $string['removeselectedpages'] = 'Poista valitut sivut';
@@ -149,7 +149,7 @@ $string['smfor'] = 'Sivukartta';
 $string['status'] = 'Tila';
 $string['strippagecheck'] = 'Oletko varma että haluat siivota vanhat versiot näiltä sivuilta:';
 $string['strippages'] = 'Siivoa sivuja';
-$string['studentadminoptions'] = 'Opiskelijan ylläpito oikeudet';
+$string['studentadminoptions'] = 'Opiskelijan ylläpito-oikeudet';
 $string['submit'] = 'Lähetä';
 $string['tabattachments'] = 'Liitteet';
 $string['tabedit'] = 'Muokkaa';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['absent'] = 'Puuttuva';
@@ -43,7 +43,7 @@ $string['editingassessmentelements'] = 'Muokkaa arvosteluperusteita';
 $string['element'] = 'Arvosteluperuste';
 $string['elementweight'] = 'Arvosteluperusteen painoarvo';
 $string['enterpassword'] = 'Anna salasana';
-$string['entriessaved'] = 'Tietueet tallenettu';
+$string['entriessaved'] = 'Tietueet tallennettu';
 $string['excellent'] = 'Erinomainen';
 $string['exerciseassessments'] = 'Oppimistehtävän arvioinnit';
 $string['exercisefeedback'] = 'Oppimistehtävän palaute';
@@ -116,7 +116,8 @@ $string['poor'] = 'Heikkotasoinen';
 $string['present'] = 'Nykyinen';
 $string['reasonforadjustment'] = 'Tarkennuksen syy';
 $string['reassess'] = 'Uudelleen arviointi';
-$string['resubmissionfor'] = 'a$:n palautus uudelleen';
+$string['regradestudentassessments'] = 'Arvostele oppilas arviot uudelleen';
+$string['resubmissionfor'] = '$a:n palautus uudelleen';
 $string['resubmitnote'] = '* tarkoitaa, että a$:lla on lupa palauttaa tämä uudelleen.<br />Tämä asetus voidaan antaa mille tahansa palautukselle arvioimalla se uudelleen ja klikkaamalla <br /><b>Salli $a:n uudelleenpalautukset</b>-painiketta. <br /Opiskelija voi palauttaa uudelleen, mikäli tämä asetus on <b>jossakin</b> heidän palautuksistaan.';
 $string['rubric'] = 'Otsikko';
 $string['savedok'] = 'Tallennettu';
@@ -135,6 +136,7 @@ $string['scalepresent'] = '2 pistettä, asteikko Osallistunut/Ei osallistunut';
 $string['scaleyes'] = '2 pistettä, asteikko Kyllä/Ei';
 $string['specimenassessmentform'] = 'Arvioinnin mallilomake';
 $string['standarddeviation'] = 'Normipoikkeavuus';
+$string['strict'] = 'tiukka';
 $string['studentallowedtoresubmit'] = 'Salli $a:n uudelleenpalautukset';
 $string['studentassessments'] = '$a arvostelut';
 $string['studentnotallowed'] = '$a EI voi palauttaa uudelleen (tai palautusta ei tarvita)';
@@ -157,6 +159,7 @@ $string['thereisfeedbackfromthe'] = 'Palautetta $a:lta';
 $string['thischarset'] = 'KÄÄNTÄJÄT: Täsmennä kielen merkistö tähän. Huomaa, että kaikki teksti joka luodaan tämän kielen ollessa aktiivinen taltioidaan tätä merkistöä käyttäen, joten älä muuta sitä, kun olet tehnyt asetukset. Esimerkki: iso-8859-1';
 $string['thisdirection'] = 'KÄÄNTÄJÄT: Tämä merkkijono täsmentää tekstisi suunnan, joko vasemmalta oikealle tai oikealta vasemmalle. Syötä joko ”ltr” tai ”rtl”.';
 $string['thisisaresubmission'] = 'Tämä on a$:n palautus uudelleen.<br />Uuden palautuksen katsomisen jälkeen päivitä tämä arviointi<br />ja klikkaa yhtä sivun alalaidan painikkeista.';
+$string['thislanguage'] = 'KÄÄNTÄJÄT: Määrittele kielesi nimi tähän. Jos mahdollista, käytä yksikoodista numeerista viittausta.';
 $string['title'] = 'Otsikko';
 $string['typeofscale'] = 'Asteikon tyyppi';
 $string['unassessed'] = '$a itsearviointi';

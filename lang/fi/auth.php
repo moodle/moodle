@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['auth_common_settings'] = 'Yleiset asetukset';
@@ -24,8 +24,11 @@ k‰ytt‰j‰lle. Viesti sis‰lt‰‰ linkin, mink‰ avulla k‰ytt‰j‰ voi aktivoida tunnuks
 $string['auth_emailtitle'] = 'K‰yt‰ s‰hkˆpostivarmistusta';
 $string['auth_fccreators'] = 'T‰m‰n ryhm‰n(ryhmien) j‰senet saavat luoda uusia kursseja. Erottele useat ryhm‰nimet \';\'-merkill‰. Nimet on oltava t‰ysin samoin kuin FirstClass palvelimella.';
 $string['auth_fcdescription'] = 'T‰m‰ menetelm‰ k‰ytt‰‰ FirstClass palvelinta tarkistaakseen ovatko annetttu k‰ytt‰j‰nimi ja salasana voimassa olevia.';
+$string['auth_fcfppport'] = 'Palvelin portti (3333 on yleisin)';
+$string['auth_fchost'] = 'FisrtClass palvelimen osoite. K‰yt‰ IP numeroa tai DNS nime‰.';
 $string['auth_fcpasswd'] = 'Salasana yll‰ olevalle tilille';
 $string['auth_fctitle'] = 'K‰yt‰ FirstClass palvelinta';
+$string['auth_fcuserid'] = 'K‰ytt‰j‰tunnus FirstClass tilille etuoikeutetulla \"alayll‰pit‰j‰\" asetuksella.';
 $string['auth_imapdescription'] = 'T‰m‰ tapa k‰ytt‰‰ IMAP-palvelinta k‰ytt‰j‰tunnuksen ja salasanan tarkistamiseen.';
 $string['auth_imaphost'] = 'IMAP-palvelimen osoite. K‰yt‰ IP-numeroa, ‰l‰ domainnime‰.';
 $string['auth_imapport'] = 'IMAP-palvelimen portti, yleens‰ 143 tai 993.';
@@ -71,6 +74,7 @@ $string['auth_nonedescription'] = 'K‰ytt‰j‰t voivat luoda vapaasti uuden tunnuks
 Jos k‰yt‰t t‰t‰ tapaa, mieti, mit‰ tietoturva- tai yll‰pito-ongelmia t‰m‰ voi aiheuttaa.';
 $string['auth_nonetitle'] = 'Ei tunnistusta';
 $string['auth_pamdescription'] = 'T‰m‰ menetelm‰ k‰ytt‰‰ PAM:ia p‰‰st‰kseen k‰siksi t‰m‰n palvelimen alkuper‰isiin k‰ytt‰j‰nimiin. Sinun t‰ytyy asentaa <a href=\"http://www.math.ohio-state.edu/~ccunning/pam_auth/\" target=\"_blank\">PHP4 PAM Authentication</a> p‰‰st‰ksesi k‰ytt‰m‰‰n t‰t‰ moduulia.';
+$string['auth_pamtitle'] = 'PAM (  kytkett‰v‰t oikeuksien tarkistamis moduulit)';
 $string['auth_passwordisexpired'] = 'Salasanasi on vanhentunut. Haluatko vaihtaa salasanasi nyt?';
 $string['auth_passwordwillexpire'] = 'Salasanasi vanhentuu $a p‰iv‰ss‰. Haluatko vaihtaa salasanasi nyt?';
 $string['auth_pop3description'] = 'T‰m‰ tapa k‰ytt‰‰ POP3-palvelinta k‰ytt‰j‰n tunnistukseen.';
@@ -82,6 +86,9 @@ $string['auth_pop3type'] = 'Palvelimen tyyppi. Jos k‰yt‰tte salattua yhteytt‰, v
 $string['auth_updatelocal'] = 'P‰ivit‰ sis‰inen arvo';
 $string['auth_updatelocal_expl'] = '<p><b>P‰ivit‰ sis‰inen arvo:</b> Jos ei onnistu, kentt‰ p‰ivittyy joka kerta k‰ytt‰j‰n kirjautuessa tai k‰ytt‰j‰synkronoinnin yhteydess‰. Kent‰t jotka on asetettu p‰ivittym‰‰n paikallisesti tulisi lukita.</p> ';
 $string['auth_updateremote'] = 'P‰ivit‰ ulkoinen arvo';
+$string['auth_updateremote_expl'] = '<p><b>P‰ivit‰ ulkoinen tieto:</b> Jos t‰m‰ ei onnistu, ulkoinen tieto p‰ivitet‰‰n samalla kun k‰ytt‰j‰ rekisteri p‰ivitet‰‰n. Kenttien pit‰isi olla lukitsemattomia, jotta editointi sallitaan.</p>';
+$string['auth_updateremote_ldap'] = '<p><b>Huomautus:</b> Ulkoisen LDAP tiedon p‰ivitys vaatii, ett‰ asetetaan binddn ja bindpw
+kaikilla sidosk‰ytt‰jille muotoiluoikeus kaikkiin k‰ytt‰j‰rekistereihin. Se ei t‰ll‰ hetkell‰ s‰ilyt‰ moniarvoisia m‰‰reit‰, eik‰ poista ylim‰‰r‰isi‰ arvoja p‰ivityksess‰. </p>';
 $string['auth_user_create'] = 'K‰ytt‰j‰n luonti';
 $string['auth_user_creation'] = 'K‰ytt‰j‰t voivat itse luoda tunnuksensa. K‰ytt‰j‰tiedot tarkistetaan s‰hkˆpostin avulla. Jos aktivoit t‰m‰n vaihtoehdon, muista myˆs m‰‰ritell‰ autentikointi-modulin muut t‰h‰n liittyv‰t asetukset.';
 $string['auth_usernameexists'] = 'K‰ytt‰j‰tunnus on jo k‰ytˆss‰. Valitse joku toinen.';
@@ -100,7 +107,10 @@ $string['parentlanguage'] = 'KƒƒNTƒJƒT: Jos kielell‰si on kantakieli jota Moodle
 $string['plaintext'] = 'Selv‰kielinen teksti';
 $string['showguestlogin'] = 'Voit n‰ytt‰‰ tai piilottaa Kirjaudu vieraana-painikkeen kirjautumissivulla.';
 $string['stdchangepassword'] = 'K‰yt‰ norminmukaista Vaihda salasana Sivua';
+$string['stdchangepassword_expl'] = 'Jos ulkoinen oikeuksien tarkistaminen sallii salasanojen vaihdot Moodlen kautta, vaihda t‰m‰ muotoon kyll‰. T‰m‰ asetus syrj‰ytt‰‰ \"Vaihda salasana URL\".';
+$string['stdchangepassword_explldap'] = 'HUOMAUTUS: On suositeltavaa, ett‰ k‰ytet‰‰n ennemmin LDAP kuin SSL salakirjoitettua tunnelia (ldaps://)jos LDAP palvelin on et‰k‰ytˆss‰.';
 $string['thischarset'] = 'KƒƒNTƒJƒT: T‰smenn‰ kielen merkistˆ t‰h‰n. Huomaa, ett‰ kaikki teksti joka luodaan t‰m‰n kielen ollessa aktiivinen taltioidaan t‰t‰ merkistˆ‰ k‰ytt‰en, joten ‰l‰ muuta sit‰, kun olet tehnyt asetukset. Esimerkki: iso-8859-1';
 $string['thisdirection'] = 'KƒƒNTƒJƒT: T‰m‰ merkkijono t‰sment‰‰ tekstisi suunnan, joko vasemmalta oikealle tai oikealta vasemmalle. Syˆt‰ joko îltrî tai îrtlî.';
+$string['thislanguage'] = 'KƒƒNTƒJƒT: M‰‰rittele kielesi nimi t‰h‰n. Jos mahdollista, k‰yt‰ yksikoodista numeerista viittausta.';
 
 ?>

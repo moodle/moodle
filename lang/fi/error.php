@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['confirmsesskeybad'] = 'Valitettavasti istuntoavaintasi ei voitu varmistaa toteuttaaksesi tämän toiminnon. Tämä turvaominaisuus ehkäisee vahingossa tapahtuvaa tai tahallista ilkivaltaista tärkeiden toimintojen suoritusta nimelläsi. Varmista, että todella haluat suorittaa tämän toiminnon.';
@@ -18,6 +18,7 @@ $string['restricteduser'] = 'Käyttäjätiliäsi \"$a\" on rajoitettu toiminnon osal
 $string['sessionipnomatch'] = 'Valitettavasti IP numerosi näyttää muuttuneen siitä, kun aluksi kirjauduit sisään. Tämä turvatoiminto estää hakkereita varastamasta identiteettiäsi sillä välin kun olet rekisteröityneenä tällä sivulla. Normaalien käyttäjien ei pitäisi nähdä tätä viestiä- pyydä sivuston hallinnolta apua.';
 $string['thischarset'] = 'KÄÄNTÄJÄT: Täsmennä kielen merkistö tähän. Huomaa, että kaikki teksti joka luodaan tämän kielen ollessa aktiivinen taltioidaan tätä merkistöä käyttäen, joten älä muuta sitä, kun olet tehnyt asetukset. Esimerkki: iso-8859-1';
 $string['thisdirection'] = 'KÄÄNTÄJÄT: Tämä merkkijono täsmentää tekstisi suunnan, joko vasemmalta oikealle tai oikealta vasemmalle. Syötä joko ”ltr” tai ”rtl”.';
+$string['thislanguage'] = 'KÄÄNTÄJÄT: Määrittele kielesi nimi tähän. Jos mahdollista, käytä yksikoodista numeerista viittausta.';
 $string['unknowncourse'] = 'Tuntematon kurssi nimeltään \"$a\"';
 $string['usernotaddederror'] = 'Käyttäjää \"$a\" ei lisätty - tuntematon virhe';
 $string['usernotaddedregistered'] = 'Käyttäjää \"$a\" ei lisätty - on jo rekisteröity';

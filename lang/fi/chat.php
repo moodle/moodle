@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // chat.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['beep'] = 'kutsu';
@@ -7,7 +7,7 @@ $string['chatintro'] = 'Johdanto';
 $string['chatname'] = 'Chat-huoneen nimi';
 $string['chatreport'] = 'Chat-istunnot';
 $string['chattime'] = 'Seuraavan chat-istunnon aika';
-$string['configmethod'] = 'Normaalisti chatin toiminta vaatii selaimen ottavan yhteyttä säännöllisesti palvelimeen. Tämä toimii kaikkialla ja eikä vaadi asetuksia, mutta saattaa samalla aiheuttaa kuormitusta palvelimelle. Chat-palvelu vaatiin unix-komentorivin käyttömahdollisuuden mutta skaalaantuu paremmin laajempaa käyttöön.';
+$string['configmethod'] = 'Normaalisti chatin toiminta vaatii selaimen ottavan yhteyttä säännöllisesti palvelimeen. Tämä toimii kaikkialla ja eikä vaadi asetuksia, mutta saattaa samalla aiheuttaa kuormitusta palvelimelle. Chat-palvelu vaatii unix-komentorivin käyttömahdollisuuden mutta skaalaantuu paremmin laajempaan käyttöön.';
 $string['configoldping'] = 'Kuinka pitkän ajan päästä käyttäjä katsotaan poistuneeksi siitä, kun hänestä ei ole kuulunut mitään?';
 $string['configrefreshroom'] = 'Kuinka usein chat-huone päivitetään (sekunteina)? Mitä lyhyempi aika, sen nopeampi huone on, mutta serverin kuormitus on silloin suurempi, kun monta käyttäjää on huoneessa samaan aikaan.';
 $string['configrefreshuserlist'] = 'Kuinka nopeasti käyttäjälista päivitetään (sekunteina)';
@@ -16,7 +16,7 @@ $string['configserverip'] = 'Chat-palvelun ip-osoite joka vastaa palvelimen nime
 $string['configservermax'] = 'Maksimi asiakkaden määrä';
 $string['configserverport'] = 'Chat-palvelun portti';
 $string['currentchats'] = 'Aktiiviset chat-istunnot';
-$string['currentusers'] = 'Tämän hetkiset käyttäjät';
+$string['currentusers'] = 'Tämänhetkiset käyttäjät';
 $string['deletesession'] = 'Poista tämä istunto';
 $string['deletesessionsure'] = 'Oletko varma, että haluat poistaa tämän istunnon?';
 $string['donotusechattime'] = 'Älä julkaise mitään chat-istuntoaikoja';
@@ -53,6 +53,7 @@ $string['strftimemessage'] = '%%H:%%M';
 $string['studentseereports'] = 'Vanhat istunnot näytetään kaikille';
 $string['thischarset'] = 'KÄÄNTÄJÄT: Täsmennä kielen merkistö tähän. Huomaa, että kaikki teksti joka luodaan tämän kielen ollessa aktiivinen taltioidaan tätä merkistöä käyttäen, joten älä muuta sitä, kun olet tehnyt asetukset. Esimerkki: iso-8859-1';
 $string['thisdirection'] = 'KÄÄNTÄJÄT: Tämä merkkijono täsmentää tekstisi suunnan, joko vasemmalta oikealle tai oikealta vasemmalle. Syötä joko ”ltr” tai ”rtl”.';
+$string['thislanguage'] = 'KÄÄNTÄJÄT: Määrittele kielesi nimi tähän. Jos mahdollista, käytä yksikoodista numeerista viittausta.';
 $string['viewreport'] = 'Näytä vanhat chat-istunnot';
 
 ?>
