@@ -10,7 +10,7 @@
         $status = true;
 
         if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
-            include_once("$CFG->wwwroot/lib/pclzip/pclzip.lib.php");
+            include_once("$CFG->dirroot/lib/pclzip/pclzip.lib.php");
             $archive = new PclZip($file);
             if (!$list = $archive->extract(dirname($file))) {
                 $status = false;
