@@ -55,18 +55,18 @@ function scorm_upgrade($oldversion) {
 	    update_record("scorm_scoes",$sco);
 	}
 	
-	execute_sql("CREATE TABLE {$CFG->prefix}scorm_scoes_track (
-			id int(10) unsigned NOT NULL auto_increment,
-			userid int(10) unsigned NOT NULL default '0',
-			scormid int(10) NOT NULL default '0',
-			scoid int(10) unsigned NOT NULL default '0',
-			element varchar(255) NOT NULL default '',
-			value longtext NOT NULL default '',
-			PRIMARY KEY  (userid, scormid, scoid, element),
-			UNIQUE (userid, scormid, scoid, element),
-			KEY userdata (userid, scormid, scoid),
-			KEY id (id)
-		     ) TYPE=MyISAM;",false); 
+	execute_sql("CREATE TABLE prefix_scorm_scoes_track (
+			id SERIAL,
+			userid integer NOT NULL default '0',
+			scormid integer NOT NULL default '0',
+			scoid integer NOT NULL default '0',
+			element varchar(255) NOT NULL deafult '',
+			value text NOT NULL default '',
+			PRIMARY KEY (userid, scormid, scoid, element),
+			UNIQUE (userid, scormid, scoid, element)
+		   );",false); 
+		   
+	modify_database('','CREATE INDEX prefix_scorm_scoes_track_userdata_idx ON  prefix_scorm_scoes_track (userid, scormid, scoid);');
 		     
 	$oldTrackingData = get_records_select("scorm_sco_users","1","id ASC");
 	$oldElementArray = array ('cmi_core_lesson_location','cmi_core_lesson_status','cmi_core_exit','cmi_core_total_time','cmi_core_score_raw','cmi_suspend_data');

@@ -37,18 +37,17 @@ CREATE TABLE prefix_scorm_scoes (
 CREATE INDEX prefix_scorm_scoes_scorm_idx ON prefix_scorm_scoes (scorm);
 
 CREATE TABLE prefix_scorm_scoes_track (
-  id SERIAL KEY,
+  id SERIAL,
   userid integer NOT NULL default '0',
   scormid integer NOT NULL default '0',
   scoid integer NOT NULL default '0',
   element varchar(255) NOT NULL deafult '',
   value text NOT NULL default '',
   PRIMARY KEY (userid, scormid, scoid, element),
-  UNIQUE (userid, scormid, scoid, element),
-  INDEX userdata (userid, scormid, scoid),
-  INDEX id (id)
+  UNIQUE (userid, scormid, scoid, element)
 );
 
+CREATE INDEX prefix_scorm_scoes_track_userdata_idx ON prefix_scorm_scoes_track (userid, scormid, scoid);
 
 #
 # Dumping data for table `log_display`
