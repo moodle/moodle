@@ -183,29 +183,31 @@ function assignment_cron () {
     return true;
 }
 
-function assignment_print_recent_activity(&$logs, $isteacher=false) {
+function assignment_print_recent_activity($course, $isteacher, $timestart) {
     global $CFG;
 
     $content = false;
     $assignments = NULL;
 
-    foreach ($logs as $key => $log) {
-        if ($log->module == "assignment") {
-            if ($log->action == "upload") {
-                //Create a temp valid module structure (course,id)
-                $tempmod->course = $log->course;
-                $tempmod->id = $log->info;
-                //Obtain the visible property from the instance
-                $modvisible = instance_is_visible($log->module,$tempmod);
-    
-                //Only if the mod is visible
-                if ($modvisible) {
-                    $assignments[$log->info] = assignment_log_info($log);
-                    $assignments[$log->info]->time = $log->time;
-                    $assignments[$log->info]->url  = $log->url;
-                }
-            }
-            unset($logs[$key]);  // No longer need this record
+    if (!$logs = get_records_select("log", "time > '$timestart' AND ".
+                                           "course = '$course->id' AND ".
+                                           "module = 'assignment' AND ".
+                                           "action = 'upload' ", "time ASC")) {
+        return false;
+    }
+
+    foreach ($logs as $log) {
+        //Create a temp valid module structure (course,id)
+        $tempmod->course = $log->course;
+        $tempmod->id = $log->info;
+        //Obtain the visible property from the instance
+        $modvisible = instance_is_visible($log->module,$tempmod);
+   
+        //Only if the mod is visible
+        if ($modvisible) {
+            $assignments[$log->info] = assignment_log_info($log);
+            $assignments[$log->info]->time = $log->time;
+            $assignments[$log->info]->url  = $log->url;
         }
     }
 
@@ -215,10 +217,10 @@ function assignment_print_recent_activity(&$logs, $isteacher=false) {
         print_headline(get_string("newsubmissions", "assignment").":");
         foreach ($assignments as $assignment) {
             $date = userdate($assignment->time, $strftimerecent);
-            echo "<P><FONT SIZE=1>$date - $assignment->firstname $assignment->lastname<BR>";
-            echo "\"<A HREF=\"$CFG->wwwroot/mod/assignment/$assignment->url\">";
+            echo "<p><font size=1>$date - $assignment->firstname $assignment->lastname<br>";
+            echo "\"<a href=\"$CFG->wwwroot/mod/assignment/$assignment->url\">";
             echo "$assignment->name";
-            echo "</A>\"</FONT></P>";
+            echo "</a>\"</font></p>";
         }
     }
  

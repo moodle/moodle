@@ -119,34 +119,36 @@ function journal_cron () {
     return true;
 }
 
-function journal_print_recent_activity(&$logs, $isteacher=false) {
+function journal_print_recent_activity($course, $isteacher, $timestart) {
     global $CFG;
 
     $content = false;
     $journals = NULL;
 
-    foreach ($logs as $key => $log) {
-        if ($log->module == "journal") {
-            if ($log->action == "add entry" or $log->action == "update entry") {
-                ///Get journal info.  I'll need it later
-                $j_log_info = journal_log_info($log);
+    if (!$logs = get_records_select("log", "time > '$timestart' AND ".
+                                           "course = '$course->id' AND ".
+                                           "module = 'journal' AND ".
+                                           "(action = 'add entry' OR action = 'update entry')", "time ASC")){
+        return false;
+    }
 
-                //Create a temp valid module structure (course,id)
-                $tempmod->course = $log->course;
-                $tempmod->id = $j_log_info->id;
-                //Obtain the visible property from the instance
-                $modvisible = instance_is_visible($log->module,$tempmod);
+    foreach ($logs as $log) {
+        ///Get journal info.  I'll need it later
+        $j_log_info = journal_log_info($log);
 
-                //Only if the mod is visible
-                if ($modvisible) {
-                    if (!isset($journals[$log->info])) {
-                        $journals[$log->info] = $j_log_info;
-                        $journals[$log->info]->time = $log->time;
-                        $journals[$log->info]->url = $log->url;
-                    }
-                }
+        //Create a temp valid module structure (course,id)
+        $tempmod->course = $log->course;
+        $tempmod->id = $j_log_info->id;
+        //Obtain the visible property from the instance
+        $modvisible = instance_is_visible($log->module,$tempmod);
+
+        //Only if the mod is visible
+        if ($modvisible) {
+            if (!isset($journals[$log->info])) {
+                $journals[$log->info] = $j_log_info;
+                $journals[$log->info]->time = $log->time;
+                $journals[$log->info]->url = $log->url;
             }
-            unset($logs[$key]);  // No longer need this record
         }
     }
 
@@ -156,10 +158,10 @@ function journal_print_recent_activity(&$logs, $isteacher=false) {
         print_headline(get_string("newjournalentries", "journal").":");
         foreach ($journals as $journal) {
             $date = userdate($journal->time, $strftimerecent);
-            echo "<P><FONT SIZE=1>$date - $journal->firstname $journal->lastname<BR>";
-            echo "\"<A HREF=\"$CFG->wwwroot/mod/journal/$journal->url\">";
+            echo "<p><font size=1>$date - $journal->firstname $journal->lastname<br>";
+            echo "\"<a href=\"$CFG->wwwroot/mod/journal/$journal->url\">";
             echo "$journal->name";
-            echo "</A>\"</FONT></P>";
+            echo "</a>\"</font></p>";
         }
     }
  

@@ -296,59 +296,62 @@ function forum_user_complete($course, $user, $mod, $forum) {
     }
 }
 
-function forum_print_recent_activity(&$logs, $isteacher=false) {
+function forum_print_recent_activity($course, $isteacher, $timestart) {
     global $CFG;
 
     $heading = false;
     $content = false;
 
+    if (!$logs = get_records_select("log", "time > '$timestart' AND ".
+                                           "course = '$course->id' AND ".
+                                           "module = 'forum' AND ".
+                                           "action LIKE 'add %' ", "time ASC")){
+        return false;
+    }
+
     $strftimerecent = get_string("strftimerecent");
 
-    foreach ($logs as $key => $log) {
-        if ($log->module == "forum") {
-            if ($log->action == "add post" or $log->action == "add discussion") {
-                //Get post info, I'll need it later
-                $post = forum_get_post_from_log($log);
-    
-                //Create a temp valid module structure (course,id)
-                $tempmod->course = $log->course;
-                $tempmod->id = $post->forum;
-                //Obtain the visible property from the instance
-                $modvisible = instance_is_visible($log->module,$tempmod);
-    
-                //Only if the mod is visible
-                if ($modvisible) {
-                    if ($post) {
-                        $teacheronly = "";
-                        if ($forum = get_record("forum", "id", $post->forum) ) {
-                            if ($forum->type == "teacher") {
-                                if ($isteacher) {
-                                    $teacheronly = "class=\"teacheronly\"";
-                                } else {
-                                    continue;
-                                }
-                            }
-                        }
-                        if (! $heading) {
-                            print_headline(get_string("newforumposts", "forum").":");
-                            $heading = true;
-                            $content = true;
-                        }
-                        $date = userdate($post->modified, $strftimerecent);
-                        echo "<p $teacheronly><font size=1>$date - $post->firstname $post->lastname<br>";
-                        echo "\"<a href=\"$CFG->wwwroot/mod/forum/$log->url\">";
-                        if ($log->action == "add discussion") {
-                            echo "<b>$post->subject</b>";
+    foreach ($logs as $log) {
+        //Get post info, I'll need it later
+        $post = forum_get_post_from_log($log);
+   
+        //Create a temp valid module structure (course,id)
+        $tempmod->course = $log->course;
+        $tempmod->id = $post->forum;
+        //Obtain the visible property from the instance
+        $modvisible = instance_is_visible($log->module,$tempmod);
+  
+        //Only if the mod is visible
+        if ($modvisible) {
+            if ($post) {
+                $teacheronly = "";
+                if ($forum = get_record("forum", "id", $post->forum) ) {
+                    if ($forum->type == "teacher") {
+                        if ($isteacher) {
+                            $teacheronly = "class=\"teacheronly\"";
                         } else {
-                            echo "$post->subject";
+                            continue;
                         }
-                        echo "</a>\"</font></p>";
                     }
                 }
+                if (! $heading) {
+                    print_headline(get_string("newforumposts", "forum").":");
+                    $heading = true;
+                    $content = true;
+                }
+                $date = userdate($post->modified, $strftimerecent);
+                echo "<p $teacheronly><font size=1>$date - $post->firstname $post->lastname<br>";
+                echo "\"<a href=\"$CFG->wwwroot/mod/forum/$log->url\">";
+                if ($log->action == "add discussion") {
+                    echo "<b>$post->subject</b>";
+                } else {
+                    echo "$post->subject";
+                }
+                echo "</a>\"</font></p>";
             }
-            unset($logs[$key]);  // No longer need this record
         }
     }
+
     return $content;
 }
 

@@ -100,29 +100,31 @@ function survey_user_complete($course, $user, $mod, $survey) {
     }
 }
 
-function survey_print_recent_activity(&$logs, $isteacher=false) {
+function survey_print_recent_activity($course, $isteacher, $timestart) {
     global $CFG;
 
     $content = false;
     $surveys = NULL;
 
-    foreach ($logs as $key => $log) {
-        if ($log->module == "survey") {
-            if ($log->action == "submit") {
-                //Create a temp valid module structure (course,id)
-                $tempmod->course = $log->course;
-                $tempmod->id = $log->info;
-                //Obtain the visible property from the instance
-                $modvisible = instance_is_visible($log->module,$tempmod);
-    
-                //Only if the mod is visible
-                if ($modvisible) {
-                    $surveys[$log->id] = survey_log_info($log);
-                    $surveys[$log->id]->time = $log->time;
-                    $surveys[$log->id]->url = $log->url;
-                }
-            }
-            unset($logs[$key]);  // No longer need this record
+    if (!$logs = get_records_select("log", "time > '$timestart' AND ".
+                                           "course = '$course->id' AND ".
+                                           "module = 'survey' AND ".
+                                           "action = 'submit' ", "time ASC")) {
+        return false;
+    }
+
+    foreach ($logs as $log) {
+        //Create a temp valid module structure (course,id)
+        $tempmod->course = $log->course;
+        $tempmod->id = $log->info;
+        //Obtain the visible property from the instance
+        $modvisible = instance_is_visible($log->module,$tempmod);
+   
+        //Only if the mod is visible
+        if ($modvisible) {
+            $surveys[$log->id] = survey_log_info($log);
+            $surveys[$log->id]->time = $log->time;
+            $surveys[$log->id]->url = $log->url;
         }
     }
 
@@ -132,10 +134,10 @@ function survey_print_recent_activity(&$logs, $isteacher=false) {
         print_headline(get_string("newsurveyresponses", "survey").":");
         foreach ($surveys as $survey) {
             $date = userdate($survey->time, $strftimerecent);
-            echo "<P><FONT SIZE=1>$date - $survey->firstname $survey->lastname<BR>";
-            echo "\"<A HREF=\"$CFG->wwwroot/mod/survey/$survey->url\">";
+            echo "<p><font size=1>$date - $survey->firstname $survey->lastname<br>";
+            echo "\"<a href=\"$CFG->wwwroot/mod/survey/$survey->url\">";
             echo "$survey->name";
-            echo "</A>\"</FONT></P>";
+            echo "</a>\"</font></p>";
         }
     }
  

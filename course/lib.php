@@ -322,21 +322,17 @@ function print_recent_activity($course) {
         $timestart = $timemaxrecent;
     }
 
-    if (! $logs = get_records_select("log", "time > '$timestart' AND ".
-                                            "course = '$course->id' AND ".
-                                            "module <> 'user' AND ".
-                                            "action <> 'view' AND ".
-                                            "action <> 'view all' ", "time ASC")) {
-        return;
-    }
-
 
     // Firstly, have there been any new enrolments?
 
     $heading = false;
     $content = false;
-    foreach ($logs as $key => $log) {
-        if ($log->module == "course" and $log->action == "enrol") {
+
+    $logs = get_records_select("log", "time > '$timestart' AND course = '$course->id' AND 
+                                       module = 'course' AND action = 'enrol'", "time ASC");
+
+    if ($logs) {
+        foreach ($logs as $key => $log) {
             if (! $heading) {
                 print_headline(get_string("newusers").":");
                 $heading = true;
@@ -346,53 +342,48 @@ function print_recent_activity($course) {
             if (isstudent($course->id, $user->id)) {
                 echo "<p><font size=1><a href=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</a></font></p>";
             }
-            unset($logs[$key]);  // No further need for it
         }
     }
 
-    if (! $logs) {
-        return;
-    }
+    // Next, have there been any modifications to the course structure?
 
-    // Next, have there been any changes to the course structure?
+    $logs = get_records_select("log", "time > '$timestart' AND course = '$course->id' AND 
+                                       module = 'course' AND action LIKE '% mod'", "time ASC");
 
-    foreach ($logs as $key => $log) {
-        if ($log->module == "course") {
-            if ($log->action == "add mod" or $log->action == "update mod" or $log->action == "delete mod") {
-                $info = split(" ", $log->info);
-                $modname = get_field($info[0], "name", "id", $info[1]);
-                //Create a temp valid module structure (course,id)
-                $tempmod->course = $log->course;
-                $tempmod->id = $info[1];
-                //Obtain the visible property from the instance
-                $modvisible = instance_is_visible($info[0],$tempmod);
-                
-                //Only if the mod is visible
-                if ($modvisible) {
-                    switch ($log->action) {
-                        case "add mod":
-                            $stradded = get_string("added", "moodle", get_string("modulename", $info[0]));
-                            $changelist["$log->info"] = array ("operation" => "add", "text" => "$stradded:<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
-                        break;
-                        case "update mod":
-                           $strupdated = get_string("updated", "moodle", get_string("modulename", $info[0]));
-                           if (empty($changelist["$log->info"])) {
-                               $changelist["$log->info"] = array ("operation" => "update", "text" => "$strupdated:<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
-                           }
-                        break;
-                        case "delete mod":
-                           if (!empty($changelist["$log->info"]["operation"]) and 
-                                      $changelist["$log->info"]["operation"] == "add") {
-                               $changelist["$log->info"] = NULL;
-                           } else {
-                               $strdeleted = get_string("deletedactivity", "moodle", get_string("modulename", $info[0]));
-                               $changelist["$log->info"] = array ("operation" => "delete", "text" => $strdeleted);
-                           }
-                        break;
-                    }
+    if ($logs) {
+        foreach ($logs as $key => $log) {
+            $info = split(" ", $log->info);
+            $modname = get_field($info[0], "name", "id", $info[1]);
+            //Create a temp valid module structure (course,id)
+            $tempmod->course = $log->course;
+            $tempmod->id = $info[1];
+            //Obtain the visible property from the instance
+            $modvisible = instance_is_visible($info[0],$tempmod);
+            
+            //Only if the mod is visible
+            if ($modvisible) {
+                switch ($log->action) {
+                    case "add mod":
+                        $stradded = get_string("added", "moodle", get_string("modulename", $info[0]));
+                        $changelist["$log->info"] = array ("operation" => "add", "text" => "$stradded:<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
+                    break;
+                    case "update mod":
+                       $strupdated = get_string("updated", "moodle", get_string("modulename", $info[0]));
+                       if (empty($changelist["$log->info"])) {
+                           $changelist["$log->info"] = array ("operation" => "update", "text" => "$strupdated:<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
+                       }
+                    break;
+                    case "delete mod":
+                       if (!empty($changelist["$log->info"]["operation"]) and 
+                                  $changelist["$log->info"]["operation"] == "add") {
+                           $changelist["$log->info"] = NULL;
+                       } else {
+                           $strdeleted = get_string("deletedactivity", "moodle", get_string("modulename", $info[0]));
+                           $changelist["$log->info"] = array ("operation" => "delete", "text" => $strdeleted);
+                       }
+                    break;
                 }
             }
-            unset($logs[$key]);  // No further need for it
         }
     }
 
@@ -411,19 +402,17 @@ function print_recent_activity($course) {
         }
     }
 
-    if (! $logs) {
-        return;
-    }
-
     // Now display new things from each module
 
     $mods = get_list_of_plugins("mod");
 
-    foreach ($mods as $mod) {
+    $isteacher = isteacher($course->id);
+
+    foreach ($mods as $mod) {      // Each module gets it's own logs and prints them
         include_once("$CFG->dirroot/mod/$mod/lib.php");
         $print_recent_activity = $mod."_print_recent_activity";
-        if ($logs and function_exists($print_recent_activity)) {
-            $modcontent = $print_recent_activity($logs, isteacher($course->id));
+        if (function_exists($print_recent_activity)) {
+            $modcontent = $print_recent_activity($course, $isteacher, $timestart);
             if ($modcontent) {
                 $content = true;
             }

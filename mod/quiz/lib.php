@@ -187,19 +187,6 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
     return true;
 }
 
-function quiz_print_recent_activity(&$logs, $isteacher=false) {
-/// Given a list of logs, assumed to be those since the last login 
-/// this function prints a short list of changes related to this module
-/// If isteacher is true then perhaps additional information is printed.
-/// This function is called from course/lib.php: print_recent_activity()
-
-    global $CFG;
-
-    $content = "";
-
-    return $content;  // True if anything was printed, otherwise false
-}
-
 function quiz_cron () {
 /// Function to be run periodically according to the moodle cron
 /// This function searches for things that need to be done, such 
