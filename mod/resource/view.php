@@ -309,7 +309,7 @@
                     echo "</p></center>";
                 }
 
-                if ($resource->summary) {
+                if (trim($resource->summary)) {
                     print_simple_box(format_text($resource->summary), 'center');
                 }
 
