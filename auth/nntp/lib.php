@@ -8,19 +8,22 @@ function auth_user_login ($username, $password) {
 
     global $CFG;
 
-    $host = "{".$CFG->auth_nntphost.":$CFG->auth_nntpport/nntp}";
+    $hosts = split(';', $CFG->auth_nntphost);   // Could be multiple hosts
 
-    error_reporting(0);
-    $connection = imap_open($host, $username, $password, OP_HALFOPEN);
-    error_reporting($CFG->debug);   
+    foreach ($hosts as $host) {                 // Try each host in turn
+        $host = '{'.trim($host).":$CFG->auth_nntpport/nntp}";
 
-    if ($connection) {
-        imap_close($connection);
-        return true;
+        error_reporting(0);
+        $connection = imap_open($host, $username, $password, OP_HALFOPEN);
+        error_reporting($CFG->debug);   
 
-    } else {
-        return false;
+        if ($connection) {
+            imap_close($connection);
+            return true;
+        }
     }
+
+    return false;    // No match
 }
 
 

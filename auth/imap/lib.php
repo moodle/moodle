@@ -7,34 +7,40 @@ function auth_user_login ($username, $password) {
 
     global $CFG;
 
-    switch ($CFG->auth_imaptype) {
-        case "imapssl":
-            $host = "{".$CFG->auth_imaphost.":$CFG->auth_imapport/imap/ssl}";
-        break;
+    $hosts = split(';', $CFG->auth_imaphost);   // Could be multiple hosts
 
-        case "imapcert":
-            $host = "{".$CFG->auth_imaphost.":$CFG->auth_imapport/imap/ssl/novalidate-cert}";
-        break;
+    foreach ($hosts as $host) {                 // Try each host in turn
 
-        case "imaptls":
-            $host = "{".$CFG->auth_imaphost.":$CFG->auth_imapport/imap/notls}";
-        break;
+        $host = trim($host);
 
-        default:
-            $host = "{".$CFG->auth_imaphost.":$CFG->auth_imapport}";
+        switch ($CFG->auth_imaptype) {
+            case "imapssl":
+                $host = '{'.$host.":$CFG->auth_imapport/imap/ssl}";
+            break;
+    
+            case "imapcert":
+                $host = '{'.$host.":$CFG->auth_imapport/imap/ssl/novalidate-cert}";
+            break;
+    
+            case "imaptls":
+                $host = '{'.$host.":$CFG->auth_imapport/imap/notls}";
+            break;
+    
+            default:
+                $host = '{'.$host.":$CFG->auth_imapport}";
+        }
+
+        error_reporting(0);
+        $connection = imap_open($host, $username, $password, OP_HALFOPEN);
+        error_reporting($CFG->debug);   
+
+        if ($connection) {
+            imap_close($connection);
+            return true;
+        }
     }
 
-    error_reporting(0);
-    $connection = imap_open($host, $username, $password, OP_HALFOPEN);
-    error_reporting($CFG->debug);   
-
-    if ($connection) {
-        imap_close($connection);
-        return true;
-
-    } else {
-        return false;
-    }
+    return false;  // No match
 }
 
 

@@ -40,6 +40,7 @@ $string['auth_ldapextrafields'] = 'These fields are optional.  You can choose to
 $string['auth_ldaptitle'] = 'Use an LDAP server';
 $string['auth_manualdescription'] = 'This method removes any way for users to create their own accounts.  All accounts must be manually created by the admin user.';
 $string['auth_manualtitle'] = 'Manual accounts only';
+$string['auth_multiplehosts'] = 'Multiple hosts can be specified (eg host1.com;host2.com;host3.com';
 $string['auth_nntpdescription'] = 'This method uses an NNTP server to check whether a given username and password is valid.';
 $string['auth_nntphost'] = 'The NNTP server address. Use the IP number, not DNS name.';
 $string['auth_nntpport'] = 'Server port (119 is the most common)';
