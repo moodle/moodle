@@ -26,13 +26,17 @@ class CourseBlock_course_summary extends MoodleBlock {
         $this->content = New stdClass;
         $this->content->text = format_text($this->course->summary, FORMAT_HTML);
         if (isediting($this->course->id)) {
-            $path = $CFG->wwwroot.'/course';
-            if (empty($THEME->custompix)) {
-                 $pixpath = $path.'/../pix';
+            if (empty($this->course->category)) {
+                $editpage = "$CFG->wwwroot/admin/site.php";
             } else {
-                 $pixpath = $path.'/../theme/'.$CFG->theme.'/pix';
+                $editpage = $CFG->wwwroot.'/course/edit.php?id='.$this->course->id;
             }
-            $this->content->text .= "<div align=\"right\"><a href=\"$CFG->wwwroot/admin/site.php\"><img src=\"$pixpath/t/edit.gif\" /></a></div>";
+            if (empty($THEME->custompix)) {
+                 $pixpath = $CFG->wwwroot.'/pix';
+            } else {
+                 $pixpath = $CFG->wwwroot.'/theme/'.$CFG->theme.'/pix';
+            }
+            $this->content->text .= "<div align=\"right\"><a href=\"$editpage\"><img src=\"$pixpath/t/edit.gif\" /></a></div>";
         }
         $this->content->footer = '';
 
