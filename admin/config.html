@@ -63,6 +63,23 @@
     </TD>
 </TR>
 <TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>smtpuser:</TD>
+	<TD>
+    <INPUT NAME=smtpuser TYPE=text SIZE=10 VALUE="<?=$config->smtpuser?>">
+    <? formerr($err["smtpuser"]); ?>
+    </TD>
+    <TD ROWSPAN=2>
+    <? print_string("configsmtpuser") ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>smtppass:</TD>
+	<TD>
+    <INPUT NAME=smtppass TYPE=text SIZE=10 VALUE="<?=$config->smtppass?>">
+    <? formerr($err["smtppass"]); ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
 	<TD ALIGN=RIGHT><P>gdversion:</TD>
 	<TD>
     <? unset($options);

@@ -63,6 +63,7 @@ $string['configmaxeditingtime'] = "This specifies the amount of time people have
 $string['configproxyhost'] = "If this <B>server</B> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.";
 $string['configslasharguments'] = "Files (images, uploads etc) are provided via a script using 'slash arguments' (the second option here). This method allows files to be more easily cached in web browsers, proxy servers etc.  Unfortunately, some PHP servers don't allow this method, so if you have trouble viewing uploaded files or images (eg user pictures), set this variable to the first option";
 $string['configsmtphosts'] = "Give the full name of one or more local SMTP servers that Moodle should use to send mail (eg 'mail.a.com' or 'mail.a.com;mail.b.com'). If you leave it blank, Moodle will use the PHP default method of sending mail.";
+$string['configsmtpuser'] = "If you have specified an SMTP server above, and the server requires authentication, then enter the username and password here.";
 $string['configunzip'] = "Indicate the location of your unzip program (Unix only).  This is needed to unpack zip archives on the server.";
 $string['configvariables'] = "Configure variables";
 $string['configzip'] = "Indicate the location of your zip program (Unix only).  This is needed to create zip archives on the server.";

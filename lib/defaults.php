@@ -10,6 +10,8 @@
        "locale"         => "en",
        "auth"           => "email",
        "smtphosts"      => "",
+       "smtpuser"       => "",
+       "smtppass"       => "",
        "gdversion"      =>  1,
        "longtimenosee"  =>  100,
        "zip"            => "/usr/bin/zip",

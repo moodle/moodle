@@ -1527,6 +1527,12 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     if ($CFG->smtphosts) {
         $mail->IsSMTP();                               // use SMTP directly
         $mail->Host = "$CFG->smtphosts";               // specify main and backup servers
+
+        if ($CFG->smtpuser) {                          // Use SMTP authentication
+            $mail->SMTPAuth = true;
+            $mail->Username = $CFG->smtpuser;
+            $mail->Password = $CFG->smtppass;
+        }
     } else {
         $mail->IsMail();                               // use PHP mail() = sendmail
     }
