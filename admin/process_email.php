@@ -44,7 +44,7 @@ $mod = substr($address,4,2);
 $modargs = substr($address,6,-16);
 $hash = substr($address,-16);
 
-if (substr(md5($prefix.$mod.$modargs.$CFG->sitesecret),0,16) != $hash) {
+if (substr(md5($prefix.$mod.$modargs.$CFG->siteidentifier),0,16) != $hash) {
 	die("HASH DIDN'T MATCH!\n");
 }
 list(,$modid) = unpack('C',base64_decode($mod.'=='));

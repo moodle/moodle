@@ -2707,9 +2707,9 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
 
 function generate_email_processing_address($modid,$modargs) {
     global $CFG;
-    
-    if (empty($CFG->sitesecret)) {
-        set_config('sitesecret',random_string(10));
+
+    if (empty($CFG->siteidentifier)) {    // Unique site identification code
+        set_config('siteidentifier', random_string(32));
     }
     
     $header = $CFG->mailprefix . substr(base64_encode(pack('C',$modid)),0,2).$modargs;
