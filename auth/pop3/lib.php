@@ -26,7 +26,7 @@ function auth_user_login ($username, $password) {
         }
 
         error_reporting(0);
-        $connection = imap_open($host, $username, $password, OP_HALFOPEN);
+        $connection = imap_open($host, $username, $password);
         error_reporting($CFG->debug);   
  
         if ($connection) {
