@@ -277,7 +277,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents, $fromtime=0) {
     global $CFG;
 
-    $display = &New stdClass;
+    $display = &new stdClass;
     $display->range = $daysinfuture; // How many days in the future we 'll look
     $display->maxevents = $maxevents;
 
@@ -296,8 +296,9 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
         $display->tstart = $usermidnighttoday;
     }
 
-    // This does include DST compensation, but unfortunately only with respect to the server's TZ
-    $display->tend = strtotime('+'.$display->range.' days', $display->tstart) - 1;
+    // This works correctly with respect to the user's DST, but it is accurate
+    // only because $fromtime is always the exact midnight of some day!
+    $display->tend = usergetmidnight($display->tstart + DAYSECS * $display->range + 3 * HOURSECS) - 1;
 
     // Get the events matching our criteria
     $whereclause = calendar_sql_where($display->tstart, $display->tend, $users, $groups, $courses);
@@ -546,10 +547,10 @@ function calendar_top_controls($type, $data) {
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
             $nextlink = calendar_get_link_tag('&gt;&gt;', 'index.php?', 0, $nextmonth, $nextyear);
             $prevlink = calendar_get_link_tag('&lt;&lt;', 'index.php?', 0, $prevmonth, $prevyear);
-            $content .= '<table class="generaltable" style="width: 100%;"><tr>';
-            $content .= '<td style="text-align: left; width: 12%;">'.$prevlink."</td>\n";
-            $content .= '<td style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.strftime(get_string('strftimemonthyear'), $time)."</a></td>\n";
-            $content .= '<td style="text-align: right; width: 12%;">'.$nextlink."</td>\n";
+            $content .= '<table class="calendar-controls"><tr>';
+            $content .= '<td class="previous">'.$prevlink."</td>\n";
+            $content .= '<td class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.strftime(get_string('strftimemonthyear'), $time)."</a></td>\n";
+            $content .= '<td class="next">'.$nextlink."</td>\n";
             $content .= '</tr></table>';
         break;
         case 'course':
@@ -557,10 +558,10 @@ function calendar_top_controls($type, $data) {
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
             $nextlink = calendar_get_link_tag('&gt;&gt;', 'view.php?id='.$data['id'].'&amp;', 0, $nextmonth, $nextyear);
             $prevlink = calendar_get_link_tag('&lt;&lt;', 'view.php?id='.$data['id'].'&amp;', 0, $prevmonth, $prevyear);
-            $content .= '<table class="generaltable" style="width: 100%;"><tr>';
-            $content .= '<td style="text-align: left; width: 12%;">'.$prevlink."</td>\n";
-            $content .= '<td style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;course='.$data['id'].'&amp;', 1, $data['m'], $data['y']).'">'.strftime(get_string('strftimemonthyear'), $time)."</a></td>\n";
-            $content .= '<td style="text-align: right; width: 12%;">'.$nextlink."</td>\n";
+            $content .= '<table class="calendar-controls"><tr>';
+            $content .= '<td class="previous">'.$prevlink."</td>\n";
+            $content .= '<td class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;course='.$data['id'].'&amp;', 1, $data['m'], $data['y']).'">'.strftime(get_string('strftimemonthyear'), $time)."</a></td>\n";
+            $content .= '<td class="next">'.$nextlink."</td>\n";
             $content .= '</tr></table>';
         break;
         case 'upcoming':
@@ -574,10 +575,10 @@ function calendar_top_controls($type, $data) {
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
             $prevdate = calendar_mktime_check($prevmonth, 1, $prevyear);
             $nextdate = calendar_mktime_check($nextmonth, 1, $nextyear);
-            $content .= "<table style='width: 100%;'><tr>\n";
-            $content .= '<td style="text-align: left; width: 30%;"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $prevmonth, $prevyear).'">&lt;&lt; '.strftime(get_string('strftimemonthyear'), $prevdate)."</a></td>\n";
-            $content .= '<td style="text-align: center"><strong>'.strftime(get_string('strftimemonthyear'), $time)."</strong></td>\n";
-            $content .= '<td style="text-align: right; width: 30%;"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $nextmonth, $nextyear).'">'.strftime(get_string('strftimemonthyear'), $nextdate)." &gt;&gt;</a></td>\n";
+            $content .= '<table class="calendar-controls"><tr>';
+            $content .= '<td class="previous"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $prevmonth, $prevyear).'">&lt;&lt; '.strftime(get_string('strftimemonthyear'), $prevdate)."</a></td>\n";
+            $content .= '<td class="current">'.strftime(get_string('strftimemonthyear'), $time)."</td>\n";
+            $content .= '<td class="next"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $nextmonth, $nextyear).'">'.strftime(get_string('strftimemonthyear'), $nextdate)." &gt;&gt;</a></td>\n";
             $content .= "</tr></table>\n";
         break;
         case 'day':
@@ -587,8 +588,8 @@ function calendar_top_controls($type, $data) {
             $nextdate = getdate(make_timestamp($data['y'], $data['m'], $data['d'] + 1));
             $prevname = calendar_wday_name($prevdate['weekday']);
             $nextname = calendar_wday_name($nextdate['weekday']);
-            $content .= "<table style='width: 100%;'><tr>\n";
-            $content .= '<td style="text-align: left; width: 20%;"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $prevdate['mday'], $prevdate['mon'], $prevdate['year']).'">&lt;&lt; '.$prevname."</a></td>\n";
+            $content .= '<table class="calendar-controls"><tr>';
+            $content .= '<td class="previous"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $prevdate['mday'], $prevdate['mon'], $prevdate['year']).'">&lt;&lt; '.$prevname."</a></td>\n";
 
             // Get the format string
             $text = get_string('strftimedaydate');
@@ -598,10 +599,10 @@ function calendar_top_controls($type, $data) {
             $text = strftime($text, $time);
             $text = str_replace(' 0', ' ', $text);
             // Print the actual thing
-            $content .= '<td style="text-align: center"><strong>'.$text."</strong></td>\n";
+            $content .= '<td class="current">'.$text.'</td>';
 
-            $content .= '<td style="text-align: right; width: 20%;"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $nextdate['mday'], $nextdate['mon'], $nextdate['year']).'">'.$nextname." &gt;&gt;</a></td>\n";
-            $content .= "</tr></table>\n";
+            $content .= '<td class="next"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $nextdate['mday'], $nextdate['mon'], $nextdate['year']).'">'.$nextname." &gt;&gt;</a></td>\n";
+            $content .= '</tr></table>';
         break;
     }
     return $content;
@@ -1217,52 +1218,6 @@ function calendar_human_readable_dst($preset) {
     return get_string('dsthumanreadable', 'calendar', $options);
     //print_string('dstonthe', 'calendar')
     //return 'ID '.$preset->id.': DST is activated on the X of X.';
-}
-
-// "Find the ($index as int, 1st, 2nd, etc, -1 = last) ($weekday as int, sunday = 0) in ($month) of ($year)"
-function calendar_find_day_in_month($index, $weekday, $month, $year) {
-    if($weekday == -1) {
-        // Any day of the week will do
-        if($index == -1) {
-            // Last day of that month
-            $targetday = calendar_days_in_month($month, $year);
-        }
-        else {
-            // Not last day; a straight index value
-            $targetday = $index;
-        }
-    }
-    else {
-        // We need to calculate when exactly that weekday is
-        // Fist of all, what day of the week is the first of that month?
-
-        // Convert to timestamp and back to readable representation using the server's timezone;
-        // this should be correct regardless of what the user's timezone is.
-        $firstmonthweekday = strftime('%w', mktime(0, 0, 0, $month, 1, $year));
-//PJ        print_object('The first of '.$month.'/'.$year.' is '.$firstmonthweekday);
-        $daysinmonth       = calendar_days_in_month($month, $year);
-
-        // This is the first such-named weekday of the month
-        $targetday = 1 + $weekday - $firstmonthweekday;
-        if($targetday <= 0) {
-            $targetday += 7;
-        }
-//PJ        print_object('The FIRST SPECIFIC '.$weekday.' of '.$month.'/'.$year.' is on '.$targetday);
-
-        if($index == -1) {
-            // To find the LAST such weekday, just keep adding 7 days at a time
-            while($targetday + 7 <= $daysinmonth) {
-                $targetday += 7;
-            }
-//PJ            print_object('The LAST SPECIFIC '.$weekday.' of '.$month.'/'.$year.' is on '.$targetday);
-        }
-        else {
-            // For a specific week, add as many weeks as required
-            $targetday += $index > 1 ? ($index - 1) * 7 : 0;
-        }
-    }
-
-    return $targetday;
 }
 
 function calendar_print_month_selector($name, $selected) {

@@ -351,6 +351,19 @@ table.minicalendar td {
     font-weight:bold;
 }
 
+table.calendar-controls .previous {
+    text-align: left;
+}
+table.calendar-controls .current {
+    text-align: center;
+}
+table.calendar-controls .next {
+    text-align: right;
+}
+#calendar .maincalendar .calendar-controls .current {
+    font-weight: bold;
+}
+
 /*****************************
 ***
 *** Blocks

@@ -650,6 +650,22 @@ table.minicalendar th {
     padding-bottom:2px;
 }
 
+table.calendar-controls {
+    width: 100%;
+}
+
+table.calendar-controls .previous,
+table.calendar-controls .next
+{
+    width: 12%;
+}
+
+#calendar .maincalendar .calendar-controls .previous,
+#calendar .maincalendar .calendar-controls .next
+{
+    width: 30%;
+}
+
 /*****************************
 ***
 *** Blocks
