@@ -30,7 +30,12 @@ function quiz_add_instance($quiz) {
 /// will create a new instance and return the id number 
 /// of the new instance.
 
+    $quiz->created      = time();
     $quiz->timemodified = time();
+    $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday, 
+                                     $quiz->openhour, $quiz->openminute, $quiz->opensecond);
+    $quiz->timeclose = make_timestamp($quiz->closeyear, $quiz->closemonth, $quiz->closeday, 
+                                      $quiz->closehour, $quiz->closeminute, $quiz->closesecond);
 
     if (!$quiz->id = insert_record("quiz", $quiz)) {
         return false;  // some error occurred
@@ -61,6 +66,10 @@ function quiz_update_instance($quiz) {
 /// will update an existing instance with new data.
 
     $quiz->timemodified = time();
+    $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday, 
+                                     $quiz->openhour, $quiz->openminute, $quiz->opensecond);
+    $quiz->timeclose = make_timestamp($quiz->closeyear, $quiz->closemonth, $quiz->closeday, 
+                                      $quiz->closehour, $quiz->closeminute, $quiz->closesecond);
     $quiz->id = $quiz->instance;
 
     if (!update_record("quiz", $quiz)) {

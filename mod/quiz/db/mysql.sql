@@ -3,7 +3,7 @@
 # http://www.phpmyadmin.net/ (download page)
 #
 # Host: localhost
-# Generation Time: Oct 15, 2002 at 08:22 PM
+# Generation Time: Oct 16, 2002 at 12:20 AM
 # Server version: 3.23.49
 # PHP Version: 4.2.3
 # Database : `moodle`
@@ -18,7 +18,8 @@ CREATE TABLE `quiz` (
   `course` int(10) unsigned NOT NULL default '0',
   `name` varchar(255) NOT NULL default '',
   `intro` text NOT NULL,
-  `days` smallint(6) NOT NULL default '0',
+  `timeopen` int(10) unsigned NOT NULL default '0',
+  `timeclose` int(10) unsigned NOT NULL default '0',
   `attempts` smallint(6) NOT NULL default '0',
   `feedback` tinyint(4) NOT NULL default '0',
   `correctanswers` tinyint(4) NOT NULL default '1',

@@ -23,7 +23,12 @@
 <TR valign=top>
     <TD align=right><P><B><? print_string("imagedisplay", "quiz") ?>:</B></P></TD>
     <TD>
-    <?  choose_from_menu($images, "image", "$question->image", get_string("none"),"",""); ?>
+    <?  if (!$images) {
+            print_string("noimagesyet");
+        } else {
+            choose_from_menu($images, "image", "$question->image", get_string("none"),"","");
+        }
+    ?>
     </TD>
 </TR>
 

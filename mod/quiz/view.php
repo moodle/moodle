@@ -37,14 +37,8 @@
 
     add_to_log($course->id, "quiz", "view", "view.php?id=$cm->id", "$quiz->id");
 
-    if ($course->format == "weeks" and $quiz->days) {
-        $timenow = time();
-        $timestart = $course->startdate + (($cw->section - 1) * 608400);
-        $timefinish = $timestart + (3600 * 24 * $quiz->days);
-        $available = ($timestart < $timenow and $timenow < $timefinish);
-    } else {
-        $available = true;
-    }
+    $timenow = time();
+    $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose);
 
 // Print the page header
 
@@ -74,13 +68,12 @@
 
     print_simple_box($quiz->intro, "CENTER");
 
-    if (isset($timestart) and isset($timefinish)) {
-        if ($available) {
-            echo "<P ALIGN=CENTER>The quiz is available: ";
-        } else {
-            echo "<P ALIGN=CENTER>The quiz is not available: ";
-        }
-        echo userdate($timestart)." - ".userdate($timefinish)." </P>";
+    if ($available) {
+        echo "<P ALIGN=CENTER>".get_string("quizavailable", "quiz", userdate($quiz->timeclose));
+    } else if ($timenow < $quiz->timeopen) {
+        echo "<P ALIGN=CENTER>".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
+    } else {
+        echo "<P ALIGN=CENTER>".get_string("quizclosed", "quiz", userdate($quiz->timeclose));
     }
 
     if ($attempts = quiz_get_user_attempts($quiz->id, $USER->id)) {
