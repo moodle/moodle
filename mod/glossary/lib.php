@@ -686,7 +686,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
     $return .= "</font> ";
 
     
-    if ( $glossary->allowcomments and !isguest()) {
+    if ( ($glossary->allowcomments && !isguest()) || isteacher($glossary->course)) {
         $return .= " <a title=\"" . get_string("addcomment","glossary") . "\" href=\"comment.php?id=$cm->id&eid=$entry->id\"><img src=\"comment.gif\" height=11 width=11 border=0></a> ";
     }
 
@@ -1557,11 +1557,11 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
 
     echo "<div align=right><p align=right>";
     $ineditperiod = ((time() - $comment->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
-    if ( ($ineditperiod && $USER->id == $comment->userid)  or isteacher($course->id) ) {
+    if ( ($glossary->allowcomments &&  $ineditperiod && $USER->id == $comment->userid)  || isteacher($course->id) ) {
         echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=edit\"><img  
                alt=\"" . get_string("edit") . "\" src=\"$CFG->pixpath/t/edit.gif\" height=11 width=11 border=0></a> ";
     }
-    if ( $USER->id == $comment->userid or isteacher($course->id) ) {
+    if ( ($glossary->allowcomments && $USER->id == $comment->userid) || isteacher($course->id) ) {
         echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=delete\"><img  
                alt=\"" . get_string("delete") . "\" src=\"$CFG->pixpath/t/delete.gif\" height=11 width=11 border=0></a>";
     }

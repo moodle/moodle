@@ -59,7 +59,7 @@
 
     print_heading(get_string('commentson','glossary')." <b>\"$entry->concept\"</b>");
 
-    if ($glossary->allowcomments) { 
+    if ($glossary->allowcomments || isteacher($glossary->course)) { 
         print_heading("<a href=\"comment.php?id=$cm->id&eid=$entry->id\">$straddcomment</a> <img title=\"$straddcomment\" src=\"comment.gif\" height=11 width=11 border=0>");
     }
 
