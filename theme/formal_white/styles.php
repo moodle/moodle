@@ -621,43 +621,43 @@ TABLE.calendarmonth THEAD TD {
 }
 
 .cal_event_global {
-	background-color: #99cc99 !important;
-	border: 2px #99cc99 solid !important;
+	background-color: #009999 !important;
+	border: 2px #009999 solid !important;
 }
 
 .cal_event_course {
-	background-color: #ff9966 !important;
-	border: 2px #ff9966 solid !important;
+	background-color: #ff3333 !important;
+	border: 2px #ff3333 solid !important;
 }
 
 .cal_event_group {
-	background-color: #FFCC00 !important;
-	border: 2px #FFCC00 solid !important;
+	background-color: #ffcc33 !important;
+	border: 2px #ffcc33 solid !important;
 }
 
 .cal_event_user {
-	background-color: #ffcc99 !important;
-	border: 2px #ffcc99 solid !important;
+	background-color: #99ccff !important;
+	border: 2px #99ccff solid !important;
 }
 
 .cal_duration_global {
-	border-top: 2px #99cc99 solid !important;
-	border-bottom: 2px #99cc99 solid !important;
+	border-top: 2px #009999 solid !important;
+	border-bottom: 2px #009999 solid !important;
 }
 
 .cal_duration_course {
-	border-top: 2px #ff9966 solid !important;
-	border-bottom: 2px #ff9966 solid !important;
+	border-top: 2px #ff3333 solid !important;
+	border-bottom: 2px #ff3333 solid !important;
 }
 
 .cal_duration_user {
-	border-top: 2px #ffcc99 solid !important;
-	border-bottom: 2px #ffcc99 solid !important;
+	border-top: 2px #99ccff solid !important;
+	border-bottom: 2px #99ccff solid !important;
 }
 
 .cal_duration_group {
-	border-top: 2px #FFCC00 solid !important;
-	border-bottom: 2px #FFCC00 solid !important;
+	border-top: 2px #ffcc33 solid !important;
+	border-bottom: 2px #ffcc33 solid !important;
 }
 
 .cal_weekend {
