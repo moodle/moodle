@@ -62,9 +62,10 @@
                         $title = strip_tags("$glossary->name: " . get_string("category","glossary"). " $category->name");
                         $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&tab=1&cat=$concept->id\">";
                     } else {
-                        $title = strip_tags("$glossary->name: $concept->concept");
-                        $href_tag_begin = "<a target=\"entry\" class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=".urlencode($concept->concept)."\" ".
-                             "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&concept=".urlencode($concept->concept)."', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
+                        $concepttitle = urlencode($concept->concept);
+                        $title = strip_tags("$glossary->name: $concepttitle");
+                        $href_tag_begin = "<a target=\"entry\" class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$concepttitle\" ".
+                             "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&concept=$concepttitle', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
                     }
 
                     $currentconcept = str_replace("|", "\|", $concept->concept);
@@ -165,7 +166,7 @@
                 }
             }
         }
-        return stripslashes($text);
+        return $text;
     }
     
     function glossary_sort_entries_by_lenght ( $entry0, $entry1 ) {
