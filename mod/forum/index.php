@@ -165,11 +165,15 @@
                     "", "", true, $searchform, navmenu($course));
     }
 
-    print_heading(get_string("generalforums", "forum"));
-    print_table($generaltable);
+    if ($generalforums) {
+        print_heading(get_string("generalforums", "forum"));
+        print_table($generaltable);
+    }
 
-    print_heading(get_string("learningforums", "forum"));
-    print_table($learningtable);
+    if ($learningforums) {
+        print_heading(get_string("learningforums", "forum"));
+        print_table($learningtable);
+    }
 
     print_footer($course);
 
