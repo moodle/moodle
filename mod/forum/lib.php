@@ -1763,7 +1763,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     // Group picture
     if ($group !== -1) {  // Groups are active - group is a group data object or NULL
         echo '<td class="picture group">';
-        if (!empty($group->picture)) {
+        if (!empty($group->picture) and empty($group->hidepicture)) {
             print_group_picture($group, $forum->course, false, false, true);
         } else if (isset($group->id)) {
             echo '<a href="'.$CFG->wwwroot.'/course/group.php?id='.$forum->course.'&amp;group='.$group->id.'">'.$group->name.'</a>';
@@ -2576,7 +2576,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
 
     if (forum_user_can_post_discussion($forum, $currentgroup)) {
         echo '<div class="';
-        echo ($forum_style == 'minimal') ? 'forumaddnewminimal' : 'forumaddnew';
+        echo ($forum_style == 'minimal') ? 'singlebutton forumaddnewminimal' : 'singlebutton forumaddnew';
         echo '">';
         echo "<form name=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
         echo "<input type=\"hidden\" name=\"forum\" value=\"$forum->id\" />";
