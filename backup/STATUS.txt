@@ -114,11 +114,13 @@ Restore Details:
             - Course Files......................................DONE
             - User Files........................................DONE
         - Check file is a valid one.............................DONE
-        - Load info from file...................................IN PROGRESS
+        - Load info from file...................................DONE
+        - Load Backup Info......................................DONE
+        - Load Course Header....................................DONE
         - Restore into feature..................................NO EXISTS
            - New course (restore)...............................NO EXISTS
            - Existing course (import)...........................NO EXISTS
-        - Select Info to Restore (from backup)..................NO EXISTS
+        - Select Info to Restore (depending from backup)........NO EXISTS
         - Make decisions........................................NO EXISTS
            - About existing users...............................NO EXISTS
         - Launch Restore........................................NO EXISTS
