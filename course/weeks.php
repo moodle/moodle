@@ -84,7 +84,6 @@
     echo "</TD><TD WIDTH=\"*\">";
 
     print_simple_box("Weekly Outline", $align="CENTER", $width="100%", $color="$THEME->cellheading");
-    echo "<IMG SRC=\"../pix/spacer.gif\" HEIGHT=6 WIDTH=1><BR>";
     
     // Now all the weekly modules
     $timenow = time();
