@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004080300)
+      // moodle.php - created with Moodle 1.4 development (2004081200)
 
 
 $string['action'] = 'Actie';
@@ -717,7 +717,7 @@ $string['order'] = 'Volgorde';
 $string['other'] = 'Andere';
 $string['outline'] = 'Overzicht';
 $string['page'] = 'Pagina';
-$string['parentlanguage'] = 'Moedertaal';
+$string['parentlanguage'] = 'en';
 $string['participants'] = 'Deelnemers';
 $string['password'] = 'Wachtwoord';
 $string['passwordchanged'] = 'Het wachtwoord is veranderd';
