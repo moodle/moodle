@@ -20,31 +20,37 @@
     }
 
     for ($i=1; $i <= $CHOICE_MAX_NUMBER; $i++) {
-        $answerchecked[$i] = "";
+        $answerchecked[$i] = '';
     }
     if ($current = get_record("choice_answers", "choice", $choice->id, "userid", $USER->id)) {
-        $answerchecked[$current->answer] = "CHECKED";
+        $answerchecked[$current->answer] = 'CHECKED';
     }
 
     if ($form = data_submitted()) {
         $timenow = time();
-        if ($current) {
-            $newanswer = $current;
-            $newanswer->answer = $form->answer;
-            $newanswer->timemodified = $timenow;
-            if (! update_record("choice_answers", $newanswer)) {
-                error("Could not update your choice");
-            }
-            add_to_log($course->id, "choice", "update", "view.php?id=$cm->id", $choice->id, $cm->id);
+
+        if (empty($form->answer)) {
+            redirect("view.php?id=$cm->id", get_string('mustchooseone', 'choice'));
+
         } else {
-            $newanswer->choice = $choice->id;
-            $newanswer->userid = $USER->id;
-            $newanswer->answer = $form->answer;
-            $newanswer->timemodified = $timenow;
-            if (! insert_record("choice_answers", $newanswer)) {
-                error("Could not save your choice");
+            if ($current) {
+                $newanswer = $current;
+                $newanswer->answer = $form->answer;
+                $newanswer->timemodified = $timenow;
+                if (! update_record("choice_answers", $newanswer)) {
+                    error("Could not update your choice");
+                }
+                add_to_log($course->id, "choice", "update", "view.php?id=$cm->id", $choice->id, $cm->id);
+            } else {
+                $newanswer->choice = $choice->id;
+                $newanswer->userid = $USER->id;
+                $newanswer->answer = $form->answer;
+                $newanswer->timemodified = $timenow;
+                if (! insert_record("choice_answers", $newanswer)) {
+                    error("Could not save your choice");
+                }
+                add_to_log($course->id, "choice", "add", "view.php?id=$cm->id", $choice->id, $cm->id);
             }
-            add_to_log($course->id, "choice", "add", "view.php?id=$cm->id", $choice->id, $cm->id);
         }
         redirect("$CFG->wwwroot/course/view.php?id=$course->id");
         exit;

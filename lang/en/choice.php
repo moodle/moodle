@@ -8,6 +8,7 @@ $string['choicename'] = 'Choice name';
 $string['choicetext'] = 'Choice text';
 $string['modulename'] = 'Choice';
 $string['modulenameplural'] = 'Choices';
+$string['mustchooseone'] = 'You must choose an answer before saving.  Nothing was saved.';
 $string['notanswered'] = 'Not answered yet';
 $string['publish'] = 'Publish results';
 $string['publishanonymous'] = 'Publish anonymous results, do not show student names';
