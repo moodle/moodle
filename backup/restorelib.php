@@ -1154,6 +1154,8 @@
                                 if ($cm) {
                                     //echo "Module ".$dblog->cmid." to module ".$cm->new_id."<br>";                         //Debug
                                     $dblog->cmid = $cm->new_id;
+                                } else {
+                                    $dblog->cmid = 0;
                                 }
                             }
                             //print_object ($dblog);                                                                        //Debug
@@ -1304,7 +1306,7 @@
             $toinsert = true;
             break;
         default:
-            //echo "action (".$log->action.") unknow. Not restored<br>";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
             break;
         }
 
@@ -1375,7 +1377,30 @@
     function restore_log_module($restore,$log) {
 
         $status = true;
+        $toinsert = false;
 
+        //echo "<hr>Before transformations<br>";                                        //Debug
+        //print_object($log);                                                           //Debug
+
+        //Now we see if the required function in the module exists
+        $function = $log->module."_restore_logs";
+        if (function_exists($function)) {
+            //Call the function
+            $log = $function($restore,$log);
+            //If everything is ok, mark the insert flag
+            if ($log) {
+                $toinsert = true;
+            }
+        }
+
+        //echo "After transformations<br>";                                             //Debug
+        //print_object($log);                                                           //Debug
+
+        //Now if $toinsert is set, insert the record
+        if ($toinsert) {
+            //echo "Inserting record<br>";                                              //Debug
+            $status = insert_record("log",$log);
+        }
         return $status;
     }
 
