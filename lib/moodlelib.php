@@ -54,6 +54,9 @@ function optional_variable(&$var, $default=0) {
 
 function set_config($name, $value) {
 /// No need for get_config because they are usually always available in $CFG
+    global $CFG;
+
+    $CFG->$name = $value;  // So it's defined for this invocation at least
 
     if (get_field("config", "name", "name", $name)) {
         return set_field("config", "value", $value, "name", $name);
