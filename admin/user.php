@@ -135,9 +135,9 @@
                     unenrol_student($user->id);  // From all courses
                     remove_teacher($user->id);   // From all courses
                     remove_admin($user->id);
-                    notify(get_string("deletedactivity", "", fullname($user, true) );
+                    notify(get_string("deletedactivity", "", fullname($user, true)) );
                 } else {
-                    notify(get_string("deletednot", "", fullname($user, true));
+                    notify(get_string("deletednot", "", fullname($user, true)));
                 }
             }
         }
