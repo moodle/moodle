@@ -1,38 +1,39 @@
 <H3> Release notes for Moodle 1.0.6 dev</H3>
 
-<P>  New features (since 1.0.5):   </P>
+<P>  Major changes in this release (since 1.0.5):   </P>
 
 <UL><DL>
-<DT> WYSIWYG Text editing!
+<DT> New feature - WYSIWYG Text editing!
 <DD> A WYSIWYG text editor has been added to many of the forms in Moodle.  These are currently 
      only visible when using Microsoft Internet Explorer 5.5 or later - other browsers see the 
      normal forms exactly as before.
 
-<DT> Quiz module!
-<DD> Finally, the most requested new module is here!  Multiple choice, short answer, true-false
-     quizzes with automatic marking, multiple attempts and many other features.
+<DT> New feature - Quiz module!
+<DD> Finally, the most requested new module is here!  Multiple choice, short answer, and true-false
+     questions with automatic marking, multiple attempts and many other features.
 
-<DT> Grade manager!
+<DT> New feature - Grade manager!
 <DD> A new tool has been added for teachers to see all grades for a course on one page.
      You can also download/export grades as a tab-separated text file or an Excel
      Spreadsheet.  In future more features will be added to this page like sorting, manual 
      columns and calculations, but it's still pretty useful right now.
 
-<DT> New smilies
+<DT> New feature - New smilies
 <DD> Many new smilies have been added, and are now also accessible using a GUI in the text editor.
 
 <DT> Languages
 <DD> German and Italian have been added!  Many thanks to the translators (see the credits).
 
-<DT> Reading module ===> Resource module
+<DT> Reading module => Resource module
 <DD> After much thought and a vote of support (21 "yes" to 6 "no") on the "Using Moodle" 
      web site I changed the name of the "reading" module to "resource" (at the code level
-     and also the English language pack).  Better now than later.
-
+     and also the language packs).  It was better to do this earlier than later.
      This more generic name will be more meaningful to more people and opens the way to 
      some real development on a resource library.
-     <BR><BR>
-     I don't anticipate ever having to change a module name again!  :-)
+     But I don't want to ever change a module name again!  :-)
+     If you have any hard-coded URLs pointing to readings that you don't want to break,
+     you can add a line like this to your Apache httpd.conf to redirect them:
+     <B><CODE>Redirect /mod/reading http://yourserver.com/mod/resource</CODE></B>
 
 <DT> Other additions
 <DD> An admin script to totally delete the Moodle data directory has been included (admin/delete.php)
