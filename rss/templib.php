@@ -198,7 +198,7 @@ function rss_display_feeds($rssid='none') {
                 <td><?php print_string('edit'); ?></td>
                 <td><?php print_string('delete'); ?></td>
             </tr>
-        <?
+        <?php
     }
     
     if (isset($res) && $res->fields){
