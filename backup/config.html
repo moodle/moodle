@@ -14,25 +14,25 @@
     $backup_config =  backup_get_config();
 
     //Checks backup_config pairs exist
-    if (empty($backup_config->backup_sche_modules)) {
+    if (!isset($backup_config->backup_sche_modules)) {
         $backup_config->backup_sche_modules = 1;
     }
-    if (empty($backup_config->backup_sche_withuserdata)) {
+    if (!isset($backup_config->backup_sche_withuserdata)) {
         $backup_config->backup_sche_withuserdata = 1;
     }
-    if (empty($backup_config->backup_sche_users)) {
+    if (!isset($backup_config->backup_sche_users)) {
         $backup_config->backup_sche_users = 1;
     }
-    if (empty($backup_config->backup_sche_logs)) {
+    if (!isset($backup_config->backup_sche_logs)) {
         $backup_config->backup_sche_logs = 0;
     }
-    if (empty($backup_config->backup_sche_userfiles)) {
+    if (!isset($backup_config->backup_sche_userfiles)) {
         $backup_config->backup_sche_userfiles = 1;
     }
-    if (empty($backup_config->backup_sche_coursefiles)) {
+    if (!isset($backup_config->backup_sche_coursefiles)) {
         $backup_config->backup_sche_coursefiles = 1;
     }
-    if (empty($backup_config->backup_sche_weekdays)) {
+    if (!isset($backup_config->backup_sche_weekdays)) {
         $backup_config->backup_sche_weekdays = "0000000";
     }
 
