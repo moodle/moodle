@@ -858,7 +858,7 @@ function main_upgrade($oldversion=0) {
     */
 
     if ($oldversion < 2004091900) { // modify idnumber to hold longer values
-        table_column('user', 'idnumber', 'idnumber', 'varchar', '64', '', '', '', 'auth');
+        table_column('user', 'idnumber', 'idnumber', 'varchar', '64', '', '', '', '');
         execute_sql("ALTER TABLE {$CFG->prefix}user ADD INDEX idnumber (idnumber)");
         execute_sql("ALTER TABLE {$CFG->prefix}user ADD INDEX auth (auth)");
     }
