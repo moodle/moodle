@@ -310,14 +310,14 @@ php_value post_max_size 2M
   <p>Sommige Moodlemodules hebben constante controle nodig om hun activiteiten te kunnen doen.
    Zo moet Moodle bijvoorbeeld de discussieforums regelmatig controleren om kopies van de berichten
    te sturen naar gebruikers die daarvoor ingeschreven hebben.</p>
-  <p>Het script dat al deze taken doet staat in de adminmapen heet cron.php. Alleen kan dit script niet
+  <p>Het script dat al deze taken doet staat in de admin map en heet cron.php. Alleen kan dit script niet
    uit zichzelf lopen, dus moet je een mechanisme installeren dat dit script om de 5 á 10 minuten
    start. Dit maakt een &quot;hartslag&quot;, zodqt het script taken kan uitvoeren na periodes die vastgelegd zijn
    in elke module.</p>
-  <p>Merk op dat de machine die cron.php laat lopen<b>niet dezelfde machine moet zijn als degene waar Moodle
+  <p>Merk op dat de machine die cron.php laat lopen <b>niet dezelfde machine moet zijn als degene waar Moodle
    op loopt</b>. Als je installatie bijvoorbeeld bij een beperkte webhost staat die geen cron aanbiedt, dan 
-   kun je bijvoorbeeld opteren om cron te laten lopen op een andere server of op je eigen huiscomputer. Het enige
-   wat belang heeft is dat het bestand cron.php regelmatig opgevraagd wordt.</p>
+   kun je bijvoorbeeld opteren om cron te laten lopen op een andere server of op je eigen computer. Het enige
+   belangrijke is dat het bestand cron.php regelmatig opgevraagd wordt.</p>
   <p>Het script veroorzaakt geen grote belasting, dus om de vijf minuten is redelijk, maar als je je daarover zorgen
    maakt, dan kun je de periode verlengen tot 15 of zelfs 30 minuten. Je kunt de periode best niet te lang nemen,
    omdat het vertragen van de e-mailverzendingen de activiteit in je vak kan vertragen.</p>
@@ -348,13 +348,13 @@ php_value post_max_size 2M
 
 </pre>
   </blockquote>
-  <h4>Het script automatisch laten lopetn om de 5 minuten</h4>
+  <h4>Het script automatisch laten lopen om de 5 minuten</h4>
   <p><b>Op Unix systemen</b>: Gebruik <b>cron</b>. Bewerk je croninstellingen door vanaf de opdrachtregel
     gebruik te maken van &quot;crontab -e&quot; en voeg een lijn toe zoals:</p>
   <blockquote>
     <pre>*/5 * * * * wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
   </blockquote>
-  <p>Gewoonlijk zal de "crontab" iodracht je in de 'vi' editor brengen. Je gaat in  
+  <p>Gewoonlijk zal de "crontab" opdracht je in de 'vi' editor brengen. Je gaat in  
      "insert mode" door op "i"te drukken, dan kun je bovenstaande lijn inbrengen, dan ga je uit insert mode door op
       ESC te drukken. Je bewaart en verlaat het programma door "wq" te typen of door ":q!" te typen 
      (zonder de aanhalingstekens).</p>
