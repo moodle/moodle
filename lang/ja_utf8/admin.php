@@ -116,6 +116,7 @@ $string['sitemaintenancemode'] = 'メンテナンスモード';
 $string['sitemaintenanceoff'] = 'メンテナンスモードが解除されました。サイトは正常に動作しています。';
 $string['sitemaintenanceon'] = 'あなたのサイトは現在メンテナンスモードで運用されています ( 管理者のみログインまたはサイトを利用することができます ) 。';
 $string['sitemaintenancewarning'] = 'あなたのサイトは現在メンテナンスモードで運用されています ( 管理者のみログインできます ) 。通常運用に戻すには、<a href=\"maintenance.php\">メンテナンスモードを解除</a> してください。';
+$string['tabselectedtofront'] = 'タグ付きのテーブルで、現在選択されているタグの列を最前面に表示する。';
 $string['therewereerrors'] = 'データにエラーがあります。';
 $string['timezoneisforcedto'] = 'ユーザに使用を強制';
 $string['timezonenotforced'] = '独自のタイムゾーンを使用';
