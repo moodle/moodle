@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 unstable development (2004092000)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
 
 
 $string['auth_common_settings'] = 'Common settings';
@@ -47,6 +47,7 @@ $string['auth_ldap_host_url'] = 'Specify LDAP host in URL-form like \'ldap://lda
 $string['auth_ldap_login_settings'] = 'Login settings';
 $string['auth_ldap_memberattribute'] = 'Optional: Overrides user member attribute, when users belongs to a group. Usually \'member\'';
 $string['auth_ldap_objectclass'] = 'Optional: Overrides objectClass used to name/search users on ldap_user_type. Usually you dont need to chage this.';
+$string['auth_ldap_opt_deref'] = 'Determines how aliases are handled during search. Select one of the following values: \"No\" (LDAP_DEREF_NEVER) or \"Yes\" (LDAP_DEREF_ALWAYS) ';
 $string['auth_ldap_passwdexpire_settings'] = 'LDAP password expiration settings.';
 $string['auth_ldap_search_sub'] = 'Put value <> 0 if  you like to search users from subcontexts.';
 $string['auth_ldap_server_settings'] = 'LDAP server settings';
@@ -77,8 +78,8 @@ $string['auth_nonedescription'] = 'Users can sign in and create valid accounts i
 $string['auth_nonetitle'] = 'No authentication';
 $string['auth_pamdescription'] = 'This method uses PAM to access the native usernames on this server. You have to install <a href=\"http://www.math.ohio-state.edu/~ccunning/pam_auth/\" target=\"_blank\">PHP4 PAM Authentication</a> in order to use this module.';
 $string['auth_pamtitle'] = 'PAM (Pluggable Authentication Modules)';
-$string['auth_passwordwillexpire'] = 'Your password will expire in $a days. Do you want change your password now?';
 $string['auth_passwordisexpired'] = 'Your password is expired. Do you want change your password now?';
+$string['auth_passwordwillexpire'] = 'Your password will expire in $a days. Do you want change your password now?';
 $string['auth_pop3description'] = 'This method uses a POP3 server to check whether a given username and password is valid.';
 $string['auth_pop3host'] = 'The POP3 server address. Use the IP number, not DNS name.';
 $string['auth_pop3mailbox'] = 'Name of the mailbox to attempt a connection with.  (usually INBOX)';
