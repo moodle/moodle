@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032300)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['action'] = '操作';
@@ -996,8 +996,10 @@ $string['timezone'] = 'タイムゾーン';
 $string['to'] = 'To';
 $string['today'] = '本日';
 $string['todaylogs'] = '本日のログ';
+$string['toeveryone'] = '全員';
 $string['toomanybounces'] = 'このメールアドレスには多くの宛先不明メールが送信されています。続けるにはメールアドレスを<b>変更してください</b>。';
 $string['toomanytoshow'] = '表示するユーザが多すぎます。';
+$string['toonly'] = '$a のみ';
 $string['top'] = 'トップ';
 $string['topic'] = 'トピック';
 $string['topichide'] = '$a よりこのトピックを隠す';
