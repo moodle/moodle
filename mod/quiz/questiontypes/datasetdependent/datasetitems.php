@@ -1,6 +1,6 @@
 <?PHP // $Id$
 
-// Allows a teacher to create, edit and delete categories
+// Allows a teacher to create, edit and delete datasets
 
 /// Print headings
 
@@ -37,10 +37,7 @@
 
 /// Print heading
 
-    echo "<P ALIGN=CENTER><FONT SIZE=3>";
-    echo $streditdatasets;
-    helpbutton("categories", $streditdatasets, "quiz");
-    echo "</FONT></P>";
+    print_heading_with_help($streditdatasets, 'questiondatasets', "quiz");
 
 /// If data submitted, then process and store.
     if ($form = data_submitted()) {
