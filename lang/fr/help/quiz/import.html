@@ -4,6 +4,50 @@
 de fichiers de texte externes, &agrave;l'aide d'un formulaire. Les
 formats de fichiers suivants sont support&eacute;s&nbsp;:</p>
 
+<p><b>Format GIFT</b></p>
+<ul>
+ <p>Le format GIFT est le plus complet des formats d'importation de
+ questions disponible dans Moodle. Il a &eacute;t&eacute; con&ccedil;u pour permettre
+ aux enseignants d'&eacute;crire simplement des questions dans in fichier
+ texte. Il permet la saisie des questions &agrave; Choix multiples, Vrai-Faux,
+ &agrave; R&eacute;ponse courte ou &agrave; R&eacute;ponse num&eacute;rique, ainsi que l'insertion de
+ _____ pour le format Mot manquant. Les diff&eacute;rents types de questions
+ peuvent &ecirc;tre m&eacute;lang&eacute;s dans un m&ecirc;me fichier texte, et le format permet
+ &eacute;galement l'insertion de commentaires, titres de questions, feedbacks
+ et pond&eacute;ration des points en %. Voici quelques exemples&nbsp;:</p>
+ <pre>
+ Quelle &eacute;tait la couleur de la jument blanche de
+ Napol&eacute;on ?{~Verte ~Noire =Blanche}
+ 
+ La jument blanche de Napol&eacute;on &eacute;tait {~verte =blanche ~noire}.
+ 
+ La jument blanche de Napol&eacute;on &eacute;tait verte.{FALSE}
+ 
+ Qui Napol&eacute;on a-t-il &eacute;pous&eacute; ?{=Marie-Louise =Jos&eacute;phine}
+ 
+ Quelle est la date de naissance de Napol&eacute;on ?{#1769:5}
+ </pre>
+  <p align=right>Plus d'informations au sujet du format <a
+  href="help.php?file=formatgift.html&amp;module=quiz">GIFT</a>.</p>
+</ul>
+  	 
+<p><b>Format Aiken</b></p>
+ <ul>
+ <p>Le format Aiken format propose une fa&ccedil;on tr&egrave;s intuitive pour cr&eacute;er
+ des questions &agrave; choix multiples de fa&ccedil;on lisible. Voici un exemple de
+ ce format&nbsp;:</p>
+ <pre>
+ Lesquels parmi ces astres font partie du syst&egrave;me solaire ?
+ A. La Voie Lact&eacute;e
+ B. Sirius
+ C. Les Pl&eacute;iades
+ D. La com&egrave;te de Halley
+ ANSWER: D
+ </pre>
+  <p align=right>Plus d'informations au sujet du format <a
+  href="help.php?file=formataiken.html&amp;module=quiz">Aiken</a>.</p>
+</ul>
+
 <p><b>R&eacute;ponse int&eacute;gr&eacute;e au texte</b></p>
 <ul>
   <p>Ce format supporte seulement des questions o&ugrave; la r&eacute;ponse est
@@ -21,7 +65,7 @@ formats de fichiers suivants sont support&eacute;s&nbsp;:</p>
   int&eacute;gr&eacute;e au texte&nbsp;&raquo;</a></p>
 </ul>
 
-<p><b>AON</b></p>
+<p><b>Format AON</b></p>
 <ul>
   <p>Ce format est identique au format pr&eacute;c&eacute;dent, sauf qu'apr&egrave;s
   l'importation des questions, toutes les questions &agrave; r&eacute;ponse
@@ -33,7 +77,7 @@ formats de fichiers suivants sont support&eacute;s&nbsp;:</p>
   questions.</p>
 </ul>
 
-<p><b>BlackBoard</b></p>
+<p><b>Format BlackBoard</b></p>
 <ul>
   <p>Ce module permet d'importer des questions enregistr&eacute;es dans le
   format &laquo;&nbsp;BlackBoard&nbsp;&raquo;. Il se fonde sur des fonctions XML
@@ -42,7 +86,7 @@ formats de fichiers suivants sont support&eacute;s&nbsp;:</p>
   href="help.php?file=formatblackboard.html&amp;module=quiz">&laquo;&nbsp;BlackBoard&nbsp;&raquo;</a></p>
 </ul>
 
-<p><b>Personnalis&eacute;</b></p>
+<p><b>Format Personnalis&eacute;</b></p>
 <ul>
   <p>Si vous avez votre propre format que vous d&eacute;sirez importer,
   vous pouvez en programmer son importation en &eacute;ditant le fichier
