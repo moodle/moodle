@@ -36,17 +36,17 @@
     if ($mode != "summary") {
         echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=summary>Summary</A></TD>";
     } else {
-        echo "<TD>Summary</TD>";
+        echo "<TD><U>Summary</U></TD>";
     }
     if ($mode != "outline") {
         echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=outline>Outline</A></TD>";
     } else {
-        echo "<TD>Outline</TD>";
+        echo "<TD><U>Outline</U></TD>";
     }
     if ($mode != "complete") {
         echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=complete>Complete</A></TD>";
     } else {
-        echo "<TD>Complete</TD>";
+        echo "<TD><U>Complete</U></TD>";
     }
     echo "</TR></TABLE>";
 
