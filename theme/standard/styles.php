@@ -355,6 +355,11 @@ a.dimmed:hover {
     font-weight: bold;
 }
 
+.categorynumber {
+    font-size: larger;
+    font-weight: bold;
+}
+
 .coursename {
 }
 

@@ -149,3 +149,8 @@ a.autolink:hover {}
 /* Specific style for listing discussions (formerly re-used forumpost)*/
 
 .forumheaderlist {}
+
+
+/* Specific style for the category numbers (was categoryname) */
+
+.categorynumber {}
