@@ -1,12 +1,16 @@
 <?php // $Id$ 
 
+$string['addmorechoices'] = 'Ajouter d\'autres propositions';
 $string['allowupdate'] = 'Permettre la mise à jour du sondage';
 $string['answered'] = 'Répondu';
-$string['choice'] = 'Proposition $a';
+$string['choice'] = 'Proposition';
 $string['choiceclose'] = 'Jusqu\'au';
 $string['choicename'] = 'Nom du sondage';
 $string['choiceopen'] = 'Ouvert le';
 $string['choicetext'] = 'Texte de la question';
+$string['displayhorizontal'] = 'Afficher horizontalement';
+$string['displaymode'] = 'Mode d\'affichage';
+$string['displayvertical'] = 'Afficher verticalement';
 $string['havetologin'] = 'Vous devez vous connecter pour pouvoir répondre à ce sondage';
 $string['modulename'] = 'Sondage';
 $string['modulenameplural'] = 'Sondages';
