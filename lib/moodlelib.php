@@ -730,7 +730,7 @@ function insert_record($table, $dataobject) {
 
     // Pull out data matching these fields
     foreach ($columns as $column) {
-        if ($column->name <> "id" && $data[$column->name] ) {
+        if ($column->name <> "id" && isset($data[$column->name]) ) {
             $ddd[$column->name] = $data[$column->name];
         }
     }
