@@ -230,14 +230,14 @@ class MoodleBlock {
     }
     function applicable_formats() {
         // Default case: the block can be used in all course types
-        return COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL;
+        return COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL | COURSE_FORMAT_SITE;
     }
     function preferred_width() {
         // Default case: the block wants to be 180 pixels wide
         return 180;
     }
     function hide_header() {
-        //Default, false--> the header is showed
+        //Default, false--> the header is shown
         return false;
     }
     function html_attributes() {
