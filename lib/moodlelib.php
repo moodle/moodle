@@ -434,7 +434,7 @@ function get_moodle_cookie() {
 /// Gets a moodle cookie with an encrypted string
     global $CFG;
 
-    $cookiename = "MOODLEID{$CFG->prefix}";
+    $cookiename = "MOODLEID{$CFG->prefix}"; 
 
     global $$cookiename;
 
