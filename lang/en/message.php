@@ -5,6 +5,7 @@ $string['ago'] = '$a ago';
 $string['allmine'] = 'All messages to me or from me';
 $string['allstudents'] = 'All messages between students in course';
 $string['allusers'] = 'All messages from all users';
+$string['backupmessageshelp'] = 'If enabled, then instant messages will be included in SITE automated backups';
 $string['beepnewmessage'] = 'Beep when a new message comes in';
 $string['blockcontact'] = 'Block contact';
 $string['blockedmessages'] = '$a message(s) to/from blocked users';
