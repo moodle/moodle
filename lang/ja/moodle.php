@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.1 development (2003053000)
+      // moodle.php - created with Moodle 1.1 development (2003062000)
 
 
 $string['action'] = "操作";
@@ -510,7 +510,7 @@ $string['restoreto'] = "リストア";
 $string['returningtosite'] = "アカウントを持ちの方ですか?";
 $string['revert'] = "クリア";
 $string['role'] = "任務";
-$string['savechanges'] = "設定を保存する";
+$string['savechanges'] = "変更を保存";
 $string['search'] = "検索";
 $string['searchagain'] = "再検索";
 $string['searchresults'] = "検索結果";
