@@ -38,7 +38,7 @@ class block_glossary_random extends block_base {
             if (!$numberofentries = count_records('glossary_entries','glossaryid',$this->config->glossary,
                                                   'approved',1)) {
                 $this->config->cache = get_string('noentriesyet','block_glossary_random');
-                parent::instance_config_save($this->config);
+                $this->instance_config_commit();
             }
 
             switch ($this->config->type) {
@@ -78,15 +78,15 @@ class block_glossary_random extends block_base {
                 $text = "<b>$entry->concept</b><br />";
                 $text .= format_text($entry->definition, $entry->format);
 
-                $this->config->nexttime = usergetmidnight(time())+60*60*24*$this->config->refresh;
+                $this->config->nexttime = usergetmidnight(time()) + DAYSECS * $this->config->refresh;
                 $this->config->previous = $i;
 
             } else {
                 $text = get_string('noentriesyet','block_glossary_random');
             }
             // store the text
-            $this->config->cache= $text;
-            parent::instance_config_save($this->config);
+            $this->config->cache = $text;
+            $this->instance_config_commit();
         }
     }
 
