@@ -1353,7 +1353,7 @@ function exercise_list_ungraded_assessments($exercise, $stype) {
                     }
                 else {
                     $action = "<A HREF=\"assessments.php?action=gradeassessment&id=$cm->id&stype=$stype&aid=$assessment->id\">".
-                        get_string("grade", "exercise")."</A>";
+                        get_string("grade")."</A>";
                     }
                 $submission = get_record("exercise_submissions", "id", $assessment->submissionid);
                 $submissionowner = get_record("user", "id", $submission->userid);

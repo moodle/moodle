@@ -786,7 +786,7 @@
 				if (!$element->id = insert_record("exercise_grades", $element)) {
 					error("Could not insert exercise element!");
 				}
-				$grade = ($elements[$form->grade[0]]->maxscore + $form->grade[1]);
+				$grade = ($elements[$form->grade[0]]->maxscore + $form->grade[1]) * 100 / $exercise->grade;
 				// check the grade for sanity!
 				if ($grade >100.0) {
 					$grade = 100.0;
@@ -974,7 +974,7 @@
 				if (!$element->id = insert_record("exercise_grades", $element)) {
 					error("Could not insert exercise element!");
 				}
-				$grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i]);
+				$grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i]) * 100 / $exercise->grade;
 				echo "<P><B>".get_string("weightederrorcount", "exercise", intval($error + 0.5))."</B>\n";
 				break;
 			
@@ -997,7 +997,7 @@
 				if (!$element->id = insert_record("exercise_grades", $element)) {
 					error("Could not insert exercise element!");
 				}
-				$grade = ($elements[$form->grade[0]]->maxscore + $form->grade[1]);
+				$grade = ($elements[$form->grade[0]]->maxscore + $form->grade[1]) * 100 / $exercise->grade;
 				break;
 
 			case 4: // rubric grading (identical to accumulative grading)
