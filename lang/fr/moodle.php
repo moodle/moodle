@@ -376,9 +376,9 @@ Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître co
 
 Si vous avez besoin d\'aide, veuillez contacter l\'administrateur du site, $a->admin';
 $string['emailconfirmationsubject'] = '$a : confirmation de l\'ouverture du compte';
-$string['emailconfirmsent'] = 'Un message vous a été envoyé à l\'adresse de courriel <strong>$a</strong>.<br />
-Il contient les instructions pour terminer votre enregistrement.<br />
-Si vous rencontrez des difficultés, veuillez contacter l\'administrateur du site.';
+$string['emailconfirmsent'] = '<p>Un message vous a été envoyé à l\'adresse de courriel <strong>$a</strong>.</p>
+<p>Il contient les instructions pour terminer votre enregistrement.</p>
+<p>Si vous rencontrez des difficultés, veuillez contacter l\'administrateur du site.</p>';
 $string['emaildigest'] = 'Forme du courriel quotidien';
 $string['emaildigestcomplete'] = 'Complet (courriel quotidien avec l\'intégralité des messages)';
 $string['emaildigestoff'] = 'Pas de courriel quotidien (un courriel par message)';
@@ -807,9 +807,9 @@ $string['passwordconfirmchange'] = 'Confirmer le changement de mot de passe';
 $string['passwordrecovery'] = 'Oui, j\'ai besoin d\'aide pour me connecter';
 $string['passwordsdiffer'] = 'Les mots de passe ne correspondent pas';
 $string['passwordsent'] = 'Le mot de passe a été envoyé';
-$string['passwordsenttext'] = 'Un message vous a été envoyé à cette adresse : $a->email.<br />
-<strong>Merci de lire ce message afin de connaître votre nouveau mot de passe</strong><br />
-Ce nouveau mot de passe a été généré automatiquement. Vous voudrez sans doute<br /> le <a href=\"$a->link\">modifier</a> afin qu\'il vous soit plus facile de vous en souvenir.';
+$string['passwordsenttext'] = '<p>Un message vous a été envoyé à cette adresse&nbsp;: $a->email.</p>
+<p><strong>Merci de lire ce message afin de connaître votre nouveau mot de passe</strong></p>
+<p>Ce nouveau mot de passe a été généré automatiquement. Vous voudrez sans doute le <a href=\"$a->link\">modifier</a> afin qu\'il vous soit plus facile de vous en souvenir.</p>';
 $string['pathnotexists'] = 'Ce chemin n\'existe pas sur votre serveur !';
 $string['pathslasherror'] = 'Le chemin ne doit pas se terminer par une barre oblique !';
 $string['paymentinstant'] = 'Le bouton ci-dessous vous permet de payer et de vous inscrire en quelques minutes !';
@@ -1023,7 +1023,7 @@ $string['uploadafile'] = 'Déposer un fichier';
 $string['uploadedfile'] = 'Le fichier a été déposé avec succès';
 $string['uploadedfileto'] = 'Le fichier « $a->file » a été déposé dans le dossier « $a->directory »';
 $string['uploadedfiletoobig'] = 'Ce fichier dépasse la taille maximale (fixée à $a octets)';
-$string['uploadfailednotrecovering'] = 'Votre dépôt de fichier a échoué car un des fichiers, $a->name, a posé problème.<br/>Voici une liste des problèmes rencontrés :<br />$a->problem<br />Impossible de récupérer l\'erreur.';
+$string['uploadfailednotrecovering'] = 'Votre dépôt de fichier a échoué car un des fichiers, $a->name, a posé problème.<br/>Voici une liste des problèmes rencontrés :<br />$a->problem<br />Impossible de rattrapper l\'erreur.';
 $string['uploadfilelog'] = 'Historique du dépôt du fichier $a';
 $string['uploadformlimit'] = 'Le fichier déposé dépasse la taille maximale fixée dans le formulaire';
 $string['uploadlabel'] = 'Titre :';
@@ -1056,9 +1056,21 @@ $string['usingexistingcourse'] = 'Avec un cours existant';
 $string['version'] = 'Version';
 $string['view'] = 'Visualisation';
 $string['virusfound'] = 'Attention ! Clam AV a détecté un virus dans un fichier déposé par $a->user dans le cours $a->course. Voici la sortie du programme clamscan:';
-$string['virusfoundlater'] = 'Le fichier que vous avez déposé le $a->date, dont le nom est $a->filename (dans le cours $a->course) contient un virus. Voici un résumé de ce qui est arrivé à votre fichier :nn$a->actionnnS\'il s\'agissait d\'un devoir rendu (ou de tout autre document), vous devez le déposer à nouveau afin que l\'enseignant puisse le consulter.';
-$string['virusfoundlateradmin'] = 'Attention ! Un fichier déposé par l\'utilisateur $a->user le $a->date, dont le nom est $a->filename (dans le cours $a->course) contient un virus. Voici un résumé de ce qui est arrivé à ce fichier :nn$a->actionnnL\'utilisateur en a été informé.';
-$string['virusfoundlateradminnolog'] = 'Attention ! Un fichier de nom $a->filename conteint un virus. Moodle n\'a pas été capable de déterminer l\'utilisateur qui l\'avait déposé.nnVoici un résumé de ce qui est arrivé à ce fichier :nn$a->action';
+$string['virusfoundlater'] = 'Le fichier que vous avez déposé le $a->date, dont le nom est $a->filename (dans le cours $a->course) contient un virus. Voici un résumé de ce qui est arrivé à votre fichier :
+
+$a->action
+
+S\'il s\'agissait d\'un devoir rendu (ou de tout autre document), vous devez le déposer à nouveau afin que l\'enseignant puisse le consulter.';
+$string['virusfoundlateradmin'] = 'Attention ! Un fichier déposé par l\'utilisateur $a->user le $a->date, dont le nom est $a->filename (dans le cours $a->course) contient un virus. Voici un résumé de ce qui est arrivé à ce fichier :
+
+$a->action
+
+L\'utilisateur en a été informé.';
+$string['virusfoundlateradminnolog'] = 'Attention ! Un fichier de nom $a->filename contient un virus. Moodle n\'a pas été capable de déterminer l\'utilisateur qui l\'avait déposé.
+
+Voici un résumé de ce qui est arrivé à ce fichier :
+
+$a->action';
 $string['virusfoundsubject'] = '$a : Virus détecté !';
 $string['virusfounduser'] = 'Le fichier que vous avez déposé, $a->filename, a été inspecté par un anti-virus et un virus y a été découvert ! Votre fichier n\'a donc pas été déposé.';
 $string['virusplaceholder'] = 'Un virus a été détecté dans ce fichier déposé. Il a été déplacé ou détruit, et l\'utilisateur en a été informé.';
