@@ -538,29 +538,26 @@
                     $data = backup_getid($restore->backup_unique_code,"user",$userid);
                     $newid = $data->new_id;
                     $currinfo = $data->info.",";
+
                     //Now, depending of the role, create records in user_studentes and user_teacher 
                     //and/or mark it in backup_ids
-                    //
-                    // Martin commented this out 25/8/03 ... I don't think it makes sense to 
-                    // recreate admins and course creators when restoring a course - this could 
-                    // be a security problem when restoring courses from one site to another...
-                    //
-                    //if ($is_admin) {
-                    //    //If the record (user_admins) doesn't exists
-                    //    if (!record_exists("user_admins","userid",$newid)) {
-                    //        //Only put status in backup_ids
-                    //        $currinfo = $currinfo."admin,";
-                    //        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
-                    //    }
-                    //} 
-                    //if ($is_coursecreator) {
-                    //    //If the record (user_coursecreators) doesn't exists
-                    //    if (!record_exists("user_coursecreators","userid",$newid)) {
-                    //        //Only put status in backup_ids
-                    //        $currinfo = $currinfo."coursecreator,";
-                    //        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
-                    //    }
-                    //} 
+                    
+                    if ($is_admin) {
+                        //If the record (user_admins) doesn't exists
+                        if (!record_exists("user_admins","userid",$newid)) {
+                            //Only put status in backup_ids
+                            $currinfo = $currinfo."admin,";
+                            $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
+                        }
+                    } 
+                    if ($is_coursecreator) {
+                        //If the record (user_coursecreators) doesn't exists
+                        if (!record_exists("user_coursecreators","userid",$newid)) {
+                            //Only put status in backup_ids
+                            $currinfo = $currinfo."coursecreator,";
+                            $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
+                        }
+                    } 
                     if ($is_teacher) {
                         //If the record (teacher) doesn't exists
                         if (!record_exists("user_teachers","userid",$newid,"course", $restore->course_id)) {
