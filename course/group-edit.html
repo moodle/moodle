@@ -1,23 +1,24 @@
 <form method="post" enctype="multipart/form-data" action="group.php">
 <table cellpadding="9" cellspacing="0" align="center">
 <tr valign="top">
-    <td align="right"><p><?php print_string("name") ?>:</td>
+    <td align="right"><?php print_string("name") ?>:</td>
     <td><input type="text" name="name" size="30" value="<?php p($group->name) ?>" />
     <?php if (isset($err["name"])) formerr($err["name"]); ?>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><?php print_string("description") ?>:</td>
+    <td align="right"><?php print_string("description") ?>:<br />
+        <?php helpbutton("text", get_string("helptext")) ?>
+    </td>
     <td><?php 
         print_textarea($usehtmleditor, 10, 50, 660, 200, "description", $group->description);
-        helpbutton("text", get_string("helptext"));
         if (isset($err["description"])) formerr($err["description"]); 
     ?>
     </td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><?php print_string("hidepicture") ?>:</td>
+    <td align="right"><?php print_string("hidepicture") ?>:</td>
     <td><?php 
         $options = NULL;
         $options[0] = get_string("no");
@@ -27,16 +28,22 @@
     </td>
 </tr>
 
+<tr valign="top">
+    <td align="right"><?print_string('enrolmentkey') ?>:</td>
+    <td><input type="text" name="password" size="25" value="<?php echo $group->password ?>" alt="<?print_string('enrolmentkey') ?>" /></td>
+</tr>
+
 <?php 
     $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
     if (!empty($CFG->gdversion) and $maxbytes) {  
 ?>
 <tr valign="top">
-    <td align="right"><p><?php print_string("newpicture") ?>:</td>
+    <td align="right"><?php print_string("newpicture") ?>:</td>
     <td>
-    <?php helpbutton("picture", get_string("helppicture"));
+    <?php
        require_once($CFG->dirroot.'/lib/uploadlib.php');
        upload_print_form_fragment(1,array('imagefile'),null,false,null,0,0,false);
+       helpbutton("picture", get_string("helppicture"));
        print_string("maxsize", "", display_size($maxbytes)); 
        if (isset($err["imagefile"])) formerr($err["imagefile"]);
     ?>

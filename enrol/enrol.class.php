@@ -203,7 +203,8 @@ function print_entry($course) {
 function check_entry($form, $course) {
     global $CFG, $USER, $SESSION, $THEME;
 
-    if ($form->password == $course->password) {
+    $groupid = $this->check_group_entry($course->id, $form->password);
+    if (($form->password == $course->password) or ($groupid !== false) ) {
 
         if (isguest()) {
         
@@ -220,6 +221,10 @@ function check_entry($form, $course) {
 
             if (! enrol_student($USER->id, $course->id, $timestart, $timeend)) {
                 error("An error occurred while trying to enrol you.");
+            }
+
+            if (($groupid !== false ) and (!add_user_to_group($groupid, $USER->id)) ) {
+                error("An error occurred while trying to add you to a group");
             }
             
             $subject = get_string("welcometocourse", "", $course->fullname);
@@ -250,6 +255,25 @@ function check_entry($form, $course) {
         $this->errormsg = get_string("enrolmentkeyhint", "", substr($course->password,0,1));
     }
                         
+}
+
+
+/**
+* Check if the given enrolment key matches a group enrolment key for the given course
+*
+* Check if the given enrolment key matches a group enrolment key for the given course
+*
+* @param    courseid  the current course id
+* @param    password  the submitted enrolment key
+*/
+function check_group_entry ($courseid, $password) {
+    $ingroup = false;
+    if ( ($groups = get_groups($courseid)) !== false ) {
+        foreach ($groups as $group) 
+            if ( !empty($group->password) and ($password == $group->password) )
+                $ingroup = $group->id;
+    }
+    return $ingroup;
 }
 
 
