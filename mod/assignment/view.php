@@ -35,15 +35,11 @@
 
     add_to_log($course->id, "assignment", "view", "view.php?id=$cm->id", $assignment->id, $cm->id);
 
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
-
     $strassignments = get_string("modulenameplural", "assignment");
     $strassignment  = get_string("modulename", "assignment");
 
-    print_header("$course->shortname: $assignment->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strassignments</A> -> $assignment->name", 
+    print_header_simple($assignment->name, "",
+                 "<A HREF=index.php?id=$course->id>$strassignments</A> -> $assignment->name", 
                   "", "", true, update_module_button($cm->id, $course->id, $strassignment), navmenu($course, $cm));
 
     if (isteacher($course->id)) {

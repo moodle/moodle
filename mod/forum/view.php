@@ -60,11 +60,8 @@
 
     if ($course->category) {
         require_login($course->id);
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
-                       <a href=\"index.php?id=$course->id\">$strforums</a> ->";
-    } else {
-        $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> ->";
-    }
+    } 
+    $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> ->";
 
     if ($forum->type == "teacher") {
         if (!isteacher($course->id)) {
@@ -78,7 +75,7 @@
         add_to_log($course->id, "forum", "view forum", "view.php?f=$forum->id", "$forum->id");
     }
 
-    print_header("$course->shortname: $forum->name", "$course->fullname",
+    print_header_simple("$forum->name", "",
                  "$navigation $forum->name", "", "", true, $buttontext, navmenu($course, $cm));
 
     if (!$cm->visible and !isteacher($course->id)) {

@@ -33,12 +33,6 @@
 
     add_to_log($course->id, "chat", "report", "report.php?id=$cm->id", "$chat->id", "$cm->id");
 
-/// Print the page header
-
-    if ($course->category) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
-    }
-
     $strchats = get_string("modulenameplural", "chat");
     $strchat  = get_string("modulename", "chat");
     $strchatreport  = get_string("chatreport", "chat");
@@ -58,8 +52,8 @@
             $groupparam = "";
         }
 
-        print_header("$course->shortname: $chat->name: $strchatreport", "$course->fullname",
-                     "$navigation <a href=\"index.php?id=$course->id\">$strchats</a> -> 
+        print_header_simple("$chat->name: $strchatreport", "",
+                     "<a href=\"index.php?id=$course->id\">$strchats</a> -> 
                      <a href=\"view.php?id=$cm->id\">$chat->name</a> -> 
                      <a href=\"report.php?id=$cm->id\">$strchatreport</a>", 
                       "", "", true, "", navmenu($course, $cm));
@@ -97,8 +91,8 @@
 
 /// Print the Sessions display
 
-    print_header("$course->shortname: $chat->name: $strchatreport", "$course->fullname",
-                 "$navigation <a href=\"index.php?id=$course->id\">$strchats</a> -> 
+    print_header_simple("$chat->name: $strchatreport", "",
+                 "<a href=\"index.php?id=$course->id\">$strchats</a> -> 
                  <a href=\"view.php?id=$cm->id\">$chat->name</a> -> $strchatreport", 
                   "", "", true, "", navmenu($course, $cm));
 

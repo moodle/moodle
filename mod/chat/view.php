@@ -43,10 +43,6 @@
 
 /// Print the page header
 
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
-
     $strchats = get_string("modulenameplural", "chat");
     $strchat  = get_string("modulename", "chat");
     $strenterchat  = get_string("enterchat", "chat");
@@ -54,8 +50,8 @@
     $strcurrentusers  = get_string("currentusers", "chat");
     $strnextsession  = get_string("nextsession", "chat");
 
-    print_header("$course->shortname: $chat->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strchats</A> -> $chat->name", 
+    print_header_simple("$chat->name", "",
+                 "<A HREF=index.php?id=$course->id>$strchats</A> -> $chat->name", 
                   "", "", true, update_module_button($cm->id, $course->id, $strchat), 
                   navmenu($course, $cm));
 

@@ -15,7 +15,7 @@
      optional_variable($name);  // confirm the action
 
      $action = strtolower($action);
-    	
+        
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
     }
@@ -36,15 +36,11 @@
 
 //    add_to_log($course->id, "glossary", "edit categories", "view.php?id=$cm->id", "$glossary->id", $cm->id);
 
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
-
     $strglossaries   = get_string("modulenameplural", "glossary");
     $strglossary     = get_string("modulename", "glossary");
 
-    print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> <A HREF=view.php?id=$cm->id&tab=GLOSSARY_CATEGORY_VIEW>$glossary->name</a> -> " . get_string("categories","glossary"),
+    print_header_simple(strip_tags("$glossary->name"), "",
+                 "<A HREF=index.php?id=$course->id>$strglossaries</A> -> <A HREF=view.php?id=$cm->id&tab=GLOSSARY_CATEGORY_VIEW>$glossary->name</a> -> " . get_string("categories","glossary"),
                   "", "", true, update_module_button($cm->id, $course->id, $strglossary),
                   navmenu($course, $cm));
 
@@ -59,8 +55,8 @@
                     $cat->usedynalink = $usedynalink;
 
                     if ( !update_record("glossary_categories", $cat) ) {
-     				    error("Weird error. The category was not updated.");
-     				    redirect("editcategories.php?id=$cm->id");
+                        error("Weird error. The category was not updated.");
+                        redirect("editcategories.php?id=$cm->id");
                     } else {
                         add_to_log($course->id, "glossary", "edit category", "editcategories.php?id=$cm->id", $hook,$cm->id);
                     }
@@ -76,26 +72,26 @@
           } elseif ( $action == "delete" ) {
                if ( $confirm ) {
                
-				    delete_records("glossary_entries_categories","categoryid", $hook);
+                    delete_records("glossary_entries_categories","categoryid", $hook);
                     delete_records("glossary_categories","id", $hook);
-				
-				    print_simple_box_start("center","40%", "#FFBBBB");
-				    echo "<center>" . get_string("categorydeleted","glossary") ."</center>";
-				    echo "</center>";
-				    print_simple_box_end();
-				
-         			print_footer($course);
+                
+                    print_simple_box_start("center","40%", "#FFBBBB");
+                    echo "<center>" . get_string("categorydeleted","glossary") ."</center>";
+                    echo "</center>";
+                    print_simple_box_end();
+                
+                    print_footer($course);
 
                     add_to_log($course->id, "glossary", "delete category", "editcategories.php?id=$cm->id", $hook,$cm->id);
                     
-     			    redirect("editcategories.php?id=$cm->id");
+                    redirect("editcategories.php?id=$cm->id");
                } else {
                     echo "<p align=\"center\">" . get_string("delete"). " " . get_string("category","glossary") . "<font size=\"3\">";
 
-     			    print_simple_box_start("center","40%", "#FFBBBB");
-     			    echo "<center><b>$category->name</b><br>";
-     			
-     			    $num_entries = count_records("glossary_entries_categories","categoryid",$category->id);
+                    print_simple_box_start("center","40%", "#FFBBBB");
+                    echo "<center><b>$category->name</b><br>";
+                
+                    $num_entries = count_records("glossary_entries_categories","categoryid",$category->id);
                     if ( $num_entries ) {
                          print_string("deletingnoneemptycategory","glossary");
                     }
@@ -105,7 +101,7 @@
                     ?>
                     <form name="form" method="post" action="editcategories.php">
 
-                    <input type="hidden" name=id 		   value="<?php p($cm->id) ?>">
+                    <input type="hidden" name=id           value="<?php p($cm->id) ?>">
                     <input type="hidden" name=action      value="delete">
                     <input type="hidden" name=confirm     value="1">
                     <input type="hidden" name=mode         value="<?php echo $mode ?>">
@@ -119,8 +115,8 @@
                     $options = array ("id" => $id);
                     print_single_button("editcategories.php", $options, get_string("no") );
                     echo "</td></tr></table>";
-     			    echo "</center>";
-     			    print_simple_box_end();
+                    echo "</center>";
+                    print_simple_box_end();
                }
           }
      } elseif ( $action == "add" ) {
@@ -129,14 +125,14 @@
                if ( $dupcategory ) {
                     echo "<p align=\"center\">" . get_string("add"). " " . get_string("category","glossary") . "<font size=\"3\">";
                     
- 				    print_simple_box_start("center","40%", "#FFBBBB");
-				    echo "<center>" . get_string("duplicatedcategory","glossary") ."</center>";
-				    echo "</center>";
-				    print_simple_box_end();
-				
-         			print_footer($course);
+                    print_simple_box_start("center","40%", "#FFBBBB");
+                    echo "<center>" . get_string("duplicatedcategory","glossary") ."</center>";
+                    echo "</center>";
+                    print_simple_box_end();
+                
+                    print_footer($course);
 
-     			    redirect("editcategories.php?id=$cm->id&action=add&&name=$name");
+                    redirect("editcategories.php?id=$cm->id&action=add&&name=$name");
 
                } else {
                     $action = "";
@@ -145,9 +141,9 @@
                     $cat->glossaryid = $glossary->id;
 
                     if ( ! $cat->id = insert_record("glossary_categories", $cat) ) {
-     				    error("Weird error. The category was not inserted.");
-              			
-          			    redirect("editcategories.php?id=$cm->id");
+                        error("Weird error. The category was not inserted.");
+                        
+                        redirect("editcategories.php?id=$cm->id");
                     } else {
                         add_to_log($course->id, "glossary", "add category", "editcategories.php?id=$cm->id", $cat->id,$cm->id);
                     }
@@ -195,8 +191,8 @@
                </td>
                <td width="10%" align="center"><b>
                <?php
-          		echo "<a href=\"editcategories.php?id=$cm->id&action=delete&mode=cat&hook=$category->id\"><img  alt=\"" . get_string("delete") . "\"src=\"../../pix/t/delete.gif\" height=11 width=11 border=0></a> ";
-          	  	echo "<a href=\"editcategories.php?id=$cm->id&action=edit&mode=cat&hook=$category->id\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a>";
+                echo "<a href=\"editcategories.php?id=$cm->id&action=delete&mode=cat&hook=$category->id\"><img  alt=\"" . get_string("delete") . "\"src=\"../../pix/t/delete.gif\" height=11 width=11 border=0></a> ";
+                echo "<a href=\"editcategories.php?id=$cm->id&action=edit&mode=cat&hook=$category->id\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a>";
                ?>
                </b></td>
              </tr>

@@ -13,17 +13,11 @@
 
     add_to_log($course->id, "choice", "view all", "index?id=$course->id", "");
 
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    } else {
-        $navigation = "";
-    }
-
     $strchoice = get_string("modulename", "choice");
     $strchoices = get_string("modulenameplural", "choice");
 
-    print_header("$course->shortname: $strchoices", "$course->fullname",
-                 "$navigation $strchoices", "", "", true, "", navmenu($course));
+    print_header_simple("$strchoices", "",
+                 "$strchoices", "", "", true, "", navmenu($course));
 
 
     if (! $choices = get_all_instances_in_course("choice", $course)) {

@@ -61,13 +61,8 @@
 
     add_to_log($course->id, "choice", "view", "view.php?id=$cm->id", $choice->id, $cm->id);
 
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    } else {
-        $navigation = "";
-    }
-    print_header("$course->shortname: $choice->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strchoices</A> -> $choice->name", "", "", true,
+    print_header_simple("$choice->name", "",
+                 "<A HREF=index.php?id=$course->id>$strchoices</A> -> $choice->name", "", "", true,
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
 
 /// Check to see if groups are being used in this choice

@@ -41,7 +41,7 @@
             error("Course Module ID was incorrect");
         }
     }
-	
+    
     /// Build the ewsiki script constant
     $ewbase = 'view.php?id='.$id;
     if (isset($userid)) $ewbase .= '&userid='.$userid;
@@ -91,12 +91,6 @@
     # The mighty Wiki itself
     include_once($CFG->dirroot."/mod/wiki/ewiki/ewiki.php");
 
-/// Print the page header
-
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
-
     $strwikis = get_string("modulenameplural", "wiki");
     $strwiki  = get_string("modulename", "wiki");
 
@@ -121,8 +115,8 @@
        }
     }    
     
-    print_header("$course->shortname: $wiki_entry->pagename", "$course->fullname",
-                "$navigation <A HREF=\"index.php?id=$course->id\">$strwikis</A> -> <A HREF=\"view.php?id=$id\">$wiki->name</a> ->".
+    print_header_simple("$wiki_entry->pagename", "",
+                "<A HREF=\"index.php?id=$course->id\">$strwikis</A> -> <A HREF=\"view.php?id=$id\">$wiki->name</a> ->".
                 get_string("administration","wiki"),
                 $focus, "", true, update_module_button($cm->id, $course->id, $strwiki),
                 navmenu($course, $cm));
@@ -348,4 +342,4 @@
     print_footer($course);
     exit;
     
-?>
+?> 

@@ -26,15 +26,11 @@
 
 /// Print the page header
 
-    if ($course->category) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
-    }
-
     $strlessons = get_string("modulenameplural", "lesson");
     $strlesson  = get_string("modulename", "lesson");
 
-    print_header("$course->shortname: $lesson->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>",
+    print_header_simple("$lesson->name", "",
+                 "<A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>",
                   "", "", true, update_module_button($cm->id, $course->id, $strlesson),
                   navmenu($course, $cm));
 

@@ -25,15 +25,12 @@
 
     add_to_log($course->id, "assignment", "upload", "view.php?a=$assignment->id", "$assignment->id", $cm->id);
 
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
     $strassignments = get_string("modulenameplural", "assignment");
     $strassignment  = get_string("modulename", "assignment");
     $strupload      = get_string("upload");
 
-    print_header("$course->shortname: $assignment->name : $strupload", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strassignments</A> -> 
+    print_header_simple("$assignment->name : $strupload", "",
+                 "<A HREF=index.php?id=$course->id>$strassignments</A> -> 
                   <A HREF=\"view.php?a=$assignment->id\">$assignment->name</A> -> $strupload", 
                   "", "", true);
 

@@ -43,16 +43,10 @@
     $strsubscribers = get_string("subscribers", "forum");
     $strforums      = get_string("forums", "forum");
 
-    if ($course->category) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
-       <a href=\"index.php?id=$course->id\">$strforums</a> -> 
+    $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> -> 
        <a href=\"view.php?f=$forum->id\">$forum->name</a> -> $strsubscribers";
-    } else {
-        $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> -> 
-       <a href=\"view.php?f=$forum->id\">$forum->name</a> -> $strsubscribers";
-    }
 
-    print_header("$course->shortname: $strsubscribers", "$course->fullname", "$navigation", 
+    print_header_simple("$strsubscribers", "", "$navigation", 
         "", "", true, forum_update_subscriptions_button($course->id, $id));
 
 /// Check to see if groups are being used in this forum

@@ -13,10 +13,6 @@
 
     add_to_log($course->id, "survey", "view all", "index.php?id=$course->id", "");
 
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
-
     $strsurveys = get_string("modulenameplural", "survey");
     $strweek = get_string("week");
     $strtopic = get_string("topic");
@@ -25,7 +21,7 @@
     $strdone  = get_string("done", "survey");
     $strnotdone  = get_string("notdone", "survey");
 
-    print_header("$course->shortname: $strsurveys", "$course->fullname", "$navigation $strsurveys", 
+    print_header_simple("$strsurveys", "", "$strsurveys", 
                  "", "", true, "", navmenu($course));
 
     if (! $surveys = get_all_instances_in_course("survey", $course)) {

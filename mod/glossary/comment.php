@@ -46,11 +46,6 @@
     }    
     add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id", "$glossary->id",$cm->id);
 
-    /// Printing the page header
-    if ($course->category) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
-    } 
-
     switch ( $action ){
         case "add":
             $straction = get_string("addingcomment","glossary");
@@ -66,8 +61,8 @@
     $strglossary = get_string("modulename", "glossary");
     $strcomments = get_string("comments", "glossary");
 
-    print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
-            "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> <A HREF=view.php?id=$cm->id>$glossary->name</a> -> <A HREF=comments.php?id=$cm->id&eid=$entry->id>$strcomments</a> -> " . $straction,
+    print_header_simple(strip_tags("$glossary->name"), "",
+            "<A HREF=index.php?id=$course->id>$strglossaries</A> -> <A HREF=view.php?id=$cm->id>$glossary->name</a> -> <A HREF=comments.php?id=$cm->id&eid=$entry->id>$strcomments</a> -> " . $straction,
             "", "", true, update_module_button($cm->id, $course->id, $strglossary),
             navmenu($course, $cm));
     
@@ -77,7 +72,7 @@
 
     if ( $action == "delete" ) {
         if ( $confirm ) {
-            delete_records("glossary_comments","id", $cid);				
+            delete_records("glossary_comments","id", $cid);             
 
             print_simple_box_start("center","40%", "#FFBBBB");
             echo "<center>" . get_string("commentdeleted","glossary") . "</center>";
@@ -89,7 +84,7 @@
 
         } else {
 
-		    glossary_print_comment($course, $cm, $glossary, $entry, $comment);
+            glossary_print_comment($course, $cm, $glossary, $entry, $comment);
 
             print_simple_box_start("center","40%", "#FFBBBB");
             echo "<center><br>" . get_string("areyousuredeletecomment","glossary");

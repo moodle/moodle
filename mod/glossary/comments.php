@@ -6,8 +6,8 @@
     
     require_variable($id);           // Course Module ID
     require_variable($eid);         // Entry ID
-	
-	global $THEME, $USER, $CFG;
+    
+    global $THEME, $USER, $CFG;
     
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -33,12 +33,6 @@
     
     add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id", "$glossary->id",$cm->id);
     
-    
-/// Printing the page header
-    if ($course->category) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
-    } 
-    
     $strglossaries = get_string("modulenameplural", "glossary");
     $strglossary = get_string("modulename", "glossary");
     $strallcategories = get_string("allcategories", "glossary");
@@ -50,8 +44,8 @@
     $strcomments = get_string("comments", "glossary");
     $straddcomment = get_string("addcomment", "glossary");
     
-    print_header(strip_tags("$course->shortname: $strcomments: $entry->concept"), "$course->fullname",
-        "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> <A HREF=view.php?id=$cm->id>$glossary->name</a> -> $strcomments",
+    print_header_simple(strip_tags("$strcomments: $entry->concept"), "",
+        "<A HREF=index.php?id=$course->id>$strglossaries</A> -> <A HREF=view.php?id=$cm->id>$glossary->name</a> -> $strcomments",
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
     
@@ -65,13 +59,13 @@
 
     print_heading(get_string('commentson','glossary')." <b>\"$entry->concept\"</b>");
 
-    if ($glossary->allowcomments) {	
+    if ($glossary->allowcomments) { 
         print_heading("<a href=\"comment.php?id=$cm->id&eid=$entry->id\">$straddcomment</a> <img title=\"$straddcomment\" src=\"comment.gif\" height=11 width=11 border=0>");
     }
 
     if ($comments = get_records("glossary_comments","entryid",$entry->id,"timemodified ASC")) {
         foreach ($comments as $comment) {
-		    glossary_print_comment($course, $cm, $glossary, $entry, $comment);
+            glossary_print_comment($course, $cm, $glossary, $entry, $comment);
             echo '<br />';
         }
     } else {

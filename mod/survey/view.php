@@ -24,16 +24,12 @@
     }
 
     $showscales = ($template->name != 'ciqname');
- 
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
 
     $strsurveys = get_string("modulenameplural", "survey");
     $strsurvey = get_string("modulename", "survey");
 
-    print_header("$course->shortname: $survey->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strsurveys</A> -> $survey->name", "", "", true,
+    print_header_simple("$survey->name", "",
+                 "<A HREF=index.php?id=$course->id>$strsurveys</A> -> $survey->name", "", "", true,
                   update_module_button($cm->id, $course->id, $strsurvey), navmenu($course, $cm));
 
 /// Check to see if groups are being used in this survey

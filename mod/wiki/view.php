@@ -215,15 +215,12 @@
 
 
 /// Print the page header
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
 
     $strwikis = get_string("modulenameplural", "wiki");
     $strwiki  = get_string("modulename", "wiki");
 
-    print_header("$course->shortname: ".($ewiki_title?$ewiki_title:$wiki->name), "$course->fullname",
-                "$navigation <A HREF=\"index.php?id=$course->id\">$strwikis</A> -> <A HREF=\"view.php?id=$moodleID\">$wiki->name</a>".($ewiki_title?" -> $ewiki_title":""),
+    print_header_simple(($ewiki_title?$ewiki_title:$wiki->name), "",
+                "<A HREF=\"index.php?id=$course->id\">$strwikis</A> -> <A HREF=\"view.php?id=$moodleID\">$wiki->name</a>".($ewiki_title?" -> $ewiki_title":""),
                 "", "", true, update_module_button($cm->id, $course->id, $strwiki),
                 navmenu($course, $cm));
 

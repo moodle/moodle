@@ -30,11 +30,7 @@
                         : "";
     $strquiz  = get_string("modulename", "quiz");
 
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
-
-    print_header("$course->shortname: $strquizzes", "$course->fullname", "$navigation $strquizzes",
+    print_header_simple("$strquizzes", "", "$strquizzes",
                  "", "", true, $streditquestions, navmenu($course));
 
 // Get all the appropriate data

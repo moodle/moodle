@@ -13,22 +13,18 @@
     require_login($course->id);
     add_to_log($course->id, "exercise", "view all", "index.php?id=$course->id", "");
 
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
-
     $strexercises = get_string("modulenameplural", "exercise");
     $strexercise = get_string("modulename", "exercise");
     $strweek = get_string("week");
     $strtopic = get_string("topic");
     $strname = get_string("name");
-	$strtitle = get_string("title", "exercise");
+    $strtitle = get_string("title", "exercise");
     $strphase = get_string("phase", "exercise");
     $strgrade = get_string("grade");
     $strdeadline = get_string("deadline", "exercise");
-	$strsubmitted = get_string("submitted", "assignment");
+    $strsubmitted = get_string("submitted", "assignment");
 
-	print_header("$course->shortname: $strexercises", "$course->fullname", "$navigation $strexercises", "", "", true, "", navmenu($course));
+    print_header_simple("$strexercises", "", "$strexercises", "", "", true, "", navmenu($course));
 
     if (! $exercises = get_all_instances_in_course("exercise", $course)) {
         notice("There are no exercises", "../../course/view.php?id=$course->id");
@@ -57,22 +53,22 @@
     }
 
     foreach ($exercises as $exercise) {
-		if ($exercise->deadline > $timenow) {
+        if ($exercise->deadline > $timenow) {
             $due = userdate($exercise->deadline);
         } else {
             $due = "<FONT COLOR=\"red\">".userdate($exercise->deadline)."</FONT>";
         }
         if ($submissions = exercise_get_user_submissions($exercise, $USER)) {
             foreach ($submissions as $submission) {
-				if ($submission->late) {
-					$submitted = "<FONT COLOR=\"red\">".userdate($submission->timecreated)."</FONT>";
-					} 
-				else {
-					$submitted = userdate($submission->timecreated);
-					}
-				$link = "<A HREF=\"view.php?id=$exercise->coursemodule\">$exercise->name</A>";
-				$title = $submission->title;
-				if ($course->format == "weeks" or $course->format == "topics") {
+                if ($submission->late) {
+                    $submitted = "<FONT COLOR=\"red\">".userdate($submission->timecreated)."</FONT>";
+                    } 
+                else {
+                    $submitted = userdate($submission->timecreated);
+                    }
+                $link = "<A HREF=\"view.php?id=$exercise->coursemodule\">$exercise->name</A>";
+                $title = $submission->title;
+                if ($course->format == "weeks" or $course->format == "topics") {
                     if (isteacher($course->id)) {
                         $phase = '';
                         switch ($exercise->phase) {
@@ -89,7 +85,7 @@
                                     }
                                     break;
                         }
-					    $table->data[] = array ($exercise->section, $link, $title, $phase, 
+                        $table->data[] = array ($exercise->section, $link, $title, $phase, 
                                 $submitted, $due);
                     } else { // it's a student
                         if ($assessments = exercise_get_user_assessments($exercise, $USER)) { // should be only one...
@@ -110,31 +106,31 @@
                                         $submitted, $due);
                                 }
                             } else {
-    	    				    $table->data[] = array ($exercise->section, $link, $title, 
+                                $table->data[] = array ($exercise->section, $link, $title, 
                                     "-", $submitted, $due);
                             }
                         }
-					} 
+                    } 
                 } else {
-					$table->data[] = array ($link, $submitted, $due);
-				}
-			}
-		} else {
+                    $table->data[] = array ($link, $submitted, $due);
+                }
+            }
+        } else {
             $submitted = get_string("no");
-			$title = '';
-			$link = "<A HREF=\"view.php?id=$exercise->coursemodule\">$exercise->name</A>";
-			if ($course->format == "weeks" or $course->format == "topics") {
+            $title = '';
+            $link = "<A HREF=\"view.php?id=$exercise->coursemodule\">$exercise->name</A>";
+            if ($course->format == "weeks" or $course->format == "topics") {
                 if (isteacher($course->id)) {
-				    $table->data[] = array ($exercise->section, $link, $title, $exercise->phase, 
+                    $table->data[] = array ($exercise->section, $link, $title, $exercise->phase, 
                             $submitted, $due);
                 } else {
-    				$table->data[] = array ($exercise->section, $link, $title, "-", $submitted, $due);
-				} 
+                    $table->data[] = array ($exercise->section, $link, $title, "-", $submitted, $due);
+                } 
             } else {
-				$table->data[] = array ($link, $submitted, $due);
-			}
-		}
-	}
+                $table->data[] = array ($link, $submitted, $due);
+            }
+        }
+    }
     echo "<BR>";
 
     print_table($table);

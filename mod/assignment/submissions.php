@@ -27,17 +27,13 @@
         error("Only teachers can look at this page");
     }
 
-    if ($course->category) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
-    }
-
     $strassignments = get_string("modulenameplural", "assignment");
     $strassignment  = get_string("modulename", "assignment");
     $strsubmissions = get_string("submissions", "assignment");
     $strsaveallfeedback = get_string("saveallfeedback", "assignment");
 
-    print_header("$course->shortname: $assignment->name", "$course->fullname",
-                 "$navigation <a href=\"index.php?id=$course->id\">$strassignments</a> -> 
+    print_header_simple($assignment->name, "",
+                 "<a href=\"index.php?id=$course->id\">$strassignments</a> -> 
                   <a href=\"view.php?a=$assignment->id\">$assignment->name</a> -> $strsubmissions", 
                   "", "", true, update_module_button($cm->id, $course->id, $strassignment), navmenu($course, $cm));
 

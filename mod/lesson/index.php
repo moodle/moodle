@@ -24,11 +24,7 @@
 
 /// Print the header
 
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
-
-    print_header("$course->shortname: $strlessons", "$course->fullname", "$navigation $strlessons", "", "", true, "", navmenu($course));
+    print_header_simple("$strlessons", "", "$strlessons", "", "", true, "", navmenu($course));
 
 /// Get all the appropriate data
 

@@ -22,11 +22,7 @@
 
 /// Print the header
 
-    if ($course->category) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
-    }
-
-    print_header("$course->shortname: $strchats", "$course->fullname", "$navigation $strchats", "", "", true, "", navmenu($course));
+    print_header_simple($strchats, "", $strchats, "", "", true, "", navmenu($course));
 
 /// Get all the appropriate data
 

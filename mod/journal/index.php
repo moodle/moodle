@@ -12,16 +12,12 @@
     require_login($course->id);
     add_to_log($course->id, "journal", "view all", "index.php?id=$course->id", "");
 
-    if ($course->category) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
-    }
-
     $strjournal = get_string("modulename", "journal");
     $strjournals = get_string("modulenameplural", "journal");
     $strweek = get_string("week");
     $strtopic = get_string("topic");
 
-    print_header("$course->shortname: $strjournals", "$course->fullname", "$navigation $strjournals", 
+    print_header_simple("$strjournals", "", "$strjournals", 
                  "", "", true, "", navmenu($course));
 
 

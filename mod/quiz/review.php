@@ -59,10 +59,6 @@
 
 // Print the page header
 
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
-
     $strquizzes = get_string("modulenameplural", "quiz");
     $strquiz  = get_string("modulename", "quiz");
     $strreport  = get_string("report", "quiz");
@@ -76,8 +72,8 @@
     $strtimecompleted = get_string("timecompleted", "quiz");
     $stroverdue = get_string("overdue", "quiz");
 
-    print_header("$course->shortname: $quiz->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strquizzes</A> 
+    print_header_simple("$quiz->name", "",
+                 "<A HREF=index.php?id=$course->id>$strquizzes</A> 
                   -> <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strreview", 
                  "", "", true);
 

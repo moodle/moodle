@@ -1153,6 +1153,26 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     include ("$CFG->dirroot/theme/$CFG->theme/header.html");
 }
 
+
+function print_header_simple($title="", $heading="", $navigation="", $focus="", $meta="",
+                       $cache=true, $button="&nbsp;", $menu="", $usexml=false, $bodytags="") {
+/// This version of print_header is simpler because the course name does not have to be
+/// provided explicitly in the strings. It can be used on the site page as in courses
+/// Eventually all print_header could be replaced by print_header_simple
+
+    global $course;                // The same hack is used in print_header
+
+    $shortname ='';
+    if ($course->category) {
+        $shortname = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
+    }
+
+    print_header("$course->shortname: $title", "$course->fullname $heading", "$shortname $navigation", $focus, $meta,
+                       $cache, $button, $menu, $usexml, $bodytags);
+}
+                       
+                       
+
 function print_footer ($course=NULL, $usercourse=NULL) {
 // Can provide a course object to make the footer contain a link to
 // to the course home page, otherwise the link will go to the site home

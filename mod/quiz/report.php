@@ -45,17 +45,13 @@
 
 /// Print the page header
     if (empty($noheader)) {
-
-        if ($course->category) {
-            $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
-        }
     
         $strquizzes = get_string("modulenameplural", "quiz");
         $strquiz  = get_string("modulename", "quiz");
         $strreport  = get_string("report", "quiz");
     
-        print_header("$course->shortname: $quiz->name", "$course->fullname",
-                     "$navigation <A HREF=index.php?id=$course->id>$strquizzes</A> 
+        print_header_simple("$quiz->name", "",
+                     "<A HREF=index.php?id=$course->id>$strquizzes</A> 
                       -> <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strreport", 
                      "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
     

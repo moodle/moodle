@@ -40,18 +40,14 @@
     $entryfields = get_record("glossary_entries", "id", $entry);
     $strareyousuredelete = get_string("areyousuredelete","glossary");
 
-
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
-    print_header("$course->shortname: $glossary->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> $glossary->name", 
+    print_header_simple("$glossary->name", "",
+                 "<A HREF=index.php?id=$course->id>$strglossaries</A> -> $glossary->name", 
                   "", "", true, update_module_button($cm->id, $course->id, $strglossary), 
                   navmenu($course, $cm));
 
 /// If data submitted, then process and store.
     
-    if ($confirm) {	// the operation was confirmed.
+    if ($confirm) { // the operation was confirmed.
         // if it is an imported entry, just delete the relation
         $entry = get_record("glossary_entries","id", $entry);
 
@@ -59,7 +55,7 @@
             $entry->glossaryid = $entry->sourceglossaryid;
             $entry->sourceglossaryid = 0;
             if (! update_record("glossary_entries", $entry)) {
-       	        error("Could not update your glossary");
+                error("Could not update your glossary");
             }
 
         } else {
@@ -69,7 +65,7 @@
             delete_records("glossary_comments", "entryid",$entry->id);
             delete_records("glossary_alias", "entryid", $entry->id);
             delete_records("glossary_ratings", "entryid", $entry->id);
-            delete_records("glossary_entries","id", $entry->id);				
+            delete_records("glossary_entries","id", $entry->id);                
         }
 
         add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&mode=$prevmode&hook=$hook", $entry,$cm->id);

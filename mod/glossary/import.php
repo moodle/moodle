@@ -32,10 +32,6 @@
         error("You must be a teacher to use this page.");
     } 
 
-    if ($course->category) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
-    } 
-    
     if ($dest != 'new' and $dest != 'current') {
         $dest = 'current';
     }
@@ -48,8 +44,8 @@
     $strsearchindefinition = get_string("searchindefinition", "glossary");
     $strsearch = get_string("search");
     
-    print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
-        "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> $glossary->name",
+    print_header_simple(strip_tags("$glossary->name"), "",
+        "<A HREF=index.php?id=$course->id>$strglossaries</A> -> $glossary->name",
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
     

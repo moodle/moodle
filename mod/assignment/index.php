@@ -12,10 +12,6 @@
     require_login($course->id);
     add_to_log($course->id, "assignment", "view all", "index.php?id=$course->id", "");
 
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
-
     $strassignments = get_string("modulenameplural", "assignment");
     $strassignment = get_string("modulename", "assignment");
     $strweek = get_string("week");
@@ -25,7 +21,7 @@
     $strsubmitted = get_string("submitted", "assignment");
 
 
-    print_header("$course->shortname: $strassignments", "$course->fullname", "$navigation $strassignments", "", "", true, "", navmenu($course));
+    print_header_simple($strassignments, "", $strassignments, "", "", true, "", navmenu($course));
 
     if (! $assignments = get_all_instances_in_course("assignment", $course)) {
         notice("There are no assignments", "../../course/view.php?id=$course->id");

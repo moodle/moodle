@@ -41,17 +41,13 @@
 
     require_login($course->id);
 
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
-
     $strexercises = get_string("modulenameplural", "exercise");
     $strexercise  = get_string("modulename", "exercise");
     $strsubmissions = get_string("submissions", "exercise");
 
     // ... print the header and...
-    print_header("$course->shortname: $exercise->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strexercises</A> -> 
+    print_header_simple("$exercise->name", "",
+                 "$<A HREF=index.php?id=$course->id>$strexercises</A> -> 
                   <A HREF=\"view.php?id=$cm->id\">$exercise->name</A> -> $strsubmissions", 
                   "", "", true);
 
