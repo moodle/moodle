@@ -346,7 +346,7 @@ function dialogue_delete_expired_conversations() {
            if ($dialogue->deleteafter) {
                $expirytime = time() - $dialogue->deleteafter * 86400;
                if ($conversations = get_records_select("dialogue_conversations",
-                   "$timemodified < $expirytime AND closed = 1")) {
+                   "timemodified < $expirytime AND closed = 1")) {
                    foreach ($conversations as $conversation) {
                        delete_records("dialogue_conversations", "id", $conversation->id);
                        delete_records("dialogue_entries", "conversationid", $conversation->id);
@@ -588,9 +588,6 @@ function dialogue_list_conversations_closed($dialogue, $user) {
 		print_table($table);
 	    print_simple_box_end();
 	} 
-	else {
-        print_string("noentry", "dialogue");
-    }
 }
 
 
