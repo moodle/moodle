@@ -50,7 +50,7 @@
     if ($students = get_course_students($course->id, "$sort $dir")) {
         $numstudents = count($students);
         echo "<H2 align=center>$numstudents $course->students</H2>";
-        if ($numstudents > 30) {
+        if ($numstudents < 30) {
             foreach ($students as $student) {
                 print_user($student, $course, $string);
             }
