@@ -953,7 +953,7 @@ global $CFG;
 function glossary_print_alphabet_links($cm, $glossary,$l, $tab) {
 global $CFG;
      if ( $glossary->showalphabet and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS ) {
-          $alphabet = explode("|", get_string("alphabet","glossary"));
+          $alphabet = explode(",", get_string("alphabet"));
           $letters_by_line = 14;
           for ($i = 0; $i < count($alphabet); $i++) {
               if ( $l == $alphabet[$i] and $l) {

@@ -97,7 +97,7 @@
         $search = '';
     } 
 
-    $alphabet = explode('|', get_string("alphabet","glossary"));
+    $alphabet = explode(',', get_string("alphabet"));
     if ($l == '' and $search == '' and !$eid) {
         // if the user is just entering the glossary...
         if ($tab != GLOSSARY_APPROVAL_VIEW) {
