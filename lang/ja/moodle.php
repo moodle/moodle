@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // moodle.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['action'] = '操作';
@@ -421,7 +421,7 @@ $string['groupsseparate'] = '分離グループ';
 $string['groupsvisible'] = '可視グループ';
 $string['guestskey'] = 'キーを持っているゲストを許可する';
 $string['guestsno'] = 'ゲストを許可しない';
-$string['guestsnotallowed'] = '\'$a\' さん申し訳ございません。ゲストでの入室は許可されていません。';
+$string['guestsnotallowed'] = '申し訳ございません、\'$a\' ではゲストでの入室は許可されていません。';
 $string['guestsyes'] = 'キーを持っていないゲストを許可する';
 $string['guestuser'] = 'ゲストユーザ';
 $string['guestuserinfo'] = 'いくつかのコースに閲覧のみ許可された特別なユーザです。';
