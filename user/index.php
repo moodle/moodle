@@ -135,9 +135,7 @@
     echo '</h2>';
 
     if (($CFG->longtimenosee < 500) and (!$page) and ($sort == "lastaccess")) {
-        echo "<center><p><font size=\"1\">(";
-        print_string("unusedaccounts","",$CFG->longtimenosee);
-        echo ")</font></p></center>";
+        echo '<p style="text-align: center;">('.get_string('unusedaccounts', '', $CFG->longtimenosee).')</p>';
     }
 
     /// Print paging bars if necessary
