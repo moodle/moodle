@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4.2 nearly (2004083121)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['action'] = 'Aktion';
@@ -179,7 +179,7 @@ $string['configlocale'] = 'Wählen Sie eine seitenweite locale - diese wird die A
 $string['configloglifetime'] = 'Dies definiert die Länge der Zeit, über die Sie die Staistiken der User-Aktivität behalten möchten. Statistiken, die veralted sind, werden automatisch gelöscht. Am besten ist es, diese so lang wie möglich zu behalten, falls Sie diese benötigen. Wenn Sie einen ausgelasteten Server haben und Geschwindigkeitseinbrüche feststellen, solten Sie den Statistik-Zeitraum reduzieren.';
 $string['configlongtimenosee'] = 'Wenn sich Studenten nach einer sehr langen Zeit nicht mehr angemeldet haben, werden Studenten automatisch nach diesem Termin aus dem Kurs ausgetragen.';
 $string['configmaxeditingtime'] = 'Hier bestimmen Sie die Zeitspanne, in der die Leute die Foren-Beiträge, Jounal-Antworten, usw. erneut bearbeiten dürfen. Normalerweise sind 30 Minuten ein guter Wert. ';
-$string['configproxyhost'] = 'Wenn dieser <B>Server</B> einen Proxy braucht (beispielsweise eine Firewall), um Internetzugriff zu bekommen, dann tragen Sie hier den Namen und den Port des Proxys ein. Anderenfalls lassen sie das Feld leer';
+$string['configproxyhost'] = 'Wenn dieser <b>Server</b> einen Proxy braucht (beispielsweise eine Firewall), um Internetzugriff zu bekommen, dann tragen Sie hier den Namen und den Port des Proxys ein. Anderenfalls lassen sie das Feld leer';
 $string['configsessiontimeout'] = 'Wenn angemeldete Benutzer eine lange Zeit fern bleiben (ohne Seiten zu laden), dann werden diese automatisch abgemeldet (Ihre Session/Sitzung wird beendet). Diese Variable gibt an, wie lange diese Zeit sein soll.';
 $string['configslasharguments'] = 'Dateien (Bilder, Dokumente, usw.) werden über ein Skript, das \'Slash-Argumente\' benutz (hier die zweite Option). Diese Methode erlaubt es Dateien einfacher im Internet-Browsern, Proxy-Servern, usw., zwischengespeichert zu werden.
 Leider erlauben nicht alle PHP-Server diese Methode, so dass Sie, sofern Sie Probleme bei der Anzeige von Dateien oder Bildern (beispielsweise den Benutzer-Fotos) haben, diese Variable auf die erste Option stellen müssen. ';
@@ -268,10 +268,12 @@ kopiere bitte diese Adresse in die obere Zeile des
 Browsers-Fensters.
 Grüße von der \'$a->sitename\'-Verwaltung, $a->admin';
 $string['emailconfirmationsubject'] = '$a: Zugangsinformation';
-$string['emailconfirmsent'] = '   <P>Eine Email sollte an Deine Adresse <B>$a</B>
+$string['emailconfirmsent'] = '<p>Eine Email sollte an Deine Adresse <B>$a</B>
 gesendet worden sein.
-   <P>Sie enthält einfache Anweisungen, um Deine Registrierung zu vervollständigen.
-   <P>Bei weiteren Problemen kontaktiere den Verwalter dieser Seite.';
+</p>
+<p>Sie enthält einfache Anweisungen, um Deine Registrierung zu vervollständigen.
+</p>
+<p>Bei weiteren Problemen kontaktiere den Verwalter dieser Seite.</p>';
 $string['emaildisplay'] = 'Email-Anzeige';
 $string['emaildisplaycourse'] = 'Nur Kurs-Mitgliedern meine Email-Adresse sichtbar machen';
 $string['emaildisplayno'] = 'Meine Email-Adresse vor jedem verbergen';
@@ -294,15 +296,15 @@ Wenn Du Hilfe benötigst, wende dich bitte an den Verwalter der Seite,
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: Kennwort-Bestätigung ändern';
 $string['emailpasswordconfirmsent'] = 'Eine Email sollte an Deine Adresse <b>$a</b> versendet worden sein.
-<p>Sie enthält einfache Anweisungen zur Bestätigung und der Kennwort-Änderung.
+<br />Sie enthält einfache Anweisungen zur Bestätigung und der Kennwort-Änderung.
 Wenn Du weiterhin Schwierigkeiten hast, kontaktiere bitte den Verwalter.';
 $string['emailpasswordsent'] = 'Danke für Deine Bestätigung des neuen Kennworts.
-<p>Eine Email mit dem Inhalt Deines neuen Kennwortes wurde an Deine Adresse <b>$a->email</b> versendet.
-<p>Das Kennwort wurde automatisch generiert -
-Vielleicht möchtest Du Dein <a href=§a->link>Kennwort ändern</a>, um es Dir leichter zu merken.';
+<br />Eine Email mit dem Inhalt Deines neuen Kennwortes wurde an Deine Adresse <b>$a->email</b> versendet.
+<br />Das Kennwort wurde automatisch generiert -
+Vielleicht möchtest Du Dein <a href=\"§a->link\">Kennwort ändern</a>, um es Dir leichter zu merken.';
 $string['enrolmentkey'] = 'Zugangs-Schlüssel';
-$string['enrolmentkeyfrom'] = 'Für diesen Kurs benötigst Du einen \'Zugangs-Schlüssel\' - ein einmaliges Kennwort,<br>den Du  von $a bekommen haben solltest<BR>';
-$string['enrolmentkeyhint'] = 'Der Zugangs-Schlüssel war falsch, bitte versuche es erneut<BR>
+$string['enrolmentkeyfrom'] = 'Für diesen Kurs benötigst Du einen \'Zugangs-Schlüssel\' - ein einmaliges Kennwort,<br>den Du  von $a bekommen haben solltest';
+$string['enrolmentkeyhint'] = 'Der Zugangs-Schlüssel war falsch, bitte versuche es erneut<br />
 (Hier ist ein Hinweis - Er startet mit \'$a\'';
 $string['entercourse'] = 'Hier klicken, um den Kurs zu betreten';
 $string['enteremailaddress'] = 'Gebe hier Deine Email-Adresse ein, um Dein Kennwort zurückzusetzen. Ein neues Kennwort wird Dir via Email zugesendet.';
@@ -416,12 +418,20 @@ zu erstellen. Jeder der individuellen Kurse kann auch
 einen einmaligen \"Zugangsschlüssel\" haben, 
 den Du später nicht mehr brauchen wirst. Hier sind die 
 Schritte: 
-<OL size=2> 
-<LI> Fülle das Formular <HREF=$a>Neuer Zugang </A> 
-mit Deinen Angaben aus. 
-<LI> Umgehend geht eine Email an Deine Adresse raus. 
-<LI> Lese die Email und klicke den darin enthaltenen Internetverweis an. <LI> Dein Zugang wird bestätigt, und Du wirst angemeldet sein. <LI> Jetzt wähle den Kurs aus, an dem Du teilnehmen möchtest. <LI>Solltest Du nach einen  \"Zugangsschlüssel\" gefragt werden, benutze den, den Dir Dein Lehrer gegeben hat. Dieser schaltet Dich für diesen Kurs frei. <LI>Nun kannst Du auf den vollen Kurs zugreifen. Zukünftig brauchst Du nur Deinen eigenen Benutzernamen und das Kennwort im Formular auf dieser Seite einzugeben, um dich anzumelden und Zugang zu jedem Kurs, bei dem Du dich angemeldet hast, zu bekommen. </OL>';
-$string['loginstepsnone'] = 'Hallo!<P>Für vollen Zugang zu den Kursen musst Du Dir einen Zugang anlegen. <P> Alles, was Du tun musst, ist einen Benutzernamen und ein  Kennwort zu wählen, das Du im Formular auf dieser Seite einträgst! <P>Wenn jemand anderes bereits Deinen Benutzernamen gewählt hat, musst Du einen anderen Benutzernamens verwenden.';
+<ol> 
+<li> Fülle das Formular <a href=\"$a\">Neuer Zugang </a> 
+mit Deinen Angaben aus. </li>
+<li> Umgehend geht eine Email an Deine Adresse raus. </li>
+<li> Lese die Email und klicke den darin enthaltenen Internetverweis an.</li>
+<li> Dein Zugang wird bestätigt, und Du wirst angemeldet sein. </li>
+<li> Jetzt wähle den Kurs aus, an dem Du teilnehmen möchtest. </li>
+<li>Solltest Du nach einen  \"Zugangsschlüssel\" gefragt werden, benutze den, den Dir Dein Lehrer gegeben hat. Dieser schaltet Dich für diesen Kurs frei. </li>
+<li>Nun kannst Du auf den vollen Kurs zugreifen. Zukünftig brauchst Du nur Deinen eigenen Benutzernamen und das Kennwort im Formular auf dieser Seite einzugeben, um dich anzumelden und Zugang zu jedem Kurs, bei dem Du dich angemeldet hast, zu bekommen. </li>
+</ol>';
+$string['loginstepsnone'] = '<p>Hallo!</p>
+<p>Für vollen Zugang zu den Kursen musst Du Dir einen Zugang anlegen.</p>
+<p> Alles, was Du tun musst, ist einen Benutzernamen und ein  Kennwort zu wählen, das Du im Formular auf dieser Seite einträgst! </p>
+<p>Wenn jemand anderes bereits Deinen Benutzernamen gewählt hat, musst Du einen anderen Benutzernamens verwenden.</p>';
 $string['loginto'] = 'Angemeldet bei $a';
 $string['loginusing'] = 'Melde Dich hier mit Benutzernamen und Kennwort an';
 $string['logout'] = 'Abmelden';
@@ -542,11 +552,11 @@ $string['passwordrecovery'] = 'Ja, hilf mir bei der Anmeldung';
 $string['passwordsdiffer'] = 'Dieses Kennwort ist falsch';
 $string['passwordsent'] = 'Kennwort wurde gesendet';
 $string['passwordsenttext'] = '   
-<P>Eine Email wurde an Deine Adresse $a->email gesendet.
-<P><B>Suche in Deiner Email nach Deinem neuen Kennwort
+<p>Eine Email wurde an Deine Adresse $a->email gesendet.</p>
+<p>Suche in Deiner Email nach Deinem neuen Kennwort</p>
 
-<P>Das Kennwort wurde automatisch erzeugt.
-Sicherlich möchtest Du es <A HREF=$a->link>ändern</a>, um es Dir leichter zu merken.';
+<p>Das Kennwort wurde automatisch erzeugt.
+Sicherlich möchtest Du es <a href=\"$a->link\">ändern</a>, um es Dir leichter zu merken.</p>';
 $string['people'] = 'Leute';
 $string['personalprofile'] = 'Eigenes Profil';
 $string['phone'] = 'Telefon';
