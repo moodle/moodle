@@ -15,6 +15,7 @@ $string['cvs.html'] = "Using CVS";
 $string['future.html'] = "Future";
 $string['credits.html'] = "Credits";
 $string['licence.html'] = "License";
+$string['other.html'] = "Other Docs";
 
 
 ?>
