@@ -20,6 +20,10 @@ optional_variable($filename,0);
 
     require_login($course->id);
 
+    if (!isteacheredit($course->id)) {
+        error("You need to be a teacher or an admin to use this page");
+    }
+
     if ($from = get_record("course","id",$fromcourse)) {
         if (!empty($filename) && file_exists($CFG->dataroot.'/'.$filename) && !empty($SESSION->import_preferences)) {
             $restore = backup_to_restore_array($SESSION->import_preferences);
