@@ -2,10 +2,13 @@
 
     require("../config.php");
 
-    $currlang = current_language();
-
-    $langs = get_list_of_languages();
-    $langmenu = popup_form ("$CFG->wwwroot/doc/?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+    if (empty($CFG->langmenu)) {
+        $langmenu = "";
+    } else {
+        $currlang = current_language();
+        $langs    = get_list_of_languages();
+        $langmenu = popup_form ("$CFG->wwwroot/doc/?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+    }
 
     if (! $site = get_site()) {
         error("Site is misconfigured");

@@ -106,9 +106,13 @@
         error("No site found!");
     }
 
-    $currlang = current_language();
-    $langs    = get_list_of_languages();
-    $langmenu = popup_form ("$CFG->wwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+    if (empty($CFG->langmenu)) {
+        $langmenu = "";
+    } else {
+        $currlang = current_language();
+        $langs    = get_list_of_languages();
+        $langmenu = popup_form ("$CFG->wwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+    }
 
     $loginsite = get_string("loginsite");
 

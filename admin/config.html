@@ -25,6 +25,29 @@
     </td>
 </tr>
 <tr valign=top>
+	<td align=right><p>langmenu:</td>
+	<td>
+    <? unset($options);
+       $options[0] = get_string("no");
+       $options[1] = get_string("yes");
+
+       choose_from_menu ($options, "langmenu", $config->langmenu, "", "", "");
+    ?>
+    </td>
+    <td>
+    <? print_string("configlangmenu") ?>
+    </td>
+</tr>
+<tr valign=top>
+	<td align=right><p>langlist:</td>
+	<td>
+    <input name=langlist type=text size=40 value="<?=$config->langlist?>">
+    </td>
+    <td>
+    <? print_string("configlanglist") ?>
+    </td>
+</tr>
+<tr valign=top>
 	<td align=right><p>locale:</td>
 	<td>
     <input name=locale type=text size=10 value="<?=$config->locale?>">

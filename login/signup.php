@@ -57,10 +57,13 @@
     $newaccount = get_string("newaccount");
     $login = get_string("login");
 
-    $currlang = current_language();
-    $langs    = get_list_of_languages();
-    $langmenu = popup_form ("$CFG->wwwroot/login/signup.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
-
+    if (empty($CFG->langmenu)) {
+        $langmenu = "";
+    } else {
+        $currlang = current_language();
+        $langs    = get_list_of_languages();
+        $langmenu = popup_form ("$CFG->wwwroot/login/signup.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+    }
 
     print_header($newaccount, $newaccount, "<A HREF=\"index.php\">$login</A> -> $newaccount", $focus, "", true, "<div align=right>$langmenu</div>");
     include("signup_form.html");
