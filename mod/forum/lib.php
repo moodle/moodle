@@ -427,7 +427,7 @@ function forum_grades($forumid) {
         foreach ($ratings as $rating) {     // Ordered by user
             if ($currentuser and $rating->userid != $currentuser) {
                 if (!empty($ratingsuser)) {
-                    $return->grades[$currentuser] = forum_get_ratings_median(0, $scalemenu, $ratingsuser);
+                    $return->grades[$currentuser] = forum_get_ratings_mean(0, $scalemenu, $ratingsuser);
                     $return->grades[$currentuser] .= "<br />".forum_get_ratings_summary(0, $scalemenu, $ratingsuser);
                 } else {
                     $return->grades[$currentuser] = "";
@@ -438,7 +438,7 @@ function forum_grades($forumid) {
             $currentuser = $rating->userid;
         }
         if (!empty($ratingsuser)) {
-            $return->grades[$currentuser] = forum_get_ratings_median(0, $scalemenu, $ratingsuser);
+            $return->grades[$currentuser] = forum_get_ratings_mean(0, $scalemenu, $ratingsuser);
             $return->grades[$currentuser] .= "<br />".forum_get_ratings_summary(0, $scalemenu, $ratingsuser);
         } else {
             $return->grades[$currentuser] = "";
@@ -1050,12 +1050,12 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo "<div align=right><p align=right>";
     if (!empty($ratings) and !empty($USER->id)) {
         if (isteacher($courseid)) {
-            forum_print_ratings_median($post->id, $ratings->scale);
+            forum_print_ratings_mean($post->id, $ratings->scale);
             if ($USER->id != $post->userid) {
                  forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
             }
         } else if ($USER->id == $post->userid) {
-            forum_print_ratings_median($post->id, $ratings->scale);
+            forum_print_ratings_mean($post->id, $ratings->scale);
         } else if (!empty($ratings->allow) ) {
             forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
         }
@@ -1167,26 +1167,26 @@ function forum_shorten_post($message) {
 }
 
 
-function forum_print_ratings_median($postid, $scale) {
+function forum_print_ratings_mean($postid, $scale) {
 /// Print the multiple ratings on a post given to the current user by others.
 /// Scale is an array of ratings
 
     static $strrate;
     
-    if ($median = forum_get_ratings_median($postid, $scale)) {
+    if ($mean = forum_get_ratings_mean($postid, $scale)) {
 
         if (empty($strratings)) {
             $strratings = get_string("ratings", "forum");
         }
 
         echo "$strratings: ";
-        link_to_popup_window ("/mod/forum/report.php?id=$postid", "ratings", $median, 400, 600);
+        link_to_popup_window ("/mod/forum/report.php?id=$postid", "ratings", $mean, 400, 600);
     }
 }
 
 
-function forum_get_ratings_median($postid, $scale, $ratings=NULL) {
-/// Return the median rating of a post given to the current user by others.
+function forum_get_ratings_mean($postid, $scale, $ratings=NULL) {
+/// Return the mean rating of a post given to the current user by others.
 /// Scale is an array of possible ratings in the scale
 /// Ratings is an optional simple array of actual ratings (just integers)
 
@@ -1199,17 +1199,26 @@ function forum_get_ratings_median($postid, $scale, $ratings=NULL) {
         }
     }
 
-    if (!$count = count($ratings)) {
-        return "";
-    }
+    $count = count($ratings);
 
-    sort($ratings, SORT_NUMERIC);
-  
-    if ($count == 1) {
-        return $scale[$ratings[0]]." (1)";
+    if ($count == 0) {
+        return "";
+
+    } else if ($count == 1) {
+        return $scale[$ratings[0]];
+
     } else {
-        $median = $ratings[ceil($count/2)];
-        return $scale[$median]." ($count)";
+        $total = 0;
+        foreach ($ratings as $rating) {
+            $total += $rating;
+        }
+        $mean = round( ((float)$total/(float)$count) + 0.001);  // Little fudge factor so that 0.5 goes UP
+    
+        if (isset($scale[$mean])) {
+            return $scale[$mean]." ($count)";
+        } else {
+            return "$mean ($count)";    // Should never happen, hopefully
+        }
     }
 }
 
