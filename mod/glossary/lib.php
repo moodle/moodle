@@ -232,11 +232,11 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview
     global $THEME, $USER;
 
     $importedentry = ($entry->sourceglossaryid == $glossary->id);
-    $isteacher = isteacher($course->id);
+    $isteacher = isteacher($course->id) or isadmin($course->id);
     $ismainglossary = $glossary->mainglossary;
-    
-    echo "<table width=100% border=0>";    
-    echo "<tr><td>";
+	
+    echo "<p align=\"right\">";
+
     $count = count_records("glossary_comments","entryid",$entry->id);
     if ($count) {
         echo "<font size=1><a href=\"comments.php?id=$cm->id&eid=$entry->id\">$count ";
@@ -245,18 +245,15 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview
         } else {
             print_string("comments", "glossary");
         }
-        echo "</a></font>";
+        echo "</a></font> ";
     }
-    echo "</td><td align=\"right\">";
 
-    echo "<td align=\"right\">";
     if ( $glossary->allowcomments ) {
         echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id\"><img  alt=\"" . get_string("addcomment","glossary") . "\" src=\"comment.gif\" height=16 width=16 border=0></a> ";
     }
 
     if ($isteacher or $glossary->studentcanpost and $entry->userid == $USER->id) {
         // only teachers can export entries so check it out
-
         if ($isteacher and !$ismainglossary and !$importedentry) {
             $mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
             if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
@@ -283,7 +280,6 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview
             echo "<font size=-1>" . get_string("exportedentry","glossary") . "</font>";
         }
     }
-    echo "</td></tr></table>";
 }
 
 function glossary_search_entries($searchterms, $glossary, $includedefinition) {

@@ -1,7 +1,7 @@
 <?PHP // $Id$
 
-	require_once("../../config.php");
-	require_once("lib.php");
+    require_once("../../config.php");
+    require_once("lib.php");
 
     require_variable($id);    // course module ID
     require_variable($mode);  // edit or delete
@@ -47,37 +47,39 @@
 /// If data submitted, then process and store.
     
     if ($mode == "edit" or $mode == "delete" ) {
-    	echo "<p>";
-    	if ( isteacher($cm->id) or $glossary->studentcanpost ) {
-    		if ($go) {	// the operation was confirmed.
-    			if ( $mode == "delete") {
-    			    // if it is an imported entry, just delete the relation
-    			    $entry = get_record("glossary_entries","id", $entry);
-    			    if ( $entry->sourceglossaryid ) {
-    			        $entry->glossaryid = $entry->sourceglossaryid;
-    			        $entry->sourceglossaryid = 0;
+        echo "<p>";
+        if ( isteacher($cm->id) or $glossary->studentcanpost ) {
+            if ($go) {	// the operation was confirmed.
+                if ( $mode == "delete") {
+                    // if it is an imported entry, just delete the relation
+                    $entry = get_record("glossary_entries","id", $entry);
+                    if ( $entry->sourceglossaryid ) {
+                        $entry->glossaryid = $entry->sourceglossaryid;
+                        $entry->sourceglossaryid = 0;
                         if (! update_record("glossary_entries", $entry)) {
                    	        error("Could not update your glossary");
-               	        }
-    			    } else {
-    				    glossary_delete_old_attachments($entry->id);
-    				    delete_records("glossary_entries","id", $entry->id);				
-    			    }
-    			
+                        }
+                    } else {
+                        if ( $entry->attachment ) {
+                            glossary_delete_old_attachments($entry->id);
+                        }
+                        delete_records("glossary_entries","id", $entry->id);				
+                    }
+
                     print_simple_box_start("center","40%", "#FFBBBB");
-    				echo "<center>$entrydeleted"; //CAMBIAR
-    				echo "</center>";
-    				print_simple_box_end();
-    			}
-        			print_footer($course);
-                      add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&currentview=$currentview&cat=$cat", $entry);
-    			redirect("view.php?id=$cm->id&currentview=$currentview&cat=$cat");
-    		} else {		// the operation has not been confirmed yet so ask the user to do so
-    			if ( $mode == "delete") {				
-    				print_simple_box_start("center","40%", "#FFBBBB");
-    				echo "<center><b>$entryfields->concept</b><br>$strareyousuredelete";
-    				
-    				?>
+                    echo "<center>$entrydeleted"; //CAMBIAR
+                    echo "</center>";
+                    print_simple_box_end();
+                }
+                print_footer($course);
+                add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&currentview=$currentview&cat=$cat", $entry);
+                redirect("view.php?id=$cm->id&currentview=$currentview&cat=$cat");
+            } else {        // the operation has not been confirmed yet so ask the user to do so
+                if ( $mode == "delete") {				
+                    print_simple_box_start("center","40%", "#FFBBBB");
+                    echo "<center><b>$entryfields->concept</b><br>$strareyousuredelete";
+
+                    ?>
                         <form name="form" method="post" action="deleteentry.php">
 
                         <input type="hidden" name=id 		   value="<?php p($cm->id) ?>">
@@ -93,12 +95,12 @@
                         </form>
                    	</center>
                    	<?php
-    				print_simple_box_end();
-    			}
-    		}
-    	} else {
-    		error("You are not allowed to edit or delete entries");
-    	}
+                    print_simple_box_end();
+                }
+            }
+        } else {
+            error("You are not allowed to edit or delete entries");
+        }
     }
     print_footer($course);
 ?>
