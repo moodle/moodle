@@ -22,8 +22,8 @@
       <? print_simple_box("Main Menu", $align="CENTER", $width="100%", $color="$THEME->cellheading"); ?>
 
 	  <LI>Home</LI>
-      <? if ($site->format > 0 ) { ?>
       <LI><A TITLE="Available courses on this server" HREF="course/"><B>Courses</B></A><BR></LI>
+      <? if ($site->format > 0 ) { ?>
       <LI><A TITLE="Site-level Forums" HREF="mod/discuss/index.php?id=<?=$site->id?>">Forums</A></LI>
       <? } ?>
 
