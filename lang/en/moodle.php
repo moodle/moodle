@@ -201,6 +201,7 @@ $string['courserestore'] = 'Course restore';
 $string['courses'] = 'Courses';
 $string['coursestaught'] = 'Courses I have taught';
 $string['coursescategory'] = 'Courses in the same category';
+$string['coursehidden'] = 'This course is currently unavailable to students';
 $string['courseupdates'] = 'Course updates';
 $string['courseuploadlimit'] = 'Course upload limit';
 $string['create'] = 'Create';

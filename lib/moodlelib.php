@@ -234,7 +234,7 @@ function clean_param($param, $options) {
 
     if ($options & PARAM_HOST) {         // allow FQDN or IPv4 dotted quad
         preg_replace('/[^\.\d\w-]/','', $param ); // only allowed chars 
-	    // match ipv4 dotted quad
+        // match ipv4 dotted quad
         if (preg_match('/(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/',$param, $match)){
             // confirm values are ok
             if ( $match[0] > 255
@@ -1005,7 +1005,7 @@ function require_login($courseid=0, $autologinguest=true) {
         }
         if (!$course->visible) {
             print_header();
-            notice(get_string('studentnotallowed', '', fullname($USER, true)), $CFG->wwwroot .'/');
+            notice(get_string('coursehidden'), $CFG->wwwroot .'/');
         }
         if ($USER->username == 'guest') {
             switch ($course->guest) {
@@ -1124,7 +1124,7 @@ function over_bounce_threshold($user) {
  * @param $reset - will reset the count to 0
  */
 function set_send_count($user,$reset=false) {
-    if ($pref = get_record('user_preferences','userid',$user->id,'name','email_send_count')) {	
+    if ($pref = get_record('user_preferences','userid',$user->id,'name','email_send_count')) {  
         $pref->value = (!empty($reset)) ? 0 : $pref->value+1;
         update_record('user_preferences',$pref);
     }
@@ -1142,7 +1142,7 @@ function set_send_count($user,$reset=false) {
  * @param $reset - will reset the count to 0
  */
 function set_bounce_count($user,$reset=false) {
-    if ($pref = get_record('user_preferences','userid',$user->id,'name','email_bounce_count')) {	
+    if ($pref = get_record('user_preferences','userid',$user->id,'name','email_bounce_count')) {    
         $pref->value = (!empty($reset)) ? 0 : $pref->value+1;
         update_record('user_preferences',$pref);
     }
