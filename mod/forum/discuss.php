@@ -31,6 +31,7 @@
             set_field("forum_discussions", "forum", $forum->id, "id", $discussion->id);
             $discussion->forum = $forum->id;
             add_to_log($course->id, "forum", "move discussion", "discuss.php?d=$discussion->id", "$discussion->id");
+            $discussionmoved = true;
         } else {
             error("You can't move to that forum - it doesn't exist!");
         }
@@ -103,6 +104,10 @@
                 echo "</div>";
             }
         }
+    }
+
+    if (isset($discussionmoved)) {
+        notify(get_string("discussionmoved", "forum", $forum->name));
     }
 
     forum_print_discussion($course, $forum, $discussion, $post, $displaymode);

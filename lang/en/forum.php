@@ -22,6 +22,7 @@ $string['deleteddiscussion'] = "The discussion topic has been deleted";
 $string['deletedpost'] = "The post has been deleted";
 $string['deletesure'] = "Are you sure you want to delete this post?";
 $string['discussion'] = "Discussion";
+$string['discussionmoved'] = "This discussion has been moved to '\$a'.";
 $string['discussions'] = "Discussions";
 $string['discussionsstartedby'] = "Discussions started by \$a";
 $string['discussthistopic'] = "Discuss this topic";
