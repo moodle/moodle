@@ -131,13 +131,17 @@
 
             $resourcetype = "";
             $embedded = false;
+            $mimetype = mimeinfo("type", $resource->reference);
 
-            $imagetypes = array('image/gif','image/jpeg','image/png');
-            if (in_array(mimeinfo("type", $resource->reference), $imagetypes)) {  // It's an image
-                $embedded = true;
+            if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
                 $resourcetype = "image";
+                $embedded = true;
 
-            } else if (mimeinfo("icon", $resource->reference) == "html.gif") {    // It's a web page
+            } else if ($mimetype == "audio/mp3") {    // It's an MP3 audio file
+                $resourcetype = "mp3";
+                $embedded = true;
+
+            } else if ($mimetype == "text/html") {    // It's a web page
                 $resourcetype = "html";
             }
 
@@ -161,14 +165,12 @@
             /// Check whether this is supposed to be a popup, but was called directly
 
             if ($resource->alltext and !$inpopup) {    /// Make a page and a pop-up window
-                add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
-
                 print_header($pagetitle, "$course->fullname", "$navigation $resource->name", "", "", true, 
                              update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
 
                 echo "\n<script language=\"Javascript\">";
                 echo "\n<!--\n";
-                echo "openpopup('$relativeurl','resource$resource->id','$resource->alltext');\n";
+                echo "openpopup('/mod/resource/view.php?inpopup=true&id=$cm->id','resource$resource->id','$resource->alltext');\n";
                 echo "\n-->\n";
                 echo '</script>';
 
@@ -176,7 +178,7 @@
                     print_simple_box(text_to_html($resource->summary), "center");
                 }
 
-                $link = "<a href=\"$fullurl\" target=\"resource$resource->id\" onClick=\"return openpopup('$relativeurl', 'resource$resource->id','$resource->alltext');\">$resource->name</a>";
+                $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&id=$cm->id\" target=\"resource$resource->id\" onClick=\"return openpopup('/mod/resource/view.php?inpopup=true&id=$cm->id', 'resource$resource->id','$resource->alltext');\">$resource->name</a>";
 
                 echo "<p>&nbsp</p>";
                 echo '<p align="center">';
@@ -232,11 +234,28 @@
                                  "", "", true, update_module_button($cm->id, $course->id, $strresource), 
                                  navmenu($course, $cm, "self"));
                     echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
+                    echo '<br />';
                 }
                 if ($resourcetype == "image") {  
                     echo "<br />";
                     echo "<center><img class=\"resourceimage\" src=\"$fullurl\"></center>";
                     echo "<br />";
+                }
+                if ($resourcetype == "mp3") {  
+                    print_simple_box_start('center');
+                    echo '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
+                    echo '        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
+                    echo '        width="600" height="100" id="mp3player" align="">';
+                    echo "<param name=movie value=\"$CFG->wwwroot/lib/mp3player.swf?src=$fullurl&autostart=yes\">";
+                    echo '<param name=quality value=high>';
+                    echo '<param name=bgcolor value="#333333">';
+                    echo "<embed src=\"$CFG->wwwroot/lib/mp3player.swf?src=$fullurl&autostart=yes\" ";
+                    echo " quality=high bgcolor=\"#333333\" width=\"600\" height=\"100\" name=\"mp3player\" ";
+                    echo ' type="application/x-shockwave-flash" ';
+                    echo ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
+                    echo '</embed>';
+                    echo '</object>';
+                    print_simple_box_end();
                 }
                 if (!$inpopup) {
                     print_footer($course);
