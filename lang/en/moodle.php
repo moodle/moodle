@@ -102,7 +102,6 @@ $string['closewindow'] = "Close this window";
 $string['comparelanguage'] = "Compare and edit current language";
 $string['complete'] = "Complete";
 $string['configcountry'] = "If you set a country here, then this country will be selected by default on new user accounts.  To force users to choose a country, just leave this unset.";
-$string['configcreatornewcourse'] = "Course creators are people who have the right to edit existing courses and change all the settings .  If this setting is enabled, the course creators will ALSO be allowed to create completely new courses.";
 $string['configdebug'] = "If you turn this on, then PHP's error_reporting will be increased so that more warnings are printed.  This is only useful for developers.";
 $string['configgdversion'] = "Indicate the version of GD that is installed.  The version shown by default is the one that has been auto-detected.  Don't change this unless you really know what you're doing.";
 $string['configerrorlevel'] = "Choose the amount of PHP warnings that you want to be displayed.  Normal is usually the best choice.";

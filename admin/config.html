@@ -300,23 +300,6 @@
     <?php print_string("configsecureforms") ?>
     </td>
 </tr>
-<tr valign=top>
-	<td align=right><p>creatornewcourse:</td>
-	<td>
-    <?php 
-       unset($options);
-       $options[0]  = get_string("no");
-       $options[1]  = get_string("yes");
-
-       choose_from_menu ($options, "creatornewcourse", $config->creatornewcourse, "", "", "");
-    ?>
-    </td>
-    <td>
-    <?php print_string("configcreatornewcourse") ?>
-    </td>
-</tr>
-
-
 
 <tr>
     <td colspan=3 align=center>
