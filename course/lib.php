@@ -669,8 +669,10 @@ function print_admin_links ($siteid, $width=180) {
 		$modicon[]=$icon;
 		$moddata[]="<HR>";
 		$modicon[]="";
-		$moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".get_string("addnewuser")."</A>";
-		$modicon[]=$icon;
+        if($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual"){
+		    $moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".get_string("addnewuser")."</A>";
+		    $modicon[]=$icon;
+        }
 		$moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/user.php\">".get_string("edituser")."</A>";
 		$modicon[]=$icon;
 		$moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/admin.php\">".get_string("assignadmins")."</A>";

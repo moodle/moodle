@@ -339,8 +339,10 @@
                          "<P><A HREF=\"../course/teacher.php\">".get_string("assignteachers")."</A></P>".
                          "<P><A HREF=\"../course/delete.php\">".get_string("deletecourse")."</A></P>".
                          "<P><A HREF=\"../course/categories.php\">".get_string("categories")."</A></P>";
-		$table->data[0][2] = "<P><A HREF=\"user.php?newuser=true\">".get_string("addnewuser")."</A></P>".
-                         "<P><A HREF=\"user.php\">".get_string("edituser")."</A></P>".
+        if($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual"){
+		    $table->data[0][2] = "<P><A HREF=\"user.php?newuser=true\">".get_string("addnewuser")."</A></P>";
+        }    
+        $table->data[0][2] .=  "<P><A HREF=\"user.php\">".get_string("edituser")."</A></P>".
                          "<P><A HREF=\"admin.php\">".get_string("assignadmins")."</A></P>".
                          "<P><A HREF=\"creators.php\">".get_string("assigncreators")."</A></P>".
                          "<P><A HREF=\"auth.php\">".get_string("authentication")."</A></P>";
