@@ -230,7 +230,18 @@
     if ($status) {
         echo "<li>Zipping backup";
         $status = backup_zip ($preferences,$moodle_home);
+    }
 
+    //Now, copy the zip file to course directory
+    if ($status) {
+        echo "<li>Copying zip file";
+        $status = copy_zip_to_course_dir ($preferences);
+    }
+
+    //Now, clean temporary data (db and filesystem)
+    if ($status) {
+        echo "<li>Cleaning up temp data";
+        $status = clean_temp_data ($preferences); 
     }
 
     if (!$status) {
@@ -245,4 +256,9 @@
 
     //End the main table
     echo "</table>";
+
+    //Print final message
+    print_simple_box(get_string("backupfinished"),"CENTER");
+    print_continue($moodle_home."/files/index.php?id=".$preferences->backup_course."&wdir=/".get_string("backupdir"));    
+
 ?>

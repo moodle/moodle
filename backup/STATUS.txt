@@ -3,8 +3,7 @@ STATUS $Id$
 
 This documment shows the current status of the backup/restore option.
 
-Backup:  WORKING. Only xml generation into temp dir. Header, info,
-                  course data, sections, user data and logs.
+Backup:  WORKING. COMPLETED but only assignments and resources.
 
 Restore: NOT WORKING. No comments.
 
@@ -87,19 +86,18 @@ Backup Details:
                  + files........................................NO EXISTS
               x user files to temp..............................DONE
               x course files to temp............................DONE
-   - Compress the backup (zip)..................................IN PROGRESS
-      - XML File................................................IN PROGRESS
-      - moddata files...........................................IN PROGRESS
-      - Course Files............................................IN PROGRESS
-      - User Files..............................................IN PROGRESS
-   - Copy finished file to browseable dir.......................NO EXISTS
-   - Delete old entries at backup end...........................NO EXISTS
-      - From database...........................................NO EXISTS      
-      - From filesystem.........................................NO EXISTS
-   - Browse backup files........................................DONE. TO FILE MANAGER
-   - Obtain info about backup files.............................NO EXISTS
-   - Download backup files......................................DONE. TO FILE MANAGER
-   - Delete backup files........................................DONE. TO FILE MANAGER
+   - Compress the backup (zip)..................................DONE. PROBLEMS PCLZIP/UNZIP
+      - XML File................................................DONE. PROBLEMS PCLZIP/UNZIP
+      - moddata files...........................................DONE. PROBLEMS PCLZIP/UNZIP
+      - Course Files............................................DONE. PROBLEMS PCLZIP/UNZIP
+      - User Files..............................................DONE. PROBLEMS PCLZIP/UNZIP
+   - Copy finished file to browseable dir.......................DONE
+   - Delete old entries at backup end...........................DONE
+      - From database...........................................DONE      
+      - From filesystem.........................................DONE
+   - Browse backup files........................................DONE
+   - Download backup files......................................DONE
+   - Delete backup files........................................DONE
    - Program automatic backups..................................NO EXISTS
 
 Restore Details:

@@ -176,7 +176,7 @@
             $coursedirs = get_directory_list($rootdir,$CFG->moddata);
             foreach ($coursedirs as $dir) {
                 //Insert them into backup_files
-               $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
+                $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
                                               (backup_code, file_type, path)
                                        VALUES
                                           ('$backup_unique_code','course','$dir')",false);
@@ -933,17 +933,20 @@
         //in temp/backup/$backup_code  dir
         $status = check_and_create_course_files_dir($preferences->backup_unique_code);
 
-        //Now iterate over files and directories except $CFG->moddata to be
+        //Now iterate over files and directories except $CFG->moddata and get_string("backupdir") to be
         //copied to backup
 
         $rootdir = $CFG->dataroot."/".$preferences->backup_course;
+
+        $name_moddata = $CFG->moddata;
+        $name_backupdata = get_string("backupdir");
         //Check if directory exists
         if (is_dir($rootdir)) {
             $list = list_directories_and_files ($rootdir);
             if ($list) {
                 //Iterate
                 foreach ($list as $dir) {
-                    if ($dir !== $CFG->moddata) {
+                    if ($dir !== $name_moddata and $dir !== $name_backupdata) {
                         $status = backup_copy_file($rootdir."/".$dir,
                                        $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/course_files/".$dir);
                     }
@@ -998,7 +1001,7 @@
 
         //Base dir where everything happens
         $basedir = $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code;
-        //Backup xip file name
+        //Backup zip file name
         $name = $preferences->backup_name;
         //List base_dir files and directories
         $filelist = list_directories_and_files ($basedir);
@@ -1006,10 +1009,10 @@
         if (empty($CFG->zip)) {    // Use built-in php-based zip function
                     $files = array();
                     foreach ($filelist as $file) {
-//                        //If directory, append "/"
-//                        if (is_dir($basedir."/".$file)) {
-//                            $file = $file."/";
-//                        }
+                        //If directory, append "/"
+                        if (is_dir($basedir."/".$file)) {
+                            $file = $file."/";
+                        }
                         //Include into array
                         $files[] = $basedir."/".$file;
                     }
@@ -1018,13 +1021,18 @@
                     if (($list = $archive->create($files,PCLZIP_OPT_REMOVE_PATH,$basedir)) == 0) {
                         error($archive->errorInfo(true));
                         $status = false;
-                    }
-                    $list = $archive->listContent();
-                    for ($i=0; $i<sizeof($list); $i++) {
-                        for(reset($list[$i]); $key = key($list[$i]); next($list[$i])) {
-                            echo "File $i / [$key] = ".$list[$i][$key]."<br>";
-                        }
+                    } 
+                    //Debug zip contents
+                    //true->do it, false->don't do it. To debug if necessary.
+                    if (false) {
                         echo "<br>";
+                        $list = $archive->listContent();
+                        for ($i=0; $i<sizeof($list); $i++) {
+                            for(reset($list[$i]); $key = key($list[$i]); next($list[$i])) {
+                                echo "File $i / [$key] = ".$list[$i][$key]."<br>";
+                            }
+                        echo "<br>";
+                        }
                     }
                 } else {                   // Use external zip program
                     $files = "";
@@ -1039,6 +1047,57 @@
         return $status;
 
     } 
+
+    //This function copies the final zip to the course dir
+    function copy_zip_to_course_dir ($preferences) {
+    
+        global $CFG;
+
+        //Backup zip file name
+        $from_zip_file = $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/".$preferences->backup_name;
+        $to_zip_file = $CFG->dataroot."/".$preferences->backup_course."/".get_string("backupdir")."/".$preferences->backup_name;
+   
+        //Check to directory
+        $status = check_dir_exists(dirname($to_zip_file),true);
+       
+        //Copy zip file
+        if ($status) {
+            $status = backup_copy_file ($from_zip_file,$to_zip_file);
+        }
+
+        return $status;
+    }
+
+    //This function clean data from backup tables and
+    //delete all temp files used
+    function clean_temp_data ($preferences) {
+
+
+        global $CFG;
+
+        $status = true;
+
+        //true->do it, false->don't do it. To debug if necessary.
+        if (true) {
+            //Now delete from tables
+            $status = execute_sql("DELETE FROM {$CFG->prefix}backup_ids
+                                   WHERE backup_code < '$preferences->backup_unique_code'",false);
+            if ($status) {
+                $status = execute_sql("DELETE FROM {$CFG->prefix}backup_files
+                                       WHERE backup_code < '$preferences->backup_unique_code'",false);
+            }
+            //Now, delete temp directory (if exists)
+            $file_path = $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code;
+            if (is_dir($file_path)) {
+                $status = delete_dir_contents($file_path);
+                //There is nothing, delete the directory itself
+                if ($status) {
+                    $status = rmdir($file_path);
+                }
+            }
+        }
+        return $status;
+    }
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1079,8 +1138,4 @@
     ///Ends copy file/dirs functions
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-        
-
-
 ?>
