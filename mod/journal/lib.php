@@ -283,19 +283,61 @@ function journal_get_participants($journalid) {
 }
 
 // SQL FUNCTIONS ///////////////////////////////////////////////////////////////////
+function supports_union(){
+    # not all databases support UNION.  Adodb doesn't seem to keep track of which do.
+    # this function should probably be moved to datalib once it has been thouroughly tested.
+    $qry = "SELECT 'a' as a UNION SELECT 'b' as a'";
+    $test = get_records_sql($qry);
+    return ($test['b']->a = 'b');
+    }
 
 function journal_get_users_done($journal) {
     global $CFG;
-    return get_records_sql("SELECT u.* 
-                              FROM {$CFG->prefix}user u, 
-                                   {$CFG->prefix}user_students s, 
-                                   {$CFG->prefix}user_teachers t, 
-                                   {$CFG->prefix}journal_entries j
-                             WHERE ((s.course = '$journal->course' AND s.userid = u.id) 
-                                OR  (t.course = '$journal->course' AND t.userid = u.id))
-                               AND u.id = j.userid 
-                               AND j.journal = '$journal->id'
-                          ORDER BY j.modified DESC");
+    if(supports_union()) {
+        # Yay!  The database supports UNION, so we can use this fast query
+        return get_records_sql ("(SELECT u.*, j.modified
+                                  FROM {$CFG->prefix}journal_entries j,
+                                       {$CFG->prefix}user u, 
+                                       {$CFG->prefix}user_students s
+                                 WHERE j.userid = u.id
+                                   AND s.userid = u.id 
+                                   AND j.journal = $journal->id
+                                   AND s.course = $journal->course)
+
+                                UNION
+                                              
+                                (SELECT u.*, j.modified
+                                  FROM {$CFG->prefix}journal_entries j,
+                                       {$CFG->prefix}user u, 
+                                       {$CFG->prefix}user_teachers t
+                                 WHERE j.userid = u.id
+                                   AND t.userid = u.id 
+                                   AND j.journal = $journal->id
+                                   AND t.course = $journal->course)
+                              ORDER BY j.modified DESC");
+    } else {
+        # Poo!  The database doesn't support UNION, so we are going to use this ugly hack
+        $s_journals = get_records_sql ("SELECT u.*
+                                  FROM {$CFG->prefix}journal_entries j,
+                                       {$CFG->prefix}user u, 
+                                       {$CFG->prefix}user_students s
+                                 WHERE j.userid = u.id
+                                   AND s.userid = u.id 
+                                   AND j.journal = $journal->id
+                                   AND s.course = $journal->course
+                              ORDER BY j.modified DESC");
+
+        $t_journals = get_records_sql ("SELECT u.*
+                                  FROM {$CFG->prefix}journal_entries j,
+                                       {$CFG->prefix}user u, 
+                                       {$CFG->prefix}user_teachers t
+                                 WHERE j.userid = u.id
+                                   AND t.userid = u.id 
+                                   AND j.journal = $journal->id
+                                   AND t.course = $journal->course)
+                              ORDER BY j.modified DESC");
+        return(array_merge($s_journals, $t_journals));
+    }
 }
 
 function journal_get_unmailed_graded($cutofftime) {
