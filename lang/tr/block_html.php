@@ -1,0 +1,10 @@
+<?PHP // $Id$ 
+      // block_html.php - created with Moodle 1.4.3 + (2004083132)
+
+
+$string['configcontent'] = 'Ýçerik';
+$string['configtitle'] = 'Blok Baþlýðý';
+$string['html'] = 'HTML';
+$string['leaveblanktohide'] = 'baþlýðý gizlemek için boþ býrakýn';
+
+?>
