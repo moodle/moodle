@@ -58,6 +58,7 @@ $string['countdown'] = 'Countdown';
 $string['countdownfinished'] = 'The quiz is closing, you should submit your answers now.';
 $string['countdowntenminutes'] = 'The quiz will be closing in ten minutes.';
 $string['coursetestmanager'] = 'Course Test Manager format';
+$string['createfirst'] = 'You must create some short-answer questions first. ';
 $string['createmultiple'] = 'Create multiple questions';
 $string['createnewquestion'] = 'Create new question';
 $string['custom'] = 'Custom format';
