@@ -1,10 +1,13 @@
-<?php
+<?PHP // $Id$ 
+      // journal.php - created with Moodle 1.0.8 dev (2002122301)
+
 
 $string['alwaysopen'] = "Immer offen";
 $string['blankentry'] = "Leerer Eintrag";
 $string['daysavailable'] = "Tage verfügbar";
 $string['editingended'] = "Bearbeitungszeitraum ist abgelaufen";
 $string['editingends'] = "Bearbeitungszeitraum endet";
+$string['entries'] = "Einträge";
 $string['feedbackupdated'] = "Mitteilung für Eintrag \$a aktualisiert";
 $string['journalname'] = "Name des Journals";
 $string['journalquestion'] = "Journal-Frage";
@@ -23,6 +26,5 @@ $string['rate'] = "Beurteilung";
 $string['saveallfeedback'] = "Alle meine Mitteilungen speichern";
 $string['startoredit'] = "Journal-Eintrag beginnen oder bearbeiten";
 $string['viewallentries'] = "Zeige \$a Journal-Einträge";
-
 
 ?>
