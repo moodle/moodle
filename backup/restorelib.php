@@ -900,9 +900,9 @@
             $this->level++;
             $this->tree[$this->level] = $tagName;
 
-if ($tagName == "QUESTION_CATEGORY" && $this->tree[3] == "QUESTION_CATEGORIES") {
-echo "<P>QUESTION_CATEGORY: ".strftime ("%X",time()),"-";
-}
+            //if ($tagName == "QUESTION_CATEGORY" && $this->tree[3] == "QUESTION_CATEGORIES") {        //Debug
+            //    echo "<P>QUESTION_CATEGORY: ".strftime ("%X",time()),"-";                            //Debug
+            //}                                                                                        //Debug
 
             //Output something to avoid browser timeouts...
             backup_flush();
@@ -923,9 +923,9 @@ echo "<P>QUESTION_CATEGORY: ".strftime ("%X",time()),"-";
             $this->level++;
             $this->tree[$this->level] = $tagName;
 
-if ($tagName == "MOD" && $this->tree[3] == "MODULES") {
-echo "<P>MOD: ".strftime ("%X",time()),"-";
-}
+            if ($tagName == "MOD" && $this->tree[3] == "MODULES") {                                     //Debug
+                echo "<P>MOD: ".strftime ("%X",time()),"-";                                             //Debug
+            }                                                                                           //Debug
 
             //Output something to avoid browser timeouts...
             backup_flush();
@@ -1416,9 +1416,9 @@ echo "<P>MOD: ".strftime ("%X",time()),"-";
                     //Prepend XML standard header to info gathered
                     $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
                     //Call to xmlize for this portion of xml data (one MOD)
-                    echo "-XMLIZE: ".strftime ("%X",time()),"-";
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                                //Debug
                     $data = xmlize($xml_data);
-                    echo strftime ("%X",time())."<p>";
+                    //echo strftime ("%X",time())."<p>";                                                          //Debug
                     //traverse_xmlize($data);                                                                     //Debug
                     //print_object ($GLOBALS['traverse_array']);                                                  //Debug
                     //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -1463,9 +1463,9 @@ echo "<P>MOD: ".strftime ("%X",time()),"-";
                     //Prepend XML standard header to info gathered
                     $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
                     //Call to xmlize for this portion of xml data (one MOD)
-                    echo "-XMLIZE: ".strftime ("%X",time()),"-";
-                    $data = xmlize($xml_data);
-                    echo strftime ("%X",time())."<p>";
+                    echo "-XMLIZE: ".strftime ("%X",time()),"-";                                                  //Debug
+                    $data = xmlize($xml_data);         
+                    echo strftime ("%X",time())."<p>";                                                            //Debug
                     //traverse_xmlize($data);                                                                     //Debug
                     //print_object ($GLOBALS['traverse_array']);                                                  //Debug
                     //$GLOBALS['traverse_array']="";                                                              //Debug
