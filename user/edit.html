@@ -215,6 +215,18 @@ if (isadmin()) {
     <?php if (isset($err["idnumber"])) formerr($err["idnumber"]); ?>
     </td>
 </tr>
+<?php if (isadmin()) {  ?>
+<tr valign=top>
+    <td><p><?php print_string("institution") ?>:</td>
+    <td><input type="text" name="institution" size=25 value="<?php p($user->institution) ?>"> <?php p($teacheronly) ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td><p><?php print_string("department") ?>:</td>
+    <td><input type="text" name="department" size=25 value="<?php p($user->department) ?>"> <?php p($teacheronly) ?>
+    </td>
+</tr>
+<?php } ?>
 <tr valign=top>
     <td><p><?php print_string("phone") ?> 1:</td>
     <td><input type="text" name="phone1" size=25 value="<?php p($user->phone1) ?>"> <?php p($teacheronly) ?>
