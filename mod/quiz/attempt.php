@@ -131,7 +131,7 @@
     }
 /// END EDIT
     $timenow = time();
-    $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose);
+    $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose) || isteacher($course->id);
 
 /// Check to see if they are submitting answers
     if ($rawanswers = data_submitted()) {
