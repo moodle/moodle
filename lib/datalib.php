@@ -873,8 +873,15 @@ function get_users_search($search, $sort="u.firstname ASC") {
 }
 
 
-function get_users_count() {
-    return count_records_select("user", "username <> 'guest' AND deleted <> 1");
+function get_users_count($search="") {
+
+    if ($search) {
+        $search = " AND (firstname LIKE '%$search%'
+                     OR lastname LIKE '%$search%'
+                     OR email LIKE '%$search%') ";
+    }
+
+    return count_records_select("user", "username <> 'guest' AND deleted <> 1 $search");
 }
 
 function get_users_listing($sort, $dir="ASC", $page=1, $recordsperpage=20, $search="") {
