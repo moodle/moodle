@@ -92,9 +92,14 @@
 <blockquote>
   <p>Moodle will also need some space on your hard disk to store uploaded files, 
     such as course documents and user pictures.</p>
-  <p>Create a directory for this purpose somewhere <B>away</B> from the web server 
-    documents directory (we don't want these files to be directly accessible from 
-    the web), and ensure that the web server software has permission to write 
+
+  <p>Create a directory for this purpose somewhere.  For security, it's best that 
+     this directory is NOT accessible via the web.  The easiest way to do this
+     is to simply locate it OUTSIDE the web directory, otherwise make sure it's well 
+     protected with .htaccess security.
+  
+  <p>So that Moodle can save uploaded files in this directory, make sure that 
+     the web server software (eg Apache) has permission to write 
     to this directory. On Unix machines, this means setting the owner of the directory 
     to be something like &quot;nobody&quot; or &quot;apache&quot;.</p>
 </blockquote>
