@@ -111,8 +111,6 @@
                  " height=\"11\" width=\"11\" border=\"0\" alt=\"$streditsummary\" /></a><br />";
         }
 
-        echo '<br clear="all" />';
-
         print_section($course, $thissection, $mods, $modnamesused);
 
         if (isediting($course->id)) {
@@ -201,8 +199,6 @@
                     echo " <a title=\"$streditsummary\" href=\"editsection.php?id=$thissection->id\">".
                          "<img src=\"$CFG->pixpath/t/edit.gif\" border=\"0\" height=\"11\" width=\"11\" alt=\"\" /></a><br />";
                 }
-
-                echo '<br clear="all" />';
 
                 print_section($course, $thissection, $mods, $modnamesused);
 
