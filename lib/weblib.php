@@ -133,14 +133,20 @@ function me() {
     if (!empty($_SERVER["REQUEST_URI"])) {
         return $_SERVER["REQUEST_URI"];
 
-    } else if (!empty($_SERVER["PATH_INFO"])) {
-        return $_SERVER["PATH_INFO"];
-
     } else if (!empty($_SERVER["PHP_SELF"])) {
+        if (!empty($_SERVER["QUERY_STRING"])) {
+            return $_SERVER["PHP_SELF"]."?".$_SERVER["QUERY_STRING"];
+        }
         return $_SERVER["PHP_SELF"];
 
+    } else if (!empty($_SERVER["SCRIPT_NAME"])) {
+        if (!empty($_SERVER["QUERY_STRING"])) {
+            return $_SERVER["SCRIPT_NAME"]."?".$_SERVER["QUERY_STRING"];
+        }
+        return $_SERVER["SCRIPT_NAME"];
+
     } else {
-        notify("Warning: Could not find any of these web server variables: \$REQUEST_URI, \$PATH_INFO or \$PHP_SELF");
+        notify("Warning: Could not find any of these web server variables: \$REQUEST_URI, \$PHP_SELF or \$SCRIPT_NAME");
     }
 }
 
