@@ -40,7 +40,7 @@
         print_header("$site->shortname: $strconfiguration: $strbackup", $site->fullname,
                       "<a href=\"../$CFG->admin/index.php\">$stradmin</a> -> ".
                       "<a href=\"../$CFG->admin/configure.php\">$strconfiguration</a> -> ".
-                      "<a href=\"../$CFG->admin/backup.php\">$strbackup</a> -> ".
+                      "<a href=\"../$CFG->admin/backup.php?sesskey=$USER->sesskey\">$strbackup</a> -> ".
                       $strlogs);
 
         print_heading($backuploglaststatus);
@@ -86,7 +86,7 @@
         print_header("$site->shortname: $strconfiguration: $strbackup", $site->fullname,
                       "<a href=\"../$CFG->admin/index.php\">$stradmin</a> -> ".
                       "<a href=\"../$CFG->admin/configure.php\">$strconfiguration</a> -> ".
-                      "<a href=\"../$CFG->admin/backup.php\">$strbackup</a> -> ".
+                      "<a href=\"../$CFG->admin/backup.php?sesskey=$USER->sesskey\">$strbackup</a> -> ".
                       "<a href=\"log.php\">$strlogs</a> -> ".
                       $strbackupdetails);
 
