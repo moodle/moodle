@@ -120,7 +120,7 @@
         }
 
         if ( $confirm and $form = data_submitted() ) {
-            $form->text = clean_text($form->text, $form->format);
+            //$form->text = clean_text($form->text, $form->format);
 
             $newentry->entryid = $entry->id;
             $newentry->comment = $form->text;
