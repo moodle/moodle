@@ -1613,6 +1613,7 @@ function quiz_grade_attempt_question_result($question, $answers) {
                 if ($answer->fraction > $bestshortanswer) {
                     $correct[$answer->id] = $answer->answer;
                     $bestshortanswer = $answer->fraction;
+                    $feedback[0] = $answer->feedback;  // Show feedback for best answer
                 }
                 if ('' != $question->answer           // Must not be mixed up with zero!
                     && (float)$answer->fraction > (float)$grade // Do we need to bother?
@@ -1622,7 +1623,7 @@ function quiz_grade_attempt_question_result($question, $answers) {
                     && ((float)$question->answer >= (float)$answer->min)
                     && ((float)$question->answer <= (float)$answer->max))
                 {
-                    $feedback[0] = $answer->feedback;
+                    //$feedback[0] = $answer->feedback;  No feedback was shown for wrong answers
                     $grade = (float)$answer->fraction;
                 }
             }
