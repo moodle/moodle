@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 unstable development (2004083000)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
 
 
 $string['action'] = 'Acção';
@@ -889,8 +889,7 @@ $string['siteerrors'] = 'Erros no sítio';
 $string['sitefiles'] = 'Ficheiros do sítio';
 $string['sitelogs'] = 'Estatísticas de acesso ao sítio';
 $string['sitenews'] = 'Notícias';
-$string['sitepartlist0'] = 'A lista de participantes só pode ser consultada pelos docentes da página principal do sítio
-';
+$string['sitepartlist0'] = 'A lista de participantes só pode ser consultada pelos docentes da página principal do sítio';
 $string['sitepartlist1'] = 'A lista de participantes só pode ser consultada pelos docentes';
 $string['sites'] = 'Sítios';
 $string['sitesection'] = 'Incluir uma secção de tópico';
@@ -942,7 +941,7 @@ $string['themes'] = 'Temas';
 $string['themesaved'] = 'O novo tema foi gravado';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'carta';
-$string['thislanguage'] = 'Português - Portugal';
+$string['thislanguage'] = 'Portugu&#234;s - Portugal';
 $string['time'] = 'Hora';
 $string['timezone'] = 'Zona horária';
 $string['to'] = 'Para';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
 
 
 $string['action'] = 'Acció';
@@ -587,7 +587,7 @@ $string['includecoursefiles'] = 'Inclou els fitxers del curs';
 $string['includecourseusers'] = 'Inclou els usuaris del curs';
 $string['included'] = 'Inclòs';
 $string['includelogentries'] = 'Inclou les entrades del registre';
-$string['includemodules'] = 'Inclou Mòduls';
+$string['includemodules'] = 'Inclou Mòduls';
 $string['includeneededusers'] = 'Inclou els usuaris necessaris';
 $string['includenoneusers'] = 'No incloguis cap usuari';
 $string['includeuserfiles'] = 'Inclou els fitxers dels usuaris';
@@ -969,7 +969,7 @@ $string['themes'] = 'Temes';
 $string['themesaved'] = 'S\'ha desat el nou tema';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Català';
+$string['thislanguage'] = 'Catal&#224;';
 $string['time'] = 'Hora';
 $string['timezone'] = 'Zona horària';
 $string['to'] = 'A';

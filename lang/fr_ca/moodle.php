@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4.1 (2004083101)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
 
 
 $string['action'] = 'Action';
@@ -157,8 +157,8 @@ $string['configdebug'] = 'Si vous activez cette option, le paramètre PHP « error
 $string['configdeleteunconfirmed'] = 'Si vous utilisez l\'authentification par courriel, c\'est la période pendant laquelle les confirmations des utilisateurs sont acceptées. À l\'échéance de cette période, les comptes non-confirmés sont supprimés.';
 $string['configdigestmailtime'] = 'Les utilisateurs désirant recevoir un courriel contenant tous les messages des forums le recevront quotidiennement. Ce réglage détermine l\'heure de la journée à laquelle le courriel sera envoyé (la tâche cron s\'exécutant immédiatement après cette heure enverra le message).';
 $string['configdisplayloginfailures'] = 'Ceci permet d\'afficher les informations sur les tentatives de connexion des utilisateurs sélectionnés.';
-$string['configenablerssfeeds'] = 'Activation des canaux RSS pour tout le site. Il est également nécessaire d\'activer les canaux RSS dans les différents modules - voyez l\'option Modules sous Administration -&gt; Configuration.';
-$string['configenablerssfeedsdisabled'] = 'Non disponible, car les canaux RSS ne sont pas activés pour le site. Pour les activer, voyez l\'option Paramètres techniques sous Administration -&gt; Configuration.';
+$string['configenablerssfeeds'] = 'Activation des canaux RSS pour tout le site. Il est également nécessaire d\'activer les canaux RSS dans les différents modules - voyez l\'option Modules sous Administration -> Configuration.';
+$string['configenablerssfeedsdisabled'] = 'Non disponible, car les canaux RSS ne sont pas activés pour le site. Pour les activer, voyez l\'option Paramètres techniques sous Administration -> Configuration.';
 $string['configerrorlevel'] = 'Choisir la quantité d\'avertissement PHP que vous souhaitez voir afficher. « Normal » est généralement le meilleur choix.';
 $string['configextendedusernamechars'] = 'Activez cette option pour permettre aux étudiants d\'utiliser n\'importe quel caractère dans leur nom d\'utilisateur (cette option n\'a aucun effet sur leur nom d\'utilisateur actuel). Par défaut, cette option est désactivée, ce qui restreint les noms d\'utilisateur aux caractères alphanumériques';
 $string['configfilteruploadedfiles'] = 'En activant cette option, vous indiquez à Moodle de filtrer tous les fichiers HTML et textes déposés avant de les afficher.';
@@ -178,7 +178,7 @@ $string['configlangdir'] = 'La plupart des langues sont écrites de gauche à droi
 $string['configlanglist'] = 'Laissez en blanc pour permettre aux utilisateurs de choisir n\'importe quelle langue que vous avez de disponible dans cette installation de Moodle. Cependant, vous pouvez raccourcir le menu du choix de la langue en écrivant une liste des codes nécessaires, séparés par une virgule. Par exemple : en, es_es, fr, it';
 $string['configlangmenu'] = 'Choisissez si vous voulez montrer le menu du choix de la langue sur la page d\'accueil, la page pour la connexion, etc. Ceci n\'affecte pas le choix de l\'utilisateur indiqué dans son profil.';
 $string['configlocale'] = 'Choisir un environnement régional pour l\'affichage des dates. Les données de cet environnement doivent être installées sur le serveur. Laisser vide en cas de doute.';
-$string['configloginhttps'] = 'Cette option permet Moodle d\'utiliser le protocole https sécurisé uniquement pour la page de connexion, ce qui fournit une connexion sécurisée. Moodle revient ensuite au protocole normal http pour gagner en vitesse. ATTENTION&nbsp;: ce réglage requiert l\'activation du protocole https sur le serveur web. Sans cela, vous risquez de NE PLUS POUVOIR ACCÉDER À VOTRE SITE.';
+$string['configloginhttps'] = 'Cette option permet Moodle d\'utiliser le protocole https sécurisé uniquement pour la page de connexion, ce qui fournit une connexion sécurisée. Moodle revient ensuite au protocole normal http pour gagner en vitesse. ATTENTION : ce réglage requiert l\'activation du protocole https sur le serveur web. Sans cela, vous risquez de NE PLUS POUVOIR ACCÉDER À VOTRE SITE.';
 $string['configloglifetime'] = 'Ceci indique la durée pour laquelle vous voulez garder les journaux d\'évènements sur l\'activité des utilisateurs. Les journaux qui sont plus vieux que ce délai sont automatiquement supprimées. Il préférable de maintenir des journaux aussi longs que possible, au cas où vous en auriez besoin. Mais si votre serveur est très occupé vous devriez écourter la durée de vos journaux.';
 $string['configlongtimenosee'] = 'Si les étudiants ne se connectent pas pendant un certain temps, leur inscription aux cours est automatiquement annulée. Ce paramètre donne cette durée.';
 $string['configmaxbytes'] = 'Ceci indique la taille maximale des fichiers qui peuvent être téléversés partout dans le site. Cette valeur est limitée par la valeur PHP upload_max_filesize et la valeur du serveur Apache «LimitRequestBody». Également, la valeur maxbytes limite la gamme des tailles qui peuvent être choisies au niveau de cours ou au niveau du module.';
@@ -192,7 +192,7 @@ $string['configsecureforms'] = 'Moodle peut employer un niveau additionnel de sé
 variable du HTTP_REFERER du fûreteur est vérifiée contre l\'adresse courante du formulaire. Dans très peu de cas, l\'activation de cette option peut poser des problèmes si l\'utilisateur emploie un parefeu (par exemple Zonealarm) configuré pour désactiver HTTP_REFERER. On remarque alors un blocage sur les formulaires Internet. Si par exemple vos utilisateurs ont des problèmes avec la page d\'ouverture, vous pourriez désactiver cette opion, bien qu\'il pourrait laisser votre site plus vulnérable aux attaques pour le vol des mots de passe. En cas de doute, laissez cette option à «oui».';
 $string['configsessioncookie'] = 'Cette option personnalise le nom du témoin (cookie) utilisé pour les sessions de Moodle. Elle est facultative, et permet d\'exécuter plusieurs instances de Moodle sur le même site.';
 $string['configsessiontimeout'] = 'Lorsqu\'un utilisateur n\'est plus actif, il sera automatiquement déconnecté après le délai indiqué. ';
-$string['configshowsiteparticipantslist'] = 'Tous les étudiants et les enseignants de ce site seront affichés dans la liste des participants. Qui doit avoir l\'autorisation de voir cette liste des participants&nbsp;?';
+$string['configshowsiteparticipantslist'] = 'Tous les étudiants et les enseignants de ce site seront affichés dans la liste des participants. Qui doit avoir l\'autorisation de voir cette liste des participants ?';
 $string['configslasharguments'] = 'Les fichiers (images, fichiers téléchargés, etc.) sont transmis via un script qui utilise les « slash arguments ». Cette méthode permet à ces fichiers d\'être plus facilement pris en compte par le système  de cache des navigateurs Web, proxy, etc. Cependant certains serveurs PHP n\'autorisent pas cette méthode. Par conséquent il est nécessaire d\'utiliser la première valeur de ce paramètre si des problèmes d\'affichage des fichiers ou images téléchargés sont rencontrés.';
 $string['configsmtphosts'] = 'Indiquer le nom complet d\'un ou plusieurs serveurs SMTP locaux que Moodle devra utiliser pour envoyer des courriels(par exemple, « mail.a.com » ou « mail.a.com;mail.b.com »). Si ce paramètre est laissé vide, Moodle utilisera la méthode par défaut de PHP pour envoyer des émails.';
 $string['configsmtpuser'] = 'Si vous avez indiqué un nom de serveur SMTP ci-dessus et qu\'il requiert une authentification, entrez ici le nom d\'utilisateur et le mot de passe à utiliser.';
@@ -917,7 +917,7 @@ $string['themes'] = 'Thèmes';
 $string['themesaved'] = 'Nouveau thème enregistré';
 $string['thischarset'] = 'iso-8859-15';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Français - Canada';
+$string['thislanguage'] = 'Fran&#231;ais - Canada';
 $string['time'] = 'Heure';
 $string['timezone'] = 'Fuseau horaire';
 $string['to'] = 'À';

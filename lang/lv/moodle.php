@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3.1 (2004052501)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
 
 
 $string['action'] = 'Darbïba';
@@ -470,7 +470,7 @@ $string['includecoursefiles'] = 'Ietvert visus kursa failus';
 $string['includecourseusers'] = 'Ietvert visus kursa lietotàjus';
 $string['included'] = 'Ietvºra';
 $string['includelogentries'] = 'Ietvert log failu ierakstus';
-$string['includemodules'] = 'Iek¶aut Modu¶us';
+$string['includemodules'] = 'Iek¶aut Modu¶us';
 $string['includeneededusers'] = 'Ietvert nepiecie¹amos lietotàjus';
 $string['includenoneusers'] = 'Iek¶aut nevienu lietotàju';
 $string['includeuserfiles'] = 'Ietvert lietotàju failus';
@@ -600,8 +600,7 @@ Ejat uz ¹o saiti, lai mainïtu paroli:
    $a->link
 
 Ar cieñu administrators,
-$a->signoff
-';
+$a->signoff';
 $string['newpicture'] = 'Jauna bilde';
 $string['newsitem'] = 'jaunums';
 $string['newsitems'] = 'jaunumi';
@@ -813,7 +812,7 @@ $string['themes'] = 'Tºmas';
 $string['themesaved'] = 'Jaunà tºma saglabàta';
 $string['thischarset'] = 'ISO-8859-4';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Latvie¹u';
+$string['thislanguage'] = 'Latvie&#353;u';
 $string['time'] = 'Laiks';
 $string['timezone'] = 'Laika josla';
 $string['to'] = 'Kam';

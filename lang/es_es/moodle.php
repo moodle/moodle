@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 Beta + (2004030702)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
 
 
 $string['action'] = 'Acción';
@@ -442,7 +442,7 @@ $string['loginsteps'] = 'Para tener acceso completo a los cursos necesita crear 
    <LI>Rellene la <A HREF=$a>Solicitud de alta</A>.
    <LI>El sistema le enviará un correo electrónico para verificar que su dirección es correcta.
    <LI>Lea el correo y confirme su alta.
-   <LI>Para entrar en los cursos se le pedirá una &quot;clave de acceso&quot;, que se le enviará cuando se matricule en los mismos.
+   <LI>Para entrar en los cursos se le pedirá una \"clave de acceso\", que se le enviará cuando se matricule en los mismos.
    <LI>A partir de ese momento no necesitará utilizar más que su nombre y contraseña.
    </OL>';
 $string['loginstepsnone'] = 'Hola.<P>Para poder tener acceso completo a los cursos necesita crear
@@ -726,7 +726,8 @@ $string['theme'] = 'Entorno';
 $string['themes'] = 'Entornos';
 $string['themesaved'] = 'Se ha grabado el nuevo entorno';
 $string['thischarset'] = 'iso-8859-1';
-$string['thislanguage'] = 'Español - España';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Espa&#241;ol - Espa&#241;a';
 $string['time'] = 'Hora';
 $string['timezone'] = 'Zona horaria';
 $string['to'] = 'A';
