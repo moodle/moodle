@@ -141,7 +141,7 @@ CREATE TABLE `prefix_workshop_stockcomments` (
   `workshopid` int(10) unsigned NOT NULL default '0', 
   `elementno` int(10) unsigned NOT NULL default '0',
   `comments` text NOT NULL default '',
-  PRIMARY KEY  (`id`),
+  PRIMARY KEY  (`id`)
 ) COMMENT='Info about the teacher comment bank';
 # --------------------------------------------------------
 
