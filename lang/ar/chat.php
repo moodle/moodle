@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.2 development (2004012800)
+      // chat.php - created with Moodle 1.4 development (2004081200)
 
 
 $string['beep'] = 'äÛãÉ';
@@ -24,6 +24,8 @@ $string['messagebeepsyou'] = ' $a  ÃÑÓá äÛãÉ áß!';
 $string['messageenter'] = ' $a  ÏÎá ÛÑÝÉ ãÍÇÏËÉ';
 $string['messageexit'] = ' $a  ÎÑÌ ãä ÛÑÝÉ ãÍÇÏËÉ';
 $string['messages'] = 'ÑÓÇÆá';
+$string['methoddaemon'] = 'ÎÇÏã Ïíãæä ááãÍÇÏËÉ';
+$string['methodnormal'] = 'ÇáØÑíÞÉ ÇáÇÚÊíÇÏíÉ';
 $string['modulename'] = 'ãÍÇÏËÉ';
 $string['modulenameplural'] = 'ãÍÇÏËÇÊ';
 $string['neverdeletemessages'] = 'áÇÊãÓÍ ÇáÑÓÇÆá ÃÈÏÇð';

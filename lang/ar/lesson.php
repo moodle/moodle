@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.4 development (2004062401)
+      // lesson.php - created with Moodle 1.4 development (2004081200)
 
 
+$string['actionaftercorrectanswer'] = 'ÇáÚãá ÈÚÏ ÇáÇÌÇÈÉ ÇáÕÍíÍÉ';
 $string['addabranchtable'] = 'ÃÖÝ ÌÏæá ÝÑÚí';
 $string['addanendofbranch'] = 'ÃÖÝ äåÇíÉ ÝÑÚ';
 $string['addaquestionpage'] = 'ÃÖÝ ÓÄÇá Åáì ÇáÕÝÍÉ';
