@@ -21,8 +21,6 @@
 
     require("../../config.php");
 	require("locallib.php");
-	//require_once("styles.php");
-
 	
 	$id = required_param('id', PARAM_INT);    // Course Module ID
  
@@ -1155,7 +1153,6 @@
                         // no nextpage go to end of lesson
                         $newpageid = LESSON_EOL;
                     }
-					echo $newpageid;
 /* CDC-FLAG */  } elseif ($newpageid == LESSON_PREVIOUSPAGE) {
 					$newpageid = $page->prevpageid;
 				} elseif ($newpageid == LESSON_RANDOMPAGE) {
