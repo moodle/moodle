@@ -134,6 +134,7 @@
         unset($module);
 
         include_once("$fullmod/version.php");  # defines $module with version etc
+        include_once("$fullmod/db/$CFG->dbtype.php");  # defines upgrading function
 
         if (!isset($module)) {
             continue;
