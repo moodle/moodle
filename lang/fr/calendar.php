@@ -5,7 +5,7 @@ $string['calendarheading'] = 'Calendrier $a';
 $string['clickhide'] = 'cacher';
 $string['clickshow'] = 'afficher';
 $string['confirmeventdelete'] = 'Voulez-vous vraiment supprimer cet événement ?';
-$string['courseevents'] = 'Événement du cours';
+$string['courseevents'] = 'Événements du cours';
 $string['dayview'] = 'Vue quotidienne';
 $string['daywithnoevents'] = 'Il n\'y a pas d\'événement programmés à cette date.';
 $string['default'] = 'Valeur par défaut';
@@ -76,7 +76,7 @@ $string['typecourse'] = 'Événement de cours';
 $string['typegroup'] = 'Événement de groupe';
 $string['typesite'] = 'Événement global';
 $string['typeuser'] = 'Événement de l\'utilisateur';
-$string['upcomingevents'] = 'Événements à venir';
+$string['upcomingevents'] = 'Prochains événements';
 $string['userevents'] = 'Événements de l\'utilisateur';
 $string['yesterday'] = 'Hier';
 
