@@ -476,6 +476,19 @@ function writequestion( $question ) {
         }
         $expout .= "}\n";
         break;
+    case SHORTANSWER:
+        $expout .= $question->questiontext."{\n";
+        foreach($question->answers as $answer) {
+            $weight = 100 * $answer->fraction;
+            $expout .= "\t=%".$weight."%".$answer->answer."#".$answer->feedback."\n";
+        }
+        $expout .= "}\n";
+        break;
+    case NUMERICAL:
+        $expout .= $question->questiontext."{\n";
+        $expout .= "\t#".$question->min."..".$question->max."#".$question->answer->feedback."\n";
+        $expout .= "}\n";
+        break;
     default:
         error( "No handler for qtype $question->qtype for GIFT export" );
     }
