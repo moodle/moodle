@@ -3,7 +3,7 @@
 
     require_once("../../config.php");
     require_once("lib.php");
-    require_once("../../files/mimetypes.php");
+    require_once("$CFG->dirroot/files/mimetypes.php");
 
     optional_variable($id);        // question id
 

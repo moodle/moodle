@@ -4,7 +4,7 @@
       // It is supposed to be used by the quiz module only
 
     require_once("../../config.php");
-    require_once("../../files/mimetypes.php");
+    require_once("$CFG->dirroot/files/mimetypes.php");
     require_once("lib.php");
 
     $lifetime = 86400;
