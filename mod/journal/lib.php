@@ -184,8 +184,10 @@ function journal_grades($journalid) {
     } else {
         if ($scale = get_record("scale", "id", - $journal->assessed)) {
             $scalegrades = make_menu_from_list($scale->scale);
-            foreach ($grades as $key => $grade) {
-                $grades[$key] = $scalegrades[$grade];
+            if ($grades) {
+                foreach ($grades as $key => $grade) {
+                    $grades[$key] = $scalegrades[$grade];
+                }
             }
         }
         $return->grades = $grades;
