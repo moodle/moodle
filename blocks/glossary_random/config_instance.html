@@ -1,3 +1,11 @@
+<?php
+   if (!isset($this->config->glossary)) {
+       $this->config->glossary = 0;
+   }
+   if (!isset($this->config->type)) {
+       $this->config->type = 0;
+   }
+?>
 <table cellpadding="9" cellspacing="0">
 <tr valign=top>
 <td align=right><?php print_string("title","block_glossary_random") ?>:</td>

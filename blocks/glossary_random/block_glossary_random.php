@@ -1,7 +1,8 @@
 <?PHP 
-define("RANDOMLY",   "0");
-define("LASTMODIFIED",     "1");
-define("NEXTONE","2");
+
+define('BGR_RANDOMLY',     '0');
+define('BGR_LASTMODIFIED', '1');
+define('BGR_NEXTONE',      '2');
 
 class block_glossary_random extends block_base {
     function init() {
@@ -35,42 +36,54 @@ class block_glossary_random extends block_base {
 		if (time() > $this->config->nexttime) {
 			
             // place glossary concept and definition in $pref->cache			
-			$numberofentries = count_records("glossary_entries","glossaryid",$this->config->glossary,"approved",1)-1; 
+			if (!$numberofentries = count_records('glossary_entries','glossaryid',$this->config->glossary,
+                                                  'approved',1)) {
+                $this->config->cache = get_string('noentriesyet','block_glossary_random'); 
+                parent::instance_config_save($this->config);    
+            }
+
 			switch ($this->config->type) {
 				
-                case RANDOMLY:			
-					$i = rand(0,$numberofentries);
+                case BGR_RANDOMLY:			
+					$i = rand(1,$numberofentries);
+                    $LIMIT = sql_paging_limit($i-1, 1);
+                    $SORT = 'ASC';
 					break;
 				
-                case NEXTONE:
-					$i = 1 + $this->config->previous;
-					if ($i < $numberofentries) {
-                        break;
+                case BGR_NEXTONE:
+                    if (isset($this->config->previous)) {
+					    $i = $this->config->previous + 1;
+                    } else {
+                        $i = 1;
+                    }
+					if ($i > $numberofentries) {  // Loop back to beginning
+                        $i = 1;
 					} 
-					//otherwise fall through					
+                    $LIMIT = sql_paging_limit($i-1, 1);
+                    $SORT = 'ASC';
+                    break;
 				
-                case LASTMODIFIED:
-					$i=$numberofentries;
+                default:  // BGR_LASTMODIFIED
+					$i = $numberofentries;
+                    $LIMIT = 'LIMIT 1';    // The last one
+                    $SORT = 'DESC';
 					break;
-
-                default:
-                    $i = 0;
-					
 			}
-							
-			if ($entries = get_records_sql("SELECT concept, definition, format FROM {$CFG->prefix}glossary_entries 								 WHERE glossaryid = {$this->config->glossary} and approved = 1 ORDER BY timemodified LIMIT {$i},1")) {
-                // get all entries, normally there is only one entry returned                        
-				foreach ($entries as $entry) {   
-                    $text = "<b> $entry->concept</b><br>";
-					$text .= format_text($entry->definition, $entry->format);
-                    
-				}
+
+			if ($entry = get_record_sql('  SELECT concept, definition, format '.
+                                        '    FROM '.$CFG->prefix.'glossary_entries'.
+                                        '   WHERE glossaryid = '.$this->config->glossary.
+                                        '     AND approved = 1 '.
+                                        'ORDER BY timemodified '.$SORT.' '.$LIMIT)) {
+
+                $text = "<b>$entry->concept</b><br />";
+				$text .= format_text($entry->definition, $entry->format);
 						
                 $this->config->nexttime = usergetmidnight(time())+60*60*24*$this->config->refresh;
                 $this->config->previous = $i;	
                  
 			} else {
-                $text = get_string('notyetconfigured','block_glossary_random'); 
+                $text = get_string('noentriesyet','block_glossary_random'); 
 			}
             // store the text
             $this->config->cache= $text;
@@ -92,19 +105,19 @@ class block_glossary_random extends block_base {
             $this->config->title = get_string('blockname','block_glossary_random');
             $this->config->refresh = 0;
         
-            $this->config->cache= get_string("notyetconfigured","block_glossary_random");
-            $this->config->addentry=get_string("addentry", "block_glossary_random");
-            $this->config->viewglossary=get_string("viewglossary", "block_glossary_random");    	
-            $this->config->invisible=get_string("invisible", "block_glossary_random");
+            $this->config->cache= get_string('notyetconfigured','block_glossary_random');
+            $this->config->addentry=get_string('addentry', 'block_glossary_random');
+            $this->config->viewglossary=get_string('viewglossary', 'block_glossary_random');    	
+            $this->config->invisible=get_string('invisible', 'block_glossary_random');
         }
         
         // select glossaries to put in dropdown box ...
-        $glossaries = get_records_select_menu("glossary", "course=".$this->course->id,"name","id,name");            
+        $glossaries = get_records_select_menu('glossary', 'course='.$this->course->id,'name','id,name');            
 		
         // and select quotetypes to put in dropdown box
-		$type[0] = get_string("random","block_glossary_random");
-		$type[1] = get_string("lastmodified","block_glossary_random");
-		$type[2] = get_string("nextone","block_glossary_random");
+		$type[0] = get_string('random','block_glossary_random');
+		$type[1] = get_string('lastmodified','block_glossary_random');
+		$type[2] = get_string('nextone','block_glossary_random');
         
         $this->config->nexttime = usergetmidnight(time())+24*60*60*$this->config->refresh;	
         
@@ -118,31 +131,36 @@ class block_glossary_random extends block_base {
             notice(get_string('blockconfigbad'), str_replace('blockaction=', 'dummy=', qualified_me()));
         }
     
-    return true;
+        return true;
     }
    
     function get_content() {
         global $USER, $CFG;
-		
-        if($this->content !== NULL) {
-            return $this->content;
-        }
-				
-		$this->content = new stdClass;
-        $this->content->text = $this->config->cache;
 
 		if (empty($this->config->glossary)) {
+            $this->content->text = get_string('notyetconfigured','block_glossary_random');
+            return $this->content->text;
+        }
+
+		if (empty($this->config->cache)) {
+            $this->config->cache = '';
+        }
+				
+        if ($this->content !== NULL) {
             return $this->content;
         }
+
+		$this->content = new stdClass;
+        $this->content->text = $this->config->cache;
         
         // place link to glossary in the footer if the glossary is visible        
         $glossaryid = $this->config->glossary;
-        $glossary=get_record("glossary", "id", $glossaryid);  						  
+        $glossary=get_record('glossary', 'id', $glossaryid);  						  
         $studentcanpost = $glossary->studentcanpost; //needed to decide on which footer
 				
         //Create a temp valid module structure (course,id)
-         $tempmod->course = $this->course->id;
-         $tempmod->id = $glossaryid;
+        $tempmod->course = $this->course->id;
+        $tempmod->id = $glossaryid;
                              
 		//Obtain the visible property from the instance
         if (instance_is_visible('glossary', $tempmod)) {
@@ -167,9 +185,6 @@ class block_glossary_random extends block_base {
 	
     function hide_header() {
 		if (empty($this->config->title)) {
-            return false;
-        }
-        if ($this->config->title == "") {
             return true;
         }
         return false;
