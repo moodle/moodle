@@ -110,7 +110,7 @@
                 exit;
             } else if (!$user->deleted) {
                 $user->deleted = "1";
-                $user->username = $user->email;  // Remember it just in case
+                $user->username = "$user->email.".time();  // Remember it just in case
                 $user->email = "";               // Clear this field to free it up
                 $user->timemodified = time();
                 if (update_record("user", $user)) {
