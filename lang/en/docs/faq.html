@@ -60,6 +60,8 @@
   <a href="http://moodle.org/doc/?file=install.html">installation instructions</a> 
   carefully will usually result in a perfectly working system. Here are some of 
   the most common problems that are encountered:</p>
+<p class="questionlink"><a href="#filenotfound">Whenever I try to access or view 
+  a file that I uploaded, I get an error &quot;File not Found&quot;</a></p>
 <p class="questionlink"><a href="#php">PHP - is it installed and what version 
   do I have?</a></p>
 <p class="questionlink"><a href="#blankpages">Why are all my pages blank?</a> 
@@ -70,10 +72,29 @@
   about &quot;headers already sent&quot;?</a></p>
 <p class="questionlink"><a href="#failedopen">I keep getting this error: Failed 
   opening required '/web/moodle/lib/setup.php'</a></p>
-<p class="questionlink"><a href="#filenotfound">Whenever I try to access or view 
-  a file that I uploaded, I get an error &quot;File not Found&quot;</a></p>
-<p>&nbsp;</p>
-<h4 class="question"><a name="php"></a>PHP - is it installed and what version 
+<p class="questionlink">&nbsp;</p>
+<h3 class="question"><a name="filenotfound"></a>Whenever I try to access or view 
+  a file that I uploaded, I get an error &quot;File not Found&quot;</h3>
+<p class="answer">For example: Not Found: The requested URL /moodle/file.php/2/myfile.jpg 
+  was not found on this server. </p>
+<p class="answer">Your web server needs to be configured to allow the part of 
+  the URL after a script name to be passed directly to the script. This is usually 
+  enabled in Apache 1, but is usually disabled by default in Apache 2. To turn 
+  it on, add this line to your httpd.conf, or to a .htaccess file in your local 
+  directory (see the <a href="./?file=install.html#webserver">Install documentation</a> 
+  for more details): </p>
+<p class="answercode"><b>AcceptPathInfo</b> on</p>
+<p class="answer">Note, this will ONLY work for Apache versions 2.x. </p>
+<p class="answer">If you are not using Apache 2 and you still have this problem 
+  (unlikely) then you can switch Moodle to use an alternative method. The disadvantages 
+  are a slight loss of performance for your users and you won't be able to use 
+  relative links within HTML resources. </p>
+<p class="answer">To use this alternative method: login as Admin, go into the 
+  "Configure Variables" page and change the setting for "<b>slasharguments</b>". 
+  You should now be able to access your uploaded files.</p>
+<p class="answer">&nbsp;</p>
+  
+  <h4 class="question"><a name="php"></a>PHP - is it installed and what version 
   do I have?</h4>
   <p class="answer">Make a new file on your web site called info.php, containing the following 
     text, and call it from your browser:</p>
@@ -125,25 +146,7 @@
 <p class="answer">Sometimes people only use the path from their home directory, 
   or relative to the root of the web server directory.</p>
 <h2>&nbsp;</h2>
-<h3 class="question"><a name="filenotfound"></a>Whenever I try to access or view 
-  a file that I uploaded, I get an error &quot;File not Found&quot;</h3>
-<p class="answer">For example: Not Found: The requested URL /moodle/file.php/2/myfile.jpg 
-  was not found on this server. </p>
-<p class="answer">Your web server needs to be configured to allow the part of 
-  the URL after a script name to be passed directly to the script. This is usually 
-  enabled in Apache 1, but is usually disabled by default in Apache 2. To turn 
-  it on, add this line to your httpd.conf, or to a .htaccess file in your local 
-  directory (see the <a href="./?file=install.html#webserver">Install documentation</a> 
-  for more details): </p>
-<p class="answercode"><b>AcceptPathInfo</b> on</p>
-<p class="answer">Note, this will ONLY work for Apache versions 2.x. </p>
-<p class="answer">If you are not using Apache 2 and you still have this problem 
-  (unlikely) then you can switch Moodle to use an alternative method. The disadvantages 
-  are a slight loss of performance for your users and you won't be able to use 
-  relative links within HTML resources. </p>
-<p class="answer">To use this alternative method: login as Admin, go into the 
-  "Configure Variables" page and change the setting for "<b>slasharguments</b>". 
-  You should now be able to access your uploaded files.</p>
+
 <hr>
 <p align="center" class="normaltext"><a href='ma&#105&#108t&#111:ma%72%74in@%6d%6fo%64%6c%65.o%72g' title='mar&#116&#105n@&#109oo&#100&#108&#101&#46&#111&#114g'>Suggest 
   a new FAQ</a> (include the answer!)</p>
