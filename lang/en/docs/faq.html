@@ -28,6 +28,12 @@
 	border: none;
 	padding-left: 10px;
 }
+.answercode {
+	font-family: "Courier New", Courier, mono;
+	font-size: small;
+	border: none;
+	padding-left: 60px;
+}
 -->
 </style>
 </head>
@@ -65,25 +71,22 @@
 <p>&nbsp;</p>
 <h4 class="question"><a name="php"></a>PHP - is it installed and what version 
   do I have?</h4>
-<div class="answer"> 
-  <p>Make a new file on your web site called info.php, containing the following 
+  <p class="answer">Make a new file on your web site called info.php, containing the following 
     text, and call it from your browser:</p>
     
-  <pre>      &lt;?PHP phpinfo() ?&gt;</pre>
-</div>
+  <p class="answercode">&lt;?PHP phpinfo() ?&gt;</p>
 <p class="answer">If nothing happens then you don't have PHP installed. See the 
   installation docs for some information about where to download it for your computer.</p>
 <p class="answer">&nbsp;</p>
 <h4 class="question"><a name="blankpages"></a>Why are all my pages blank? </h4> 
-<p class="answer">Check the dirroot and/or dataroot in config.php. You must use 
-  complete, absolute pathnames:</p>
-<p class="answer"> eg &nbsp$CFG->dirroot = "d:\inetpub\sites\www.yoursite.com\web\moodle";</p>
-<p class="answer"> eg&nbsp $CFG->dataroot = "d:\inetpub\sites\www.yoursite.com\database\moodle";</p>
+<p class="answer">Check the dirroot variable in config.php. You must use complete, 
+  absolute pathnames, eg:</p>
+<p class="answercode"> $CFG->dirroot = "d:\inetpub\sites\www.yoursite.com\web\moodle";</p>
 <p>&nbsp; </p>
 <h4 class="question"><a name="errorgetstring"></a>My pages show fatal errors such 
   as : call to undefined function: get_string()</h4>
 <p class="answer">If you see errors like:</p>
-<p class="answer">Parse error: parse error, unexpected T_VARIABLE in c:\program 
+<p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program 
   files\easyphp\www\moodle\config.php on line 94 <br>
   Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php 
   on line 11</p>
@@ -96,17 +99,15 @@
 <h4 class="question"><a name="headerssent"></a>Why do I keep getting error messages 
   about &quot;headers already sent&quot;?</h4>
 <p class="answer">If you see errors like this:</p>
-<blockquote> 
-  <p class="answer">Warning: Cannot add header information - headers already sent 
-    by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php 
-    on line 1322 </p>
-  <p class="answer"> Warning: Cannot add header information - headers already 
-    sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php 
-    on line 1323 </p>
-  <p class="answer"> Warning: Cannot add header information - headers already 
-    sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/login/index.php 
-    on line 54 </p>
-</blockquote>
+<p class="answercode">Warning: Cannot add header information - headers already 
+  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php 
+  on line 1322 </p>
+<p class="answercode"> Warning: Cannot add header information - headers already 
+  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php 
+  on line 1323 </p>
+<p class="answercode"> Warning: Cannot add header information - headers already 
+  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/login/index.php 
+  on line 54 </p>
 <p class="answer">You have blank lines or spaces after the final ?> in your config.php 
   file. Sometimes text editors add these - for example Notepad on Windows - so 
   you may have to try a different text editor to remove these spaces or blank 
@@ -130,10 +131,7 @@
   it on, add this line to your httpd.conf, or to a .htaccess file in your local 
   directory (see the <a href="./?file=install.html#webserver">Install documentation</a> 
   for more details): </p>
-<blockquote>
-  <pre>
-     <span class="answer"><b>AcceptPathInfo</b> on</span></pre>
-</blockquote>
+<p class="answercode"><b>AcceptPathInfo</b> on</p>
 <p class="answer">Note, this will ONLY work for Apache versions 2.x. </p>
 <p class="answer">If you are not using Apache 2 and you still have this problem 
   (unlikely) then you can switch Moodle to use an alternative method. The disadvantages 
