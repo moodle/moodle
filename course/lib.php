@@ -422,6 +422,9 @@ function get_array_of_activities($courseid) {
            if ($section->sequence) {
                $sequence = explode(",", $section->sequence);
                foreach ($sequence as $seq) {
+                   if (empty($rawmods[$seq])) {
+                       continue;
+                   }
                    $mod[$seq]->cm = $rawmods[$seq]->id;
                    $mod[$seq]->mod = $rawmods[$seq]->modname;
                    $mod[$seq]->section = $section->section;
