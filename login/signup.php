@@ -1,31 +1,30 @@
 <?PHP // $Id$
 
     require_once("../config.php");
-	require_once("../lib/countries.php");
+    require_once("../lib/countries.php");
     require_once("../auth/$CFG->auth/lib.php");
 
-	if ($user = data_submitted()) {
-        $user->username= strtolower($user->username);
-		validate_form($user, $err);
+    if ($user = data_submitted()) {
+        validate_form($user, $err);
 
-		if (count((array)$err) == 0) {
-		    $plainpass = $user->password;
+        if (count((array)$err) == 0) {
+            $plainpass = $user->password;
             $user->password = md5($user->password);
             $user->confirmed = 0;
             $user->lang = current_language();
             $user->firstaccess = time();
             $user->secret = random_string(15);
             if (isset($CFG->auth_user_create) and $CFG->auth_user_create==1 and function_exists('auth_user_create') ){
-			    if (! auth_user_exists($user->username)) {
-				    if (! auth_user_create($user,$plainpass)) {
-				        error("Could not add user to authentication module!");
+                if (! auth_user_exists($user->username)) {
+                    if (! auth_user_create($user,$plainpass)) {
+                        error("Could not add user to authentication module!");
                     }
-				} else {
-				    error("User already exists on authentication database.");
+                } else {
+                    error("User already exists on authentication database.");
                 }
             }
 
-			if (! ($user->id = insert_record("user", $user)) ) {
+            if (! ($user->id = insert_record("user", $user)) ) {
                 error("Could not add your record to the database!");
             }
 
@@ -34,16 +33,16 @@
             if (! send_confirmation_email($user)) {
                 error("Tried to send you an email but failed!");
             }
-	
+    
             $emailconfirm = get_string("emailconfirm");
-	        print_header($emailconfirm, $emailconfirm, $emailconfirm);
+            print_header($emailconfirm, $emailconfirm, $emailconfirm);
             echo "<CENTER>";
             print_string("emailconfirmsent", "", $user->email);
             echo "</CENTER>";
             print_footer();
-			exit;
-		}
-	}
+            exit;
+        }
+    }
 
     if (!empty($err)) {
         $focus = "form.".array_shift(array_flip(get_object_vars($err)));
@@ -63,8 +62,8 @@
     $langmenu = popup_form ("$CFG->wwwroot/login/signup.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
 
 
-	print_header($newaccount, $newaccount, "<A HREF=\"index.php\">$login</A> -> $newaccount", $focus, "", true, "<div align=right>$langmenu</div>");
-	include("signup_form.php");
+    print_header($newaccount, $newaccount, "<A HREF=\"index.php\">$login</A> -> $newaccount", $focus, "", true, "<div align=right>$langmenu</div>");
+    include("signup_form.php");
     print_footer();
 
 
@@ -75,8 +74,8 @@
 
 function validate_form($user, &$err) {
     global $CFG;
-	if (empty($user->username))
-		$err->username = get_string("missingusername");
+    if (empty($user->username))
+        $err->username = get_string("missingusername");
 
     else if (record_exists("user", "username", $user->username))
         $err->username = get_string("usernameexists");
@@ -89,13 +88,13 @@ function validate_form($user, &$err) {
 
     if (isset($CFG->auth_user_create) and $CFG->auth_user_create==1 and function_exists('auth_user_exists') ){
         if (auth_user_exists($user->username)) {
-		    $err->username = get_string("usernameexists");
-		}
-	}         
+            $err->username = get_string("usernameexists");
+        }
+    }         
 
 
-	if (empty($user->password)) 
-		$err->password = get_string("missingpassword");
+    if (empty($user->password)) 
+        $err->password = get_string("missingpassword");
 
     if (empty($user->firstname))
         $err->firstname = get_string("missingfirstname");
@@ -109,16 +108,16 @@ function validate_form($user, &$err) {
         
     else if (! validate_email($user->email))
         $err->email = get_string("invalidemail");
-	
+    
     else if (record_exists("user", "email", $user->email)) 
-		$err->email = get_string("emailexists")." <A HREF=forgot_password.php>".get_string("newpassword")."?</A>";
+        $err->email = get_string("emailexists")." <A HREF=forgot_password.php>".get_string("newpassword")."?</A>";
 
 
-	if (empty($user->city)) 
-		$err->city = get_string("missingcity");
+    if (empty($user->city)) 
+        $err->city = get_string("missingcity");
 
-	if (empty($user->country)) 
-		$err->country = get_string("missingcountry");
+    if (empty($user->country)) 
+        $err->country = get_string("missingcountry");
 
     return;
 }
