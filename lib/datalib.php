@@ -961,7 +961,7 @@ function get_users_listing($sort, $dir="ASC", $page=1, $recordsperpage=20, $sear
              $limit = "LIMIT $page,$recordsperpage";
              break;
         case "postgres7":
-             $limit = "LIMIT $recordsperpage OFFSET ".($page * $recordsperpage);
+             $limit = "LIMIT $recordsperpage OFFSET ".($page);
              break;
         default: 
              $limit = "LIMIT $recordsperpage,$page";
