@@ -3,6 +3,7 @@
 
 
 define ('MESSAGE_SHORTLENGTH', 300);
+define ('MESSAGE_WINDOW', true);
 
 
 function message_print_contacts() {

@@ -1617,6 +1617,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     $title = strip_tags($title);
 
     include ($CFG->dirroot .'/theme/'. $CFG->theme .'/header.html');
+
+    echo message_popup_window();
 }
 
 /**

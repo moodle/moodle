@@ -4628,5 +4628,35 @@ if(!function_exists('html_entity_decode')) {
     }
 }
 
+/**
+ * If new messages are waiting for the current user, then return 
+ * Javascript code to create a popup window
+ *
+ * @return string Javascript code
+ */
+function message_popup_window() {
+    global $USER;
+
+    $popuplimit = 30;     // Minimum seconds between popups
+
+    if (!defined('MESSAGE_WINDOW')) {
+        if (isset($USER->id)) {
+            if (!isset($USER->message_lastpopup)) {
+                $USER->message_lastpopup = 0;
+            }
+            if ((time() - $USER->message_lastpopup) > $popuplimit) {  /// It's been long enough
+                if (get_user_preferences('message_showmessagewindow', 1) == 1) {
+                    if (count_records_select('message', 'useridto = \''.$USER->id.'\' AND timecreated > \''.$USER->message_lastpopup.'\'')) {
+                        $USER->message_lastpopup = time();
+                        return '<script language="JavaScript" type="text/javascript">'."\n openpopup('/message/index.php', 'message', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\n</script>";
+                    }
+                }
+            }
+        }
+    }
+
+    return '';
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
