@@ -337,7 +337,7 @@
             $table->data[0][0] .= "<p><a href=\"$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a></p>";
 		}
 		$table->data[0][1] = "<p><a href=\"../course/edit.php\">".get_string("addnewcourse")."</a></p>".
-                         "<p><a href=\"../course/teacher.php\">".get_string("assignteachers")."</a></p>".
+                         "<p><a href=\"teacher.php\">".get_string("assignteachers")."</a></p>".
                          "<p><a href=\"../course/delete.php\">".get_string("deletecourse")."</a></p>".
                          "<p><a href=\"../course/categories.php\">".get_string("categories")."</a></p>";
         if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual") {
@@ -351,7 +351,7 @@
 	    $table->head  = array (get_string("courses"));
 		$table->align = array ("CENTER");
 		$table->data[0][1] = "<p><a href=\"../course/edit.php\">".get_string("addnewcourse")."</a></p>".
-		  "<p><a href=\"../course/teacher.php\">".get_string("assignteachers")."</a></p>";
+		  "<p><a href=\"teacher.php\">".get_string("assignteachers")."</a></p>";
 	}
     
     print_table($table);

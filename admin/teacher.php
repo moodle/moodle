@@ -2,7 +2,8 @@
       // Admin-only script to assign teachers to courses
 
 	require_once("../config.php");
-	require_once("../user/lib.php");
+
+    define("MAX_USERS_PER_PAGE", 30);
 
     optional_variable($id);       // course id
 
@@ -31,18 +32,17 @@
 
     if (!$id) {
 	    print_header("$site->shortname: $strassignteachers", "$site->fullname", 
-                     "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> $strassignteachers");
+                     "<a href=\"index.php\">$stradministration</a> -> $strassignteachers");
         
         $isadmin = isadmin(); /// cache value
         $courses = get_courses();
-        
 
 		print_heading(get_string("choosecourse"));
-		print_simple_box_start("CENTER");
+		print_simple_box_start("center");
         
 		foreach ($courses as $course) {
-		    if ($isadmin OR isteacher($course->id, $USER->id)){
-			    echo "<A HREF=\"teacher.php?id=$course->id\">$course->fullname ($course->shortname)</A><BR>\n";
+		    if ($isadmin or isteacher($course->id, $USER->id)){
+			    echo "<a href=\"teacher.php?id=$course->id\">$course->fullname ($course->shortname)</a><br>\n";
 				$coursesfound = TRUE;
 			}
 		}	
@@ -65,9 +65,10 @@
 
 	print_header("$site->shortname: $course->shortname: $strassignteachers", 
                  "$site->fullname", 
-                 "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> 
-                  <A HREF=\"teacher.php\">$strassignteachers</A> -> $course->shortname", "");
-    print_heading("<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname ($course->shortname)</A>");
+                 "<a href=\"index.php\">$stradministration</a> -> 
+                  <a href=\"teacher.php\">$strassignteachers</a> -> $course->shortname", "");
+
+    print_heading("<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname ($course->shortname)</a>");
 
 
 /// Get all existing teachers for this course.
@@ -129,76 +130,63 @@
 
 /// Print the lists of existing and potential teachers
 
-    echo "<TABLE CELLPADDING=2 CELLSPACING=10 ALIGN=CENTER>";
-    echo "<TR><TH WIDTH=50%>$strexistingteachers</TH><TH WIDTH=50%>$strpotentialteachers</TH></TR>";
-    echo "<TR><TD WIDTH=50% NOWRAP VALIGN=TOP>";
+    echo "<table cellpadding=2 cellspacing=10 align=center>";
+    echo "<tr><th width=50%>$strexistingteachers</th><th width=50%>$strpotentialteachers</th></tr>";
+    echo "<tr><td width=50% nowrap valign=top>";
 
 /// First, show existing teachers for this course
 
     if (empty($teachers)) { 
-        echo "<P ALIGN=CENTER>$strnoexistingteachers</A>";
+        echo "<p align=center>$strnoexistingteachers</a>";
+        $teacherlist = "";
 
     } else {
+        $teacherarray = array();
         foreach ($teachers as $teacher) {
-            echo "<P ALIGN=right>$teacher->firstname $teacher->lastname, $teacher->email &nbsp;&nbsp; <A HREF=\"teacher.php?id=$course->id&remove=$teacher->id\" TITLE=\"$strremoveteacher\"><IMG SRC=\"../pix/t/right.gif\" BORDER=0></A></P>";
+            $teacherarray[] = $teacher->id;
+            echo "<p align=right>$teacher->firstname $teacher->lastname, $teacher->email &nbsp;&nbsp; <a href=\"teacher.php?id=$course->id&remove=$teacher->id\" title=\"$strremoveteacher\"><img src=\"../pix/t/right.gif\" border=0></a></p>";
         }
+        $teacherlist = implode(",",$teacherarray);
+        unset($teacherarray);
     }
 
-    echo "<TD WIDTH=50% NOWRAP VALIGN=TOP>";
+    echo "<td width=50% nowrap valign=top>";
 
 /// Print list of potential teachers
 
-    if (!empty($search)) {
-        $users = get_users_search($search);
+    $usercount = get_users(false, $search, true, $teacherlist);
+
+    if ($usercount == 0) {
+        echo "<p align=center>$strnopotentialteachers</p>";
+
+    } else if ($usercount > MAX_USERS_PER_PAGE) {
+        echo "<p align=center>$strtoomanytoshow</p>";
 
     } else {
-        $users = get_users_confirmed();
-    }
 
-    
-    if (!empty($users)) {
-        foreach ($users as $user) {  // Remove users who are already teachers
-            if (!empty($teachers)) {
-                foreach ($teachers as $teacher) {
-                    if ($teacher->id == $user->id) {
-                        continue 2;
-                    }
-                }
-            }
-            $potential[] = $user;
-        }
-    }
-
-    if (empty($potential)) { 
-        echo "<P ALIGN=CENTER>$strnopotentialteachers</A>";
         if ($search) {
-            echo "<FORM ACTION=teacher.php METHOD=GET>";
-            echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
-            echo "<INPUT TYPE=text NAME=search SIZE=20>";
-            echo "<INPUT TYPE=submit VALUE=\"$strsearchagain\">";
-            echo "</FORM>";
+            echo "<p align=center>($strsearchresults : $search)</p>";
         }
 
-    } else {
-        if (!empty($search)) {
-            echo "<P ALIGN=CENTER>($strsearchresults)</P>";
+        if (!$users = get_users(true, $search, true, $teacherlist)) {
+            error("Could not get users!");
         }
-        if (count($potential) <= 20) {
-            foreach ($potential as $user) {
-                echo "<P ALIGN=LEFT><A HREF=\"teacher.php?id=$course->id&add=$user->id\" TITLE=\"$straddteacher\"><IMG SRC=\"../pix/t/left.gif\" BORDER=0></A>&nbsp;&nbsp;$user->firstname $user->lastname, $user->email";
-            }
-        } else {
-            echo "<P ALIGN=CENTER>There are too many users to show.<BR>";
-            echo "Enter a search word here.";
-            echo "<FORM ACTION=teacher.php METHOD=GET>";
-            echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
-            echo "<INPUT TYPE=text NAME=search SIZE=20>";
-            echo "<INPUT TYPE=submit VALUE=\"$strsearch\">";
-            echo "</FORM>";
+
+        foreach ($users as $user) {
+            echo "<p align=left><a href=\"{$_SERVER['PHP_SELF']}?id=$course->id&add=$user->id\"".
+                   "title=\"$straddteacher\"><img src=\"../pix/t/left.gif\"".
+                   "border=0></a>&nbsp;&nbsp;$user->firstname $user->lastname, $user->email";
         }
     }
 
-    echo "</TR></TABLE>";
+    if ($search or $usercount > MAX_USERS_PER_PAGE) {
+        echo "<form action={$_SERVER['PHP_SELF']} method=post>";
+        echo "<input type=text name=search size=20>";
+        echo "<input type=submit value=\"$searchstring\">";
+        echo "</form>";
+    }
+
+    echo "</tr></table>";
 
     print_footer();
 

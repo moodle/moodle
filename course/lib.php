@@ -749,7 +749,7 @@ function print_admin_links ($siteid, $width=180) {
     if (iscreator()) {
 	    $moddata[]="<a href=\"$CFG->wwwroot/course/edit.php\">".get_string("addnewcourse")."</a>";
 		$modicon[]=$icon;
-		$moddata[]="<a href=\"$CFG->wwwroot/course/teacher.php\">".get_string("assignteachers")."</a>";
+		$moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/teacher.php\">".get_string("assignteachers")."</a>";
 		$modicon[]=$icon;
         $fulladmin = "";
     }

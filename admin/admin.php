@@ -1,10 +1,9 @@
 <?PHP // $Id$
       // Admin-only script to assign administrative rights to users
-      // !!! based on ../course/teacher.php (cut and pasted, then mangled)
-
-    define("MAX_USERS_PER_PAGE", 30);
 
 	require_once("../config.php");
+    
+    define("MAX_USERS_PER_PAGE", 30);
 
     optional_variable($add, "");
     optional_variable($remove, "");
@@ -121,7 +120,7 @@
         foreach ($admins as $admin) {
             $adminarray[] = $admin->id;
             echo "<p align=right>$admin->firstname $admin->lastname,
-            $admin->email &nbsp;&nbsp; ";
+                     $admin->email &nbsp;&nbsp; ";
             if ($primaryadmin->id == $admin->id){
                 print_spacer(10, 9, false);
             } else {
@@ -151,7 +150,7 @@
     } else {
 
         if ($search) {
-            echo "<p align=center>($strsearchresults)</p>";
+            echo "<p align=center>($strsearchresults : $search)</p>";
         }
          
         if (!$users = get_users(true, $search, true, $adminlist)) {
@@ -159,9 +158,9 @@
         }
 
         foreach ($users as $user) {
-            echo "<p align=left><A HREF=\"{$_SERVER['PHP_SELF']}?add=$user->id\"".
+            echo "<p align=left><a href=\"{$_SERVER['PHP_SELF']}?add=$user->id\"".
                    "title=\"$straddadmin\"><img src=\"../pix/t/left.gif\"".
-                   "border=0></A>&nbsp;&nbsp;$user->firstname $user->lastname, $user->email";
+                   "border=0></a>&nbsp;&nbsp;$user->firstname $user->lastname, $user->email";
         }
     }
 
