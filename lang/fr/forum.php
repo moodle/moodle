@@ -2,6 +2,7 @@
 
 $string['addanewdiscussion'] = 'Ajouter un nouveau sujet de discussion';
 $string['addanewtopic'] = 'Ajouter un nouveau sujet';
+$string['allforums'] = 'Tous les forums';
 $string['allowchoice'] = 'Autoriser tout le monde à choisir de s\'abonner ou non';
 $string['allowdiscussions'] = 'Interventions autorisées';
 $string['allowratings'] = 'Autoriser l\'évaluation des articles';
@@ -145,6 +146,7 @@ $string['searchphrase'] = 'Phrase exacte dans le corps du message';
 $string['searchsubject'] = 'Terme dans le sujet du message';
 $string['searchuser'] = 'Nom de l\'auteur';
 $string['searchuserid'] = 'Identifiant (Moodle ID) de l\'auteur';
+$string['searchwhichforums'] = 'Rechercher dans quels forums&nbsp;?';
 $string['searchwords'] = 'Termes apparaissant n\'importe où dans le message';
 $string['searcholderposts'] = 'Rechercher les anciens messages...';
 $string['searchresults'] = 'Résultats de la recherche';
