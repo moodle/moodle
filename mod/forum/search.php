@@ -111,7 +111,7 @@
     $searchterms = str_replace('forumid:', 'instance:', $search);
     $searchterms = explode(' ', $searchterms);
 
-    $searchform = forum_print_search_form($course, "", true, "navbar");
+    $searchform = forum_print_search_form($course, $search, true, "navbar");
 
     if ($group = user_group($course->id, $USER->id)) {
         $groupid = $group->id;
