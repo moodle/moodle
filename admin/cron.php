@@ -103,16 +103,15 @@
     //Perhaps a long time and memory could help in large sites
     //ini_set("max_execution_time","3000");
     //ini_set("memory_limit","56M");
-    if (file_exists("../backup/backup_scheduled.php") &&
-        file_exists("../backup/backuplib.php") &&
-        file_exists("../backup/lib.php")) {
-        echo "Running backup tasks\n";
-        include_once("../backup/backup_scheduled.php");
-        include_once("../backup/backuplib.php");
-        include_once("../backup/lib.php");
-        $status = schedule_backup_cron();
-        if (!$status) {
-            echo "Something was wrong in backup tasks!!!\n";
+    if (file_exists("$CFG->dirroot/backup/backup_scheduled.php") and
+        file_exists("$CFG->dirroot/backup/backuplib.php") and
+        file_exists("$CFG->dirroot/backup/lib.php")) {
+        include_once("$CFG->dirroot/backup/backup_scheduled.php");
+        include_once("$CFG->dirroot/backup/backuplib.php");
+        include_once("$CFG->dirroot/backup/lib.php");
+        echo "Running backups if required...\n";
+        if (! schedule_backup_cron()) {
+            echo "Something went wrong while performing backup tasks!!!\n";
         } else {
             echo "Backup tasks finished\n";
         }
