@@ -29,6 +29,10 @@ if ( isguest() ) {
 if (! $glossary = get_record("glossary", "id", $cm->instance)) {
     error("Course module is incorrect");
 }
+
+if (!$glossary->studentcanpost && !isteacher($glossary->course)) {
+    error("You can't add/edit entries to this glossary!");
+}
 if ( $confirm ) {
     $form = data_submitted();
     if ( !isset($form->usedynalink) ) {

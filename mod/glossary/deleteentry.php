@@ -23,6 +23,10 @@
         error("Course is misconfigured");
     }
 
+    if (! $entry = get_record("glossary_entries","id", $entry)) {
+        error("Entry ID was incorrect");
+    }
+
     require_login($course->id);
 
     if (isguest()) {
@@ -37,7 +41,6 @@
         error("You are not allowed to edit or delete entries");
     }
 
-    $entryfields = get_record("glossary_entries", "id", $entry);
     $strareyousuredelete = get_string("areyousuredelete","glossary");
 
     print_header_simple("$glossary->name", "",
@@ -45,10 +48,13 @@
                   "", "", true, update_module_button($cm->id, $course->id, $strglossary), 
                   navmenu($course, $cm));
 
-    $entry = get_record("glossary_entries","id", $entry);
 
-    if (($entry->userid <> $USER->id) and !isteacher($course->id)) {
+    if (($entry->userid != $USER->id) and !isteacher($course->id)) {
         error("You can't delete other people's entries!");
+    }
+    $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
+    if (!$ineditperiod and !isteacher($course->id)) {
+        error("You can't delete this. Time expired!");
     }
 
 /// If data submitted, then process and store.
@@ -78,8 +84,8 @@
 
     } else {        // the operation has not been confirmed yet so ask the user to do so
 
-        notice_yesno("<b>$entryfields->concept</b><p>$strareyousuredelete</p>",
-                      "deleteentry.php?id=$cm->id&mode=delete&confirm=1&entry=".s($entry->concept)."&prevmode=$prevmode&hook=$hook",
+        notice_yesno("<b>$entry->concept</b><p>$strareyousuredelete</p>",
+                      "deleteentry.php?id=$cm->id&mode=delete&confirm=1&entry=".s($entry->id)."&prevmode=$prevmode&hook=$hook",
                       "view.php?id=$cm->id&mode=$prevmode&hook=$hook");
 
     }

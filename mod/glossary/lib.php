@@ -690,7 +690,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
         $return .= " <a title=\"" . get_string("addcomment","glossary") . "\" href=\"comment.php?id=$cm->id&eid=$entry->id\"><img src=\"comment.gif\" height=11 width=11 border=0></a> ";
     }
 
-    if ($isteacher or $glossary->studentcanpost and $entry->userid == $USER->id) {
+    if ($isteacher or ($glossary->studentcanpost and $entry->userid == $USER->id)) {
         // only teachers can export entries so check it out
         if ($isteacher and !$ismainglossary and !$importedentry) {
             $mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
