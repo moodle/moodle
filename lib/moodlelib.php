@@ -876,6 +876,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
 
 /// GROUPS /////////////////////////////////////////////////////////
+ 
 
 /**
 * Returns a boolean: is the user a member of the given group?
@@ -886,10 +887,33 @@ function ismember($groupid, $userid=0) {
     global $USER;
 
     if (!$userid) {
-        return !empty($USER->groupmember[$groupid]);
+        if (empty($USER->groupmember)) {
+            return false;
+        }
+        foreach ($USER->groupmember as $courseid => $mgroupid) {
+            if ($mgroupid == $groupid) {
+                return true;
+            }
+        }
+        return false;
     }
 
     return record_exists("groups_members", "groupid", $groupid, "userid", $userid);
+}
+
+/**
+* Returns the group ID of the current user in the given course
+* 
+* @param	type description
+*/
+function mygroupid($courseid) {
+    global $USER;
+
+    if (empty($USER->groupmember[$courseid])) {
+        return 0;
+    } else {
+        return $USER->groupmember[$courseid];
+    }
 }
 
 /**
@@ -942,6 +966,39 @@ function get_current_group($courseid, $full=false) {
         return $SESSION->currentgroup[$courseid];
     }
 }
+
+/**
+* A combination function to make it easier for modules
+* to set up groups.
+*
+* It will use a given "groupid" parameter and try to use
+* that to reset the current group for the user.
+*
+* @param	type description
+*/
+function get_and_set_current_group($course, $groupmode, $groupid=0) {
+
+    if (!$groupmode) {   // Groups don't even apply
+        return false;  
+    }
+
+    $currentgroupid = get_current_group($course->id);
+
+    if ($groupid) {     // Try to change the current group
+        if ($group = get_record('groups', 'id', $groupid, 'courseid', $course->id)) { // Exists
+            if (isteacheredit($course->id)) {          // Sets current default group
+                $currentgroupid = set_current_group($course->id, $group->id);
+
+            } else if ($groupmode == VISIBLEGROUPS) {  // All groups are visible
+                $currentgroupid = $group->id;
+            }
+        }
+    }
+
+    return $currentgroupid;
+}
+
+
 
 
 
