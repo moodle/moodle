@@ -113,8 +113,9 @@
                     if (forum_is_forcesubscribed($forum->id)) {
                         $sublink = get_string("yes");
                     } else {
-                        if ($groupmode = groupmode($course, $forum) and !isteacheredit($course->id) and !mygroupid($course->id)) {
+                        if (groupmode($course, $forum) and !isteacheredit($course->id) and !mygroupid($course->id)) {
                             $sublink = get_string("no");   // Can't subscribe to a group forum (not in a group)
+                            $forumlink = $forum->name;
                         } else {
                             if (forum_is_subscribed($USER->id, $forum->id)) {
                                 $subscribed = get_string("yes");
@@ -151,8 +152,9 @@
                 if (forum_is_forcesubscribed($forum->id)) {
                     $sublink = get_string("yes");
                 } else {
-                    if ($groupmode = groupmode($course, $forum) and !isteacheredit($course->id) and !mygroupid($course->id)) {
+                    if (groupmode($course, $forum) and !isteacheredit($course->id) and !mygroupid($course->id)) {
                         $sublink = get_string("no");   // Can't subscribe to a group forum (not in a group)
+                        $forumlink = $forum->name;
                     } else {
                         if (forum_is_subscribed($USER->id, $forum->id)) {
                             $subscribed = get_string("yes");
