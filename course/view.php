@@ -26,30 +26,22 @@
 
     add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
 
-    if (isset($edit)) {
-        if (isteacher($course->id)) {
+    if (isteacher($course->id)) {
+        if (isset($edit)) {
             if ($edit == "on") {
                 $USER->editing = true;
             } else if ($edit == "off") {
                 $USER->editing = false;
             }
         }
-    }
 
-    if (isset($help)) {
-        if ($help == "on") {
-            $USER->help = true;
-        } else if ($help == "off") {
-            $USER->help = false;
-        } 
-    }
+        if (isset($hide)) {
+            set_section_visible($course->id, $hide, "0");
+        }
 
-    if (isset($hide)) {
-        set_section_visible($course->id, $hide, "0");
-    }
-
-    if (isset($show)) {
-        set_section_visible($course->id, $show, "1");
+        if (isset($show)) {
+            set_section_visible($course->id, $show, "1");
+        }
     }
 
     $SESSION->fromdiscussion = "$CFG->wwwroot/course/view.php?id=$course->id";
