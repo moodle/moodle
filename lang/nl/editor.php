@@ -1,0 +1,68 @@
+<?PHP // $Id$ 
+      // editor.php - created with Moodle 1.2 development (2003102900)
+
+
+$string['about'] = "Info";
+$string['alignment'] = "Uitlijning";
+$string['alternatetext'] = "Alternatieve tekst";
+$string['bold'] = "Vet";
+$string['borderthickness'] = "Randdikte";
+$string['bottom'] = "Onderaan";
+$string['browse'] = "Bladeren";
+$string['cancel'] = "Annuleer";
+$string['cellpadding'] = "Celinhoud tot Rand";
+$string['cellspacing'] = "Cel tot Cel";
+$string['choosechar'] = "Kies teken";
+$string['chooseicon'] = "Kies een icoontje om in te voegen";
+$string['close'] = "Sluiten";
+$string['cols'] = "Kolommen";
+$string['copy'] = "Kopieren";
+$string['createlink'] = "Weblink invoegen";
+$string['cut'] = "Knippen";
+$string['forecolor'] = "Tekstkleur";
+$string['hilitecolor'] = "Achtergrondkleur";
+$string['horizontal'] = "Horizontaal";
+$string['horizontalrule'] = "Horizontale lijn";
+$string['htmlmode'] = "Omschakelen naar HTML code";
+$string['imageurl'] = "URL van de afbeelding";
+$string['indent'] = "Inspringing vergroten";
+$string['insertchar'] = "Speciaal teken invoegen";
+$string['insertimage'] = "Afbeelding invoegen";
+$string['insertsmile'] = "Smiley invoegen";
+$string['inserttable'] = "Tabel invoegen";
+$string['italic'] = "Cursief";
+$string['justifycenter'] = "Centreren";
+$string['justifyfull'] = "Uitvullen";
+$string['justifyleft'] = "Links uitlijnen";
+$string['justifyright'] = "Rechts uitlijnen";
+$string['layout'] = "Opmaak";
+$string['left'] = "Links";
+$string['middle'] = "Midden";
+$string['notset'] = "Niet ingesteld";
+$string['ok'] = "OK";
+$string['orderedlist'] = "Geordende lijst";
+$string['outdent'] = "Inspringing verkleinen";
+$string['paste'] = "Plakken van klembord";
+$string['path'] = "Pad";
+$string['percent'] = "Procent";
+$string['pixels'] = "Pixels";
+$string['popupeditor'] = "Vergroot editor";
+$string['preview'] = "Voorbeeld";
+$string['redo'] = "Opnieuw";
+$string['right'] = "Rechts";
+$string['rows'] = "Rijen";
+$string['showhelp'] = "Help ";
+$string['spacing'] = "Afstanden";
+$string['strikethrough'] = "Doorhalen";
+$string['subscript'] = "Subscript";
+$string['superscript'] = "Superscript";
+$string['textindicator'] = "Huidige stijl";
+$string['textmode'] = "Je bent in TEKST MODUS. Gebruik de [<>] knop om terug om te schakelen naar WYSIWIG.";
+$string['top'] = "Bovenaan";
+$string['underline'] = "Onderstrepen";
+$string['undo'] = "Ongedaan maken";
+$string['unorderedlist'] = "Lijst met opsommingstekens";
+$string['vertical'] = "Verticaal";
+$string['width'] = "Breedte";
+
+?>
