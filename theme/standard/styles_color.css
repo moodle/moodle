@@ -561,3 +561,8 @@ table.minicalendar {
 
 .message .content {
 }
+
+.censoredtext {
+    color:#000000;
+    background:#000000;
+}

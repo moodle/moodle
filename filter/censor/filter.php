@@ -18,8 +18,9 @@ function censor_filter($courseid, $text) {
 
     if (empty($search)) {
         $search = explode(',', get_string('censorbadwords'));
+        rsort($search);
         foreach ($search as $key => $word) {
-            $replace[$key] = '<span style="color:black;background:black;">'.$word.'</span>';
+            $replace[$key] = '<span class="censoredtext">'.$word.'</span>';
         }
     }
 
