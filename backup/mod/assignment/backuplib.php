@@ -113,7 +113,6 @@
         //Now copy the assignment dir
         if ($status) {
             //Only if it exists !! Thanks to Daniel Miksik.
-            echo "(Thanks, Daniel !!)";
             if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/assignment")) {
                 $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/assignment",
                                            $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/assignment");
