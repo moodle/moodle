@@ -125,7 +125,12 @@
     } else {
         $currlang = current_language();
         $langs    = get_list_of_languages();
-        $langmenu = popup_form ("$CFG->wwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+        if (empty($CFG->loginhttps)) {
+            $wwwroot = $CFG->wwwroot;
+        } else {
+            $wwwroot = str_replace('http','https',$CFG->wwwroot);
+        }
+        $langmenu = popup_form ("$wwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
     }
 
     $loginsite = get_string("loginsite");

@@ -161,6 +161,12 @@ $CFG->admin = 'admin';
 // most likely doesn't work yet.   THIS IS FOR DEVELOPERS ONLY, IT IS
 // NOT RECOMMENDED FOR PRODUCTION SITES
 //      $CFG->unicode = true;
+//
+// Turning this on will make Moodle use a https connection just for the 
+// login page (providing a secure login), and then afterwards revert 
+// back to the normal http URL.  Requires https to be enabled on the 
+// web server.
+//      $CFG->loginhttps = true;
 
 
 

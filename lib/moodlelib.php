@@ -365,7 +365,12 @@ function require_login($courseid=0) {
             $SESSION->fromurl  = $_SERVER["HTTP_REFERER"];
         }
         $USER = NULL;
-        redirect("$CFG->wwwroot/login/index.php");
+        if (empty($CFG->loginhttps)) {
+            redirect("$CFG->wwwroot/login/index.php");
+        } else {
+            $wwwroot = str_replace('http','https',$CFG->wwwroot);
+            redirect("$wwwroot/login/index.php");
+        }
         die;
     }
 

@@ -28,7 +28,12 @@
     }
 
     if (empty($USER->id)) {
-        $loginstring = "<font size=2><a href=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</a></font>";
+        if (empty($CFG->loginhttps)) {
+            $wwwroot = $CFG->wwwroot;
+        } else {
+            $wwwroot = str_replace('http','https',$CFG->wwwroot);
+        }
+        $loginstring = "<font size=2><a href=\"$wwwroot/login/index.php\">".get_string("login")."</a></font>";
     } else {
         $loginstring = "<font size=1>".user_login_string($site)."</font>";
     }

@@ -953,10 +953,15 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     }
 
     if (!$menu and $navigation) {
-        if (isset($USER->id)) {
-            $menu = "<font size=\"2\"><a target=\"$CFG->framename\" href=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</a></font>";
+        if (empty($CFG->loginhttps)) {
+            $wwwroot = $CFG->wwwroot;
         } else {
-            $menu = "<font size=\"2\"><a target=\"$CFG->framename\" href=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</a></font>";
+            $wwwroot = str_replace('http','https',$CFG->wwwroot);
+        }
+        if (isset($USER->id)) {
+            $menu = "<font size=\"2\"><a target=\"$CFG->framename\" href=\"$wwwroot/login/logout.php\">".get_string("logout")."</a></font>";
+        } else {
+            $menu = "<font size=\"2\"><a target=\"$CFG->framename\" href=\"$wwwroot/login/index.php\">".get_string("login")."</a></font>";
         }
     }
 
@@ -1076,18 +1081,23 @@ function user_login_string($course, $user=NULL) {
     }
 
     if (isset($user->id) and $user->id) {
+        if (empty($CFG->loginhttps)) {
+            $wwwroot = $CFG->wwwroot;
+        } else {
+            $wwwroot = str_replace('http','https',$CFG->wwwroot);
+        }
         $fullname = fullname($user, true);
         $username = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
         if (isguest($user->id)) {
             $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
-                      " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</a>)";
+                      " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string("login")."</a>)";
         } else {
             $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
                       " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</a>)";
         }
     } else {
         $loggedinas = get_string("loggedinnot", "moodle").
-                      " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</a>)";
+                      " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string("login")."</a>)";
     }
     return $loggedinas;
 }
