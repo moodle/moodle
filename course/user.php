@@ -59,7 +59,7 @@
         if ($mode == $listmode) {
             echo "<td><u>$strmode</u></td>";
         } else {
-            echo "<td><a href=\"user.php?id=$course->id&amp;user=$user->id&amp;mode=$listmode>$strmode\"</a></td>";
+            echo "<td><a href=\"user.php?id=$course->id&amp;user=$user->id&amp;mode=$listmode\">$strmode</a></td>";
         }
     }
     echo "</tr></table>";
