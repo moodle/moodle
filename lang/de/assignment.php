@@ -1,17 +1,17 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // assignment.php - created with Moodle 1.0.8 dev (2002122301)
 
 
 $string['allowresubmit'] = "Erneutes Einreichen erlauben";
 $string['assignmentdetails'] = "Aufgabendetails";
-$string['assignmentmail'] = "\$a->teacher hat einen Kommentar zu Ihrer eingereichten Aufgabe '\$a->assignment' abgegeben.
+$string['assignmentmail'] = "\$a->teacher hat einen Kommentar zu Ihrer eingereichten Aufgabe '\$a->assignment' verfasst.
 
-Sie können diesen angehängt an Ihre eingereichte Aufgabe sehen:
+Sie finden diesen im Anhang Ihrer eingereichten Aufgabe:
 
 \$a->url";
-$string['assignmentmailhtml'] = "\$a->teacher hat einen Kommentar zu Ihrer eingereichten Aufgabe </i>'<br /><br />
-Sie können diesen angehängt an Ihre
-<a href=\\\"\$a->url\\\">eingereichte Aufgabe</a> sehen:.";
+$string['assignmentmailhtml'] = "\$a->teacher hat einen Kommentar zu Ihrer eingereichten Aufgabe verfasst.</i>'<br /><br />
+Sie finden diesen im Anhang Ihrer 
+<a href=\\\"\$a->url\\\">eingereichten Aufgabe</a>:.";
 $string['assignmentname'] = "Aufgabenname";
 $string['assignmenttype'] = "Aufgabentyp";
 $string['description'] = "Beschreibung ";
