@@ -470,7 +470,7 @@ function print_section($courseid, $section, $mods, $modnamesused, $absolute=fals
             echo "<BR>\n";
         }
     }
-    echo "</TD></TR></TABLE>\n";
+    echo "</TD></TR></TABLE><BR>\n\n";
 }
 
 function print_side_block($heading="", $list=NULL, $footer="", $icons=NULL) {
