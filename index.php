@@ -52,7 +52,7 @@
     <TD WIDTH="55%" VALIGN="TOP">
       <? print_simple_box("Site News", $align="CENTER", $width="100%", $color="$THEME->cellheading"); ?>
 
-      <IMG HEIGHT=8 SRC="pix/spacer.gif"><BR>
+      <IMG HEIGHT=8 SRC="pix/spacer.gif" ALT=""><BR>
 
       <? include("mod/discuss/lib.php");
          forum_latest_topics();
