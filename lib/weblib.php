@@ -192,6 +192,32 @@ function stripslashes_safe($string) {
     return $string;
 }
 
+
+function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
+/// Given some normal text, this function will break up any 
+/// long words to a given size, by inserting the given character
+
+    $output = '';
+    $length = strlen($string);
+    $wordlength = 0;
+
+    for ($i=0; $i<$length; $i++) {
+        $char = $string[$i];
+        if ($char == ' ' or $char == "\t" or $char == "\n" or $char == "\r") {
+            $wordlength = 0;
+        } else {
+            $wordlength++;
+            if ($wordlength > $maxsize) {
+                $output .= $cutchar;
+                $wordlength = 0;
+            }
+        }
+        $output .= $char;
+    }
+    return $output;
+}
+
+
 if (!function_exists('str_ireplace')) {    /// Only exists in PHP 5
     function str_ireplace($find, $replace, $string) {
     /// This does a search and replace, ignoring case
