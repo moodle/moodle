@@ -1,6 +1,8 @@
 <?PHP  // $Id: report.php,
 //  created from the above 2003/11/20 by Tom Robb tom@robb.net
-// Version 2.0
+// Version 2.2  Modified 2003/11/25 pm
+//  $showtext added to toggle display of full text of M/C questions
+//  Discrimination Index figures added
 
 /// This report shows the specific responses made by each student for each question.
 
@@ -22,22 +24,26 @@ $string['itemanal'] = "Item Response Analysis";
 $string['listitems'] = "Listing of Items in This Quiz";
 $string['noresponse'] = "No Response";
 $string['percentcorrect'] = "Percent Correct";
-$string['question'] = "Question";
+$string['discrimination'] = "Discrim. Index";
 $string[''] = "";
 */
 
         $strindivresp = get_string("indivresp", "quiz");
         $strname = get_string("name", "quiz");
-        $strgrade = get_string("grade");
+        $strgrade = get_string("grade", "quiz");
         $stritemanal = get_string("itemanal", "quiz");
         $strcorrresp = get_string("corrresp", "quiz");
         $strnoresponse = get_string("noresponse", "quiz");
         $strpercentcorrect = get_string("percentcorrect", "quiz");
         $strlistitems = get_string("listitems", "quiz");
         $strquestion = get_string("question", "quiz");
+        $strwithsummary = get_string("withsummary", "quiz");
+        $strdiscrimination = get_string("discrimination", "quiz");
 //        $str = get_string("qr", "quiz");
 
-    //Get the question ids
+    //$showtext causes M/C text to whos in top table.  This could be made into a user toggle if we want to complicate matters
+    $showtext = 1;
+    $containsMCTF = 0;  //used to toggle title in final listing
     $thisquizid = $quiz->id;
     $qs_in_order =qr_getqs($thisquizid);
     $qcount = 0;
@@ -51,6 +57,7 @@ $string[''] = "";
             $quests[$qid]["qtype"] =  $thiskey;
             $quests[$qid]["qtext"] =  $question_data[$thiskey]->questiontext;
         }
+        if($quests[$qid]['qtype'] == 3 or $quests[$qid]['qtype'] == 2){ $containsMCTF = 1;}
         if($quests[$qid]['qtype'] == 5){
             //for MATCH items we need to know how many items there are
             $thismatch = get_record("quiz_match","question","$qid");
@@ -169,6 +176,61 @@ $string[''] = "";
     print("<h3>Data Tally</h3>");
     print_object($data_tally);
     }
+
+    //Create a list of all attempts with their scores for item analysis
+    //Also create $data2 that has attempt id as key
+    foreach ($data_tally as $thistally){
+        foreach($thistally as $this_aid=>$thisattempt){
+            //this is the attempt id and the score
+            $data2[$this_aid] = $thisattempt;
+            $scores[$this_aid] = $thisattempt[1];
+        }
+    }
+    arsort($scores);
+    //now go through scores from top to bottom and from $data2 accumulate no correct for top 1/3 and bottom 1/3 of scorers
+    $totscores = count($scores);
+    $numb_to_analyze = floor($totscores/3);
+    $skipval = $numb_to_analyze + 1;
+    $first_lowval = $totscores - $numb_to_analyze +1;
+    $count_scores = 0;
+    $tempscores = array();
+    $top_scores = array_pad($tempscores,$table_colcount+1,0);
+    $bott_scores = array_pad($tempscores,$table_colcount+1,0);
+    foreach($scores as $aid=>$score){
+        $count_scores++;
+        if ($count_scores < $skipval){
+            //array items 0 & 1 contain user name & tot score, not item data
+            $i = 2;
+            while($data2[$aid][$i]){
+                //let this array start from 1
+                if ($data2[$aid][$i]['score'] == 1){
+                    $top_scores[$i-1]++;
+                }
+                $i++;
+            }
+        } elseif ($count_scores >= $first_lowval) {
+            $i = 2;
+            while($data2[$aid][$i]){
+                //let this array start from 1
+                if ($data2[$aid][$i]['score'] == 1){
+                    $bott_scores[$i-1]++;
+                }
+                $i++;
+            }
+        } else {
+            continue;
+        }
+    }
+    
+    if($debug and !$download){
+    print("<h3>Scores</h3>");
+    print_object($scores);
+    print("<h3>Top Scores</h3>");
+    print_object($top_scores);
+    print("<h3>Bottom Scores</h3>");
+    print_object($bott_scores);
+    }
+    
     //Create here an array with the response analysis data for use with both screen display & Excel
     //  2 dimensional array has as many cells across as items + title, as many down as $max_choices
     // plus one row [0] for correct items
@@ -418,12 +480,31 @@ $string[''] = "";
             $row = $row+2;
         }
 
-        //Finally output the total percent correct
+        //Output the total percent correct
         $row++;
         $myxls->write_string($row,1,"Percent Correct:",$formatbrt);
         for ($i = 1; $i<= $table_colcount;$i++){
             $myxls->write_string($row,$i,$pct_correct[$i],$formatbc);
         }
+
+    //Finally display the itemanalysis
+        $row++;
+        $myxls->write_string($row,0,"Discrimination Index",$formatbc);
+        $myxls->write_string($row+1,0,"Top third",$formatbc);
+        $myxls->write_string($row+2,0,"Bottom third",$formatbc);
+        for ($i = 1; $i<= $table_colcount;$i++){
+            if($bott_scores[$i] > 0) {
+                $val = round(($top_scores[$i]/$bott_scores[$i]),1);
+            } elseif ($top_scores[$i] ){
+                $val = 10;
+            } else {
+                $val = 0;
+            }
+            $myxls->write_string($row,$i,$val,$formatbc);
+            $myxls->write_string($row+1,$i,$top_scores[$i],$formatbc);
+            $myxls->write_string($row+2,$i,$bott_scores[$i],$formatbc);
+        }
+
 
            //Print the questions with responses on a new worksheet
         $myxls = &$workbook->add_worksheet('Questions and Responses');
@@ -570,6 +651,12 @@ $string[''] = "";
                     if ($thisitem['score'] == 1) {$thiscolor = "blue";}
                     if(!$thisitem['data'][1]){$thisitem['data'][1]="($strnoresponse)";}
                     print("<td align=center><font size=-2>{$thisitem['data'][0]}<br><font color='$thiscolor'>{$thisitem['data'][1]}</font></font></td>");
+                } elseif  ($thisitem['qtype'] == 3) {
+                    if ($showtext) {
+                        print("<td align=center><font color='$thiscolor' size=-2>&nbsp;&nbsp;{$thisitem['data']}&nbsp;&nbsp;</font></td>");
+                    } else {
+                        print("<td align=center><font color='$thiscolor'>&nbsp;&nbsp;{$thisitem['data']}&nbsp;&nbsp;</font></td>");
+                    }
                 } else {
                     print("<td align=center><font color='$thiscolor'>&nbsp;&nbsp;{$thisitem['data']}&nbsp;&nbsp;</font></td>");
                 }
@@ -577,12 +664,14 @@ $string[''] = "";
         }
         print("</tr>\n");
     }
-    
+    print("</table><p>\n");
+        
     if($debug and !$download){
     print("<h3>Qtally</h3>");
     print_object($qtally);
     }
     //print tally of how many selected each choice
+    print ("<p><table width=95% border=1 align=center cellpadding=2 cellspacing=0>\n");
     print("<tr><th colspan=$totcolcount>$stritemanal</th></tr>");
     qr_print_headers($data_tally,"Item","&nbsp;");
     //display row with correct answers
@@ -611,10 +700,25 @@ $string[''] = "";
         }
     }
     print("</tr>\n");
-    //Finally display the total percent correct
+    //Display the total percent correct
     print("<tr valign=top><th align=right colspan=2>$strpercentcorrect:</th>");
     for ($i = 0; $i< $table_colcount;$i++){
         print ("<th>{$pct_correct[$i]}</th> ");
+    }
+    print("</tr>\n");
+    //Finally display the itemanalysis
+    print("<tr valign=top valign='middle'><th align=right colspan=2>");
+    helpbutton("discrimination", "", "quiz");
+    print(" $strdiscrimination:</th>");
+    for ($i = 1; $i<= $table_colcount;$i++){
+        if($bott_scores[$i] > 0) {
+            $val = round(($top_scores[$i]/$bott_scores[$i]),1);
+        } elseif ($top_scores[$i] ){
+            $val = 10;
+        } else {
+            $val = 0;
+        }
+        print ("<th valign='middle'><font size=-1>$val ({$top_scores[$i]}/{$bott_scores[$i]})</font></th> ");
     }
     print("</tr>\n");
     print("</table>\n");
@@ -622,17 +726,39 @@ $string[''] = "";
     //Now printout the questions (and M/C answers if $containsMC
 
     print ("<p><table width=95% border=1 align=center cellpadding=2 cellspacing=0>\n");
-    print("<tr><th colspan=3>QUIZ: $quiz->name&nbsp;&nbsp; -- &nbsp;&nbsp;$strlistitems</th></tr>\n");
+    if ($containsMCTF){$ws = " ". $strwithsummary;} else {$ws = "";}
+    print("<tr><th colspan=3>QUIZ: $quiz->name&nbsp;&nbsp; -- &nbsp;&nbsp;$strlistitems$ws</th></tr>\n");
     $qcount = 0;
+    $itemcount = 0; //needed since matching Qs adds additional columns of data in $analysis
     foreach ($qs_in_order as $qid){
         $qcount++;
-        print("<tr valign=top><th>Q-$qcount</th><td colspan=2>{$quests[$qid]['qtext']}</td></tr>\n");
+        if ($quests[$qid]['qtype']==5) { $itemcount = $itemcount + $match_number[$qid];} else {$itemcount++;}
+        print("<tr valign=top><th  width='10%'>Q-$qcount</th><td colspan=2>{$quests[$qid]['qtext']}</td></tr>\n");
         if($quests[$qid]['qtype']==3){
             $nowchoices = $quests[$qid]['choice'];
             foreach($nowchoices as $thischoice){
-                print("<tr valign=top><td>&nbsp;</td>");
-                print("<td width='5%' align=center><b>A-{$thischoice['choiceno']}</b></td><td>{$thischoice['answer']}</td></tr>\n");
+                $cno = $thischoice['choiceno'];
+                $nowstat =  $analysis[$cno][$itemcount];
+                $pct_cor = qr_make_pct($nowstat,$total_user_count);
+                print("<tr valign=top><td align='right' width='10%'>$nowstat ($pct_cor)&nbsp;</td>");
+                print("<td width='5%' align='center'><b>A-$cno</b></td><td>{$thischoice['answer']}</td></tr>\n");
             }
+        }
+        if($quests[$qid]['qtype']==2){
+            //"True" responses
+            $nowstat =  $analysis[1][$qcount];
+            $colpos = strpos($nowstat,":");
+            $nowresp = substr($nowstat,$colpos+1);
+            $pct_cor = qr_make_pct($nowresp,$total_user_count);
+            print("<tr valign=top><td align='right'>$nowresp ($pct_cor)&nbsp;</td>");
+            print("<td colspan=2 align=left>True</td></tr>\n");
+            //"False" responses
+            $nowstat =  $analysis[2][$qcount];
+            $colpos = strpos($nowstat,":");
+            $nowresp = substr($nowstat,$colpos+1);
+            $pct_cor = qr_make_pct($nowresp,$total_user_count);
+            print("<tr valign=top><td align='right'>$nowresp ($pct_cor)&nbsp;</td>");
+            print("<td colspan=2 align=left>False</td></tr>\n");
         }
     }
     print("</table>\n");
@@ -756,29 +882,29 @@ function qr_make_footers(){
         if($quests[$qid]['qtype'] == 5) {
             foreach ($qtally[$qid] as $thisitem){
                 $this_correct = $thisitem['correct'];
-                $footers[] = qr_make_pct($this_correct);
+                $footers[] = qr_make_pct($this_correct,$total_user_count);
             }
         } else {
             $this_correct = $qtally[$qid]['correct'];
-            $footers[] = qr_make_pct($this_correct);
+            $footers[] = qr_make_pct($this_correct,$total_user_count);
         }
     }
     return $footers;
 }
 
-function qr_make_pct($this_correct){
+function qr_make_pct($this_correct,$totusers){
     global  $qs_in_order,$qtally,$quests,$total_user_count;
-    if($this_correct>0){
-        $pct_cor =round(($this_correct/$total_user_count)*100,1);
+    if($this_correct>0 and $totusers > 0){
+        $pct_cor =round((($this_correct/$totusers)*100),1);
     } else {
-    $pct_cor = 0;
+        $pct_cor = 0;
     }
     return $pct_cor ."%";
 }
 
 function qr_answer_lookup($qid,$thisanswer){
     //For each type of question, this needs to determine answer string to report and whether right or wrong
-    global $quests,$qtally,$max_choices,$thismin,$thismax;
+    global $quests,$qtally,$max_choices,$thismin,$thismax,$showtext;
     $thistype = $quests[$qid]['qtype'];
     $returndata['data'] = "--";
     $returndata['score'] = 0;
@@ -804,8 +930,14 @@ function qr_answer_lookup($qid,$thisanswer){
             }
             break;
         case 3:  //MULTICHOICE
-            $returndata['data'] = $quests[$qid]['choice'][$thisanswer]['choiceno'];
-            if($max_choices < $returndata['data']) {$max_choices = $returndata['data'];}
+            $thischoiceno = $quests[$qid]['choice'][$thisanswer]['choiceno'];
+            if ($showtext){
+                $returndata['data'] = $quests[$qid]['choice'][$thisanswer]['answer'];
+            } else {
+                $returndata['data'] = $thischoiceno;
+            }
+//            if($max_choices < $returndata['data']) {$max_choices = $returndata['data'];}
+            if ($max_choices < $thischoiceno) {$max_choices = $thischoiceno;}
             $qtally[$qid][$quests[$qid]['choice'][$thisanswer]['choiceno']]++;
             if (strtolower($quests[$qid]['correct'])==strtolower($quests[$qid]['choice'][$thisanswer]['choiceno'])){
                 $returndata['score'] = 1;
