@@ -770,6 +770,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     global $CFG, $USER;
 
     static $groupbuttons;
+    static $groupbuttonslink;
     static $isteacher;
     static $isediting;
     static $ismoving;
@@ -778,7 +779,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
 
     if (!isset($isteacher)) {
-        $groupbuttons = ($course->groupmode and !$course->groupmodeforce);
+        $groupbuttons     = $course->groupmode;
+        $groupbuttonslink = (!$course->groupmodeforce);
         $isteacher = isteacher($course->id);
         $isediting = isediting($course->id);
         $ismoving = ismoving($course->id);
@@ -841,7 +843,12 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                          " href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a></font>";
                 }
                 if ($isediting) {
-                    if (!$groupbuttons) {
+                    if ($groupbuttons) {
+                        if (! $mod->groupmodelink = $groupbuttonslink) {
+                            $mod->groupmode = $course->groupmode;
+                        }
+
+                    } else {
                         $mod->groupmode = false;
                     }
                     echo "&nbsp;&nbsp;";
@@ -1744,6 +1751,7 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
         $str->hide      = get_string("hide");
         $str->show      = get_string("show");
         $str->clicktochange  = get_string("clicktochange");
+        $str->forcedmode     = get_string("forcedmode");
         $str->groupsnone     = get_string("groupsnone");
         $str->groupsseparate = get_string("groupsseparate");
         $str->groupsvisible  = get_string("groupsvisible");
@@ -1770,17 +1778,24 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     }
     if ($mod->groupmode !== false) {
         if ($mod->groupmode == SEPARATEGROUPS) {
-            $groupmode = "<a title=\"$str->groupsseparate ($str->clicktochange)\" ".
-                         " href=\"$path/mod.php?id=$mod->id&groupmode=0\"><img".
-                         " src=\"$pixpath/t/groups.gif\" hspace=2 height=11 width=11 border=0></a> ";
+            $grouptitle = $str->groupsseparate;
+            $groupimage = "$pixpath/t/groups.gif";
+            $grouplink  = "$path/mod.php?id=$mod->id&groupmode=0";
         } else if ($mod->groupmode == VISIBLEGROUPS) {
-            $groupmode = "<a title=\"$str->groupsvisible ($str->clicktochange)\" ".
-                         " href=\"$path/mod.php?id=$mod->id&groupmode=1\"><img".
-                         " src=\"$pixpath/t/groupv.gif\" hspace=2 height=11 width=11 border=0></a> ";
+            $grouptitle = $str->groupsvisible;
+            $groupimage = "$pixpath/t/groupv.gif";
+            $grouplink  = "$path/mod.php?id=$mod->id&groupmode=1";
         } else {
-            $groupmode = "<a title=\"$str->groupsnone ($str->clicktochange)\" ".
-                         " href=\"$path/mod.php?id=$mod->id&groupmode=2\"><img".
-                         " src=\"$pixpath/t/groupn.gif\" hspace=2 height=11 width=11 border=0></a> ";
+            $grouptitle = $str->groupsnone;
+            $groupimage = "$pixpath/t/groupn.gif";
+            $grouplink  = "$path/mod.php?id=$mod->id&groupmode=2";
+        }
+        if ($mod->groupmodelink) {
+            $groupmode = "<a title=\"$grouptitle ($str->clicktochange)\" href=\"$grouplink\">".
+                         "<img src=\"$groupimage\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\"></a>";
+        } else {
+            $groupmode = "<img title=\"$grouptitle ($str->forcedmode)\" ".
+                         " src=\"$groupimage\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\">";
         }
     } else {
         $groupmode = "";

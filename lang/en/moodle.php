@@ -346,6 +346,7 @@ $string['followingoptional'] = 'The following items are optional';
 $string['followingrequired'] = 'The following items are required';
 $string['force'] = 'Force';
 $string['forcelanguage'] = 'Force language';
+$string['forcedmode'] = 'forced mode';
 $string['forceno'] = 'Do not force';
 $string['forgotten'] = 'Forgotten your username or password?';
 $string['format'] = 'Format';
