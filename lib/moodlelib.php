@@ -104,6 +104,7 @@ define('PARAM_PATH',    0x0020);
 define('PARAM_HOST',    0x0040);  // FQDN or IPv4 dotted quad
 define('PARAM_URL',     0x0080);  
 define('PARAM_LOCALURL',0x0180);  // NOT orthogonal to the others! Implies PARAM_URL!
+define('PARAM_CLEANFILE',0x0200);
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
@@ -198,22 +199,20 @@ function clean_param($param, $options) {
         $param = strip_tags($param);
     }
 
+    if ($options & PARAM_CLEANFILE) {    // allow only safe characters
+        $param = clean_filename($param);
+    }
+
     if ($options & PARAM_FILE) {         // Strip all suspicious characters from filename
-        $param = clean_param($param, PARAM_PATH);
-        $pos = strrpos($param,'/');
-        if ($pos !== FALSE) {
-            $param = substr($param, $pos+1);
-        }
-        if ($param === '.' or $param === ' ') {
-            $param = '';
-        }
+        $param = ereg_replace('[[:cntrl:]]|[<>"`\|\':\\/]', '', $param);
+        $param = ereg_replace('\.\.+', '', $param);
     }
 
     if ($options & PARAM_PATH) {         // Strip all suspicious characters from file path
         $param = str_replace('\\\'', '\'', $param);
         $param = str_replace('\\"', '"', $param);
         $param = str_replace('\\', '/', $param);
-        $param = ereg_replace('[[:cntrl:]]|[<>"`\|\']', '', $param);
+        $param = ereg_replace('[[:cntrl:]]|[<>"`\|\':]', '', $param);
         $param = ereg_replace('\.\.+', '', $param);
         $param = ereg_replace('//+', '/', $param);
     }
