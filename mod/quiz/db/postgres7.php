@@ -295,6 +295,10 @@ function quiz_upgrade($oldversion) {
         table_column('quiz_grades', 'grade', 'grade', 'real', 2, '');
     }
 
+    if ($oldversion < 2005021400) {
+        table_column("quiz", "", "decimalpoints", "integer", "4", "", "2", "not null", "grademethod");
+    }
+
     return true;
 }
 

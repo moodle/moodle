@@ -25,6 +25,7 @@ CREATE TABLE `prefix_quiz` (
   `feedback` tinyint(4) NOT NULL default '0',
   `correctanswers` tinyint(4) NOT NULL default '1',
   `grademethod` tinyint(4) NOT NULL default '1',
+  `decimalpoints` tinyint(4) NOT NULL default '2',
   `review` tinyint(4) NOT NULL default '0',
   `questionsperpage` int(10) NOT NULL default '0',
   `shufflequestions` tinyint(4) NOT NULL default '0',
