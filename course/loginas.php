@@ -28,7 +28,7 @@
         error("Only teachers can use this page!");
     }
 
-    if ($course->category and !isstudent($course->id, $user)) {
+    if ($course->category and !isstudent($course->id, $user) and !isadmin()) {
         error("This student is not in this course!");
     }
 
