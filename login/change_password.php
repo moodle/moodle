@@ -28,7 +28,7 @@
                 error("Can't change guest password!");
             }
             
-            if(is_internal_auth($user)){
+            if (is_internal_auth($user->auth)){
                 if (set_field("user", "password", $password, "username", $username)) {
                     $user->password = $password;
                 } else {
@@ -38,23 +38,19 @@
                 // the relevant auth libs should be loaded already 
                 // as validate_form() calls authenticate_user_login()
                 // check that we allow changes through moodle
-                if(isset($CFG->{'auth_'. $user->auth.'_stdchangepassword'}) && $CFG->{'auth_'. $user->auth.'_stdchangepassword'}){
-                       if(function_exists('auth_user_update_password')){
-                           // note that we pass cleartext password 
-                           if(auth_user_update_password($user->username, $frm->newpassword1)){
-                               $user->password = $password;
-                           } else {
-                               error("Could not set the new password");
-                           }
-                       } else {
-
-                           error_log("External Authentication " . $user->auth . 
-                                     ' is set to use standard change password interface ' .
-                                     ' but auth_user_update_password() is missing.');
-                           error('The authentication module is misconfigured'); 
-                       } 
+                if (!empty($CFG->{'auth_'. $user->auth.'_stdchangepassword'})) {
+                    if (function_exists('auth_user_update_password')){
+                        // note that we pass cleartext password 
+                        if (auth_user_update_password($user->username, $frm->newpassword1)){
+                            $user->password = $password;
+                        } else {
+                            error('Could not set the new password');
+                        }
+                    } else {
+                        error('The authentication module is misconfigured (missing auth_user_update_password)'); 
+                    } 
                 } else {
-                      error("You are cannot change you password this way.");
+                    error("You cannot change your password this way.");
                 }
             }
             
