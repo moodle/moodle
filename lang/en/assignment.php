@@ -24,6 +24,7 @@ $string['submitassignment'] = "Submit your assignment using this form";
 $string['submitted'] = "Submitted";
 $string['typeuploadsingle'] = "Upload a single file, worth between 0 - 100 marks";
 $string['uploadedfiles'] = "uploaded files";
+$string['uploadsuccess'] = "Uploaded '\$a' successfully";
 $string['viewsubmissions'] = "View \$a submitted assignments";
 $string['yoursubmission'] = "Your submission";
 

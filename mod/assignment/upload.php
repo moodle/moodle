@@ -52,7 +52,7 @@
                     if ($submission) {
                         $submission->timemodified = time();
                         if (update_record("assignment_submissions", $submission)) {
-                            print_heading("Uploaded '$newfile_name' successfully.");
+                            print_heading(get_string("uploadsuccess", "assignment", $newfile_name) );
                         } else {
                             notify("File was uploaded OK but could not update your submission!");
                         }
@@ -63,7 +63,7 @@
                         $newsubmission->timemodified = time();
                         $newsubmission->numfiles     = 1;
                         if (insert_record("assignment_submissions", $newsubmission)) {
-                            print_heading("Uploaded '$newfile_name' successfully.");
+                            print_heading(get_string("uploadsuccess", "assignment", $newfile_name) );
                         } else {
                             notify("'$newfile_name' was uploaded OK but submission did not register!");
                         }
