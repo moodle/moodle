@@ -14,7 +14,8 @@ $THEME->custompix = false;
 /// for all the activity modules.
 ////////////////////////////////////////////////////////////////////////////////
 
-$THEME->standardsheets = array('styles_layout', 'styles_fonts', 'styles_color');
+// $THEME->standardsheets = array('styles_layout', 'styles_fonts', 'styles_color');
+$THEME->standardsheets = false;
 
 /// This variable can be set to an array containing
 /// filenames from the *STANDARD* theme.  If the 

@@ -485,7 +485,7 @@ table.quiz input {
 TABLE.calendarmini {
 	width:100%;
     margin:0px;
-    padding:2px;
+    padding:0px;
     border-width:1px;
     border-style:solid;
 }
@@ -500,8 +500,8 @@ TABLE.calendarmonth {
 
 TABLE.calendarmini TBODY TD {
     width:14%;
-    border-width:1px;
-    border-style:solid;
+    border-width:1px 0px;
+    border-style:none;
     vertical-align:center;
 }
 
