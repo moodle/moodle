@@ -1090,13 +1090,12 @@ function get_users_longtimenosee($cutofftime) {
     global $CFG;
 
     $db->debug = true;
-    return get_records_sql("SELECT u.* 
+    return get_records_sql("SELECT DISTINCT u.* 
                               FROM {$CFG->prefix}user u, 
                                    {$CFG->prefix}user_students s
                              WHERE u.lastaccess > '0' 
                                AND u.lastaccess < '$cutofftime' 
-                               AND u.id = s.userid
-                          GROUP BY u.id");
+                               AND u.id = s.userid ");
 }
 
 
