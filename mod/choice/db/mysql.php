@@ -79,15 +79,17 @@ function choice_upgrade($oldversion) {
                 foreach ($choices as $choice) {
                     for ($i=1; $i<=6; $i++) {      // We used to have six columns
                         $option = new stdClass;
-                        $option->choiceid     = $choice->id;
                         $option->text         = $choice->{'answer'.$i};
-                        $option->timemodified = $choice->timemodified;
-                        if ($option->id = insert_record('choice_options', $option)) { 
-                            /// Update all the user answers to fit the new value
-                            execute_sql("UPDATE {$CFG->prefix}choice_answers 
-                                            SET optionid='$option->id' 
-                                          WHERE choiceid='$choice->id' 
-                                            AND optionid='$i'");                                                            
+                        if ($option->text) {   /// Don't bother with blank options
+                            $option->choiceid     = $choice->id;
+                            $option->timemodified = $choice->timemodified;
+                            if ($option->id = insert_record('choice_options', $option)) { 
+                                /// Update all the user answers to fit the new value
+                                execute_sql("UPDATE {$CFG->prefix}choice_answers 
+                                                SET optionid='$option->id' 
+                                              WHERE choiceid='$choice->id' 
+                                                AND optionid='$i'");                                                            
+                            }
                         }
                     }
                 }
