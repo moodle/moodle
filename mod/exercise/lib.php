@@ -546,6 +546,7 @@ function exercise_user_outline($course, $user, $mod, $exercise) {
     return NULL;
 }
 
+
 /*******************************************************************/
 function exercise_get_participants($exerciseid) {
 //Returns the users with data in one exercise
@@ -1723,6 +1724,11 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
 						foreach ($assessments as $assessment) {
 							if (isteacher($course->id, $assessment->userid)) {
 								$teacherassessed = true;
+                                if (!$teacher = get_record("user", "id", $assessment->userid)) {
+                                    error("List unassessed student submissions: teacher record not found");
+                                }
+                                $comment = get_string("resubmissionfor", "exercise",
+                                                "$teacher->firstname $teacher->lastname");
 								if ($assessment->timecreated > $timenow - $CFG->maxeditingtime) {
 									$warm = true;
 								}
@@ -1739,6 +1745,34 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
 					}
 					if (!$teacherassessed) { 
 						// no teacher's assessment
+                        // find who did the previous assessment
+            			if (!$submissions = exercise_get_user_submissions($exercise, $submissionowner)) {
+			            	error("List unassessed student submissions: submission records not found");
+				        }
+                        // get the last but one submission (prevsubmission)
+            			$n = 0;
+			            foreach ($submissions as $tempsubmission) {
+            				if ($n == 1) {
+                                $prevsubmission = $tempsubmission;
+		        		    	break;
+				    	    }
+    				        $n++;
+				        }
+            			// get the teacher's assessment of the student's previous submission
+		            	if ($assessments = get_records("exercise_assessments", "submissionid", 
+                                    $prevsubmission->id)) {
+                            foreach ($assessments as $assessment) {
+                                if (isteacher($course->id, $assessment->userid)) {
+                                    if (!$teacher = get_record("user", "id", $assessment->userid)) {
+                                        error("List unassessed student submissions: teacher record not found");
+                                    }
+                                    $comment = get_string("resubmissionfor", "exercise",
+                                                    "$teacher->firstname $teacher->lastname");
+								    break; // no need to look further
+                                    
+				                }
+                            }
+                        }
 						$action = "<A HREF=\"assessments.php?action=assessresubmission&id=$cm->id&sid=$submission->id\">".
 							get_string("assess", "exercise")."</A>";
 						$table->data[] = array(exercise_print_submission_title($exercise, $submission), 

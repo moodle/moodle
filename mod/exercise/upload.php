@@ -22,8 +22,6 @@
 
     require_login($course->id);
 
-    add_to_log($course->id, "exercise", "submit", "view.php?id=$cm->id", "$exercise->id");
-
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
     }
@@ -64,6 +62,7 @@
 						error("Sorry, an error in the system prevents you from uploading files: contact your teacher or system administrator");
 						}
 					if (move_uploaded_file($newfile['tmp_name'], "$dir/$newfile_name")) {
+                        add_to_log($course->id, "exercise", "submit", "view.php?id=$cm->id", "$exercise->id");
 						print_heading(get_string("uploadsuccess", "assignment", $newfile_name) );
 						}
 					else {

@@ -7,6 +7,7 @@
 	admindelete
 	adminlist
 	adminlistbystudent
+	assessresubmission
 	assesssubmission
 	displaygradingform
 	editelements (teachers only)
