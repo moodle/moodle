@@ -812,6 +812,7 @@ $string['sitefiles'] = 'Fichiers du site';
 $string['sitelogs'] = 'Événements du site';
 $string['sitenews'] = 'Brèves';
 $string['sites'] = 'Sites';
+$string['sitesection'] = 'Inclure une description';
 $string['sitesettings'] = 'Configuration du site';
 $string['size'] = 'Taille';
 $string['sizeb'] = 'octets';
