@@ -1,0 +1,75 @@
+<?PHP  // $Id$
+
+/// Library of functions and constants for module label
+
+
+define("LABEL_MAX_NAME_LENGTH", 50);
+
+function label_add_instance($label) {
+/// Given an object containing all the necessary data, 
+/// (defined by the form in mod.html) this function 
+/// will create a new instance and return the id number 
+/// of the new instance.
+
+    $label->name = strip_tags($label->content);
+    if (strlen($label->name) > LABEL_MAX_NAME_LENGTH) {
+        $label->name = substr($label->name, 0, LABEL_MAX_NAME_LENGTH)."...";
+    }
+    $label->timemodified = time();
+
+    return insert_record("label", $label);
+}
+
+
+function label_update_instance($label) {
+/// Given an object containing all the necessary data, 
+/// (defined by the form in mod.html) this function 
+/// will update an existing instance with new data.
+
+    $label->name = strip_tags($label->content);
+    if (strlen($label->name) > LABEL_MAX_NAME_LENGTH) {
+        $label->name = substr($label->name, 0, LABEL_MAX_NAME_LENGTH)."...";
+    }
+    $label->timemodified = time();
+    $label->id = $label->instance;
+
+    return update_record("label", $label);
+}
+
+
+function label_delete_instance($id) {
+/// Given an ID of an instance of this module, 
+/// this function will permanently delete the instance 
+/// and any data that depends on it.  
+
+    if (! $label = get_record("label", "id", "$id")) {
+        return false;
+    }
+
+    $result = true;
+
+    if (! delete_records("label", "id", "$label->id")) {
+        $result = false;
+    }
+
+    return $result;
+}
+
+function label_user_outline($course, $user, $mod, $label) {
+/// Return a small object with summary information about what a 
+/// user has done with a given particular instance of this module
+/// Used for user activity reports.
+/// $return->time = the time they did it
+/// $return->info = a short text description
+
+    return NULL;
+}
+
+function label_user_complete($course, $user, $mod, $label) {
+/// Print a detailed representation of what a  user has done with 
+/// a given particular instance of this module, for user activity reports.
+
+    return false;
+}
+
+?>
