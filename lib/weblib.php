@@ -609,39 +609,41 @@ function replace_smilies(&$text) {
     static $e = array();
     static $img = array();
     static $emoticons = array(
-        ':-)'  => 'smiley.gif',
-        ':)'   => 'smiley.gif',
-        ':-D'  => 'biggrin.gif',
-        ';-)'  => 'wink.gif',
-        ':-/'  => 'mixed.gif',
-        'V-.'  => 'thoughtful.gif',
-        ':-P'  => 'tongueout.gif',
-        'B-)'  => 'cool.gif',
-        '^-)'  => 'approve.gif',
-        '8-)'  => 'wideeyes.gif',
-        ':o)'  => 'clown.gif',
-        ':-('  => 'sad.gif',
-        ':('   => 'sad.gif',
-        '8-.'  => 'shy.gif',
-        ':-I'  => 'blush.gif',
-        ':-X'  => 'kiss.gif',
-        '8-o'  => 'surprise.gif',
-        'P-|'  => 'blackeye.gif',
-        '8-['  => 'angry.gif',
-        'xx-P' => 'dead.gif',
-        '|-.'  => 'sleepy.gif',
-        '}-]'  => 'evil.gif',
+        ':-)'  => 'smiley',
+        ':)'   => 'smiley',
+        ':-D'  => 'biggrin',
+        ';-)'  => 'wink',
+        ':-/'  => 'mixed',
+        'V-.'  => 'thoughtful',
+        ':-P'  => 'tongueout',
+        'B-)'  => 'cool',
+        '^-)'  => 'approve',
+        '8-)'  => 'wideeyes',
+        ':o)'  => 'clown',
+        ':-('  => 'sad',
+        ':('   => 'sad',
+        '8-.'  => 'shy',
+        ':-I'  => 'blush',
+        ':-X'  => 'kiss',
+        '8-o'  => 'surprise',
+        'P-|'  => 'blackeye',
+        '8-['  => 'angry',
+        'xx-P' => 'dead',
+        '|-.'  => 'sleepy',
+        '}-]'  => 'evil',
         );
 
- /// this is the meat of the code - this is run every time
-     if ($runonce == false){
+    if ($runonce == false) {  /// After the first time this is not run again
         foreach ($emoticons as $emoticon => $image){
+            $alttext = get_string($image, 'pix');
+
             $e[] = $emoticon;
-            $img[] = "<img alt=\"$emoticon\" width=\"15\" height=\"15\" src=\"$CFG->pixpath/s/$image\" />";
+            $img[] = "<img alt=\"$alttext\" width=\"15\" height=\"15\" src=\"$CFG->pixpath/s/$image.gif\" />";
         }
         $runonce = true;
     }
 
+/// this is the meat of the code - this is run every time
     $text = str_replace($e, $img, $text);
 }
 
