@@ -1,6 +1,6 @@
 <?php
 /*
-V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -18,8 +18,8 @@ include_once(ADODB_DIR.'/adodb-csvlib.inc.php');
  
 class ADODB_csv extends ADOConnection {
 	var $databaseType = 'csv';
-    var $hasInsertID = true;
-    var $hasAffectedRows = true;	
+	var $hasInsertID = true;
+	var $hasAffectedRows = true;	
 	var $fmtTimeStamp = "'Y-m-d H:i:s'";
 	var $_affectedrows=0;
 	var $_insertid=0;
@@ -30,15 +30,15 @@ class ADODB_csv extends ADOConnection {
 	{			
 	}
 	
-    function _insertid()
-    {
-            return $this->_insertid;
-    }
-    
-    function _affectedrows()
-    {
-            return $this->_affectedrows;
-    }
+	function _insertid()
+	{
+			return $this->_insertid;
+	}
+	
+	function _affectedrows()
+	{
+			return $this->_affectedrows;
+	}
   
   	function &MetaDatabases()
 	{
@@ -161,7 +161,7 @@ class ADODB_csv extends ADOConnection {
 	/*	Returns: the last error message from previous database operation	*/	
 	function ErrorMsg() 
 	{
-	    	return $this->_errorMsg;
+			return $this->_errorMsg;
 	}
 	
 	/*	Returns: the last error number from previous database operation	*/	

@@ -1,6 +1,6 @@
 <?php
 /*
-V2.12 12 June 2002 (c) 2000-2002 John Lim. All rights reserved.
+V2.50 14 Nov 2002  (c) 2000-2002 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -44,40 +44,46 @@ class ADODB_informix72 extends ADOConnection {
 		putenv('GL_DATE=%Y-%m-%d');
 	}
 
-    function _insertid()
-    {
+	function _insertid()
+	{
 		$sqlca =ifx_getsqlca($this->lastQuery);
 		return @$sqlca["sqlerrd1"];
-    }
+	}
 
-    function _affectedrows()
-    {
-		if ($this->lastQuery) {
-           return ifx_affected_rows ($this->lastQuery);
-       } else
-		return 0;
-    }
-
-    function BeginTrans()
+	function _affectedrows()
 	{
-        $this->Execute('BEGIN');
+		if ($this->lastQuery) {
+		   return ifx_affected_rows ($this->lastQuery);
+	   } else
+		return 0;
+	}
+
+	function BeginTrans()
+	{
+		if ($this->transOff) return true;
+		$this->transCnt += 1;
+		$this->Execute('BEGIN');
 		$this->_autocommit = false;
-    	return true;
+		return true;
 	}
 
 	function CommitTrans($ok=true) 
 	{ 
 		if (!$ok) return $this->RollbackTrans();
-        $this->Execute('COMMIT');
+		if ($this->transOff) return true;
+		if ($this->transCnt) $this->transCnt -= 1;
+		$this->Execute('COMMIT');
 		$this->_autocommit = true;
 		return true;
 	}
 
 	function RollbackTrans()
 	{
-         $this->Execute('ROLLBACK');
-		 $this->_autocommit = true;
-         return true;
+		if ($this->transOff) return true;
+		if ($this->transCnt) $this->transCnt -= 1;
+		$this->Execute('ROLLBACK');
+		$this->_autocommit = true;
+		return true;
 	}
 
 	function RowLock($tables,$where)
@@ -95,7 +101,7 @@ class ADODB_informix72 extends ADOConnection {
 	}
 
    function ErrorNo() {
-      return ifx_error();
+	  return ifx_error();
    }
 
    function MetaColumns($table)
@@ -137,41 +143,41 @@ class ADODB_informix72 extends ADOConnection {
 	{
 	global $ADODB_COUNTRECS;
 	
-      // String parameters have to be converted using ifx_create_char
-      if ($inputarr) {
-         foreach($inputarr as $v) {
-            if (gettype($v) == 'string') {
-               $tab[] = ifx_create_char($v);
-            }
-            else {
-               $tab[] = $v;
-            }
-         }
-      }
+	  // String parameters have to be converted using ifx_create_char
+	  if ($inputarr) {
+		 foreach($inputarr as $v) {
+			if (gettype($v) == 'string') {
+			   $tab[] = ifx_create_char($v);
+			}
+			else {
+			   $tab[] = $v;
+			}
+		 }
+	  }
 
-      // In case of select statement, we use a scroll cursor in order
-      // to be able to call "move", or "movefirst" statements
-      if ($ADODB_COUNTRECS && preg_match("/^[\\t\\n ]*select/i", $sql)) {
-         if ($inputarr) {
-            $this->lastQuery = ifx_query($sql,$this->_connectionID, IFX_SCROLL, $tab);
-         }
-         else {
-            $this->lastQuery = ifx_query($sql,$this->_connectionID, IFX_SCROLL);
-         }
-      }
-      else {
-         if ($inputarr) {
-            $this->lastQuery = ifx_query($sql,$this->_connectionID, $tab);
-         }
-         else {
+	  // In case of select statement, we use a scroll cursor in order
+	  // to be able to call "move", or "movefirst" statements
+	  if (!$ADODB_COUNTRECS && preg_match("/^\s*select/i", $sql)) {
+		 if ($inputarr) {
+			$this->lastQuery = ifx_query($sql,$this->_connectionID, IFX_SCROLL, $tab);
+		 }
+		 else {
+			$this->lastQuery = ifx_query($sql,$this->_connectionID, IFX_SCROLL);
+		 }
+	  }
+	  else {
+		 if ($inputarr) {
+			$this->lastQuery = ifx_query($sql,$this->_connectionID, $tab);
+		 }
+		 else {
 			$this->lastQuery = ifx_query($sql,$this->_connectionID);
-         }
-      }
+		 }
+	  }
 
-      // Following line have been commented because autocommit mode is
-      // not supported by informix SE 7.2
+	  // Following line have been commented because autocommit mode is
+	  // not supported by informix SE 7.2
 
-      //if ($this->_autocommit) ifx_query('COMMIT',$this->_connectionID);
+	  //if ($this->_autocommit) ifx_query('COMMIT',$this->_connectionID);
 
 		return $this->lastQuery;
 	}
@@ -227,7 +233,7 @@ class ADORecordset_informix72 extends ADORecordSet {
 
 	function _initrs()
 	{
-	    $this->_numOfRows = -1; // ifx_affected_rows not reliable, only returns estimate -- ($ADODB_COUNTRECS)? ifx_affected_rows($this->_queryID):-1;
+		$this->_numOfRows = -1; // ifx_affected_rows not reliable, only returns estimate -- ($ADODB_COUNTRECS)? ifx_affected_rows($this->_queryID):-1;
 		$this->_numOfFields = ifx_num_fields($this->_queryID);
 	}
 
@@ -238,34 +244,34 @@ class ADORecordset_informix72 extends ADORecordSet {
 
    function MoveLast()
    {
-      $this->fields = @ifx_fetch_row($this->_queryID, "LAST");
-      if ($this->fields) $this->EOF = false;
-      $this->_currentRow = -1;
+	  $this->fields = @ifx_fetch_row($this->_queryID, "LAST");
+	  if ($this->fields) $this->EOF = false;
+	  $this->_currentRow = -1;
 
-      if ($this->fetchMode == ADODB_FETCH_NUM) {
-         foreach($this->fields as $v) {
-            $arr[] = $v;
-         }
-         $this->fields = $arr;
-      }
+	  if ($this->fetchMode == ADODB_FETCH_NUM) {
+		 foreach($this->fields as $v) {
+			$arr[] = $v;
+		 }
+		 $this->fields = $arr;
+	  }
 
-      return true;
+	  return true;
    }
 
    function MoveFirst()
 	{
-      $this->fields = @ifx_fetch_row($this->_queryID, "FIRST");
-      if ($this->fields) $this->EOF = false;
-      $this->_currentRow = 0;
+	  $this->fields = @ifx_fetch_row($this->_queryID, "FIRST");
+	  if ($this->fields) $this->EOF = false;
+	  $this->_currentRow = 0;
 
-      if ($this->fetchMode == ADODB_FETCH_NUM) {
-         foreach($this->fields as $v) {
-            $arr[] = $v;
-         }
-         $this->fields = $arr;
-      }
+	  if ($this->fetchMode == ADODB_FETCH_NUM) {
+		 foreach($this->fields as $v) {
+			$arr[] = $v;
+		 }
+		 $this->fields = $arr;
+	  }
 
-      return true;
+	  return true;
    }
 
    function _fetch($ignore_fields=false)
@@ -293,4 +299,3 @@ class ADORecordset_informix72 extends ADORecordSet {
 
 }
 ?>
-

@@ -1,6 +1,6 @@
 <?php
 /* 
-V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -59,7 +59,7 @@ global $ADODB_mssql_date_order;
 		$anum = (int) $adate;
 		if ($anum > 0) {
 			if ($anum > 31) {
-				print "<p>MSSQL: YYYY-MM-DD date format not supported currently</p>";
+				ADOConnection::outp( "MSSQL: YYYY-MM-DD date format not supported currently");
 			} else
 				$ADODB_mssql_date_order = 'dmy';
 		} else
@@ -69,46 +69,42 @@ global $ADODB_mssql_date_order;
 
 class ADODB_mssql extends ADOConnection {
 	var $databaseType = "mssql";	
+	var $dataProvider = "mssql";
 	var $replaceQuote = "''"; // string to use to replace quotes
 	var $fmtDate = "'Y-m-d'";
 	var $fmtTimeStamp = "'Y-m-d h:i:sA'";
 	var $hasInsertID = true;
-    var $hasAffectedRows = true;
+	var $hasAffectedRows = true;
 	var $metaTablesSQL="select name from sysobjects where type='U' or type='V' and (name not in ('sysallocations','syscolumns','syscomments','sysdepends','sysfilegroups','sysfiles','sysfiles1','sysforeignkeys','sysfulltextcatalogs','sysindexes','sysindexkeys','sysmembers','sysobjects','syspermissions','sysprotects','sysreferences','systypes','sysusers','sysalternates','sysconstraints','syssegments','REFERENTIAL_CONSTRAINTS','CHECK_CONSTRAINTS','CONSTRAINT_TABLE_USAGE','CONSTRAINT_COLUMN_USAGE','VIEWS','VIEW_TABLE_USAGE','VIEW_COLUMN_USAGE','SCHEMATA','TABLES','TABLE_CONSTRAINTS','TABLE_PRIVILEGES','COLUMNS','COLUMN_DOMAIN_USAGE','COLUMN_PRIVILEGES','DOMAINS','DOMAIN_CONSTRAINTS','KEY_COLUMN_USAGE'))";
 	var $metaColumnsSQL = "select c.name,t.name,c.length from syscolumns c join systypes t on t.xusertype=c.xusertype join sysobjects o on o.id=c.id where o.name='%s'";
 	var $hasTop = 'top';		// support mssql SELECT TOP 10 * FROM TABLE
-	var $_hastrans = false;
 	var $hasGenID = true;
-	var $sysDate = 'GetDate()';
+	var $sysDate = 'convert(datetime,convert(char,getdate(),102),102)';
 	var $sysTimeStamp = 'GetDate()';
 	var $_has_mssql_init;
 	var $maxParameterLen = 4000;
 	var $arrayClass = 'ADORecordSet_array_mssql';
 	var $uniqueSort = true;
+	var $leftOuter = '*=';
+	var $rightOuter = '=*';
+	var $ansiOuter = true; // for mssql7 or later
 	
 	function ADODB_mssql() 
 	{			
 		$this->_has_mssql_init = (strnatcmp(PHP_VERSION,'4.1.0')>=0);	
 	}
 
-    // might require begintrans -- committrans
-    function _insertid()
-    {
-            return $this->GetOne('select @@identity');
-    }
-      // might require begintrans -- committrans
-    function _affectedrows()
-    {
-        return $this->GetOne('select @@rowcount');
-    }
-	
-    function BeginTrans()
-	{       
-		$this->_hastrans = true;
-       	$this->Execute('BEGIN TRAN');
-       	return true;
+	// might require begintrans -- committrans
+	function _insertid()
+	{
+			return $this->GetOne('select @@identity');
 	}
-		
+	  // might require begintrans -- committrans
+	function _affectedrows()
+	{
+		return $this->GetOne('select @@rowcount');
+	}
+	
 	function GenID($seq='adodbseq',$start=1)
 	{	
 		//$this->debug=1;
@@ -122,7 +118,7 @@ class ADODB_mssql extends ADOConnection {
 				return false;
 			}
 			$this->Execute('COMMIT TRANSACTION adodbseq'); 
-			return 1;
+			return $start;
 		}
 		$num = $this->GetOne("select id from $seq");
 		$this->Execute('COMMIT TRANSACTION adodbseq'); 
@@ -132,20 +128,68 @@ class ADODB_mssql extends ADOConnection {
 		//return $this->GetOne("SELECT CONVERT(varchar(255), NEWID()) AS 'Char'");
 	}
 	
+	// Format date column in sql string given an input format that understands Y M D
+	function SQLDate($fmt, $col=false)
+	{	
+		if (!$col) $col = $this->sysDate;
+		$s = '';
+		
+		$len = strlen($fmt);
+		for ($i=0; $i < $len; $i++) {
+			if ($s) $s .= '+';
+			$ch = $fmt[$i];
+			switch($ch) {
+			case 'Y':
+			case 'y':
+				$s .= "datename(yyyy,$col)";
+				break;
+			case 'M':
+			case 'm':
+				$s .= "replace(str(month($col),2),' ','0')";
+				break;
+			case 'Q':
+			case 'q':
+				$s .= "datename(quarter,$col)";
+				break;
+			case 'D':
+			case 'd':
+				$s .= "replace(str(day($col),2),' ','0')";
+				break;
+			default:
+				if ($ch == '\\') {
+					$i++;
+					$ch = substr($fmt,$i,1);
+				}
+				$s .= $this->qstr($ch);
+				break;
+			}
+		}
+		return $s;
+	}
+
+	
+	function BeginTrans()
+	{
+		if ($this->transOff) return true; 
+		$this->transCnt += 1;
+	   	$this->Execute('BEGIN TRAN');
+	   	return true;
+	}
+		
 	function CommitTrans($ok=true) 
 	{ 
+		if ($this->transOff) return true; 
 		if (!$ok) return $this->RollbackTrans();
-		if (!$this->_hastrans) return false;
-		$this->_hastrans = false;
-        $this->Execute('COMMIT TRAN');
-        return true;
+		if ($this->transCnt) $this->transCnt -= 1;
+		$this->Execute('COMMIT TRAN');
+		return true;
 	}
 	function RollbackTrans()
 	{
-		if (!$this->_hastrans) return false;
-		$this->_hastrans = false;
-        $this->Execute('ROLLBACK TRAN');
-        return true;
+		if ($this->transOff) return true; 
+		if ($this->transCnt) $this->transCnt -= 1;
+		$this->Execute('ROLLBACK TRAN');
+		return true;
 	}
 	
 	/*
@@ -162,30 +206,30 @@ class ADODB_mssql extends ADOConnection {
 	*/
 	function RowLock($tables,$where) 
 	{
-		if (!$this->_hastrans) $this->BeginTrans();
+		if (!$this->transCnt) $this->BeginTrans();
 		return $this->GetOne("select top 1 null as ignore from $tables with (ROWLOCK,HOLDLOCK) where $where");
 	}
 	
 	//From: Fernando Moreira <FMoreira@imediata.pt>
 	function MetaDatabases() 
 	{ 
-	    if(@mssql_select_db("master")) { 
-	             $qry="select name from sysdatabases where name <> 'master'"; 
-	             if($rs=@mssql_query($qry)){ 
-	                     $tmpAr=$ar=array(); 
-	                     while($tmpAr=@mssql_fetch_row($rs)) 
-	                             $ar[]=$tmpAr[0]; 
-	                    @mssql_select_db($this->databaseName); 
-	                     if(sizeof($ar)) 
-	                             return($ar); 
-	                     else 
-	                             return(false); 
-	             } else { 
-	                     @mssql_select_db($this->databaseName); 
-	                     return(false); 
-	             } 
-	     } 
-	     return(false); 
+		if(@mssql_select_db("master")) { 
+				 $qry="select name from sysdatabases where name <> 'master'"; 
+				 if($rs=@mssql_query($qry)){ 
+						 $tmpAr=$ar=array(); 
+						 while($tmpAr=@mssql_fetch_row($rs)) 
+								 $ar[]=$tmpAr[0]; 
+						@mssql_select_db($this->databaseName); 
+						 if(sizeof($ar)) 
+								 return($ar); 
+						 else 
+								 return(false); 
+				 } else { 
+						 @mssql_select_db($this->databaseName); 
+						 return(false); 
+				 } 
+		 } 
+		 return(false); 
 	} 
 
 	function SelectDB($dbName) 
@@ -209,14 +253,14 @@ class ADODB_mssql extends ADOConnection {
 	function ErrorNo() 
 	{
 		if (empty($this->_errorMsg)) {
-			$this->_errorMsg = mssql_get_last_message();	print " D E F $this->_errorMsg";
+			$this->_errorMsg = mssql_get_last_message();
 		}
 		$id = @mssql_query("select @@ERROR",$this->_connectionID);
 		if (!$id) return false;
 		$arr = mssql_fetch_array($id);
 		@mssql_free_result($id);
 		if (is_array($arr)) return $arr[0];
-       else return -1;
+	   else return -1;
 	}
 	
 	// returns true or false
@@ -234,6 +278,12 @@ class ADODB_mssql extends ADOConnection {
 	{
 		$this->_connectionID = mssql_pconnect($argHostname,$argUsername,$argPassword);
 		if ($this->_connectionID === false) return false;
+		
+		// persistent connections can forget to rollback on crash, so we do it here.
+		if ($this->autoRollback) {
+			$cnt = $this->GetOne('select @@TRANCOUNT');
+			while (--$cnt >= 0) $this->Execute('ROLLBACK TRAN'); 
+		}
 		if ($argDatabasename) return $this->SelectDB($argDatabasename);
 		return true;	
 	}
@@ -246,7 +296,7 @@ class ADODB_mssql extends ADOConnection {
 	function PrepareSP($sql)
 	{
 		if (!$this->_has_mssql_init) {
-			print "PrepareSP: mssql_init only available since PHP 4.1.0<br>\n";
+			ADOConnection::outp( "PrepareSP: mssql_init only available since PHP 4.1.0");
 			return $sql;
 		}
 		$stmt = mssql_init($sql,$this->_connectionID);
@@ -275,7 +325,7 @@ class ADODB_mssql extends ADOConnection {
 	function Parameter(&$stmt, &$var, $name, $isOutput=false, $maxLen=4000, $type=false)
 	{
 		if (!$this->_has_mssql_init) {
-			print "Parameter: mssql_bind only available since PHP 4.1.0<br>\n";
+			ADOConnection::outp( "Parameter: mssql_bind only available since PHP 4.1.0");
 			return $sql;
 		}
 
@@ -291,7 +341,7 @@ class ADODB_mssql extends ADOConnection {
 			}
 		
 		if  ($this->debug) {
-			print "Parameter(\$stmt, \$php_var='$var', \$name='$name'); (type=$type)<br>\n";
+			ADOConnection::outp( "Parameter(\$stmt, \$php_var='$var', \$name='$name'); (type=$type)");
 		}
 		return mssql_bind($stmt[1], '@'.$name, $var, $type, $isOutput, $isNull, $maxLen);
 	}
@@ -325,7 +375,7 @@ class ADODB_mssql extends ADOConnection {
 	// returns true or false
 	function _close()
 	{ 
-		if ($this->_hastrans) $this->RollbackTrans();
+		if ($this->transCnt) $this->RollbackTrans();
 		$rez = @mssql_close($this->_connectionID);
 		$this->_connectionID = false;
 		return $rez;
@@ -365,12 +415,12 @@ class ADORecordset_mssql extends ADORecordSet {
 	// get next resultset - requires PHP 4.0.5 or later
 	function NextRecordSet()
 	{
-	    if (!mssql_next_result($this->_queryID)) return false;
-	    $this->_inited = false;
+		if (!mssql_next_result($this->_queryID)) return false;
+		$this->_inited = false;
 		$this->bind = false;
-	    $this->_currentRow = -1;
-	    $this->Init();
-	    return true;
+		$this->_currentRow = -1;
+		$this->Init();
+		return true;
 	}
 
 	/* Use associative array to get fields array */
@@ -421,21 +471,55 @@ class ADORecordset_mssql extends ADORecordSet {
 	{
 		if (!$this->EOF) {		
 			$this->_currentRow++;
-			if ($this->fetchMode & ADODB_FETCH_ASSOC) $this->fields = @mssql_fetch_array($this->_queryID);
-			else $this->fields = @mssql_fetch_row($this->_queryID);
-			
+			if ($this->fetchMode & ADODB_FETCH_ASSOC) {
+			global $ADODB_mssql_has_datetimeconvert;
+				if ($ADODB_mssql_has_datetimeconvert) // only for PHP 4.2.0 or later
+					$this->fields = @mssql_fetch_assoc($this->_queryID);
+				else {
+					$flds = @mssql_fetch_array($this->_queryID);
+					if (is_array($flds)) {
+						$fassoc = array();
+						foreach($flds as $k => $v) {
+							if (is_numeric($k)) continue;
+							$fassoc[$k] = $v;
+						}
+						$this->fields = $fassoc;
+					} else 
+						$this->fields = $flds;
+				}
+			} else {
+				$this->fields = @mssql_fetch_row($this->_queryID);
+			}
 			if (is_array($this->fields)) return true;
 			$this->EOF = true;
 		}
 		return false;
 	}
+
 	
 	// INSERT UPDATE DELETE returns false even if no error occurs in 4.0.4
 	// also the date format has been changed from YYYY-mm-dd to dd MMM YYYY in 4.0.4. Idiot!
 	function _fetch($ignore_fields=false) 
 	{
-		if ($this->fetchMode & ADODB_FETCH_ASSOC) $this->fields = @mssql_fetch_array($this->_queryID);
-		else $this->fields = @mssql_fetch_row($this->_queryID);
+		if ($this->fetchMode & ADODB_FETCH_ASSOC) {
+		global $ADODB_mssql_has_datetimeconvert;
+			if ($ADODB_mssql_has_datetimeconvert) // only for PHP 4.2.0 or later
+				$this->fields = @mssql_fetch_assoc($this->_queryID);
+			else {
+				$flds = @mssql_fetch_array($this->_queryID);
+				if (is_array($flds)) {
+					$fassoc = array();
+					foreach($flds as $k => $v) {
+						if (is_integer($k)) continue;
+						$fassoc[$k] = $v;
+					}
+					$this->fields = $fassoc;
+				} else
+					$this->fields = $flds;
+			}
+		} else {
+			$this->fields = @mssql_fetch_row($this->_queryID);
+		}
 		return (!empty($this->fields));
 	}
 	

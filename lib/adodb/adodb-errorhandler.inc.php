@@ -1,6 +1,6 @@
 <?php
 /**
- * @version V2.12 12 June 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -10,6 +10,9 @@
  * Latest version is available at http://php.weblogs.com
  *
 */
+
+// added Claudio Bustos  clbustos#entelchile.net
+if (!defined('ADODB_ERROR_HANDLER_TYPE')) define('ADODB_ERROR_HANDLER_TYPE',E_USER_ERROR); 
 
 define('ADODB_ERROR_HANDLER','ADODB_Error_Handler');
 
@@ -25,6 +28,7 @@ define('ADODB_ERROR_HANDLER','ADODB_Error_Handler');
 	*/
 function ADODB_Error_Handler($dbms, $fn, $errno, $errmsg, $p1=false, $p2=false)
 {
+	if (error_reporting() == 0) return; // obey @ protocol
 	switch($fn) {
 	case 'EXECUTE':
 		$sql = $p1;
@@ -68,6 +72,6 @@ function ADODB_Error_Handler($dbms, $fn, $errno, $errmsg, $p1=false, $p2=false)
 
 
 	//print "<p>$s</p>";
-	trigger_error($s,E_USER_ERROR);
+	trigger_error($s,ADODB_ERROR_HANDLER_TYPE); 
 }
 ?>

@@ -1,6 +1,6 @@
 <?php 
 /*
-V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -27,15 +27,15 @@ $gSQLBlockRows=20; // max no of rows per table block
 // $zheaderarray: contains the replacement strings for the headers (optional)
 //
 //  USAGE:
-//    include('adodb.inc.php');
-//    $db = ADONewConnection('mysql');
-//    $db->Connect('mysql','userid','password','database');
-//    $rs = $db->Execute('select col1,col2,col3 from table');
-//    rs2html($rs, 'BORDER=2', array('Title1', 'Title2', 'Title3'));
-//    $rs->Close();
+//	include('adodb.inc.php');
+//	$db = ADONewConnection('mysql');
+//	$db->Connect('mysql','userid','password','database');
+//	$rs = $db->Execute('select col1,col2,col3 from table');
+//	rs2html($rs, 'BORDER=2', array('Title1', 'Title2', 'Title3'));
+//	$rs->Close();
 //
 // RETURNS: number of rows displayed
-function rs2html(&$rs,$ztabhtml='',$zheaderarray="")
+function rs2html(&$rs,$ztabhtml=false,$zheaderarray=false,$htmlspecialchars=true)
 {
 $s ='';$rows=0;$docnt = false;
 GLOBAL $gSQLMaxRows,$gSQLBlockRows;
@@ -49,26 +49,26 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows;
 	//else $docnt = true;
 	$typearr = array();
 	$ncols = $rs->FieldCount();
-    $hdr = "<TABLE COLS=$ncols $ztabhtml>\n\n";
+	$hdr = "<TABLE COLS=$ncols $ztabhtml>\n\n";
 	for ($i=0; $i < $ncols; $i++) {	
 		$field = $rs->FetchField($i);
 		if ($zheaderarray) $fname = $zheaderarray[$i];
 		else $fname = htmlspecialchars($field->name);	
 		$typearr[$i] = $rs->MetaType($field->type,$field->max_length);
  		//print " $field->name $field->type $typearr[$i] ";
-		    
-		if (empty($fname)) $fname = '&nbsp;';
+			
+		if (strlen($fname)==0) $fname = '&nbsp;';
 		$hdr .= "<TH>$fname</TH>";
-    }
+	}
 
 	print $hdr."\n\n";
 	
 	// smart algorithm - handles ADODB_FETCH_MODE's correctly!
 	$numoffset = isset($rs->fields[0]);
-    while (!$rs->EOF) {
-        $s .= "<TR>\n";
+	while (!$rs->EOF) {
+		$s .= "<TR valign=top>\n";
 		
-    	for ($i=0, $v=($numoffset) ? $rs->fields[0] : reset($rs->fields); 
+		for ($i=0, $v=($numoffset) ? $rs->fields[0] : reset($rs->fields); 
 			$i < $ncols; 
 			$i++, $v = ($numoffset) ? @$rs->fields[$i] : next($rs->fields)) {
 			
@@ -82,18 +82,17 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows;
 			break;
 			case 'I':
 			case 'N':
-				$s .= "	<TD align=right>".htmlspecialchars(trim($v)) ."&nbsp;</TD>\n";
-               	$s = stripslashes($s);
-               	$s = urldecode($s);
+				$s .= "	<TD align=right>".stripslashes((trim($v))) ."&nbsp;</TD>\n";
+			   	
 			break;
 			default:
-				$s .= "	<TD>".htmlspecialchars(trim($v)) ."&nbsp;</TD>\n";
-               	$s = stripslashes($s);
-               	$s = urldecode($s);
+				if ($htmlspecialchars) $v = htmlspecialchars($v);
+				$s .= "	<TD>". str_replace("\n",'<br>',stripslashes((trim($v)))) ."&nbsp;</TD>\n";
+			  
 			}
 		} // for
-        $s .= "</TR>\n\n";
-              
+		$s .= "</TR>\n\n";
+			  
 		$rows += 1;
 		if ($rows >= $gSQLMaxRows) {
 			$rows = "<p>Truncated at $gSQLMaxRows</p>";
@@ -103,22 +102,22 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows;
 		$rs->MoveNext();
 	
 	// additional EOF check to prevent a widow header
-        if (!$rs->EOF && $rows % $gSQLBlockRows == 0) {
+		if (!$rs->EOF && $rows % $gSQLBlockRows == 0) {
 	
 		//if (connection_aborted()) break;// not needed as PHP aborts script, unlike ASP
-        	print $s . "</TABLE>\n\n";
-        	$s = $hdr;
+			print $s . "</TABLE>\n\n";
+			$s = $hdr;
 		}
-    } // while
+	} // while
 
-    print $s."</TABLE>\n\n";
+	print $s."</TABLE>\n\n";
 
 	if ($docnt) print "<H2>".$rows." Rows</H2>";
 	
 	return $rows;
  }
  
-
+// pass in 2 dimensional array
 function arr2html(&$arr,$ztabhtml='',$zheaderarray='')
 {
 	if (!$ztabhtml) $ztabhtml = 'BORDER=1';
@@ -128,7 +127,7 @@ function arr2html(&$arr,$ztabhtml='',$zheaderarray='')
 	if ($zheaderarray) {
 		$s .= '<TR>';
 		for ($i=0; $i<sizeof($zheaderarray); $i++) {
-			$s .= "    <TD>{$zheaderarray[$i]}</TD>\n";
+			$s .= "	<TH>{$zheaderarray[$i]}</TH>\n";
 		}
 		$s .= "\n</TR>";
 	}
@@ -140,11 +139,11 @@ function arr2html(&$arr,$ztabhtml='',$zheaderarray='')
 			for ($j=0; $j<sizeof($a); $j++) {
 				$val = $a[$j];
 				if (empty($val)) $val = '&nbsp;';
-				$s .= "    <TD>$val</TD>\n";
+				$s .= "	<TD>$val</TD>\n";
 			}
 		else if ($a) {
-			$s .=  '    <TD>'.$a."</TD>\n";
-		} else $s .= "    <TD>&nbsp;</TD>\n";
+			$s .=  '	<TD>'.$a."</TD>\n";
+		} else $s .= "	<TD>&nbsp;</TD>\n";
 		$s .= "\n</TR>\n";
 	}
 	$s .= '</TABLE>';

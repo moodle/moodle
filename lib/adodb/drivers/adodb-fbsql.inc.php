@@ -1,6 +1,6 @@
 <?php
 /*
- @version V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+ @version V2.50 14 Nov 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
  Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -13,8 +13,8 @@ if (! defined("_ADODB_FBSQL_LAYER")) {
 
 class ADODB_fbsql extends ADOConnection {
 	var $databaseType = 'fbsql';
-    var $hasInsertID = true;
-    var $hasAffectedRows = true;	
+	var $hasInsertID = true;
+	var $hasAffectedRows = true;	
 	var $metaTablesSQL = "SHOW TABLES";	
 	var $metaColumnsSQL = "SHOW COLUMNS FROM %s";
 	var $fmtTimeStamp = "'Y-m-d H:i:s'";
@@ -24,15 +24,15 @@ class ADODB_fbsql extends ADOConnection {
 	{			
 	}
 	
-    function _insertid()
-    {
-            return fbsql_insert_id($this->_connectionID);
-    }
-    
-    function _affectedrows()
-    {
-            return fbsql_affected_rows($this->_connectionID);
-    }
+	function _insertid()
+	{
+			return fbsql_insert_id($this->_connectionID);
+	}
+	
+	function _affectedrows()
+	{
+			return fbsql_affected_rows($this->_connectionID);
+	}
   
   	function &MetaDatabases()
 	{
@@ -54,13 +54,8 @@ class ADODB_fbsql extends ADOConnection {
 		$arr = func_get_args();
 		$first = true;
 
-		foreach($arr as $a) {
-			if ($first) {
-				$s = $a;
-				$first = false;
-			} else $s .= ','.$a;
-		}
-		if (sizeof($s) > 0) return "CONCAT($s)";
+		$s = implode(',',$arr);
+		if (sizeof($arr) > 0) return "CONCAT($s)";
 		else return '';
 	}
 	
@@ -85,7 +80,7 @@ class ADODB_fbsql extends ADOConnection {
  	function &MetaColumns($table) 
 	{
 		if ($this->metaColumnsSQL) {
-		
+			
 			$rs = $this->Execute(sprintf($this->metaColumnsSQL,$table));
 			
 			if ($rs === false) return false;
@@ -138,7 +133,7 @@ class ADODB_fbsql extends ADOConnection {
 	function ErrorMsg() 
 	{
 		$this->_errorMsg = @fbsql_error($this->_connectionID);
-	    	return $this->_errorMsg;
+			return $this->_errorMsg;
 	}
 	
 	/*	Returns: the last error number from previous database operation	*/	

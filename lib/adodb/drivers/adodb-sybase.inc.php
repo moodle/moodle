@@ -1,6 +1,6 @@
 <?php
 /* 
-V2.12 12 June 2002 (c) 2000-2002 John Lim. All rights reserved.
+V2.50 14 Nov 2002  (c) 2000-2002 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -21,47 +21,59 @@ class ADODB_sybase extends ADOConnection {
 	var $fmtDate = "'Y-m-d'";
 	var $fmtTimeStamp = "'Y-m-d H:i:s'";
 	var $hasInsertID = true;
-    var $hasAffectedRows = true;
+	var $hasAffectedRows = true;
   	var $metaTablesSQL="select name from sysobjects where type='U' or type='V'";
 	var $metaColumnsSQL = "select c.name,t.name,c.length from syscolumns c join systypes t on t.xusertype=c.xusertype join sysobjects o on o.id=c.id where o.name='%s'";
 	var $concat_operator = '+'; 
 	var $sysDate = 'GetDate()';
 	var $arrayClass = 'ADORecordSet_array_sybase';
 	var $sysDate = 'GetDate()';
+	var $leftOuter = '*=';
+	var $rightOuter = '=*';
 	
 	function ADODB_sybase() 
 	{			
 	}
  
-    // might require begintrans -- committrans
-    function _insertid()
-    {
-    	return $this->GetOne('select @@identity');
-    }
-      // might require begintrans -- committrans
-    function _affectedrows()
-    {
-       return $this->GetOne('select @@rowcount');
-    }
+	// might require begintrans -- committrans
+	function _insertid()
+	{
+		return $this->GetOne('select @@identity');
+	}
+	  // might require begintrans -- committrans
+	function _affectedrows()
+	{
+	   return $this->GetOne('select @@rowcount');
+	}
 
-              
-    function BeginTrans()
-	{       
-    	$this->Execute('BEGIN TRAN');
-    	return true;
+			  
+	function BeginTrans()
+	{	
+	
+		if ($this->transOff) return true;
+		$this->transCnt += 1;
+		   
+		$this->Execute('BEGIN TRAN');
+		return true;
 	}
 	
 	function CommitTrans($ok=true) 
 	{ 
+		if ($this->transOff) return true;
+		
 		if (!$ok) return $this->RollbackTrans();
-    	$this->Execute('COMMIT TRAN');
-    	return true;
+	
+		$this->transCnt -= 1;
+		$this->Execute('COMMIT TRAN');
+		return true;
 	}
 	
 	function RollbackTrans()
 	{
-    	$this->Execute('ROLLBACK TRAN');
-        return true;
+		if ($this->transOff) return true;
+		$this->transCnt -= 1;
+		$this->Execute('ROLLBACK TRAN');
+		return true;
 	}
 	
 	// http://www.isug.com/Sybase_FAQ/ASE/section6.1.html#6.1.4
@@ -72,7 +84,7 @@ class ADODB_sybase extends ADOConnection {
 		return $this->GetOne("select top 1 null as ignore from $tables HOLDLOCK where $where");
 		
 	}	
-        
+		
 	function SelectDB($dbName) {
 		$this->databaseName = $dbName;
 		if ($this->_connectionID) {
@@ -196,8 +208,8 @@ class ADORecordset_sybase extends ADORecordSet {
 		return @sybase_data_seek($this->_queryID, $row);
 	}		
 
-	function _fetch($ignore_fields=false) {
-		
+	function _fetch($ignore_fields=false) 
+	{
 		if ($this->fetchMode == ADODB_FETCH_NUM) $this->fields = @sybase_fetch_row($this->_queryID);
 		else $this->fields = @sybase_fetch_array($this->_queryID);
 		return is_array($this->fields);

@@ -1,11 +1,12 @@
 <?php
 /*
-V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
 	Made table name configurable - by David Johnson djohnson@inpro.net
-    Encryption by Ari Kuorikoski <ari.kuorikoski@finebyte.com>
+	Encryption by Ari Kuorikoski <ari.kuorikoski@finebyte.com>
+	
   Set tabs to 4 for best viewing.
   
   Latest version of ADODB is available at http://php.weblogs.com/adodb
@@ -19,7 +20,9 @@ wrapper library.
  
  	GLOBAL $HTTP_SESSION_VARS;
 	include('adodb.inc.php');
-	include('adodb-session.php');
+	#---------------------------------#
+	include('adodb-cryptsession.php'); 
+	#---------------------------------#
 	session_start();
 	session_register('AVAR');
 	$HTTP_SESSION_VARS['AVAR'] += 1;
@@ -32,10 +35,10 @@ wrapper library.
 so:
  
   create table sessions (
-       SESSKEY char(32) not null,
-       EXPIRY int(11) unsigned not null,
-       DATA text not null,
-      primary key (sesskey)
+	   SESSKEY char(32) not null,
+	   EXPIRY int(11) unsigned not null,
+	   DATA text not null,
+	  primary key (sesskey)
   );
   
   2. Then define the following parameters in this file:
@@ -48,7 +51,7 @@ so:
 	
   3. Recommended is PHP 4.0.2 or later. There are documented
 session bugs in 
-     earlier versions of PHP.
+	 earlier versions of PHP.
 
 */
 
@@ -156,7 +159,7 @@ global $ADODB_SESS_CONN,$ADODB_SESS_INSERT,$ADODB_SESSION_TBL;
 	}
 	else $ADODB_SESS_INSERT = true;
 	
-	return false;
+	return '';
 }
 
 function adodb_sess_write($key, $val) 

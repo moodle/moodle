@@ -1,6 +1,6 @@
 <?php
 /* 
-V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -8,7 +8,7 @@ Set tabs to 4 for best viewing.
   
   Latest version is available at http://php.weblogs.com/
   
-    Microsoft ADO data driver. Requires ADO. Works only on MS Windows.
+	Microsoft ADO data driver. Requires ADO. Works only on MS Windows.
 */
   define("_ADODB_ADO_LAYER", 1 );
 /*--------------------------------------------------------------------------------------
@@ -21,27 +21,26 @@ class ADODB_ado extends ADOConnection {
 	var $fmtTimeStamp = "'Y-m-d, h:i:sA'";
 	var $replaceQuote = "''"; // string to use to replace quotes
 	var $dataProvider = "ado";	
-    var $hasAffectedRows = true;
+	var $hasAffectedRows = true;
 	var $adoParameterType = 201; // 201 = long varchar, 203=long wide varchar, 205 = long varbinary
 	var $_affectedRows = false;
 	var $_thisTransactions;
-	var $_inTransaction = 0;
 	var $_cursor_type = 3; // 3=adOpenStatic,0=adOpenForwardOnly,1=adOpenKeyset,2=adOpenDynamic
 	var $_cursor_location = 3; // 2=adUseServer, 3 = adUseClient;
 	var $_lock_type = -1;
 	var $_execute_option = -1;
-                      
+					  
 	
 	function ADODB_ado() 
 	{ 	
 	}
 
 	
-    function _affectedrows()
-    {
-            return $this->_affectedRows;
-    }
-    
+	function _affectedrows()
+	{
+			return $this->_affectedRows;
+	}
+	
 	// you can also pass a connection string like this:
 	//
 	// $DB->Connect('USER ID=sa;PASSWORD=pwd;SERVER=mangrove;DATABASE=ai',false,false,'SQLOLEDB');
@@ -72,7 +71,7 @@ class ADODB_ado extends ADOConnection {
 		if ($argUsername) $argHostname .= ";$u=$argUsername";
 		if ($argPassword)$argHostname .= ";$p=$argPassword";
 		
-		if ($this->debug) print "<p>Host=".$argHostname."<BR>version=$dbc->version</p>";
+		if ($this->debug) ADOConnection::outp( "Host=".$argHostname."<BR>\n version=$dbc->version");
 		// @ added below for php 4.0.1 and earlier
 		@$dbc->Open((string) $argHostname);
 		
@@ -210,11 +209,11 @@ class ADODB_ado extends ADOConnection {
 			return $rs;
 		}
 		
-		$rs = @$dbc->Execute($sql,&$this->_affectedRows, $this->_execute_option);
+		$rs = @$dbc->Execute($sql,$this->_affectedRows, $this->_execute_option);
 		/*
 			$rs =  new COM('ADODB.Recordset');
 			if ($rs) {
-				$rs->Open ($sql, $dbc, $this->_cursor_type,$this->_lock_type, $this->_execute_option);            				
+				$rs->Open ($sql, $dbc, $this->_cursor_type,$this->_lock_type, $this->_execute_option);							
 			}
 		*/
 		if ($dbc->Errors->Count > 0) return false;
@@ -227,6 +226,8 @@ class ADODB_ado extends ADOConnection {
 	
 	function BeginTrans() 
 	{ 
+		if ($this->transOff) return true;
+		
 		if (isset($this->_thisTransactions))
 			if (!$this->_thisTransactions) return false;
 		else {
@@ -235,19 +236,22 @@ class ADODB_ado extends ADOConnection {
 			if (!$o) return false;
 		}
 		@$this->_connectionID->BeginTrans();
-		$this->_inTransaction += 1;
+		$this->transCnt += 1;
 		return true;
 	}
 	function CommitTrans($ok=true) 
 	{ 
 		if (!$ok) return $this->RollbackTrans();
+		if ($this->transOff) return true;
+		
 		@$this->_connectionID->CommitTrans();
-		if ($this->_inTransaction) @$this->_inTransaction -= 1;
+		if ($this->transCnt) @$this->transCnt -= 1;
 		return true;
 	}
 	function RollbackTrans() {
+		if ($this->transOff) return true;
 		@$this->_connectionID->RollbackTrans();
-		if ($this->_inTransaction) @$this->_inTransaction -= 1;
+		if ($this->transCnt) @$this->transCnt -= 1;
 		return true;
 	}
 	
@@ -291,9 +295,9 @@ class ADORecordSet_ado extends ADORecordSet {
 	var $dataProvider = "ado";	
 	var $_tarr = false; // caches the types
 	var $_flds; // and field objects
-    var $canSeek = true;
+	var $canSeek = true;
   	var $hideErrors = true;
-	      
+		  
 	function ADORecordSet_ado(&$id)
 	{
 	global $ADODB_FETCH_MODE;
@@ -347,23 +351,23 @@ class ADORecordSet_ado extends ADORecordSet {
 	}
 	
 	
-     // should only be used to move forward as we normally use forward-only cursors
+	 // should only be used to move forward as we normally use forward-only cursors
 	function _seek($row)
 	{
-       $rs = $this->_queryID; 
-        // absoluteposition doesn't work -- my maths is wrong ?
-        //    $rs->AbsolutePosition->$row-2;
-        //    return true;
-        if ($this->_currentRow > $row) return false;
-        @$rs->Move((integer)$row - $this->_currentRow-1); //adBookmarkFirst
+	   $rs = $this->_queryID; 
+		// absoluteposition doesn't work -- my maths is wrong ?
+		//	$rs->AbsolutePosition->$row-2;
+		//	return true;
+		if ($this->_currentRow > $row) return false;
+		@$rs->Move((integer)$row - $this->_currentRow-1); //adBookmarkFirst
 		return true;
 	}
 	
 /*
 	OLEDB types
 	
-     enum DBTYPEENUM
-    {	DBTYPE_EMPTY	= 0,
+	 enum DBTYPEENUM
+	{	DBTYPE_EMPTY	= 0,
 	DBTYPE_NULL	= 1,
 	DBTYPE_I2	= 2,
 	DBTYPE_I4	= 3,
@@ -527,7 +531,7 @@ class ADORecordSet_ado extends ADORecordSet {
 				$this->fields[] = false;
 				break;
 			case 6: // currency is not supported properly;
-				print '<br><b>'.$f->Name.': currency type not supported by PHP</b><br>';
+				ADOConnection::outp( '<b>'.$f->Name.': currency type not supported by PHP</b>');
 				$this->fields[] = (float) $f->value;
 				break;
 			default:
@@ -542,7 +546,7 @@ class ADORecordSet_ado extends ADORecordSet {
 		@$rs->MoveNext(); // @ needed for some versions of PHP!
 		
 		if ($this->fetchMode == ADODB_FETCH_ASSOC) {
-			$this->fields = $this->GetRowAssoc(false);
+			$this->fields = $this->GetRowAssoc(ADODB_ASSOC_CASE);
 		}
 		return true;
 	}

@@ -1,7 +1,7 @@
 <?php
 
 /** 
- * @version V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V2.50 14 Nov 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -27,6 +27,8 @@ $sql = "SELECT * FROM ADOXYZ WHERE id = -1";
 // Select an empty record from the database 
 
 $conn = &ADONewConnection("mysql");  // create a connection
+//$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
+
 $conn->debug=1;
 $conn->PConnect("localhost", "root", "", "test"); // connect to MySQL, testdb
 $conn->Execute("delete from adoxyz where lastname like 'Smith%'");
@@ -35,9 +37,10 @@ $rs = $conn->Execute($sql); // Execute the query and get the empty recordset
 $record = array(); // Initialize an array to hold the record data to insert
 
 // Set the values for the fields in the record
-$record["firstname"] = "Bob";
+$record["firstname"] = "null";
 $record["lastname"] = "Smith\$@//";
 $record["created"] = time();
+$record["id"] = -1;
 
 // Pass the empty recordset and the array containing the data to insert
 // into the GetInsertSQL function. The function will process the data and return

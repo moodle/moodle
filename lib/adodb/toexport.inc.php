@@ -1,7 +1,7 @@
 <?php
 
 /** 
- * @version V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V2.50 14 Nov 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -18,7 +18,7 @@
  * fclose($f);
  *
  * TO STDOUT
- * rscsvout($rs);
+ * rs2csvout($rs);
  */
  
 // returns a recordset as a csv string
@@ -41,19 +41,19 @@ function rs2csvout(&$rs,$addtitles=true)
 	fclose($fp);
 }
 
-function tab2csv(&$rs,$addtitles=true)
+function rs2tab(&$rs,$addtitles=true)
 {
 	return _adodb_export($rs,"\t",',',false,$addtitles);
 }
 
 // to file pointer
-function tab2csvfile(&$rs,$fp,$addtitles=true)
+function rs2tabfile(&$rs,$fp,$addtitles=true)
 {
 	_adodb_export($rs,"\t",',',$fp,$addtitles);
 }
 
 // to stdout
-function tab2csvout(&$rs,$addtitles=true)
+function rs2tabout(&$rs,$addtitles=true)
 {
 	$fp = fopen('php://stdout','wb');
 	_adodb_export($rs,"\t",' ',true,$addtitles);
@@ -93,19 +93,19 @@ function _adodb_export(&$rs,$sep,$sepreplace,$fp=false,$addtitles=true,$quote = 
 		
 		if ($hasNumIndex) {
 			for ($j=0; $j < $max; $j++) {
-				$v = $rs->fields[$j];
+				$v = trim($rs->fields[$j]);
 				if ($escquote) $v = str_replace($quote,$escquotequote,$v);
 				$v = strip_tags(str_replace("\n",$replaceNewLine,str_replace($sep,$sepreplace,$v)));
 				
-				if (strpos($v,$sep) || strpos($v,$quote))$elements[] = "$quote$v$quote";
+				if (strpos($v,$sep) !== false || strpos($v,$quote) !== false) $elements[] = "$quote$v$quote";
 				else $elements[] = $v;
 			}
 		} else { // ASSOCIATIVE ARRAY
 			foreach($rs->fields as $v) {
-				if ($escquote) $v = str_replace($quote,$escquotequote,$v);
+				if ($escquote) $v = str_replace($quote,$escquotequote,trim($v));
 				$v = strip_tags(str_replace("\n",$replaceNewLine,str_replace($sep,$sepreplace,$v)));
 				
-				if (strpos($v,$sep) || strpos($v,$quote))$elements[] = "$quote$v$quote";
+				if (strpos($v,$sep) !== false || strpos($v,$quote) !== false) $elements[] = "$quote$v$quote";
 				else $elements[] = $v;
 			}
 		}

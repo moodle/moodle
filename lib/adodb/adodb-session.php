@@ -1,6 +1,6 @@
 <?php
 /*
-V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -22,6 +22,17 @@ wrapper library.
 	session_register('AVAR');
 	$HTTP_SESSION_VARS['AVAR'] += 1;
 	print "<p>\$HTTP_SESSION_VARS['AVAR']={$HTTP_SESSION_VARS['AVAR']}</p>";
+	
+To force non-persistent connections, call adodb_session_open first before session_start():
+
+ 	GLOBAL $HTTP_SESSION_VARS;
+	include('adodb.inc.php');
+	include('adodb-session.php');
+	adodb_session_open(false,false,false);
+	session_start();
+	session_register('AVAR');
+	$HTTP_SESSION_VARS['AVAR'] += 1;
+	print "<p>\$HTTP_SESSION_VARS['AVAR']={$HTTP_SESSION_VARS['AVAR']}</p>";
 
  
  Installation
@@ -29,10 +40,10 @@ wrapper library.
  1. Create this table in your database (syntax might vary depending on your db):
  
   create table sessions (
-       SESSKEY char(32) not null,
-       EXPIRY int(11) unsigned not null,
-       DATA text not null,
-      primary key (sesskey)
+	   SESSKEY char(32) not null,
+	   EXPIRY int(11) unsigned not null,
+	   DATA text not null,
+	  primary key (sesskey)
   );
 
 
@@ -45,7 +56,7 @@ wrapper library.
 	$ADODB_SESSION_TBL = 'sessions'
 	
   3. Recommended is PHP 4.0.6 or later. There are documented
-     session bugs in earlier versions of PHP.
+	 session bugs in earlier versions of PHP.
 
 */
 
@@ -71,7 +82,7 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 	$ADODB_SESS_INSERT, 
 	$ADODB_SESSION_CRC;
 	
-	$ADODB_SESS_LIFE = get_cfg_var('session.gc_maxlifetime');
+	$ADODB_SESS_LIFE = ini_get('session.gc_maxlifetime');
 	if ($ADODB_SESS_LIFE <= 1) {
 	 // bug in PHP 4.0.3 pl 1  -- how about other versions?
 	 //print "<h3>Session Error: PHP.INI setting <i>session.gc_maxlifetime</i>not set: $ADODB_SESS_LIFE</h3>";
@@ -105,7 +116,6 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 function adodb_sess_open($save_path, $session_name,$persist=true) 
 {
 GLOBAL $ADODB_SESS_CONN;
-	//if( $persist) print "PERSIST ";
 	if (isset($ADODB_SESS_CONN)) return true;
 	
 GLOBAL 	$ADODB_SESSION_CONNECT, 
@@ -119,14 +129,14 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 	$ADODB_SESS_CONN = ADONewConnection($ADODB_SESSION_DRIVER);
 	if (!empty($ADODB_SESS_DEBUG)) {
 		$ADODB_SESS_CONN->debug = true;
-		print " conn=$ADODB_SESSION_CONNECT user=$ADODB_SESSION_USER pwd=$ADODB_SESSION_PWD db=$ADODB_SESSION_DB ";
+		ADOConnection::outp( " conn=$ADODB_SESSION_CONNECT user=$ADODB_SESSION_USER pwd=$ADODB_SESSION_PWD db=$ADODB_SESSION_DB ");
 	}
 	if ($persist) $ok = $ADODB_SESS_CONN->PConnect($ADODB_SESSION_CONNECT,
 			$ADODB_SESSION_USER,$ADODB_SESSION_PWD,$ADODB_SESSION_DB);
 	else $ok = $ADODB_SESS_CONN->Connect($ADODB_SESSION_CONNECT,
 			$ADODB_SESSION_USER,$ADODB_SESSION_PWD,$ADODB_SESSION_DB);
 	
-	if (!$ok) print "<p>Session: connection failed</p>";
+	if (!$ok) ADOConnection::outp( "<p>Session: connection failed</p>",false);
 }
 
 /****************************************************************************************\
@@ -159,7 +169,7 @@ global $ADODB_SESS_CONN,$ADODB_SESS_INSERT,$ADODB_SESSION_TBL,$ADODB_SESSION_CRC
 		$rs->Close();
 		
 		// new optimization adodb 2.1
-		$ADODB_SESSION_CRC = crc32($v);
+		$ADODB_SESSION_CRC = strlen($v).crc32($v);
 		
 		return $v;
 	}
@@ -184,28 +194,30 @@ function adodb_sess_write($key, $val)
 
 	$expiry = time() + $ADODB_SESS_LIFE;
 	
-	// new optimization adodb 2.1
-	if ($ADODB_SESSION_CRC !== false && $ADODB_SESSION_CRC == crc32($val)) {
-		if ($ADODB_SESS_DEBUG) echo "<p>Session: No need to update - crc32 not changed</p>";
+	// crc32 optimization since adodb 2.1
+	// now we only update expiry date, thx to sebastian thom in adodb 2.32
+	if ($ADODB_SESSION_CRC !== false && $ADODB_SESSION_CRC == strlen($val).crc32($val)) {
+		if ($ADODB_SESS_DEBUG) echo "<p>Session: Only updating date - crc32 not changed</p>";
+		$qry = "UPDATE $ADODB_SESSION_TBL SET expiry=$expiry WHERE sesskey='$key'";
+		$rs = $ADODB_SESS_CONN->Execute($qry);	
 		return true;
 	}
 	$val = rawurlencode($val);
-	$qry = "UPDATE $ADODB_SESSION_TBL SET expiry=$expiry,data='$val' WHERE sesskey='$key'";
-	$rs = $ADODB_SESS_CONN->Execute($qry);
-	if ($rs) $rs->Close();
-	else print '<p>Session Update: '.$ADODB_SESS_CONN->ErrorMsg().'</p>';
 	
-	if ($ADODB_SESS_INSERT || $rs === false) {
-		$qry = "INSERT INTO $ADODB_SESSION_TBL(sesskey,expiry,data) VALUES ('$key',$expiry,'$val')";
-		$rs = $ADODB_SESS_CONN->Execute($qry);
-		if ($rs) $rs->Close();
-		else print '<p>Session Insert: '.$ADODB_SESS_CONN->ErrorMsg().'</p>';
+	$rs = $ADODB_SESS_CONN->Replace($ADODB_SESSION_TBL,
+	    array('sesskey' => $key, 'expiry' => $expiry, 'data' => $val),
+    	'sesskey',$autoQuote = true);
+	
+	if (!$rs) {
+		ADOConnection::outp( '<p>Session Replace: '.$ADODB_SESS_CONN->ErrorMsg().'</p>',false);
 	}
+	
 	// bug in access driver (could be odbc?) means that info is not commited
 	// properly unless select statement executed in Win2000
-	if ($ADODB_SESS_CONN->databaseType == 'access') $rs = $ADODB_SESS_CONN->Execute("select sesskey from $ADODB_SESSION_TBL WHERE sesskey='$key'");
+	if ($rs && $ADODB_SESS_CONN->databaseType == 'access') 
+		$rs = $ADODB_SESS_CONN->Execute("select sesskey from $ADODB_SESSION_TBL WHERE sesskey='$key'");
 
-	return isset($rs);
+	return !empty($rs);
 }
 
 function adodb_sess_destroy($key) 
@@ -261,7 +273,7 @@ GLOBAL $HTTP_SESSION_VARS;
 	session_start();
 	session_register('AVAR');
 	$HTTP_SESSION_VARS['AVAR'] += 1;
-	print "<p>\$HTTP_SESSION_VARS['AVAR']={$HTTP_SESSION_VARS['AVAR']}</p>";
+	ADOConnection::outp( "<p>\$HTTP_SESSION_VARS['AVAR']={$HTTP_SESSION_VARS['AVAR']}</p>",false);
 }
 
 ?>

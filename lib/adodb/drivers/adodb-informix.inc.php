@@ -1,7 +1,6 @@
 <?php
 /**
-* @version V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). 
-All rights reserved.
+* @version V2.50 14 Nov 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
 * Released under both BSD license and Lesser GPL library license.
 * Whenever there is any discrepancy between the two licenses,
 * the BSD license will take precedence.
@@ -18,6 +17,7 @@ include_once(ADODB_DIR.'/drivers/adodb-informix72.inc.php');
 class ADODB_informix extends ADODB_informix72 {
 	var $databaseType = "informix";
 	var $hasTop = 'FIRST';
+	var $ansiOuter = true;
 }
 
 class ADORecordset_informix extends ADORecordset_informix72 {

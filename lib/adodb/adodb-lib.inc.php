@@ -1,6 +1,6 @@
 <?php
 /* 
-V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -88,11 +88,12 @@ function &_adodb_pageexecute_all_rows(&$zthis, $sql, $nrows, $page,
 
 	$qryRecs = false; //count records for no offset
 	
-	// jlim - attempt query rewrite first
-	$rewritesql = preg_replace(
-		'/^\s*SELECT\s.*\sFROM\s/is','SELECT COUNT(*) FROM ',$sql);
+	// jlim - attempt query rewrite first if no GROUP BY nor SELECT DISTINCT
+	if (!preg_match('/\s+GROUP\s+BY\s+/is',$sql) && !preg_match("/\s*SELECT\s*DISTINCT/i", $sql))
+		$rewritesql = preg_replace(
+			'/^\s*SELECT\s.*\s+FROM\s/Uis','SELECT COUNT(*) FROM ',$sql);
 		
-	if ($rewritesql != $sql){
+	if (isset($rewritesql) && $rewritesql != $sql){
 		
 		// fix by alexander zhukov, alex#unipack.ru, because count(*) and 'order by' fails 
 		// with mssql, access and postgresql
@@ -106,8 +107,8 @@ function &_adodb_pageexecute_all_rows(&$zthis, $sql, $nrows, $page,
 				if (!$rs->EOF) $qryRecs = reset($rs->fields);
 				$rs->Close();
 			}
-		} else $qryRecs = $zthis->GetOne($rewritesql);
-      	if ($qryRecs !== false)
+		} else $qryRecs = $zthis->GetOne($rewritesql,$inputarr);
+	  	if ($qryRecs !== false)
 	   		$lastpageno = (int) ceil($qryRecs / $nrows);
 	}
 	
@@ -115,22 +116,23 @@ function &_adodb_pageexecute_all_rows(&$zthis, $sql, $nrows, $page,
 	if ($qryRecs === false) {
 		$rstest = &$zthis->Execute($sql);
 		if ($rstest) {
-	        //save total records
-	   	    $qryRecs = $rstest->RecordCount();
-			if ($qryRecs == -1)
-				if (!$rstest->EOF) {
-					$rstest->MoveLast();
-					$qryRecs = $zthis->_currentRow;
-				} else
-					$qryRecs = 0;
+	   		$qryRecs = $rstest->RecordCount();
+			if ($qryRecs == -1) { 
+			// some databases will return -1 on MoveLast() - change to MoveNext()
+				while(!$rstest->EOF) {
+					$rstest->MoveNext();
+				}
+				$qryRecs = $rstest->_currentRow;
+			}
+			if ($qryRecs == -1) $qryRecs = 0;
 					
-	       	$lastpageno = (int) ceil($qryRecs / $nrows);
+		   	$lastpageno = (int) ceil($qryRecs / $nrows);
 		}
 		if ($rstest) $rstest->Close();
 	}
 	
 	$zthis->_maxRecordCount = $qryRecs;
-    
+	
 	// If page number <= 1, then we are at the first page
 	if (!isset($page) || $page <= 1) {	
 		$page = 1;
@@ -229,11 +231,21 @@ function _adodb_getupdatesql(&$zthis,&$rs, $arrFields,$forceUpdate=false,$magicq
 
 		// Get the full where clause excluding the word "WHERE" from
 		// the existing query.
-		preg_match("/WHERE\s(.*)/i", $rs->sql, $whereClause);
-
+		preg_match('/\sWHERE\s(.*)/i', $rs->sql, $whereClause);
+		
+		$discard = false;
+		// not a good hack, improvements?
+		if ($whereClause)
+			preg_match('/\s(LIMIT\s.*)/i', $whereClause[1], $discard);
+		
+		if ($discard)
+			$whereClause[1] = substr($whereClause[1], 0, strlen($whereClause[1]) - strlen($discard[1]));
+		
 		// updateSQL will contain the full update query when all
 		// processing has completed.
 		$updateSQL = "UPDATE " . $tableName[1] . " SET ";
+
+		$hasnumeric = (isset($rs->fields[0]));
 		
 		// Loop through all of the fields in the recordset
 		for ($i=0, $max=$rs->FieldCount(); $i < $max; $i++) {
@@ -249,8 +261,9 @@ function _adodb_getupdatesql(&$zthis,&$rs, $arrFields,$forceUpdate=false,$magicq
 				// is different from the value passed in then
 				// go ahead and append the field name and new value to
 				// the update query.
-
-				if ($forceUpdate || strcmp($rs->fields[$i], $arrFields[$field->name])) {
+				
+				$val = ($hasnumeric) ? $rs->fields[$i] : $rs->fields[$field->name];
+				if ($forceUpdate || strcmp($val, $arrFields[$field->name])) {
 					// Set the counter for the number of fields that will be updated.
 					$fieldUpdatedCount++;
 
@@ -261,15 +274,18 @@ function _adodb_getupdatesql(&$zthis,&$rs, $arrFields,$forceUpdate=false,$magicq
 					// "mike" <mike@partner2partner.com> patch and "Ryan Bailey" <rebel@windriders.com> 
 					//PostgreSQL uses a 't' or 'f' and therefore needs to be processed as a string ('C') type field.
 					if ((substr($zthis->databaseType,0,8) == "postgres") && ($mt == "L")) $mt = "C";
-
+					if ($arrFields[$field->name] === 'null') 
+						$updateSQL .= $field->name . " = null, ";
+					else		
 					switch($mt) {
+						case 'null':
 						case "C":
 						case "X":
 							$updateSQL .= $field->name . " = " . $zthis->qstr($arrFields[$field->name],$magicq) . ", ";
 							break;
 						case "D":
 							$updateSQL .= $field->name . " = " . $zthis->DBDate($arrFields[$field->name]) . ", ";
-       						break;
+	   						break;
 						case "T":
 							$updateSQL .= $field->name . " = " . $zthis->DBTimeStamp($arrFields[$field->name]) . ", ";
 							break;
@@ -278,7 +294,7 @@ function _adodb_getupdatesql(&$zthis,&$rs, $arrFields,$forceUpdate=false,$magicq
 							break;
 					};
 				};
-    		};
+			};
 		};
 
 		// If there were any modified fields then build the rest of the update query.
@@ -334,6 +350,9 @@ function _adodb_getinsertsql(&$zthis,&$rs,$arrFields,$magicq=false)
 
 				// Based on the datatype of the field
 				// Format the value properly for the database
+				if ($arrFields[$field->name] === 'null') 
+						$values .= "null, ";
+				else		
 				switch($mt) {
 					case "C":
 					case "X":
@@ -349,8 +368,8 @@ function _adodb_getinsertsql(&$zthis,&$rs,$arrFields,$magicq=false)
 						$values .= (float) $arrFields[$field->name] . ", ";
 						break;
 				};
-    		};
-      	};
+			};
+	  	};
 
 		// If there were any inserted fields then build the rest of the insert query.
 		if ($fieldInsertedCount > 0) {

@@ -1,6 +1,6 @@
 <?php
 /* 
-version V2.12 12 June 2002 (c) 2000-2002  John Lim (jlim@natsoft.com.my). All rights
+version V2.50 14 Nov 2002 (c) 2000-2002  John Lim (jlim@natsoft.com.my). All rights
 reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -10,32 +10,32 @@ Set tabs to 4 for best viewing.
   Latest version is available at http://php.weblogs.com/
 
   21.02.2002 - Wade Johnson wade@wadejohnson.de
-               Extended ODBC class for Sybase SQLAnywhere.
+			   Extended ODBC class for Sybase SQLAnywhere.
    1) Added support to retrieve the last row insert ID on tables with
-      primary key column using autoincrement function.
+	  primary key column using autoincrement function.
 
    2) Added blob support.  Usage:
-         a) create blob variable on db server:
+		 a) create blob variable on db server:
 
-        $dbconn->create_blobvar($blobVarName);
+		$dbconn->create_blobvar($blobVarName);
 
-      b) load blob var from file.  $filename must be complete path
+	  b) load blob var from file.  $filename must be complete path
 
-      $dbcon->load_blobvar_from_file($blobVarName, $filename);
+	  $dbcon->load_blobvar_from_file($blobVarName, $filename);
 
-      c) Use the $blobVarName in SQL insert or update statement in the values
-      clause:
+	  c) Use the $blobVarName in SQL insert or update statement in the values
+	  clause:
 
-        $recordSet = $dbconn->Execute('INSERT INTO tabname (idcol, blobcol) '
-        .
-       'VALUES (\'test\', ' . $blobVarName . ')');
+		$recordSet = $dbconn->Execute('INSERT INTO tabname (idcol, blobcol) '
+		.
+	   'VALUES (\'test\', ' . $blobVarName . ')');
 
-     instead of loading blob from a file, you can also load from 
-      an unformatted (raw) blob variable:
-      $dbcon->load_blobvar_from_var($blobVarName, $varName);
+	 instead of loading blob from a file, you can also load from 
+	  an unformatted (raw) blob variable:
+	  $dbcon->load_blobvar_from_var($blobVarName, $varName);
 
-      d) drop blob variable on db server to free up resources:
-      $dbconn->drop_blobvar($blobVarName);
+	  d) drop blob variable on db server to free up resources:
+	  $dbconn->drop_blobvar($blobVarName);
 
   Sybase_SQLAnywhere data driver. Requires ODBC.
 
@@ -51,16 +51,16 @@ if (!defined('ADODB_SYBASE_SQLANYWHERE')){
 
  class ADODB_sqlanywhere extends ADODB_odbc {
   	var $databaseType = "sqlanywhere";	
-    var $hasInsertID = true;
+	var $hasInsertID = true;
 	
 	function ADODB_sqlanywhere()
 	{
 		$this->ADODB_odbc();
 	}
 
-     function _insertid() {
+	 function _insertid() {
   	   return $this->GetOne('select @@identity');
-     }
+	 }
 
   function create_blobvar($blobVarName) {
    $this->Execute("create variable $blobVarName long binary");
@@ -80,22 +80,22 @@ if (!defined('ADODB_SYBASE_SQLANYWHERE')){
    $integer_chunks = (integer)filesize($filename) / $chunk_size;
    $modulus = filesize($filename) % $chunk_size;
    if ($modulus != 0){
-    $integer_chunks += 1;
+	$integer_chunks += 1;
    }
 
    for($loop=1;$loop<=$integer_chunks;$loop++){
-    $contents = fread ($fd, $chunk_size);
-    $contents = bin2hex($contents);
+	$contents = fread ($fd, $chunk_size);
+	$contents = bin2hex($contents);
 
-    $hexstring = '';
+	$hexstring = '';
 
-    for($loop2=0;$loop2<strlen($contents);$loop2+=2){
-     $hexstring .= '\x' . substr($contents,$loop2,2);
-     }
+	for($loop2=0;$loop2<strlen($contents);$loop2+=2){
+	 $hexstring .= '\x' . substr($contents,$loop2,2);
+	 }
 
-    $hexstring = $this->qstr($hexstring);
+	$hexstring = $this->qstr($hexstring);
 
-    $this->Execute("set $blobVarName = $blobVarName || " . $hexstring);
+	$this->Execute("set $blobVarName = $blobVarName || " . $hexstring);
    }
 
    fclose ($fd);
@@ -108,22 +108,22 @@ if (!defined('ADODB_SYBASE_SQLANYWHERE')){
    $integer_chunks = (integer)strlen($varName) / $chunk_size;
    $modulus = strlen($varName) % $chunk_size;
    if ($modulus != 0){
-    $integer_chunks += 1;
+	$integer_chunks += 1;
    }
 
    for($loop=1;$loop<=$integer_chunks;$loop++){
-    $contents = substr ($varName, (($loop - 1) * $chunk_size), $chunk_size);
-    $contents = bin2hex($contents);
+	$contents = substr ($varName, (($loop - 1) * $chunk_size), $chunk_size);
+	$contents = bin2hex($contents);
 
-    $hexstring = '';
+	$hexstring = '';
 
-    for($loop2=0;$loop2<strlen($contents);$loop2+=2){
-     $hexstring .= '\x' . substr($contents,$loop2,2);
-     }
+	for($loop2=0;$loop2<strlen($contents);$loop2+=2){
+	 $hexstring .= '\x' . substr($contents,$loop2,2);
+	 }
 
-    $hexstring = $this->qstr($hexstring);
+	$hexstring = $this->qstr($hexstring);
 
-    $this->Execute("set $blobVarName = $blobVarName || " . $hexstring);
+	$this->Execute("set $blobVarName = $blobVarName || " . $hexstring);
    }
 
    return;

@@ -1,6 +1,6 @@
 <?php
 /* 
-V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -69,6 +69,7 @@ class ADODB_DB2 extends ADODB_odbc {
 	var $concat_operator = 'CONCAT';
 	var $sysDate = 'CURRENT DATE';
 	var $sysTimeStamp = 'CURRENT TIMESTAMP';
+	var $ansiOuter = true;
 	//var $curmode = SQL_CUR_USE_ODBC;
 	
 	function ADODB_DB2()
@@ -107,6 +108,38 @@ class ADODB_DB2 extends ADODB_odbc {
 		if ($this->_autocommit) $this->BeginTrans();
 		return $this->GetOne("select 1 as ignore from $tables where $where for update");
 	}
+	
+	// Format date column in sql string given an input format that understands Y M D
+	function SQLDate($fmt, $col=false)
+	{	
+	// use right() and replace() ?
+		if (!$col) $col = $this->sysDate;
+		$s = '';
+		
+		$len = strlen($fmt);
+		for ($i=0; $i < $len; $i++) {
+			if ($s) $s .= '+';
+			$ch = $fmt[$i];
+			switch($ch) {
+			case 'Y':
+			case 'y':
+				$s .= "char(year($col))";
+				break;
+			case 'M':
+			case 'm':
+				$s .= "right(digits(month($col)),2)";
+				break;
+			case 'D':
+			case 'd':
+				$s .= "right(digits(day($col)),2)";
+				break;
+			default:
+				$s .= $this->qstr($ch);
+			}
+		}
+		return $s;
+	} 
+ 
 	
 	function &SelectLimit($sql,$nrows=-1,$offset=-1,$arg3=false)
 	{

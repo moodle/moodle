@@ -2,7 +2,7 @@
 <body bgcolor=white>
 <?php
 /** 
- * V2.12 12 June 2002 (c) 2001-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * V2.50 14 Nov 2002  (c) 2001-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -107,25 +107,25 @@ http://localhost/php/adodb/server.php?sql=insert+into+products+%28productname%29
 
 adorecordset Object
 (
-    [dataProvider] => native
-    [fields] => 
-    [blobSize] => 64
-    [canSeek] => 
-    [EOF] => 1
-    [emptyTimeStamp] =>  
-    [emptyDate] =>  
-    [debug] => 
-    [timeToLive] => 0
-    [bind] => 
-    [_numOfRows] => -1
-    [_numOfFields] => 0
-    [_queryID] => 1
-    [_currentRow] => -1
-    [_closed] => 
-    [_inited] => 
-    [sql] => insert into products (productname) values ('testprod')
-    [affectedrows] => 1
-    [insertid] => 81
+	[dataProvider] => native
+	[fields] => 
+	[blobSize] => 64
+	[canSeek] => 
+	[EOF] => 1
+	[emptyTimeStamp] =>  
+	[emptyDate] =>  
+	[debug] => 
+	[timeToLive] => 0
+	[bind] => 
+	[_numOfRows] => -1
+	[_numOfFields] => 0
+	[_queryID] => 1
+	[_currentRow] => -1
+	[_closed] => 
+	[_inited] => 
+	[sql] => insert into products (productname) values ('testprod')
+	[affectedrows] => 1
+	[insertid] => 81
 )
 
 
@@ -136,25 +136,25 @@ http://localhost/php/adodb/server.php?sql=insert+into+products+%28productname%29
 
 adorecordset Object
 (
-    [dataProvider] => native
-    [fields] => 
-    [blobSize] => 64
-    [canSeek] => 
-    [EOF] => 1
-    [emptyTimeStamp] =>  
-    [emptyDate] =>  
-    [debug] => 
-    [timeToLive] => 0
-    [bind] => 
-    [_numOfRows] => -1
-    [_numOfFields] => 0
-    [_queryID] => 1
-    [_currentRow] => -1
-    [_closed] => 
-    [_inited] => 
-    [sql] => insert into products (productname) values ('testprod')
-    [affectedrows] => 1
-    [insertid] => 82
+	[dataProvider] => native
+	[fields] => 
+	[blobSize] => 64
+	[canSeek] => 
+	[EOF] => 1
+	[emptyTimeStamp] =>  
+	[emptyDate] =>  
+	[debug] => 
+	[timeToLive] => 0
+	[bind] => 
+	[_numOfRows] => -1
+	[_numOfFields] => 0
+	[_queryID] => 1
+	[_currentRow] => -1
+	[_closed] => 
+	[_inited] => 
+	[sql] => insert into products (productname) values ('testprod')
+	[affectedrows] => 1
+	[insertid] => 82
 )
 
 
@@ -165,25 +165,25 @@ http://localhost/php/adodb/server.php?sql=delete+from+products+where+productid%3
 
 adorecordset Object
 (
-    [dataProvider] => native
-    [fields] => 
-    [blobSize] => 64
-    [canSeek] => 
-    [EOF] => 1
-    [emptyTimeStamp] =>  
-    [emptyDate] =>  
-    [debug] => 
-    [timeToLive] => 0
-    [bind] => 
-    [_numOfRows] => -1
-    [_numOfFields] => 0
-    [_queryID] => 1
-    [_currentRow] => -1
-    [_closed] => 
-    [_inited] => 
-    [sql] => delete from products where productid>80
-    [affectedrows] => 2
-    [insertid] => 0
+	[dataProvider] => native
+	[fields] => 
+	[blobSize] => 64
+	[canSeek] => 
+	[EOF] => 1
+	[emptyTimeStamp] =>  
+	[emptyDate] =>  
+	[debug] => 
+	[timeToLive] => 0
+	[bind] => 
+	[_numOfRows] => -1
+	[_numOfFields] => 0
+	[_queryID] => 1
+	[_currentRow] => -1
+	[_closed] => 
+	[_inited] => 
+	[sql] => delete from products where productid>80
+	[affectedrows] => 2
+	[insertid] => 0
 )
 
 [more stuff deleted]

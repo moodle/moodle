@@ -8,7 +8,7 @@
 <body>
 <?php 
 /*
-V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -55,7 +55,7 @@ GLOBAL $ADODB_version,$ADODB_FETCH_MODE;
 	for ($i=0; $i < $max; $i++) {
 		$rs = $db->Execute($sql);	
 		$arr = $rs->GetArray();
-       //         print $arr[0][1];
+	   //		 print $arr[0][1];
 	}
 	$end =  microtime();
 	$start = explode(' ',$start);
@@ -64,7 +64,7 @@ GLOBAL $ADODB_version,$ADODB_FETCH_MODE;
 	print_r($start);
 	print_r($end);
 	
-      //  print_r($arr);
+	  //  print_r($arr);
 	$total = $end[0]+trim($end[1]) - $start[0]-trim($start[1]);
 	printf ("<p>seconds = %8.2f for %d iterations each with %d records</p>",$total,$max, sizeof($arr));
 	flush();
@@ -74,7 +74,7 @@ GLOBAL $ADODB_version,$ADODB_FETCH_MODE;
 	<table width=100% ><tr><td bgcolor=beige>&nbsp;</td></tr></table>
 	</p>
 <?php
-        //$db->Close();
+		//$db->Close();
 }
 include("testdatabases.inc.php");
 
