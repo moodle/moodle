@@ -3317,10 +3317,10 @@ function forum_tp_count_forum_unread_posts($userid, $forumid, $groupid=false) {
     }
 
     $sql = 'SELECT COUNT(p.id) '.
-           'FROM '.$CFG->prefix.'forum_posts p,'.$CFG->prefix.'forum_discussions d '.
+           'FROM '.$CFG->prefix.'forum_posts p JOIN '.$CFG->prefix.'forum_discussions d ON p.discussion = d.id '.
            'LEFT JOIN '.$CFG->prefix.'forum_read r ON r.postid = p.id AND r.userid = '.$userid.' '.
-           'WHERE d.forum = '.$forumid.$groupsel.' AND p.discussion = d.id '.
-                'AND p.modified >= '.$cutoffdate.' AND r.id is NULL';
+           'WHERE d.forum = '.$forumid.$groupsel.
+                ' AND p.modified >= '.$cutoffdate.' AND r.id is NULL';
 
     return (count_records_sql($sql));
 }
