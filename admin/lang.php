@@ -182,6 +182,7 @@
             foreach ($enstring as $key => $envalue) {
                 $envalue = nl2br(htmlspecialchars($envalue));
                 $envalue = str_replace("\$a","<B>\$a</B>", $envalue);  // Make variables bold
+                $envalue = str_replace("%%","%",$envalue);
                 // TODO:  It would be nice if all the $a->something variables were bold too
 
                 echo "<TR>";
