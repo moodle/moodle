@@ -20,7 +20,8 @@ function mimeinfo($element, $filename) {
         "pdf"  => array ("type"=>"application/pdf", "icon"=>"pdf.gif"),
         "doc"  => array ("type"=>"application/msword", "icon"=>"word.gif"),
         "ppt"  => array ("type"=>"application/vnd.ms-powerpoint", "icon"=>"powerpoint.gif"),
-        "xls"  => array ("type"=>"application/vnd.ms-excel", "icon"=>"excel.gif")
+        "xls"  => array ("type"=>"application/vnd.ms-excel", "icon"=>"excel.gif"),
+        "avi"  => array ("type"=>"video/x-ms-wm", "icon"=>"avi.gif")
     );
 
     if (eregi("\.([a-z0-9]+)$", $filename, $match)) {
