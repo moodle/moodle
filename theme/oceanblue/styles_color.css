@@ -1,29 +1,47 @@
-/************************************************* 
-***
-*** color
-***
-**************************************************/
+/*******************************************************************
+styles_color.css
+    
+This CSS file contains all color definitions like background-color,
+font-color, border-color etc.
 
-/*************************************************
-***
-*** This CSS file contains all color definitions
-*** like background-color, font-color,
-*** border-color etc.
-***
-*** Shortindex:
-*** basic and general styles
-*** header and footer styles
-*** content styles (alphabetically)
-*** admin, course, activities, calendar, blocks
-*** 
-*** Please sort new styles for existing content
-*** into the appropriate part of this CSS file.
-*** Styles for new Blocks or Activities please
-*** place at the end.
-*** Wouldn't the alphabetical order be better?
-***
-**************************************************/
+Styles are organised into the following sections:
 
+    core
+    header
+    footer
+
+    admin
+    blocks
+    calendar
+    course
+    doc
+    login
+    message
+    tabs
+    user
+
+    modules
+        assignment
+        chat
+        choice
+        forum
+        glossary
+        journal
+        label
+        lesson
+        quiz
+        resource
+        scorm
+        survey
+        wiki
+        workshop
+
+*******************************************************************/
+
+
+/*******************************************************************
+*** Core
+*******************************************************************/
 
 /* basic styles */
 a:link,
@@ -33,7 +51,7 @@ a:visited {
 
 a.dimmed:link,
 a.dimmed:visited {
-    color:#666666; /* hidden */
+    color:#AAAAAA;
 }
 
 a:hover {
@@ -49,21 +67,6 @@ a.autolink:visited {
 a.autolink.glossary:hover {
     cursor: help;
 }
-
-.tablink a:link,
-.tablink a:visited {
-    color:#000066;
-}
-
-.tablink a:hover {
-    text-decoration: none;
-}
-
-.selected .tablink a:link,
-.selected .tablink a:visited {
-    color:#000000;
-}
-
 
 /* general styles */
 body {
@@ -109,18 +112,6 @@ td.header {
     background-color:#DDDDDD;
 }
 
-
-/* header styles */
-
-
-/* footer styles */
-
-
-/*****************************
-***
-*** content styles
-***
-******************************/
 /* many places */
 .generalbox {
     border-color:#9999FF; /* borders */
@@ -129,14 +120,77 @@ td.header {
     border-color:#9999FF; /* borders */
 }
 .feedbackbox {
-    border-color:#9999FF; /* borders */
+    border-color: #888888; /* borders */
 }
 .feedbackby {
     background-color:#BBBBBB;
 }
-.userpicture {
-    background:#EEEEEE; 
+
+.noticebox {
+    border-color:#9999FF; /* borders */
 }
+
+.errorbox {
+    color:#ffffff;
+    border-color:#660000;
+    background-color:#990000;
+}
+
+/* weblib.php table */
+.tabledivider {
+    border-color:#9999FF; /* borders */
+}
+
+/* entry-page index.php */ 
+.sitetopic {
+    background-color:#FFFFFF; /* cellheading */
+    border-color:#9999FF; /* borders */
+}
+
+.dimmed_text {
+    color:#AAAAAA;
+}
+
+.teacheronly {
+    color:#990000;
+}
+
+.unread {
+    background: #FFD991;
+} 
+
+.censoredtext {
+    color:#000000;
+    background:#000000;
+}
+
+
+/* kept for backward compatibility with some non-standard modules
+   which use these classes for various things */
+.generaltab, .generaltabinactive {
+    background-color:#BBBBBB;
+    
+}
+.generaltabselected {
+    background-color:#DDDDDD;
+}
+.generaltabinactive {
+    color:#CCCCCC;
+}
+
+
+
+/*******************************************************************
+*** Header
+*******************************************************************/
+
+/*******************************************************************
+*** Footer
+*******************************************************************/
+
+/*******************************************************************
+*** Admin
+*******************************************************************/
 
 .admin .generalboxcontent {
     background-color:#EEEEEE; 
@@ -150,302 +204,42 @@ td.header {
     background-color:#FFFFFF; 
 }
 
-.noticebox {
-    border-color:#9999FF; /* borders */
+
+/*******************************************************************
+*** Blocks
+*******************************************************************/
+
+.rssclientlink {
+    border-top-color:#DDDDDD;
 }
 
-.errorbox {
-    color:#ffffff;
-    border-color:#660000;
-    background-color:#990000;
-}
-
-.loginbox .content {
-    border-color:#DDDDDD; /* borders */
-}
-
-/* weblib.php table */
-.tabledivider {
-    border-color:#9999FF; /* borders */
-}
-
-
-/* entry-page index.php */ 
-.sitetopic {
-    background-color:#FFFFFF; /* cellheading */
-    border-color:#9999FF; /* borders */
-}
-
-
-/*****************************
-***
-*** Admin
-***
-******************************/
-/* admin, calednder, course */
-.dimmed_text {
-    color:#666666;
-}
-
-
-/*****************************
-***
-*** Course
-***
-******************************/
-/* course, entry-page, login */
-.headingblock {
-    border-color:#9999FF; /* borders */
-}
-
-
-/* course */
-.headingblock .outline {
-    border-color:#9999FF; /* borders */
-}
-
-#course-view .section td {
-    border-color:#DDDDDD;
-}
-
-#course-view .section .content {
-}
-
-#course-view .section .side {
-    background: #EEEEEE;
-}
-
-#course-view .section .left {
-}
-
-#course-view .section .right {
-}
-
-#course-view .current .side{
-    background: #FFD991;
-}
-
-#course-view .topics {
-}
-
-#course-view .weeks {
-}
-
-#course-view .section .spacer {
-}
-
-#course-view .section .weekdates {
-    color:#666666;
-}
-
-.categoryboxcontent,
-.courseboxcontent {
-    border-color:#9999FF; /* borders */
-    background: #FFFFFF;
-}
-
-
-/* user */
-
-.userinfobox {
-    border-color: #DDDDDD;
-    background-color: #F7F7F7;
-}
-
-
-
-/*****************************
-***
-*** Activities
-***
-******************************/
-/* assignment, forum, glossary */
-.forumheaderlist,
-.forumpost {
-    border-color:#9999FF; /* borders */
-}
-
-.forumpost .content {
-    background: #FFFFFF;
-}
-
-.forumpost .left {
-    background:#EEEEEE; 
-}
-
-.forumpost .topic {
-    border-style:solid; /* borders */
-    border-width: 0px;
-    border-bottom-color: #EEEEEE;
-    border-bottom-width: 1px;
-}
-
-.forumpost .starter {
-    background:#DDDDDD; 
-}
-
-.forumheaderlist .discussion .starter {
-    background:#DDDDDD; 
-}
-
-.forumheaderlist td {
-    border-color: #FFFFFF;
-}
-
-
-/* survey */
-#mod-survey-view .r0 {
-    background-color: #EEEEEE;
-}
-#mod-survey-view .r1 {
-    background-color: #DDDDDD;
-}
-
-
-/* assignment */
-.assignmentsubmission {
-}
-
-.assignmentnew .assignmentfeedback{
-    background-color:#DDDDDD; /* cellheading2 */
-}   
-    
-.assignmentold .assignmentfeedback{
-    background-color:#BBBBBB; /* cellheading */
-}
-
-.assignmentheading {
-    background-color:#BBBBBB; /* cellheading */
-}
-
-
-/* workshop */
-
-.workshoppostpicture {
-    background-color:#FEE6B9; /* cellcontent2 */
-}
-
-.workshopassessmentheading {
-    background-color:#DDDDDD; /* cellheading2 */
-}
-
-
-/* glossary, wiki */
-.entryboxheader {
-    border-color: #BBBBBB;
-}
-
-.entrybox {
-    border-color: #BBBBBB;
-}
-
-.entry {
-}
-
-.glossarypost {
-    border-color: #DDDDDD;
-}
-
-.glossarypost .entryheader,
-.glossarypost .entryapproval,
-.glossarypost .picture,
-.glossarypost .entryattachment,
-.glossarypost .left {
-    background-color: #F0F0F0;
-}
-
-.glossarycomment {
-    border-color: #DDDDDD;
-}
-
-.glossarycomment .entryheader,
-.glossarycomment .picture,
-.glossarycomment .left {
-    background-color: #F0F0F0;
-
-}
-
-.generaltab, .generaltabinactive {
-    background-color:#BBBBBB; /* cellheading */
-}
-
-.generaltabselected {
-    background-color:#DDDDDD; /* cellheading2 */
-}
-
-.generaltabinactive {
-    color:#CCCCCC;
-}
-
-
-
-#mod-glossary-report .generalbox .teacher {
-    background: #F0F0F0;
-}
-
-
-
-
-/* lang, forum */
-.teacheronly {
-    color:#990000;
-}
-
-.sideblock .post .head {
+.rssclientdescription {
     color:#555555;
 }
 
-.forumthread .unread {
-    background: #FFD991;
-}
-
-.unread {
-    background: #FFD991;
-} 
-
-#mod-forum-view .unread {
-    padding-left: 3px;
-    padding-right: 3px;
-}
-
-#mod-forum-discuss .forumpost {
-    background: none;
-}
-
-#mod-forum-discuss .unread .forumpostmessage {
-    border-style: solid; 
-    border-color: #FFD991; 
-    border-width: 2px; 
-} 
-
-#mod-forum-discuss .forumthread .unread {
-} 
-
-#mod-forum-index .unread {
-}
-
-/* message */
-table.message_search_results td {
+.sideblock {
     border-color:#9999FF; /* borders */
 }
 
-
-/* quiz */
-
-body#mod-quiz-report table#attempts td {
-    border-color: #dddddd;
-}
-body#mod-quiz-report table#attempts .r1 {
-    background-color: #eeeeee;
+.sideblock .header {
 }
 
+.sideblock .content {
+    background-color:#FCFCFC;
+}
+
+.sideblock .content hr {
+    border-top-color:#999999;
+}
+
+.sideblock .list {
+}
 
 
-/*****************************
-***
+
+/*******************************************************************
 *** Calendar
-***
-******************************/
+*******************************************************************/
 
 #calendar .maincalendar,
 #calendar .sidecalendar
@@ -454,15 +248,15 @@ body#mod-quiz-report table#attempts .r1 {
 }
 
 #calendar .maincalendar table.calendarmonth th {
-    border-color: #555555;
+    border-color: #000000;
 }
 
 table.minicalendar {
-    border-color:#DDDDDD;
+    border-color:#9999FF;
 }
 
 #calendar .maincalendar .eventlist .event {
-    border-color:#DDDDDD;
+    border-color:#9999FF;
 }
 
 #calendar .maincalendar .eventlist .event .topic,
@@ -535,7 +329,7 @@ table.minicalendar {
 
 #calendar .today,
 .minicalendar .today {
-    border-color:#555555 !important;
+    border-color:#000000 !important;
 }
 
 .cal_popup_fg {
@@ -543,47 +337,87 @@ table.minicalendar {
 }
 
 .cal_popup_bg {
-    border-color:#555555;
+    border-color:#000000;
     background-color:#FFFFFF;
 }
 
 
-/*****************************
-***
-*** Blocks
-***
-******************************/
-/* block_rss_client.php */
-.rssclientlink {
-    border-top-color:#DDDDDD;
-}
+/*******************************************************************
+*** Course
+*******************************************************************/
 
-.rssclientdescription {
-    color:#555555;
-}
-
-
-/* sideblock */
-/* calendar, weblib.php, wiki */
-.sideblock {
+/* course, entry-page, login */
+.headingblock {
     border-color:#9999FF; /* borders */
 }
-.sideblock .header {
+
+/* course */
+.headingblock .outline {
+    border-color:#9999FF; /* borders */
 }
 
-.sideblock .content {
-    background-color:#FCFCFC;
+#course-view .section td {
+    border-color:#9999FF;
 }
 
-.sideblock .content hr {
-    border-top-color:#999999;
+#course-view .section .content {
 }
 
-.sideblock .list {
+#course-view .section .side {
+    background: #EEEEEE;
+}
+
+#course-view .section .left {
+}
+
+#course-view .section .right {
+}
+
+#course-view .current .side{
+    background: #FFD991;
+}
+
+#course-view .topics {
+}
+
+#course-view .weeks {
+}
+
+#course-view .section .spacer {
+}
+
+#course-view .section .weekdates {
+    color:#AAAAAA;
+}
+
+.categoryboxcontent,
+.courseboxcontent {
+    border-color:#9999FF; /* borders */
+    background: #FFFFFF;
 }
 
 
-/* Messaging */
+/*******************************************************************
+*** Doc
+*******************************************************************/
+
+/*******************************************************************
+*** Login
+*******************************************************************/
+
+.loginbox .content {
+    border-color:#9999FF; /* borders */
+}
+
+
+/*******************************************************************
+*** Message
+*******************************************************************/
+
+table.message_search_results td {
+    border-color:#9999FF; /* borders */
+}
+
 .message .author {
     color: #999999;
 }
@@ -595,7 +429,244 @@ table.minicalendar {
 .message .content {
 }
 
-.censoredtext {
-    color:#000000;
-    background:#000000;
+
+/*******************************************************************
+*** Tabs
+*******************************************************************/
+
+.tablink a:link,
+.tablink a:visited {
+    color:#000066;
 }
+
+.tablink a:hover {
+    text-decoration: none;
+}
+
+.selected .tablink a:link,
+.selected .tablink a:visited {
+    color:#000000;
+}
+
+
+/*******************************************************************
+*** User
+*******************************************************************/
+
+.userpicture {
+    background:#EEEEEE; 
+}
+
+.userinfobox {
+    border-color: #DDDDDD;
+    background-color: #F7F7F7;
+}
+
+
+/*******************************************************************
+*** Modules: Assignment
+*******************************************************************/
+
+.assignmentsubmission {
+}
+
+.assignmentnew .assignmentfeedback{
+    background-color:#DDDDDD; /* cellheading2 */
+}   
+    
+.assignmentold .assignmentfeedback{
+    background-color:#BBBBBB; /* cellheading */
+}
+
+.assignmentheading {
+    background-color:#BBBBBB; /* cellheading */
+}
+
+
+/*******************************************************************
+*** Modules: Chat
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Choice
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Forum
+*******************************************************************/
+
+.forumheaderlist,
+.forumpost {
+    border-color:#9999FF; /* borders */
+}
+
+.forumpost .content {
+    background: #FFFFFF;
+}
+
+.forumpost .left {
+    background:#EEEEEE; 
+}
+
+.forumpost .topic {
+    border-style:solid; /* borders */
+    border-width: 0px;
+    border-bottom-color: #EEEEEE;
+    border-bottom-width: 1px;
+}
+
+.forumpost .starter {
+    background:#DDDDDD; 
+}
+
+.forumheaderlist .discussion .starter {
+    background:#DDDDDD; 
+}
+
+.forumheaderlist td {
+    border-color: #FFFFFF;
+}
+
+.sideblock .post .head {
+    color:#555555;
+}
+
+.forumthread .unread {
+    background: #FFD991;
+}
+
+#mod-forum-view .unread {
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+#mod-forum-discuss .forumpost {
+    background: none;
+}
+
+#mod-forum-discuss .unread .forumpostmessage {
+    border-style: solid; 
+    border-color: #FFD991; 
+    border-width: 2px; 
+} 
+
+#mod-forum-discuss .forumthread .unread {
+} 
+
+#mod-forum-index .unread {
+}
+
+
+/*******************************************************************
+*** Modules: Glossary
+*******************************************************************/
+
+.entryboxheader {
+    border-color: #BBBBBB;
+}
+
+.entrybox {
+    border-color: #BBBBBB;
+}
+
+.entry {
+}
+
+.glossarypost {
+    border-color: #DDDDDD;
+}
+
+.glossarypost .entryheader,
+.glossarypost .entryapproval,
+.glossarypost .picture,
+.glossarypost .entryattachment,
+.glossarypost .left {
+    background-color: #F0F0F0;
+}
+
+.glossarycomment {
+    border-color: #DDDDDD;
+}
+
+.glossarycomment .entryheader,
+.glossarycomment .picture,
+.glossarycomment .left {
+    background-color: #F0F0F0;
+
+}
+
+#mod-glossary-report .generalbox .teacher {
+    background: #F0F0F0;
+}
+
+.categoryheader {
+    background-color: #dddddd;
+}
+
+.glossaryformatheader {
+    background-color: #dddddd;
+}
+
+
+/*******************************************************************
+*** Modules: Journal
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Label
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Lesson
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Quiz
+*******************************************************************/
+
+body#mod-quiz-report table#attempts td {
+    border-color: #dddddd;
+}
+body#mod-quiz-report table#attempts .r1 {
+    background-color: #eeeeee;
+}
+
+
+/*******************************************************************
+*** Modules: Resource
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Scorm
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Survey
+*******************************************************************/
+
+#mod-survey-view .r0 {
+    background-color: #EEEEEE;
+}
+#mod-survey-view .r1 {
+    background-color: #DDDDDD;
+}
+
+
+/*******************************************************************
+*** Modules: Wiki
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Workshop
+*******************************************************************/
+
+.workshoppostpicture {
+    background-color:#FEE6B9; /* cellcontent2 */
+}
+
+.workshopassessmentheading {
+    background-color:#DDDDDD; /* cellheading2 */
+}
+
+
+
