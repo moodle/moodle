@@ -1,20 +1,20 @@
 <?php
-    if (empty($form->name)) {
+    if (!isset($form->name)) {
         $form->name = "";
     }
-    if (empty($form->type)) {
+    if (!isset($form->type)) {
         $form->type = "";
     }
-    if (empty($form->intro)) {
+    if (!isset($form->intro)) {
         $form->intro = "";
     }
-    if (empty($form->open)) {
+    if (!isset($form->open)) {
         $form->open = 2;
     }
-    if (empty($form->assessed)) {
+    if (!isset($form->assessed)) {
         $form->assessed = "";
     }
-    if (empty($form->forcesubscribe)) {
+    if (!isset($form->forcesubscribe)) {
         $form->forcesubscribe = "";
     }
 ?>
