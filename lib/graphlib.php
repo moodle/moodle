@@ -155,6 +155,12 @@ function init() {
       $fontpath = $CFG->dirroot."/lang/en/fonts/";
   }
   $this->parameter['path_to_fonts'] = $fontpath;
+
+  if (file_exists("$fontpath"."lang_decode.php")) {
+      $this->parameter['lang_decode'] = "$fontpath"."lang_decode.php";
+  } else {
+      $this->parameter['lang_decode'] = "";
+  }
   /// End Moodle mods
 
 
@@ -1215,6 +1221,10 @@ function print_TTF($message) {
       $x = 0;
       break;
   }
+  if ($this->parameter['lang_decode']) {               // Moodle addition
+      include_once($this->parameter['lang_decode']);
+      $text = lang_decode($text);
+  }
   ImageTTFText($this->image, $points, $angle, $x, $y, $colour, $font, $text);
 }
 
@@ -1317,6 +1327,10 @@ function get_boundaryBox($message) {
 	}
 
 	// get boundary box and offsets for printing at an angle
+    if ($this->parameter['lang_decode']) {               // Moodle addition
+        include_once($this->parameter['lang_decode']);
+        $text = lang_decode($text);
+    }
 	$bounds = ImageTTFBBox($points, $angle, $font, $text);
 
 	if ($angle < 0) {
