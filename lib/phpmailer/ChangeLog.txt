@@ -1,5 +1,38 @@
 ChangeLog
 
+Version 1.70 (Mon, Jun 20 2003)
+* Added SMTP keep-alive support
+* Added IsError method for error detection
+* Added error message translation support (SetLanguage)
+* Refactored many methods to increase library performance
+* Hello now sends the newer EHLO message before HELO as per RFC 2821
+* Removed the boundary class and replaced it with GetBoundary
+* Removed queue support methods
+* New $Hostname variable
+* New Message-ID header
+* Received header reformat
+* Helo variable default changed to $Hostname
+* Removed extra spaces in Content-Type definition (#667182)
+* Return-Path should be set to Sender when set
+* Adds Q or B encoding to headers when necessary
+* quoted-encoding should now encode NULs \000
+* Fixed encoding of body/AltBody (#553370)
+* Adds "To: undisclosed-recipients:;" when all recipients are hidden (BCC)
+* Multiple bug fixes
+
+Version 1.65 (Fri, Aug 09 2002)
+* Fixed non-visible attachment bug (#585097) for Outlook
+* SMTP connections are now closed after each transaction
+* Fixed SMTP::Expand return value
+* Converted SMTP class documentation to phpDocumentor format
+
+Version 1.62 (Wed, Jun 26 2002)
+* Fixed multi-attach bug
+* Set proper word wrapping
+* Reduced memory use with attachments
+* Added more debugging
+* Changed documentation to phpDocumentor format
+
 Version 1.60 (Sat, Mar 30 2002)
 * Sendmail pipe and address patch (Christian Holtje)
 * Added embedded image and read confirmation support (A. Ognio)
