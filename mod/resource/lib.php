@@ -126,5 +126,11 @@ function resource_user_complete($course, $user, $mod, $resource) {
     }
 }
 
+function resource_get_participants($resourceid) {
+//Returns the users with data in one resource
+//(NONE, byt must exists on EVERY mod !!)
+
+    return false;
+}
 
 ?>
