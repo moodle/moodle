@@ -294,6 +294,35 @@ table.formtable td {
     border-style:solid;
 }
 
+.forumpost {
+    margin-top: 15px;
+}
+
+.forumpost .topic {
+    padding: 4px;
+}
+
+
+.forumpost .commands {
+    padding-top: 0.5em;
+    text-align:right;
+}
+
+.forumpost .ratings {
+    padding-top: 1em;
+    text-align:right;
+}
+
+.forumpost .content {
+    padding: 4px;
+}
+
+.forumpost .left {
+    padding: 4px;
+    text-align: center;
+    vertical-align: top;
+}
+
 .forumpostindent {
     margin-left: 30px;
 }

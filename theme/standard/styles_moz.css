@@ -121,13 +121,22 @@ table.minicalendar td {
     -moz-border-radius:3px;
 }
 
-.sideblock, .forumpost {
+.sideblock {
     -moz-border-radius-bottomleft:20px;
     -moz-border-radius-bottomright:20px;
 }
 
-.forumpost .left {
+.forumpost {
     -moz-border-radius-bottomleft:20px;
+    -moz-border-radius-bottomright:20px;
+}
+
+.forumpost .side {
+    -moz-border-radius-bottomleft:20px;
+}
+
+.forumpost .content {
+    -moz-border-radius-bottomright:20px;
 }
 
 #user-view .left {

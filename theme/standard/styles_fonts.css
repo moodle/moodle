@@ -213,6 +213,14 @@ h4 {
     font-size:x-small;
 }
 
+.forumpost .topic .subject {
+    font-weight: bold;
+}
+
+.forumpost .topic .author {
+    font-size: 0.8em;
+}
+
 
 /* message */
 .message_summary_link {

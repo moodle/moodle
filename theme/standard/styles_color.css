@@ -236,23 +236,19 @@ th {
     border-color:#DDDDDD; /* borders */
 }
 
-.forumpostside {
-    background:#EEEEEE;
+.forumpost .content {
+    background: #FFFFFF;
 }
 
-.forumpostpicture {
+.forumpost .left {
     background:#EEEEEE; 
 }
 
-.forumpostheader {
+.forumpost .topic {
     border-style:solid; /* borders */
     border-width: 0px;
     border-bottom-color: #EEEEEE;
     border-bottom-width: 1px;
-}
-
-.forumpostmessage {
-    background:#FFFFFF;
 }
 
 /* survey */
