@@ -257,6 +257,11 @@ function auth_get_users($filter='*', $dontlistcreated=false) {
 
 
     foreach ($contexts as $context) {
+        
+        $context = trim($context);
+        if (empty($context)) {
+            continue;
+        }
 
         if ($CFG->ldap_search_sub) {
             //use ldap_search to find first user from subtree
@@ -391,6 +396,10 @@ function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
     $fresult = array();
     $count = 0;
     foreach ($contexts as $context) {
+        $context = trim($context);
+        if (empty($context)) {
+            continue;
+        }
         begin_sql();
         if ($CFG->ldap_search_sub) {
             //use ldap_search to find first user from subtree
@@ -1183,6 +1192,10 @@ function auth_ldap_isgroupmember ($username='', $groupdns='') {
     $groups = explode(";",$groupdns);
     
     foreach ($groups as $group){
+        $group = trim($group);
+        if (empty($group)) {
+            continue;
+        }
         //echo "Checking group $group for member $username\n";
         $search = @ldap_read($ldapconnection, $group,  '('.$CFG->ldap_memberattribute.'='.$username.')', array($CFG->ldap_memberattribute));
         if (ldap_count_entries($ldapconnection, $search)) {$info = auth_ldap_get_entries($ldapconnection, $search);
@@ -1228,6 +1241,11 @@ function auth_ldap_connect($binddn='',$bindpwd=''){
     $urls = explode(";",$CFG->ldap_host_url);
         
     foreach ($urls as $server){
+        $url = trim($url);
+        if (empty($url)) {
+            continue;
+        }
+
         $connresult = ldap_connect($server);
         //ldap_connect returns ALWAYS true
  
@@ -1284,7 +1302,10 @@ function auth_ldap_find_userdn ($ldapconnection, $username){
   
     foreach ($ldap_contexts as $context) {
 
-        $context == trim($context);
+        $context = trim($context);
+        if (empty($context)) {
+            continue;
+        }
 
         if ($CFG->ldap_search_sub){
             //use ldap_search to find first user from subtree
@@ -1359,6 +1380,11 @@ function auth_ldap_get_userlist($filter="*") {
     }
 
     foreach ($contexts as $context) {
+
+        $context = trim($context);
+        if (empty($context)) {
+            continue;
+        }
 
         if ($CFG->ldap_search_sub) {
             //use ldap_search to find first user from subtree
