@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 unstable development (2004083000)
+      // glossary.php - created with Moodle 1.4.2 (2004083125)
 
 
 $string['addcomment'] = 'เพิ่มเติมความคิดเห็น';
@@ -47,8 +47,8 @@ $string['commentdeleted'] = 'ความคิดเห็นนี้ถูกลบออก';
 $string['comments'] = 'ความคิดเห็น';
 $string['commentson'] = 'แสดงความคิดเห็นเมื่อ';
 $string['commentupdated'] = 'ความคิดเห็นถูกเพิ่มเติม';
-$string['concept'] = 'คอนเซปต์';
-$string['concepts'] = 'คอนเซปต์';
+$string['concept'] = 'คำศัพท์';
+$string['concepts'] = 'คำศัพท์';
 $string['configenablerssfeeds'] = 'ตรงนี้ใช้สำหรับเปิดให้การป้อนข้อมูลแบบ RSS เกิดขึ้นได้ในทุกหมวดคำศัพท์  คุณยังจะต้องเปิดการป้อนข้อมูลเองในการตั้งค่าของแต่ละหมวดคำศัพท์';
 $string['currentglossary'] = 'อภิธานศัพท์ปัจจุบัน';
 $string['dateview'] = 'เลือกโดยดูจากวันที่';
@@ -85,6 +85,8 @@ $string['entrydeleted'] = 'คำศัพท์ถูกลบ';
 $string['entryexported'] = 'ส่งออกคำศัพท์สำเร็จแล้ว';
 $string['entryishidden'] = '(คำศัพท์นี้ถูกซ่อนอยู่)';
 $string['entryleveldefaultsettings'] = 'การตั้งค่าระดับคำศัพท์';
+$string['entrysaved'] = 'บันทึกคำศัพท์แล้ว';
+$string['entryupdated'] = 'อัพเดทคำศัพท์แล้ว';
 $string['entryusedynalink'] = 'ควรลิงก์คำศัพท์นี้อัตโนมัติ';
 $string['explainaddentry'] = 'เพิ่มคำศัพท์ใหม่ <br /> ต้องใส่คอนเซปต์และความหมาย';
 $string['explainall'] = 'แสดงคำศัพท์ทั้งหมดในหน้าเดียว';
@@ -127,6 +129,7 @@ $string['noentry'] = 'ไม่พบคำศัพท์นี้';
 $string['notcategorised'] = 'ไม่อยู่ในประเภทใด';
 $string['numberofentries'] = 'จำนวนคำศัพท์';
 $string['onebyline'] = 'หนึ่งคำต่อบรรทัด';
+$string['parentlanguage'] = 'en';
 $string['printerfriendly'] = 'รูปแบบที่สะดวกต่อการพิมพ์';
 $string['question'] = 'คำถาม';
 $string['rate'] = 'ให้คะแนน';
@@ -154,6 +157,9 @@ $string['sortchronogically'] = 'เรียงจากวันที่';
 $string['special'] = 'พิเศษ';
 $string['standardview'] = 'เลือกโดยตัวอักษร';
 $string['studentcanpost'] = 'นักเรียนสามารถเพิ่มคำศัพท์ได้';
+$string['thischarset'] = 'TIS-620';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Thai';
 $string['totalentries'] = 'จำนวนคำศัพท์ทั้งหมด';
 $string['usedynalink'] = 'ลิงก์ไปที่คำศัพท์อัตโนมัติ';
 $string['waitingapproval'] = 'รอการอนุมัติอยู่';

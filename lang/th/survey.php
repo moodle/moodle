@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.4 development (2004060400)
+      // survey.php - created with Moodle 1.4.2 (2004083125)
 
 
 $string['actual'] = 'ตามจริง';
@@ -184,6 +184,7 @@ $string['nobodyyet'] = 'ไม่มีผู้ใดทำแบบสอบถามนี้เสร็จ';
 $string['notdone'] = 'ยังไม่เสร็จ';
 $string['notes'] = 'การวิเคราะห์และบันทึกของท่าน';
 $string['othercomments'] = 'ความคิดเห็นเพิ่มเติม';
+$string['parentlanguage'] = 'en';
 $string['peoplecompleted'] = 'มี $a  คน  ที่ได้ทำแบบสอบถามนี้';
 $string['preferred'] = 'ชอบ';
 $string['preferredclass'] = 'ชั้นเรียนที่ชอบ';
@@ -204,6 +205,9 @@ $string['surveyname'] = 'ชื่อการสำรวจ';
 $string['surveysaved'] = 'การสำรวจที่บันทึกแล้ว';
 $string['surveytype'] = 'ประเภทการสำรวจ';
 $string['thanksforanswers'] = 'ขอบคุณสำหรับการตอบแบบสอบถาม, $a';
+$string['thischarset'] = 'TIS-620';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Thai';
 $string['time'] = 'เวลา';
 $string['viewsurveyresponses'] = 'ดู $a ผลการสำรวจ';
 

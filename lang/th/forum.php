@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 unstable development (2004083000)
+      // forum.php - created with Moodle 1.4.2 (2004083125)
 
 
 $string['addanewdiscussion'] = 'ตั้งกระทู้';
@@ -90,6 +90,7 @@ $string['openmode0'] = 'ตั้งกระทู้ไม่ได้ ตอบไม่ได้';
 $string['openmode1'] = 'ตั้งกระทู้ไม่ได้ ตอบได้';
 $string['openmode2'] = 'ตั้งกระทู้ได้ ตอบได้';
 $string['parent'] = 'ความเห็นก่อนหน้า';
+$string['parentlanguage'] = 'en';
 $string['parentofthispost'] = 'โพสต์ที่คุณเขียนตอบ';
 $string['postadded'] = 'เพิ่มโพสต์ของคุณแล้ว<P>คุณมีเวลา $a หากต้องการแก้ไข';
 $string['postincontext'] = 'ดูเนื้อหาโพสต์';
@@ -146,6 +147,9 @@ $string['subscribestart'] = 'ต้องสำเนาโพสต์ในกระทู้นี้ทางอีเมล';
 $string['subscribestop'] = 'ไม่ต้องการสำเนาโพสต์ทางอีเมล';
 $string['subscription'] = 'การเป็นสมาชิก';
 $string['subscriptions'] = 'การเป็นสมาชิก';
+$string['thischarset'] = 'TIS-620';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Thai';
 $string['unsubscribe'] = 'ต้องการออกจากการเป็นสมาชิกกระดาน';
 $string['unsubscribed'] = 'ไม่ได้เป็นสมาชิก';
 $string['unsubscribeshort'] = 'ยกเลิกการเป็นสมาชิก';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 unstable development (2004083000)
+      // quiz.php - created with Moodle 1.4.2 (2004083125)
 
 
 $string['acceptederror'] = 'คลาดเคลื่อนได้..';
@@ -180,6 +180,7 @@ $string['numerical'] = 'แบบโจทย์ตัวเลข';
 $string['optional'] = 'ทางเลือก';
 $string['overdue'] = 'เกินกำหนด';
 $string['paragraphquestion'] = 'คำถามย่อหน้าดังกล่าวบรรทัดที่ $a ไม่ถูกต้อง ระบบจะไม่นำคำถามนี้มาใช้';
+$string['parentlanguage'] = 'en';
 $string['passworderror'] = 'ใส่รหัสผ่านผิดค่ะ';
 $string['percentcorrect'] = 'เปอร์เซ็นต์ที่ถูก';
 $string['preview'] = 'Preview';
@@ -245,6 +246,9 @@ $string['shufflequestions'] = 'สลับคำถาม';
 $string['significantfigures'] = 'ด้วย $a ';
 $string['subneterror'] = 'ขออภัยค่ะ แบบทดสอบนี้ถูกล็อกเอาไว้สามารถทำได้ภายในที่ตั้งที่ระบุไว้เท่านั้น คอมพิวเตอร์ของคุณอยู่ในพื้นที่นอกเหนือจากเขตที่ระบุเอาไว้';
 $string['substitutedby'] = 'แทนที่โดย';
+$string['thischarset'] = 'TIS-620';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Thai';
 $string['time'] = 'เวลา';
 $string['timecompleted'] = 'ทำเสร็จเมื่อ';
 $string['timeleft'] = 'เหลือเวลา';

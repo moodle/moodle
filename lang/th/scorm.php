@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 unstable development (2004083000)
+      // scorm.php - created with Moodle 1.4.2 (2004083125)
 
 
 $string['asset'] = 'Asset';
@@ -55,6 +55,7 @@ $string['not_corr_type'] = '$a->tag ผิดประเภท';
 $string['notattempted'] = 'ยังไม่ได้ทำ';
 $string['organizations'] = 'องค์กร';
 $string['packagedir'] = 'มีข้อผิดพลาด ไม่สามารถสร้างแพกเกจไดเรคทอรี่';
+$string['parentlanguage'] = 'en';
 $string['passed'] = 'ผ่าน';
 $string['php5'] = 'PHP 5 (DOMXML native library)';
 $string['position_error'] = 'แท็ก$a->tag ไม่ใช่ลูกของ $a->parent tag';
@@ -66,6 +67,9 @@ $string['scoes'] = 'คะแนน';
 $string['score'] = 'คะแนน';
 $string['syntax'] = 'Syntax error';
 $string['tag_error'] = 'ไม่ทราบค่าแท็ก ($a->tag) ในเนื้อหา: $a->value';
+$string['thischarset'] = 'TIS-620';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Thai';
 $string['too_many_attributes'] = 'แท็ก  $a->tag มีแอทริบิวต์มากเกินไป';
 $string['too_many_children'] = 'แท้ก  $a->tag มีลูกมากเกินไป';
 $string['trackingloose'] = 'คำเตือน  ข้อมูลของแพคเกจ SCORM อาจจะอาจได้';

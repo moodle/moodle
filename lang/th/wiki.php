@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 unstable development (2004083000)
+      // wiki.php - created with Moodle 1.4.2 (2004083125)
 
 
 $string['action'] = 'ต้องการทำ..';
@@ -126,6 +126,7 @@ $string['pageslinkingto'] = 'หน้าที่ต้องการลิงก์มายังหน้านี้';
 $string['pagesremoved'] = 'ลบหน้า';
 $string['pagesreverted'] = 'เปลี่ยนกลับ';
 $string['pagesstripped'] = 'ลบหน้านี้แล้ว';
+$string['parentlanguage'] = 'en';
 $string['plaintext'] = 'ตัวหนังสือธรรมดา';
 $string['preview'] = 'ดูตัวอย่าง';
 $string['readonly'] = 'หน้านี้อ่านได้อย่างเดียว แก้ไขไม่ได้';
@@ -157,6 +158,9 @@ $string['tabinfo'] = 'History';
 $string['tablinks'] = 'ลิงก์';
 $string['tabview'] = 'ดู';
 $string['thanksforcontribution'] = 'ขอบคุณสำหรับข้อมูลที่คุณเพิ่มเข้ามาค่ะ';
+$string['thischarset'] = 'TIS-620';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Thai';
 $string['thispageisntlinkedfromanywhereelse'] = 'ไม่ได้ลิงก์หน้านี้มาจากที่อื่น';
 $string['updatedpages'] = 'อัพเดทหน้านี้แล้ว';
 $string['uplerror'] = 'ขออภัยค่ะมีปัญหาในระหว่างการอัพโหลด';
