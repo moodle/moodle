@@ -1149,9 +1149,10 @@ function move_module($cm, $move) {
     }
 }
 
-function make_editing_buttons($moduleid, $absolute=false, $visible=true, $str=NULL) {
+function make_editing_buttons($moduleid, $absolute=false, $visible=true) {
     global $CFG, $THEME;
 
+    static $str = '';
     if (empty($str)) {
         $str->delete   = get_string("delete");
         $str->moveup   = get_string("moveup");
