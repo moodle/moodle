@@ -15,7 +15,7 @@
 
 <body bgcolor="#FFFFFF">
 <h1>Latest Release notes</h1>
-<h3> New in Moodle 1.2 (14th March, 2004)</h3>
+<h3> New in Moodle 1.2 (20th March, 2004)</h3>
 <ul>
   <dl>
     <dt>Major new features</dt>
@@ -56,21 +56,22 @@
     <dt>Site administration</dt>
     <dd> 
       <ul>
-        <li>An important security fix preventing teachers from logging in as admins</li>
-        <li>User's names can now be configured so student's can only see &quot;firstname lastname&quot;, &quot;lastname firstname&quot; or &quot;firstname&quot;</li>
+        <li>An important security fix preventing teachers from logging in as admins who are students in their course</li>
+        <li>New setting &quot;forcelogin&quot;  can force people to log in before they can see any of the site</li>
+        <li>New setting &quot;opentogoogle&quot;  allows Google and people referred by Google to get in as guest</li>
+        <li>New setting &quot;timezone&quot; allows a default timezone to be set for the whole site</li>
+        <li>New setting &quot;deleteunconfirmed&quot; specifies the time we'll wait for email accounts to be confirmed</li>
+        <li>New setting &quot;allowunenroll&quot; enables/disables students from unenrolling themselves from courses</li>
+        <li>New setting &quot;fullnamedisplay&quot; allows override for the formatting of user full names so students can only see &quot;firstname lastname&quot;, &quot;lastname firstname&quot; or &quot;firstname&quot;</li>
         <li>Individual users can have their email disabled by the teacher or admin (useful for dealing with broken mail accounts that are bouncing)</li>
-        <li>A new setting &quot;forcelogin&quot;  can force people to log in before they can see any of the site</li>
         <li>Upload sizes can now be controlled throughout Moodle using &quot;maxbytes&quot;. There is a site limit (bounded by the current PHP limits), which itself is the upper bound for course limits, which is the upper bound for activity limits.</li>
-        <li>Students can be allowed/disallowed self-unenrolling</li>
         <li>Moodle cookies can be customised (helps when running multiple Moodles on one site)</li>
         <li>Included script for analysing database performance (admin/dbperformance.php)</li>
         <li>Included standalone script to check a server for Moodle compatibility (lib/compatible.php)</li>
         <li> If a file called cronextra.php exists in the dataroot then cron will run that too.  This allows sites to have &quot;special&quot; maintenance features.</li>
         <li>Course formats are now more like plugins, in separate directories</li>
         <li>Users can now be uploaded from text files</li>
-        <li>If $CFG-&gt;disableuserimages is defined then user images can not be changed</li>
-        <li>If $CFG-&gt;opentogoogle is defined then Google can get in as guest
-and people referred by google also get in as guest</li>
+        <li>If $CFG-&gt;disableuserimages is defined (in config.php) then user images can not be changed</li>
         <li>If $CFG-&gt;admineditalways is defined then the administrator can edit ANY post at any time.</li>
         <li>If $CFG-&gt;filterall is defined then even little things liks forum subjects and activity names are filtered</li>
         <li>Support for restricted demo users (eg the teacher demo on Moodle.org) - usernames can be added to a list of  names in config.php. eg $CFG-&gt;restrictusers = 'teacher,fred';</li>
@@ -80,7 +81,7 @@ and people referred by google also get in as guest</li>
     <dd> 
       <ul>
         <li>Fixes for Internet Explorer can be more robust at using the style sheet</li>
-        <li>Miscellaneous fixes and improvements to themes - custom themes need upgrading.</li>
+        <li>Miscellaneous fixes and improvements to themes - <strong>custom themes need upgrading!</strong></li>
       </ul>
     </dd>
     <dt>Translations</dt>
@@ -93,6 +94,7 @@ and people referred by google also get in as guest</li>
         <li>Language packs can now define the order that people's names should be shown in</li>
         <li>Language files are now written using slightly more efficient PHP code</li>
         <li>Finally got rid of the final bogus linefeeds in the multi-line strings</li>
+        <li>Courses can now &quot;force&quot; a language on all users</li>
       </ul>
     </dd>
     <dt>Backup / Restore</dt>
@@ -108,12 +110,12 @@ and people referred by google also get in as guest</li>
       <ul>
         <li>Warning: the new text filters can increase the load on your server, particularly when used with complex filters. Use them with caution. </li>
         <li>The new <strong>glossary filter</strong> can create links to glossary entries from matching words throughout Moodle.</li>
-        <li>The new <strong>TeX filter</strong> can convert TeX code found anywhere in Moodle into true Mathematics notation (GIF format image)</li>
+        <li>The new <strong>TeX filter</strong> can convert TeX code found anywhere in Moodle into true Mathematics notation (GIF format image). There is also an <strong>algebra</strong> filter with a simpler input format (more like calculators).</li>
         <li>The new <strong>censor filter</strong> can be enabled to filter out bad words.</li>
         <li>The new <strong>multilang filter</strong> allows texts to be entered in multiple languages, and only the best one will be shown to each user (depending on their language setting)</li>
         <li>The &lt;nolink&gt; tag can be used to prevent autolinking within a passage of text.</li>
         <li>More tags are now allowed, including &lt;acronym&gt; and all &lt;math&gt; tags.</li>
-        <li>Some areas where text wasn't being filtered before (security risk) have now been fixed.</li>
+        <li>Some areas where text wasn't properly filtered before (security risk) have now been fixed.</li>
       </ul>
     </dd>
     <dt>Developer API</dt>
