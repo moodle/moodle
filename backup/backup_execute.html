@@ -24,11 +24,18 @@
             if (!isset($$var)) {
                 $$var = 1;
             }
+            //Now stores all the mods preferences into an array into preferences
+            $preferences->mods[$modname]->backup = $$var;
+
             //Check include user info
             $var = "backup_user_info_".$modname;
             if (!isset($$var)) {
                 $$var = 1;
             }
+            //Now stores all the mods preferences into an array into preferences
+            $preferences->mods[$modname]->userinfo = $$var; 
+            //And the name of the mod
+            $preferences->mods[$modname]->name = $modname;
         }
     }
 
@@ -36,30 +43,43 @@
     if (!isset($backup_users)) {
         $backup_users = 1;
     }
+    $preferences->backup_users = $backup_users;
    
     if (!isset($backup_logs)) {
         $backup_logs = 1;
     }
+    $preferences->backup_logs = $backup_logs;
 
     if (!isset($backup_user_files)) {
         $backup_user_files = 1;
    }
+    $preferences->backup_user_files = $backup_user_files;
 
     if (!isset($backup_course_files)) {
         $backup_course_files = 2;
     }
+    $preferences->backup_course_files = $backup_course_files;
 
     if (!isset($id)) {
         error ("Course not specified");
     }
+    $preferences->backup_course = $id;
 
     if (!isset($backup_name)) {
         error ("Backup name not specified");
     }
+    $preferences->backup_name = $backup_name;
 
     if (!isset($backup_unique_code)) {
         error ("Backup unique code not specified");
     }
+    $preferences->backup_unique_code = $backup_unique_code;
+
+    //Another Info
+    $preferences->moodle_version = $version;
+    $preferences->moodle_release = $release;
+    $preferences->backup_version = $backup_version;
+    $preferences->backup_release = $backup_release;
 
     if ($count == 0) {
         notice("No backupable modules are installed!");
@@ -79,6 +99,9 @@
     //Start the main tr, where all the backup progress is done
     echo "<tr>";
     echo "<td colspan=\"2\">";
+    
+    //Start the main ul
+    echo "<ul>";
 
     //Delete old_entries from backup tables
     echo "<li>Deteting old data";
@@ -95,12 +118,40 @@
     if ($status) {
         $status = clear_backup_dir($backup_unique_code);
     }
+
+    //Create the moodle.xml file
+    if ($status) {
+        echo "<li>Creating xml file";
+        //Begin a new list to xml contents
+        echo "<ul>";
+        echo "<li>Writing header";
+        //Obtain the xml file (create and open) and print prolog information
+        $backup_file = backup_open_xml($backup_unique_code);
+        echo "<li>Writing info";
+        //Prints general info about backup to file
+        if ($backup_file) {
+            $status = backup_general_info($backup_file,$preferences);
+        }
+
+    
+        //Close the xml file and xml data
+        if ($backup_file) {
+            $status = backup_close_xml($backup_file);
+        }
+
+        //End xml contents (close ul)
+        echo "</ul>";
+    }
+
     if (!$status) {
         error ("An error has ocurred");
     }
 
+    //Ends th main ul
+    echo "</ul>";
 
     //End the main tr, where all the backup is done
+    echo "</td></tr>";
 
     //End the main table
     echo "</table>";
