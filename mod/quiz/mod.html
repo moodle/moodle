@@ -2,7 +2,7 @@
 <!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
 
 <?PHP 
-    include_once("$CFG->dirroot/mod/quiz/lib.php");
+    require_once("$CFG->dirroot/mod/quiz/lib.php");
 
     if (empty($form->name)) {
         $form->name = "";

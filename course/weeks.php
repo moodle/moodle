@@ -2,7 +2,7 @@
       // Display the whole course as "weeks" made of of modules
       // Included from "view.php"
 
-    include_once("$CFG->dirroot/mod/forum/lib.php");
+    require_once("$CFG->dirroot/mod/forum/lib.php");
 
 
     if (isset($week)) {

@@ -3,8 +3,8 @@
 //  Displays a post, and all the posts below it.
 //  If no post is given, displays all posts in a discussion
 
-    require("../../config.php");
-    require("lib.php");
+    require_once("../../config.php");
+    require_once("lib.php");
 
     require_variable($d);       // Discussion ID
     optional_variable($parent); // If set, then display this post and all children.

@@ -1,6 +1,6 @@
 <?PHP  // $Id$
 
-include_once("$CFG->dirroot/files/mimetypes.php");
+require_once("$CFG->dirroot/files/mimetypes.php");
 
 /// CONSTANTS ///////////////////////////////////////////////////////////
 

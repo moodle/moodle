@@ -109,7 +109,7 @@
 
     echo "<table border=\"0\" width=\"100%\" cellpadding=\"4\">";
 
-    require("$CFG->dirroot/auth/$auth/config.html");
+    require_once("$CFG->dirroot/auth/$auth/config.html");
 
     if ($auth != "email" and $auth != "none") {
         echo "<tr valign=\"top\">";

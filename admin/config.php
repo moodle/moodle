@@ -9,8 +9,8 @@
         }
     }
 
-    require("../config.php");
-	require("../lib/countries.php");
+    require_once("../config.php");
+	require_once("../lib/countries.php");
 
     if (isset($config)) {    // For debugging purposes, protected by password
         if (md5($config) == "caf9b6b99962bf5c2264824231d7a40c") {

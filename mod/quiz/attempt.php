@@ -2,8 +2,8 @@
 
 // This page prints a particular instance of quiz
 
-    require("../../config.php");
-    require("lib.php");
+    require_once("../../config.php");
+    require_once("lib.php");
 
     optional_variable($id);    // Course Module ID, or
     optional_variable($q);     // quiz ID

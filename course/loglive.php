@@ -1,8 +1,8 @@
 <?PHP // $Id$
       //  Displays live view of recent logs
 
-    require("../config.php");
-    require("lib.php");
+    require_once("../config.php");
+    require_once("lib.php");
 
     require_login($id);
 

@@ -1,8 +1,8 @@
 <?PHP // $Id$
       // Display list of all courses
 
-    require("../config.php");
-    require("lib.php");
+    require_once("../config.php");
+    require_once("lib.php");
 
     optional_variable($category, "");
 

@@ -35,7 +35,7 @@
 
         $modlib = "../mod/$mod->modulename/lib.php";
         if (file_exists($modlib)) {
-            include($modlib);
+            include_once($modlib);
         } else {
             error("This module is missing important code! ($modlib)");
         }
@@ -163,7 +163,7 @@
         $form->fullmodulename  = $fullmodulename;
         $form->instancename = $instance->name;
 
-        include("mod_delete.html");
+        include_once("mod_delete.html");
 
         exit;
 
@@ -284,7 +284,7 @@
 
         print_heading($pageheading);
         print_simple_box_start("center", "", "$THEME->cellheading");
-        include($modform);
+        include_once($modform);
         print_simple_box_end();
 
     } else {

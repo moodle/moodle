@@ -109,7 +109,7 @@
 // Output the file as a valid Excel spreadsheet if required
 
     if ($type == "xls") {
-        include( "$CFG->libdir/psxlsgen.php" );
+        require_once( "$CFG->libdir/psxlsgen.php" );
 
 
         $myxls = new PhpSimpleXlsGen();

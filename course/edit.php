@@ -1,8 +1,8 @@
 <?PHP // $Id$
       // Edit course settings
 
-	require("../config.php");
-	require("lib.php");
+	require_once("../config.php");
+	require_once("lib.php");
 
     optional_variable($id, 0);   // course id
 

@@ -1,8 +1,8 @@
 <?PHP // $Id$
       // Allows the admin to create, delete and rename course categories
 
-	require("../config.php");
-	require("lib.php");
+	require_once("../config.php");
+	require_once("lib.php");
 
     if (!isadmin()) {
         error("Only administrators can use this course!");

@@ -99,7 +99,7 @@ $CFG->buggy_referer = false;
 
 
 $CFG->libdir    = "$CFG->dirroot/lib";   // Do not change this
-require("$CFG->libdir/setup.php");       // Do not change this
+require_once("$CFG->libdir/setup.php");       // Do not change this
 
 // MAKE SURE WHEN YOU EDIT THIS FILE THAT THERE ARE NO SPACES, BLANK LINES, 
 // RETURNS, OR ANYTHING ELSE AFTER THE TWO CHARACTERS ON THE NEXT LINE.

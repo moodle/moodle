@@ -1,8 +1,8 @@
 <?PHP // $Id$
       // Displays different views of the logs.
 
-    require("../config.php");
-    require("lib.php");
+    require_once("../config.php");
+    require_once("lib.php");
 
     require_variable($id);    // Course ID
     optional_variable($user, 0); // User to display

@@ -2,8 +2,8 @@
 
 //  Display the course home page.
 
-    include_once("../config.php");
-    include_once("lib.php");
+    require_once("../config.php");
+    require_once("lib.php");
 
     optional_variable($id);
     optional_variable($name);

@@ -15,7 +15,7 @@
 
 /// Connect to the database using adodb
 
-    require("$CFG->libdir/adodb/adodb.inc.php"); // Database access functions
+    require_once("$CFG->libdir/adodb/adodb.inc.php"); // Database access functions
 
     $db = &ADONewConnection($CFG->dbtype);         
 
@@ -33,9 +33,9 @@
 
 /// Load up standard libraries 
 
-    require("$CFG->libdir/weblib.php");          // Functions for producing HTML
-    require("$CFG->libdir/datalib.php");         // Functions for accessing databases
-    require("$CFG->libdir/moodlelib.php");       // Other general-purpose functions
+    require_once("$CFG->libdir/weblib.php");          // Functions for producing HTML
+    require_once("$CFG->libdir/datalib.php");         // Functions for accessing databases
+    require_once("$CFG->libdir/moodlelib.php");       // Other general-purpose functions
 
 
 /// Load up any configuration from the config table

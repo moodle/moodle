@@ -3,8 +3,8 @@
 //  Collect ratings, store them, then return to where we came from
 
 
-    require("../../config.php");
-    require("lib.php");
+    require_once("../../config.php");
+    require_once("lib.php");
 
     if (isguest()) {
         error("Guests are not allowed to rate posts.", $_SERVER["HTTP_REFERER"]);

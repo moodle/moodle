@@ -1,5 +1,6 @@
 <?PHP // $Id$
-    require("../config.php");
+
+    require_once("../config.php");
 
     // Check if the guest user exists.  If not, create one.
     if (! record_exists("user", "username", "guest")) {

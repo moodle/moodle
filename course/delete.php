@@ -1,7 +1,7 @@
 <?PHP // $Id$
       // Admin-only code to delete a course utterly
 
-	require("../config.php");
+	require_once("../config.php");
 
     optional_variable($id);       // course id
     optional_variable($delete);   // delete confirmation

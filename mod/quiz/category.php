@@ -1,8 +1,8 @@
 <?PHP // $Id$
       // Allows a teacher to create, edit and delete categories
 
-	require("../../config.php");
-	require("lib.php");
+	require_once("../../config.php");
+	require_once("lib.php");
 
     require_variable($id);   // course
 

@@ -1,9 +1,9 @@
 <?PHP // $Id$
       /// For creating and editing quiz questions.
 
-    require("../../config.php");
-    require("lib.php");
-    require("../../files/mimetypes.php");
+    require_once("../../config.php");
+    require_once("lib.php");
+    require_once("../../files/mimetypes.php");
 
     optional_variable($id);
 

@@ -6,7 +6,7 @@
       // courses that aren't so rigidly defined by time.
       // Included from "view.php"
 
-    include_once("$CFG->dirroot/mod/forum/lib.php");
+    require_once("$CFG->dirroot/mod/forum/lib.php");
 
     if (isset($topic)) {
         if ($topic == "all") {

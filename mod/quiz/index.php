@@ -2,8 +2,8 @@
 
 // This page lists all the instances of quiz in a particular course
 
-    require("../../config.php");
-    require("lib.php");
+    require_once("../../config.php");
+    require_once("lib.php");
 
     require_variable($id);   // course
 

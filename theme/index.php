@@ -1,6 +1,6 @@
 <?PHP // $Id$
 
-    require("../config.php");
+    require_once("../config.php");
 
     optional_variable($preview);   // which theme to show
     optional_variable($choose);    // set this theme as default

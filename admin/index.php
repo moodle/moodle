@@ -1,6 +1,6 @@
 <?PHP // $Id$
 
-    require("../config.php");
+    require_once("../config.php");
 
 
 /// Check that PHP is of a sufficient version

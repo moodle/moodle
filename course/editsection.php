@@ -1,8 +1,8 @@
 <?PHP // $Id$
       // Edit the introduction of a section
 
-    require("../config.php");
-    require("lib.php");
+    require_once("../config.php");
+    require_once("lib.php");
 
     require_variable($id);    // Week ID
 

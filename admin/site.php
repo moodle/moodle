@@ -1,6 +1,6 @@
 <?PHP // $Id$
 
-    require("../config.php");
+    require_once("../config.php");
 
     if ($site = get_site()) {
         if (!isadmin()) {

@@ -1,7 +1,7 @@
 <?PHP // $Id$
 
-	require("../config.php");
-	require("../lib/countries.php");
+	require_once("../config.php");
+	require_once("../lib/countries.php");
 
 	if ($user = data_submitted()) {
 

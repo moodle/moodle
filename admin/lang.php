@@ -1,6 +1,6 @@
 <?PHP // $Id$
 
-    require("../config.php");
+    require_once("../config.php");
 
     optional_variable($mode, "");
 

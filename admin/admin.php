@@ -2,7 +2,7 @@
       // Admin-only script to assign administrative rights to users
       // !!! based on ../course/teacher.php (cut and pasted, then mangled)
 
-	require("../config.php");
+	require_once("../config.php");
 
     # sanity checks
     assert("!ereg('[^0-9]', \$_REQUEST['add'])");

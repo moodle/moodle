@@ -1,6 +1,6 @@
 <?PHP // $Id$
 
-	require("../config.php");
+	require_once("../config.php");
 
 	if ( isset($p) && isset($s) ) {     #  p = user.secret   s = user.username
 

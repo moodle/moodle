@@ -3,7 +3,7 @@
 // Deletes the moodledata directory, COMPLETELY!!
 // BE VERY CAREFUL USING THIS!
 
-    include("../config.php");
+    require_once("../config.php");
 
     require_login();
 

@@ -1,6 +1,6 @@
 <?PHP // $Id$
 
-    require("../../config.php");
+    require_once("../../config.php");
 
     require_variable($id);   // course
 

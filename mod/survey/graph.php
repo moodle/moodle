@@ -1,8 +1,8 @@
 <?PHP // $Id$
 
-    require("../../config.php");
-    require("$CFG->libdir/graphlib.php");
-    require("lib.php");
+    require_once("../../config.php");
+    require_once("$CFG->libdir/graphlib.php");
+    require_once("lib.php");
 
     require_variable($id);    // Course Module ID
     require_variable($type);  // Graph Type

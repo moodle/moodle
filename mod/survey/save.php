@@ -1,7 +1,7 @@
 <?PHP // $Id$
 
-	require('../../config.php');
-	require('lib.php');
+	require_once('../../config.php');
+	require_once('lib.php');
 
 
 // Make sure this is a legitimate posting

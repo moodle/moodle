@@ -3,7 +3,7 @@
       // Syntax:   pix.php/userid/f1.jpg or pix.php/userid/f2.jpg
       //     OR:   ?file=userid/f1.jpg or ?file=userid/f2.jpg
 
-    require("../config.php");
+    require_once("../config.php");
 
     $lifetime = 86400;
 

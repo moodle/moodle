@@ -1,6 +1,6 @@
 <?PHP // $Id$
 
-    require("../../config.php");
+    require_once("../../config.php");
 
     if ($form = data_submitted($destination)) { 
 

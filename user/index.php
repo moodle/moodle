@@ -2,9 +2,9 @@
 
 //  Lists all the users within a given course
 
-    require("../config.php");
-    require("../lib/countries.php");
-    require("lib.php");
+    require_once("../config.php");
+    require_once("../lib/countries.php");
+    require_once("lib.php");
 
     require_variable($id);   //course
     optional_variable($sort, "lastaccess");  //how to sort students

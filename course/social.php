@@ -2,8 +2,8 @@
     // social.php - course format featuring social forum
     //              included from view.php
     
-    include_once("$CFG->dirroot/mod/forum/lib.php");
-    include_once("$CFG->dirroot/mod/resource/lib.php");
+    require_once("$CFG->dirroot/mod/forum/lib.php");
+    require_once("$CFG->dirroot/mod/resource/lib.php");
 
     $leftwidth = 210;
 ?>

@@ -1,9 +1,9 @@
 <?PHP // $Id$
       // Produces a graph of log accesses
 
-    require("../config.php");
-    require("lib.php");
-    require("$CFG->libdir/graphlib.php");
+    require_once("../config.php");
+    require_once("lib.php");
+    require_once("$CFG->libdir/graphlib.php");
 
     require_variable($id);    // Course ID
     require_variable($type);  // Graph Type

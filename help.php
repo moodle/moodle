@@ -4,7 +4,7 @@
   ///            Usually this will appear in a popup 
   ///            See helpbutton() in lib/moodlelib.php
 
-  include("config.php");
+  require_once("config.php");
 
   optional_variable($file, "");
   optional_variable($text, "No text to display");
@@ -26,7 +26,7 @@
         }
 
         if (file_exists("$filepath")) {
-            include("$filepath");           // Chosen language
+            require_once("$filepath");           // Chosen language
 
         } else {                            // Fall back to English
             if ($module == "moodle") {
@@ -36,7 +36,7 @@
             }
 
             if (file_exists("$filepath")) {
-                include("$filepath");
+                require_once("$filepath");
             } else {
                 notify("Can not find the specified help file");
                 die;

@@ -2,8 +2,8 @@
 
 //  Subscribe to or unsubscribe from a forum.
 
-    require("../../config.php");
-    require("lib.php");
+    require_once("../../config.php");
+    require_once("lib.php");
 
     require_variable($id);      // The forum to subscribe or unsubscribe to
     optional_variable($force);  // Force everyone to be subscribed to this forum?

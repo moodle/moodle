@@ -1,9 +1,9 @@
 <?PHP // $Id$
       // Displays all grades for a course
 
-	require("../config.php");
-	require("lib.php");
-    require("../lib/psxlsgen.php");
+	require_once("../config.php");
+	require_once("lib.php");
+    require_once("../lib/psxlsgen.php");
 
     require_variable($id);              // course id
     optional_variable($download, "");   // to download data 

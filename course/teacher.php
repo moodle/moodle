@@ -1,8 +1,8 @@
 <?PHP // $Id$
       // Admin-only script to assign teachers to courses
 
-	require("../config.php");
-	require("../user/lib.php");
+	require_once("../config.php");
+	require_once("../user/lib.php");
 
     optional_variable($id);       // course id
 

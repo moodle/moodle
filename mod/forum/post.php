@@ -3,8 +3,8 @@
 //  Edit and save a new post to a discussion
 
 
-    require("../../config.php");
-    require("lib.php");
+    require_once("../../config.php");
+    require_once("lib.php");
 
     if (isguest()) {
         error(get_string("noguestpost", "forum"), $_SERVER["HTTP_REFERER"]);

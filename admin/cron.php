@@ -13,7 +13,7 @@
 
     $FULLME = "cron";
 
-    require("../config.php");
+    require_once("../config.php");
 
     echo "<PRE>\n";
 

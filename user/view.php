@@ -2,10 +2,10 @@
 
 //  Display profile for a particular user
 
-    require("../config.php");
-    require("../lib/countries.php");
-    require("../mod/forum/lib.php");
-    require("lib.php");
+    require_once("../config.php");
+    require_once("../lib/countries.php");
+    require_once("../mod/forum/lib.php");
+    require_once("lib.php");
 
     require_variable($id);
     require_variable($course);

@@ -1,8 +1,8 @@
 <?PHP // $Id$
 
-	require("../config.php");
-	require("../user/lib.php");
-    require("../lib/countries.php");
+	require_once("../config.php");
+	require_once("../user/lib.php");
+    require_once("../lib/countries.php");
 
     $recordsperpage = 30;
 

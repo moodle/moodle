@@ -1,10 +1,10 @@
 <?PHP  // $Id$
        // index.php - the front page.
     
-    require("config.php");
-    require("course/lib.php");
-    require("mod/resource/lib.php"); 
-    require("mod/forum/lib.php");
+    require_once("config.php");
+    require_once("course/lib.php");
+    require_once("mod/resource/lib.php"); 
+    require_once("mod/forum/lib.php");
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/admin/index.php");

@@ -594,7 +594,7 @@ function print_side_block_end() {
 
 
 function print_admin_links ($siteid, $width=180) {
-    global $THEME, $CFG;
+    global $CFG;
     
     $icon = "<IMG SRC=\"$CFG->wwwroot/pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
     $moddata[]="<A HREF=\"$CFG->wwwroot/admin/config.php\">".get_string("configvariables")."</A>";
@@ -639,7 +639,7 @@ function print_admin_links ($siteid, $width=180) {
 }
 
 function print_course_admin_links($course, $width=180) {
-    global $USER, $THEME, $CFG;
+    global $USER, $CFG;
 
     if (isteacher($course->id)) {
         $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";

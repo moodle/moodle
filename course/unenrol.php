@@ -5,8 +5,8 @@
 //  but will remove them from the student list and prevent 
 //  any course email being sent to them.
 
-    require("../config.php");
-    require("lib.php");
+    require_once("../config.php");
+    require_once("lib.php");
 
     require_variable($id);               //course
     optional_variable($user, $USER->id); //user

@@ -2,8 +2,8 @@
       // This function fetches files from the data directory
       // Syntax:   file.php/courseid/dir/.../dir/filename.ext
 
-    require("config.php");
-    require("files/mimetypes.php");
+    require_once("config.php");
+    require_once("files/mimetypes.php");
 
     $lifetime = 86400;
 

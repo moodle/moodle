@@ -1,7 +1,7 @@
 <?PHP // $Id$
 
-    include("../../config.php");
-    include("lib.php");
+    require_once("../../config.php");
+    require_once("lib.php");
 
     require_variable($id);    // Course Module ID
 

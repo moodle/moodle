@@ -2,8 +2,8 @@
 
 //  Deletes a forum entirely.  
 
-    require("../../config.php");
-    require("mod.php");
+    require_once("../../config.php");
+    require_once("mod.php");
 
     require_variable($f);  // The forum to delete.
 

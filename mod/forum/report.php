@@ -2,8 +2,8 @@
 
 //  For a given post, shows a report of all the ratings it has
 
-    require("../../config.php");
-    require("lib.php");
+    require_once("../../config.php");
+    require_once("lib.php");
 
     require_variable($id);
 
