@@ -63,13 +63,13 @@ function save_user_image($userid, $filename) {
     umask(0000);
 
     if (!file_exists("$CFG->dataroot/users")) {
-        if (! mkdir("$CFG->dataroot/users", 0777)) {
+        if (! mkdir("$CFG->dataroot/users", $CFG->directorypermissions)) {
             return false;
         }
     }
 
     if (!file_exists("$CFG->dataroot/users/$userid")) {
-        if (! mkdir("$CFG->dataroot/users/$userid", 0777)) {
+        if (! mkdir("$CFG->dataroot/users/$userid", $CFG->directorypermissions)) {
             return false;
         }
     }
@@ -80,9 +80,15 @@ function save_user_image($userid, $filename) {
         return false;
     }
 
-    chmod($originalfile, 0777);
+    chmod($originalfile, 0666);
 
     $imageinfo = GetImageSize($originalfile);
+    
+    if (empty($imageinfo)) {
+        unlink($originalfile);
+        return false;
+    }
+    
     $image->width  = $imageinfo[0];
     $image->height = $imageinfo[1];
     $image->type   = $imageinfo[2];
