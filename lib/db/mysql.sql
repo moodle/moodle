@@ -53,7 +53,6 @@ CREATE TABLE `prefix_course` (
   `visible` int(10) unsigned NOT NULL default '1',
   `groupmode` int(4) unsigned NOT NULL default '0',
   `groupmodeforce` int(4) unsigned NOT NULL default '0',
-  `showreports` int(4) unsigned NOT NULL default '0',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
