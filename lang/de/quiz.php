@@ -37,6 +37,9 @@ $string['choice'] = "Auswahl";
 $string['choices'] = "Verfügbare Auswahl";
 $string['correctanswer'] = "Richtige Antwort";
 $string['correctanswers'] = "Richtige Antworten";
+$string['countdown'] = "Countdown";
+$string['countdownfinished'] = "Das Quiz ist beendet, Sie sollten Ihre Antworten jetzt absenden.";
+$string['countdowntenminutes'] = "Das Quiz endet in 10 Minuten.";
 $string['createmultiple'] = "Mehrere Fragen erstellen";
 $string['createnewquestion'] = "Eine neue Frage anlegen";
 $string['custom'] = "Eigenes Format";
@@ -120,6 +123,10 @@ $string['regradecomplete'] = "Alle Versuche wurden zurückgesetzt";
 $string['regradecount'] = "\$a->changed von \$a->attempt Noten wurden geändert";
 $string['rename'] = "Umbenennen";
 $string['report'] = "Berichte";
+$string['reportoverview'] = "Übersicht";
+$string['reportregrade'] = "Versuche zurücksetzen";
+$string['reportsimplestat'] = "Einfache Statistik";
+$string['review'] = "Bericht";
 $string['save'] = "Speichern";
 $string['savegrades'] = "Noten speichern";
 $string['savemyanswers'] = "Meine Antworten auswerten";
@@ -142,7 +149,17 @@ $string['true'] = "Wahr";
 $string['truefalse'] = "Wahr/Falsch";
 $string['type'] = "Typ";
 $string['viewallanswers'] = "Zeige \$a ausgefüllte Quiz";
+$string['viewallreports'] = "Berichte ansehen für \$a Versuche";
 $string['webct'] = "WebCT Format";
 $string['yourfinalgradeis'] = "Ihre Gesamtnote für dieses Quiz ist \$a";
+
+
+
+
+
+
+
+
+
 
 ?>

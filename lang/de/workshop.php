@@ -78,6 +78,8 @@ $string['noteonassessmentelements'] = "Beachten Sie, dass die Benotung in eine A
 Dies macht die Benotung einfacher und plausibler. Als Kursleiter müssen Sie diese<br>
 Kriterien hinzufügen, bevor Sie die Aufgabe dem Kursteilnehmer zugänglich machen. Dies geschieht durch das <br>Klicken auf die Aufgabe im Kurs. Sofern keine Kriterien vorhanden sind, werden Sie gefragt<br>diese hinzuzufügen. Sie können die Anzahl der Kriterien ändern, indem Sie die Seite der Aufgabenbearbeitung benutzen.<br>
 Die Kriterien selbst können über die Seite &quot;Aufgabenverwaltung&quot; bearbeitet werden";
+$string['newassessments'] = "Neue Workshop Bewertung";
+$string['newsubmissions'] = "Neue Workshop Einreichung";
 $string['notgraded'] = "Nicht benotet";
 $string['notitlegiven'] = "Kein Titel angegeben";
 $string['numberofassessmentelements'] = "Anzahl der Kommentare, Bewertungskriterien, Note des Verbunds oder Kriteriumsaussage";
@@ -154,5 +156,4 @@ $string['weightsusedforfinalgrade'] = "Gewichtung, die für die Endnote verwendet
 $string['weightsusedforsubmissions'] = "Gewichtung, die für die Beiträge verwenden wird";
 $string['yourassessments'] = "Ihre Bewertung";
 $string['yourfeedbackgoeshere'] = "Ihre Bewertung beginnt hier";
-
 ?>
