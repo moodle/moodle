@@ -1,7 +1,5 @@
 <?PHP // $Id$ 
 
-$string['thislanguage'] = '&#1601;&#1575;&#1585;&#1587;&#1740;';  // Name of this language in the native language eg Fran&#37872;is 
-$string['thischarset'] = "utf-8";  // The best charset to use for this language
 $string['action'] = "عمل مورد نظر";
 $string['activities'] = "فعاليتها";
 $string['activity'] = "فعاليت";
@@ -633,7 +631,7 @@ $string['time'] = "زمان";
 $string['timezone'] = "زمان محلي";
 $string['thanks'] = "متشکرم";
 $string['thischarset'] = "utf-8";
-$string['thislanguage'] = "Farsi UTF8";
+$string['thislanguage'] = "&#1601;&#1575;&#1585;&#1587;&#1740";
 $string['theme'] = "شکل ظاهري سايت";
 $string['themes'] = "شکل ظاهري سايت";
 $string['themesaved'] = "شکل ظاهري سايت تغيير کرد";
