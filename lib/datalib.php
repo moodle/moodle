@@ -480,12 +480,21 @@ function get_records_sql_menu($sql) {
     }
 }
 
-function get_field($table, $return, $field, $value) {
+function get_field($table, $return, $field1, $value1, $field2="", $value2="", $field3="", $value3="") {
 /// Get a single field from a database record
 
     global $db, $CFG;
 
-    $rs = $db->Execute("SELECT $return FROM $CFG->prefix$table WHERE $field = '$value'");
+    $select = "WHERE $field1 = '$value1'";
+
+    if ($field2) {
+        $select .= " AND $field2 = '$value2'";
+        if ($field3) {
+            $select .= " AND $field3 = '$value3'";
+        }
+    }
+
+    $rs = $db->Execute("SELECT $return FROM $CFG->prefix$table $select");
     if (empty($rs)) return false;
 
     if ( $rs->RecordCount() == 1 ) {
@@ -495,12 +504,21 @@ function get_field($table, $return, $field, $value) {
     }
 }
 
-function set_field($table, $newfield, $newvalue, $field, $value) {
+function set_field($table, $newfield, $newvalue, $field1, $value1, $field2="", $value2="", $field3="", $value3="") {
 /// Set a single field in a database record
 
     global $db, $CFG;
 
-    return $db->Execute("UPDATE $CFG->prefix$table SET $newfield = '$newvalue' WHERE $field = '$value'");
+    $select = "WHERE $field1 = '$value1'";
+
+    if ($field2) {
+        $select .= " AND $field2 = '$value2'";
+        if ($field3) {
+            $select .= " AND $field3 = '$value3'";
+        }
+    }
+
+    return $db->Execute("UPDATE $CFG->prefix$table SET $newfield = '$newvalue' $select");
 }
 
 
