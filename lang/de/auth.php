@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.6.4 beta (2002112001)
+      // auth.php - created with Moodle 1.0.6 dev 3 (2002102101)
 
 
 $string['auth_dbdescription'] = "This method uses an external database table to check whether a given username and password is valid.  If the account is a new one, then information from other fields may also be copied across into Moodle.";
@@ -20,7 +20,6 @@ $string['auth_imaphost'] = "The IMAP server address. Use the IP number, not DNS 
 $string['auth_imapport'] = "IMAP server port number. Usually this is 143 or 993.";
 $string['auth_imaptitle'] = "Use an IMAP server";
 $string['auth_imaptype'] = "The IMAP server type.  IMAP servers can have different types of authentication and negotiation.";
-$string['instructions'] = "Instructions";
 $string['auth_ldap_bind_dn'] = "If you want to use bind-user to search users, specify it here. Someting like 'cn=ldapuser,ou=public,o=org'";
 $string['auth_ldap_bind_pw'] = "Password for bind-user.";
 $string['auth_ldap_contexts'] = "List of contexts where users are located. Separate different contexts with ';'. For example: 'ou=users,o=org; ou=others,o=org'";
@@ -48,8 +47,11 @@ $string['auth_pop3title'] = "Use a POP3 server";
 $string['auth_pop3type'] = "Server type. If your server uses certificate security, choose pop3cert.";
 $string['authenticationoptions'] = "Authentication options";
 $string['authinstructions'] = "Here you can provide instructions for your users, so they know which username and password they should be using.  The text you enter here will appear on the login page.  If you leave this blank then no instructions will be printed.";
+$string['changepassword'] = "Kennwort-URL ändern";
+$string['changepasswordhelp'] = "Hier können Sie einen Ort angeben, an dem Ihre Benutzer ihren Nutzernamen/Kennwort ändern können, sofern Sie es vergessen haben. Diese Option wird den Nutzern als Schaltfläche auf Anmeldungsseite angeboten.Wenn Sie dieses Feld leer lassen, wird er nicht angezeigt.";
 $string['chooseauthmethod'] = "Choose an authentication method: ";
 $string['guestloginbutton'] = "Guest login button";
+$string['instructions'] = "Instructions";
 $string['showguestlogin'] = "You can hide or show the guest login button on the login page.";
 
 ?>
