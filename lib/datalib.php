@@ -141,13 +141,13 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
 
             switch (strtolower($type)) {
                 case "integer":
-                    if ($size <= 2) {
+                    if ($size <= 4) {
                         $type = "INT2";
                     } 
-                    if ($size <= 4) {
+                    if ($size <= 10) {
                         $type = "INT";
                     }
-                    if  ($size > 4) {
+                    if  ($size > 10) {
                         $type = "INT8";
                     }
                     break;
