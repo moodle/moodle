@@ -251,6 +251,10 @@ th {
     border-bottom-width: 1px;
 }
 
+.forumpost .starter {
+    background:#DDDDDD; 
+}
+
 /* survey */
 #mod-survey-view .r0 {
     background-color: #EEEEEE;

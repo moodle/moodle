@@ -318,6 +318,7 @@ table.formtable td {
 }
 
 .forumpost .left {
+    width: 35px;
     padding: 4px;
     text-align: center;
     vertical-align: top;
