@@ -1138,9 +1138,7 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
     }
 
     $groupmembers = '';
-    $userstudents = '';
-    $userstudentcolumns = '';
-    $select = " u.deleted = '0' ";
+    $select = "s.course = '$courseid' AND s.userid = u.id AND u.deleted = '0' ";
 
     if ($search) {
         $search = " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
@@ -1162,23 +1160,16 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
         $select .= " AND u.id = gm.userid AND gm.groupid = '$group'";
     }
 
-    if ($courseid != 0) {
-        $userstudents = ", {$CFG->prefix}user_students s ";
-        $select .= " AND s.course = '$courseid' AND s.userid = u.id";
-        $userstudentcolumns = ", s.timeaccess as lastaccess";
-    } else {
-        $userstudentcolumns = ", u.lastaccess as lastaccess";
-    }
-
-
     if ($sort) {
         $sort = " ORDER BY $sort ";
     }
 
     return get_records_sql("SELECT u.id, u.confirmed, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
                             u.email, u.city, u.country, u.picture, u.department, u.institution,
-                            u.emailstop, u.lang, u.timezone $userstudentcolumns
-                            FROM {$CFG->prefix}user u $userstudents $groupmembers
+                            u.emailstop, u.lang, u.timezone, s.timeaccess as lastaccess
+                            FROM {$CFG->prefix}user u,
+                                 {$CFG->prefix}user_students s
+                                 $groupmembers
                             WHERE $select $search $sort $dir $limit");
 }
 
@@ -1193,20 +1184,20 @@ function count_course_students($course, $search="", $firstinitial="", $lastiniti
 
     switch ($CFG->dbtype) {
         case "mysql":
+             $fullname = " CONCAT(firstname,\" \",lastname) ";
              $LIKE = "LIKE";
              break;
         default: 
+             $fullname = " firstname||\' \'||lastname ";
              $LIKE = "ILIKE";
     }
-
     
     $groupmembers = "";
-    $userstudents = "";
         
-    $select = " u.deleted = '0'";
+    $select = "s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'";
 
     if ($search) {
-        $select .= " AND u.firstname $LIKE '%$search%' OR u.lastname $LIKE '%$search%'";
+        $search = " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
     } 
     if ($firstinitial) {
         $select .= " AND u.firstname $LIKE '$firstinitial%'";
@@ -1223,13 +1214,9 @@ function count_course_students($course, $search="", $firstinitial="", $lastiniti
         $select .= " AND u.id = gm.userid AND gm.groupid = '$group'";
     }
 
-    if ($course->id != 0) {
-        $userstudents = ", {$CFG->prefix}user_students s ";
-        $select .= " AND s.course = '$course->id' AND s.userid = u.id";
-    }
-
     return count_records_sql("SELECT COUNT(*) 
-                              FROM {$CFG->prefix}user u $userstudents $groupmembers
+                              FROM {$CFG->prefix}user u,
+                                   {$CFG->prefix}user_students s $groupmembers
                               WHERE $select");
 }
 
@@ -1353,7 +1340,8 @@ function get_site_users($sort="u.lastaccess DESC", $select="") {
 * @param	array(int)	$exceptions	a list of IDs to ignore, eg 2,4,5,8,9,10
 * @param	string	$sort	a SQL snippet for the sorting criteria to use
 */
-function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sort="firstname ASC") {
+function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sort="firstname ASC",
+                   $firstinitial="", $lastinitial="") {
 
     global $CFG;
 
@@ -1371,17 +1359,26 @@ function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sor
              $LIKE = "ILIKE";
     }
 
+    $select = "username <> 'guest' AND deleted = 0";
+
     if ($search) {
-        $search = " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
+        $select .= " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
     }
 
     if ($confirmed) {
-        $confirmed = " AND confirmed = '1' ";
+        $select .= " AND confirmed = '1' ";
     }
 
     if ($exceptions) {
-        $exceptions = " AND id NOT IN ($exceptions) ";
+        $select .= " AND id NOT IN ($exceptions) ";
     }
+
+    if ($firstinitial) {
+        $select .= " AND firstname $LIKE '$firstinitial%'";
+    } 
+    if ($lastinitial) {
+        $select .= " AND lastname $LIKE '$lastinitial%'";
+    } 
 
     if ($sort and $get) {
         $sort = " ORDER BY $sort ";
@@ -1390,9 +1387,9 @@ function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sor
     }
 
     if ($get) {
-        return get_records_select("user", "username <> 'guest' AND deleted = 0 $search $confirmed $exceptions $sort");
+        return get_records_select("user", "$select $sort");
     } else {
-        return count_records_select("user", "username <> 'guest' AND deleted = 0 $search $confirmed $exceptions $sort");
+        return count_records_select("user", "$select $sort");
     }
 }
 
@@ -1404,7 +1401,9 @@ function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sor
 *
 * @param	type description
 */
-function get_users_listing($sort, $dir="ASC", $page=1, $recordsperpage=20, $search="") {
+function get_users_listing($sort="lastaccess", $dir="ASC", $page=0, $recordsperpage=99999,
+                           $search="", $firstinitial="", $lastinitial="") {
+
     global $CFG;
 
     switch ($CFG->dbtype) {
@@ -1420,22 +1419,35 @@ function get_users_listing($sort, $dir="ASC", $page=1, $recordsperpage=20, $sear
              break;
         default: 
              $limit = "LIMIT $recordsperpage,$page";
-             $fullname = " firstname||\" \"||lastname ";
+             $fullname = " firstname||' '||lastname ";
              $LIKE = "LIKE";
     }
 
+    $select = 'deleted <> 1';
+
     if ($search) {
-        $search = " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
+        $select .= " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
     }
 
-/// warning: will return unconfirmed users
+    if ($firstinitial) {
+        $select .= " AND firstname $LIKE '$firstinitial%' ";
+    }
+
+    if ($lastinitial) {
+        $select .= " AND lastname $LIKE '$lastinitial%' ";
+    }
+
+    if ($sort) {
+        $sort = " ORDER BY $sort $dir";
+    }
+
+/// warning: will return UNCONFIRMED USERS
     return get_records_sql("SELECT id, username, email, firstname, lastname, city, country, lastaccess, confirmed
                               FROM {$CFG->prefix}user 
-                             WHERE username <> 'guest' 
-                               AND deleted <> 1 $search
-                          ORDER BY $sort $dir $limit");
+                             WHERE $select $sort $limit ");
 
 }
+
 
 /**
 * shortdesc
