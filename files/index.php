@@ -338,26 +338,16 @@
             if (!empty($name)) {
                 html_header($course, $wdir);
                 $name = clean_filename($name);
-                if (empty($CFG->zip)) {    // Use built-in php-based zip function
-                    $files = array();
-                    foreach ($USER->filelist as $file) {
-                       $files[] = cleardoubleslashes("$basedir/$file"); // no doubleslashes!
-                    }
-                    include_once("$CFG->libdir/pclzip/pclzip.lib.php");
-                    $archive = new PclZip(cleardoubleslashes("$basedir/$wdir/$name"));
-                   if (($list = $archive->create($files, PCLZIP_OPT_REMOVE_PATH,
-                             rtrim(cleardoubleslashes("$basedir/$wdir"), "/"))) == 0) { // no double slashes and trailing slash!
-                        error($archive->errorInfo(true));
-                    }
-                } else {                   // Use external zip program
-                    $files = "";
-                    foreach ($USER->filelist as $file) {
-                        $files .= basename($file);
-                        $files .= " ";
-                    }
-                    $command = "cd $basedir/$wdir ; $CFG->zip -r $name $files";
-                    Exec($command);
+
+                $files = array();
+                foreach ($USER->filelist as $file) {
+                   $files[] = "$basedir/$file";
                 }
+
+                if (!zip_files($files,"$basedir/$wdir/$name")) {
+                    error(get_string("zipfileserror","error"));
+                }
+
                 clearfilelist();
                 displaydir($wdir);
                     
