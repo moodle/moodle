@@ -591,7 +591,7 @@ function button_to_popup_window ($url, $name='popup', $linkname='click here',
 /**
  * Prints a simple button to close a window
  */
-function close_window_button() {
+function close_window_button($name='closewindow') {
 
     echo '<center>' . "\n";
     echo '<script type="text/javascript">' . "\n";
@@ -602,10 +602,26 @@ function close_window_button() {
     echo '-->' . "\n";
     echo '</script>' . "\n";
     echo '<noscript>' . "\n";
-    print_string('closewindow');
+    print_string($name);
     echo '</noscript>' . "\n";
     echo '</center>' . "\n";
 }
+
+/*
+ * Try and close the current window immediately using Javascript
+ */
+function close_window($delay=0) {
+    echo '<script language="JavaScript" type="text/javascript">'."\n";
+    echo '<!--'."\n";
+    if ($delay) {
+        sleep($delay);
+    }
+    echo 'self.close();'."\n";
+    echo '-->'."\n";
+    echo '</script>'."\n";
+    exit;
+}
+
 
 /**
  * Given an array of value, creates a popup menu to be part of a form
@@ -1849,6 +1865,39 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
 
 
 /// Print out the entire style sheet
+
+    if (!empty($THEME->modsheets)) {     // Search for styles.php within activity modules
+        if ($mods = get_list_of_plugins('mod')) {
+            foreach ($mods as $mod) {
+                if (file_exists($CFG->dirroot.'/mod/'.$mod.'/styles.php')) {
+                    echo "/***** mod/$mod/styles.php start *****/\n\n";
+                    @include_once($CFG->dirroot.'/mod/'.$mod.'/styles.php');
+                    echo "\n\n/***** mod/$mod/styles.php end *****/\n\n";
+                }
+            }
+        }
+    }
+
+    if (!empty($THEME->blocksheets)) {     // Search for styles.php within block modules
+        if ($mods = get_list_of_plugins('blocks')) {
+            foreach ($mods as $mod) {
+                if (file_exists($CFG->dirroot.'/blocks/'.$mod.'/styles.php')) {
+                    echo "/***** blocks/$mod/styles.php start *****/\n\n";
+                    @include_once($CFG->dirroot.'/blocks/'.$mod.'/styles.php');
+                    echo "\n\n/***** blocks/$mod/styles.php end *****/\n\n";
+                }
+            }
+        }
+    }
+
+    if (!empty($THEME->langsheets)) {     // Search for styles.php within the current language
+        $lang = current_language();
+        if (file_exists($CFG->dirroot.'/lang/'.$lang.'/styles.php')) {
+            echo "/***** lang/$lang/styles.php start *****/\n\n";
+            @include_once($CFG->dirroot.'/lang/'.$lang.'/styles.php');
+            echo "\n\n/***** lang/$lang/styles.php end *****/\n\n";
+        }
+    }
 
     foreach ($THEME->sheets as $sheet) {
         echo "/***** $sheet.css start *****/\n\n";
