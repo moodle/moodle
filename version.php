@@ -7,6 +7,6 @@
 
 $version = 2004083101;   // MUST NOT BE CHANGED!  (except by Martin)
 
-$release = "1.4.1";      // User-friendly version number
+$release = "1.4.1+";      // User-friendly version number
 
 ?>
