@@ -171,7 +171,9 @@ if (isadmin()) {
     </td>
 </tr>
 <tr>
-    <td colspan=2><br /><b><?php print_string("followingoptional") ?>:</b></td>
+    <td colspan=2><br /><b><?php print_string("followingoptional") ?>:</b>&nbsp;&nbsp;&nbsp;
+       <?php print_user_picture($user->id, $course->id, $user->picture, false, false, false); ?>
+    </td>
 </tr>
 
 
