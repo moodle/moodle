@@ -287,7 +287,7 @@
         print_simple_box_end();
 
     } else {
-        notice("This module cannot be added to this course yet!", "$CFG->wwwroot/course/view.php?id=$course->id");
+        notice("This module cannot be added to this course yet! (No file found at: $modform)", "$CFG->wwwroot/course/view.php?id=$course->id");
     }
 
     print_footer($course);
