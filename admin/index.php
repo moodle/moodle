@@ -331,7 +331,7 @@
                  " <img src=\"../pix/t/user.gif\" height=\"11\" width=\"11\" alt=\"\"></font><br />";
     $userdata .= "<font size=+1>&nbsp;</font><a href=\"creators.php\">".get_string("assigncreators")."</a> - <font size=\"1\">".
                  get_string("adminhelpassigncreators")."</font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"admin.php\">".get_string("assignadmins")."</a> - <font size=\"1\">".
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"admin.php?sesskey=$USER->sesskey\">".get_string("assignadmins")."</a> - <font size=\"1\">".
                  get_string("adminhelpassignadmins")."</font><br />";
 
     $table->data[] = array("<font size=+1><b><a href=\"users.php\">".get_string("users")."</a></b>", $userdata);
