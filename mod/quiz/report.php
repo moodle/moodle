@@ -82,6 +82,7 @@
 
     print_heading($quiz->name);
 
+
     if (!empty($attempt)) {  // Show a particular attempt
 
         if (! $attempt = get_record("quiz_attempts", "id", $attempt)) {
@@ -97,6 +98,8 @@
         if (! $questions = quiz_get_attempt_responses($attempt, $quiz)) {
             error("Could not reconstruct quiz results for attempt $attempt->id!");
         }
+
+        quiz_remove_unwanted_questions(&$questions, $quiz);
 
         if (!$result = quiz_grade_attempt_results($quiz, $questions)) {
             error("Could not re-grade this quiz attempt!");
@@ -158,6 +161,7 @@
             if (! $questions = quiz_get_attempt_responses($attempt, $quiz)) {
                 error("Could not reconstruct quiz results for attempt $attempt->id!");
             }
+            quiz_remove_unwanted_questions(&$questions, $quiz);
 
             if (!$result = quiz_grade_attempt_results($quiz, $questions)) {
                 error("Could not re-grade this quiz attempt!");
@@ -220,5 +224,23 @@
 
 // Finish the page
     print_footer($course);
+
+
+function quiz_remove_unwanted_questions(&$questions, $quiz) {
+
+    $quizquestions = array();
+    $quizids = explode(",", $quiz->questions);
+    foreach ($quizids as $quizid) {
+        $quizquestions[$quizid] = true;
+    }
+    foreach ($questions as $key => $question) {
+        if (!isset($quizquestions[$question->id])) {
+            unset($questions[$key]);
+        }
+    }
+}
+
+
+
 
 ?>
