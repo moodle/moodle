@@ -11,7 +11,7 @@
 // eg   wget -q -O /dev/null 'http://moodle.somewhere.edu/admin/cron.php'
 // or   php /web/moodle/admin/cron.php 
 
-    $FULLME = "we don't care";
+    $FULLME = "cron";
 
     require("../config.php");
 
@@ -21,7 +21,7 @@
 
 //  Run all cron jobs for each module
 
-    if ($mods = get_records_sql("SELECT * FROM modules WHERE cron > 0 AND (($timenow - lastcron) > cron)")) {
+    if ($mods = get_records_select("modules", "cron > 0 AND (($timenow - lastcron) > cron)")) {
         foreach ($mods as $mod) {
             $libfile = "$CFG->dirroot/mod/$mod->name/lib.php";
             if (file_exists($libfile)) {
@@ -42,11 +42,8 @@
 // Unenrol users who haven't logged in for $CFG->longtimenosee
 
     if ($CFG->longtimenosee) { // value in days
-        $cutofftime = $timenow - ($CFG->longtimenosee * 3600 * 24);
-        if ($users = get_records_sql("SELECT u.* FROM user u, user_students s
-                                       WHERE lastaccess > '0' AND 
-                                             lastaccess < '$cutofftime' AND
-                                             u.id = s.user GROUP BY u.id")) {
+        $longtime = $timenow - ($CFG->longtimenosee * 3600 * 24);
+        if ($users = get_users_longtimenosee($longtime)) {
             foreach ($users as $user) {
                 if (unenrol_student($user->id)) {
                     echo "Deleted student enrolment for $user->firstname $user->lastname ($user->id)\n";
@@ -58,11 +55,8 @@
 
 // Delete users who haven't confirmed within seven days
 
-    $cutofftime = $timenow - (7 * 24 * 3600);
-    if ($users = get_records_sql("SELECT * FROM user 
-                                  WHERE confirmed = '0' AND 
-                                        firstaccess > '0' AND 
-                                        firstaccess < '$cutofftime'")) {
+    $oneweek = $timenow - (7 * 24 * 3600);
+    if ($users = get_users_unconfirmed($oneweek)) {
         foreach ($users as $user) {
             if (delete_records("user", "id", $user->id)) {
                 echo "Deleted unconfirmed user for $user->firstname $user->lastname ($user->id)\n";

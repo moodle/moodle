@@ -125,14 +125,9 @@
 /// Print list of potential admins
 
     if ($search) {
-        $users = get_records_sql("SELECT * from user WHERE confirmed = 1 AND deleted = 0
-                                  AND (firstname LIKE '%$search%' OR 
-                                       lastname LIKE '%$search%' OR 
-                                       email LIKE '%$search%')
-                                  AND username <> 'guest' AND username <> 'changeme'");
+        $users = get_users_search($search);
     } else {
-        $users = get_records_sql("SELECT * from user WHERE confirmed = 1 AND deleted = 0
-                                  AND username <> 'guest' AND username <> 'changeme'");
+        $users = get_users_confirmed();
     }
 
     

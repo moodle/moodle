@@ -69,11 +69,11 @@ function record_exists($table, $field="", $value="", $field2="", $value2="", $fi
 
     global $CFG;
 
-    if ($field and $value) {
+    if ($field) {
         $select = "WHERE $field = '$value'";
-        if ($field2 and $value2) {
+        if ($field2) {
             $select .= " AND $field2 = '$value2'";
-            if ($field3 and $value3) {
+            if ($field3) {
                 $select .= " AND $field3 = '$value3'";
             }
         }
@@ -105,11 +105,11 @@ function count_records($table, $field="", $value="", $field2="", $value2="", $fi
 
     global $CFG;
 
-    if ($field and $value) {
+    if ($field) {
         $select = "WHERE $field = '$value'";
-        if ($field2 and $value2) {
+        if ($field2) {
             $select .= " AND $field2 = '$value2'";
-            if ($field3 and $value3) {
+            if ($field3) {
                 $select .= " AND $field3 = '$value3'";
             }
         }
@@ -117,6 +117,15 @@ function count_records($table, $field="", $value="", $field2="", $value2="", $fi
 
     return count_records_sql("SELECT COUNT(*) FROM $CFG->prefix$table $select");
 }
+
+function count_records_select($table, $select="") {
+/// Get all the records and count them
+
+    global $CFG;
+
+    return count_records_sql("SELECT COUNT(*) FROM $CFG->prefix$table $select");
+}
+
 
 function count_records_sql($sql) {
 /// Get all the records and count them
@@ -137,9 +146,9 @@ function get_record($table, $field, $value, $field2="", $value2="", $field3="", 
 
     $select = "WHERE $field = '$value'";
 
-    if ($field2 and $value2) {
+    if ($field2) {
         $select .= " AND $field2 = '$value2'";
-        if ($field3 and $value3) {
+        if ($field3) {
             $select .= " AND $field3 = '$value3'";
         }
     }
@@ -171,7 +180,7 @@ function get_records($table, $field="", $value="", $sort="", $fields="*") {
 
     global $CFG;
 
-    if ($field and $value) {
+    if ($field) {
         $select = "WHERE $field = '$value'";
     }
     if ($sort) {
@@ -181,17 +190,32 @@ function get_records($table, $field="", $value="", $sort="", $fields="*") {
     return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sortorder");
 }
 
-
-function get_records_list($table, $field="", $values="", $sort="", $fields="*") {
-// Get a number of records as an array of objects
-// Differs from get_records() in that the values variable 
-// can be a comma-separated list of values eg  "4,5,6,10"
-// Can optionally be sorted eg "time ASC" or "time DESC"
-// The "key" is the first column returned, eg usually "id"
+function get_records_select($table, $select="", $sort="", $fields="*") {
+/// Get a number of records as an array of objects
+/// Can optionally be sorted eg "time ASC" or "time DESC"
+/// "select" is a fragment of SQL to define the selection criteria
+/// The "key" is the first column returned, eg usually "id"
 
     global $CFG;
 
-    if ($field and $value) {
+    if ($sort) {
+        $sortorder = "ORDER BY $sort";
+    }
+
+    return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sortorder");
+}
+
+
+function get_records_list($table, $field="", $values="", $sort="", $fields="*") {
+/// Get a number of records as an array of objects
+/// Differs from get_records() in that the values variable 
+/// can be a comma-separated list of values eg  "4,5,6,10"
+/// Can optionally be sorted eg "time ASC" or "time DESC"
+/// The "key" is the first column returned, eg usually "id"
+
+    global $CFG;
+
+    if ($field) {
         $select = "WHERE $field in ($values)";
     }
     if ($sort) {
@@ -202,10 +226,11 @@ function get_records_list($table, $field="", $values="", $sort="", $fields="*") 
 }
 
 
+
 function get_records_sql($sql) {
-// Get a number of records as an array of objects
-// The "key" is the first column returned, eg usually "id"
-// The sql statement is provided as a string.
+/// Get a number of records as an array of objects
+/// The "key" is the first column returned, eg usually "id"
+/// The sql statement is provided as a string.
 
     global $db;
 
@@ -226,11 +251,45 @@ function get_records_sql($sql) {
     }
 }
 
+function get_records_menu($table, $field="", $value="", $sort="", $fields="*") {
+/// Get a number of records as an array of objects
+/// Can optionally be sorted eg "time ASC" or "time DESC"
+/// If "fields" is specified, only those fields are returned
+/// The "key" is the first column returned, eg usually "id"
+
+    global $CFG;
+
+    if ($field) {
+        $select = "WHERE $field = '$value'";
+    }
+    if ($sort) {
+        $sortorder = "ORDER BY $sort";
+    }
+
+    return get_records_sql_menu("SELECT $fields FROM $CFG->prefix$table $select $sortorder");
+}
+
+function get_records_select_menu($table, $select="", $sort="", $fields="*") {
+/// Get a number of records as an array of objects
+/// Can optionally be sorted eg "time ASC" or "time DESC"
+/// "select" is a fragment of SQL to define the selection criteria
+/// Returns associative array of first two fields
+
+    global $CFG;
+
+    if ($sort) {
+        $sortorder = "ORDER BY $sort";
+    }
+
+    return get_records_sql_menu("SELECT $fields FROM $CFG->prefix$table $select $sortorder");
+}
+
+
 function get_records_sql_menu($sql) {
-// Given an SQL select, this function returns an associative 
-// array of the first two columns.  This is most useful in 
-// combination with the choose_from_menu function to create 
-// a form menu.
+/// Given an SQL select, this function returns an associative 
+/// array of the first two columns.  This is most useful in 
+/// combination with the choose_from_menu function to create 
+/// a form menu.
 
     global $db;
 
@@ -278,11 +337,11 @@ function delete_records($table, $field="", $value="", $field2="", $value2="", $f
 
     global $db, $CFG;
 
-    if ($field and $value) {
+    if ($field) {
         $select = "WHERE $field = '$value'";
-        if ($field2 and $value2) {
+        if ($field2) {
             $select .= " AND $field2 = '$value2'";
-            if ($field3 and $value3) {
+            if ($field3) {
                 $select .= " AND $field3 = '$value3'";
             }
         }
@@ -482,7 +541,9 @@ function adminlogin($username, $md5password) {
 
     global $CFG;
 
-    return record_exists_sql("SELECT u.id FROM {$CFG->prefix}user u, {$CFG->prefix}user_admins a 
+    return record_exists_sql("SELECT u.id 
+                                FROM {$CFG->prefix}user u, 
+                                     {$CFG->prefix}user_admins a 
                               WHERE u.id = a.user 
                                 AND u.username = '$username' 
                                 AND u.password = '$md5password'");
@@ -498,6 +559,31 @@ function get_site () {
         return false;
     }
 }
+
+
+function get_courses($category=0, $sort="fullname ASC") {
+/// Returns list of courses
+
+    if ($category > 0) {          // Return all courses in one category
+        return get_records("course", "category", $category, $sort);
+
+    } else if ($category < 0) {   // Return all courses, even the site
+        return get_records("course", "", "", $sort);
+
+    } else {                      // Return all courses, except site
+        return get_records_select("course", "category > 0", $sort);
+    }
+}
+
+function get_categories() {
+    return get_records("course_categories", "", "", "name");
+}
+
+
+function get_guest() {
+    return get_user_info_from_db("username", "guest");
+}
+
 
 function get_admin () {
 /// Returns $user object of the main admin user
@@ -581,8 +667,81 @@ function get_course_users($courseid, $sort="u.lastaccess DESC") {
 }
 
 
+function get_users_search($search, $sort="u.firstname ASC") {
+    global $CFG;
+
+    return get_records_sql("SELECT * from {$CFG->prefix}user 
+                             WHERE confirmed = 1 
+                               AND deleted = 0
+                               AND (firstname LIKE '%$search%' OR 
+                                    lastname LIKE '%$search%' OR 
+                                    email LIKE '%$search%')
+                               AND username <> 'guest' 
+                               AND username <> 'changeme'");
+}
+
+
+function get_users_count() {
+    return count_record_select("user", "username <> 'guest' AND deleted <> 1");
+}
+
+function get_users_listing($sort, $dir="ASC", $page=1, $recordsperpage=20) {
+    global $CFG;
+    return get_records_sql("SELECT id, username, email, firstname, lastname, city, country, lastaccess  
+                              FROM {$CFG->prefix}user 
+                             WHERE username <> 'guest' 
+                               AND deleted <> '1' 
+                          ORDER BY $sort $dir 
+                             LIMIT $page,$recordsperpage");
+
+}
+
+function get_users_confirmed() {
+    global $CFG;
+    return get_records_sql("SELECT * 
+                              FROM {$CFG->prefix}user 
+                             WHERE confirmed = 1 
+                               AND deleted = 0
+                               AND username <> 'guest' 
+                               AND username <> 'changeme'");
+}
+
+
+function get_users_unconfirmed($cutofftime=999999999) {
+    global $CFG;
+    return get_records_sql("SELECT * 
+                             FROM {$CFG->prefix}user 
+                            WHERE confirmed = 0
+                              AND firstaccess > 0 
+                              AND firstaccess < '$cutofftime'");
+}
+
+
+function get_users_longtimenosee($cutofftime) {
+    global $CFG;
+    return get_records_sql("SELECT u.* 
+                              FROM {$CFG->prefix}user u, 
+                                   {$CFG->prefix}user_students s
+                             WHERE lastaccess > '0' 
+                               AND lastaccess < '$cutofftime' 
+                               AND u.id = s.user 
+                          GROUP BY u.id");
+}
+
+
 
 /// MODULE FUNCTIONS /////////////////////////////////////////////////
+
+function get_course_mods($courseid) {
+/// Just gets a raw list of all modules in a course
+    global $CFG;
+
+    return get_records_sql("SELECT cm.*, m.name as modname
+                            FROM {$CFG->prefix}modules m, {$CFG->prefix}course_modules cm
+                            WHERE cm.course = '$courseid' 
+                            AND cm.deleted = '0'
+                            AND cm.module = m.id ");
+}
 
 function get_coursemodule_from_instance($modulename, $instance, $courseid) {
 /// Given an instance of a module, finds the coursemodule description
@@ -618,5 +777,76 @@ function get_all_instances_in_course($modulename, $courseid, $sort="cw.section")
                             ORDER BY $sort");
 
 }
+
+
+/// LOG FUNCTIONS /////////////////////////////////////////////////////
+
+
+function add_to_log($course, $module, $action, $url="", $info="") {
+/// Add an entry to the log table.  These are "action" focussed rather
+/// than web server hits, and provide a way to easily reconstruct what 
+/// any particular student has been doing.
+///
+/// course = the course id
+/// module = forum, journal, resource, course, user etc
+/// action = view, edit, post (often but not always the same as the file.php)
+/// url    = the file and parameters used to see the results of the action
+/// info   = additional description information 
+
+    global $db, $USER, $REMOTE_ADDR;
+
+    if (isset($USER->realuser)) {  // Don't log
+        return;
+    }
+
+    $timenow = time();
+    $info = addslashes($info);
+
+    $result = $db->Execute("INSERT INTO log
+                            SET time = '$timenow', 
+                                user = '$USER->id',
+                                course = '$course',
+                                ip = '$REMOTE_ADDR', 
+                                module = '$module',
+                                action = '$action',
+                                url = '$url',
+                                info = '$info'");
+    if (!$result) {
+        echo "<P>Error: Could not insert a new entry to the Moodle log</P>";  // Don't throw an error
+    }    
+}
+
+
+function get_logs($select, $order) {
+    global $CFG;
+
+    return get_records_sql("SELECT l.*, u.firstname, u.lastname, u.picture 
+                              FROM {$CFG->prefix}log l, 
+                                   {$CFG->prefix}user u 
+                                   $select $order");
+}
+
+function get_logs_usercourse($userid, $courseid, $coursestart) {
+    global $CFG;
+
+    return get_records_sql("SELECT floor((`time` - $coursestart)/86400) as day, count(*) as num 
+                            FROM {$CFG->prefix}log 
+                           WHERE user = '$userid' 
+                             AND course = '$courseid'
+                             AND `time` > '$coursestart'
+                        GROUP BY day ");
+}
+
+function get_logs_userday($userid, $courseid, $daystart) {
+    global $CFG;
+
+    return get_records_sql("SELECT floor((`time` - $daystart)/3600) as hour, count(*) as num
+                            FROM {$CFG->prefix}log
+                           WHERE user = '$userid' 
+                             AND course = '$courseid'
+                             AND `time` > '$daystart'
+                        GROUP BY hour ");
+}
+
 
 ?>

@@ -22,8 +22,7 @@
         error("Course module is incorrect");
     }
 
-    $entry = get_record_sql("SELECT * FROM journal_entries 
-                             WHERE user='$USER->id' AND journal='$journal->id'");
+    $entry = get_record("journal_entries", "user", $USER->id, "journal", $journal->id);
 
 
 /// If data submitted, then process and store.

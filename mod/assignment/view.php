@@ -51,9 +51,8 @@
             echo "<P align=right><A HREF=\"submissions.php?id=$assignment->id\">".
                   get_string("viewfeedback", "assignment")."</A></P>";
         } else {
-            $count = count_records_sql("SELECT COUNT(*) FROM assignment_submissions 
-                                        WHERE assignment = '$assignment->id' 
-                                          AND timemodified > 0");
+            $count = count_records_select("assignment_submissions", 
+                                          "assignment = '$assignment->id' AND timemodified > 0");
             echo "<P align=right><A HREF=\"submissions.php?id=$assignment->id\">".
                   get_string("viewsubmissions", "assignment", $count)."</A></P>";
         }

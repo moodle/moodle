@@ -13,7 +13,7 @@
 # Table structure for table `quiz`
 #
 
-CREATE TABLE `quiz` (
+CREATE TABLE `prefix_quiz` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `course` int(10) unsigned NOT NULL default '0',
   `name` varchar(255) NOT NULL default '',
@@ -37,7 +37,7 @@ CREATE TABLE `quiz` (
 # Table structure for table `quiz_answers`
 #
 
-CREATE TABLE `quiz_answers` (
+CREATE TABLE `prefix_quiz_answers` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `question` int(10) unsigned NOT NULL default '0',
   `answer` varchar(255) NOT NULL default '',
@@ -52,7 +52,7 @@ CREATE TABLE `quiz_answers` (
 # Table structure for table `quiz_attempts`
 #
 
-CREATE TABLE `quiz_attempts` (
+CREATE TABLE `prefix_quiz_attempts` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `quiz` int(10) unsigned NOT NULL default '0',
   `user` int(10) unsigned NOT NULL default '0',
@@ -69,7 +69,7 @@ CREATE TABLE `quiz_attempts` (
 # Table structure for table `quiz_categories`
 #
 
-CREATE TABLE `quiz_categories` (
+CREATE TABLE `prefix_quiz_categories` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `course` int(10) unsigned NOT NULL default '0',
   `name` varchar(255) NOT NULL default '',
@@ -83,7 +83,7 @@ CREATE TABLE `quiz_categories` (
 # Table structure for table `quiz_grades`
 #
 
-CREATE TABLE `quiz_grades` (
+CREATE TABLE `prefix_quiz_grades` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `quiz` int(10) unsigned NOT NULL default '0',
   `user` int(10) unsigned NOT NULL default '0',
@@ -97,7 +97,7 @@ CREATE TABLE `quiz_grades` (
 # Table structure for table `quiz_multichoice`
 #
 
-CREATE TABLE `quiz_multichoice` (
+CREATE TABLE `prefix_quiz_multichoice` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `question` int(10) unsigned NOT NULL default '0',
   `layout` tinyint(4) NOT NULL default '0',
@@ -112,7 +112,7 @@ CREATE TABLE `quiz_multichoice` (
 # Table structure for table `quiz_question_grades`
 #
 
-CREATE TABLE `quiz_question_grades` (
+CREATE TABLE `prefix_quiz_question_grades` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `quiz` int(10) unsigned NOT NULL default '0',
   `question` int(10) unsigned NOT NULL default '0',
@@ -125,7 +125,7 @@ CREATE TABLE `quiz_question_grades` (
 # Table structure for table `quiz_questions`
 #
 
-CREATE TABLE `quiz_questions` (
+CREATE TABLE `prefix_quiz_questions` (
   `id` int(10) NOT NULL auto_increment,
   `category` int(10) NOT NULL default '0',
   `name` varchar(255) NOT NULL default '',
@@ -140,7 +140,7 @@ CREATE TABLE `quiz_questions` (
 # Table structure for table `quiz_responses`
 #
 
-CREATE TABLE `quiz_responses` (
+CREATE TABLE `prefix_quiz_responses` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `attempt` int(10) unsigned NOT NULL default '0',
   `question` int(10) unsigned NOT NULL default '0',
@@ -154,7 +154,7 @@ CREATE TABLE `quiz_responses` (
 # Table structure for table `quiz_shortanswer`
 #
 
-CREATE TABLE `quiz_shortanswer` (
+CREATE TABLE `prefix_quiz_shortanswer` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `question` int(10) unsigned NOT NULL default '0',
   `answers` varchar(255) NOT NULL default '',
@@ -168,7 +168,7 @@ CREATE TABLE `quiz_shortanswer` (
 # Table structure for table `quiz_truefalse`
 #
 
-CREATE TABLE `quiz_truefalse` (
+CREATE TABLE `prefix_quiz_truefalse` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `question` int(10) unsigned NOT NULL default '0',
   `true` int(10) unsigned NOT NULL default '0',
@@ -178,8 +178,8 @@ CREATE TABLE `quiz_truefalse` (
 ) TYPE=MyISAM COMMENT='Options for True-False questions';
 
 
-INSERT INTO log_display VALUES ('quiz', 'view', 'quiz', 'name');
-INSERT INTO log_display VALUES ('quiz', 'report', 'quiz', 'name');
-INSERT INTO log_display VALUES ('quiz', 'attempt', 'quiz', 'name');
-INSERT INTO log_display VALUES ('quiz', 'submit', 'quiz', 'name');
+INSERT INTO prefix_log_display VALUES ('quiz', 'view', 'quiz', 'name');
+INSERT INTO prefix_log_display VALUES ('quiz', 'report', 'quiz', 'name');
+INSERT INTO prefix_log_display VALUES ('quiz', 'attempt', 'quiz', 'name');
+INSERT INTO prefix_log_display VALUES ('quiz', 'submit', 'quiz', 'name');
 

@@ -24,7 +24,7 @@
     }
 
     // make some easy ways to access the entries.
-    if ( $eee = get_records_sql("SELECT * FROM journal_entries WHERE journal='$journal->id'")) {
+    if ( $eee = get_records("journal_entries", "journal", $journal->id)) {
         foreach ($eee as $ee) {
             $entrybyuser[$ee->user] = $ee;
             $entrybyentry[$ee->id]  = $ee;

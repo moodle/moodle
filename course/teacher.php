@@ -32,7 +32,7 @@
 	    print_header("$site->shortname: $strassignteachers", "$site->fullname", 
                      "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $strassignteachers");
 
-        if ($courses = get_records_sql("SELECT * from course WHERE category > 0 ORDER BY fullname")) {
+        if ($courses = get_courses()) {
 
             print_heading(get_string("choosecourse"));
             print_simple_box_start("CENTER");
@@ -132,14 +132,9 @@
 /// Print list of potential teachers
 
     if ($search) {
-        $users = get_records_sql("SELECT * from user WHERE confirmed = 1 AND deleted = 0
-                                  AND (firstname LIKE '%$search%' OR 
-                                       lastname LIKE '%$search%' OR 
-                                       email LIKE '%$search%')
-                                  AND username <> 'guest' AND username <> 'changeme'");
+        $users = get_users_search($search);
     } else {
-        $users = get_records_sql("SELECT * from user WHERE confirmed = 1 AND deleted = 0
-                                  AND username <> 'guest' AND username <> 'changeme'");
+        $users = get_users_confirmed();
     }
 
     

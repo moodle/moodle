@@ -37,11 +37,13 @@
 // a different database you will need to set up all your tables by hand  //
 // which could be a big job.    See doc/install.html                     //
 
-$CFG->dbtype    = "mysql";     // eg mysql (postgres7, oracle, access etc)
+$CFG->dbtype    = "mysql";     // mysql or postgres7 
 $CFG->dbhost    = "localhost"; // eg localhost 
-$CFG->dbname    = "moodle";    // eg moodle
+$CFG->dbname    = "moodletest";    // eg moodle
 $CFG->dbuser    = "username";
 $CFG->dbpass    = "password";
+
+$CFG->prefix    = "mdl_";      // Prefix value to use for all table names
 
 
 ///////////////////////////////////////////////////////////////////////////

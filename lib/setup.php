@@ -26,8 +26,9 @@
 
 /// Load up standard libraries 
 
-    require("$CFG->libdir/weblib.php");          // Standard web page functions
-    require("$CFG->libdir/moodlelib.php");       // Various Moodle functions
+    require("$CFG->libdir/weblib.php");          // Functions for producing HTML
+    require("$CFG->libdir/datalib.php");         // Functions for accessing databases
+    require("$CFG->libdir/moodlelib.php");       // Other general-purpose functions
 
 
 /// Set error reporting back to normal
@@ -36,7 +37,7 @@
 
 /// Load up any configuration from the config table
     
-    if ($configs = get_records_sql("SELECT * FROM config")) {
+    if ($configs = get_records("config")) {
         $CFG = (array)$CFG;
         foreach ($configs as $config) {
             $CFG[$config->name] = $config->value;
@@ -112,8 +113,10 @@
     if (! isset($_SESSION["USER"]))    { $_SESSION["USER"]    = new object; }
     extract($_SESSION);  // Makes $SESSION and $USER available for read-only access
 
-    $FULLME = qualified_me();
-    $ME     = strip_querystring($FULLME);
+    if (!$FULLME) {
+        $FULLME = qualified_me();
+    }
+    $ME = strip_querystring($FULLME);
 
 
 /// Set language/locale of printed times.  If user has chosen a language that 

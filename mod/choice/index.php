@@ -28,7 +28,7 @@
         notice("There are no choices", "../../course/view.php?id=$course->id");
     }
 
-    if ( $allanswers = get_records_sql("SELECT * FROM choice_answers WHERE user='$USER->id'")) {
+    if ( $allanswers = get_records("choice_answers", "user", $USER->id)) {
         foreach ($allanswers as $aa) {
             $answers[$aa->choice] = $aa;
         }

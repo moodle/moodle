@@ -80,8 +80,8 @@
             echo "</CENTER>";
         }
 
-        if ($entry = get_record_sql("SELECT * FROM journal_entries 
-                                     WHERE user='$USER->id' AND journal='$journal->id'")) {
+
+        if ($entry = get_record("journal_entries", "user", $USER->id, "journal", $journal->id)) {
 
             if (empty($entry->text)) {
                 echo "<P ALIGN=center><B>".get_string("blankentry","journal")."</B></P>";

@@ -17,27 +17,16 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     $users = array();
 
     if ($course->category) {
-        if ($students = get_records_sql("SELECT u.* FROM user u, user_students s 
-                                         WHERE s.course = '$course->id' AND s.user = u.id
-                                         ORDER BY u.lastaccess DESC")) {
-            foreach ($students as $student) {
-                $users["$student->id"] = "$student->firstname $student->lastname";
-            }
+        if (!$users = get_course_users($course->id, "u.lastaccess DESC")) {
+            $users = array();
         }
-        if ($teachers = get_records_sql("SELECT u.* FROM user u, user_teachers t 
-                                         WHERE t.course = '$course->id' AND t.user = u.id
-                                         ORDER BY u.lastaccess DESC")) {
-            foreach ($teachers as $teacher) {
-                $users["$teacher->id"] = "$teacher->firstname $teacher->lastname";
-            }
-        }
-        if ($guest = get_user_info_from_db("username", "guest")) {
+        if ($guest = get_guest()) {
             $users["$guest->id"] = "$guest->firstname $guest->lastname";
         }
     }
 
     if (isadmin()) {
-        if ($ccc = get_records_sql("SELECT * FROM course ORDER BY fullname")) {
+        if ($ccc = get_records("course", "", "", "fullname")) {
             foreach ($ccc as $cc) {
                 if ($cc->category) {
                     $courses["$cc->id"] = "$cc->fullname";
@@ -121,7 +110,7 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
 
     } else {
         $selector = "WHERE l.user = u.id";  // Show all courses
-        if ($ccc = get_records_sql("SELECT * FROM course ORDER BY fullname")) {
+        if ($ccc = get_courses(-1)) {
             foreach ($ccc as $cc) {
                 $courses[$cc->id] = "$cc->shortname";
             }
@@ -137,8 +126,7 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
         $selector .= " AND l.time > '$date' AND l.time < '$enddate'";
     }
 
-    if (!$logs = get_records_sql("SELECT l.*, u.firstname, u.lastname, u.picture 
-                                  FROM log l, user u $selector $order")){
+    if (!$logs = get_logs($select, $order)) {
         notify("No logs found!");
         print_footer($course);
         exit;
@@ -147,11 +135,13 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
     $count=0;
     $tt = getdate(time());
     $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
-    echo "<P ALIGN=CENTER>Displaying ".count($logs)." records</P>";
+    echo "<P ALIGN=CENTER>";
+    print_string("displayingrecords", "", count($logs));
+    echo "</P>";
     echo "<TABLE BORDER=0 ALIGN=center CELLPADDING=3 CELLSPACING=3>";
     foreach ($logs as $log) {
 
-        if ($ld = get_record_sql("SELECT * FROM log_display WHERE module='$log->module' AND action='$log->action'")) {
+        if ($ld = get_record("log_display", "module", "$log->module", "action", "$log->action")) {
             $log->info = get_field($ld->mtable, $ld->field, "id", $log->info);
         }
 
@@ -179,11 +169,11 @@ function print_all_courses($category="all", $style="full", $maxcount=999, $width
     global $CFG, $USER;
 
     if ($category == "all") {
-        $courses = get_records_sql("SELECT * FROM course WHERE category > 0 ORDER BY fullname ASC");
+        $courses = get_courses();
 
     } else if ($category == "my") {
         if (isset($USER->id)) {
-            if ($courses = get_records_sql("SELECT * FROM course WHERE category > 0 ORDER BY fullname ASC")) {
+            if ($courses = get_courses()) {
                 foreach ($courses as $key => $course) {
                     if (!isteacher($course->id) and !isstudent($course->id)) {
                         unset($courses[$key]);
@@ -193,7 +183,7 @@ function print_all_courses($category="all", $style="full", $maxcount=999, $width
         }
 
     } else {
-        $courses = get_records("course", "category", $category, "fullname ASC");
+        $courses = get_courses($category);
     }
 
     if ($style == "minimal") {
@@ -297,7 +287,7 @@ function print_recent_activity($course) {
         echo "</FONT></P>";
     }
 
-    if (! $logs = get_records_sql("SELECT * FROM log WHERE time > '$USER->lastlogin' AND course = '$course->id' ORDER BY time ASC")) {
+    if (! $logs = get_records_select("log", "time > '$USER->lastlogin' AND course = '$course->id'", "time ASC")) {
         return;
     }
 
@@ -400,11 +390,7 @@ function get_array_of_activities($courseid) {
 
     $mod = array();
 
-    if (!$rawmods = get_records_sql("SELECT cm.*, m.name as modname
-                                     FROM modules m, course_modules cm
-                                     WHERE cm.course = '$courseid' 
-                                       AND cm.deleted = '0'
-                                       AND cm.module = m.id ") ) {
+    if (!$rawmods = get_course_mods($courseid)) {
         return NULL;
     }
 
@@ -435,7 +421,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
     $modnamesplural= NULL;    // all course module names (plural form)
     $modnamesused  = NULL;    // course module names used
 
-    if ($allmods = get_records_sql("SELECT * FROM modules") ) {
+    if ($allmods = get_records("modules")) {
         foreach ($allmods as $mod) {
             $modnames[$mod->name] = get_string("modulename", "$mod->name");
             $modnamesplural[$mod->name] = get_string("modulenameplural", "$mod->name");
@@ -445,11 +431,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
         error("No modules are installed!");
     }
 
-    if ($rawmods = get_records_sql("SELECT cm.*, m.name as modname
-                                     FROM modules m, course_modules cm
-                                     WHERE cm.course = '$courseid' 
-                                       AND cm.deleted = '0'
-                                       AND cm.module = m.id ") ) {
+    if ($rawmods = get_course_mods($courseid)) {
         foreach($rawmods as $mod) {    // Index the mods
             $mods[$mod->id] = $mod;
             $mods[$mod->id]->modfullname = $modnames[$mod->modname];
@@ -459,17 +441,13 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
     }
 }
 
+
 function get_all_sections($courseid) {
     
-    return get_records_sql("SELECT section, id, course, summary, sequence
-                            FROM course_sections 
-                            WHERE course = '$courseid' 
-                            ORDER BY section");
+    return get_records("course_sections", "course", "$courseid", "sections", 
+                       "section, id, course, summary, sequence");
 }
 
-function get_all_categories() {
-    return get_records_sql("SELECT * FROM course_categories ORDER by name");
-}
 
 function print_section_block($heading, $course, $section, $mods, $modnames, $modnamesused, 
                              $absolute=true, $width="100%", $isediting=false) {
@@ -684,7 +662,7 @@ function print_course_categories($categories, $selected="none", $width=180) {
     $strrequireskey = get_string("requireskey");
 
     if ($selected == "index") {  // Print comprehensive index of categories with courses
-        if ($courses = get_records_sql("SELECT * FROM course WHERE category > 0 ORDER BY shortname")) {
+        if ($courses = get_courses()) {
             if (isset($USER->id) and !isadmin()) {
                 print_simple_box_start("CENTER", "100%", $THEME->cellheading);
                 print_heading("<A HREF=\"course/index.php?category=my\">".get_string("mycourses")."</A>", "LEFT");
@@ -773,9 +751,7 @@ function add_mod_to_section($mod) {
 // Returns the course_sections ID where the mod is inserted
     GLOBAL $db;
 
-    if ($section = get_record_sql("SELECT * FROM course_sections 
-                                   WHERE course = '$mod->course' AND section = '$mod->section'") ) {
-
+    if ($section = get_record("course_sections", "course", "$mod->course", "section", "$mod->section")) {
         if ($section->sequence) {
             $newsequence = "$section->sequence,$mod->coursemodule";
         } else {
@@ -857,9 +833,8 @@ function move_module($cm, $move) {
                 return true;
             } else {               // Push onto end of previous section
                 $prevsectionnumber = $thissection->section - 1;
-                if (! $prevsection = get_record_sql("SELECT * FROM course_sections 
-                                                  WHERE course='$thissection->course'
-                                                  AND section='$prevsectionnumber' ")) {
+                if (! $prevsection = get_record("course_sections", "course", "$thissection->course", 
+                                                                   "section", "$prevsectionnumber")) {
                     error("Previous section ($prevsection->id) doesn't exist");
                 }
 
@@ -902,9 +877,8 @@ function move_module($cm, $move) {
 
         if ($last) {
             $nextsectionnumber = $thissection->section + 1;
-            if ($nextsection = get_record_sql("SELECT * FROM course_sections 
-                                            WHERE course='$thissection->course'
-                                            AND section='$nextsectionnumber' ")) {
+            if ($nextsection = get_record("course_sections", "course", "$thissection->course", 
+                                                               "section", "$nextsectionnumber")) {
 
                 if ($nextsection->sequence) {
                     $newsequence = "$cm->id,$nextsection->sequence";

@@ -111,6 +111,7 @@ $string['deletednot'] = "Could not delete \$a !";
 $string['deletingcourse'] = "Deleting \$a";
 $string['department'] = "Department";
 $string['description'] = "Description";
+$string['displayingrecords'] = "Displaying \$a records";
 $string['displayingusers'] = "Displaying users \$a->start to \$a->end";
 $string['documentation'] = "Moodle Documentation";
 $string['downloadexcel'] = "Download in Excel format";

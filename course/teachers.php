@@ -33,7 +33,7 @@
         }
 
         foreach ($rank as $num => $vals) {
-            if (! $teacher = get_record_sql("SELECT * FROM user_teachers WHERE course='$course->id' and user='$num'")) {
+            if (! $teacher = get_record("user_teachers", "course", "$course->id", "user", "$num")) {
                 error("No such teacher in course $course->shortname with user id $num");
             }
             $teacher->role = $vals[r];

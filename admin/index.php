@@ -205,16 +205,14 @@
 
     include_once("$CFG->dirroot/lib/defaults.php");
 
-    $CFG = (array)$CFG;
     foreach ($defaults as $name => $value) {
-        if (!isset($CFG[$name])) {
-            $config->name  = $name;
-            $config->value = $CFG[$name] = $value;
-            insert_record("config", $config);
+        if (!isset($CFG->$name)) {
+            $CFG->$name = $value;
+            set_config($name, $value);
             $configchange = true;
         }
     }
-    $CFG = (object)$CFG;
+
 
 /// If any new configurations were found then send to the config page to check
 
@@ -228,7 +226,7 @@
     }
 
 /// Set up the admin user
-    if (! record_exists_sql("SELECT * FROM user_admins")) {   // No admin user yet
+    if (! record_exists("user_admins")) {   // No admin user yet
         redirect("user.php");
     }
 

@@ -14,7 +14,7 @@
 # Table structure for table `config`
 #
 
-CREATE TABLE `config` (
+CREATE TABLE `prefix_config` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
   `value` varchar(255) NOT NULL default '',
@@ -27,7 +27,7 @@ CREATE TABLE `config` (
 # Table structure for table `course`
 #
 
-CREATE TABLE `course` (
+CREATE TABLE `prefix_course` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `category` int(10) unsigned NOT NULL default '0',
   `password` varchar(50) NOT NULL default '',
@@ -56,7 +56,7 @@ CREATE TABLE `course` (
 # Table structure for table `course_categories`
 #
 
-CREATE TABLE `course_categories` (
+CREATE TABLE `prefix_course_categories` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`),
@@ -68,7 +68,7 @@ CREATE TABLE `course_categories` (
 # Table structure for table `course_modules`
 #
 
-CREATE TABLE `course_modules` (
+CREATE TABLE `prefix_course_modules` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `course` int(10) unsigned NOT NULL default '0',
   `module` int(10) unsigned NOT NULL default '0',
@@ -86,7 +86,7 @@ CREATE TABLE `course_modules` (
 # Table structure for table `course_sections`
 #
 
-CREATE TABLE `course_sections` (
+CREATE TABLE `prefix_course_sections` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `course` int(10) unsigned NOT NULL default '0',
   `section` int(10) unsigned NOT NULL default '0',
@@ -100,7 +100,7 @@ CREATE TABLE `course_sections` (
 # Table structure for table `log`
 #
 
-CREATE TABLE `log` (
+CREATE TABLE `prefix_log` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `time` int(10) unsigned NOT NULL default '0',
   `user` int(10) unsigned NOT NULL default '0',
@@ -118,7 +118,7 @@ CREATE TABLE `log` (
 # Table structure for table `log_display`
 #
 
-CREATE TABLE `log_display` (
+CREATE TABLE `prefix_log_display` (
   `module` varchar(20) NOT NULL default '',
   `action` varchar(20) NOT NULL default '',
   `mtable` varchar(20) NOT NULL default '',
@@ -130,7 +130,7 @@ CREATE TABLE `log_display` (
 # Table structure for table `modules`
 #
 
-CREATE TABLE `modules` (
+CREATE TABLE `prefix_modules` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(20) NOT NULL default '',
   `version` int(10) NOT NULL default '0',
@@ -146,7 +146,7 @@ CREATE TABLE `modules` (
 # Table structure for table `user`
 #
 
-CREATE TABLE `user` (
+CREATE TABLE `prefix_user` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `confirmed` tinyint(1) NOT NULL default '0',
   `deleted` tinyint(1) NOT NULL default '0',
@@ -189,7 +189,7 @@ CREATE TABLE `user` (
 # Table structure for table `user_admins`
 #
 
-CREATE TABLE `user_admins` (
+CREATE TABLE `prefix_user_admins` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `user` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
@@ -201,7 +201,7 @@ CREATE TABLE `user_admins` (
 # Table structure for table `user_students`
 #
 
-CREATE TABLE `user_students` (
+CREATE TABLE `prefix_user_students` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `user` int(10) unsigned NOT NULL default '0',
   `course` int(10) unsigned NOT NULL default '0',
@@ -217,7 +217,7 @@ CREATE TABLE `user_students` (
 # Table structure for table `user_teachers`
 #
 
-CREATE TABLE `user_teachers` (
+CREATE TABLE `prefix_user_teachers` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `user` int(10) unsigned NOT NULL default '0',
   `course` int(10) unsigned NOT NULL default '0',

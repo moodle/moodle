@@ -33,8 +33,7 @@
 
     print_header("Ratings for: $post->subject");
 
-    if (!$ratings = get_records_sql("SELECT u.*, r.rating, r.time FROM forum_ratings r, user u
-                                     WHERE r.post='$post->id' AND r.user=u.id ORDER BY $sort")) {
+    if (!$ratings = forum_get_ratings($post->id, $sort)) {
         echo "No ratings for this post: \"$post->subject\"";
         die;
     } else {

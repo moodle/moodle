@@ -3,8 +3,7 @@
 $CHOICE_MAX_NUMBER = 6;
 
 function choice_user_outline($course, $user, $mod, $choice) {
-    if ($current = get_record_sql("SELECT * FROM choice_answers
-                                   WHERE choice='$choice->id' AND user='$user->id'")) {
+    if ($current = get_record("choice_answers", "choice", $choice->id, "user", $user->id)) {
         $result->info = "'".choice_get_answer($choice, $current->answer)."'";
         $result->time = $current->timemodified;
         return $result;
@@ -14,8 +13,7 @@ function choice_user_outline($course, $user, $mod, $choice) {
 
 
 function choice_user_complete($course, $user, $mod, $choice) {
-    if ($current = get_record_sql("SELECT * FROM choice_answers
-                                   WHERE choice='$choice->id' AND user='$user->id'")) {
+    if ($current = get_record("choice_answers", "choice", $choice->id, "user", $user->id)) {
         $result->info = "'".choice_get_answer($choice, $current->answer)."'";
         $result->time = $current->timemodified;
         echo get_string("answered", "choice").": $result->info , last updated ".userdate($result->time);

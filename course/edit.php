@@ -96,7 +96,7 @@
         }
     }
 
-    $form->categories = get_records_sql_menu("SELECT id,name FROM course_categories");
+    $form->categories = get_records_select_menu("course_categories", "", "name", "id,name");
     
     $form->courseformats = array (
              "weeks"  => get_string("formatweeks"),

@@ -23,7 +23,7 @@
 	    print_header("$site->shortname: $strdeletecourse", $site->fullname, 
                      "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $strdeletecourse");
 
-        if ($courses = get_records_sql("SELECT * from course WHERE category > 0 ORDER BY fullname")) {
+        if ($courses = get_courses()) {
             print_heading(get_string("choosecourse"));
             print_simple_box_start("CENTER");
             foreach ($courses as $course) {
@@ -71,7 +71,7 @@
     $strdeleted = get_string("deleted");
     // First delete every instance of every module
 
-    if ($allmods = get_records_sql("SELECT * FROM modules") ) {
+    if ($allmods = get_records("modules") ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
             $modfile = "../mod/$modname/lib.php";

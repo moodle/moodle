@@ -402,6 +402,45 @@ function forum_grades($forumid) {
 }
 
 
+/// SQL FUNCTIONS ///////////////////////////////////////////////////////////
+
+function forum_search_posts($search, $courseid) {
+/// Returns a list of posts that were found
+    global $CFG;
+
+    if (!isteacher($courseid)) {
+        $notteacherforum = "AND f.type <> 'teacher'";
+    } else {
+        $notteacherforum = "";
+    }
+
+    return get_records_sql("SELECT p.*,u.firstname,u.lastname,u.email,u.picture,u.id as userid 
+                            FROM {$CFG->prefix}forum_posts p,  
+                                 {$CFG->prefix}forum_discussions d, 
+                                 {$CFG->prefix}user u, 
+                                 {$CFG->prefix}forum f
+                            WHERE (p.message LIKE '%$search%' OR p.subject LIKE '%$search%')
+                              AND p.user = u.id 
+                              AND p.discussion = d.id 
+                              AND d.course = '$courseid' 
+                              AND d.forum = f.id 
+                              $notteacherforum
+                         ORDER BY p.modified DESC LIMIT 0, 50");
+}
+
+function forum_get_ratings($postid, $sort="u.firstname ASC") {
+/// Returns a list of ratings for a particular post - sorted.
+    global $CFG;
+    return get_records_sql("SELECT u.*, r.rating, r.time 
+                              FROM {$CFG->prefix}forum_ratings r, 
+                                   {$CFG->prefix}user u
+                             WHERE r.post='$postid' 
+                               AND r.user=u.id 
+                             ORDER BY $sort");
+}
+
+
+
 /// OTHER FUNCTIONS ///////////////////////////////////////////////////////////
 
 
@@ -1185,15 +1224,17 @@ function forum_subscribed_users($course, $forum) {
 }
 
 function forum_subscribe($userid, $forumid) {
-    global $db;
+/// Adds user to the subscriber list
 
-    return $db->Execute("INSERT INTO forum_subscriptions SET user = '$userid', forum = '$forumid'");
+    $sub->user  = $userid;
+    $sub->forum = $forumid;
+
+    return insert_record("forum_subscriptions", $sub);
 }
 
 function forum_unsubscribe($userid, $forumid) {
-    global $db;
-
-    return $db->Execute("DELETE FROM forum_subscriptions WHERE user = '$userid' AND forum = '$forumid'");
+/// Removes user from the subscriber list
+    return delete_records("forum_subscriptions", "user", $userid, "forum", $forumid)
 }
 
 

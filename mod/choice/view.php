@@ -19,8 +19,7 @@
         error("Course module is incorrect");
     }
 
-    if ($current = get_record_sql("SELECT * FROM choice_answers
-                                     WHERE choice='$choice->id' AND user='$USER->id'")) {
+    if ($current = get_record("choice_answers", "choice", $choice->id, "user", $USER->id)) {
         $answerchecked[$current->answer] = "CHECKED";
     }
 

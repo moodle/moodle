@@ -25,17 +25,17 @@
                 continue;
             }
             if ($rating) {
-                if ($check = get_record_sql("SELECT COUNT(*) as count FROM forum_ratings 
-                                        WHERE user='$USER->id' AND post='$post'")){
-                    if ($check->count == 0) {
-                        $timenow = time();
-                        if (!$rs = $db->Execute("INSERT DELAYED INTO forum_ratings 
-                                            SET user='$USER->id', post='$post', time='$timenow', rating='$rating'")){
-                            error("Could not insert a new rating ($post = $rating)");
-                        }
-                        
-                    } else {
-                        error("You've rated this question before ($post)");
+                if (record_exists("forum_ratings", "user", $USER->id, "post", $post)) {
+                    error("You've rated this question before ($post)");
+                } else {
+                    unset($newrating);
+                    $newrating->user = $USER->id;
+                    $newrating->time = time();
+                    $newrating->post = $post;
+                    $newrating->rating = $rating;
+
+                    if (! insert_record("forum_ratings", $newrating)) {
+                        error("Could not insert a new rating ($post = $rating)");
                     }
                 }
             }

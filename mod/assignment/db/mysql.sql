@@ -2,7 +2,7 @@
 # Table structure for table `assignment`
 #
 
-CREATE TABLE `assignment` (
+CREATE TABLE `prefix_assignment` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `course` int(10) unsigned NOT NULL default '0',
   `name` varchar(255) NOT NULL default '',
@@ -22,7 +22,7 @@ CREATE TABLE `assignment` (
 # Table structure for table `assignment_submissions`
 #
 
-CREATE TABLE `assignment_submissions` (
+CREATE TABLE `prefix_assignment_submissions` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `assignment` int(10) unsigned NOT NULL default '0',
   `user` int(10) unsigned NOT NULL default '0',
@@ -39,9 +39,9 @@ CREATE TABLE `assignment_submissions` (
 # --------------------------------------------------------
 
 
-INSERT INTO log_display VALUES ('assignment', 'view', 'assignment', 'name');
-INSERT INTO log_display VALUES ('assignment', 'add', 'assignment', 'name');
-INSERT INTO log_display VALUES ('assignment', 'update', 'assignment', 'name');
-INSERT INTO log_display VALUES ('assignment', 'view submissions', 'assignment', 'name');
-INSERT INTO log_display VALUES ('assignment', 'upload', 'assignment', 'name');
+INSERT INTO prefix_log_display VALUES ('assignment', 'view', 'assignment', 'name');
+INSERT INTO prefix_log_display VALUES ('assignment', 'add', 'assignment', 'name');
+INSERT INTO prefix_log_display VALUES ('assignment', 'update', 'assignment', 'name');
+INSERT INTO prefix_log_display VALUES ('assignment', 'view submissions', 'assignment', 'name');
+INSERT INTO prefix_log_display VALUES ('assignment', 'upload', 'assignment', 'name');
 

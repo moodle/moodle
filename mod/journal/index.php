@@ -49,8 +49,7 @@
 
     foreach ($journals as $journal) {
 
-        $entry = get_record_sql("SELECT text FROM journal_entries 
-                                 WHERE user='$USER->id' AND journal='$journal->id'");
+        $entrytext = get_field("journal_entries", "text", "user", $USER->id, "journal", $journal->id");
 
         $journal->timestart  = $course->startdate + (($journal->section - 1) * 608400);
         if ($journal->daysopen) {
@@ -61,7 +60,7 @@
         $journalopen = ($journal->timestart < $timenow && $timenow < $journal->timefinish);
 
 
-        $text = text_to_html($entry->text)."<P ALIGN=right><A HREF=\"view.php?id=$journal->coursemodule\">";
+        $text = text_to_html($entrytext)."<P ALIGN=right><A HREF=\"view.php?id=$journal->coursemodule\">";
         if ($journalopen) {
             $text .= "$stredit</A></P>";
         } else {

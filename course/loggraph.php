@@ -63,12 +63,7 @@
            $timestart = $timefinish;
        }
 
-       if ($rawlogs = get_records_sql("SELECT floor((`time` - $coursestart)/86400) as day, 
-                                              count(*) as num FROM log 
-                                       WHERE user = '$user->id' 
-                                         AND course = '$course->id'
-                                         AND `time` > '$coursestart'
-                                       GROUP BY day ")) {
+       if ($rawlogs = get_logs_usercourse($user->id, $course->id, $coursestart)) {
            foreach ($rawlogs as $rawlog) {
                $logs[$rawlog->day] = $rawlog->num;
            }
@@ -116,12 +111,7 @@
            $hours[$i] = userdate($hour, "$hh %p");
        }
 
-       if ($rawlogs = get_records_sql("SELECT floor((`time` - $daystart)/3600) as hour, 
-                                              count(*) as num FROM log 
-                                       WHERE user = '$user->id' 
-                                         AND course = '$course->id'
-                                         AND `time` > '$daystart'
-                                       GROUP BY hour ")) {
+       if ($rawlogs = get_logs_userday($user->id, $course->id, $daystart)) {
            foreach ($rawlogs as $rawlog) {
                $logs[$rawlog->hour] = $rawlog->num;
            }

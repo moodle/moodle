@@ -57,7 +57,7 @@
 
 
 /// Get the existing categories
-    if (!$categories = get_all_categories()) {
+    if (!$categories = get_categories()) {
         // Try and make one
         $cat->name = get_string("miscellaneous");
         if ($cat->id = insert_record("course_categories", $cat)) {
@@ -86,7 +86,7 @@
     }
 
 /// Find any orphan courses that don't yet have a valid category and set to default
-    if ($courses = get_records_sql("SELECT * FROM course WHERE category > 0")) {
+    if ($courses = get_courses()) {
         foreach ($courses as $course) {
             if (!isset( $categories[$course->category] )) {
                 set_field("course", "category", $default, "id", $course->id);

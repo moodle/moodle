@@ -112,11 +112,7 @@ function assignment_cron () {
 
     $cutofftime = time() - $CFG->maxeditingtime;
 
-    if ($submissions = get_records_sql("SELECT s.*, a.course, a.name
-                                        FROM   assignment_submissions s, assignment a
-                                        WHERE  s.mailed = '0' 
-                                        AND s.timemarked < '$cutofftime' AND s.timemarked > 0
-                                        AND s.assignment = a.id")) {
+    if ($submissions = assignment_get_unmailed_submissions($cutofftime)) {
         $timenow = time();
 
         foreach ($submissions as $submission) {
@@ -194,9 +190,7 @@ function assignment_print_recent_activity(&$logs, $isteacher=false) {
 
     foreach ($logs as $log) {
         if ($log->module == "assignment" and $log->action == "upload") {
-            $assignments[$log->info] = get_record_sql("SELECT a.name, u.firstname, u.lastname
-                                                       FROM assignment a, user u
-                                                      WHERE a.id = '$log->info' AND u.id = '$log->user'");
+            $assignments[$log->info] = assignment_log_info($log);
             $assignments[$log->info]->time = $log->time;
             $assignments[$log->info]->url  = $log->url;
         }
@@ -220,10 +214,61 @@ function assignment_print_recent_activity(&$logs, $isteacher=false) {
 function assignment_grades($assignmentid) {
 /// Must return an array of grades, indexed by user, and a max grade.
 
-    $return->grades = get_records_sql_menu("SELECT user,grade FROM assignment_submissions WHERE assignment = '$assignmentid'");
+    $return->grades = get_records_menu("assignment_submissions", "assignment", 
+                                       $assignmentid, "", "user,grade");
     $return->maxgrade = get_field("assignment", "grade", "id", "$assignmentid");
     return $return;
 }
+
+/// SQL STATEMENTS //////////////////////////////////////////////////////////////////
+
+function assignment_log_info($log) {
+    global $CFG;
+    return get_record_sql("SELECT a.name, u.firstname, u.lastname
+                             FROM {$CFG->prefix}assignment a, 
+                                  {$CFG->prefix}user u
+                            WHERE a.id = '$log->info' 
+                              AND u.id = '$log->user'");
+}
+
+function assignment_get_all_submissions($assignment) {
+/// Return all assignment submissions by ENROLLED students
+    global $CFG;
+    return get_records_sql("SELECT a.* 
+                              FROM {$CFG->prefix}assignment_submissions a, 
+                                   {$CFG->prefix}user_students s
+                             WHERE a.user = s.user
+                               AND s.course = '$assignment->course'
+                               AND a.assignment = '$assignment->id' 
+                          ORDER BY a.timemodified DESC");
+}
+
+function assignment_get_users_done($assignment) {
+/// Return list of users who have done an assignment
+    global $CFG;
+    return get_records_sql("SELECT u.* 
+                              FROM {$CFG->prefix}user u, 
+                                   {$CFG->prefix}user_students s, 
+                                   {$CFG->prefix}assignment_submissions a
+                             WHERE s.course = '$assignment->course' 
+                               AND s.user = u.id
+                               AND u.id = a.user 
+                               AND a.assignment = '$assignment->id'
+                          ORDER BY a.timemodified DESC");
+}
+
+function assignment_get_unmailed_submissions($cutofftime) {
+/// Return list of marked submissions that have not been mailed out
+    global $CFG;
+    return get_records_sql("SELECT s.*, a.course, a.name
+                              FROM {$CFG->prefix}assignment_submissions s, 
+                                   {$CFG->prefix}assignment a
+                             WHERE s.mailed = 0 
+                               AND s.timemarked < $cutofftime 
+                               AND s.timemarked > 0
+                               AND s.assignment = a.id");
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -239,24 +284,7 @@ function assignment_file_area($assignment, $user) {
 }
 
 function assignment_get_submission($assignment, $user) {
-    return get_record_sql("SELECT * from assignment_submissions 
-                           WHERE assignment = '$assignment->id' AND user = '$user->id'");
-}
-
-function assignment_get_all_submissions($assignment) {
-// Return all assignment submissions by ENROLLED students
-    return get_records_sql("SELECT a.* FROM assignment_submissions a, user_students s
-                            WHERE a.user = s.user
-                              AND s.course = '$assignment->course'
-                              AND a.assignment = '$assignment->id' 
-                              ORDER BY a.timemodified DESC");
-}
-
-function assignment_get_users_done($assignment) {
-    return get_records_sql("SELECT u.* FROM user u, user_students s, assignment_submissions a
-                            WHERE s.course = '$assignment->course' AND s.user = u.id
-                              AND u.id = a.user AND a.assignment = '$assignment->id'
-                            ORDER BY a.timemodified DESC");
+    return get_record("assignment_submissions", "assignment", $assignment->id, "user", $user->id);
 }
 
 function assignment_print_difference($time) {

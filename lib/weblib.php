@@ -1,10 +1,33 @@
 <?PHP // $Id$
 
-// weblib.php
+///////////////////////////////////////////////////////////////////////////
+// weblib.php - functions for web output
 //
-// Library of useful PHP functions and constants related to web pages.
+// Library of all general-purpose Moodle PHP functions and constants
+// that produce HTML output
 //
-//
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.com                                            //
+//                                                                       //
+// Copyright (C) 2001-2003  Martin Dougiamas  http://dougiamas.com       //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
 
 /// Constants
 
@@ -493,6 +516,572 @@ function highlight($needle, $haystack) {
     }   
 
     return (join('', $parts));
+}
+
+
+
+/// STANDARD WEB PAGE PARTS ///////////////////////////////////////////////////
+
+function print_header ($title="", $heading="", $navigation="", $focus="", $meta="", $cache=true, $button="&nbsp;", $menu="") {
+// $title - appears top of window
+// $heading - appears top of page
+// $navigation - premade navigation string
+// $focus - indicates form element eg  inputform.password
+// $meta - meta tags in the header
+// $cache - should this page be cacheable?
+// $button - HTML code for a button (usually for module editing)
+// $menu - HTML code for a popup menu 
+    global $USER, $CFG, $THEME;
+
+    if (file_exists("$CFG->dirroot/theme/$CFG->theme/styles.php")) {
+        $styles = $CFG->stylesheet;
+    } else {
+        $styles = "$CFG->wwwroot/theme/standard/styles.php";
+    }
+
+    if ($navigation == "home") {
+        $home = true;
+        $navigation = "";
+    }
+
+    if ($button == "") {
+        $button = "&nbsp;";
+    }
+
+    if (!$menu and $navigation) {
+        if (isset($USER->id)) {
+            $menu = "<FONT SIZE=2><A TARGET=_parent HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A></FONT>";
+        } else {
+            $menu = "<FONT SIZE=2><A TARGET=_parent HREF=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</A></FONT>";
+        }
+    }
+
+    // Specify character set ... default is iso-8859-1 but some languages might need something else
+    // Could be optimised by carrying the charset variable around in $USER
+    if (current_language() == "en") {
+        $meta = "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=iso-8859-1\">\n$meta\n";
+    } else {
+        $meta = "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=".get_string("thischarset")."\">\n$meta\n";
+    }
+
+    if ($CFG->langdir == "RTL") {
+        $direction = " DIR=\"RTL\"";
+    } else {
+        $direction = " DIR=\"LTR\"";
+    }
+ 
+    if (!$cache) {   // Do everything we can to prevent clients and proxies caching
+        @header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+        @header("Pragma: no-cache");
+        $meta .= "\n<META HTTP-EQUIV=\"Pragma\" CONTENT=\"no-cache\">";
+        $meta .= "\n<META HTTP-EQUIV=\"Expires\" CONTENT=\"0\">";
+    }
+
+    include ("$CFG->dirroot/theme/$CFG->theme/header.html");
+}
+
+function print_footer ($course=NULL) {
+// Can provide a course object to make the footer contain a link to 
+// to the course home page, otherwise the link will go to the site home
+    global $USER, $CFG, $THEME;
+
+
+/// Course links
+    if ($course) {
+        if ($course == "home") {   // special case for site home page - please do not remove
+            $homelink  = "<P ALIGN=center><A TITLE=\"Moodle $CFG->release ($CFG->version)\" HREF=\"http://moodle.com/\">";
+            $homelink .= "<BR><IMG WIDTH=130 HEIGHT=19 SRC=\"pix/madewithmoodle2.gif\" BORDER=0></A></P>";
+            $course = get_site();
+            $homepage = true;
+        } else {
+            $homelink = "<A TARGET=_top HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A>";
+        }
+    } else {
+        $homelink = "<A TARGET=_top HREF=\"$CFG->wwwroot\">".get_string("home")."</A>";
+        $course = get_site();
+    }
+
+/// User links
+    if ($USER->realuser) {
+        if ($realuser = get_record("user", "id", $USER->realuser)) {
+            $realuserinfo = " [<A HREF=\"$CFG->wwwroot/course/loginas.php?id=$course->id&return=$realuser->id\">$realuser->firstname $realuser->lastname</A>] ";
+        }
+    }
+
+    if ($USER->id) {
+        $username = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$USER->firstname $USER->lastname</A>";
+        $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
+                      " (<A HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A>)";
+    } else {
+        $loggedinas = get_string("loggedinnot", "moodle").
+                      " (<A HREF=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</A>)";
+    }
+
+    include ("$CFG->dirroot/theme/$CFG->theme/footer.html");
+}
+
+
+
+function print_navigation ($navigation) {
+   global $CFG;
+
+   if ($navigation) {
+       if (! $site = get_site()) {
+           $site->shortname = get_string("home");;
+       }
+       echo "<A TARGET=_top HREF=\"$CFG->wwwroot/\">$site->shortname</A> -> $navigation";
+   }
+}
+
+function print_heading($text, $align="CENTER", $size=3) {
+    echo "<P ALIGN=\"$align\"><FONT SIZE=\"$size\"><B>".stripslashes($text)."</B></FONT></P>";
+}
+
+function print_heading_with_help($text, $helppage, $module="moodle") {
+// Centered heading with attached help button (same title text)
+    echo "<P ALIGN=\"CENTER\"><FONT SIZE=\"3\"><B>".stripslashes($text);
+    helpbutton($helppage, $text, $module);
+    echo "</B></FONT></P>";
+}
+    
+function print_continue($link) {
+    global $HTTP_REFERER;
+
+    if (!$link) {
+        $link = $HTTP_REFERER;
+    }
+
+    print_heading("<A HREF=\"$link\">".get_string("continue")."</A>");
+}
+
+
+function print_simple_box($message, $align="", $width="", $color="#FFFFFF", $padding=5, $class="generalbox") {
+    print_simple_box_start($align, $width, $color, $padding, $class);
+    echo stripslashes($message);
+    print_simple_box_end();
+}
+
+function print_simple_box_start($align="", $width="", $color="#FFFFFF", $padding=5, $class="generalbox") {
+    global $THEME;
+
+    if ($align) {
+        $tablealign = "ALIGN=\"$align\"";
+    }
+    if ($width) {
+        $tablewidth = "WIDTH=\"$width\"";
+    }
+    echo "<table $tablealign $tablewidth class=\"$class\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\"><tr><td bgcolor=\"$color\" class=\"$class"."content\">";
+}
+
+function print_simple_box_end() {
+    echo "</td></tr></table>";
+}
+
+function print_single_button($link, $options, $label="OK") {
+    echo "<FORM ACTION=\"$link\" METHOD=GET>";
+    if ($options) {
+        foreach ($options as $name => $value) {
+            echo "<INPUT TYPE=hidden NAME=\"$name\" VALUE=\"$value\">";
+        }
+    }
+    echo "<INPUT TYPE=submit VALUE=\"$label\"></FORM>";
+}
+
+function print_spacer($height=1, $width=1, $br=true) {
+    global $CFG;
+    echo "<IMG HEIGHT=\"$height\" WIDTH=\"$width\" SRC=\"$CFG->wwwroot/pix/spacer.gif\" ALT=\"\">";
+    if ($br) {
+        echo "<BR \>\n";
+    }
+}
+
+function print_file_picture($path, $courseid=0, $height="", $width="", $link="") {
+// Given the path to a picture file in a course, or a URL,
+// this function includes the picture in the page.
+    global $CFG;
+
+    if ($height) {
+        $height = "HEIGHT=\"$height\"";
+    }
+    if ($width) {
+        $width = "WIDTH=\"$width\"";
+    }
+    if ($link) {
+        echo "<A HREF=\"$link\">";
+    }
+    if (substr(strtolower($path), 0, 7) == "http://") {
+        echo "<IMG BORDER=0 $height $width SRC=\"$path\">";
+
+    } else if ($courseid) {
+        echo "<IMG BORDER=0 $height $width SRC=\"";
+        if ($CFG->slasharguments) {        // Use this method if possible for better caching
+            echo "$CFG->wwwroot/file.php/$courseid/$path";
+        } else {
+            echo "$CFG->wwwroot/file.php?file=$courseid/$path";
+        }
+        echo "\">";
+    } else {
+        echo "Error: must pass URL or course";
+    }
+    if ($link) {
+        echo "</A>";
+    }
+}
+
+function print_user_picture($userid, $courseid, $picture, $large=false, $returnstring=false, $link=true) {
+    global $CFG;
+
+    if ($link) {
+        $output = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$userid&course=$courseid\">";
+    } else {
+        $output = "";
+    }
+    if ($large) {
+        $file = "f1.jpg";
+        $size = 100;
+    } else {
+        $file = "f2.jpg";
+        $size = 35;
+    }
+    if ($picture) {
+        if ($CFG->slasharguments) {        // Use this method if possible for better caching
+            $output .= "<IMG SRC=\"$CFG->wwwroot/user/pix.php/$userid/$file\" BORDER=0 WIDTH=$size HEIGHT=$size ALT=\"\">";
+        } else {
+            $output .= "<IMG SRC=\"$CFG->wwwroot/user/pix.php?file=/$userid/$file\" BORDER=0 WIDTH=$size HEIGHT=$size ALT=\"\">";
+        }
+    } else {
+        $output .= "<IMG SRC=\"$CFG->wwwroot/user/default/$file\" BORDER=0 WIDTH=$size HEIGHT=$size ALT=\"\">";
+    }
+    if ($link) {
+        $output .= "</A>";
+    }
+
+    if ($returnstring) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+function print_table($table) {
+// Prints a nicely formatted table.
+// $table is an object with several properties.
+//     $table->head      is an array of heading names.
+//     $table->align     is an array of column alignments
+//     $table->size      is an array of column sizes
+//     $table->data[]    is an array of arrays containing the data.
+//     $table->width     is an percentage of the page
+//     $table->cellpadding    padding on each cell
+//     $table->cellspacing    spacing between cells
+
+    if (isset($table->align)) {
+        foreach ($table->align as $key => $aa) {
+            if ($aa) {
+                $align[$key] = " ALIGN=\"$aa\"";
+            } else {
+                $align[$key] = "";
+            }
+        }
+    }
+    if (isset($table->size)) {
+        foreach ($table->size as $key => $ss) {
+            if ($ss) {
+                $size[$key] = " WIDTH=\"$ss\"";
+            } else {
+                $size[$key] = "";
+            }
+        }
+    }
+
+    if (!$table->width) {
+        $table->width = "80%";
+    }
+
+    if (!$table->cellpadding) {
+        $table->cellpadding = "5";
+    }
+
+    if (!$table->cellspacing) {
+        $table->cellspacing = "1";
+    }
+
+    print_simple_box_start("CENTER", "$table->width", "#FFFFFF", 0);
+    echo "<TABLE WIDTH=100% BORDER=0 valign=top align=center ";
+    echo " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"generaltable\">\n";
+
+    if ($table->head) {
+        echo "<TR>";
+        foreach ($table->head as $key => $heading) {
+            echo "<TH VALIGN=top ".$align[$key].$size[$key]." NOWRAP class=\"generaltableheader\">$heading</TH>";
+        }
+        echo "</TR>\n";
+    }
+
+    foreach ($table->data as $row) {
+        echo "<TR VALIGN=TOP>";
+        foreach ($row as $key => $item) {
+            echo "<TD ".$align[$key].$size[$key]." class=\"generaltablecell\">$item</TD>";
+        }
+        echo "</TR>\n";
+    }
+    echo "</TABLE>\n";
+    print_simple_box_end();
+
+    return true;
+}
+
+function print_editing_switch($courseid) {
+    global $CFG, $USER;
+
+    if (isteacher($courseid)) {
+        if ($USER->editing) {
+            echo "<A HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=off\">Turn editing off</A>";
+        } else {
+            echo "<A HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=on\">Turn editing on</A>";
+        }
+    }
+}
+
+function print_textarea($richedit, $rows, $cols, $width, $height, $name, $value="") {
+    global $CFG, $THEME;
+
+    if ($richedit) {
+        echo "<object id=richedit style=\"BACKGROUND-COLOR: buttonface\"";
+        echo " data=\"$CFG->wwwroot/lib/rte/richedit.html\"";
+        echo " width=\"$width\" height=\"$height\" ";
+        echo " type=\"text/x-scriptlet\" VIEWASTEXT></object>\n";
+        echo "<TEXTAREA style=\"display:none\" NAME=\"$name\" ROWS=1 COLS=1>";
+        p($value);
+        echo "</TEXTAREA>\n";
+    } else {
+        echo "<TEXTAREA name=\"$name\" rows=\"$rows\" cols=\"$cols\" wrap=virtual>";
+        p($value);
+        echo "</TEXTAREA>\n";
+    }
+}
+
+function print_richedit_javascript($form, $name, $source="no") {
+    echo "<SCRIPT language=\"JavaScript\" event=\"onload\" for=\"window\">\n";
+    echo "   document.richedit.options = \"history=no;source=$source\";";
+    echo "   document.richedit.docHtml = $form.$name.innerText;";
+    echo "</SCRIPT>";
+}
+
+
+function update_course_icon($courseid) {
+// Used to be an icon, but it's now a simple form button
+    global $CFG, $USER;
+
+    if (isteacher($courseid)) {
+        if ($USER->editing) {
+            $string = get_string("turneditingoff");
+            $edit = "off";
+        } else {
+            $string = get_string("turneditingon");
+            $edit = "on";
+        }
+        return "<FORM TARGET=_parent METHOD=GET ACTION=\"$CFG->wwwroot/course/view.php\">".
+               "<INPUT TYPE=hidden NAME=id VALUE=\"$courseid\">".
+               "<INPUT TYPE=hidden NAME=edit VALUE=\"$edit\">".
+               "<INPUT TYPE=submit VALUE=\"$string\"></FORM>";
+    }
+}
+
+function update_module_button($moduleid, $courseid, $string) {
+// Prints the editing button on a module "view" page
+    global $CFG;
+
+    if (isteacher($courseid)) {
+        $string = get_string("updatethis", "", $string);
+        return "<FORM TARGET=_parent METHOD=GET ACTION=\"$CFG->wwwroot/course/mod.php\">".
+               "<INPUT TYPE=hidden NAME=update VALUE=\"$moduleid\">".
+               "<INPUT TYPE=hidden NAME=return VALUE=\"true\">".
+               "<INPUT TYPE=submit VALUE=\"$string\"></FORM>";
+    }
+}
+
+
+function navmenu($course, $cm=NULL) {
+// Given a course and a (current) coursemodule
+// This function returns a small popup menu with all the 
+// course activity modules in it, as a navigation menu
+// The data is taken from the serialised array stored in 
+// the course record
+
+    global $CFG;
+
+    if ($cm) {
+       $cm = $cm->id;
+    }
+
+    if ($course->format == 'weeks') {
+        $strsection = get_string("week");
+    } else {
+        $strsection = get_string("topic");
+    }
+
+    if (!$modinfo = unserialize($course->modinfo)) {
+        return "";
+    }
+    $section = -1;
+    $selected = "";
+    foreach ($modinfo as $mod) {
+        if ($mod->section > 0 and $section <> $mod->section) {
+            $menu[] = "-------------- $strsection $mod->section --------------";
+        }
+        $section = $mod->section;
+        $url = "$mod->mod/view.php?id=$mod->cm";
+        if ($cm == $mod->cm) {
+            $selected = $url;
+        }
+        $mod->name = urldecode($mod->name);
+        if (strlen($mod->name) > 55) {
+            $mod->name = substr($mod->name, 0, 50)."...";
+        }
+        $menu[$url] = $mod->name; 
+    }
+
+    return popup_form("$CFG->wwwroot/mod/", $menu, "navmenu", $selected, get_string("jumpto"), "", "", true);
+}   
+
+
+
+function print_date_selector($day, $month, $year, $currenttime=0) {
+// Currenttime is a default timestamp in GMT
+// Prints form items with the names $day, $month and $year
+
+    if (!$currenttime) {
+        $currenttime = time();
+    }
+    $currentdate = usergetdate($currenttime);
+
+    for ($i=1; $i<=31; $i++) {
+        $days[$i] = "$i";
+    }
+    for ($i=1; $i<=12; $i++) {
+        $months[$i] = date("F", mktime(0,0,0,$i,1,2000));
+    }
+    for ($i=2000; $i<=2010; $i++) {
+        $years[$i] = $i;
+    }
+    choose_from_menu($days,   $day,   $currentdate[mday], "");
+    choose_from_menu($months, $month, $currentdate[mon],  "");
+    choose_from_menu($years,  $year,  $currentdate[year], "");
+}
+
+function print_time_selector($hour, $minute, $currenttime=0) {
+// Currenttime is a default timestamp in GMT
+// Prints form items with the names $hour and $minute
+
+    if (!$currenttime) {
+        $currenttime = time();
+    }
+    $currentdate = usergetdate($currenttime);
+    for ($i=0; $i<=23; $i++) {
+        $hours[$i] = sprintf("%02d",$i);
+    }
+    for ($i=0; $i<=59; $i++) {
+        $minutes[$i] = sprintf("%02d",$i);
+    }
+    choose_from_menu($hours,   $hour,   $currentdate[hours],   "");
+    choose_from_menu($minutes, $minute, $currentdate[minutes], "");
+}
+
+function error ($message, $link="") {
+    global $CFG, $SESSION;
+
+    print_header(get_string("error"));
+    echo "<BR>";
+    print_simple_box($message, "center", "", "#FFBBBB");
+   
+    if (!$link) {
+        if ( !empty($SESSION->fromurl) ) {
+            $link = "$SESSION->fromurl";
+            unset($SESSION->fromurl);
+            save_session("SESSION");
+        } else {
+            $link = "$CFG->wwwroot";
+        }
+    }
+    print_continue($link);
+    print_footer();
+    die;
+}
+
+function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=false, $text="") {
+    // $page = the keyword that defines a help page
+    // $title = the title of links, rollover tips, alt tags etc
+    // $module = which module is the page defined in
+    // $image = use a help image for the link?  (true/false/"both")
+    // $text = if defined then this text is used in the page, and 
+    //         the $page variable is ignored.
+    global $CFG;
+
+    if ($module == "") {
+        $module = "moodle";
+    }
+
+    if ($image) {
+        if ($linktext) {
+            $linkobject = "$title<IMG align=\"absmiddle\" BORDER=0 HEIGHT=17 WIDTH=22 ALT=\"\" SRC=\"$CFG->wwwroot/pix/help.gif\">";
+        } else {
+            $linkobject = "<IMG align=\"absmiddle\" BORDER=0 HEIGHT=17 WIDTH=22 ALT=\"$title\" SRC=\"$CFG->wwwroot/pix/help.gif\">";
+        }
+    } else {
+        $linkobject = $title;
+    }
+    if ($text) {
+        $url = "/help.php?module=$module&text=".htmlentities(urlencode($text));
+    } else {
+        $url = "/help.php?module=$module&file=$page.html";
+    }
+    link_to_popup_window ($url, "popup", $linkobject, 400, 500, $title);
+}
+
+function notice ($message, $link="") {
+    global $THEME, $HTTP_REFERER;
+
+    if (!$link) {
+        $link = $HTTP_REFERER;
+    }
+
+    echo "<BR>";
+    print_simple_box($message, "center", "", "$THEME->cellheading");
+    print_heading("<A HREF=\"$link\">".get_string("continue")."</A>");
+    print_footer(get_site());
+    die;
+}
+
+function notice_yesno ($message, $linkyes, $linkno) {
+    global $THEME;
+
+    print_simple_box_start("center", "", "$THEME->cellheading");
+    echo "<P ALIGN=CENTER><FONT SIZE=3>$message</FONT></P>";
+    echo "<P ALIGN=CENTER><FONT SIZE=3><B>";
+    echo "<A HREF=\"$linkyes\">".get_string("yes")."</A>";
+    echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+    echo "<A HREF=\"$linkno\">".get_string("no")."</A>";
+    echo "</B></FONT></P>";
+    print_simple_box_end();
+}
+
+function redirect($url, $message="", $delay=0) {
+// Uses META tags to redirect the user, after printing a notice
+
+    echo "<META HTTP-EQUIV='Refresh' CONTENT='$delay; URL=$url'>";
+
+    if (!empty($message)) {
+        print_header();
+        echo "<CENTER>";
+        echo "<P>$message</P>";
+        echo "<P>( <A HREF=\"$url\">".get_string("continue")."</A> )</P>";
+        echo "</CENTER>";
+    }
+    die; 
+}
+
+function notify ($message) {
+    echo "<P align=center><B><FONT COLOR=#FF0000>$message</FONT></B></P>\n";
 }
 
 

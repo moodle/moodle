@@ -11,7 +11,7 @@
     $strmycourses = get_string("mycourses");
     $strfulllistofcourses = get_string("fulllistofcourses");
 
-    if (!$categories = get_all_categories()) {
+    if (!$categories = get_categories()) {
         error("Could not find any course categories!");
     }
 

@@ -9,8 +9,7 @@ $JOURNAL_RATING = array ("3" => get_string("journalrating3", "journal"),
 // STANDARD MODULE FUNCTIONS /////////////////////////////////////////////////////////
 
 function journal_user_outline($course, $user, $mod, $journal) {
-    if ($entry = get_record_sql("SELECT * FROM journal_entries 
-                                 WHERE user='$user->id' AND journal='$journal->id'")) {
+    if ($entry = get_record("journal_entries", "user", $user->id, "journal", $journal->id)) {
 
         $numwords = count(preg_split("/\w\b/", $entry->text)) - 1;
 
@@ -24,8 +23,7 @@ function journal_user_outline($course, $user, $mod, $journal) {
 
 function journal_user_complete($course, $user, $mod, $journal) {
 
-    if ($entry = get_record_sql("SELECT * FROM journal_entries 
-                             WHERE user='$user->id' AND journal='$journal->id'")) {
+    if ($entry = get_record("journal_entries", "user", $user->id, "journal", $journal->id)) {
 
         print_simple_box_start();
         if ($entry->modified) {
@@ -53,11 +51,7 @@ function journal_cron () {
 
     $cutofftime = time() - $CFG->maxeditingtime;
 
-    if ($entries = get_records_sql("SELECT e.*, j.course, j.name
-                                     FROM   journal_entries e, journal j
-                                     WHERE  e.mailed = '0' 
-                                     AND e.timemarked < '$cutofftime' AND e.timemarked > 0
-                                     AND e.journal = j.id")) {
+    if ($entries = journal_get_unmailed_graded($cutofftime)) {
         $timenow = time();
 
         foreach ($entries as $entry) {
@@ -135,10 +129,7 @@ function journal_print_recent_activity(&$logs, $isteacher=false) {
         if ($log->module == "journal") {
             if ($log->action == "add entry" or $log->action == "update entry") {
                 if (!isset($journals[$log->info])) {
-                    $journals[$log->info] = get_record_sql("SELECT j.*, u.firstname, u.lastname
-                                           FROM journal j, journal_entries e, user u
-                                           WHERE e.id = '$log->info' AND e.journal = j.id
-                                                 AND e.user = u.id");
+                    $journals[$log->info] = journal_log_info($log);
                     $journals[$log->info]->time = $log->time;
                     $journals[$log->info]->url = $log->url;
                 }
@@ -165,9 +156,7 @@ function journal_grades($journalid) {
 /// Must return an array of grades, indexed by user, and a max grade.
     global $JOURNAL_RATING;
 
-    if ($return->grades = get_records_sql_menu("SELECT user,rating 
-                                                  FROM journal_entries
-                                                 WHERE journal = '$journalid'")) {
+    if ($return->grades = get_records_menu("journal_entries", "journal", $journalid, "", "user,rating")) {
         foreach ($return->grades as $key => $value) {
             if ($value) {
                 $return->grades[$key] = $JOURNAL_RATING[$value];
@@ -181,16 +170,47 @@ function journal_grades($journalid) {
 }
 
 
+// SQL FUNCTIONS ///////////////////////////////////////////////////////////////////
+
+function journal_get_users_done($journal) {
+    global $CFG;
+    return get_records_sql("SELECT u.* 
+                              FROM {$CFG->prefix}user u, 
+                                   {$CFG->prefix}user_students s, 
+                                   {$CFG->prefix}user_teachers t, 
+                                   {$CFG->prefix}journal_entries j
+                             WHERE ((s.course = '$journal->course' AND s.user = u.id) 
+                                OR  (t.course = '$journal->course' AND t.user = u.id))
+                               AND u.id = j.user 
+                               AND j.journal = '$journal->id'
+                          ORDER BY j.modified DESC");
+}
+
+function journal_get_unmailed_graded($cutofftime) {
+    global $CFG;
+    return get_records_sql("SELECT e.*, j.course, j.name
+                              FROM {$CFG->prefix}journal_entries e, 
+                                   {$CFG->prefix}journal j
+                             WHERE e.mailed = '0' 
+                               AND e.timemarked < '$cutofftime' 
+                               AND e.timemarked > 0
+                               AND e.journal = j.id");
+}
+
+function journal_log_info($log) {
+    global $CFG;
+    return get_record_sql("SELECT j.*, u.firstname, u.lastname
+                             FROM {$CFG->prefix}journal j, 
+                                  {$CFG->prefix}journal_entries e, 
+                                  {$CFG->prefix}user u
+                            WHERE e.id = '$log->info' 
+                              AND e.journal = j.id
+                              AND e.user = u.id");
+}
+
 // OTHER JOURNAL FUNCTIONS ///////////////////////////////////////////////////////////////////
 
 
-function journal_get_users_done($journal) {
-    return get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t, journal_entries j
-                            WHERE ((s.course = '$journal->course' AND s.user = u.id) OR 
-                                   (t.course = '$journal->course' AND t.user = u.id))
-                              AND u.id = j.user AND j.journal = '$journal->id'
-                            ORDER BY j.modified DESC");
-}
 
 function journal_print_user_entry($course, $user, $entry, $teachers, $ratings) {
     global $THEME;

@@ -47,7 +47,7 @@
          }
 
          if ($site->newsitems > 0 ) {
-             $categories = get_all_categories();
+             $categories = get_categories();
              if (count($categories) > 1) {
                  print_course_categories($categories, "none", $side);
              } else {
@@ -73,7 +73,7 @@
      if ($site->newsitems == 0 ) {
          print_heading_block(get_string("availablecourses"));
          print_spacer(8,1);
-         $categories = get_all_categories();
+         $categories = get_categories();
          if (count($categories) > 1) {
              print_course_categories($categories, "index");
          } else {

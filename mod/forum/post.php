@@ -252,9 +252,7 @@
 
 
     if ($post->discussion) {
-        if (! $toppost = get_record_sql("SELECT * FROM forum_posts 
-                                         WHERE discussion='$post->discussion' 
-                                         AND parent = 0")) {
+        if (! $toppost = get_record("forum_posts", "discussion", $post->discussion, "parent", 0)) {
             error("Could not find top parent of post $post->id");
         }
     } else {

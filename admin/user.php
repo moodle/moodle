@@ -13,7 +13,7 @@
     optional_variable($dir, "ASC");
     optional_variable($page, 0);
 
-    if (! record_exists_sql("SELECT * FROM user_admins")) {   // No admin user yet
+    if (! record_exists("user_admins")) {   // No admin user yet
         $user->firstname = "Admin";
         $user->lastname  = "User";
         $user->username  = "admin";
@@ -126,11 +126,7 @@
 
         // Carry on with the user listing
 
-        if (!$user = get_record_sql("SELECT count(*) as count FROM user WHERE username <> 'guest' AND deleted <> '1'")) {
-            error("Could not search for users?");
-        }
-
-        $usercount = $user->count;
+        $usercount = get_users_count();
 
         $columns = array("name", "email", "city", "country", "lastaccess");
 
@@ -153,9 +149,7 @@
             $sort = "firstname";
         }
 
-        if ($users = get_records_sql("SELECT id, username, email, firstname, lastname, city, country, lastaccess  from user WHERE username <> 'guest' 
-                                      AND deleted <> '1' ORDER BY $sort $dir LIMIT $page,$recordsperpage")) {
-
+        if ($users = get_users_listing($sort, $dir, $page, $recordsperpage)) {
             print_heading("$usercount ".get_string("users"));
             
             $a->start = $page;
