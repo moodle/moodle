@@ -56,6 +56,7 @@ $string['notefile'] = 'Pour déposer des fichiers dans le cours (afin qu\'ils app
 $string['notypechosen'] = 'Vous devez choisir un type. Utilisez le bouton « Retour » de votre navigateur et recommencez.';
 $string['pagedisplay'] = 'Afficher cette ressource dans la fenêtre courante';
 $string['pagewindow'] = 'Même fenêtre';
+$string['pan'] = 'Pan';
 $string['parameter'] = 'Paramètre';
 $string['parameters'] = 'Paramètres';
 $string['popupresource'] = 'Cette ressource apparaîtra dans une fenêtre pop-up';
@@ -69,6 +70,7 @@ $string['resourcetypetext'] = 'Composer une page de texte';
 $string['searchweb'] = 'Rechercher une page web';
 $string['serverurl'] = 'URL du serveur ($a->wwwroot)';
 $string['variablename'] = 'Nom de la variable';
+$string['vol'] = 'Vol';
 
 // The following strings are to be deleted after 1.4 release
 $string['resourcetype1'] = 'Référence';
