@@ -123,7 +123,7 @@ Er zijn geen 'goede' en geen 'foute' antwoorden; we zijn alleen maar geïnteresse
 
 Jouw zorgvuldig ingevulde antwoorden zullen ons helpen bij het verbeteren van de manier waarop dit onderdeel in toekomst online aangeboden gaat worden.
 
-Hartstikke bedankt.
+Hartelijk bedankt.
  ";
 $string['collesaname'] = "COLLES (Werkelijk)";
 $string['collesapintro'] = "Door middel van dit onderzoek proberen wij beter te begrijpen hoe goed de online lesmethode van dit onderdeel jou heeft geholpen bij het leren.
@@ -134,7 +134,7 @@ Er zijn geen 'goede' en geen 'foute' antwoorden; we zijn alleen maar geïnteresse
 
 Jouw zorgvuldig ingevulde antwoorden zullen ons helpen bij het verbeteren van de manier waarop dit onderdeel in toekomst online aangeboden gaat worden.
 
-Hartstikke bedankt.";
+Hartelijk bedankt.";
 $string['collesapname'] = "COLLES (Voorkeur en Werkelijk)";
 $string['collesm1'] = "Relevantie";
 $string['collesm1short'] = "Relevantie";
@@ -157,7 +157,7 @@ Er zijn geen 'goede' en geen 'foute' antwoorden; we zijn alleen maar geïnteresse
 
 Jouw zorgvuldig ingevulde antwoorden zullen ons helpen bij het verbeteren van de manier waarop dit onderdeel in toekomst online aangeboden gaat worden.
 
-Hartstikke bedankt.";
+Hartelijk bedankt.";
 $string['collespname'] = "COLLES (Voorkeur) ";
 $string['done'] = "Voltooid";
 $string['download'] = "Download";
