@@ -916,6 +916,7 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     }
 
     $title = str_replace('"', '&quot;', $title);
+    $title = strip_tags($title);
 
     include ("$CFG->dirroot/theme/$CFG->theme/header.html");
 }
@@ -1686,7 +1687,13 @@ function update_groups_button($courseid) {
 function print_group_menu($groups, $groupmode, $currentgroup, $urlroot) {
 /// Prints an appropriate group selection menu
 
-    echo '<table align="center"><tr><td>';
+/// Add an "All groups" to the start of the menu
+    $groupsmenu[0] = get_string("allgroups");
+    foreach ($groups as $key => $groupname) {
+        $groupsmenu[$key] = $groupname;
+    }
+
+    echo '<table><tr><td>';
     if ($groupmode == VISIBLEGROUPS) {
         print_string('groupsvisible');
     } else {
@@ -1694,7 +1701,7 @@ function print_group_menu($groups, $groupmode, $currentgroup, $urlroot) {
     }
     echo ':';
     echo '</td><td nowrap="nowrap" align="left" width="50%">';
-    popup_form($urlroot.'&group=', $groups, 'selectgroup', $currentgroup, "", "", "", false, "self");
+    popup_form($urlroot.'&group=', $groupsmenu, 'selectgroup', $currentgroup, "", "", "", false, "self");
     echo '</tr></table>';
 
 }
