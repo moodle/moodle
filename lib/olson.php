@@ -83,8 +83,8 @@ function olson_todst ($filename) {
             $mdl_tz = array_merge($zone, $rule);
 
             //fix (de)activate_time (AT) field to be GMT
-            $mdl_tz['activate_time']   = olson_parse_at($mdl_tz['activate_time'],   'set',   $mdl_tz['gmtoff']);
-            $mdl_tz['deactivate_time'] = olson_parse_at($mdl_tz['deactivate_time'], 'reset', $mdl_tz['gmtoff']);
+            $mdl_tz['dst_time'] = olson_parse_at($mdl_tz['dst_time'], 'set',   $mdl_tz['gmtoff']);
+            $mdl_tz['std_time'] = olson_parse_at($mdl_tz['std_time'], 'reset', $mdl_tz['gmtoff']);
         } else {
             // just a simple zone
             $mdl_tz = $zone;
@@ -130,8 +130,8 @@ function olson_todst ($filename) {
                     $mdl_tz = array_merge($zone, $rule);
 
                     //fix (de)activate_time (AT) field to be GMT
-                    $mdl_tz['activate_time']   = olson_parse_at($mdl_tz['activate_time'],   'set',   $mdl_tz['gmtoff']);
-                    $mdl_tz['deactivate_time'] = olson_parse_at($mdl_tz['deactivate_time'], 'reset', $mdl_tz['gmtoff']);
+                    $mdl_tz['dst_time'] = olson_parse_at($mdl_tz['dst_time'], 'set',   $mdl_tz['gmtoff']);
+                    $mdl_tz['std_time'] = olson_parse_at($mdl_tz['std_time'], 'reset', $mdl_tz['gmtoff']);
                 } else {
                     // just a simple zone
                     $mdl_tz = $zone;
@@ -143,6 +143,10 @@ function olson_todst ($filename) {
                     $mdl_tz['from'] = 1970;
                 }
                 $mdl_tz['from_timestamp'] = gmmktime(0, 0, 0, 1, 1, $mdl_tz['from'], 0) + $mdl_tz['gmtoff'] * 60 ;
+                if($mdl_tz['from_timestamp'] < 0) {
+                    // This can still happen if $mdl_tz['gmtoff'] < 0
+                    continue;
+                }
                 $mdl_zones[] = $mdl_tz;
             }
         } 
@@ -262,17 +266,18 @@ function olson_simple_rule_parser ($filename) {
                 trigger_error('Unknown month: '.$in);
             }
     
-            $moodle_rule['name'] = $name;
-            $moodle_rule['year'] = $year;
-            $moodle_rule['apply_offset']   = $save; // time offset
+            $moodle_rule['name']   = $name;
+            $moodle_rule['year']   = $year;
+            $moodle_rule['dstoff'] = $save; // time offset
 
-            $moodle_rule['activate_month'] = $months[$in]; // the month
-            $moodle_rule['activate_time']  = $at; // the time
+            $moodle_rule['dst_month'] = $months[$in]; // the month
+            $moodle_rule['dst_time']  = $at; // the time
 
             // Encode index and day as per Moodle's specs
             $on = olson_parse_on($on);
-            $moodle_rule['activate_index'] = $on['index'];
-            $moodle_rule['activate_day']   = $on['day'];
+            $moodle_rule['dst_startday']  = $on['startday'];
+            $moodle_rule['dst_weekday']   = $on['weekday'];
+            $moodle_rule['dst_skipweeks'] = $on['skipweeks'];
             
             // and now the "deactivate" data
             list($discard,
@@ -293,14 +298,14 @@ function olson_simple_rule_parser ($filename) {
                 trigger_error('Unknown month: '.$in);
             }
 
-            $moodle_rule['deactivate_month'] = $months[$in]; // the month
-            $moodle_rule['deactivate_time']  = $at; // the time
+            $moodle_rule['std_month'] = $months[$in]; // the month
+            $moodle_rule['std_time']  = $at; // the time
     
             // Encode index and day as per Moodle's specs
             $on = olson_parse_on($on);
-
-            $moodle_rule['deactivate_index'] = $on['index'];
-            $moodle_rule['deactivate_day']   = $on['day'];
+            $moodle_rule['std_startday']  = $on['startday'];
+            $moodle_rule['std_weekday']   = $on['weekday'];
+            $moodle_rule['std_skipweeks'] = $on['skipweeks'];
                 
             $moodle_rules[$moodle_rule['name']][$moodle_rule['year']] = $moodle_rule;
             //print_object($moodle_rule);
@@ -336,7 +341,14 @@ function olson_simple_zone_parser ($filename) {
             $lastzone = NULL; // reset lastzone
             continue;
         }
-        
+
+        // If there are blanks in the start of the line but the first non-ws character is a #,
+        // assume it's an "inline comment". The funny thing is that this happens only during
+        // the definition of the Rule for Europe/Athens.
+        if(substr(trim($line), 0, 1) == '#') {
+            continue;
+        }
+
         /*** Notes
          ***
          *** By splitting on space, we are only keeping the
