@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['addcomment'] = 'Agregar comentario';
@@ -10,6 +10,7 @@ $string['allcategories'] = 'Todas las categorías';
 $string['allentries'] = 'TODAS';
 $string['allowcomments'] = 'Permitir comentar las entradas';
 $string['allowduplicatedentries'] = 'Permitir entradas duplicadas';
+$string['allowprintview'] = 'Permitir vista impresión';
 $string['allowratings'] = 'Permitir calificar las entradas';
 $string['answer'] = 'Respuesta';
 $string['approve'] = 'Aprobar';
@@ -129,7 +130,9 @@ $string['noentry'] = 'No se econtró ninguna entrada.';
 $string['notcategorised'] = 'No clasificado';
 $string['numberofentries'] = 'Número de entradas';
 $string['onebyline'] = '(uno por línea)';
+$string['parentlanguage'] = 'es';
 $string['printerfriendly'] = 'Versión para impresión';
+$string['printviewnotallowed'] = 'No se permite vista de impresión';
 $string['question'] = 'Pregunta';
 $string['rate'] = 'Calificar';
 $string['rating'] = 'Calificación';
@@ -156,6 +159,9 @@ $string['sortchronogically'] = 'Buscar cronológicamente';
 $string['special'] = 'Especial';
 $string['standardview'] = 'Vista Normal';
 $string['studentcanpost'] = 'Los estudiantes pueden agregar entradas';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'es';
 $string['totalentries'] = 'Total de entradas ';
 $string['usedynalink'] = 'Hiperenlace automático';
 $string['waitingapproval'] = 'Esperando aprobación';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['admindirerror'] = 'El directorio especificado para admin es incorrecto';
@@ -84,6 +84,7 @@ a, digamos, 16M. Si no lo tiene, pida a su administrador que lo haga por usted.
 (podrá ver los errores cuando mire las páginas) de modo que tendrá que eliminar el archivo .htaccess.
 </ol>';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP no ha sido adecuadamente configurado con la extensión MySQL de modo que pueda comunicarse con MySQL. Por favor, compruebe el archivo php.ini o recompile PHP.';
+$string['parentlanguage'] = 'es';
 $string['pass'] = 'Pass';
 $string['phpversion'] = 'Versión PHP';
 $string['phpversionerror'] = 'La versión PHP debe ser 4.1.0 o superior';
@@ -98,10 +99,12 @@ $string['safemodehelp'] = '<p>Moodle puede tener varios problemas con \'safe mod
 
 <p>Si lo desea, puede seguir con la instalación, pero experimentará problemas más adelante.</p>';
 $string['sessionautostart'] = 'Autocomienzo de sesión';
-$string['sessionautostarterror'] = 'Debe estar desactivado';
+$string['sessionautostarterror'] = 'Deb e estar desactivado';
 $string['sessionautostarthelp'] = '<p>Moodle requiere apoyo de sesión y no funcionará sin él.</p>
 
 <p>Las sesiones deben estar activadas en el archhivo php.ini para el parámetro session.auto_start.</p>';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'es';
 $string['wwwroot'] = 'WWW';
 $string['wwwrooterror'] = 'El ajuste \'WWW\' es incorrecto';
 
