@@ -51,7 +51,7 @@
     require_login($course->id);
 
     // ...log activity...
-	add_to_log($course->id, "workshop", "view", "view.php?id=$cm->id", "$workshop->id");
+	add_to_log($course->id, "workshop", "view", "view.php?id=$cm->id", $workshop->id, $cm->id);
 
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
@@ -107,7 +107,7 @@
 
 		// move to phase 4
 		set_field("workshop", "phase", 4, "id", "$workshop->id");
-		add_to_log($course->id, "workshop", "assessments only", "view.php?id=$cm->id", "$workshop->id");
+		add_to_log($course->id, "workshop", "assessments only", "view.php?id=$cm->id", "$workshop->id", $cm->id);
 		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 4));
 	}
 	
@@ -121,7 +121,7 @@
 
 		// move to phase 3
 		set_field("workshop", "phase", 3, "id", "$workshop->id");
-		add_to_log($course->id, "workshop", "allow both", "view.php?id=$cm->id", "$workshop->id");
+		add_to_log($course->id, "workshop", "allow both", "view.php?id=$cm->id", "$workshop->id", $cm->id);
 		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 3));
 	}
 	
@@ -140,7 +140,7 @@
 		}
 		else {
 			set_field("workshop", "phase", 2, "id", "$workshop->id");
-			add_to_log($course->id, "workshop", "submissions", "view.php?id=$cm->id", "$workshop->id");
+			add_to_log($course->id, "workshop", "submissions", "view.php?id=$cm->id", "$workshop->id", $cm->id);
 			redirect("view.php?id=$cm->id", get_string("movingtophase", "workshop", 2));
 		}
 	}
@@ -155,7 +155,7 @@
 
 		// move to phase 5
 		set_field("workshop", "phase", 5, "id", "$workshop->id");
-		add_to_log($course->id, "workshop", "close", "view.php?id=$cm->id", "$workshop->id");
+		add_to_log($course->id, "workshop", "close", "view.php?id=$cm->id", "$workshop->id", $cm->id);
 		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 5));
 	}
 	
@@ -290,7 +290,7 @@
 		}
 
 		set_field("workshop", "phase", 6, "id", "$workshop->id");
-		add_to_log($course->id, "workshop", "display grades", "view.php?id=$cm->id", "$workshop->id");
+		add_to_log($course->id, "workshop", "display grades", "view.php?id=$cm->id", "$workshop->id", $cm->id);
 		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 6));
 	}
 	
@@ -309,7 +309,7 @@
 		}
 
 		set_field("workshop", "phase", 1, "id", "$workshop->id");
-		add_to_log($course->id, "workshop", "set up", "view.php?id=$cm->id", "$workshop->id");
+		add_to_log($course->id, "workshop", "set up", "view.php?id=$cm->id", "$workshop->id", $cm->id);
 		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 1));
 	}
 	

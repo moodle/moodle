@@ -35,7 +35,7 @@
 
     require_login($course->id);
 
-    add_to_log($course->id, "quiz", "view", "view.php?id=$cm->id", "$quiz->id");
+    add_to_log($course->id, "quiz", "view", "view.php?id=$cm->id", $quiz->id, $cm->id);
 
     $timenow = time();
 
@@ -43,7 +43,7 @@
 // Print the page header
 
     if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
     }
 
     $strquizzes = get_string("modulenameplural", "quiz");

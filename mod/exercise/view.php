@@ -36,7 +36,7 @@
     require_login($course->id);
 
     // ...log activity...
-	add_to_log($course->id, "exercise", "view", "view.php?id=$cm->id", "$exercise->id");
+	add_to_log($course->id, "exercise", "view", "view.php?id=$cm->id", $exercise->id, $cm->id);
 
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
@@ -145,7 +145,7 @@
 		}
 
 		set_field("exercise", "phase", 3, "id", "$exercise->id");
-		add_to_log($course->id, "exercise", "display", "view.php?id=$cm->id", "$exercise->id");
+		add_to_log($course->id, "exercise", "display", "view.php?id=$cm->id", "$exercise->id", $cm->id);
 		redirect("view.php?id=$cm->id", get_string("movingtophase", "exercise", 3));
 	}
 	
@@ -169,7 +169,7 @@
 			}
 		else {
 			set_field("exercise", "phase", 2, "id", "$exercise->id");
-			add_to_log($course->id, "exercise", "open", "view.php?id=$cm->id", "$exercise->id");
+			add_to_log($course->id, "exercise", "open", "view.php?id=$cm->id", "$exercise->id", $cm->id);
 			redirect("view.php?id=$cm->id", get_string("movingtophase", "exercise", 2));
 		}
 	}
@@ -183,7 +183,7 @@
 		}
 
 		set_field("exercise", "phase", 1, "id", "$exercise->id");
-		add_to_log($course->id, "exercise", "set up", "view.php?id=$cm->id", "$exercise->id");
+		add_to_log($course->id, "exercise", "set up", "view.php?id=$cm->id", "$exercise->id", $cm->id);
 		redirect("view.php?id=$cm->id", get_string("movingtophase", "exercise", 1));
 	}
 	

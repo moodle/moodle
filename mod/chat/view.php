@@ -39,7 +39,7 @@
 
     require_login($course->id);
 
-    add_to_log($course->id, "chat", "view", "view.php?id=$cm->id", "$chat->id");
+    add_to_log($course->id, "chat", "view", "view.php?id=$cm->id", $chat->id, $cm->id);
 
 /// Print the page header
 

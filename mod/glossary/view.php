@@ -85,7 +85,7 @@
     if (!$cm->visible and !isteacher($course->id)) {
         notice(get_string("activityiscurrentlyhidden"));
     } 
-    add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id&tab=$tab", "$glossary->id");
+    add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id&tab=$tab", $glossary->id, $cm->id);
 
 /// stablishing flag variables
     if ( $sortorder = strtolower($sortorder) ) {

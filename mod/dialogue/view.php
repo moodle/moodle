@@ -19,7 +19,7 @@
         error("Course module is incorrect");
     }
 
-    add_to_log($course->id, "dialogue", "view", "view.php?id=$cm->id", "$dialogue->id");
+    add_to_log($course->id, "dialogue", "view", "view.php?id=$cm->id", $dialogue->id, $cm->id);
 
     if (! $cw = get_record("course_sections", "id", $cm->section)) {
         error("Course module is incorrect");

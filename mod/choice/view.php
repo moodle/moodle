@@ -35,7 +35,7 @@
             if (! update_record("choice_answers", $newanswer)) {
                 error("Could not update your choice");
             }
-            add_to_log($course->id, "choice", "update", "view.php?id=$cm->id", "$choice->id");
+            add_to_log($course->id, "choice", "update", "view.php?id=$cm->id", $choice->id, $cm->id);
         } else {
             $newanswer->choice = $choice->id;
             $newanswer->userid = $USER->id;
@@ -44,7 +44,7 @@
             if (! insert_record("choice_answers", $newanswer)) {
                 error("Could not save your choice");
             }
-            add_to_log($course->id, "choice", "add", "view.php?id=$cm->id", "$choice->id");
+            add_to_log($course->id, "choice", "add", "view.php?id=$cm->id", $choice->id, $cm->id);
         }
         redirect("$CFG->wwwroot/course/view.php?id=$course->id");
         exit;
@@ -53,7 +53,7 @@
     $strchoice = get_string("modulename", "choice");
     $strchoices = get_string("modulenameplural", "choice");
 
-    add_to_log($course->id, "choice", "view", "view.php?id=$cm->id", "$choice->id");
+    add_to_log($course->id, "choice", "view", "view.php?id=$cm->id", $choice->id, $cm->id);
 
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";

@@ -30,7 +30,7 @@
 
     require_login($course->id);
 
-    add_to_log($course->id, "attendance", "view", "view.php?id=$cm->id", "$attendance->id");
+    add_to_log($course->id, "attendance", "view", "view.php?id=$cm->id", $attendance->id, $cm->id);
 
 /// Print the page header
 

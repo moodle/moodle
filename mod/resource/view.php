@@ -40,7 +40,7 @@
 
     switch ($resource->type) {
         case REFERENCE:
-            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
+            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", $resource->id, $cm->id);
             print_header($pagetitle, "$course->fullname", "$navigation $resource->name", "", "", true, 
                          update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
 
@@ -55,7 +55,7 @@
             break;
 
         case WEBLINK:
-            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
+            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", $resource->id, $cm->id);
 
             $inpopup = !empty($_GET["inpopup"]);
 
@@ -109,7 +109,7 @@
                 } else {
                     $url = "$resource->reference";
                 }
-                add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
+                add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", $resource->id, $cm->id);
                 echo "<head><title>$course->shortname: $resource->name</title></head>\n";
                 echo "<frameset rows=\"$CFG->resource_framesize,*\" border=\"2\">";
                 echo "<frame src=\"view.php?id=$cm->id&frameset=top\">";
@@ -210,7 +210,7 @@
 
             /// We can only get here once per resource, so add an entry to the log
 
-            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
+            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", $resource->id, $cm->id);
 
 
             /// If we are in a frameset, just print the top of it
@@ -305,7 +305,7 @@
 
 
         case PLAINTEXT:
-            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
+            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", $resource->id, $cm->id);
             print_header($pagetitle, "$course->fullname", "$navigation $resource->name",
                          "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
 
@@ -317,7 +317,7 @@
             break;
 
         case HTML:
-            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
+            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", $resource->id, $cm->id);
             print_header($pagetitle, "$course->fullname", "$navigation $resource->name",
                          "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
 
@@ -333,7 +333,7 @@
             break;
 
         case PROGRAM:   // Code provided by Mark Kimes <hectorp@buckfoodsvc.com>
-            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
+            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", $resource->id, $cm->id);
 
             $temptime = gmdate("YmdHis",time());
 
@@ -380,7 +380,7 @@
             break;
 
         case WIKITEXT:
-            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
+            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", $resource->id, $cm->id);
             print_header($pagetitle, "$course->fullname", "$navigation $resource->name",
                 "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
 

@@ -33,7 +33,7 @@
 
     require_login($course->id);
 
-    add_to_log($course->id, "assignment", "view", "view.php?id=$cm->id", "$assignment->id");
+    add_to_log($course->id, "assignment", "view", "view.php?id=$cm->id", $assignment->id, $cm->id);
 
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";

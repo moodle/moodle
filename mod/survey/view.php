@@ -46,7 +46,7 @@
 //  Check the survey hasn't already been filled out.
 
     if (survey_already_done($survey->id, $USER->id)) {
-        add_to_log($course->id, "survey", "view graph", "view.php?id=$cm->id", "$survey->id");
+        add_to_log($course->id, "survey", "view graph", "view.php?id=$cm->id", $survey->id, $cm->id);
         print_heading(get_string("surveycompleted", "survey"));
         $numusers = survey_count_responses($survey->id);
         print_heading(get_string("peoplecompleted", "survey", $numusers));
@@ -58,7 +58,7 @@
     }
 
 //  Start the survey form
-    add_to_log($course->id, "survey", "view form", "view.php?id=$cm->id", "$survey->id");
+    add_to_log($course->id, "survey", "view form", "view.php?id=$cm->id", $survey->id, $cm->id);
 
     echo "<form name=form method=post action=save.php>";
     echo "<input type=hidden name=id value=$id>";
