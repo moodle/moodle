@@ -444,7 +444,6 @@
                     $showentry = 0;
                 }
             } 
-$num=0;
 //glossary_debug($debug,(++$num) . ": $showentry");
             if ( $hook == 'SPECIAL' ) {
                 $initial = $entry->concept[0];
@@ -474,7 +473,7 @@ $num=0;
             if ( $showentry ) {
             
                 /// if there's a group break
-                if ( $currentpivot != $pivot ) {  
+                if ( $currentpivot != strtoupper($pivot) ) {  
 
                     // print the group break if apply and necessary
                     if ( $printpivot )  {
@@ -482,7 +481,7 @@ $num=0;
                             print_simple_box_end();
                             $tableisopen = 0;
                         }
-                        $currentpivot = $pivot;
+                        $currentpivot = strtoupper($pivot);
 
                         echo '<p>';
                         echo '<table width="95%" border="0" class="generaltabselected" bgcolor="' . $THEME->cellheading2 . '">';
