@@ -4,7 +4,7 @@
     require_once('../../config.php');
     require_once('locallib.php');
 
-    require_variable($category);
+    $category = required_param('category');
 
     // This script can only be called while editing a quiz
 
@@ -29,10 +29,9 @@
     }
 
 
-
 /// If data submitted, then process and store.
 
-    if ($form = data_submitted()) {
+    if ($form = data_submitted() and confirm_sesskey()) {
         if ($form->randomcreate > 0) {
             $newquestionids = array(); // this will hold the ids of the random questions
             
@@ -91,6 +90,10 @@
             $newquestionids = array_merge($questionids, $newquestionids);
             $modform->questions = implode(',', $newquestionids);
             $SESSION->modform = $modform;
+            if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->instance)) {
+                error('Could not save question list');
+            }
+            quiz_questiongrades_update($modform->grades, $modform->instance);
         }
         redirect('edit.php');
     }
@@ -135,6 +138,7 @@
 
     print_simple_box_start('center', '', $THEME->cellheading);
     echo '<form method="POST" action="multiple.php">';
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
     echo '<table cellpadding="5">';
     echo '<tr><td align="right">';
     print_string('category', 'quiz');

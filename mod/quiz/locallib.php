@@ -1350,6 +1350,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
             $randomcount[$i] = $i;
         }
         echo '<form method="post" action="multiple.php">';
+        echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
         print_string('addrandom1', 'quiz');
         choose_from_menu($randomcount, 'randomcreate', '10', '');
         print_string('addrandom2', 'quiz');
