@@ -3,8 +3,7 @@ STATUS $Id$
 
 This documment shows the current status of the backup/restore option.
 
-Backup:  WORKING. COMPLETED but only assignments, resources,
-                  choices, forums, journals, quizzes and surveys.
+Backup:  WORKING. COMPLETED except workshops.
 
 Restore: WORKING. COMPLETED but only assignments, resources, 
                   choices and surveys.
