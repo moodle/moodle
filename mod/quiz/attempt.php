@@ -120,7 +120,7 @@
             exit;
         }
 
-        if (! quiz_save_best_grade($quiz, $USER)) {
+        if (! quiz_save_best_grade($quiz, $USER->id)) {
             error("Sorry! Could not calculate your best grade!");
         }
 

@@ -748,11 +748,11 @@ function quiz_get_grade_records($quiz) {
                               AND qg.user = u.id");
 }
 
-function quiz_save_best_grade($quiz, $user) {
+function quiz_save_best_grade($quiz, $userid) {
 /// Calculates the best grade out of all attempts at a quiz for a user,
 /// and then saves that grade in the quiz_grades table.
 
-    if (!$attempts = quiz_get_user_attempts($quiz->id, $user->id)) {
+    if (!$attempts = quiz_get_user_attempts($quiz->id, $userid)) {
         notify("Could not find any user attempts");
         return false;
     }
@@ -760,7 +760,7 @@ function quiz_save_best_grade($quiz, $user) {
     $bestgrade = quiz_calculate_best_grade($quiz, $attempts);
     $bestgrade = (($bestgrade / $quiz->sumgrades) * $quiz->grade);
 
-    if ($grade = get_record_sql("SELECT * FROM quiz_grades WHERE quiz='$quiz->id' AND user='$user->id'")) {
+    if ($grade = get_record_sql("SELECT * FROM quiz_grades WHERE quiz='$quiz->id' AND user='$userid'")) {
         $grade->grade = $bestgrade;
         $grade->timemodified = time();
         if (!update_record("quiz_grades", $grade)) {
@@ -769,7 +769,7 @@ function quiz_save_best_grade($quiz, $user) {
         }
     } else {
         $grade->quiz = $quiz->id;
-        $grade->user = $user->id;
+        $grade->user = $userid;
         $grade->grade = round($bestgrade, 2);
         $grade->timemodified = time();
         if (!insert_record("quiz_grades", $grade)) {

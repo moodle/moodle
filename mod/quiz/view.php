@@ -101,6 +101,11 @@
         $table->align = array("CENTER", "CENTER", "LEFT", "RIGHT");
         $table->width = array("", "", "", "");
         foreach ($attempts as $attempt) {
+            if ($timetaken = ($attempt->timefinish - $attempt->timestart)) {
+                $timetaken = format_time($timetaken);
+            } else {
+                $timetaken = "-";
+            }
             $table->data[] = array( $attempt->attempt, 
                                     format_time($attempt->timefinish - $attempt->timestart),
                                     userdate($attempt->timefinish), 

@@ -9,6 +9,7 @@
     optional_variable($q);     // quiz ID
 
     optional_variable($attempt);     // A particular attempt ID
+    optional_variable($regrade);     // Regrade all attempts
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -80,8 +81,14 @@
             error("Could not re-grade this quiz attempt!");
         }
 
+        if ($timetaken = ($attempt->timefinish - $attempt->timestart)) {
+            $timetaken = format_time($timetaken);
+        } else {
+            $timetaken = "-";
+        }
+
         $table->align  = array("RIGHT", "LEFT");
-        $table->data[] = array("$strtimetaken:", format_time($attempt->timefinish - $attempt->timestart));
+        $table->data[] = array("$strtimetaken:", $timetaken);
         $table->data[] = array("$strtimecompleted:", userdate($attempt->timefinish));
         $table->data[] = array("$strscore:", "$result->sumgrades/$quiz->sumgrades ($result->percentage %)");
         $table->data[] = array("$strgrade:", "$result->grade/$quiz->grade");
@@ -94,6 +101,48 @@
         quiz_print_quiz_questions($quiz, $result);
 
         print_continue("report.php?q=$quiz->id");
+        print_footer($course);
+        exit;
+    }
+
+    if ($regrade) {
+        if (!$attempts = get_records("quiz_attempts", "quiz", $quiz->id)) {
+            print_header(get_string("noattempts", "quiz"));
+            print_continue("report.php?id=$cm->id");
+            print_footer($course);
+            exit;
+        }
+
+        $users = array();
+        foreach ($attempts as $attempt) {
+            if (! $questions = quiz_get_attempt_responses($attempt)) {
+                error("Could not reconstruct quiz results for attempt $attempt->id!");
+            }
+
+            if (!$result = quiz_grade_attempt_results($quiz, $questions)) {
+                error("Could not re-grade this quiz attempt!");
+            }
+
+            echo "<P ALIGN=center>$attempt->sumgrades --> $result->sumgrades</P>";
+            $attempt->sumgrades = $result->sumgrades;
+
+            if (! update_record("quiz_attempts", $attempt)) {
+                notify("Could not regrade attempt $attempt->id");
+                continue;
+            }
+
+            $users[$attempt->user] = $attempt->user;
+        }
+
+        if ($users) {
+            foreach ($users as $userid) {
+                if (! quiz_save_best_grade($quiz, $userid)) {
+                    notify("Could not save best grade for user $userid!");
+                }
+            }
+        }   
+        print_heading(get_string("regradecomplete", "quiz"));
+        print_continue("report.php?id=$cm->id");
         print_footer($course);
         exit;
     }
@@ -120,6 +169,12 @@
     }
 
     print_table($table);
+
+    echo "<CENTER><P>";
+    $options["regrade"] = "true";
+    $options["id"] = $cm->id;
+    print_single_button("report.php", $options, get_string("regrade", "quiz"));
+    echo "</P></CENTER>";
 
 // Finish the page
     print_footer($course);
