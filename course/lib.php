@@ -545,7 +545,7 @@ function print_course_admin_links($courseid) {
     $admindata[]="<A HREF=\"$CFG->wwwroot/files/index.php?id=$courseid\">".get_string("files")."...</A>";
     $adminicon[]="<IMG SRC=\"$CFG->wwwroot/files/pix/files.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
 
-    $admindata[]="<A TARGET=helpwindow HREF=\"$CFG->wwwroot/doc/teacher.html\">".get_string("help")."...</A>";
+    $admindata[]="<A HREF=\"$CFG->wwwroot/doc/view.php?id=$courseid&file=teacher.html\">".get_string("help")."...</A>";
     $adminicon[]="<IMG SRC=\"$CFG->wwwroot/mod/reading/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
 
     if ($teacherforum = forum_get_course_forum($courseid, "teacher")) {
