@@ -31,10 +31,6 @@
     require("$CFG->libdir/moodlelib.php");       // Other general-purpose functions
 
 
-/// Set error reporting back to normal
-    error_reporting(7);   
-
-
 /// Load up any configuration from the config table
     
     if ($configs = get_records("config")) {
@@ -46,6 +42,10 @@
         unset($configs);
         unset($config);
     }
+
+
+/// Set error reporting back to normal
+    error_reporting($CFG->debug);   
 
 
 /// Location of standard files
