@@ -301,17 +301,32 @@ function get_record($table, $field1, $value1, $field2="", $value2="", $field3=""
 function get_record_sql($sql) {
 /// Get a single record as an object
 /// The sql statement is provided as a string.
-/// A LIMIT is added to keep limit the returned records to 1
+/// A LIMIT is normally added to only look for 1 record
 
-    global $db;
+    global $db, $CFG;
 
-    $rs = $db->Execute("$sql LIMIT 1");
-    if (empty($rs)) return false;
-
-    if ( $rs->RecordCount() == 1 ) {
-        return (object)$rs->fields;
+    if ($CFG->debug > 7) {    // Debugging mode - don't use limit
+       $limit = "";
     } else {
-        return false;
+       $limit = " LIMIT 1";    // Workaround - limit to one record
+    }
+
+    $rs = $db->Execute("$sql$limit");
+
+    if (empty($rs)) {
+        return false;    // Nothing found
+    }
+
+    if ( $rs->RecordCount() == 1 ) { // Found one record
+        return (object)$rs->fields;
+
+    } else {                         // Error: found more than one record
+        if ($records = $rs->GetAssoc(true)) {
+            print_object($records);
+            notice("Found more than one record in get_record_sql() !");
+        } else {
+            notice("Very strange error in get_record_sql() !");
+        }
     }
 }
 
