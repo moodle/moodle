@@ -83,6 +83,10 @@ function assignment_upgrade($oldversion) {
     if ($oldversion < 2002110302) {
         execute_sql(" UPDATE `assignment` SET `type` = '1'");
     }
+    if ($oldversion < 2003091000) {
+        # Old field that was never added!
+        table_column("assignment", "", "resubmit", "integer", "2", "unsigned", "0", "", "format");
+    }
 
     return true;
 }

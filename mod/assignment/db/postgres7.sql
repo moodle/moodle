@@ -8,6 +8,7 @@ CREATE TABLE prefix_assignment (
   name varchar(255) NOT NULL default '',
   description text NOT NULL default '',
   format integer NOT NULL default '0',
+  resubmit integer NOT NULL default '0',
   type integer NOT NULL default '1',
   maxbytes integer NOT NULL default '100000',
   timedue integer NOT NULL default '0',
