@@ -82,6 +82,10 @@ function block_instance($blockname, $instance = NULL) {
 function block_load_class($blockname) {
     global $CFG;
 
+    if (empty($blockname)) {
+        return false;
+    }
+
     include_once($CFG->dirroot.'/blocks/moodleblock.class.php');
     $classname = 'block_'.$blockname;
     include_once($CFG->dirroot.'/blocks/'.$blockname.'/block_'.$blockname.'.php');
@@ -663,7 +667,7 @@ function upgrade_blocks_db($continueto) {
         if (modify_database($CFG->dirroot .'/blocks/db/'. $CFG->dbtype .'.sql')) {
             $db->debug = false;
             if (set_config('blocks_version', $blocks_version)) {
-                notify(get_string('databasesuccess'), 'green');
+                notify(get_string('databasesuccess'), 'notifysuccess');
                 notify(get_string('databaseupgradeblocks', '', $blocks_version));
                 print_continue($continueto);
                 exit;
@@ -686,7 +690,7 @@ function upgrade_blocks_db($continueto) {
         if (blocks_upgrade($CFG->blocks_version)) {
             $db->debug=false;
             if (set_config('blocks_version', $blocks_version)) {
-                notify(get_string('databasesuccess'), 'green');
+                notify(get_string('databasesuccess'), 'notifysuccess');
                 notify(get_string('databaseupgradeblocks', '', $blocks_version));
                 print_continue($continueto);
                 exit;
@@ -838,7 +842,7 @@ function upgrade_blocks_plugins($continueto) {
                     if (! update_record('block', $block)) {
                         error('Could not update block '. $block->name .' record in block table!');
                     }
-                    notify(get_string('blocksuccess', '', $blocktitle), 'green');
+                    notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
                     echo '<hr />';
                 }
                 $updated_blocks = true;
@@ -870,7 +874,7 @@ function upgrade_blocks_plugins($continueto) {
             if (!is_dir($fullblock .'/db/') || modify_database($fullblock .'/db/'. $CFG->dbtype .'.sql')) {
                 $db->debug = false;
                 if ($block->id = insert_record('block', $block)) {
-                    notify(get_string('blocksuccess', '', $blocktitle), 'green');
+                    notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
                     echo '<hr />';
                 } else {
                     error($block->name .' block could not be added to the block list!');
