@@ -43,7 +43,7 @@
         $cutofftime = $timenow - ($CFG->longtimenosee * 3600 * 24);
         if ($users = get_records_sql("SELECT u.* FROM user u, user_students s
                                        WHERE lastaccess > '0' AND 
-                                             lastaccess < '$cutofftime'
+                                             lastaccess < '$cutofftime' AND
                                              u.id = s.user GROUP BY u.id")) {
             foreach ($users as $user) {
                 if (delete_records("user_students", "user", $user->id)) {
