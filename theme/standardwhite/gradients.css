@@ -11,7 +11,7 @@ div.header {
     background-repeat:repeat-x;     
 }
 
-#nav-bar {
+.navbar {
     background-image:url(gradient.jpg);     
     background-position:top;    
     background-repeat:repeat-x;     
