@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -181,15 +181,31 @@ CREATE [ UNIQUE ] INDEX index_name ON table
 	*/
 	function _IndexSQL($idxname, $tabname, $flds, $idxoptions)
 	{
-		if (isset($idxoptions['REPLACE'])) $sql[] = "DROP INDEX $idxname";
-		if (isset($idxoptions['UNIQUE'])) $unique = ' UNIQUE';
-		else $unique = '';
+		$sql = array();
 		
-		if (is_array($flds)) $flds = implode(', ',$flds);
-		$s = "CREATE$unique INDEX $idxname ON $tabname ";
-		if (isset($idxoptions['HASH'])) $s .= 'USING HASH ';
-		if (isset($idxoptions[$this->upperName])) $s .= $idxoptions[$this->upperName];
-		$s .= "($flds)";
+		if ( isset($idxoptions['REPLACE']) || isset($idxoptions['DROP']) ) {
+			$sql[] = sprintf ($this->dropIndex, $idxname);
+			if ( isset($idxoptions['DROP']) )
+				return $sql;
+		}
+		
+		if ( empty ($flds) ) {
+			return $sql;
+		}
+		
+		$unique = isset($idxoptions['UNIQUE']) ? ' UNIQUE' : '';
+		
+		$s = 'CREATE' . $unique . ' INDEX ' . $idxname . ' ON ' . $tabname . ' ';
+		
+		if (isset($idxoptions['HASH']))
+			$s .= 'USING HASH ';
+		
+		if ( isset($idxoptions[$this->upperName]) )
+			$s .= $idxoptions[$this->upperName];
+		
+		if ( is_array($flds) )
+			$flds = implode(', ',$flds);
+		$s .= '(' . $flds . ')';
 		$sql[] = $s;
 		
 		return $sql;

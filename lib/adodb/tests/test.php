@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -10,7 +10,7 @@ V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights rese
 */
 
 error_reporting(E_ALL);
-
+$ADODB_FLUSH = true;
 
 define('ADODB_ASSOC_CASE',0);
 
@@ -28,7 +28,7 @@ function CheckWS($conn)
 {
 global $ADODB_EXTENSION;
 
-	include_once('../adodb-session.php');
+	include_once('../session/adodb-session.php');
 	
 	$saved = $ADODB_EXTENSION;
 	$db = ADONewConnection($conn);
@@ -118,6 +118,7 @@ FROM `nuke_stories` `t1`, `nuke_authors` `t2`, `nuke_stories_cat` `t3`, `nuke_to
 	flush();
 	print "<i>date1</i> (1969-02-20) = ".$db->DBDate('1969-2-20');
 	print "<br><i>date1</i> (1999-02-20) = ".$db->DBDate('1999-2-20');
+	print "<br><i>date1.1</i> 1999 = ".$db->DBDate("'1999'");
 	print "<br><i>date2</i> (1970-1-2) = ".$db->DBDate(24*3600)."<p>";
 	print "<i>ts1</i> (1999-02-20 13:40:50) = ".$db->DBTimeStamp('1999-2-20 1:40:50 pm');
 	print "<br><i>ts1.1</i> (1999-02-20 13:40:00) = ".$db->DBTimeStamp('1999-2-20 13:40');
@@ -126,6 +127,10 @@ FROM `nuke_stories` `t1`, `nuke_authors` `t2`, `nuke_stories_cat` `t3`, `nuke_to
 	print "<br> Fractional TS (1999-2-20 13:40:50.91): ".$db->DBTimeStamp($db->UnixTimeStamp('1999-2-20 13:40:50.91+1'));
 	 $dd = $db->UnixDate('1999-02-20');
 	print "<br>unixdate</i> 1999-02-20 = ".date('Y-m-d',$dd)."<p>";
+	print "<br><i>ts4</i> =".($db->UnixTimeStamp("19700101000101")+8*3600);
+	print "<br><i>ts5</i> =".$db->DBTimeStamp($db->UnixTimeStamp("20040110092123"));
+	print "<br><i>ts6</i> =".$db->UserTimeStamp("20040110092123");
+	print "<br><i>ts6</i> =".$db->DBTimeStamp("20040110092123");
 	flush();
 	// mssql too slow in failing bad connection
 	if (false && $db->databaseType != 'mssql') {
@@ -260,8 +265,18 @@ FROM `nuke_stories` `t1`, `nuke_authors` `t2`, `nuke_stories_cat` `t3`, `nuke_to
 		$a = $db->MetaColumns('ADOXYZ');
 		if ($a===false) print "<b>MetaColumns not supported</b></p>";
 		else {
-			print "<p>Columns of ADOXYZ: ";
-			foreach($a as $v) print " ($v->name $v->type $v->max_length) ";
+			print "<p>Columns of ADOXYZ: <font size=1><br>";
+			foreach($a as $v) {print_r($v); echo "<br>";}
+			echo "</font>";
+		}
+		
+		print "<p>Testing MetaIndexes</p>";
+		$a = $db->MetaIndexes('ADOXYZ',true);
+		if ($a===false) print "<b>MetaIndexes not supported</b></p>";
+		else {
+			print "<p>Indexes of ADOXYZ: <font size=1><br>";
+			foreach($a as $v) {print_r($v); echo "<br>";}
+			echo "</font>";
 		}
 		print "<p>Testing MetaPrimaryKeys</p>";
 		$a = $db->MetaPrimaryKeys('ADOXYZ');
@@ -329,8 +344,8 @@ GO
 		$yr = '1998';
 		
 		$stmt = $db->PrepareSP('SalesByCategory');
-		$db->Parameter($stmt,$cat,'CategoryName');
-		$db->Parameter($stmt,$yr,'OrdYear');
+		$db->InParameter($stmt,$cat,'CategoryName');
+		$db->InParameter($stmt,$yr,'OrdYear');
 		$rs = $db->Execute($stmt);
 		rs2html($rs);
 		
@@ -338,8 +353,8 @@ GO
 		$yr = 1998;
 		
 		$stmt = $db->PrepareSP('SalesByCategory');
-		$db->Parameter($stmt,$cat,'CategoryName');
-		$db->Parameter($stmt,$yr,'OrdYear');
+		$db->InParameter($stmt,$cat,'CategoryName');
+		$db->InParameter($stmt,$yr,'OrdYear');
 		$rs = $db->Execute($stmt);
 		rs2html($rs);
 		
@@ -362,9 +377,9 @@ GO
 		$days = 10;
 		$begin_date = '';
 		$end_date = '';
-		$db->Parameter($stmt,$days,'days', false, 4, SQLINT4); 
-		$db->Parameter($stmt,$begin_date,'start', 1, 20, SQLVARCHAR ); 
-		$db->Parameter($stmt,$end_date,'end', 1, 20, SQLVARCHAR ); 
+		$db->InParameter($stmt,$days,'days', 4, SQLINT4); 
+		$db->OutParameter($stmt,$begin_date,'start', 20, SQLVARCHAR ); 
+		$db->OutParameter($stmt,$end_date,'end', 20, SQLVARCHAR ); 
 		$db->Execute($stmt);
 		if (empty($begin_date) or empty($end_date)) {
 			Err("MSSQL SP Test for OUT Failed");
@@ -388,6 +403,7 @@ GO
 CREATE OR REPLACE PACKAGE adodb AS
 TYPE TabType IS REF CURSOR RETURN tab%ROWTYPE;
 PROCEDURE open_tab (tabcursor IN OUT TabType,tablenames in varchar);
+PROCEDURE data_out(input IN varchar, output OUT varchar); 
 END adodb;
 /
 
@@ -396,12 +412,16 @@ PROCEDURE open_tab (tabcursor IN OUT TabType,tablenames in varchar) IS
 	BEGIN
 		OPEN tabcursor FOR SELECT * FROM tab where tname like tablenames;
 	END open_tab;
+	
+PROCEDURE data_out(input IN varchar, output OUT varchar) IS
+	BEGIN
+		output := 'Cinta Hati '||input;
+	END;
 END adodb;
-
 /
-*/		
+*/
 		$stmt = $db->Prepare("BEGIN adodb.open_tab(:RS,'A%'); END;");
-		$db->Parameter($stmt, $cur, 'RS', false, -1, OCI_B_CURSOR);
+		$db->InParameter($stmt, $cur, 'RS', -1, OCI_B_CURSOR);
 		$rs = $db->Execute($stmt);
 	
 		if ($rs && !$rs->EOF) {
@@ -410,15 +430,22 @@ END adodb;
 			print "<b>Error in using Cursor Variables 1</b><p>";
 		}
 		
-		$rs = $db->ExecuteCursor("BEGIN adodb.open_tab(:RS2,:TAB); END;",'RS2',array('TAB'=>'A%'));
-		if ($rs && !$rs->EOF) {
-			print "Test 2 RowCount: ".$rs->RecordCount()."<p>";
-		} else {
-			print "<b>Error in using Cursor Variables 2</b><p>";
-		}
 		
 		print "<h4>Testing Stored Procedures for oci8</h4>";
-
+		
+		$stmt = $db->PrepareSP("BEGIN adodb.data_out(:a1, :a2); END;");
+		$a1 = 'Malaysia';
+		//$a2 = ''; # a2 doesn't even need to be defined!
+		$db->InParameter($stmt,$a1,'a1');
+		$db->OutParameter($stmt,$a2,'a2');
+		$rs = $db->Execute($stmt);
+		if ($rs) {
+			if ($a2 !== 'Cinta Hati Malaysia') print "<b>Stored Procedure Error: a2 = $a2</b><p>";
+			else echo  "OK: a2=$a2<p>";
+		} else {
+			print "<b>Error in using Stored Procedure IN/Out Variables</b><p>";
+		}
+		
 		
 		$tname = 'A%';
 		
@@ -530,6 +557,7 @@ END adodb;
 	$db->Execute("insert into ADOXYZ (id,firstname,lastname,created) values ($i*10+9,'Steven','Oey',$time )");
 	} // for
 	if (1) {
+	$db->debug=1;
 	$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 	$cnt = $db->GetOne("select count(*) from ADOXYZ");
 	$rs = $db->Execute('update ADOXYZ set id=id+1');	
@@ -555,23 +583,24 @@ END adodb;
 		print "<p><b>Error on RecordCount. Should be 0. Was ".$rs->RecordCount()."</b></p>"; 
 		print_r($rs->fields);
 	}
-	$rs = &$db->Execute("select id,firstname,lastname,created from ADOXYZ order by id");
-	if ($rs) {
-		if ($rs->RecordCount() != 50) {
-			print "<p><b>RecordCount returns ".$rs->RecordCount()."</b></p>";
-			$poc = $rs->PO_RecordCount('ADOXYZ');
-			if ($poc == 50) print "<p> &nbsp; &nbsp; PO_RecordCount passed</p>";
-			else print "<p><b>PO_RecordCount returns wrong value: $poc</b></p>";
-		} else print "<p>RecordCount() passed</p>";
-		if (isset($rs->fields['firstname'])) print '<p>The fields columns can be indexed by column name.</p>';
-		else {
-			Err( '<p>The fields columns <i>cannot</i> be indexed by column name.</p>');
-			print_r($rs->fields);
+	if ($db->databaseType !== 'odbc') {
+		$rs = &$db->Execute("select id,firstname,lastname,created,".$db->random." from ADOXYZ order by id");
+		if ($rs) {
+			if ($rs->RecordCount() != 50) {
+				print "<p><b>RecordCount returns ".$rs->RecordCount()."</b></p>";
+				$poc = $rs->PO_RecordCount('ADOXYZ');
+				if ($poc == 50) print "<p> &nbsp; &nbsp; PO_RecordCount passed</p>";
+				else print "<p><b>PO_RecordCount returns wrong value: $poc</b></p>";
+			} else print "<p>RecordCount() passed</p>";
+			if (isset($rs->fields['firstname'])) print '<p>The fields columns can be indexed by column name.</p>';
+			else {
+				Err( '<p>The fields columns <i>cannot</i> be indexed by column name.</p>');
+				print_r($rs->fields);
+			}
+			if (empty($HTTP_GET_VARS['hide'])) rs2html($rs);
 		}
-		if (empty($HTTP_GET_VARS['hide'])) rs2html($rs);
+		else print "<b>Error in Execute of SELECT with random</b></p>";
 	}
-	else print "<b>Error in Execute of SELECT</b></p>";
-	
 	$val = $db->GetOne("select count(*) from ADOXYZ");
 	 if ($val == 50) print "<p>GetOne returns ok</p>";
 	 else print "<p><b>Fail: GetOne returns $val</b></p>";
@@ -1076,6 +1105,7 @@ END adodb;
 		err('**** RSFilter failed');
 		print_r($rs->fields);
 	}
+	
 	rs2html($rs);
 		
 	$db->debug=1;
@@ -1138,7 +1168,10 @@ END adodb;
 		'firstname',	# row fields
 		'lastname',		# column fields 
 		false,			# join
-		'ID' 			# sum
+		'ID', 			# sum
+		'Sum ',			# label for sum
+		'sum',			# aggregate function
+		true
 	);
 	$rs = $db->Execute($sql);
 	if ($rs) rs2html($rs);
@@ -1205,13 +1238,16 @@ END adodb;
 		if ($ds != date("d m Y")) Err("Bad UserDate: ".$ds);
 		else echo "Passed UserDate: $ds<p>";
 	}
-	
-	$rs = $db->SelectLimit("select ".$db->sysTimeStamp." from adoxyz",1);
+	$db->debug=1;
+	if ($db->dataProvider == 'oci8') 
+		$rs = $db->SelectLimit("select to_char(".$db->sysTimeStamp.",'YYYY-MM-DD HH24:MI:SS') from adoxyz",1);
+	else 
+		$rs = $db->SelectLimit("select ".$db->sysTimeStamp." from adoxyz",1);
 	$date = $rs->fields[0];
 	if (!$date) Err("Bad sysTimeStamp");
 	else {
 		$ds = $db->UserTimeStamp($date,"H \\h\\r\\s-d m Y");
-		if ($ds != date("H \\h\\r\\s-d m Y")) Err("Bad UserTimeStamp: ".$ds);
+		if ($ds != date("H \\h\\r\\s-d m Y")) Err("Bad UserTimeStamp: ".$ds.", correct is ".date("H \\h\\r\\s-d m Y"));
 		else echo "Passed UserTimeStamp: $ds<p>";
 		
 		$date = 100;
@@ -1408,6 +1444,6 @@ include('./testdatabases.inc.php');
 include_once('../adodb-time.inc.php');
 adodb_date_test();
 ?>
-<p><i>ADODB Database Library  (c) 2000-2003 John Lim. All rights reserved. Released under BSD and LGPL.</i></p>
+<p><i>ADODB Database Library  (c) 2000-2004 John Lim. All rights reserved. Released under BSD and LGPL.</i></p>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <?php
 /** 
- * @version V4.01 23 Oct 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V4.11 27 Jan 2004 (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -94,12 +94,12 @@ function adodb_error_pg($errormsg)
             '/Relation [\"\'].*[\"\'] already exists|Cannot insert a duplicate key into (a )?unique index.*/'      => DB_ERROR_ALREADY_EXISTS,
             '/divide by zero$/'                     => DB_ERROR_DIVZERO,
             '/pg_atoi: error in .*: can\'t parse /' => DB_ERROR_INVALID_NUMBER,
-            '/ttribute [\"\'].*[\"\'] not found$|Relation [\"\'].*[\"\'] does not have attribute [\"\'].*[\"\']/' => DB_ERROR_NOSUCHFIELD,
+            '/ttribute [\"\'].*[\"\'] not found|Relation [\"\'].*[\"\'] does not have attribute [\"\'].*[\"\']/' => DB_ERROR_NOSUCHFIELD,
             '/parser: parse error at or near \"/'   => DB_ERROR_SYNTAX,
             '/referential integrity violation/'     => DB_ERROR_CONSTRAINT
         );
-   
-    foreach ($error_regexps as $regexp => $code) {
+	reset($error_regexps);
+    while (list($regexp,$code) = each($error_regexps)) {
         if (preg_match($regexp, $errormsg)) {
             return $code;
         }
@@ -190,6 +190,7 @@ static $MAP = array(
 function adodb_error_oci8()
 {
 static $MAP = array(
+			 1 => DB_ERROR_ALREADY_EXISTS,
             900 => DB_ERROR_SYNTAX,
             904 => DB_ERROR_NOSUCHFIELD,
             923 => DB_ERROR_SYNTAX,
@@ -199,7 +200,7 @@ static $MAP = array(
             1722 => DB_ERROR_INVALID_NUMBER,
             2289 => DB_ERROR_NOSUCHTABLE,
             2291 => DB_ERROR_CONSTRAINT,
-            2449 => DB_ERROR_CONSTRAINT,
+            2449 => DB_ERROR_CONSTRAINT
         );
 	   
 	return $MAP;

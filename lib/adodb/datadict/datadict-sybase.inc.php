@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -69,8 +69,8 @@ class ADODB2_sybase extends ADODB_DataDict {
 	
 	
 	function AddColumnSQL($tabname, $flds)
-	{	
-		if ($this->schema) $tabname = $this->schema.'.'.$tabname;
+	{
+		$tabname = $this->TableName ($tabname);
 		$f = array();
 		list($lines,$pkey) = $this->_GenFields($flds);
 		$s = "ALTER TABLE $tabname $this->addCol";
@@ -84,7 +84,7 @@ class ADODB2_sybase extends ADODB_DataDict {
 	
 	function AlterColumnSQL($tabname, $flds)
 	{
-		if ($this->schema) $tabname = $this->schema.'.'.$tabname;
+		$tabname = $this->TableName ($tabname);
 		$sql = array();
 		list($lines,$pkey) = $this->_GenFields($flds);
 		foreach($lines as $v) {
@@ -96,7 +96,7 @@ class ADODB2_sybase extends ADODB_DataDict {
 	
 	function DropColumnSQL($tabname, $flds)
 	{
-		if ($this->schema) $tabname = $this->schema.'.'.$tabname;
+		$tabname = $this->TableName ($tabname);
 		if (!is_array($flds)) $flds = explode(',',$flds);
 		$f = array();
 		$s = "ALTER TABLE $tabname";
@@ -194,15 +194,28 @@ CREATE TABLE
 */
 	function _IndexSQL($idxname, $tabname, $flds, $idxoptions)
 	{
-		if (isset($idxoptions['REPLACE'])) $sql[] = "DROP INDEX $tabname.$idxname";
-		if (isset($idxoptions['UNIQUE'])) $unique = ' UNIQUE';
-		else $unique = '';
-		if (is_array($flds)) $flds = implode(', ',$flds);
-		if (isset($idxoptions['CLUSTERED'])) $clustered = ' CLUSTERED';
-		else $clustered = '';
+		$sql = array();
 		
-		$s = "CREATE$unique$clustered INDEX $idxname ON $tabname ($flds)";
-		if (isset($idxoptions[$this->upperName])) $s .= $idxoptions[$this->upperName];
+		if ( isset($idxoptions['REPLACE']) || isset($idxoptions['DROP']) ) {
+			$sql[] = sprintf ($this->dropIndex, $tabname . '.' . $idxname);
+			if ( isset($idxoptions['DROP']) )
+				return $sql;
+		}
+		
+		if ( empty ($flds) ) {
+			return $sql;
+		}
+		
+		$unique = isset($idxoptions['UNIQUE']) ? ' UNIQUE' : '';
+		$clustered = isset($idxoptions['CLUSTERED']) ? ' CLUSTERED' : '';
+		
+		if ( is_array($flds) )
+			$flds = implode(', ',$flds);
+		$s = 'CREATE' . $unique . $clustered . ' INDEX ' . $idxname . ' ON ' . $tabname . ' (' . $flds . ')';
+		
+		if ( isset($idxoptions[$this->upperName]) )
+			$s .= $idxoptions[$this->upperName];
+
 		$sql[] = $s;
 		
 		return $sql;

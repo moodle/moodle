@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -75,6 +75,7 @@ class ADODB_mssql extends ADOConnection {
 	var $fmtTimeStamp = "'Y-m-d h:i:sA'";
 	var $hasInsertID = true;
 	var $substr = "substring";
+	var $length = 'len';
 	var $upperCase = 'upper';
 	var $hasAffectedRows = true;
 	var $metaDatabasesSQL = "select name from sysdatabases where name <> 'master'";
@@ -99,6 +100,7 @@ class ADODB_mssql extends ADOConnection {
 	var $identitySQL = 'select @@IDENTITY'; // 'select SCOPE_IDENTITY'; # for mssql 2000
 	var $uniqueOrderBy = true;
 	var $_bindInputArray = true;
+	
 	
 	function ADODB_mssql() 
 	{		
@@ -197,10 +199,13 @@ class ADODB_mssql extends ADOConnection {
 		if ($nrows > 0 && $offset <= 0) {
 			$sql = preg_replace(
 				'/(^\s*select\s+(distinctrow|distinct)?)/i','\\1 '.$this->hasTop." $nrows ",$sql);
-			return $this->Execute($sql,$inputarr);
+			$rs =& $this->Execute($sql,$inputarr);
 		} else
-			return ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
+			$rs =& ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
+	
+		return $rs;
 	}
+	
 	
 	// Format date column in sql string given an input format that understands Y M D
 	function SQLDate($fmt, $col=false)
@@ -430,6 +435,7 @@ order by constraint_name, referenced_table_name, keyno";
 	// returns true or false
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
+		if (!function_exists('mssql_pconnect')) return false;
 		$this->_connectionID = mssql_connect($argHostname,$argUsername,$argPassword);
 		if ($this->_connectionID === false) return false;
 		if ($argDatabasename) return $this->SelectDB($argDatabasename);
@@ -440,6 +446,7 @@ order by constraint_name, referenced_table_name, keyno";
 	// returns true or false
 	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
+		if (!function_exists('mssql_pconnect')) return false;
 		$this->_connectionID = mssql_pconnect($argHostname,$argUsername,$argPassword);
 		if ($this->_connectionID === false) return false;
 		
@@ -511,7 +518,9 @@ order by constraint_name, referenced_table_name, keyno";
 			}
 		
 		if  ($this->debug) {
-			ADOConnection::outp( "Parameter(\$stmt, \$php_var='$var', \$name='$name'); (type=$type)");
+			$prefix = ($isOutput) ? 'Out' : 'In';
+			$ztype = (empty($type)) ? 'false' : $type;
+			ADOConnection::outp( "{$prefix}Parameter(\$stmt, \$php_var='$var', \$name='$name', \$maxLen=$maxLen, \$type=$ztype);");
 		}
 		/*
 			See http://phplens.com/lens/lensforum/msgs.php?id=7231

@@ -28,6 +28,6 @@ $ADODB_LANG_ARRAY = array (
 	DB_ERROR_NEED_MORE_DATA     => 'donn&eacute;es fournies insuffisantes',
 	DB_ERROR_EXTENSION_NOT_FOUND=> 'extension non trouv&eacute;e',
 	DB_ERROR_NOSUCHDB           => 'base de donn&eacute;es inconnue',
-	DB_ERROR_ACCESS_VIOLATION   => 'droits ynsuffisants'
+	DB_ERROR_ACCESS_VIOLATION   => 'droits insuffisants'
 );
 ?>

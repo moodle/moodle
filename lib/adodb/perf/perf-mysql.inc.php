@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -83,13 +83,32 @@ class perf_mysql extends adodb_perf{
 		$this->conn =& $conn;
 	}
 	
-	function Explain($sql)
+	function Explain($sql,$partial=false)
 	{
+		
 		if (strtoupper(substr(trim($sql),0,6)) !== 'SELECT') return '<p>Unable to EXPLAIN non-select statement</p>';
+		$save = $this->conn->LogSQL(false);
+		if ($partial) {
+			$sqlq = $this->conn->qstr($sql.'%');
+			$arr = $this->conn->GetArray("select distinct sql1 from adodb_logsql where sql1 like $sqlq");
+			if ($arr) {
+				foreach($arr as $row) {
+					$sql = reset($row);
+					if (crc32($sql) == $partial) break;
+				}
+			}
+		}
 		$sql = str_replace('?',"''",$sql);
+		
+		if ($partial) {
+			$sqlq = $this->conn->qstr($sql.'%');
+			$sql = $this->conn->GetOne("select sql1 from adodb_logsql where sql1 like $sqlq");
+		}
+		
 		$s = '<p><b>Explain</b>: '.htmlspecialchars($sql).'</p>';
 		$rs = $this->conn->Execute('EXPLAIN '.$sql);
 		$s .= rs2html($rs,false,false,false,false);
+		$this->conn->LogSQL($save);
 		$s .= $this->Tracer($sql);
 		return $s;
 	}
@@ -207,7 +226,9 @@ class perf_mysql extends adodb_perf{
 	{
 	global $HTTP_SESSION_VARS;
 	
-		$stat = $this->conn->GetOne('show innodb status');
+		$rs = $this->conn->Execute('show innodb status');
+		if (!$rs || $rs->EOF) return 0;
+		$stat = $rs->fields[0];
 		$at = strpos($stat,'Buffer pool hit rate');
 		$stat = substr($stat,$at,200);
 		if (preg_match('!Buffer pool hit rate\s*([0-9]*) / ([0-9]*)!',$stat,$arr)) {

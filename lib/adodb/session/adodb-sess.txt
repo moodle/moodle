@@ -1,0 +1,131 @@
+John,
+
+I have been an extremely satisfied ADODB user for several years now.
+
+To give you something back for all your hard work, I've spent the last 3
+days rewriting the adodb-session.php code.
+
+----------
+What's New
+----------
+
+Here's a list of the new code's benefits:
+
+* Combines the functionality of the three files:
+
+adodb-session.php
+adodb-session-clob.php
+adodb-cryptsession.php
+
+each with very similar functionality, into a single file adodb-session.php.
+This will ease maintenance and support issues.
+
+* Supports multiple encryption and compression schemes.
+  Currently, we support:
+
+  MD5Crypt (crypt.inc.php)
+  MCrypt
+  Secure (Horde's emulation of MCrypt, if MCrypt module is not available.)
+  GZip
+  BZip2
+
+These can be stacked, so if you want to compress and then encrypt your
+session data, it's easy.
+Also, the built-in MCrypt functions will be *much* faster, and more secure,
+than the MD5Crypt code.
+
+* adodb-session.php contains a single class ADODB_Session that encapsulates
+all functionality.
+  This eliminates the use of global vars and defines (though they are
+supported for backwards compatibility).
+
+* All user defined parameters are now static functions in the ADODB_Session
+class.
+
+New parameters include:
+
+* encryptionKey(): Define the encryption key used to encrypt the session.
+Originally, it was a hard coded string.
+
+* persist(): Define if the database will be opened in persistent mode.
+Originally, the user had to call adodb_sess_open().
+
+* dataFieldName(): Define the field name used to store the session data, as
+'DATA' appears to be a reserved word in the following cases:
+	ANSI SQL
+	IBM DB2
+	MS SQL Server
+	Postgres
+	SAP
+
+* filter(): Used to support multiple, simulataneous encryption/compression
+schemes.
+
+* Debug support is improved thru _rsdump() function, which is called after
+every database call.
+
+------------
+What's Fixed
+------------
+
+The new code includes several bug fixes and enhancements:
+
+* sesskey is compared in BINARY mode for MySQL, to avoid problems with
+session keys that differ only by case.
+  Of course, the user should define the sesskey field as BINARY, to
+correctly fix this problem, otherwise performance will suffer.
+
+* In ADODB_Session::gc(), if $expire_notify is true, the multiple DELETES in
+the original code have been optimized to a single DELETE.
+
+* In ADODB_Session::destroy(), since "SELECT expireref, sesskey FROM $table
+WHERE sesskey = $qkey" will only return a single value, we don't loop on the
+result, we simply process the row, if any.
+
+* We close $rs after every use.
+
+---------------
+What's the Same
+---------------
+
+I know backwards compatibility is *very* important to you.  Therefore, the
+new code is 100% backwards compatible.
+
+If you like my code, but don't "trust" it's backwards compatible, maybe we
+offer it as beta code, in a new directory for a release or two?
+
+------------
+What's To Do
+------------
+
+I've vascillated over whether to use a single function to get/set
+parameters:
+
+$user = ADODB_Session::user(); 	// get
+ADODB_Session::user($user);		// set
+
+or to use separate functions (which is the PEAR/Java way):
+
+$user = ADODB_Session::getUser();
+ADODB_Session::setUser($user);
+
+I've chosen the former as it's makes for a simpler API, and reduces the
+amount of code, but I'd be happy to change it to the latter.
+
+Also, do you think the class should be a singleton class, versus a static
+class?
+
+Let me know if you find this code useful, and will be including it in the
+next release of ADODB.
+
+If so, I will modify the current documentation to detail the new
+functionality.  To that end, what file(s) contain the documentation?  Please
+send them to me if they are not publically available.
+
+Also, if there is *anything* in the code that you like to see changed, let
+me know.
+
+Thanks,
+
+Ross
+

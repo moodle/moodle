@@ -1,6 +1,6 @@
 <?php 
 /*
-  V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -49,7 +49,7 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows;
 	//else $docnt = true;
 	$typearr = array();
 	$ncols = $rs->FieldCount();
-	$hdr = "<TABLE COLS=$ncols $ztabhtml>\n\n";
+	$hdr = "<TABLE COLS=$ncols $ztabhtml><tr>\n\n";
 	for ($i=0; $i < $ncols; $i++) {	
 		$field = $rs->FetchField($i);
 		if ($zheaderarray) $fname = $zheaderarray[$i];
@@ -60,7 +60,7 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows;
 		if (strlen($fname)==0) $fname = '&nbsp;';
 		$hdr .= "<TH>$fname</TH>";
 	}
-
+	$hdr .= "\n</tr>";
 	if ($echo) print $hdr."\n\n";
 	else $html = $hdr;
 	

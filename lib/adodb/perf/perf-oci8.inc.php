@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -47,6 +47,15 @@ class perf_oci8 extends ADODB_perf{
    		 sum(getmisses))))*100,2)
 		from  v\$rowcache",
 		'increase <i>shared_pool_size</i> if too ratio low'),
+		
+		'memory sort ratio' => array('RATIOH',
+		"SELECT ROUND((100 * b.VALUE) /DECODE ((a.VALUE + b.VALUE), 
+       0,1,(a.VALUE + b.VALUE)),2)
+FROM   v\$sysstat a, 
+       v\$sysstat b
+WHERE  a.name = 'sorts (disk)'
+AND    b.name = 'sorts (memory)'",
+	"% of memory sorts compared to disk sorts - should be over 95%"),
 
 	'IO',
 		'data reads' => array('IO',
@@ -176,7 +185,7 @@ class perf_oci8 extends ADODB_perf{
 		return reset($rs->fields);
 	}
 	
-	function Explain($sql) 
+	function Explain($sql,$partial=false) 
 	{
 		$savelog = $this->conn->LogSQL(false);
 		$rs =& $this->conn->SelectLimit("select ID FROM PLAN_TABLE");
@@ -216,6 +225,17 @@ CREATE TABLE PLAN_TABLE (
 		$rs->Close();
 	//	$this->conn->debug=1;
 	
+		if ($partial) {
+			$sqlq = $this->conn->qstr($sql.'%');
+			$arr = $this->conn->GetArray("select distinct distinct sql1 from adodb_logsql where sql1 like $sqlq");
+			if ($arr) {
+				foreach($arr as $row) {
+					$sql = reset($row);
+					if (crc32($sql) == $partial) break;
+				}
+			}
+		}
+		
 		$s = "<p><b>Explain</b>: ".htmlspecialchars($sql)."</p>";	
 		
 		$this->conn->BeginTrans();
@@ -239,7 +259,7 @@ CONNECT BY prior id=parent_id and statement_id='$id'");
 		$s .= rs2html($rs,false,false,false,false);
 		$this->conn->RollbackTrans();
 		$this->conn->LogSQL($savelog);
-		$s .= $this->Tracer($sql);
+		$s .= $this->Tracer($sql,$partial);
 		return $s;
 	}
 	
@@ -256,17 +276,18 @@ select  a.size_for_estimate as cache_mb_estimate,
 		'- BETTER - '
 	else ' ' end as currsize, 
    a.estd_physical_read_factor-b.estd_physical_read_factor as best_when_0
-   from (select size_for_estimate,size_factor,estd_physical_read_factor,rownum  r from v\$conn_cache_advice) a , 
-   (select size_for_estimate,size_factor,estd_physical_read_factor,rownum r from v\$conn_cache_advice) b where a.r = b.r-1");
+   from (select size_for_estimate,size_factor,estd_physical_read_factor,rownum  r from v\$db_cache_advice) a , 
+   (select size_for_estimate,size_factor,estd_physical_read_factor,rownum r from v\$db_cache_advice) b where a.r = b.r-1");
 		if (!$rs) return false;
 		
 		/*
-		The v$conn_cache_advice utility show the marginal changes in physical data block reads for different sizes of db_cache_size
+		The v$db_cache_advice utility show the marginal changes in physical data block reads for different sizes of db_cache_size
 		*/
 		$s = "<h3>Data Cache Estimate</h3>";
 		if ($rs->EOF) {
 			$s .= "<p>Cache that is 50% of current size is still too big</p>";
 		} else {
+			$s .= "Ideal size of Data Cache is when \"best_when_0\" changes from a positive number and becomes zero.";
 			$s .= rs2html($rs,false,false,false,false);
 		}
 		return $s;
@@ -360,7 +381,8 @@ order by
 
   		global $ADODB_CACHE_MODE,$HTTP_GET_VARS;
   		if (isset($HTTP_GET_VARS['expsixora']) && isset($HTTP_GET_VARS['sql'])) {
-				echo "<a name=explain></a>".$this->Explain($HTTP_GET_VARS['sql'])."\n";
+				$partial = empty($HTTP_GET_VARS['part']);
+				echo "<a name=explain></a>".$this->Explain($HTTP_GET_VARS['sql'],$partial)."\n";
 		}
 
 		if (isset($HTTP_GET_VARS['sql'])) return $this->_SuspiciousSQL();
@@ -385,7 +407,7 @@ order by
 	// code thanks to Ixora. 
 	// http://www.ixora.com.au/scripts/query_opt.htm
 	// requires oracle 8.1.7 or later
-	function& ExpensiveSQL($numsql = 10)
+	function ExpensiveSQL($numsql = 10)
 	{
 		$sql = "
 select
@@ -424,11 +446,14 @@ order by
 ";
 		global $ADODB_CACHE_MODE,$HTTP_GET_VARS;
   		if (isset($HTTP_GET_VARS['expeixora']) && isset($HTTP_GET_VARS['sql'])) {
-				echo "<a name=explain></a>".$this->Explain($HTTP_GET_VARS['sql'])."\n";
+			$partial = empty($HTTP_GET_VARS['part']);	
+			echo "<a name=explain></a>".$this->Explain($HTTP_GET_VARS['sql'],$partial)."\n";
 		}
 		
-		if (isset($HTTP_GET_VARS['sql'])) return $this->_ExpensiveSQL();
-		
+		if (isset($HTTP_GET_VARS['sql'])) {
+			 $var =& $this->_ExpensiveSQL();
+			 return $var;
+		}
 		$save = $ADODB_CACHE_MODE;
 		$ADODB_CACHE_MODE = ADODB_FETCH_NUM;
 		$savelog = $this->conn->LogSQL(false);

@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V4.01 23 Oct 2003 (c) 2000-2003 John Lim. All rights reserved.
+  version V4.11 27 Jan 2004 (c) 2000-2004 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -33,9 +33,8 @@ year entries allows you to become year-2000 compliant. For example:
 NLS_DATE_FORMAT='RR-MM-DD'
 
 You can also modify the date format using the ALTER SESSION command. 
-
-
 */
+
 class ADODB_oci8 extends ADOConnection {
 	var $databaseType = 'oci8';
 	var $dataProvider = 'oci8';
@@ -55,8 +54,7 @@ class ADODB_oci8 extends ADOConnection {
 	var $_genSeqSQL = "CREATE SEQUENCE %s START WITH %s";
 	var $_dropSeqSQL = "DROP SEQUENCE %s";
 	var $hasAffectedRows = true;
-	var $upperCase = 'upper';
-	var $substr = 'substr';
+	var $random = "abs(mod(DBMS_RANDOM.RANDOM,10000001)/10000000)";
 	var $noNullStrings = false;
 	var $connectSID = false;
 	var $_bind = false;
@@ -150,6 +148,9 @@ NATSOFT.DOMAIN =
 */
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename,$mode=0)
 	{
+		if (!function_exists('OCIPLogon')) return false;
+		
+		
         $this->_errorMsg = false;
 		$this->_errorCode = false;
 		
@@ -206,6 +207,8 @@ NATSOFT.DOMAIN =
 	{
 		return $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename,1);
 	}
+	
+	
 	
 	// returns true or false
 	function _nconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
@@ -438,7 +441,9 @@ NATSOFT.DOMAIN =
 			}
 			// note that $nrows = 0 still has to work ==> no rows returned
 
-			return ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
+			$rs =& ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
+			return $rs;
+			
 		} else {
 			 // Algorithm by Tomas V V Cox, from PEAR DB oci8.php
 			
@@ -449,8 +454,7 @@ NATSOFT.DOMAIN =
 			 }
 			 
 			 if (is_array($inputarr)) {
-				 reset($inputarr);
-				 while (list($k,$v) = each($inputarr)) {
+			 	foreach($inputarr as $k => $v) {
 					if (is_array($v)) {
 						if (sizeof($v) == 2) // suggested by g.giunta@libero.
 							OCIBindByName($stmt,":$k",$inputarr[$k][0],$v[1]);
@@ -498,8 +502,9 @@ NATSOFT.DOMAIN =
 				$inputarr['adodb_nrows'] = $nrows;
 				$inputarr['adodb_offset'] = $offset;
 				
-			if ($secs2cache>0) return $this->CacheExecute($secs2cache, $sql,$inputarr);
-			else return $this->Execute($sql,$inputarr);
+			if ($secs2cache>0) $rs =& $this->CacheExecute($secs2cache, $sql,$inputarr);
+			else $rs =& $this->Execute($sql,$inputarr);
+			return $rs;
 		}
 	
 	}
@@ -589,7 +594,7 @@ NATSOFT.DOMAIN =
 		
 		$stmt = $this->Prepare('insert into emp (empno, ename) values (:empno, :ename)');
 	*/
-	function Prepare($sql)
+	function Prepare($sql,$cursor=false)
 	{
 	static $BINDNUM = 0;
 	
@@ -600,7 +605,7 @@ NATSOFT.DOMAIN =
 		$BINDNUM += 1;
 		
 		if (@OCIStatementType($stmt) == 'BEGIN') {
-			return array($sql,$stmt,0,$BINDNUM,OCINewCursor($this->_connectionID));
+			return array($sql,$stmt,0,$BINDNUM, ($cursor) ? false : OCINewCursor($this->_connectionID));
 		} 
 		
 		return array($sql,$stmt,0,$BINDNUM);
@@ -623,13 +628,12 @@ NATSOFT.DOMAIN =
 	*/
 	function &ExecuteCursor($sql,$cursorName='rs',$params=false)
 	{
-		$stmt = ADODB_oci8::Prepare($sql);
+		$stmt = ADODB_oci8::Prepare($sql,true); # true to allocate OCINewCursor
 			
 		if (is_array($stmt) && sizeof($stmt) >= 5) {
 			$this->Parameter($stmt, $ignoreCur, $cursorName, false, -1, OCI_B_CURSOR);
 			if ($params) {
-				reset($params);
-				while (list($k,$v) = each($params)) {
+				foreach($params as $k => $v) {
 					$this->Parameter($stmt,$params[$k], $k);
 				}
 			}
@@ -711,7 +715,9 @@ NATSOFT.DOMAIN =
 	function Parameter(&$stmt,&$var,$name,$isOutput=false,$maxLen=4000,$type=false)
 	{
 			if  ($this->debug) {
-				ADOConnection::outp( "Parameter(\$stmt, \$php_var='$var', \$name='$name');");
+				$prefix = ($isOutput) ? 'Out' : 'In';
+				$ztype = (empty($type)) ? 'false' : $type;
+				ADOConnection::outp( "{$prefix}Parameter(\$stmt, \$php_var='$var', \$name='$name', \$maxLen=$maxLen, \$type=$ztype);");
 			}
 			return $this->Bind($stmt,$var,$maxLen,$type,$name);
 	}
@@ -747,8 +753,7 @@ NATSOFT.DOMAIN =
 				} else {
 				// one statement to bind them all
 					$bindarr = array();
-					reset($inputarr);
-					while(list($k,$v) = each($inputarr)) {
+					foreach($inputarr as $k => $v) {
 						$bindarr[$k] = $v;
 						OCIBindByName($stmt,":$k",$bindarr[$k],4000);
 					}
@@ -765,8 +770,7 @@ NATSOFT.DOMAIN =
 		if (defined('ADODB_PREFETCH_ROWS')) @OCISetPrefetch($stmt,ADODB_PREFETCH_ROWS);
 			
 		if (is_array($inputarr)) {
-			reset($inputarr);
-			while(list($k,$v) = each($inputarr)) {
+			foreach($inputarr as $k => $v) {
 				if (is_array($v)) {
 					if (sizeof($v) == 2) // suggested by g.giunta@libero.
 						OCIBindByName($stmt,":$k",$inputarr[$k][0],$v[1]);
@@ -795,17 +799,17 @@ NATSOFT.DOMAIN =
 					return $stmt;
 					
                 case "BEGIN":
-                    if (is_array($sql) && isset($sql[4])) {
+                    if (is_array($sql) && !empty($sql[4])) {
 						$cursor = $sql[4];
 						if (is_resource($cursor)) {
-							OCIExecute($cursor);						
+							$ok = OCIExecute($cursor);	
 	                        return $cursor;
 						}
 						return $stmt;
                     } else {
 						if (is_resource($stmt)) {
-								OCIFreeStatement($stmt);
-								return true;
+							OCIFreeStatement($stmt);
+							return true;
 						}
                         return $stmt;
                     }
@@ -984,10 +988,10 @@ class ADORecordset_oci8 extends ADORecordSet {
 		
 		$this->_inited = true;
 		if ($this->_queryID) {
-						
+			
 			$this->_currentRow = 0;
 			@$this->_initrs();
-			$this->EOF = !$this->_fetch(); 	
+			$this->EOF = !$this->_fetch();
 			
 			/*
 			// based on idea by Gaetano Giunta to detect unusual oracle errors
@@ -1065,7 +1069,10 @@ class ADORecordset_oci8 extends ADORecordSet {
 	/* Optimize SelectLimit() by using OCIFetch() instead of OCIFetchInto() */
 	function &GetArrayLimit($nrows,$offset=-1) 
 	{
-		if ($offset <= 0) return $this->GetArray($nrows);
+		if ($offset <= 0) {
+			$arr =& $this->GetArray($nrows);
+			return $arr;
+		}
 		for ($i=1; $i < $offset; $i++) 
 			if (!@OCIFetch($this->_queryID)) return array();
 			
@@ -1139,7 +1146,7 @@ class ADORecordset_oci8 extends ADORecordSet {
 		case 'NCLOB':
 		case 'LONG':
 		case 'LONG VARCHAR':
-		case 'CLOB';
+		case 'CLOB':
 		return 'X';
 		
 		case 'LONG RAW':

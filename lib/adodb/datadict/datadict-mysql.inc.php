@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -13,7 +13,8 @@
 class ADODB2_mysql extends ADODB_DataDict {
 	var $databaseType = 'mysql';
 	var $alterCol = ' MODIFY COLUMN';
-	var $quote = '`';
+	
+	var $dropIndex = 'DROP INDEX %s ON %s';
 	
 	function MetaType($t,$len=-1,$fieldobj=false)
 	{
@@ -84,6 +85,7 @@ class ADODB2_mysql extends ADODB_DataDict {
 		case 'T': return 'DATETIME';
 		case 'L': return 'TINYINT';
 		
+		case 'R':
 		case 'I': return 'INTEGER';
 		case 'I1': return 'TINYINT';
 		case 'I2': return 'SMALLINT';
@@ -130,17 +132,40 @@ class ADODB2_mysql extends ADODB_DataDict {
 		ON tbl_name (col_name[(length)],... )
 	*/
 	
+	function DropIndexSQL ($idxname, $tabname)
+	{
+		return array(sprintf($this->dropIndex, $this->NameQuote($idxname), $this->TableName($tabname)));
+	}
+	
 	function _IndexSQL($idxname, $tabname, $flds, $idxoptions)
 	{
-		//if (isset($idxoptions['REPLACE'])) $sql[] = "DROP INDEX IF EXISTS $idxname";
-		if (isset($idxoptions['REPLACE'])) $sql[] = "DROP INDEX $idxname ON $tabname";
-		if (isset($idxoptions['FULLTEXT'])) $unique = ' FULLTEXT';
-		else if (isset($idxoptions['UNIQUE'])) $unique = ' UNIQUE';
-		else $unique = '';
+		$sql = array();
 		
-		if (is_array($flds)) $flds = implode(', ',$flds);
-		$s = "CREATE$unique INDEX $idxname ON $tabname ($flds)";
-		if (isset($idxoptions[$this->upperName])) $s .= $idxoptions[$this->upperName];
+		if ( isset($idxoptions['REPLACE']) || isset($idxoptions['DROP']) ) {
+			$sql[] = sprintf ($this->dropIndex, $idxname, $tabname);
+			if ( isset($idxoptions['DROP']) )
+				return $sql;
+		}
+		
+		if ( empty ($flds) ) {
+			return $sql;
+		}
+		
+		if (isset($idxoptions['FULLTEXT'])) {
+			$unique = ' FULLTEXT';
+		} elseif (isset($idxoptions['UNIQUE'])) {
+			$unique = ' UNIQUE';
+		} else {
+			$unique = '';
+		}
+		
+		if ( is_array($flds) )
+			$flds = implode(', ',$flds);
+		$s = 'CREATE' . $unique . ' INDEX ' . $idxname . ' ON ' . $tabname . ' (' . $flds . ')';
+		
+		if ( isset($idxoptions[$this->upperName]) )
+			$s .= $idxoptions[$this->upperName];
+		
 		$sql[] = $s;
 		
 		return $sql;

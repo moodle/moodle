@@ -23,7 +23,7 @@ This library replaces native functions as follows:
 	date()     with  adodb_date() 
 	gmdate()   with  adodb_gmdate()
 	mktime()   with  adodb_mktime()
-	gmmktime() with  adodb_gmmktime()45
+	gmmktime() with  adodb_gmmktime()
 </pre>
 	
 The parameters are identical, except that adodb_date() accepts a subset
@@ -56,7 +56,7 @@ adodb_mktime(0,0,0,10,15,1582) - adodb_mktime(0,0,0,10,4,1582)
 COPYRIGHT
 
 (c) 2003 John Lim and released under BSD-style license except for code by jackbbs,
-which includes adodb_mktime, adodb_get_gmt_different, adodb_is_leap_year
+which includes adodb_mktime, adodb_get_gmt_diff, adodb_is_leap_year
 and originally found at http://www.php.net/manual/en/function.mktime.php
 
 =============================================================================
@@ -174,6 +174,9 @@ c. Implement daylight savings, which looks awfully complicated, see
 
 
 CHANGELOG
+- 26 Oct 2003 0.11
+Because of daylight savings problems (some systems apply daylight savings to 
+January!!!), changed adodb_get_gmt_diff() to ignore daylight savings.
 
 - 9 Aug 2003 0.10
 Fixed bug with dates after 2038. 
@@ -231,7 +234,7 @@ First implementation.
 /*
 	Version Number
 */
-define('ADODB_DATE_VERSION',0.10);
+define('ADODB_DATE_VERSION',0.11);
 
 /*
 	We check for Windows as only +ve ints are accepted as dates on Windows.
@@ -496,13 +499,13 @@ function adodb_year_digit_check($y)
 /**
  get local time zone offset from GMT
 */
-function adodb_get_gmt_different() 
+function adodb_get_gmt_diff() 
 {
-static $DIFF;
-	if (isset($DIFF)) return $DIFF;
+static $TZ;
+	if (isset($TZ)) return $TZ;
 	
-	$DIFF = mktime(0,0,0,1,2,1970) - gmmktime(0,0,0,1,2,1970);
-	return $DIFF;
+	$TZ = mktime(0,0,0,1,2,1970,0) - gmmktime(0,0,0,1,2,1970,0);
+	return $TZ;
 }
 
 /**
@@ -527,7 +530,7 @@ function adodb_getdate($d=false,$fast=false)
 */
 function _adodb_getdate($origd=false,$fast=false,$is_gmt=false)
 {
-	$d =  $origd - ($is_gmt ? 0 : adodb_get_gmt_different());
+	$d =  $origd - ($is_gmt ? 0 : adodb_get_gmt_diff());
 	
 	$_day_power = 86400;
 	$_hour_power = 3600;
@@ -709,7 +712,7 @@ function adodb_date($fmt,$d=false,$is_gmt=false)
 			
 			if ($secs < 10) $dates .= ':0'.$secs; else $dates .= ':'.$secs;
 			
-			$gmt = adodb_get_gmt_different();
+			$gmt = adodb_get_gmt_diff();
 			$dates .= sprintf(' %s%04d',($gmt<0)?'+':'-',abs($gmt)/36); break;
 				
 		case 'Y': $dates .= $year; break;
@@ -738,9 +741,9 @@ function adodb_date($fmt,$d=false,$is_gmt=false)
 			
 		// HOUR
 		case 'Z':
-			$dates .= ($is_gmt) ? 0 : -adodb_get_gmt_different(); break;
+			$dates .= ($is_gmt) ? 0 : -adodb_get_gmt_diff(); break;
 		case 'O': 
-			$gmt = ($is_gmt) ? 0 : adodb_get_gmt_different();
+			$gmt = ($is_gmt) ? 0 : adodb_get_gmt_diff();
 			$dates .= sprintf('%s%04d',($gmt<0)?'+':'-',abs($gmt)/36); break;
 			
 		case 'H': 
@@ -820,7 +823,7 @@ function adodb_mktime($hr,$min,$sec,$mon,$day,$year,$is_dst=false,$is_gmt=false)
 				return @mktime($hr,$min,$sec,$mon,$day,$year);
 	}
 	
-	$gmt_different = ($is_gmt) ? 0 : adodb_get_gmt_different();
+	$gmt_different = ($is_gmt) ? 0 : adodb_get_gmt_diff();
 	
 	$hr = intval($hr);
 	$min = intval($min);

@@ -4,7 +4,7 @@ global $ADODB_INCLUDED_LIB;
 $ADODB_INCLUDED_LIB = 1;
 
 /* 
-V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -19,13 +19,82 @@ V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights rese
 function _array_change_key_case($an_array)
 {
 	if (is_array($an_array)) {
-      	foreach($an_array as $key => $value)
+		foreach($an_array as $key=>$value)
         	$new_array[strtoupper($key)] = $value;
 
        	return $new_array;
    }
 
 	return $an_array;
+}
+
+function _adodb_replace(&$zthis, $table, $fieldArray, $keyCol, $autoQuote, $has_autoinc)
+{
+		if (count($fieldArray) == 0) return 0;
+		$first = true;
+		$uSet = '';
+		
+		if (!is_array($keyCol)) {
+			$keyCol = array($keyCol);
+		}
+		foreach($fieldArray as $k => $v) {
+			if ($autoQuote && !is_numeric($v) and strncmp($v,"'",1) !== 0 and strcasecmp($v,'null')!=0) {
+				$v = $zthis->qstr($v);
+				$fieldArray[$k] = $v;
+			}
+			if (in_array($k,$keyCol)) continue; // skip UPDATE if is key
+			
+			if ($first) {
+				$first = false;			
+				$uSet = "$k=$v";
+			} else
+				$uSet .= ",$k=$v";
+		}
+		 
+		$where = false;
+		foreach ($keyCol as $v) {
+			if ($where) $where .= " and $v=$fieldArray[$v]";
+			else $where = "$v=$fieldArray[$v]";
+		}
+		
+		if ($uSet && $where) {
+			$update = "UPDATE $table SET $uSet WHERE $where";
+			
+			$rs = $zthis->Execute($update);
+			if ($rs) {
+				if ($zthis->poorAffectedRows) {
+				/*
+				 The Select count(*) wipes out any errors that the update would have returned. 
+				http://phplens.com/lens/lensforum/msgs.php?id=5696
+				*/
+					if ($zthis->ErrorNo()<>0) return 0;
+					
+				# affected_rows == 0 if update field values identical to old values
+				# for mysql - which is silly. 
+			
+					$cnt = $zthis->GetOne("select count(*) from $table where $where");
+					if ($cnt > 0) return 1; // record already exists
+				} else
+					 if (($zthis->Affected_Rows()>0)) return 1;
+			}
+		}
+	//	print "<p>Error=".$this->ErrorNo().'<p>';
+		$first = true;
+		foreach($fieldArray as $k => $v) {
+			if ($has_autoinc && in_array($k,$keyCol)) continue; // skip autoinc col
+			
+			if ($first) {
+				$first = false;			
+				$iCols = "$k";
+				$iVals = "$v";
+			} else {
+				$iCols .= ",$k";
+				$iVals .= ",$v";
+			}				
+		}
+		$insert = "INSERT INTO $table ($iCols) VALUES ($iVals)"; 
+		$rs = $zthis->Execute($insert);
+		return ($rs) ? 2 : 0;
 }
 
 // Requires $ADODB_FETCH_MODE = ADODB_FETCH_NUM
@@ -138,9 +207,12 @@ function _adodb_getcount(&$zthis, $sql,$inputarr=false,$secs2cache=0)
 		if ($qryRecs !== false) return $qryRecs;
 	}
 	
+	//--------------------------------------------
 	// query rewrite failed - so try slower way...
+	
+	// strip off unneeded ORDER BY
 	$rewritesql = preg_replace('/(\sORDER\s+BY\s.*)/is','',$sql); 
-	$rstest = &$zthis->Execute($rewritesql);
+	$rstest = &$zthis->Execute($rewritesql,$inputarr);
 	if ($rstest) {
    		$qryRecs = $rstest->RecordCount();
 		if ($qryRecs == -1) { 
@@ -400,79 +472,78 @@ function _adodb_getinsertsql(&$zthis,&$rs,$arrFields,$magicq=false)
 	$values = '';
 	$fields = '';
 	$arrFields = _array_change_key_case($arrFields);
+	
 	if (!$rs) {
-			printf(ADODB_BAD_RS,'GetInsertSQL');
-			return false;
-		}
+		printf(ADODB_BAD_RS,'GetInsertSQL');
+		return false;
+	}
 
-		$fieldInsertedCount = 0;
-	
-		
-		// Loop through all of the fields in the recordset
-		for ($i=0, $max=$rs->FieldCount(); $i < $max; $i++) {
+	$fieldInsertedCount = 0;
 
-			// Get the field from the recordset
-			$field = $rs->FetchField($i);
-			// If the recordset field is one
-			// of the fields passed in then process.
-			$upperfname = strtoupper($field->name);
-			if (adodb_key_exists($upperfname,$arrFields)) {
-	
-				// Set the counter for the number of fields that will be inserted.
-				$fieldInsertedCount++;
+	// Loop through all of the fields in the recordset
+	for ($i=0, $max=$rs->FieldCount(); $i < $max; $i++) {
 
-				// Get the name of the fields to insert
-				$fields .= $field->name . ", ";
-				
-				$mt = $rs->MetaType($field->type);
-				
-				// "mike" <mike@partner2partner.com> patch and "Ryan Bailey" <rebel@windriders.com> 
-				//PostgreSQL uses a 't' or 'f' and therefore needs to be processed as a string ('C') type field.
-				if ((strncmp($zthis->databaseType,"postgres",8) === 0) && ($mt == "L")) $mt = "C";
+		// Get the field from the recordset
+		$field = $rs->FetchField($i);
+		// If the recordset field is one
+		// of the fields passed in then process.
+		$upperfname = strtoupper($field->name);
+		if (adodb_key_exists($upperfname,$arrFields)) {
 
-				// Based on the datatype of the field
-				// Format the value properly for the database
-				if ((defined('ADODB_FORCE_NULLS') && is_null($arrFields[$upperfname])) || $arrFields[$upperfname] === 'null') 
-						$values .= "null, ";
-				else		
-				switch($mt) {
-					case "C":
-					case "X":
-					case 'B':
-						$values .= $zthis->qstr($arrFields[$upperfname],$magicq) . ", ";
-						break;
-					case "D":
-						$values .= $zthis->DBDate($arrFields[$upperfname]) . ", ";
-						break;
-					case "T":
-						$values .= $zthis->DBTimeStamp($arrFields[$upperfname]) . ", ";
-						break;
-					default:
-						$val = $arrFields[$upperfname];
-						if (!is_numeric($val)) $val = (float) $val;
-						$values .= $val . ", ";
-						break;
-				};
+			// Set the counter for the number of fields that will be inserted.
+			$fieldInsertedCount++;
+
+			// Get the name of the fields to insert
+			$fields .= $field->name . ", ";
+			
+			$mt = $rs->MetaType($field->type);
+			
+			// "mike" <mike@partner2partner.com> patch and "Ryan Bailey" <rebel@windriders.com> 
+			//PostgreSQL uses a 't' or 'f' and therefore needs to be processed as a string ('C') type field.
+			if ((strncmp($zthis->databaseType,"postgres",8) === 0) && ($mt == "L")) $mt = "C";
+
+			// Based on the datatype of the field
+			// Format the value properly for the database
+			if ((defined('ADODB_FORCE_NULLS') && is_null($arrFields[$upperfname])) || $arrFields[$upperfname] === 'null') 
+					$values .= "null, ";
+			else		
+			switch($mt) {
+				case "C":
+				case "X":
+				case 'B':
+					$values .= $zthis->qstr($arrFields[$upperfname],$magicq) . ", ";
+					break;
+				case "D":
+					$values .= $zthis->DBDate($arrFields[$upperfname]) . ", ";
+					break;
+				case "T":
+					$values .= $zthis->DBTimeStamp($arrFields[$upperfname]) . ", ";
+					break;
+				default:
+					$val = $arrFields[$upperfname];
+					if (!is_numeric($val)) $val = (float) $val;
+					$values .= $val . ", ";
+					break;
 			};
-	  	};
+		};
+  	};
 
-		// If there were any inserted fields then build the rest of the insert query.
-		if ($fieldInsertedCount > 0) {
-			// Get the table name from the existing query.
-			preg_match("/FROM\s+".ADODB_TABLE_REGEX."/is", $rs->sql, $tableName);
+	// If there were any inserted fields then build the rest of the insert query.
+	if ($fieldInsertedCount <= 0)  return false;
+	
+	// Get the table name from the existing query.
+	preg_match("/FROM\s+".ADODB_TABLE_REGEX."/is", $rs->sql, $tableName);
 
-			// Strip off the comma and space on the end of both the fields
-			// and their values.
-			$fields = substr($fields, 0, -2);
-			$values = substr($values, 0, -2);
+	// Strip off the comma and space on the end of both the fields
+	// and their values.
+	$fields = substr($fields, 0, -2);
+	$values = substr($values, 0, -2);
 
-			// Append the fields and their values to the insert query.
-			$insertSQL = "INSERT INTO " . $tableName[1] . " ( $fields ) VALUES ( $values )";
+	// Append the fields and their values to the insert query.
+	$insertSQL = "INSERT INTO " . $tableName[1] . " ( $fields ) VALUES ( $values )";
 
-			return $insertSQL;
-
-		} else {
-			return false;
-   		};
+	return $insertSQL;
 }
+
+
 ?>

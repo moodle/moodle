@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -192,6 +192,9 @@ class ADODB_ado extends ADOConnection {
 		
 		return $arr;
 	}
+	
+
+
 	
 	/* returns queryID or false */
 	function &_query($sql,$inputarr=false) 
@@ -543,15 +546,18 @@ class ADORecordSet_ado extends ADORecordSet {
 
 			switch($t) {
 			case 135: // timestamp
-				$this->fields[] = date('Y-m-d H:i:s',(integer)$f->value);
-				break;
-				
+				if (!strlen((string)$f->value)) $this->fields[] = false;
+				else $this->fields[] = adodb_date('Y-m-d H:i:s',(float)$f->value);
+				break;			
 			case 133:// A date value (yyyymmdd) 
-				$val = $f->value;
-				$this->fields[] = substr($val,0,4).'-'.substr($val,4,2).'-'.substr($val,6,2);
+				if ($val = $f->value) {
+					$this->fields[] = substr($val,0,4).'-'.substr($val,4,2).'-'.substr($val,6,2);
+				} else
+					$this->fields[] = false;
 				break;
 			case 7: // adDate
-				$this->fields[] = date('Y-m-d',(integer)$f->value);
+				if (!strlen((string)$f->value)) $this->fields[] = false;
+				else $this->fields[] = adodb_date('Y-m-d',(float)$f->value);
 				break;
 			case 1: // null
 				$this->fields[] = false;
@@ -577,7 +583,25 @@ class ADORecordSet_ado extends ADORecordSet {
 		return true;
 	}
 	
-	
+		function NextRecordSet()
+		{
+			$rs = $this->_queryID;
+			$this->_queryID = $rs->NextRecordSet();
+			//$this->_queryID = $this->_QueryId->NextRecordSet();
+			if ($this->_queryID == null) return false;
+			
+			$this->_currentRow = -1;
+			$this->_currentPage = -1;
+			$this->bind = false;
+			$this->fields = false;
+			$this->_flds = false;
+			$this->_tarr = false;
+			
+			$this->_inited = false;
+			$this->Init();
+			return true;
+		}
+
 	function _close() {
 		$this->_flds = false;
 		@$this->_queryID->Close();// by Pete Dishman (peterd@telephonetics.co.uk)

@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -84,7 +84,6 @@ class ADODB_DB2 extends ADODB_odbc {
 	var $identitySQL = 'values IDENTITY_VAL_LOCAL()';
 	var $_bindInputArray = true;
 	var $upperCase = 'upper';
-	var $substr = 'substr';
 	
 	
 	function ADODB_DB2()
@@ -248,15 +247,17 @@ class ADODB_DB2 extends ADODB_odbc {
 			if ($offset <= 0) {
 			// could also use " OPTIMIZE FOR $nrows ROWS "
 				if ($nrows >= 0) $sql .=  " FETCH FIRST $nrows ROWS ONLY ";
-				return $this->Execute($sql,false);
+				$rs =& $this->Execute($sql,false);
 			} else {
 				if ($offset > 0 && $nrows < 0);
 				else {
 					$nrows += $offset;
 					$sql .=  " FETCH FIRST $nrows ROWS ONLY ";
 				}
-				return ADOConnection::SelectLimit($sql,-1,$offset);
+				$rs =& ADOConnection::SelectLimit($sql,-1,$offset);
 			}
+			
+			return $rs;
 		}
 	
 };

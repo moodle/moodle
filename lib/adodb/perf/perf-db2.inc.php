@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -59,9 +59,19 @@ class perf_db2 extends adodb_perf{
 		$this->conn =& $conn;
 	}
 	
-	function Explain($sql)
+	function Explain($sql,$partial=false)
 	{
 		$save = $this->conn->LogSQL(false);
+		if ($partial) {
+			$sqlq = $this->conn->qstr($sql.'%');
+			$arr = $this->conn->GetArray("select distinct sql1 from adodb_logsql where sql1 like $sqlq");
+			if ($arr) {
+				foreach($arr as $row) {
+					$sql = reset($row);
+					if (crc32($sql) == $partial) break;
+				}
+			}
+		}
 		$qno = rand();
 		$ok = $this->conn->Execute("EXPLAIN PLAN SET QUERYNO=$qno FOR $sql");
 		ob_start();

@@ -11,7 +11,7 @@
 <body bgcolor="#FFFFFF">
 
 <h2>ADOdb Data Dictionary Library for PHP</h2>
-<p> V4.01 23 Oct 2003 (c) 2000-2003 John Lim (<a href="mailto:jlim#natsoft.com.my">jlim#natsoft.com.my</a>)</p>
+<p> V4.11 27 Jan 2004 (c) 2000-2004 John Lim (<a href="mailto:jlim#natsoft.com.my">jlim#natsoft.com.my</a>)</p>
 <p><font size=1>This software is dual licensed using BSD-Style and LGPL. This 
   means you can use it in compiled proprietary and commercial products.</font></p>
 <p>Useful ADOdb links:  <a href=http://php.weblogs.com/adodb?dd=1>Download</a> &nbsp; <a href=http://php.weblogs.com/adodb_manual?dd=1>Other Docs</a>
@@ -65,9 +65,10 @@ $dict-><strong>ExecuteSQLArray</strong>($sqlarray);
 <p>	The older (and still supported) format of $fldarray is a 2-dimensional array, where each row in the 
 	1st dimension represents one field. Each row has this format:
 <pre>	array($fieldname, $type, [,$colsize] [,$otheroptions]*)</pre>
-	The first 2 fields must be the field name and the field type. The field type
-	can be a portable type codes or the actual type for that database. 
-	<p>
+	
+<p>The first 2 fields must be the field name and the field type. The field type
+	can be a portable type codes or the actual type for that database.</p>
+<p>
 	Legal portable type codes include:
 <pre>
 C:  varchar
@@ -97,46 +98,50 @@ N:  Numeric or decimal number
 <p>
 	The $otheroptions include the following keywords (case-insensitive):
 <pre>
-AUTO			For autoincrement number. Emulated with triggers if not available.
+AUTO            For autoincrement number. Emulated with triggers if not available.
 				Sets NOTNULL also.
-AUTOINCREMENT	Same as auto.
-KEY			Primary key field. Sets NOTNULL also. Compound keys are supported.
+AUTOINCREMENT   Same as auto.
+KEY             Primary key field. Sets NOTNULL also. Compound keys are supported.
 PRIMARY 		Same as KEY.
-DEF			Synonym for DEFAULT for lazy typists.
-DEFAULT		The default value. Character strings are auto-quoted unless
-				the string begins and ends with spaces, eg ' SYSDATE '.
-NOTNULL		If field is not null.
-DEFDATE		Set default value to call function to get today's date.
-DEFTIMESTAMP	Set default to call function to get today's datetime.
-NOQUOTE		Prevents autoquoting of default string values.
-CONSTRAINTS	Additional constraints defined at the end of the field
-				definition.
+DEF             Synonym for DEFAULT for lazy typists.
+DEFAULT         The default value. Character strings are auto-quoted unless
+                the string begins and ends with spaces, eg ' SYSDATE '.
+NOTNULL         If field is not null.
+DEFDATE         Set default value to call function to get today's date.
+DEFTIMESTAMP    Set default to call function to get today's datetime.
+NOQUOTE         Prevents autoquoting of default string values.
+CONSTRAINTS     Additional constraints defined at the end of the field
+                definition.
 </pre>
 <p> The Data Dictonary accepts two formats, the older array specification: </p>
 <pre>
 $flds = array(
-	array('COLNAME', 'DECIMAL', '8.4', 'DEFAULT' => 0, 'NotNull'),
-	array('ID',      'I'      , 'AUTO'),
-	array('MYDATE',  'D'      , 'DEFDATE'),
-	array('NAME',    'C'      ,'32', 
+	array('COLNAME',   'DECIMAL', '8.4', 'DEFAULT' => 0, 'NotNull'),
+	array('id',        'I'      , 'AUTO'),
+	array('`MY DATE`', 'D'      , 'DEFDATE'),
+	array('NAME',      'C'      , '32', 
 		  'CONSTRAINTS' => 'FOREIGN KEY REFERENCES reftable')
 );  </pre>
 Or the simpler declarative format:
 <pre> $flds = "
 <font color="#660000"><strong> COLNAME DECIMAL(8.4) DEFAULT 0 NotNull,
- ID I AUTO,
- MYDATE D DEFDATE, 
+ id I AUTO,
+ `MY DATE` D DEFDATE, 
  NAME C(32) CONSTRAINTS 'FOREIGN KEY REFERENCES reftable' </strong></font>
 "; 
 </pre>
 <p>
-	The $taboptarray is the 3rd parameter of the CreateTableSQL function. 
+	Note that if you have special characters in the field name (e.g. My Date), you should enclose it in back-quotes. Normally field names are not case-sensitive, but if you enclose it in back-quotes, some databases treat the names as case-sensitive, and some don't. So be careful.
+<p>The $taboptarray is the 3rd parameter of the CreateTableSQL function. 
 	This contains table specific settings. Legal keywords include:
 	 
 <ul>
 	<li>REPLACE <br>
 		Indicates that the previous table definition should be removed (dropped)together 
 		with ALL data. See first example below.<br>
+	</li>
+	<li>DROP <br>
+		Drop table. Useful for removing unused tables.<br>
 	</li>
 	<li>CONSTRAINTS <br>
 		Define this as the key, with the constraint as the value. See the postgresql 
@@ -177,6 +182,7 @@ Or the simpler declarative format:
 	UNIQUE			Make unique index
 	FULLTEXT		Make fulltext index (only mysql)
 	HASH			Create hash index (only postgres)
+	DROP            Drop legacy index
 	</pre>	
 <p> <strong>function AddColumnSQL($tabname, $flds)</strong>
 <p>Add one or more columns. Not guaranteed to work under all situations.

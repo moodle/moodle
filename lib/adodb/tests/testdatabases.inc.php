@@ -1,7 +1,7 @@
 <?php
   
 /*
-V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -212,8 +212,7 @@ if (!empty($testdb2)) {
 }
 
 
-
-ADOLoadCode("odbc_mssql");
+ADOLoadCode('odbc_mssql');
 if (!empty($testmssql)) { // MS SQL Server via ODBC
 	$db = ADONewConnection();
 	
@@ -250,13 +249,16 @@ if (!empty($testmssql) && !empty($testado) ) { // ADO ACCESS MSSQL -- thru ODBC 
 
 ADOLoadCode("mssqlpo");
 if (!empty($testmssql)) { // MS SQL Server -- the extension is buggy -- probably better to use ODBC
-	$db = ADONewConnection();
+	$db = ADONewConnection("mssqlpo");
 	//$db->debug=1;
 	print "<h1>Connecting $db->databaseType...</h1>";
 	
-	$db->PConnect('tigress','adodb','natsoft','northwind');
-	
-	if (true or @$db->PConnect("mangrove", "sa", "natsoft", "ai")) {
+	$ok = $db->PConnect('tigress','adodb','natsoft','northwind');
+	//$rs = $db->Execute("exec sp_ddate");
+	//print_r($rs->fields);
+	//die();
+
+	if ($ok or @$db->PConnect("mangrove", "sa", "natsoft", "ai")) {
 		AutoDetect_MSSQL_Date_Order($db);
 	//	$db->Execute('drop table adoxyz');
 		testdb($db,"create table ADOXYZ (id int, firstname char(24) null, lastname char(24) null,created datetime null)");
@@ -271,7 +273,7 @@ if (!empty($testmssql) && !empty($testado)) { // ADO ACCESS MSSQL with OLEDB pro
 	//$db->debug=1;
 	$myDSN="SERVER=tigress;DATABASE=northwind;Trusted_Connection=yes";
 	//$myDSN='SERVER=(local)\NetSDK;DATABASE=northwind;';
-	if ($db->PConnect($myDSN, "sa", "natsoft", 'SQLOLEDB'))
+	if ($db->PConnect($myDSN, "adodb", "natsoft", 'SQLOLEDB'))
 		testdb($db,"create table ADOXYZ (id int, firstname char(24), lastname char(24),created datetime)");
 	else print "ERROR: MSSQL test 2 requires a MS SQL 7 on a server='mangrove', userid='sa', password='', database='ai'";
 

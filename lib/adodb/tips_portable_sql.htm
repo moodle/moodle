@@ -8,7 +8,9 @@
 <body bgcolor=white>
 <table width=100% border=0><tr><td><h2>Tips on Writing Portable SQL &nbsp;</h2></td><td>
  <div align=right><img src="cute_icons_for_site/adodb.gif"></div></td></tr></table>
- 
+  <p>Updated 18 Sep 2003. Added Portable Native SQL section.
+<p>
+
  If you are writing an application that is used in multiple environments and 
   operating systems, you need to plan to support multiple databases. This article 
   is based on my experiences with multiple database systems, stretching from 4th 
@@ -166,17 +168,18 @@ the correct placeholder (available since ADOdb 3.92):
 $stmt = $DB-&gt;Prepare($sql);
 $stmt = $DB-&gt;Execute($stmt,array('one','two'));
 </font></pre>
+<a name="native"></a>
 <h2>Portable Native SQL</h2>
 <p>ADOdb provides the following functions for portably generating SQL functions 
   as strings to be merged into your SQL statements (some are only available since 
   ADOdb 3.92): </p>
-<table width="75%" border="1">
+<table width="75%" border="1" align=center>
   <tr> 
-    <td><b>Function</b></td>
+    <td width=30%><b>Function</b></td>
     <td><b>Description</b></td>
   </tr>
   <tr> 
-    <td height="63">DBDate($date)</td>
+    <td>DBDate($date)</td>
     <td>Pass in a UNIX timestamp or ISO date and it will convert it to a date 
       string formatted for INSERT/UPDATE</td>
   </tr>
@@ -207,6 +210,26 @@ $stmt = $DB-&gt;Execute($stmt,array('one','two'));
     <td>Param($name)</td>
     <td>Generates bind placeholders, using ? or named conventions as appropriate.</td>
   </tr>
+  <tr><td>$db->sysDate</td><td>Property that holds the SQL function that returns today's date</td>
+</tr>
+<tr><td>$db->sysTimeStamp</td><td>Property that holds the SQL function that returns the current
+timestamp (date+time).
+</td>
+</tr>
+<tr>
+<td>$db->concat_operator</td><td>Property that holds the concatenation operator
+</td>
+</tr>
+<tr><td>$db->length</td><td>Property that holds the name of the SQL strlen function.
+</td></tr>
+
+<tr><td>$db->upperCase</td><td>Property that holds the name of the SQL strtoupper function.
+</td></tr>
+<tr><td>$db->random</td><td>Property that holds the SQL to generate a random number between 0.00 and 1.00.
+</td>
+</tr>
+<tr><td>$db->substr</td><td>Property that holds the name of the SQL substring function.
+</td></tr>
 </table>
 <p>&nbsp; </p>
 <h2>DDL and Tuning</h2>
@@ -269,6 +292,9 @@ $conn->UpdateBlob('blobtable','blobcol',$blobvalue,'id=1');
   ambiguities when you use the ANY and EXISTS operators. However if your database 
   has significant amounts of missing or unknown data, using nulls might be a good 
   idea. 
+  <p>
+  ADOdb also supports a portable <a href=http://phplens.com/adodb/reference.functions.concat.html#ifnull>IfNull</a> function, so you can define what to display
+  if the field contains a null.
 <h3><b>Stored Procedures</b></h3>
 <p>Stored procedures are another problem area. Some databases allow recordsets 
   to be returned in a stored procedure (Microsoft SQL Server and Sybase), and 

@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -45,10 +45,12 @@ class ADODB_firebird extends ADODB_ibase {
 		$str .=($offset>=0) ? "SKIP $offset " : '';
 		
 		$sql = preg_replace('/^[ \t]*select/i',$str,$sql); 
-		return ($secs) ? 
-				$this->CacheExecute($secs,$sql,$inputarr)
-			: 	
-				$this->Execute($sql,$inputarr);
+		if ($secs)
+			$rs =& $this->CacheExecute($secs,$sql,$inputarr);
+		else
+			$rs =& $this->Execute($sql,$inputarr);
+			
+		return $rs;
 	}
 	
 	
