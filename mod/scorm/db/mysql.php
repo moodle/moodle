@@ -23,8 +23,8 @@ function scorm_upgrade($oldversion) {
     	table_column("scorm_scoes", "", "organization", "VARCHAR", "255", "", "", "NOT NULL", "manifest");
     }
     if ($oldversion < 2004071900) {
-      table_column("scorm", "", "maxgrade", "FLOAT", "3", "", "0", "NOT NULL", "reference");
-      table_column("scorm", "", "grademethod", "TINYINT", "2", "", "0", "NOT NULL", "maxgrade");
+	table_column("scorm", "", "maxgrade", "FLOAT", "3", "", "0", "NOT NULL", "reference");
+	table_column("scorm", "", "grademethod", "TINYINT", "2", "", "0", "NOT NULL", "maxgrade");
     }
 
     if ($oldversion < 2004111200) {
@@ -39,6 +39,58 @@ function scorm_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_scorm_sco_users ADD INDEX scormid (scormid);');
         modify_database('','ALTER TABLE prefix_scorm_sco_users ADD INDEX userid (userid);');
         modify_database('','ALTER TABLE prefix_scorm_sco_users ADD INDEX scoid (scoid);');
+    }
+    
+    if ($oldversion < 2005031300) {
+	table_column("scorm_scoes", "", "prerequisites", "VARCHAR", "200", "", "", "NOT NULL", "title");
+	table_column("scorm_scoes", "", "maxtimeallowed", "VARCHAR", "13", "", "", "NOT NULL", "prerequisites");
+	modify_database('',"ALTER TABLE prefix_scorm_scoes ADD timelimitaction SET('exit,message','exit,no message','continue,message','continue,no message') DEFAULT '' AFTER `maxtimeallowed`");
+	table_column("scorm_scoes", "", "masteryscore", "VARCHAR", "200", "", "", "NOT NULL", "datafromlms");
+	
+	$oldScoesData = get_records_select("scorm_scoes","1","id ASC");
+	modify_database('',"ALTER TABLE prefix_scorm_scoes CHANGE type scormtype SET('sco','asset') DEFAULT '' NOT NULL");
+	foreach ($oldScoesData as $sco) {
+	    $sco->scormtype = $sco->type;
+	    unset($sco->type);
+	    update_record("scorm_scoes",$sco);
+	}
+	
+	execute_sql("CREATE TABLE {$CFG->prefix}scorm_scoes_track (
+			id int(10) unsigned NOT NULL auto_increment,
+			userid int(10) unsigned NOT NULL default '0',
+			scormid int(10) NOT NULL default '0',
+			scoid int(10) unsigned NOT NULL default '0',
+			element varchar(255) NOT NULL default '',
+			value longtext NOT NULL default '',
+			PRIMARY KEY  (userid, scormid, scoid, element),
+			UNIQUE (userid, scormid, scoid, element),
+			KEY userdata (userid, scormid, scoid),
+			KEY id (id)
+		     ) TYPE=MyISAM;",false); 
+		     
+	$oldTrackingData = get_records_select("scorm_sco_users","1","id ASC");
+	$oldElementArray = array ('cmi_core_lesson_location','cmi_core_lesson_status','cmi_core_exit','cmi_core_total_time','cmi_core_score_raw','cmi_suspend_data');
+	foreach ($oldTrackingData as $oldTrack) {
+	    $newTrack = '';
+       	    $newTrack->userid = $oldTrack->userid;
+       	    $newTrack->scormid = $oldTrack->scormid;
+       	    $newTrack->scoid = $oldTrack->scoid;
+       	    
+       	    foreach ( $oldElementArray as $element) {
+       	    	$newTrack->element = $element;
+       	    	$newTrack->value = $oldTrack->$element;
+       	    	if ($newTrack->value == NULL) {
+       	    	    $newTrack->value = '';
+       	    	}
+       	    	insert_record("scorm_scoes_track",$newTrack,false);
+       	    }
+	}
+	modify_database('',"DROP TABLE prefix_scorm_sco_users");
+	modify_database('',"INSERT INTO prefix_log_display VALUES ('resource', 'review', 'resource', 'name')");
+    }
+    
+    if ($oldversion < 2005031400) {
+	table_column("scorm", "popup", "");
     }
 
     return true;

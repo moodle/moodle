@@ -33,83 +33,40 @@
 
     require_login($course->id, false, $cm);
 
-    if ( $scoes_user = get_records_select("scorm_sco_users","userid = ".$USER->id." AND scormid = ".$scorm->id,"scoid ASC") ) {
-        //
-        // Already user
-        //
-	if (!empty($scoid)) {	
-	    //
-	    // Direct sco request
-	    //
-	    if ($sco = get_record("scorm_scoes","id",$scoid)) {
-	        if ($sco->launch == '') {
-	            // Search for th first launchable sco 
-	            if ($scoes = get_records("scorm_scoes","scorm",$scorm->id,"id ASC")) {
-	                $sco = current($scoes);
-	                while ($sco->id < $scoid) {
-	                    $sco = next($scoes);
-	                }
-	                while ($sco->launch == '') {
-	                    $sco = next($scoes);
-	                }
-	            }
-	        }
-	    }
-	} else {
-	    //
-	    // Search for first incomplete sco
-	    //
-	    foreach ( $scoes_user as $sco_user ) {
-		if (($sco_user->cmi_core_lesson_status != "completed") && ($sco_user->cmi_core_lesson_status != "passed") && ($sco_user->cmi_core_lesson_status != "failed")) {
-		    $sco = get_record("scorm_scoes","id",$sco_user->scoid);
-		    break;
-		} else {
-		    // If review mode get the first
-		    if ($mode == "review") {
-			$sco = get_record("scorm_scoes","id",$sco_user->scoid);
-			break;
-		    }
+    if (!empty($scoid)) {	
+    //
+    // Direct sco request
+    //
+	if ($sco = get_record("scorm_scoes","id",$scoid)) {
+	    if ($sco->launch == '') {
+		// Search for the next launchable sco 
+		if ($scoes = get_records_select("scorm_scoes","scorm=".$scorm->id." AND launch<>'' AND id>".$scoid,"id ASC")) {
+		    $sco = current($scoes);
 		}
 	    }
-	}
-	//
-	// If no sco was found get the first of SCORM package
-	//
-	if (!isset($sco)) {
-	    $scoes = get_records_select("scorm_scoes","scorm=".$scorm->id." AND launch<>'' order by id ASC");
-	    $sco = each($scoes);
 	}
     } else {
-        //
-        // A new user
-        //
-	if ($scoes = get_records("scorm_scoes","scorm",$scorm->id,"id ASC")) {
-	    //
-	    // Create user scoes records
-	    //
-	    foreach ($scoes as $sco) {
-		if (($sco->launch != "") && ($sco->type != "sca") && ($sco->type != "asset")){
-		    if (!isset($first)) {
-			$first = $sco;
-		    }
-		    $sco_user->userid = $USER->id;
-		    $sco_user->scoid = $sco->id;
-		    $sco_user->scormid = $scorm->id;
-		    $element = "cmi_core_lesson_status";
-		    $sco_user->$element = "not attempted";
-		    $ident = insert_record("scorm_sco_users",$sco_user);
-		}
+    //
+    // Search for first incomplete sco
+    //
+    	if ( $scoes_track = get_records_select("scorm_scoes_track","userid=".$USER->id." AND element='cmi.core.lesson_status' AND scormid=".$scorm->id,"scoid ASC") ) {
+    	    $sco_track = current($scoes_track);
+	    while ((($sco_track->value == "completed") || ($sco_track->value == "passed") || ($sco_track->value == "failed")) && ($mode == "normal")) {
+		$sco_track = next($scoes_track);
 	    }
-	    if (isset($first)) {
-	        $sco = $first;
-	    }
-	    if (!empty($scoid)) {
-		if ($sco = get_record("scorm_scoes","id",$scoid)) {
-		    unset($first);
-		}
-	    }
+	    $sco = get_record("scorm_scoes","id",$sco_track->scoid);
 	}
+	
     }
+    
+    //
+    // If no sco was found get the first of SCORM package
+    //
+    if (!isset($sco)) {
+	$scoes = get_records_select("scorm_scoes","scorm=".$scorm->id." AND launch<>''","id ASC");
+	$sco = current($scoes);
+    }
+
     //
     // Forge SCO URL
     //
@@ -129,17 +86,7 @@
     </head>
     <body>
 	<script language="javascript">
-<?php	
-    if ($scorm->popup == "") { 
-	echo "\t    document.location=\"$result\";\n";
-    } else {
-        $popuplocation = '';
-        if (isset($_COOKIE["SCORMpopup"])) {
-            $popuplocation = $_COOKIE["SCORMpopup"];
-        }
-   	echo "\t    top.main = window.open('$result','main','$scorm->popup$popuplocation');\n";
-    }
-?>
+	    document.location='<?php echo $result ?>';
 	</script>
     </body>
 </html>

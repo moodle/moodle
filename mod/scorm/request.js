@@ -20,11 +20,11 @@ function NewHttpReq() {
     return httpReq;
 }
 
-function DoRequest(httpReq,url) {
+function DoRequest(httpReq,url,param) {
     //
     // httpReq.open (Method("get","post"), URL(string), Asyncronous(true,false))
     //
-    httpReq.open("get", url,false);
-    httpReq.send(null);
+    httpReq.open("post", url,false);
+    httpReq.send(param);
     return httpReq.responseText;
 }

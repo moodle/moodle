@@ -18,9 +18,6 @@
     if (empty($form->datadir)) {
         $form->datadir = "";
     }
-    if (empty($form->popup)) {
-        $form->popup = "";
-    }
     if (empty($form->maxgrade)) {
         $form->maxgrade = "";
     }
@@ -43,7 +40,7 @@
     function validate_scorm(theform,filename) {
     	//alert(filename);
         var myRequest = NewHttpReq();
-    	result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/validate.php?id=<?php p($form->course) ?>&reference="+filename+"<?php echo $scormid.$datadir ?>");
+    	result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/validate.php","id=<?php p($form->course) ?>&reference="+filename+"<?php echo $scormid.$datadir ?>");
     	//alert(result);
 	results = result.split('\n');
 	if ((results[0] == "found") || (results[0] == "regular")) {
@@ -99,48 +96,6 @@
 	 	?>
 	    </td>
 	</tr>
-<?php   
-        $strnewwindow     = get_string("newwindow", "scorm");
-        $strnewwindowopen = get_string("newwindowopen", "scorm");
-        foreach ($SCORM_WINDOW_OPTIONS as $optionname) {
-            $stringname = "str$optionname";
-            $$stringname = get_string("new$optionname", "scorm");
-            $window->$optionname = "";
-            $jsoption[] = "\"$optionname\"";
-        }
-        $alljsoptions = implode(",", $jsoption);
-        
-        if ($form->instance) {     // Re-editing
-            if ($form->popup == "") {
-                $newwindow = "";   // Disable the new window
-                foreach ($SCORM_WINDOW_OPTIONS as $optionname) {
-                    $defaultvalue = "scorm_popup$optionname";
-                    $window->$optionname = $CFG->$defaultvalue;
-                }
-            } else {
-                $newwindow = "checked";
-                $rawoptions = explode(',', $form->popup); 
-                foreach ($rawoptions as $rawoption) {
-                    $option = explode('=', trim($rawoption));
-                    if (($option[0] != 'location') && ($option[0] != 'menubar') && ($option[0] != 'toolbar')) {
-                        $optionname = $option[0];
-                        $optionvalue = $option[1];
-                        if ($optionname == "height" or $optionname == "width") {
-                            $window->$optionname = $optionvalue;
-                        } else if ($optionvalue == 1) {
-                            $window->$optionname = "checked";
-                        }
-                    }
-                }
-            }
-        } else {
-            foreach ($SCORM_WINDOW_OPTIONS as $optionname) {
-                $defaultvalue = "scorm_popup$optionname";
-                $window->$optionname = $CFG->$defaultvalue;
-            }
-            $newwindow = $CFG->scorm_popup;
-        }    
-?>
         <tr valign="top">
             <td align="right"><b><?php print_string("grademethod", "scorm") ?>:</b></td>
             <td>
@@ -163,126 +118,21 @@
             ?>
             </td>
         </tr>    
-        <tr>
-    	    <td align="right"><b><?php print_string("display", "scorm") ?>:</b></td>
-    	    <td>
-        	<input type="button" value="hide settings" id="windowsettingsbutton" onclick="javascript: return showhide('windowsettings');" />
-        	<input type="hidden" name="windowsettingspref" id="windowsettingspref" 
-                 value="<?php echo get_user_preferences('windowsettingspref', $CFG->scorm_windowsettings); ?>" />
-        	<?php helpbutton("window", get_string("display", "scorm"), "scorm", true) ?>
-    	    </td>
-	</tr>
-    </table>
-    <script type="text/javascript">
-        var subitems = [<?php echo $alljsoptions; ?>];
-                    
-        function autowindow(set) {
-            divobj = document.getElementById('autocontinue');
-            if (document.form.newwindow.checked) {
-                divobj.style.display = 'none';
-            } else {
-                divobj.style.display = 'block';
-            }
-        }
-                  
-    	function showhide (id, set) {
-            divobj = document.getElementById(id);
-            butobj = document.getElementById(id+'button');
-            prefobj = document.getElementById(id+'pref');
-            if (set == true) {
-         	if (prefobj.value == '1') {
-         	    divobj.style.display = 'block';
-            	    butobj.value = '<?php print_string("hidesettings") ?>';
-            	} else {
-            	    divobj.style.display = 'none';
-                    butobj.value = '<?php print_string("showsettings") ?>...';
-            	}
-            } else {
-        	if (prefobj.value == '1') {
-                    divobj.style.display = 'none';
-                    butobj.value = '<?php print_string("showsettings") ?>...';
-                    prefobj.value = '0';
-            	} else {
-                    divobj.style.display = 'block';
-                    butobj.value = '<?php print_string("hidesettings") ?>';
-                    prefobj.value = '1';
-            	}
-            }
-    	}
-    </script>
- 
- <div id="windowsettings" align="center">
-    <table>
-        <tr valign="top">
-            <td align="right" nowrap="nowrap">
-                <b><?php p($strnewwindow) ?>:</b>
-            </td>
-            <td>
-                <input name="setnewwindow" type="hidden" value="1" />
-                <input name="newwindow" type="checkbox" value="1" onclick="autowindow();return lockoptions('form','newwindow', subitems);" <?php echo $newwindow ?> /> 
-                <?php echo $strnewwindowopen."\n"; ?>
-                <ul style='list-style-type:none;'><li>
-                <?php
-                     foreach ($window as $name => $value) {
-                         if ($name == "height" or $name == "width") {
-                             continue;
-                         }
-                         echo "\t\t<input name=\"h$name\" type=\"hidden\" value=\"0\" />\n";
-                         if ($window->$name == 'checked') {
-                             $window->$name = 'checked="checked"';
-                         }
-                         echo "\t\t<input name=\"$name\" type=\"checkbox\" value=\"1\" ".$window->$name." /> ";
-                         $stringname = "str$name";
-                         echo $$stringname."<br />\n";
-                     }
-                ?>
-
-                <input name="hwidth" type="hidden" value="0" />
-                <input name="width" type="text" size="4" value="<?php p($window->width) ?>" alt="width" /> <?php p($strwidth) ?><br />
-                <input name="hheight" type="hidden" value="0" />
-                <input name="height" type="text" size="4" value="<?php p($window->height) ?>" alt="height" /> <?php p($strheight) ?><br />
-                <?php
-                     if (!$newwindow) {
-                         echo "<script type=\"text/javascript\">\n<!--\n";
-                         echo "\tlockoptions('form','newwindow', subitems);";
-                         echo "\n-->\n</script>";
-                     }
-                 ?>
-                 </li></ul>
-             </td>
-         </tr>
-      </table>
-      <div id="autocontinue">
-     	<table>
-            <tr>
+	<tr>
             <td align="right"><b><?php print_string("autocontinue","scorm") ?>:</b></td>
-            	<td>
-            	<?php
+            <td>
+            <?php
                 $options = array();
                 $options[0]=get_string("no");
                 $options[1]=get_string("yes");
                 choose_from_menu ($options, "auto", $form->auto);
                 helpbutton("autocontinue", get_string("autocontinue", "scorm"), "scorm", true);
-            	?>
-            	</td>
-            </tr>
-     	</table>
-     </div>
-  </div>
-    <script type="text/javascript">
-    <?php
-        if ($newwindow == "checked") {
-            echo "autowindow();\n";
-            echo "showhide('windowsettings',false);\n";
-            $newwindow = "checked='checked'";
-        } else {
-            echo "showhide('windowsettings',true);\n";
-        }
-    ?>
-    </script>
+            ?>
+	    </td>
+	</tr>
+    </table>
     <input type="hidden" name="datadir"	value="<?php p($form->datadir) ?>" />
     <input type="hidden" name="launch"	value="<?php p($form->launch) ?>" />
-    <input type="hidden" name="popup"	value="<?php p($form->popup) ?>" />
     <input type="hidden" name="auto"	value="<?php p($form->auto) ?>" />
     <input type="hidden" name="maxgrade"	value="<?php p($form->maxgrade) ?>" />
     <input type="hidden" name="grademethod"	value="<?php p($form->grademethod) ?>" />

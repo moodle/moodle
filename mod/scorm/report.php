@@ -61,7 +61,7 @@
         print_heading($scorm->name);
     }
     if ($scoes =get_records_select("scorm_scoes","scorm='$scorm->id' ORDER BY id")) {
-        if ($sco_users=get_records_select("scorm_sco_users", "scormid='$scorm->id' GROUP BY userid")) {
+        if ($sco_users=get_records_select("scorm_scoes_track", "scormid='$scorm->id' GROUP BY userid")) {
 
             $strname  = get_string("name");
 
@@ -80,7 +80,7 @@
             }
 
             foreach ($sco_users as $sco_user) {
-                $user_data = scorm_get_scoes_records($sco_user);
+                $user_data = scorm_get_user_track($scorm->id,$sco_user->userid);
 
                 $row = array();
                 $data = current($user_data);

@@ -6,19 +6,19 @@
     require_login();
     
     
-    $reference = clean_param($_GET["reference"], PARAM_PATH);
-    $courseid = $_GET["id"];
+    $reference = clean_param($_POST["reference"], PARAM_PATH);
+    $courseid = $_POST["id"];
     $datadir = '';
-    if (isset($_GET["datadir"])) {
-        $datadir = $_GET["datadir"];
+    if (isset($_POST["datadir"])) {
+        $datadir = $_POST["datadir"];
     }
     
     $scormid = 0;
     $launch = 0;
     $result = '';
     $errorlogs = '';
-    if (isset($_GET["instance"])) {
-	$scormid = $_GET["instance"];
+    if (isset($_POST["instance"])) {
+	$scormid = $_POST["instance"];
 	$launch = 1;
     	$fp = fopen($CFG->dataroot.'/'.$courseid.'/'.$reference,"r");
     	$fstat = fstat($fp);

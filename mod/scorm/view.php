@@ -63,7 +63,7 @@
        	         "", "", true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
         
     	if (isteacher($course->id)) {
-    	    if ($sco_users = get_records_select("scorm_sco_users", "scormid='$scorm->id' GROUP BY userid")) {
+    	    if ($sco_users = get_records_select("scorm_scoes_track", "scormid='$scorm->id' GROUP BY userid")) {
         	echo "<p align=\"right\"><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\">".get_string("viewallreports","scorm",count($sco_users))."</a></p>";
             } else {
            	echo "<p align=\"right\">".get_string("noreports","scorm")."</p>";
@@ -148,19 +148,20 @@
     		}
     		if ($sco->launch) {
     		    $score = "";
-    		    if ($sco_user=get_record("scorm_sco_users","scoid",$sco->id,"userid",$USER->id)) {
-    		    	if ( $sco_user->cmi_core_lesson_status == "") {
-    		    	    $sco_user->cmi_core_lesson_status = "not attempted";
+    		    if ($user_tracks=scorm_get_tracks($sco->id,$USER->id)) {
+    		    	if ( $user_tracks->status == "") {
+    		    	    $user_tracks->status = "notattempted";
     		    	}
-    			echo "      <img src=\"pix/".scorm_remove_spaces($sco_user->cmi_core_lesson_status).".gif\" alt=\"".get_string(scorm_remove_spaces($sco_user->cmi_core_lesson_status),"scorm")."\" title=\"".get_string(scorm_remove_spaces($sco_user->cmi_core_lesson_status),"scorm")."\" />\n";
- 			if (($sco_user->cmi_core_lesson_status == "not attempted") || ($sco_user->cmi_core_lesson_status == "incomplete")) {
+    		    	$strstatus = get_string($user_tracks->status,'scorm');
+    			echo "<img src='pix/".$user_tracks->status.".gif' alt='$strstatus' title='$strstatus' />";
+    			if (($user_tracks->status == "notattempted") || ($user_tracks->status == "incomplete")) {
  			    $incomplete = true;
  			}
- 			if ($sco_user->cmi_core_score_raw > 0) {
-    			    $score = "(".get_string("score","scorm").":&nbsp;".$sco_user->cmi_core_score_raw.")";
+ 			if ($user_tracks->score_raw != "") {
+    			    $score = "(".get_string("score","scorm").":&nbsp;".$user_tracks->score_raw.")";
     		    	}
     		    } else {
-    			if ($sco->type == 'sco') {
+    			if ($sco->scormtype == 'sco') {
     			    echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" title=\"".get_string("notattempted","scorm")."\" />";
     			    $incomplete = true;
     			} else {
@@ -196,7 +197,7 @@
 ?>
 <script language="javascript" type="text/javascript">
 <!--
-    function playSCO(scoid,status) {
+    function playSCO(scoid) {
     	document.theform.scoid.value = scoid;
     	document.theform.submit();
     }

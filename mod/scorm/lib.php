@@ -11,12 +11,7 @@ $SCORM_GRADE_METHOD = array (VALUESCOES => get_string("gradescoes", "scorm"),
 			     VALUEHIGHEST => get_string("gradehighest", "scorm"),
                              VALUEAVERAGE => get_string("gradeaverage", "scorm"),
                              VALUESUM => get_string("gradesum", "scorm"));
-                             
-$SCORM_WINDOW_OPTIONS = array('resizable', 'scrollbars', 'status', 'height', 'width');
 
-if (!isset($CFG->scorm_popup)) {
-    set_config('scorm_popup', '');
-}
 if (!isset($CFG->scorm_validate)) {
     $scorm_validate = 'none';
     //I've commented this out for Moodle 1.4, as I've seen errors in 
@@ -30,23 +25,6 @@ if (!isset($CFG->scorm_validate)) {
     set_config('scorm_validate', $scorm_validate);
 }
 
-foreach ($SCORM_WINDOW_OPTIONS as $popupoption) {
-    $popupoption = "scorm_popup$popupoption";
-    if (!isset($CFG->$popupoption)) {
-        if ($popupoption == 'scorm_popupheight') {
-            set_config($popupoption, 450);
-        } else if ($popupoption == 'scorm_popupwidth') {
-            set_config($popupoption, 620);
-        } else {
-            set_config($popupoption, 'checked');
-        }
-    }  
-}
-
-if (!isset($CFG->scorm_framesize)) {
-    set_config('scorm_framesize', 140);
-}
-
 function scorm_add_instance($scorm) {
 /// Given an object containing all the necessary data, 
 /// (defined by the form in mod.html) this function 
@@ -56,23 +34,8 @@ function scorm_add_instance($scorm) {
     $scorm->timemodified = time();
 
     # May have to add extra stuff in here #
-    global $CFG,$SCORM_WINDOW_OPTIONS;
+    global $CFG;
     
-    $scorm->popup = '';
-
-    $optionlist = array();
-    foreach ($SCORM_WINDOW_OPTIONS as $option) {
-        if (isset($scorm->$option)) {
-            $optionlist[] = $option.'='.$scorm->$option;
-        }
-    }
-    $scorm->popup = implode(',', $optionlist);
-    
-
-    if ($scorm->popup != '') {
-    	$scorm->popup .= ',location=0,menubar=0,toolbar=0';
-    	$scorm->auto = '0';
-    }
     $id = insert_record('scorm', $scorm);
     
     //
@@ -98,22 +61,8 @@ function scorm_update_instance($scorm) {
     $scorm->id = $scorm->instance;
 
     # May have to add extra stuff in here #
-    global $CFG,$SCORM_WINDOW_OPTIONS;
+    global $CFG;
     
-    $scorm->popup = '';
-    
-    $optionlist = array();
-    foreach ($SCORM_WINDOW_OPTIONS as $option) {
-        if (isset($scorm->$option)) {
-            $optionlist[] = $option.'='.$scorm->$option;
-        }
-    }
-    $scorm->popup = implode(',', $optionlist);
-
-    if ($scorm->popup != '') {
-    	$scorm->popup .= ',location=0,menubar=0,toolbar=0';
-    	$scorm->auto = '0';
-    }
     
     //
     // Check if scorm manifest needs to be reparsed
@@ -145,7 +94,7 @@ function scorm_delete_instance($id) {
     scorm_delete_files($CFG->dataroot.'/'.$scorm->course.'/moddata/scorm'.$scorm->datadir);
 
     # Delete any dependent records here #
-    if (! delete_records('scorm_sco_users', 'scormid', $scorm->id)) {
+    if (! delete_records('scorm_scoes_track', 'scormid', $scorm->id)) {
         $result = false;
     }
     if (! delete_records('scorm_scoes', 'scorm', $scorm->id)) {
@@ -211,9 +160,9 @@ function scorm_grades($scormid) {
     	}
     
     	$return->grades = NULL;
-    	if ($sco_users=get_records_select('scorm_sco_users', "scormid='$scormid' GROUP BY userid")) {
+    	if ($sco_users=get_records_select('scorm_scoes_track', "scormid='$scormid' GROUP BY userid")) {
             foreach ($sco_users as $sco_user) {
-        	$user_data=get_records_select('scorm_sco_users',"scormid='$scormid' AND userid='$sco_user->userid'");
+        	$user_data=get_records_select('scorm_scoes_track',"scormid='$scormid' AND userid='$sco_user->userid' AND element='cmi_core_lesson_status'");
             	$scores->completed=0;
             	$scores->browsed=0;
             	$scores->incomplete=0;
@@ -222,10 +171,10 @@ function scorm_grades($scormid) {
             	$result='';
             	$data = current($user_data);
             	foreach ($user_data as $data) {
-                    if ($data->cmi_core_lesson_status=='passed')
+                    if ($data->value=='passed')
                     	$scores->completed++;
                     else
-                    	$scores->{scorm_remove_spaces($data->cmi_core_lesson_status)}++;
+                    	$scores->{scorm_remove_spaces($data->value)}++;
             	}
             	if ($scores->completed)
                     $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/completed.gif\" alt=\"".get_string('completed','scorm')."\" title=\"".get_string('completed','scorm')."\" /> $scores->completed ";
@@ -243,8 +192,8 @@ function scorm_grades($scormid) {
         
    	}
     } else {
-        $grades = get_records_select("scorm_sco_users", "scormid=$scormid AND cmi_core_score_raw>0","","id,userid,cmi_core_score_raw");
-        //$grades = get_records_menu("scorm_sco_users", "scormid",$scormid,"","userid,cmi_core_score_raw");
+        $grades = get_records_select("scorm_scoes_track", "scormid=$scormid AND element='cmi_core_score_raw' AND value<>''","","id,userid,value");
+        //$grades = get_records_menu("scorm_scoes_track", "scormid",$scormid,"","userid,cmi_core_score_raw");
         $valutations = array();
         foreach ($grades as $grade) {
             if (!isset($valutations[$grade->userid])) {
@@ -257,16 +206,16 @@ function scorm_grades($scormid) {
             }
             switch ($scorm->grademethod) {
             	case VALUEHIGHEST:
-            	    if ($grade->cmi_core_score_raw > $valutations[$grade->userid]) {
-            	    	$valutations[$grade->userid] = $grade->cmi_core_score_raw;
+            	    if ($grade->value > $valutations[$grade->userid]) {
+            	    	$valutations[$grade->userid] = $grade->value;
             	    }
             	break;
             	case VALUEAVERAGE:
-            	    $values[$grade->userid]->grade += $grade->cmi_core_score_raw;
+            	    $values[$grade->userid]->grade += $grade->value;
             	    $values[$grade->userid]->values++;
             	break;
             	case VALUESUM:
-            	    $valutations[$grade->userid] += $grade->cmi_core_score_raw;
+            	    $valutations[$grade->userid] += $grade->value;
             	break;
             }
         }
@@ -445,7 +394,7 @@ function scorm_startElement($parser, $name, $attrs) {
         if (!isset($attrs['ADLCP:SCORMTYPE'])) {
             $attrs['ADLCP:SCORMTYPE'] = '';
         }
-        $resources[$attrs['IDENTIFIER']]['type']=$attrs['ADLCP:SCORMTYPE'];
+        $resources[$attrs['IDENTIFIER']]['scormtype']=$attrs['ADLCP:SCORMTYPE'];
     }
     if ($name == 'ORGANIZATION') {
         $i++;
@@ -484,6 +433,18 @@ function scorm_endElement($parser, $name) {
     }
     if ($name == 'ADLCP:DATAFROMLMS') {
     	$scoes[$i]['datafromlms'] = $datacontent;
+    }
+    if ($name == 'ADLCP:PREREQUISITES') {
+    	$scoes[$i]['prerequisites'] = $datacontent;
+    }
+    if ($name == 'ADLCP:MAXTIMEALLOWED') {
+    	$scoes[$i]['maxtimeallowed'] = $datacontent;
+    }
+    if ($name == 'ADLCP:TIMELIMITACTION') {
+    	$scoes[$i]['timelimitaction'] = $datacontent;
+    }
+    if ($name == 'ADLCP:MASTERYSCORE') {
+    	$scoes[$i]['masteryscore'] = $datacontent;
     }
     if ($name == 'ORGANIZATION') {
     	$organization = '';
@@ -531,7 +492,7 @@ function scorm_parse($basedir,$file,$scorm_id) {
 
     $sco->scorm = $scorm_id;
     delete_records('scorm_scoes','scorm',$scorm_id);
-    delete_records('scorm_sco_users','scormid',$scorm_id);
+    delete_records('scorm_scoes_track','scormid',$scorm_id);
     
     if (isset($scoes[1])) {
     	for ($j=1; $j<=$i; $j++) {
@@ -543,6 +504,22 @@ function scorm_parse($basedir,$file,$scorm_id) {
         	$scoes[$j]['datafromlms'] = '';
             } 
             $sco->datafromlms = $scoes[$j]['datafromlms'];
+            if (!isset($scoes[$j]['prerequisites'])) {
+        	$scoes[$j]['prerequisites'] = '';
+            } 
+            $sco->datafromlms = $scoes[$j]['prerequisites'];
+            if (!isset($scoes[$j]['maxtimeallowed'])) {
+        	$scoes[$j]['maxtimeallowed'] = '';
+            } 
+            $sco->datafromlms = $scoes[$j]['maxtimeallowed'];
+            if (!isset($scoes[$j]['timelimitaction'])) {
+        	$scoes[$j]['timelimitaction'] = '';
+            } 
+            $sco->datafromlms = $scoes[$j]['timelimitaction'];
+            if (!isset($scoes[$j]['masteryscore'])) {
+        	$scoes[$j]['masteryscore'] = '';
+            } 
+            $sco->datafromlms = $scoes[$j]['masteryscore'];
         
             if (!isset($resources[($scoes[$j]['identifierref'])]['href'])) {
         	$resources[($scoes[$j]['identifierref'])]['href'] = '';
@@ -591,13 +568,45 @@ function scorm_parse($basedir,$file,$scorm_id) {
     return $launch;
 }
 
+function scorm_get_tracks($scoid,$userid) {
+/// Gets all tracks of specified sco and user 
+    global $CFG;
+    
+    if ($tracks = get_records_select("scorm_scoes_track","userid=$userid AND scoid=$scoid")) {
+    	$user_tracks->userid = $userid;
+    	$user_tracks->scoid = $scoid;
+	foreach ($tracks as $track) {
+	    $element = str_replace('.','_',$track->element);
+	    switch ($element) {
+	    case "cmi_core_lesson_status":
+	    case "cmi_completition_status":
+	    	if ($track->value == 'not attempted') {
+	    	    $track->value = 'notattempted';
+	    	}
+		$user_tracks->status = $track->value;
+	    break;
+	    case "cmi_core_score_raw":
+	    case "cmi_score_raw":
+	    	$user_tracks->score_raw = $track->value;
+	    break;
+	    default:
+		$user_tracks->{$element} = $track->value;
+	    }
+	}
+	//print_r($user_tracks);
+	return $user_tracks;
+    } else {
+	return false;
+    }
+}
+
 function scorm_get_scoes_records($sco_user) {
 /// Gets all info required to display the table of scorm results
 /// for report.php
     global $CFG;
 
     return get_records_sql("SELECT su.*, u.firstname, u.lastname, u.picture 
-                            FROM {$CFG->prefix}scorm_sco_users su, 
+                            FROM {$CFG->prefix}scorm_scoes_track su, 
                                  {$CFG->prefix}user u
                             WHERE su.scormid = '$sco_user->scormid'
                               AND su.userid = u.id
@@ -615,9 +624,8 @@ function scorm_remove_spaces($sourcestr) {
     return $newstr;
 }
 
-function scorm_string_round($stringa) {
+function scorm_string_round($stringa, $len=11) {
 // Crop a string to $len character and set an anchor title to the full string
-    $len=11;
     if ( strlen($stringa)>$len ) {
     return "<a name=\"none\" title=\"$stringa\">".substr($stringa,0,$len-4).'...'.substr($stringa,strlen($stringa)-1,1).'</a>';
     } else
@@ -634,14 +642,6 @@ function scorm_external_link($link) {
         $result = true;
     else if (substr($link,0,4) == 'www.')
         $result = true;
-    /*else if (substr($link,0,7) == 'rstp://')
-        $result = true;
-    else if (substr($link,0,6) == 'rtp://')
-        $result = true;
-    else if (substr($link,0,6) == 'ftp://')
-        $result = true;
-    else if (substr($link,0,9) == 'gopher://')
-        $result = true; */
     return $result;
 }    
 ?>
