@@ -106,7 +106,6 @@ $string['dstpresetadjusttime'] = 'Time adjustment';
 
 $string['explain_dstpresetforced'] = 'The site administrator does not allow users to modify this option.';
 $string['explain_dstpreset'] = 'You can select which area to use DST settings for, if any, from the drop-down menu.';
-$string['dstdefaultpresetname'] = 'New DST Preset';
 $string['nth'] = '{$a}st';
 $string['dsthumanreadable'] = 'On the $a->activate_index $a->activate_weekday of each $a->activate_month, move the time $a->offset minutes $a->direction. This change lasts until the $a->deactivate_index $a->deactivate_weekday of $a->deactivate_month.';
 $string['dstadjusttime'] = 'Move time';

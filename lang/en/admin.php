@@ -85,31 +85,22 @@ $string['configvariables'] = 'Variables';
 $string['configwarning'] = 'Be careful modifying these settings - strange values could cause problems.';
 $string['configzip'] = 'Indicate the location of your zip program (Unix only, optional).  If specified, this will be used to create zip archives on the server.  If you leave this blank, then Moodle will use internal routines.';
 $string['confirmation'] = 'Confirmation';
-$string['confirmdeletedst'] = 'Deleting the preset named <strong>$a</strong> will immediately disable DST for all users of that preset. This could possibly change their perception of time without warning. Are you sure you want to continue?';
-$string['confirmdeletedstdefault'] = '<strong>The preset named $a is being used for all users of this site!</strong> Deleting it will change their perception of time without warning. Are you sure you want to continue?';
 $string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours. <br />The <a href=\"../doc/?frame=install.html&sub=cron\">installation documentation</a> explains how you can automate this.';
 $string['dstpresetforced'] = 'This is forced by the site administrator';
-$string['emptydstlist'] = 'There are currently no DST presets defined. You can add one by clicking on the Add button.';
-$string['editingtimezone'] = 'Editing a timezone';
 $string['edithelpdocs'] = 'Edit help documents';
 $string['editstrings'] = 'Edit strings';
-$string['errordstpresetactivateearlier'] = 'The month of activation must be earlier than the month of deactivation';
-$string['errordstpresetnameempty'] = 'The preset name cannot be empty';
-$string['errordstpresetnameexists'] = 'Another preset with that name already exists';
 $string['filteruploadedfiles'] = 'Filter uploaded files';
 $string['helpadminseesall'] = 'Do admins see all calendar events or just those that apply to themselves?';
 $string['helpcalendarsettings'] = 'Configure various calendar and date/time-related aspects of Moodle';
 $string['helpforcetimezone'] = 'You can allow users to individually select their timezone, or force a timezone for everyone.';
-$string['helpmanagetimezones'] = 'You can manually add, edit and delete the timezone profiles for this site, or you can let Moodle automatically update and download new profiles from moodle.org.';
+$string['helpmanagetimezones'] = 'You can let Moodle automatically update and download new profiles from moodle.org.';
 $string['helpsitemaintenance'] = 'For upgrades and other work';
 $string['helpstartofweek'] = 'Which day starts the week in the calendar?';
 $string['helpupcominglookahead'] = 'How many days in the future does the calendar look for upcoming events by default?';
 $string['helpupcomingmaxevents'] = 'How many (maximum) upcoming events are shown to users by default?';
 $string['helpweekenddays'] = 'Which days of the week are treated as \"weekend\" and shown with a different colour?';
-$string['managetimezones'] = 'Manage timezone profiles';
 $string['nodstpresetsexist'] = 'DST support is disabled for all users because there are no DST presets defined. You can define some presets using the button below.';
 $string['optionalmaintenancemessage'] = 'Optional maintenance messsage';
-$string['returntocalendaroptions'] = 'Return to calendar options';
 $string['sitemaintenance'] = 'The site is undergoing maintenance and is currently not available';
 $string['sitemaintenancemode'] = 'Maintenance mode';
 $string['sitemaintenanceon'] = 'Your site is currently in maintenance mode (only admins can log in or use the site).';
@@ -118,12 +109,10 @@ $string['sitemaintenancewarning'] = 'Your site is currently in maintenance mode 
 $string['tabselectedtofront'] = 'On tables with tabs, should the row with the currently selected tag be placed at the front';
 $string['timezonenotforced'] = 'Users can choose their own timezone';
 $string['timezoneisforcedto'] = 'Force all users to use';
-$string['timezones'] = 'Timezones';
 $string['therewereerrors'] = 'There were errors in your data';
 $string['updatetimezones'] = 'Automatically update profiles';
 $string['upgradelogs'] = 'For full functionality, your old logs need to be upgraded.  <a href=\"$a\">More information</a>';
 $string['upgradelogsinfo'] = 'Some changes have recently been made in the way logs are stored.  To be able to view all of your old logs on a per-activity basis, your old logs need to be upgraded.  Depending on your site this can take a long time (eg several hours) and can be quite taxing on the database for large sites.  Once you start this process you should let it finish (by keeping the browser window open).  Don\'t worry - your site will work fine for other people while the logs are being upgraded.<br /><br />Do you want to upgrade your logs now?';
-
 $string['upgradesure'] = 'Your Moodle files have been changed, and you are about to automatically upgrade your server to this version:
 <p><b>$a</b></p>
 <p>Once you do this you can not go back again.</p> 
