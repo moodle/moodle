@@ -156,13 +156,13 @@ $string['emailconfirm'] = "Conferma il tuo account";
 $string['emailconfirmation'] = "Salve \$a->firstname,
 Un nuovo account è stato richiesto a '\$a->sitename' usando il tuo indirizzo di posta elettronica.
 
-
 Per confermare il tuo nuovo account, devi cliccare sul seguente link:
 
   \$a->link
 
 In molti programmi di posta, questo dovrebbe apparire come un link colorato di blu sul quale è sufficiente cliccare. Se in questo modo non dovesse funzionare, allora taglia e incolla il link nella finestra degli indirizzi in alto nel tuo browser e premi invio.
-Saluti dall'amministratore \$a->admin  del sito '\$a->sitename'";
+
+Saluti dall'amministratore \$a->admin";
 $string['emailconfirmationsubject'] = "\$a: conferma iscrizione";
 $string['emailconfirmsent'] = "<P>Una email è stata inviata al tuo indirizzo <B>\$a</B>
 <P> contiene istruzioni per completare la tua registrazione.
@@ -617,15 +617,8 @@ $string['weekshow'] = "Mostra questa settimana a \$a";
 $string['welcometocourse'] = "Benvenuto(a) a \$a";
 $string['welcometocoursetext'] = "Benvenuto(a) a \$a->coursename!
 
-
-
-Una delle prime cose che dovresti fare è quella di editare la pagina col tuo profilo nel corso in modo tale che possiamo avere maggiori informazioni su di te:
-
-
-
-\$a->prfileurl
-
 Una delle prime cose che dovresti fare è di pubblicare il tuo profilo nella tua pagina all'interno del corso in modo da poterti conoscere meglio:
+
   \$a->profileurl";
 $string['withchosenfiles'] = "Con i files scelti";
 $string['withoutuserdata'] = "senza dati utente";

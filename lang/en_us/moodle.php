@@ -139,7 +139,7 @@ which you can just click on.  If that doesn't work,
 then cut and paste the address into the address
 line at the top of your web browser window.
 
-Cheers from the '\$a->sitename' administrator,
+If you need help, please contact the site administrator,
 \$a->admin";
 $string['emailconfirmsent'] = "   <P>An email should have been sent to your address at <B>\$a</B>
    <P>It contains easy instructions to complete your registration.

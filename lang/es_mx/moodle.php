@@ -126,31 +126,21 @@ $string['editthisactivity'] = "Editar esta actividad";
 $string['edituser'] = "Editar usuario";
 $string['email'] = "Dirección de correo";
 $string['emailconfirm'] = "Confirme su cuenta";
-$string['emailconfirmation'] = "Hola \$a->firstname,
-
-
-
-Alguien, seguramente usted, ha solicitado la apertura de una cuenta en '\$a->sitename' utilizando esta dirección de correo.
-
-
-
-Para completar el proceso de inscripción haga clic aquí:
-
-
-
-  \$a->link
-
-
-
-Si usted no lo ha solicitado, ignore esta mensaje.
-
-Felicitaciones 
-
+$string['emailconfirmation'] = "Hola \$a->firstname,
+Alguien, seguramente usted, ha solicitado la apertura de una cuenta 
+en '\$a->sitename' utilizando esta dirección de correo.
+
+Para completar el proceso de inscripción haga clic aquí:
+
+  \$a->link
+
+Si usted no lo ha solicitado, ignore esta mensaje.
+
+Felicitaciones 
+
 \$a->admin";
-$string['emailconfirmsent'] = "   <P>Hemos enviado un correo electrónico a <B>\$a</B>,
-
-   <P>ahí encontrará instrucciones sencillas para concluir el proceso.
-
+$string['emailconfirmsent'] = "   <P>Hemos enviado un correo electrónico a <B>\$a</B>,
+   <P>ahí encontrará instrucciones sencillas para concluir el proceso.
    <P>Si enfrenta alguna dificultad contace al Administrador del Sistema.";
 $string['emaildisplay'] = "Mostrar correo";
 $string['emaildisplaycourse'] = "Mostrar mi dirección de correo sólo a mis compañeros de curso";
@@ -160,11 +150,11 @@ $string['emailexists'] = "Esta dirección de correo ya está registrada.";
 $string['emailformat'] = "Formato de correo";
 $string['emailmustbereal'] = "IMPORTANTE: Para concluir el proceso debe colocar su verdadera dirección";
 $string['enrolmentkey'] = "Llave de acceso";
-$string['enrolmentkeyfrom'] = "Este curso requiere el uso de una 'llave de acceso'<BR>
-
+$string['enrolmentkeyfrom'] = "Este curso requiere el uso de una 'llave de acceso'<BR>
+
 que podrá obtener con \$a";
-$string['enrolmentkeyhint'] = "Esta 'llave de acceso' es incorrecta, por favor trate nuevamente<BR>
-
+$string['enrolmentkeyhint'] = "Esta 'llave de acceso' es incorrecta, por favor trate nuevamente<BR>
+
 (Una pista: comienza con '\$a')";
 $string['entercourse'] = "Clic aquí para entrar al curso";
 $string['enteremailaddress'] = "Escriba su dirección de correo. Una nueva contraseña le será enviada.";
@@ -198,18 +188,16 @@ $string['gd1'] = "GD 1.x instalado";
 $string['gd2'] = "GD 2.x instalado";
 $string['gdneed'] = "GD debe estar instalado para ver este gráfico.";
 $string['gdnot'] = "GD no instalado";
-$string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)<BR> Traducción: Claudio Tavares (http://enlaceacademico.com)
-
-
-
-Este programa es software gratuito; Ud. puede redistribuirlo y/o modificarlo
-
-bajo los términos de GNU General Public License según la publicación
-
-de The Free Software Foundation; incluso la versión 2 o alguna posterior.
-
-<BR>
-
+$string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)<BR> Traducción: Claudio Tavares (http://enlaceacademico.com)
+
+Este programa es software gratuito; Ud. puede redistribuirlo y/o modificarlo
+
+bajo los términos de GNU General Public License según la publicación
+
+de The Free Software Foundation; incluso la versión 2 o alguna posterior.
+
+<BR>
+
 Para más detalles vea: http://www.gnu.org/copyleft/gpl.html";
 $string['grade'] = "Calificación";
 $string['grades'] = "Calificaciones";
@@ -267,29 +255,29 @@ $string['login'] = "Acceso";
 $string['loginas'] = "Entrar como";
 $string['loginguest'] = "Entrar como invitado";
 $string['loginsite'] = "Entrar al sitio";
-$string['loginsteps'] = "Para acceder al sistema tómese un minuto para
-
-crear una cuenta.
-
-   <P>	 Estos son los pasos:
-
-   <OL size=2>
-
-   <LI>Llene la <A HREF=\$a>Forma de registro</A>.
-
-   <LI>El sistema le enviará un correo para verificar que su dirección esté correcta.
-
-   <LI>Lea el correo y confirme su matrícula.
-
-   <LI>Si algún curso en particular le solicita una &quot;llave de acceso&quot; utilice la que le brindaron cuando se matriculó.
-
-   <LI>A partir de ese momento no necesitará utilizar más que su nombre y contraseña.
-
+$string['loginsteps'] = "Para acceder al sistema tómese un minuto para
+
+crear una cuenta.
+
+   <P>	 Estos son los pasos:
+
+   <OL size=2>
+
+   <LI>Llene la <A HREF=\$a>Forma de registro</A>.
+
+   <LI>El sistema le enviará un correo para verificar que su dirección esté correcta.
+
+   <LI>Lea el correo y confirme su matrícula.
+
+   <LI>Si algún curso en particular le solicita una &quot;llave de acceso&quot; utilice la que le brindaron cuando se matriculó.
+
+   <LI>A partir de ese momento no necesitará utilizar más que su nombre y contraseña.
+
    </OL>";
-$string['loginstepsnone'] = "Hola.<P>Para acceder a todos los cursos necesita crear
-
-una cuenta.<P>Todo lo que tiene que hacer es inscribirse en esta página.
-
+$string['loginstepsnone'] = "Hola.<P>Para acceder a todos los cursos necesita crear
+
+una cuenta.<P>Todo lo que tiene que hacer es inscribirse en esta página.
+
 <P>";
 $string['loginto'] = "Entrar a \$a";
 $string['loginusing'] = "Entre aquí usando su nombre y contraseña";
@@ -344,28 +332,20 @@ $string['never'] = "Nunca";
 $string['new'] = "Nuevo";
 $string['newaccount'] = "Nueva cuenta";
 $string['newpassword'] = "Nueva contraseña";
-$string['newpasswordtext'] = "Hola \$a->firstname,
-
-
-
-La contraseña de su cuenta en '\$a->sitename' se ha cancelado y se le otorgado una nueva contraseña temporal.
-
-
-
-   Nombre de usuario: \$a->username
-
-   contraseña: \$a->newpassword
-
-
-
-Dirígase a esta página y cambie su contraseña temporal por una que pueda recordar mejor:
-
-   \$a->link
-
-
-
-Atte. '\$a->sitename' El Administrador,
-
+$string['newpasswordtext'] = "Hola \$a->firstname,
+
+La contraseña de su cuenta en '\$a->sitename' se ha cancelado y se le otorgado una nueva contraseña temporal.
+
+   Nombre de usuario: \$a->username
+
+   contraseña: \$a->newpassword
+
+Dirígase a esta página y cambie su contraseña temporal por una que pueda recordar mejor:
+
+   \$a->link
+
+Atte. '\$a->sitename' El Administrador,
+
 \$a->signoff";
 $string['newpicture'] = "Imagen nueva";
 $string['newsitem'] = "nuevo ítem";
@@ -409,12 +389,12 @@ $string['passwordchanged'] = "La contraseña ha cambiado";
 $string['passwordrecovery'] = "Sí, ayúdeme a entrar";
 $string['passwordsdiffer'] = "Las contraseñas son diferentes";
 $string['passwordsent'] = "Se ha enviado la contraseña";
-$string['passwordsenttext'] = "   <P>El sistema ha enviado un correo electrónico a \$a->email.
-
-   <P><B>Revise su correo para recibir una nueva contraseña</B>
-
-   <P>La nueva contraseña se genera automáticamente, por lo que tal vez Ud. desee
-
+$string['passwordsenttext'] = "   <P>El sistema ha enviado un correo electrónico a \$a->email.
+
+   <P><B>Revise su correo para recibir una nueva contraseña</B>
+
+   <P>La nueva contraseña se genera automáticamente, por lo que tal vez Ud. desee
+
    <A HREF=\$a->link>cambiarla</A> por una que le sea más fácil recordar.";
 $string['people'] = "Personas";
 $string['personalprofile'] = "Información personal";
@@ -465,8 +445,8 @@ $string['sites'] = "Sitios";
 $string['sitesettings'] = "Configurar página";
 $string['size'] = "Tamaño";
 $string['socialheadline'] = "Foro social, últimos temas";
-$string['someallowguest'] = "Si solamente desea ver el funcionamiento de la plataforma puede entrar como invitado. Esto le permitirá ver algunos cursos, pero no podrá 
-
+$string['someallowguest'] = "Si solamente desea ver el funcionamiento de la plataforma puede entrar como invitado. Esto le permitirá ver algunos cursos, pero no podrá 
+
 participar en ellos (escribir, etc.) Para entrar como invitado haga clic aquí";
 $string['someerrorswerefound'] = "Alguna información está incorrecta. Abajo aparecen más detalles.";
 $string['startdate'] = "Fecha de inicio del curso";
@@ -535,16 +515,16 @@ $string['webpage'] = "Página web";
 $string['week'] = "Semana";
 $string['weeklyoutline'] = "Diagrama semanal";
 $string['welcometocourse'] = "Bienvenido a \$a";
-$string['welcometocoursetext'] = "Bienvenido a \$a->coursename
-
-
-
-Lo primero que debe hacer es actualizar su información personal,
-
-así podremos saber algo más sobre usted.
-
-
-
+$string['welcometocoursetext'] = "Bienvenido a \$a->coursename
+
+
+
+Lo primero que debe hacer es actualizar su información personal,
+
+así podremos saber algo más sobre usted.
+
+
+
   \$a->profileurl";
 $string['withchosenfiles'] = "Con los archivos escojidos";
 $string['wordforstudent'] = "Su palabra para estudiante";

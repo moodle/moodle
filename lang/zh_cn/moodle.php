@@ -153,94 +153,31 @@ $string['editthisactivity'] = "编辑这个活动项目";
 $string['edituser'] = "编辑用户帐号";
 $string['email'] = "Email地址";
 $string['emailconfirm'] = "确认你的帐号";
-$string['emailconfirmation'] = "\$a->lastname ：<br>
+$string['emailconfirmation'] = "\$a->lastname ：
 
+你好！
 
+刚才你用你的电子邮箱地址在‘ \$a->sitename ’上申请了一个新帐号。
 
-
-
-
-
-&nbsp;&nbsp;&nbsp;&nbsp;你好！<br>
-
-
-
-
-
-
-
-&nbsp;&nbsp;&nbsp;&nbsp;刚才你用你的电子邮箱地址在‘ \$a->sitename ’上申请了一个新帐号。
-
-
-
-
-
-
-
-&nbsp;&nbsp;&nbsp;&nbsp;如果要确认你的新帐号，请点击以下链接：<br>
-
-
-
-
-
-
+如果要确认你的新帐号，请点击以下链接：
 
   \$a->link
 
-
-
-
-
-
-
-<br>&nbsp;&nbsp;&nbsp;&nbsp;在多数的邮件软件中，这个地址应该显示为蓝色的链接。如果不是这样，请将以上地址复制粘贴到网页浏览器（比如IE或netscape等）的地址栏，打开这个网页。<br>
-
-
-
-
-
+在多数的邮件软件中，这个地址应该显示为蓝色的链接。如果不是这样，请将以上地址复制粘贴到网页浏览器（比如IE或netscape等）的地址栏，打开这个网页。
 
 
 致
 
+敬礼！
 
+‘ \$a->sitename ’管理员
 
-
-
-
-
-&nbsp;&nbsp;&nbsp;&nbsp;敬礼！
-
-
-
-
-
-
-
-<P align=right>‘ \$a->sitename ’管理员<br>
-
-
-
-
-
-
-
-\$a->admin </P>";
+\$a->admin";
 $string['emailconfirmationsubject'] = "\$a ：帐号确认";
 $string['emailconfirmsent'] = "   <P>一封电子邮件已经发送到你的地址 <B> \$a </B>。
 
 
-
-
-
-
-
    <P>这封邮件简要说明了你如何完成注册。
-
-
-
-
-
 
 
    <P>如果你还遇到什么困难，请和网站管理员联系。";
@@ -253,114 +190,40 @@ $string['emailformat'] = "Email格式";
 $string['emailmustbereal'] = "注意：你的email地址必须是真实的";
 $string['emailpasswordconfirmation'] = "\$a->firstname ：
 
+你好!
 
+有人(很可能是你自己)为你在“ \$a->sitename ”上的帐号申请了新的密码。
 
+如果你要确认申请，并希望通过email获取新密码，请点击以下链接：
 
+    \$a->link
 
+在多数邮件软件(如outlook)中该链接应该显现为蓝色的链接，你只需点击它。如果它不能正常工作，那么请你复制该地址，然后粘贴到网页浏览器的地址栏中，按回车键，就可以到达。
 
-
-&nbsp;&nbsp;&nbsp;&nbsp;你好!<br>
-
-
-
-
-
-
-
-&nbsp;&nbsp;&nbsp;&nbsp;有人(很可能是你自己)为你在“ \$a->sitename ”上的帐号申请了新的密码。<br>
-
-
-
-
-
-
-
-&nbsp;&nbsp;&nbsp;&nbsp;如果你要确认申请，并希望通过email获取新密码，请点击以下链接：<br>
-
-
-
-
-
-
-
-\$a->link <br>
-
-
-
-
-
-
-
-&nbsp;&nbsp;&nbsp;&nbsp;在多数邮件软件(如outlook)中该链接应该显现为蓝色的链接，你只需点击它。如果它不能正常工作，那么请你复制该地址，然后粘贴到网页浏览器的地址栏中，按回车键，就可以到达。<br>
-
-
-
-
-
-
-
-&nbsp;&nbsp;&nbsp;&nbsp;如果你需要帮助，请联系管理员 \$a->admin 。
-
-
-
-
-
-
-
+如果你需要帮助，请联系管理员 \$a->admin 。
 ";
 $string['emailpasswordconfirmationsubject'] = "\$a ：确认更改密码";
 $string['emailpasswordconfirmsent'] = "一封email已经发送到你的邮箱<b>\$a</b>。
 
-
-
-
-
-
-
 <p>其中有关于如何确认并完成本次密码更改的简单说明。
-
-
-
-
-
 
 
 如果你还是有困难，请联系管理员。";
 $string['emailpasswordsent'] = "谢谢你对更改密码做了确认。
 
-
-
 <p>你的新密码已经通过email发送到你的邮箱：<b>\$a->email</b>
-
-
 
 <P>这个新密码是自动生成的——你最好到<a href=\$a->link>这里</a>改成你自己容易记的密码。";
 $string['enrolmentkey'] = "选课密钥";
 $string['enrolmentkeyfrom'] = "该课程需要‘选课密钥’——<BR>
 
-
-
-
-
-
-
 一个从 \$a 获得的一次性密码";
 $string['enrolmentkeyhint'] = "这个选课密钥不正确，请再试一次<BR>
-
-
-
-
-
 
 
 （提示：以'\$a'开头）";
 $string['entercourse'] = "点击进入该课程";
 $string['enteremailaddress'] = "输入你的email地址以重设密码，
-
-
-
-
-
 
 
 新密码将送到你的信箱中。";
@@ -400,27 +263,9 @@ $string['gdneed'] = "要看到该图必须安装GD";
 $string['gdnot'] = "GD没有安装";
 $string['gpl'] = "版权所有 (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
 
-
-
-
-
-
-
 该系统是自由软件；你可以按照自由软件基金会所公布的GNU通用公共许可证（GPL）进行修改或重新发布；许可证可以是第2版或更新的版本。
 
-
-
-
-
-
-
 发布该软件是希望它有用有益，但不提供任何形式的担保，不论是明确的还是隐含的，包括但不限于可销售和适合特定用途的隐含保证。详见GNU通用公共许可证：
-
-
-
-
-
-
 
 http://www.gnu.org/copyleft/gpl.html";
 $string['grade'] = "得分";
@@ -495,75 +340,21 @@ $string['loginguest'] = "作为访客登录";
 $string['loginsite'] = "登录该站";
 $string['loginsteps'] = "嗨，你好！为了完全访问所有课程，你必须花一两分钟时间申请一个新帐号。各个课程可能还需要一个一次性的“选课密钥”，用过一次以后就不再需要。请按以下步骤：
 
-
-
-
-
-
-
    <OL size=2>
-
-
-
-
-
-
 
    <LI>填写<A HREF= \$a >注册新帐号</A>上的关于个人情况的表单。
 
-
-
-
-
-
-
    <LI>一封email会马上发送到你的email信箱中。
-
-
-
-
-
-
 
    <LI>阅读这封email，点击信中包含的网页链接。
 
-
-
-
-
-
-
    <LI>你的帐号会马上得到确认，而你也将登录到本站中。
-
-
-
-
-
-
 
    <LI>然后，选择你想选修的课程。
 
-
-
-
-
-
-
    <LI>如果系统提示“选课密钥”，请用你的老师提供给你的密钥。这样才能注册到该课程中。
 
-
-
-
-
-
-
    <LI>这时你可以完全访问课程。从此后你只需输入你个人的用户名和密码（在本页面的表单中）以登录并进入任一个你已注册的课程。
-
-
-
-
-
-
 
    </OL>";
 $string['loginstepsnone'] = "嗨！<P>为了完全访问课程你必须申请一个新帐号。<P>你所需要做的是创建一个用户名和密码，并在本页面中使用。<P>如果别人已经申请了相同的用户名，只好请你委屈一下用别的用户名重试。";
@@ -630,111 +421,19 @@ $string['new'] = "新";
 $string['newaccount'] = "新帐号";
 $string['newcourse'] = "新课程";
 $string['newpassword'] = "新密码";
-$string['newpasswordtext'] = "\$a->lastname ：<br>
-
-
-
-
-
-
-
-&nbsp;&nbsp;&nbsp;&nbsp;你好！ 
-
-
-
-
-
-
-
-<br>&nbsp;&nbsp;&nbsp;&nbsp;你在‘ \$a->sitename ’上的帐号密码已被重设，这是你新的临时密码。
-
-
-
-
-
-
-
-<br>&nbsp;&nbsp;&nbsp;&nbsp;现在你的登录信息是：
-
-
-
-
-
-
-
-<br>&nbsp;&nbsp;&nbsp;&nbsp;   用户名： \$a->username
-
-
-
-
-
-
-
-<br>&nbsp;&nbsp;&nbsp;&nbsp;   密码： \$a->newpassword
-
-
-
-
-
-
-
-<br>&nbsp;&nbsp;&nbsp;&nbsp;请到这里更改你的密码：
-
-
-
-
-
-
-
+$string['newpasswordtext'] = "\$a->lastname ：
+你好！ 
+你在‘ \$a->sitename ’上的帐号密码已被重设，这是你新的临时密码。
+现在你的登录信息是：
+ 用户名： \$a->username
+ 密码： \$a->newpassword
+请到这里更改你的密码：
    \$a->link
-
-
-
-
-
-
-
-<br>&nbsp;&nbsp;&nbsp;&nbsp;在多数的邮件软件中，这个地址应该显示为蓝色的链接。如果不是这样，请将以上地址复制粘贴到网页浏览器（比如IE或netscape等）的地址栏，打开这个网页。<br>
-
-
-
-
-
-
-
+在多数的邮件软件中，这个地址应该显示为蓝色的链接。如果不是这样，请将以上地址复制粘贴到网页浏览器（比如IE或netscape等）的地址栏，打开这个网页。
 致
-
-
-
-
-
-
-
-<br>&nbsp;&nbsp;&nbsp;&nbsp;敬礼！
-
-
-
-
-
-
-
-<P align=right>'\$a->sitename'管理员<br>
-
-
-
-
-
-
-
-\$a->signoff
-
-
-
-
-
-
-
-</P>";
+敬礼！
+'\$a->sitename'管理员
+\$a->signoff";
 $string['newpicture'] = "新照片";
 $string['newsitem'] = "新闻条目";
 $string['newsitems'] = "新闻条目";
@@ -787,27 +486,9 @@ $string['passwordsdiffer'] = "这些密码不对";
 $string['passwordsent'] = "密码已被发送";
 $string['passwordsenttext'] = "   <P>一封email已经送到你的邮箱 \$a->email。
 
-
-
-
-
-
-
    <P><B>请查收你的email以获取密码。</B>
 
-
-
-
-
-
-
    <P>这个新密码是自动生成的，所以你可能需要点击
-
-
-
-
-
-
 
    <A HREF= \$a->link >这里</A>改成你自己容易记的密码。";
 $string['people'] = "人物";
@@ -955,19 +636,7 @@ $string['weekshow'] = "显示这个星期于 \$a";
 $string['welcometocourse'] = "欢迎来到 \$a";
 $string['welcometocoursetext'] = "欢迎你来 \$a->coursename！
 
-
-
-
-
-
-
 你首先要做的一件事情是编辑你的个人信息，以便我们更好地了解你：
-
-
-
-
-
-
 
   \$a->profileurl";
 $string['withchosenfiles'] = "用选中的文件";

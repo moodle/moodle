@@ -121,7 +121,22 @@ $string['editthisactivity'] = "Editar esta atividade";
 $string['edituser'] = "Editar contas de usuários";
 $string['email'] = "Endereço de e-mail";
 $string['emailconfirm'] = "Confirmar seu registro";
-$string['emailconfirmation'] = "Olá \$a->firstname, Uma nova conta foi solicitada a '\$a->sitename' usando seu endereço de email. Para confonfirmar seu registro, por favor acesse este endereço:  \$a->link Em seu programa de e-mail, isto deve aparecer como um vínculo azul  o qual você poderá clicar.  Se isso não funcionar, então recorte e cole o endereço na barra de endereço do se navegador.  Congratulações da '\$a->sitename'. Responsável pelo sistema, \$a->admin";
+$string['emailconfirmation'] = "Olá \$a->firstname, 
+
+Uma nova conta foi solicitada a '\$a->sitename' usando seu endereço de email. 
+
+Para confonfirmar seu registro, por favor acesse este endereço:  
+
+   \$a->link 
+   
+Em seu programa de e-mail, isto deve aparecer como um vínculo azul  
+o qual você poderá clicar.  Se isso não funcionar, então recorte e 
+cole o endereço na barra de endereço do se navegador.  
+
+Congratulações da '\$a->sitename'. 
+
+Responsável pelo sistema, 
+\$a->admin";
 $string['emailconfirmsent'] = "<P>Um email deveria ter sido enviado a seu endereço a <B>\$a</B><P>Contém instruções fáceis para completar sua inscrição.   <P>Se você continua tendo dificuldade, contacte o administrador de local.";
 $string['emaildisplay'] = "Visualizar e-mail";
 $string['emaildisplaycourse'] = "Permitir só outros participantes do curso ver meu endereço de email";

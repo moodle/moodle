@@ -134,9 +134,22 @@ $string['emailconfirmsent'] = "
    <P>email by mal by» posielaný na va¹u adresu <B>\$a</B>
    <P>Obsahuje jednoduchý návod na ukonèenie va¹ej registrácie.
    <P>Ak problémy pretrvávajú kontaktujte administrátora stránky.";
-$string['emailconfirmation'] = "Ahoj \$a->firstname,Po¾iadali ste o nové konto u '\$a->sitename'
-pou¾ívajúce va¹u emailovú adresu. Na potvrdenie vá¹ho nového konta, choïte prosím na nasledujúcu webovú adresu:  \$a->link vo väè¹ine emailových programoch by sa to malo objavi» ako modrá linka, na ktorú staèí kliknú». Ak to nefunguje skopírujte adresu do riadku pre adresu vo vrchnej èasti okna vá¹ho web prehliadaèa.
-S pozdravom od '\$a->sitename' administrátora,       \$a->admin";
+$string['emailconfirmation'] = "Ahoj \$a->firstname,
+
+Po¾iadali ste o nové konto u '\$a->sitename'
+pou¾ívajúce va¹u emailovú adresu. Na potvrdenie vá¹ho nového konta, 
+choïte prosím na nasledujúcu webovú adresu:  
+
+  \$a->link 
+  
+vo väè¹ine emailových programoch by sa to malo objavi» ako 
+modrá linka, na ktorú staèí kliknú». Ak to nefunguje 
+skopírujte adresu do riadku pre adresu vo vrchnej èasti 
+okna vá¹ho web prehliadaèa.
+
+S pozdravom od '\$a->sitename' administrátora,
+
+\$a->admin";
 
 $string['emaildisplay'] = "Zobrazenie emailov";
 $string['emaildisplayno'] = "Ukry» moju skutoènú emailovú adresu pre v¹etkých";

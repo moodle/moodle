@@ -129,10 +129,13 @@ $string['emailconfirm'] = "Confirmã-þi contul";
 $string['emailconfirmation'] = "Salut \$a->firstname,
 A fost solicitata deschiderea unui cont nou pe site-ul '\$a->sitename' folosindu-se adresa ta de e-mail.
 Pentru a confirma noul tau cont, te rog du-te la adresa urmatoare:
+
   \$a->link
+
 In cele mai multe programe, aceasta trebuie sa apara ca un link albastru pe care poti sa apesi. Dacã nu functioneaza,
 atunci copiaza, apoi lipeste adresa in rubrica Address a browserului web pe care-l folosesti.
 Numai gânduri bune de la administratorul site-ului '\$a->sitename'.
+
 \$a->admin";
 $string['emailconfirmsent'] = "   <P>Un email a fost trimis la adresa ta e-mail <B>\$a</B><P>Mesajul conþine instrucþiuni cu privire la finalizarea înregistrãrii.<P>Dacã întâmpini totuºi dificultãþi, ia legãtura cu administratorul site-ului.";
 $string['emaildisplay'] = "Aratã e-mail";
