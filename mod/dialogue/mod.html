@@ -1,13 +1,4 @@
 <?php
-	// set the defaults...
-    if ($usehtmleditor = can_use_richtext_editor()) {
-        $defaultformat = FORMAT_HTML;
-        $onsubmit = "onsubmit=\"copyrichtext(document.form.description);\"";
-    } else {
-        $defaultformat = FORMAT_MOODLE;
-        $onsubmit = "";
-    }
-	// ...and fill the form if needed
     if (!isset($form->name)) {
         $form->name = "";
     }
@@ -29,7 +20,7 @@
 print_heading_with_help(get_string("furtherinformation", "dialogue"), "info", "dialogue"); 
 ?>
 
-<form name="form" method="post" <?php echo $onsubmit ?> action="mod.php">
+<form name="form" method="post" action="mod.php">
 <table cellpadding=5>
 <tr valign=top>
     <td align=right><p><b><?php print_string("dialoguename", "dialogue") ?>:</b></p></td>
@@ -50,7 +41,7 @@ print_heading_with_help(get_string("furtherinformation", "dialogue"), "info", "d
     
     </TD>
     <td>
-        <textarea name="intro" rows=15 cols=30 wrap="virtual"><?php p($form->intro) ?></textarea>
+        <?php print_textarea($usehtmleditor, 20, 50, 680, 400, "intro", $form->intro); ?>
     </td>
 </tr>
 <tr valign=top>

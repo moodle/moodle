@@ -30,7 +30,7 @@
         $form->rssarticles = 0;
     }
 ?>
-<form name="form" method="post" <?php echo $onsubmit ?> action="mod.php">
+<form name="form" method="post" action="mod.php">
 <table cellpadding=5>
 <tr>
 <tr valign=top>
@@ -77,7 +77,7 @@
     </font>
     </td>
     <td>
-        <textarea name="intro" rows=4 cols=50 wrap="virtual"><?php p($form->intro) ?></textarea>
+        <?php print_textarea($usehtmleditor, 20, 50, 680, 400, "intro", $form->intro); ?>
     </td>
 </tr>
 

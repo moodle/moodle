@@ -184,7 +184,7 @@
     print_footer($course);
 
     if ($usehtmleditor) {
-        use_html_editor();
+        use_html_editor("summary");
     }
 
     exit;

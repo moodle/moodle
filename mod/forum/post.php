@@ -403,7 +403,7 @@
     print_simple_box_end();
 
     if ($usehtmleditor) {
-        use_html_editor();
+        use_html_editor("message");
     }
 
     print_footer($course);

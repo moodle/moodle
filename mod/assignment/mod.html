@@ -1,9 +1,4 @@
 <?php
-    if ($usehtmleditor = can_use_richtext_editor()) {
-        $defaultformat = FORMAT_HTML;
-    } else {
-        $defaultformat = FORMAT_MOODLE;
-    }
     if (empty($form->name)) {
         $form->name = "";
     }
@@ -30,15 +25,15 @@
     }
 ?>
 
-<form name="form" method="post" <?php echo $onsubmit ?> action="mod.php">
-<table cellpadding=5>
-<tr valign=top>
+<form name="form" method="post" action="mod.php">
+<table cellpadding="5">
+<tr valign="top">
     <td align=right><p><b><?php print_string("assignmentname", "assignment") ?>:</b></p></td>
     <td>
         <input type="text" name="name" size=60 value="<?php p($form->name) ?>">
     </td>
 </tr>
-<tr valign=top>
+<tr valign="top">
     <td align=right><p><b><?php print_string("description", "assignment") ?>:</b></p>
     <font size="1">
      <?php
@@ -59,23 +54,27 @@
     <?php
        print_textarea($usehtmleditor, 20, 60, 680, 400, "description", $form->description);
     
-       echo "<p align=right>";
-       helpbutton("textformat", get_string("formattexttype"));
-       print_string("formattexttype");
-       echo ":&nbsp;";
-       if (!$form->format) {
-           $form->format = $defaultformat;
+       if ($usehtmleditor) {
+           echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
+       } else {
+           echo '<p align="right">';
+           helpbutton("textformat", get_string("formattexttype"));
+           print_string("formattexttype");
+           echo ':&nbsp;';
+           if (!$form->format) {
+               $form->format = $defaultformat;
+           }
+           choose_from_menu(format_text_menu(), "format", $form->format, ""); 
+           echo '</p>';
        }
-       choose_from_menu(format_text_menu(), "format", $form->format, ""); 
-       echo "</p>";
     ?>
     </td>
 </tr>
-<tr valign=top>
+<tr valign="top">
     <td align=right><p><b><?php print_string("assignmenttype", "assignment") ?>:</b></p></td>
     <td>
     <?php
-       require("$CFG->dirroot/mod/assignment/lib.php");
+       require_once("$CFG->dirroot/mod/assignment/lib.php");
        asort($ASSIGNMENT_TYPE);
        choose_from_menu($ASSIGNMENT_TYPE, "type", $form->type, "");
        helpbutton("assignmenttype", get_string("assignmenttype", "assignment"), "assignment");
@@ -119,21 +118,14 @@
 </table>
 <br />
 <center>
-<input type="hidden" name=course     value="<?php p($form->course) ?>">
-<input type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
-<input type="hidden" name=section       value="<?php p($form->section) ?>">
-<input type="hidden" name=module     value="<?php p($form->module) ?>">
-<input type="hidden" name=modulename value="<?php p($form->modulename) ?>">
-<input type="hidden" name=instance   value="<?php p($form->instance) ?>">
-<input type="hidden" name=mode       value="<?php p($form->mode) ?>">
-<input type="submit" value="<?php print_string("savechanges") ?>">
-<input type="submit" name=cancel value="<?php print_string("cancel") ?>">
+<input type="hidden" name=course     value="<?php p($form->course) ?>" />
+<input type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>" />
+<input type="hidden" name=section       value="<?php p($form->section) ?>" />
+<input type="hidden" name=module     value="<?php p($form->module) ?>" />
+<input type="hidden" name=modulename value="<?php p($form->modulename) ?>" />
+<input type="hidden" name=instance   value="<?php p($form->instance) ?>" />
+<input type="hidden" name=mode       value="<?php p($form->mode) ?>" />
+<input type="submit" value="<?php print_string("savechanges") ?>" />
+<input type="submit" name=cancel value="<?php print_string("cancel") ?>" />
 </center>
 </form>
-
-<?php 
-   if ($usehtmleditor) { 
-       print_richedit_javascript("form", "description", "yes");
-   }
-?>
-

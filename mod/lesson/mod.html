@@ -2,7 +2,8 @@
 <!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
 <?php
 
-require("$CFG->dirroot/mod/lesson/lib.php");  // for parameter array
+    require_once("$CFG->dirroot/mod/lesson/lib.php");  // for parameter array
+    $nohtmleditorneeded = true;
 
 // set the defaults
     if (empty($form->name)) {
@@ -38,6 +39,7 @@ require("$CFG->dirroot/mod/lesson/lib.php");  // for parameter array
     if (!isset($form->deadline)) {
         $form->deadline = 0;
     }
+
 ?>
 
 <FORM name="form" method="post" action="<?php echo $ME ?>">

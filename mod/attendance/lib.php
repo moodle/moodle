@@ -40,10 +40,11 @@ function attendance_add_instance($attendance) {
        $attendance->day = make_timestamp($attendance->theyear, 
 			   $attendance->themonth, $attendance->theday);
      }
+     $attendance->notes = $attendance->name;
      $attendance->name=userdate($attendance->day, get_string("strftimedate"));
-	 if (isset($attendance->notes)) { 
-	 	$attendance->name = $attendance->name . " - " . $attendance->notes;
-	 }
+	 if ($attendance->notes) { 
+	 	$attendance->name = $attendance->name . " - " .  $attendance->notes;
+	 }  
 	  $attendance->edited = 0;
 if ($attendance->dynsection) { 
 	if ($mod->course) {
@@ -78,10 +79,10 @@ function attendance_update_instance($attendance) {
 
      $attendance->day = make_timestamp($attendance->theyear, 
 			$attendance->themonth, $attendance->theday); 
+     $attendance->notes = $attendance->name;
      $attendance->name=userdate($attendance->day, get_string("strftimedate"));
 	 if ($attendance->notes) { 
-	 	$attendance->name = $attendance->name . " - " . 
-	 	  $attendance->notes;
+	 	$attendance->name = $attendance->name . " - " .  $attendance->notes;
 	 }  
   if ($attendance->dynsection) { 
 	    //get info about the course

@@ -91,7 +91,7 @@ class quiz_report extends quiz_default_report {
     $user_resps = qr_quiz_responses($thisquizid);
 //    //print_object($user_resps);
     foreach($user_resps as $thiskey => $thisresp){
-        $userdata[$thisresp->userid][$thisresp->attemptno]['response'][$thisresp->question]=$thisresp->answer;
+        $userdata[$thisresp->userid][$thisresp->attemptno]['response'][$thisresp->question]=s($thisresp->answer);
         $userdata[$thisresp->userid][$thisresp->attemptno]['grade']=$thisresp->sumgrades;
         $userdata[$thisresp->userid][$thisresp->attemptno]['name']=fullname($thisresp);
         $userdata[$thisresp->userid][$thisresp->attemptno]['attemptid']=$thisresp->aid;

@@ -90,7 +90,7 @@
 	include("edit.html");
 
     if ($usehtmleditor) {
-        use_html_editor();
+        use_html_editor("text");
     }
 
     print_footer($course);

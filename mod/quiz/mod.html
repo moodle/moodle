@@ -60,11 +60,25 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><p><b><?php print_string("introduction", "quiz") ?>:</b></p></td>
+    <td align=right><p><b><?php print_string("introduction", "quiz") ?>:</b></p>
+      <br />
+    <font size="1">
+     <?php
+        if ($usehtmleditor) {
+           helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
+        } else {
+           helpbutton("text", get_string("helptext"), "moodle", true, true); 
+           echo '<br />';
+           emoticonhelpbutton("form", "description");
+           echo '<br />';
+        } 
+      ?>
+      <br />
+      </font>
+    </td>
     <td>
-        <textarea name="intro" rows=4 cols=50 wrap="virtual"><?php p($form->intro) ?></textarea>
         <?php 
-           helpbutton("text", get_string("helptext")); 
+           print_textarea($usehtmleditor, 20, 50, 680, 400, "intro", $form->intro);
         ?>
     </td>
 </tr>

@@ -1,7 +1,5 @@
 <?PHP  // $Id$
 
-global $CFG;
-
 if (!isset($form->studentcanpost)) {
     $form->studentcanpost = $CFG->glossary_studentspost;
 }
@@ -74,7 +72,7 @@ if (!isset($form->showspecial)) {
      </font>
     </td>
     <td>
-        <textarea name="intro" rows=5 cols=50 wrap="virtual"><?php p($form->intro) ?></textarea>
+        <?php print_textarea($usehtmleditor, 20, 50, 680, 400, "intro", $form->intro); ?>
     </td>
 </tr>
 <TR valign=top>
