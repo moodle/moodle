@@ -153,6 +153,65 @@
     }
 
     echo '<td style="vertical-align: top;">';
+    
+    
+/// Print Section
+    if ($site->numsections > 0) {
+        echo "<table class=\"topicsoutline\" border=\"0\" cellpadding=\"8\" cellspacing=\"0\" width=\"100%\">";
+    
+        /// If currently moving a file then show the current clipboard
+        if (ismoving($site->id)) {
+            $stractivityclipboard = strip_tags(get_string("activityclipboard", "", addslashes($USER->activitycopyname)));
+            $strcancel= get_string("cancel");
+            echo "<tr>";
+            echo "<td colspan=3 valign=top bgcolor=\"$THEME->cellcontent\" class=\"topicoutlineclip\" width=\"100%\">";
+            echo "<p><font size=2>";
+            echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"course/mod.php?cancelcopy=true\">$strcancel</a>)";
+            echo "</font></p>";
+            echo "</td>";
+            echo "</tr>";
+            echo "<tr><td colspan=3><img src=\"pix/spacer.gif\" width=1 height=1></td></tr>";
+        }
+
+        $streditsummary   = get_string("editsummary");
+        $stradd           = get_string("add");
+        $stractivities    = get_string("activities");
+
+        $sections = get_all_sections($site->id);
+        get_all_mods($site->id, $mods, $modnames, $modnamesplural, $modnamesused);
+        $section = 0;
+        $thissection = $sections[$section];
+
+        echo '<tr id="section_0">';
+        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=top width=20>&nbsp;</td>";
+        echo "<td valign=top bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\" width=\"100%\">";
+
+        echo format_text($thissection->summary, FORMAT_HTML);
+
+        if ($editing) {
+            echo "<a title=\"$streditsummary\" ".
+                 " href=\"course/editsection.php?id=$thissection->id\"><img src=\"$CFG->pixpath/t/edit.gif\" ".
+                 " height=11 width=11 border=0 alt=\"$streditsummary\"></a><br />";
+        }
+
+        echo '<br clear="all">';
+
+        print_section($site, $thissection, $mods, $modnamesused, true);
+
+        if ($editing) {
+            echo "<div align=right>";
+            popup_form("$CFG->wwwroot/course/mod.php?id=$site->id&amp;section=$section&add=",
+                        $modnames, "section", "", "$stradd...", "mods", $stractivities);
+            echo "</div>";
+        }
+
+        echo "</td>";
+        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=top align=center width=10>";
+        echo "&nbsp;</td></tr>";
+        echo "<tr><td colspan=3><img src=\"pix/spacer.gif\" width=1 height=1></td></tr>";
+        echo '</table>';
+    }
+
     switch ($CFG->frontpage) {     /// Display the main part of the front page.
         case FRONTPAGENEWS:
             if (! $newsforum = forum_get_course_forum($site->id, "news")) {

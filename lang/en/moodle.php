@@ -835,6 +835,7 @@ $string['sitefiles'] = 'Site files';
 $string['sitelogs'] = 'Site logs';
 $string['sitenews'] = 'Site news';
 $string['sites'] = 'Sites';
+$string['sitesection'] = 'Include a topic section';
 $string['sitesettings'] = 'Site settings';
 $string['size'] = 'Size';
 $string['sizeb'] = 'bytes';

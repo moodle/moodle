@@ -805,7 +805,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                         continue;
                     }
                     echo "<a title=\"$strmovefull\"".
-                         " href=\"mod.php?moveto=$mod->id\">".
+                         " href=\"$CFG->wwwroot/course/mod.php?moveto=$mod->id\">".
                          "<img height=\"16\" width=\"80\" src=\"$CFG->pixpath/movehere.gif\" ".
                          " alt=\"$strmovehere\" border=\"0\"></a><br />\n";
                 }
