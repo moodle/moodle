@@ -895,20 +895,20 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2004111700) {// add an index to event for timestart and timeduration. - drop them first silently to avoid conflicts when upgrading.
-        execute_sql('ALTER TABLE prefix_event DROP INDEX timestart;',false);
-        execute_sql('ALTER TABLE prefix_event DROP INDEX timeduration;',false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}event DROP INDEX timestart;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}event DROP INDEX timeduration;",false); 
 
         modify_database('','ALTER TABLE prefix_event ADD INDEX timestart (timestart);');
         modify_database('','ALTER TABLE prefix_event ADD INDEX timeduration (timeduration);');
     }
 
     if ($oldversion < 2004111700) { //add indexes on modules and course_modules. - drop them first silently to avoid conflicts when upgrading.
-        execute_sql('ALTER TABLE prefix_course_modules drop key visible;',false);
-        execute_sql('ALTER TABLE prefix_course_modules drop key course;',false);
-        execute_sql('ALTER TABLE prefix_course_modules drop key module;',false);
-        execute_sql('ALTER TABLE prefix_course_modules drop key instance;',false);
-        execute_sql('ALTER TABLE prefix_course_modules drop key deleted;',false);
-        execute_sql('ALTER TABLE prefix_modules drop key name;',false);
+        execute_sql("ALTER TABLE {$CFG->prefix}course_modules drop key visible;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}course_modules drop key course;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}course_modules drop key module;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}course_modules drop key instance;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}course_modules drop key deleted;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}modules drop key name;",false);
 
         modify_database('','ALTER TABLE prefix_course_modules add key visible(visible);');
         modify_database('','ALTER TABLE prefix_course_modules add key course(course);');
@@ -919,21 +919,21 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2004111700) { // add an index on the groups_members table. - drop them first silently to avoid conflicts when upgrading.
-        execute_sql('ALTER TABLE prefix_groups_members DROP INDEX userid;',false);
+        execute_sql("ALTER TABLE {$CFG->prefix}groups_members DROP INDEX userid;",false);
 
         modify_database('','ALTER TABLE prefix_groups_members ADD INDEX userid (userid);');
     }
 
     if ($oldversion < 2004111700) { // add an index on user students timeaccess (used for sorting)- drop them first silently to avoid conflicts when upgrading
-        execute_sql('ALTER TABLE prefix_user_students DROP INDEX timeaccess;',false);
+        execute_sql("ALTER TABLE {$CFG->prefix}user_students DROP INDEX timeaccess;",false);
 
         modify_database('','ALTER TABLE prefix_user_students ADD INDEX timeaccess (timeaccess);');
     }
 
     if ($oldversion < 2004111700) {  // add indexes on faux-foreign keys. - drop them first silently to avoid conflicts when upgrading.
-        execute_sql('ALTER TABLE prefix_scale DROP INDEX courseid;',false);
-        execute_sql('ALTER TABLE prefix_user_admins DROP INDEX userid;',false);
-        execute_sql('ALTER TABLE prefix_user_coursecreators DROP INDEX userid;',false);
+        execute_sql("ALTER TABLE {$CFG->prefix}scale DROP INDEX courseid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}user_admins DROP INDEX userid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}user_coursecreators DROP INDEX userid;",false);
 
         modify_database('','ALTER TABLE prefix_scale ADD INDEX courseid (courseid);');
         modify_database('','ALTER TABLE prefix_user_admins ADD INDEX userid (userid);');
@@ -942,18 +942,18 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2004111700) { // replace index on course
         fix_course_sortorder(0,0,1);
-        execute_sql("ALTER TABLE `prefix_course` DROP KEY category",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}course` DROP KEY category",false);
 
-        execute_sql("ALTER TABLE `prefix_course` DROP KEY category_sortorder;",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}course` DROP KEY category_sortorder;",false);
         modify_database('', "ALTER TABLE `prefix_course` ADD UNIQUE KEY category_sortorder(category,sortorder)"); 
 
-        execute_sql("ALTER TABLE `prefix_user` DROP INDEX prefix_user_deleted_idx;",false);
-        execute_sql("ALTER TABLE `prefix_user` DROP INDEX prefix_user_confirmed_idx;",false);
-        execute_sql("ALTER TABLE `prefix_user` DROP INDEX prefix_user_firstname_idx;",false);
-        execute_sql("ALTER TABLE `prefix_user` DROP INDEX prefix_user_lastname_idx;",false);
-        execute_sql("ALTER TABLE `prefix_user` DROP INDEX prefix_user_city_idx;",false); 
-        execute_sql("ALTER TABLE `prefix_user` DROP INDEX prefix_user_country_idx;",false); 
-        execute_sql("ALTER TABLE `prefix_user` DROP INDEX prefix_user_lastaccess_idx;",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_deleted_idx;",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_confirmed_idx;",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_firstname_idx;",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_lastname_idx;",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_city_idx;",false); 
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_country_idx;",false); 
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_lastaccess_idx;",false);
 
         modify_database("", "ALTER TABLE `prefix_user` ADD INDEX prefix_user_deleted_idx  (deleted)");
         modify_database("", "ALTER TABLE `prefix_user` ADD INDEX prefix_user_confirmed_idx (confirmed)");
@@ -965,7 +965,7 @@ function main_upgrade($oldversion=0) {
      }
  
     if ($oldversion < 2004111700) { // one more index for email (for sorting)
-        execute_sql('ALTER TABLE `prefix_user` DROP INDEX prefix_user_email_idx;',false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_email_idx;",false);
         modify_database('','ALTER TABLE `prefix_user` ADD INDEX prefix_user_email_idx (email);');
     }
 
