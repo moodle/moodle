@@ -8,7 +8,11 @@
         error("Only admins can access this page");
     }
 
-    if($data = data_submitted()) {
+    if (!confirm_sesskey()) {
+        error(get_string('confirmsesskeybad', 'error'));
+    }
+
+    if ($data = data_submitted()) {
 
         // do we want default values?
         if(isset($data->resettodefaults)) {
@@ -21,7 +25,7 @@
                 error("Editor settings could not be updated!");
             }
         }
-        redirect("$CFG->wwwroot/$CFG->admin/editor.php", get_string("changessaved"), 1);
+        redirect("$CFG->wwwroot/$CFG->admin/editor.php?sesskey=$USER->sesskey", get_string("changessaved"), 1);
 
     } else {
         // Generate edit form
