@@ -1,3 +1,22 @@
+<?php 
+    include("../../config.php");
+
+    $lastmodified = filemtime("htmlarea.php");
+    $lifetime = 1800;
+	
+    header("Content-type: application/x-javascript");  // Correct MIME type
+    header("Last-Modified: " . gmdate("D, d M Y H:i:s", lastmodified) . " GMT");
+    header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
+    header("Cache-control: max_age = $lifetime"); 
+    header("Pragma: ");
+
+	$lang = current_language();
+
+	if (empty($lang)) {
+		$lang = "en";
+	}
+?>
+
 //
 // htmlArea v3.0 - Copyright (c) 2002 interactivetools.com, inc.
 // This copyright notice MUST stay intact for use (see license.txt).
@@ -12,16 +31,6 @@
 
 // Creates a new HTMLArea object.  Tries to replace the textarea with the given
 // ID with it.
-<?php 
-include("../../config.php");
-	
-	$lang = current_language();
-
-	if (empty($lang)) {
-		$lang = "en";
-	}
-
-?>
 function HTMLArea(textarea, config) {
 	if (HTMLArea.checkSupportedBrowser()) {
 		if (typeof config == "undefined") {
