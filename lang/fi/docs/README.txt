@@ -1,15 +1,15 @@
 Moodle dokumentointi 
 --------------------
 
-Jos haluat auttaa Moodlen dokumentoinnin kääntämisessä suomeksi, olisi hyvä
-että:
- 1) Älä jätä englanninkielisiä tiedostoja kääntämättä /lang/fi/docs
-    hakemistoon. Alkuperäisiä englanninkielisiä tiedostoja käytetään
-    automaatisesti jos käännetty versio puuttuu.
+Jos haluat auttaa Moodlen dokumentoinnin kÃ¤Ã¤ntÃ¤misessÃ¤ suomeksi, olisi hyvÃ¤
+ettÃ¤:
+ 1) Ã„lÃ¤ jÃ¤tÃ¤ englanninkielisiÃ¤ tiedostoja kÃ¤Ã¤ntÃ¤mÃ¤ttÃ¤ /lang/fi/docs
+    hakemistoon. AlkuperÃ¤isiÃ¤ englanninkielisiÃ¤ tiedostoja kÃ¤ytetÃ¤Ã¤n
+    automaatisesti jos kÃ¤Ã¤nnetty versio puuttuu.
 
- 2) käännä tiedostot tässä järjestyksessä (aloitetaan tärkeimmistä):
+ 2) kÃ¤Ã¤nnÃ¤ tiedostot tÃ¤ssÃ¤ jÃ¤rjestyksessÃ¤ (aloitetaan tÃ¤rkeimmistÃ¤):
   
-    TÄKEIMMÄT
+    TÃ„KEIMMÃ„T
     |-------------------
     |
     |   - files.php
@@ -39,5 +39,5 @@ että:
     |   - credits.html
     |
     |-------------------
-    VÄHEMMÄN TÄRKEÄT
+    VÃ„HEMMÃ„N TÃ„RKEÃ„T
 

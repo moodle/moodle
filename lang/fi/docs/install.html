@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
 <HTML>
 <HEAD>
-	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-1">
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE>Moodle Docs: Installation</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.0.2  (Linux)">
 	<META NAME="CREATED" CONTENT="20030219;554200">
@@ -86,7 +86,7 @@ suoraan CVS:st&auml;. Yksityskohdat lataamisesta on selostettu
 sivulla <A HREF="http://moodle.com/">http://moodle.com/</A></BLOCKQUOTE>
 <BLOCKQUOTE>Lataamisen ja paketin purkamisen j&auml;lkeen, tai kun
 ole hakenut tiedostot&nbsp; CVS:st&auml;, sinulla on hakemisto
-nimelt&auml; moodle, mikä sis&auml;lt&auml;&auml; muita tiedostoja
+nimelt&auml; moodle, mikÃ¤ sis&auml;lt&auml;&auml; muita tiedostoja
 ja hakemistoja.</BLOCKQUOTE>
 <BLOCKQUOTE>Sijoita t&auml;m&auml; kansio www-hakemistoon jolloin
 sivustosi osoite on&nbsp; <B>http://yourwebserver.com/moodle</B>, tai
@@ -204,7 +204,7 @@ vaatii eri asetukset, voit YLIM&Auml;&Auml;RITELL&Auml; palvelimen
 oletus-asetukset.</BLOCKQUOTE>
 <BLOCKQUOTE>Ylim&auml;&auml;ritell&auml;ksesi oletus-asetukset tee&nbsp;
 <B>.htaccess</B> tiedosto Moodle'n p&auml;&auml;hakemistoon . (T&auml;m&auml;
-toimii ainoastaan apache-palvelimella kun AllowOverride on päällä.</BLOCKQUOTE>
+toimii ainoastaan apache-palvelimella kun AllowOverride on pÃ¤Ã¤llÃ¤.</BLOCKQUOTE>
 <PRE STYLE="margin-left: 2cm; margin-right: 2cm">DirectoryIndex index.php index.html index.htm
 php_flag magic_quotes_gpc On
 php_flag magic_quotes_runtime Off
@@ -244,12 +244,12 @@ sijaitsevan osoitteessa: <U>http://example.com/moodle</U></BLOCKQUOTE>
 Moodlen etusivulle sinut ohjataan yll&auml;pitosivulle. Esimm&auml;isell&auml;
 kertaa sinulle esitet&auml;&auml;n GPL-lisenssi jonka ehdot sinun
 pit&auml;&auml; hyv&auml;ksy&auml;, jotta asennusta voidaan jatkaa.</BLOCKQUOTE>
-<BLOCKQUOTE>(Moodle k&auml;ytt&auml;&auml; evästeitä (cookies) ja
-eik&auml; toimi oikein jos est&auml;t evästeiden tallentamisen
+<BLOCKQUOTE>(Moodle k&auml;ytt&auml;&auml; evÃ¤steitÃ¤ (cookies) ja
+eik&auml; toimi oikein jos est&auml;t evÃ¤steiden tallentamisen
 selaimeesi!) 
 </BLOCKQUOTE>
 <BLOCKQUOTE>Nyt Moodle aloittaa tietokannan luonnin. N&auml;et
-tietokannan luomiseen liittyviä käskyjä ja niiden j&auml;lkeen tila-viestin (vihre&auml;
+tietokannan luomiseen liittyviÃ¤ kÃ¤skyjÃ¤ ja niiden j&auml;lkeen tila-viestin (vihre&auml;
 tai punainen) komennon onnistumisesta:</BLOCKQUOTE>
 <BLOCKQUOTE STYLE="margin-left: 3cm; margin-right: 3cm">CREATE TABLE
 course ( id int(10) unsigned NOT NULL auto_increment, category
@@ -334,7 +334,7 @@ Scrptin ajamisen automatisointi</H4>
 -e&quot;ja lis&auml;&auml; rivi:</BLOCKQUOTE>
 <PRE STYLE="margin-left: 2cm; margin-right: 2cm">*/5 * * * * {komento}
 
-missä {komento} on:
+missÃ¤ {komento} on:
 wget -q -O /dev/null http://example.com/moodle/admin/cron.php
 tai
 lynx -dump http://example.com/moodle/admin/cron.php &gt; /dev/null
