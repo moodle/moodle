@@ -10,6 +10,10 @@
         redirect("$CFG->wwwroot/$CFG->admin/index.php");
     }
 
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
     if (isadmin()) {
         if (moodle_needs_upgrading()) {
             redirect("$CFG->wwwroot/$CFG->admin/index.php");

@@ -129,7 +129,7 @@
 
     $loginsite = get_string("loginsite");
 
-    print_header("$site->fullname: $loginsite", "$loginsite", get_string("login"), $focus, "", true, "<div align=right>$langmenu</div>"); 
+    print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=right>$langmenu</div>"); 
     include("index_form.html");
     print_footer();
 

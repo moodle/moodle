@@ -9,6 +9,7 @@
        "changepassword"   =>  true,
        "country"          => "",
        "debug"            =>  7,
+       "forcelogin"       =>  false,
        "fullnamedisplay"  => "firstname lastname",
        "framename"        => "_top",
        "frontpage"        =>  0,
