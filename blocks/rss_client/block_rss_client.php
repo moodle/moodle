@@ -174,7 +174,7 @@ class block_rss_client extends block_base {
                     isset($this->config->block_rss_client_show_channel_image) && 
                         $this->config->block_rss_client_show_channel_image &&
                             isset($rss->image) && isset($rss->image['link']) && isset($rss->image['title']) && isset($rss->image['url']) ) {
-                $returnstring .= '<div class="rssclientimage"><a href="'. $rss->image['link'] .'"><img src="'. $rss->image['url'] .'" alt="'. $rss->image['title'] .'"/></a></div><br />';
+                $returnstring .= '<div class="rssclientimage"><a href="'. $rss->image['link'] .'"><img src="'. $rss->image['url'] .'" title="'. $rss->image['title'] .'" alt=""/></a></div><br />';
             }
 
             if ($showtitle) {
