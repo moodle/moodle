@@ -140,8 +140,10 @@ GNU General Public License for more details:
 
 http://www.gnu.org/copyleft/gpl.html";
 $string[grade] = "Grade";
-$string[guestsno] = "No, do not allow guests in";
-$string[guestsyes] = "Yes, allow 'guest' student in";
+$string[guestsno] = "Do not allow guests in";
+$string[guestsnotallowed] = "Sorry, '\$a' does not allow guests to enter.";
+$string[guestsyes] = "Allow guests without the key";
+$string[guestskey] = "Allow guests who have the key";
 $string[help] = "Help";
 $string[helppicture] = "How to upload a picture";
 $string[helptext] = "How to write text";
@@ -268,7 +270,7 @@ $string[numyears] = "\$a years";
 $string[numwords] = "\$a words";
 $string[numviews] = "\$a views";
 $string[ok] = "OK";
-$string[opentoguests] = "Open to guests?";
+$string[opentoguests] = "Guest access";
 $string[optional] = "optional";
 $string[outline] = "Outline";
 $string[participants] = "Participants";

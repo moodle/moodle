@@ -940,9 +940,10 @@ function require_login($courseid=0) {
     global $CFG, $SESSION, $USER, $FULLME, $HTTP_REFERER, $PHPSESSID;
       
     // First check that the user is logged in to the site.
-    if (! (isset( $USER->loggedin ) && $USER->confirmed) ) { 
+
+    if (! (isset($USER->loggedin) and $USER->confirmed) ) { // They're not
         $SESSION->wantsurl = $FULLME;
-        $SESSION->fromurl = $HTTP_REFERER;
+        $SESSION->fromurl  = $HTTP_REFERER;
         save_session("SESSION");
         if ($PHPSESSID) { // Cookies not enabled.
             redirect("$CFG->wwwroot/login/?PHPSESSID=$PHPSESSID");
@@ -955,7 +956,7 @@ function require_login($courseid=0) {
     // Next, check if the user can be in a particular course
     if ($courseid) {
         if ($USER->student[$courseid] || $USER->teacher[$courseid] || $USER->admin) {
-            if (!isset($USER->realuser)) {  // Don't log if this isn't a realuser
+            if (!isset($USER->realuser)) {  // Don't update if this isn't a realuser
                 update_user_in_db();
             }
             return;   // user is a member of this course.
@@ -963,13 +964,21 @@ function require_login($courseid=0) {
         if (! $course = get_record("course", "id", $courseid)) {
             error("That course doesn't exist");
         }
-        if ($course->guest && ($USER->username == "guest")) {
-            update_user_in_db();
-            return;   // user is a guest and this course allows guests
+        if ($USER->username == "guest") {
+            switch ($course->guest) {
+                case 0: // Guests not allowed
+                    print_header();
+                    notice(get_string("guestsnotallowed", "", $course->fullname));
+                    break;
+                case 1: // Guests allowed
+                    update_user_in_db();
+                    return;
+                case 2: // Guests allowed with key (drop through)
+                    break;
+            }
         }
 
-        // Not allowed in the course, so see if they want to enrol
-
+        // Currently not enrolled in the course, so see if they want to enrol
         $SESSION->wantsurl = $FULLME;
         save_session("SESSION");
         redirect("$CFG->wwwroot/course/enrol.php?id=$courseid");

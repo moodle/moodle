@@ -17,7 +17,7 @@
 // If there's something it cannot do itself, it 
 // will tell you what you need to do.
 
-$version = 2002082000;
+$version = 2002082100;
 
 function upgrade_moodle($oldversion=0) {
 
@@ -34,7 +34,7 @@ function upgrade_moodle($oldversion=0) {
     }
 
     if ($oldversion < 2002073100) {
-        execute_sql("DELETE FROM `modules` WHERE `name` = 'chat' ");
+        execute_sql(" DELETE FROM `modules` WHERE `name` = 'chat' ");
     }
 
     if ($oldversion < 2002080200) {
@@ -43,8 +43,12 @@ function upgrade_moodle($oldversion=0) {
     }
 
     if ($oldversion < 2002080300) {
-        execute_sql("  ALTER TABLE `log_display` CHANGE `table` `mtable` VARCHAR( 20 ) NOT NULL   ");
-        execute_sql("  ALTER TABLE `user_teachers` CHANGE `authority` `authority` TINYINT( 3 ) DEFAULT '3' NOT NULL   ");
+        execute_sql(" ALTER TABLE `log_display` CHANGE `table` `mtable` VARCHAR( 20 ) NOT NULL ");
+        execute_sql(" ALTER TABLE `user_teachers` CHANGE `authority` `authority` TINYINT( 3 ) DEFAULT '3' NOT NULL ");
+    }
+
+    if ($oldversion < 2002082100) {
+        execute_sql(" ALTER TABLE `course` CHANGE `guest` `guest` TINYINT(2) UNSIGNED DEFAULT '0' NOT NULL ");
     }
 
     return true;
