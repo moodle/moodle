@@ -138,7 +138,7 @@
         if (!empty($displaysection) and $displaysection != $section) {
             $strsummary= "";
             if (!empty($sections[$section])) {
-                $strsummary = " - ".substr($sections[$section]->summary, 0, 100);
+                $strsummary = " - ".substr($sections[$section]->summary, 0, 60);
             }
             $sectionmenu["topic=$section"] = "$section$strsummary";
             $section++;
