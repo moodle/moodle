@@ -31,15 +31,17 @@ function choose_bb_xsl($manifest){
 function blackboard_convert($dir){
     global $CFG;
 
-    if (!function_exists('xslt_create')) {  // XSLT MUST be installed for this to work
-        return true;
-    }
 
     // Check for a Blackboard manifest file
-    if(is_file($dir."/imsmanifest.xml")){
+    if (is_file($dir."/imsmanifest.xml")){
 
         //Select the proper XSL file
         $xslt_file = choose_bb_xsl($dir."/imsmanifest.xml");
+
+        if (!function_exists('xslt_create')) {  // XSLT MUST be installed for this to work
+            notify('You need the XSLT library installed in PHP to open this Blackboard file');
+            return false;
+        }
 
         //TODO: Use the get_string function
         echo "<li>Converting Blackboard export</li>";
