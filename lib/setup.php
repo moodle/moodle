@@ -101,7 +101,7 @@ global $THEME;
         echo 'Database name: '. $CFG->dbname .'<br />';
         echo 'Database user: '. $CFG->dbuser .'<br />';
         if (!isset($CFG->dbpersist)) {
-            echo '<p>The admin should also try setting this in config.php:  $'. CFG->dbpersist .' = false; </p>';
+            echo '<p>The admin should also try setting this in config.php:  '. $CFG->dbpersist .' = false; </p>';
         }
         echo '</font>';
         die;
