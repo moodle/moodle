@@ -55,8 +55,8 @@
             $usernew->$key = clean_text($usernew->$key, FORMAT_MOODLE);
         }
 
-        $usernew->firstname = strip_tags($usernew->firstname);
-        $usernew->lastname  = strip_tags($usernew->lastname);
+        $usernew->firstname = trim(strip_tags($usernew->firstname));
+        $usernew->lastname  = trim(strip_tags($usernew->lastname));
 
         if (isset($usernew->username)) {
             $usernew->username = trim(moodle_strtolower($usernew->username));
