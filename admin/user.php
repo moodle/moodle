@@ -211,7 +211,9 @@
         flush();
 
         foreach ($users as $key => $user) {
-            $users[$key]->country = $COUNTRIES[$user->country];
+            if (!empty($user->country)) {
+                $users[$key]->country = $COUNTRIES[$user->country];
+            }
         }
         if ($sort == "country") {  // Need to resort by full country name, not code
             foreach ($users as $user) {
