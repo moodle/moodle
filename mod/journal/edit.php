@@ -80,7 +80,7 @@
     print_header("$course->shortname: $journal->name", "$course->fullname",
                  "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
                   <A HREF=\"index.php?id=$course->id\">$strjournals</A> -> 
-                  <A HREF=\"view.php?id=$cm->id\">$journal->name</A> -> $stredit", "form.text",
+                  <A HREF=\"view.php?id=$cm->id\">$journal->name</A> -> $stredit", "theform.text",
                   "", true, "", navmenu($course, $cm));
 
     echo "<CENTER>\n";
