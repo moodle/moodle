@@ -2546,34 +2546,26 @@ function forum_user_can_post($forum, $user=NULL) {
 }
 
 
-function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
-                                        $forum_style='plain', $forum_sort='',
-                                        $currentgroup=0, $groupmode=-1, $page=-1) {
+function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $displayformat='plain', $sort='',
+                                        $currentgroup=-1, $groupmode=-1, $page=-1) {
     global $CFG, $USER;
 
-    if ($forum_id) {
-        if (! $forum = get_record('forum', 'id', $forum_id)) {
-            error('Forum ID was incorrect');
-        }
-        if (! $course = get_record('course', 'id', $forum->course)) {
-            error('Could not find the course this forum belongs to!');
-        }
-        if (! $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-            // This happens for example for the teacher forum
-            $cm->id = NULL;
-            $cm->visible = 1;
-            $cm->course = $course->id;
-        }
-        require_course_login($course, true, $cm);
 
-    } else {
-        if (! $course = get_record('course', 'category', 0)) {
-            error('Could not find a top-level course!');
-        }
-        if (! $forum = forum_get_course_forum($course->id, 'news')) {
-            error("Could not find or create a main forum in this course (id $course->id)");
-        }
+/// Sort out some defaults
+
+    if ((!$maxdiscussions) && ($displayformat == 'plain')) {
+        $displayformat = 'header';  // Abbreviate display by default
     }
+
+    $fullpost = false;
+    if ($displayformat == 'plain') {
+        $fullpost = true;
+    }
+
+
+/// Decide if current user is allowed to see ALL the current discussions or not
+
+/// First check the group stuff
 
     if ($groupmode == -1) {    /// We need to reconstruct groupmode because none was given
         if ($cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
@@ -2583,11 +2575,20 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         }
     }
 
+    if ($currentgroup == -1) {    /// We need to reconstruct currentgroup because none was given
+        $currentgroup = get_current_group($course->id);
+    }
+
+    if (!$currentgroup and ($groupmode != SEPARATEGROUPS or isteacheredit($course->id)) ) {
+        $visiblegroups = -1;
+    } else {
+        $visiblegroups = $currentgroup;
+    }
+
+/// If the user can post discussions, then this is a good place to put the button for it
 
     if (forum_user_can_post_discussion($forum, $currentgroup)) {
-        echo '<div class="';
-        echo ($forum_style == 'minimal') ? 'singlebutton forumaddnewminimal' : 'singlebutton forumaddnew';
-        echo '">';
+        echo '<div class="singlebutton forumaddnew">';
         echo "<form name=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
         echo "<input type=\"hidden\" name=\"forum\" value=\"$forum->id\" />";
         echo '<input type="submit" value="';
@@ -2597,34 +2598,11 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         echo "</div>\n";
     }
 
-    if ((!$forum_numdiscussions) && ($forum_style == 'plain')) {
-        $forum_style = 'header';  // Abbreviate display by default
-    }
-
-    if ($forum_style == 'minimal') {
-        $forum_sort = 'p.modified DESC';
-    }
-
-    $fullpost = false;
-    if ($forum_style == 'plain') {
-        $fullpost = true;
-    }
-
-
-/// Decides if current user is allowed to see ALL the current discussions or not
-
-    if (!$currentgroup and ($groupmode != SEPARATEGROUPS or isteacheredit($forum->course)) ) {
-        $visiblegroups = -1;
-    } else {
-        $visiblegroups = $currentgroup;
-    }
 
 /// Get all the recent discussions we're allowed to see
 
-    if (! $discussions = forum_get_discussions($forum->id, $forum_sort, 0, $fullpost, $visiblegroups) ) {
-        echo '<div class="';
-        echo ($forum_style == 'minimal') ? 'forumnodiscussminimal' : 'forumnodiscuss';
-        echo '">';
+    if (! $discussions = forum_get_discussions($forum->id, $sort, 0, $fullpost, $visiblegroups) ) {
+        echo '<div class="forumnodiscuss">';
         if ($forum->type == 'news') {
             echo '('.get_string('nonews', 'forum').')';
         } else {
@@ -2634,39 +2612,38 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         return;
     }
 
-    //If forum_numdiscussions <= 0 don't paging (to avoid some divided by 0 errors)
-    if ($forum_numdiscussions <= 0) {
+/// If no discussions then don't use paging (to avoid some divide by 0 errors)
+
+    if ($maxdiscussions <= 0) {
         $page = -1;
-        $forum_numdiscussions = 0;
+        $maxdiscussions = 0;
     }
 
-    //If we want paging
+/// If we want paging
+
     if ($page != -1) {
         ///Get the number of discussions found
         $numdiscussions = count($discussions);
 
         ///Show the paging bar
-        print_paging_bar($numdiscussions, $page, $forum_numdiscussions, "view.php?f=$forum->id&");
+        print_paging_bar($numdiscussions, $page, $maxdiscussions, "view.php?f=$forum->id&");
 
         //Calculate the page "window"
-        $pagestart = ($page * $forum_numdiscussions) + 1;
-        $pageend  = $pagestart + $forum_numdiscussions - 1;
+        $pagestart = ($page * $maxdiscussions) + 1;
+        $pageend  = $pagestart + $maxdiscussions - 1;
     }
+
 
     $replies = forum_count_discussion_replies($forum->id);
 
     $canreply = forum_user_can_post($forum);
 
+
     $discussioncount = 0;
     $olddiscussionlink = false;
     $strdatestring = get_string('strftimerecentfull');
 
-    if ($forum_style == 'minimal') {
-        $strftimerecent = get_string('strftimerecent');
-        $strmore = get_string('more', 'forum');
-    }
-
-    if ($forum_style == 'header') {
+    if ($displayformat == 'header') {
         echo '<table class="forumheaderlist">';
         echo '<thead>';
         echo '<tr>';
@@ -2690,15 +2667,15 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
     foreach ($discussions as $discussion) {
         $discussioncount++;
 
-        //If we want paging
-        if ($page != -1) {
-            //And we aren't inside the page "window"
-            if ($discussioncount < $pagestart || $discussioncount > $pageend) {
-                //Skip this discussion
+        if ($page != -1) {     // We are using paging
+            if ($discussioncount < $pagestart) {  // Not there yet
                 continue;
             }
+            if ($discussioncount > $pageend) {    // All done, finish the loop
+                break;
+            }
         //Without paging, old approach
-        } else if ($forum_numdiscussions && ($discussioncount > $forum_numdiscussions)) {
+        } else if ($maxdiscussions && ($discussioncount > $maxdiscussions)) {
             $olddiscussionlink = true;
             break;
         }
@@ -2709,15 +2686,13 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         } else {
             $discussion->replies = 0;
         }
+
         if ($CFG->forum_trackreadposts) {
         /// SPECIAL CASE: The front page can display a news item post to non-logged in users.
         /// All posts are read in this case.
             if (empty($USER)) {
                 $discussion->unread = 0;
             } else {
-        /// Add in the unread posts. Add one to the replies to include the original post.
-//                $discussion->unread = $discussion->replies+1 -
-//                                      forum_tp_count_discussion_read_records($USER->id, $discussion->discussion);
                 $discussion->unread = forum_tp_count_discussion_unread_posts($USER->id, $discussion->discussion);
             }
         }
@@ -2730,22 +2705,8 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         // Use discussion name instead of subject of first post
         $discussion->subject = $discussion->name;
 
-        switch ($forum_style) {
-            case "minimal":
-                if (!empty($CFG->filterall)) {
-                    $discussion->subject = filter_text($discussion->subject, $forum->course);
-                }
-                echo "<p><span class=\"forumheadminimal\">".
-                     userdate($discussion->modified, $strftimerecent).
-                     " - ".
-                     fullname($discussion).
-                     "</span><br />";
-                echo "<span class=\"foruminfominimal\">$discussion->subject ";
-                echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->discussion\">";
-                echo $strmore."...</a></span>";
-                echo "</p>\n";
-            break;
-            case "header":
+        switch ($displayformat) {
+            case 'header':
                 if ($groupmode > 0) {
                     if (isset($groups[$discussion->groupid])) {
                         $group = $groups[$discussion->groupid];
@@ -2765,34 +2726,29 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
                 }
 
             /// Need to add in the forum id for forum_print_post.
-                $discussion->forum = $forum_id;
+                $discussion->forum = $forum->id;
 
-                forum_print_post($discussion, $forum->course, $ownpost, $reply=0, $link, $assessed=false);
+                forum_print_post($discussion, $course->id, $ownpost, $reply=0, $link, $assessed=false);
             break;
         }
     }
 
-    if ($forum_style == "header") {
+    if ($displayformat == "header") {
         echo '</tbody>';
         echo '</table>';
     }
 
     if ($olddiscussionlink) {
-        echo '<div class="';
-        echo ($forum_style == 'minimal') ? 'forumolddiscussminimal">' : 'forumolddiscuss">';
-/*        if ($forum_style == "minimal") {
-            echo '<p align="center">';
-        } else {
-            echo '<p align="right">';
-        }*/
-        echo "<a href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id&amp;showall=1\">";
-        echo get_string("olderdiscussions", "forum")."</a> ...</div>";
+        echo '<div class="forumolddiscuss">';
+        echo '<a href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id.'&amp;showall=1">';
+        echo get_string('olderdiscussions', 'forum').'</a> ...</div>';
     }
 
     if ($page != -1) { ///Show the paging bar
-        print_paging_bar($numdiscussions, $page, $forum_numdiscussions, "view.php?f=$forum->id&");
+        print_paging_bar($numdiscussions, $page, $maxdiscussions, "view.php?f=$forum->id&");
     }
 }
+
 
 function forum_print_discussion($course, $forum, $discussion, $post, $mode, $canreply=NULL) {
 

@@ -461,3 +461,11 @@ body#user-index #longtimenosee {
 .helplink {
     font-size:0.8em;
 }
+
+.headingblock .title {
+    font-weight: bold;
+}
+.headingblock .link {
+    font-size: 0.9em;
+    font-weight: bold;
+}

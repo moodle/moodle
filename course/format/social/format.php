@@ -2,8 +2,7 @@
       // format.php - course format featuring social forum
       //              included from view.php
 
-    require_once("$CFG->dirroot/mod/forum/lib.php");
-    require_once("$CFG->dirroot/mod/resource/lib.php");
+    require_once($CFG->dirroot.'/mod/forum/lib.php');
 
     // Bounds for block widths
     define('BLOCK_L_MIN_WIDTH', 100);
@@ -25,36 +24,35 @@
     echo '<table id="layout-table">';
     echo '<tr>';
 
-    if(blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
+    if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
         echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         echo '</td>';
     }
 
     echo '<td id="middle-column">';
-    if ($social = forum_get_course_forum($course->id, "social")) {
-        if (forum_is_subscribed($USER->id, $social->id)) {
-            $subtext = get_string("unsubscribe", "forum");
+    if ($forum = forum_get_course_forum($course->id, 'social')) {
+        if (forum_is_subscribed($USER->id, $forum->id)) {
+            $subtext = get_string('unsubscribe', 'forum');
         } else {
-            $subtext = get_string("subscribe", "forum");
+            $subtext = get_string('subscribe', 'forum');
         }
-        $headertext = "<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" class=\"headingblockcontent\"><tr><td>".
-                       get_string("socialheadline").
-                       "</td><td align=\"right\"><font size=\"1\">".
-                       "<a href=\"../mod/forum/subscribe.php?id=$social->id\">$subtext</a></td>".
-                       "</tr></table>";
+        $headertext = '<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr>'.
+                      '<td><div class="title">'.get_string('socialheadline').'</div></td>'.
+                      '<td><div class="link"><a href="../mod/forum/subscribe.php?id='.$forum->id.'">'.$subtext.'</a></div></td>'.
+                      '</tr></table>';
         print_heading_block($headertext);
-        echo "<img alt=\"\" height=\"7\" src=\"../pix/spacer.gif\" /><br />";
+        print_spacer(7);
 
-        forum_print_latest_discussions($social->id, 10, "plain", "", false);
+        forum_print_latest_discussions($course, $forum, 10, 'plain', '', false);
 
     } else {
-        notify("Could not find or create a social forum here");
+        notify('Could not find or create a social forum here');
     }
     echo '</td>';
 
     // The right column
-    if(blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
+    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
         echo '</td>';

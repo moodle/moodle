@@ -13,10 +13,7 @@
     define('BLOCK_R_MAX_WIDTH', 210);
 
     require_once('config.php');
-    require_once($CFG->dirroot .'/course/lib.php');
     require_once($CFG->dirroot .'/lib/blocklib.php');
-    require_once($CFG->dirroot .'/mod/resource/lib.php');
-    require_once($CFG->dirroot .'/mod/forum/lib.php');
 
     if (empty($SITE)) {
         redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
@@ -47,8 +44,10 @@
     $PAGE       = page_create_object(PAGE_COURSE_VIEW, SITEID);
     $pageblocks = blocks_setup($PAGE);
     $editing    = $PAGE->user_is_editing();
-    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),  BLOCK_L_MAX_WIDTH);
-    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), BLOCK_R_MAX_WIDTH);
+    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),  
+                                            BLOCK_L_MAX_WIDTH);
+    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 
+                                            BLOCK_R_MAX_WIDTH);
 
     print_header(strip_tags($SITE->fullname), $SITE->fullname, 'home', '',
                  '<meta name="description" content="'. s(strip_tags($SITE->summary)) .'" />',
@@ -59,9 +58,9 @@
 
 <table id="layout-table">
   <tr>
-  <?PHP
+  <?php
 
-    if(blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
+    if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
         echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         echo '</td>';
@@ -72,6 +71,8 @@
 
 /// Print Section
     if ($SITE->numsections > 0) {
+
+        require_once($CFG->dirroot .'/course/lib.php');
 
         if (!$section = get_record('course_sections', 'course', $SITE->id, 'section', 1)) {
             delete_records('course_sections', 'course', $SITE->id, 'section', 1); // Just in case
@@ -116,35 +117,39 @@
 
     switch ($CFG->frontpage) {     /// Display the main part of the front page.
         case FRONTPAGENEWS:
-            if (! $newsforum = forum_get_course_forum($SITE->id, 'news')) {
-                error('Could not find or create a main news forum for the site');
-            }
-
-            if (isset($USER->id)) {
-                $SESSION->fromdiscussion = $CFG->wwwroot;
-                if (forum_is_subscribed($USER->id, $newsforum->id)) {
-                    $subtext = get_string('unsubscribe', 'forum');
-                } else {
-                    $subtext = get_string('subscribe', 'forum');
+            if ($SITE->newsitems) { // Print forums only when needed
+                require_once($CFG->dirroot .'/mod/forum/lib.php');
+    
+                if (! $newsforum = forum_get_course_forum($SITE->id, 'news')) {
+                    error('Could not find or create a main news forum for the site');
                 }
-                $headertext = "<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" class=\"headingblockcontent\"><tr>
-                               <td>$newsforum->name</td>
-                               <td align=\"right\"><font size=\"1\">
-                               <a href=\"mod/forum/subscribe.php?id=$newsforum->id\">$subtext</a>
-                               </td></tr></table>";
-            } else {
-                $headertext = $newsforum->name;
-            }
-
-            if ($SITE->newsitems) { //print forums only when needed
+    
+                if (isset($USER->id)) {
+                    $SESSION->fromdiscussion = $CFG->wwwroot;
+                    if (forum_is_subscribed($USER->id, $newsforum->id)) {
+                        $subtext = get_string('unsubscribe', 'forum');
+                    } else {
+                        $subtext = get_string('subscribe', 'forum');
+                    }
+                    $headertext = '<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr>'.
+                          '<td><div class="title">'.$newsforum->name.'</div></td>'.
+                          '<td><div class="link"><a href="mod/forum/subscribe.php?id='.$newsforum->id.'">'.$subtext.'</a></div></td>'.
+                          '</tr></table>';
+                } else {
+                    $headertext = $newsforum->name;
+                }
+    
                 print_heading_block($headertext);
                 print_spacer(8,1);
-                forum_print_latest_discussions($newsforum->id, $SITE->newsitems);
+                forum_print_latest_discussions($SITE, $newsforum, $SITE->newsitems);
             }
         break;
 
         case FRONTPAGECOURSELIST:
         case FRONTPAGECATEGORYNAMES:
+
+            require_once($CFG->dirroot .'/course/lib.php');
+
             if (isset($USER->id) and !isset($USER->admin)) {
                 print_heading_block(get_string('mycourses'));
                 print_spacer(8,1);
@@ -175,7 +180,7 @@
 
 
     // The right column
-    if(blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing || isadmin()) {
+    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing || isadmin()) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
         if (isadmin()) {
             echo '<div align="center">'.update_course_icon($SITE->id).'</div>';

@@ -396,7 +396,8 @@ table.userinfobox {
     margin-left: 30px;
 }
 
-body#user-view .forumpost {
+body#user-view .forumpost,
+.course .forumpost {
     width: 100%;
 }
 
@@ -991,3 +992,8 @@ body#course-enrol .generalbox {
 body#course-enrol .coursebox {
     margin-top: 20px;
 }
+
+.headingblock .link {
+    text-align:right;
+}
+
