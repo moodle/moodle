@@ -103,6 +103,23 @@ if (isset($_GET['help'])) {
 }
 
 
+//==========================================================================//
+
+/// Any special action we need to take?
+
+if(isset($_POST['specialaction'])) {
+    switch($_POST['specialaction']) {
+        case 'downloadconfig':
+            $str = generate_config_php();
+            header('Content-Type: text/plain');
+            header('Content-Disposition: attachment; filename="config.php"');
+            header('Content-Length: '.strlen($str));
+            header('Connection: Close');
+            echo $str;
+            die();
+        break;
+    }
+}
 
 //==========================================================================//
 
@@ -258,38 +275,8 @@ if ($nextstage == 4 or $INSTALL['stage'] == 4) {
 /// Try to open config file for writing.
 
 if ($nextstage == 5) {
-
-    $str  = '<?php  /// Moodle Configuration File '."\n";
-    $str .= "\n";
-
-    $str .= 'unset($CFG);'."\n";
-    $str .= "\n";
-
-    $str .= '$CFG->dbtype    = \''.$INSTALL['dbtype']."';\n";
-    $str .= '$CFG->dbhost    = \''.$INSTALL['dbhost']."';\n";
-    if ($INSTALL['dbtype'] == 'mysql') {
-        $str .= '$CFG->dbname    = \''.$INSTALL['dbname']."';\n";
-        $str .= '$CFG->dbuser    = \''.$INSTALL['dbuser']."';\n";
-        $str .= '$CFG->dbpass    = \''.$INSTALL['dbpass']."';\n";
-    }
-    $str .= '$CFG->dbpersist =  false;'."\n";
-    $str .= '$CFG->prefix    = \''.$INSTALL['prefix']."';\n";
-    $str .= "\n";
-
-    $str .= '$CFG->wwwroot   = \''.$INSTALL['wwwroot']."';\n";
-    $str .= '$CFG->dirroot   = \''.$INSTALL['dirroot']."';\n";
-    $str .= '$CFG->dataroot  = \''.$INSTALL['dataroot']."';\n";
-    $str .= "\n";
-
-    $str .= '$CFG->directorypermissions = 0777;'."\n";
-    $str .= "\n";
-
-    $str .= 'require_once("$CFG->dirroot/lib/setup.php");'."\n";
-    $str .= '// MAKE SURE WHEN YOU EDIT THIS FILE THAT THERE ARE NO SPACES, BLANK LINES,'."\n";
-    $str .= '// RETURNS, OR ANYTHING ELSE AFTER THE TWO CHARACTERS ON THE NEXT LINE.'."\n";
-    $str .= '?>';
-
     if (( $configsuccess = ($fh = @fopen($configfile, 'w')) ) !== false) {
+        $str = generate_config_php();
         fwrite($fh, $str);
         fclose($fh);
     }
@@ -354,10 +341,10 @@ if ($nextstage == 5) {
         echo "<p>".get_string('configfilewritten', 'install')."</p>\n";
     } else {
         echo "<p>".get_string('configfilenotwritten', 'install')."</p>";
-        echo "<hr />\n";
-        echo "<div style=\"text-align: left\">\n";
-        print_object(htmlentities($str));
-        echo "</div>\n";
+        echo '<form name="installform" method="post" action="install.php"><p>';
+        echo '<input type="hidden" name="specialaction" value="downloadconfig" />';
+        echo '<input type="submit" name="download" value="'.get_string('downloadconfigphp').'" />';
+        echo '</p></form>';
         echo "<hr />\n";
     }
     $options = array();
@@ -625,6 +612,45 @@ function check_memory_limit() {
     @ini_set('memory_limit', '16M');
     return ((int)str_replace('M', '', get_memory_limit()) >= 16);
 }
+
+//==========================================================================//
+
+function generate_config_php() {
+    global $INSTALL;
+
+    $str  = '<?php  /// Moodle Configuration File '."\n";
+    $str .= "\n";
+
+    $str .= 'unset($CFG);'."\n";
+    $str .= "\n";
+
+    $str .= '$CFG->dbtype    = \''.$INSTALL['dbtype']."';\n";
+    $str .= '$CFG->dbhost    = \''.$INSTALL['dbhost']."';\n";
+    if ($INSTALL['dbtype'] == 'mysql') {
+        $str .= '$CFG->dbname    = \''.$INSTALL['dbname']."';\n";
+        $str .= '$CFG->dbuser    = \''.$INSTALL['dbuser']."';\n";
+        $str .= '$CFG->dbpass    = \''.$INSTALL['dbpass']."';\n";
+    }
+    $str .= '$CFG->dbpersist =  false;'."\n";
+    $str .= '$CFG->prefix    = \''.$INSTALL['prefix']."';\n";
+    $str .= "\n";
+
+    $str .= '$CFG->wwwroot   = \''.$INSTALL['wwwroot']."';\n";
+    $str .= '$CFG->dirroot   = \''.$INSTALL['dirroot']."';\n";
+    $str .= '$CFG->dataroot  = \''.$INSTALL['dataroot']."';\n";
+    $str .= "\n";
+
+    $str .= '$CFG->directorypermissions = 0777;'."\n";
+    $str .= "\n";
+
+    $str .= 'require_once("$CFG->dirroot/lib/setup.php");'."\n";
+    $str .= '// MAKE SURE WHEN YOU EDIT THIS FILE THAT THERE ARE NO SPACES, BLANK LINES,'."\n";
+    $str .= '// RETURNS, OR ANYTHING ELSE AFTER THE TWO CHARACTERS ON THE NEXT LINE.'."\n";
+    $str .= '?>';
+
+    return $str;
+}
+
 
 //==========================================================================//
 
