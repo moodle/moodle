@@ -322,6 +322,9 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         if (!isset($backup_config->backup_sche_coursefiles)) {
             $backup_config->backup_sche_coursefiles = 1;
         }
+        if (!isset($backup_config->backup_sche_messages)) {
+            $backup_config->backup_sche_messages = 1;
+        }
         if (!isset($backup_config->backup_sche_active)) {
             $backup_config->backup_sche_active = 0;
         }
@@ -389,6 +392,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         $preferences->backup_logs = $backup_config->backup_sche_logs;
         $preferences->backup_user_files = $backup_config->backup_sche_userfiles;
         $preferences->backup_course_files = $backup_config->backup_sche_coursefiles;
+        $preferences->backup_messages = $backup_config->backup_sche_messages;
         $preferences->backup_course = $course->id;
         $preferences->backup_destination = $backup_config->backup_sche_destination;
         $preferences->backup_keep = $backup_config->backup_sche_keep;
@@ -478,7 +482,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
     //Now calculate the users
     if ($status) {
         schedule_backup_log($starttime,$course->id,"    calculating users");
-        user_check_backup($course->id,$backup_unique_code,$preferences->backup_users);  
+        user_check_backup($course->id,$backup_unique_code,$preferences->backup_users,$preferences->backup_messages);  
     }
 
     //Now calculate the logs
@@ -584,6 +588,15 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
         if ($status) {
             schedule_backup_log($starttime,$preferences->backup_course,"      user info");
             $status = backup_user_info($backup_file,$preferences);
+        }
+
+        //If we have selected to backup messages and we are
+        //doing a SITE backup, let's do it
+        if ($status && $preferences->backup_messages && $preferences->backup_course == SITEID) {
+            schedule_backup_log($starttime,$preferences->backup_course,"      messages");
+            if (!$status = backup_messages($backup_file,$preferences)) {
+                notify("An error occurred while backing up messages");
+            }
         }
 
         //If we have selected to backup quizzes, backup categories and

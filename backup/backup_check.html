@@ -76,6 +76,10 @@
 
     if (!isset($backup_course_files)) {
         $backup_course_files = 2;
+        }
+
+    if (!isset($backup_messages)) {
+        $backup_messages = 1;
     }
 
     if ($count == 0) {
@@ -150,7 +154,7 @@
 
 
     //Here we check if backup_users = None. Then, we switch off every module
-    //user info, user_files, logs and exercises and workshop backups. A Warning is showed to
+    //user info, user_files, logs and exercises, workshop and messages backups. A Warning is showed to
     //inform the user.
     if ($backup_users == 2) {
         if ($allmods = get_records("modules") ) {
@@ -169,6 +173,7 @@
             }
         $backup_user_files = 0;
         $backup_logs = 0;
+        $backup_messages = 0;
         }
         print_simple_box("<font color=\"red\">".get_string("backupnoneusersinfo")."</font>","center", "70%", '', "20", "noticebox");
         echo "<hr />";
@@ -230,7 +235,7 @@
             $user_options[2] = get_string("includenoneusers");
             echo $user_options[$backup_users].'</b>';
             //Print info
-            $table->data = user_check_backup($id,$backup_unique_code,$backup_users);  
+            $table->data = user_check_backup($id,$backup_unique_code,$backup_users,$backup_messages);  
             print_table($table); 
             echo "</td></tr>";
             
@@ -279,6 +284,7 @@
 <input type="hidden" name="backup_logs" value="<?php p($backup_logs) ?>" />
 <input type="hidden" name="backup_user_files" value="<?php p($backup_user_files) ?>" />
 <input type="hidden" name="backup_course_files" value="<?php p($backup_course_files) ?>" />
+<input type="hidden" name="backup_messages" value="<?php p($backup_messages) ?>" />
 <input type="hidden" name="to"     value="<?php p($to) ?>" />
 <input type="hidden" name="id"     value="<?php  p($id) ?>" />
 <input type="hidden" name="launch" value="execute" />

@@ -91,6 +91,11 @@
     }
     $preferences->backup_course_files = $backup_course_files;
 
+    if (!isset($backup_messages)) {
+        $backup_messages = 1;
+    }
+    $preferences->backup_messages = $backup_messages;
+
     if (!isset($id)) {
         error ("Course not specified");
     }
@@ -210,6 +215,15 @@
             echo "<li>".get_string("writinguserinfo").'</li>';
             if (!$status = backup_user_info($backup_file,$preferences)) {
                 notify("An error occurred while backing up user info");
+            }
+        }
+
+        //If we have selected to backup messages and we are
+        //doing a SITE backup, let's do it
+        if ($status && $preferences->backup_messages && $preferences->backup_course == SITEID) {
+            echo "<li>".get_string("writingmessagesinfo").'</li>';
+            if (!$status = backup_messages($backup_file,$preferences)) {
+                notify("An error occurred while backing up messages");
             }
         }
 

@@ -77,6 +77,10 @@
         $backup_course_files = 1;
     }
 
+    if (!isset($backup_messages)) {
+        $backup_messages = 1;
+    }
+
     if ($count == 0) {
         notice("No backupable modules are installed!");
     }
@@ -186,6 +190,21 @@
         $course_file_options[1] = get_string("yes");
         choose_from_menu($course_file_options, "backup_course_files", $backup_course_files, "");
         echo "</td></tr>";
+
+        if (empty($to) && $course->id == SITEID) {
+            //If we are in a SITEID backup print the Messages tr
+            echo "<tr>";
+            echo "<td align=\"right\"><b>";
+            echo get_string ('messages','message').":";
+            echo "</b></td><td>";
+            $mess_options[0] = get_string("no"); 
+            $mess_options[1] = get_string("yes"); 
+            choose_from_menu($mess_options, "backup_messages", $backup_messages, "");
+            echo "</td></tr>";
+        }
+        else {
+            echo '<input type="hidden" name="backup_messages" value="0" />';
+        }
     }
 ?>
 </table>

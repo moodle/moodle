@@ -35,6 +35,9 @@
     if (!isset($backup_config->backup_sche_coursefiles)) {
         $backup_config->backup_sche_coursefiles = 1;
     }
+    if (!isset($backup_config->backup_sche_messages)) {
+        $backup_config->backup_sche_messages = 0;
+    }
     if (!isset($backup_config->backup_sche_active)) {
         $backup_config->backup_sche_active = 0;
     }
@@ -144,6 +147,15 @@
     </td>
     <td>
     <?php print_string("backupcoursefileshelp") ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php print_string("messages","message") ?>:</td>
+    <td>
+    <?php choose_from_menu($yesno_array, "backup_sche_messages", $backup_config->backup_sche_messages, "") ?>
+    </td>
+    <td>
+    <?php print_string("backupmessageshelp","message") ?>  
     </td>
 </tr>
 <tr valign="top">

@@ -30,7 +30,7 @@
  
     //Calculate the number of users to backup and put their ids in backup_ids
     //Return an array of info (name,value)
-    function user_check_backup($course,$backup_unique_code,$backup_users) {
+    function user_check_backup($course,$backup_unique_code,$backup_users,$backup_messages) {
         //$backup_users=0-->all
         //              1-->course (needed + enrolled)
         //              2-->none
@@ -44,7 +44,7 @@
         if ($backup_users == 0 or $backup_users == 1) {
         
             //Calculate needed users (calling every xxxx_get_participants function + scales users)
-            $needed_users = backup_get_needed_users($course);
+            $needed_users = backup_get_needed_users($course, $backup_messages);
 
             //Calculate enrolled users (students + teachers)
             $enrolled_users = backup_get_enrolled_users($course);
@@ -126,7 +126,7 @@
     //   every student and teacher in the course, so it
     //must be merged with backup_get_enrrolled_users !!
 
-    function backup_get_needed_users ($courseid) {
+    function backup_get_needed_users ($courseid, $includemessages=false) {
         
         global $CFG;
 
@@ -158,7 +158,7 @@
             }
         }
 
-        //Now, add scales users (from site and course scales)
+        //Now, add scale users (from site and course scales)
         //Get users
         $scaleusers = get_records_sql("SELECT DISTINCT userid,userid
                                        FROM {$CFG->prefix}scale
@@ -169,6 +169,22 @@
                 //If userid != 0
                 if ($scaleuser->userid != 0) {
                     $result[$scaleuser->userid]->id = $scaleuser->userid;
+                }
+            }
+        }
+
+        //Now, add message users if necessary
+        if ($includemessages) {
+            include_once("$CFG->dirroot/message/lib.php");
+            //Get users
+            $messageusers = message_get_participants();
+            //Add message users to results
+            if ($messageusers) {
+                foreach ($messageusers as $messageuser) {
+                    //If id != 0
+                    if ($messageuser->id !=0) {
+                        $result[$messageuser->id]->id = $messageuser->id;
+                    }
                 }
             }
         }
@@ -527,6 +543,12 @@
         } else {
             fwrite ($bf,full_tag("COURSEFILES",3,false,"false"));
         }
+        //The messages in backup
+        if ($preferences->backup_messages == 1 && $preferences->backup_course == SITEID) {
+            fwrite ($bf,full_tag("MESSAGES",3,false,"true"));
+        } else {
+            fwrite ($bf,full_tag("MESSAGES",3,false,"false"));
+        }
         //The mode of writing the block data
         fwrite ($bf,full_tag('BLOCKFORMAT',3,false,'instances'));
 
@@ -676,6 +698,111 @@
         return $status;
 
     }
+
+    //Prints course's messages info (tables message, message_read and message_contacts)
+    function backup_messages ($bf,$preferences) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get info from messages
+        $unreads = get_records ('message');
+        $reads   = get_records ('message_read');
+        $contacts= get_records ('message_contacts');
+
+        if ($unreads || $reads || $contacts) {
+            $counter = 0;
+            //message open tag
+            fwrite ($bf,start_tag("MESSAGES",2,true));
+            if ($unreads) {
+                //Iterate over every unread    
+                foreach ($unreads as $unread) {
+                    //start message
+                    fwrite($bf, start_tag("MESSAGE",3,true));
+                    fwrite ($bf,full_tag("STATUS",4,false,"UNREAD"));
+                    fwrite ($bf,full_tag("USERIDFROM",4,false,$unread->useridfrom));
+                    fwrite ($bf,full_tag("USERIDTO",4,false,$unread->useridto));
+                    fwrite ($bf,full_tag("MESSAGE",4,false,$unread->message));
+                    fwrite ($bf,full_tag("FORMAT",4,false,$unread->format));
+                    fwrite ($bf,full_tag("TIMECREATED",4,false,$unread->timecreated));
+                    fwrite ($bf,full_tag("MESSAGETYPE",4,false,$unread->messagetype));
+                    //end message
+                    fwrite ($bf,end_tag("MESSAGE",3,true));
+
+                    //Do some output
+                    $counter++;
+                    if ($counter % 20 == 0) {
+                        echo ".";   
+                        if ($counter % 400 == 0) {
+                            echo "<br />";
+                        }
+                        backup_flush(300);
+                    }
+                }
+            }
+
+            if ($reads) {
+                //Iterate over every read    
+                foreach ($reads as $read) {
+                    //start message
+                    fwrite($bf, start_tag("MESSAGE",3,true));
+                    fwrite ($bf,full_tag("STATUS",4,false,"READ"));
+                    fwrite ($bf,full_tag("USERIDFROM",4,false,$read->useridfrom));
+                    fwrite ($bf,full_tag("USERIDTO",4,false,$read->useridto));
+                    fwrite ($bf,full_tag("MESSAGE",4,false,$read->message));
+                    fwrite ($bf,full_tag("FORMAT",4,false,$read->format));
+                    fwrite ($bf,full_tag("TIMECREATED",4,false,$read->timecreated));
+                    fwrite ($bf,full_tag("MESSAGETYPE",4,false,$read->messagetype));
+                    fwrite ($bf,full_tag("TIMEREAD",4,false,$read->timeread));
+                    fwrite ($bf,full_tag("MAILED",4,false,$read->mailed));
+                    //end message
+                    fwrite ($bf,end_tag("MESSAGE",3,true));
+
+                    //Do some output
+                    $counter++;
+                    if ($counter % 20 == 0) {
+                        echo ".";   
+                        if ($counter % 400 == 0) {
+                            echo "<br />";
+                        }
+                        backup_flush(300);
+                    }
+                }
+            }
+
+            if ($contacts) {
+                fwrite($bf, start_tag("CONTACTS",3,true));
+                //Iterate over every contact    
+                foreach ($contacts as $contact) {
+                    //start contact
+                    fwrite($bf, start_tag("CONTACT",4,true));
+                    fwrite ($bf,full_tag("USERID",5,false,$contact->userid));
+                    fwrite ($bf,full_tag("CONTACTID",5,false,$contact->contactid));
+                    fwrite ($bf,full_tag("BLOCKED",5,false,$contact->blocked));
+                    //end contact
+                    fwrite ($bf,end_tag("CONTACT",4,true));
+
+                    //Do some output
+                    $counter++;
+                    if ($counter % 20 == 0) {
+                        echo ".";   
+                        if ($counter % 400 == 0) {
+                            echo "<br />";
+                        }
+                        backup_flush(300);
+                    }
+                }
+                fwrite($bf, end_tag("CONTACTS",3,true));
+            }
+            //messages close tag
+            $status = fwrite ($bf,end_tag("MESSAGES",2,true));
+        }
+
+        return $status;
+
+    }
+
 
 
     //Prints course's blocks info (table block_instance)
@@ -1046,9 +1173,9 @@
                     }
                     //Do some output
                     $counter++;
-                    if ($counter % 10 == 0) {
+                    if ($counter % 20 == 0) {
                         echo ".";
-                        if ($counter % 200 == 0) {
+                        if ($counter % 400 == 0) {
                             echo "<br />";
                         }
                         backup_flush(300);
