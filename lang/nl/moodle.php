@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 nearly beta! (2004022400)
+      // moodle.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['action'] = 'Actie';
@@ -16,6 +16,9 @@ $string['add'] = 'Voeg toe';
 $string['addadmin'] = 'Voeg beheerder toe';
 $string['addcreator'] = 'Voeg een vak-aanmaker toe';
 $string['added'] = '$a toegevoegd';
+$string['addedtogroup'] = 'Toegevoegd aan groep $a';
+$string['addedtogroupnot'] = 'Niet toegevoegd aan groep $a';
+$string['addedtogroupnotenrolled'] = 'Niet toegevoegd aan groep $a, omdat die niet aangemeld is in dit vak';
 $string['addinganew'] = 'Een nieuwe $a toevoegen';
 $string['addinganewto'] = 'Een nieuwe $a->what aan $a->to toevoegen';
 $string['addingdatatoexisting'] = 'Gegevens toevoegen aan bestaande';
