@@ -328,20 +328,28 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
             $users = get_records(user, 'auth', 'ldap', '', 'id, username', '');
             //to be continued later....... 
             foreach ( $ldapusers as $user) {
-                print_r($user);
-                if (record_exists('user', 'auth', 'ldap', 'username', $user[$CFG->ldap_user_attribute][0])) {
-                    if (isset($user[$CFG->auth_user_idnumber])) {
-                        if (set_field('user', 'idnumber', $user[$CFG->auth_user_idnumber], 'username', $user[$CFG->ldap_user_attribute][0], 'auth', 'ldap' )) {
-                            echo 'Filled idnumber for user '.$user[$CFG->ldap_user_attribute][0]."\n";
+                if (record_exists('user', 'auth', 'ldap', 'username', $user->username)) {
+                    if (isset($user->idnumber)) {
+                        //edir uses binary guid field
+                        if ($CFG->ldap_user_type == 'edir'){
+                            $user->idnumber = bin2hex($user->idnumber);
+                        } 
+                        
+                        $idnumber = $user->$CFG->idnumber;
+
+                        if (set_field('user', 'idnumber', $user->idnumber, 'username', $user->username, 'auth', 'ldap' )) {
+                            echo 'Filled idnumber for user '.$user->username."\n";
                         } else {
-                            echo 'Cannot fill idnumber for user ' .$user[$CFG->ldap_user_attribute][0]. 'Problem updating database..'."\n";
+                            echo 'Cannot fill idnumber for user ' .$user->username. 'Problem updating database..'."\n";
                         }    
                     } else {    
-                        echo 'Cannot fill idnumber for user '.$user[$CFG->ldap_user_attribute][0].'idnumber does not exist in ldap.'."\n";
+                        echo 'Cannot fill idnumber for user '.$user->username.'idnumber does not exist in ldap.'."\n";
+                        print_r($user);
                     }    
                 }    
             }    
-            
+           echo 'Firstsync complete!';
+           return;
         } 
 
         //Build existing userinformation
@@ -377,8 +385,13 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
         
         //put userinformation in $updateusers and $newusers
         foreach ($ldapusers as $user) {
-            if (isset($user[$idattribute][0])) {
-                $useridnumber = $user[$idattribute][0];
+            if (!empty($user->idnumber)) {
+                //edir uses binary guid field
+                if ($CFG->ldap_user_type == 'edir'){
+                    $user->idnumber = bin2hex($user->idnumber);
+                } 
+                $idnumber = $user->idnumber;
+
                 if (isset($moodleldapusers[$useridnumber])) {
                     $arraytoupdate = &$updateusers;
                     $userinfo = $moodleldapusers[$useridnumber];
