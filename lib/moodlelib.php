@@ -1535,7 +1535,7 @@ function get_directory_list($rootdir, $excludefile="", $descend=true) {
         return $dirs;
     }
 
-    while ($file = readdir($dir)) {
+    while (false !== ($file = readdir($dir))) {
         $firstchar = substr($file, 0, 1);
         if ($firstchar == "." or $file == "CVS" or $file == $excludefile) {
             continue;
