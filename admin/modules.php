@@ -160,8 +160,8 @@
 
         $delete = "<a href=\"modules.php?delete=$module->name\">$strdelete</a>";
 
-        if (file_exists("$CFG->dirroot/mod/$module->name/config.php")) {
-            $settings = "<a href=\"$CFG->wwwroot/mod/$module->name/config.php\">$strsettings</a>";
+        if (file_exists("$CFG->dirroot/mod/$module->name/config.html")) {
+            $settings = "<a href=\"module.php?module=$module->name\">$strsettings</a>";
         } else {
             $settings = "";
         }
