@@ -10,25 +10,19 @@ function resource_directory($cmid=0) {
 function display() {
     global $CFG, $THEME;
 
-    $strresource = get_string("modulename", "resource");
-    $strresources = get_string("modulenameplural", "resource");
-    $strlastmodified = get_string("lastmodified");
+/// Set up generic stuff first, including checking for access
+    parent::display();
 
-    $course = $this->course;      // Shortcut
-    $resource = $this->resource;  // Shortcut
-
-    if ($course->category) {
-        require_login($course->id);
-        $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id={$course->id}\">{$course->shortname}</a> ->              
-            <a target=\"{$CFG->framename}\" href=\"index.php?id={$course->id}\">$strresources</a> ->";
-    } else {
-        $navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id={$course->id}\">$strresources</a> ->";     }
+/// Set up some shorthand variables
+    $cm = $this->cm;     
+    $course = $this->course;
+    $resource = $this->resource; 
 
     require_once("../../files/mimetypes.php");
 
     $subdir = isset($_GET['subdir']) ? $_GET['subdir'] : '';
 
-    add_to_log($course->id, "resource", "view", "view.php?id={$this->cm->id}", $resource->id, $this->cm->id);
+    add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
 
     if ($resource->reference) {
         $relativepath = "{$course->id}/{$resource->reference}";
@@ -46,13 +40,13 @@ function display() {
         array_shift($subs);
         $countsubs = count($subs);
         $count = 0;
-        $subnav = "<a href=\"view.php?id={$this->cm->id}\">{$resource->name}</a>";
+        $subnav = "<a href=\"view.php?id={$cm->id}\">{$resource->name}</a>";
         $backsub = '';
         foreach ($subs as $sub) {
             $count++;
             if ($count < $countsubs) {
                 $backsub .= "/$sub";
-                $subnav  .= " -> <a href=\"view.php?id={$this->cm->id}&amp;subdir=$backsub\">$sub</a>";
+                $subnav  .= " -> <a href=\"view.php?id={$cm->id}&amp;subdir=$backsub\">$sub</a>";
             } else {
                 $subnav .= " -> $sub";
             }
@@ -63,9 +57,9 @@ function display() {
 
     $pagetitle = strip_tags($course->shortname.': '.$resource->name);
 
-    print_header($pagetitle, $course->fullname, "$navigation $subnav",
-            "", "", true, update_module_button($this->cm->id, $course->id, $strresource),
-            navmenu($course, $this->cm));
+    print_header($pagetitle, $course->fullname, "$this->navigation $subnav",
+            "", "", true, update_module_button($cm->id, $course->id, $this->strresource),
+            navmenu($course, $cm));
 
     if (isteacheredit($course->id)) {
         echo "<div align=\"right\"><img src=\"$CFG->pixpath/i/files.gif\" height=\"16\" width=\"16\" alt=\"\" />&nbsp".
@@ -123,7 +117,7 @@ function display() {
         echo '</td>';
         echo '<td nowrap="nowrap"><p>';
         if ($icon == 'folder.gif') {
-            echo "<a href=\"view.php?id={$this->cm->id}&amp;subdir=$subdir/$file\">$file</a>";
+            echo "<a href=\"view.php?id={$cm->id}&amp;subdir=$subdir/$file\">$file</a>";
         } else {
             link_to_popup_window($relativeurl, "resourcedirectory{$resource->id}", "$file", 450, 600, '');
         }
