@@ -458,7 +458,7 @@ function upgrade_blocks_plugins($continueto) {
         $methods = get_class_methods($classname);
         if(!in_array(strtolower($classname), $methods)) {
             // No constructor
-            $notices[] = "Block $blockname: class does not have a constructor";
+            //$notices[] = "Block $blockname: class does not have a constructor";
             $invalidblocks[] = $blockname;
             continue;
         }
