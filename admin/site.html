@@ -22,7 +22,7 @@
            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
         } else {
            helpbutton("html", get_string("helphtml"), "moodle", true, true);
-        } 
+        }
       ?>
       <br />
      </font>
@@ -31,7 +31,7 @@
 </tr>
 <tr valign="top">
         <td align="right"><?php print_string("frontpageformat") ?>:</td>
-        <td><?php 
+        <td><?php
            $options = array("0"  =>  get_string("frontpagenews"),
                             "1"  =>  get_string("frontpagecourselist"),
                             "2"  =>  get_string("frontpagecategorynames"));
@@ -47,7 +47,7 @@
 </tr>
 <tr valign="top">
         <td align="right"><?php print_string("newsitemsnumber") ?>:</td>
-        <td><?php 
+        <td><?php
            $newsitem  = get_string("newsitem");
            $newsitems = get_string("newsitems");
            $options = array("0"  =>  "0 $newsitems",
@@ -78,7 +78,7 @@
 <tr valign="top">
     <td align="right"><?php print_string("wordforteacher") ?>:</td>
     <td><input type="text" name="teacher" maxlength="100" size="25" value="<?php p($form->teacher) ?>" alt="<?php print_string("wordforteacher") ?>" />
-    (<?php print_string("wordforteachereg") ?>) 
+    (<?php print_string("wordforteachereg") ?>)
     <?php if (isset($err["teacher"])) formerr($err["teacher"]); ?>
     </td>
 </tr>
@@ -92,14 +92,14 @@
 <tr valign="top">
     <td align="right"><?php print_string("wordforstudent") ?>:</td>
     <td><input type="text" name="student" maxlength="100" size="25" value="<?php p($form->student) ?>" alt="<?php print_string("wordforstudent") ?>" />
-    (<?php print_string("wordforstudenteg") ?>) 
+    (<?php print_string("wordforstudenteg") ?>)
     <?php if (isset($err["student"])) formerr($err["student"]); ?>
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><?php print_string("wordforstudents") ?>:</td>
     <td><input type="text" name="students" maxlength="100" size="25" value="<?php p($form->students) ?>" alt="<?php print_string("wordforstudents") ?>" />
-    (<?php print_string("wordforstudentseg") ?>) 
+    (<?php print_string("wordforstudentseg") ?>)
     <?php if (isset($err["students"])) formerr($err["students"]); ?>
     </td>
 </tr>
@@ -108,8 +108,8 @@
     <td><input type="submit" value="<?php print_string("savechanges") ?>"></td>
 </tr>
 </table>
-<input type="hidden" name="id" value="<?php p($form->id) ?>">
-<input type="hidden" name="category" value="<?php p($form->category) ?>">
-<input type="hidden" name="format" value="<?php p($form->format) ?>">
-<input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
+<input type="hidden" name="id" value="<?php p($form->id) ?>" />
+<input type="hidden" name="category" value="<?php p($form->category) ?>" />
+<input type="hidden" name="format" value="<?php p($form->format) ?>" />
+<input type="hidden" name="sesskey" value="<?php p($sesskey) ?>" />
 </form>
