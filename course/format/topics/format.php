@@ -31,7 +31,7 @@
         }
     }
 
-    if (isteacher($course->id) and isset($marker)) {
+    if (isteacher($course->id) and isset($marker) and confirm_sesskey()) {
         $course->marker = $marker;
         if (! set_field("course", "marker", $marker, "id", $course->id)) {
             error("Could not mark that topic for this course");
@@ -226,28 +226,28 @@
 
             if (isediting($course->id)) {
                 if ($course->marker == $section) {  // Show the "light globe" on/off
-                    echo "<a href=\"view.php?id=$course->id&marker=0\" title=\"$strmarkedthistopic\">".
+                    echo "<a href=\"view.php?id=$course->id&marker=0&sesskey=$USER->sesskey\" title=\"$strmarkedthistopic\">".
                          "<img src=\"$CFG->pixpath/i/marked.gif\" vspace=3 height=16 width=16 border=0></a><br />";
                 } else {
-                    echo "<a href=\"view.php?id=$course->id&marker=$section\" title=\"$strmarkthistopic\">".
+                    echo "<a href=\"view.php?id=$course->id&marker=$section&sesskey=$USER->sesskey\" title=\"$strmarkthistopic\">".
                          "<img src=\"$CFG->pixpath/i/marker.gif\" vspace=3 height=16 width=16 border=0></a><br />";
                 }
 
                 if ($thissection->visible) {        // Show the hide/show eye
-                    echo "<a href=\"view.php?id=$course->id&hide=$section\" title=\"$strtopichide\">".
+                    echo "<a href=\"view.php?id=$course->id&hide=$section&sesskey=$USER->sesskey\" title=\"$strtopichide\">".
                          "<img src=\"$CFG->pixpath/i/hide.gif\" vspace=3 height=16 width=16 border=0></a><br />";
                 } else {
-                    echo "<a href=\"view.php?id=$course->id&show=$section\" title=\"$strtopicshow\">".
+                    echo "<a href=\"view.php?id=$course->id&show=$section&sesskey=$USER->sesskey\" title=\"$strtopicshow\">".
                          "<img src=\"$CFG->pixpath/i/show.gif\" vspace=3 height=16 width=16 border=0></a><br />";
                 }
 
                 if ($section > 1) {                       // Add a arrow to move section up
-                    echo "<a href=\"view.php?id=$course->id&section=$section&move=-1\" title=\"$strmoveup\">".
+                    echo "<a href=\"view.php?id=$course->id&section=$section&move=-1&sesskey=$USER->sesskey\" title=\"$strmoveup\">".
                          "<img src=\"$CFG->pixpath/t/up.gif\" vspace=3 height=11 width=11 border=0></a><br />";
                 }
 
                 if ($section < $course->numsections) {    // Add a arrow to move section down
-                    echo "<a href=\"view.php?id=$course->id&section=$section&move=1\" title=\"$strmovedown\">".
+                    echo "<a href=\"view.php?id=$course->id&section=$section&move=1&sesskey=$USER->sesskey\" title=\"$strmovedown\">".
                          "<img src=\"$CFG->pixpath/t/down.gif\" vspace=3 height=11 width=11 border=0></a><br />";
                 }
 

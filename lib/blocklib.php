@@ -410,6 +410,9 @@ function block_find($blockid, $leftblocks, $rightblocks) {
 
 //This function prints the block to admin blocks as necessary
 function block_print_blocks_admin(&$course, $missingblocks) {
+
+    global $USER;
+
     if (isediting($course->id)) {
         $strblocks = get_string('blocks');
         $stradd    = get_string('add');
@@ -430,7 +433,7 @@ function block_print_blocks_admin(&$course, $missingblocks) {
                 else {
                     $target = 'view.php';
                 }
-                $content = popup_form($target.'?id='.$course->id.'&amp;blockaction=add&amp;blockid=',
+                $content = popup_form($target.'?id='.$course->id.'&amp;blockaction=add&amp;sesskey='.$USER->sesskey.'&amp;blockid=',
                                       $menu, 'add_block', '', "$stradd...", '', '', true);
                 $content = '<div align="center">'.$content.'</div>';
                 print_side_block($strblocks, $content, NULL, NULL, NULL);

@@ -75,15 +75,15 @@
 
         $editing = $USER->editing;
 
-        if (isset($hide)) {
+        if (isset($hide) and confirm_sesskey()) {
             set_section_visible($course->id, $hide, '0');
         }
 
-        if (isset($show)) {
+        if (isset($show) and confirm_sesskey()) {
             set_section_visible($course->id, $show, '1');
         }
 
-        if (isset($_GET['blockaction'])) {
+        if (isset($_GET['blockaction']) and confirm_sesskey()) {
             if (isset($_GET['blockid'])) {
                 block_action($course, $leftblocks, $rightblocks, strtolower($_GET['blockaction']), intval($_GET['blockid']));
             }
@@ -118,7 +118,7 @@
         }
 
         if (!empty($section)) {
-            if (!empty($move)) {
+            if (!empty($move) and confirm_sesskey()) {
                 if (!move_section($course, $section, $move)) {
                     notify("An error occurred while moving a section");
                 }
