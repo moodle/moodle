@@ -119,6 +119,8 @@
                 fwrite($bf,full_tag("INFO",4,false,$category->info));
                 fwrite($bf,full_tag("PUBLISH",4,false,$category->publish));
                 fwrite($bf,full_tag("STAMP",4,false,$category->stamp));
+                fwrite($bf,full_tag("PARENT",4,false,$category->parent));
+                fwrite($bf,full_tag("SORTORDER",4,false,$category->sortorder));
                 //Now, backup their questions
                 $status = quiz_backup_question($bf,$preferences,$category->id);
                 //End category

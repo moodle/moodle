@@ -10,6 +10,7 @@
         //Create missing categories and reasign orphaned questions
         fix_orphaned_questions($course);
 
+        //Detect used categories (by category in questions)
         $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
                                    (backup_code, table_name, old_id)
                                SELECT DISTINCT $backup_unique_code,'quiz_categories',t.category
@@ -19,6 +20,37 @@
                                WHERE q.course = '$course' AND
                                      g.quiz = q.id AND
                                      g.question = t.id",false);
+
+        //Now, foreach detected category, we look for their parents upto 0 (top category)
+        $categories = get_records_sql("SELECT old_id, old_id 
+                                       FROM {$CFG->prefix}backup_ids
+                                       WHERE backup_code = $backup_unique_code AND
+                                             table_name = 'quiz_categories'");
+
+        if ($categories) {
+            foreach ($categories as $category) {
+                if ($dbcat = get_record('quiz_categories','id',$category->old_id)) {
+                    //echo $dbcat->name;      //Debug
+                    //Go up to 0
+                    while ($dbcat->parent != 0) {
+                        //echo '->';              //Debug
+                        $current = $dbcat->id;
+                        if ($dbcat = get_record('quiz_categories','id',$dbcat->parent)) {
+                            //Found parent, add it to backup_ids (by using backup_putid
+                            //we ensure no duplicates!)
+                            $status = backup_putid($backup_unique_code,'quiz_categories',$dbcat->id,0);
+                            //echo $dbcat->name;      //Debug
+                        } else {
+                            //Parent not found, fix it (set its parent to 0)
+                            set_field ('quiz_categories','parent',0,'id',$current);
+                            //echo 'assigned to top!';          //Debug
+                        }
+                    }
+                    //echo '<br />';          //Debug
+                }
+            }
+        }
+
         return $status;
     }
 
