@@ -203,6 +203,69 @@ function quiz_upgrade($oldversion) {
         table_column("quiz", "", "password", "varchar", "255", "", "", "not null", "");
         table_column("quiz", "", "subnet", "varchar", "255", "", "", "not null", "");
     }
+
+    if ($oldversion < 2004073001) {
+        // Six new tables:
+
+
+        // One table for handling units for numerical questions
+        modify_database ("", " CREATE TABLE `prefix_quiz_numerical_units` (
+                               `id` int(10) unsigned NOT NULL auto_increment,
+                               `question` int(10) unsigned NOT NULL default '0',
+                               `multiplier` decimal(40,20) NOT NULL default '1.00000000000000000000',
+                               `unit` varchar(50) NOT NULL default '',
+                               PRIMARY KEY  (`id`)
+                ) TYPE=MyISAM COMMENT='Optional unit options for numerical questions'; ");
+
+
+        // Four tables for handling distribution and storage of
+        // individual data for dataset dependent question types
+        modify_database ("", " CREATE TABLE `prefix_quiz_attemptonlast_datasets` (
+                               `id` int(10) unsigned NOT NULL auto_increment,
+                               `category` int(10) unsigned NOT NULL default '0',
+                               `userid` int(10) unsigned NOT NULL default '0',
+                               `datasetnumber` int(10) unsigned NOT NULL default '0',
+                               PRIMARY KEY  (`id`),
+                               UNIQUE KEY `category` (`category`,`userid`)
+            ) TYPE=MyISAM COMMENT='Dataset number for attemptonlast attempts per user'; ");
+        modify_database ("", " CREATE TABLE `prefix_quiz_dataset_definitions` (
+                               `id` int(10) unsigned NOT NULL auto_increment,
+                               `category` int(10) unsigned NOT NULL default '0',
+                               `name` varchar(255) NOT NULL default '',
+                               `type` int(10) NOT NULL default '0',
+                               `options` varchar(255) NOT NULL default '',
+                               `itemcount` int(10) unsigned NOT NULL default '0',
+                               PRIMARY KEY  (`id`)
+            ) TYPE=MyISAM COMMENT='Organises and stores properties for dataset items'; ");
+        modify_database ("", " CREATE TABLE `prefix_quiz_dataset_items` (
+                               `id` int(10) unsigned NOT NULL auto_increment,
+                               `definition` int(10) unsigned NOT NULL default '0',
+                               `number` int(10) unsigned NOT NULL default '0',
+                               `value` varchar(255) NOT NULL default '',
+                               PRIMARY KEY  (`id`),
+                               KEY `definition` (`definition`)
+                             ) TYPE=MyISAM COMMENT='Individual dataset items'; ");
+        modify_database ("", " CREATE TABLE `prefix_quiz_question_datasets` (
+                               `id` int(10) unsigned NOT NULL auto_increment,
+                               `question` int(10) unsigned NOT NULL default '0',
+                               `datasetdefinition` int(10) unsigned NOT NULL default '0',
+                               PRIMARY KEY  (`id`),
+                               KEY `question` (`question`,`datasetdefinition`)
+            ) TYPE=MyISAM COMMENT='Many-many relation between questions and dataset definitions'; ");
+
+        // One table for new question type calculated
+        //  - the first dataset dependent question type
+        modify_database ("", " CREATE TABLE `prefix_quiz_calculated` (
+                               `id` int(10) unsigned NOT NULL auto_increment,
+                               `question` int(10) unsigned NOT NULL default '0',
+                               `answer` int(10) unsigned NOT NULL default '0',
+                               `tolerance` varchar(20) NOT NULL default '0.0',
+                               `tolerancetype` int(10) NOT NULL default '1',
+                               `correctanswerlength` int(10) NOT NULL default '2',
+                               PRIMARY KEY  (`id`),
+                               KEY `question` (`question`)
+                ) TYPE=MyISAM COMMENT='Options for questions of type calculated'; ");
+    }
     
     return true;
 }

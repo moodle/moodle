@@ -1,11 +1,11 @@
-# phpMyAdmin MySQL-Dump
-# version 2.3.2-dev
-# http://www.phpmyadmin.net/ (download page)
+# phpMyAdmin SQL Dump
+# version 2.5.7
+# http://www.phpmyadmin.net
 #
 # Host: localhost
-# Generation Time: Oct 16, 2002 at 01:12 AM
-# Server version: 3.23.49
-# PHP Version: 4.2.3
+# Generation Time: Jul 30, 2004 at 02:52 PM
+# Server version: 4.0.18
+# PHP Version: 4.3.7
 # Database : `moodle`
 # --------------------------------------------------------
 
@@ -56,6 +56,20 @@ CREATE TABLE `prefix_quiz_answers` (
 # --------------------------------------------------------
 
 #
+# Table structure for table `quiz_attemptonlast_datasets`
+#
+
+CREATE TABLE `prefix_quiz_attemptonlast_datasets` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `category` int(10) unsigned NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
+  `datasetnumber` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `category` (`category`,`userid`)
+) TYPE=MyISAM COMMENT='Dataset number for attemptonlast attempts per user';
+# --------------------------------------------------------
+
+#
 # Table structure for table `quiz_attempts`
 #
 
@@ -75,6 +89,22 @@ CREATE TABLE `prefix_quiz_attempts` (
 # --------------------------------------------------------
 
 #
+# Table structure for table `quiz_calculated`
+#
+
+CREATE TABLE `prefix_quiz_calculated` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `question` int(10) unsigned NOT NULL default '0',
+  `answer` int(10) unsigned NOT NULL default '0',
+  `tolerance` varchar(20) NOT NULL default '0.0',
+  `tolerancetype` int(10) NOT NULL default '1',
+  `correctanswerlength` int(10) NOT NULL default '2',
+  PRIMARY KEY  (`id`),
+  KEY `question` (`question`)
+) TYPE=MyISAM COMMENT='Options for questions of type calculated';
+# --------------------------------------------------------
+
+#
 # Table structure for table `quiz_categories`
 #
 
@@ -87,6 +117,35 @@ CREATE TABLE `prefix_quiz_categories` (
   `stamp` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Categories are for grouping questions';
+# --------------------------------------------------------
+
+#
+# Table structure for table `quiz_dataset_definitions`
+#
+
+CREATE TABLE `prefix_quiz_dataset_definitions` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `category` int(10) unsigned NOT NULL default '0',
+  `name` varchar(255) NOT NULL default '',
+  `type` int(10) NOT NULL default '0',
+  `options` varchar(255) NOT NULL default '',
+  `itemcount` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) TYPE=MyISAM COMMENT='Organises and stores properties for dataset items';
+# --------------------------------------------------------
+
+#
+# Table structure for table `quiz_dataset_items`
+#
+
+CREATE TABLE `prefix_quiz_dataset_items` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `definition` int(10) unsigned NOT NULL default '0',
+  `number` int(10) unsigned NOT NULL default '0',
+  `value` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `definition` (`definition`)
+) TYPE=MyISAM COMMENT='Individual dataset items';
 # --------------------------------------------------------
 
 #
@@ -133,6 +192,22 @@ CREATE TABLE `prefix_quiz_match_sub` (
 # --------------------------------------------------------
 
 #
+# Table structure for table `quiz_multianswers`
+#
+
+CREATE TABLE `prefix_quiz_multianswers` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `question` int(10) unsigned NOT NULL default '0',
+  `answers` varchar(255) NOT NULL default '',
+  `positionkey` varchar(255) NOT NULL default '',
+  `answertype` smallint(6) NOT NULL default '0',
+  `norm` int(10) unsigned NOT NULL default '1',
+  PRIMARY KEY  (`id`),
+  KEY `question` (`question`)
+) TYPE=MyISAM COMMENT='Options for multianswer questions';
+# --------------------------------------------------------
+
+#
 # Table structure for table `quiz_multichoice`
 #
 
@@ -145,6 +220,47 @@ CREATE TABLE `prefix_quiz_multichoice` (
   PRIMARY KEY  (`id`),
   KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='Options for multiple choice questions';
+# --------------------------------------------------------
+
+#
+# Table structure for table `quiz_numerical`
+#
+
+CREATE TABLE `prefix_quiz_numerical` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `question` int(10) unsigned NOT NULL default '0',
+  `answer` int(10) unsigned NOT NULL default '0',
+  `min` varchar(255) NOT NULL default '',
+  `max` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `answer` (`answer`)
+) TYPE=MyISAM COMMENT='Options for numerical questions';
+# --------------------------------------------------------
+
+#
+# Table structure for table `quiz_numerical_units`
+#
+
+CREATE TABLE `prefix_quiz_numerical_units` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `question` int(10) unsigned NOT NULL default '0',
+  `multiplier` decimal(40,20) NOT NULL default '1.00000000000000000000',
+  `unit` varchar(50) NOT NULL default '',
+  PRIMARY KEY  (`id`)
+) TYPE=MyISAM COMMENT='Optional unit options for numerical questions';
+# --------------------------------------------------------
+
+#
+# Table structure for table `quiz_question_datasets`
+#
+
+CREATE TABLE `prefix_quiz_question_datasets` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `question` int(10) unsigned NOT NULL default '0',
+  `datasetdefinition` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `question` (`question`,`datasetdefinition`)
+) TYPE=MyISAM COMMENT='Many-many relation between questions and dataset definitions';
 # --------------------------------------------------------
 
 #
@@ -173,7 +289,7 @@ CREATE TABLE `prefix_quiz_questions` (
   `questiontext` text NOT NULL,
   `questiontextformat` tinyint(2) NOT NULL default '0',
   `image` varchar(255) NOT NULL default '',
-  `defaultgrade` INT UNSIGNED DEFAULT '1' NOT NULL,
+  `defaultgrade` int(10) unsigned NOT NULL default '1',
   `qtype` smallint(6) NOT NULL default '0',
   `stamp` varchar(255) NOT NULL default '',
   `version` int(10) NOT NULL default '1',
@@ -188,8 +304,8 @@ CREATE TABLE `prefix_quiz_questions` (
 CREATE TABLE `prefix_quiz_randomsamatch` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `question` int(10) unsigned NOT NULL default '0',
-  `choose` INT UNSIGNED DEFAULT '4' NOT NULL,
-  PRIMARY KEY ( `id` ),
+  `choose` int(10) unsigned NOT NULL default '4',
+  PRIMARY KEY  (`id`),
   KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='Info about a random short-answer matching question';
 # --------------------------------------------------------
@@ -225,21 +341,6 @@ CREATE TABLE `prefix_quiz_shortanswer` (
 # --------------------------------------------------------
 
 #
-# Table structure for table `quiz_numerical`
-#
-
-CREATE TABLE `prefix_quiz_numerical` (
-  `id` int(10) unsigned NOT NULL auto_increment,
-  `question` int(10) unsigned NOT NULL default '0',
-  `answer` int(10) unsigned NOT NULL default '0',
-  `min` varchar(255) NOT NULL default '',
-  `max` varchar(255) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  KEY `answer` (`answer`)
-) TYPE=MyISAM COMMENT='Options for numerical questions';
-# --------------------------------------------------------
-
-#
 # Table structure for table `quiz_truefalse`
 #
 
@@ -253,22 +354,6 @@ CREATE TABLE `prefix_quiz_truefalse` (
 ) TYPE=MyISAM COMMENT='Options for True-False questions';
 # --------------------------------------------------------
 
-#
-# Table structure for table `quiz_multianswers`
-#
-
-CREATE TABLE `prefix_quiz_multianswers` (
-  `id` int(10) unsigned NOT NULL auto_increment,
-  `question` int(10) unsigned NOT NULL default '0',
-  `answers` varchar(255) NOT NULL default '',
-  `positionkey` varchar(255) NOT NULL default '',
-  `answertype` smallint(6) NOT NULL default '0',
-  `norm` int(10) unsigned NOT NULL default '1',
-  PRIMARY KEY  (`id`),
-  KEY `question` (`question`)
-) TYPE=MyISAM COMMENT='Options for multianswer questions';
-# --------------------------------------------------------
-
 INSERT INTO prefix_log_display VALUES ('quiz', 'add', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'update', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'view', 'quiz', 'name');
@@ -276,4 +361,3 @@ INSERT INTO prefix_log_display VALUES ('quiz', 'report', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'attempt', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'submit', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'review', 'quiz', 'name');
-
