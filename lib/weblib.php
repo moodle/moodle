@@ -3713,5 +3713,19 @@ function page_id_and_class(&$getid, &$getclass) {
     $getclass = $class;
 }
 
+/**
+ * Prints a maintenance message from /maintenance.html
+ */
+function print_maintenance_message () {
+    global $CFG, $SITE;
+    
+    print_header(strip_tags($SITE->fullname), $SITE->fullname, 'home');
+    print_simple_box_start('center');
+    print_heading(get_string('sitemaintenance', 'admin'));
+    @include($CFG->dataroot.'/1/maintenance.html');
+    print_simple_box_end();
+}
+
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

@@ -45,7 +45,8 @@
                     get_string('adminhelpeditorsettings'));
     $table->data[]= array("<strong><a href=\"calendar.php\">". get_string('calendarsettings', 'admin') ."</a></strong>",
                     get_string('helpcalendarsettings', 'admin'));
-
+    $table->data[]= array("<strong><a href=\"maintenance.php\">". get_string('sitemaintenancemode', 'admin') ."</a></strong>",
+                    get_string('helpsitemaintenance', 'admin'));
     print_table($table);
     
     print_footer($site);

@@ -978,6 +978,14 @@ function require_login($courseid=0, $autologinguest=true) {
         }
     }
 
+    // If the site is currently under maintenance, then print a message
+    if (!isadmin()) {
+        if (file_exists($CFG->dataroot.'/1/maintenance.html')) {
+            print_maintenance_message();
+            die;
+        }
+    }
+
     // Next, check if the user can be in a particular course
     if ($courseid) {
         if ($courseid == SITEID) {

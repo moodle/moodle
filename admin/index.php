@@ -288,6 +288,11 @@
         print_simple_box(get_string('cronwarning', 'admin') , 'center');
     }
 
+/// Alert if we are currently in maintenance mode
+    if (file_exists($CFG->dataroot.'/1/maintenance.html')) {
+        print_simple_box(get_string('sitemaintenancewarning', 'admin') , 'center');
+    }
+
     $table->tablealign = "right";
     $table->align = array ("right", "left");
     $table->wrap = array ("nowrap", "nowrap");
@@ -317,6 +322,8 @@
                     get_string("adminhelpeditorsettings")."</font><br />";
     $configdata .= "<font size=+1>&nbsp;</font><a href=\"calendar.php\">". get_string('calendarsettings', 'admin') ."</a> - <font size=\"1\">".
                     get_string('helpcalendarsettings', 'admin')."</font><br />";
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"maintenance.php\">". get_string('sitemaintenancemode', 'admin') ."</a> - <font size=\"1\">".
+                    get_string('helpsitemaintenance', 'admin')."</font><br />";
 
     $table->data[] = array("<font size=+1><b><a href=\"configure.php\">".get_string("configuration")."</a></b>", 
                             $configdata);
