@@ -459,7 +459,7 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook=""
         return $return;
 }
 function  glossary_print_entry_concept($entry) {
-    $text = format_text($entry->concept, $entry->format);
+    $text = format_text('<nolink>' . $entry->concept . '</nolink>', $entry->format);
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }
