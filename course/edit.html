@@ -41,6 +41,13 @@
     </td>
 </tr>
 <tr valign=top>
+    <td align="right"><P><?php  print_string("idnumber") ?>:</td>
+    <td><input type="text" name="idnumber" maxlength="100"  size="10" value="<?php  p($form->idnumber) ?>">
+    <?php  helpbutton("courseidnumber", get_string("idnumber")) ?>
+    <?php  if (isset($err["idnumber"])) formerr($err["idnumber"]); ?>
+    </td>
+</tr>
+<tr valign=top>
     <td align="right"><P><?php  print_string("summary") ?>:</td>
     <td><?php
         print_textarea($usehtmleditor, 10, 50, 660, 200, "summary", $form->summary);
