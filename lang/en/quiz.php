@@ -121,6 +121,7 @@ $string['randomsamatchcreate'] = "Create Random Short-Answer Matching questions"
 $string['randomsamatchintro'] = "For each of the following questions, select the matching answer from the menu.";
 $string['randomsamatchnumber'] = "Number of questions to select";
 $string['readytosend'] = "You are about to send your whole quiz to be graded.  Are you sure you want to continue?";
+$string['recentlyaddedquestion'] = "Recently added question!";
 $string['regrade'] = "Regrade all attempts";
 $string['regradecomplete'] = "All attempts have been regraded";
 $string['regradecount'] = "\$a->changed out of \$a->attempt grades were changed";
