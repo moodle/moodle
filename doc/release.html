@@ -20,7 +20,10 @@
 
 <DT> Languages</DT>
 <DD> Two completely new languages have been added: Indonesian (from Arfan Hidayat) 
-     and Japanese (from Mitsuhiro Yoshida).  Other languages contain some updates.</DD>
+     and Japanese (from Mitsuhiro Yoshida).  A US English version was added too.
+     Most other languages contain some updates.  All languages now contain locale 
+     information, which means that when a user changes the language all the dates 
+     will display properly too.</DD>
 
 <DT> Database access</DT>
 <DD> ADOdb was upgraded to 2.50 which should fix some problems with very 
@@ -28,9 +31,13 @@
 
 <DT> Layout improvements</DT>
 <DD> Cleaned up the display of "side boxes" and added CSS style control over 
-     more elements on the site and course pages.  The interface when 
+     more elements on the site and course pages.  You may need to upgrade
+     your custom themes to get the full effect.  Changes are in styles.php, 
+     config.php and one line in header.html.
+
+     <P>The interface when 
      courses are on front page and there is more than one category has 
-     been improved (no longer just shows short course names).
+     been improved (no longer just shows short course names).</P>
      
      </DD>
 
@@ -38,8 +45,10 @@
 <DD> A wrapper file provides a class interface to main Moodle library 
      (for external programs interfacing to Moodle) - moodle/lib/makeclass.php</DD>
 
-<DT> Bug fixes</DT>
+<DT> Small improvements and bug fixes</DT>
 <DD>
+     <LI> Quizzes now have a confirmation dialog when submitting an attempt
+     <LI> Courses now default to having "show recent activity" on (again).
      <LI> Abolished leading zeroes in dates (introduced in last release)
      <LI> Some formatting fixes for Japanese and old Netscape browsers
      <LI> Teacher can allow larger assignments to be uploaded
