@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // reading.php - created with Moodle 1.0.5 (2002092700)
+      // resource.php - created with Moodle 1.0.6.3 (2002111401)
 
 
 $string['addresource'] = "Ajouter une lecture";
@@ -12,7 +12,7 @@ $string['fulltext'] = "Texte pur";
 $string['htmlfragment'] = "Morceau de HTML";
 $string['modulename'] = "Lecture";
 $string['modulenameplural'] = "Lectures";
-$string['neverread'] = "Jamais lu";
+$string['neverseen'] = "Jamais lu";
 $string['note'] = "Note";
 $string['notefile'] = "Pour envoyer plus de fichiers dans le cours (afin qu'ils apparaissent dans cette liste), utiliser le
 <A HREF=\$a>Gestionnaire de fichiers</A>.";

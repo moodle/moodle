@@ -1,16 +1,15 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.5 (2002092700)
+      // forum.php - created with Moodle 1.0.6.3 (2002111401)
 
 
 $string['addanewdiscussion'] = "Ajouter un nouveau sujet de discussion";
 $string['allowchoice'] = "Autoriser tout le monde à choisir";
-$string['allowdiscussions'] = "Autoriser un \$a à commencer une nouvelle discussion ?";
+$string['allowdiscussions'] = "Un \$a peut commencer";
 $string['allowratings'] = "Autoriser l'évaluation des articles";
 $string['allowsdiscussions'] = "Chacun peut démarrer un nouveau sujet de discussion dans ce forum";
 $string['anyfile'] = "Tout fichier";
 $string['attachment'] = "Pièce attachée";
 $string['bynameondate'] = "par \$a->name - \$a->date";
-$string['canstudentsstart'] = "Autoriser un \$a à commencer une nouvelle discussion ?";
 $string['couldnotadd'] = "Impossible d'ajouter votre message à cause d'une erreur non connue";
 $string['couldnotdeleteratings'] = "Désolé, la suppression n'est plus possible car des personnes ont fait une évaluation";
 $string['couldnotdeletereplies'] = "Désolé, la suppression n'est plus possible car des personnes ont fait une réponse";
@@ -59,13 +58,18 @@ $string['newforumposts'] = "Nouveaux messages dans les forums";
 $string['nodiscussions'] = "Il n'y a pas encore de sujet de discussion dans ce forum";
 $string['noguestpost'] = "Désolé, les invités ne sont pas autorisés à écrire des messages";
 $string['noposts'] = "Aucun message";
+$string['nopostscontaining'] = "Aucun message contenant « \$a » n'a été trouvé";
 $string['nosubscribers'] = "Il n'y a pas encore d'inscrits à ce forum";
 $string['nownotsubscribed'] = "\$a->name NE recevra PAS de copies de '\$a->forum' par émail.";
 $string['nowsubscribed'] = "\$a->name recevra une copie de '\$a->forum' par émail.";
 $string['numposts'] = "\$a articles";
 $string['olderdiscussions'] = "Discussions plus anciennes";
+$string['openmode0'] = "Aucune discussion, aucune réponse";
+$string['openmode1'] = "Aucune discussion, mais les réponses sont autorisées";
+$string['openmode2'] = "Discussions et réponses";
 $string['parentofthispost'] = "Niveau supérieur de cet article";
 $string['postadded'] = "Votre message a été enregistré.<p>Il vous est possible de le modifier pendant \$a.";
+$string['postincontext'] = "Voir ce message dans son contexte";
 $string['postingtip'] = "<B>Conseils de rédaction</B><BR><BR>
 Avant de répondre :
 <UL>
@@ -95,6 +99,7 @@ $string['repliesone'] = "\$a réponse";
 $string['reply'] = "Répondre";
 $string['search'] = "Chercher";
 $string['searchforums'] = "Chercher dans les forums";
+$string['searchresults'] = "Résultats de la recherche";
 $string['sendinratings'] = "Envoyer mes dernières évaluations";
 $string['showsubscribers'] = "Afficher les inscrits";
 $string['singleforum'] = "Une seule discussion simple";
