@@ -1,7 +1,7 @@
 <?php // $Id$
 
-    require_once("../../config.php");
-    require_once("lib.php");
+    require_once('../../config.php');
+    require_once('lib.php');
 
     $id = required_param('id', PARAM_INT);                  // course id
     $search = trim(optional_param('search', '', PARAM_NOTAGS));  // search string
@@ -16,23 +16,25 @@
     $fullwords = trim(optional_param('fullwords', '', PARAM_NOTAGS)); // Whole words
     $notwords = trim(optional_param('notwords', '', PARAM_NOTAGS));   // Words we don't want
 
+    $timefromrestrict = optional_param('timefromrestrict', 0, PARAM_INT); // Use starting date
     $fromday = optional_param('fromday', 0, PARAM_INT);      // Starting date
     $frommonth = optional_param('frommonth', 0, PARAM_INT);      // Starting date
     $fromyear = optional_param('fromyear', 0, PARAM_INT);      // Starting date
     $fromhour = optional_param('fromhour', 0, PARAM_INT);      // Starting date
     $fromminute = optional_param('fromminute', 0, PARAM_INT);      // Starting date
-    if ($fromday) {
+    if ($timefromrestrict) {
         $datefrom = make_timestamp($fromyear, $frommonth, $fromday, $fromhour, $fromminute);
     } else {
         $datefrom = optional_param('datefrom', 0, PARAM_INT);      // Starting date
     }
 
+    $timetorestrict = optional_param('timetorestrict', 0, PARAM_INT); // Use ending date
     $today = optional_param('today', 0, PARAM_INT);      // Ending date
     $tomonth = optional_param('tomonth', 0, PARAM_INT);      // Ending date
     $toyear = optional_param('toyear', 0, PARAM_INT);      // Ending date
     $tohour = optional_param('tohour', 0, PARAM_INT);      // Ending date
     $tominute = optional_param('tominute', 0, PARAM_INT);      // Ending date
-    if ($today) {
+    if ($timetorestrict) {
         $dateto = make_timestamp($toyear, $tomonth, $today, $tohour, $tominute);
     } else {
         $dateto = optional_param('datefrom', 0, PARAM_INT);      // Ending date
@@ -130,7 +132,7 @@
 
     print_header_simple("$strsearchresults", "",
             "<a href=\"index.php?id=$course->id\">$strforums</a> ->
-            <a href=\"search.php?id=$course->id\">$strsearch</a> -> ".stripslashes($search), 'search.words',
+            <a href=\"search.php?id=$course->id\">$strsearch</a> -> ".stripslashes($search), '',
             "", "",  $searchform, navmenu($course));
 
     print_heading("$strsearchresults: $totalcount");
@@ -142,7 +144,7 @@
     $strippedsearch = str_replace('user:','',$search);
     $strippedsearch = str_replace('subject:','',$strippedsearch);
     $strippedsearch = str_replace('&quot;','',$strippedsearch);
-    $searchterms = explode(" ", $strippedsearch);    // Search for words independently
+    $searchterms = explode(' ', $strippedsearch);    // Search for words independently
     foreach ($searchterms as $key => $searchterm) {
         if (preg_match('/^\-/',$searchterm)) {
             unset($searchterms[$key]);
@@ -153,10 +155,10 @@
 
     foreach ($posts as $post) {
 
-        if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
-            error("Discussion ID was incorrect");
+        if (! $discussion = get_record('forum_discussions', 'id', $post->discussion)) {
+            error('Discussion ID was incorrect');
         }
-        if (! $forum = get_record("forum", "id", "$discussion->forum")) {
+        if (! $forum = get_record('forum', 'id', "$discussion->forum")) {
             error("Could not find forum $discussion->forum");
         }
 
@@ -164,7 +166,7 @@
         $discussion->name = highlight("$strippedsearch", $discussion->name);
 
         $fullsubject = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
-        if ($forum->type != "single") {
+        if ($forum->type != 'single') {
             $fullsubject .= " -> <a href=\"discuss.php?d=$discussion->id\">$discussion->name</a>";
             if ($post->parent != 0) {
                 $fullsubject .= " -> <a href=\"discuss.php?d=$post->discussion&amp;parent=$post->id\">$post->subject</a>";
@@ -195,6 +197,8 @@
         if ($missing_terms) {
             $strmissingsearchterms = get_string('missingsearchterms','forum');
             $post->message = '<p class="highlight2">'.$strmissingsearchterms.' '.$missing_terms.'</p>'.$message;
+        } else {
+            $post->message = $message;
         }
 
         $fulllink = "<a href=\"discuss.php?d=$post->discussion#$post->id\">".get_string("postincontext", "forum")."</a>";
@@ -216,6 +220,12 @@ function forum_print_big_search_form($course) {
     print_simple_box(get_string('searchforumintro', 'forum'), 'center', '', '', 'searchbox', 'intro');
 
     print_simple_box_start("center");
+
+    echo "<script type=\"text/javascript\" language=\"javascript\">\n";
+    echo "var timefromitems = ['fromday','frommonth','fromyear','fromhour', 'fromminute'];\n";
+    echo "var timetoitems = ['today','tomonth','toyear','tohour','tominute'];\n";
+    echo "</script>\n";
+
     echo '<form name="search" action="search.php" method="get">';
     echo '<input type="hidden" value="'.$course->id.'" name="id" alt="">';
     echo '<table cellpadding="10" class="searchbox" id="form">';
@@ -243,22 +253,38 @@ function forum_print_big_search_form($course) {
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchdatefrom', 'forum').':</td>';
     echo '<td class="c1">';
+    echo '<input name="timefromrestrict" type="checkbox" value="1" alt="'.get_string('searchdatefrom', 'forum').'" onclick="return lockoptions(\'search\', \'timefromrestrict\', timefromitems)" /> ';
     if (empty($dateto)) {
         $datefrom = make_timestamp(2000, 1, 1, 0, 0, 0);
     }
     print_date_selector('fromday', 'frommonth', 'fromyear', $datefrom);
     print_time_selector('fromhour', 'fromminute', $datefrom);
+
+    echo '<input type="hidden" name="hfromday" value="0" />';
+    echo '<input type="hidden" name="hfrommonth" value="0" />';
+    echo '<input type="hidden" name="hfromyear" value="0" />';
+    echo '<input type="hidden" name="hfromhour" value="0" />';
+    echo '<input type="hidden" name="hfromminute" value="0" />';
+
     echo '</td>';
     echo '</tr>';
 
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchdateto', 'forum').':</td>';
     echo '<td class="c1">';
+    echo '<input name="timetorestrict" type="checkbox" value="1" alt="'.get_string('searchdateto', 'forum').'" onclick="return lockoptions(\'search\', \'timetorestrict\', timetoitems)" /> ';
     if (empty($dateto)) {
         $dateto = time()+3600;
     }
     print_date_selector('today', 'tomonth', 'toyear', $dateto);
     print_time_selector('tohour', 'tominute', $dateto);
+
+    echo '<input type="hidden" name="htoday" value="0" />';
+    echo '<input type="hidden" name="htomonth" value="0" />';
+    echo '<input type="hidden" name="htoyear" value="0" />';
+    echo '<input type="hidden" name="htohour" value="0" />';
+    echo '<input type="hidden" name="htominute" value="0" />';
+
     echo '</td>';
     echo '</tr>';
 
@@ -279,6 +305,12 @@ function forum_print_big_search_form($course) {
 
     echo '</table>';
     echo '</form>';
+
+    echo "<script type=\"text/javascript\">";
+    echo "lockoptions('search','timefromrestrict', timefromitems);";
+    echo "lockoptions('search','timetorestrict', timetoitems);";
+    echo "</script>\n";
+
     print_simple_box_end();
 }
 
