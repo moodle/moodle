@@ -1146,6 +1146,40 @@ function main_upgrade($oldversion=0) {
         fix_course_sortorder(0, 1, 1);
     }   
 
+
+    if ($oldversion < 2005020101) {
+        // hopefully this is the LAST TIME we need to do this ;)
+        if ($rows = count_records("course_meta")) {
+            // we need to upgrade
+            modify_database("","CREATE TABLE `prefix_course_meta_tmp` (
+            `parent_course` int(10) NOT NULL default 0,
+            `child_course` int(10) NOT NULL default 0);");
+            
+            execute_sql("INSERT INTO {$CFG->prefix}course_meta_tmp (parent_course,child_course) 
+               SELECT {$CFG->prefix}course_meta.parent_course, {$CFG->prefix}course_meta.child_course
+               FROM {$CFG->prefix}course_meta");
+            $insertafter = true;
+        }
+
+        execute_sql("DROP TABLE {$CFG->prefix}course_meta");
+
+        modify_database("","CREATE TABLE `prefix_course_meta` (
+            `id` int(10) unsigned NOT NULL auto_increment,
+            `parent_course` int(10) unsigned NOT NULL default 0,
+            `child_course` int(10) unsigned NOT NULL default 0,
+            PRIMARY KEY (`id`),
+            KEY `parent_course` (parent_course),
+            KEY `child_course` (child_course));");
+
+        if (!empty($insertafter)) {
+            execute_sql("INSERT INTO {$CFG->prefix}course_meta (parent_course,child_course) 
+               SELECT {$CFG->prefix}course_meta_tmp.parent_course, {$CFG->prefix}course_meta_tmp.child_course
+               FROM {$CFG->prefix}course_meta_tmp");
+
+            execute_sql("DROP TABLE {$CFG->prefix}course_meta_tmp");
+        }
+    }
+
     return $result;
 }
 
