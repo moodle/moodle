@@ -49,7 +49,7 @@
                   }
                   echo "</optgroup>\n";
               }
-              if (!empty($users)) {
+	      else {
                   if ($usercount > MAX_USERS_PER_PAGE) {
                       echo '<optgroup label="'.get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
                           .'<optgroup label="'.get_string('trysearching').'"><option></option></optgroup>'."\n";

@@ -3,7 +3,7 @@
 
     require_once("../config.php");
 
-    define("MAX_USERS_PER_PAGE", 1000);
+    define("MAX_USERS_PER_PAGE", 5000);
 
     require_variable($id);         // course id
     optional_variable($add, "");
