@@ -354,7 +354,7 @@
 
 
     echo "<center>";
-    if (isadmin()) {           /// Print button to re-sort courses by name
+    if (isadmin() and $numcourses > 1) {           /// Print button to re-sort courses by name
         unset($options);
         $options["id"] = $category->id;
         $options["resort"] = "name";
