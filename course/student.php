@@ -38,9 +38,9 @@
 
 
     if ($course->students != $strstudents) {
-        $parastudents = " ($course->students)";
-    } else {
-        $parastudents = "";
+        $strassignstudents .= " ($course->students)";
+        $strpotentialstudents .= " ($course->students)";
+        $strexistingstudents .= " ($course->students)";
     }
 
 	print_header("$course->shortname: $strassignstudents", 
