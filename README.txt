@@ -3,15 +3,16 @@ README     $Id$
 
 If you are installing the first time, then you 
 should read the installation guide which is 
-stored in the doc subdirectory:
-
-   doc/install.html
-
-You can also access the latest version (as well 
-complete information about upgrading and using 
-Moodle on the moodle.com web site:
+part of the Moodle documentation (along with 
+information about upgrading etc):
 
    http://moodle.com/doc/
+
+There is a copy of all this documentation as part of 
+this Moodle distribution.  You can access your local
+copy of the installation guide here:
+
+   lang/en/docs/install.html
 
 Once Moodle is installed on your machine, then 
 you can also access a local copy of all this 
