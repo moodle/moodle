@@ -299,7 +299,8 @@
 
         if (empty($CFG->backup_version)) {                  // Backup has never been installed.
             $strdatabaseupgrades = get_string("databaseupgrades");
-            print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
+            print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, 
+                         "", "", false, "&nbsp;", "&nbsp;");
 
             $db->debug=true;
             if (modify_database("$CFG->dirroot/backup/db/$CFG->dbtype.sql")) {
