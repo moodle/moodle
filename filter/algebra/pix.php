@@ -11,6 +11,9 @@
     $CFG->texfilterdir     = "filter/tex";
     $CFG->algebraimagedir  = "filter/algebra";
 
+    $cmd = '';      // Initialise these variables
+    $status = '';
+
     error_reporting(E_ALL);
 
     $lifetime = 86400;
