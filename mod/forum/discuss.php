@@ -23,7 +23,7 @@
     }
 
     if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-        notify("Bad coursemodule for this discussion");
+        //notify("Bad coursemodule for this discussion");  // Only affects navmenu
     }
 
     if ($course->category) {
