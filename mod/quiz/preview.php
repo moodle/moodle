@@ -34,7 +34,7 @@ if ($quizid) {
     $quiz->shuffleanswers = $CFG->quiz_shuffleanswers;
     $quiz->questions = "$question->id";
     $quiz->sumgrades = $question->defaultgrade;
-    $quiz->grade = $CFG->quiz_maximumgrade;
+    $quiz->grade = 0;
     $quiz->timecreated = 0;
     $quiz->timemodified = 0;
     $quiz->timelimit = $CFG->quiz_timelimit;
