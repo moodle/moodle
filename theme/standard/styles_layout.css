@@ -497,3 +497,7 @@ body#doc-contents ul {
     font-size: 0.8em;
     width: 90%; /* try it on IE without this and see what happens */
 }
+
+body#course-view .unread {
+    margin-left: 3em;
+} 

@@ -172,10 +172,28 @@ th {
     border-color:#DDDDDD; /* borders */
 }
 
+.forumpostside {
+    background:#EEEEEE;
+}
+
+.forumpostpicture {
+    background:#EEEEEE; 
+}
+
+.forumpostheader {
+    border-style:solid; /* borders */
+    border-width: 0px;
+    border-bottom-color: #EEEEEE;
+    border-bottom-width: 1px;
+}
+
+.forumpostmessage {
+    background:#FFFFFF;
+}
 
 /* glossary, wiki */
 .generaltab {
-    background-color:#FFD991; /* cellheading */
+    background-color:#BBBBBB; /* cellheading */
 }
 
 .generaltabselected {
@@ -192,6 +210,32 @@ th {
     color:#555555;
 }
 
+.forumthread .unread {
+    background: #FFD991;
+}
+
+.unread {
+    background: #FFD991;
+} 
+
+#mod-forum-view .unread {
+}
+
+#mod-forum-discuss .forumpost {
+    background: none;
+}
+
+#mod-forum-discuss .unread .forumpostmessage {
+    border-style: solid; 
+    border-color: #FFD991; 
+    border-width: 2px; 
+} 
+
+#mod-forum-discuss .forumthread .unread {
+} 
+
+#mod-forum-index .unread {
+}
 
 /* message */
 table.message_search_results td {
