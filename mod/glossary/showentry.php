@@ -23,10 +23,10 @@
     }
 
 
-    if ( $eid ) {
-        $entries = get_records_sql("select e.* from {$CFG->prefix}glossary_entries e, {$CFG->prefix}glossary g".
-                                  " where (e.id = $eid)");
-    } elseif ( $concept ) {
+    if ($eid) {
+        $entries[] = get_record("glossary_entries", "id", $eid);
+
+    } else if ($concept) {
         $entries = get_records_sql("select e.* from {$CFG->prefix}glossary_entries e, {$CFG->prefix}glossary g".
                                   " where e.glossaryid = g.id and".
                                       " (e.casesensitive != 0 and ucase(concept) = '" . strtoupper(trim($concept)). "' or".
@@ -34,12 +34,11 @@
                                       " (g.course = $courseid or g.globalglossary) and".
                                       " e.usedynalink != 0 and g.usedynalink != 0");
     } 
-    if ( $entries ) {
+
+    if ($entries) {
         glossary_print_dynaentry($courseid, $entries, $displayformat);
     }    
     
     close_window_button();
-?>
-</body>
-</html>
 
+?>
