@@ -1492,16 +1492,20 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
 
     global $USER, $CFG, $SESSION, $ME;
 
-    global $course;                // This is a bit of an ugly hack to be gotten rid of later
+/// This is an ugly hack to be replaced later by a proper global $COURSE
+    global $course;
     if (!empty($course->lang)) {
         $CFG->courselang = $course->lang;
     }
 
-    if (file_exists($CFG->dirroot .'/theme/'. $CFG->theme .'/styles.php')) {
-        $styles = $CFG->stylesheet;
-    } else {
-        $styles = $CFG->wwwroot .'/theme/standard/styles.php';
+/// Set up all our style sheets
+    if ($CFG->theme != 'standard') {   // Always include the standard stylesheet
+        $meta = "\n".'<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/theme/standard/styles.php" />';
     }
+    $meta .= "\n".'<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/theme/'.$CFG->theme.'/styles.php" />';
+
+    // Add a stylesheet for the HTML editor
+    $meta = "\n".'<style type="text/css">@import url($CFG->wwwroot/lib/editor/htmlarea.css);</style>'."\n$meta\n";
 
     if ($navigation == 'home') {
         $home = true;
@@ -1548,8 +1552,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
         }
     }
 
-    // Add a stylesheet for the HTML editor
-    $meta = "<style type=\"text/css\">@import url($CFG->wwwroot/lib/editor/htmlarea.css);</style>\n$meta\n";
 
     if (!empty($CFG->unicode)) {
         $encoding = 'utf-8';
