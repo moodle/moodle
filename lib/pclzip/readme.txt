@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------
-// PclZip 2.0-rc1 - readme.txt
+// PclZip 2.0-rc2 - readme.txt
 // --------------------------------------------------------------------------------
 // License GNU/GPL - january 2003
 // Vincent Blavet - vincent@phpconcept.net
@@ -31,9 +31,22 @@
 2 - What's new
 ==============
 
-  Version 2.0-rc1 :
+  Version 2.0-rc2 :
     ***** Warning : Some new features may break the backward compatibility for your scripts.
                     Please carefully read the readme file.
+    - Add the ability to delete by Index, name and regular expression. This feature is 
+      performed by the method delete(), which uses the optional parameters
+      PCLZIP_OPT_BY_INDEX, PCLZIP_OPT_BY_NAME, PCLZIP_OPT_BY_EREG or PCLZIP_OPT_BY_PREG.
+    - Add the ability to extract by regular expression. To extract by regexp you must use the method
+      extract(), with the option PCLZIP_OPT_BY_EREG or PCLZIP_OPT_BY_PREG 
+      (depending if you want to use ereg() or preg_match() syntax) followed by the 
+      regular expression pattern.
+    - Add the ability to extract by index, directly with the extract() method. This is a
+      code improvment of the extractByIndex() method.
+    - Add the ability to extract by name. To extract by name you must use the method
+      extract(), with the option PCLZIP_OPT_BY_NAME followed by the filename to
+      extract or an array of filenames to extract. To extract all a folder, use the folder
+      name rather than the filename with a '/' at the end.
     - Add the ability to add files without compression. This is done with a new attribute
       which is PCLZIP_OPT_NO_COMPRESSION.
     - Add the attribute PCLZIP_OPT_EXTRACT_AS_STRING, which allow to extract a file directly
@@ -48,6 +61,11 @@
       path is the same
       as a zipped dir. The dir is not zipped (['status'] = filtered), only its content.
     - Add better support for windows paths (thanks for help from manus@manusfreedom.com).
+    - Corrected bug : When the archive file already exists with size=0, the add() method
+      fails. Corrected in 2.0.
+    - Remove the use of OS_WINDOWS constant. Use php_uname() function rather.
+    - Control the order of index ranges in extract by index feature.
+    - Change the internal management of folders (better handling of internal flag).
 
 
   Version 1.3 :
