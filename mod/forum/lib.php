@@ -1097,6 +1097,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
 function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false, 
                           $ratings=NULL, $footer="", $highlight="") {
+
     global $THEME, $USER, $CFG;
 
     static $stredit, $strdelete, $strreply, $strparent, $threadedmode;
@@ -1194,6 +1195,8 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo "</p>";
 
     echo "<div align=right><p align=right>";
+
+    $ratingsmenuused = false;
     if (!empty($ratings) and !empty($USER->id)) {
         $useratings = true;
         if ($ratings->assesstimestart and $ratings->assesstimefinish) {
@@ -1206,11 +1209,13 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
                 forum_print_ratings_mean($post->id, $ratings->scale);
                 if ($USER->id != $post->userid) {
                      forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
+                     $ratingsmenuused = true;
                 }
             } else if ($USER->id == $post->userid) {
                 forum_print_ratings_mean($post->id, $ratings->scale);
             } else if (!empty($ratings->allow) ) {
                 forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
+                $ratingsmenuused = true;
             }
         }
     }
@@ -1221,7 +1226,8 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         } else {
             $replystring = get_string("repliesmany", "forum", $post->replies);
         }
-        echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><b>".get_string("discussthistopic", "forum")."</b></a> ($replystring)&nbsp;&nbsp;";
+        echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><b>".
+             get_string("discussthistopic", "forum")."</b></a> ($replystring)&nbsp;&nbsp;";
     }
     echo "</p>";
     if ($footer) {
@@ -1229,6 +1235,8 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
     echo "</div>";
     echo "</td></tr>\n</table>\n\n";
+
+    return $ratingsmenuused;
 }
 
 
@@ -2077,6 +2085,7 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
     $reply   = forum_user_can_post($forum);
 
     $ratings = NULL;
+    $ratingsmenuused = false;
     if ($forum->assessed and !empty($USER->id)) {
         if ($ratings->scale = make_grades_menu($forum->scale)) {
             $ratings->assesstimestart = $forum->assesstimestart;
@@ -2091,27 +2100,35 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
         }
     }
 
-    forum_print_post($post, $course->id, $ownpost, $reply, $link=false, $ratings);
+    if (forum_print_post($post, $course->id, $ownpost, $reply, $link=false, $ratings)) {
+        $ratingsmenuused = true;
+    }
 
     switch ($mode) {
         case FORUM_MODE_FLATOLDEST :
         case FORUM_MODE_FLATNEWEST :
         default:   
             echo "<ul>";
-            forum_print_posts_flat($post->discussion, $course->id, $mode, $ratings, $reply);
+            if (forum_print_posts_flat($post->discussion, $course->id, $mode, $ratings, $reply)) {
+                $ratingsmenuused = true;
+            }
             echo "</ul>";
             break;
 
         case FORUM_MODE_THREADED :
-            forum_print_posts_threaded($post->id, $course->id, 0, $ratings, $reply);
+            if (forum_print_posts_threaded($post->id, $course->id, 0, $ratings, $reply)) {
+                $ratingsmenuused = true;
+            }
             break;
 
         case FORUM_MODE_NESTED :
-            forum_print_posts_nested($post->id, $course->id, $ratings, $reply);
+            if (forum_print_posts_nested($post->id, $course->id, $ratings, $reply)) {
+                $ratingsmenuused = true;
+            }
             break;
     }
 
-    if ($ratings) {
+    if ($ratingsmenuused) {
         echo "<center><input type=\"submit\" value=\"".get_string("sendinratings", "forum")."\">";
         if ($forum->scale < 0) {
             if ($scale = get_record("scale", "id", abs($forum->scale))) {
@@ -2127,6 +2144,7 @@ function forum_print_posts_flat($discussion, $course, $direction, $ratings, $rep
     global $USER;
 
     $link  = false;
+    $ratingsmenuused = false;
 
     if ($direction < 0) {
         $sort = "ORDER BY created DESC";
@@ -2137,17 +2155,20 @@ function forum_print_posts_flat($discussion, $course, $direction, $ratings, $rep
     if ($posts = forum_get_discussion_posts($discussion, $sort)) {
         foreach ($posts as $post) {
             $ownpost = ($USER->id == $post->userid);
-            forum_print_post($post, $course, $ownpost, $reply, $link, $ratings);
+            if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings)) {
+                $ratingsmenuused = true;
+            }
         }
-    } else {
-        return;
     }
+
+    return $ratingsmenuused;
 }
 
 function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply) { 
     global $USER;
 
     $link  = false;
+    $ratingsmenuused = false;
 
     if ($posts = forum_get_child_posts($parent)) {
         foreach ($posts as $post) {
@@ -2155,7 +2176,9 @@ function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply) 
             echo "<ul>";
             if ($depth > 0) {
                 $ownpost = ($USER->id == $post->userid);
-                forum_print_post($post, $course, $ownpost, $reply, $link, $ratings);  // link=true?
+                if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings)) {
+                    $ratingsmenuused = true;
+                }
                 echo "<br />";
             } else {
                 $by->name = "$post->firstname $post->lastname";
@@ -2165,18 +2188,20 @@ function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply) 
                 echo "</font></p></li>";
             }
 
-            forum_print_posts_threaded($post->id, $course, $depth-1, $ratings, $reply);
+            if (forum_print_posts_threaded($post->id, $course, $depth-1, $ratings, $reply)) {
+                $ratingsmenuused = true;
+            }
             echo "</ul>\n";
         }
-    } else {
-        return;
     }
+    return $ratingsmenuused;
 }
 
 function forum_print_posts_nested($parent, $course, $ratings, $reply) { 
     global $USER;
 
     $link  = false;
+    $ratingsmenuused = false;
 
     if ($posts = forum_get_child_posts($parent)) {
         foreach ($posts as $post) {
@@ -2187,15 +2212,18 @@ function forum_print_posts_nested($parent, $course, $ratings, $reply) {
                 $ownpost = ($USER->id == $post->userid);
             }
 
-            echo "<UL>";
-            forum_print_post($post, $course, $ownpost, $reply, $link, $ratings);
-            echo "<BR>";
-            forum_print_posts_nested($post->id, $course, $ratings, $reply);
-            echo "</UL>\n";
+            echo "<ul>";
+            if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings)) {
+                $ratingsmenuused = true;
+            }
+            echo "<br />";
+            if (forum_print_posts_nested($post->id, $course, $ratings, $reply)) {
+                $ratingsmenuused = true;
+            }
+            echo "</ul>\n";
         }
-    } else {
-        return;
     }
+    return $ratingsmenuused;
 }
 
 function forum_set_display_mode($mode=0) {
