@@ -67,6 +67,29 @@
         setlocale ("LC_TIME", $CFG->lang);        // Might work
     }
 
+/// Reference code to remove magic quotes from everything ... just in case.
+/// If you have problems with slashes everywhere then you might want to 
+/// uncomment this code.  It will not be necessary on 99.9% of PHP servers.
+/// Got this from http://www.php.net/manual/en/configuration.php
+//    if (ini_get("magic_quotes_gpc") ) {
+//        foreach ($GLOBALS["HTTP_".$GLOBALS["REQUEST_METHOD"]."_VARS"] as $key => $value) {
+//            if (!is_array($value)) { // Simple value
+//                $newval = stripslashes($value);
+//                $GLOBALS["HTTP_".$GLOBALS["REQUEST_METHOD"]."_VARS"][$key] = $newval;
+//                if (ini_get("register_globals")) {
+//                    $GLOBALS[$key] = $newval;
+//                }
+//            } else {  // Array
+//                foreach ($value as $k => $v) {
+//                    $newval = stripslashes($v);
+//                    $GLOBALS["HTTP_".$GLOBALS["REQUEST_METHOD"]."_VARS"][$key][$k] = $newval;
+//                    if (ini_get("register_globals")) {
+//                        $GLOBALS[$key][$k] = $newval;
+//                    }
+//                }
+//            }
+//        }
+//    }
 
 /// The following is a hack to get around the problem of PHP installations
 /// that have "register_globals" turned off (default since PHP 4.1.0).
