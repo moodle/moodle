@@ -105,34 +105,44 @@
         $results["$a->userid"]["$a->question"]["answer2"] = $a->answer2;
     }
 
-
 // Output the file as a valid Excel spreadsheet if required
 
     if ($type == "xls") {
-        require_once( "$CFG->libdir/psxlsgen.php" );
+        require_once("$CFG->libdir/excel/Worksheet.php");
+        require_once("$CFG->libdir/excel/Workbook.php");
 
+        header("Content-type: application/vnd.ms-excel");
+        header("Content-Disposition: attachment; filename=".$survey->name.".xls");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
+        header("Pragma: public");
 
-        $myxls = new PhpSimpleXlsGen();
-        $myxls->totalcol = count($order) + 100;
+        $workbook = new Workbook("-");
+        // Creating the first worksheet
+        $myxls =& $workbook->add_worksheet($survey->name);
+
         $header = array("surveyid","surveyname","userid","firstname","lastname","email","idnumber","time", "notes");
-        $myxls->ChangePos(0,0);
+        $col=0;
         foreach ($header as $item) {
-            $myxls->InsertText($item);
+            $myxls->write_string(0,$col++,$item);
         }
         foreach ($order as $key => $qid) {
             $question = $questions["$qid"];
             if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
-                $myxls->InsertText("$question->text");
+                $myxls->write_string(0,$col++,"$question->text");
             }
             if ($question->type == "2" || $question->type == "3")  {
-                $myxls->InsertText("$question->text (preferred)");
+                $myxls->write_string(0,$col++,"$question->text (preferred)");
             }
         }
 
-        $i = 0;
+//      $date = $workbook->addformat();
+//      $date->set_num_format('mmmm-d-yyyy h:mm:ss AM/PM'); // ?? adjust the settings to reflect the PHP format below
+
+        $row = 0;
         foreach ($results as $user => $rest) {
-            $i++;
-            $myxls->ChangePos($i,0);
+            $col = 0;
+            $row++;
             if (! $u = get_record("user", "id", $user)) {
                 error("Error finding student # $user");
             }
@@ -141,27 +151,28 @@
             } else {
                 $notes = "No notes made";
             }
-            $myxls->InsertText($survey->id);
-            $myxls->InsertText($survey->name);
-            $myxls->InsertText($user);
-            $myxls->InsertText($u->firstname);
-            $myxls->InsertText($u->lastname);
-            $myxls->InsertText($u->email);
-            $myxls->InsertText($u->idnumber);
-            $myxls->InsertText( userdate($results["$user"]["time"], "%d-%b-%Y %I:%M:%S %p") );
-            $myxls->InsertText($notes);
+            $myxls->write_string($row,$col++,$survey->id);
+            $myxls->write_string($row,$col++,$survey->name);
+            $myxls->write_string($row,$col++,$user);
+            $myxls->write_string($row,$col++,$u->firstname);
+            $myxls->write_string($row,$col++,$u->lastname);
+            $myxls->write_string($row,$col++,$u->email);
+            $myxls->write_string($row,$col++,$u->idnumber);
+            $myxls->write_string($row,$col++, userdate($results["$user"]["time"], "%d-%b-%Y %I:%M:%S %p") );
+//          $myxls->write_number($row,$col++,$results["$user"]["time"],$date);
+            $myxls->write_string($row,$col++,$notes);
     
             foreach ($order as $key => $qid) {
                 $question = $questions["$qid"];
                 if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
-                    $myxls->InsertText( $results["$user"]["$qid"]["answer1"] );
+                    $myxls->write_string($row,$col++, $results["$user"]["$qid"]["answer1"] );
                 }
                 if ($question->type == "2" || $question->type == "3")  {
-                    $myxls->InsertText( $results["$user"]["$qid"]["answer2"] );
+                    $myxls->write_string($row, $col++, $results["$user"]["$qid"]["answer2"] );
                 }
             }
         }
-        $myxls->SendFileName("$survey->name");
+        $workbook->close();
 
         exit;
     }
