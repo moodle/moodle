@@ -1314,8 +1314,16 @@ HTMLArea.prototype._createLink = function(link) {
     var outparam = null;
     if (typeof link == "undefined") {
         link = this.getParentElement();
-        if (link && !/^a$/i.test(link.tagName))
+        if (link && !/^a$/i.test(link.tagName)) {
             link = null;
+            var sel = this._getSelection();
+            var rng = this._createRange(sel);
+            var len = HTMLArea.is_ie ? rng.text.toString().length : sel.toString().length;
+            if(len < 1) {
+                alert("You must select text first!");
+                return false;
+            }
+        }
     }
     if (link) {
         outparam = {
