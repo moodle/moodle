@@ -57,6 +57,7 @@
 
         $USER = $user;
         $USER->loggedin = true;
+        $USER->sesskey  = random_string(10); // for added security, used to check script parameters
         $USER->site = $CFG->wwwroot;
         $USER->admin = true;
         $USER->teacher["$site->id"] = true;
