@@ -46,6 +46,12 @@
       echo "</TD></TR></TABLE>";
       echo "<BR>";
 
+      // Print a form to search discussions
+      print_simple_box("Search Discussions", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+      echo "<DIV ALIGN=CENTER>";
+      print_discussion_search_form($course);
+      echo "</DIV>";
+
       // Print Admin links for teachers and admin.
       if (isteacher($USER->id) || isadmin()) {
           print_simple_box("Admin", $align="CENTER", $width="100%", $color="$THEME->cellheading");
@@ -64,7 +70,6 @@
           $adminicon[]="<IMG SRC=\"../files/pix/files.gif\" HEIGHT=16 WIDTH=16 ALT=\"Files\">";
 
           print_side_block("", $admindata, "", $adminicon);
-
       }
       ?>
 
