@@ -116,11 +116,11 @@ Backup Details:
    - Browse backup files........................................DONE
    - Download backup files......................................DONE
    - Delete backup files........................................DONE
-   - Program scheduled backups..................................IN PROGRESS
+   - Program scheduled backups..................................DONE
       - Build a configuration inteface..........................DONE
       - Create the script.......................................DONE
       - Integrate it in cron....................................DONE
-      - View logs...............................................IN PROGRESS
+      - View logs...............................................DONE
       - Send email..............................................DONE
    - Select manually the desired activities to backup...........NOT EXISTS
       - Modify the backup frontend..............................NOT EXISTS
