@@ -11,11 +11,11 @@
 <tr valign=top>
     <td align=right><p>students_can_post_entries:</td>
     <td>
-    <SELECT size=1 name=students_can_post_entries>
+    <SELECT size=1 name=cnfstudentcanpost>
 <?php 
     $yselected = "";
     $nselected = "";
-    if ($CFG->students_can_post_entries) {
+    if ($CFG->cnfstudentcanpost) {
         $yselected = " SELECTED ";
     } else {
         $nselected = " SELECTED ";
@@ -26,17 +26,17 @@
     </SELECT>
     </td>
     <td>
-    <?php print_string("configstudents_can_post_entries", "glossary") ?>
+    <?php print_string("cnfstudentcanpost", "glossary") ?>
     </td>
 </tr>
 <tr valign=top>
     <td align=right><p>allow_duplicated_entries:</td>
     <td>
-    <SELECT size=1 name=allow_duplicated_entries>
+    <SELECT size=1 name=cnfallowdupentries>
 <?php 
     $yselected = "";
     $nselected = "";
-    if ($CFG->allow_duplicated_entries) {
+    if ($CFG->cnfallowdupentries) {
         $yselected = " SELECTED ";
     } else {
         $nselected = " SELECTED ";
@@ -47,17 +47,17 @@
     </SELECT>
     </td>
     <td>
-    <?php print_string("configallow_duplicated_entries", "glossary") ?>
+    <?php print_string("cnfallowdupentries", "glossary") ?>
     </td>
 </tr>
 <tr valign=top>
     <td align=right><p>allow_comments:</td>
     <td>
-    <SELECT size=1 name=allow_comments>
+    <SELECT size=1 name=cngallowcomments>
 <?php 
     $yselected = "";
     $nselected = "";
-    if ($CFG->allow_comments) {
+    if ($CFG->cngallowcomments) {
         $yselected = " SELECTED ";
     } else {
         $nselected = " SELECTED ";
@@ -68,17 +68,17 @@
     </SELECT>
     </td>
     <td>
-    <?php print_string("configallow_comments", "glossary") ?>
+    <?php print_string("cngallowcomments", "glossary") ?>
     </td>
 </tr>
 <tr valign=top>
     <td align=right><p>automatically_link_glossaries:</td>
     <td>
-    <SELECT size=1 name=automatically_link_glossaries>
+    <SELECT size=1 name=cnflinkglossaries>
 <?php 
     $yselected = "";
     $nselected = "";
-    if ($CFG->automatically_link_glossaries) {
+    if ($CFG->cnflinkglossaries) {
         $yselected = " SELECTED ";
     } else {
         $nselected = " SELECTED ";
@@ -89,17 +89,17 @@
     </SELECT>
     </td>
     <td>
-    <?php print_string("configautomatically_link_glossaries", "glossary") ?>
+    <?php print_string("cnflinkglossaries", "glossary") ?>
     </td>
 </tr>
 <tr valign=top>
     <td align=right><p>default_approval_status:</td>
     <td>
-    <SELECT size=1 name=default_approval_status>
+    <SELECT size=1 name=cnfapprovalstatus>
 <?php 
     $yselected = "";
     $nselected = "";
-    if ($CFG->default_approval_status) {
+    if ($CFG->cnfapprovalstatus) {
         $yselected = " SELECTED ";
     } else {
         $nselected = " SELECTED ";
@@ -110,7 +110,7 @@
     </SELECT>
     </td>
     <td>
-    <?php print_string("configdefault_approval_status", "glossary") ?>
+    <?php print_string("cnfapprovalstatus", "glossary") ?>
     </td>
 </tr>
 <tr valign=top>
@@ -119,11 +119,11 @@
 <tr valign=top>
     <td align=right><p>automatically_link_entry:</td>
     <td>
-    <SELECT size=1 name=automatically_link_entry>
+    <SELECT size=1 name=cnflinkentry>
 <?php 
     $yselected = "";
     $nselected = "";
-    if ($CFG->automatically_link_entry) {
+    if ($CFG->cnflinkentry) {
         $yselected = " SELECTED ";
     } else {
         $nselected = " SELECTED ";
@@ -134,17 +134,17 @@
     </SELECT>
     </td>
     <td>
-    <?php print_string("configautomatically_link_entry", "glossary") ?>
+    <?php print_string("cnflinkentry", "glossary") ?>
     </td>
 </tr>
 <tr valign=top>
     <td align=right><p>case_sensitive:</td>
     <td>
-    <SELECT size=1 name=case_sensitive>
+    <SELECT size=1 name=cnfcasesensitive>
 <?php 
     $yselected = "";
     $nselected = "";
-    if ($CFG->case_sensitive) {
+    if ($CFG->cnfcasesensitive) {
         $yselected = " SELECTED ";
     } else {
         $nselected = " SELECTED ";
@@ -155,17 +155,17 @@
     </SELECT>
     </td>
     <td>
-    <?php print_string("configcase_sensitive", "glossary") ?>
+    <?php print_string("cnfcasesensitive", "glossary") ?>
     </td>
 </tr>
 <tr valign=top>
     <td align=right><p>match_whole_words:</td>
     <td>
-    <SELECT size=1 name=match_whole_words>
+    <SELECT size=1 name=cnffullmatch>
 <?php 
     $yselected = "";
     $nselected = "";
-    if ($CFG->match_whole_words) {
+    if ($CFG->cnffullmatch) {
         $yselected = " SELECTED ";
     } else {
         $nselected = " SELECTED ";
@@ -176,7 +176,7 @@
     </SELECT>
     </td>
     <td>
-    <?php print_string("configmatch_whole_words", "glossary") ?>
+    <?php print_string("cnffullmatch", "glossary") ?>
     </td>
 </tr>
 <tr>

@@ -5,19 +5,19 @@
 global $CFG;
 
 if (!isset($form->studentcanpost)) {
-    $form->studentcanpost = $CFG->students_can_post_entries;
+    $form->studentcanpost = $CFG->cnfstudentcanpost;
 }
 if (!isset($form->allowduplicatedentries)) {
-    $form->allowduplicatedentries = $CFG->allow_duplicated_entries;
+    $form->allowduplicatedentries = $CFG->cnfallowdupentries;
 }
 if (!isset($form->allowcomments)) {
-    $form->allowcomments = $CFG->allow_comments;
+    $form->allowcomments = $CFG->cngallowcomments;
 }
 if (!isset($form->usedynalink)) {
-    $form->usedynalink = $CFG->automatically_link_glossaries;
+    $form->usedynalink = $CFG->cnflinkglossaries;
 }
 if (!isset($form->defaultapproval)) {
-    $form->defaultapproval = $CFG->default_approval_status;
+    $form->defaultapproval = $CFG->cnfapprovalstatus;
 }
 if (!isset($form->mainglossary)) {
     $form->mainglossary = 0;

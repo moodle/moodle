@@ -55,7 +55,7 @@ if (isset($errors)) {
         if ($newentry->usedynalink) {
             $selected = "checked";
         }
-    } elseif ( $CFG->automatically_link_entry ) {
+    } elseif ( $CFG->cnflinkentry ) {
         $selected = "checked";
     }
 ?> 
@@ -71,7 +71,7 @@ if (isset($errors)) {
           if ( $newentry->casesensitive ) {
              echo "selected";
           }
-      } elseif ( $CFG->case_sensitive ) {
+      } elseif ( $CFG->cnfcasesensitive ) {
           echo "selected";
       }
       ?> 
@@ -81,7 +81,7 @@ if (isset($errors)) {
           if ( !$newentry->casesensitive ) {
              echo "selected";
           }
-      } elseif ( !$CFG->case_sensitive ) {
+      } elseif ( !$CFG->cnfcasesensitive ) {
           echo "selected";
       }
       ?>><?php echo get_string("no") ?>
@@ -98,7 +98,7 @@ if (isset($errors)) {
           if ( $newentry->fullmatch ) {
              echo "selected";
           }
-      } elseif ( $CFG->match_whole_words ) {
+      } elseif ( $CFG->cnffullmatch ) {
           echo "selected";
       }
       ?> 
@@ -108,7 +108,7 @@ if (isset($errors)) {
           if ( !$newentry->fullmatch ) {
              echo "selected";
           }
-      } elseif ( !$CFG->match_whole_words ) {
+      } elseif ( !$CFG->cnffullmatch ) {
           echo "selected";
       }
       ?>><?php echo get_string("no") ?>

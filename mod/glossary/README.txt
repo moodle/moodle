@@ -1,31 +1,32 @@
-Glossary version 0.1
-----------------------
-
-
+Glossary version 0.5 dev
+------------------------
 By Williams Castillo (castillow@tutopia.com)
 
+This is the Glossary module. Created and maintained by Williams Castillo. This are my first lines in PHP... It means that, although I've tried to do my best, it might (in fact, it does) shows my inexperience... in PHP... and moodle as well.
 
-This is the Glossary module created and maintained by Williams Castillo.  
+Basically, this module allows you to maintain a repository of data in the form of concepts, Entry->Definitions, etc. Thus:
 
-It allows to create main and secondary glossaries within courses. Some of its features are:
-- Entries could be added by teachers (default) or by student (optional)
-- Entries from a secondary glossary could be exported by the teacher to the main glossary of the course.
-- The course creator could specify if a glossary should or should not allow duplicated entries.
-- You can browse entries by its first letters or all-in-one-page. 
-- YOu can search by concept (and optionally by definition).
-- 
-
+- Entries could be automatically linked from within moodle resources, labels, forum posts, etc.
+- Glossaries can be viewed in a printer-friendly version format
+- The display format of the entries is modular so you can create your own formats (and share them with the Moodle community!)
+- Entries are posted by teachers and can be posted by students as well
+- Entries can be approved before make them public.
+- Entries can have an optional attached file.
+- Entries can be commented by any registered user.
+- Entries can be categorized (one entry can belongs to zero or more categories)
+- Entries can be browsed by letters (initials), categories or by date.
 
 Quick install instructions
 
-1)  Copy the files inside lang/en (glossary.php and help/*.*) to your lang/en folder. Please, forgive my english... I tried to do my best... I'll appreciate if you send me correct translations of these files (I've also included the spanish translation as well).
-2)  Create a folder inside your moodle/mod folder and copy all other files inside it.
-3) If you are using a them that uses its own set of icons (like cordoroyblue), you will need to copy the icon.gif and export.gif into your folder of custom icons.
-4)  Visit your admin page to install the module
-5)  Enjoy it.
+1) Be sure you have at least Moodle 1.2 dev installed
+2) Be sure to have the latest version of the module
+3) Be sure to have the latest language for english (en) and your own language.
+3) Create a directory inside you /mod directory and name it: glossary
+4) Copy all the files in this directory inside the one you've created in step 3.
+5) Pay a visit to your admin area
+6) Have fun.
 
-
-Please, send me your comments and suggestions. It will help me improve this module.
+Comments and suggestions are always welcome.
 
 All the best,
 Will
