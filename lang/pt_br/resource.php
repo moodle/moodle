@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.0.8 (2003010600)
+      // resource.php - created with Moodle 1.1 development (2003062000)
 
 
 $string['addresource'] = "Adicionar material";
-$string['editingaresource'] = "Editar feedback";
+$string['editingaresource'] = "Editar material";
 $string['example'] = "Exemplo";
 $string['examplereference'] = "Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.";
 $string['exampleurl'] = "http://www.exemplo.com/diretorio/arquivo.html";
@@ -19,10 +19,11 @@ $string['notypechosen'] = "Você tem que escolher um tipo. Use seu botão de retor
 $string['resourcetype'] = "Tipo de material";
 $string['resourcetype1'] = "Referência";
 $string['resourcetype2'] = "Página  Web";
-$string['resourcetype3'] = "Arquivo enviado";
+$string['resourcetype3'] = "Material arquivado no site";
 $string['resourcetype4'] = "Texto simples";
 $string['resourcetype5'] = "Endereço Web (link)";
 $string['resourcetype6'] = "Texto HTML";
 $string['resourcetype7'] = "Programa";
+$string['resourcetype8'] = "Texto Wiki";
 
 ?>

@@ -1,9 +1,16 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.8 (2003010600)
+      // assignment.php - created with Moodle 1.1 development (2003062000)
 
 
 $string['allowresubmit'] = "Permitir novo envio";
 $string['assignmentdetails'] = "Detalhes da tarefa";
+$string['assignmentmail'] = "\$a->teacher escreveu comentários sobre a seguinte tarefa que você apresentou: '\$a->assignment'
+
+Leia os comentários anexos à tarefa:
+
+\$a->url";
+$string['assignmentmailhtml'] = "\$a->teacher escreveu comentários sobre a seguinte tarefa que você apresentou: '<i>\$a->assignment</i>'<br /><br />
+Leia os <a href=\\\"\$a->url\\\">comentários anexos à tarefa</a>.";
 $string['assignmentname'] = "Nome da tarefa";
 $string['assignmenttype'] = "Tipo de tarefa";
 $string['description'] = "Descrição";
@@ -27,13 +34,13 @@ $string['submitassignment'] = "Envie a sua tarefa usando este formulário";
 $string['submitted'] = "Enviada";
 $string['typeoffline'] = "Atividade offline";
 $string['typeuploadsingle'] = "Envio de  arquivo único";
-$string['uploadbadname'] = "O nome deste arquivo continha caracteres estranhos e não pode ser enviado";
+$string['uploadbadname'] = "O nome deste arquivo contém caracteres estranhos e não pode ser enviado";
 $string['uploadedfiles'] = "Arquivos enviados";
 $string['uploaderror'] = "Erro durante a gravação do arquivo no servidor";
 $string['uploadfailnoupdate'] = "O arquivo foi recebido, mas não foi possível atualizar a sua tarefa!";
 $string['uploadfiletoobig'] = "Infelizmente este arquivo é muito grande (o limite é de \$a bytes)";
-$string['uploadnofilefound'] = "Não foi encontrado nenhum arquivo - tem certeza que selecionou algum para enviar?";
-$string['uploadnotregistered'] = "'\$a' foi recebido corretamente mas o envio não foi registado!";
+$string['uploadnofilefound'] = "Não foi encontrado nenhum arquivo - você tem certeza que selecionou um arquivo para enviar?";
+$string['uploadnotregistered'] = "'\$a' foi recebido corretamente mas o envio não foi registrado!";
 $string['uploadsuccess'] = "'\$a' enviado com sucesso!";
 $string['viewfeedback'] = "Ver  avaliação e feedback";
 $string['viewsubmissions'] = "Ver \$a tarefas enviadas";
