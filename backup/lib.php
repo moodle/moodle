@@ -206,7 +206,7 @@
         global $CFG; 
 
         //Change this if you want !!
-        $days = 1;
+        $days = 2;
         //End change this
         $seconds = $days * 24 * 60 * 60;
         $delete_from = time()-$seconds;

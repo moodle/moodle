@@ -22,7 +22,8 @@
             //Check module info
             $var = "backup_".$modname;
             if (!isset($$var)) {
-                $$var = 1;
+                //Every undefined backup_XXXX isn't exported
+                $$var = 0;
             }
             //Now stores all the mods preferences into an array into preferences
             $preferences->mods[$modname]->backup = $$var;
