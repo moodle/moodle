@@ -972,9 +972,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                          ';
                 }
                 $instancename = urldecode($modinfo[$modnumber]->name);
-                if (!empty($CFG->filterall)) {
-                    $instancename = filter_text("<nolink>$instancename</nolink>", $course->id);
-                }
+                    $instancename = format_string($instancename, true,  $course->id);
 
                 if (!empty($modinfo[$modnumber]->extra)) {
                     $extra = urldecode($modinfo[$modnumber]->extra);
