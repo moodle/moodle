@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 unstable development (2004091700)
+      // forum.php - created with Moodle 1.5 unstable development (2004092000)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -119,7 +119,7 @@ $string['ratingsuse'] = '評価を使用する';
 $string['ratingtime'] = 'この期間の投稿に対する評価を制限する:';
 $string['re'] = 'Re:';
 $string['readtherest'] = '残りのトピックを読む';
-$string['replies'] = '返事';
+$string['replies'] = '返信';
 $string['repliesmany'] = '返信数: $a 件';
 $string['repliesone'] = '返信数: $a 件';
 $string['reply'] = '返信';
