@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 $module->fullname = "Forum";
-$module->version  = 2002073008;
+$module->version  = 2002080100;
 $module->cron     = 60;
 $module->search   = "";
 
@@ -34,6 +34,11 @@ function forum_upgrade($oldversion) {
     execute_sql("UPDATE log SET action = 'add discussion' WHERE module = 'discuss' AND action = 'add' ");
     execute_sql("UPDATE log SET module = 'forum' WHERE module = 'discuss' ");
     notify("Renamed all the old discuss tables (now part of forum) and created new forum_types");
+  }
+
+  if ($oldversion < 2002080100) {
+    execute_sql("INSERT INTO log_display VALUES ('forum', 'view subscribers', 'forum', 'name') ");
+    execute_sql("INSERT INTO log_display VALUES ('forum', 'update', 'forum', 'name') ");
   }
 
   return true;

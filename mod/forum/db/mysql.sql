@@ -83,10 +83,13 @@ CREATE TABLE forum_subscriptions (
 #
 
 INSERT INTO log_display VALUES ('forum', 'add', 'forum', 'name');
-INSERT INTO log_display VALUES ('forum', 'add discussion', 'forum_discuss', 'name');
+INSERT INTO log_display VALUES ('forum', 'update', 'forum', 'name');
+INSERT INTO log_display VALUES ('forum', 'add discussion', 'forum_discussions', 'name');
 INSERT INTO log_display VALUES ('forum', 'add post', 'forum_posts', 'subject');
 INSERT INTO log_display VALUES ('forum', 'update post', 'forum_posts', 'subject');
-INSERT INTO log_display VALUES ('forum', 'view discussion', 'forum_discuss', 'name');
+INSERT INTO log_display VALUES ('forum', 'view subscribers', 'forum', 'name');
+INSERT INTO log_display VALUES ('forum', 'view discussion', 'forum_discussions', 'name');
 INSERT INTO log_display VALUES ('forum', 'view forum', 'forum', 'name');
 INSERT INTO log_display VALUES ('forum', 'subscribe', 'forum', 'name');
 INSERT INTO log_display VALUES ('forum', 'unsubscribe', 'forum', 'name');
+

@@ -14,7 +14,7 @@
 
     require_login($course->id);
 
-    add_to_log($course->id, "course", "search", "search.php?id=$course->id&search=$search", "$search"); 
+    add_to_log($course->id, "forum", "search", "search.php?id=$course->id&search=$search", "$search"); 
 
     if ($search) {
         print_header("$course->shortname: Search Results", "$course->fullname",

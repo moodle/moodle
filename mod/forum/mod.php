@@ -36,6 +36,7 @@ function add_instance($forum) {
             error("Could not add the discussion for this forum");
         }
     }
+    add_to_log($forum->course, "forum", "add", "index.php?f=$forum->id", "$forum->id");
 
     return $forum->id;
 }
@@ -77,7 +78,12 @@ function update_instance($forum) {
         }
     }
 
-    return update_record("forum", $forum);
+    if (update_record("forum", $forum)) {
+        add_to_log($forum->course, "forum", "update", "index.php?f=$forum->id", "$forum->id");
+        return true;
+    } else {
+        return false;
+    }
 }
 
 
