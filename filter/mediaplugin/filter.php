@@ -52,14 +52,15 @@ function mediaplugin_filter($courseid, $text) {
 
         $replace  = '\\0<br /><object classid="CLSID:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"';
         $replace .= '        codebase="http://www.apple.com/qtactivex/qtplugin.cab" ';
-        $replace .= '        height="225" width="300"';
+        $replace .= '        height="240" width="300"';
         $replace .= '        id="quicktime" align="" type="application/x-oleobject">';
         $replace .= "<param name=\"src\" value=\"\\2.mov\" />";
         $replace .= '<param name="autoplay" value=true />';
         $replace .= '<param name="loop" value=true />';
         $replace .= '<param name="controller" value=true />';
+        $replace .= '<param name="scale" value="tofit" />';
         $replace .= "\n<embed src=\"\\2.mov\" name=\"quicktime\" type=\"video/quicktime\" ";
-        $replace .= ' height="225" width="300" ';
+        $replace .= ' height="240" width="300" scale="tofit" ';
         $replace .= ' autoplay="true" controller="true" loop="true" ';
         $replace .= ' pluginspage="http://quicktime.apple.com/">';
         $replace .= '</embed>';
