@@ -181,7 +181,7 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
     }
 }
 
-function print_table($table, $cellpadding=10, $cellspacing=1) {
+function print_table($table) {
 // Prints a nicely formatted table.
 // $table is an object with several properties.
 //     $table->head      is an array of heading names.
@@ -189,6 +189,8 @@ function print_table($table, $cellpadding=10, $cellspacing=1) {
 //     $table->size      is an array of column sizes
 //     $table->data[]    is an array of arrays containing the data.
 //     $table->width     is an percentage of the page
+//     $table->cellpadding    padding on each cell
+//     $table->cellspacing    spacing between cells
 
     if (isset($table->align)) {
         foreach ($table->align as $key => $aa) {

@@ -81,6 +81,9 @@
             $table->head = array ("&nbsp;", $name, $city, $country, $lastaccess);
             $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT", "LEFT");
             $table->size = array ("10", "*", "*", "*", "*");
+            $table->size = array ("10", "*", "*", "*", "*");
+            $table->cellpadding = 2;
+            $table->cellspacing = 0;
             
             foreach ($students as $student) {
                 if ($student->lastaccess) {
@@ -101,7 +104,7 @@
                     "<FONT SIZE=2>".$COUNTRIES["$student->country"]."</FONT>",
                     "<FONT SIZE=2>$lastaccess</FONT>");
             }
-            print_table($table, 2, 0);
+            print_table($table);
         }
     } 
 

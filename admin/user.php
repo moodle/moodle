@@ -149,6 +149,7 @@
 
             $table->head = array ($name, $email, $city, $country, $lastaccess, "", "");
             $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER");
+            $table->width = "95%";
             foreach ($users as $user) {
                 if ($user->id == $USER->id or $user->username == "changeme") {
                     $deletebutton = "";
