@@ -221,8 +221,6 @@
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
 
-    echo '<div id="glossary-view" class="glossary">';  // glossary-view wrapper start
-
     //If rss are activated at site and glossary level and this glossary has rss defined, show link
         if (isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
             $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds && $glossary->rsstype && $glossary->rssarticles) {
@@ -404,8 +402,6 @@
     }
 
 /// Finish the page
-
-    echo '</div>';  // glossary-view wrapper end
 
     print_footer($course);
 
