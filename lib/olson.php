@@ -13,7 +13,7 @@ function olson_todst ($filename) {
 
     $zones = olson_simple_zone_parser($filename);
     $rules = olson_simple_rule_parser($filename);
-    
+
     $mdl_zones = array();
 
     /**
@@ -32,7 +32,7 @@ function olson_todst ($filename) {
     $maxyear = localtime(time(), true);
     $maxyear = $maxyear['tm_year'] + 1900 + 10;
 
-    foreach ($zones as $zname=>$zbyyear) { // loop over zones
+    foreach ($zones as $zname => $zbyyear) { // loop over zones
         /**
          *** Loop over years, only adding a rule when zone or rule
          *** have changed. All loops preserver the last seen vars
@@ -99,6 +99,8 @@ function olson_todst ($filename) {
         $mdl_zones[] = $mdl_tz;
         //print_object("Zero entry for $zone[name] added");
 
+        $lasttimezone = $mdl_tz;
+
         ///
         /// 1971 onwards
         /// 
@@ -148,8 +150,13 @@ if(isset($mdl_tz['dst_time']) && !strpos($mdl_tz['dst_time'], ':') || isset($mdl
     print_object('---');
 }
 */
+                // This is the simplest way to make the != operator just below NOT take the year into account
+                $lasttimezone['year'] = $mdl_tz['year'];
 
-                $mdl_zones[] = $mdl_tz;
+                // If not a duplicate, add and update $lasttimezone
+                if($lasttimezone != $mdl_tz) {
+                    $mdl_zones[] = $lasttimezone = $mdl_tz;
+                }
             }
         } 
         
@@ -202,19 +209,18 @@ function olson_simple_rule_parser ($filename) {
              $letter) = $rule;
 
         $srs = ($save === '0') ? 'reset' : 'set';
-        $rules[$name][$from][$srs] = $rule;
 
-        /*
-        if($to == 'only' || $to == 'max') {
-            // In both cases, a single entry for one year will suffice
+        if($to == 'only') {
             $to = $from;
+        }
+        else if($to == 'max') {
+            $to = date('Y');
         }
 
         for($i = $from; $i <= $to; ++$i) {
             $rules[$name][$i][$srs] = $rule;
         }
-        */
-        
+
     }
 
     fclose($file);
@@ -395,7 +401,7 @@ function olson_simple_zone_parser ($filename) {
             if (!empty($line[5])) { 
                 $zone['until'] = $line[5];
             }
-            $zone['from'] = '0';
+            $zone['year'] = '0';
             
             $zones[$zone['name']] = array();
 
@@ -409,7 +415,7 @@ function olson_simple_zone_parser ($filename) {
             }
             // retrieve info from the lastzone
             $zone = $lastzone;
-            $zone['from'] = $zone['until'];
+            $zone['year'] = $zone['until'];
             // overwrite with current data
             list(
                   $zone['gmtoff'],
@@ -440,7 +446,7 @@ function olson_simple_zone_parser ($filename) {
             $zone['rule'] = '';
         }
         
-        $zones[$zone['name']][(string)$zone['from']] = $zone;
+        $zones[$zone['name']][(string)$zone['year']] = $zone;
     }
 
     return $zones;
@@ -457,16 +463,16 @@ function olson_parse_offset ($offset) {
     
     // perhaps it's just minutes
     if (preg_match('/^(-?)(\d*)$/', $offset)) {
-        return $offset;
+        return intval($offset);
     }
     // (-)hours:minutes(:seconds) 
     if (preg_match('/^(-?)(\d*):(\d+)/', $offset, $matches)) {
         // we are happy to discard the seconds
         $sign    = $matches[1];
-        $hours   = (int)$matches[2];
-        $seconds = (int)$matches[3];
+        $hours   = intval($matches[2]);
+        $seconds = intval($matches[3]);
         $offset  = $sign . ($hours*60 + $seconds);
-        return $offset;
+        return intval($offset);
     } 
 
     trigger_error('Strange time format in olson_parse_offset() ' .$offset);
