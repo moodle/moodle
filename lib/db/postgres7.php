@@ -917,6 +917,10 @@ function main_upgrade($oldversion=0) {
         table_column('user',   '', 'theme', 'varchar', '50', '', '', '', 'lang');
     }
 
+    if ($oldversion < 2005021700) {
+        table_column('user', '', 'dstpreset', 'int', '10', '', '0', 'not null', 'timezone');
+    }
+
     return $result;
 }
 

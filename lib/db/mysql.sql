@@ -436,6 +436,7 @@ CREATE TABLE `prefix_user` (
   `lang` varchar(10) default 'en',
   `theme` varchar(50) NOT NULL default '',
   `timezone` float NOT NULL default '99',
+  `dstpreset` int(10) NOT NULL default '0',
   `firstaccess` int(10) unsigned NOT NULL default '0',
   `lastaccess` int(10) unsigned NOT NULL default '0',
   `lastlogin` int(10) unsigned NOT NULL default '0',
