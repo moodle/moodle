@@ -8,7 +8,6 @@ $string[modulenameplural] = "Forums";
 $string[addanewdiscussion] = "Add a new discussion topic";
 $string[bynameondate] = "by \$a->name - \$a->date";
 $string[delete] = "Delete";
-$string[description] = "Description";
 $string[discussion] = "Discussion";
 $string[discussions] = "Discussions";
 $string[discussionsstartedby] = "Discussions started by \$a";

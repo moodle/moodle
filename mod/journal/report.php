@@ -91,7 +91,7 @@
     } else {
         echo "<FORM ACTION=report.php METHOD=post>\n";
 
-        if ($usersdone = journal_get_users_done($course, $journal)) {
+        if ($usersdone = journal_get_users_done($journal)) {
             foreach ($usersdone as $user) {
                 $entry = $entrybyuser[$user->id];
                 journal_print_user_entry($course, $user, $entry, $teachers, $RATING);

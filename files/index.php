@@ -37,18 +37,10 @@
         echo "<td colspan=\"2\">";
     }
 
-    if (! file_exists($CFG->dataroot)) {
-        if (! mkdir($CFG->dataroot, 0750)) {
-            error("You need to create the directory $CFG->dataroot with web server write access");
-        }
+    if (! $basedir = make_upload_directory("$course->id") {
+        error("The site administrator needs to fix the file permissions");
     }
-    $basedir = "$CFG->dataroot/$course->id";
 
-    if (! file_exists($basedir)) {
-        if (! mkdir($basedir, 0750)) {
-            error("Could not create a directory for this course ($basedir)");
-        }
-    }
     $baseweb = $CFG->wwwroot;
 
 //  End of configuration and access control
@@ -396,12 +388,6 @@ function fulldelete($location) {
         }
     }
     return true;
-}
-
-function clean_filename($string) {
-    $string = eregi_replace("\.\.", "", $string);
-    $string = eregi_replace("[^([:alnum:]|\.)]", "_", $string);
-    return    eregi_replace("_+", "_", $string);
 }
 
 

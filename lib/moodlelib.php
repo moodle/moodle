@@ -190,6 +190,29 @@ function print_editing_switch($courseid) {
     }
 }
 
+function update_course_icon($courseid) {
+    global $CFG, $USER;
+
+    if (isteacher($courseid)) {
+        if ($USER->editing) {
+            return "<A TITLE=\"Turn editing OFF\" HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=off\"
+                    TARGET=_top><IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
+        } else {
+            return "<A TITLE=\"Turn editing ON\" HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=on\"
+                    TARGET=_top><IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
+        }
+    }
+}
+
+function update_module_icon($moduleid, $courseid) {
+    global $CFG;
+
+    if (isteacher($courseid)) {
+        return "<A TITLE=\"Edit this activity\" HREF=\"$CFG->wwwroot/course/mod.php?update=$moduleid&return=true\" TARGET=_top><IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
+    }
+}
+
+
 function print_date_selector($day, $month, $year, $currenttime=0) {
 // Currenttime is a default timestamp in GMT
 // Prints form items with the names $day, $month and $year
@@ -237,29 +260,35 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0) 
    return mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
 }
 
-function update_course_icon($courseid) {
-    global $CFG, $USER;
+function format_time($totalsecs) {
+// Given an amount of time in seconds, prints it 
+// nicely as months, days, hours etc as needed
 
-    if (isteacher($courseid)) {
-        if ($USER->editing) {
-            return "<A TITLE=\"Turn editing OFF\" HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=off\"
-                    TARGET=_top><IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
-        } else {
-            return "<A TITLE=\"Turn editing ON\" HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=on\"
-                    TARGET=_top><IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
-        }
-    }
+    $totalsecs = abs($totalsecs);
+
+    $days  = floor($totalsecs/86400);
+    $remainder = $totalsecs - ($days*86400);
+    $hours = floor($remainder/3600);
+    $remainder = $remainder - ($hours*3600);
+    $mins  = floor($remainder/60);
+    $secs = $remainder - ($mins*60);
+
+    if ($secs  != 1) $ss = "s";
+    if ($mins  != 1) $ms = "s";
+    if ($hours != 1) $hs = "s";
+    if ($days  != 1) $ds = "s";
+
+    if ($days)  $odays  = "$days day$ds";
+    if ($hours) $ohours = "$hours hr$hs";
+    if ($mins)  $omins  = "$mins min$ms";
+    if ($secs)  $osecs  = "$secs sec$ss";
+
+    if ($days)  return "$odays $ohours";
+    if ($hours) return "$ohours $omins";
+    if ($mins)  return "$omins $osecs";
+    if ($secs)  return "$osecs";
+    return get_string("now");
 }
-
-function update_module_icon($moduleid, $courseid) {
-    global $CFG;
-
-    if (isteacher($courseid)) {
-        return "<A TITLE=\"Edit this activity\" HREF=\"$CFG->wwwroot/course/mod.php?update=$moduleid&return=true\" TARGET=_top><IMG 
-                SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
-    }
-}
-
 
 function userdate($date, $format="", $timezone=99) {
 // Returns a formatted string that represents a date in user time
@@ -280,7 +309,9 @@ function userdate($date, $format="", $timezone=99) {
 }
 
 function usergetdate($date, $timezone=99) {
-// Returns an array that represents a date in user time
+// Given a $date timestamp in GMT, returns an array 
+// that represents the date in user time
+
     global $USER;
 
     if ($timezone == 99) {
@@ -1143,7 +1174,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     $mail->FromName = "$from->firstname $from->lastname";
     $mail->Subject  =  stripslashes($subject);
 
-    $mail->AddAddress("$user->email","$user->firstname $user->lastname"); 
+    $mail->AddAddress("$user->email", "$user->firstname $user->lastname"); 
 
     $mail->WordWrap = 70;                               // set word wrap
 
@@ -1181,6 +1212,37 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
 /// FILE HANDLING  /////////////////////////////////////////////
 
+function make_upload_directory($directory) {
+// $directory = a string of directory names under $CFG->dataroot
+// eg  stuff/assignment/1
+// Returns full directory if successful, false if not
+
+    global $CFG;
+
+    $currdir = $CFG->dataroot;
+    if (!file_exists($currdir)) {
+        if (! mkdir($currdir, 0750)) {
+            notify("ERROR: You need to create the directory $currdir with web server write access");
+            return false;
+        }
+    }
+
+    $dirarray = explode("/", $directory);
+
+    foreach ($dirarray as $dir) {
+        $currdir = "$currdir/$dir";
+        if (! file_exists($currdir)) {
+            if (! mkdir($currdir, 0750)) {
+                notify("ERROR: Could not find or create a directory ($currdir)");
+                return false;
+            }
+        }
+    }
+
+    return $currdir;
+}
+
+
 function get_directory_list( $rootdir ) {
 // Returns an array with all the filenames in 
 // all subdirectories, relative to the given rootdir.
@@ -1205,6 +1267,13 @@ function get_directory_list( $rootdir ) {
 
     return $dirs;
 }
+
+function clean_filename($string) {
+    $string = eregi_replace("\.\.", "", $string);
+    $string = eregi_replace("[^([:alnum:]|\.)]", "_", $string);
+    return    eregi_replace("_+", "_", $string);
+}
+
 
 /// STRING TRANSLATION  ////////////////////////////////////////
 
@@ -1422,30 +1491,5 @@ function generate_password($maxlen=10) {
 }
 
 
-function format_time($totalsecs) {
-
-    $days  = floor($totalsecs/86400);
-    $remainder = $totalsecs - ($days*86400);
-    $hours = floor($remainder/3600);
-    $remainder = $remainder - ($hours*3600);
-    $mins  = floor($remainder/60);
-    $secs = $remainder - ($mins*60);
-
-    if ($secs  != 1) $ss = "s";
-    if ($mins  != 1) $ms = "s";
-    if ($hours != 1) $hs = "s";
-    if ($days  != 1) $ds = "s";
-
-    if ($days)  $odays  = "$days day$ds";
-    if ($hours) $ohours = "$hours hr$hs";
-    if ($mins)  $omins  = "$mins min$ms";
-    if ($secs)  $osecs  = "$secs sec$ss";
-
-    if ($days)  return "$odays $ohours";
-    if ($hours) return "$ohours $omins";
-    if ($mins)  return "$omins $osecs";
-    if ($secs)  return "$osecs";
-    return "now";
-}
 
 ?>

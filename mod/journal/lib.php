@@ -150,10 +150,10 @@ function journal_cron () {
     return true;
 }
 
-function journal_get_users_done($course, $journal) {
+function journal_get_users_done($journal) {
     return get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t, journal_entries j
-                            WHERE ((s.course = '$course->id' AND s.user = u.id) OR 
-                                   (t.course = '$course->id' AND t.user = u.id))
+                            WHERE ((s.course = '$journal->course' AND s.user = u.id) OR 
+                                   (t.course = '$journal->course' AND t.user = u.id))
                               AND u.id = j.user AND j.journal = '$journal->id'
                             ORDER BY j.modified DESC");
 }
