@@ -35,8 +35,8 @@
 
 	var dn = ""; var old = "";
 
-	if (document.all||document.getElementById) { document.write('<span id="LiveClockIE" style="width:'+mywidth+'px; background-color:'+myback_color+'"></span>'); }
-	else if (document.layers) { document.write('<ilayer bgColor="'+myback_color+'" id="ClockPosNS"><layer width="'+mywidth+'" id="LiveClockNS"></layer></ilayer>'); }
+	if (document.all||document.getElementById) { document.write('<span id="LiveClockIE" style="width:'+mywidth+'px;"></span>'); }
+	else if (document.layers) { document.write('<ilayer id="ClockPosNS"><layer width="'+mywidth+'" id="LiveClockNS"></layer></ilayer>'); }
 	else { old = "true"; show_clock(); }
 	
 	/*function leave() {  // feable attempt to run a script when someone leaves a timed test early, failed so far
@@ -73,7 +73,6 @@
 			
 			myclock = '';
 			myclock += '<font style="color:'+myfont_color+'; font-family:'+myfont_face+'; font-size:'+myfont_size+'pt;">';
-			myclock += "Time remaining: ";
 			if (hours > 0) {
 				myclock += hours+":";
 			}
