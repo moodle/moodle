@@ -49,6 +49,7 @@ $string['defaultgrade'] = "Standard-Note der Frage";
 $string['defaultinfo'] = "Die Standard-Kategorie für diese Frage";
 $string['deletequestioncheck'] = "Sind Sie sich absolut sicher, dass Sie '\$a' löschen möchten?";
 $string['description'] = "Beschreibung";
+$string['eachattemptbuildsonthelast'] = "Jeder Versuch basiert auf dem Letzten";
 $string['editcategories'] = "Kategorien bearbeiten";
 $string['editingdescription'] = "Eine Beschreibung bearbeiten";
 $string['editingmatch'] = "Eine Zuordnungsfrage bearbeiten";

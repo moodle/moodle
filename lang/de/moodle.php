@@ -25,35 +25,21 @@ $string['address'] = "Adresse";
 $string['addteacher'] = "Lehrer anlegen";
 $string['admin'] = "Admin";
 $string['adminhelpaddnewuser'] = "Neue Nutzerzugänge manuell anlegen";
-$string['adminhelpassignadmins'] = "Administratoren haben vollen Zugriff auf die Site";
+$string['adminhelpassignadmins'] = "Administratoren haben vollen Zugriff auf die Seite";
 $string['adminhelpassigncreators'] = "Ersteller können neue Kurse anlegen und dort unterrichten";
 $string['adminhelpassignteachers'] = "Wählen Sie einen Kurs und verwenden Sie das Icon, um Lehrer hinzuzufügen";
 $string['adminhelpauthentication'] = "Sie können interne Nutzerzugänge oder externe Datenbanken verwenden";
-$string['adminhelpconfiguration'] = "Generelle Variablen für die gesamte Site festlegen";
-$string['adminhelpcourses'] = "Kurse und Kategorien definieren und Ihnen Personen zuordnen";
+$string['adminhelpconfiguration'] = "Generelle Variablen für die gesamte Seite festlegen";
+$string['adminhelpcourses'] = "Kurse und Kategorien definieren und ihnen Personen zuordnen";
 $string['adminhelpedituser'] = "Liste der Nutzerzugänge durchsuchen und bearbeiten";
 $string['adminhelplanguage'] = "Überprüfen und Bearbeiten des aktuellen Sprachpakets";
-$string['adminhelplogs'] = "Logfiles der Aktivitäten der Site durchsuchen";
+$string['adminhelplogs'] = "Logfiles der Aktivitäten der Seite durchsuchen";
 $string['adminhelpmanagemodules'] = "Installierte Module und deren Einstellungen verwalten";
 $string['adminhelpmanagedatabase'] = "Direkt auf die Datenbank zugreifen (Vorsicht!)";
 $string['adminhelpsitesettings'] = "Festlegen der Aufmachung für die Begrüßungsseite ";
 $string['adminhelpsitefiles'] = "Allgemenine Dateien veröffentlichen oder externe Backups hochladen";
 $string['adminhelpthemes'] = "Optik der Seite auswählen";
 $string['adminhelpusers'] = "Nutzer anlegen und Authentifizierung festlegen";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 $string['administration'] = "Administration";
 $string['administrator'] = "Administrator";
 $string['administrators'] = "Administratoren";
@@ -73,6 +59,7 @@ $string['areyousuretorestorethis'] = "Sind Sie sicher dieses zurück zu setzen";
 $string['assessment'] = "Beurteilung";
 $string['assignadmins'] = "Verwalter zuweisen";
 $string['assigncreators'] = "Kursersteller zuweisen";
+$string['assignstudents'] = "Teilnehmer zuweisen";
 $string['assignteachers'] = "Lehrer zuweisen";
 $string['authentication'] = "Authentifizierung";
 $string['autosubscribe'] = "Automatische Forumsanmeldung";
@@ -161,6 +148,8 @@ $string['course'] = "Kurs";
 $string['courseavailable'] = "Dieser Kurs ist für Kursteilnehmer verfügbar";
 $string['courseavailablenot'] = "Dieser Kurs ist nicht für Kursteilnehmer verfügbar";
 $string['coursebackup'] = "Kurssicherung";
+$string['coursecategories'] = "Kurskategorien";
+$string['coursecategory'] = "Kurskategorie";
 $string['coursemanagement'] = "Kursverwaltung";
 $string['coursecreators'] = "Kursersteller";
 $string['coursefiles'] = "Kursdateien";
@@ -309,6 +298,7 @@ $string['filemissing'] = "\$a fehlt";
 $string['files'] = "Dateien";
 $string['filesfolders'] = "Dateien/Ordner";
 $string['filloutallfields'] = "Bitte füllen Sie alle Formular-Felder aus";
+$string['findmorecourses'] = "Weitere Kurse finden...";
 $string['firstname'] = "Vorname";
 $string['firsttime'] = "Sind Sie das erste Mal hier?";
 $string['followingoptional'] = "Die folgenden Angaben sind optional";
@@ -412,7 +402,7 @@ $string['loginguest'] = "Anmelden als Gast";
 $string['loginsite'] = "Anmeldung für diese Seite";
 $string['loginsteps'] = "Hallo! Für den vollen Zugang zu
 den Kursen werden Sie sich eine Minute Zeit nehmen müssen,
-um einen neuen Zugang für sich selbst auf dieser Website
+um einen neuen Zugang für sich selbst auf dieser Webseite
 zu erstellen. Jeder der individuellen Kurse kann auch
 einen einmaligen \\\"Zugangsschlüssel\\\" haben,
 den Sie später nicht mehr brauchen werden. Hier sind die
@@ -475,6 +465,7 @@ $string['movedown'] = "Nach unten verschieben";
 $string['movefilestohere'] = "Dateien hierhin verschieben";
 $string['movefull'] = "\$a an diese Stelle verschieben";
 $string['movehere'] = "Hierhin verschieben";
+$string['moveselectedcoursesto'] = "Gewählte Kurse verschieben nach ...";
 $string['movetoanotherfolder'] = "In einen anderen Ordner verschieben";
 $string['moveup'] = "Nach oben verschieben";
 $string['mustconfirm'] = "Sie müssen Ihren Zugang bestätigen";
@@ -512,6 +503,7 @@ $string['newsitemsnumber'] = "Anzuzeigende Nachrichten";
 $string['newuser'] = "Neuer Benutzer";
 $string['newusers'] = "Neue Benutzer";
 $string['no'] = "Nein";
+$string['nocoursesfound'] = "Keine Kurse gefunden mit dem Begriff '\$a'";
 $string['nocoursesyet'] = "Keine Kurse in dieser Rubrik";
 $string['noexistingadmins'] = "Kein Verwalter vorhanden, dies ist ein schwerwiegender Fehler und diese Nachricht sollten Sie niemals sehen.";
 $string['noexistingcreators'] = "Keine Ersteller angelegt";
@@ -520,6 +512,7 @@ $string['nofilesselected'] = "Keine Dateien wurden zur Wiederherstellung ausgewä
 $string['nofilesyet'] = "Bislang wurden keine Dateien für Ihren Kurs hochgeladen";
 $string['nograde'] = "Keine Note";
 $string['noimagesyet'] = "Bislang wurden keine Grafiken für Ihren Kurs hochgeladen";
+$string['nomorecourses'] = "Keine weiteren entsprechenden Kurse gefunden";
 $string['none'] = "Nichts";
 $string['nopotentialadmins'] = "Keine potenziellen Verwalter";
 $string['nopotentialcreators'] = "Keinen potenziellen Kursersteller";
@@ -578,6 +571,7 @@ $string['publicdirectory'] = "Offentliches Verzeichnis";
 $string['publicdirectory0'] = "Bitte veröffentlichen Sie diese Seite nicht";
 $string['publicdirectory1'] = "Nur den Seitennamen veröffentlichen";
 $string['publicdirectory2'] = "Nur den Seitennamen mit einem Link veröffentlichen";
+$string['publicsitefileswarning'] = "Anmerkung: Jeder kann auf die Dateien, die sich hier befinden, zugreifen";
 $string['question'] = "Frage";
 $string['readme'] = "LIESMICH";
 $string['readinginfofrombackup'] = "Lese Information vom Backup";
@@ -601,6 +595,7 @@ $string['rename'] = "Umbenennen";
 $string['renamefileto'] = "Umbenennen <b>\$a</b> in";
 $string['required'] = "Erforderlich";
 $string['requireskey'] = "Dieser Kurs setzt einen Zugangs-Schlüssel voraus";
+$string['resortcoursesbyname'] = "Kurse neu sortieren nach Name";
 $string['resources'] = "Arbeitsmittel";
 $string['restore'] = "Wiederherstellung";
 $string['restorecancelled'] = "Wiederherstellung abgebrochen";
@@ -611,17 +606,26 @@ $string['returningtosite'] = "Auf diese Internet-Seite zurückkehren?";
 $string['revert'] = "Zurückkehren";
 $string['role'] = "Rolle";
 $string['savechanges'] = "Änderungen speichern";
+$string['scale'] = "Skala";
+$string['scales'] = "Skalen";
+$string['scalescustom'] = "Benutzerdefinierte Skalen";
+$string['scalescustomno'] = "Es wurden noch keine benutzerdefinierten Skalen angelegt";
+$string['scalescustomcreate'] = "Neu Skala anlegen";
+$string['scalesstandard'] = "Standard Skalen";
 $string['search'] = "Suchen";
 $string['searchagain'] = "Erneut Suchen";
+$string['searchcourses'] = "Kurse suchen";
 $string['searchresults'] = "Suchergebnisse";
 $string['sec'] = "Sekunde";
 $string['secs'] = "Sekunden";
 $string['section'] = "Abschnitt";
 $string['sections'] = "Abschnitte";
+$string['select'] = "Auswählen";
 $string['selectacountry'] = "Land auswählen";
 $string['selectednowmove'] = "\$a Dateien zum Verschieben ausgewählt. Wählen Sie jetzt das Ziel und klicken 'Files hierhin verschieben'";
 $string['senddetails'] = "Senden Sie meine Details per E-Mail zu";
 $string['separateandconnected'] = "Getrennte und gemeinsame Art des Wissens";
+$string['separateandconnecteddescription'] = "";
 $string['serverlocaltime'] = "Die Lokalzeit des Servers";
 $string['settings'] = "Einstellungen";
 $string['shortname'] = "Kurzname";
@@ -639,6 +643,7 @@ $string['showonlyweek'] = "Nur Woche \$a anzeigen";
 $string['showrecent'] = "Neue Aktivitäten anzeigen";
 $string['showtheselogs'] = "Diese Statistiken anzeigen";
 $string['site'] = "Seite";
+$string['sitefiles'] = "Dateien der Seite";
 $string['sitelogs'] = "Statistiken der Seite";
 $string['sitenews'] = "Nachrichten der Seite";
 $string['sites'] = "Seiten";
@@ -669,14 +674,17 @@ $string['summaryof'] = "Zusammenfassung von \$a";
 $string['supplyinfo'] = "Geben Sie bitte ein paar Informationen über sich selbst an";
 $string['teacheronly'] = "für \$a nur";
 $string['teachers'] = "Lehrer";
+$string['teacherroles'] = "\$a Rollen";
 $string['textediting'] = "Wenn Sie einen Text bearbeiten";
 $string['texteditor'] = "Standard Internet-Formulare benutzen";
 $string['textformat'] = "Reines Textformat";
 $string['thanks'] = "Danke";
 $string['theme'] = "Thema";
+$string['themes'] = "Themen";
 $string['themesaved'] = "Neues Thema gespeichert";
 $string['thischarset'] = "iso-8859-1";
 $string['thislanguage'] = "Deutsch";
+$string['time'] = "Zeit";
 $string['timezone'] = "Zeitzone";
 $string['to'] = "An";
 $string['today'] = "Heute";
