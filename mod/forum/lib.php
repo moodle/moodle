@@ -1578,6 +1578,12 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 // *** THIS IS MISLEADING AT BEST AND SHOULD BE CORRECTED!!! ***
 
 function forum_print_discussion_header(&$post, $forum, $datestring="") {
+/// This function prints the overview of a discussion in the forum listing.
+/// It needs some discussion information and some post information, these
+/// happen to be combined for efficiency in the $post parameter by the function 
+/// that calls this one
+///   forum_print_latest_discussions()
+
     global $THEME, $USER, $CFG;
 
     if (!empty($CFG->filterall)) {
@@ -1609,15 +1615,9 @@ function forum_print_discussion_header(&$post, $forum, $datestring="") {
     }
 
     echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderdate\" align=right nowrap>";
-
-    // [pj] This is also VERY suspicious, as it discriminates between a post record and a discussion record
-    // based on the presence of the timemodified field WITHOUT SAYING ANYTHING. Ummm.... documentation, anyone?
-
-    if (!empty($post->timemodified)) {
-        echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#'.$post->lastpostid.'">'.userdate($post->timemodified, $datestring).'</a>';
-    } else {
-        echo userdate($post->modified, $datestring);
-    }
+    $usedate = (empty($post->timemodified)) ? $post->modified : $post->timemodified;  // Just in case
+    echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'&parent='.$post->lastpostid.'">'.
+          userdate($usedate, $datestring).'</a>';
     echo "</td>\n";
 
     echo "</tr>\n";
