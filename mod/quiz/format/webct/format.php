@@ -296,9 +296,6 @@ class quiz_file_format extends quiz_default_format {
             	if (eregi("^http://",$filename)) {
 	                $question->image = $filename;
             	}
-            	else {
-                    $warnings[] = get_string("imagemissing", "quiz", $nLineCounter." ($filename)");
-            	}
                 continue;
             }
 
