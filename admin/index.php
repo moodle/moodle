@@ -252,6 +252,11 @@
         redirect("site.php");
     }
 
+/// Define the unique site ID code if it isn't already
+    if (empty($CFG->siteidentifier)) {    // Unique site identification code
+        set_config('siteidentifier', random_string(32));
+    }
+
 /// Set up the admin user
     if (! record_exists("user_admins")) {   // No admin user yet
         redirect("user.php");
