@@ -290,9 +290,9 @@ function display() {
         print_header($pagetitle, $course->fullname, "$navigation {$resource->name}", "", "", true, update_module_button($this->cm->id, $course->id, $strresource), navmenu($course, $this->cm));
 
 
-        echo "\n<script language=\"Javascript\">";
+        echo "\n<script language=\"javascript\" type=\"text/javascript\">";
         echo "\n<!--\n";
-        echo "openpopup('/mod/resource/view.php?inpopup=true&amp;id={$this->cm->id}','resource{$resource->id}','{$resource->popup}');\n";
+        echo "openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}','resource{$resource->id}','{$resource->popup}');\n";
         echo "\n-->\n";
         echo '</script>';
 
@@ -303,7 +303,7 @@ function display() {
 
         $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$this->cm->id}\" target=\"resource{$resource->id}\" onclick=\"return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$this->cm->id}', 'resource{$resource->id}','{$resource->popup}');\">{$resource->name}</a>";
 
-        echo "<p>&nbsp</p>";
+        echo "<p>&nbsp;</p>";
         echo '<p align="center">';
         print_string('popupresource', 'resource');
         echo '<br />';
@@ -318,11 +318,16 @@ function display() {
     /// Now check whether we need to display a frameset
 
     if (empty($_GET['frameset']) and !$embedded and !$inpopup and $resource->options == "frame") {
-        echo "<head><title>{$course->shortname}: {$resource->name}</title></head>\n";
-        echo "<frameset rows=\"$CFG->resource_framesize,*\" border=\"2\">";
-        echo "<frame src=\"view.php?id={$this->cm->id}&amp;type={$resource->type}&amp;frameset=top\">";
-        echo "<frame src=\"$fullurl\">";
+        echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
+        echo "<html dir=\"ltr\">\n";
+        echo '<head>';
+        echo '<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />';
+        echo "<title>{$course->shortname}: {$resource->name}</title></head>\n";
+        echo "<frameset rows=\"$CFG->resource_framesize,*\">";
+        echo "<frame src=\"view.php?id={$this->cm->id}&amp;type={$resource->type}&amp;frameset=top\" />";
+        echo "<frame src=\"$fullurl\" />";
         echo "</frameset>";
+        echo "</html>";
         exit;
     }
 
