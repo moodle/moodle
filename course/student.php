@@ -98,7 +98,8 @@
         $studentarray = array();
         foreach ($students as $student) {
             $studentarray[] = $student->id;
-            echo "<p align=right>$student->firstname $student->lastname, $student->email &nbsp;&nbsp; <a href=\"student.php?id=$course->id&remove=$student->id\" title=\"$strremovestudent\"><img src=\"../pix/t/right.gif\" border=0></a></p>";
+            $fullname = fullname($student, true);
+            echo "<p align=right>$fullname, $student->email &nbsp;&nbsp; <a href=\"student.php?id=$course->id&remove=$student->id\" title=\"$strremovestudent\"><img src=\"../pix/t/right.gif\" border=0></a></p>";
         }
         $studentlist = implode(",",$studentarray);
         unset($studentarray);
@@ -128,9 +129,10 @@
         }
 
         foreach ($users as $user) {
+            $fullname = fullname($user, true);
             echo "<p align=left><a href=\"student.php?id=$course->id&add=$user->id\"".
                    "title=\"$straddstudent\"><img src=\"../pix/t/left.gif\"".
-                   "border=0></a>&nbsp;&nbsp;$user->firstname $user->lastname, $user->email";
+                   "border=0></a>&nbsp;&nbsp;$fullname, $user->email";
         }
     }
 

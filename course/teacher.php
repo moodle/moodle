@@ -156,7 +156,7 @@
                 $teacher->role = $course->teacher;
             }
     
-            $table->data[] = array ($picture, "$teacher->firstname $teacher->lastname", $authority,
+            $table->data[] = array ($picture, fullname($teacher, true), $authority,
                                     "<input type=text name=\"r$teacher->id\" value=\"$teacher->role\" size=30>",
                                     $editall, $removelink);
         }
@@ -203,7 +203,7 @@
         foreach ($users as $user) {
             $addlink = "<a href=\"teacher.php?id=$course->id&add=$user->id\">$straddteacher</a>";
             $picture = print_user_picture($user->id, $course->id, $user->picture, false, true);
-            $table->data[] = array ($picture, "$user->firstname $user->lastname", $user->email, $addlink);
+            $table->data[] = array ($picture, fullname($user, true), $user->email, $addlink);
         }
         print_table($table);
     }
