@@ -28,8 +28,8 @@ $string['attemptsexist'] = 'Quelqu\'un a déjà effectué ce test';
 $string['attemptsunlimited'] = 'Nombre illimité de tentatives';
 $string['backtoquiz'] = 'Retour à l\'édition du test';
 $string['bestgrade'] = 'Meilleure note';
-$string['calculated'] = 'Calculée';
 $string['blackboard'] = 'Format Blackboard';
+$string['calculated'] = 'Calculée';
 $string['calculatedquestion'] = 'Question calculée non supportée (ligne $a). La question sera ignorée';
 $string['caseno'] = 'La casse des caractères indiffère';
 $string['casesensitive'] = 'Casse des caractères';
@@ -55,6 +55,7 @@ $string['coursetestmanager'] = 'Format CTM';
 $string['createmultiple'] = 'Créer plusieurs questions';
 $string['createnewquestion'] = 'Créer une question';
 $string['custom'] = 'Format personnalisé';
+$string['datasetdefinitions'] = 'Définitions du jeu de données réutilisable de la catégorie $a';
 $string['datasetnumber'] = 'Nombre';
 $string['daysavailable'] = 'Jours disponibles';
 $string['decimals'] = ' avec $a ';
@@ -95,6 +96,7 @@ $string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['exportquestions'] = 'Exporter des questions vers un fichier';
 $string['false'] = 'Faux';
 $string['feedback'] = 'Feedback';
+$string['file'] = 'Fichier';
 $string['fileformat'] = 'Format de fichier';
 $string['filloutoneanswer'] = 'Vous devez donner au moins une proposition.<br />Les proposition laissées vides ne seront pas prises en compte.';
 $string['filloutthreequestions'] = 'Vous devez donner au moins trois propositions.<br />Les propositions laissées vides ne seront pas prises en compte.';
@@ -121,6 +123,7 @@ $string['importquestions'] = 'Importer les questions d\'un fichier';
 $string['indivresp'] = 'Réponses de chaque personne à toutes les questions';
 $string['introduction'] = 'Introduction';
 $string['itemanal'] = 'Analyse des réponses à cette question';
+$string['itemdefinition'] = 'Définition';
 $string['keptcategory'] = ''
 	// The use of ) and ( below should really not be necessary but
 	// because of some sort of PHP bug it is better to keep'em
@@ -135,7 +138,9 @@ $string['keptlocal'] = ''
 	.' du même jeu de données privé de '
 	.'".(1==$a ? \'lettres\' :(2==$a ? \'fichiers\' : (3==$a ? \'liens\' : $a)))."'
 	.' que précédemment';
+$string['link'] = 'Lien';
 $string['listitems'] = 'Liste des questions du test';
+$string['literal'] = 'Lettre';
 $string['loguniform'] = 'chiffres, distribution logarithmique uniforme';
 $string['marks'] = 'Points';
 $string['match'] = 'Appariement';
