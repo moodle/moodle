@@ -614,17 +614,19 @@ function authenticate_user_login($username, $password) {
 }
 
 
-function enrol_student($user, $course) {
+function enrol_student($userid, $courseid) {
 /// Enrols a student in a given course
     global $db;
 
-    $record->userid = $user;
-    $record->course = $course;
-    $record->start = 0;
-    $record->end = 0;
-    $record->time = time();
-
-    return insert_record("user_students", $record);
+    if (!record_exists("user_students", "userid", $userid, "course", $courseid)) {
+        $student->userid = $userid;
+        $student->course = $courseid;
+        $student->start = 0;
+        $student->end = 0;
+        $student->time = time();
+        return insert_record("user_students", $student);
+    }
+    return true;
 }
 
 function unenrol_student($user, $course=0) {
