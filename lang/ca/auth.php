@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.1.1 (2003091000)
+      // auth.php - created with Moodle 1.2 development (2004022000)
 
 
 $string['auth_dbdescription'] = 'Aquest mètode utilitza una taula d\'una base de dades externa per comprovar si un nom d\'usuari i una contrasenya són vàlids. Si el compte és nou, aleshores també es pot copiar en Moodle informació d\'altres camps.';
@@ -44,6 +44,7 @@ $string['auth_ldapextrafields'] = 'Aquests camps són opcionals. Podeu triar d\'o
 $string['auth_ldaptitle'] = 'Utilitza un servidor LDAP';
 $string['auth_manualdescription'] = 'Aquest mètode impedeix que els usuaris puguin crear-se comptes. Tots els comptes han de ser creats manualment per l\'usuari administrador.';
 $string['auth_manualtitle'] = 'Només comptes manuals';
+$string['auth_multiplehosts'] = 'Podeu especificar diversos ordinadors (p. e. host1.com; host2.com; host3.com)';
 $string['auth_nntpdescription'] = 'Aquest mètode utilitza un servidor NNTP per comprovar si un nom d\'usuari i una contrasenya són vàlids.';
 $string['auth_nntphost'] = 'L\'adreça del servidor NNTP. Ha de ser el número IP, no el nom del DNS.';
 $string['auth_nntpport'] = 'Número de port del servidor (el 119 és el més habitual)';

@@ -1,23 +1,23 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.1.1 (2003091000)
+      // journal.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['alwaysopen'] = 'Obert sempre';
 $string['blankentry'] = 'Entrada en blanc';
 $string['daysavailable'] = 'Dies disponible';
-$string['editingended'] = 'El període d\'edició ha acabat';
-$string['editingends'] = 'El període d\'edició acaba';
+$string['editingended'] = 'El període d\'edició ha finalitzat';
+$string['editingends'] = 'El període d\'edició finalitza';
 $string['entries'] = 'Entrades';
-$string['feedbackupdated'] = 'Comentaris actualitzats per a $a entrades';
-$string['journalmail'] = '$a->teacher ha posat alguns comentaris sobre
+$string['feedbackupdated'] = 'S\'han actualitzat els comentaris de $a entrades';
+$string['journalmail'] = '$a->teacher ha enviat alguns comentaris sobre
 la vostra entrada de diari \'$a->journal\'
 
-Podeu veure els comentaris junt amb l\'entrada:
+Podeu veure els comentaris adjunts a l\'entrada:
 
-    $a->url';
-$string['journalmailhtml'] = '$a->teacher ha posat alguns comentaris sobre
+$a->url';
+$string['journalmailhtml'] = '$a->teacher ha enviat alguns comentaris sobre
 la vostra entrada de diari \'<i>$a->journal</i>\'<br /><br />
-Podeu veure els comentaris junt amb l\'<a href="$a->url">entrada</a>.';
+Podeu veure els comentaris adjunts a l\'<a href=\"$a->url\">entrada</a>.';
 $string['journalname'] = 'Nom del diari';
 $string['journalquestion'] = 'Pregunta del diari';
 $string['journalrating1'] = 'Insatisfactori';
@@ -34,6 +34,6 @@ $string['overallrating'] = 'Valoració global';
 $string['rate'] = 'Valoració';
 $string['saveallfeedback'] = 'Desa tots els meus comentaris';
 $string['startoredit'] = 'Comença o edita l\'entrada del diari';
-$string['viewallentries'] = 'Veure totes les entrades del diari';
+$string['viewallentries'] = 'Visualitza totes les entrades dels diaris';
 
 ?>
