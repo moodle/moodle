@@ -1222,14 +1222,16 @@ for ($row = 0; $row < $numrows; $row++) {
                     }
                } else {
                     $currentcolor = "";
+                    echo "<td colspan=\"".(2* $tabsperrow)."\"></td>\n";
                }
                $tabproccessed++;
           }
      } else {
           $firsttabincurrentrow = $tabproccessed;
           $tabproccessed += $tabsperrow;
+          echo "<td colspan=\"".(2* $tabsperrow)."\"></td>\n";
      }
-     echo "</tr><tr><td colspan=" . (2* $tabsperrow) . " ></td></tr>\n";
+     echo "</tr><tr><td colspan=\"" . (2* $tabsperrow) . "\" height=\"1\"></td></tr>\n";
 }
      echo "<tr>\n";
           $tabproccessed = $firsttabincurrentrow;
@@ -1299,12 +1301,12 @@ for ($row = 0; $row < $numrows; $row++) {
 }
 
 function glossary_print_tabbed_table_end() {
-     echo "</center><p></td></tr></table></center>";
+     echo "</td></tr></table></center>";
 }
 
 function glossary_print_approval_menu($cm, $glossary,$mode, $hook, $sortkey = '', $sortorder = '') {
     if ($glossary->showalphabet) {
-        echo '<center>' . get_string("explainalphabet","glossary") . '<p>';
+        echo '<center>' . get_string("explainalphabet","glossary") . '</center><br />';
     }
     glossary_print_special_links($cm, $glossary, $mode, $hook);
 
@@ -1316,21 +1318,21 @@ function glossary_print_approval_menu($cm, $glossary,$mode, $hook, $sortkey = ''
 }
 
 function glossary_print_addentry_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
-    echo '<center>' . get_string("explainaddentry","glossary") . '<p>';
+    echo '<center>' . get_string("explainaddentry","glossary") . '</center><br />';
 }
 
 function glossary_print_import_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
-    echo '<center>' . get_string("explainimport","glossary") . '<p>';
+    echo '<center>' . get_string("explainimport","glossary") . '</center><br />';
 }
 
 function glossary_print_export_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
-    echo '<center>' . get_string("explainexport","glossary") . '<p>';
+    echo '<center>' . get_string("explainexport","glossary") . '</center><br />';
 }
 
 function glossary_print_alphabet_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
     if ( $mode != 'date' ) {
         if ($glossary->showalphabet) {
-            echo '<center>' . get_string("explainalphabet","glossary") . '<p>';
+            echo '<center>' . get_string("explainalphabet","glossary") . '</center><br />';
         }
 
         glossary_print_special_links($cm, $glossary, $mode, $hook);
@@ -1345,13 +1347,12 @@ function glossary_print_alphabet_menu($cm, $glossary, $mode, $hook, $sortkey='',
 
 function glossary_print_author_menu($cm, $glossary,$mode, $hook, $sortkey = '', $sortorder = '') {
     if ($glossary->showalphabet) {
-        echo '<center>' . get_string("explainalphabet","glossary") . '<br />';
+        echo '<center>' . get_string("explainalphabet","glossary") . '</center><br />';
     }
 
     glossary_print_sorting_links($cm, $mode, $sortkey,$sortorder);
     glossary_print_alphabet_links($cm, $glossary, $mode, $hook, $sortkey, $sortorder);
     glossary_print_all_links($cm, $glossary, $mode, $hook);
-//    echo "<br />";
 }
 
 function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
