@@ -1436,12 +1436,15 @@ function get_groups($courseid, $userid=0) {
     global $CFG;
 
     if ($userid) {
+        $dbselect = ", {$CFG->prefix}groups_members m";
         $userselect = "AND m.groupid = g.id AND m.userid = '$userid'";
+    } else {
+        $dbselect = '';
+        $userselect = '';
     }
 
     return get_records_sql("SELECT DISTINCT g.*
-                              FROM {$CFG->prefix}groups g,
-                                   {$CFG->prefix}groups_members m 
+                              FROM {$CFG->prefix}groups g $dbselect
                              WHERE g.courseid = '$courseid' $userselect ");
 }
 
