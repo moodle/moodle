@@ -101,6 +101,7 @@ $string['nowpleasemakeyourownassessment'] = 'Veuillez maintenant évaluer le trav
 	Faites toutes les modifications que vous jugez nécessaires, puis cliquez sur l\'un<br />
 	des boutons au bas de la page.';
 $string['numberofassessmentelements'] = 'Nombre de commentaires, d\'éléments d\'évaluation, de critères, de notes ou de catégories dans une rubrique';
+$string['numberofcriterionelements'] = 'Le nombre d\'éléments d\'évaluation doit être supérieur à un.';
 $string['numberofentries'] = 'Nombre de travaux';
 $string['numberofentriesinleaguetable'] = 'Nombre de travaux dans le tableau des meilleurs travaux';
 $string['numberofnegativeresponses'] = 'Nombre de réponses négatives';
