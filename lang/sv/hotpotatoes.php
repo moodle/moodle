@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // hotpotatoes.php - created with Moodle 1.4.3 + (2004083131)
+      // hotpotatoes.php - created with Moodle 1.4.3 + (2004083134)
 
 
 $string['abandoned'] = 'avbruten';
 $string['allattempts'] = 'alla försök';
 $string['allmycourses'] = 'alla mina kurser';
+$string['average'] = 'Medel';
 $string['bestattempt'] = 'det bästa försöket';
 $string['checks'] = 'kontrollerar';
 $string['clues'] = 'ledtrådar';
@@ -15,6 +16,7 @@ $string['deletedattempts'] = '$a försök har tagits bort';
 $string['deletedresponses'] = '$a responser har tagits bort ';
 $string['enterafilename'] = 'Var snäll och skriv in ett filnamn';
 $string['filetype'] = 'Filtyp';
+$string['forceplugins'] = 'Tvinga fram media plugins';
 $string['giveup'] = 'Ge upp';
 $string['hints'] = 'tips';
 $string['ignored'] = 'Inte beaktad';

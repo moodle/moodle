@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 (2004083100)
+      // wiki.php - created with Moodle 1.4.3 + (2004083134)
 
 
 $string['action'] = '-- Händelse --';
@@ -26,7 +26,7 @@ $string['checklinkscheck'] = 'Är Du säker på att Du vill kontrollera länkarna på
 $string['checklinksnotice'] = 'Medan sidan arbetar så får Du vara lite tålmodig-';
 $string['chooseadministration'] = '-- Administration --';
 $string['chooseafile'] = 'Välj/ladda upp inledande sida';
-$string['choosewikilinks'] = 'Välj Wiki länkar';
+$string['choosewikilinks'] = 'Välj Wiki-länkar';
 $string['comment'] = 'Kommentar ';
 $string['contentsize'] = 'Storlek på innehållet';
 $string['created'] = 'Skapad';
@@ -38,13 +38,13 @@ $string['deleteversionserror'] = 'Var snäll och ange ett korrekt antal versioner
 $string['diff'] = 'Skillnad';
 $string['differences'] = 'Skillnader mellan version $a->new_ver och $a->old_ver av $a->pagename.';
 $string['disablecamel'] = 'Avaktivera länkar av typ CamelCase';
-$string['disabledpage'] = 'Den här sidan är inte tillgänglig f n.';
+$string['disabledpage'] = 'Den här sidan är inte tillgänglig f.n.';
 $string['doesnotexist'] = 'Den här sidan finns inte ännu, var snäll och välj \"Redigera\" om Du vill skapa den. ';
 $string['downloadaszip'] = 'Nedladdningsbart ziparkiv';
 $string['downloadtimes'] = 'Nedladdad $a gånger';
 $string['dwnlnofiles'] = 'Inga filer har laddats upp ännu.';
 $string['dwnlsection'] = 'Sektion för nedladdning';
-$string['editform1'] = 'Försök att inte oroa Dig för mycket om formattering. Det kan Du alltid förbättra i efterhand. ';
+$string['editform1'] = 'Bry Dig inte för mycket om formateringen. Den kan Du alltid förbättra i efterhand. ';
 $string['editform2'] = 'Var snäll och skriv förståndigt. Kom ihåg att all redigering loggas. ';
 $string['editthispage'] = 'Redigera den här sidan';
 $string['emptypage'] = 'Tom sida';
@@ -157,6 +157,7 @@ $string['tabview'] = 'Visa';
 $string['thanksforcontribution'] = 'Tack för Ditt bidrag';
 $string['thispageisntlinkedfromanywhereelse'] = 'Den här sidan länkas inte från någon annanstans, ';
 $string['updatedpages'] = 'Uppdaterade sidor';
+$string['updatedwikipages'] = 'Uppdaterade wikisidor';
 $string['uplerror'] = 'Någonting blev tyvärr fel under uppladdningen av filen.';
 $string['uplinsect'] = 'Ladda upp till';
 $string['uplnewnam'] = 'Spara under ett annat filnamn';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 (2004083100)
+      // resource.php - created with Moodle 1.4.3 + (2004083134)
 
 
 $string['addresource'] = 'Lägg till resurs';
@@ -79,6 +79,7 @@ $string['resourcetypehtml'] = 'Utforma en webbsida';
 $string['resourcetypelabel'] = 'Infoga en etikett';
 $string['resourcetypetext'] = 'Utforma en textsida';
 $string['searchweb'] = 'Sök en webbsida';
+$string['serverurl'] = 'URL till servern ($a->wwwroot)';
 $string['variablename'] = 'Namn på variabel';
 
 ?>

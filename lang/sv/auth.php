@@ -1,7 +1,21 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.4.3 + (2004083131)
+      // auth.php - created with Moodle 1.4.3 + (2004083134)
 
 
+$string['auth_cas_baseuri'] = 'Serverns URI (ingenting om det inte är en baseURI)<br />IF t.ex. CAS-servern svarar mot
+värd.domän.se/CAS/ THEN <br />cas_baseuri=CAS/';
+$string['auth_cas_create_user'] = 'Aktivera detta om Du vill lägga in CAS-auktoriserade användare i Moodles databas. Om inte som kommer bara användare som redan finns i Moodles databas att kunna logga in.';
+$string['auth_cas_enabled'] = 'Aktivera detta om Du vill använda autenticering med CAS.';
+$string['auth_cas_hostname'] = 'Värdnamn för CAS-server<br />t.ex. värd.domän.se';
+$string['auth_cas_invalidcaslogin'] = 'Din inloggning misslyckades tyvärr - Dina rättigheter kunde inte bekräftas';
+$string['auth_cas_language'] = 'Valt språk';
+$string['auth_cas_logincas'] = 'Tillträde via en säker uppkoppling';
+$string['auth_cas_port'] = 'CAS-serverns port';
+$string['auth_cas_server_settings'] = 'Konfiguration av CAS-server';
+$string['auth_cas_text'] = 'Säker uppkoppling';
+$string['auth_cas_version'] = 'CAS version';
+$string['auth_casdescription'] = 'Den här metode använder en CAS-server (Central Authentication Service)för att autentisera användare i en Single Sign On environment (SSO). Du kan också använda enkel LDAP autentisering. Om ett viss givet annvändarnamn och lösenord är giltigt enligt CAS så lägger Moodle in en ny användare i sin databas, och hämtar användarens egenskaper (attribut) från LDAP om så krävs. Vid nästföljande inloggningar så kontrolleras bara användarnamnet och lösenordet.';
+$string['auth_castitle'] = 'Använd en CAS-server (SSO)';
 $string['auth_common_settings'] = 'Vanliga inställningar';
 $string['auth_data_mapping'] = 'Kartor över data';
 $string['auth_dbdescription'] = 'Denna metod använder en extern databastabell för att kontrollera huruvida ett givet användarnamn och lösenord är giltigt.  Om kontot är nytt, så kan information från andra fält också kopieras till Moodle.';
@@ -11,7 +25,7 @@ $string['auth_dbfielduser'] = 'Namn på det fält som innehåller användarnamn';
 $string['auth_dbhost'] = 'Den dator (värd) som används för databasservern.';
 $string['auth_dbname'] = 'Namnet på själva databasen ';
 $string['auth_dbpass'] = 'Lösenord som matchar ovanstående användarnamn';
-$string['auth_dbpasstype'] = 'Specificera formatet på det fält som lösenordet ska ligga í. MD-kryptering går att använda om Du vill koppla upp Dig mot andra vanliga webbapplikationer som PostNuke.';
+$string['auth_dbpasstype'] = 'Specificera formatet på det fält som lösenordet ska ligga i. MD-kryptering går att använda om Du vill koppla upp Dig mot andra vanliga webbapplikationer som PostNuke.';
 $string['auth_dbtable'] = 'Namn på tabellen i databasen';
 $string['auth_dbtitle'] = 'Använd en extern databas';
 $string['auth_dbtype'] = 'Databastyp (se <A HREF=../lib/adodb/readme.htm#drivers>ADOdb dokumentation</A> för detaljer)';
@@ -28,7 +42,7 @@ $string['auth_fcpasswd'] = 'Lösenordet för det ovanstående kontot';
 $string['auth_fctitle'] = 'Använd en FirstClass-server';
 $string['auth_fcuserid'] = 'AnvändarID för FirstClass-konto med inställningen \"Subadministrator\" aktiverad.';
 $string['auth_imapdescription'] = 'Denna metod använder en IMAP-server för att kontrollera huruvida ett givet användarnamn och lösenord är giltigt.';
-$string['auth_imaphost'] = 'IMAP-serverns adress. Använd IP-nummer, inte DNS- namn.';
+$string['auth_imaphost'] = 'IMAP-serverns adress. Använd IP-nummer, inte DNS-namn.';
 $string['auth_imapport'] = 'IMAP-serverns portnummer. Vanligtvis är detta 143 eller 993.';
 $string['auth_imaptitle'] = 'Använd en IMAP-server';
 $string['auth_imaptype'] = 'IMAP servertyp.  IMAP-servrar kan ha olika typer av autenticeringar och förhandlingar.';

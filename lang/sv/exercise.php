@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.4.2+ (2004083126)
+      // exercise.php - created with Moodle 1.4.3 + (2004083134)
 
 
 $string['absent'] = 'Frånvarande';
@@ -30,7 +30,7 @@ $string['criterion'] = 'Kriterium';
 $string['deadline'] = 'Stoppdatum/tid';
 $string['deadlineis'] = 'Stoppdatum/tid är $a';
 $string['delete'] = 'Ta bort ';
-$string['deletesubmissionwarning'] = 'Varning! Det finns $a bedömningar/värderingar/betygssättningar som är kopplade till det här bidraget. Vi rekommenderar kraftfullt att Di INTE tar bort bidraget. ';
+$string['deletesubmissionwarning'] = 'Varning! Det finns $a bedömningar/värderingar/betygssättningar som är kopplade till det här bidraget. Vi rekommenderar kraftfullt att Du INTE tar bort bidraget. ';
 $string['deleting'] = 'Tar bort.';
 $string['description'] = 'Beskrivning';
 $string['descriptionofexercise'] = 'Till en övningsuppgift som $a ska göra ska det finnas en beskrivning, i Word- eller HTML-format, av det arbete som ska utföras. Filen laddas upp till övningen innan uppgiften blir tillgänglig för $a. Det är även möjligt att skapa en uppsättning olika varianter av samma övning eller uppgift, återigen i Word- eller HTML-format och ladda upp dessa till övningsuppgiften innan den blir tillgänglig för $a. ';
@@ -157,10 +157,7 @@ $string['theexercise'] = 'Övningsuppgiften';
 $string['theexerciseandthesubmissionby'] = 'Övningsuppgift och inskickat bidrag av $a';
 $string['thegradeis'] = 'Betyget/omdömet är $a';
 $string['thereisfeedbackfromthe'] = 'Det finns återkoppling från $a';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
 $string['thisisaresubmission'] = 'Det här är ett återinskickat bidrag från $a<br />Din bedömning/värdering/betygssättning av deras tidigare inskickade bidrag visas.<br />När Du har tittat på de senast inskickade bidragen var då snäll och rätta/ändra/komplettera den här bedömningen/värderingen/betygssättningen och klicka på någon av knapparna i sidfoten.  ';
-$string['thislanguage'] = 'Swedish';
 $string['title'] = 'Titel';
 $string['typeofscale'] = 'Typ av skala';
 $string['unassessed'] = '$a inte bedömd/värderad/betygssatt';

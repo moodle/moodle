@@ -1,15 +1,12 @@
 <?PHP // $Id$ 
-      // hotpot.php - created with Moodle 1.4.2+ (2004083126)
+      // hotpot.php - created with Moodle 1.4.3 + (2004083134)
 
 
-$string['clearall'] = 'Töm allt';
-$string['deleteall'] = 'Ta bort allt';
-$string['modulename'] = 'Test av typen Hot Potatoes';
-$string['modulenameplural'] = 'Test av typen Hot Potatoes';
-$string['really'] = 'Vill Du verkligen ta bort alla resultat för det här testet?';
+$string['clearall'] = 'Rensa alla';
+$string['deleteall'] = 'Ta bort alla';
+$string['modulename'] = 'Hot Potatoes test';
+$string['modulenameplural'] = 'Hot Potatoes test';
+$string['really'] = 'Vill Du verkligen ta bort alla resultat på detta test?';
 $string['strattemptlabel'] = 'Försök: Resultat, Datum Tid (Varaktighet), [Avdrag]';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Swedish';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.4.3 + (2004083131)
+      // message.php - created with Moodle 1.4.3 + (2004083134)
 
 
 $string['addcontact'] = 'Lägg till kontakt';
@@ -7,6 +7,7 @@ $string['ago'] = 'För $a sedan';
 $string['allmine'] = 'Alla meddelanden från mig till mig';
 $string['allstudents'] = 'Alla meddelanden mellan studenter/elever/deltagare/lärande i kursen';
 $string['allusers'] = 'Alla meddelanden från alla användare';
+$string['backupmessageshelp'] = 'Om detta är altiverat så kommer snabbmeddelanden att tas med i automatiska säkerhetskopieringar för hela webbplatsen.';
 $string['beepnewmessage'] = 'Avge en ljudsignal när det kommer in ett nytt meddelande';
 $string['blockcontact'] = 'Blockera kontakt';
 $string['blockedmessages'] = '$a meddelande(n) till/från blockerade användare';
@@ -22,8 +23,7 @@ $string['includeblockedusers'] = 'Ta med blockerade användare';
 $string['incomingcontacts'] = 'Inkommande kontakter ($a)';
 $string['keywords'] = 'Nyckelord';
 $string['keywordssearchresults'] = 'Sökresultat: $a meddelanden funna';
-$string['maxmessages'] = 'Maximalt antal meddelanden som ska visas i historiken över diskussionsämnen
-';
+$string['maxmessages'] = 'Maximalt antal meddelanden som ska visas i historiken över diskussionsämnen';
 $string['message'] = 'Meddelande';
 $string['messagehistory'] = 'Historik för meddelanden';
 $string['messages'] = 'Meddelanden';
@@ -41,6 +41,7 @@ $string['onlyfromme'] = 'Endast meddelanden från mig';
 $string['onlymycourses'] = 'Endast i mina kurser';
 $string['onlytome'] = 'Endast meddelanden till mig';
 $string['pagerefreshes'] = 'Den här sidan uppdateras automatiskt var $a sekund';
+$string['readmessages'] = '$ lästa meddelanden ';
 $string['removecontact'] = 'Ta bort kontakt';
 $string['savemysettings'] = 'Spara mina inställningar';
 $string['search'] = 'Sök';

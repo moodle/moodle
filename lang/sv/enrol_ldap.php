@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_ldap.php - created with Moodle 1.4.3 + (2004083131)
+      // enrol_ldap.php - created with Moodle 1.4.3 + (2004083134)
 
 
 $string['description'] = '<p>Du kan använda en LDAP-server för att styra Dina registreringar. Utgångspunkten är att Ditt LDAP-träd innehåller grupper som visar en karta till kurserna och att var och en av dessa grupper/kurser har kartor över medlemsdata som visar vägen till studenterna/eleverna/deltagarna/de lärande</p><p>Utgångspunkten är att kurser är definierade som grupper i LDAP där varje grupp har ett flertal fält för medlemsskap (<em>member</em> eller <em>memberUid</em>) som innehåller en unik identifiering av användaren.</p><p>För att använda LDAP-registrering <strong>måste</strong> Dina användare ha giltiga fält för ID-nummer. LDAP-grupperna måste ha detta ID-nummer i fältet för medlemmar för att man ska kunna registrera en användare på en kurs. Detta kommer i normalfallet att fungera bra om Du redan använder autenticering via LDAP.</p><p>Registreringarna kommer att uppdateras när användaren loggar in. Du kan också köra ett skript för att synkronisera registreringarna. Titta i <em>enrol/ldap/enrol_ldap_sync.php</em>.</p>

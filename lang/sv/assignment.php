@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.4.3 + (2004083131)
+      // assignment.php - created with Moodle 1.4.3 + (2004083134)
 
 
 $string['allowresubmit'] = 'Låt användarna skicka om sina bidrag';
@@ -30,6 +30,7 @@ $string['maximumsize'] = 'Maximum storlek';
 $string['modulename'] = 'Uppgift';
 $string['modulenameplural'] = 'Uppgifter';
 $string['newsubmissions'] = 'Uppgifterna är inskickade';
+$string['noassignments'] = 'Det finns inga uppgifter ännu.';
 $string['notgradedyet'] = 'Ännu ej bedömd';
 $string['notsubmittedyet'] = 'Ännu inte inskickade uppgifter';
 $string['overwritewarning'] = 'Varning: uppladdning igen kommer att ERSÄTTA Ditt nuvarande redan inskickade bidrag';

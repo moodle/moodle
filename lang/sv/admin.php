@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.4.3 + (2004083131)
+      // admin.php - created with Moodle 1.4.3 + (2004083134)
 
 
 $string['adminseesallevents'] = 'Administratörer ser alla händelser';
@@ -10,7 +10,9 @@ $string['cachetext'] = 'Så länge lagras text i cache-minnet';
 $string['calendarsettings'] = 'Kalender';
 $string['change'] = 'ändra';
 $string['configallowcoursethemes'] = 'Om Du aktiverar detta så kommer det att bli möjligt för kurser att ställa in sina egna teman. Teman för kurser är giltiga över alla andra val av teman (webbplats, användare, eller teman för sessioner)';
+$string['configallowemailaddresses'] = 'Om Du vill att alla nya e-postadresser ska höra till vissa specifika domäner, då ska Du skriva in dem i en kommaseparerad lista här. Alla andra domäner kommer att avvisas. Ett exempel: <strong>ourcollege.edu.au .gov.au</strong>';
 $string['configallowunenroll'] = 'Om Du väljer \'Ja\' för den här inställningen så kommer studenter/elever/deltagare/lärande att kunna avregistrera sig själva när de vill. I annat fall så kan de inte det och den här processen kommer att kontrolleras helt och hållet av (distans)lärare och administratörer.';
+$string['configallowuserblockhiding'] = 'Vill Du att användare själva ska kunna välja att dölja/visa ytterkolumnerna (sidoblocken) på hela webbplatsen? Den här egenskapen använder Javascript och cookies för att komma ihåg statusen på varje ihopfällt block och detta påverkar bara det användaren själv ser.';
 $string['configallowuserthemes'] = 'Om Du aktiverar detta så kommer det att bli möjligt för användare att ställa in sina egna teman. Teman för användare giltiga över teman för webbplatsen men inte över teman för kurser.';
 $string['configallusersaresitestudents'] = 'Med tanke på webbplatsens hemsida, bör ALLA användare antas vara studenter/elever/deltagare/lärande? Om Du svarar \'Ja\' då kommer alla med ett bekräftat konto att kunna delta som student/elev/deltagare/lärande i dessa aktiviteter. Om Du svarar \'Nej\' kommer bara de användare som redan är deltagare i åtminstone en kurs att kunna ta del av dessa aktiviteter på hemsidan. Bara administratörer och (distans)lärare med speciella behörigheter kan agera som (distans)lärare i dessa aktiviteter på hemsidan.';
 $string['configautologinguests'] = 'Ska besökare automatiskt loggas in som gäster när de klickar sig in i kurser med behörighet som gäster?';
@@ -22,6 +24,8 @@ $string['configcountry'] = 'Om Du väljer ett land här så kommer detta land att v
 $string['configdbsessions'] = 'Om detta är avaktiverat så kommer den här inställningen att lagra information om aktuella sessioner Detta är speciellt användbart för stora/hårt belastade webbplatser eller webbplatser som är byggda som kluster av servrar. På de flesta webbplatser så borde detta antagligen vara avaktiverat s';
 $string['configdebug'] = 'Om Du aktiverar det här så utökar Du PHP:s felrapportering. Systemet ger då ifrån sig fler varningar. Detta är av värde bara för utvecklare.';
 $string['configdeleteunconfirmed'] = 'Om Du använder autenticering med e-post så är detta den tid inom vilken ett svar från användarna kommer att accepteras. Efter att denna tid har gått ut så kommer alla icke bekräftade konton att tas bort.';
+$string['configdenyemailaddresses'] = 'Om Du avvisa e-postadresser från specifika domäner så listar Du dem här på samma sätt. Alla andra domäner kommer att accepteras. Ett exempel:
+<strong>hotmail.com yahoo.co.uk</strong>';
 $string['configdigestmailtime'] = 'Användare som väljer att prenumerera på sammanfattande e-postmeddelanden kommer att få dessa sammanfattningar dagligen. Den här inställningen bestämmer vid vilken tid på dygnet som det dagliga e-postmeddelandet kommer att skickas. (det \"cron\" som körs efter denna timme kommer att sända det)';
 $string['configdisplayloginfailures'] = 'Det här kommer (för utvalda användare) att visa information om inloggningar som inte har lyckat.';
 $string['configenablerssfeeds'] = 'Den här omkopplaren kommer att aktivera RSS-inmatningar från hela webbplatsen. För att faktiskt se några förändringar så behöver Du aktivera RSS-inmatningar i de individuella modulerna också - gå till inställningar för moduler i Administration->konfiguration';
@@ -69,6 +73,7 @@ $string['configsectionuser'] = 'Användare';
 $string['configsecureforms'] = 'Moodle kan använda ytterligare en säkerhetsnivå när systemet tar emot data från ett formulär. Om detta är aktiverat så jämförs webbläsarens variabel HTTP_REFERER med det aktuella formulärets adress. I några enstaka fall kan det ge upphov till problem om användaren utnyttjar en brandvägg (t.ex. Zonealarm) som är inställd på att ta bort HTTP_REFERER från sin webbtrafik,. Symptom på detta är att man \"fastnar\" på ett formulär. Om Dina användare har problem med loginsidan så kanske Du vill avaktivera den här inställningen även om det öppnar Din sajt för lösenordsattacker. Om Du är tveksam så är det bäst att låta inställningen \'Ja\' vara kvar.';
 $string['configsessioncookie'] = 'Med den här inställningen kan Du ändra namnet på den \'cookie\' som används för sessioner i Moodle. Detta är valfritt och behövs egentligen bara när Du kör fler än en instans (kopia) av Moodle på samma webbplats.';
 $string['configsessiontimeout'] = 'Om användare som är inloggade på den här webbplatsen är inaktiva under en lång tid (utan att ladda ner sidor) så loggas de automatiskt ut. (Deras session tar slut). Den här variabeln bestämmer hur lång den tiden ska vara.';
+$string['configshowblocksonmodpages'] = 'En del aktivitetsmoduler stödjer block på sina sidor. Om Du aktiverar detta så kommer (distans)lärare att kunna lägga till block på dessa sidor, annars visar gränssnittet inte denna egenskap.';
 $string['configshowsiteparticipantslist'] = 'Alla dessa studenter/elever/deltagare/lärande och (distans)lärare kommer att finnas med på listan över deltagare på webbplatsen. Vem ska har rätt att se denna lista?';
 $string['configsitepolicy'] = 'Har Du en policy för webbplatsen som alla användare måste se och godkänna innan de får tillräde till den här webbplatsen? Då ska Du ange URL-en till den här. URL-en kan peka vart som helst - en lämplig plats kunde vara en fil i katalogen för webbplatsens filer t.ex. http://dinwebbplats/file.php/1/policy.html';
 $string['configslasharguments'] = 'Filer (bilder, uppladdade filer etc) tillhandahålls via ett skript som använder \'slash arguments\' (det andra valet här). Denna metod låter filer lättare bli mellanlagrade i webbklienter, proxyservrar etc. Dessvärre tillåter vissa PHP-servrar inte denna metod, så om Du har problem att se uppladdade filer eller bilder (t.ex. användares bilder) så bör Du sätta denna variabel till det första valet.';
@@ -85,10 +90,10 @@ $string['confirmation'] = 'Bekräftelse';
 $string['confirmdeletedst'] = 'Om Du tar bort det förinställda värde som kallas <strong>$a</strong> så avaktiverar detta omedelbart DST för alla användare av det förinställda. Detta kan, utan varning, ändra hur de uppfattar tiden. Är Du säker på att Du vill fortsätta?';
 $string['confirmdeletedstdefault'] = '<strong>Det förinställda värde som kallas $a används för alla användare på den här webbplatsen! </strong>Om Du tar bort det ändrar, utan varning, hur de uppfattar tiden. Är Du säker på att Du vill fortsätta?';
 $string['cronwarning'] = 'Skriptet <a href=\"cron.php\">cron.php skript för underhåll</a> har inte körts under de senaste 24 timmarna.<br />I <a href=\"../doc/?frame=install.html&sub=cron\">dokumentation för installation </a> kan Du hitta förklaringar om hur Du kan automatisera detta. ';
-$string['dstisapreference'] = 'Varje användare kan välja vilket förinställt värde de vill använda';
-$string['dstisforcedto'] = 'Tvinga alla användare att använda';
-$string['dstpresets'] = 'Förinställda värden för DST';
-$string['editingdstpreset'] = 'Att redigera förinställda värden för DST';
+$string['dstpresetforced'] = 'Denna inställning har låsts av webbplatsens administratör';
+$string['edithelpdocs'] = 'Redigera hjälpdokument';
+$string['editingtimezone'] = 'Redigerar en tidszon';
+$string['editstrings'] = 'Redigera strängar';
 $string['emptydstlist'] = 'Det finns f.n. inga förinställda värden för DST som har definierats. Du kan lägga till ett genom att klicka på knappen \"Lägg till\".';
 $string['errordstpresetactivateearlier'] = 'Månaden för aktivering måste vara av ett senare datum än månaden för avaktivering. ';
 $string['errordstpresetnameempty'] = 'Namnet på ett förinställt värde kan inte vara tomt';
@@ -96,22 +101,28 @@ $string['errordstpresetnameexists'] = 'Ett annat förinställt värde med det namne
 $string['filteruploadedfiles'] = 'Filtrera uppladdade filer';
 $string['helpadminseesall'] = 'Kan administratörerna se alla händelser för kalendrar eller bara de som berör dem själva?';
 $string['helpcalendarsettings'] = 'Att konfigurera olika aspekter på Moodle som har med kalender och datum/tid att göra.';
-$string['helpdstforusers'] = 'Kan varje användare välja sina egna inställningar för DST?';
-$string['helpmanagedstpresets'] = 'Klicka på den här knappen för att lägga till, redigera eller ta bort förinställda värden för DST som är tillgängliga på den här webbplatsen.';
+$string['helpforcetimezone'] = 'Du kan antingen tillåta användare att välja sina tidszoner individuellt eller \"diktera\" en tidszom som gäller för alla.';
+$string['helpmanagetimezones'] = 'Du kan antingen manuellt lägga till, redigera och ta bort profilerna för tidszonerna för den här webbplatsen, eller låta Moodle uppdatera och ladda ner nya profiler automatiskt från moodle.org';
 $string['helpsitemaintenance'] = 'För uppgraderingar och annat arbete';
 $string['helpstartofweek'] = 'Vilken dag inleder veckan i kalendern?';
 $string['helpupcominglookahead'] = 'Hur många dagar framåt i tiden övervakar kalendern som standard när det gäller kommande händelser?';
 $string['helpupcomingmaxevents'] = 'Hur många (maximalt) kommande händelser visas för användarna som standard?';
 $string['helpweekenddays'] = 'Vilka dagar i veckan markeras som \"helgdagar\" och visas med en annan färg?';
-$string['managedstpresets'] = 'Àdministrera förinställda värden för DST';
+$string['managetimezones'] = 'Administrera profiler för tidszoner';
 $string['nodstpresetsexist'] = 'Stödet för DST är avaktiverat för alla användare eftersom det inte finns några förinställda värden. Du kan definiera några förinställda värden genom att använda knappen här nedan.';
 $string['optionalmaintenancemessage'] = 'Valfritt meddelande angående underhåll';
+$string['returntocalendaroptions'] = 'Gå tillbaka till alternativen för kalender';
 $string['sitemaintenance'] = 'Det pågår f.n underhålll på webbplasen och det är för tillfället inte tillgänglig.';
 $string['sitemaintenancemode'] = 'Mod för underhåll';
 $string['sitemaintenanceoff'] = 'Läget för underhåll har avaktiverats och webbplatsen fungerar normalt igen.';
 $string['sitemaintenanceon'] = 'Din webbplats är f.n. i ett läge för underhåll. (bara adminstratörer kan logga in eller använda platsen).';
 $string['sitemaintenancewarning'] = 'Din webbplats är f.n. i ett läge för underhåll. (bara adminstratörer kan logga in). För att återställa den här webbplatsen till normalt operativt läge  <a href=\"maintenance.php\">avaktivera läget för underhåll</a>.';
+$string['tabselectedtofront'] = 'På tabeller med tabbar bör raden med den för tillfället valda taggen placeras längst fram.';
 $string['therewereerrors'] = 'Det fanns fel i Dina data';
+$string['timezoneisforcedto'] = 'Tvinga alla användare att använda samma tidszon';
+$string['timezonenotforced'] = 'Användare kan själva välja sin egen tidszon';
+$string['timezones'] = 'Tidszoner';
+$string['updatetimezones'] = 'Uppdatera profiler automatiskt';
 $string['upgradelogs'] = 'För att Du ska kunna utnyttja all funktionalitet så måste Dina gamla loggar uppgraderas. <a href=\"$a\">Mer information</a>';
 $string['upgradelogsinfo'] = 'En del förändringar har nyligen gjorts när det gäller hur loggarna lagras. För att Du ska kunna se alla Dina gamla loggar per aktivitet s a s så måste Dina gamla loggar uppgraderas. Detta kan ta lång tid, beroende på hur Din webbplats fungerar och det kan vara rätt krävande för databasen om det är en stor webbplats. När Du väl har påbörjat den här processen så bör Du också slutföra den (genom att hålla webbläsarens fönster öppet). Var dock inte orolig för Dina användare, webbplatsen bör fungera normalt för dem medan detta pågår. <br /><br /> Vill Du uppdatera Dina loggar nu?';
 $string['upgradesure'] = 'Dina Moodle-filer har ändrats och Du håller på att automatiskt uppgradera Din server till den här versionen:

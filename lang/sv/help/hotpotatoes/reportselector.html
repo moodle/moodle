@@ -1,100 +1,98 @@
-<?php
-	$strabandoned = get_string('abandoned', 'hotpotatoes');
-	$strinprogress = get_string('inprogress', 'hotpotatoes');
-?>
-<style type="text/css">
+<STYLE type="text/css">
 <!--
 	DD {font-size:0.8em; margin-top:0.5em;}
 -->
-</style>
-<p align="center"><b>Att v&auml;lja en rapport</b></p>
-<p>Du kan ange olika kriterier f&ouml;r att v&auml;lja olika format f&ouml;r output f&ouml;r
-de rapporter som &auml;r m&ouml;jliga i Hot Potatoes.</p>
+</STYLE>
+<P align="center">
+	<B>Selecting a Report</B>
+</P>
+<P>
+	You can specify different selection criteria and different output formats for the 
+	Hot Potatoes reports.
+</P>
 <?php
 	if (isadmin()) { // only admins can select a course
 ?>
-<dl>
-	<dt><b>Att v&auml;lja en kurs</b></dt>
+<DL>
+	<DT><B>Selecting a course</B></DT>
 
-	<dd><b><?php print_string('thiscourse', 'hotpotatoes') ?></b><br /> 
-	Rapporten kommer att visa responser fr&aring;n deltagare
-	i den aktuella kursen.</dd>
-	<dd><b><?php print_string('allmycourses', 'hotpotatoes') ?></b><br /> 
-		Rapporten kommer att visa responser fr&aring;n deltagare f&ouml;r alla kurser som 
-		anv&auml;nder detta test och och i vilka Du &auml;r (distans)l&auml;rare-
-		F&ouml;r att kunna anv&auml;ndas i ett flertal kurser s&aring; m&aring;ste testet vara
-		placerat i katalogen f&ouml;r Webbplatsens filer.
-		Detta alternativ &auml;r bara tillg&auml;ngligt f&ouml;r weebbplatsens systemadministrat&ouml;r.
-		</dd>
-	</dl>
+	<DD><B>this course</B><BR> 
+	The report will show responses by participants in the current course</DD>
+	<DD><B>all my courses</B><BR> 
+		The report will show responses by participants for all courses which 
+		use this quiz and in which you are a teacher. 
+		To be used in several courses, the quiz must be located in the Site 
+		files directory.
+		This option is only available to site administrators.
+	</DD>
+	</DD>
+</DL>
 <?php
 	}
 ?>
-<dl>
-	<dt><b>Att v&auml;lja anv&auml;ndare</b></dt>
-	<dd><b><?php print_string('students', 'hotpotatoes') ?></b><br /> 
-		Rapporten kommer att visa responser endast fr&aring;n studenter/elever/deltagare/l&auml;rande
-		Responser fr&aring;n (distans)l&auml;rare kommer inte att inkluderas i rapporten.
-	</dd>
+<DL>
+	<DT><B>Selecting users</B></DT>
+	<DD><B>students</B><BR> 
+		The report will show responses by students only. 
+		Teacher's responses will not be included in the report
+	</DD>
 
-	<dd><b><?php print_string('studentsandteachers', 'hotpotatoes') ?></b><br /> 			
-		Rapporten kommer att visa responser fr&aring;n studenter/elever/deltagare/l&auml;rande ocgh (distans)l&auml;rare.
-		Responser fr&aring;n &quot;g&auml;st&quot;-anv&auml;ndare, om det finns n&aring;gra, kommer ocks&aring; att inkluderas. 
-	</dd>
-</dl>
-<dl>
-	<dt><b>Att v&auml;lja betyg/omd&ouml;men</b></dt>
-	<dd><b><?php print_string('bestattempt', 'hotpotatoes') ?></b><br /> 
-	Rapporten kommer bara att visa responserna fr&aring;n det b&auml;sta f&ouml;rs&ouml;ket f&ouml;r varje anv&auml;ndare.
-	</dd>
+	<DD><B>students and teachers</B><BR> 			
+		The report will show responses by students and teachers.
+		Responses by the &quot;guest&quot; user, if any, will also be included. 
+	</DD>
+</DL>
+<DL>
+	<DT><B>Selecting grades</B></DT>
+	<DD><B>best attempt</B><BR> 
+	The report will only include the responses from the best attempt by each user</DD>
 
-	<dd><b><?php print_string('allattempts', 'hotpotatoes') ?></b><br /> 
-	Rapporten kommer att visa responserna fr&aring;n alla f&ouml;rs&ouml;k f&ouml;r varje anv&auml;ndare.
-	</dd>
-</dl>
-<dl>
-	<dt><b>Att v&auml;lja  ett format f&ouml;r  output</b></dt>
-	<dd><b><?php print_string('reportoverview', 'quiz') ?></b><br /> 	
-		Den h&auml;r rapporten &auml;r en lista &ouml;ver f&ouml;rs&ouml;k p&aring; det h&auml;r testet.
-		&quot;<?php p($strabandoned) ?>&quot; f&ouml;rs&ouml;k &auml;r inkluderade,
-		men &quot;<?php p($strinprogress) ?>&quot; f&ouml;rs&ouml;k visas inte.
-		Den visar bilden, namnet och det b&auml;sta resultatet f&ouml;r varje anv&auml;ndare.
-		och resultatet, tiden och hur l&aring;ng tid varje f&ouml;rs&ouml;k tog.
-		<br /><br />
-		F&ouml;rs&ouml;k kan markeras och d&auml;refter tas bort om Du s&aring; &ouml;nskar.
-		</dd>
-	<dd><b><?php print_string('reportsimplestat', 'quiz') ?></b><br /> 	
-		Den h&auml;r rapporten &auml;r en lista &ouml;ver fullf&ouml;ljda f&ouml;rs&ouml;k p&aring; det h&auml;r testet.
-		
-		F&ouml;rs&ouml;k som &auml;r markerade som &quot;<?php p($strabandoned) ?>&quot; eller 
-		&quot;<?php p($strinprogress) ?>&quot; &auml;r inte inkluderade.
-		Rapporten visar namnet och det b&auml;sta resultatet f&ouml;r varje anv&auml;ndare samt
-		resultatet f&ouml;r varje fr&aring;ga i varje f&ouml;rs&ouml;k.
-		<br /><br />
-		Det visar ocks&aring; medelresultatet p&aring; de enskilda fr&aring;gorna och p&aring; testet som helhet.
-		<br />
-		En detaljerad rapport &ouml;ver f&ouml;rs&ouml;ken kan laddas ner i Excel- eller textformat.
-		
-	</dd>
-	<dd><b><?php print_string('reportfullstat', 'quiz') ?></b><br /> 	
-	    Den h&auml;r rapporten visar alla detaljer ang&aring;ende alla fullf&ouml;ljda f&ouml;rs&ouml;k f&ouml;r det h&auml;r testet.
-		<br /><br />
+	<DD><B>all attempts</B><BR> 
+	The report will include the responses from all attempts by each user</DD>
+</DL>
+<DL>
+	<DT><B>Selecting an output format</B></DT>
+	<DD><B>Overview</B><BR> 	
+		This report is a list of attempts at this quiz.
+		&quot;abandoned&quot; attempts are included,
+		but &quot;in progress&quot; attempts are not shown.
 
-		F&ouml;rs&ouml;k som &auml;r markerade som  &quot;<?php p($strabandoned) ?>&quot; or 
-		&quot;<?php p($strinprogress) ?>&quot;  &auml;r inte inkluderade.
-		<br /><br />
-		Rapporten inneh&aring;ller f&ouml;ljande tabeller:
-		
-		<ul>
-			<li>
-				 <b>Tabellen &ouml;ver responser</b>, som visar hur varje anv&auml;ndare
-				 gav respons p&aring; varje fr&aring;ga i vart och ett av deras f&ouml;s&ouml;k med testet.
-			</li>
-			<li>
-				<b>Tabellen f&ouml;r analys av komponenter</b>, som listat responserna p&aring; varje fr&auml;ga och 
-				frekvensen f&ouml;r varje response.
-			</li>
-		</ul>
-		En detaljerad rapport &ouml;ver f&ouml;rs&ouml;ken kan laddas ner i Excel- eller textformat..
-	</dd>
-</dl>
+		It shows the picture, name and best score for each user,
+		and the score, time and duration of each attempt. 
+
+		Attempts may be selected and then deleted if required.
+	</DD>
+	<DD><B>Simple statistics</B><BR> 	
+		This report is a list of all completed attempts at this quiz.
+
+		Attempts marked as &quot;abandoned&quot; or 
+		&quot;in progress&quot; are not included.
+
+		The report shows the name and best score for each user, and the score 
+		of each question in each attempt.
+
+		It also gives the averages scores of the individual 
+		questions and the quiz as a whole.
+
+		Details of the attempts may be downloaded in Excel or text format.
+	</DD>
+	<DD><B>Detailed statistics</B><BR> 	
+		This report shows full details of all completed attempts at this quiz,
+
+		Attempts marked as &quot;abandoned&quot; or 
+		&quot;in progress&quot; are not included.
+
+		The report contains the following tables:
+		<UL>
+			<LI>
+				the <B>responses table</B>, which shows how each user responded 
+				to each question in each of their attempts at the quiz.
+			</LI>
+			<LI>
+				the <B>item analysis table</B>, which lists the responses to each 
+				question and the frequency of each response.
+			</LI>
+		</UL>
+		The details shown in this report may be downloaded in Excel or text format.
+	</DD>
+</DL>
