@@ -13,12 +13,16 @@
     require_login(0, false);   // Script is useless unless they're logged in
 
     if ($post = data_submitted()) {
-        if (!empty($post->course)) {
-            if ($course = get_record('course', 'id', $post->course)) {
-                if (!empty($course->lang)) {
-                    $CFG->courselang = $course->lang;
-                }
-            }
+        if (empty($post->course)) {
+            error('No course was defined!');
+        }
+
+        if (!$course = get_record('course', 'id', $post->course)) {
+            error('Could not find specified course!');
+        }
+
+        if (!empty($course->lang)) {           // Override current language
+            $CFG->courselang = $course->lang;
         }
 
         if (empty($SESSION->fromurl)) {
@@ -33,7 +37,7 @@
 
         $post->attachment = isset($_FILES['attachment']) ? $_FILES['attachment'] : NULL;
 
-        if (!$cm = get_coursemodule_from_instance("forum", $post->forum, $post->course)) { // For the logs
+        if (!$cm = get_coursemodule_from_instance("forum", $post->forum, $course->id)) { // For the logs
             $cm->id = 0;
         }
 
@@ -45,7 +49,7 @@
             $message = '';
             if (forum_update_post($post,$message)) {
 
-                add_to_log($post->course, "forum", "update post",
+                add_to_log($course->id, "forum", "update post",
                           "discuss.php?d=$post->discussion&amp;parent=$post->id", "$post->id", $cm->id);
 
                 $timemessage = 2;
@@ -68,7 +72,7 @@
             $message = '';
             if ($post->id = forum_add_new_post($post,$message)) {
 
-                add_to_log($post->course, "forum", "add post",
+                add_to_log($course->id, "forum", "add post",
                           "discuss.php?d=$post->discussion&amp;parent=$post->id", "$post->id", $cm->id);
 
                 $timemessage = 2;
@@ -95,7 +99,7 @@
             $message = '';
             if ($discussion->id = forum_add_discussion($discussion,$message)) {
 
-                add_to_log($post->course, "forum", "add discussion",
+                add_to_log($course->id, "forum", "add discussion", 
                            "discuss.php?d=$discussion->id", "$discussion->id", $cm->id);
 
                 $timemessage = 2;
