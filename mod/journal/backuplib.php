@@ -38,6 +38,7 @@
                 fwrite ($bf,full_tag("MODTYPE",4,false,"journal"));
                 fwrite ($bf,full_tag("NAME",4,false,$journal->name));
                 fwrite ($bf,full_tag("INTRO",4,false,$journal->intro));
+                fwrite ($bf,full_tag("INTROFORMAT",4,false,$journal->introformat));
                 fwrite ($bf,full_tag("DAYS",4,false,$journal->days));
                 fwrite ($bf,full_tag("ASSESSED",4,false,$journal->assessed));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$journal->timemodified));

@@ -26,5 +26,9 @@ function journal_upgrade($oldversion) {
         }
     }
 
+    if ($oldversion < 2004011400) {
+        table_column("journal", "", "introformat", "integer", "2", "", "1", "not null", "intro");
+    }
+
     return $result;
 }

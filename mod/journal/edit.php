@@ -83,7 +83,7 @@
 
     echo "<center>\n";
 
-    print_simple_box( format_text($journal->intro) , "center");
+    print_simple_box( format_text($journal->intro, $journal->introformat) , "center");
 
     echo "<br />";
 

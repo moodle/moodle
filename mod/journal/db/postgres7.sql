@@ -19,6 +19,7 @@ CREATE TABLE prefix_journal (
   course integer NOT NULL default '0',
   name varchar(255) default NULL,
   intro text,
+  introformat integer NOT NULL default '0',
   days integer NOT NULL default '7',
   assessed integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'

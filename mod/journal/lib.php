@@ -57,7 +57,7 @@ function journal_user_complete_index($course, $user, $journal, $journalopen, $he
     }
 
     print_simple_box_start("left", "90%");
-    echo format_text($journal->intro);
+    echo format_text($journal->intro,  $journal->introformat);
     print_simple_box_end();
     echo "<br clear=all />";
     echo "<br />";

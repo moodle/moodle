@@ -42,6 +42,7 @@
             $journal->course = $restore->course_id;
             $journal->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $journal->intro = backup_todb($info['MOD']['#']['INTRO']['0']['#']);
+            $journal->introformat = backup_todb($info['MOD']['#']['INTROFORMAT']['0']['#']);
             $journal->days = backup_todb($info['MOD']['#']['DAYS']['0']['#']);
             $journal->assessed = backup_todb($info['MOD']['#']['ASSESSED']['0']['#']);
             $journal->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
