@@ -197,3 +197,11 @@ select {
 	color: #000000;
 	background-color: #999999;
 }
+
+.logininfo {
+    font-size: x-small;
+}
+
+.homelink {
+    font-size: x-small;
+}

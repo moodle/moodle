@@ -53,7 +53,7 @@
 
     $courseword = get_string("course");
 
-    $loggedinas = "<font size=1>".user_login_string($course, $USER)."</font>";
+    $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
 
     print_header("$courseword: $course->fullname", "$course->fullname", "$course->shortname", "search.search", "", true,
                   update_course_icon($course->id), $loggedinas);

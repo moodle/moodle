@@ -217,3 +217,11 @@ a.dimmed:hover {
 .forumpostheaderdate {
     font-size: small;
 }
+
+.logininfo {
+    font-size: x-small;
+}
+
+.homelink {
+    font-size: x-small;
+}
