@@ -6,7 +6,7 @@
 
     if ($user = data_submitted()) {
         validate_form($user, $err);
-
+        $user->username= trim(moodle_strtolower($user->username));
         if (count((array)$err) == 0) {
             $plainpass = $user->password;
             $user->password = md5($user->password);
@@ -74,16 +74,17 @@
 
 function validate_form($user, &$err) {
     global $CFG;
-    if (empty($user->username))
+    if (empty($user->username)){
         $err->username = get_string("missingusername");
-
-    else if (record_exists("user", "username", $user->username))
-        $err->username = get_string("usernameexists");
-
-    else {
-        $string = eregi_replace("[^([:alnum:])]", "", $user->username);
-        if (strcmp($user->username, $string)) 
+    }else{
+        $user->username = trim(moodle_strtolower($user->username));
+        if (record_exists("user", "username", $user->username)){
+            $err->username = get_string("usernameexists");
+        }else {
+            $string = eregi_replace("[^([:alnum:])]", "", $user->username);
+            if (strcmp($user->username, $string)) 
             $err->username = get_string("alphanumerical");
+        }
     }
 
     if (isset($CFG->auth_user_create) and $CFG->auth_user_create==1 and function_exists('auth_user_exists') ){

@@ -45,7 +45,7 @@
 	if ($usernew = data_submitted()) {
         $usernew->firstname = strip_tags($usernew->firstname);
         $usernew->lastname  = strip_tags($usernew->lastname);
-
+        $usernew->username = trim(moodle_strtolower($usernew->username));
         if (empty($_FILES['imagefile'])) {
             $_FILES['imagefile'] = NULL;    // To avoid using uninitialised variable later
         }

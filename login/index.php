@@ -21,8 +21,8 @@
 
 
     if ($frm = data_submitted()) {
+        $frm->username = trim(moodle_strtolower($frm->username));
         $user = authenticate_user_login($frm->username, $frm->password);
-
         update_login_count();
 
         if ($user) {
