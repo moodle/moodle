@@ -43,10 +43,11 @@
             $strpasswordchanged = get_string("passwordchanged");
 
             if ($course->id) {
+                $fullname = fullname($USER, true);
 	            print_header($strpasswordchanged, $strpasswordchanged,
                              "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
                               <A HREF=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</A> ->
-                              <A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$USER->firstname $USER->lastname</A> -> $strpasswordchanged", $focus);
+                              <A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$fullname</A> -> $strpasswordchanged", $focus);
 			    notice($strpasswordchanged, "$CFG->wwwroot/user/view.php?id=$USER->id&course=$id");
             } else {
 			    print_header($strpasswordchanged, $strpasswordchanged, $strpasswordchanged, "");
@@ -76,10 +77,11 @@
 
     $strchangepassword = get_string("changepassword");
     if (!empty($course->id)) {
+        $fullname = fullname($USER, true);
 	    print_header($strchangepassword, $strchangepassword,
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
                       <A HREF=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</A> ->
-                      <A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$USER->firstname $USER->lastname</A> -> $strchangepassword", $focus);
+                      <A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$fullname</A> -> $strchangepassword", $focus);
     } else {
 	    print_header($strchangepassword, $strchangepassword, $strchangepassword, $focus);
     }

@@ -38,7 +38,7 @@
 
     // Login as this student and return to course home page.
 
-    $teacher_name = "$USER->firstname $USER->lastname";
+    $teacher_name = fullname($USER, true);
     $teacher_id   = "$USER->id";
 
     $USER = get_user_info_from_db("id", $user);
@@ -47,7 +47,7 @@
     $USER->realuser = $teacher_id;
 
     set_moodle_cookie($USER->username);
-    $student_name = "$USER->firstname $USER->lastname";
+    $student_name = fullname($USER, true);
 
     add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&user=$user", "$teacher_name -> $student_name");
 
