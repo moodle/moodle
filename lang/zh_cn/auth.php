@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.6.4 beta (2002112001)
+      // auth.php - created with Moodle 1.0.6.4 (2002112400)
 
 
 $string['auth_dbdescription'] = "该方法使用一个外部数据库来检验用户名和密码是否有效。如果是一个新帐号，该帐号其它字段的信息将一起复制到本系统中。";
@@ -20,12 +20,11 @@ $string['auth_imaphost'] = "IMAP服务器地址。用IP地址，不要用域名。";
 $string['auth_imapport'] = "IMAP服务器端口号。通常是143或993。";
 $string['auth_imaptitle'] = "使用一个IMAP服务器";
 $string['auth_imaptype'] = "IMAP服务器类型。IMAP服务器可能有不同类型的身份验证。";
-$string['instructions'] = "使用说明";
 $string['auth_ldap_bind_dn'] = "如果你想用绑定用户来搜索用户，在此指定。就象：‘cn=ldapuser,ou=public,o=org’";
 $string['auth_ldap_bind_pw'] = "绑定用户的密码。";
 $string['auth_ldap_contexts'] = "用户背景列表。以‘;’分隔。例如：‘ou=users,o=org; ou=others,o=org’";
 $string['auth_ldap_host_url'] = "以URL形式指定LDAP主机，类似于：‘ldap://ldap.myorg.com/’或‘ldaps://ldap.myorg.com/’";
-$string['auth_ldap_search_sub'] = "Put value &lt;&gt; 0 if  you like to search users from subcontexts.";
+$string['auth_ldap_search_sub'] = "如果你想从次级上下文中搜索用户，设值&lt;&gt; 0。";
 $string['auth_ldap_update_userinfo'] = "从LDAP向本系统更新用户信息（姓名、地址……）要查看映射信息，请看/auth/ldap/attr_mappings.php";
 $string['auth_ldap_user_attribute'] = "用于命名/搜索用户的属性。通常为‘cn’。";
 $string['auth_ldapdescription'] = "该方法利用一个外部的LDAP服务器进行身份验证。
@@ -51,6 +50,7 @@ $string['changepassword'] = "更改密码地址（URL）";
 $string['changepasswordhelp'] = "在这里你可以指定一个位置用户可以重新获得或更改他们的用户名/密码。这将在登录页面显示一个按钮。如果留空不填，就不会有按钮出现。";
 $string['chooseauthmethod'] = "选择一个身份验证方法：";
 $string['guestloginbutton'] = "访客登录按钮";
+$string['instructions'] = "使用说明";
 $string['showguestlogin'] = "你可以在登录页面显示或隐藏访客登录按钮。";
 
 ?>

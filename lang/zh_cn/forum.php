@@ -1,9 +1,6 @@
-<?PHP // $Id$
+<?PHP // $Id$ 
+      // forum.php - created with Moodle 1.0.6.4 (2002112400)
 
-#------------------------------------------------------------
-$string['modulename'] = "讨论区";
-$string['modulenameplural'] = "讨论区";
-#------------------------------------------------------------
 
 $string['addanewdiscussion'] = "添加一个新的讨论话题";
 $string['allowchoice'] = "允许每个人选择";
@@ -14,7 +11,7 @@ $string['anyfile'] = "任何文件";
 $string['attachment'] = "附件";
 $string['bynameondate'] = "按 \$a->name - \$a->date";
 $string['couldnotadd'] = "由于一个未知的错误，你的贴子无法发表";
-$string['couldnotdeleteratings'] = "抱歉，已经被打分的贴子不能删除";
+$string['couldnotdeleteratings'] = "抱歉，已经被评分的贴子不能删除";
 $string['couldnotdeletereplies'] = "抱歉，已经有跟贴的贴子不能删除";
 $string['couldnotupdate'] = "由于一个未知的错误，你的贴子无法更新";
 $string['delete'] = "删除";
@@ -30,7 +27,7 @@ $string['edit'] = "编辑";
 $string['editing'] = "正在编辑";
 $string['emptymessage'] = "你的贴子有点错误。大概是你没有填写内容，或附件太大。你的更改<B>没有</B>保存。";
 $string['everyonecanchoose'] = "每个人均可选择订阅";
-$string['everyoneissubscribed'] = "每个都订阅该讨论区";
+$string['everyoneissubscribed'] = "每个人都订阅该讨论区";
 $string['forcesubscribe'] = "强制每个人都订阅";
 $string['forcesubscribeq'] = "强制每个人都订阅吗？";
 $string['forum'] = "讨论区";
@@ -47,10 +44,12 @@ $string['introteacher'] = "一个教师专用讨论区";
 $string['learningforums'] = "学习讨论区";
 $string['maxtimehaspassed'] = "抱歉，编辑该贴的时间限制（\$a）已过！";
 $string['message'] = "讯息";
-$string['modeflatoldestfirst'] = "列表显示回贴，旧贴在前";
 $string['modeflatnewestfirst'] = "列表显示回贴，新贴在前";
+$string['modeflatoldestfirst'] = "列表显示回贴，旧贴在前";
 $string['modenested'] = "嵌套显示回贴";
 $string['modethreaded'] = "树状显示回贴";
+$string['modulename'] = "讨论区";
+$string['modulenameplural'] = "讨论区";
 $string['more'] = "更多";
 $string['namenews'] = "新闻讨论区";
 $string['namesocial'] = "公众讨论区";
@@ -65,15 +64,12 @@ $string['nownotsubscribed'] = "\$a->name 将<B>不</B>会收到 '\$a->forum' 复件的电
 $string['nowsubscribed'] = "\$a->name 将收到 '\$a->forum' 复件的电子邮件。";
 $string['numposts'] = "\$a 个贴子";
 $string['olderdiscussions'] = "旧的讨论话题";
-$string['openmode0'] = "No discussions, no replies";
-$string['openmode1'] = "No discussions, but replies are allowed";
-$string['openmode2'] = "Discussions and replies are allowed";
-$string['parentofthispost'] = "Parent of this post";
+$string['openmode0'] = "不能发起新论题，也不能回贴";
+$string['openmode1'] = "不能发起新论题，但允许回贴";
+$string['openmode2'] = "发起新论题和回贴均允许";
+$string['parentofthispost'] = "该贴的父贴";
 $string['postadded'] = "你的贴子已经发表了。<P>如果你想修改，在 \$a 时间内是允许的。";
 $string['postincontext'] = "在上下文中看此贴";
-$string['postmailinfo'] = "这是一份来自 \$a 网站的贴子。
-要在网站上回贴，请点击这个链接：";
-
 $string['postingtip'] = "<B>发贴提示：</B>
 在回贴时：
 <UL>
@@ -87,7 +83,8 @@ $string['postingtip'] = "<B>发贴提示：</B>
 <LI>清楚解释你的观点
 <LI>想想你要问的问题
 </UL>";
-
+$string['postmailinfo'] = "这是一份来自 \$a 网站的贴子。
+要在网站上回贴，请点击这个链接：";
 $string['postrating1'] = "Shows mostly SEPARATE knowing";
 $string['postrating2'] = "Equally separate and connected";
 $string['postrating3'] = "Shows mostly CONNECTED knowing";
@@ -95,14 +92,14 @@ $string['postupdated'] = "你的贴子已经更新";
 $string['processingpost'] = "正在处理贴子 \$a";
 $string['rate'] = "评分";
 $string['ratings'] = "评分";
+$string['re'] = "回复：";
 $string['readtherest'] = "阅读该主题的其它贴子";
-$string['re'] = "回复：";    // Put in front of subjects that are replies to another post
 $string['repliesmany'] = "迄今有 \$a 个回贴";
 $string['repliesone'] = "迄今有 \$a 个回贴";
 $string['reply'] = "答复";
 $string['search'] = "搜索";
-$string['searchresults'] = "搜索结果";
 $string['searchforums'] = "搜索讨论区";
+$string['searchresults'] = "搜索结果";
 $string['sendinratings'] = "呈送我的最新评分";
 $string['showsubscribers'] = "显示订阅者";
 $string['singleforum'] = "A single simple discussion";
