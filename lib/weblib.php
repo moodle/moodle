@@ -249,21 +249,21 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here", $hei
 
     global $CFG;
 
-    echo "\n<SCRIPT language=\"Javascript\">";
+    echo "\n<script language=\"javascript\">";
     echo "\n<!--";
-    echo "\ndocument.write('<A TITLE=\"$title\" HREF=javascript:openpopup(\"$url\",\"$name\",\"$height\",\"$width\") >".addslashes($linkname)."</A>');";
+    echo "\ndocument.write('<a title=\"$title\" href=javascript:openpopup(\"$url\",\"$name\",\"$height\",\"$width\") >".addslashes($linkname)."</A>');";
     echo "\n//-->";
-    echo "\n</SCRIPT>";
-    echo "\n<NOSCRIPT>\n<A TARGET=\"$name\" TITLE=\"$title\" HREF=\"$CFG->wwwroot/$url\">$linkname</A>\n</NOSCRIPT>\n";
+    echo "\n</script>";
+    echo "\n<noscript>\n<a target=\"$name\" title=\"$title\" href=\"$CFG->wwwroot/$url\">$linkname</a>\n</noscript>\n";
 
 }
 
 function close_window_button() {
 /// Prints a simple button to close a window
 
-    echo "<FORM><CENTER>";
-    echo "<INPUT TYPE=button onClick=\"self.close();\" VALUE=\"".get_string("closewindow")."\">";
-    echo "</CENTER></FORM>";
+    echo "<form><center>";
+    echo "<input type=button onClick=\"self.close();\" value=\"".get_string("closewindow")."\">";
+    echo "</center></form>";
 }
 
 
@@ -281,28 +281,28 @@ function choose_from_menu ($options, $name, $selected="", $nothing="choose", $sc
         $javascript = "";
     }
 
-    $output = "<SELECT NAME=$name $javascript>\n";
+    $output = "<select name=$name $javascript>\n";
     if ($nothing) {
-        $output .= "   <OPTION VALUE=\"$nothingvalue\"\n";
+        $output .= "   <option value=\"$nothingvalue\"\n";
         if ($nothingvalue == $selected) {
-            $output .= " SELECTED";
+            $output .= " selected";
         }
-        $output .= ">$nothing</OPTION>\n";
+        $output .= ">$nothing</option>\n";
     }
     if (!empty($options)) {
         foreach ($options as $value => $label) {
-            $output .= "   <OPTION VALUE=\"$value\"";
+            $output .= "   <option value=\"$value\"";
             if ($value == $selected) {
-                $output .= " SELECTED";
+                $output .= " selected";
             }
             if ($label) {
-                $output .= ">$label</OPTION>\n";
+                $output .= ">$label</option>\n";
             } else {
-                $output .= ">$value</OPTION>\n";
+                $output .= ">$value</option>\n";
             }
         }
     }
-    $output .= "</SELECT>\n";
+    $output .= "</select>\n";
 
     if ($return) {
         return $output;
@@ -688,8 +688,8 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     if (!$cache) {   // Do everything we can to prevent clients and proxies caching
         @header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
         @header("Pragma: no-cache");
-        $meta .= "\n<META HTTP-EQUIV=\"Pragma\" CONTENT=\"no-cache\">";
-        $meta .= "\n<META HTTP-EQUIV=\"Expires\" CONTENT=\"0\">";
+        $meta .= "\n<meta http-equiv=\"pragma\" content=\"no-cache\">";
+        $meta .= "\n<meta http-equiv=\"expires\" content=\"0\">";
     }
 
     include ("$CFG->dirroot/theme/$CFG->theme/header.html");
@@ -704,15 +704,15 @@ function print_footer ($course=NULL) {
 /// Course links
     if ($course) {
         if ($course == "home") {   // special case for site home page - please do not remove
-            $homelink  = "<P ALIGN=center><A TITLE=\"Moodle $CFG->release ($CFG->version)\" HREF=\"http://moodle.com/\" TARGET=\"_blank\">";
-            $homelink .= "<BR><IMG WIDTH=130 HEIGHT=19 SRC=\"pix/madewithmoodle2.gif\" BORDER=0></A></P>";
+            $homelink  = "<p align=\"center\"><a title=\"moodle $CFG->release ($CFG->version)\" href=\"http://moodle.org/\" target=\"_blank\">";
+            $homelink .= "<br><img width=\"130\" height=\"19\" src=\"pix/madewithmoodle2.gif\" border=0></a></p>";
             $course = get_site();
             $homepage = true;
         } else {
-            $homelink = "<A TARGET=\"{$CFG->framename}\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A>";
+            $homelink = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
         }
     } else {
-        $homelink = "<A TARGET=\"{$CFG->framename}\" HREF=\"$CFG->wwwroot\">".get_string("home")."</A>";
+        $homelink = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot\">".get_string("home")."</a>";
         $course = get_site();
     }
 
@@ -761,8 +761,8 @@ function print_navigation ($navigation) {
    }
 }
 
-function print_heading($text, $align="CENTER", $size=3) {
-    echo "<P ALIGN=\"$align\"><FONT SIZE=\"$size\"><B>".stripslashes_safe($text)."</B></FONT></P>";
+function print_heading($text, $align="center", $size=3) {
+    echo "<p align=\"$align\"><font size=\"$size\"><b>".stripslashes_safe($text)."</b></font></p>";
 }
 
 function print_heading_with_help($text, $helppage, $module="moodle") {
@@ -792,10 +792,10 @@ function print_simple_box_start($align="", $width="", $color="#FFFFFF", $padding
     global $THEME;
 
     if ($align) {
-        $align = "ALIGN=\"$align\"";
+        $align = "align=\"$align\"";
     }
     if ($width) {
-        $width = "WIDTH=\"$width\"";
+        $width = "width=\"$width\"";
     }
     echo "<table $align $width class=\"$class\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\"><tr><td bgcolor=\"$color\" class=\"$class"."content\">";
 }
@@ -805,20 +805,20 @@ function print_simple_box_end() {
 }
 
 function print_single_button($link, $options, $label="OK") {
-    echo "<FORM ACTION=\"$link\" METHOD=GET>";
+    echo "<form action=\"$link\" method=get>";
     if ($options) {
         foreach ($options as $name => $value) {
-            echo "<INPUT TYPE=hidden NAME=\"$name\" VALUE=\"$value\">";
+            echo "<input type=hidden name=\"$name\" value=\"$value\">";
         }
     }
-    echo "<INPUT TYPE=submit VALUE=\"$label\"></FORM>";
+    echo "<input type=submit value=\"$label\"></form>";
 }
 
 function print_spacer($height=1, $width=1, $br=true) {
     global $CFG;
-    echo "<IMG HEIGHT=\"$height\" WIDTH=\"$width\" SRC=\"$CFG->wwwroot/pix/spacer.gif\" ALT=\"\">";
+    echo "<img height=\"$height\" width=\"$width\" src=\"$CFG->wwwroot/pix/spacer.gif\" alt=\"\">";
     if ($br) {
-        echo "<BR \>\n";
+        echo "<br />\n";
     }
 }
 
@@ -828,19 +828,19 @@ function print_file_picture($path, $courseid=0, $height="", $width="", $link="")
     global $CFG;
 
     if ($height) {
-        $height = "HEIGHT=\"$height\"";
+        $height = "height=\"$height\"";
     }
     if ($width) {
-        $width = "WIDTH=\"$width\"";
+        $width = "width=\"$width\"";
     }
     if ($link) {
-        echo "<A HREF=\"$link\">";
+        echo "<a href=\"$link\">";
     }
     if (substr(strtolower($path), 0, 7) == "http://") {
-        echo "<IMG BORDER=0 $height $width SRC=\"$path\">";
+        echo "<img border=0 $height $width src=\"$path\">";
 
     } else if ($courseid) {
-        echo "<IMG BORDER=0 $height $width SRC=\"";
+        echo "<img border=0 $height $width src=\"";
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
             echo "$CFG->wwwroot/file.php/$courseid/$path";
         } else {
@@ -851,7 +851,7 @@ function print_file_picture($path, $courseid=0, $height="", $width="", $link="")
         echo "Error: must pass URL or course";
     }
     if ($link) {
-        echo "</A>";
+        echo "</a>";
     }
 }
 
@@ -859,7 +859,7 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
     global $CFG;
 
     if ($link) {
-        $output = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$userid&course=$courseid\">";
+        $output = "<a href=\"$CFG->wwwroot/user/view.php?id=$userid&course=$courseid\">";
     } else {
         $output = "";
     }
@@ -872,15 +872,15 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
     }
     if ($picture) {
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= "<IMG SRC=\"$CFG->wwwroot/user/pix.php/$userid/$file\" BORDER=0 WIDTH=$size HEIGHT=$size ALT=\"\">";
+            $output .= "<img src=\"$CFG->wwwroot/user/pix.php/$userid/$file\" border=0 width=$size height=$size alt=\"\">";
         } else {
-            $output .= "<IMG SRC=\"$CFG->wwwroot/user/pix.php?file=/$userid/$file\" BORDER=0 WIDTH=$size HEIGHT=$size ALT=\"\">";
+            $output .= "<img src=\"$CFG->wwwroot/user/pix.php?file=/$userid/$file\" border=0 width=$size height=$size alt=\"\">";
         }
     } else {
-        $output .= "<IMG SRC=\"$CFG->wwwroot/user/default/$file\" BORDER=0 WIDTH=$size HEIGHT=$size ALT=\"\">";
+        $output .= "<img src=\"$CFG->wwwroot/user/default/$file\" border=0 width=$size height=$size alt=\"\">";
     }
     if ($link) {
-        $output .= "</A>";
+        $output .= "</a>";
     }
 
     if ($returnstring) {
@@ -905,7 +905,7 @@ function print_table($table) {
     if (isset($table->align)) {
         foreach ($table->align as $key => $aa) {
             if ($aa) {
-                $align[$key] = " ALIGN=\"$aa\"";
+                $align[$key] = " align=\"$aa\"";
             } else {
                 $align[$key] = "";
             }
@@ -914,7 +914,7 @@ function print_table($table) {
     if (isset($table->size)) {
         foreach ($table->size as $key => $ss) {
             if ($ss) {
-                $size[$key] = " WIDTH=\"$ss\"";
+                $size[$key] = " width=\"$ss\"";
             } else {
                 $size[$key] = "";
             }
@@ -923,7 +923,7 @@ function print_table($table) {
     if (isset($table->wrap)) {
         foreach ($table->wrap as $key => $ww) {
             if ($ww) {
-                $wrap[$key] = " NOWRAP ";
+                $wrap[$key] = " nowrap ";
             } else {
                 $wrap[$key] = "";
             }
@@ -987,9 +987,9 @@ function print_editing_switch($courseid) {
 
     if (isteacher($courseid)) {
         if ($USER->editing) {
-            echo "<A HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=off\">Turn editing off</A>";
+            echo "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=off\">turn editing off</a>";
         } else {
-            echo "<A HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=on\">Turn editing on</A>";
+            echo "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=on\">turn editing on</a>";
         }
     }
 }
@@ -999,25 +999,25 @@ function print_textarea($richedit, $rows, $cols, $width, $height, $name, $value=
     global $CFG, $THEME;
 
     if ($richedit) {
-        echo "<object id=richedit style=\"BACKGROUND-COLOR: buttonface\"";
+        echo "<object id=richedit style=\"background-color: buttonface\"";
         echo " data=\"$CFG->wwwroot/lib/rte/richedit.html\"";
         echo " width=\"$width\" height=\"$height\" ";
         echo " type=\"text/x-scriptlet\" VIEWASTEXT></object>\n";
-        echo "<TEXTAREA style=\"display:none\" NAME=\"$name\" ROWS=1 COLS=1>";
+        echo "<textarea style=\"display:none\" name=\"$name\" rows=1 cols=1>";
         p($value);
-        echo "</TEXTAREA>\n";
+        echo "</textarea>\n";
     } else {
-        echo "<TEXTAREA name=\"$name\" rows=\"$rows\" cols=\"$cols\" wrap=virtual>";
+        echo "<textarea name=\"$name\" rows=\"$rows\" cols=\"$cols\" wrap=virtual>";
         p($value);
-        echo "</TEXTAREA>\n";
+        echo "</textarea>\n";
     }
 }
 
 function print_richedit_javascript($form, $name, $source="no") {
-    echo "<SCRIPT language=\"JavaScript\" event=\"onload\" for=\"window\">\n";
+    echo "<script language=\"javascript\" event=\"onload\" for=\"window\">\n";
     echo "   document.richedit.options = \"history=no;source=$source\";";
     echo "   document.richedit.docHtml = $form.$name.innerText;";
-    echo "</SCRIPT>";
+    echo "</script>";
 }
 
 
@@ -1033,10 +1033,10 @@ function update_course_icon($courseid) {
             $string = get_string("turneditingon");
             $edit = "on";
         }
-        return "<FORM TARGET=_parent METHOD=GET ACTION=\"$CFG->wwwroot/course/view.php\">".
-               "<INPUT TYPE=hidden NAME=id VALUE=\"$courseid\">".
-               "<INPUT TYPE=hidden NAME=edit VALUE=\"$edit\">".
-               "<INPUT TYPE=submit VALUE=\"$string\"></FORM>";
+        return "<form target=_parent method=get action=\"$CFG->wwwroot/course/view.php\">".
+               "<input type=hidden name=id value=\"$courseid\">".
+               "<input type=hidden name=edit value=\"$edit\">".
+               "<input type=submit value=\"$string\"></form>";
     }
 }
 
@@ -1046,10 +1046,10 @@ function update_module_button($moduleid, $courseid, $string) {
 
     if (isteacher($courseid)) {
         $string = get_string("updatethis", "", $string);
-        return "<FORM TARGET=_parent METHOD=GET ACTION=\"$CFG->wwwroot/course/mod.php\">".
-               "<INPUT TYPE=hidden NAME=update VALUE=\"$moduleid\">".
-               "<INPUT TYPE=hidden NAME=return VALUE=\"true\">".
-               "<INPUT TYPE=submit VALUE=\"$string\"></FORM>";
+        return "<form target=_parent method=get action=\"$CFG->wwwroot/course/mod.php\">".
+               "<input type=hidden name=update value=\"$moduleid\">".
+               "<input type=hidden name=return value=\"true\">".
+               "<input type=submit value=\"$string\"></form>";
     }
 }
 
@@ -1247,17 +1247,17 @@ function redirect($url, $message="", $delay=0) {
 // Uses META tags to redirect the user, after printing a notice
 
     if (empty($message)) {
-        echo "<META HTTP-EQUIV='Refresh' CONTENT='$delay; URL=$url'>";
+        echo "<meta http-equiv='refresh' content='$delay; url=$url'>";
     } else {
         if (! $delay) {  
             $delay = 3;  // There's no point having a message with no delay
         }
-        echo "<META HTTP-EQUIV='Refresh' CONTENT='$delay; URL=$url'>";
+        echo "<meta http-equiv='refresh' content='$delay; url=$url'>";
         print_header();
-        echo "<CENTER>";
-        echo "<P>$message</P>";
-        echo "<P>( <A HREF=\"$url\">".get_string("continue")."</A> )</P>";
-        echo "</CENTER>";
+        echo "<center>";
+        echo "<p>$message</p>";
+        echo "<p>( <a href=\"$url\">".get_string("continue")."</a> )</p>";
+        echo "</center>";
     }
     die; 
 }
