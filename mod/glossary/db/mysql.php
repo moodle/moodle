@@ -345,7 +345,7 @@ function glossary_upgrade($oldversion) {
       set_field('glossary','editalways','1','mainglossary','0');
   }
 
-  if ($oldversion < 2004111200) {
+  if ($oldversion < 2004080932) {
       modify_database('','ALTER TABLE prefix_glossary ADD INDEX course (course);');
       modify_database('','ALTER TABLE prefix_glossary_alias ADD INDEX entryid (entryid);');
       modify_database('','ALTER TABLE prefix_glossary_categories ADD INDEX glossaryid (glossaryid);');

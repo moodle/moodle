@@ -106,7 +106,7 @@ function glossary_upgrade($oldversion) {
       set_field('glossary','editalways','1','mainglossary','0');
   }
 
-  if ($oldversion < 2004111200) {
+  if ($oldversion < 2004080932) {
       modify_database('','CREATE INDEX prefix_glossary_course_idx ON prefix_glossary (course);');
       modify_database('','CREATE INDEX prefix_glossary_alias_entryid_idx ON prefix_glossary_alias (entryid);');
       modify_database('','CREATE INDEX prefix_glossary_categories_glossaryid_idx ON prefix_glossary_categories (glossaryid);');
