@@ -10,8 +10,7 @@ CREATE TABLE prefix_backup_files (
   file_type varchar(10) NOT NULL default '',
   path varchar(255) NOT NULL default '',
   old_id integer default NULL,
-  new_id integer default NULL,
-  PRIMARY KEY (backup_code, file_type, path)
+  new_id integer default NULL
 );
 
 # --------------------------------------------------------
@@ -23,13 +22,11 @@ CREATE INDEX prefix_backup_codetypepath_idx ON prefix_backup_files (backup_code,
 #
 
 CREATE TABLE prefix_backup_ids (
-  prefix_backup_codenameid_idx PRIMARY KEY,
-  backup_code int(12) unsigned NOT NULL default '0',
+  backup_code int8 NOT NULL default '0',
   table_name varchar(30) NOT NULL default '',
-  old_id int(10) unsigned NOT NULL default '0',
-  new_id int(10) unsigned default NULL,
-  info mediumtext,
-  PRIMARY KEY (backup_code, table_name, old_id)
+  old_id int8 NOT NULL default '0',
+  new_id int8 default NULL,
+  info text
 );
 
 CREATE INDEX prefix_backup_codenameid_idx ON prefix_backup_ids (backup_code,table_name,old_id);
