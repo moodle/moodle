@@ -189,6 +189,8 @@ function data_submitted($url="") {
 /// checks the referer against the given url (it uses 
 /// the current page if none was specified.
 
+    global $CFG;
+
     if (empty($_POST)) {
         return false;
 

@@ -9,13 +9,13 @@
 <tr valign=top>
 	<td><P><? print_string("username") ?>:</td>
 	<td><input type="text" name="username" size=12 value="<? p($user->username) ?>">
-	<? formerr($err->username) ?>
+	<? if (!empty($err->username)) { formerr($err->username); } ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("password") ?>:</td>
 	<td><input type="password" name="password" size=12 value="<? p($user->password) ?>">
-	<? formerr($err->password) ?>
+	<? if (!empty($err->password)) { formerr($err->password); } ?>
 	</td>
 </tr>
 <tr valign=top>
@@ -24,43 +24,43 @@
 <tr valign=top>
 	<td><P><? print_string("email") ?>:</td>
 	<td><input type="text" name="email" size=25 value="<? p($user->email) ?>">
-	<? formerr($err->email) ?>
+	<? if (!empty($err->email)) { formerr($err->email); } ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("firstname") ?>:</td>
 	<td><input type="text" name="firstname" size=25 value="<? p($user->firstname) ?>">
-	<? formerr($err->firstname) ?>
+	<? if (!empty($err->firstname)) { formerr($err->firstname);} ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("lastname") ?>:</td>
 	<td><input type="text" name="lastname" size=25 value="<? p($user->lastname) ?>">
-	<? formerr($err->lastname) ?>
+	<? if (!empty($err->lastname)) { formerr($err->lastname);} ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("idnumber") ?>:</td>
 	<td><input type="text" name="idnumber" size=25 value="<? p($user->idnumber) ?>"> (<? print_string("optional") ?>)
-	<? formerr($err->idnumber) ?>
+	<? if (!empty($err->idnumber)) { formerr($err->idnumber);} ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("phone") ?>:</td>
 	<td><input type="text" name="phone" size=25 value="<? p($user->phone) ?>"> (<? print_string("optional") ?>)
-	<? formerr($err->phone) ?>
+	<? if (!empty($err->phone)) { formerr($err->phone);} ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("city") ?>:</td>
 	<td><input type="text" name="city" size=25 value="<? p($user->city) ?>">
-	<? formerr($err->city) ?>
+	<? if (!empty($err->city)) { formerr($err->city);} ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("country") ?>:</td>
 	<td><? choose_from_menu ($COUNTRIES, "country", $user->country, get_string("selectacountry"), "", "") ?>
-	<? formerr($err->country) ?>
+	<? if (!empty($err->country)) { formerr($err->country);} ?>
 	</td>
 </tr>
 <tr>
