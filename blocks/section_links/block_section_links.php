@@ -66,7 +66,7 @@ class block_section_links extends block_base {
             $display = get_field('course_display', 'display', 'course', $this->instance->pageid, 'userid', $USER->id);
         }
         if (!empty($display)) {
-            $link = "$CFG->wwwroot/course/view.php?id=$this->instance->pageid&amp;$sectionname=";
+            $link = $CFG->wwwroot.'/course/view.php?id='.$this->instance->pageid.'&amp;'.$sectionname.'=';
         } else {
             $link = '#';
         }
