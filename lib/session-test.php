@@ -17,6 +17,6 @@ if (!isset($_SESSION["test"])) {   // First time you call it.
     echo "<P>Sessions are working correctly</P>";
 }
 
-echo "<P><A HREF=\"session-test.php?random=".rand(1,10000)."\">Reload this page</A></P>"
+echo "<P><A HREF=\"session-test.php?random=".rand(1,10000)."\">Reload this page</A></P>";
 
 ?>
