@@ -96,14 +96,15 @@ function process_tf($xml, &$questions) {
         // first choice is true, second is false.
         $id = $choices[0]["@"]["id"];
 
-        $question->feedbacktrue = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
-        $question->feedbackfalse = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
-
-        if (strcmp($id, $correct_answer) == 0)  // true is correct
+        if (strcmp($id, $correct_answer) == 0) {  // true is correct
             $question->answer = 1;
-        else   // false is correct
+            $question->feedbacktrue = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
+            $question->feedbackfalse = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
+        } else {  // false is correct
             $question->answer = 0;
-
+            $question->feedbacktrue = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
+            $question->feedbackfalse = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
+        }
         $questions[] = $question;
       }
 }
