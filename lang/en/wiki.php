@@ -46,6 +46,7 @@ $string['editthispage'] = 'Edit this page';
 $string['backlinks'] = 'Referring links';
 $string['pageinfo'] = 'Page information';
 $string['attachments'] = 'Page attachments';
+$string['howtowiki'] = 'How to wiki';
 
 $string['chooseadministration'] = '-- Administration --';
 $string['administration'] = 'Administration';
