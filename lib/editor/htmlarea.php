@@ -1464,7 +1464,7 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
 HTMLArea.prototype._editorEvent = function(ev) {
 	var editor = this;
 	var keyEvent = (HTMLArea.is_ie && ev.type == "keydown") || (ev.type == "keypress");
-	if (keyEvent && ev.ctrlKey) {
+	if (keyEvent && ev.ctrlKey && ! ev.altKey) {
 		var sel = null;
 		var range = null;
 		var key = String.fromCharCode(HTMLArea.is_ie ? ev.keyCode : ev.charCode).toLowerCase();
