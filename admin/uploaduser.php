@@ -81,7 +81,8 @@
                                   "department" => 1, 
                                   "city" => 1, 
                                   "country" => 1,
-                                  "lang" => 1, 
+                                  "lang" => 1,
+                                  "auth" => 1,
                                   "timezone" => 1);
         $optional = array("idnumber" => 1, 
                           "icq" => 1, 
@@ -163,7 +164,6 @@
                         $user->{$name} = addslashes($value);
                     }
                 }
-                $user->auth = 'manual';
                 $user->confirmed = 1;
                 $user->timemodified = time();
                 $linenum++;
