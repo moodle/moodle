@@ -167,7 +167,7 @@ CREATE TABLE `user` (
   `lastlogin` int(10) unsigned NOT NULL default '0',
   `currentlogin` int(10) unsigned NOT NULL default '0',
   `lastIP` varchar(15) default NULL,
-  `personality` varchar(5) default NULL,
+  `secret` varchar(15) default NULL,
   `picture` tinyint(1) default NULL,
   `url` varchar(255) default NULL,
   `description` text,

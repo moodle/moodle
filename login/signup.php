@@ -13,6 +13,9 @@
             $user->password = md5($user->password);
             $user->confirmed = 0;
             $user->firstaccess = time();
+            $user->secret = random_string(15);
+            echo $user->secret;
+            $db->debug = true;
 
 			if (! ($user->id = insert_record("user", $user)) ) {
                 error("Could not add your record to the database!");
@@ -96,6 +99,20 @@ function validate_form($user, &$err) {
 }
 
 
+function random_string ($length=15) {
+    $pool  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    $pool .= "abcdefghijklmnopqrstuvwxyz";
+    $pool .= "0123456789";
+    $poollen = strlen($pool);
+    mt_srand ((double) microtime() * 1000000);
+    $string = "";
+    for ($i = 0; $i < $length; $i++) {
+        $string .= substr($pool, (mt_rand()%($poollen)), 1);
+    }
+    return $string;
+}
+
+
 function send_confirmation_email($user) {
 
     global $CFG;
@@ -105,7 +122,7 @@ function send_confirmation_email($user) {
 
     $data->firstname = $user->firstname;
     $data->sitename = $site->fullname;
-    $data->link = "$CFG->wwwroot/login/confirm.php?x=$user->id&s=$user->username";
+    $data->link = "$CFG->wwwroot/login/confirm.php?p=$user->secret&s=$user->username";
     $data->admin = "$from->firstname $from->lastname ($from->email)";
 
     $message = get_string("emailconfirmation", "", $data);

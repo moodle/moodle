@@ -2,9 +2,9 @@
 
 	require("../config.php");
 
-	if ( isset($x) && isset($s) ) {     #  x = user.id   s = user.username
+	if ( isset($p) && isset($s) ) {     #  p = user.secret   s = user.username
 
-		$user = get_user_info_from_db("id", "$x");
+		$user = get_user_info_from_db("secret", "$p");
 
 		if ($user) {
 			if ($user->username == $s) {
