@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 Beta (2004022400)
+      // editor.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['about'] = 'Tietoja editorista';
@@ -24,7 +24,7 @@ $string['copy'] = 'Kopioi';
 $string['createfolder'] = 'Luo kansio';
 $string['createlink'] = 'Lisää linkki';
 $string['cut'] = 'Leikkaa';
-$string['delete'] = 'Posta';
+$string['delete'] = 'Poista';
 $string['filebrowser'] = 'Tiedostoselain';
 $string['forecolor'] = 'Tekstin väri';
 $string['heading'] = 'Otsikko';
@@ -32,7 +32,7 @@ $string['height'] = 'Korkeus';
 $string['hilitecolor'] = 'Taustan väri';
 $string['horizontal'] = 'Vaaka';
 $string['horizontalrule'] = 'Vaakaviiva';
-$string['htmlmode'] = 'Näytä HTML koodi';
+$string['htmlmode'] = 'Näytä HTML-koodi';
 $string['imageurl'] = 'Kuvan URL';
 $string['indent'] = 'Lisää sisennystä';
 $string['insertchar'] = 'Lisää merkki';
@@ -56,11 +56,11 @@ $string['linktargetself'] = 'Samaan kehykseen';
 $string['linktargettop'] = 'Samaan ikkunaan';
 $string['linktitle'] = 'Otsikko';
 $string['linkurl'] = 'URL';
-$string['middle'] = 'Middle';
+$string['middle'] = 'Keskitä';
 $string['move'] = 'Siirrä';
 $string['normal'] = 'Normaali';
 $string['notimage'] = 'Valittu tiedosto ei ollut kuva. Valitse kuvatiedosto!';
-$string['notset'] = 'Not Set';
+$string['notset'] = 'Ei valittua';
 $string['ok'] = 'OK';
 $string['orderedlist'] = 'Numerointi';
 $string['outdent'] = 'Vähennä sisennystä';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 Beta (2004022400)
+      // glossary.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['addcomment'] = 'Lis‰‰ kommentti';
@@ -17,23 +17,24 @@ $string['areyousuredelete'] = 'Haluatko todella poistaa t‰m‰n tietueen?';
 $string['areyousuredeletecomment'] = 'Haluatko todella poistaa t‰m‰n kommentin?';
 $string['areyousureexport'] = 'Haluatko todella vied‰ t‰m‰n tietueen ->';
 $string['ascending'] = '(nouseva)';
-$string['attachment'] = 'Liite Kohteita';
+$string['attachment'] = 'Liite';
 $string['authorview'] = 'Selaa kirjoittajan mukaan';
 $string['back'] = 'Takaisin';
 $string['cantinsertcat'] = 'Kategoriaa ei voi lis‰t‰';
 $string['cantinsertrec'] = 'Tietuetta ei voi lis‰t‰';
-$string['cantinsertrel'] = 'Relaatiota kommenttiin ei voi lis‰t‰';
-$string['casesensitive'] = 'T‰m‰ tietue on case sensitive';
+$string['cantinsertrel'] = 'Relaatiota kategoriaan ei voi lis‰t‰';
+$string['casesensitive'] = 'T‰m‰n tietueen kirjainkoko on merkityksellinen (&quot;case sensitive&quot;)';
 $string['categories'] = 'Kategoriat';
 $string['category'] = 'Kategoria';
 $string['categorydeleted'] = 'Kategoria poistettu';
 $string['categoryview'] = 'Selaa kategorioiden mukaan';
-$string['cnfallowcomments'] = 'M‰‰rit‰, sallitaanko kategoria kommentit oletuksena';
+$string['cnfallowcomments'] = 'M‰‰rit‰, sallitaanko kommentit sanaston tietueisiin oletuksena';
 $string['cnfallowdupentries'] = 'M‰‰rit‰, sallitaanko p‰‰llekk‰isyydet sanastossa oletuksena';
 $string['cnfapprovalstatus'] = 'M‰‰rit‰ oletustila opiskelijoiden l‰hett‰mille tietueille.';
-$string['cnfcasesensitive'] = 'Onko oletuksena tietueen isoilla ja pienill‰ kirjaimilla merkityst‰, kun tietue linkitet‰‰n. ';
+$string['cnfcasesensitive'] = 'Onko oletuksena tietueen kirjainkoko merkityksellinen (&quot;case sensitive&quot;), kun tietue linkitet‰‰n. ';
 $string['cnfdefaulthook'] = 'Valitse oletuskokoelma n‰ytett‰v‰ksi, kun sanastoon tutustutaan ensimm‰ist‰ kertaa.';
 $string['cnfdefaultmode'] = 'Valitse oletuskehys, kun sanastoon tutustutaan ensimm‰ist‰ kertaa.';
+$string['cnffullmatch'] = 'Kun tietuetta linkitet‰‰n, onko oletuksena kohdetekstin kirjainkoko merkityksellinen?';
 $string['cnflinkentry'] = 'Linkitet‰‰nkˆ tietue automaattisesti oletuksena?';
 $string['cnflinkglossaries'] = 'Linkitet‰‰nkˆ sanasto automaattisesti oletuksena?';
 $string['cnfrelatedview'] = 'Valitse n‰yttˆtapa automaattiselle linkitt‰miselle ja tietueen katsomiselle.';
@@ -81,10 +82,10 @@ $string['entrydeleted'] = 'Tietue poistettu';
 $string['entryexported'] = 'Tietueen vienti onnistui';
 $string['entryishidden'] = '(t‰m‰ tietue on t‰ll‰ hetkell‰ piilotettuna)';
 $string['entryusedynalink'] = 'T‰m‰ tietue pit‰isi linkitty‰ automaattisesti';
-$string['explainaddentry'] = 'Lis‰‰ uusi tietue sanastoon.<br>K‰site ja m‰‰ritelm‰ ovat pakollisia kentti‰.';
+$string['explainaddentry'] = 'Lis‰‰ uusi tietue sanastoon.<br />K‰site ja m‰‰ritelm‰ ovat pakollisia kentti‰.';
 $string['explainall'] = 'N‰yt‰ kaikki tietueet yhdell‰ sivulla';
 $string['explainalphabet'] = 'Selaa sanastoa t‰m‰n hakemiston avulla.';
-$string['explainexport'] = 'Vientitiedosto on luotu.<br>Lataa se ja s‰ilyt‰ sit‰ huolella. Voit tuoda sen milloin tahansa t‰lle tai mille tahansa muulle kurssille.';
+$string['explainexport'] = 'Vientitiedosto on luotu.<br />Lataa se ja s‰ilyt‰ sit‰ huolella. Voit tuoda sen milloin tahansa t‰lle tai mille tahansa muulle kurssille.';
 $string['explainimport'] = 'M‰‰rit‰ tuontitiedosto ja tuonnin asetukset.';
 $string['explainspecial'] = 'N‰ytt‰‰ tietueet, jotka eiv‰t ala kirjaimella';
 $string['exportedentry'] = 'Viety tietue';

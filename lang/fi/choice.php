@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.2 Beta (2004022400)
+      // choice.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['answered'] = 'Vastattu';

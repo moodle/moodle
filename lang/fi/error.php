@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.2 Beta (2004022400)
+      // error.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['coursegroupunknown'] = 'Ryhmää vastaavaa kurssia $a ei ole määritetty.';
