@@ -1,9 +1,5 @@
 <?PHP //$Id$
     //This page prints the backup form to select everything
-echo "aqui";
-echo $id;
-echo $launch;
-echo $cancel;
  
    //Checks for the required files/functions to backup every mod
     //And check if there is data about it on $form
@@ -17,36 +13,36 @@ echo $cancel;
                include_once($modfile);
                if (function_exists($modbackup)) {
                    $var = "exists_".$modname;
-                   $var = true;
+                   $form->$var = true;
                    $count++;
                }
             }
             //Check data
             //Check module info
             $var = "backup_".$modname;
-            if (!isset($var)) {
-                $var = 1;
+            if (!isset($form->$var)) {
+                $form->$var = 1;
             }
             //Check include user info
             $var = "backup_user_info_".$modname;
-            if (!isset($var)) {
-                $var = 1;
+            if (!isset($form->$var)) {
+                $form->$var = 1;
             }
         }
     }
 
     //Check other parameters
-    if (!isset($ackup_users)) {
-        $ackup_users = 2;
+    if (!isset($form->backup_users)) {
+        $form->backup_users = 2;
     }
-    if (!isset($ackup_logs)) {
-        $ackup_logs = 1;
+    if (!isset($form->backup_logs)) {
+        $form->backup_logs = 1;
     }
-    if (!isset($ackup_user_files)) {
-        $ackup_user_files = 1;
+    if (!isset($form->backup_user_files)) {
+        $form->backup_user_files = 1;
     }
-    if (!isset($ackup_course_files)) {
-        $ackup_course_files = 1;
+    if (!isset($form->backup_course_files)) {
+        $form->backup_course_files = 1;
     }
 
     if ($count == 0) {
@@ -64,7 +60,7 @@ echo $cancel;
             $modbackup = $modname."_backup_mods";
             //If exists the lib & function
             $var = "exists_".$modname;
-            if ($var) {
+            if ($form->$var) {
                 //Print the full tr
                 echo "<tr>";
                 echo "<td align=\"right\"><P><B>";
@@ -73,11 +69,11 @@ echo $cancel;
                 $backup_options[0] = get_string("no"); 
                 $backup_options[1] = get_string("yes");
                 $var = "backup_".$modname;
-                choose_from_menu($backup_options, $var, $var, "");
+                choose_from_menu($backup_options, $var, $form>$var, "");
                 $backup_user_options[0] = get_string("withoutuserdata"); 
                 $backup_user_options[1] = get_string("withuserdata");
                 $var = "backup_user_info_".$modname;
-                choose_from_menu($backup_user_options, $var, $var, "");
+                choose_from_menu($backup_user_options, $var, $form->$var, "");
                 echo "</td></tr>";
             }
         }
@@ -92,7 +88,7 @@ echo $cancel;
         $user_options[0] = get_string("all");
         $user_options[1] = get_string("course");
         $user_options[2] = get_string("needed");
-        choose_from_menu($user_options, "backup_users", $ackup_users, "");
+        choose_from_menu($user_options, "backup_users", $form->backup_users, "");
         echo "</td></tr>";
 
         //Now print the Logs tr
@@ -102,7 +98,7 @@ echo $cancel;
         echo "</td><td>";
         $log_options[0] = get_string("no");
         $log_options[1] = get_string("yes"); 
-        choose_from_menu($log_options, "backup_logs", $ackup_logs, ""); 
+        choose_from_menu($log_options, "backup_logs", $form->backup_logs, ""); 
         echo "</td></tr>";
 
         //Now print the User Files tr
@@ -112,7 +108,7 @@ echo $cancel;
         echo "</td><td>";
         $user_file_options[0] = get_string("no"); 
         $user_file_options[1] = get_string("yes"); 
-        choose_from_menu($user_file_options, "backup_user_files", $ackup_user_files, "");
+        choose_from_menu($user_file_options, "backup_user_files", $form->backup_user_files, "");
         echo "</td></tr>";
 
         //Now print the Course Files tr
@@ -122,7 +118,7 @@ echo $cancel;
         echo "</td><td>";
         $course_file_options[0] = get_string("no");
         $course_file_options[1] = get_string("yes");
-        choose_from_menu($course_file_options, "backup_course_files", $ackup_course_files, "");
+        choose_from_menu($course_file_options, "backup_course_files", $form->backup_course_files, "");
         echo "</td></tr>";
     }
 ?>
