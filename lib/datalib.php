@@ -108,7 +108,7 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
                 $after = "AFTER `$after`";
             }
 
-            execute_sql("ALTER TABLE {$CFG->prefix}$table $operation $type $signed $default $null $after");
+            return execute_sql("ALTER TABLE {$CFG->prefix}$table $operation $type $signed $default $null $after");
             break;
 
         case "postgres7":        // From Petri Asikainen
@@ -161,7 +161,7 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
                 }
             }
 
-            execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET DEFAULT $default");
+            return execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET DEFAULT $default");
 
             break;
 
@@ -188,7 +188,7 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
             }
 
             execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET $null");
-            execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET $default");
+            return execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET $default");
             break;
 
     }

@@ -1662,6 +1662,26 @@ function make_menu_from_list($list, $separator=",") {
     return $outarray;
 }
 
+function make_grades_menu($gradingtype) {
+/// Creates an array that represents all the current grades that
+/// can be chosen using the given grading type.  Negative numbers
+/// are scales, zero is no grade, and positive numbers are maximum
+/// grades.
+
+    $grades = array();
+    if ($gradingtype < 0) {
+        if ($scale = get_record("scale", "id", - $gradingtype)) {
+            return make_menu_from_list($scale->scale);
+        }
+    } else if ($gradingtype > 0) {
+        for ($i=$gradingtype; $i>=0; $i--) {
+            $grades[$i] = $i;
+        }
+        return $grades;
+    }
+    return $grades;
+}
+
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

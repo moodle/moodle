@@ -126,21 +126,6 @@
         add_to_log($course->id, "assignment", "view submissions", "submissions.php?id=$assignment->id", "$assignment->id");
     }
 
-    $grades = array();
-
-    if ($assignment->grade < 0) {
-        $scaleid = - ($assignment->grade);
-        if ($scale = get_record("scale", "id", $scaleid)) {
-            $grades = make_menu_from_list($scale->scale);
-        }
-    } else if ($assignment->grade == 0) {
-        $grades = NULL;
-    } else {
-        for ($i=$assignment->grade; $i>=0; $i--) {
-            $grades[$i] = $i;
-        }
-    }
-
     // Submission sorting
     print_simple_box_start("CENTER", "50%");
     echo "<P align=\"CENTER\">";
@@ -154,6 +139,8 @@
 
     echo "<FORM ACTION=submissions.php METHOD=post>\n";
     
+    $grades = make_grades_menu($assignment->grade);
+
     foreach ($submissions as $submission) {
         $user = $users[$submission->userid];
         assignment_print_submission($assignment, $user, $submission, $teachers, $grades);

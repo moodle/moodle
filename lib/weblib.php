@@ -1292,6 +1292,7 @@ function print_scale_menu($courseid, $name, $current) {
                           $linkobject, 400, 500, $strscales);
 }
 
+
 function print_scale_menu_helpbutton($courseid, $scale) {
 /// Prints a help button about a scale
 /// scale is an object
