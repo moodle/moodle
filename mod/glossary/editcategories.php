@@ -56,11 +56,11 @@
                     $CategoryObject->name = $name;
 
                     if ( !update_record("glossary_categories", $CategoryObject) ) {
-     				error("Weird error. The category was not updated.");
-              			
-          			redirect("editcategories.php?id=$cm->id");
+     				    error("Weird error. The category was not updated.");
+     				    redirect("editcategories.php?id=$cm->id");
+                    } else {
+                        add_to_log($course->id, "glossary", "edit category", "editcategories.php?id=$cm->id", $cat);
                     }
-                    
                } else {
                     echo "<p align=\"center\">" . get_string("edit"). " " . get_string("category","glossary") . "<font size=\"3\">";
 
@@ -72,26 +72,26 @@
           } elseif ( $action == "delete" ) {
                if ( $confirm ) {
                
-				delete_records("glossary_entries_categories","categoryid", $cat);
+				    delete_records("glossary_entries_categories","categoryid", $cat);
                     delete_records("glossary_categories","id", $cat);
 				
-				print_simple_box_start("center","40%", "#FFBBBB");
-				echo "<center>" . get_string("categorydeleted","glossary") ."</center>";
-				echo "</center>";
-				print_simple_box_end();
+				    print_simple_box_start("center","40%", "#FFBBBB");
+				    echo "<center>" . get_string("categorydeleted","glossary") ."</center>";
+				    echo "</center>";
+				    print_simple_box_end();
 				
          			print_footer($course);
 
                     add_to_log($course->id, "glossary", "delete category", "editcategories.php?id=$cm->id", $cat);
                     
-     			redirect("editcategories.php?id=$cm->id");
+     			    redirect("editcategories.php?id=$cm->id");
                } else {
                     echo "<p align=\"center\">" . get_string("delete"). " " . get_string("category","glossary") . "<font size=\"3\">";
 
-     			print_simple_box_start("center","40%", "#FFBBBB");
-     			echo "<center><b>$category->name</b><br>";
+     			    print_simple_box_start("center","40%", "#FFBBBB");
+     			    echo "<center><b>$category->name</b><br>";
      			
-     			$num_entries = count_records("glossary_entries_categories","categoryid",$category->id);
+     			    $num_entries = count_records("glossary_entries_categories","categoryid",$category->id);
                     if ( $num_entries ) {
                          print_string("deletingnoneemptycategory","glossary");
                     }
@@ -109,29 +109,29 @@
                     <input type="submit" value=" <?php print_string("yes")?> ">
                     </form>
                     </td><td align=left width=50%>
-                    <?
+                    <?php
                     unset($options);
                     $options = array ("id" => $id);
                     print_single_button("editcategories.php", $options, get_string("no") );
                     echo "</td></tr></table>";
-     			echo "</center>";
-     			print_simple_box_end();
+     			    echo "</center>";
+     			    print_simple_box_end();
                }
           }
      } elseif ( $action == "add" ) {
           if ( $confirm ) {
-               $dupcategory = get_record("glossary_categories","lcase(name)",strtolower($name));
+               $dupcategory = get_record("glossary_categories","lcase(name)",strtolower($name),"glossaryid",$glossary->id);
                if ( $dupcategory ) {
                     echo "<p align=\"center\">" . get_string("add"). " " . get_string("category","glossary") . "<font size=\"3\">";
                     
-				print_simple_box_start("center","40%", "#FFBBBB");
-				echo "<center>" . get_string("duplicatedcategory","glossary") ."</center>";
-				echo "</center>";
-				print_simple_box_end();
+ 				    print_simple_box_start("center","40%", "#FFBBBB");
+				    echo "<center>" . get_string("duplicatedcategory","glossary") ."</center>";
+				    echo "</center>";
+				    print_simple_box_end();
 				
          			print_footer($course);
 
-     			redirect("editcategories.php?id=$cm->id&action=add&&name=$name");
+     			    redirect("editcategories.php?id=$cm->id&action=add&&name=$name");
 
                } else {
                     $action = "";
@@ -139,11 +139,11 @@
                     $CategoryObject->glossaryid = $glossary->id;
 
                     if ( ! $CategoryObject->id = insert_record("glossary_categories", $CategoryObject) ) {
-     				error("Weird error. The category was not inserted.");
+     				    error("Weird error. The category was not inserted.");
               			
-          			redirect("editcategories.php?id=$cm->id");
+          			    redirect("editcategories.php?id=$cm->id");
                     } else {
-                         add_to_log($course->id, "glossary", "add category", "editcategories.php?id=$cm->id", $cat);
+                        add_to_log($course->id, "glossary", "add category", "editcategories.php?id=$cm->id", $CategoryObject->id);
                     }
              }
           } else {
@@ -154,7 +154,6 @@
      }
      
      if ( $action ) {
-
           print_footer();
           die;
      }
@@ -162,41 +161,41 @@
 ?>
 
 
-<p align="center"><? p(get_string("edit")) ?> <? p(get_string("categories","glossary")) ?><font size="3">
+<p align="center"><?php p(get_string("edit")) ?> <?php p(get_string("categories","glossary")) ?><font size="3">
 
 <FORM name="theform" method="post" <?=$onsubmit ?> action="editcategories.php">
-<table width="40%" class=generalbox cellpadding=5 bgcolor="<? p($THEME->cellheading)?>">
+<table width="40%" class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
         <tr>
           <td width="90%" align="center"><b>
-          <? p(get_string("categories","glossary")) ?></b></td>
+          <?php p(get_string("categories","glossary")) ?></b></td>
           <td width="10%" align="center"><b>
-          <? p(get_string("action")) ?></b></td>
+          <?php p(get_string("action")) ?></b></td>
         </tr>
-        <tr><td width=100% colspan=2  bgcolor="<? p($THEME->cellheading2)?>">
+        <tr><td width=100% colspan=2  bgcolor="<?php p($THEME->cellheading2)?>">
         
         <table width=100%>
-<?
+<?php
      $categories = get_records("glossary_categories","glossaryid",$glossary->id,"name ASC");
 
      if ( $categories ) {
           foreach ($categories as $category) {
                $num_entries = count_records("glossary_entries_categories","categoryid",$category->id);
              ?>
-             <tr bgcolor="<? p($THEME->cellheading2)?>">
+             <tr bgcolor="<?php p($THEME->cellheading2)?>">
                <td width="90%" align="left">
-               <?
+               <?php
                     echo "<b>$category->name</b> <font size=-1>($num_entries " . get_string("entries","glossary") . ")</font>";
                ?>
                </td>
                <td width="10%" align="center"><b>
-               <?
+               <?php
           		echo "<a href=\"editcategories.php?id=$cm->id&action=delete&cat=$category->id\"><img  alt=\"" . get_string("delete") . "\"src=\"../../pix/t/delete.gif\" height=11 width=11 border=0></a> ";
           	  	echo "<a href=\"editcategories.php?id=$cm->id&action=edit&cat=$category->id\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a>";
                ?>
                </b></td>
              </tr>
              
-             <?
+             <?php
           }
      }
 ?>
@@ -204,8 +203,8 @@
         
         </td>
         <tr>
-        <td width=100% colspan=2  align=center bgcolor="<? p($THEME->cellheading2)?>">
-            <?
+        <td width=100% colspan=2  align=center bgcolor="<?php p($THEME->cellheading2)?>">
+            <?php
             
              $options['id'] = $cm->id;
              $options['action'] = "add";
@@ -230,4 +229,4 @@
 
 </form>
 
-<? print_footer() ?>
+<?php print_footer() ?>

@@ -5,87 +5,92 @@
 <CENTER>
 <TABLE cellpadding=5>
 <TR valign=top>
-    <TD align=right><P><B><? print_string("name") ?>:</B></P></TD>
+    <TD align=right><P><B><?php print_string("name") ?>:</B></P></TD>
     <TD>
-        <INPUT type="text" name="name" size=30 value="<? p($form->name) ?>">
+        <INPUT type="text" name="name" size=30 value="<?php p($form->name) ?>">
     </TD>
 </TR>
 <!-- More rows go in here... -->
-<TR valign=top>
-    <TD align=right><P><B><? echo get_string("studentcanpost", "glossary") ?>:</B></P></TD>
-    <TD>
-  <select size="1" name="studentcanpost">
-  <option value="1" <? 
-   if ( $form->studentcanpost ) {
-      echo "selected";
-   }
-   ?>><? echo get_string("yes") ?></option>
-  <option value="0" <? 
-   if ( !$form->studentcanpost ) {
-      echo "selected";
-   }
-   ?>><? echo get_string("no") ?>
-  </option>
-  </select> <? helpbutton("studentcanpost", get_string("studentcanpost", "glossary"), "glossary") ?>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><? echo get_string("allowduplicatedentries", "glossary") ?>:</B></P></TD>
-    <TD>
-  <select size="1" name="allowduplicatedentries">
-  <option value="1" <? 
-   if ( $form->allowduplicatedentries ) {
-      echo "selected";
-   }
-   ?> 
-   ><? echo get_string("yes") ?></option>
-  <option value="0" <? 
-   if ( !$form->allowduplicatedentries ) {
-      echo "selected";
-   }
-   ?>><? echo get_string("no") ?>
-  </option>
-  </select> <? helpbutton("allowduplicatedentries", get_string("allowduplicatedentries", "glossary"), "glossary") ?>
-    </TD>
-</TR>
-<?
+<?php
 $mainglossary = get_record("glossary","mainglossary",1,"course",$form->course);
 if (!$mainglossary or $mainglossary->id == $form->instance ) {
 ?>
 <TR valign=top>
-    <TD align=right><P><B><? echo get_string("glossarytype", "glossary") ?>:</B></P></TD>
+    <TD align=right><P><B><?php echo get_string("glossarytype", "glossary") ?>:</B></P></TD>
     <TD>
   <select size="1" name="mainglossary">
-  <option value="1" <? 
+  <option value="1" <?php
    if ( $form->mainglossary ) {
       echo "selected";
    }
-   ?>><? echo get_string("mainglossary", "glossary") ?></option>
-  <option value="0" <? 
+   ?>><?php echo get_string("mainglossary", "glossary") ?></option>
+  <option value="0" <?php
    if ( !$form->mainglossary ) {
       echo "selected";
    }
-   ?>><? echo get_string("secundaryglossary", "glossary") ?>
+   ?>><?php echo get_string("secondaryglossary", "glossary") ?>
   </option>
-  </select> <? helpbutton("mainglossary", get_string("mainglossary", "glossary"), "glossary") ?>
+  </select> <?php helpbutton("mainglossary", get_string("mainglossary", "glossary"), "glossary") ?>
     </TD>
 </TR>
-<?
+<?php
 } else {
 	echo "<INPUT type=\"hidden\" name=mainglossary value=\"0\">";
 }
 ?>
 <TR valign=top>
-    <TD align=right><P><B><? echo get_string("displayformat", "glossary") ?>:</B></P></TD>
+    <TD align=right><P><B><?php p(get_string("studentcanpost", "glossary")) ?>:</B><br>
+    <font size=1><?php p(get_string("warningstudentcapost","glossary")) ?></font></P></TD>
+    <TD>
+  <select size="1" name="studentcanpost">
+  <option value="1" <?php
+   if ( $form->studentcanpost ) {
+      echo "selected";
+   }
+   ?>><?php echo get_string("yes") ?></option>
+  <option value="0" <?php
+   if ( !$form->studentcanpost ) {
+      echo "selected";
+   }
+   ?>><?php echo get_string("no") ?>
+  </option>
+  </select> <?php helpbutton("studentcanpost", get_string("studentcanpost", "glossary"), "glossary") ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("allowduplicatedentries", "glossary") ?>:</B></P></TD>
+    <TD>
+  <select size="1" name="allowduplicatedentries">
+  <option value="1" <?php
+   if ( $form->allowduplicatedentries ) {
+      echo "selected";
+   }
+   ?> 
+   ><?php echo get_string("yes") ?></option>
+  <option value="0" <?php
+   if ( !$form->allowduplicatedentries ) {
+      echo "selected";
+   }
+   ?>><?php echo get_string("no") ?>
+  </option>
+  </select> <?php helpbutton("allowduplicatedentries", get_string("allowduplicatedentries", "glossary"), "glossary") ?>
+    </TD>
+</TR>
+<TR valign=top>
+<td colspan=2><hr>
+</tr>
+</tr>
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("displayformat", "glossary") ?>:</B></P></TD>
     <TD>
   <select size="1" name="displayformat">
-  <option value="0" <? 
+  <option value="0" <?php
    if ( $form->displayformat == 0) {
       echo "selected";
    }
-  ?>><? echo get_string("displayformatdefault", "glossary") ?></option>
+  ?>><?php echo get_string("displayformatdefault", "glossary") ?></option>
 
-<?
+<?php
     global $CFG;
 
     $basedir = opendir("$CFG->dirroot/mod/glossary/formats");
@@ -112,75 +117,75 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
 	
 ?>
 
-    </select> <? helpbutton("displayformat", get_string("displayformat", "glossary"), "glossary") ?>
+    </select> <?php helpbutton("displayformat", get_string("displayformat", "glossary"), "glossary") ?>
     </TD>
 </TR>
 <TR valign=top>
-    <TD align=right><P><B><? echo get_string("showspecial", "glossary") ?>:</B></P></TD>
+    <TD align=right><P><B><?php echo get_string("showspecial", "glossary") ?>:</B></P></TD>
     <TD>
   <select size="1" name="showspecial">
-  <option value="1" <? 
+  <option value="1" <?php
    if ( $form->showspecial ) {
       echo "selected";
    }
    ?> 
-   ><? echo get_string("yes") ?></option>
-  <option value="0" <? 
+   ><?php echo get_string("yes") ?></option>
+  <option value="0" <?php
    if ( !$form->showspecial ) {
       echo "selected";
    }
-   ?>><? echo get_string("no") ?>
+   ?>><?php echo get_string("no") ?>
   </option>
-  </select> <? helpbutton("shows", get_string("showspecial", "glossary"), "glossary") ?>
+  </select> <?php helpbutton("shows", get_string("showspecial", "glossary"), "glossary") ?>
     </TD>
 </TR>
 <TR valign=top>
-    <TD align=right><P><B><? echo get_string("showalphabet", "glossary") ?>:</B></P></TD>
+    <TD align=right><P><B><?php echo get_string("showalphabet", "glossary") ?>:</B></P></TD>
     <TD>
   <select size="1" name="showalphabet">
-  <option value="1" <? 
+  <option value="1" <?php
    if ( $form->showalphabet ) {
       echo "selected";
    }
    ?> 
-   ><? echo get_string("yes") ?></option>
-  <option value="0" <? 
+   ><?php echo get_string("yes") ?></option>
+  <option value="0" <?php
    if ( !$form->showalphabet ) {
       echo "selected";
    }
-   ?>><? echo get_string("no") ?>
+   ?>><?php echo get_string("no") ?>
   </option>
-  </select> <? helpbutton("shows", get_string("showalphabet", "glossary"), "glossary") ?>
+  </select> <?php helpbutton("shows", get_string("showalphabet", "glossary"), "glossary") ?>
     </TD>
 </TR>
 <TR valign=top>
-    <TD align=right><P><B><? echo get_string("showall", "glossary") ?>:</B></P></TD>
+    <TD align=right><P><B><?php echo get_string("showall", "glossary") ?>:</B></P></TD>
     <TD>
   <select size="1" name="showall">
-  <option value="1" <? 
+  <option value="1" <?php
    if ( $form->showall ) {
       echo "selected";
    }
    ?> 
-   ><? echo get_string("yes") ?></option>
-  <option value="0" <? 
+   ><?php echo get_string("yes") ?></option>
+  <option value="0" <?php
    if ( !$form->showall ) {
       echo "selected";
    }
-   ?>><? echo get_string("no") ?>
+   ?>><?php echo get_string("no") ?>
   </option>
-  </select> <? helpbutton("shows", get_string("showall", "glossary"), "glossary") ?>
+  </select> <?php helpbutton("shows", get_string("showall", "glossary"), "glossary") ?>
     </TD>
 </TR>
 </TABLE>
 <!-- These hidden variables are always the same -->
-<INPUT type="hidden" name=course        value="<? p($form->course) ?>">
-<INPUT type="hidden" name=coursemodule  value="<? p($form->coursemodule) ?>">
-<INPUT type="hidden" name=section       value="<? p($form->section) ?>">
-<INPUT type="hidden" name=module        value="<? p($form->module) ?>">
-<INPUT type="hidden" name=modulename    value="<? p($form->modulename) ?>">
-<INPUT type="hidden" name=instance      value="<? p($form->instance) ?>">
-<INPUT type="hidden" name=mode          value="<? p($form->mode) ?>">
-<INPUT type="submit" value="<? print_string("savechanges") ?>">
+<INPUT type="hidden" name=course        value="<?php p($form->course) ?>">
+<INPUT type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
+<INPUT type="hidden" name=section       value="<?php p($form->section) ?>">
+<INPUT type="hidden" name=module        value="<?php p($form->module) ?>">
+<INPUT type="hidden" name=modulename    value="<?php p($form->modulename) ?>">
+<INPUT type="hidden" name=instance      value="<?php p($form->instance) ?>">
+<INPUT type="hidden" name=mode          value="<?php p($form->mode) ?>">
+<INPUT type="submit" value="<?php print_string("savechanges") ?>">
 </CENTER>
 </FORM>

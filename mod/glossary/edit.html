@@ -1,37 +1,39 @@
-<?
+<?php
 	global $CFG, $THEME;
     	require_once("../../config.php");
 ?>
 <FORM name="theform" method="post" <?=$onsubmit ?> action="edit.php" enctype="multipart/form-data">
-<table  class=generalbox cellpadding=5 bgcolor="<? p($THEME->cellheading)?>">
+<table  class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
 <tr valign=top>
     <td align=right><p><b><?php echo get_string("concept","glossary") ?>:</b></p></td>
     <td>
-        <INPUT type="text" name="concept" size=30 value="<? p($form->concept) ?>">
+        <INPUT type="text" name="concept" size=30 value="<?php p($form->concept) ?>">
     </td>
 </tr>
 <tr valign=top>
     <td align=right><p><b><?php echo get_string("categories","glossary") ?>:</b></p></td>
     <td>	
-	<?
+	<?php
 		$categories = get_records("glossary_categories","glossaryid",$glossary->id);
 		echo "<select size=\"6\" name=\"categories[]\" multiple=\"yes\">";
 		echo "<option value=0>" . get_string("nocategorized","glossary") . "</optioon>";
 
-		foreach ( $categories as $category ) {
-			echo "  <option ";
+		if ( $categories ) {
+            foreach ( $categories as $category ) {
+			    echo "  <option ";
 
-			if ( record_exists("glossary_entries_categories","entryid",$entry->id,"categoryid",$category->id) ) {
-				echo "selected " ;
-			}
-			echo "value=\"$category->id\">$category->name</option>\n";
+			    if ( record_exists("glossary_entries_categories","entryid",$entry->id,"categoryid",$category->id) ) {
+				    echo "selected " ;
+			    }
+			    echo "value=\"$category->id\">$category->name</option>\n";
+            }
 		}
 	?>
 	</select>
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><p><b><? echo get_string("definition","glossary") ?>:</b></p>
+    <td align=right><p><b><?php echo get_string("definition","glossary") ?>:</b></p>
     <font size="1">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
@@ -75,7 +77,7 @@
 <tr>
 <td colspan=2>
 	<p align=center>
-	<? if ($entry->id) {
+	<?php if ($entry->id) {
 		echo "<input type=\"hidden\" name=entry value=\"$entry->id\">";
    	 }
 	?>
@@ -83,8 +85,8 @@
 	<input type="hidden" name=currentview value="<?=$currentview ?>">
 	<input type="hidden" name=cat value="<?=$cat ?>">
 
-	<input type="submit" value="<? print_string("savechanges") ?>">
-	<input type="reset" value="<? print_string("revert") ?>">
+	<input type="submit" value="<?php print_string("savechanges") ?>">
+	<input type="reset" value="<?php print_string("revert") ?>">
 	</P>
 </td>
 </tr>

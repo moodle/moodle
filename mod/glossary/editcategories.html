@@ -1,11 +1,11 @@
-<?
+<?PHP
 	global $CFG, $THEME;
     	require_once("../../config.php");
 
 ?>
 
 <FORM name="form" method="post" <?=$onsubmit ?> action="editcategories.php">
-<table  class=generalbox cellpadding=5 bgcolor="<? p($THEME->cellheading)?>">
+<table  class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
 <tr valign=top>
     <td align=right><p><b><?php echo get_string("name") ?>:</b></p></td>
     <td>
@@ -17,9 +17,9 @@
 	<input type="hidden" name=id value="<?=$cm->id ?>">
 	<input type="hidden" name=action value="<?=$action?>">
 	<input type="hidden" name=confirm value=1>
-	<input type="hidden" name=cat value=<? p($cat) ?>>
-	<input type="submit" value="<? print_string("savechanges") ?>">
-	<input type="reset" value="<? print_string("back","glossary") ?>"  onclick="javascript:history.go(-1);">
+	<input type="hidden" name=cat value=<?php p($cat) ?>>
+	<input type="submit" value="<?php print_string("savechanges") ?>">
+	<input type="reset" value="<?php print_string("back","glossary") ?>"  onclick="javascript:history.go(-1);">
 	</P>
 </td>
 </tr>

@@ -28,7 +28,7 @@
         $status = true;
 
         //Iterate over glossary table
-        $glossaries = get_records ("glossary","course",$preferences->backup_course,"id");
+        $glossaries = get_records ("glossary","course",$preferences->backup_course,"mainglossary");
         if ($glossaries) {
             foreach ($glossaries as $glossary) {
                 //Start mod
@@ -80,7 +80,7 @@
                 fwrite ($bf,full_tag("GLOSSARYID",6,false,$glo_cat->glossaryid));
                 fwrite ($bf,full_tag("NAME",6,false,$glo_cat->name));
 
-                $entries = get_records("glossary_entries_categories","categoryid",$glo_cat->id,"entryid");
+                $entries = get_records("glossary_entries_categories","categoryid",$glo_cat->id,"mainglossary");
                 if ($entries) {
                     $status =fwrite ($bf,start_tag("ENTRIES",6,true));
                     foreach ($entries as $entry) {
@@ -129,6 +129,7 @@
                     fwrite ($bf,full_tag("DEFINITION",6,false,$glo_ent->definition));
                     fwrite ($bf,full_tag("FORMAT",6,false,$glo_ent->format));
                     fwrite ($bf,full_tag("ATTACHMENT",6,false,$glo_ent->attachment));
+                    fwrite ($bf,full_tag("SOURCEGLOSSARYID",6,false,$glo_ent->sourceglossaryid));
                     fwrite ($bf,full_tag("TIMECREATED",6,false,$glo_ent->timecreated));
                     fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$glo_ent->timemodified));
                     fwrite ($bf,full_tag("TEACHERENTRY",6,false,$glo_ent->teacherentry));

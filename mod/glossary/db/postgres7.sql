@@ -39,6 +39,7 @@ CREATE TABLE prefix_glossary_entries (
      timecreated int4 NOT NULL default '0',
      timemodified int4 NOT NULL default '0',
      teacherentry int2 NOT NULL default '0',
+     sourceglossaryid int4 NOT NULL default '0',
      PRIMARY KEY(id)
 );
 

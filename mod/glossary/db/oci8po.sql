@@ -61,7 +61,8 @@ CREATE TABLE prefix_glossary_entries (
   attachment varchar2(100) default '' not null,
   timecreated number(10) default '0' not null,
   timemodified number(10) default '0' not null,
-  teacherentry number(2) default '0' not null
+  teacherentry number(2) default '0' not null,
+  sourceglossaryid number(10) default '0' not null
 );
 
 COMMENT on table prefix_glossary_entries is 'all glossary entries';
@@ -155,9 +156,15 @@ rem
 
 INSERT INTO prefix_log_display VALUES ('glossary', 'add', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'update', 'glossary', 'name');
+INSERT INTO prefix_log_display VALUES ('glossary', 'delete', 'glossary', 'name');
 
 INSERT INTO prefix_log_display VALUES ('glossary', 'view', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'view all', 'glossary', 'name');
 
 INSERT INTO prefix_log_display VALUES ('glossary', 'add entry', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'update entry', 'glossary', 'name');
+INSERT INTO prefix_log_display VALUES ('glossary', 'delete entry', 'glossary', 'name');
+
+INSERT INTO prefix_log_display VALUES ('glossary', 'add category', 'glossary', 'name');
+INSERT INTO prefix_log_display VALUES ('glossary', 'update category', 'glossary', 'name');
+INSERT INTO prefix_log_display VALUES ('glossary', 'delete category', 'glossary', 'name');

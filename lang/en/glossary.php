@@ -34,6 +34,7 @@ $string['entryexported'] = "Entry succesfully exported.";
 $string['explainspecial'] = "<b>Special</b> will show all concepts that do not begin with a letter.<br>";
 $string['explainalphabet'] = "Select the letter you want to look for.<p>";
 $string['explainall'] = "<b>ALL</b> will show all entries in one page.";
+$string['exportedentry'] = "Exported entry";
 $string['exporttomainglossary'] = "Export to main glossary";
 $string['glossarytype'] = "Glossary Type";
 $string['mainglossary'] = "Main glossary";
@@ -45,13 +46,14 @@ $string['noentries'] = "No entries found in this section";
 $string['noentry'] = "No entry found.";
 $string['searchconcept'] = "Search:";
 $string['searchindefinition'] = "Search in concept AND definitions?";
-$string['secundaryglossary'] = "Secondary glossary";
+$string['secondaryglossary'] = "Secondary glossary";
 $string['showspecial'] = "Show 'Special' link";
 $string['showalphabet'] = "Show alphabet";
 $string['showall'] = "Show 'ALL' link";
 $string['special'] = "Special";
 $string['standardview'] = "Standard View";
 $string['studentcanpost'] = "Students can add entries";
+$string['warningstudentcapost'] = "(This apply only if the glossary is not the main one)";
 $string['writtenby'] = "By";
 
 ?>

@@ -109,15 +109,22 @@
             $entry->definition = backup_todb($ent_info['#']['DEFINITION']['0']['#']);
             $entry->format = backup_todb($ent_info['#']['FORMAT']['0']['#']);
             $entry->attachment = backup_todb($ent_info['#']['ATTACHMENT']['0']['#']);
+            $entry->sourceglossaryid = backup_todb($ent_info['#']['SOURCEGLOSSARYID']['0']['#']);
             $entry->timecreated = backup_todb($ent_info['#']['TIMECREATED']['0']['#']);
             $entry->timemodified = backup_todb($ent_info['#']['TIMEMODIFIED']['0']['#']);
             $entry->teacherentry = backup_todb($ent_info['#']['TEACHERENTRY']['0']['#']);
+
 
             //We have to recode the userid field
             $user = backup_getid($restore->backup_unique_code,"user",$entry->userid);
             if ($user) {
                 $entry->userid = $user->new_id;
-             }
+            }
+            //We have to recode the sourceglossaryid field
+            $source = backup_getid($restore->backup_unique_code,"glossary",$entry->sourceglossaryid);
+            if ($source) {
+                $entry->sourceglossaryid = $source->new_id;
+            }
             //If it's a teacher entry or userinfo was selected, restore the entry
             if ($entry->teacherentry or $restore->mods['glossary']->userinfo) {
                 //The structure is equal to the db, so insert the glossary_entries

@@ -59,6 +59,12 @@ function glossary_upgrade($oldversion) {
         execute_sql("ALTER TABLE `{$CFG->prefix}glossary_entries_categories` DROP PRIMARY KEY ");
         execute_sql("ALTER TABLE `{$CFG->prefix}glossary_entries_categories` ADD `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST");
     }
+    
+    if ( $oldversion < 2003092400 ) {
+        execute_sql( "ALTER TABLE `{$CFG->prefix}glossary_entries` " .
+                    "ADD `sourceglossaryid` INT(10) unsigned NOT NULL DEFAULT '0' AFTER `attachment` " );
+
+    }
 
     return true;
 }

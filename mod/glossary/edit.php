@@ -95,10 +95,11 @@ if ($e) {
                 $newentry->timecreated = time();
                 $newentry->timemodified = time();
                 $newentry->teacherentry = isteacher($course->id,$USER->id);
+                $newentry->sourceglossaryid = 0;
 
                 $PermissionGranted = 1;
                 if ( !$glossary->allowduplicatedentries ) {
-                       $dupentries = get_record("glossary_entries","UCASE(concept)", strtoupper($newentry->concept));
+                       $dupentries = get_record("glossary_entries","UCASE(concept)", strtoupper($newentry->concept), "glossaryid", $glossary->id);
                        if ($dupentries) {
                               $PermissionGranted = 0;
                        }

@@ -72,13 +72,12 @@
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
     }
 
-     $strglossaries   = get_string("modulenameplural", "glossary");
-     $strglossary     = get_string("modulename", "glossary");
-     $strallcategories= get_string("allcategories", "glossary");
-     $straddentry     = get_string("addentry", "glossary");
-     $strnoentries    = get_string("noentries", "glossary");
-
-    print_header("$course->shortname: $glossary->name", "$course->fullname",
+    $strglossaries   = get_string("modulenameplural", "glossary");
+    $strglossary     = get_string("modulename", "glossary");
+    $strallcategories= get_string("allcategories", "glossary");
+    $straddentry     = get_string("addentry", "glossary");
+    $strnoentries    = get_string("noentries", "glossary");
+    print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> $glossary->name",
                   "", "", true, update_module_button($cm->id, $course->id, $strglossary),
                   navmenu($course, $cm));
@@ -91,11 +90,11 @@
           echo "<table width=100% border=0><tr><td width=50% align=right>";
      	?>
      	<form method="POST" action="view.php">
-     	  <? p(get_string("searchconcept","glossary")) ?> <input type="text" name="search" size="20" value=""> <br><? p(get_string("searchindefinition","glossary")) ?> <input type="checkbox" name="includedefinition" value="1">
-     	  <input type="submit" value="Search" name="searchbutton">
-     	  <input type="hidden" name="id" value="<? p($cm->id) ?>">
+     	  <?php p(get_string("searchconcept","glossary")) ?> <input type="text" name="search" size="20" value=""> <br><?php p(get_string("searchindefinition","glossary")) ?> <input type="checkbox" name="includedefinition" value="1">
+     	  <input type="submit" value="<?php p(get_string("search")) ?>" name="searchbutton">
+     	  <input type="hidden" name="id" value="<?php p($cm->id) ?>">
      	</form>
-     	<?
+     	<?php
           echo "</td><td valign=top align=right width=50%>";
            if (isteacher($course->id) or ($glossary->studentcanpost) and !isguest($course->id)) {
               $options = array ("id" => "$cm->id");
@@ -116,7 +115,7 @@
      } else {
           $CurrentTab = 0;
      }
-     print_tabbed_table_start($data, $CurrentTab, $tCFG);
+     glossary_print_tabbed_table_start($data, $CurrentTab, $tCFG);
      echo "<center>";
      if ( $currentview ) {
          glossary_print_categories_menu($course, $cm, $glossary, $cat, $category);
@@ -140,16 +139,26 @@
 		$allentries = get_records("glossary_entries", "id", $eid);
 	} elseif ( $currentview and $cat == 0 ) {   // Browsing all categories
         $sql = "SELECT gec.id gecid, gc.name, gc.id CID, ge.*
-            FROM {$CFG->prefix}glossary_entries ge,
-                {$CFG->prefix}glossary_entries_categories gec,
-                {$CFG->prefix}glossary_categories gc
-            WHERE ge.glossaryid = '$glossary->id' AND
-                gec.entryid = ge.id AND
-                gc.id = gec.categoryid
-            ORDER BY gc.name, ge.concept";
+                FROM {$CFG->prefix}glossary_entries ge,
+                    {$CFG->prefix}glossary_entries_categories gec,
+                    {$CFG->prefix}glossary_categories gc
+                WHERE (ge.glossaryid = '$glossary->id' or ge.sourceglossaryid = '$glossary->id') AND
+                    gec.entryid = ge.id AND
+                    gc.id = gec.categoryid
+                ORDER BY gc.name, ge.concept";
 	    $allentries = get_records_sql( $sql );
 	} else {			// looking for terms that begin with a specify letter or entries with no category associated
-		$allentries = get_records("glossary_entries", "glossaryid", $glossary->id,"concept ASC");
+		$ownentries = get_records("glossary_entries", "glossaryid", $glossary->id,"concept ASC");
+		$importedentries = get_records("glossary_entries", "sourceglossaryid", $glossary->id,"concept ASC");
+		
+		if ( $ownentries and $importedentries ) {
+		    $allentries = array_merge($ownentries, $importedentries);
+		    usort($allentries, glossary_sort_entries);		
+		} elseif ( $importedentries ) {
+		    $allentries = $importedentries;
+		} elseif ( $ownentries ) {
+		    $allentries = $ownentries;
+		}
 	}
 
     if ( $allentries ) {
@@ -261,7 +270,7 @@
 	}
 
      echo "</center>";
-     print_tabbed_table_end();
+     glossary_print_tabbed_table_end();
 
 /// Finish the page
     print_footer($course);

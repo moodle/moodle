@@ -1,4 +1,4 @@
-<?
+<?PHP
 	require_once("../../config.php");
 	require_once("lib.php");
 
@@ -66,45 +66,30 @@
 				}
 			}
 			if ( $PermissionGranted ) {
-               	$newentry->userid = $entry->userid;
-      	      	$newentry->glossaryid = $mainglossary->id;
-	           	$newentry->concept = $entry->concept;
-               	$newentry->definition = $entry->definition;
-      	       	$newentry->format = $entry->format;
-		  	   	$newentry->timecreated = $entry->timecreated;
-	   		   	$newentry->timemodified = $entry->timemodified;
-			   	$newentry->teacherentry = $entry->teacherentry;
-			   	$newentry->attachment = $entry->attachment;
-
-		   		if (! $newentry->id = insert_record("glossary_entries", $newentry) ) {
+			
+                $entry->glossaryid       = $mainglossary->id;
+                $entry->sourceglossaryid = $glossary->id;
+                
+                if (! update_record("glossary_entries", $entry)) {
 					error("Could not export the entry to the main glossary");
 				} else {
-                         print_simple_box_start("center", "60%", "$THEME->cellheading");
-                         echo "<p align=center><font size=3>$entryexported</font></p></font>";
-                         if ($newentry->attachment) {
-                              $entry->course = $cm->course;
-               	          $newentry->course = $cm->course;
-                              if ( !glossary_copy_attachments($entry, $newentry) ) {
-                                   echo "<p align=\"center\">However, the attachment couldn't be exported.";
-                              }
-                         }
-                         
-                         add_to_log($course->id, "glossary", "add entry", "view.php?id=$cm->id&currentview=$currentview&cat=$cat&eid=".$entry->id, "$newentry->id");
+                    print_simple_box_start("center", "60%", "$THEME->cellheading");
+                    echo "<p align=center><font size=3>$entryexported</font></p></font>";
 
-                         print_continue("view.php?id=$cm->id&currentview=$currentview&cat=$cat&eid=".$entry->id);
-                         print_simple_box_end();
+                    print_continue("view.php?id=$cm->id&eid=".$entry->id);
+                    print_simple_box_end();
 
-     					print_footer();
+     				print_footer();
 
-     	                redirect("view.php?id=$cm->id&currentview=$currentview&cat=$cat&eid=".$entry->id);
-     	                die;
+     	            redirect("view.php?id=$cm->id&eid=".$entry->id);
+     	            die;
 				}
 			} else {
 			    print_simple_box_start("center", "60%", "#FFBBBB");
 			    echo "<p align=center><font size=3>$entryalreadyexist</font></p></font>";
 				echo "<p align=center>";
 
-				print_continue("view.php?id=$cm->id&currentview=$currentview&cat=$cat&eid=".$entry->id);
+				print_continue("view.php?id=$cm->id&eid=".$entry->id);
 
 			    print_simple_box_end();
 			}
@@ -113,7 +98,7 @@
 	    	print_simple_box_start("center", "60%", "#FFBBBB");
 	    	echo "<p align=center><font size=3>A weird error was found while trying to export this entry. Operation cancelled.</font></p></font>";
 
-			print_continue("view.php?id=$cm->id&currentview=$currentview&cat=$cat&eid=".$entry->id);
+			print_continue("view.php?id=$cm->id&eid=".$entry->id);
 
 	    	print_simple_box_end();
 	}

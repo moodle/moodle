@@ -217,19 +217,39 @@ function glossary_print_entry_by_default($course, $cm, $glossary, $entry,$curren
 function glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview="",$cat="") {
     global $THEME, $USER;
 
-	  if (isteacher($course->id) or $glossary->studentcanpost and $entry->userid == $USER->id) {
+    $ImportedEntry = ($entry->sourceglossaryid == $glossary->id);
+    $IsTeacher = isteacher($course->id);
+    $IsMainGlossary = $glossary->mainglossary;
+    
+	if ($IsTeacher or $glossary->studentcanpost and $entry->userid == $USER->id) {
  	  	echo "<p align=right>";
-		if (isteacher($course->id) and !$glossary->mainglossary) {
+ 	  	// only teachers can export entries so check it out
+		if ($IsTeacher and !$IsMainGlossary and !$ImportedEntry) {
 			$mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
-			if ( $mainglossary ) {
-
-				echo "<a href=\"exportentry.php?id=$cm->id&entry=$entry->id&currentview=$currentview&cat=$cat\"><img  alt=\"" . get_string("exporttomainglossary","glossary") . "\"src=\"export.gif\" height=11 width=11 border=0></a> ";
+			if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
+				
+                echo "<a href=\"exportentry.php?id=$cm->id&entry=$entry->id&currentview=$currentview&cat=$cat\"><img  alt=\"" . get_string("exporttomainglossary","glossary") . "\"src=\"export.gif\" height=11 width=11 border=0></a> ";
 
 			}
 		}
-		echo "<a href=\"deleteentry.php?id=$cm->id&mode=delete&entry=$entry->id&currentview=$currentview&cat=$cat\"><img  alt=\"" . get_string("delete") . "\"src=\"../../pix/t/delete.gif\" height=11 width=11 border=0></a> ";
-	  	echo "<a href=\"edit.php?id=$cm->id&e=$entry->id&currentview=$currentview&cat=$cat\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a>";
-	  }
+		
+        if ( $entry->sourceglossaryid ) {
+            $icon = "minus.gif";   // graphical metaphor (minus) for deleting an imported entry
+        } else {
+            $icon = "../../pix/t/delete.gif";
+        }
+
+		// Exported entries can be updated/deleted only by teachers in the main glossary
+        if ( !$ImportedEntry and ($IsTeacher or !$IsMainGlossary) ) {
+            echo "<a href=\"deleteentry.php?id=$cm->id&mode=delete&entry=$entry->id&currentview=$currentview&cat=$cat\"><img  alt=\"" . get_string("delete") . "\"src=\"";
+            echo $icon;
+            echo "\" height=11 width=11 border=0></a> ";
+            
+            echo "<a href=\"edit.php?id=$cm->id&e=$entry->id&currentview=$currentview&cat=$cat\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a>";
+        } elseif ( $ImportedEntry ) {
+            echo "<font size=-1>" . get_string("exportedentry","glossary") . "</font>";
+        }
+	}
 }
 
 function glossary_search_entries($searchterms, $glossary, $includedefinition) {
@@ -298,7 +318,7 @@ function glossary_search_entries($searchterms, $glossary, $includedefinition) {
     $selectsql = "{$CFG->prefix}glossary_entries e,
                   {$CFG->prefix}glossary g $onlyvisibletable
              WHERE ($conceptsearch OR $definitionsearch)
-               AND e.glossaryid = g.id $onlyvisible
+               AND (e.glossaryid = g.id or e.sourceglossaryid = g.id) $onlyvisible
 		   AND g.id = $glossary->id";
 
     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
@@ -499,7 +519,7 @@ function glossary_print_attachments($entry, $return=NULL) {
     return $imagereturn;
 }
 
-function print_tabbed_table_start($data, $CurrentTab, $tTHEME = NULL) {
+function glossary_print_tabbed_table_start($data, $CurrentTab, $tTHEME = NULL) {
 
 if ( !$tTHEME ) {
      global $THEME;
@@ -522,19 +542,22 @@ $NumRows              = (int) ( $Tabs / $TabsPerRow ) + 1;
 
 ?>
   <center>
-  <table border="0" cellpadding="0" cellspacing="0" width="<? p($TableWidth) ?>">
+  <table border="0" cellpadding="0" cellspacing="0" width="<?php p($TableWidth) ?>">
     <tr>
       <td width="100%">
 
       <table border="0" cellpadding="0" cellspacing="0" width="100%">
 
-<?
+<?php
 $TabProccessed = 0;
 for ($row = 0; $row < $NumRows; $row++) {
      echo "<tr>\n";
      if ( $row != $CurrentRow ) {
           for ($col = 0; $col < $TabsPerRow; $col++) {
                if ( $TabProccessed < $Tabs ) {
+                    if ( $col == 0 ) {
+                        echo "<td width=\"$TabSeparation\" align=\"center\">&nbsp;</td>";
+                    }
                     if ($TabProccessed == $CurrentTab) {
                          $CurrentColor = $CurrentTabColor;
                     } else {
@@ -569,6 +592,9 @@ for ($row = 0; $row < $NumRows; $row++) {
           $TabProccessed = $FirstTabInCurrentRow;
           for ($col = 0; $col < $TabsPerRow; $col++) {
                if ( $TabProccessed < $Tabs ) {
+                    if ( $col == 0 ) {
+                        echo "<td width=\"$TabSeparation\" align=\"center\">&nbsp;</td>";
+                    }
                     if ($TabProccessed == $CurrentTab) {
                          $CurrentColor = $CurrentTabColor;
                     } else {
@@ -607,15 +633,15 @@ for ($row = 0; $row < $NumRows; $row++) {
       </td>
     </tr>
     <tr>
-      <td width="100%" bgcolor="<? p($TableColor) ?>"><hr></td>
+      <td width="100%" bgcolor="<?php p($TableColor) ?>"><hr></td>
     </tr>
     <tr>
-      <td width="100%" bgcolor="<? p($TableColor) ?>">
+      <td width="100%" bgcolor="<?php p($TableColor) ?>">
           <center>
-<?
+<?php
 }
 
-function print_tabbed_table_end() {
+function glossary_print_tabbed_table_end() {
      echo "</center><p></td></tr></table></center>";
 }
 
@@ -722,4 +748,15 @@ global $CFG, $THEME;
      echo "<tr><td colspan=3><hr></td></tr>";
      echo "</table>";
 }
+
+function glossary_sort_entries ( $entry0, $entry1 ) {
+    if ( strtolower(ltrim($entry0->concept)) < strtolower(ltrim($entry1->concept)) ) {
+        return -1;
+    } elseif ( strtolower(ltrim($entry0->concept)) > strtolower(ltrim($entry1->concept)) ) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 ?>
