@@ -5,7 +5,7 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    require_variable($search);    // search words
+    optional_variable($search, "");    // search words
     optional_variable($page, "0");   // which page to show
     optional_variable($perpage, "10");   // which page to show
 
@@ -24,8 +24,17 @@
     make_categories_list($displaylist, $parentlist, "");
 
     $strcourses = get_string("courses");
+    $strsearch = get_string("search");
     $strsearchresults = get_string("searchresults");
     $strcategory = get_string("category");
+
+    if (!$search) {
+        print_header("$site->fullname : $strsearch", $site->fullname, 
+                     "<a href=\"index.php\">$strcourses</a> -> $strsearch", "", "");
+        print_course_search();
+        print_footer();
+        exit;
+    }
 
     print_header("$site->fullname : $strsearchresults", $site->fullname, 
                  "<a href=\"index.php\">$strcourses</a> -> $strsearchresults -> '$search'", "", "");
