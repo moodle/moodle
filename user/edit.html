@@ -44,6 +44,24 @@ if (isadmin()) {
 	</td>
 </tr>
 <tr valign=top>
+	<td><P><? print_string("emaildisplay") ?>:</td>
+	<td><? 
+    $choices["0"] = get_string("emaildisplayno");
+    $choices["1"] = get_string("emaildisplayyes");
+    $choices["2"] = get_string("emaildisplaycourse");
+    choose_from_menu ($choices, "maildisplay", $user->maildisplay, "") ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P><? print_string("emailformat") ?>:</td>
+	<td><? 
+    unset($choices);
+    $choices["0"] = get_string("textformat");
+    $choices["1"] = get_string("htmlformat");
+    choose_from_menu ($choices, "mailformat", $user->mailformat, "") ?>
+	</td>
+</tr>
+<tr valign=top>
 	<td><P><? print_string("city") ?>:</td>
 	<td><input type="text" name="city" size=25 value="<? p($user->city) ?>">
 	<? formerr($err["city"]) ?>
@@ -53,27 +71,6 @@ if (isadmin()) {
 	<td><P><? print_string("country") ?>:</td>
 	<td><? choose_from_menu ($COUNTRIES, "country", $user->country, get_string("selectacountry")."...", "", "") ?>
 	<? formerr($err["country"]) ?>
-	</td>
-</tr>
-<tr valign=top>
-	<td><P><? print_string("userdescription") ?>:</td>
-	<td><TEXTAREA NAME=description COLS=50 ROWS=10 WRAP=virtual><? p($user->description) ?></TEXTAREA> 
-    <? helpbutton("text", get_string("helptext")) ?>
-	<? formerr($err["description"]) ?>
-	</td>
-</tr>
-<tr>
-    <td colspan=2><BR><B><? print_string("followingoptional") ?>:</B></td>
-</tr>
-<tr valign=top>
-	<td><P><? print_string("newpicture") ?>:</td>
-	<td>
-    <INPUT type="hidden" name="MAX_FILE_SIZE" value="<? echo get_max_upload_file_size() ?>">
-    <input type="file" name="imagefile" size=40>
-    <? helpbutton("picture", get_string("helppicture"));
-       print_string("maxsize", "", display_size(get_max_upload_file_size())); 
-	   formerr($err["imagefile"]);
-    ?>
 	</td>
 </tr>
 <tr valign=top>
@@ -115,20 +112,24 @@ if (isadmin()) {
     </td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("emailformat") ?>:</td>
-	<td><? 
-    $choices["0"] = get_string("textformat");
-    $choices["1"] = get_string("htmlformat");
-    choose_from_menu ($choices, "mailformat", $user->mailformat, "") ?>
+	<td><P><? print_string("userdescription") ?>:</td>
+	<td><TEXTAREA NAME=description COLS=50 ROWS=10 WRAP=virtual><? p($user->description) ?></TEXTAREA> 
+    <? helpbutton("text", get_string("helptext")) ?>
+	<? formerr($err["description"]) ?>
 	</td>
 </tr>
+<tr>
+    <td colspan=2><BR><B><? print_string("followingoptional") ?>:</B></td>
+</tr>
 <tr valign=top>
-	<td><P><? print_string("emaildisplay") ?>:</td>
-	<td><? 
-    $choices["0"] = get_string("emaildisplayno");
-    $choices["1"] = get_string("emaildisplayyes");
-    $choices["2"] = get_string("emaildisplaycourse");
-    choose_from_menu ($choices, "maildisplay", $user->maildisplay, "") ?>
+	<td><P><? print_string("newpicture") ?>:</td>
+	<td>
+    <INPUT type="hidden" name="MAX_FILE_SIZE" value="<? echo get_max_upload_file_size() ?>">
+    <input type="file" name="imagefile" size=40>
+    <? helpbutton("picture", get_string("helppicture"));
+       print_string("maxsize", "", display_size(get_max_upload_file_size())); 
+	   formerr($err["imagefile"]);
+    ?>
 	</td>
 </tr>
 <tr valign=top>
