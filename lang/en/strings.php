@@ -184,12 +184,12 @@ $string[usernameexists] = "This username already exists, choose another";
 $string[userprofilefor] = "User profile for \$a";
 $string[webpage] = "Web page";
 $string[welcometocourse] = "Welcome to \$a";
-$string[welcometocoursetext] = "Welcome to \$a!
+$string[welcometocoursetext] = "Welcome to \$a->coursename!
 
 One of the first things you should do is edit your profile page
 within the course so that we can learn more about you:
 
-  \$b";
+  \$a->profileurl";
 $string[wordforteacher] = "Your word for Teacher";
 $string[wordforteachereg] = "eg Teacher, Tutor, Facilitator etc";
 $string[wordforstudent] = "Your word for Student";
