@@ -32,7 +32,8 @@ CREATE TABLE `prefix_workshop` (
   `showleaguetable` tinyint(3) unsigned NOT NULL default '0',
   `usepassword` tinyint(3) unsigned NOT NULL default '0',
   `password` varchar(32) NOT NULL default '',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `course` (`course`)
 ) COMMENT='Defines workshop';
 # --------------------------------------------------------
 
@@ -53,7 +54,9 @@ CREATE TABLE `prefix_workshop_submissions` (
   `late` int(3) unsigned NOT NULL default '0',
   `nassessments` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  INDEX `userid` (`userid`) 
+  INDEX `userid` (`userid`),
+  INDEX `workshopid` (`workshopid`),
+  INDEX `mailed` (`mailed`)
 ) COMMENT='Info about submitted work from teacher and students';
 # --------------------------------------------------------
 
@@ -78,7 +81,9 @@ CREATE TABLE `prefix_workshop_assessments` (
   `teachercomment` text NOT NULL,
   PRIMARY KEY  (`id`),
   INDEX (`submissionid`),
-  INDEX (`userid`)
+  INDEX (`userid`),
+  INDEX `workshopid` (`workshopid`),
+  INDEX `mailed` (`mailed`)
   ) COMMENT='Info about assessments by teacher and students';
 # --------------------------------------------------------
 
@@ -96,7 +101,8 @@ CREATE TABLE `prefix_workshop_elements` (
   `weight` tinyint(3) unsigned NOT NULL default '11',
   `stddev` float NOT NULL default '0.0',
   `totalassessments` int(10) NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `workshopid` (`workshopid`)
 ) COMMENT='Info about marking scheme of assignment';
 # --------------------------------------------------------
 
@@ -127,7 +133,8 @@ CREATE TABLE `prefix_workshop_grades` (
   `feedback` text NOT NULL default '',
   `grade` tinyint(3) NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  INDEX (`assessmentid`)
+  INDEX (`assessmentid`),
+  INDEX `workshopid` (`workshopid`)
 ) COMMENT='Info about individual grades given to each element';
 # --------------------------------------------------------
 
@@ -157,7 +164,11 @@ CREATE TABLE `prefix_workshop_comments` (
   `timecreated` int(10) unsigned NOT NULL default '0',
   `mailed` tinyint(2) unsigned NOT NULL default '0',
   `comments` text NOT NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `workshopid` (`workshopid`),
+  KEY `assessmentid` (`assessmentid`),
+  KEY `userid` (`userid`),
+  KEY `mailed` (`mailed`)
 ) COMMENT='Defines comments';
 # --------------------------------------------------------
         

@@ -142,6 +142,40 @@ function workshop_upgrade($oldversion) {
         execute_sql("ALTER TABLE `{$CFG->prefix}workshop_submissions` DROP COLUMN `biasgrade`");
         execute_sql("ALTER TABLE `{$CFG->prefix}workshop_submissions` DROP COLUMN `reliabilitygrade`");
     }
+
+    if ($oldversion < 2004111200) {
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop DROP INDEX course;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_assessments DROP INDEX userid;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_assessments DROP INDEX workshopid;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_assessments DROP INDEX submissionid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_assessments DROP INDEX mailed;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_comments DROP INDEX workshopid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_comments DROP INDEX assessmentid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_comments DROP INDEX userid;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_comments DROP INDEX mailed;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_elements DROP INDEX workshopid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_grades DROP INDEX workshopid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_grades DROP INDEX assessmentid;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_submissions DROP INDEX workshopid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_submissions DROP INDEX userid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_submissions DROP INDEX mailed;",false);
+
+        modify_database('','ALTER TABLE prefix_workshop ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_workshop_assessments ADD INDEX userid (userid);');
+        modify_database('','ALTER TABLE prefix_workshop_assessments ADD INDEX workshopid (workshopid);');
+        modify_database('','ALTER TABLE prefix_workshop_assessments ADD INDEX submissionid (submissionid);');
+        modify_database('','ALTER TABLE prefix_workshop_assessments ADD INDEX mailed (mailed);');
+        modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX workshopid (workshopid);'); 
+        modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX assessmentid (assessmentid);'); 
+        modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX userid (userid);'); 
+        modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX mailed (mailed);'); 
+        modify_database('','ALTER TABLE prefix_workshop_elements ADD INDEX workshopid (workshopid);');
+        modify_database('','ALTER TABLE prefix_workshop_grades ADD INDEX workshopid (workshopid);'); 
+        modify_database('','ALTER TABLE prefix_workshop_grades ADD INDEX assessmentid (assessmentid);'); 
+        modify_database('','ALTER TABLE prefix_workshop_submissions ADD INDEX workshopid (workshopid);');
+        modify_database('','ALTER TABLE prefix_workshop_submissions ADD INDEX userid (userid);');
+        modify_database('','ALTER TABLE prefix_workshop_submissions ADD INDEX mailed (mailed);');
+    }
     
     return true;
 }

@@ -136,6 +136,39 @@ function workshop_upgrade($oldversion) {
         execute_sql("ALTER TABLE {$CFG->prefix}workshop_submissions DROP COLUMN reliabilitygrade");
     }
     
+    if ($oldversion < 2004111200) {
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_course_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_assessments_workshopid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_assessments_submissionid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_assessments_userid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_assessments_mailed_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_comments_workshopid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_comments_assessmentid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_comments_userid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_comments_mailed_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_elements_workshopid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_grades_workshopid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_grades_assessmentid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_submissions_workshopid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_submissions_userid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_submissions_mailed_idx;",false);
+
+        modify_database('','CREATE INDEX prefix_workshop_course_idx ON prefix_workshop (course);');
+        modify_database('','CREATE INDEX prefix_workshop_assessments_workshopid_idx ON prefix_workshop_assessments (workshopid);');
+        modify_database('','CREATE INDEX prefix_workshop_assessments_submissionid_idx ON prefix_workshop_assessments (submissionid);');
+        modify_database('','CREATE INDEX prefix_workshop_assessments_userid_idx ON prefix_workshop_assessments (userid);');
+        modify_database('','CREATE INDEX prefix_workshop_assessments_mailed_idx ON prefix_workshop_assessments (mailed);');
+        modify_database('','CREATE INDEX prefix_workshop_comments_workshopid_idx ON prefix_workshop_comments (workshopid);');
+        modify_database('','CREATE INDEX prefix_workshop_comments_assessmentid_idx ON prefix_workshop_comments (assessmentid);');
+        modify_database('','CREATE INDEX prefix_workshop_comments_userid_idx ON prefix_workshop_comments (userid);');
+        modify_database('','CREATE INDEX prefix_workshop_comments_mailed_idx ON prefix_workshop_comments (mailed);');
+        modify_database('','CREATE INDEX prefix_workshop_elements_workshopid_idx ON prefix_workshop_elements (workshopid);');
+        modify_database('','CREATE INDEX prefix_workshop_grades_workshopid_idx ON prefix_workshop_grades (workshopid);');
+        modify_database('','CREATE INDEX prefix_workshop_grades_assessmentid_idx ON prefix_workshop_grades (assessmentid);');
+        modify_database('','CREATE INDEX prefix_workshop_submissions_workshopid_idx ON prefix_workshop_submissions (workshopid);');
+        modify_database('','CREATE INDEX prefix_workshop_submissions_userid_idx ON prefix_workshop_submissions (userid);');
+        modify_database('','CREATE INDEX prefix_workshop_submissions_mailed_idx ON prefix_workshop_submissions (mailed);');
+    }
 
     return true;
 
