@@ -473,7 +473,12 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
 /// $format is one of the format constants, defined above
 
     switch ($format) {
-        case FORMAT_MOODLE:
+        case FORMAT_HTML:
+            $text = replace_smilies($text);
+            return $text;
+            break;
+
+        default:  // FORMAT_MOODLE or anything else
             if (!isset($options->smiley)) {
                 $options->smiley=true;
             }
@@ -481,11 +486,6 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
                 $options->para=true;
             }
             return text_to_html($text, $options->smiley, $options->para);
-            break;
-
-        case FORMAT_HTML:
-            $text = replace_smilies($text);
-            return $text;
             break;
     }
 }
