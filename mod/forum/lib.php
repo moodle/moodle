@@ -1528,11 +1528,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
 
     echo '<a name="'.$post->id.'"></a>';
-    if ($post->parent) {
-        echo '<table class="forumpost'.$read_style.'">';
-    } else {
-        echo '<table class="forumpost'.$read_style.'" width="100%">';
-    }
+    echo '<table cellspacing="0" class="forumpost'.$read_style.'">';
 
     echo '<tr class="header"><td class="picture left">';
     print_user_picture($post->userid, $courseid, $post->picture);
