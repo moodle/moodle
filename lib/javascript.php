@@ -7,7 +7,7 @@
         echo "<script src=\"".$CFG->wwwroot."/lib/speller/spellChecker.js\"></script>\n";
     }
 ?>
-<script language="JavaScript">
+<script language="JavaScript" type="text/javascript">
 
 <!-- //hide
 
