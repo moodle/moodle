@@ -21,7 +21,9 @@
 
     require_login($course->id);
 
-    if (isguest() or (!isteacher($course->id) and !$chat->studentlogs)) {
+    $isteacher = isteacher($course->id);
+
+    if (isguest() or (!$isteacher and !$chat->studentlogs)) {
         error("You can not view these chat reports");
     }
 
@@ -122,7 +124,7 @@
                 foreach ($sessionusers as $sessionuser => $usermessagecount) {
                     if ($user = get_record("user", "id", $sessionuser)) {
                         print_user_picture($user->id, $course->id, $user->picture);
-                        echo "&nbsp;".fullname($user);
+                        echo "&nbsp;".fullname($user, $isteacher);
                         echo "&nbsp;($usermessagecount)<br />";
                     }
                 }
