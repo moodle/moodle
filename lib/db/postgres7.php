@@ -194,7 +194,7 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2003080400) {
-        notice("If the following command fails you may want to change the type manually, from TEXT to INTEGER.  Moodle should keep working even if you don't.");
+        notify("If the following command fails you may want to change the type manually, from TEXT to INTEGER.  Moodle should keep working even if you don't.");
         table_column("course_categories", "courseorder", "courseorder", "integer", "10", "unsigned");
         table_column("course", "", "sortorder", "integer", "10", "unsigned", "0", "", "category");
     }
