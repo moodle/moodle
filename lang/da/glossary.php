@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3 development (2004041800)
+      // glossary.php - created with Moodle 1.3.3 (2004052503)
 
 
 $string['addcomment'] = 'Tilføj kommentar';
@@ -49,6 +49,7 @@ $string['commentson'] = 'Kommentare til ';
 $string['commentupdated'] = 'Kommentaren er blevet updateret';
 $string['concept'] = 'Koncept';
 $string['concepts'] = 'Koncepter';
+$string['configenablerssfeeds'] = 'Denne mulighed vil gøre det muligt at generere RSS feed for alle opslagsværker. Du skal stadig slå det til for hvert opslagsværk.';
 $string['currentglossary'] = 'Nuværende ordbog';
 $string['dateview'] = 'Vis efter dato';
 $string['defaultapproval'] = 'Standard godkendelse status';
@@ -68,6 +69,7 @@ $string['displayformat6'] = 'Indlægs liste';
 $string['displayformatcontinuous'] = 'Kontinuerlig med forfatter';
 $string['displayformatdefault'] = 'Simpel ordbogs-stil';
 $string['displayformats'] = 'visnings formater';
+$string['displayformatssetup'] = 'Vis formaterings opsætning';
 $string['duplicateentry'] = 'Dubletter';
 $string['editcategories'] = 'Ret kategorier';
 $string['editentry'] = 'Ret opslagsord';
@@ -81,6 +83,7 @@ $string['entryapproved'] = 'Dette opslagsord er blevet godkendt';
 $string['entrydeleted'] = 'Opslagsord slettet';
 $string['entryexported'] = 'Opslagsord er blevet exporteret';
 $string['entryishidden'] = '(Dette opslagsord er skjult)';
+$string['entryleveldefaultsettings'] = 'Normal indstilling';
 $string['entryusedynalink'] = 'Dette opslagsord skulle blive automatisk linket.';
 $string['explainaddentry'] = 'Tilføj et nyt opslagsord til det nyværende opslagsværk. <br />Koncept og definition skal udfyldes! ';
 $string['explainall'] = 'Vis ALLE opslagsord på en side';
@@ -97,6 +100,8 @@ $string['filetoimport'] = 'Fil der skal importeres';
 $string['fillfields'] = 'Koncept og definition skal udfyldes! ';
 $string['filtername'] = 'Ordbogs autolinkning';
 $string['fullmatch'] = 'Genkend kun hele ord<br /><small>(Når de automatisk bliver linket)</small>';
+$string['globalglossary'] = 'Global opslagsværk';
+$string['glossaryleveldefaultsettings'] = 'Normal opslagsværk indstillinger';
 $string['glossarytype'] = 'Ordbogstype';
 $string['glosssaryexported'] = 'Opslagsværk eksporteret';
 $string['importcategories'] = 'Importer kategorier';
@@ -134,6 +139,7 @@ $string['ratingsuse'] = 'Brug vurderinger';
 $string['ratingtime'] = 'Begræns vurdering til opslagsord med dato inden for dette interval:';
 $string['rejectedentries'] = 'Afviste opslagsord';
 $string['rejectionrpt'] = 'Afvisnings årsag';
+$string['rsssubscriberss'] = 'Vis RSS feed for \'$a\' indlæg';
 $string['searchindefinition'] = 'Søg efter hele teksten';
 $string['secondaryglossary'] = 'Sekundær opslagsværk';
 $string['sendinratings'] = 'Send min seneste vurdering';
@@ -151,6 +157,8 @@ $string['totalentries'] = 'Opslagsord ialt';
 $string['usedynalink'] = 'Automatisk link opslagsværkord';
 $string['waitingapproval'] = 'Afventer godkendelse';
 $string['warningstudentcapost'] = '(I tilfælde af at det ikke er hovedopslagsværket)';
+$string['withauthor'] = 'Indlæg med forfatter';
+$string['withoutauthor'] = 'Indlæg uden forfatter';
 $string['writtenby'] = 'af';
 $string['youarenottheauthor'] = 'Da du ikke har skrevet denne kommentar, kan du ikke rette i den!';
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 Beta (2004022400)
+      // resource.php - created with Moodle 1.3.3 (2004052503)
 
 
 $string['addresource'] = 'Tilføj materiale';
@@ -19,6 +19,7 @@ $string['configpopuptoolbar'] = 'Skal popupvinduer vise værktøjslinjen som stand
 $string['configpopupwidth'] = 'Hvilken bredde skal popupvinduer have som standart?';
 $string['configwebsearch'] = 'Når der tilføjes en URL som en webside eller weblink, vil denne lokation tilbydes som et sted der kan hjælpe brugeren med at søge efter den URL de ønsker.';
 $string['directlink'] = 'Direkte link til denne fil';
+$string['directoryinfo'] = 'Alle filer i det valgte bibliotek vil blive vist';
 $string['editingaresource'] = 'Rediger i materialet';
 $string['example'] = 'Eksempel';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
@@ -27,8 +28,10 @@ $string['fetchclienterror'] = 'Der er opstået en fejl med din webclient da den s
 $string['fetcherror'] = 'Der er opstået en fejl i forbindelse med hentningen af websiden.';
 $string['fetchservererror'] = 'Der er opstået en fejl på serveren i forbindelse med hentningen af websiden (måske en programfejl).<p>';
 $string['filename'] = 'Filnavn';
+$string['filtername'] = 'Resource autolinkning';
 $string['fulltext'] = 'Fuld tekst';
 $string['htmlfragment'] = 'HTML del';
+$string['maindirectory'] = 'Main directory';
 $string['modulename'] = 'Materiale';
 $string['modulenameplural'] = 'Materialer';
 $string['neverseen'] = 'Ikke set endnu';
@@ -58,5 +61,6 @@ $string['resourcetype5'] = 'Web Link';
 $string['resourcetype6'] = 'HTML tekst';
 $string['resourcetype7'] = 'Program';
 $string['resourcetype8'] = 'Wikitekst';
+$string['resourcetype9'] = 'Directory';
 
 ?>

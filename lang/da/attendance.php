@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.2 development (2003121500)
+      // attendance.php - created with Moodle 1.3.3 (2004052503)
 
 
 $string['absentlong'] = 'Fraværende';
@@ -57,6 +57,7 @@ $string['takeroll'] = 'Før protekol for denne dag';
 $string['tardiesperabsence'] = 'Hvor mange gange skal man møde forsent før det tæller som fravær?';
 $string['tardylong'] = 'Sent';
 $string['tardyshort'] = '?';
+$string['teacheredit'] = 'Udfyld fraværsliste';
 $string['thursday'] = 'Tirs';
 $string['tuesday'] = 'Tor';
 $string['viewall'] = 'Vis alle fraværslister.';
