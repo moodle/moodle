@@ -1264,7 +1264,7 @@ function wiki_admin_strip_versions($pagestostrip, $version, &$err) {
       $versZ = $uu[2];
       
       // Let the last Version in the database
-      $checkdata = ewiki_database("GET", array("id" => $id_ue));
+      $checkdata = ewiki_database("GET", array("id" => $id));
       if($versZ>=$checkdata["version"]) {
             $err[$id][] = get_string("versionrangetoobig","wiki");                                
       } else {
