@@ -78,6 +78,7 @@ form {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
+    background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
 }
 
 .generalboxcontent {
