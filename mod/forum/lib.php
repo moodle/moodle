@@ -2308,12 +2308,6 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
         $userselect = "";
     }
 
-    if ($groupid) {
-        $groupselect = " AND d.groupid = '$groupid'";
-    } else {
-        $groupselect = "";
-    }
-
     $posts = get_records_sql("SELECT p.*, d.name, u.firstname, u.lastname,
                                      u.picture, d.groupid, cm.instance, f.name, cm.section
                                FROM {$CFG->prefix}forum_posts p,
@@ -2331,32 +2325,35 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
                                 AND f.id = d.forum
                               ORDER BY d.id");
 
-  if (empty($posts))
+    if (empty($posts))
+      return;
+
+    foreach ($posts as $post) {
+
+        if (empty($groupid) || ismember($groupid, $post->userid)) {
+            $tmpactivity->type = "forum";
+            $tmpactivity->defaultindex = $index;
+            $tmpactivity->instance = $post->instance;
+            $tmpactivity->name = $post->name;
+            $tmpactivity->section = $post->section;
+
+            $tmpactivity->content->id = $post->id;
+            $tmpactivity->content->discussion = $post->discussion;
+            $tmpactivity->content->subject = $post->subject;
+            $tmpactivity->content->parent = $post->parent;
+  
+            $tmpactivity->user->userid = $post->userid;
+            $tmpactivity->user->fullname = fullname($post);
+            $tmpactivity->user->picture = $post->picture;
+
+            $tmpactivity->timestamp = $post->modified;
+            $activities[] = $tmpactivity;
+  
+            $index++;
+        }
+    }
+
     return;
-
-  foreach ($posts as $post) {
-    $tmpactivity->type = "forum";
-    $tmpactivity->defaultindex = $index;
-    $tmpactivity->instance = $post->instance;
-    $tmpactivity->name = $post->name;
-    $tmpactivity->section = $post->section;
-
-    $tmpactivity->content->id = $post->id;
-    $tmpactivity->content->discussion = $post->discussion;
-    $tmpactivity->content->subject = $post->subject;
-    $tmpactivity->content->parent = $post->parent;
-
-    $tmpactivity->user->userid = $post->userid;
-    $tmpactivity->user->fullname = fullname($post);
-    $tmpactivity->user->picture = $post->picture;
-
-    $tmpactivity->timestamp = $post->modified;
-    $activities[] = $tmpactivity;
-
-    $index++;
-  }
-
-  return;
 }
 
 function forum_print_recent_mod_activity($activity, $course, $detail=false) {
