@@ -5,7 +5,7 @@ include("plot.inc");
 
 if (isset($user)) {
     $user = get_record("user", "id", $user);
-    $username = "<B>$user->firstname $user->lastname</B>";
+    $username = "<B>$user->firstname $user->lastname</B> [$user->city, $user->country] : ";
 } else {
     $username = "";
 }
@@ -112,7 +112,7 @@ print '
 ';
 
 if(isset($address)) {
-print "$username, $values[desc]";
+print "$username $values[desc]";
 }
 
 $PHP_SELF = $HTTP_SERVER_VARS['PHP_SELF'];
