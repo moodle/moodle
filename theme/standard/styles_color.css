@@ -353,51 +353,51 @@ table.message_search_results td {
 ***
 ******************************/
 
-.cal_event_global {
+.event_global {
     border-color:#2EBA0E !important;
     background-color:#2EBA0E;
 }
 
-.cal_event_course {
+.event_course {
     border-color:#FF9966 !important;
     background-color:#FF9966;
 }
 
-.cal_event_group {
+.event_group {
     border-color:#FBBB23 !important;
     background-color:#FBBB23;
 }
 
-.cal_event_user {
+.event_user {
     border-color:#A1BECB !important;
     background-color:#A1BECB;
 }
 
-.cal_duration_global {
+.duration_global {
     border-top-color:#2EBA0E !important;
     border-bottom-color:#2EBA0E !important;
 }
 
-.cal_duration_course {
+.duration_course {
     border-top-color:#FF9966 !important;
     border-bottom-color:#FF9966 !important;
 }
 
-.cal_duration_user {
+.duration_user {
     border-top-color:#A1BECB !important;
     border-bottom-color:#A1BECB !important;
 }
 
-.cal_duration_group {
+.duration_group {
     border-top-color:#FBBB23 !important;
     border-bottom-color:#FBBB23 !important;
 }
 
-.cal_weekend {
+.weekend {
     color:#FF0000;
 }
 
-.cal_today {
+.today {
     border-color:#000000 !important;
 }
 
