@@ -29,6 +29,7 @@
 
     require_variable($module);
 
+    $module = clean_filename($module);
 	require_once("$CFG->dirroot/mod/$module/lib.php");
 
 

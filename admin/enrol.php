@@ -3,8 +3,10 @@
        //             Yes, enrol is correct English spelling.
 
     include("../config.php");
+
+    $enrol = (string)parameter('enrol', $CFG->enrol);
+
     require_login();
-    optional_variable($enrol, $CFG->enrol);
 
     if (!$site = get_site()) {
         redirect("index.php");
@@ -14,6 +16,7 @@
         error("Only the admin can use this page");
     }
 
+    $enrol = clean_filename($enrol);
     require_once("$CFG->dirroot/enrol/$enrol/enrol.php");   /// Open the class
 
     $enrolment = new enrolment_plugin();
