@@ -99,13 +99,13 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align="right"><P><?php  print_string("hiddentopics") ?>:</td>
+    <td align="right"><P><?php  print_string("hiddensections") ?>:</td>
     <td><?php
     unset($choices);
-    $choices["0"] = get_string("hiddentopicscollapsed");
-    $choices["1"] = get_string("hiddentopicsinvisible");
-    choose_from_menu ($choices, "hiddentopics", $form->hiddentopics, "");
-    helpbutton("coursehiddentopics", get_string("hiddentopics")); ?>
+    $choices["0"] = get_string("hiddensectionscollapsed");
+    $choices["1"] = get_string("hiddensectionsinvisible");
+    choose_from_menu ($choices, "hiddensections", $form->hiddensections, "");
+    helpbutton("coursehiddensections", get_string("hiddensections")); ?>
     </td>
 </tr>
 <tr valign=top>

@@ -51,7 +51,7 @@ CREATE TABLE `prefix_course` (
   `maxbytes` int(10) unsigned NOT NULL default '0',
   `showreports` int(4) unsigned NOT NULL default '0',
   `visible` int(1) unsigned NOT NULL default '1',
-  `hiddentopics` int(1) unsigned NOT NULL default '0',
+  `hiddensections` int(2) unsigned NOT NULL default '0',
   `groupmode` int(4) unsigned NOT NULL default '0',
   `groupmodeforce` int(4) unsigned NOT NULL default '0',
   `lang` varchar(10) NOT NULL default '',

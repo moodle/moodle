@@ -744,12 +744,12 @@ function main_upgrade($oldversion=0) {
         table_column("event", "", "format", "integer", "4", "unsigned", "0", "not null", "description");
     }
 
-    if ($oldversion < 2004042703) {
-        set_config("enablerssfeeds",0);
-    }
-
     if ($oldversion < 2004042900) {
         execute_sql(" ALTER TABLE `{$CFG->prefix}course` DROP `showrecent` ");
+    }
+
+    if ($oldversion < 2004043001) {     /// Change hiddentopics to hiddensections
+        table_column("course", "hiddentopics", "hiddensections", "integer", "2", "unsigned", "0", "not null");
     }
 
     return $result;

@@ -482,15 +482,16 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2004042701) {     /// Add hiddentopics field to control hidden topics behaviour
-        table_column("course", "", "hiddentopics", "integer", "1", "unsigned", "0", "not null", "visible");
+        #table_column("course", "", "hiddentopics", "integer", "1", "unsigned", "0", "not null", "visible");
+        #See 'hiddensections' further down
     }
 
     if ($oldversion < 2004042702) {     /// Add a format field for the description 
         table_column("event", "", "format", "integer", "4", "unsigned", "0", "not null", "description");
     }
 
-    if ($oldversion < 2004042703) {
-        set_config("enablerssfeeds",0);
+    if ($oldversion < 2004043001) {     /// Add hiddentopics field to control hidden topics behaviour
+        table_column("course", "", "hiddensections", "integer", "2", "unsigned", "0", "not null", "visible");
     }
 
     return $result;

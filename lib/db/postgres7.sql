@@ -29,7 +29,7 @@ CREATE TABLE prefix_course (
    maxbytes integer NOT NULL default '0',
    showreports integer NOT NULL default '0',
    visible integer NOT NULL default '1',
-   hiddentopics integer NOT NULL default '0',
+   hiddensections integer NOT NULL default '0',
    groupmode integer NOT NULL default '0',
    groupmodeforce integer NOT NULL default '0',
    lang varchar(10) NOT NULL default '',
