@@ -18,6 +18,12 @@ function attendance_upgrade($oldversion) {
         table_column("attendance", "", "autoattend", "integer", 2, "unsigned", "0", "not null");
     }
 
+    if ($oldversion < 2004111200) {
+        modify_database('','CREATE INDEX prefix_attendance_course_idx ON prefix_attendance (course);');
+        modify_database('','CREATE INDEX prefix_attendance_roll_dayid_idx ON prefix_attendance_roll (dayid);');
+        modify_database('','CREATE INDEX prefix_attendance_roll_userid_idx ON prefix_attendance_roll (userid);');
+    }
+
     return true;
 }
 

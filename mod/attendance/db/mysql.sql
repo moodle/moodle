@@ -14,7 +14,8 @@ CREATE TABLE prefix_attendance (
   dynsection tinyint(1) NOT NULL default '0',
   edited tinyint(1) NOT NULL default '0',
   autoattend tinyint(1) NOT NULL default '0',
-  PRIMARY KEY  (id)
+  PRIMARY KEY  (id),
+  KEY `course` (`course`) 
 ) TYPE=MyISAM;
 
 #
@@ -28,5 +29,7 @@ CREATE TABLE prefix_attendance_roll (
   hour tinyint(1) unsigned NOT NULL default '0',
   status int(11) NOT NULL default '0',
   notes varchar(64) NOT NULL default '',
-  PRIMARY KEY  (id)
+  PRIMARY KEY  (id),
+  KEY `dayid` (`dayid`),
+  KEY `userid` (`userid`)
 ) TYPE=MyISAM;

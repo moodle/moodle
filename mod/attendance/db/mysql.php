@@ -20,7 +20,11 @@ function attendance_upgrade($oldversion) {
         modify_database("", "INSERT INTO {$CFG->prefix}log_display VALUES ('attendance', 'viewweek', 'attendance', 'name');");
     }
 
-
+    if ($oldversion < 2004111200) {
+        modify_database('','ALTER TABLE prefix_attendance ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_attendance_roll ADD INDEX dayid (dayid);');
+        modify_database('','ALTER TABLE prefix_attendance_roll ADD INDEX userid (userid);');
+    }
 
     return true;
 }
