@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 unstable development (2004083000)
+      // forum.php - created with Moodle 1.5 unstable development (2004090402)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
 $string['addanewtopic'] = 'トピックを追加';
-$string['allowchoice'] = 'ユーザは登録を選択出来ます';
+$string['allowchoice'] = '選択可能';
 $string['allowdiscussions'] = '$a  はこのフォーラムに投稿可能ですか?';
 $string['allowratings'] = '投稿を評価可能にしますか?';
 $string['allowsdiscussions'] = 'このフォーラムでは一つのディスカッショントピックで開始してください。';
@@ -31,7 +31,7 @@ $string['digestmailprefs'] = 'ユーザプロフィール';
 $string['digestmailsubject'] = '$a: フォーラムダイジェスト';
 $string['digestsentusers'] = 'メールダイジェストが  $a 名のユーザに送信されました。';
 $string['discussion'] = 'ディスカッション';
-$string['discussionmoved'] = 'ディスカッションは \'$a\' に移動されました。';
+$string['discussionmoved'] = 'ディスカッションは 「 $a 」に移動されました。';
 $string['discussionname'] = 'ディスカッション名';
 $string['discussions'] = 'ディスカッション';
 $string['discussionsstartedby'] = '$a さんより開始されたディスカッション';
@@ -41,11 +41,11 @@ $string['eachuserforum'] = 'ディスカッションを1件投稿';
 $string['edit'] = '編集';
 $string['editing'] = '編集';
 $string['emptymessage'] = '投稿に異常があります。空白のままか添付ファイルのサイズが制限を越えています。変更は保存されませんでした。';
-$string['everyonecanchoose'] = 'ユーザは登録を選択出来ます';
-$string['everyoneissubscribed'] = 'ユーザは強制登録されます';
-$string['existingsubscribers'] = '登録ユーザ';
-$string['forcesubscribe'] = 'ユーザを強制登録する';
-$string['forcesubscribeq'] = 'ユーザを強制登録しますか?';
+$string['everyonecanchoose'] = 'ユーザはメール通知登録出来ます';
+$string['everyoneissubscribed'] = 'ユーザはメール通知登録されます';
+$string['existingsubscribers'] = 'メール通知登録ユーザ';
+$string['forcesubscribe'] = 'ユーザを強制メール通知登録する';
+$string['forcesubscribeq'] = 'ユーザを強制メール通知登録しますか?';
 $string['forum'] = 'フォーラム';
 $string['forumintro'] = 'フォーラム紹介';
 $string['forumname'] = 'フォーラム名';
@@ -76,10 +76,10 @@ $string['nameteacher'] = '教師用フォーラム';
 $string['newforumposts'] = '新規投稿';
 $string['nodiscussions'] = 'トピックはありません。';
 $string['noguestpost'] = '申し訳ございません、ゲストは投稿できません。';
-$string['nomorepostscontaining'] = 'これ以上 \'$a\'  を含んだ投稿はありません。';
+$string['nomorepostscontaining'] = 'これ以上「 $a 」 を含んだ投稿はありません。';
 $string['nonews'] = '新しいニュースはありません。';
 $string['noposts'] = '投稿がありません。';
-$string['nopostscontaining'] = ' $a が含まれる投稿は見つかりませんでした。';
+$string['nopostscontaining'] = '「 $a 」 が含まれる投稿は見つかりませんでした。';
 $string['nosubscribers'] = 'このフォーラムには登録者はいません。';
 $string['notingroup'] = '申し訳ございません。グループ以外の方はこのフォーラムを閲覧できません。';
 $string['nownotsubscribed'] = '$a->name 宛に「 $a->forum 」の投稿記事はメール送信されません。';
@@ -140,7 +140,7 @@ $string['subscribeall'] = '全員のメール通知登録';
 $string['subscribed'] = 'メール通知登録';
 $string['subscribenone'] = '全員のメール通知解除';
 $string['subscribers'] = 'メール通知登録者';
-$string['subscribersto'] = '$a のメール通知登録';
+$string['subscribersto'] = '「 $a 」 のメール通知登録';
 $string['subscribestart'] = 'フォーラムの投稿記事をメール送信する';
 $string['subscribestop'] = 'フォーラムの投稿記事をメール送信しない';
 $string['subscription'] = 'メール通知登録';
