@@ -11,13 +11,13 @@
     optional_variable($ewiki_action,"");     // Action on Wiki-Page
     optional_variable($id);     // Course Module ID, or
     optional_variable($wid);    // Wiki ID
-    optional_variable($wikipage, false);     // Wiki Page Name
+    optional_variable($page, false);     // Wiki Page Name
     optional_variable($q,"");    // Search Context
-    optional_variable($userid);     // User wiki.
-    optional_variable($groupid);    // Group wiki.
+    optional_variable($userid, 0);     // User wiki.
+    optional_variable($groupid, 0);    // Group wiki.
     optional_variable($canceledit,"");    // Editing has been cancelled
     if($canceledit) {
-      @$wikipage=$ewiki_id;
+      @$page=$ewiki_id;
     }
 
     if ($id) {
@@ -71,9 +71,9 @@
         define("EWIKI_PAGE_INDEX",$wiki_entry->pagename);
 
         /// If the page has a ' in it, it may have slashes added to it. Remove them if it does.
-        $wikipage = ($wikipage === false) ?  stripslashes(EWIKI_PAGE_INDEX) : stripslashes($wikipage);
+        $page = ($page === false) ?  stripslashes(EWIKI_PAGE_INDEX) : stripslashes($page);
 
-///     ### Prevent ewiki getting id as PageID...
+///     # Prevent ewiki getting id as PageID...
         unset($_REQUEST["id"]);
         unset($_GET["id"]);
         unset($_POST["id"]);
@@ -97,9 +97,9 @@
         /// Build the ewsiki script constant
         /// ewbase will also be needed by EWIKI_SCRIPT_BINARY
         $ewbase = $ME.'?id='.$moodleID;
-        if (isset($userid)) $ewbase .= '&userid='.$userid;
-        if (isset($groupid)) $ewbase .= '&groupid='.$groupid;
-        $ewscript = $ewbase.'&wikipage=';
+        if (isset($userid) && $userid!=0) $ewbase .= '&userid='.$userid;
+        if (isset($groupid) && $groupid!=0) $ewbase .= '&groupid='.$groupid;
+        $ewscript = $ewbase.'&page=';
         define("EWIKI_SCRIPT", $ewscript);
         define("EWIKI_SCRIPT_URL", $ewscript);
 
@@ -193,7 +193,7 @@
 
         global $ewiki_author, $USER;
         $ewiki_author=fullname($USER);
-        $content=ewiki_page($wikipage);
+        $content=ewiki_page($page);
         $content2='';
 
         ### RESTORE ID from Moodle
@@ -207,13 +207,13 @@
     }
 
 
-    # Group wiki, ...: No wikipage and no ewiki_title
+    # Group wiki, ...: No page and no ewiki_title
     if(!isset($ewiki_title)) {
           $ewiki_title="";
     }
         
 /// Moodle Log
-    add_to_log($course->id, "wiki", $ewiki_action, "view.php?id=$cm->id&groupid=$groupid&userid=$userid&wikipage=$wikipage", $wiki->name." ".$ewiki_title);
+    add_to_log($course->id, "wiki", $ewiki_action, "view.php?id=$cm->id&groupid=$groupid&userid=$userid&page=$page", $wiki->name." ".$ewiki_title);
 
 
 /// Print the page header
@@ -309,9 +309,9 @@
         }
         foreach ($tabs as $tab) {
             $tabname = get_string("tab$tab", 'wiki');
-            if ($ewiki_action != "$tab" && !in_array($wikipage, $specialpages)) {          
+            if ($ewiki_action != "$tab" && !in_array($page, $specialpages)) {          
                 echo '<td class="generaltab" '.$tabstyle.' bgcolor="'.$THEME->cellheading.'">';
-                echo '<a href="'.$ewbase.'&wikipage='.$tab.'/'.$ewiki_id.'">'.$tabname.'</a>';
+                echo '<a href="'.$ewbase.'&page='.$tab.'/'.$ewiki_id.'">'.$tabname.'</a>';
                 echo '</td>';
             } else {
                 echo '<td class="generaltabselected" '.$tabstyle.' bgcolor="'.$THEME->cellcontent.'">'.$tabname.'</td>';
@@ -325,9 +325,9 @@
     /// Don't filter any pages containing wiki actions (except view). A wiki page containing
     /// actions will have the form [action]/[pagename]. If the '/' isn't there, or the action
     /// is 'view', filter it. Also, if the page doesn't exist, it will default to 'edit'.
-    $actions = explode('/', $wikipage);
+    $actions = explode('/', $page);
     if ($ewiki_action == "edit" || ($actions !== false && count($actions) > 1 && $actions[0] != 'view') ||
-        (count($actions) == 1 && !record_exists('wiki_pages', 'pagename', $wikipage, 'wiki', $wiki_entry->id))) {
+        (count($actions) == 1 && !record_exists('wiki_pages', 'pagename', $page, 'wiki', $wiki_entry->id))) {
         print $content;
     }
     else {

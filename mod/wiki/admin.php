@@ -11,11 +11,11 @@
     
 
     optional_variable($id);    // Course Module ID, or
-    optional_variable($wikipage);    // Pagename
+    optional_variable($page, false);    // Pagename
     optional_variable($confirm, "");
     optional_variable($action,"");    // Admin Action
-    optional_variable($userid);     // User wiki.
-    optional_variable($groupid);    // Group wiki.
+    optional_variable($userid, 0);     // User wiki.
+    optional_variable($groupid, 0);    // Group wiki.
         
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -44,9 +44,9 @@
     
     /// Build the ewsiki script constant
     $ewbase = 'view.php?id='.$id;
-    if (isset($userid)) $ewbase .= '&userid='.$userid;
-    if (isset($groupid)) $ewbase .= '&groupid='.$groupid;
-    $ewscript = $ewbase.'&wikipage=';
+    if (isset($userid) && $userid!=0) $ewbase .= '&userid='.$userid;
+    if (isset($groupid) && $groupid!=0) $ewbase .= '&groupid='.$groupid;
+    $ewscript = $ewbase.'&page=';
     define("EWIKI_SCRIPT", $ewscript);
     if($wiki->ewikiacceptbinary) {
       define("EWIKI_UPLOAD_MAXSIZE", get_max_upload_file_size());
@@ -148,7 +148,7 @@
         break;
       }
       add_to_log($course->id, "wiki", $action, "admin.php?action=$action&userid=$userid&groupid=$groupid&id=$id", $wiki->name.($addloginfo?": ".$addloginfo:""));
-      $link="admin.php?action=$action&userid=$userid&groupid=$groupid&id=$id&wikipage=$wikipage";            
+      $link="admin.php?action=$action".($userid?"&userid=".$userid:"").($groupid?"&groupid=".$groupid:"")."&id=$id&page=$page";            
       switch($action) {
         case "removepages": 
             if($form->proceed) {            
@@ -219,7 +219,7 @@
     } 
     
     /// Actions which need a confirmation. If confirmed, do the action
-    $redirect="view.php?userid=$userid&groupid=$groupid&id=$id&wikipage=$wikipage";
+    $redirect="view.php?".($groupid?"&groupid=".$groupid:"").($userid?"&userid=".$userid:"")."&id=$id&page=$page";
     if($confirm && !$err) {
       switch($action) {
         case "removepages":
@@ -317,7 +317,7 @@
     
         /// Administrative Links       
         echo '<td align="center">';          
-        wiki_print_administration_actions($wiki, $cm->id, $userid, $groupid, $wikipage, $wiki->htmlmode!=2, $course);
+        wiki_print_administration_actions($wiki, $cm->id, $userid, $groupid, $page, $wiki->htmlmode!=2, $course);
         echo '</td>';
         
 #        if($wiki->htmlmode!=2) {
