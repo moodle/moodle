@@ -18,7 +18,7 @@
 // If there's something it cannot do itself, it 
 // will tell you what you need to do.
 
-$version = 2002091900;   // The current version is a date (YYYYMMDDXX) where 
+$version = 2002092000;   // The current version is a date (YYYYMMDDXX) where 
                          //    XX is a number that increments during the day
 
 $release = "1.0.5 dev";      // For humans only, not used for the upgrade process
@@ -73,6 +73,9 @@ function upgrade_moodle($oldversion=0) {
     if ($oldversion < 2002091900) {
         notify("Most Moodle configuration variables have been moved to the database and can now be edited via the admin page.");
         notify("Although it is not vital that you do so, you might want to edit <U>config.php</U> and remove all the unused settings (except the database, URL and directory definitions).  See <U>config-dist.php</U> for an example of how your new slim config.php should look.");
+    }
+    if ($oldversion < 2002092000) {
+        execute_sql(" ALTER TABLE `user` CHANGE `lang` `lang` VARCHAR(5) DEFAULT 'en' NOT NULL  ");
     }
 
     return true;
