@@ -99,6 +99,7 @@ $string['backuporiginalname'] = 'Nom de la sauvegarde';
 $string['backupsavetohelp'] = 'Chemin d\'accès complet du dossier où vous voulez enregistrer les sauvegardes<br />(laissez vide pour enregistrer dans le dossier par défaut)';
 $string['backupuserfileshelp'] = 'Choisissez si vous désirez inclure les fichiers des utilisateurs (par exemple l\'image du profil) dans les sauvegardes automatiques';
 $string['backupusershelp'] = 'Choisissez si vous désirez inclure tous les utilisateurs du serveur ou seulement ceux nécessaires à chaque cours';
+$string['blocks'] = 'Blocs';
 $string['backupversion'] = 'Version de la sauvegarde';
 $string['blocksetup'] = 'Mise en place des tables de blocs';
 $string['blocksuccess'] = '$a tables ont été correctement mises en place';
