@@ -5,13 +5,14 @@
 $string['modulename'] = 'Wiki';
 $string['modulenameplural'] = 'Wikis';
 
-$string['wikiname'] = "Page Name";
-$string['wikitype'] = "Type";
+$string['wikiname'] = 'Page Name';
+$string['wikitype'] = 'Type';
 $string['ewikiprinttitle'] = 'Print the title on every Wiki-Page';
 $string['htmlmode'] = 'HTML Mode';
 $string['ewikiacceptbinary'] = 'Allow binary files';
 $string['initialcontent'] = 'Choose an Initial Page';
 $string['chooseafile'] = 'Choose/upload initial page';
+$string['pagenamechoice'] = '- or -';
 
 $string['wikidefaultpagename'] = 'WikiIndex';
 $string['wikistartederror'] = 'Wiki already has entries - can\'t change.';
