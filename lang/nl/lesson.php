@@ -1,30 +1,50 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.4 alpha (2004081500)
+      // lesson.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['actionaftercorrectanswer'] = 'Actie na juist antwoord';
 $string['addabranchtable'] = 'Voeg een vertakkingstabel toe';
 $string['addanendofbranch'] = 'voeg het einde van een tak toe';
 $string['addaquestionpage'] = 'Voeg een vragenpagina toe';
+$string['addcluster'] = 'Voeg een cluster toe';
+$string['addendofcluster'] = 'Voeg het einde van een cluster toe';
 $string['answer'] = 'Antwoord';
 $string['answersfornumerical'] = 'Antwoorden voor numerieke vragen moeten paren zijn van de minimum- en de maximumwaarde';
+$string['arrangebuttonshorizontally'] = 'De knoppen voor de takken horizontaal schikken in  de diamodus?';
 $string['attempt'] = 'Poging: $a';
 $string['attempts'] = 'Pogingen';
 $string['available'] = 'Beschikbaar van';
+$string['backtreeview'] = 'Terug naar boomweergave';
 $string['branchtable'] = 'Vertakkingstabel';
+$string['cancel'] = 'Annuleer';
 $string['canretake'] = '$a mag de les opnieuw doen';
 $string['casesensitive'] = 'Hoofdlettergevoelig';
 $string['checkbranchtable'] = 'Controleer vertakkingstabel';
 $string['checknavigation'] = 'Controleer de navigatie';
 $string['checkquestion'] = 'Controleer de vraag';
+$string['clicktopost'] = 'Klik hier om je cijfer op de scorelijst te zetten';
+$string['clusterjump'] = 'Ongeziene vraag binnen een cluster';
+$string['clustertitle'] = 'Cluster';
+$string['comments'] = 'Jouw commentaar';
 $string['confirmdeletionofthispage'] = 'Bevestig het verwijderen van deze pagina';
 $string['congratulations'] = 'Proficiat - je hebt het einde van de les bereikt';
 $string['continue'] = 'Ga verder';
+$string['correctanswerjump'] = 'Sprong bij juist antwoord';
+$string['correctanswerscore'] = 'Cijfer bij juist antwoord';
+$string['correctresponse'] = 'Juist antwoord';
+$string['customscoring'] = 'Aangepaste cijfers';
 $string['deadline'] = 'Deadline';
 $string['deleting'] = 'Verwijderen';
 $string['deletingpage'] = 'Pagina $a aan het verwijderen';
 $string['description'] = 'Beschrijving';
+$string['displayhighscores'] = 'Toon hoogste cijfers';
+$string['displayinleftmenu'] = 'Toon in linkermenu?';
+$string['displayleftmenu'] = 'Toon linkermenu';
 $string['displayofgrade'] = 'Tonen van het cijfer (voor de leerling)';
+$string['displayreview'] = 'Toon herwerkknop';
+$string['editlessonsettings'] = 'Bewerk de instellingen van deze les';
+$string['editpagecontent'] = 'Bewerk de inhoud van deze pagina';
+$string['email'] = 'E-mail';
 $string['endofbranch'] = 'Einde vertakking';
 $string['endoflesson'] = 'Einde van de les';
 $string['fileformat'] = 'Bestandsformaat';
@@ -47,7 +67,6 @@ $string['multipleanswer'] = 'Meer antwoorden';
 $string['nextpage'] = 'Volgende pagina';
 $string['noanswer'] = 'Er is niet geantwoord';
 $string['noattemptrecordsfound'] = 'Geen pogingen gevonden: geen cijfer gegeven.';
-$string['nobranchtablefound'] = 'Geen vertakkingstabel gevonden';
 $string['normal'] = 'Normaal - volg het lespad';
 $string['notdefined'] = 'Niet gedefinieerd';
 $string['notitle'] = 'Geen titel';

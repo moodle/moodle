@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 development (2004081200)
+      // glossary.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['addcomment'] = 'Voeg commentaar toe';
@@ -85,6 +85,8 @@ $string['entrydeleted'] = 'Item verwijderd';
 $string['entryexported'] = 'Item met succes geëxporteerd';
 $string['entryishidden'] = '(dit item is verborgen)';
 $string['entryleveldefaultsettings'] = 'Standaardinstellingen invoer';
+$string['entrysaved'] = 'Dit item is bewaard';
+$string['entryupdated'] = 'Dit item is geüpdatet';
 $string['entryusedynalink'] = 'Dit item wordt<br />automatisch gelinkt';
 $string['explainaddentry'] = 'Voeg een nieuwe invoer toe in deze woordenlijst<br />Zowel concept als definitie moeten ingevuld worden.';
 $string['explainall'] = 'Toon ALLE items op één pagina';
