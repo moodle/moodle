@@ -117,7 +117,8 @@ function schedule_backup_cron() {
             }
         }
         //Send the message
-        email_to_user($admin,$admin,get_string("scheduledbackupstatus"),$message);
+        $site = get_site();
+        email_to_user($admin,$admin,"$site->shortname: ".get_string("scheduledbackupstatus"),$message);
     }
     
 
