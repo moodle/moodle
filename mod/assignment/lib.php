@@ -569,7 +569,7 @@ function assignment_print_feedback($course, $submission) {
     echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
 
     echo "<P ALIGN=RIGHT><FONT SIZE=-1><I>";
-    if ($submission->grade) {
+    if ($submission->grade or $submission->timemarked) {
         echo get_string("grade").": $submission->grade";
     } else {
         echo get_string("nograde");
