@@ -468,7 +468,7 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
 
            foreach ($answerids as $key => $answerid) {
                $answer = $answers[$answerid];
-               $qnum = $key + 1;
+               $qnumchar = chr(ord('a') + $key);
 
                if (empty($feedback) or empty($response[$answerid])) {
                    $checked = "";
@@ -483,9 +483,9 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
                }
                echo "</TD>";
                if (empty($feedback) or empty($correct[$answer->id])) {
-                   echo "<TD valign=top>$qnum. $answer->answer</TD>";
+                   echo "<TD valign=top>$qnumchar. $answer->answer</TD>";
                } else {
-                   echo "<TD valign=top CLASS=highlight>$qnum. $answer->answer</TD>";
+                   echo "<TD valign=top CLASS=highlight>$qnumchar. $answer->answer</TD>";
                }
                if (!empty($feedback)) {
                    echo "<TD valign=top>&nbsp;";
