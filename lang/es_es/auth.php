@@ -1,8 +1,6 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.9 development (2003032400)
-	  // Revisi&oacute;n de la traducci&oacute;n al espa&ntilde;ol y
-	  // traducci&oacute;n de nuevas cadenas:
-	  // Emmanuelle Guti&eacute;rrez y Restrepo (emmanuelle@sidar.org)
+      // auth.php - created with Moodle 1.0.9 (2003052900)
+
 
 $string['auth_dbdescription'] = "Este método utiliza una tabla de una base de datos externa para comprobar si un determinado usuario y contraseña son válidos. Si la cuenta es nueva, la información de otros campos puede también ser copiada en Moodle.";
 $string['auth_dbextrafields'] = "Estos campos son opcionales. Usted puede elegir pre-rellenar algunos campos del usuario de Moodle con información desde los <strong>campos de la base de datos externa</strong> que especifique aquí. <p>Si deja esto en blanco, se tomarán los valores por defecto</p>.<p>En ambos casos, el usuario podrá editar todos estos campos después de entrar</p>.";
@@ -26,19 +24,19 @@ $string['auth_imaptype'] = "El tipo de servidor IMAP. Los servidores IMAP pueden
 $string['auth_ldap_bind_dn'] = "Si quiere usar 'bind-user' para buscar usuarios, especifíquelo aquí. Algo como 'cn=ldapuser,ou=public,o=org'";
 $string['auth_ldap_bind_pw'] = "Contraseña para bind-user.";
 $string['auth_ldap_contexts'] = "Lista de contextos donde están localizados los usuarios. Separar contextos diferentes con ';'. Por ejemplo: 'ou=usuarios,o=org; ou=otros,o=org'";
-$string['auth_ldap_create_context'] = "Si habilita la creación de usuario con confirmación por medio de correo electrónico, especifique el contexto en el que se crean los usuarios. Este contexto debe ser diferente de otros usuarios para prevenir problemas de seguridad. No es necesario añadir este contexto a Idap_context-variable, Moodle buscará automáticamente los usuarios para este contexto.";
+$string['auth_ldap_create_context'] = "Si habilita la creación de usuario con confirmación por medio de correo electrónico, especifique el contexto en el que se crean los usuarios. Este contexto debe ser diferente de otros usuarios para prevenir problemas de seguridad. No es necesario añadir este contexto a ldap_context-variable, Moodle buscará automáticamente los usuarios de este contexto.";
 $string['auth_ldap_creators'] = "Lista de grupos cuyos miembros están autorizados para crear nuevos cursos. Pueden separarse varios grupos con ';'. Normalmente así: 'cn=teachers,ou=staff,o=myorg'";
 $string['auth_ldap_host_url'] = "Especificar el host LDAP en forma de URL como 'ldap://ldap.myorg.com/' o 'ldaps://ldap.myorg.com/' ";
 $string['auth_ldap_memberattribute'] = "Especificar el atributo para nombre de usuario, cuando los usuarios se integran en un grupo. Normalmente 'miembro'";
 $string['auth_ldap_search_sub'] = "Ponga el valor &lt;&gt; 0 si quiere buscar usuarios desde subcontextos.";
 $string['auth_ldap_update_userinfo'] = "Actualizar información del usuario (nombre, apellido, dirección..) desde LDAP a Moodle. Mire en /auth/ldap/attr_mappings.php para información de mapeado";
 $string['auth_ldap_user_attribute'] = "El atributo usado para nombrar/buscar usuarios. Normalmente 'cn'.";
-$string['auth_ldapdescription'] = "Este método proporciona autenticación contra un servidor LDAP externo.
+$string['auth_ldapdescription'] = "Este método proporciona autenticación contra un servidor LDAP externo.
 Si el nombre de usuario y contraseña facilitados son válidos, Moodle crea una nueva entrada para el usuario en su base de datos. Este módulo puede leer atributos de usuario desde LDAP y prerrellenar los campos requeridos en Moodle. Para las entradas sucesivas sólo se comprueba el usuario y la contraseña.";
 $string['auth_ldapextrafields'] = "Estos campos son opcionales. Usted puede elegir pre-rellenar algunos campos de usuario en Moodle con información de los <strong>campos LDAP</strong> que especifique aquí. <p>Si deja estos campos en blanco, entonces no se transferirá nada desde LDAP y se usará el sistema predeterminado en Moodle.</p><p>En ambos casos, los usuarios podrán editar todos estos campos después de entrar.</p>";
 $string['auth_ldaptitle'] = "Usar un servidor LDAP";
 $string['auth_manualdescription'] = "Este m&eacute;todo elimina cualquier forma de que los usuarios creen sus propias cuentas. Todas las cuentas deben ser creadas manualmente por el administrador.";
-$string['auth_manualtitle'] = "Crear cuentas s&oacute;lo manualmente";
+$string['auth_manualtitle'] = "Crear cuentas solo de forma manual";
 $string['auth_nntpdescription'] = "Este método usa un servidor NNTP para comprobar si el nombre de usuario y contraseña facilitados son válidos.";
 $string['auth_nntphost'] = "La dirección del servidor NNTP. Usar el número IP, no el nombre DNS.";
 $string['auth_nntpport'] = "Puerto del Servidor (119 es el más habitual)";

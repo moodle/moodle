@@ -1,12 +1,6 @@
-<?PHP // $Id$
-	  // Revisi&oacute;n de la traducci&oacute;n al espa&ntilde;ol y
-	  // traducci&oacute;n de nuevas cadenas:
-	  // Emmanuelle Guti&eacute;rrez y Restrepo (emmanuelle@sidar.org)
+<?PHP // $Id$ 
+      // resource.php - created with Moodle 1.0.9 (2003052900)
 
-#------------------------------------------------------------
-$string['modulename'] = "Recurso";
-$string['modulenameplural'] = "Recursos";
-#------------------------------------------------------------
 
 $string['addresource'] = "Añadir recurso";
 $string['editingaresource'] = "Editar recurso";
@@ -16,10 +10,12 @@ $string['exampleurl'] = "http://www.ejemplo.com/algúndirectorio/algúnarchivo.htm
 $string['filename'] = "Nombre del archivo";
 $string['fulltext'] = "Texto completo";
 $string['htmlfragment'] = "Fragmento HTML";
+$string['modulename'] = "Recurso";
+$string['modulenameplural'] = "Recursos";
 $string['neverseen'] = "Nunca visto";
 $string['note'] = "Nota";
-$string['notefile'] = "Para subir más de un archivo (y que se puedan ver en la lista) utilice el
-
+$string['notefile'] = "Para subir más de un archivo (y que se puedan ver en la lista) utilice el
+
 <a href=\$a >Administrador de archivos</a>.";
 $string['notypechosen'] = "Necesita elegir un tipo. Vuelva atrás e inténtelo de nuevo.";
 $string['resourcetype'] = "Tipo de recurso";

@@ -1,19 +1,16 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.5 dev (2002092300)
-	  // Revisi&oacute;n de la traducci&oacute;n al espa&ntilde;ol y
-	  // traducci&oacute;n de nuevas cadenas:
-	  // Emmanuelle Guti&eacute;rrez y Restrepo (emmanuelle@sidar.org)
+      // assignment.php - created with Moodle 1.0.9 (2003052900)
 
 
 $string['allowresubmit'] = "Permitir reenvío";
 $string['assignmentdetails'] = "Detalles de la tarea";
-$string['assignmentmail'] = "\$a->como profesor, ha hecho algunas observaciones al trabajo que ha enviado para '\$a->assignment'
-
-Puede verlas a&ntilde;adidas al trabajo que ha enviado, en:
-
+$string['assignmentmail'] = "\$a->teacher ha corregido y comentado la tarea que has enviado para la '\$a->assignment'
+
+Puedes ver la corrección y los comentarios, junto a la tarea que has enviado, en:
+
     \$a->url";
-$string['assignmentmailhtml'] = "\$a->como profesor ha hecho algunas observaciones al trabajo que ha enviado para '<i>\$a->tarea</i>'<br /><br />
-Puede verlos a&ntilde;adidos a su <a href=\\\"\$a->url\\\">tarea enviada</a>.";
+$string['assignmentmailhtml'] = "\$a->teacher ha corregido y comentado la tarea que has enviado para la '<i>\$a->tarea</i>'<br /><br />
+Puede ver la corrección y los comentarios, junto a la <a href=\\\"\$a->url\\\">tarea enviada</a>.";
 $string['assignmentname'] = "Título de la tarea";
 $string['assignmenttype'] = "Tipo de tarea";
 $string['description'] = "Descripción";

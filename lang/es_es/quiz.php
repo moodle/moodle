@@ -1,19 +1,14 @@
-<?PHP // $Id$
-	  // Revisi&oacute;n de la traducci&oacute;n al espa&ntilde;ol y
-	  // traducci&oacute;n de nuevas cadenas:
-	  // Emmanuelle Guti&eacute;rrez y Restrepo (emmanuelle@sidar.org)
+<?PHP // $Id$ 
+      // quiz.php - created with Moodle 1.0.9 (2003052900)
 
-#------------------------------------------------------------
-$string['modulename'] = "Cuestionario";
-$string['modulenameplural'] = "Cuestionarios";
-#------------------------------------------------------------
 
+$string['addingquestions'] = "Esta parte de la página es donde se maneja la base de datos de preguntas. Las preguntas se guardan en categorías para ayudarle a mantenerlas organizadas, y pueden usarse para cualquier cuestionario en su curso o incluso en otros cursos si usted escoge \\\"publicarlos\\\". <br /> <br />Después de que seleccione o cree una categoría de preguntas podrá crear o editar preguntas. Puede seleccionar cualquiera de estas preguntas para añadirlas a su cuestionario en el otro lado de esta página.";
 $string['addquestions'] = "Añadir preguntas";
-$string['addquestionstoquiz'] = "A&ntilde;adir preguntas al cuestionario actual";
+$string['addquestionstoquiz'] = "Añadir preguntas al cuestionario actual";
 $string['addselectedtoquiz'] = "Agregar al cuestionario";
 $string['allowreview'] = "Permitir revisar";
-$string['alwaysavailable'] = "Siempre disponible";
 $string['alreadysubmitted'] = "Parece que usted ya ha enviado este cuestionario";
+$string['alwaysavailable'] = "Siempre disponible";
 $string['answer'] = "Respuesta";
 $string['answerhowmany'] = "¿Una o varias respuestas?";
 $string['answersingleno'] = "Permitido varias respuestas";
@@ -28,9 +23,9 @@ $string['attemptsunlimited'] = "Intentos ilimitados";
 $string['backtoquiz'] = "Regresar a la edición del cuestionario";
 $string['bestgrade'] = "Calificación máxima";
 $string['blackboard'] = "Pizarra";
+$string['caseno'] = "No, es indiferente que esté en mayúsculas o minúsculas";
 $string['casesensitive'] = "Sensible a mayúsculas y minúsculas";
 $string['caseyes'] = "Mayúsculas y minúsculas deben coincidir";
-$string['caseno'] = "No, es indiferente que esté en mayúsculas o minúsculas";
 $string['categories'] = "Categorías";
 $string['category'] = "Categoría";
 $string['categoryinfo'] = "Información de la categoría";
@@ -40,38 +35,38 @@ $string['choice'] = "Elección";
 $string['choices'] = "Opciones disponibles";
 $string['correctanswer'] = "Respuesta correcta";
 $string['correctanswers'] = "Respuesta incorrecta";
-$string['createmultiple'] = "Crear m&uacute;ltiples preguntas";
-$string['createnewquestion'] = "Crear una pregunta";
+$string['createmultiple'] = "Crear múltiples preguntas";
+$string['createnewquestion'] = "Crear una nueva pregunta";
 $string['custom'] = "Personalizar formato";
 $string['daysavailable'] = "Días disponibles";
 $string['default'] = "Por defecto";
-$string['defaultgrade'] = "Calificaci&oacute;n de la pregunta por defecto";
+$string['defaultgrade'] = "Calificación de la pregunta por defecto";
 $string['defaultinfo'] = "La categoría por defecto para preguntas";
 $string['deletequestioncheck'] = "¿Está seguro de que desea borrar '\$a'?";
 $string['editcategories'] = "Editar categorías";
 $string['editingmatch'] = "Editando una pregunta de correspondencia";
 $string['editingmultichoice'] = "Editando una pregunta de múltiple opción";
-$string['editingquiz'] = "Editando un cuestionario";
 $string['editingquestion'] = "Editando una pregunta";
+$string['editingquiz'] = "Editando un cuestionario";
 $string['editingrandom'] = "Editar una pregunta al azar";
 $string['editingrandomsamatch'] = "Editando una pregunta aleatoria que hace juego con una respuesta corta";
 $string['editingshortanswer'] = "Editando una pregunta de respuesta corta";
-$string['editingtruefalse'] = "Editando una pregunta falso/verdadero";
+$string['editingtruefalse'] = "Editando una pregunta de falso/verdadero";
 $string['false'] = "Falso";
 $string['feedback'] = "Respuesta";
+$string['fileformat'] = "Formato de archivo";
 $string['filloutoneanswer'] = "Debe rellenar al menos una respuesta. Las respuestas en blanco no cuentan.";
 $string['filloutthreequestions'] = "Debe rellenar al menos tres preguntas. Las preguntas dejadas en blanco no se usarán.";
 $string['fillouttwochoices'] = "Debe elegir al menos dos opciones. Las opciones en blanco no cuentan.";
-$string['fileformat'] = "Formato de archivo";
-$string['fractionsaddwrong'] = "Las calificaciones que ha escogido no suman el 100%%
-
-<br />En lugar de eso, suman un \$a%%
-
+$string['fractionsaddwrong'] = "Las calificaciones que ha escogido no suman el 100%%
+
+<br />En lugar de eso, suman un \$a%%
+
 <br />¿Quieres volver atrás y arreglar esta pregunta?";
-$string['fractionsnomax'] = "Una de las respuestas debería ser 100%%, de forma que sea
-
-<br />posible conseguir la nota máxima para esta cuestión.
-
+$string['fractionsnomax'] = "Una de las respuestas debería ser 100%%, de forma que sea
+
+<br />posible conseguir la nota máxima para esta cuestión.
+
 <br />¿Quieres volver atrás y arreglar esta pregunta?";
 $string['gradeaverage'] = "Promedio de calificaciones";
 $string['gradehighest'] = "Calificación más alta";
@@ -87,6 +82,8 @@ $string['matchanswer'] = "Emparejar respuesta";
 $string['missingname'] = "La pregunta no tiene título";
 $string['missingquestiontext'] = "La pregunta no tiene texto";
 $string['missingword'] = "formato de palabra perdido";
+$string['modulename'] = "Cuestionario";
+$string['modulenameplural'] = "Cuestionarios";
 $string['multichoice'] = "Opción múltiple";
 $string['noanswers'] = "No se seleccionó ninguna respuesta";
 $string['noattempts'] = "No se ha hecho ningún intento en este cuestionario";
@@ -94,8 +91,8 @@ $string['nomoreattempts'] = "No se permiten más respuestas";
 $string['noquestions'] = "Aún no se han añadido preguntas";
 $string['noreview'] = "No le está permitido revisar este cuestionario";
 $string['noreviewuntil'] = "No le está permitido revisar este cuestionario hasta \$a";
-$string['notenoughsubquestions'] = "No se han definido suficientes sub-preguntas
-<br />
+$string['notenoughsubquestions'] = "No se han definido suficientes sub-preguntas
+<br />
 ¿Desea volver atrás y arreglar esta pregunta?";
 $string['publish'] = "Publicar";
 $string['qti'] = "IMS <acronym title=Question and Test Interoperability>QTI</acronym> format";
@@ -106,9 +103,10 @@ $string['questions'] = "Preguntas";
 $string['quizavailable'] = "El cuestionario está disponible hasta el \$a";
 $string['quizclose'] = "Cerrar cuestionario";
 $string['quizclosed'] = "El plazo para contestar este cuestionario finalizó el \$a";
-$string['quizopen'] = "Abrir cuestionario";
 $string['quiznotavailable'] = "Este cuestionario no estará disponible hasta el \$a";
+$string['quizopen'] = "Abrir cuestionario";
 $string['random'] = "Organizado al azar";
+$string['randomcreate'] = "Crear preguntas aleatorias";
 $string['randomsamatch'] = "Emparejando respuestas cortas aleatoriamente";
 $string['randomsamatchcreate'] = "Crear preguntas emparejadas con respuestas cortas aleatoriamente";
 $string['randomsamatchintro'] = "Para cada una de las preguntas siguientes, seleccione desde el menú la respuesta que hace juego.";
@@ -129,14 +127,14 @@ $string['selectall'] = "Seleccionar todo";
 $string['selectcategoryabove'] = "Seleccione una categoría";
 $string['shortanswer'] = "Respuesta corta";
 $string['show'] = "Mostrar";
-$string['showfeedback'] = "¿Mostrar resultado al finalizar?";
 $string['showcorrectanswer'] = "¿Mostrar la respuesta correcta al finalizar?";
+$string['showfeedback'] = "¿Mostrar resultado al finalizar?";
 $string['shuffleanswers'] = "Barajar respuestas";
 $string['shufflequestions'] = "Barajar preguntas";
 $string['time'] = "Tiempo";
-$string['timetaken'] = "Tiempo invertido";
 $string['timecompleted'] = "Completado";
-$string['toomanyrandom'] = "&iexcl;El n&uacute;mero de preguntas al azar requeridas es mayor que el que contiene esta categor&iacute;a! (\$a)";
+$string['timetaken'] = "Tiempo invertido";
+$string['toomanyrandom'] = "¡El número de preguntas al azar requeridas es mayor que el que contiene esta categoría! (\$a)";
 $string['true'] = "Verdadero";
 $string['truefalse'] = "Verdadero/Falso";
 $string['type'] = "Escriba";

@@ -1,27 +1,21 @@
-<?PHP // $Id$
-	  // Revisi&oacute;n de la traducci&oacute;n previa al espa&ntilde;ol y
-	  // traducci&oacute;n de nuevas cadenas:
-	  // Emmanuelle Guti&eacute;rrez y Restrepo (emmanuelle@sidar.org)
+<?PHP // $Id$ 
+      // journal.php - created with Moodle 1.0.9 (2003052900)
 
-#------------------------------------------------------------
-$string['modulename'] = "Diario";
-$string['modulenameplural'] = "Diarios";
-#------------------------------------------------------------
 
 $string['alwaysopen'] = "Siempre abierto";
 $string['blankentry'] = "No hay datos";
 $string['daysavailable'] = "Días disponibles";
-$string['editingends'] = "Período de edición finalizado";
 $string['editingended'] = "El período de edición ha terminado";
+$string['editingends'] = "Período de edición finalizado";
 $string['entries'] = "Entradas";
 $string['feedbackupdated'] = "Respuesta actualizada en \$a entries";
-$string['journalmail'] = "\$a->como profesor ha colocado algunos comenarios sobre su entrada en el diario en '\$a->diario'
-
-Puede verlos a&ntilde;adidos a su entrada en el diario:
-
+$string['journalmail'] = "\$a->teacher ha hecho algunos comenarios sobre su entrada en el diario en '\$a->diario'
+
+Puede verlos añadidos a su entrada en el diario:
+
     \$a->url";
-$string['journalmailhtml'] = "\$a->como profesor, ha colocado algunos comentarios sobre su entrada en el diario en '<i>\$a->diario</i>'<br /><br />
-Puede verlos a&ntilde;adidos a su <a href=\\\"\$a->url\\\">entrada en diario</a>.";
+$string['journalmailhtml'] = "\$a->teacher ha hecho algunos comentarios sobre su entrada en el diario en '<i>\$a->diario</i>'<br /><br />
+Puede verlos añadidos a su <a href=\\\"\$a->url\\\">entrada en diario</a>.";
 $string['journalname'] = "Nombre del diario";
 $string['journalquestion'] = "Pregunta del diario";
 $string['journalrating1'] = "No satisfactorio";

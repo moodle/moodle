@@ -1,12 +1,12 @@
 ACERCA DE ESTE DIRECTORIO
 --------------------
 
-NO CAMBIE, RENOMBRE O ELIMNINE NINGUNO DE LOS ARCHIVOS 
+NO CAMBIE, RENOMBRE O ELIMINE NINGUNO DE LOS ARCHIVOS 
 DE ESTE DIRECTORIO a menos que usted REALMENTE sepa qu&eacute; 
 est&aacute; haciendo.  
 
 Cambiar estos archivos prodr&iacute;a producir 
-da&ntilde;os irreparables en sus curso.
+da&ntilde;os irreparables en sus cursos.
 
 Este directorio contiene archivos que se cargan 
 en su curso dentro de determinados m&oacute;dulos 
