@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
        // Authentication by looking up an NNTP server
 
 

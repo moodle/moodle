@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php //$Id$
     //This file contains all the function needed in the backup utility
     //except the mod-related funtions that are into every backuplib.php inside
     //every mod directory
@@ -852,7 +852,7 @@
                 if ($counter % 10 == 0) {
                     echo ".";   
                     if ($counter % 200 == 0) {
-                        echo "<br>";
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -921,7 +921,7 @@
                     if ($counter % 10 == 0) {
                         echo ".";
                         if ($counter % 200 == 0) {
-                            echo "<br>";
+                            echo "<br />";
                         }
                         backup_flush(300);
                     }
@@ -1171,7 +1171,7 @@
         }
 
         if ($result != $content && $CFG->debug>7) {                                  //Debug
-            echo "<br><hr>".$content."<br>changed to<br>".$result."<hr><br>";        //Debug
+            echo "<br /><hr />".$content."<br />changed to<br />".$result."<hr /><br />";        //Debug
         }                                                                            //Debug
 
         return $result;
@@ -1268,7 +1268,7 @@
         $filelist = list_directories_and_files ($basedir);
 
         if (empty($CFG->zip)) {    // Use built-in php-based zip function
-            //echo "<br>Using pclzip";                                    //Debug
+            //echo "<br />Using pclzip";                                    //Debug
             $files = array();
             foreach ($filelist as $file) {
                 //If directory, append "/"
@@ -1277,7 +1277,7 @@
                 //    $file = $file."/";
                 //}
                 //Include into array
-                //echo "<br>Adding file/dir ".$file;                       //Debug
+                //echo "<br />Adding file/dir ".$file;                       //Debug
                 $files[] = $basedir."/".$file;
             }
             include_once("$CFG->dirroot/lib/pclzip/pclzip.lib.php");
@@ -1292,18 +1292,18 @@
             //PclTraceDisplay();                                           //Debug
             //PclTraceOff();                                               //Debug
         } else {                   // Use external zip program
-            //echo "<br>Using external zip";                               //Debug
+            //echo "<br />Using external zip";                               //Debug
             $files = "";
             foreach ($filelist as $file) {
                 $files .= basename($file);
                 $files .= " ";
             }
             $command = "cd $basedir ; $CFG->zip -r $name $files";
-            //echo "<br>Executing command: ".$command;                     //Debug
+            //echo "<br />Executing command: ".$command;                     //Debug
             $status = Exec($command);
         }
 
-        //echo "<br>Status: ".$status;                                     //Debug
+        //echo "<br />Status: ".$status;                                     //Debug
         return $status;
 
     } 
@@ -1328,9 +1328,9 @@
             //Define zip destination (course dir)
             $to_zip_file = $CFG->dataroot."/".$preferences->backup_course;
     
-            //echo "<p>From: ".$from_zip_file."<br>";                                              //Debug
+            //echo "<p>From: ".$from_zip_file."<br />";                                              //Debug
     
-            //echo "<p>Checking: ".$to_zip_file."<br>";                                          //Debug
+            //echo "<p>Checking: ".$to_zip_file."<br />";                                          //Debug
     
             //Checks course dir exists
             $status = check_dir_exists($to_zip_file,true);
@@ -1338,7 +1338,7 @@
             //Define zip destination (backup dir)
             $to_zip_file = $to_zip_file."/backupdata";
     
-            //echo "<p>Checking: ".$to_zip_file."<br>";                                          //Debug
+            //echo "<p>Checking: ".$to_zip_file."<br />";                                          //Debug
     
             //Checks backup dir exists
             $status = check_dir_exists($to_zip_file,true);
@@ -1347,7 +1347,7 @@
             $to_zip_file = $to_zip_file."/".$preferences->backup_name;
         }
 
-        //echo "<p>To: ".$to_zip_file."<br>";                                              //Debug
+        //echo "<p>To: ".$to_zip_file."<br />";                                              //Debug
 
         //Copy zip file
         if ($status) {

@@ -1,4 +1,4 @@
-<?PHP
+<?php
     if (!isset($config->ldap_host_url)) {
         $config->ldap_host_url = "";
     }
@@ -37,231 +37,231 @@
     }
 
 ?>
-<tr valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_host_url:</TD>
-    <TD>
-        <INPUT name=ldap_host_url TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_host_url?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><p>ldap_host_url:</td>
+    <td>
+        <input name="ldap_host_url" type="text" size="30" value="<?php echo $config->ldap_host_url?>" />
     <?php  if (isset($err["ldap_host_url"])) formerr($err["ldap_host_url"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_ldap_host_url","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<tr valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_version:</TD>
-    <TD>
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><p>ldap_version:</td>
+    <td>
     <?php
        $versions[2] = "2";
        $versions[3] = "3";
        choose_from_menu($versions, "ldap_version", $config->ldap_version, "");
        if (isset($err["ldap_version"])) formerr($err["ldap_version"]); 
     ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_ldap_version","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_contexts:</TD>
-    <TD>
-    <INPUT name=ldap_contexts TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_contexts?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><p>ldap_contexts:</td>
+    <td>
+    <input name="ldap_contexts" type="text" size="30" value="<?php echo $config->ldap_contexts?>" />
     <?php  if (isset($err["ldap_contexts"])) formerr($err["ldap_contexts"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_ldap_contexts","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_user_attribute:</TD>
-    <TD>
-    <INPUT name=ldap_user_attribute TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_user_attribute?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><p>ldap_user_attribute:</td>
+    <td>
+    <input name="ldap_user_attribute" type="text" size="30" value="<?php echo $config->ldap_user_attribute?>" />
     <?php  if (isset($err["ldap_user_attribute"])) formerr($err["ldap_user_attribute"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_ldap_user_attribute","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_objectclass:</TD>
-    <TD>
-    <INPUT name=ldap_objectclass TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_objectclass?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><p>ldap_objectclass:</td>
+    <td>
+    <input name="ldap_objectclass" type="text" size="30" value="<?php echo $config->ldap_objectclass?>" />
     <?php  if (isset($err["ldap_objectclass"])) formerr($err["ldap_objectclass"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_ldap_objectclass","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_search_sub:</TD>
-    <TD>
-    <INPUT name=ldap_search_sub TYPE=text SIZE=1 VALUE="<?php echo $config->ldap_search_sub?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><p>ldap_search_sub:</td>
+    <td>
+    <input name="ldap_search_sub" type="text" size="1" value="<?php echo $config->ldap_search_sub?>" />
     <?php  if (isset($err["ldap_search_sub"])) formerr($err["ldap_search_sub"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_ldap_search_sub","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_bind_dn:</TD>
-    <TD>
-    <INPUT name=ldap_bind_dn TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_bind_dn?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><p>ldap_bind_dn:</td>
+    <td>
+    <input name="ldap_bind_dn" type="text" size="30" value="<?php echo $config->ldap_bind_dn?>" />
     <?php  if (isset($err["ldap_bind_dn"])) formerr($err["ldap_bind_dn"]); ?>
-    </TD><TD>
+    </td><td>
     <?php  print_string("auth_ldap_bind_dn","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_bind_pw:</TD>
-    <TD>
-    <INPUT name=ldap_bind_pw TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_bind_pw?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><p>ldap_bind_pw:</td>
+    <td>
+    <input name="ldap_bind_pw" type="text" size="30" value="<?php echo $config->ldap_bind_pw?>" />
     <?php  if (isset($err["ldap_bind_pw"])) formerr($err["ldap_bind_pw"]); ?>
-    </TD><TD>
+    </td><td>
     <?php  print_string("auth_ldap_bind_pw","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-        <TD ALIGN=RIGHT><P>ldap_memberattribute:</TD>
-        <TD>
-    <INPUT name=ldap_memberattribute TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_memberattribute?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+        <td align="right"><p>ldap_memberattribute:</td>
+        <td>
+    <input name="ldap_memberattribute" type="text" size="30" value="<?php echo $config->ldap_memberattribute?>" />
     <?php  if (isset($err["ldap_memberattribute"])) formerr($err["ldap_memberattribute"]); ?>
-    </TD><TD>
+    </td><td>
     <?php  print_string("auth_ldap_memberattribute","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-        <TD ALIGN=RIGHT><P>ldap_creators:</TD>
-        <TD>
-    <INPUT name=ldap_creators TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_creators?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+        <td align="right"><p>ldap_creators:</td>
+        <td>
+    <input name="ldap_creators" type="text" size="30" value="<?php echo $config->ldap_creators?>" />
     <?php  if (isset($err["ldap_creators"])) formerr($err["ldap_creators"]); ?>
-    </TD><TD>
+    </td><td>
     <?php  print_string("auth_ldap_creators","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_create_context:</TD>
-    <TD>
-    <INPUT name=ldap_create_context TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_create_context?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><p>ldap_create_context:</td>
+    <td>
+    <input name="ldap_create_context" type="text" size="30" value="<?php echo $config->ldap_create_context?>" />
     <?php  if (isset($err["ldap_create_context"])) formerr($err["ldap_create_context"]); ?>
-    </TD><TD>
+    </td><td>
     <?php  print_string("auth_ldap_create_context","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR>
-    <TD ALIGN=RIGHT><P><?php  print_string("firstname") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_firstname" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_firstname?>">
-    </TD>
-    <TD rowspan=12 VALIGN=CENTER>
+<tr>
+    <td align="right"><p><?php  print_string("firstname") ?>:</td>
+    <td>
+    <input name="auth_user_firstname" type="text" size="30" value="<?php echo $config->auth_user_firstname?>" />
+    </td>
+    <td rowspan="12" valign="center">
     <?php  print_string("auth_ldapextrafields","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("lastname") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_lastname" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_lastname?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><p><?php  print_string("lastname") ?>:</td>
+    <td>
+    <input name="auth_user_lastname" type="text" size="30" value="<?php echo $config->auth_user_lastname?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("email") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_email" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_email?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><p><?php  print_string("email") ?>:</td>
+    <td>
+    <input name="auth_user_email" type="text" size="30" value="<?php echo $config->auth_user_email?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("phone") ?> 1:</TD>
-    <TD>
-    <INPUT name="auth_user_phone1" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_phone1?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><p><?php  print_string("phone") ?> 1:</td>
+    <td>
+    <input name="auth_user_phone1" type="text" size="30" value="<?php echo $config->auth_user_phone1?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("phone") ?> 2:</TD>
-    <TD>
-    <INPUT name="auth_user_phone2" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_phone2?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><p><?php  print_string("phone") ?> 2:</td>
+    <td>
+    <input name="auth_user_phone2" type="text" size="30" value="<?php echo $config->auth_user_phone2?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("department") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_department" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_department?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><p><?php  print_string("department") ?>:</td>
+    <td>
+    <input name="auth_user_department" type="text" size="30" value="<?php echo $config->auth_user_department?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("address") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_address" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_address?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><p><?php  print_string("address") ?>:</td>
+    <td>
+    <input name="auth_user_address" type="text" size="30" value="<?php echo $config->auth_user_address?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("city") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_city" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_city?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><p><?php  print_string("city") ?>:</td>
+    <td>
+    <input name="auth_user_city" type="text" size="30" value="<?php echo $config->auth_user_city?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("country") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_country" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_country?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><p><?php  print_string("country") ?>:</td>
+    <td>
+    <input name="auth_user_country" type="text" size="30" value="<?php echo $config->auth_user_country?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("description") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_description" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_description?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><p><?php  print_string("description") ?>:</td>
+    <td>
+    <input name="auth_user_description" type="text" size="30" value="<?php echo $config->auth_user_description?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("idnumber") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_idnumber" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_idnumber?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><p><?php  print_string("idnumber") ?>:</td>
+    <td>
+    <input name="auth_user_idnumber" type="text" size="30" value="<?php echo $config->auth_user_idnumber?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("language") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_lang" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_lang?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><p><?php  print_string("language") ?>:</td>
+    <td>
+    <input name="auth_user_lang" type="text" size="30" value="<?php echo $config->auth_user_lang?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("guid") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_guid" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_guid?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><p><?php  print_string("guid") ?>:</td>
+    <td>
+    <input name="auth_user_guid" type="text" size="30" value="<?php echo $config->auth_user_guid?>" />
+    </td>
+</tr>
 
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("instructions", "auth") ?>:</TD>
-    <TD>
-    <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><?php  p($config->auth_instructions) ?></TEXTAREA> 
-    </TD>
-    <TD>
+<tr valign="top">
+    <td align="right"><p><?php  print_string("instructions", "auth") ?>:</td>
+    <td>
+    <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
+    </td>
+    <td>
     <?php  print_string("authinstructions","auth") ?>
     <?php  helpbutton("text", get_string("helptext")) ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
 
 

@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php //$Id$
     //This file contains all the code needed to execute scheduled backups
 
 //This function is executed via moodle cron

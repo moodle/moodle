@@ -1,4 +1,4 @@
-<?PHP
+<?php
     if (!isset($config->auth_dbhost)) {
         $config->auth_dbhost = "localhost";
     }
@@ -27,20 +27,20 @@
         $config->auth_dbpasstype = "plaintext";
     }
 ?>
-<tr valign="top"  BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>auth_dbhost:</TD>
-	<TD>
-        <INPUT name=auth_dbhost TYPE=text SIZE=30 VALUE="<?php echo $config->auth_dbhost?>">
+<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+	<td align="right"><p>auth_dbhost:</td>
+	<td>
+        <input name="auth_dbhost" type="text" size="30" value="<?php echo $config->auth_dbhost?>" />
 	<?php  if (isset($err["auth_dbhost"])) formerr($err["auth_dbhost"]); ?>
-	</TD>
-    <TD>
+	</td>
+    <td>
     <?php  print_string("auth_dbhost","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP  BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>auth_dbtype:</TD>
-	<TD>
+<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+	<td align="right"><p>auth_dbtype:</td>
+	<td>
     <?php  $dbtypes = array("access","ado_access", "ado", "ado_mssql", "borland_ibase", "csv", "db2", "fbsql", "firebird", "ibase", "informix72", "informix", "mssql", "mysql", "mysqlt", "oci805", "oci8", "oci8po", "odbc", "odbc_mssql", "odbc_oracle", "oracle", "postgres64", "postgres7", "postgres", "proxy", "sqlanywhere", "sybase", "vfp");
        foreach ($dbtypes as $dbtype) {
            $dboptions[$dbtype] = $dbtype;
@@ -48,188 +48,188 @@
        choose_from_menu($dboptions, "auth_dbtype", $config->auth_dbtype, "");
     ?>
       
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_dbtype","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP  BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>auth_dbname:</TD>
-	<TD>
-    <INPUT name=auth_dbname TYPE=text SIZE=30 VALUE="<?php echo $config->auth_dbname?>">
+<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+	<td align="right"><p>auth_dbname:</td>
+	<td>
+    <input name="auth_dbname" type="text" size="30" value="<?php echo $config->auth_dbname?>" />
     <?php  if (isset($err["auth_dbname"]))formerr($err["auth_dbname"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_dbname","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP  BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>auth_dbuser:</TD>
-	<TD>
-    <INPUT name=auth_dbuser TYPE=text SIZE=30 VALUE="<?php echo $config->auth_dbuser?>">
+<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+	<td align="right"><p>auth_dbuser:</td>
+	<td>
+    <input name="auth_dbuser" type="text" size="30" value="<?php echo $config->auth_dbuser?>" />
     <?php  if (isset($err["auth_dbuser"])) formerr($err["auth_dbuser"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_dbuser","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP  BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>auth_dbpass:</TD>
-	<TD>
-    <INPUT name="auth_dbpass" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_dbpass?>">
+<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+	<td align="right"><p>auth_dbpass:</td>
+	<td>
+    <input name="auth_dbpass" type="text" size="30" value="<?php echo $config->auth_dbpass?>" />
     <?php  if (isset($err["auth_dbpass"])) formerr($err["auth_dbpass"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_dbpass","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP  BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>auth_dbtable:</TD>
-	<TD>
-    <INPUT name="auth_dbtable" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_dbtable?>">
+<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+	<td align="right"><p>auth_dbtable:</td>
+	<td>
+    <input name="auth_dbtable" type="text" size="30" value="<?php echo $config->auth_dbtable?>" />
     <?php  if (isset($err["auth_dbtable"])) formerr($err["auth_dbtable"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_dbtable","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP  BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>auth_dbfielduser:</TD>
-	<TD>
-    <INPUT name="auth_dbfielduser" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_dbfielduser?>">
+<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+	<td align="right"><p>auth_dbfielduser:</td>
+	<td>
+    <input name="auth_dbfielduser" type="text" size="30" value="<?php echo $config->auth_dbfielduser?>" />
     <?php  if (isset($err["auth_dbfielduser"])) formerr($err["auth_dbfielduser"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_dbfielduser","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP  BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>auth_dbfieldpass:</TD>
-	<TD>
-    <INPUT name="auth_dbfieldpass" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_dbfieldpass?>">
+<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+	<td align="right"><p>auth_dbfieldpass:</td>
+	<td>
+    <input name="auth_dbfieldpass" type="text" size="30" value="<?php echo $config->auth_dbfieldpass?>" />
     <?php  if (isset($err["auth_dbfieldpass"])) formerr($err["auth_dbfieldpass"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_dbfieldpass","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP  BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>auth_dbpasstype:</TD>
-	<TD>
+<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+	<td align="right"><p>auth_dbpasstype:</td>
+	<td>
     <?php  $passtype["plaintext"] = get_string("plaintext", "auth");
        $passtype["md5"]       = get_string("md5", "auth");
        choose_from_menu($passtype, "auth_dbpasstype", $config->auth_dbpasstype, "");
     ?>
       
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_dbpasstype","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
 
-<TR>
-	<TD ALIGN=RIGHT><P><?php  print_string("firstname") ?>:</TD>
-	<TD>
-    <INPUT name="auth_user_firstname" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_firstname?>">
-    </TD>
-    <TD rowspan=12 VALIGN=CENTER>
+<tr>
+	<td align="right"><p><?php  print_string("firstname") ?>:</td>
+	<td>
+    <input name="auth_user_firstname" type="text" size="30" value="<?php echo $config->auth_user_firstname?>" />
+    </td>
+    <td rowspan="12" valign="center">
     <?php  print_string("auth_dbextrafields","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("lastname") ?>:</TD>
-	<TD>
-    <INPUT name="auth_user_lastname" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_lastname?>">
-    </TD>
-</TR>
+<tr valign="top">
+	<td align="right"><p><?php  print_string("lastname") ?>:</td>
+	<td>
+    <input name="auth_user_lastname" type="text" size="30" value="<?php echo $config->auth_user_lastname?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("email") ?>:</TD>
-	<TD>
-    <INPUT name="auth_user_email" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_email?>">
-    </TD>
-</TR>
+<tr valign="top">
+	<td align="right"><p><?php  print_string("email") ?>:</td>
+	<td>
+    <input name="auth_user_email" type="text" size="30" value="<?php echo $config->auth_user_email?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("phone") ?> 1:</TD>
-	<TD>
-    <INPUT name="auth_user_phone1" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_phone1?>">
-    </TD>
-</TR>
+<tr valign="top">
+	<td align="right"><p><?php  print_string("phone") ?> 1:</td>
+	<td>
+    <input name="auth_user_phone1" type="text" size="30" value="<?php echo $config->auth_user_phone1?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("phone") ?> 2:</TD>
-	<TD>
-    <INPUT name="auth_user_phone2" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_phone2?>">
-    </TD>
-</TR>
+<tr valign="top">
+	<td align="right"><p><?php  print_string("phone") ?> 2:</td>
+	<td>
+    <input name="auth_user_phone2" type="text" size="30" value="<?php echo $config->auth_user_phone2?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("department") ?>:</TD>
-	<TD>
-    <INPUT name="auth_user_department" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_department?>">
-    </TD>
-</TR>
+<tr valign="top">
+	<td align="right"><p><?php  print_string("department") ?>:</td>
+	<td>
+    <input name="auth_user_department" type="text" size="30" value="<?php echo $config->auth_user_department?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("address") ?>:</TD>
-	<TD>
-    <INPUT name="auth_user_address" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_address?>">
-    </TD>
-</TR>
+<tr valign="top">
+	<td align="right"><p><?php  print_string("address") ?>:</td>
+	<td>
+    <input name="auth_user_address" type="text" size="30" value="<?php echo $config->auth_user_address?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("city") ?>:</TD>
-	<TD>
-    <INPUT name="auth_user_city" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_city?>">
-    </TD>
-</TR>
+<tr valign="top">
+	<td align="right"><p><?php  print_string("city") ?>:</td>
+	<td>
+    <input name="auth_user_city" type="text" size="30" value="<?php echo $config->auth_user_city?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("country") ?>:</TD>
-	<TD>
-    <INPUT name="auth_user_country" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_country?>">
-    </TD>
-</TR>
+<tr valign="top">
+	<td align="right"><p><?php  print_string("country") ?>:</td>
+	<td>
+    <input name="auth_user_country" type="text" size="30" value="<?php echo $config->auth_user_country?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("description") ?>:</TD>
-	<TD>
-    <INPUT name="auth_user_description" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_description?>">
-    </TD>
-</TR>
+<tr valign="top">
+	<td align="right"><p><?php  print_string("description") ?>:</td>
+	<td>
+    <input name="auth_user_description" type="text" size="30" value="<?php echo $config->auth_user_description?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("idnumber") ?>:</TD>
-	<TD>
-    <INPUT name="auth_user_idnumber" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_idnumber?>">
-    </TD>
-</TR>
+<tr valign="top">
+	<td align="right"><p><?php  print_string("idnumber") ?>:</td>
+	<td>
+    <input name="auth_user_idnumber" type="text" size="30" value="<?php echo $config->auth_user_idnumber?>" />
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("language") ?>:</TD>
-	<TD>
-    <INPUT name="auth_user_lang" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_lang?>">
-    </TD>
-</TR>
+<tr valign="top">
+	<td align="right"><p><?php  print_string("language") ?>:</td>
+	<td>
+    <input name="auth_user_lang" type="text" size="30" value="<?php echo $config->auth_user_lang?>" />
+    </td>
+</tr>
 
 
-<TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("instructions", "auth") ?>:</TD>
-	<TD>
-    <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><?php  p($config->auth_instructions) ?></TEXTAREA> 
-    </TD>
-    <TD>
+<tr valign="top">
+	<td align="right"><p><?php  print_string("instructions", "auth") ?>:</td>
+	<td>
+    <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
+    </td>
+    <td>
     <?php  print_string("authinstructions","auth") ?>
     <?php  helpbutton("text", get_string("helptext")) ?>
-    </TD>
-</TR>
+    </td>
+</tr>

@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 //CHANGELOG:
 //15.08.2004 Added support for user syncronization
 //24.02.2003 Added support for coursecreators

@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php //$Id$
     //This page prints the backup todo list to see everything
 
     //Check login   
@@ -110,9 +110,9 @@
 
     //Now print the Backup Name tr
     echo "<tr>";
-    echo "<td align=\"right\"><P><B>";
+    echo "<td align=\"right\"><p><b>";
     echo get_string("name").":";
-    echo "</B></td><td>";
+    echo "</b></td><td>";
     echo $backup_name;
     echo "</td></tr>";
     
@@ -339,7 +339,7 @@
     }
 
     //Print final message
-    print_simple_box(get_string("backupfinished"),"CENTER");
+    print_simple_box(get_string("backupfinished"),"center");
     print_continue("$CFG->wwwroot/files/index.php?id=".$preferences->backup_course."&wdir=/backupdata");    
 
 ?>

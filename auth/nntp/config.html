@@ -1,4 +1,4 @@
-<?PHP
+<?php
     if (!isset($config->auth_nntphost)) {
         $config->auth_nntphost = "127.0.0.1";
     }
@@ -7,36 +7,36 @@
     }
 ?>
 
-<tr valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>auth_nntphost:</TD>
-	<TD>
-        <INPUT name="auth_nntphost" TYPE="text" SIZE=30 VALUE="<?php echo $config->auth_nntphost?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+	<td align="right"><p>auth_nntphost:</td>
+	<td>
+        <input name="auth_nntphost" type="text" size="30" value="<?php echo $config->auth_nntphost?>" />
 	<?php  if (isset($err["auth_nntphost"]))  formerr($err["auth_nntphost"]); ?>
-	</TD>
-    <TD>
+	</td>
+    <td>
     <?php  print_string("auth_nntphost","auth") ?>
     <?php  print_string("auth_multiplehosts","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>auth_nntpport:</TD>
-	<TD>
-    <INPUT name=auth_nntpport TYPE=text SIZE=6 VALUE="<?php echo $config->auth_nntpport?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+	<td align="right"><p>auth_nntpport:</td>
+	<td>
+    <input name="auth_nntpport" type="text" size="6" value="<?php echo $config->auth_nntpport?>" />
     <?php  if (isset($err["auth_nntpport"])) formerr($err["auth_nntpport"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_nntpport","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("instructions", "auth") ?>:</TD>
-	<TD>
-    <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><?php  p($config->auth_instructions) ?></TEXTAREA> 
-    </TD>
-    <TD>
+<tr valign="top">
+	<td align="right"><p><?php  print_string("instructions", "auth") ?>:</td>
+	<td>
+    <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
+    </td>
+    <td>
     <?php  print_string("authinstructions","auth") ?>
     <?php  helpbutton("text", get_string("helptext")) ?>
-    </TD>
-</TR>
+    </td>
+</tr>

@@ -83,13 +83,13 @@
 ?>
 <form method="post" action="backup.php" name="form">
 
-<table cellpadding=9 cellspacing=0 >
-<tr valign=top>
-    <td colspan = 3 align=center><strong><?php print_string("settings") ?></strong></td>
+<table cellpadding="9" cellspacing="0" >
+<tr valign="top">
+    <td colspan = 3 align="center"><strong><?php print_string("settings") ?></strong></td>
 </tr>
-<tr valign=top>
-    <td align=right><p><?php print_string("includemodules") ?>:</td>
-    <td nowrap>
+<tr valign="top">
+    <td align="right"><p><?php print_string("includemodules") ?>:</td>
+    <td nowrap="nowrap">
     <?php choose_from_menu($yesno_array, "backup_sche_modules", $backup_config->backup_sche_modules, "") ?>
     <?php choose_from_menu($withwithout_array, "backup_sche_withuserdata", $backup_config->backup_sche_withuserdata, "") ?>
     </td>
@@ -97,8 +97,8 @@
     <?php print_string("backupincludemoduleshelp") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><?php print_string("users") ?>:</td>
+<tr valign="top">
+    <td align="right"><p><?php print_string("users") ?>:</td>
     <td>
     <?php choose_from_menu($courseall_array, "backup_sche_users", $backup_config->backup_sche_users, "") ?>
     </td>
@@ -106,8 +106,8 @@
     <?php print_string("backupusershelp") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><?php print_string("logs") ?>:</td>
+<tr valign="top">
+    <td align="right"><p><?php print_string("logs") ?>:</td>
     <td>
     <?php choose_from_menu($yesno_array, "backup_sche_logs", $backup_config->backup_sche_logs, "") ?>
     </td>
@@ -115,8 +115,8 @@
     <?php print_string("backuplogshelp") ?>  
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><?php print_string("userfiles") ?>:</td>
+<tr valign="top">
+    <td align="right"><p><?php print_string("userfiles") ?>:</td>
     <td>
     <?php choose_from_menu($yesno_array, "backup_sche_userfiles", $backup_config->backup_sche_userfiles, "") ?>
     </td>
@@ -124,8 +124,8 @@
     <?php print_string("backupuserfileshelp") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><?php print_string("coursefiles") ?>:</td>
+<tr valign="top">
+    <td align="right"><p><?php print_string("coursefiles") ?>:</td>
     <td>
     <?php choose_from_menu($yesno_array, "backup_sche_coursefiles", $backup_config->backup_sche_coursefiles, "") ?>
     </td>
@@ -133,8 +133,8 @@
     <?php print_string("backupcoursefileshelp") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><?php print_string("keep") ?>:</td>
+<tr valign="top">
+    <td align="right"><p><?php print_string("keep") ?>:</td>
     <td>
     <?php
         choose_from_menu($keep_array, "backup_sche_keep", $backup_config->backup_sche_keep, "");
@@ -145,16 +145,16 @@
     <?php print_string("backupkeephelp") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td colspan = 3 align=center><strong><?php print_string("schedule") ?></strong></td>
+<tr valign="top">
+    <td colspan = 3 align="center"><strong><?php print_string("schedule") ?></strong></td>
 </tr>
-<tr valign=top>
-    <td colspan = 3 align=center>
+<tr valign="top">
+    <td colspan = 3 align="center">
         <?php print_string("active") ?>: <?php choose_from_menu($yesno_array, "backup_sche_active", $backup_config->backup_sche_active, "") ?>
     </td>
 </tr>
 <tr>
-    <td colspan=3 align=center>
+    <td colspan="3" align="center">
         <?php 
             //Get first day of week from languaje files
             //after searching the web I haven't find a sytem to retrieve it in php from locale info
@@ -189,18 +189,18 @@
         ?>
     </td>
 </tr>
-<tr valign=top>
-    <td colspan = 3 align=center>
+<tr valign="top">
+    <td colspan = 3 align="center">
         <?php print_string("executeat") ?>: <?php print_time_selector("backup_sche_hour","backup_sche_minute",make_timestamp(2000,1,1,$backup_config->backup_sche_hour,$backup_config->backup_sche_minute)) ?>
     </td>
 </tr>
-<tr valign=top>
-    <td colspan = 3 align=center>
-        <?php print_string("saveto") ?>: <input name="backup_sche_destination" type="text" size="40" value="<?php p($backup_config->backup_sche_destination) ?>"><?php helpbutton("directorypaths", strip_tags(get_string("directorypaths"))) ?><br><?php if (!empty($sche_destination_error)) { formerr($sche_destination_error); echo "<br>"; } ?><?php print_string("backupsavetohelp") ?>
+<tr valign="top">
+    <td colspan = 3 align="center">
+        <?php print_string("saveto") ?>: <input name="backup_sche_destination" type="text" size="40" value="<?php p($backup_config->backup_sche_destination) ?>"><?php helpbutton("directorypaths", strip_tags(get_string("directorypaths"))) ?><br /><?php if (!empty($sche_destination_error)) { formerr($sche_destination_error); echo "<br />"; } ?><?php print_string("backupsavetohelp") ?>
     </td>
 </tr>
 <tr>
-    <td colspan=3 align=center>
+    <td colspan="3" align="center">
         <input type="submit" value="<?php print_string("savechanges") ?>"></td>
 </tr>
 </table>

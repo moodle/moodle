@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php //$Id$
     //This script is used to configure and execute the backup proccess.
 
     //Define some globals for all the script
@@ -47,13 +47,13 @@
     //If no course has been selected or cancel button pressed
     if (!$id or $cancel) {
         print_header("$site->shortname: $strcoursebackup", $site->fullname,
-                     "<A HREF=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</A> -> $strcoursebackup");
+                     "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> $strcoursebackup");
 
         if ($courses = get_courses()) {
             print_heading(get_string("choosecourse"));
-            print_simple_box_start("CENTER");
+            print_simple_box_start("center");
             foreach ($courses as $course) {
-            echo "<A HREF=\"backup.php?id=$course->id\">$course->fullname ($course->shortname)</A><BR>";
+            echo "<a href=\"backup.php?id=$course->id\">$course->fullname ($course->shortname)</a><br />";
             }
             print_simple_box_end();
         } else {

@@ -50,28 +50,28 @@
         if (!$courses) {
             notify("No logs found!");
         } else {
-            echo "<table border=0 align=center cellpadding=3 cellspacing=3>";
+            echo "<table border=\"0\" align=\"center\" cellpadding=\"3\" cellspacing=\"3\">";
             //Print table header
-            echo "<tr nowrap>";
-            echo "<td nowrap align=center><font size=3>$strcourse</font></td>";
-            echo "<td nowrap align=center colspan=3><font size=3>$strtimetaken</font></td>";
-            echo "<td nowrap align=center><font size=3>$strstatus</font></td>";
-            echo "<td nowrap align=center><font size=3>$strnext</font></td>";
+            echo "<tr nowrap=\"nowrap\">";
+            echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"3\">$strcourse</font></td>";
+            echo "<td nowrap=\"nowrap\" align=\"center\" colspan=\"3\"><font size=\"3\">$strtimetaken</font></td>";
+            echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"3\">$strstatus</font></td>";
+            echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"3\">$strnext</font></td>";
             foreach ($courses as $course) {
                 //Get the course shortname
                 $coursename = get_field ("course","fullname","id",$course->courseid);
                 if ($coursename) {
-                    echo "<tr nowrap>";
-                    echo "<td nowrap><font size=2><a href=\"log.php?courseid=$course->courseid\">".$coursename."</a></td>";
-                    echo "<td nowrap><font size=2>".userdate($course->laststarttime,$strftimedatetime)."</td>";
-                    echo "<td nowrap><font size=2> - </td>";
-                    echo "<td nowrap><font size=2>".userdate($course->lastendtime,$strftimedatetime)."</td>";
+                    echo "<tr nowrap=\"nowrap\">";
+                    echo "<td nowrap=\"nowrap\"><font size=\"2\"><a href=\"log.php?courseid=$course->courseid\">".$coursename."</a></td>";
+                    echo "<td nowrap=\"nowrap\"><font size=\"2\">".userdate($course->laststarttime,$strftimedatetime)."</td>";
+                    echo "<td nowrap=\"nowrap\"><font size=\"2\"> - </td>";
+                    echo "<td nowrap=\"nowrap\"><font size=\"2\">".userdate($course->lastendtime,$strftimedatetime)."</td>";
                     if (!$course->laststatus) {
-                        echo "<td nowrap align=center><font size=2 color=red>".$strerror."</td>";
+                        echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"2\" color=\"red\">".$strerror."</td>";
                     } else {
-                        echo "<td nowrap align=center><font size=2 color=green>".$strok."</td>";
+                        echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"2\" color=\"green\">".$strok."</td>";
                     }
-                    echo "<td nowrap><font size=2>".userdate($course->nextstarttime,$strftimedatetime)."</td>";
+                    echo "<td nowrap=\"nowrap\"><font size=\"2\">".userdate($course->nextstarttime,$strftimedatetime)."</td>";
                     echo "</tr>";
                 }
             }
@@ -104,10 +104,10 @@
         if (!$executions) {
             notify("No logs found!");
         } else {
-            echo "<table border=0 align=center cellpadding=3 cellspacing=3>";
+            echo "<table border=\"0\" align=\"center\" cellpadding=\"3\" cellspacing=\"3\">";
             foreach($executions as $execution) {
-                echo "<tr nowrap>";
-                echo "<td nowrap align=center colspan=3>";
+                echo "<tr nowrap=\"nowrap\">";
+                echo "<td nowrap=\"nowrap\" align=\"center\" colspan=\"3\">";
                 print_simple_box("<center>".userdate($execution->laststarttime)."</center>", "center");
                 echo "</td>";
                 echo "</tr>";
@@ -118,11 +118,11 @@
                                          ORDER BY time");
                 if ($logs) {
                     foreach ($logs as $log) {
-                        echo "<tr nowrap>";
-                        echo "<td nowrap><font size=2>".userdate($log->time,$strftimetime)."</font></td>";
-                        $log->info = str_replace("- ERROR!!","- <font color=red>ERROR!!</font>",$log->info);
-                        $log->info = str_replace("- OK","- <font color=green>OK</font>",$log->info);
-                        echo "<td nowrap><font size=2>".str_replace("  ","&nbsp;&nbsp;&nbsp;&nbsp;",$log->info)."</font></td>";
+                        echo "<tr nowrap=\"nowrap\">";
+                        echo "<td nowrap=\"nowrap\"><font size=\"2\">".userdate($log->time,$strftimetime)."</font></td>";
+                        $log->info = str_replace("- ERROR!!","- <font color=\"red\">ERROR!!</font>",$log->info);
+                        $log->info = str_replace("- OK","- <font color=\"green\">OK</font>",$log->info);
+                        echo "<td nowrap=\"nowrap\"><font size=\"2\">".str_replace("  ","&nbsp;&nbsp;&nbsp;&nbsp;",$log->info)."</font></td>";
                         echo "</tr>";
                     }
                 }

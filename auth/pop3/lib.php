@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
        // Authentication by looking up a POP3 server
 
 function auth_user_login ($username, $password) {

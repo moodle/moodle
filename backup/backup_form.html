@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php //$Id$
     //This page prints the backup form to select everything
 
     //Check login   
@@ -74,7 +74,7 @@
 ?>
 
 <form name="form" method="post" action="<?php echo $ME ?>">
-<table cellpadding=5>
+<table cellpadding="5">
 <?php
     if ($allmods = get_records("modules") ) {
         foreach ($allmods as $mod) {
@@ -85,7 +85,7 @@
             if (isset($$var) && $$var) {
                 //Print the full tr
                 echo "<tr>";
-                echo "<td align=\"right\"><P><B>";
+                echo "<td align=\"right\"><p><b>";
                 echo get_string("include")." ". get_string("modulenameplural",$modname).":";
                 echo "</td><td>";
                 $backup_options[0] = get_string("no"); 
@@ -104,7 +104,7 @@
 
         //Now print the Users tr
         echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
+        echo "<td align=\"right\"><p><b>";
         echo get_string("users").":";
         echo "</td><td>";
         $user_options[0] = get_string("all");
@@ -115,7 +115,7 @@
 
         //Now print the Logs tr
         echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
+        echo "<td align=\"right\"><p><b>";
         echo get_string("logs").":";                                               
         echo "</td><td>";
         $log_options[0] = get_string("no");
@@ -125,7 +125,7 @@
 
         //Now print the User Files tr
         echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
+        echo "<td align=\"right\"><p><b>";
         echo get_string ("userfiles").":";
         echo "</td><td>";
         $user_file_options[0] = get_string("no"); 
@@ -135,7 +135,7 @@
 
         //Now print the Course Files tr
         echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
+        echo "<td align=\"right\"><p><b>";
         echo get_string ("coursefiles").":";
         echo "</td><td>";
         $course_file_options[0] = get_string("no");
@@ -145,11 +145,11 @@
     }
 ?>
 </table>
-<BR>
-<CENTER>
-<input type="hidden" name=id     value="<?php  p($id) ?>">
-<input type="hidden" name=launch value="check">
+<br />
+<center>
+<input type="hidden" name="id"     value="<?php  p($id) ?>">
+<input type="hidden" name="launch" value="check">
 <input type="submit" value="<?php  print_string("continue") ?>">
-<input type="submit" name=cancel value="<?php  print_string("cancel") ?>">
-</CENTER>
-</FORM>
+<input type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+</center>
+</form>

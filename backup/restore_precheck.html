@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
     //This page copies th zip to the temp directory,
     //unzip it, check that it is a valid backup file
     //inform about its contents and fill all the necesary
@@ -32,7 +32,7 @@
     $file = $CFG->dataroot."/".$file;
 
     //Start the main table
-    echo "<table cellpadding=5>";
+    echo "<table cellpadding=\"5\">";
     echo "<tr><td>";
     
     //Start the mail ul
@@ -138,13 +138,13 @@
     //Finally, a little form to continue
     //with some hidden fields
     if ($status) {
-        echo "<br><CENTER>";
+        echo "<br /><center>";
         $hidden["backup_unique_code"] = $backup_unique_code;
         $hidden["launch"]             = "form";
         $hidden["file"]               =  $file;
         $hidden["id"]                 =  $id;
         print_single_button("restore.php", $hidden, get_string("continue"),"post");
-        echo "</CENTER>";
+        echo "</center>";
     }
   
     if (!$status) {

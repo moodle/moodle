@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php //$Id$
     //This page prints the restore form to select everything yo want
     //to restore. Form is dinamically buid, depending of "info" object
     //that contains the backup contents and depending of every mod
@@ -98,7 +98,7 @@
 
 ?>
 
-<SCRIPT LANGUAGE="JavaScript">
+<script language="JavaScript">
 <!--
 function selectItemInMenuByName(formId, menuName, selectIndex ) {
     myForm = document.getElementById(formId)
@@ -114,13 +114,13 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
 </script>
 
 <form name="form1" id="form1" method="post" action="<?php echo $ME ?>">
-<table cellpadding=5>
+<table cellpadding="5">
 <?php
 
     //First, course destination
     //Print the full tr
     echo "<tr>";
-    echo "<td align=\"right\"><P><b>";
+    echo "<td align=\"right\"><p><b>";
     echo get_string("restoreto").":</b>";
     echo "</td><td>";
     if (isteacheredit($id) and !isadmin()) {
@@ -162,7 +162,7 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
                     if (isset($info->mods[$modname]) && $info->mods[$modname]->backup == "true") {
                         //Print the full tr
                         echo "<tr>";
-                        echo "<td align=\"right\"><P><B>";
+                        echo "<td align=\"right\"><p><b>";
                         echo get_string("include")." ". get_string("modulenameplural",$modname).":";
                         echo "</td><td>";
                         $restore_options[0] = get_string("no"); 
@@ -201,7 +201,7 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
 
         //Now print the Users tr
         echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
+        echo "<td align=\"right\"><p><b>";
         echo get_string("users").":";
         echo "</td><td>";
         //If some user is present in the backup file
@@ -222,7 +222,7 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
 
         //Now print the Logs tr
         echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
+        echo "<td align=\"right\"><p><b>";
         echo get_string("logs").":";                                               
         echo "</td><td>";
         //If logs are in the backup file, show menu, else fixed to no
@@ -238,7 +238,7 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
 
         //Now print the User Files tr
         echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
+        echo "<td align=\"right\"><p><b>";
         echo get_string ("userfiles").":";
         echo "</td><td>";
         //If user files are in the backup file, show menu, else fixed to no
@@ -254,7 +254,7 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
 
         //Now print the Course Files tr
         echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
+        echo "<td align=\"right\"><p><b>";
         echo get_string ("coursefiles").":";
         echo "</td><td>";
         //If course files are in the backup file, show menu, else fixed to no
@@ -272,11 +272,11 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
     }
 ?>
 </table>
-<BR>
-<CENTER>
-<input type="hidden" name=id     value="<?php  p($id) ?>">
-<input type="hidden" name=launch value="check">
+<br />
+<center>
+<input type="hidden" name="id"     value="<?php  p($id) ?>">
+<input type="hidden" name="launch" value="check">
 <input type="submit" value="<?php  print_string("continue") ?>">
-<input type="submit" name=cancel value="<?php  print_string("cancel") ?>">
-</CENTER>
-</FORM>
+<input type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+</center>
+</form>

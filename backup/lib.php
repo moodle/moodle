@@ -282,7 +282,7 @@
         global $CFG;
 
         if (is_file($from_file)) {
-            //echo "<br>Copying ".$from_file." to ".$to_file;              //Debug
+            //echo "<br />Copying ".$from_file." to ".$to_file;              //Debug
             //$perms=fileperms($from_file);
             //return copy($from_file,$to_file) && chmod($to_file,$perms);
             umask(0000);
@@ -292,7 +292,7 @@
             return backup_copy_dir($from_file,$to_file);
         }
         else{
-            //echo "<br>Error: not file or dir ".$from_file;               //Debug
+            //echo "<br />Error: not file or dir ".$from_file;               //Debug
             return false;
         }
     }
@@ -302,7 +302,7 @@
         global $CFG;
 
         if (!is_dir($to_file)) {
-            //echo "<br>Creating ".$to_file;                                //Debug
+            //echo "<br />Creating ".$to_file;                                //Debug
             umask(0000);
             $status = mkdir($to_file,$CFG->directorypermissions);
         }

@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php //$Id$
     //This page receives the required info and executes the restore
     //with the parameters suplied. Whe finished, delete temporary
     //data from backup_tables and temp directory
@@ -47,7 +47,7 @@
     }
 
     //Start the main table
-    echo "<table cellpadding=5>";
+    echo "<table cellpadding=\"5\">";
     echo "<tr><td>";
 
     //Start the main ul
@@ -132,7 +132,7 @@
 
     //Now create users as needed 
     if ($status and ($restore->users == 0 or $restore->users == 1)) {
-        echo "<li>".get_string("creatingusers")."<br>";
+        echo "<li>".get_string("creatingusers")."<br />";
         if (!$status = restore_create_users($restore,$xml_file)) {
             notify("Could not restore users.");
         }
@@ -168,7 +168,7 @@
                     if ($counter % 10 == 0) {
                         echo ".";
                         if ($counter % 200 == 0) {
-                            echo "<br>";
+                            echo "<br />";
                         }
                         backup_flush(300);
                     }
@@ -187,7 +187,7 @@
 
     //Now create categories and questions as needed (STEP1)
     if ($status and ($restore->mods['quiz']->restore)) {
-         echo "<li>".get_string("creatingcategoriesandquestions")."<br>";
+         echo "<li>".get_string("creatingcategoriesandquestions")."<br />";
          if (!$status = restore_create_questions($restore,$xml_file)) {
              notify("Could not restore categories and questions!");
          }
@@ -195,7 +195,7 @@
 
     //Now create user_files as needed
     if ($status and ($restore->user_files)) {
-        echo "<li>".get_string("copyinguserfiles")."<br>";
+        echo "<li>".get_string("copyinguserfiles")."<br />";
         if (!$status = restore_user_files($restore)) {
             notify("Could not restore user files!");
         }
@@ -210,7 +210,7 @@
 
     //Now create course files as needed
     if ($status and ($restore->course_files)) {
-        echo "<li>".get_string("copyingcoursefiles")."<br>";
+        echo "<li>".get_string("copyingcoursefiles")."<br />";
         if (!$status = restore_course_files($restore)) {
             notify("Could not restore course files!");
         }
@@ -320,7 +320,7 @@
     }
 
     //Print final message
-    print_simple_box(get_string("restorefinished"),"CENTER");
+    print_simple_box(get_string("restorefinished"),"center");
     print_continue("$CFG->wwwroot/course/view.php?id=".$restore->course_id);
 
 ?>

@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php //$Id$
     //Functions used in restore
    
     //This function unzips a zip file in the same directory that it is
@@ -155,14 +155,14 @@
                         $post->message = addslashes($result);
                         $status = update_record("forum_posts",$post);
                         if ($CFG->debug>7) {
-                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br>";
+                            echo "<br />";
                         }
                         backup_flush(300);
                     }
@@ -198,14 +198,14 @@
                         $resource->alltext = addslashes($result);
                         $status = update_record("resource",$resource);
                         if ($CFG->debug>7) {
-                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br>";
+                            echo "<br />";
                         }
                         backup_flush(300);
                     }
@@ -899,17 +899,17 @@
 
                 //Here, if create_preferences, do it as necessary
                 if ($create_preferences) {
-                    //echo "Checking for preferences of user ".$user->username."<br>";         //Debug
+                    //echo "Checking for preferences of user ".$user->username."<br />";         //Debug
                     //Get user new id from backup_ids
                     $data = backup_getid($restore->backup_unique_code,"user",$userid);
                     $newid = $data->new_id;
                     if (isset($user->user_preferences)) {
-                        //echo "Preferences exist in backup file<br>";                         //Debug
+                        //echo "Preferences exist in backup file<br />";                         //Debug
                         foreach($user->user_preferences as $user_preference) {
-                            //echo $user_preference->name." = ".$user_preference->value."<br>";    //Debug
+                            //echo $user_preference->name." = ".$user_preference->value."<br />";    //Debug
                             //We check if that user_preference exists in DB
                             if (!record_exists("user_preferences","userid",$newid,"name",$user_preference->name)) {
-                                //echo "Creating it<br>";                                              //Debug
+                                //echo "Creating it<br />";                                              //Debug
                                 //Prepare the record and insert it
                                 $user_preference->userid = $newid;
                                 $status = insert_record("user_preferences",$user_preference);
@@ -1162,7 +1162,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1299,7 +1299,7 @@
         $result = str_replace($search,$replace,$content);
 
         if ($result != $content && $CFG->debug>7) {                                  //Debug
-            echo "<br><hr>".$content."<br>changed to<br>".$result."<hr><br>";        //Debug
+            echo "<br /><hr />".$content."<br />changed to<br />".$result."<hr /><br />";        //Debug
         }                                                                            //Debug
 
         return $result;
@@ -1351,7 +1351,7 @@
                             if ($counter % 2 == 0) {
                                 echo ".";
                                 if ($counter % 40 == 0) {
-                                echo "<br>";
+                                echo "<br />";
                                 }
                                 backup_flush(300);
                             }
@@ -1404,7 +1404,7 @@
                     if ($counter % 2 == 0) {       
                         echo ".";
                         if ($counter % 40 == 0) {       
-                        echo "<br>";
+                        echo "<br />";
                         }
                         backup_flush(300);
                     }
@@ -1521,14 +1521,14 @@
                             //We have to recode the userid field
                             $user = backup_getid($restore->backup_unique_code,"user",$dblog->userid);
                             if ($user) {
-                                //echo "User ".$dblog->userid." to user ".$user->new_id."<br>";                             //Debug
+                                //echo "User ".$dblog->userid." to user ".$user->new_id."<br />";                             //Debug
                                 $dblog->userid = $user->new_id;
                             }
                             //We have to recode the cmid field (if module isn't "course" or "user")
                             if ($dblog->module != "course" and $dblog->module != "user") {
                                 $cm = backup_getid($restore->backup_unique_code,"course_modules",$dblog->cmid);
                                 if ($cm) {
-                                    //echo "Module ".$dblog->cmid." to module ".$cm->new_id."<br>";                         //Debug
+                                    //echo "Module ".$dblog->cmid." to module ".$cm->new_id."<br />";                         //Debug
                                     $dblog->cmid = $cm->new_id;
                                 } else {
                                     $dblog->cmid = 0;
@@ -1553,7 +1553,7 @@
                         if ($counter % 10 == 0) {
                             echo ".";
                             if ($counter % 200 == 0) {
-                                echo "<br>";
+                                echo "<br />";
                             }
                             backup_flush(300);
                         }
@@ -1575,7 +1575,7 @@
         $status = true;
         $toinsert = false;
 
-        //echo "<hr>Before transformations<br>";                                        //Debug
+        //echo "<hr />Before transformations<br />";                                        //Debug
         //print_object($log);                                                           //Debug
         //Depending of the action, we recode different things
         switch ($log->action) {
@@ -1687,16 +1687,16 @@
             $toinsert = true;
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
         }
 
-        //echo "After transformations<br>";                                             //Debug
+        //echo "After transformations<br />";                                             //Debug
         //print_object($log);                                                           //Debug
 
         //Now if $toinsert is set, insert the record
         if ($toinsert) {
-            //echo "Inserting record<br>";                                              //Debug
+            //echo "Inserting record<br />";                                              //Debug
             $status = insert_record("log",$log);
         }
         return $status;
@@ -1708,7 +1708,7 @@
         $status = true;
         $toinsert = false;
         
-        //echo "<hr>Before transformations<br>";                                        //Debug
+        //echo "<hr />Before transformations<br />";                                        //Debug
         //print_object($log);                                                           //Debug
         //Depending of the action, we recode different things                           
         switch ($log->action) {
@@ -1748,16 +1748,16 @@
             }
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
         }
 
-        //echo "After transformations<br>";                                             //Debug
+        //echo "After transformations<br />";                                             //Debug
         //print_object($log);                                                           //Debug
 
         //Now if $toinsert is set, insert the record
         if ($toinsert) {
-            //echo "Inserting record<br>";                                              //Debug
+            //echo "Inserting record<br />";                                              //Debug
             $status = insert_record("log",$log);
         }
         return $status;
@@ -1769,7 +1769,7 @@
         $status = true;
         $toinsert = false;
 
-        //echo "<hr>Before transformations<br>";                                        //Debug
+        //echo "<hr />Before transformations<br />";                                        //Debug
         //print_object($log);                                                           //Debug
 
         //Now we see if the required function in the module exists
@@ -1783,12 +1783,12 @@
             }
         }
 
-        //echo "After transformations<br>";                                             //Debug
+        //echo "After transformations<br />";                                             //Debug
         //print_object($log);                                                           //Debug
 
         //Now if $toinsert is set, insert the record
         if ($toinsert) {
-            //echo "Inserting record<br>";                                              //Debug
+            //echo "Inserting record<br />";                                              //Debug
             $status = insert_record("log",$log);
         }
         return $status;
@@ -1877,7 +1877,7 @@
 
             //Check if we are into INFO zone
             //if ($this->tree[2] == "INFO")                                                             //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
 
         //This is the startTag handler we use where we are reading the course header zone (todo="COURSE_HEADER")
@@ -1891,7 +1891,7 @@
 
             //Check if we are into COURSE_HEADER zone
             //if ($this->tree[3] == "HEADER")                                                           //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
 
         //This is the startTag handler we use where we are reading the sections zone (todo="SECTIONS")
@@ -1905,7 +1905,7 @@
 
             //Check if we are into SECTIONS zone
             //if ($this->tree[3] == "SECTIONS")                                                         //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
         
         //This is the startTag handler we use where we are reading the user zone (todo="USERS")
@@ -1916,7 +1916,7 @@
 
             //Check if we are into USERS zone  
             //if ($this->tree[3] == "USERS")                                                            //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
 
         //This is the startTag handler we use where we are reading the questions zone (todo="QUESTIONS")
@@ -1934,7 +1934,7 @@
 
             //Check if we are into QUESTION_CATEGORIES zone
             //if ($this->tree[3] == "QUESTION_CATEGORIES")                                              //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
 
             //If we are under a QUESTION_CATEGORY tag under a QUESTION_CATEGORIES zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
@@ -1962,7 +1962,7 @@
 
             //Check if we are into SCALES zone
             //if ($this->tree[3] == "SCALES")                                                           //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
 
             //If we are under a SCALE tag under a SCALES zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
@@ -1989,7 +1989,7 @@
 
             //Check if we are into GROUPS zone
             //if ($this->tree[3] == "GROUPS")                                                           //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
 
             //If we are under a GROUP tag under a GROUPS zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
@@ -2017,7 +2017,7 @@
 
             //Check if we are into EVENTS zone
             //if ($this->tree[3] == "EVENTS")                                                           //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
 
             //If we are under a EVENT tag under a EVENTS zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
@@ -2045,7 +2045,7 @@
 
             //Check if we are into MODULES zone
             //if ($this->tree[3] == "MODULES")                                                          //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
 
             //If we are under a MOD tag under a MODULES zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
@@ -2073,7 +2073,7 @@
 
             //Check if we are into LOGS zone
             //if ($this->tree[3] == "LOGS")                                                             //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
 
             //If we are under a LOG tag under a LOGS zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
@@ -2094,7 +2094,7 @@
             //Output something to avoid browser timeouts...
             backup_flush();
 
-            echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+            echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
  
         //This is the endTag handler we use where we are reading the info zone (todo="INFO")
@@ -2102,8 +2102,8 @@
             //Check if we are into INFO zone
             if ($this->tree[2] == "INFO") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
                 //Dependig of different combinations, do different things
                 if ($this->level == 3) {
                     switch ($tagName) {
@@ -2181,8 +2181,8 @@
             //Check if we are into COURSE_HEADER zone
             if ($this->tree[3] == "HEADER") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
                 //Dependig of different combinations, do different things
                 if ($this->level == 4) {
                     switch ($tagName) {
@@ -2309,8 +2309,8 @@
             //Check if we are into SECTIONS zone
             if ($this->tree[3] == "SECTIONS") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
                 //Dependig of different combinations, do different things
                 if ($this->level == 4) {
                     switch ($tagName) {
@@ -2408,8 +2408,8 @@
             //Check if we are into USERS zone
             if ($this->tree[3] == "USERS") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
                 //Dependig of different combinations, do different things
                 if ($this->level == 4) {
                     switch ($tagName) {
@@ -2424,7 +2424,7 @@
                             if ($this->counter % 10 == 0) {
                                 echo ".";
                                 if ($this->counter % 200 == 0) {
-                                echo "<br>";
+                                echo "<br />";
                                 }
                                 backup_flush(300);
                             }
@@ -2627,8 +2627,8 @@
             //Check if we are into QUESTION_CATEGORIES zone
             if ($this->tree[3] == "QUESTION_CATEGORIES") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
                 //Acumulate data to info (content + close tag)
                 //Reconvert: strip htmlchars again and trim to generate xml data
                 if (!isset($this->temp)) {
@@ -2677,8 +2677,8 @@
             //Check if we are into SCALES zone
             if ($this->tree[3] == "SCALES") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
                 //Acumulate data to info (content + close tag)
                 //Reconvert: strip htmlchars again and trim to generate xml data
                 if (!isset($this->temp)) {
@@ -2727,8 +2727,8 @@
             //Check if we are into GROUPS zone
             if ($this->tree[3] == "GROUPS") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
                 //Acumulate data to info (content + close tag)
                 //Reconvert: strip htmlchars again and trim to generate xml data
                 if (!isset($this->temp)) {
@@ -2777,8 +2777,8 @@
             //Check if we are into EVENTS zone
             if ($this->tree[3] == "EVENTS") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
                 //Acumulate data to info (content + close tag)
                 //Reconvert: strip htmlchars again and trim to generate xml data
                 if (!isset($this->temp)) {
@@ -2827,8 +2827,8 @@
             //Check if we are into MODULES zone
             if ($this->tree[3] == "MODULES") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
                 //Acumulate data to info (content + close tag)
                 //Reconvert: strip htmlchars again and trim to generate xml data
                 if (!isset($this->temp)) {
@@ -2883,8 +2883,8 @@
             //Check if we are into LOGS zone
             if ($this->tree[3] == "LOGS") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
                 //Acumulate data to info (content + close tag)
                 //Reconvert: strip htmlchars again and trim to generate xml data
                 if (!isset($this->temp)) {
@@ -2944,8 +2944,8 @@
         //This is the endTag default handler we use when todo is undefined
         function endElement($parser, $tagName) {
             if (trim($this->content))                                                                     //Debug
-                echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
-            echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
+            echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
 
             //Clear things
             $this->tree[$this->level] = "";

@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php //$Id$
     //This script is used to configure and execute the restore proccess.
 
     //Define some globals for all the script
@@ -53,7 +53,7 @@
     //If no file has been selected from the FileManager, inform and end
     if (!$file) {
         print_header("$site->shortname: $strcourserestore", $site->fullname,
-                     "<A HREF=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</A> -> $strcourserestore");
+                     "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> $strcourserestore");
         print_heading(get_string("nofilesselected"));
         print_continue("$CFG->wwwroot/$CFG->admin/index.php");
         print_footer();
@@ -63,7 +63,7 @@
     //If cancel has been selected, inform and end
     if ($cancel) {
         print_header("$site->shortname: $strcourserestore", $site->fullname,
-                     "<A HREF=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</A> -> $strcourserestore");
+                     "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> $strcourserestore");
         print_heading(get_string("restorecancelled"));
         print_continue("$CFG->wwwroot/$CFG->admin/index.php");
         print_footer();
