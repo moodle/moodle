@@ -96,15 +96,15 @@
     echo "<tr><td align=\"right\">";
     print_string("category", "quiz");
     echo ":</td><td>";
-    choose_from_menu($categories, "category", "$category->id", "");
-    echo "</tr>";
+    echo str_replace('&nbsp;', '', $categories[$category->id]) . " ($course->shortname)";
+    echo "</td></tr>";
 
     echo "<tr><td align=\"right\">";
     print_string("fileformat", "quiz");
     echo ":</td><td>";
     choose_from_menu($fileformatnames, "format", "gift", "");
     helpbutton("export", $strexportquestions, "quiz");
-    echo "</tr>";
+    echo "</td></tr>";
 
     echo "<tr><td align=\"right\">";
     print_string("exportname", "quiz" );
