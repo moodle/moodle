@@ -172,11 +172,11 @@ class block_rss_client extends block_base {
                     isset($this->config->block_rss_client_show_channel_image) && 
                         $this->config->block_rss_client_show_channel_image &&
                             isset($rss->image) && isset($rss->image['link']) && isset($rss->image['title']) && isset($rss->image['url']) ) {
-                $returnstring .= '<div class="rssclientimage"><a href="'. $rss->image['link'] .'"><img src="'. $rss->image['url'] .'" title="'. $rss->image['title'] .'" alt="'. $rss->image['title'] .'"/></a></div><br />';
+                $returnstring .= '<div class="image"><a href="'. $rss->image['link'] .'"><img src="'. $rss->image['url'] .'" title="'. $rss->image['title'] .'" alt="'. $rss->image['title'] .'"/></a></div><br />';
             }
 
             if ($showtitle) {
-                $returnstring .= '<div class="rssclienttitle">'. $feedtitle .'</div><br />';
+                $returnstring .= '<div class="title">'. $feedtitle .'</div><br />';
             } 
 
             $formatoptions->para = false;
@@ -195,11 +195,11 @@ class block_rss_client extends block_base {
 
                 $item['link'] = str_replace('&', '&amp;', $item['link']);
 
-                $returnstring .= '<div class="rssclientlink"><a href="'. $item['link'] .'" target="_new">'. $item['title'] . '</a></div>' ."\n";
+                $returnstring .= '<div class="link"><a href="'. $item['link'] .'" target="_new">'. $item['title'] . '</a></div>' ."\n";
 
                 
                 if ($display_description && !empty($item['description'])){
-                    $returnstring .= '<div class="rssclientdescription">'.
+                    $returnstring .= '<div class="description">'.
                                      format_text($item['description'], FORMAT_MOODLE, $formatoptions, $this->courseid) . 
                                      '</div>' ."\n";
                 }
@@ -207,7 +207,7 @@ class block_rss_client extends block_base {
 
             if (!empty($rss->channel['link'])) {
                 if (!empty($this->config) && isset($this->config->block_rss_client_show_channel_link) && $this->config->block_rss_client_show_channel_link) {
-                    $returnstring .=  '<div class="rssclientchannellink"><br /><a href="'. $rss->channel['link'] .'">'. get_string('block_rss_client_channel_link', 'block_rss_client') .'</a></div>';
+                    $returnstring .=  '<div class="channellink"><br /><a href="'. $rss->channel['link'] .'">'. get_string('block_rss_client_channel_link', 'block_rss_client') .'</a></div>';
                 } 
                 if (!empty($feedtitle) ) {
                     $feedtitle = '<a href="'. $rss->channel['link'] .'">'. $feedtitle .'</a>';
