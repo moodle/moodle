@@ -1615,6 +1615,29 @@ function obfuscate_mailto($email, $label="") {
                                                         obfuscate_text($label));
 }
 
+function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
+/// Prints a single paging bar to provide access to other pages  (usually in a search)
+
+    if ($totalcount > $perpage) {
+        echo "<p>".get_string("page").":";
+        $count = 0;
+        while ($totalcount > 0) {
+            $displaypage = $count+1;
+            if ($page == $count) {
+                echo "&nbsp;&nbsp;$displaypage";
+            } else {
+                echo "&nbsp;&nbsp;<a href=\"{$baseurl}page=$count\">$displaypage</a>";
+            }
+            $count++;
+            $totalcount -= $perpage;
+        }
+        $pagenum = $page + 1;
+        if ($pagenum != $count) {
+            echo "&nbsp;&nbsp;(<a href=\"{$baseurl}page=$pagenum\">".get_string("next")."</a>)";
+        }
+        echo "</p>";
+    }
+}
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

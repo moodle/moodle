@@ -10,6 +10,16 @@
 
     $search = trim(strip_tags($search));
 
+    if ($search) {
+        $searchterms = explode(" ", $search);    // Search for words independently
+        foreach ($searchterms as $key => $searchterm) {
+            if (strlen($searchterm) < 2) {
+                unset($searchterms[$key]);
+            }
+        }
+        $search = trim(implode(" ", $searchterms));
+    }
+
     if (! $course = get_record("course", "id", $id)) {
         error("Course id is incorrect.");
     }
@@ -23,6 +33,7 @@
     $strforums = get_string("modulenameplural", "forum");
     $strsearch = get_string("search", "forum");
     $strsearchresults = get_string("searchresults", "forum");
+    $strpage = get_string("page");
 
     $searchform = forum_print_search_form($course, $search, true, "plain");
 
@@ -36,12 +47,20 @@
         print_header("$course->shortname: $strsearch", "$course->fullname",
                  "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> -> 
                   <A HREF=\"index.php?id=$course->id\">$strforums</A> -> $strsearch", "search.search",
-                  "", "",  $searchform);
+                  "", "");
+
+
+        print_simple_box_start("center");
+        echo "<center>";
+        echo $searchform;
+        echo "</center><br />";
+        print_string("searchhelp");
+        print_simple_box_end();
     }
 
     if ($search) {
      
-        if (!$posts =  forum_search_posts($search, $course->id, $page*$perpage, $perpage)) {
+        if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
             if ($page) {
                 print_heading(get_string("nomorepostscontaining", "forum", $search));
                 print_continue("search.php?id=$course->id&search=".urlencode($search));
@@ -51,6 +70,12 @@
             print_footer($course);
             exit;
         }
+
+        print_heading("$strsearchresults: $totalcount");
+
+        echo "<center>";
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&id=$course->id&perpage=$perpage&");
+        echo "</center>";
 
         foreach ($posts as $post) {
 
@@ -80,18 +105,9 @@
             echo "<br />";
         }
 
-        if (count($posts) == $perpage) {
-            $options = array();
-            $options["id"] = $course->id;
-            $options["search"] = $search;
-            $options["page"] = $page+1;
-            $options["perpage"] = $perpage;
-            echo "<center>";
-            print_single_button("search.php", $options, get_string("searcholderposts", "forum"));
-            echo "</center>";
-        } else {
-            print_heading(get_string("nomorepostscontaining", "forum", $search));
-        }
+        echo "<center>";
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&id=$course->id&perpage=$perpage&");
+        echo "</center>";
     }
 
     print_footer($course);
