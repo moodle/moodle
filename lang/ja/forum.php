@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 development (2003042801)
+      // forum.php - created with Moodle 1.0.9 development (2003051200)
 
 
 $string['addanewdiscussion'] = "トピックを追加";
@@ -27,10 +27,10 @@ $string['eachuserforum'] = "ディスカッションを1件投稿";
 $string['edit'] = "編集";
 $string['editing'] = "編集";
 $string['emptymessage'] = "投稿に異常があります。空白のままか添付ファイルのサイズが制限を越えています。変更は保存されませんでした。";
-$string['everyonecanchoose'] = "全員を参加させることが出来ます";
+$string['everyonecanchoose'] = "全員が登録することが出来ます";
 $string['everyoneissubscribed'] = "全員がこのフォーラムに登録されます";
-$string['forcesubscribe'] = "全員を参加させる";
-$string['forcesubscribeq'] = "全員を参加させますか?";
+$string['forcesubscribe'] = "全員を登録する";
+$string['forcesubscribeq'] = "全員を登録しますか?";
 $string['forum'] = "フォーラム";
 $string['forumintro'] = "フォーラム紹介";
 $string['forumname'] = "フォーラム名";
@@ -62,7 +62,7 @@ $string['nodiscussions'] = "トピックはありません";
 $string['noguestpost'] = "申し訳ございません、ゲストは投稿できません";
 $string['noposts'] = "投稿がありません";
 $string['nopostscontaining'] = " \$a が含まれる投稿は見つかりませんでした";
-$string['nosubscribers'] = "このフォーラムには参加者はいません";
+$string['nosubscribers'] = "このフォーラムには登録者はいません";
 $string['nownotsubscribed'] = "\$a->name 宛に「 \$a->forum 」のコピーは送信されました。";
 $string['nowsubscribed'] = "\$a->name 宛に「 \$a->forum 」のコピーが送信されました。";
 $string['numposts'] = "\$a 投稿";
@@ -93,16 +93,18 @@ $string['search'] = "検索";
 $string['searchforums'] = "フォーラムを検索";
 $string['searchresults'] = "検索結果";
 $string['sendinratings'] = "最新のレーティングを送信する";
-$string['showsubscribers'] = "参加者を表示";
+$string['showsubscribers'] = "登録者を表示";
 $string['singleforum'] = "単一ディスカッション";
 $string['startedby'] = "ディスカッションの開始";
 $string['subject'] = "題名";
-$string['subscribe'] = "このフォーラムに参加する";
-$string['subscribed'] = "参加";
-$string['subscribers'] = "参加者";
-$string['subscribersto'] = "\$a の参加者";
-$string['subscriptions'] = "参加";
-$string['unsubscribe'] = "このフォーラムから登録を抹消する";
+$string['subscribe'] = "フォーラムに登録する";
+$string['subscribed'] = "登録";
+$string['subscribers'] = "登録者";
+$string['subscribersto'] = "\$a の登録者";
+$string['subscription'] = "登録";
+$string['subscriptions'] = "登録";
+$string['unsubscribe'] = "フォーラムから登録抹消する";
+$string['unsubscribed'] = "フォーラムに登録しない";
 $string['youratedthis'] = "あなたの評価";
 $string['yournewtopic'] = "新規トピック";
 $string['yourreply'] = "あなたの返信";
