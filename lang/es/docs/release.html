@@ -17,6 +17,69 @@
 <body bgcolor="#FFFFFF">
 <h1>Notas sobre versiones</h1>
 
+<h3> Moodle 1.4.1   (12 de Septiembre de 2004)</h3>
+
+<ul><dl>
+    <dt>Unas pocas cosas nuevas</dt>
+    <dd>
+      <ul>
+        <li>Nuevo filtro de &quot;Protecci&oacute;n de Correo&quot; que   codifica
+           las direcciones de correo dentro de todos los textos (para ayudar
+          a prevenir
+          la captura automatizada de
+          direcciones por terceros).</li>
+        <li>Las direcciones de correo permitidas ahora pueden ser restringidas
+          (mirar el fichero config-dist.php para m&aacute;s detalles).</li>
+        <li>Nuevas instrucciones para los traductores, embebidas en el entorno
+          de traducci&oacute;n.</li>
+        <li>Nueva p&aacute;gina de ayuda para las &quot;Rutas de Directorios&quot;.</li>
+      </ul>
+    </dd>
+    <dt>Y algunos problemas solucionados</dt>
+    <dd>
+      <ul>
+        <li>Mejorado el rendimiento en la visualizaci&oacute;n de los registros del
+          sitio.</li>
+        <li>Mejorada la paginaci&oacute;n y el rendimiento en el glosario.</li>
+        <li>Las entradas del glosario ahora son mostradas correctamente si pertenecen
+          a varias categor&iacute;as.</li>
+        <li>No se redeclara &quot; auth_user_login&quot; tras una entrada fallida.</li>
+        <li>A&ntilde;adidos dos iconos que faltaban en el tema &quot;cordoroyblue&quot;.</li>
+        <li>A&ntilde;adido el bot&oacute;n "Nuevo Evento" en la p&aacute;gina de &quot;Pr&oacute;ximos
+          Eventos&quot;.</li>
+        <li>Siempre se utiliza &quot; addslashes&quot; en los mensajes del chat (versi&oacute;n
+          demonio) antes de introducirlos en la bd.</li>
+        <li>Solucionados problemas en la utilizaci&oacute;n de los &quot;Periodos
+          Fijos de Matriculaci&oacute;n&quot;
+          cuando est&aacute;n configurados para un curso.</li>
+        <li>El identificador del &quot;curso-portada&quot; (definido como
+          SITEID) ya no se asume que sea siempre 1.</li>
+        <li>Los l&iacute;mites de memoria por defecto son aumentados por encima de los
+          16M, para ayudar a Moodle a continuar trabajando incluso cuando haya
+          problemas de memoria no planeados.</li>
+        <li>Los emoticones ahora son mostrados como im&aacute;genes en el formato &quot;Markdown&quot;.</li>
+        <li>Los talleres funcionan en el bloque de &quot;Actividad Reciente&quot; otra
+          vez.</li>
+        <li>file.php ahora solo puede ser utilizado para acceder a archivos dentro
+          del curso.</li>
+        <li>Mejorado el funcionamiento de los bloques de calendario en la portada
+          del sitio.</li>
+        <li>Solucionado un problema de comillas producido por el instalador para
+          las bases de datos  PostgreSQL.</li>
+        <li>Solucionados algunos problemas de visualizaci&oacute;n de respuestas correctas
+          en la revisi&oacute;n de los cuestionarios.</li>
+        <li>Las etiquetas &lt;tt> y &lt;code> ahora son permitidas.</li>
+        <li>En los res&uacute;menes de secciones y de cursos y las etiquetas
+          ya no se proh&iacute;be el uso de Javascript.</li>
+        <li>Solucionado un extra&ntilde;o problema en LDAP que pod&iacute;a ser causa de la
+          no creaci&oacute;n de nuevas cuentas.</li>
+      </ul>
+    </dd>
+  </dl>
+</ul>
+
+<p>&nbsp;</p>
+
 <h3> Moodle 1.4   (31 de Agosto de 2004)</h3>
 
 <ul><dl>
