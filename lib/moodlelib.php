@@ -301,6 +301,10 @@ function reload_user_preferences() {
 
     global $USER;
 
+    if(empty($USER) || empty($USER->id)) {
+        return false;
+    }
+
     unset($USER->preference);
 
     if ($preferences = get_records('user_preferences', 'userid', $USER->id)) {
@@ -329,7 +333,12 @@ function set_user_preference($name, $value, $userid=NULL) {
     global $USER;
 
     if (empty($userid)){
-        $userid = $USER->id;
+        if(!empty($USER) && !empty($USER->id)) {
+            $userid = $USER->id;
+        }
+        else {
+            return false;
+        }
     }
 
     if (empty($name)) {
@@ -338,7 +347,9 @@ function set_user_preference($name, $value, $userid=NULL) {
 
     if ($preference = get_record('user_preferences', 'userid', $userid, 'name', $name)) {
         if (set_field('user_preferences', 'value', $value, 'id', $preference->id)) {
-            $user->preference[$name] = $value;
+            if(!empty($USER)) {
+                $USER->preference[$name] = $value;
+            }
             return true;
         } else {
             return false;
@@ -349,7 +360,9 @@ function set_user_preference($name, $value, $userid=NULL) {
         $preference->name   = $name;
         $preference->value  = (string)$value;
         if (insert_record('user_preferences', $preference)) {
-            $user->preference[$name] = $value;
+            if(!empty($USER)) {
+                $USER->preference[$name] = $value;
+            }
             return true;
         } else {
             return false;
@@ -370,7 +383,12 @@ function unset_user_preference($name, $userid=NULL) {
     global $USER;
 
     if (empty($userid)){
-        $userid = $USER->id;
+        if(!empty($USER) && !empty($USER->id)) {
+            $userid = $USER->id;
+        }
+        else {
+            return false;
+        }
     }
 
     return delete_records('user_preferences', 'userid', $userid, 'name', $name);
@@ -392,14 +410,18 @@ function set_user_preferences($prefarray, $userid=NULL) {
     }
 
     if (empty($userid)){
-        $userid = $USER->id;
+        if(!empty($USER) && !empty($USER->id)) {
+            $userid = $USER->id;
+        }
+        else {
+            return false;
+        }
     }
 
     $return = true;
     foreach ($prefarray as $name => $value) {
-        // The order is important; if the test for return is done first,
-        // then if one function call fails all the remaining ones will
-        // be "optimized away"
+        // The order is important; if the test for return is done first, then
+        // if one function call fails all the remaining ones will be "optimized away"
         $return = set_user_preference($name, $value, $userid) and $return;
     }
     return $return;
