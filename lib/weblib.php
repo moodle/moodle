@@ -998,7 +998,7 @@ function highlight($needle, $haystack, $case=0,
     }
     $haystack = str_replace(array_keys($final),$final,$haystack);
 
-    return stripslashes($haystack);
+    return $haystack;
 }
 
 function highlightfast($needle, $haystack) {
