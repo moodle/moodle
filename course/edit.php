@@ -22,11 +22,15 @@
         if (!iscreator()) {
             error("Only administrators and teachers can use this page");
         }
+
+        $course = NULL;
     }
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");
     }
+
+
 
 
 /// If data submitted, then process and store.
@@ -112,6 +116,7 @@
             $form->newsitems = 5;
             $form->showrecent = 1;
             $form->category = 1;
+            $form->id = "";
         }
     }
 
@@ -131,7 +136,7 @@
     $straddnewcourse = get_string("addnewcourse");
     $stradministration = get_string("administration");
 
-    if (isset($course)) {
+    if (!empty($course)) {
 	    print_header($streditcoursesettings, "$course->fullname", 
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                       -> $streditcoursesettings", $focus);
