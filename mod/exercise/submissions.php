@@ -47,7 +47,7 @@
 
     // ... print the header and...
     print_header_simple("$exercise->name", "",
-                 "$<A HREF=index.php?id=$course->id>$strexercises</A> -> 
+                 "<A HREF=index.php?id=$course->id>$strexercises</A> -> 
                   <A HREF=\"view.php?id=$cm->id\">$exercise->name</A> -> $strsubmissions", 
                   "", "", true);
 
