@@ -56,7 +56,7 @@
     echo "</TR></TABLE>";
 
 
-    get_all_mods($course->id, $mods, $modtype);
+    get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 
     switch ($mode) {
         case "today" :

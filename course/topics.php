@@ -61,9 +61,9 @@
 
     $moddata = array();
     $modicon = array();
-    if ($modtype) {
-        foreach ($modtype as $modname => $modfullname) {
-            $moddata[] = "<A HREF=\"../mod/$modname/index.php?id=$course->id\">".$modfullname."s</A>";
+    if ($modnamesused) {
+        foreach ($modnamesused as $modname => $modfullname) {
+            $moddata[] = "<A HREF=\"../mod/$modname/index.php?id=$course->id\">".$modnamesplural[$modname]."</A>";
             $modicon[] = "<IMG SRC=\"../mod/$modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$modfullname\">";
         }
     }
@@ -173,7 +173,7 @@
         if (isediting($course->id)) {
             echo "<DIV ALIGN=right>";
             popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$section&add=", 
-                        $modtypes, "section$section", "", "Add...");
+                        $modnames, "section$section", "", "Add...");
             echo "</DIV>";
         }
 

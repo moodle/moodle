@@ -119,13 +119,14 @@
                   "$CFG->wwwroot/course/view.php?id=$course->id");
         }
 
+        $fullmodulename = strtolower(get_string("modulename", $module->name));
 
         $form->coursemodule = $cm->id;
         $form->section      = $cm->section;
         $form->course       = $cm->course;
         $form->instance     = $cm->instance;
         $form->modulename   = $module->name;
-        $form->fullmodulename  = strtolower($module->fullname);
+        $form->fullmodulename  = $fullmodulename;
         $form->instancename = $instance->name;
 
         include("mod_delete.html");
@@ -165,7 +166,8 @@
         $form->instance     = $cm->instance;
         $form->mode         = "update";
 
-        $pageheading = "Updating a ".strtolower($module->fullname)." in $sectionname $cw->section";
+        $fullmodulename = strtolower(get_string("modulename", $module->name));
+        $pageheading = "Updating a $fullmodulename in $sectionname $cw->section";
 
         
     } else if (isset($add)) {
@@ -195,10 +197,12 @@
         $form->instance   = $cm->instance;
         $form->mode       = "add";
 
+        $fullmodulename = strtolower(get_string("modulename", $module->name));
+
+        $pageheading = "Adding a new $fullmodulename";
+
         if ($form->section) {
-            $pageheading = "Adding a new ".strtolower($module->fullname)." to $sectionname $form->section";
-        } else {
-            $pageheading = "Adding a new ".strtolower($module->fullname);
+            $pageheading .= " to $sectionname $form->section";
         }
 
     } else {
@@ -212,14 +216,14 @@
     }
 
     if ($course->category) {
-        print_header("$course->shortname: Editing a $module->fullname", 
-                     "$course->shortname: Editing a $module->fullname",
+        print_header("$course->shortname: Editing a $fullmodulename", 
+                     "$course->shortname: Editing a $fullmodulename",
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
-                      Editing a $module->fullname", "form.name", "", false);
+                      Editing a $fullmodulename", "form.name", "", false);
     } else {
-        print_header("$course->shortname: Editing a $module->fullname", 
-                     "$course->shortname: Editing a $module->fullname",
-                     "Editing a $module->fullname", "form.name", "", false);
+        print_header("$course->shortname: Editing a $fullmodulename", 
+                     "$course->shortname: Editing a $fullmodulename",
+                     "Editing a $fullmodulename", "form.name", "", false);
     }
 
     $modform = "../mod/$module->name/mod.html";

@@ -393,23 +393,35 @@ function enrol_student_in_course($user, $course) {
 	}
 }
 
-function get_all_mods($courseid, &$mods, &$modtype) {
+function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modnamesused) {
+// Returns a number of useful structures for course displays
 
-    $mods = NULL;
-    $modtype = NULL;
+    $mods          = NULL;    // course modules indexed by id
+    $modnames      = NULL;    // all course module names
+    $modnamesused  = NULL;    // course module names used
 
-    if ( $rawmods = get_records_sql("SELECT cm.*, m.name as modname, m.fullname as modfullname
-                                   FROM modules m, course_modules cm
-                                   WHERE cm.course = '$courseid' 
-                                     AND cm.deleted = '0'
-                                     AND cm.module = m.id") ) {
-        foreach($rawmods as $mod) {    // Index the mods
-            $mods[$mod->id] = $mod;
-            $modtype[$mod->modname] = $mod->modfullname;
+    if ($allmods = get_records_sql("SELECT * FROM modules") ) {
+        foreach ($allmods as $mod) {
+            $modnames[$mod->name] = get_string("modulename", "$mod->name");
+            $modnamesplural[$mod->name] = get_string("modulenameplural", "$mod->name");
         }
-        ksort($modtype);
+        asort($modnames);
+    } else {
+        error("No modules are installed!");
     }
 
+    if ($rawmods = get_records_sql("SELECT cm.*, m.name as modname
+                                     FROM modules m, course_modules cm
+                                     WHERE cm.course = '$courseid' 
+                                       AND cm.deleted = '0'
+                                       AND cm.module = m.id") ) {
+        foreach($rawmods as $mod) {    // Index the mods
+            $mods[$mod->id] = $mod;
+            $mods[$mod->id]->modfullname = $modnames[$mod->modname];
+            $modnamesused[$mod->modname] = $modnames[$mod->modname];
+        }
+        asort($modnamesused);
+    }
 }
 
 function get_all_sections($courseid) {
@@ -642,5 +654,43 @@ function move_module($id, $move) {
     }
 }
 
+function make_editing_buttons($moduleid) {
+    $delete   = get_string("delete");
+    $moveup   = get_string("moveup");
+    $movedown = get_string("movedown");
+    $update   = get_string("update");
+    return "&nbsp; &nbsp; 
+          <A HREF=mod.php?delete=$moduleid><IMG 
+             SRC=../pix/t/delete.gif BORDER=0 ALT=\"$delete\"></A>
+          <A HREF=mod.php?id=$moduleid&move=-1><IMG 
+             SRC=../pix/t/up.gif BORDER=0 ALT=\"$moveup\"></A>
+          <A HREF=mod.php?id=$moduleid&move=1><IMG 
+             SRC=../pix/t/down.gif BORDER=0 ALT=\"$movedown\"></A>
+          <A HREF=mod.php?update=$moduleid><IMG 
+             SRC=../pix/t/edit.gif BORDER=0 ALT=\"$update\"></A>";
+}
+
+function print_side_block($heading="", $list=NULL, $footer="", $icons=NULL) {
+    
+    echo "<TABLE WIDTH=100%>\n";
+    echo "<TR><TD COLSPAN=2><P><B><FONT SIZE=2>$heading</TD></TR>\n";
+    if ($list) {
+        foreach($list as $key => $string) {
+            echo "<TR><TD VALIGN=top WIDTH=12>";
+            if ($icons[$key]) {
+                echo $icons[$key];
+            } else {
+                echo "";
+            }
+            echo "</TD>\n<TD WIDTH=100% VALIGN=top>";
+            echo "<P><FONT SIZE=2>$string</FONT></P>";
+            echo "</TD></TR>\n";
+        }
+    }
+    if ($footer) {
+        echo "<TR><TD></TD><TD ALIGN=left><P><FONT SIZE=2>$footer</TD></TR>\n";
+    }
+    echo "</TABLE><BR>\n\n";
+}
 
 ?>

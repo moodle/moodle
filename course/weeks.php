@@ -43,9 +43,9 @@
 
     $moddata = array();
     $modicon = array();
-    if ($modtype) {
-        foreach ($modtype as $modname => $modfullname) {
-            $moddata[] = "<A HREF=\"../mod/$modname/index.php?id=$course->id\">".$modfullname."s</A>";
+    if ($modnamesused) {
+        foreach ($modnamesused as $modname => $modfullname) {
+            $moddata[] = "<A HREF=\"../mod/$modname/index.php?id=$course->id\">".$modnamesplural[$modname]."</A>";
             $modicon[] = "<IMG SRC=\"../mod/$modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$modfullname\">";
         }
     }
@@ -136,7 +136,7 @@
         }
 
         if (isediting($course->id)) {
-            $thisweek->summary .= "&nbsp;<A HREF=editweek.php?id=$thisweek->id><IMG SRC=\"../pix/t/edit.gif\" BORDER=0 ALT=\"Edit summary\"></A></P>";
+            $thisweek->summary .= "&nbsp;<A HREF=\"editsection.php?id=$thisweek->id\"><IMG SRC=\"../pix/t/edit.gif\" BORDER=0 ALT=\"Edit summary\"></A></P>";
         }
 
         echo text_to_html($thisweek->summary);
@@ -163,7 +163,7 @@
         if (isediting($course->id)) {
             echo "<DIV ALIGN=right>";
             popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$week&add=", 
-                        $modtypes, "section$week", "", "Add...");
+                        $modnames, "section$week", "", "Add...");
             echo "</DIV>";
         }
 
