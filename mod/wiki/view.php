@@ -16,9 +16,6 @@
     optional_variable($userid, 0);     // User wiki.
     optional_variable($groupid, 0);    // Group wiki.
     optional_variable($canceledit,"");    // Editing has been cancelled
-    if($canceledit) {
-      @$page=$ewiki_id;
-    }
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -156,6 +153,13 @@
         # The mighty Wiki itself
         include_once($CFG->dirroot."/mod/wiki/ewiki/ewiki.php");
 
+        if($canceledit) {          
+          if ($delim = strpos($page, EWIKI_ACTION_SEP_CHAR)) {
+            @$page = substr($page, $delim + 1);
+          } else {
+            @$page="";
+          }
+        }
         # Language-stuff: eWiki gets language from Browser. Lets correct it. Empty arrayelements do no harm
         $ewiki_t["languages"]=array(current_language(), $course->lang, $CFG->lang,"en","c");
 
