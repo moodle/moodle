@@ -222,7 +222,7 @@
 
 
     $internalpassword = false;
-    if (is_internal_auth()) {
+    if (is_internal_auth() or ( $CFG->{'auth_'.$USER->auth.'_stdchangepassword'} and $CFG->{'auth_'.$USER->auth.'_stdchangepassword'} == 1)) {
         if(empty($CFG->loginhttps)) {
         $internalpassword = "$CFG->wwwroot/login/change_password.php";
         } else {
@@ -233,12 +233,12 @@
 //  Print other functions
     echo "<center><table align=\"center\"><tr>";
     if ($currentuser and !isguest()) {
-        if ($internalpassword) {
+        if ($internalpassword ) {
             echo "<td nowrap=\"nowrap\"><form action=\"$internalpassword\" method=\"get\">";
             echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
             echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
             echo "</form></td>";
-        } else if (strlen($CFG->changepassword) > 1) {
+        } else if ( strlen($CFG->changepassword) > 1 ) {
             echo "<td nowrap=\"nowrap\"><form action=\"$CFG->changepassword\" method=\"get\">";
             echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
             echo "</form></td>";
