@@ -1063,7 +1063,16 @@ function calendar_set_filters(&$courses, &$group, &$user, $defaultcourses = NULL
     if($SESSION->cal_show_groups) {
         if(is_int($groupcourses)) {
             // One course, whatever group the user is in that course
-            if(mygroupid($groupcourses)) {
+            if(isteacher($groupcourses, $USER->id)) {
+                $grouprecords = get_groups($groupcourses);
+                if($grouprecords === false) {
+                    $group = false;
+                }
+                else {
+                    $group = array_keys($grouprecords);
+                }
+            }
+            else if(mygroupid($groupcourses)) {
                 $group = mygroupid($groupcourses);
             }
             else {
@@ -1072,24 +1081,27 @@ function calendar_set_filters(&$courses, &$group, &$user, $defaultcourses = NULL
         }
         else if(is_array($groupcourses)) {
             // Many courses, we want all of them
-            if(empty($USER->groupmember)) {
+            $grouparray = array();
+
+            // For each course...
+            foreach($groupcourses as $courseid => $dummy) {
+                // If the user is a teacher in there,
+                if(isteacher($courseid, $USER->id)) {
+                    // Show events from all groups
+                    if(($grouprecords = get_groups($courseid)) !== false) {
+                        $grouparray = array_merge($grouparray, array_keys($grouprecords));
+                    }
+                }
+                // Otherwise show events from the group he is a member of
+                else if(isset($USER->groupmember[$courseid])) {
+                    $grouparray[] = $USER->groupmember[$courseid];
+                }
+            }
+            if(empty($grouparray)) {
                 $group = false;
             }
             else {
-                $grouparray = array();
-                foreach ($USER->groupmember as $courseid => $mgroupid) {
-                    if (array_key_exists($courseid, $groupcourses)) {
-                        $grouparray[] = $mgroupid;
-                    }
-                }
-                if(!empty($grouparray)) {
-                    // We got some groups at the least
-                    $group = $grouparray;
-                }
-                else {
-                    // No groups in these courses
-                    $group = false;
-                }
+                $group = $grouparray;
             }
         }
         else if(is_bool($groupcourses)) {
