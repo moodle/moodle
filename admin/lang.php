@@ -29,6 +29,7 @@
             $title = $strmissingstrings;
             $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/admin/lang.php">'.
                       '<input type="hidden" name="mode" value="compare" />'.
+                      '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />'.
                       '<input type="submit" value="'.$strcomparelanguage.'" /></form>';
             break;
         case "compare":
@@ -36,6 +37,7 @@
             $title = $strcomparelanguage;
             $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/admin/lang.php">'.
                       '<input type="hidden" name="mode" value="missing" />'.
+                      '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />'.
                       '<input type="submit" value="'.$strmissingstrings.'" /></form>';
             break;
         default:
@@ -60,8 +62,8 @@
         echo "</td><td>";
         echo popup_form ("$CFG->wwwroot/admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
         echo "</td></tr></table>";
-        print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>");
-        print_heading("<a href=\"lang.php?mode=compare\">$strcomparelanguage</a>");
+        print_heading("<a href=\"lang.php?mode=missing&sesskey=$USER->sesskey\">$strmissingstrings</a>");
+        print_heading("<a href=\"lang.php?mode=compare&sesskey=$USER->sesskey\">$strcomparelanguage</a>");
         echo "<center><hr noshade=\"noshade\" size=\"1\" />";
         $options["lang"] = $currentlang;
         print_single_button("http://moodle.org/download/lang/", $options, get_string("latestlanguagepack"));
@@ -85,7 +87,7 @@
         }
     }
 
-    if ($mode == "missing") {
+    if ($mode == "missing" and confirm_sesskey()) {
         // For each file, check that a counterpart exists, then check all the strings
     
         foreach ($stringfiles as $file) {
@@ -151,7 +153,7 @@
             notice(get_string("languagegood"), "lang.php");
         }
 
-    } else if ($mode == "compare") {
+    } else if ($mode == "compare" and confirm_sesskey()) {
 
         if (isset($_POST['currentfile'])){   // Save a file
             $newstrings = $_POST;
@@ -159,7 +161,7 @@
             if (lang_save_file($langdir, $currentfile, $newstrings)) {
                 notify(get_string("changessaved")." ($langdir/$currentfile)", "green");
             } else {
-                error("Could not save the file '$currentfile'!", "lang.php?mode=compare&amp;currentfile=$currentfile");
+                error("Could not save the file '$currentfile'!", "lang.php?mode=compare&amp;currentfile=$currentfile&amp;sesskey=$USER->sesskey");
             }
         }
 
@@ -171,7 +173,7 @@
             if ($file == $currentfile) {
                 echo "<b>$file</b> &nbsp; ";
             } else {
-                echo "<a href=\"lang.php?mode=compare&amp;currentfile=$file\">$file</a> &nbsp; ";
+                echo "<a href=\"lang.php?mode=compare&currentfile=$file&sesskey=$USER->sesskey\">$file</a> &nbsp; ";
             }
         }
         echo '</font></center>';
@@ -214,6 +216,7 @@
 
         if ($editable) {
             echo "<form name=\"$currentfile\" action=\"lang.php\" method=\"post\">";
+            echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
         }
         echo "<table width=\"100%\" cellpadding=\"2\" cellspacing=\"3\" border=\"0\">";
         foreach ($enstring as $key => $envalue) {
