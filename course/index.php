@@ -1,4 +1,5 @@
 <?PHP // $Id$
+      // Display list of all courses
 
     require("../config.php");
     require("lib.php");

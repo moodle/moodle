@@ -1,4 +1,5 @@
 <?PHP // $Id$
+      // Admin-only script to assign teachers to courses
 
 	require("../config.php");
 	require("../user/lib.php");

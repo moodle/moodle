@@ -35,7 +35,7 @@
 <tr valign=top>
 	<td><P><? print_string("category") ?>:</td>
 	<td><? 
-           choose_from_menu ($form->categories, "category", "$form->category");
+           choose_from_menu ($form->categories, "category", "$form->category", "");
 	       formerr($err["category"]);
         ?>
 	</td>
@@ -43,7 +43,8 @@
 <tr valign=top>
 	<td><P><? print_string("format") ?>:</td>
 	<td><? 
-           choose_from_menu ($COURSE_FORMATS, "format", "$form->format");
+           choose_from_menu ($form->courseformats, "format", "$form->format", "");
+           helpbutton("courseformats", get_string("courseformats"));
 	       formerr($err["format"]);
         ?>
 	</td>
@@ -65,23 +66,10 @@
                         "8" => "8 $newsitems",
                         "9" => "9 $newsitems",
                         "10" => "10 $newsitems");
-       choose_from_menu ($options, "newsitems", "$form->newsitems");
+       choose_from_menu ($options, "newsitems", "$form->newsitems", "");
        formerr($err["newsitems"]);
     ?>
     </td>
-</tr>
-
-<tr valign=top>
-	<td><P><? print_string("wordforteacher") ?>:</td>
-	<td><input type="text" name="teacher" size=25 value="<? p($form->teacher) ?>">
-	(<? print_string("wordforteachereg") ?>) <? formerr($err["teacher"]) ?>
-	</td>
-</tr>
-<tr valign=top>
-	<td><P><? print_string("wordforstudent") ?>:</td>
-	<td><input type="text" name="student" size=25 value="<? p($form->student) ?>">
-	(<? print_string("wordforstudenteg") ?>) <? formerr($err["student"]) ?>
-	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("startdate") ?>:</td>
@@ -99,6 +87,18 @@
            choose_from_menu ($sectionmenu, "numsections", "$form->numsections");
 	       formerr($err["numsections"]);
 	?></td>
+</tr>
+<tr valign=top>
+	<td><P><? print_string("wordforteacher") ?>:</td>
+	<td><input type="text" name="teacher" size=25 value="<? p($form->teacher) ?>">
+	(<? print_string("wordforteachereg") ?>) <? formerr($err["teacher"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P><? print_string("wordforstudent") ?>:</td>
+	<td><input type="text" name="student" size=25 value="<? p($form->student) ?>">
+	(<? print_string("wordforstudenteg") ?>) <? formerr($err["student"]) ?>
+	</td>
 </tr>
 <tr>
 	<td></td>

@@ -1,4 +1,5 @@
 <?PHP // $Id$
+      // Produces a graph of log accesses
 
     require("../config.php");
     require("lib.php");

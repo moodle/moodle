@@ -45,17 +45,19 @@
     }
 
 
-    print_header("Unenrol from $course->shortname", "$course->shortname", "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> Unenrol"); 
+    $strunenrol = get_string("unenrol");
+
+    print_header("$course->shortname: $strunenrol", "$course->fullname", 
+                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> $strunenrol"); 
 
     if ($user->id == $USER->id) {
-        notice_yesno ("Are you sure you want to remove yourself from this course?", 
-                      "unenrol.php?id=$id&user=$user->id&confirm=yes", "$HTTP_REFERER");
+        $strunenrolsure  = get_string("unenrolsure", "", get_string("yourself"));
     } else {
-        notice_yesno ("Are you sure you want to remove $user->firstname $user->lastname from this course?", 
-                      "unenrol.php?id=$id&user=$user->id&confirm=yes", "$HTTP_REFERER");
+        $strunenrolsure = get_string("unenrolsure", "", "$user->firstname $user->lastname");
     }
 
-    print_footer();
+    notice_yesno ($strunenrolsure, "unenrol.php?id=$id&user=$user->id&confirm=yes", "$HTTP_REFERER");
 
+    print_footer();
 
 ?>

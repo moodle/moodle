@@ -1,6 +1,5 @@
 <?PHP // $Id$
-
-//  Asks for a course pass key, once only
+      // Asks for a course pass key, once only, and enrols that user
 
     require("../config.php");
     require("lib.php");

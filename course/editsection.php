@@ -1,4 +1,5 @@
 <?PHP // $Id$
+      // Edit the introduction of a section
 
     require("../config.php");
     require("lib.php");
@@ -42,7 +43,7 @@
         $form = $section;
     }
 
-    $sectionname = $COURSE_SECTION[$course->format];
+    $sectionname = get_string("name$course->format");
     $stredit = get_string("edit", "", " $sectionname $section->section");
 
     print_header($stredit, $stredit, "", "form.summary");

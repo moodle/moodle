@@ -1,4 +1,5 @@
 <?PHP // $Id$
+      // Edit course settings
 
 	require("../config.php");
 	require("lib.php");
@@ -93,6 +94,12 @@
     }
 
     $form->categories = get_records_sql_menu("SELECT id,name FROM course_categories");
+    
+    $form->courseformats = array (
+             "weeks"  => get_string("formatweeks"),
+             "social" => get_string("formatsocial"),
+             "topics" => get_string("formattopics")
+    );
 
     $streditcoursesettings = get_string("editcoursesettings");
     $straddnewcourse = get_string("addnewcourse");

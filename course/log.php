@@ -1,6 +1,5 @@
 <?PHP // $Id$
-
-//  log.php - displays different views of the logs.
+      // Displays different views of the logs.
 
     require("../config.php");
     require("lib.php");
@@ -30,9 +29,8 @@
 
 
     if ($user || $date) {
-
-        $userinfo = "all users";
-        $dateinfo = "any day";
+        $userinfo = get_string("allparticipants");
+        $dateinfo = get_string("alldays");
 
         if ($user) {
             if (!$u = get_record("user", "id", $user) ) {
@@ -54,21 +52,20 @@
 
         print_log($course, $user, $date, "ORDER BY l.time DESC");
 
-
     } else {
         print_header("$course->shortname: $strlogs", "$course->fullname", 
                  "<A HREF=\"view.php?id=$course->id\">$course->shortname</A> -> $strlogs", "");
 
-        print_heading("Choose which logs you want to look at");
+        print_heading(get_string("chooselogs").":");
 
         print_log_selector_form($course);
 
-        print_heading("Or see what is happening right now");
+        echo "<BR>";
+        print_heading(get_string("chooselivelogs").":");
 
         echo "<CENTER><H3>";
-        link_to_popup_window("/course/loglive.php?id=$course->id","livelog","Live logs", 500, 800);
+        link_to_popup_window("/course/loglive.php?id=$course->id","livelog", get_string("livelogs"), 500, 800);
         echo "</H3></CENTER>";
-
     }
 
     print_footer($course);

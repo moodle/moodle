@@ -2,7 +2,7 @@
 
 <CENTER>
 <FORM name="form" method="post" action="<?=$ME ?>">
-<? print_heading("Are you absolutely sure you want to delete the $form->fullmodulename '$form->instancename' ?") ?>
+<? print_heading(get_string("deletecheckfull", "", "$form->fullmodulename '$form->instancename'")); ?>
 <input type="hidden" name=mode         value="delete">
 <input type="hidden" name=section      value="<? echo $form->section; ?>">
 <input type="hidden" name=course       value="<? p($form->course) ?>">

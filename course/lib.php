@@ -1,20 +1,12 @@
 <? // $Id$
+   // Library of useful functions
 
-$COURSE_FORMATS = array (
-             "weeks" => "Weekly layout",
-             "social" => "Social layout",
-             "topics" => "Topics layout"
-           );
 
-$COURSE_SECTION = array (
-             "weeks" => "week",
-             "social" => "section",
-             "topics" => "topic"
-           );
+$COURSE_MAX_LOG_DISPLAY = 150;       // days
 
-$COURSE_MAX_LOG_DISPLAY = 150;     // days
+$COURSE_TEACHER_COLOR = "#990000";   // To hilight certain items that are teacher-only
 
-$COURSETEACHERCOLOR = "#990000";   // To hilight certain items
+$COURSE_LIVELOG_REFRESH = 60;        // Seconds
 
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate="today") {
@@ -66,7 +58,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     $timemidnight = $today = usergetmidnight($timenow);
 
     // Put today up the top of the list
-    $dates = array("$timemidnight" => "Today, ".userdate($timenow, "%e %B %Y") );
+    $dates = array("$timemidnight" => get_string("today").", ".userdate($timenow, "%e %B %Y") );
 
     if (! $course->startdate) {
         $course->startdate = $course->timecreated;
@@ -92,10 +84,10 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
         echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
     }
     if ($course->category) {
-        choose_from_menu ($users, "user", $selecteduser, "All participants");
+        choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
     }
-    choose_from_menu ($dates, "date", $selecteddate, "Any day");
-    echo "<INPUT TYPE=submit VALUE=\"Show these logs\">";
+    choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
+    echo "<INPUT TYPE=submit VALUE=\"".get_string("showtheselogs")."\">";
     echo "</FORM>";
     echo "</CENTER>";
 }
@@ -183,7 +175,7 @@ function print_all_courses($cat=1, $style="full", $maxcount=999) {
     if ($courses = get_records("course", "category", $cat, "fullname ASC")) {
         if ($style == "minimal") {
             $count = 0;
-            $icon  = "<IMG SRC=\"pix/i/course.gif\" HEIGHT=16 WIDTH=16 ALT=\"Course\">";
+            $icon  = "<IMG SRC=\"pix/i/course.gif\" HEIGHT=16 WIDTH=16 ALT=\"".get_string("course")."\">";
             foreach ($courses as $course) {
                 $moddata[]="<A TITLE=\"$course->shortname\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A>";
                 $modicon[]=$icon;
@@ -233,11 +225,11 @@ function print_course($course) {
         echo "</FONT></P>";
     }
     if ($course->guest or ($course->password == "")) {
-        echo "<A TITLE=\"This course allows guest users\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+        echo "<A TITLE=\"".get_string("allowguests")."\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
         echo "<IMG VSPACE=4 ALT=\"\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"$CFG->wwwroot/user/user.gif\"></A>&nbsp;&nbsp;";
     }
     if ($course->password) {
-        echo "<A TITLE=\"This course requires an enrolment key\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+        echo "<A TITLE=\"".get_string("requireskey")."\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
         echo "<IMG VSPACE=4 ALT=\"\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"$CFG->wwwroot/pix/i/key.gif\"></A>";
     }
 
@@ -259,7 +251,7 @@ function print_recent_activity($course) {
     // This function trawls through the logs looking for 
     // anything new since the user's last login
 
-    global $CFG, $USER, $COURSETEACHERCOLOR;
+    global $CFG, $USER, $COURSE_TEACHER_COLOR;
 
     if (! $USER->lastlogin ) {
         echo "<P ALIGN=CENTER><FONT SIZE=1>";
@@ -371,7 +363,7 @@ function print_recent_activity($course) {
                         if (!isteacher($course->id)) {
                             continue;
                         } else {
-                            $teacherpost = "COLOR=$COURSETEACHERCOLOR";
+                            $teacherpost = "COLOR=$COURSE_TEACHER_COLOR";
                         }
                     }
                 }
@@ -395,9 +387,8 @@ function print_recent_activity($course) {
     }
 
     if (! $content) {
-        echo "<FONT SIZE=2>Nothing new since your last login</FONT>";
+        echo "<FONT SIZE=2>".get_string("nothingnew")."</FONT>";
     }
-
 }
 
 
@@ -772,14 +763,14 @@ function make_editing_buttons($moduleid, $absolute=false) {
         $path = "";
     }
     return "&nbsp; &nbsp; 
-          <A HREF=\"".$path."mod.php?delete=$moduleid\"><IMG 
-             SRC=".$path."../pix/t/delete.gif BORDER=0 ALT=\"$delete\"></A>
-          <A HREF=\"".$path."mod.php?id=$moduleid&move=-1\"><IMG 
-             SRC=".$path."../pix/t/up.gif BORDER=0 ALT=\"$moveup\"></A>
-          <A HREF=\"".$path."mod.php?id=$moduleid&move=1\"><IMG 
-             SRC=".$path."../pix/t/down.gif BORDER=0 ALT=\"$movedown\"></A>
-          <A HREF=\"".$path."mod.php?update=$moduleid\"><IMG 
-             SRC=".$path."../pix/t/edit.gif BORDER=0 ALT=\"$update\"></A>";
+          <A TITLE=\"$delete\" HREF=\"".$path."mod.php?delete=$moduleid\"><IMG 
+             SRC=".$path."../pix/t/delete.gif BORDER=0></A>
+          <A TITLE=\"$moveup\" HREF=\"".$path."mod.php?id=$moduleid&move=-1\"><IMG 
+             SRC=".$path."../pix/t/up.gif BORDER=0></A>
+          <A TITLE=\"$movedown\" HREF=\"".$path."mod.php?id=$moduleid&move=1\"><IMG 
+             SRC=".$path."../pix/t/down.gif BORDER=0></A>
+          <A TITLE=\"$update\" HREF=\"".$path."mod.php?update=$moduleid\"><IMG 
+             SRC=".$path."../pix/t/edit.gif BORDER=0></A>";
 }
 
 ?>

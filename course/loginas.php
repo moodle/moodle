@@ -1,4 +1,5 @@
 <?PHP // $Id$
+      // Allows a teacher/admin to login as another user (in stealth mode)
 
     require("../config.php");
     require("lib.php");

@@ -153,7 +153,7 @@
             error("This module doesn't exist");
         }
 
-        $sectionname = $COURSE_SECTION[$course->format];
+        $sectionname = get_string("name$course->format");
 
         if (! $form = get_record($module->name, "id", $cm->instance)) {
             error("The required instance of this module doesn't exist");
@@ -189,7 +189,7 @@
             error("This course doesn't exist");
         }
 
-        $sectionname = $COURSE_SECTION[$course->format];
+        $sectionname = get_string("name$course->format");
 
         if (! $module = get_record("modules", "name", $add)) {
             error("This module type doesn't exist");

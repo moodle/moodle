@@ -1,6 +1,5 @@
 <?PHP // $Id$
-
-//  loglive.php - displays different views of the logs.
+      //  Displays live view of recent logs
 
     require("../config.php");
     require("lib.php");
@@ -15,9 +14,11 @@
         error("Only teachers can view logs");
     }
 
-    print_header("Activity within the last hour (updates every 60 secs)", 
-                  "Activity within the last hour (updates every 60 secs)", 
-                  "", "", "<META HTTP-EQUIV='Refresh' CONTENT='60; URL=loglive.php?id=$id'>");
+    $strlivelogs = get_string("livelogs");
+    $strupdatesevery = get_string("updatesevery", "moodle", $COURSE_LIVELOG_REFRESH);
+
+    print_header("$strlivelogs ($strupdatesevery)", "$strlivelogs", "", "", 
+                 "<META HTTP-EQUIV='Refresh' CONTENT='$COURSE_LIVELOG_REFRESH; URL=loglive.php?id=$id'>");
 
     $user=0;
     $date=time() - 3600;

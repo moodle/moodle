@@ -1,4 +1,5 @@
 <?PHP // $Id$
+      // Admin-only code to delete a course utterly
 
 	require("../config.php");
 
@@ -43,12 +44,12 @@
 
     if (! $delete) {
         $strdeletecheck = get_string("deletecheck", "", $course->shortname);
-        $strdeletecheckfull = get_string("deletecheckfull");
+        $strdeletecoursecheck = get_string("deletecoursecheck");
 	    print_header("$site->fullname : $strdeletecheck", $site->fullname, 
                      "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> 
                       <A HREF=\"delete.php\">$strdeletecourse</A> -> $strdeletecheck");
 
-        notice_yesno("$strdeletecheckfull<BR><BR>$course->fullname", 
+        notice_yesno("$strdeletecoursecheck<BR><BR>$course->fullname", 
                      "delete.php?id=$course->id&delete=".md5($course->timemodified), 
                      "delete.php");
         exit;

@@ -1,5 +1,7 @@
 <?PHP // $Id$
 
+// Display user activity reports for a course
+
     require("../config.php");
     require("lib.php");
 
