@@ -55,12 +55,13 @@ quiz.php           No assignat
 resource.php       CENT
 scheduler.php      No assignat
 scorm.php          CENT
-survey.php                 No assignat
+survey.php         No assignat
 wiki.php           CENT
 workshop.php       No assignat
 
-admin.php                   CENT
-auth.php                     CENT
+admin.php          CENT
+auth.php           CENT
+enrol_*.php        CENT
 calendar.php       CENT
 countries.php      CENT
 editor.php         CENT

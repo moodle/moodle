@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3 (2004052500)
+      // editor.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['about'] = 'Referent a aquest editor';
@@ -8,7 +8,10 @@ $string['absmiddle'] = 'Absmiddle';
 $string['address'] = 'Adreça';
 $string['alignment'] = 'Alineació';
 $string['alternatetext'] = 'Text alternatiu';
-$string['baseline'] = 'Baseline';
+$string['anchorhelp'] = 'Només crea l\'àncora. Heu de crear l\'enllaç a mà.';
+$string['anchorname'] = 'Nom de l\'àncora';
+$string['anchors'] = 'Àncores';
+$string['baseline'] = 'Línia base';
 $string['bold'] = 'Negreta';
 $string['borderthickness'] = 'Gruix del contorn';
 $string['bottom'] = 'Bottom';
@@ -21,6 +24,7 @@ $string['chooseicon'] = 'Tria una icona per inserir';
 $string['close'] = 'Tanca';
 $string['cols'] = 'Cols';
 $string['copy'] = 'Copia la selecció';
+$string['createanchor'] = 'Crea àncora';
 $string['createfolder'] = 'Crea una carpeta';
 $string['createlink'] = 'Insereix un enllaç web';
 $string['cut'] = 'Talla la selecció';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004053000)
+      // forum.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
 
 
 $string['addanewdiscussion'] = 'Ein neues Diskussionsthema hinzufügen';
@@ -16,6 +16,7 @@ $string['configenablerssfeeds'] = 'Diese Einstellung ermöglicht die Nutzung der 
 $string['configlongpost'] = 'Jeder Beitrag (ohne HTML-Codierung), der länger ist als diese Einstellung, wird als lang eingestuft.';
 $string['configmanydiscussions'] = 'Maximale Anzahl der Diskussionsthemen eines Forums pro Seite';
 $string['configmaxbytes'] = 'Maximale Größe für alle Anhänge, die zu den Beiträgen auf diese Seite hochgeladen wurden ';
+$string['configreplytouser'] = 'Wenn ein Beitrag aus einem Forum per E-Mail versandt wird, soll er die E-Mail-Adresse des Teilnehmers/der Teilnehmerin enthalten, damit eine Antwort direkt gegeben werden kann und nicht über das Forum erfolgt? Wenn Sie \'Ja\' auswählen, können die Teilnehmer/innen in ihrem Profil festlegen, ob die E-Mail-Adresse veröffentlicht werden soll oder nicht.';
 $string['configshortpost'] = 'Jeder Beitrag (ohne HTML-Codierung), der kürzer ist, wird als kurz eingestuft.';
 $string['couldnotadd'] = 'Ihr Eintrag konnte aufgrund eines unbekannten Fehlers nicht hinzugefügt werden';
 $string['couldnotdeleteratings'] = 'Der Eintrag kann nicht gelöscht werden, weil er schon bewertet wurde';
@@ -25,6 +26,10 @@ $string['delete'] = 'Löschen';
 $string['deleteddiscussion'] = 'Das Diskussionsthema ist gelöscht worden ';
 $string['deletedpost'] = 'Der Eintrag wurde gelöscht';
 $string['deletesure'] = 'Möchten Sie diesen Eintrag wirklich löschen?';
+$string['digestmailheader'] = 'Dies ist die tägliche Zusammenfassung (Digest) der Beiträge von $a->sitename. Sie können Ihre E-Mail-Einstellungen unter $a->userprefs abändern.';
+$string['digestmailprefs'] = 'Ihr Profil';
+$string['digestmailsubject'] = '$a: Zusammenfassung der Foren';
+$string['digestsentusers'] = 'Die E-Mail-Zusammenfassungen wurden erfolgreich versandt an $a Teilnehmer/innen.';
 $string['discussion'] = 'Diskussion';
 $string['discussionmoved'] = 'Diese Diskussion wurde nach \'$a\' verschoben';
 $string['discussionname'] = 'Name der Diskussion';
@@ -38,6 +43,7 @@ $string['editing'] = 'Bearbeitung';
 $string['emptymessage'] = 'Fehler in Ihrem Eintrag. Vielleicht haben Sie keinen Text eingegeben oder der Anhang war zu gross. Ihre Änderungen wurden NICHT gespeichert.';
 $string['everyonecanchoose'] = 'Jede/r kann sich eintragen';
 $string['everyoneissubscribed'] = 'Jede/r ist für dieses Forum abonniert';
+$string['existingsubscribers'] = 'Derzeitige Abonnenten';
 $string['forcesubscribe'] = 'Jede/r ist zwingend für dieses Forum abonniert';
 $string['forcesubscribeq'] = 'Jede/n zwingend in diesem Forum eintragen?';
 $string['forum'] = 'Forum';
@@ -93,9 +99,13 @@ $string['postrating1'] = 'Durchaus differenziertes Wissen';
 $string['postrating2'] = 'Durchaus differenziert und fundiert';
 $string['postrating3'] = 'Zeigt ziemlich fundiertes Wissen';
 $string['posts'] = 'Beiträge';
+$string['posttoforum'] = 'Beitrag absenden';
 $string['postupdated'] = 'Ihr Beitrag wurde aktualisiert';
+$string['potentialsubscribers'] = 'Potenzielle Abonnenten';
+$string['processingdigest'] = 'Verarbeitung der E-Mail-Zusammenfassung für $a';
 $string['processingpost'] = 'Bearbeite Beitrag $a';
 $string['prune'] = 'Beenden';
+$string['prunedpost'] = 'Eine neue Diskussion wurde begonnen';
 $string['pruneheading'] = 'Die Diskussion an diesem Thema abschließen und in einem neuen Thema fortführen';
 $string['rate'] = 'Bewerte';
 $string['rating'] = 'Bewertung';
@@ -136,7 +146,7 @@ $string['subscribestart'] = 'Senden Sie mir Kopien via E-Mail von den Beiträgen 
 $string['subscribestop'] = 'Ich möchte keine Kopien via E-Mail von den Beiträgen zu diesem Forum';
 $string['subscription'] = 'Anmeldung';
 $string['subscriptions'] = 'Anmeldungen';
-$string['unsubscribe'] = 'Ich will künftig keine Emails von Beiträgen aus diesem Forum erhalten';
+$string['unsubscribe'] = 'Ich will künftig keine Emails von Beiträgen aus dieem Forum erhalten';
 $string['unsubscribed'] = 'Abgemeldet';
 $string['unsubscribeshort'] = 'Abmelden';
 $string['youratedthis'] = 'Ihre Bewertung';

@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.3 development (2004032800)
+      // error.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['coursegroupunknown'] = 'No s\'ha especificat el curs corresponent al grup $a';
 $string['erroronline'] = 'Error a la línia $a';
 $string['fieldrequired'] = '\"$a\" és un camp necessari';
+$string['filenotfound'] = 'El fitxer sol·licitat no es pot trobar';
 $string['groupalready'] = 'L\'usuari ja pertany al grup $a';
 $string['groupunknown'] = 'El grup $a no està associat al curs especificat';
 $string['invalidfieldname'] = '\"$a\" no és un nom vàlid per a un camp';
@@ -15,5 +16,6 @@ $string['restricteduser'] = 'Al vostre compte \"$a\" no li és permès de fer això
 $string['unknowncourse'] = 'El curs \"$a\" és desconegut';
 $string['usernotaddederror'] = 'No s\'ha afegit l\'usuari \"$a\" - error desconegut';
 $string['usernotaddedregistered'] = 'No s\'ha afegit l\'usuari \"$a\" - ja està registrat';
+$string['usernotavailable'] = 'Els detalls d\'aquest usuari no estan disponibles per a vós.';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3 (2004052500)
+      // resource.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
 
 
 $string['addresource'] = 'Material hinzufügen';
@@ -21,15 +21,15 @@ $string['configwebsearch'] = 'Wenn eine URL als Webseite oder Link eingefügt wir
 $string['directlink'] = 'Direkter Link zu dieser Datei';
 $string['directoryinfo'] = 'Alle Dateien im ausgewählten Verzeichnis werden angezeigt';
 $string['editingaresource'] = 'Material bearbeiten';
+$string['encryptedcode'] = 'Verschlüsselter Code';
 $string['example'] = 'Beispiel';
-$string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.beispiel.de/Beispielverzeichnis/Beispieldatei.html';
 $string['fetchclienterror'] = 'Ein Fehler ist beim Aufruf der Seite aufgetreten (evtl. eine falsche Web-Adresse).';
-$string['fetcherror'] = 'Ein Fehler ist beim Aufruf der Seite aufgetreten.
-';
+$string['fetcherror'] = 'Ein Fehler ist beim Aufruf der Seite aufgetreten.';
 $string['fetchservererror'] = 'Ein Fehler (evtl. ein Programmfehler) ist beim Remoteserver aufgetreten . </p>';
 $string['filename'] = 'Dateiname';
 $string['filtername'] = 'Automatische Verlinkung von Arbeitsunterlagen';
+$string['frameifpossible'] = 'Zeigt das Arbeitsmaterial in einem Frame. Die Seitennavigation bleibt sichtbar';
 $string['fulltext'] = 'Voller Text';
 $string['htmlfragment'] = 'HTML-Teil';
 $string['maindirectory'] = 'Hauptverzeichnis für Dateien';
@@ -52,6 +52,10 @@ $string['note'] = 'Anmerkung';
 $string['notefile'] = 'Um mehr als eine Datei für diesen Kurs hochzuladen (damit dieses in der Liste erscheinen) benutzen Sie bitte den 
 <A HREF=$a >Datei-Manager</A>.';
 $string['notypechosen'] = 'Sie müssen einen Typ auswählen. Verwenden Sie den Zurück-Knopf und probieren Sie es erneut';
+$string['pagedisplay'] = 'Zeigt das Arbeitsmaterial im derzeitigen Fenster';
+$string['pagewindow'] = 'Gleiches Fenster';
+$string['parameter'] = 'Einstellung';
+$string['parameters'] = 'Einstellungen';
 $string['popupresource'] = 'Diese Quelle erscheint in einem Pop-Up-Fenster';
 $string['popupresourcelink'] = 'Wenn es nicht klappt, klicken sie hier $a';
 $string['resourcetype'] = 'Typ der Quelle';
@@ -64,5 +68,12 @@ $string['resourcetype6'] = 'HTML-Text';
 $string['resourcetype7'] = 'Programm';
 $string['resourcetype8'] = 'Wiki-Text';
 $string['resourcetype9'] = 'Verzeichnis';
+$string['resourcetypedirectory'] = 'Ein Verzeichnis anzeigen';
+$string['resourcetypefile'] = 'Link auf eine Datei oder eine Webseite';
+$string['resourcetypehtml'] = 'Erstellen einer Webseite';
+$string['resourcetypelabel'] = 'Bezeichnung einfügen';
+$string['resourcetypetext'] = 'Erstellen einer Textseite';
+$string['searchweb'] = 'Suche nach einer Webseite';
+$string['variablename'] = 'Name der Variable';
 
 ?>

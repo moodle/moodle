@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.3 development (2004040500)
+      // lesson.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
 
 
 $string['actionaftercorrectanswer'] = 'Aktion nach der richtigen Antwort';
@@ -31,7 +31,7 @@ $string['fileformat'] = 'Dateiformat';
 $string['firstanswershould'] = 'Die richtige Antwort sollte an der ersten Stelle stehen und zur nächsten Seite führen.';
 $string['gradeis'] = 'Ihre Note ist $a';
 $string['handlingofretakes'] = 'Benotung bei Wiederholungen';
-$string['here'] = '';
+$string['here'] = 'hier';
 $string['importquestions'] = 'Fragen importieren';
 $string['jump'] = 'Sprung';
 $string['maximumnumberofanswersbranches'] = 'Höchstzahl der Antworten/Verzweigungen';
@@ -47,25 +47,26 @@ $string['multipleanswer'] = 'Mehrere Antworten';
 $string['nextpage'] = 'Nächste Seite';
 $string['noanswer'] = 'Sie haben keine Antwort abgegeben';
 $string['noattemptrecordsfound'] = 'Keine aufgezeichneten Daten gefunden: Keine Bewertung vorgenommen';
+$string['nobranchtablefound'] = 'Keine Verzweigungsseite gefunden';
 $string['normal'] = 'Normal - folgt dem Pfad der Lektion';
 $string['notdefined'] = 'Nicht definiert';
 $string['notitle'] = 'Kein Titel';
 $string['numberofcorrectanswers'] = 'Anzahl der richtigen Antwort(en): $a';
 $string['numberofcorrectmatches'] = 'Anzahl der passenden Paare: $a';
-$string['numberofpagestoshow'] = 'Anzahl der angezeigten Seiten (Karten) $a';
+$string['numberofpagestoshow'] = 'Anzahl der angezeigten Seiten (Karten): $a';
 $string['numberofpagesviewed'] = 'Anzahl der bisher angesehenen Seiten: $a';
 $string['ordered'] = 'Geordnet';
 $string['outof'] = 'Außerhalb von $a';
-$string['questiontype'] = "Fragentyp";
-$string['questionoption'] = "Fragenoptionen";
 $string['page'] = 'Seite: $a';
-$string['pages'] = 'Seiten';
 $string['pagecontents'] = 'Inhalt der Seite';
+$string['pages'] = 'Seiten';
 $string['pagetitle'] = 'Seitentitel';
-$string['pleasecheckoneanswer'] = 'Bitte wählen Sie eine Antwort aus';
-$string['pleasecheckoneormoreanswers'] = 'Bitte wählen Sie eine oder mehrere Antworten aus';
+$string['pleasecheckoneanswer'] = 'Bitte überprüfen Sie Ihre Antwort noch einmal';
+$string['pleasecheckoneormoreanswers'] = 'Bitte überprüfen Sie Ihre Antwort(en)';
 $string['pleaseenteryouranswerinthebox'] = 'Bitte tragen Sie Ihre Antwort in das entsprechende Feld ein.';
 $string['pleasematchtheabovepairs'] = 'Bitte vergleichen Sie die obigen Paare';
+$string['questionoption'] = 'Fragenoptionen';
+$string['questiontype'] = 'Fragentyp';
 $string['reached'] = 'erreicht';
 $string['redisplaypage'] = 'Seite erneut anzeigen';
 $string['response'] = 'Reaktion';

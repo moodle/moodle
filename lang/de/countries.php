@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // countries.php - created with Moodle 1.2 development (2003111400)
+      // countries.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
 
 
 $string['AD'] = 'Andorra';
@@ -177,6 +177,7 @@ $string['PL'] = 'Polen';
 $string['PM'] = 'St. Pieree und Miguelon';
 $string['PN'] = 'Ptcairn';
 $string['PR'] = 'Purto Rico';
+$string['PS'] = 'Palästina';
 $string['PT'] = 'Portugal';
 $string['PW'] = 'Palau';
 $string['PY'] = 'Paraguay';

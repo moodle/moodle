@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3 (2004052500)
+      // glossary.php - created with Moodle 1.4 (2004083100)
 
 
 $string['addcomment'] = 'Pøidat komentáø';
@@ -61,16 +61,17 @@ $string['deletingnoneemptycategory'] = 'Odstranìním této kategorie neodstraníte 
 $string['descending'] = '(sestupnì)';
 $string['destination'] = 'Cíl';
 $string['displayformat'] = 'Zpùsob zobrazení';
-$string['displayformat2'] = 'Úplný vèetnì autora';
-$string['displayformat3'] = 'Encyclopedie';
-$string['displayformat4'] = 'FAQ (ÈKD:-)';
-$string['displayformat5'] = 'Úplný bez autora';
-$string['displayformat6'] = 'Seznam polo¾ek';
 $string['displayformatcontinuous'] = 'Souvislý bez autora';
-$string['displayformatdefault'] = 'Prostý slovníkový styl';
+$string['displayformatdictionary'] = 'Prostý slovníkový styl';
+$string['displayformatencyclopedia'] = 'Encyklopedie';
+$string['displayformatentrylist'] = 'Seznam polo¾ek';
+$string['displayformatfaq'] = 'ÈKD';
+$string['displayformatfullwithauthor'] = 'Úplný vèetnì autora';
+$string['displayformatfullwithoutauthor'] = 'Úplný bez autora';
 $string['displayformats'] = 'Zpùsoby zobrazení';
 $string['displayformatssetup'] = 'Nastavení zpùsobù zobrazení';
 $string['duplicateentry'] = 'Duplicitní polo¾ka';
+$string['editalways'] = 'Upravit v¾dy';
 $string['editcategories'] = 'Upravit kategorie';
 $string['editentry'] = 'Upravit polo¾ku';
 $string['editingcomment'] = 'Úprava komentáøe';
@@ -100,6 +101,7 @@ $string['filetoimport'] = 'Importovat ze souboru';
 $string['fillfields'] = 'Pojem a definice jsou povinná pole.';
 $string['filtername'] = 'Automatické propojování slovníku';
 $string['fullmatch'] = 'Srovnávat pouze celá slova<br><small>(pøi automatickém propojování)</small>';
+$string['globalglossary'] = 'Globální slovník';
 $string['glossaryleveldefaultsettings'] = 'Výchozí nastavení pro slovník';
 $string['glossarytype'] = 'Typ slovníku';
 $string['glosssaryexported'] = 'Slovník exportován.';

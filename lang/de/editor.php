@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3 (2004052500)
+      // editor.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
 
 
 $string['about'] = 'Über diesen Editor';
@@ -8,6 +8,9 @@ $string['absmiddle'] = 'Position in der Mitte';
 $string['address'] = 'Anschrift';
 $string['alignment'] = 'Anordnung';
 $string['alternatetext'] = 'Alternativer Text';
+$string['anchorhelp'] = 'Hiermit erstellen Sie nur einen Anker. Zusätzlich müssen Sie einen Link manuell erstellen.';
+$string['anchorname'] = 'Name des Ankers';
+$string['anchors'] = 'Anker';
 $string['baseline'] = 'Grundlinie';
 $string['bold'] = 'Fett';
 $string['borderthickness'] = 'Dicke der Ränder';
@@ -21,6 +24,7 @@ $string['chooseicon'] = 'Wählen Sie ein Icon aus, das eingefügt werden soll';
 $string['close'] = 'Schließen';
 $string['cols'] = 'Reihen';
 $string['copy'] = 'Die Auswahl kopieren';
+$string['createanchor'] = 'Anker erstellen';
 $string['createfolder'] = 'Ordner erstellen';
 $string['createlink'] = 'Einen Link einfügen';
 $string['cut'] = 'Markierung ausschneiden';

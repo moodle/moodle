@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.3 (2004052500)
+      // auth.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['auth_dbdescription'] = 'Aquest mètode utilitza una taula d\'una base de dades externa per comprovar si un nom d\'usuari i una contrasenya són vàlids. Si el compte és nou, aleshores també es pot copiar en Moodle informació d\'altres camps.';
@@ -16,6 +16,13 @@ $string['auth_dbtype'] = 'Tipus de base de dades (vg. la <A HREF=../lib/adodb/re
 $string['auth_dbuser'] = 'Nom d\'usuari amb accés de lectura a la base de dades';
 $string['auth_emaildescription'] = 'La confirmació per correu electrònic és el mètode d\'autenticació per defecte. Quan l\'usuari es registra i tria el seu nom d\'usuari i contrasenya, se li envia un missatge per confirmar les dades. Aquest missatge conté un enllaç segur a una pàgina en la qual l\'usuari pot confirmar el seu compte. En les connexions següents simplement es compara el nom d\'usuari i la contrasenya amb els valors guardats a la base de dades de Moodle.';
 $string['auth_emailtitle'] = 'Autenticació basada en el correu electrònic';
+$string['auth_fccreators'] = 'Llista de grups als membres dels quals els és permès de crear nous cursos. Separeu els diferents grups amb \';\'. Els noms han de ser exactament iguals als del servidor FirstClass. El sistema distingeix majúscules i minúscules.';
+$string['auth_fcdescription'] = 'Aquest mètode utilitza un servidor FirstClass per comprovar si el nom d\'usuari i la contrasenya són vàlids.';
+$string['auth_fcfppport'] = 'Número de port del servidor (el més comú és el 3333)';
+$string['auth_fchost'] = 'Adreça del servidor FirstClass. Utilitzeu el número IP o el nom del DNS.';
+$string['auth_fcpasswd'] = 'Contrasenya d\'aquest compte.';
+$string['auth_fctitle'] = 'Utilitza un servidor FirstClass';
+$string['auth_fcuserid'] = 'Userid del compte FirstClass amb conjunt de privilegis de \'Subaministrador\'.';
 $string['auth_imapdescription'] = 'Aquest mètode utilitza un servidor IMAP per comprovar si un nom d\'usuari i una contrasenya són vàlids.';
 $string['auth_imaphost'] = 'L\'adreça del servidor IMAP. Ha de ser el número IP, no el nom del DNS.';
 $string['auth_imapport'] = 'El número de port del servidor IMAP. Generalment és el 143 o el 993.';
@@ -28,6 +35,7 @@ $string['auth_ldap_create_context'] = 'Si activeu la creació d\'usuaris mitjança
 $string['auth_ldap_creators'] = 'Llista de grups als membres dels quals els és permès  crear nous cursos. Separeu els grups amb \';\'. Generalment una cosa semblant a \'cn=teachers,ou=staff,o=myorg\'';
 $string['auth_ldap_host_url'] = 'Especifiqueu l\'hoste LDAP en format URL, per exemple \'ldap://ldap.myorg.com/\' o \'ldaps://ldap.myorg.com/\' ';
 $string['auth_ldap_memberattribute'] = 'Especifiqueu l\'atribut de membre de l\'usuari, quan els usuaris pertanyen a un grup. Generalment \'member\'';
+$string['auth_ldap_objectclass'] = 'Filtre utilitzat per nomenar/cercar usuaris. Generalment es defineix quelcom semblant a objectClass=posixAccount. Per defecte objectClass=*, que retorna tots els objectes de LDAP.';
 $string['auth_ldap_search_sub'] = 'Poseu el valor <> 0 si voleu cercar els usuaris en subcontextos.';
 $string['auth_ldap_update_userinfo'] = 'Passar les dades de l\'usuari (nom, cognoms, adreça...) de LDAP a Moodle. Informació sobre mapatge en /auth/ldap/attr_mappings.php';
 $string['auth_ldap_user_attribute'] = 'L\'atribut utilitzat per anomenar/cercar usuaris. Generalment \'cn\'.';
@@ -54,6 +62,7 @@ $string['auth_nonedescription'] = 'Els usuaris es poden registrar i crear compte
 $string['auth_nonetitle'] = 'Sense autenticació';
 $string['auth_pop3description'] = 'Aquest mètode utilitza un servidor POP3 per comprovar si un nom d\'usuari i una contrasenya són vàlids.';
 $string['auth_pop3host'] = 'L\'adreça del servidor POP3. Ha de ser el número IP, no el nom del DNS.';
+$string['auth_pop3mailbox'] = 'Nom de la bústia amb la qual es fa la connexió (generalment INBOX)';
 $string['auth_pop3port'] = 'Número de port del servidor (el 110 és el més habitual)';
 $string['auth_pop3title'] = 'Utilitza un servidor POP3';
 $string['auth_pop3type'] = 'Tipus de servidor. Si el vostre servidor utilitza seguretat per certificat, trieu pop3cert.';

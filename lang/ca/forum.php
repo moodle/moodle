@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004062600)
+      // forum.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['addanewdiscussion'] = 'Afegeix un nou tema de debat';
@@ -43,6 +43,7 @@ $string['editing'] = 'S\'està editant';
 $string['emptymessage'] = 'El vostre missatge presentava algun problema. Potser l\'havíeu deixat en blanc, o el fitxer adjunt era massa gran. Els canvis NO s\'han desat.';
 $string['everyonecanchoose'] = 'Cadascú pot triar subscriure\'s';
 $string['everyoneissubscribed'] = 'Tothom està subscrit a aquest fòrum';
+$string['existingsubscribers'] = 'Subscriptors actuals';
 $string['forcesubscribe'] = 'Imposa que tothom estigui subscrit';
 $string['forcesubscribeq'] = 'Imposeu que tothom estigui subscrit?';
 $string['forum'] = 'Fòrum';
@@ -100,6 +101,7 @@ $string['postrating3'] = 'Sobretot coneixements connectats';
 $string['posts'] = 'Missatges';
 $string['posttoforum'] = 'Envia al fòrum';
 $string['postupdated'] = 'S\'ha actualitzat el vostre missatge';
+$string['potentialsubscribers'] = 'Subscriptors potencials';
 $string['processingdigest'] = 'S\'està processant el resum de correu de l\'usuari $a';
 $string['processingpost'] = 'S\'està processant el missatge $a';
 $string['prune'] = 'Separa';
@@ -147,6 +149,8 @@ $string['subscriptions'] = 'Subscripcions';
 $string['unsubscribe'] = 'Cancel·la la meva subscripció a aquest fòrum';
 $string['unsubscribed'] = 'La vostra subscripció ha estat cancel·lada';
 $string['unsubscribeshort'] = 'Cancel·la subscripció';
+$string['yesforever'] = 'Sí, per sempre';
+$string['yesinitially'] = 'Sí, inicialment';
 $string['youratedthis'] = 'La vostra valoració';
 $string['yournewtopic'] = 'Nou tema de debat';
 $string['yourreply'] = 'La vostra resposta';

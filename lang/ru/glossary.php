@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3.1 + (2004052501)
+      // glossary.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['addcomment'] = 'Добавить комментарий';
@@ -61,13 +61,7 @@ $string['deletingnoneemptycategory'] = 'Удаление этой категории не будет удалять
 $string['descending'] = '(спуск)';
 $string['destination'] = 'Предназначение';
 $string['displayformat'] = 'Формат Показа';
-$string['displayformat2'] = 'Полный с автором';
-$string['displayformat3'] = 'Энциклопедия';
-$string['displayformat4'] = 'FAQ';
-$string['displayformat5'] = 'Полный без автора';
-$string['displayformat6'] = 'Список записей';
 $string['displayformatcontinuous'] = 'Непрерывный без автора';
-$string['displayformatdefault'] = 'Простой, стиль словаря';
 $string['displayformats'] = 'Форматы показа';
 $string['displayformatssetup'] = 'Настройка форматов показа';
 $string['duplicateentry'] = 'Дублирование записи';
@@ -100,6 +94,7 @@ $string['filetoimport'] = 'Файл для импорта';
 $string['fillfields'] = 'Концепция и определение - обязательные поля.';
 $string['filtername'] = 'Авто-связывание глоссария';
 $string['fullmatch'] = 'Соответствие только по полным словам';
+$string['globalglossary'] = 'Глобальный глоссарий';
 $string['glossaryleveldefaultsettings'] = 'Настройки по умолчанию для Уровня Глоссария';
 $string['glossarytype'] = 'Тип глоссария';
 $string['glosssaryexported'] = 'Глоссарий экспортирован';

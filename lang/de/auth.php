@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.3 development (2004040500)
+      // auth.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
 
 
 $string['auth_dbdescription'] = 'Diese Methode benutzt eine externe Datenbank-Tabelle, um die Gültigkeit eines angegebenen Nutzernamens und Kennwort zu überprüfen, Wenn der Zugang neu ist, werden die Informationen der übrigen Felder ebenso zu Moodle hinüberkopiert.';
@@ -17,6 +17,13 @@ $string['auth_dbtype'] = 'Der Datenbank-Typ (Siehe <A HREF=../lib/adodb/readme.h
 $string['auth_dbuser'] = 'Nutzername mit Schreibzugriff auf die Datenbank';
 $string['auth_emaildescription'] = 'E-Mail-Bestätigung ist die Standard-Authentifizierungsmethode. Wenn sich der Nutzer anmeldet, seinen eigenen Nutzernamen und sein Passwort auswählt, wird eine Bestätigungs-E-Mail an die E-Mail-Adresse des Nutzers gesendet. Diese E-Mail enthält einen sicheren Verweis auf eine Seite, wo der Nutzer seinen Zugang bestätigen kann. Spätere Anmeldungen prüfen nur den Nutzernamen und Kennwort anhand der in der Moodle-Datenbank gespeicherten Daten.';
 $string['auth_emailtitle'] = 'E-Mail-basierte Authentifizierung';
+$string['auth_fccreators'] = 'Liste der Kursersteller/innen. Trennen Sie verschiedene Gruppen durch \';\'. Namen müssen genau so geschrieben werden, wie auf dem Referenz-Server. Achten Sie auch auf die korrekte Groß- und Kleinschreibung.';
+$string['auth_fcdescription'] = 'Dieses Verfahren überprüft auf einem anderen Server die Gültigkeit des Nutzernamens und des Passwortes.';
+$string['auth_fcfppport'] = 'Server-Port (3333 wird zumeist genutzt)';
+$string['auth_fchost'] = 'Server-Adresse des Referenz-Servers. Tragen Sie die IP-Adresse oder den DNS Namen ein.';
+$string['auth_fcpasswd'] = 'Passwort für den Zugang';
+$string['auth_fctitle'] = 'Verwendet einen Referenz-Server';
+$string['auth_fcuserid'] = 'Nutzer-ID auf dem Referenz-Server mit der bevorzugten \'Subadmin\'-Einstellung';
 $string['auth_imapdescription'] = 'Diese Methode verwendet einen IMAP-Server, um zu prüfen, ob der angegebener Nutzername und das Passwort gültig sind.';
 $string['auth_imaphost'] = 'IMAP Server-Adresse. Benutzen Sie die IP, nicht den DNS-Namen';
 $string['auth_imapport'] = 'IMAP Serverport-Nummer. Normalerweise ist das 143 oder 993.';
@@ -29,7 +36,8 @@ $string['auth_ldap_create_context'] = 'Wenn Sie die Nutzer-Erstellung mit E-Mail
 $string['auth_ldap_creators'] = 'Eine Liste von Gruppen, denen es erlaubt ist, neue Kurse zu erstellen. Trennen Sie mehrere Gruppen durch \';\'. Normalerweise etwas wie \'cn=teachers,ou=staff, o=myorg\'';
 $string['auth_ldap_host_url'] = 'Geben Sie einen LDAP Server in URL-Form an wie \'ldap://ldap.myorg.de/\' oder \'ldaps://ldap.myorg.de/\' ';
 $string['auth_ldap_memberattribute'] = 'Geben Sie die Mitgliedsoptionen an, wenn Nutzer zu einer Gruppe gehören. Normalerweise \'member\'';
-$string['auth_ldap_search_sub'] = 'Wählen Sie &lt;&gt; 0 wenn Sie Nutzer aus Unterumgebungen suchen möchten.';
+$string['auth_ldap_objectclass'] = 'Filter für die Suche nach Namen/Nutzern. Normalerweise tragen Sie ein objectClass=posixAccount . Defaults to objectClass=* what will return all objects from LDAP.';
+$string['auth_ldap_search_sub'] = 'Wählen Sie <> 0 wenn Sie Nutzer aus Unterumgebungen suchen möchten.';
 $string['auth_ldap_update_userinfo'] = 'Nutzerdaten  (Vorname, Name, Adresse...) von LDAP zu Moodle aktualisieren. Weitere Informationen in /auth/ldap/attr_mappings.php';
 $string['auth_ldap_user_attribute'] = 'Verwendete Eigenschaften, um Nutzer zu benennen/suchen. Normalerweise \'cn\'.';
 $string['auth_ldap_version'] = 'Diese Version des LDAP Protokolls nutzt Ihr Server.';
@@ -51,6 +59,7 @@ $string['auth_nonedescription'] = 'Nutzer können sich anmelden und gültige Nutze
 $string['auth_nonetitle'] = 'Keine Authentifizierung';
 $string['auth_pop3description'] = 'Diese Methode verwendet einen POP3-Server, um zu prüfen, ob der angegebener Nutzername und das Passwort gültig sind.';
 $string['auth_pop3host'] = 'POP3 Server-Adresse. Benutzen Sie die IP, nicht den DNS-Namen.';
+$string['auth_pop3mailbox'] = 'Name der Mailbox mit der eine Verbindung hergestellt werden soll (z.B. Inbox)';
 $string['auth_pop3port'] = 'POP3 Serverport-Nummer. Normalerweise ist das 110.';
 $string['auth_pop3title'] = 'Einen POP3-Server verwenden';
 $string['auth_pop3type'] = 'Servertyp. Wenn Ihr Server Sicherheitszertifikate verwendet, wählen Sie pop3cert.';

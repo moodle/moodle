@@ -1,9 +1,13 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004062600)
+      // wiki.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['action'] = '-- Acció --';
 $string['administration'] = 'Administració';
+$string['allowremovepages'] = 'Permet suprimir pàgines';
+$string['allowrevertchanges'] = 'Permet desfer canvis en massa';
+$string['allowsetpage'] = 'Permet definir els indicadors de pàgina';
+$string['allowstrippages'] = 'Permet estripar pàgines';
 $string['attachments'] = 'Fitxers adjunts';
 $string['author'] = 'Autor';
 $string['authorfieldpattern'] = 'Patró del camp d\'autor';
@@ -33,6 +37,7 @@ $string['deleteversions'] = 'Nombre de versions recents que voleu suprimir';
 $string['deleteversionserror'] = 'Introduïu un nombre correcte de versions.';
 $string['diff'] = 'Diff';
 $string['differences'] = 'Diferències entre les versions $a->new_ver i $a->old_ver de: $a->pagename.';
+$string['disablecamel'] = 'Inhabilitat els enllaços CamelCase';
 $string['disabledpage'] = 'Actualment aquesta pàgina no està disponible.';
 $string['doesnotexist'] = 'Aquesta pàgina encara no existeix. Podeu fer clic en el botó Edita si voleu crear-la.';
 $string['downloadaszip'] = 'Fitxer zip descarregable';
@@ -107,6 +112,7 @@ $string['nothingtostrip'] = 'No hi ha pàgines que tinguin mes d\'una versió.';
 $string['nowikicreated'] = 'No s\'han creat entrades en aquest wiki';
 $string['of'] = 'de';
 $string['offline'] = 'OFFLINE';
+$string['optional'] = 'opcional';
 $string['orphanedpage'] = 'Pàgina òrfena';
 $string['orphanedpages'] = 'Pàgines òrfenes';
 $string['otherwikis'] = 'Altres Wikis';
@@ -145,6 +151,11 @@ $string['strippagecheck'] = 'Esteu segur que voleu estripar les versions velles 
 $string['strippages'] = 'Estripar pàgines';
 $string['studentadminoptions'] = 'Opcions d\'administració per als estudiants';
 $string['submit'] = 'Tramet';
+$string['tabattachments'] = 'Adjunts';
+$string['tabedit'] = 'Edició';
+$string['tabinfo'] = 'Història';
+$string['tablinks'] = 'Enllaços';
+$string['tabview'] = 'Visualització';
 $string['thanksforcontribution'] = 'Gràcies per la vostra col·laboració';
 $string['thispageisntlinkedfromanywhereelse'] = 'No hi ha cap enllaç que meni a aquesta pàgina.';
 $string['updatedpages'] = 'Pàgines actualitzades';

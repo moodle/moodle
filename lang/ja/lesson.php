@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 development (2004082600)
+      // lesson.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['actionaftercorrectanswer'] = '正解後の動作';
@@ -36,7 +36,7 @@ $string['importquestions'] = '質問のインポート';
 $string['jump'] = 'ジャンプ';
 $string['maximumnumberofanswersbranches'] = '解答/選択枝の最大数';
 $string['maximumnumberofattempts'] = '挑戦の最大回数';
-$string['minimumnumberofquestions'] = '質問の最大数';
+$string['minimumnumberofquestions'] = '質問の最小数';
 $string['modulename'] = 'レッスン';
 $string['modulenameplural'] = 'レッスン';
 $string['movepagehere'] = 'ページをここに移動する';
@@ -45,7 +45,7 @@ $string['movingtonextpage'] = '次ページに移動中';
 $string['multianswer'] = '重複解答';
 $string['multipleanswer'] = '重複解答';
 $string['nextpage'] = '次ページ';
-$string['noanswer'] = '解答がありません';
+$string['noanswer'] = '解答がありません。';
 $string['noattemptrecordsfound'] = '挑戦レコードが見つかりません: 評価無し';
 $string['nobranchtablefound'] = '分岐表が見つかりませんでした。';
 $string['normal'] = '通常 - レッスンパスに従う';
@@ -60,28 +60,29 @@ $string['page'] = 'ページ: $a';
 $string['pagecontents'] = 'ページ内容';
 $string['pages'] = 'ページ';
 $string['pagetitle'] = 'ページタイトル';
-$string['pleasecheckoneanswer'] = '答えを確認してください';
-$string['pleasecheckoneormoreanswers'] = '1またはそれ以上の答えを選択してください';
-$string['pleaseenteryouranswerinthebox'] = 'ボックスに答えを入力してください';
-$string['pleasematchtheabovepairs'] = '上記のペアを合わせてください';
+$string['pleasecheckoneanswer'] = '答えを確認してください。';
+$string['pleasecheckoneormoreanswers'] = '1またはそれ以上の答えを選択してください。';
+$string['pleaseenteryouranswerinthebox'] = 'ボックスに答えを入力してください。';
+$string['pleasematchtheabovepairs'] = '上記のペアを合わせてください。';
 $string['questionoption'] = '質問オプション';
 $string['questiontype'] = '質問タイプ';
 $string['redisplaypage'] = '再表示';
 $string['response'] = 'フィードバック';
-$string['sanitycheckfailed'] = '正当性チェックが失敗しました: この挑戦は削除されました';
+$string['sanitycheckfailed'] = '正当性チェックが失敗しました: この挑戦は削除されました。';
 $string['savepage'] = 'ページの保存';
 $string['showanunansweredpage'] = '未解答のページを表示';
 $string['showanunseenpage'] = '未閲覧のページを表示';
 $string['singleanswer'] = '単一解答';
 $string['thatsthecorrectanswer'] = '正しい答えです';
 $string['thatsthewronganswer'] = '間違った答えです';
+$string['thefollowingpagesjumptothispage'] = '下記のページは、このページにジャンプします。';
 $string['thispage'] = 'このページ';
 $string['useeditor'] = 'エディタを使用';
 $string['usemaximum'] = '最大値を使用';
 $string['usemean'] = '平均値を使用';
 $string['youhaveseen'] = 'あなたは既にこのレッスンを1ページ以上閲覧しました。<br />あなたが見た最後のページから始めますか?';
 $string['youranswer'] = 'あなたの解答';
-$string['yourcurrentgradeis'] = '現在の成績は $a です';
-$string['youshouldview'] = '少なくとも $a 回閲覧してください';
+$string['yourcurrentgradeis'] = '現在の成績は $a です。';
+$string['youshouldview'] = '少なくとも $a 回閲覧してください。';
 
 ?>

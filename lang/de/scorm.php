@@ -1,37 +1,77 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.3 (2004052500)
+      // scorm.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
 
 
+$string['attr_error'] = 'Falscher Wert für Attribut ($a->atttr) in Tag $a->tag';
 $string['autocontinue'] = 'Automatische Fortsetzung';
+$string['badmanifest'] = 'Einige dauerhafte Fehler: siehe Fehlerprotokoll';
 $string['browse'] = 'Durchsuchen';
 $string['browsed'] = 'Durchsucht';
 $string['browsemode'] = 'Durchsuchen Einstellung';
 $string['chooseapacket'] = 'Auswählen oder aktualisieren eines SCORM Pakets';
 $string['completed'] = 'Abgeschlossen';
+$string['configframesize'] = 'Dieser Wert ist die Größe (in Pixeln) des Topframes (mit der Navigation) wenn ein Scormpaket ausgeführt wird.';
+$string['configpopup'] = 'Wenn ein neues SCORM-Paket ergänzt wird, das in einem Popup-Fenster angezeigt werden kann, soll diese Option als Grundeinstellung gewählt werden?';
+$string['configpopupheight'] = 'Welche Höhe sollte ein Popup-Fenster als Grundeinstellung haben?';
+$string['configpopupresizable'] = 'Sollen Popup-Fenster normalerweise in der Größe anpassbar sein?';
+$string['configpopupscrollbars'] = 'Sollten Popup-Fenster normalerweise scrollbar seinß';
+$string['configpopupstatus'] = 'Sollen Popup-Fenster normalerweise den Status anzeigen? ';
+$string['configpopupwidth'] = 'Welche Breite sollte ein Popup-Fenster normalerweise haben?';
 $string['coursepacket'] = 'Kurspaket';
 $string['coursestruct'] = 'Kursstruktur';
 $string['datadir'] = 'Dateisystemfehler: Verzeichnis für Kursdaten konnte nicht erstellt werden';
+$string['domxml'] = 'DOMXML externe Bibliothek';
 $string['entercourse'] = 'SCORM Kurs starten';
+$string['errorlogs'] = 'Fehlerprotokoll';
 $string['failed'] = 'Fehlgeschlagen';
+$string['found'] = 'Manifest gefunden';
+$string['gradeaverage'] = 'Durchschnittsnote';
+$string['gradehighest'] = 'Höchstnote';
+$string['grademethod'] = 'Bewertungsmethode';
+$string['gradescoes'] = 'Scoes Situation';
+$string['gradesum'] = 'Summe der Bewertungen';
+$string['guestsno'] = 'Gäste können Scorm-Kurse nicht ansehen';
 $string['incomplete'] = 'Unvollständig';
+$string['missing_attribute'] = 'Fehlende Attribute $a->attr in Tag $a->tag';
+$string['missing_tag'] = 'Fehlendes Tag $a->tag';
 $string['mode'] = 'Einstellung';
 $string['modulename'] = 'SCORM';
 $string['modulenameplural'] = 'SCORMS';
+$string['newheight'] = 'Voreingestellte Höhe der Fenster (in Pixeln)';
+$string['newresizable'] = 'Fenster kann in der Größe angepasst werden';
+$string['newscrollbars'] = 'Fenster kann gescrollt werden';
+$string['newstatus'] = 'Statusanzeige zeigen';
+$string['newwidth'] = 'Voreingestellte Größe der Fenster (in Pixeln)';
+$string['newwindow'] = 'Neues Fenster';
+$string['newwindowopen'] = 'Das Scorm-Paket in einem neuen Popup-Fenster anzeigen';
 $string['next'] = 'Fortsetzen';
+$string['no_attributes'] = 'Tag $a->tag muss Attribute haben';
+$string['no_children'] = 'Tag $a->tag muss Kinder/Children haben';
 $string['nomanifest'] = 'Zeichen nicht gefunden';
 $string['noreports'] = 'Kein Bericht zum Anzeigen vorhanden';
 $string['normal'] = 'Normal';
+$string['not_corr_type'] = 'Falsche Schreibweise im Tag $a->tag';
 $string['notattempted'] = 'Nicht versucht';
+$string['organizations'] = 'Organisationen';
 $string['packagedir'] = 'Dateisystemfehler: Verzeichnis für Paket kann nicht erstellt werden';
 $string['passed'] = 'Abgeschlossen';
+$string['php5'] = 'PHP 5 (DOMXML native library)';
+$string['position_error'] = 'Der $a-tag Tag kann nicht Kind/Child des $a->parent Tag sein';
 $string['prev'] = 'Vorheriges';
 $string['regular'] = 'Reguläres Zeichen';
 $string['report'] = 'Bericht';
 $string['review'] = 'Rückblick';
+$string['scoes'] = 'Scoes';
 $string['score'] = 'Bewertung';
+$string['syntax'] = 'Schreibfehler';
+$string['tag_error'] = 'Unbekannter Tag ($a->tag) mit dem Inhalt: $a->value';
+$string['too_many_attributes'] = 'Tag $a->tag hat zu viele Attribute';
+$string['too_many_children'] = 'Tag $a->tag hat zu viele Kinder/children';
 $string['trackingloose'] = 'WARNUNG: Trackingdaten dieses SCORM Paketes gehen verloren!';
 $string['validateascorm'] = 'Überprüfen eines SCORM Pakets';
 $string['validation'] = 'Prüfergebnis';
+$string['validationtype'] = 'Die Einstellungen der DOMXML Library werden zur Prüfung des SCORM Manifests  verwandt. Wennn Sie sich nicht genau auskennen, lassen Sie die Einstellungen unverändert stehen.';
+$string['versionwarning'] = 'Die Version des Manifests ist älter als 1.3, Warnung beim $a->tag Tag';
 $string['viewallreports'] = 'Berichte für $a Versuche anzeigen';
 
 ?>
