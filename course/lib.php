@@ -1235,19 +1235,19 @@ function print_category_info($category, $depth) {
         }
 
         echo '<td valign="top">'.$catimage.'</td>';
-        echo '<td valign="top" width="100%" class="categoryname">';
+        echo '<td valign="top" width="100%" class="category name">';
         echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'.$category->name.'</a>';
         echo '</td>';
-        echo '<td class="categoryname">&nbsp;</td>';
+        echo '<td class="category info">&nbsp;</td>';
         echo '</tr>';
 
         if ($courses && !(isset($CFG->max_category_depth)&&($depth>=$CFG->max_category_depth-1))) {
             foreach ($courses as $course) {
                 $linkcss = $course->visible ? '' : ' class="dimmed" ';
                 echo '<tr><td valign="top" width="30">&nbsp;';
-                echo '</td><td valign="top" width="100%" class="coursename">';
+                echo '</td><td valign="top" width="100%" class="course name">';
                 echo '<a '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname.'</a>';
-                echo '</td><td align="right" valign="top" nowrap="nowrap" class="coursename">';
+                echo '</td><td align="right" valign="top" nowrap="nowrap" class="course info">';
                 if ($course->guest ) {
                     echo '<a title="'.$strallowguests.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
                     echo '<img hspace="1" alt="'.$strallowguests.'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/guest.gif" /></a>';
@@ -1279,10 +1279,10 @@ function print_category_info($category, $depth) {
             echo '</td>';
         }
 
-        echo '<td valign="top" width="100%" class="categoryname">';
+        echo '<td valign="top" width="100%" class="category name">';
         echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'.$category->name.'</a>';
         echo '</td>';
-        echo '<td valign="top" class="categorynumber">';
+        echo '<td valign="top" class="category number">';
         if ($category->coursecount) {
             echo $category->coursecount;
         }
@@ -1314,7 +1314,6 @@ function print_courses($category, $width="100%") {
     if ($courses) {
         foreach ($courses as $course) {
             print_course($course, $width);
-            echo "<br />\n";
         }
     } else {
         print_heading(get_string("nocoursesyet"));
@@ -1340,12 +1339,12 @@ function print_course($course, $width="100%") {
 
     echo "<table width=\"100%\">";
     echo '<tr valign="top">';
-    echo '<td valign="top" width="50%" class="courseboxinfo">';
+    echo '<td valign="top" width="50%" class="info">';
     echo '<b><a title="'.get_string('entercourse').'"'.
          $linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.
          $course->fullname.'</a></b><br />';
     if ($teachers = get_course_teachers($course->id)) {
-        echo "<span class=\"courseboxteachers\">\n";
+        echo "<span class=\"teachers\">\n";
         foreach ($teachers as $teacher) {
             if ($teacher->authority > 0) {
                 if (!$teacher->role) {
@@ -1361,7 +1360,7 @@ function print_course($course, $width="100%") {
 
     echo $enrol->get_access_icons($course);
 
-    echo '</td><td valign="top" width="50%" class="courseboxsummary">';
+    echo '</td><td valign="top" width="50%" class="summary">';
     $options = NULL;
     $options->noclean = true;
     $options->para = false;
@@ -1389,7 +1388,6 @@ function print_my_moodle() {
                 continue;
             }
             print_course($course, "100%");
-            echo "<br />\n";
         }
 
         if (count_records("course") > (count($courses) + 1) ) {  // Some courses not being displayed
@@ -1518,16 +1516,23 @@ function set_coursemodule_visible($id, $visible) {
     return set_field("course_modules", "visible", $visible, "id", $id);
 }
 
+/*
+ * Delete a course module and any associated data at the course level (events)
+ * Until 1.5 this function simply marked a deleted flag ... now it 
+ * deletes it completely.
+ *
+ */
 function delete_course_module($id) {
-    $cm = get_record('course_modules', 'id', $id);
+    if (!$cm = get_record('course_modules', 'id', $id)) {
+        return true;
+    }
     $modulename = get_field('modules', 'name', 'id', $cm->module);
     if ($events = get_records_select('event', "instance = '$cm->instance' AND modulename = '$modulename'")) {
         foreach($events as $event) {
             delete_event($event);
         }
     }
-    return set_field("course_modules", "visible", 0, "id", $id);
-    return set_field("course_modules", "deleted", 1, "id", $id);
+    return delete_records('course_modules', 'id', $cm->id);
 }
 
 function delete_mod_from_section($mod, $section) {
