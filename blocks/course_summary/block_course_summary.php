@@ -41,6 +41,11 @@ class CourseBlock_course_summary extends MoodleBlock {
     function hide_header() {
         return true;
     }
+
+    function preferred_width() {
+        return 210;
+    }
+
 }
 
 ?>
