@@ -360,6 +360,15 @@ function  glossary_print_entry_concept($entry) {
 
 function glossary_print_entry_definition($entry) {
     $definition = str_ireplace($entry->concept,"<nolink>$entry->concept</nolink>",$entry->definition);
+/*    if ( $aliases = get_records("glossary_alias","entryid",$entry->id) ) {
+        foreach ($aliases as $alias) {
+        echo "<small><font color=red>$alias->alias: ";
+            $definition = str_ireplace($alias->alias,"<nolink>$alias->alias</nolink>",$definition);
+            echo "<b>" . format_text($definition,2) . "</b>";
+        echo "</font></small><br>";
+        }
+    }
+*/
     echo format_text($definition, $entry->format);
 }
 
@@ -1226,7 +1235,12 @@ function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
             if (!$cm = get_coursemodule_from_instance("glossary", $entry->glossaryid, $glossary->course) ) {
                 error("Glossary is misconfigured - don't know what course module it is ");
             }
-            glossary_print_entry($course, $cm, $glossary, $entry, "","",0,$displayformat);
+            $dp = $displayformat;
+            // Hard-coded until the Display formats manager is done.
+            if ( $dp == -1 and $glossary->displayformat == 6 ) {
+                $dp = 2;
+            }
+            glossary_print_entry($course, $cm, $glossary, $entry, "","",0,$dp);
         }
     }
     echo "</td>";

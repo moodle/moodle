@@ -69,7 +69,7 @@
     echo "<table class=\"generalbox\" width=\"70%\" align=\"center\" border=\"0\" cellpadding=\"5\" cellspacing=\"0\">";
 	echo "<tr bgcolor=$THEME->cellheading2><td align=center>";
 	    echo "<table border=0 width=100%><tr><td width=33%></td><td width=33% align=center>";
-	    echo get_string("commentson","glossary") . " <b>$entry->concept</b></td>";
+	    echo get_string("commentson","glossary") . ' <b>' . glossary_print_entry_concept($entry) . '</b></td>';
 	    echo "<td width=33% align=right>";	
         if ( $glossary->allowcomments ) {	
             echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id\"><img  alt=\"" . get_string("addcomment","glossary") . "\" src=\"comment.gif\" height=16 width=16 border=0></a> ";
@@ -85,7 +85,7 @@
           echo "</td></tr></table>";
     }
     echo "<b>$entry->concept</b>: ";
-    echo format_text($entry->definition, $entry->format);
+    glossary_print_entry_definition($entry);
     echo "</td>";
     echo "</TR></table>";
 
