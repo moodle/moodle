@@ -1,41 +1,41 @@
-<P ALIGN=CENTER><B>Help on writing text</B></P>
+<p align="center"><b>Aide à la saisie de textes</b></p>
 
-Writing text in Moodle works pretty much the way you would expect, but you also have the ability to include "smilies", "URL addresses" and some HTML tags in your text.
+<p>La saisie de textes fonctionne dans Moodle à peu près de la façon dont vous l'attendez. Vous avez en plus la possibilité d'ajouter à votre texte des «&nbsp;smilies&nbsp;» ou «&nbsp;binettes&nbsp;», des adresses URL et quelques balises HTML.</p>
 
-<P><B>Smilies (emoticons)</B></P>
-<UL>
-<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=5>
-<TR><TH>Name       <TH>Picture                                                 <TH>You type</TR>
-<TR><TD>smile      <TD ALIGN=CENTER><img ALT=smile SRC="<?php echo $CFG->wwwroot?>/pix/s/smiley.gif"><TD ALIGN=CENTER> :-) </TD></TR>
-<TR><TD>sad        <TD ALIGN=CENTER><img ALT=sad SRC="<?php echo $CFG->wwwroot?>/pix/s/sad.gif"><TD ALIGN=CENTER> :-( </TD></TR>
-<TR><TD>grin       <TD ALIGN=CENTER><img ALT=grin SRC="<?php echo $CFG->wwwroot?>/pix/s/biggrin.gif"><TD ALIGN=CENTER> :-D </TD></TR>
-<TR><TD>wink       <TD ALIGN=CENTER><img ALT=wink SRC="<?php echo $CFG->wwwroot?>/pix/s/wink.gif"><TD ALIGN=CENTER> ;-) </TD></TR>
-<TR><TD>mixed      <TD ALIGN=CENTER><img ALT=mixed SRC="<?php echo $CFG->wwwroot?>/pix/s/mixed.gif"><TD ALIGN=CENTER> :-/ </TD></TR>
-<TR><TD>wide-eyed  <TD ALIGN=CENTER><img ALT=wide-eyed SRC="<?php echo $CFG->wwwroot?>/pix/s/wideeyes.gif"><TD ALIGN=CENTER> 8-) </TD></TR>
-<TR><TD>tongue-out <TD ALIGN=CENTER><img ALT=tongue-out SRC="<?php echo $CFG->wwwroot?>/pix/s/tongueout.gif"><TD ALIGN=CENTER> :-P </TD></TR>
-<TR><TD>surprise   <TD ALIGN=CENTER><img ALT=surprised SRC="<?php echo $CFG->wwwroot?>/pix/s/surprise.gif"><TD ALIGN=CENTER> :-o </TD></TR>
-<TR><TD>cool       <TD ALIGN=CENTER><img ALT=cool SRC="<?php echo $CFG->wwwroot?>/pix/s/cool.gif"><TD ALIGN=CENTER> B-) </TD></TR>
-</TABLE>
-</UL>
+<p><b>Binettes (smilies ou emoticons)</b></p>
+<ul>
+<table border="0" cellpadding="5" cellspacing="5">
+<tr><th>Nom</th>         <th>Dessin</th>                                                                                    <th>Ce qu'il faut taper</th></tr>
+<tr><td>sourire</td>     <td align="center"><img alt="smile" src="<?php echo $CFG->wwwroot?>/pix/s/smiley.gif"></td>        <td align="center"> :-) </td></tr>
+<tr><td>triste</td>      <td align="center"><img alt="sad" src="<?php echo $CFG->wwwroot?>/pix/s/sad.gif"></td>             <td align="center"> :-( </td></tr>
+<tr><td>très content</td><td align="center"><img alt="grin" src="<?php echo $CFG->wwwroot?>/pix/s/biggrin.gif"></td>        <td align="center"> :-D </td></tr>
+<tr><td>clin d'oeil</td> <td align="center"><img alt="wink" src="<?php echo $CFG->wwwroot?>/pix/s/wink.gif"></td>           <td align="center"> ;-) </td></tr>
+<tr><td>confus</td>      <td align="center"><img alt="mixed" src="<?php echo $CFG->wwwroot?>/pix/s/mixed.gif"></td>         <td align="center"> :-/ </td></tr>
+<tr><td>choqué</td>      <td align="center"><img alt="wide-eyed" src="<?php echo $CFG->wwwroot?>/pix/s/wideeyes.gif"></td>  <td align="center"> 8-) </td></tr>
+<tr><td>langue</td>      <td align="center"><img alt="tongue-out" src="<?php echo $CFG->wwwroot?>/pix/s/tongueout.gif"></td><td align="center"> :-P </td></tr>
+<tr><td>surprise</td>    <td align="center"><img alt="surprised" src="<?php echo $CFG->wwwroot?>/pix/s/surprise.gif"></td>  <td align="center"> :-o </td></tr>
+<tr><td>cool</td>        <td align="center"><img alt="cool" src="<?php echo $CFG->wwwroot?>/pix/s/cool.gif"></td>           <td align="center"> B-) </td></tr>
+</table>
+</ul>
 
-<P><B>URLs</B></P>
-<UL>
-<P>Any "word" starting with <B>www.</B> or <B>http://</B> will automatically be turned into a clickable link. 
-<P>For example:  <A HREF="http://www.yahoo.com">www.yahoo.com</A> or <A HREF="http://curtin.edu">http://curtin.edu</A>
-</UL>
+<p><b>URLs</b></p>
+<ul>
+<p>Tout texte commençant par <b>www.</b> ou par <b>http://</b> est automatiquement converti en un lien cliquable.</p>
+<p>Par exemple :  <a href="http://www.google.com/">www.google.com</a> or <a href="http://moodle.org/">http://moodle.org</a></p>
+</ul>
 
-<P><B>HTML tags</B></P>
-<UL>
-<P>You can use a limited subset of HTML tags to add emphasis to your texts.
-<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=5>
-<TR><TH>HTML tags<TH>Produces</TR>
-<TR><TD>&lt;B> bold &lt;/B> <TD> <B>bold text</B> </TR>
-<TR><TD>&lt;I> italic &lt;/I> <TD> <I>italic text</I> </TR>
-<TR><TD>&lt;U> underline &lt;/U> <TD> <U>underlined text</U> </TR>
-<TR><TD>&lt;FONT SIZE=1> small &lt;/FONT> <TD> <FONT SIZE=1>small</FONT> </TR>
-<TR><TD>&lt;FONT SIZE=4> large &lt;/FONT> <TD> <FONT SIZE=4>large</FONT> </TR>
-<TR><TD>&lt;FONT COLOR=green> example &lt;/FONT> <TD> <FONT color=green>example</FONT> </TR>
-</TABLE>
-</UL>
+<p><b>Balises HTML</b></p>
+<ul>
+<p>Vous pouvez utiliser quelques balises HTML pour rendre vos textes plus clairs et structurés.</p>
+<table border="0" cellpadding="5" cellspacing="5">
+<tr><th>Balises HTML</th>                            <th>Effet produit</th></tr>
+<tr><td>&lt;B> gras &lt;/B></td>                     <td><b>texte en caractères gras</b></td></tr>
+<tr><td>&lt;I> italique &lt;/I></td>                 <td><i>texte en caractères italiques</i></td></tr>
+<tr><td>&lt;U> souligné &lt;/U></td>                 <td><u>texte souligné</u></td></tr>
+<tr><td>&lt;FONT SIZE=1> petit &lt;/FONT></td>       <td><font size="1">texte en petits caractères</font></td></tr>
+<tr><td>&lt;FONT SIZE=4> grand &lt;/FONT></td>       <td><font size="4">texte en grands caractères</font></td></tr>
+<tr><td>&lt;FONT COLOR=green> exemple &lt;/FONT></td><td><font color="green">texte en couleur verte</font></td></tr>
+</table>
+</ul>
 
 

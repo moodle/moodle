@@ -1,21 +1,21 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.0.8 beta test (2003010400)
+      // choice.php - created with Moodle 1.1 Beta + (2003082100)
 
 
 $string['answered'] = "Répondu";
 $string['choice'] = "Proposition \$a";
-$string['choicename'] = "Nom de la consultation";
+$string['choicename'] = "Nom du sondage";
 $string['choicetext'] = "Texte de la question";
-$string['modulename'] = "Consultation";
-$string['modulenameplural'] = "Consultations";
+$string['modulename'] = "Sondage";
+$string['modulenameplural'] = "Sondages";
 $string['notanswered'] = "Pas encore répondu";
 $string['publish'] = "Publication des résultats";
-$string['publishanonymous'] = "Publier les résultats anonymement, ne pas montrer le nom des étudiants";
-$string['publishnames'] = "Publier les résultats complets, afficher le nom des personnes et leur choix";
-$string['publishnot'] = "Les étudiants ne peuvent consulter les résultats";
+$string['publishanonymous'] = "Publier les résultats anonymement, sans afficher le nom des étudiants";
+$string['publishnames'] = "Publier les résultats complets, avec le nom des étudiants et leur choix";
+$string['publishnot'] = "Ne pas publier les résultats pour les étudiants";
 $string['responses'] = "Réponses";
 $string['responsesto'] = "Réponses à \$a";
-$string['savemychoice'] = "Enregistrer ma réponse";
-$string['viewallresponses'] = "Voire les \$a réponses";
+$string['savemychoice'] = "Enregistrer mon vote";
+$string['viewallresponses'] = "Voir les \$a réponses";
 
 ?>

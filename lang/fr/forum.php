@@ -1,68 +1,79 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.6.3 (2002111401)
+      // forum.php - created with Moodle 1.1.1 (2003091111)
 
 
 $string['addanewdiscussion'] = "Ajouter un nouveau sujet de discussion";
+$string['addanewtopic'] = "Ajouter un nouveau sujet";
 $string['allowchoice'] = "Autoriser tout le monde à choisir";
-$string['allowdiscussions'] = "Un \$a peut commencer";
+$string['allowdiscussions'] = "Un \$a peut commencer une discussion";
 $string['allowratings'] = "Autoriser l'évaluation des articles";
-$string['allowsdiscussions'] = "Chacun peut démarrer un nouveau sujet de discussion dans ce forum";
+$string['allowsdiscussions'] = "Tout le monde peut commencer une nouvelle discussion dans ce forum";
 $string['anyfile'] = "Tout fichier";
-$string['attachment'] = "Pièce attachée";
+$string['attachment'] = "Annexe";
 $string['bynameondate'] = "par \$a->name - \$a->date";
-$string['couldnotadd'] = "Impossible d'ajouter votre message à cause d'une erreur non connue";
-$string['couldnotdeleteratings'] = "Désolé, la suppression n'est plus possible car des personnes ont fait une évaluation";
-$string['couldnotdeletereplies'] = "Désolé, la suppression n'est plus possible car des personnes ont fait une réponse";
-$string['couldnotupdate'] = "Impossible de modifier votre message à cause d'une erreur non connue";
+$string['configdisplaymode'] = "Mode d'affichage par défaut des discussions";
+$string['configlongpost'] = "Tout message dépassant cette longueur (code HTML non compris) est considéré comme long message";
+$string['configmanydiscussions'] = "Nombre maximum de discussions affichées sur une page";
+$string['configshortpost'] = "Tout message plus court que cette longueur (code HTML non compris) est considéré comme message court";
+$string['couldnotadd'] = "Impossible d'ajouter votre message à cause d'une erreur indéterminée";
+$string['couldnotdeleteratings'] = "Désolé, la suppression de ce message n'est plus possible car quelqu'un l'a déjà évalué";
+$string['couldnotdeletereplies'] = "Désolé, la suppression n'est plus possible car quelqu'un a déjà répondu";
+$string['couldnotupdate'] = "Impossible de modifier votre message à cause d'une erreur indéterminée";
 $string['delete'] = "Supprimer";
 $string['deleteddiscussion'] = "Le sujet de discussion a été supprimé";
 $string['deletedpost'] = "Le message a été supprimé";
 $string['deletesure'] = "Êtes-vous certain de vouloir supprimer ce message ?";
 $string['discussion'] = "Discussion";
+$string['discussionmoved'] = "Cette discussion a été déplacée vers  « \$a ».";
 $string['discussions'] = "Discussions";
 $string['discussionsstartedby'] = "Discussions commencées par \$a";
+$string['discussionsstartedbyrecent'] = "Discussions récentes commencées par \$a";
 $string['discussthistopic'] = "Discuter sur ce sujet";
 $string['eachuserforum'] = "Chaque personne commence une discussion";
 $string['edit'] = "Modifier";
-$string['editing'] = "Modifier";
-$string['emptymessage'] = "Il y a eu un problème avec votre message. Peut-être est-il vide ou bien la pièce attachée est trop grosse. Vos modifications n'ont pas été enregistrées.";
-$string['everyonecanchoose'] = "Tout le monde peut choisir de s'inscrire";
-$string['everyoneissubscribed'] = "Tout le monde est inscrit à ce forum.<br>Il n'est pas possible de s'en désinscrire.";
-$string['forcesubscribe'] = "Forcer l'inscription de tout le monde";
-$string['forcesubscribeq'] = "Forcer l'inscription de tout le monde";
+$string['editing'] = "Modification";
+$string['emptymessage'] = "Il y a eu un problème avec votre message. Peut-être est-il vide ou alors la taille de l'annexe est trop grande. Vos modifications n'ont pas été enregistrées.";
+$string['everyonecanchoose'] = "Tout le monde peut recevoir une copie des messages";
+$string['everyoneissubscribed'] = "Tout le monde reçoit une copie des messages de ce forum.<br />Il n'est pas possible de désactiver cette fonction.";
+$string['forcesubscribe'] = "Envoyer une copie des messages à tout le monde";
+$string['forcesubscribeq'] = "Envoyer une copie des messages à tout le monde ?";
 $string['forum'] = "Forum";
 $string['forumintro'] = "Introduction au forum";
 $string['forumname'] = "Nom du forum";
 $string['forums'] = "Forums";
-$string['forumtype'] = "Type du forum";
+$string['forumtype'] = "Type de forum";
 $string['generalforum'] = "Forum standard pour utilisation générale";
-$string['generalforums'] = "Forums standards";
+$string['generalforums'] = "Forums standard";
 $string['inforum'] = "dans \$a";
 $string['intronews'] = "Nouvelles diverses et annonces";
-$string['introsocial'] = "Un forum ouvert pour discuter à propos de n'importe quoi";
-$string['introteacher'] = "Un forum réservé aux notes et discussions des professeurs";
+$string['introsocial'] = "Un forum pour discuter de sujets divers";
+$string['introteacher'] = "Un forum réservé aux remarques et discussions des enseignants";
+$string['lastpost'] = "Dernier message";
 $string['learningforums'] = "Forums d'apprentissage";
-$string['maxtimehaspassed'] = "Désolé mais le délai maximum pour modifier ce message (\$a) est dépassé";
+$string['maxtimehaspassed'] = "Désolé. Le délai maximum pour modifier ce message (\$a) est dépassé";
 $string['message'] = "Message";
 $string['modeflatnewestfirst'] = "Afficher les réponses en ligne, la plus récente en premier";
 $string['modeflatoldestfirst'] = "Afficher les réponses en ligne, la plus ancienne en premier";
-$string['modenested'] = "Afficher les réponses emboitées";
+$string['modenested'] = "Afficher les réponses emboîtées";
 $string['modethreaded'] = "Afficher les réponses en fils de discussions";
 $string['modulename'] = "Forum";
 $string['modulenameplural'] = "Forums";
 $string['more'] = "plus";
+$string['movethisdiscussionto'] = "Déplacer cette discussion vers ...";
 $string['namenews'] = "Forum des nouvelles";
-$string['namesocial'] = "Forum social";
-$string['nameteacher'] = "Forum des professeurs";
+$string['namesocial'] = "Forum informel";
+$string['nameteacher'] = "Forum des enseignants";
 $string['newforumposts'] = "Nouveaux messages dans les forums";
 $string['nodiscussions'] = "Il n'y a pas encore de sujet de discussion dans ce forum";
 $string['noguestpost'] = "Désolé, les invités ne sont pas autorisés à écrire des messages";
+$string['nomorepostscontaining'] = "Plus aucun message contenant « \$a » n'a été trouvé";
+$string['nonews'] = "Aucune brève n'a été encore publiée";
 $string['noposts'] = "Aucun message";
 $string['nopostscontaining'] = "Aucun message contenant « \$a » n'a été trouvé";
-$string['nosubscribers'] = "Il n'y a pas encore d'inscrits à ce forum";
-$string['nownotsubscribed'] = "\$a->name NE recevra PAS de copies de '\$a->forum' par émail.";
-$string['nowsubscribed'] = "\$a->name recevra une copie de '\$a->forum' par émail.";
-$string['numposts'] = "\$a articles";
+$string['nosubscribers'] = "Personne encore ne reçoit de copie des messages de ce forum";
+$string['nownotsubscribed'] = "\$a->name NE recevra PAS de copies des messages du forum « \$a->forum » par e-mail.";
+$string['nowsubscribed'] = "\$a->name recevra une copie des messages du forum « \$a->forum » par e-mail.";
+$string['numposts'] = "\$a messages";
 $string['olderdiscussions'] = "Discussions plus anciennes";
 $string['openmode0'] = "Aucune discussion, aucune réponse";
 $string['openmode1'] = "Aucune discussion, mais les réponses sont autorisées";
@@ -71,44 +82,73 @@ $string['parentofthispost'] = "Niveau supérieur de cet article";
 $string['postadded'] = "Votre message a été enregistré.<p>Il vous est possible de le modifier pendant \$a.";
 $string['postincontext'] = "Voir ce message dans son contexte";
 $string['postingtip'] = "<B>Conseils de rédaction</B><BR><BR>
+
 Avant de répondre :
+
 <UL>
+
 <LI>lire l'article calmement et avec attention
+
 <LI>identifier les points sur lesquels vous pouvez répondre
+
 </UL>
 
+
+
 Lors de la rédaction :
+
 <UL>
-<LI>garder votre réponse courte et dans le sujet
+
+<LI>gardez votre réponse courte et dans le sujet
+
 <LI>expliquez vos idées clairement
+
 <LI>pensez aux questions que vous pouvez poser
+
 </UL>";
-$string['postmailinfo'] = "Ceci est une copie du message posté sur le site \$a
+$string['postmailinfo'] = "Ceci est une copie du message posté sur le site \$a.
+
 Pour ajouter une réponse sur le site, cliquer sur ce lien:";
 $string['postrating1'] = "Globalement non pertinent";
 $string['postrating2'] = "Moyennement intéressant";
 $string['postrating3'] = "Globalement pertinent";
+$string['posts'] = "Messages";
 $string['postupdated'] = "Votre message a été modifié";
 $string['processingpost'] = "Enregistrement de l'article \$a";
-$string['rate'] = "Évaluation";
+$string['rate'] = "Note";
+$string['rating'] = "Notation";
+$string['ratingeveryone'] = "Tout le monde peut évaluer les messages";
+$string['ratingno'] = "Pas d'évaluation";
+$string['ratingonlyteachers'] = "Seul \$a peut évaluer les messages";
 $string['ratings'] = "Évaluations";
+$string['ratingssaved'] = "Évaluations enregistrées";
+$string['ratingsuse'] = "Évaluation des messages";
+$string['ratingtime'] = "Restreindre les évaluations aux messages postés entre ces dates :";
 $string['re'] = "Re:";
 $string['readtherest'] = "Lire le reste du sujet";
+$string['replies'] = "Réponses";
 $string['repliesmany'] = "\$a réponses";
 $string['repliesone'] = "\$a réponse";
 $string['reply'] = "Répondre";
-$string['search'] = "Chercher";
-$string['searchforums'] = "Chercher dans les forums";
+$string['search'] = "Rechercher";
+$string['searchforums'] = "Rechercher dans les forums";
+$string['searcholderposts'] = "Rechercher les anciens messages...";
 $string['searchresults'] = "Résultats de la recherche";
 $string['sendinratings'] = "Envoyer mes dernières évaluations";
-$string['showsubscribers'] = "Afficher les inscrits";
+$string['showsubscribers'] = "Afficher les utilisateurs recevant une copie des messages";
 $string['singleforum'] = "Une seule discussion simple";
+$string['startedby'] = "commencée par";
 $string['subject'] = "Sujet";
-$string['subscribe'] = "S'inscrire à ce forum";
-$string['subscribed'] = "Inscrit";
-$string['subscribers'] = "Inscrits";
-$string['subscribersto'] = "Inscrits à « \$a »";
-$string['unsubscribe'] = "Désinscription de ce forum";
+$string['subscribe'] = "Recevoir une copie des messages";
+$string['subscribed'] = "Abonné";
+$string['subscribers'] = "Abonnés";
+$string['subscribersto'] = "Abonnés à « \$a »";
+$string['subscribestart'] = "Envoyez-moi une copie des messages de ce forum";
+$string['subscribestop'] = "Ne m'envoyez plus de copie des messages de ce forum ";
+$string['subscription'] = "Abonnement";
+$string['subscriptions'] = "Abonnements";
+$string['unsubscribe'] = "Ne pas recevoir de copie des messages";
+$string['unsubscribed'] = "Désabonné";
 $string['youratedthis'] = "Vous l'avez évalué";
 $string['yournewtopic'] = "Nouveau sujet de discussion";
 $string['yourreply'] = "Votre réponse";

@@ -1,82 +1,88 @@
 French Translation
 ------------------
 
-Author: Sébastien Namèche <seb@gaia.anet.fr>
+Authors: 
+Nicolas Martignoni <nicolas@martignoni.net>
+Sbastien Namche <seb@gaia.anet.fr>
 
+La traduction franaise de Moodle semblant ne plus tre mise ˆ jour,
+je (Nicolas Martignoni) me suis mis au travail pour amliorer et complter
+le dbut de traduction de Sbastien Namche.
 
-Ci-suit une liste de termes pour lesquels j'ai
-choisi une traduction dans le contexte de Moodle.
-Ils sont listés pour mémoire afin que, si une autre
-personne travaille sur la traduction de Moodle en
-Français, elle utilise les mêmes mots.
+J'ai lgrement modifi la liste des termes choisis par Sbastien.
+Vous trouvez ci-dessous cette liste modifie par mes soins.
 
-Par ailleurs, la traduction de certains d'entre eux
-ne me satisfait pas complètement. Ne surtout pas
-hésiter à m'envoyer vos suggestions.
+Je suis conscient que certains choix ne sont pas toujours appropris.
+Si vous avez d'autres suggestions, merci de me les envoyer.
+
+Concernant la traduction de "email", j'ai choisi le terme "e-mail" (trs
+parlant pour les utilisateurs), qui n'est pas une vritable traduction.
+Une autre possibilit serait l'utilisation systmatique du terme "courriel",
+mais en aucun cas "mail".
 
 account          compte
-activity         activité
-assessment       appréciation
+activity         activit
+assessment       apprciation
 assignment       devoir
-attachment       pièce attachée
+attachment       annexe
 authentication   authentification
-choice           question
-course category	 matière
-department       département
-download         recevoir
-email            message ou adresse émail, selon le contexte
-entry            page
+choice           sondage
+course category	 discipline
+department       dpartement
+download         tlcharger
+email            message par e-mail, adresse e-mail ou par e-mail, selon le contexte
+entry            contribution
 feedback         feedback
 grade            note ou niveau, selon le contexte
 guest            visiteur anonyme
-hit              requête
+hit              requte
 journal          journal
-logs             évènements
+logs             vnements
 offline          hors-ligne
 post             message
 quiz             test
-scale            barème
+scale            barme
 server           serveur
 social format	 informel
-submission       soumission
-survey           évaluation
+submissions      devoirs rendus
+survey           questionnaire
 teacher          enseignant
 to login         s'identifier
-to reate         évaluer
-upload           envoyer
+upload           envoyer (ou dposer)
 user             utilisateur
 username         nom d'utilisateur
-worth            valeur
 
 
 TODO
-  Tous les « username » -> « nom d'utilisateur »
-  Tous les « email » -> « message » ou « adresse émail »
-  Finir help/questions.html
-  Finir help/surveys.html
-
-Message
-  « Socratic » ?
-  Easy changelog for lang/* files
-
+  Beaucoup de choses encore. Entre autres :
+  - trouver une bonne traduction de "Separate and Connected ways of knowing",
+    de "Connected Learning", "Separate Learning" et de "Reflective Thinking" ;
+  - traduire attendance.php ;
+  - traduire chatarea.php ;
+  - traduire countries.php ;
+  - traduire glossary.php ;
+  - traduire label.php ;
+  - traduire pgassignment.php ;  
+  - traduire workshop.php ;
+  - terminer surveys.php.
 
 Voici quelques liens que j'utilise :
   - dictionnaire des synonymes
       http://elsap1.unicaen.fr/dicosyn.html
   - Le grand dictionnaire terminologique
       http://www.granddictionnaire.com/
-  - la conjugaison (Alléluia !)
+  - la conjugaison (Allluia !)
       http://www.leconjugueur.com/
 
 
 Quelques conventions :
   - pour la ponctuation de fin de texte et les majuscules,
-  j'essaye de suivre strictement le texte anglais original ;
-  - les majuscules *sont* accentuées ;
-  - les guillements fançaises sont « ».
+    on essaie de suivre strictement le texte anglais original ;
+  - les majuscules *sont* accentues ;
+  - les guillemets franais sont Ç È.
 
 
-Quelques liens qui traitent du constructivisme social en français :
+Quelques liens qui traitent du constructivisme social en franais :
   - http://www.acelf.ca/revue/XXV1/articles/rxxv1-10.html
   - http://www.schule.suedtirol.it/blikk/angebote/reformpaedagogik/rp70110b.htm
   - http://agora.unige.ch/sred/Archive/const/ecole.html
