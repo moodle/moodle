@@ -625,7 +625,7 @@ function exercise_get_submit_logs($course, $timestart) {
     global $CFG, $USER;
     
     $timethen = time() - $CFG->maxeditingtime;
-    return get_records_sql("SELECT l.time, l.url, u.firstname, u.lastname, l.info exerciseid, e.name
+    return get_records_sql("SELECT l.time, l.url, u.firstname, u.lastname, l.info as exerciseid, e.name
                              FROM {$CFG->prefix}log l,
                                 {$CFG->prefix}exercise e, 
                                 {$CFG->prefix}user u
