@@ -104,13 +104,21 @@ class block_rss_client extends block_base {
         return true;
     }
 
+    /**
+     *
+     */
     function get_rss_by_id($rssid, $display_description, $shownumentries) {
+        global $CFG;
         $returnstring = '';
         $rss_record = get_record('block_rss_client', 'id', $rssid);
         if (isset($rss_record) && isset($rss_record->id)) {
             $rss = rss_get_feed($rss_record->id, $rss_record->url, $rss_record->type);
-            if (empty($rss)) {
-                // There was a failure in loading the rss feed
+
+            if ($CFG->debug && (empty($rss) || !empty($rss->ERROR))) {
+                // There was a failure in loading the rss feed, print link to full error text
+                if (!empty($rss) && !empty($rss->ERROR)) {
+                    print '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_error.php?error='. urlencode($rss->ERROR) .'">Error loading a feed.</a><br />';
+                }
                 return;
             }
 
