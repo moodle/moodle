@@ -469,19 +469,19 @@ function quiz_get_category_menu($courseid, $published=false) {
 function quiz_print_category_form($course, $current) {
 // Prints a form to choose categories
 
-    if (!$categories = quiz_get_category_menu($course->id, true)) {
+    if (!$categories = get_records_sql("SELECT * FROM quiz_categories WHERE course='$course->id' OR publish = '1' ORDER by name ASC")) {
         if (!$category = quiz_get_default_category($course->id)) {
             notify("Error creating a default category!");
             return false;
         }
-        $categories[$category->id] = $category->name;
     }
     foreach ($categories as $key => $category) {
        if ($category->publish) {
-           if ($course = get_record_sql("course", "id", $category->course)) {
-               $categories[$key]->name .= " ($course->shortname)";
+           if ($catcourse = get_record("course", "id", $category->course)) {
+               $category->name .= " ($catcourse->shortname)";
            }
        }
+       $catmenu[$category->id] = $category->name;
     }
     $strcategory = get_string("category", "quiz");
     $strshow = get_string("show", "quiz");
@@ -490,7 +490,7 @@ function quiz_print_category_form($course, $current) {
     echo "<TABLE width=\"100%\"><TR><TD>";
     echo "<FORM METHOD=POST ACTION=edit.php>"; 
     echo "<B>$strcategory:</B>&nbsp;";
-    choose_from_menu($categories, "cat", "$current");
+    choose_from_menu($catmenu, "cat", "$current");
     echo "<INPUT TYPE=submit VALUE=\"$strshow\">";
     echo "</FORM>";
     echo "</TD><TD align=right>";
