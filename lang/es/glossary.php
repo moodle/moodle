@@ -2,23 +2,32 @@
       // glossary.php - created with Moodle 1.1 (2003082800)
 
 
+$string['addcomment'] = "Agregar comentario";
 $string['addentry'] = "Agregar entrada";
 $string['allcategories'] = "Todas las categorías";
 $string['allentries'] = "TODAS";
+$string['allowcomments'] = "Permitir comentar las entradas";
 $string['allowduplicatedentries'] = "Permitir entradas duplicadas";
 $string['alphabet'] = "A|B|C|D|E|F|G|H|I|J|K|L|M|N|Ñ|O|P|Q|R|S|T|U|V|W|X|Y|Z";
 $string['areyousuredelete'] = "¿Está seguro que desea borrarla?";
+$string['areyousuredeletecomment'] = "¿Está seguro que desea borrar este comentario?";
 $string['attachment'] = "Adjunto";
 $string['back'] = "Volver";
 $string['categories'] = "Categorías";
 $string['category'] = "Categoría";
 $string['categorydeleted'] = "Categoría eliminada";
 $string['categoryview'] = "Vista por Categoría";
+$string['comment'] = "Comentario";
+$string['commentdeleted'] = "Se ha borrado el comentario.";
+$string['comments'] = "Comantarios";
+$string['commentson'] = "Comentarios de";
+$string['commentupdated'] = "Este comentario se ha actualizado";
 $string['concept'] = "Concepto";
 $string['concepts'] = "Conceptos";
 $string['definition'] = "Definición";
 $string['definitions'] = "Definiciones";
 $string['deleteentry'] = "Borrar entrada";
+$string['deletingcomment'] = "Borrarndo comentario";
 $string['deletingnoneemptycategory'] = "Eliminar una categoría no eliminará las entradas. Si desea eliminar las entradas tendrá que hacerlo manualmente.";
 $string['displayformat'] = "Formato de muestra de entradas";
 $string['displayformat1'] = "Completo sin autor";
@@ -27,6 +36,7 @@ $string['displayformat3'] = "Enciclopedia";
 $string['displayformatdefault'] = "Simple, estilo diccionario";
 $string['editcategories'] = "Editar categorías";
 $string['editentry'] = "Editar entrada";
+$string['editingcomment'] = "Editando un comentario";
 $string['entries'] = "Entradas";
 $string['entrieswithoutcategory'] = "Entradas sin categoría";
 $string['entry'] = "Entrada";
@@ -40,12 +50,15 @@ $string['exportedentry'] = "Entrada exportada";
 $string['exporttomainglossary'] = "Exportar al glosario principal";
 $string['glossarytype'] = "Tipo de glosario";
 $string['mainglossary'] = "Glosario principal";
+$string['maxtimehaspassed'] = "Lo sentimos, pero ya excedió el tiempo máximo de edición.";
 $string['modulename'] = "Glosario";
 $string['modulenameplural'] = "Glosarios";
 $string['newglossaryentries'] = "Nuevas entradas en el glosario:";
-$string['nocategorized'] = "Sin categoría";
+$string['nocomment'] = "NO se encontraron comentarios";
+$string['nocomments'] = "(Entrada sin comentarios)";
 $string['noentries'] = "No se encontraron entradas en esta sección";
 $string['noentry'] = "No se econtró ninguna entrada.";
+$string['notcategorised'] = "No clasificado";
 $string['searchindefinition'] = "¿Buscar en conceptos y definiciones?";
 $string['secondaryglossary'] = "Glosario secundario";
 $string['showall'] = "Mostrar enlace 'TODAS'";
@@ -56,5 +69,6 @@ $string['standardview'] = "Vista Normal";
 $string['studentcanpost'] = "Los estudiantes pueden agregar entradas";
 $string['warningstudentcapost'] = "(Esto sólo aplica si el glosario no es principal)";
 $string['writtenby'] = "Por";
+$string['youarenottheauthor'] = "Dado que usted no es el autor de este comentario, no està autorizado a modificarlo.";
 
 ?>
