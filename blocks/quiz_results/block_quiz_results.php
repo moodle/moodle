@@ -30,7 +30,7 @@ class block_quiz_results extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
 
-        if($this->instance->pagetype == PAGE_COURSE_VIEW) {
+        if($this->instance->pagetype == 'course-view') {
             // We need to see if we are monitoring a quiz 
             $quizid   = empty($this->config->quizid) ? 0 : $this->config->quizid;
             $courseid = $this->instance->pageid;
@@ -166,7 +166,7 @@ class block_quiz_results extends block_base {
             // Ready for output!
             $gradeformat = intval(empty($this->config->gradeformat) ? GRADE_FORMAT_PCT : $this->config->gradeformat);
 
-            if($this->instance->pagetype != PAGE_QUIZ_VIEW) {
+            if($this->instance->pagetype != 'mod-quiz-view') {
                 // Don't show header and link to the quiz if we ARE at the quiz...
                 $this->content->text .= '<h1><a href="'.$CFG->wwwroot.'/mod/quiz/view.php?q='.$quizid.'">'.$quiz->name.'</a></h1>';
             }
@@ -278,7 +278,7 @@ class block_quiz_results extends block_base {
 
             $gradeformat = intval(empty($this->config->gradeformat) ? GRADE_FORMAT_PCT : $this->config->gradeformat);
 
-            if($this->instance->pagetype != PAGE_QUIZ_VIEW) {
+            if($this->instance->pagetype != 'mod-quiz-view') {
                 // Don't show header and link to the quiz if we ARE at the quiz...
                 $this->content->text .= '<h1><a href="'.$CFG->wwwroot.'/mod/quiz/view.php?q='.$quizid.'">'.$quiz->name.'</a></h1>';
             }
