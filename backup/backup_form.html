@@ -83,7 +83,7 @@
             $modbackup = $modname."_backup_mods";
             //If exists the lib & function
             $var = "exists_".$modname;
-            if ($$var) {
+            if (isset($$var) && $$var) {
                 //Print the full tr
                 echo "<tr>";
                 echo "<td align=\"right\"><P><B>";

@@ -125,7 +125,7 @@
             $modbackup = $modname."_backup_mods";
             //If exists the lib & function
             $var = "exists_".$modname;
-            if ($$var) {
+            if (isset($$var) && $$var) {
                 //Add hidden fields
                 $var = "backup_".$modname;
                 echo "<input type=\"hidden\" name=\"".$var."\" value=\"".$$var."\">";

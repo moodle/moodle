@@ -16,7 +16,7 @@
 
     //If restore session info exists, but we are posting parameters
     //manually, this has prioriry
-    if ($restore and isset($restore_restoreto)) {
+    if (isset($restore) and isset($restore_restoreto)) {
         unset($restore);
     }
 
