@@ -4,7 +4,7 @@
 <form name="form" method="post" action="signup.php">
 <table>
 <tr valign=top>
-	<td colspan=2><P><B>Create a new username and password to log in with:</td>
+	<td colspan=2><P><B><? print_string("createuserandpass") ?>:</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("username") ?>:</td>
@@ -19,7 +19,7 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td colspan=2><BR><P><B>Please supply some information about yourself:</B><BR>(Note: your email address must be a real one)</P>
+	<td colspan=2><P><BR><B><? print_string("supplyinfo") ?>:</B><BR>(<? print_string("emailmustbereal") ?>)</P>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("email") ?>:</td>
@@ -41,13 +41,13 @@
 </tr>
 <tr valign=top>
 	<td><P><? print_string("idnumber") ?>:</td>
-	<td><input type="text" name="idnumber" size=25 value="<? p($user->idnumber) ?>"> (optional)
+	<td><input type="text" name="idnumber" size=25 value="<? p($user->idnumber) ?>"> (<? print_string("optional") ?>)
 	<? formerr($err->idnumber) ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("phone") ?>:</td>
-	<td><input type="text" name="phone" size=25 value="<? p($user->phone) ?>"> (optional)
+	<td><input type="text" name="phone" size=25 value="<? p($user->phone) ?>"> (<? print_string("optional") ?>)
 	<? formerr($err->phone) ?>
 	</td>
 </tr>

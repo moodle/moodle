@@ -19,6 +19,7 @@ $string[country] = "Country";
 $string[course] = "Course";
 $string[courses] = "Courses";
 $string[createaccount] = "Create my new account";
+$string[createuserandpass] = "Create a new username and password to log in with";
 $string[currentlocaltime] = "your current local time";
 $string[delete] = "Delete";
 $string[editmyprofile] = "Edit my profile";
@@ -48,6 +49,7 @@ Cheers from the '\$a->sitename' administrator,
 \$a->admin";
 
 $string[emailexists] = "This email address is already registered.";
+$string[emailmustbereal] = "Note: your email address must be a real one";
 $string[entercourse] = "Click to enter this course";
 $string[enteremailaddress] = "Enter in your email address to reset your 
    password and have the new password sent to you via email.";
@@ -128,6 +130,7 @@ $string[newpicture] = "New picture";
 $string[nosuchemail] = "No such email address";
 $string[notenrolled] = "\$a is not enrolled in this course.";
 $string[ok] = "OK";
+$string[optional] = "optional";
 $string[participants] = "Participants";
 $string[password] = "Password";
 $string[passwordchanged] = "Password has been changed";
@@ -149,6 +152,7 @@ $string[sitenews] = "Site news";
 $string[sitesettings] = "Site settings";
 $string[someallowguest] = "Some courses may allow guest access";
 $string[startsignup] = "Start now by creating a new account!";
+$string[supplyinfo] = "Please supply some information about yourself";
 $string[teacheronly] = "for the \$a only";
 $string[textformat] = "Plain text format";
 $string[timezone] = "Timezone";
