@@ -4,8 +4,9 @@
 <tr valign=top>
 	<td align=right><p>attendance_dynsection:</td>
 	<td>
-	<input type="checkbox" name="attendance_dynsection" value="1" <? echo !empty($CFG->attendance_dynsection) ? 'checked' : '' ?> >
-    </td>
+		<? $optds[0] = "No";$optds[1] = "Yes";
+		choose_from_menu($optds, "attendance_dynsection", $CFG->attendance_dynsection, ""); ?>
+  </td>
     <td>
 		<? p(get_string("defaultdynamicsection","attendance")) ?>
 	</td>
@@ -71,6 +72,40 @@
     	<?php p(get_string("defaultstudentstatus","attendance")) ?>
     </td>
 </tr>
+
+<tr valign=top>
+	<td align=right><p>attendance_autoattend:</td>
+	<td>
+		<? $optaa[0] = "No";$optaa[1] = "Yes";
+		choose_from_menu($optaa, "attendance_autoattend", $CFG->attendance_autoattend, ""); ?>
+    </td>
+    <td>
+		<? p(get_string("defaultautoattend","attendance")) ?>
+	</td>
+</tr>
+
+<tr valign=top>
+	<td align=right><p>attendance_grade:</td>
+	<td>
+		<? $optgr[0] = "No";$optgr[1] = "Yes";
+		choose_from_menu($optgr, "attendance_grade", $CFG->attendance_grade, ""); ?>
+    </td>
+    <td>
+		<? p(get_string("defaultgrade","attendance")) ?>
+	</td>
+</tr>
+
+<tr valign=top>
+	<td align=right><p>attendance_maxgrade:</td>
+	<td>
+		<? for ($i=0;$i<=100;$i++){ $opt4[$i] = $i; }
+		choose_from_menu($opt4, "attendance_maxgrade", $CFG->attendance_maxgrade, ""); ?>
+    </td>
+    <td>
+    	<?php p(get_string("defaultmaxgrade","attendance")) ?>
+    </td>
+</tr>
+
 
 <tr>
     <td colspan=3 align=center>

@@ -57,8 +57,14 @@ $string['downloadexceltotals'] = "Download Summary Excel Spreadsheet";
 $string['downloadtextfull'] = "Download Full Text Report";
 $string['downloadtexttotals'] = "Download Summary Text Report";
 $string['autoattend'] = "Automatically take attendance based on user activity logs";
+$string['defaultautoattend'] = "Whether to take attendance based on user activity logs by default";
 $string['autoattendmulti'] = "Automatically take attendance for all rolls based on user activity logs";
 $string['auto'] = "auto";
+$string['gradevalue'] = "Make this roll gradeable";
+$string['defaultgrade'] = " Whether to make attendance rolls gradeable by default";
+$string['gradevaluemulti'] = "Make these rolls gradeable";
+$string['maxgradevalue'] = "Maximum grade value for full attendance";
+$string['defaultmaxgrade'] = "What the default maximum grade value for full attendance should be";
 
 
 ?>

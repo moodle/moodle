@@ -149,7 +149,7 @@ if ($dlsub== "all") {
 		    elseif ($atts[$k]->sroll[$student->id][$j]->status == 2) {;$abs++;}
 		  } /// for loop
 	  } // outer for for each day of attendance
-    $tot=tally_overall_absences_decimal($abs,$tar);
+    $tot=attendance_tally_overall_absences_decimal($abs,$tar);
     $myxls->write_number($row,$pos,$tot);
 		$row++;
   }
@@ -212,7 +212,7 @@ if ($dlsub== "all") {
 		    elseif ($atts[$k]->sroll[$student->id][$j]->status == 2) {;$abs++;}
 		  } /// for loop
 	  } // outer for for each day of attendance
-    $tot=tally_overall_absences_decimal($abs,$tar);
+    $tot=attendance_tally_overall_absences_decimal($abs,$tar);
     echo "\t".$tot."\n";
 		$row++;
   }
@@ -429,7 +429,7 @@ while (($multipage || $onepage) && (!$endonepage)) {
 		    elseif ($atts[$k]->sroll[$student->id][$j]->status == 2) {;$abs++;}
 		  } /// for loop
 	    } // outer for for each day of attendance
-      $tot=tally_overall_absences_fraction($abs,$tar);
+      $tot=attendance_tally_overall_absences_fraction($abs,$tar);
       echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-left: 1px dotted; border-top: 1px solid;\">".$tot."</td></tr>\n";
     }
   }  // foreach

@@ -3,8 +3,20 @@
 
 <!-- RJJ I'm using inline CSS styles for some stuff in this page because I want to centralize -->
 <!-- the logic and styles in a single directory -->
-  <?php @include_once("$CFG->dirroot/mod/attendance/lib.php")
+<?php @include_once("$CFG->dirroot/mod/attendance/lib.php");
     //require_once("lib.php")
+
+// error_reporting(E_ALL);
+ // if we're adding a new instance
+if (empty($form->id)) {
+ 	if (isset($CFG->attendance_dynsection) && ($CFG->attendance_dynsection == "1")) { $form->dynsection = 1; }
+ 	if (isset($CFG->attendance_autoattend) && ($CFG->attendance_autoattend == "1")) { $form->autoattend = 1; }
+ 	if (isset($CFG->attendance_grade) && ($CFG->attendance_grade == "1")) { $form->grade = 1; }
+ 	$form->maxgrade = isset($CFG->attendance_maxgrade)?$CFG->attendance_maxgrade:0;
+ 	$form->hours = isset($CFG->attendance_default_hours)?$CFG->attendance_default_hours:1;
+ 	$form->day = time();
+ 	$form->notes = "";
+}
     ?>
 <FORM name="form" method="post" action="<?=$ME ?>">
 <CENTER>
@@ -28,16 +40,35 @@
       <input type="checkbox" name="dynsection" <?php echo !empty($form->dynsection) ? 'checked' : '' ?> >
     </TD>
 </tr>
+<tr valign=top>
+    <TD align="right"><P><B><?php print_string("autoattend", "attendance") ?>:</B></P></TD>
+    <TD align="left">
+      <input type="checkbox" name="autoattend" <?php echo !empty($form->autoattend) ? 'checked' : '' ?> >
+    </TD>
+</tr>
 <?php // starting with 2 to allow for the nothing value in choose_from_menu to be the default of 1
 for ($i=2;$i<=24;$i++){ $opt[$i] = $i; } ?>
 <TR valign=top>
     <TD align=right><P><B><?php print_string("hoursinclass", "attendance") ?>:</B></P></TD>
     <TD  colspan="3" align="left"><?php choose_from_menu($opt, "hours", $form->hours, "1","","1") ?></td>
 </tr>
+ <tr valign=top>
+    <TD align="right"><P><B><?php print_string("gradevalue", "attendance") ?>:</B></P></TD>
+    <TD align="left">
+      <input type="checkbox" name="grade" <?php echo !empty($form->grade) ? 'checked' : '' ?> >
+    </TD>
+</tr>
+<?php // starting with 2 to allow for the nothing value in choose_from_menu to be the default of 1
+for ($i=0;$i<=100;$i++){ $opt2[$i] = $i; } ?>
+<TR valign=top>
+    <TD align=right><P><B><?php print_string("maxgradevalue", "attendance") ?>:</B></P></TD>
+    <TD  colspan="3" align="left"><?php choose_from_menu($opt2, "maxgrade", $form->maxgrade, "0","","0") ?></td>
+</tr>
+
 <tr valign=top>
     <td align=right><p><b><?php print_string("notes", "attendance") ?>:</b></p></td>
     <td colspan="3">
-        <input type="text" name="notes" size=60 value="<?php p($form->notes) ?>">
+        <input type="text" name="notes" size=60 value="<?php p($form->notes)?>">
     </td>
 </tr>
 </TABLE>
@@ -45,7 +76,7 @@ for ($i=2;$i<=24;$i++){ $opt[$i] = $i; } ?>
 
 <?php  // if we're modifying an existing instance of attendance instead 
     //   of creating a new one
- if ($form->id) {
+ if (isset($form->id)) {
    // get the list of attendance records for all hours of the given day and 
    // put it in the array for use in the attendance table
    $rolls = get_records("attendance_roll", "dayid", $form->id);
@@ -106,7 +137,8 @@ if ($form->hours >1) {
 	for($j=1;$j<=$form->hours;$j++) {
       // set the attendance defaults for each student
 	  $r1c=$r2c=$r3c=" ";
-    $rollstatus = (($form->edited==0)?$CFG->attendance_default_student_status:$sroll[$student->id][$j]->status);
+    $rollstatus = (($form->edited==0)?$CFG->attendance_default_student_status:
+      ((isset($sroll[$student->id][$j]->status)?$sroll[$student->id][$j]->status:0)));
     if ($rollstatus==1) {$r2c="checked";}
     elseif ($rollstatus==2) {$r3c="checked";}
     else {$r1c="checked";}

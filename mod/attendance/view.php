@@ -136,7 +136,7 @@
       echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-left: 1px dotted; border-top: 1px solid;\">".$status."</td>\n";
 	  } /// for loop
     if ($form->hours > 1) {
-	    $tot=tally_overall_absences_fraction($abs,$tar);
+	    $tot=attendance_tally_overall_absences_fraction($abs,$tar);
       echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-left: 1px dotted; border-top: 1px solid;\">".$tot."</td></tr>\n";
     }
   }

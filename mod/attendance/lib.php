@@ -35,6 +35,7 @@ function attendance_add_instance($attendance) {
      $attendance->timemodified = time();
      $attendance->dynsection = !empty($attendance->dynsection) ? 1 : 0;
     $attendance->autoattend = !empty($attendance->autoattend) ? 1 : 0;
+    $attendance->grade = !empty($attendance->grade) ? 1 : 0;
      if (empty($attendance->day)) {
        $attendance->day = make_timestamp($attendance->theyear, 
 			   $attendance->themonth, $attendance->theday);
@@ -73,6 +74,7 @@ function attendance_update_instance($attendance) {
     $attendance->id = $attendance->instance;
     $attendance->dynsection = !empty($attendance->dynsection) ? 1 : 0;
     $attendance->autoattend = !empty($attendance->autoattend) ? 1 : 0;
+    $attendance->grade = !empty($attendance->grade) ? 1 : 0;
 
      $attendance->day = make_timestamp($attendance->theyear, 
 			$attendance->themonth, $attendance->theday); 
@@ -260,12 +262,15 @@ function attendance_cron () {
 /// This function searches for things that need to be done, such 
 /// as sending out mail, toggling flags etc ... 
     global $CFG;
+   echo "Attendance: Performing automatic attendance logging\n";
 // look for all attendance instances set to autoattend
 	$attendances = get_records("attendance", "autoattend", 1, "course ASC");
 	$td = attendance_find_today(time());
 	$tm = attendance_find_tomorrow(time());
 	foreach($attendances as $attendance) {
     if (($attendance->day >=$td ) && ($attendance->day < $tm)) {
+    echo "Attendance: Taking attendance for $attendance->name\n";
+
 			if(!isset($courses[$attendance->course]->students)) {
 			  $courses[$attendance->course]->students = 
 			    attendance_get_course_students($attendance->course, "u.lastname ASC");
@@ -298,10 +303,29 @@ function attendance_cron () {
 function attendance_grades($attendanceid) {
 /// Must return an array of grades for a given instance of this module, 
 /// indexed by user.  It also returns a maximum allowed grade.
-/// NOT IMPLEMENTED AT THIS TIME - WILL DO GRADING BY ATTENDANCE STUFF IN A LATER VERSION
-    $return->grades = NULL;
-    $return->maxgrade = NULL;
-
+    $attendance = get_record("attendance", "id", $attendanceid);
+    if ($attendance->grade == "1") {
+      $students = get_course_students($attendance->course);
+      foreach ($students as $student) {
+      	$rolls = attendance_get_records("attendance_roll", 
+          "dayid",$attendance->id,
+          "userid",$student->id);
+        $abs=$tar=0;
+        if ($rolls) {
+          foreach ($rolls as $roll) { 
+            if ($roll->status == 1) {$tar++;}
+	        elseif ($roll->status == 2) {$abs++;}
+		  }
+		  $total = $attendance->hours - attendance_tally_overall_absences_decimal($abs, $tar);
+		  $percent = ($total != 0)?$total/$attendance->hours:0;
+		  $return->grades[$student->id] = ($percent == 0)?0.0:$attendance->maxgrade * $percent;
+		} else  { $return->grades[$student->id] = $attendance->maxgrade; }
+      } // foreach student
+      $return->maxgrade = $attendance->maxgrade;
+    } else {  // if attendance->grade == "1"
+      $return->grades = NULL;
+      $return->maxgrade = NULL;
+    }// else for if attendance->grade == "1"
     return $return;
 }
 
@@ -345,7 +369,7 @@ function attendance_get_course_students($courseid, $sort="u.lastaccess DESC") {
 * @param	int	$tardies	the total number of tardies for a span of time
 * @return	float	the number of absences it adds up to - may be a decimal!
 */
-function tally_overall_absences_decimal($absences, $tardies) {
+function attendance_tally_overall_absences_decimal($absences, $tardies) {
     global $CFG;
 	if (isset($CFG->attendance_tardies_per_absence) && ($CFG->attendance_tardies_per_absence>0)) {
 	  return $absences + ($tardies/$CFG->attendance_tardies_per_absence);
@@ -363,7 +387,7 @@ function tally_overall_absences_decimal($absences, $tardies) {
 * @param	int	$tardies	the total number of tardies for a span of time
 * @return	string	the number of absences it adds up to - may have a fractional component!
 */
-function tally_overall_absences_fraction($absences, $tardies) {
+function attendance_tally_overall_absences_fraction($absences, $tardies) {
     global $CFG;
 	if (isset($CFG->attendance_tardies_per_absence) && ($CFG->attendance_tardies_per_absence>0)) {
 	  $whole = floor($tardies/$CFG->attendance_tardies_per_absence);

@@ -142,60 +142,6 @@ if (isset($_POST["course"]))  {
 
     unset($SESSION->modform); // Clear any old ones that may be hanging around.
 
-
-
-
-/*    optional_variable($id);    // Course Module ID, or
-    optional_variable($a);     // attendance ID
-
-/// populate the appropriate objects
-    if ($id) {
-        if (! $course = get_record("course", "id", $id)) {
-            error("Course is misconfigured");
-        }
-        if (! $attendance = get_record("attendance", "course", $id)) {
-            error("Course module is incorrect");
-        }
-        if (! $cm = get_coursemodule_from_instance("attendance", $attendance->id, $id)) {
-            error("Course Module ID was incorrect");
-        }
-        if (! $attendances = get_records("attendance", "course", $cm->course)) {
-            error("Course module is incorrect");
-        }
-
-    } else {
-        if (! $attendance = get_record("attendance", "id", $a)) {
-            error("Course module is incorrect");
-        }
-        if (! $course = get_record("course", "id", $attendance->course)) {
-            error("Course is misconfigured");
-        }
-        if (! $cm = get_coursemodule_from_instance("attendance", $attendance->id, $course->id)) {
-            error("Course Module ID was incorrect");
-        }
-        if (! $attendances = get_records("attendance", "course", $cm->course)) {
-            error("Course module is incorrect");
-        }
-    }
-
-    require_login($course->id);
-
-    add_to_log($course->id, "attendance", "add", "add.php?id=$course->id");
-
-/// Print the page header
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
-
-    $strattendances = get_string("modulenameplural", "attendance");
-    $strattendance  = get_string("modulename", "attendance");
-    $straddmultiple  = get_string("addmultiple", "attendance");
-    
-    print_header("$course->shortname: $straddmultiple", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strattendances</A> -> $straddmultiple", 
-                  "", "", true, "&nbsp;", 
-                  navmenu($course));
-*/
  
 /// Print the main part of the page
 
@@ -204,6 +150,13 @@ if (isset($_POST["course"]))  {
     //require_once("lib.php")
 // determine the end date for the course based on the number of sections and the start date
 $course->enddate = $course->startdate + $course->numsections * 604800;
+
+if (isset($CFG->attendance_dynsection) && ($CFG->attendance_dynsection == "1")) { $form->dynsection = 1; }
+if (isset($CFG->attendance_autoattend) && ($CFG->attendance_autoattend == "1")) { $form->autoattend = 1; }
+if (isset($CFG->attendance_grade) && ($CFG->attendance_grade == "1")) { $form->grade = 1; }
+$form->maxgrade = isset($CFG->attendance_maxgrade)?$CFG->attendance_maxgrade:0;
+$form->hours = isset($CFG->attendance_default_hours)?$CFG->attendance_default_hours:1;
+
 ?>
 <FORM name="form" method="post" action="<?=$ME ?>">
 <CENTER>
@@ -246,12 +199,33 @@ $course->enddate = $course->startdate + $course->numsections * 604800;
       <input type="checkbox" name="dynsection" <?php echo !empty($form->dynsection) ? 'checked' : '' ?> >
     </TD>
 </tr>
+<tr valign=top>
+    <TD align="right"><P><B><?php print_string("autoattendmulti", "attendance") ?>:</B></P></TD>
+    <TD align="left">
+      <input type="checkbox" name="autoattend" <?php echo !empty($form->autoattend) ? 'checked' : '' ?> >
+    </TD>
+</tr>
 <?php // starting with 2 to allow for the nothing value in choose_from_menu to be the default of 1
 for ($i=2;$i<=24;$i++){ $opt[$i] = $i; } ?>
 <TR valign=top>
     <TD align=right><P><B><?php print_string("hoursineachclass", "attendance") ?>:</B></P></TD>
-    <TD  colspan="3" align="left"><?php choose_from_menu($opt, "hours", $CFG->attendance_default_hours, "1","","1") ?></td>
+    <TD  colspan="3" align="left"><?php choose_from_menu($opt, "hours", $form->hours, "1","","1") ?></td>
 </tr>
+
+<tr valign=top>
+    <TD align="right"><P><B><?php print_string("gradevaluemulti", "attendance") ?>:</B></P></TD>
+    <TD align="left">
+      <input type="checkbox" name="grade" <?php echo !empty($form->grade) ? 'checked' : '' ?> >
+    </TD>
+</tr>
+<?php // starting with 2 to allow for the nothing value in choose_from_menu to be the default of 1
+for ($i=0;$i<=100;$i++){ $opt2[$i] = $i; } ?>
+<TR valign=top>
+    <TD align=right><P><B><?php print_string("maxgradevalue", "attendance") ?>:</B></P></TD>
+    <TD  colspan="3" align="left"><?php choose_from_menu($opt2, "maxgrade", $form->maxgrade, "0","","0") ?></td>
+</tr>
+
+
 </TABLE>
 <!-- These hidden variables are always the same -->
 <INPUT type="hidden" name=course        value="<?php p($form->course) ?>">
