@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.1 development (2003081700)
+      // quiz.php - created with Moodle 1.2 development (2003091800)
 
 
 $string['acceptederror'] = "Errore accettato";
@@ -24,7 +24,7 @@ $string['attemptsallowed'] = "Tentativi permessi";
 $string['attemptsunlimited'] = "Tentativi illimitati";
 $string['backtoquiz'] = "Indietro all'editazione del quiz";
 $string['bestgrade'] = "Voto migliore";
-$string['blackboard'] = "Lavagna";
+$string['blackboard'] = "Blackboard";
 $string['caseno'] = "Il maiuscolo non è importante";
 $string['casesensitive'] = "Il maiuscolo è importante";
 $string['caseyes'] = "Il maiuscolo è importante per tutte le lettere";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1 development (2003081700)
+      // forum.php - created with Moodle 1.2 development (2003091800)
 
 
 $string['addanewdiscussion'] = "Aggiungi un nuovo argomento di discussione";
@@ -11,6 +11,10 @@ $string['allowsdiscussions'] = "Questo forum permette a ciscuna persona di dare 
 $string['anyfile'] = "Qualunque file";
 $string['attachment'] = "Allegato";
 $string['bynameondate'] = "di \$a->name - \$a->date";
+$string['configdisplaymode'] = "La modalità di visualizzazione di default per le discussioni se nessuna é impostata.";
+$string['configlongpost'] = "Ogni post oltre questa lunghezza (escludendo l'HTML) é considerato lungo.";
+$string['configmanydiscussions'] = "Numero massimo di discussioni mostrate in una pagina del forum";
+$string['configshortpost'] = "Ogni post sotto questa lunghezza (escludendo l'HTML) é considerato corto.";
 $string['couldnotadd'] = "Non è possibile aggiungere il tuo intervento a causa di un errore sconosciuto.";
 $string['couldnotdeleteratings'] = "Spiacenti,questo non può essere cancellato in quanto gli utenti lo hanno già valutato.";
 $string['couldnotdeletereplies'] = "Spiacenti, non può essere cancellato in quanto gli utenti hanno già dato le loro risposte.";
@@ -74,6 +78,7 @@ $string['olderdiscussions'] = "Vecchie discussioni";
 $string['openmode0'] = "Discussioni e risposte non permesse";
 $string['openmode1'] = "Discussioni non permesse ma risposte consentite";
 $string['openmode2'] = "Discussioni e risposte sono permesse";
+$string['parent'] = "Mostra superiore";
 $string['parentofthispost'] = "Relativo a questo post";
 $string['postadded'] = "Il tuo messaggio è stato aggiunto con successo.<P>Hai \$a per editarlo se desideri apportare delle modifiche.";
 $string['postincontext'] = "Vedi questo messaggio nel contesto";
@@ -92,6 +97,8 @@ $string['ratingno'] = "Nessuna valutazione";
 $string['ratingonlyteachers'] = "Solo \$a può valutare i post";
 $string['ratings'] = "Voti";
 $string['ratingssaved'] = "Voti archiviati";
+$string['ratingsuse'] = "Utilizza valutazioni";
+$string['ratingtime'] = "Restringi la valutazione ai post con data in questo range:";
 $string['re'] = "Re:";
 $string['readtherest'] = "Leggi il resto dell'argomento";
 $string['replies'] = "Repliche";

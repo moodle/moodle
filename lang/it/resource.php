@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.1 development (2003081700)
+      // resource.php - created with Moodle 1.1.1 (2003091000)
 
 
 $string['addresource'] = "Aggiungi risorsa";
+$string['configframesize'] = "Quando una pagina web  o un file é visualizzato in un frame, questa é la dimensione (in pixel) del frame superiore (che contiene la navigazione).";
 $string['editingaresource'] = "Edita una risorsa";
 $string['example'] = "Esempio";
 $string['examplereference'] = "Tobin, K. & Tippins, D (1993)
