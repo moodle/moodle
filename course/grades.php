@@ -137,7 +137,7 @@
 
 /// Creating a workbook
         $workbook = new Workbook("-");
-        $myxls =& $workbook->add_worksheet('$strgrades');
+        $myxls =& $workbook->add_worksheet($strgrades);
     
 /// Print names of all the fields
 
