@@ -58,6 +58,8 @@
          if (isadmin()) {
              print_simple_box(get_string("administration"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
              $icon = "<IMG SRC=\"pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+             $moddata[]="<B><A HREF=\"admin/\">".get_string("admin")."</A></B>...";
+             $modicon[]=$icon;
              $moddata[]="<A HREF=\"course/log.php?id=$site->id\">".get_string("sitelogs")."</A>";
              $modicon[]=$icon;
              $moddata[]="<A HREF=\"admin/site.php\">".get_string("sitesettings")."</A>";
