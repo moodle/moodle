@@ -14,17 +14,17 @@
 
 function censor_filter($courseid, $text) {
 
-    static $search, $replace;
+    static $words;
 
-    if (empty($search)) {
-        $search = explode(',', get_string('censorbadwords'));
-        rsort($search);
-        foreach ($search as $key => $word) {
-            $replace[$key] = '<span class="censoredtext">'.$word.'</span>';
+    if (empty($words)) {
+        $words = array();
+        $badwords = explode(',', get_string('censorbadwords'));
+        foreach ($badwords as $badword) {
+            $words[] = new filterobject($badword, '<span class="censoredtext">', '</span>', false, false);
         }
     }
 
-    return str_ireplace($search, $replace, $text);
+    return filter_phrases($text, $words);  // Look for all these words in the text
 }
 
 
