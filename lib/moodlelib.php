@@ -1013,7 +1013,7 @@ function dst_offset_on($time) {
     $finaloffset = NULL;
 
     foreach($USER->dstchanges as $from => $offset) {
-        if($from < $time) {
+        if($from <= $time) {
             $finaloffset = $offset;
             break;
         }
