@@ -64,4 +64,15 @@ $string['resourcetypetext'] = 'Composer une page de texte';
 $string['searchweb'] = 'Rechercher une page web';
 $string['variablename'] = 'Nom de la variable';
 
+// The following strings are to be deleted after 1.4 release
+$string['resourcetype1'] = 'Référence';
+$string['resourcetype2'] = 'Page web (interne)';
+$string['resourcetype3'] = 'Fichier';
+$string['resourcetype4'] = 'Texte Moodle';
+$string['resourcetype5'] = 'Page web (externe)';
+$string['resourcetype6'] = 'Texte HTML';
+$string['resourcetype7'] = 'Programme';
+$string['resourcetype8'] = 'Texte Wiki';
+$string['resourcetype9'] = 'Dossier';
+
 ?>
