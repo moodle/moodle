@@ -1,23 +1,10 @@
-README FOR LANGUAGE PLUGIN
---------------------------
+US English is only slightly different from standard English.
 
-This directory contains all the strings and texts needed
-to render a Moodle site in a particular language.
+Only a few words are changed, like :
 
-The default language is English.  If a string is missing 
-for any reason from another language, then the English 
-version will be used.
+  enrolment -> enrollment
+  colour    -> color
 
-Note that each installed module should have a file here,
-as well as the main file which is called "moodle.php".
-
-The "help" directory contains whole pages written in HTML,
-and the "docs" directory contains other miscellaneous 
-documents.
-
-If you are thinking of translating Moodle to another language,
-please contact me so I can help you!
-
-Cheers,
-Martin      martin@dougiamas.com
-
+Note that many help files and strings may be missing but this
+doesn't matter much.  Because the "parent language" of this 
+pack is "en", missing strings will be taken from there.
