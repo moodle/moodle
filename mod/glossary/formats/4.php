@@ -6,7 +6,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $mode="
     if ( $entry ) {
         $colour = $THEME->cellheading2;
 
-        echo '<table border=1 cellspacing=0 width=95% valign=top cellpadding=10>';
+        echo '<br /><table border=0 cellspacing=0 width=95% valign=top cellpadding=10 class=forumpost>';
 
         echo '<tr>';
         echo "<td width=100% bgcolor=\"$colour\">";

@@ -439,7 +439,6 @@
                 if ( glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook,1,$displayformat,$ratings) ) {
                     $ratingsmenuused = true;
                 }
-                echo "<br />";
 
                 $entriesshown++;
             }

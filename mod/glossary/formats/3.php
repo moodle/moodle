@@ -8,7 +8,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $mode="
     $user = get_record("user", "id", $entry->userid);
     $strby = get_string("writtenby", "glossary");
 
-    echo "\n<table border=0 width=95% cellspacing=0 valign=top cellpadding=3 class=forumpost align=center>";
+    echo "\n<br /><table border=0 width=95% cellspacing=0 valign=top cellpadding=3 class=forumpost align=center>";
 
     echo "\n<tr>";
     echo "\n<td bgcolor=\"$colour\" width=35 valign=top class=\"forumpostpicture\">";
@@ -16,7 +16,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $mode="
     if ($entry) {
         print_user_picture($user->id, $course->id, $user->picture);
         echo "</td>";
-        echo "<td align=\"top\" nowrap width=100% bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
+        echo "<td align=\"top\" width=100% bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
         glossary_print_entry_approval($cm, $entry, $mode);
         echo "<b>";
         glossary_print_entry_concept($entry);

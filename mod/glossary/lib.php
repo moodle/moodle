@@ -185,7 +185,7 @@ function glossary_user_complete($course, $user, $mod, $glossary) {
              $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
             print_simple_box_start("center","70%");
         } else {
-            echo '<table width="95%" boder="0"><tr><td>';
+            echo '<table width="95%" border="0"><tr><td>';
         }
         foreach ($entries as $entry) {
             $cm = get_coursemodule_from_instance("glossary", $glossary->id, $course->id);
@@ -508,7 +508,8 @@ function glossary_print_entry_definition($entry) {
         $definition = str_replace(array_keys($tags),$tags,$definition);
     }
 
-    $text = format_text($definition, $entry->format);
+    $options->para = false;
+    $text = format_text($definition, $entry->format,$options);
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }
@@ -661,7 +662,7 @@ function glossary_print_entry_by_default($course, $cm, $glossary, $entry,$mode="
     $colour = $THEME->cellheading2;
 
     echo "\n<TR>";
-    echo "<TD WIDTH=100% class=\"generalbox\" valign=\"top\" BGCOLOR=\"#FFFFFF\">";
+    echo "<TD WIDTH=100% valign=\"top\" BGCOLOR=\"#FFFFFF\">";
         glossary_print_entry_approval($cm, $entry, $mode);
         glossary_print_entry_attachment($entry,"html","right");
         echo "<b>";
@@ -1110,6 +1111,10 @@ for ($row = 0; $row < $numrows; $row++) {
                     } else {
                          $currentcolor = $tabcolor;
                          $currentstyle = 'generaltab';
+                    }
+
+                    if (!isset($data[$tabproccessed]->link)) {
+                        $data[$tabproccessed]->link = NULL;
                     }
                     echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\"><b>";
                     if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
