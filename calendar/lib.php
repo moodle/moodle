@@ -607,6 +607,7 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
         case 'event':
         case 'upcoming':
         case 'day':
+        case 'month':
             $getvars = '&amp;from='.$type;
         break;
         case 'course':
