@@ -143,6 +143,7 @@ $string['smfor'] = 'Mapa del sitio para';
 $string['status'] = 'Estatus';
 $string['strippagecheck'] = '¿Está seguro de que quiere arrancar versiones antiguas de estas páginas:';
 $string['strippages'] = 'Arrancar páginas';
+$string['studentadminoptions'] = 'Opciones de admin de estudiantes';
 $string['submit'] = 'Enviar';
 $string['thanksforcontribution'] = 'Gracias por su contribución';
 $string['thispageisntlinkedfromanywhereelse'] = 'Esta página no tiene ningún enlace.';
