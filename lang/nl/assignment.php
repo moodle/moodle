@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
 
 
 $string['allowresubmit'] = 'Sta herhaald insturen toe';
@@ -35,6 +35,7 @@ $string['maximumsize'] = 'Maximale grootte  ';
 $string['modulename'] = 'Opdracht';
 $string['modulenameplural'] = 'Opdrachten';
 $string['newsubmissions'] = 'Ingestuurde opdrachten';
+$string['noassignments'] = 'Er zijn nog geen opdrachten';
 $string['notgradedyet'] = 'Nog niet beoordeeld';
 $string['notsubmittedyet'] = 'Nog niet ingestuurd';
 $string['overwritewarning'] = 'Waarschuwing: als je opnieuw een opdracht instuurt OVERSCHRIJFT deze de huidige ingestuurde opdracht';

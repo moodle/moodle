@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
 
 
 $string['accesscontrol'] = 'Toegangscontrole';
@@ -8,6 +8,11 @@ $string['addabranchtable'] = 'Voeg een vertakkingstabel toe';
 $string['addanendofbranch'] = 'voeg het einde van een tak toe';
 $string['addaquestionpage'] = 'Voeg een vragenpagina toe';
 $string['addcluster'] = 'Voeg een cluster toe';
+$string['addedabranchtable'] = 'Vertakkingstabel toegevoegd';
+$string['addedanendofbranch'] = 'Eind van een tak toegevoegd';
+$string['addedaquestionpage'] = 'Vragenpagina toegevoegd';
+$string['addedcluster'] = 'Cluster toegevoegd';
+$string['addedendofcluster'] = 'Einde van een cluster toegevoegd';
 $string['addendofcluster'] = 'Voeg het einde van een cluster toe';
 $string['answer'] = 'Antwoord';
 $string['answeredcorrectly'] = 'juist geantwoord.';
@@ -44,6 +49,7 @@ $string['correctresponse'] = 'Juist antwoord';
 $string['customscoring'] = 'Aangepaste cijfers';
 $string['deadline'] = 'Deadline';
 $string['deleteattempts'] = 'Verwijder de pogeingen van de leerling voor deze les (user id)';
+$string['deletedpage'] = 'Pagina verwijderd';
 $string['deleting'] = 'Verwijderen';
 $string['deletingpage'] = 'Pagina $a aan het verwijderen';
 $string['description'] = 'Beschrijving';
@@ -91,6 +97,7 @@ $string['here'] = 'hier';
 $string['highscore'] = 'Hoogste score';
 $string['hightime'] = 'Langste duur';
 $string['importquestions'] = 'Importeer vragen';
+$string['insertedpage'] = 'Pagina ingevoegd';
 $string['jump'] = 'Spring';
 $string['jumptsto'] = 'spring naar';
 $string['leftduringtimed'] = 'Je bent weggegaan tijdens een getimede les. <br />Klik op ga verder om de les te hervatten.';
@@ -117,6 +124,7 @@ $string['modattempts'] = 'Laat leerling nalezen';
 $string['modattemptsnoteacher'] = 'Nalezen werkt alleen voor leerlingen';
 $string['modulename'] = 'Les';
 $string['modulenameplural'] = 'Lessen';
+$string['movedpage'] = 'Pagina verplaatst';
 $string['movepagehere'] = 'Verplaats de pagina naar hier';
 $string['moving'] = 'Pagina $a aan het verplaatsen';
 $string['movingtonextpage'] = 'Verplaatsen naar de volgende pagina';
@@ -216,6 +224,7 @@ $string['timetaken'] = 'Gebruikte tijd';
 $string['topscorestitle'] = 'Top $a->maxhighscores cijfers voor de les $a->name';
 $string['treeview'] = 'Toon boomstructuur';
 $string['unseenpageinbranch'] = 'Ongeziene vraag binnen een tak';
+$string['updatedpage'] = 'Pagina geüpdatet';
 $string['updatefailed'] = 'Update mislukt';
 $string['updatesuccess'] = 'Update gelukt';
 $string['useeditor'] = 'Gebruik de editor';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012501)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -75,6 +75,7 @@ $string['datasetdefinitions'] = 'Herbruikbare datasetdefinities voor categorie $
 $string['datasetnumber'] = 'Aantal';
 $string['daysavailable'] = 'Dagen beschikbaar';
 $string['decimalformat'] = 'decimalen';
+$string['decimalpoints'] = 'Decimale cijfers';
 $string['decimals'] = 'met $a';
 $string['default'] = 'Standaard';
 $string['defaultgrade'] = 'Standaardbeoordeling vraag';

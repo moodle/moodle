@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012501)
+      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
 
 
 $string['addcontact'] = 'Voeg een contactpersoon toe';
@@ -7,6 +7,7 @@ $string['ago'] = '$a geleden';
 $string['allmine'] = 'Alle berichten aan mij of van mij';
 $string['allstudents'] = 'Alle berichten tussen leerlingen binnen een vak';
 $string['allusers'] = 'Alle berichten van alle gebruikers';
+$string['backupmessageshelp'] = 'Als dit ingeschakeld is, dan zullen berichten in de automatische SITE backups gezet worden';
 $string['beepnewmessage'] = 'Geluidssignaal als er een nieuw bericht binnenkomt';
 $string['blockcontact'] = 'Blokkeer contactpersoon';
 $string['blockedmessages'] = '$a bericht(en) van/aan geblokkeerde gebruikers';
@@ -40,6 +41,7 @@ $string['onlyfromme'] = 'Enkel mijn berichten';
 $string['onlymycourses'] = 'Enkel in mijn vakken';
 $string['onlytome'] = 'Enkel berichten aan mij';
 $string['pagerefreshes'] = 'Deze pagina ververst automatisch om de $a seconden';
+$string['readmessages'] = '$a gelezen berichten';
 $string['removecontact'] = 'Verwijder contactpersoon';
 $string['savemysettings'] = 'Bewaar mijn instellingen';
 $string['search'] = 'Zoek';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
@@ -43,6 +43,7 @@ $string['discussionsstartedbyrecent'] = 'Discussies die recentelijk door $a zijn
 $string['discussthistopic'] = 'Draag bij aan de discussie';
 $string['eachuserforum'] = 'Iedereen voegt één discussie toe';
 $string['edit'] = 'Wijzig';
+$string['editedby'] = 'Bewerkt door $s->name - $a->date';
 $string['editing'] = 'Wijzigen';
 $string['emptymessage'] = 'Er was iets mis met je bericht. Misschien heb je het leeg gelaten of was de bijlage te groot. Je wijzigingen zijn NIET bewaard.';
 $string['everyonecanchoose'] = 'Iedereen kan kiezen om al dan niet lid te zijn.';
@@ -68,6 +69,7 @@ $string['markunread'] = 'Markeer als ongelezen';
 $string['maxattachmentsize'] = 'Maximum grootte van bijlagen';
 $string['maxtimehaspassed'] = 'Helaas is de maximale tijd voor het wijzigen van dit bericht ($a) verstreken!';
 $string['message'] = 'Bericht';
+$string['missingsearchterms'] = 'Volgende zoektermen komen alleen in de HTML-opmaak van deze boodschap voor:';
 $string['modeflatnewestfirst'] = 'Laat de antwoorden in één lijst zien, met de nieuwste eerst';
 $string['modeflatoldestfirst'] = 'Laat de antwoorden in één lijst zien, met de oudste eerst';
 $string['modenested'] = 'Laat de antwoorden \'genest\' zien';

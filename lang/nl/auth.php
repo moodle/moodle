@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111000)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
 
 
 $string['auth_common_settings'] = 'Algemene instellingen';
@@ -79,6 +79,8 @@ $string['auth_pop3mailbox'] = 'Naam van de mailbox waarmee je een connectie prob
 $string['auth_pop3port'] = 'De poort van de server (meestal is dat 110)';
 $string['auth_pop3title'] = 'Gebruik een  POP3-server';
 $string['auth_pop3type'] = 'Het type van de server. Als jouw server gebruikt maakt van beveiliging door middel van een certificaat, kies pop3cert.';
+$string['auth_shibbolethdescription'] = 'Door deze methode te gebruiken kun je verbinding maken met een bestaande Shibboleth server om gebruikers te controleren en nieuwe aan te maken';
+$string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'Update lokale gegevens';
 $string['auth_updatelocal_expl'] = '<p><b>Update lokale gegevens:</b>Als je dit inschakelt, dan zal het veld (van de externe authenticatie) automatisch geüpdatet worden telkens de gebruiker zich aanmeldt of wanneer er een gebruikerssynchronisatie gebeurt. Velden die lokaal worden geüpdatet moeten geblokkeerd worden.</p>';
 $string['auth_updateremote'] = 'Update externe gegevens';
@@ -103,8 +105,5 @@ $string['showguestlogin'] = 'Je kunt de om in te loggen als gast verbergen of la
 $string['stdchangepassword'] = 'Gebruik de standaardpagina om het wachtwoord te wijzigen';
 $string['stdchangepassword_expl'] = 'Zet dit op ja als het externe systeem toelaat om wachtwoorden via Moodle te wijzigen. Deze instelling gaat voor op de \"Verander wachtwoord-URL\"';
 $string['stdchangepassword_explldap'] = 'Merk op: het is aan te raaden om LDAP te gebruiken met een SSL geëncrypteerde tunnel (ldaps://) als de LDAP-server op afstand staat.';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 
 ?>
