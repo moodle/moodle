@@ -993,6 +993,9 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         }
     }
     $meta = "<meta http-equiv=\"content-type\" content=\"text/html; charset=$encoding\" />\n$meta\n";
+    if (!$usexml) {
+        @header('Content-type: text/html; charset='.$encoding);
+    }
 
     if ( get_string("thisdirection") == "rtl" ) {
         $direction = " dir=\"rtl\"";
@@ -1001,8 +1004,12 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     }
 
     if (!$cache) {   // Do everything we can to prevent clients and proxies caching
-        @header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-        @header("Pragma: no-cache");
+        @header('Expires: Mon, 20 Aug 1969 09:23:00 GMT');
+        @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        @header('Cache-Control: no-store, no-cache, must-revalidate');
+        @header('Cache-Control: post-check=0, pre-check=0', false);
+        @header('Pragma: no-cache');
+
         $meta .= "\n<meta http-equiv=\"pragma\" content=\"no-cache\" />";
         $meta .= "\n<meta http-equiv=\"expires\" content=\"0\" />";
     }
