@@ -577,7 +577,7 @@ TD.event_description {
     background-color:#F9FAFA;
 }
 
-.sideblock .heading {
+.sideblock .header {
     background-color:#EEF0F2;
     color:#666666;
 }
@@ -590,6 +590,18 @@ TD.event_description {
 	border-top-color:#999;
 }
 
+/* sideblock intermediate styles */
+#right-column th.header {
+    background-color:#FFEDCE;
+}
+
+#right-column .sideblock,
+#right-column .sideblock .content,
+#right-column .sideblock .list {
+  background-color:#FFFFFF;
+  border-color:#C0CAD4;
+  
+}
 
 /* course summary */
 #block_course_summary .sideblockmain {

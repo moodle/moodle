@@ -746,25 +746,30 @@ table.calendar-controls .next
     border:0 none;
 }
 
-.sideblock .heading .hide-show {
+#right-column .sideblock {
+  border:1px solid;
+  
+}
+
+.sideblock .header .hide-show {
     float:right;
 }
 
-.sideblock .heading .hide-show img.hide-show-image {
+.sideblock .header .hide-show img.hide-show-image {
     height:11px;
     width:11px;
     padding-top:0.35em;
 }
 
-.sideblock .heading .hide-show img.hide-show-image {
+.sideblock .header .hide-show img.hide-show-image {
     background:url('../../pix/t/switch_minus.gif') no-repeat bottom;
 }
 
-.sideblock.hidden .heading .hide-show img.hide-show-image {
+.sideblock.hidden .header .hide-show img.hide-show-image {
     background:url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
-.sideblock .heading .title {
+.sideblock .header .title {
     float:left;
     width:auto;
 }
@@ -773,17 +778,17 @@ table.calendar-controls .next
     display:none;
 }
 
-.sideblock .heading .commands {
+.sideblock .header .commands {
     float:right;
     padding-left:0.2em;
 }
 
-.sideblock .heading .commands a {
+.sideblock .header .commands a {
     cursor:pointer;
     border-bottom:none;
 }
 
-.sideblock .heading .commands a img {
+.sideblock .header .commands a img {
     padding-top:0.5em;
 }
 
@@ -807,7 +812,7 @@ table.calendar-controls .next
     padding:1px 0px;
 }
 
-#left-column .sideblock .heading,
+#left-column .sideblock .header,
 #left-column .sideblock {
     border-width:0px 0px 0px 1px;
 }
