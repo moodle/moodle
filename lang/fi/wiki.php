@@ -5,7 +5,7 @@
 $string['action'] = '-- Toiminto --';
 $string['administration'] = 'Ylläpito';
 $string['allowremovepages'] = 'Salli \'Poista sivuja\'';
-$string['allowrevertchanges'] = 'Salli \'peruuta muutokset\'';
+$string['allowrevertchanges'] = 'Salli \'Peruuta muutokset\'';
 $string['allowsetpage'] = 'Salli \'Aseta sivun liput\'';
 $string['allowstrippages'] = 'Salli \'Siivoa sivuja\'';
 $string['attachments'] = 'Sivun liitteet';
@@ -136,7 +136,7 @@ $string['removepages'] = 'Poista sivuja';
 $string['removeselectedpages'] = 'Poista valitut sivut';
 $string['revertallsince'] = 'Poista myös muutokset jotka on tehty jälkeen';
 $string['revertchanges'] = 'Peruuta muutokset';
-$string['revertlastonly'] = 'Vain , jos se ainoa mahdollisuus';
+$string['revertlastonly'] = 'Vain, jos se ainoa mahdollisuus';
 $string['revertpages'] = 'Peruuta massamuutokset';
 $string['revertpagescheck'] = 'Haluatko varmasti peruuttaa seuraavat muutokset:';
 $string['revertthe'] = 'Poista vain valittu versio';

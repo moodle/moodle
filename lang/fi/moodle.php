@@ -218,7 +218,7 @@ $string['configshowsiteparticipantslist'] = 'Kaikki sivuston käyttäjät ovat luet
 $string['configslasharguments'] = 'Tiedostot, jotka välitetään php-välityksessä selaimille, voidaan jakaa käyttäen \'slash arguments\'-metodia. Tämä mahdolistaa tiedostojen tallentumisen välityspalvelimille. Kaikki php-palvelimet eivät tue tätä ominaisuutta. Aseta silloin käyttöön ensimmäinen vaihtoehto.';
 $string['configsmtphosts'] = 'Anna postin lähettämiseen käytettävän SMTP-palvelimen nimi. Voit määritellä useita palvelimia muodossa \'posti.domain.org;
 posti2.domain.org\'. Mikäli jätät tämän tyhjäksi, Moodle käyttää PHP:n oletustapaa postin lähettämiseen.';
-$string['configsmtpuser'] = 'Jos SMTP-palvelin vaatiin autentikoinnin, anna käyttäjätunnus ja salasana näihin kenttiin.';
+$string['configsmtpuser'] = 'Jos SMTP-palvelin vaatii autentikoinnin, anna käyttäjätunnus ja salasana näihin kenttiin.';
 $string['configteacherassignteachers'] = 'Sallitaanko tavallisten opettajien määrittää muita opettajia kurssilleen? Jos ei, niin ainoastaan kurssiylläpitäjät voivat määrittää opettajia kurssilleen.';
 $string['configtimezone'] = 'Tästä voit asettaa oletusaikavyöhykkeen. Tämä on ainoastaan oletusasetus päiväyksien näyttämistä varten, jokainen käyttäjä voi asettaa sen haluamakseen profiilissaan.
 \"Server time\" tässä yhteydessä tarkoittaa järjestelmän asetusta, käyttäjäprofiilissa \"Server time\" viittaa tähän oletusaikavyöhykeasetukseen.';
@@ -473,7 +473,7 @@ $string['forcepasswordchangehelp'] = 'Pakota salasanan vaihto seuraavan kirjautu
 $string['forgotten'] = 'Unohditko salasanasi?';
 $string['format'] = 'Muotoilu';
 $string['formathtml'] = 'HTML-muoto';
-$string['formatmarkdown'] = 'hinnanalennus formaatti';
+$string['formatmarkdown'] = 'Markdown-formaatti';
 $string['formatplain'] = 'Pelkkä teksti-muoto';
 $string['formatsocial'] = 'Keskustelu';
 $string['formattext'] = 'Automaattimuotoilu';
@@ -790,6 +790,7 @@ $string['order'] = 'Tila';
 $string['other'] = 'Toinen';
 $string['outline'] = 'Rakenne';
 $string['page'] = 'Sivu';
+$string['parentlanguage'] = 'KÄÄNTÄJÄT: Jos kielelläsi on kantakieli jota Moodlen pitäisi käyttää merkkijonon ollessa kateissa, täsmennä sitä varten koodi tähän. Jos jätät tämän alueen tyhjäksi, käytetään englantia. Esimerkki: nl';
 $string['participants'] = 'Osallistujat';
 $string['password'] = 'Salasana';
 $string['passwordchanged'] = 'Salasana on vaihdettu';
@@ -860,11 +861,11 @@ $string['returningtosite'] = 'Jos sinulla on jo tunnus:';
 $string['revert'] = 'Peruuta';
 $string['role'] = 'Rooli';
 $string['rss'] = 'RSS';
-$string['rssarticles'] = 'Viimeisinpien RSS artikkelien määrä';
+$string['rssarticles'] = 'Viimeisimpien RSS artikkelien määrä';
 $string['rsstype'] = 'RSS syöte tastä aktiviteetista';
 $string['savechanges'] = 'Tallenna muutokset';
 $string['saveto'] = 'Tallenna';
-$string['scale'] = 'Asteiko';
+$string['scale'] = 'Asteikko';
 $string['scales'] = 'Asteikot';
 $string['scalescustom'] = 'Omat asteikot';
 $string['scalescustomcreate'] = 'Lisää uusi asteikko';
@@ -1045,13 +1046,13 @@ $string['virusfoundlater'] = 'Kurssille $a->course  $a->date lähettämästä tiedos
 
 $a->action
 
-Jos tämä on tehtävän palautus, uudeleenlähetys saattaa olla tarpeen jotta arviointi voidaan suorittaa.';
+Jos tämä on tehtävän palautus, uudelleenlähetys saattaa olla tarpeen jotta arviointi voidaan suorittaa.';
 $string['virusfoundlateradmin'] = 'Ylläpitäjä huomio! Kurssille $a->user kurssille $a->course  $a->date lähettämästä tiedostosta $a->filename on löytynyt virus. Tiedostolle on tapahtunut seuraavaa:
 
 $a->action
 
 Käyttäjälle on ilmoitettu tapahtuneesta.';
-$string['virusfoundlateradminnolog'] = 'Ylläpitäjä huomio! Lähettetystä tiedostosta $a->filename on löytynyt virus. Moodle ei voinut selvittää tiedoston lähettäjää Tiedostolle on tapahtunut seuraavaa:
+$string['virusfoundlateradminnolog'] = 'Ylläpitäjä huomio! Lähetetystä tiedostosta $a->filename on löytynyt virus. Moodle ei voinut selvittää tiedoston lähettäjää. Tiedostolle on tapahtunut seuraavaa:
 
 $a->action';
 $string['virusfoundsubject'] = '$a : Viruksen saastuttama!';
