@@ -4,18 +4,19 @@
 
     //This is the "graphical" structure of the glossary mod:
     //
-    //                     glossary ---------------------- glossary_categories
-    //                    (CL,pk->id)                  (CL,pk->id,fk->glossaryid)
-    //                        |                                       |
-    //                        |                                       |
-    //                        |                                       |
-    //                  glossary_entries -------------- glossary_entries_categories
-    //         (UL,pk->id, fk->glossaryid, files)      (UL, pk->categoryid,entryid]
-    //                        |             \                          
-    //                        |              \                         
-    //                        |               \                        
-    //                  glossary_comments      --------- glossary_alias 
-    //              (UL,pk->id, fk->entryid)            (UL, pk->id, pk->entryid)
+    //                     glossary ----------------------------------------- glossary_categories
+    //                    (CL,pk->id)                                     (CL,pk->id,fk->glossaryid)
+    //                        |                                                       |
+    //                        |                                                       |
+    //                        |                                                       |
+    //                  glossary_entries --------------------------------glossary_entries_categories
+    //         (UL,pk->id, fk->glossaryid, files)         |               (UL, pk->categoryid,entryid)
+    //                        |                           |             
+    //                        |                           |--------------------glossary_ratings 
+    //                        |                           |               (UL, pk->id, pk->entryid)
+    //                  glossary_comments                 |
+    //              (UL,pk->id, fk->entryid)              |---------------------glossary_alias
+    //                                                                     (UL, pk->id, pk->entryid)
     //
     //
     // Meaning: pk->primary key field of the table
@@ -171,6 +172,7 @@
 
                     if ( $userinfo ) {
                         $status = backup_glossary_comments ($bf,$preferences,$glo_ent->id);
+                        $status = backup_glossary_ratings ($bf,$preferences,$glo_ent->id);
                     }
 
                     $status =fwrite ($bf,end_tag("ENTRY",5,true));
@@ -214,6 +216,31 @@
         }
         return $status;
     }
+
+   //Backup glossary_ratings contents (executed from backup_glossary_entries)
+    function backup_glossary_ratings ($bf,$preferences,$entryid) {
+
+        global $CFG;
+
+        $status = true;
+
+        $ratings = get_records("glossary_ratings","entryid",$entryid);
+        if ($ratings) {
+            $status =fwrite ($bf,start_tag("RATINGS",6,true));
+            foreach ($ratings as $rating) {
+                $status =fwrite ($bf,start_tag("RATING",7,true));
+
+                fwrite ($bf,full_tag("ID",8,false,$rating->id));
+                fwrite ($bf,full_tag("USERID",8,false,$rating->userid));
+                fwrite ($bf,full_tag("TIME",8,false,$rating->time));
+                fwrite ($bf,full_tag("RATING",8,false,$rating->rating));
+
+                $status =fwrite ($bf,end_tag("RATING",7,true));
+            }
+            $status =fwrite ($bf,end_tag("RATINGS",6,true));
+        }
+        return $status;
+    }
    
     //Backup glossary_alias contents (executed from backup_glossary_entries)
     function backup_glossary_aliases ($bf,$preferences,$entryid) {
@@ -228,7 +255,7 @@
             foreach ($aliases as $alias) {
                 $status =fwrite ($bf,start_tag("ALIAS",7,true));
 
-                fwrite ($bf,full_tag("NAME",8,false,$comment->id));
+                fwrite ($bf,full_tag("ALIAS_TEXT",8,false,$alias->alias));
 
                 $status =fwrite ($bf,end_tag("ALIAS",7,true));        
             }

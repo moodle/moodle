@@ -4,18 +4,19 @@
 
     //This is the "graphical" structure of the glossary mod:
     //
-    //                     glossary ---------------------- glossary_categories
-    //                    (CL,pk->id)                  (CL,pk->id,fk->glossaryid)
-    //                        |                                       |
-    //                        |                                       |
-    //                        |                                       |
-    //                  glossary_entries -------------- glossary_entries_categories
-    //         (UL,pk->id, fk->glossaryid, files)      (UL, [pk->categoryid,entryid]
-    //                        |               \
-    //                        |                \
-    //                        |                 \
-    //                  glossary_comments        ------ glossary_alias
-    //              (UL,pk->id, fk->entryid)            (UL, pk->id, pk->entryid)
+    //                     glossary ----------------------------------------- glossary_categories
+    //                    (CL,pk->id)                                     (CL,pk->id,fk->glossaryid)
+    //                        |                                                       |
+    //                        |                                                       |
+    //                        |                                                       |
+    //                  glossary_entries --------------------------------glossary_entries_categories
+    //         (UL,pk->id, fk->glossaryid, files)         |               (UL, pk->categoryid,entryid)
+    //                        |                           |
+    //                        |                           |--------------------glossary_ratings
+    //                        |                           |               (UL, pk->id, pk->entryid)
+    //                  glossary_comments                 |
+    //              (UL,pk->id, fk->entryid)              |---------------------glossary_alias
+    //                                                                     (UL, pk->id, pk->entryid)
     //
     //
     // Meaning: pk->primary key field of the table
@@ -172,6 +173,8 @@
                     $status = glossary_alias_restore_mods($oldid,$newid,$ent_info,$restore);
                     //Now restore glossary_comments
                     $status = glossary_comments_restore_mods($oldid,$newid,$ent_info,$restore);
+                    //Now restore glossary_ratings
+                    $status = glossary_ratings_restore_mods($oldid,$newid,$ent_info,$restore);
                     //Now copy moddata associated files if needed
                     if ($entry->attachment) {
                         $status = glossary_restore_files ($old_glossary_id, $new_glossary_id,
@@ -236,6 +239,55 @@
         return $status;
     }
 
+    //This function restores the glossary_ratings
+    function glossary_ratings_restore_mods($old_entry_id,$new_entry_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the ratings array
+        $ratings = $info['#']['RATINGS']['0']['#']['RATING'];
+
+        //Iterate over ratings
+        for($i = 0; $i < sizeof($ratings); $i++) {
+            $rat_info = $ratings[$i];
+            //traverse_xmlize($rat_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //Now, build the GLOSSARY_RATINGS record structure
+            $rating->entryid = $new_entry_id;
+            $rating->userid = backup_todb($rat_info['#']['USERID']['0']['#']);
+            $rating->time = backup_todb($rat_info['#']['TIME']['0']['#']);
+            $rating->rating = backup_todb($rat_info['#']['RATING']['0']['#']);
+
+            //We have to recode the userid field
+            $user = backup_getid($restore->backup_unique_code,"user",$rating->userid);
+            if ($user) {
+                $rating->userid = $user->new_id;
+            }
+
+            //The structure is equal to the db, so insert the glossary_ratings
+            $newid = insert_record ("glossary_ratings",$rating);
+
+            //Do some output
+            if (($i+1) % 50 == 0) {
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
+            if (!$newid) {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
     //This function restores the glossary_alias table
     function glossary_alias_restore_mods($old_entry_id,$new_entry_id,$info,$restore) {
 
@@ -252,7 +304,7 @@
 
             //Now, build the GLOSSARY_ALIAS record structure
             $alias->entryid = $new_entry_id;
-            $alias->name = backup_todb($alias_info['#']['NAME']['0']['#']);
+            $alias->alias = backup_todb($alias_info['#']['ALIAS_TEXT']['0']['#']);
 
             //The structure is equal to the db, so insert the glossary_comments
             $newid = insert_record ("glossary_alias",$alias);
