@@ -1,10 +1,12 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>Moodle Docs: Coding Guidelines</title>
-<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 </head>
-<body bgcolor="#FFFFFF">
+<body>
 <h1>Moodle Coding Guidelines</h1>
 <p class="normaltext">Any collaborative project needs consistency and stability 
   to stay strong.</p>
@@ -39,7 +41,7 @@
     from your code using get_string() or print_string().</li>
   <li class="spaced">All help files should be translatable - create new texts 
     in the &quot;en/help&quot; directory and call them using helpbutton().
-    <p>If you need to update a help file: 
+    <p>If you need to update a help file: </p>
     <ul>
     <li>with a minor change, where an old translation of the
         file would still make sense, then it's OK to make the change
@@ -50,7 +52,7 @@
         new code and the help index files should also be modified to point 
         to the newest versions.</li>
     </ul>
-    </p>
+    
 </li>
   <li class="spaced">Incoming data from the browser (sent via GET or POST) automatically
     has magic_quotes applied (regardless of the PHP settings) so that you can safely
@@ -200,7 +202,7 @@ GOOD: $assignments (for an array of objects)<br />
   <li class="spaced">Most tables should have a <strong>timemodified</strong> field (INT10) which is updated with a current timestamp obtained with the PHP <strong>time</strong>() function.</li>
 </ol>
 <hr />
-<p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
-<p align="CENTER"><font size="1">Version: $Id$</font></p>
+<p align="center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
 </body>
 </html>

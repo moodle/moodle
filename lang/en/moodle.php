@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // moodle.php - created with Moodle 1.5 development (2004082300)
+<?PHP // $Id$
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['action'] = 'Action';
@@ -30,7 +30,6 @@ $string['addresource'] = 'Add a resource...';
 $string['address'] = 'Address';
 $string['addstudent'] = 'Add student';
 $string['addteacher'] = 'Add teacher';
-$string['allteachers'] = 'All teachers';
 $string['admin'] = 'Admin';
 $string['adminhelpaddnewuser'] = 'To manually create a new user account';
 $string['adminhelpassignadmins'] = 'Admins can do anything and go anywhere in the site';
@@ -63,6 +62,7 @@ $string['administrators'] = 'Administrators';
 $string['administratorsall'] = 'All administrators';
 $string['administratorsandteachers'] = 'Administrators and teachers';
 $string['advancedfilter'] = 'Advanced search';
+$string['advancedsettings'] = 'Advanced settings';
 $string['again'] = 'again';
 $string['all'] = 'All';
 $string['allactivities'] = 'All activities';
@@ -75,6 +75,7 @@ $string['allowguests'] = 'This course allows guest users to enter';
 $string['allowinternal'] = 'Allow internal methods as well';
 $string['allownot'] = 'Do not allow';
 $string['allparticipants'] = 'All participants';
+$string['allteachers'] = 'All teachers';
 $string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
 $string['alphanumerical'] = 'Can only contain alphabetical letters or numbers';
 $string['alreadyconfirmed'] = 'Registration has already been confirmed';
@@ -121,6 +122,7 @@ $string['blockconfigbad'] = 'This block has not been implemented correctly and t
 $string['blockdeleteconfirm'] = 'You are about to completely delete the block \'$a\'.  This will completely delete everything in the database associated with this block.  Are you SURE you want to continue?';
 $string['blockdeletefiles'] = 'All data associated with the block \'$a->block\' has been deleted from the database.  To complete the deletion (and prevent the block re-installing itself), you should now delete this directory from your server: $a->directory';
 $string['blocks'] = 'Blocks';
+$string['blocksaddedit'] = 'Add/Edit Blocks';
 $string['blocksetup'] = 'Setting up block tables';
 $string['blocksuccess'] = '$a tables have been set up correctly';
 $string['bycourseorder'] = 'By course order';
@@ -150,7 +152,7 @@ $string['chooseuser'] = 'Choose a user';
 $string['city'] = 'City/town';
 $string['clambroken'] = 'Your administrator has enabled virus checking for file uploads but has misconfigured something.<br />Your file upload was NOT successful. Your administrator has been emailed to notify them so they can fix it.<br />Maybe try uploading this file later.';
 $string['clamdeletedfile'] = 'The file has been deleted';
-$string['clamdeletedfilefailed'] ='The file could not be deleted';
+$string['clamdeletedfilefailed'] = 'The file could not be deleted';
 $string['clamemailsubject'] = '$a :: Clam AV notification';
 $string['clamfailed'] = 'Clam AV has failed to run.  The return error message was $a. Here is the output from Clam:';
 $string['clamlost'] = 'Moodle is configured to run clam on file upload, but the path supplied to Clam AV, $a,  is invalid.';
@@ -202,6 +204,7 @@ $string['configloglifetime'] = 'This specifies the length of time you want to ke
 $string['configlongtimenosee'] = 'If students haven\'t logged in for a very long time, then they are automatically unsubscribed from courses.  This parameter specifies that time limit.';
 $string['configmaxbytes'] = 'This specifies a maximum size that uploaded files can be throughout the whole site.  This setting is limited by the PHP setting upload_max_filesize and the Apache setting LimitRequestBody.  In turn, maxbytes limits the range of sizes that can be chosen at course level or module level.';
 $string['configmaxeditingtime'] = 'This specifies the amount of time people have to re-edit forum postings, journal feedback etc.  Usually 30 minutes is a good value.';
+$string['configmessaging'] = 'Should the messaging system between site users be enabled?';
 $string['confignoreplyaddress'] = 'Emails are sometimes sent out on behalf of a user (eg forum posts). The email address you specify here will be used as the \"From\" address in those cases when the recipients should not be able to reply directly to the user (eg when a user chooses to keep their address private).';
 $string['confignotifyloginfailures'] = 'If login failures have been recorded, email notifications can be sent out.  Who should see these notifications?';
 $string['confignotifyloginthreshold'] = 'If notifications about failed logins are active, how many failed login attempts by one user or one IP address is it worth notifying about?';
@@ -231,6 +234,7 @@ $string['confirmednot'] = 'Your registration has not yet been confirmed!';
 $string['continue'] = 'Continue';
 $string['continuetocourse'] = 'Click here to enter your course';
 $string['cookiesenabled'] = 'Cookies must be enabled in your browser';
+$string['cookiesnotenabled'] = 'Unfortunately, cookies are currently not enabled in your browser';
 $string['copy'] = 'copy';
 $string['copyingcoursefiles'] = 'Copying course files';
 $string['copyinguserfiles'] = 'Copying user files';
@@ -252,6 +256,8 @@ $string['coursegrades'] = 'Course grades';
 $string['courseinfo'] = 'Course info';
 $string['courserestore'] = 'Course restore';
 $string['courses'] = 'Courses';
+$string['coursestaught'] = 'Courses I have taught';
+$string['coursescategory'] = 'Courses in the same category';
 $string['courseupdates'] = 'Course updates';
 $string['courseuploadlimit'] = 'Course upload limit';
 $string['create'] = 'Create';
@@ -319,8 +325,8 @@ $string['deletingexistingcoursedata'] = 'Deleting existing course data';
 $string['deletingolddata'] = 'Deleting old data';
 $string['department'] = 'Department';
 $string['description'] = 'Description';
-$string['detailedmore'] = 'More detailed';    
 $string['detailedless'] = 'Less detailed';
+$string['detailedmore'] = 'More detailed';
 $string['directorypaths'] = 'Directory Paths';
 $string['disable'] = 'Disable';
 $string['displayingfirst'] = 'Only the first $a->count $a->things are displayed';
@@ -337,7 +343,7 @@ $string['duplicatinga'] = 'Duplicating: $a';
 $string['duplicatingain'] = 'Duplicating $a->what in $a->in';
 $string['edhelpbgcolor'] = 'Define editarea\'s background-color.<br />Valid values are for example: #ffffff or white';
 $string['edhelpcleanword'] = 'This setting enables or disables Word specific format filtering.';
-$string['edhelpenablespelling'] = 'Enable or disable spellchecking. When enabled, <strong>aspell</strong> must be installed on the server.';
+$string['edhelpenablespelling'] = 'Enable or disable spellchecking. When enabled, <strong>aspell</strong> must be installed on the server. The second value is the <strong>default dictionary</strong>. This value will be used if aspell doesn\'t have dictionary for users own language.';
 $string['edhelpfontfamily'] = 'The font-family property is a list of font family names and/or generic family names. Family names must be seperated with comma.';
 $string['edhelpfontlist'] = 'Define the fonts used on editors dropdown menu.';
 $string['edhelpfontsize'] = 'The default font-size sets the size of a font. <br />Valid values are for example: medium, large, smaller, larger, 10pt, 11px.';
@@ -346,6 +352,7 @@ $string['editcoursesettings'] = 'Edit course settings';
 $string['editfiles'] = 'Edit files';
 $string['editgroupprofile'] = 'Edit group profile';
 $string['editinga'] = 'Editing $a';
+$string['editingteachershort'] = 'Editor';
 $string['editlock'] = 'This value cannot be edited!';
 $string['editmyprofile'] = 'Edit profile';
 $string['editorbgcolor'] = 'Background-color';
@@ -382,9 +389,9 @@ line at the top of your web browser window.
 If you need help, please contact the site administrator,
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: account confirmation';
-$string['emailconfirmsent'] = '   <p>An email should have been sent to your address at <b>$a</b>
-   <p>It contains easy instructions to complete your registration.
-   <p>If you continue to have difficulty, contact the site administrator.';
+$string['emailconfirmsent'] = '   <p>An email should have been sent to your address at <b>$a</b></p>
+   <p>It contains easy instructions to complete your registration.</p>
+   <p>If you continue to have difficulty, contact the site administrator.</p>';
 $string['emaildigest'] = 'Email digest type';
 $string['emaildigestcomplete'] = 'Complete (daily email with full posts)';
 $string['emaildigestoff'] = 'No digest (single email per forum post)';
@@ -461,6 +468,7 @@ $string['existingcoursedeleting'] = 'Existing course, deleting it first';
 $string['existingcreators'] = 'Existing course creators';
 $string['existingstudents'] = 'Enrolled students';
 $string['existingteachers'] = 'Existing teachers';
+$string['explanation'] = 'Explanation';
 $string['failedloginattempts'] = '$a->attempts failed logins since your last login';
 $string['failedloginattemptsall'] = '$a->attempts failed logins for $a->accounts accounts';
 $string['feedback'] = 'Feedback';
@@ -568,6 +576,7 @@ $string['hiddensections'] = 'Hidden sections';
 $string['hiddensectionscollapsed'] = 'Hidden sections are shown in collapsed form';
 $string['hiddensectionsinvisible'] = 'Hidden sections are completely invisible';
 $string['hide'] = 'Hide';
+$string['hideadvancedsettings'] = 'Hide advanced settings';
 $string['hidepicture'] = 'Hide picture';
 $string['hidesettings'] = 'Hide settings';
 $string['hits'] = 'Hits';
@@ -585,6 +594,11 @@ $string['htmleditordisabledbrowser'] = 'The HTML editor is unavailable because y
 $string['htmlformat'] = 'Pretty HTML format';
 $string['icqnumber'] = 'ICQ number';
 $string['idnumber'] = 'ID number';
+$string['importdata'] = 'Import course data';
+$string['importdatafrom'] = 'Find a course to import data from:';
+$string['importdataexported'] = 'Exported data from \'from\' course successfully.<br /> Continue to import into your \'to\' course.';
+$string['importdatafinished'] = 'Import complete! Continue to your course';
+$string['importmetacoursenote'] = 'Use this form to add courses to your meta course (this will import the enrolments)';
 $string['inactive'] = 'Inactive';
 $string['include'] = 'Include';
 $string['includeallusers'] = 'Include All Users';
@@ -596,6 +610,7 @@ $string['includemodules'] = 'Include Modules';
 $string['includeneededusers'] = 'Include Needed Users';
 $string['includenoneusers'] = 'Include None Users';
 $string['includeuserfiles'] = 'Include User Files';
+$string['info'] = 'Information';
 $string['institution'] = 'Institution';
 $string['invalidemail'] = 'Invalid email address';
 $string['invalidlogin'] = 'Invalid login, please try again';
@@ -666,6 +681,9 @@ $string['makeeditable'] = 'If you make \'$a\' editable by the web server process
 $string['manageblocks'] = 'Blocks';
 $string['managedatabase'] = 'Database';
 $string['managefilters'] = 'Filters';
+$string['managemeta'] = 'Is this a meta course?';
+$string['managemetaexplan'] = '(This means that enrolments are inherited from other courses)';
+$string['managemetadisabled'] = 'This is disabled because this course is already in a meta course';
 $string['managemodules'] = 'Modules';
 $string['markedthistopic'] = 'This topic is highlighted as the current topic';
 $string['markthistopic'] = 'Highlight this topic as the current topic';
@@ -674,8 +692,19 @@ $string['maximumgrade'] = 'Maximum grade';
 $string['maximumshort'] = 'Max';
 $string['maximumupload'] = 'Maximum upload size';
 $string['maxsize'] = 'Max size: $a';
+$string['metaassigncourses'] = 'Assign courses';
+$string['metaalreadycourses'] = 'Courses already assigned';
+$string['metaalreadyhascourses'] = 'This meta course already has child courses.';
+$string['metaalreadyhasenrolments'] = 'This course already has normal enrolments.';
+$string['metaalreadyinmeta'] = 'This course is already part of a meta course.';
+$string['metanoalreadycourses'] = 'No courses already assigned';
+$string['metapotentialcourses'] = 'Courses available';
+$string['metanopotentialcourses'] = 'No courses available';
+$string['metaaddcourse'] = 'Add this course';
+$string['metaremovecourse'] = 'Remove this course';
 $string['min'] = 'min';
 $string['mins'] = 'mins';
+$string['minutes'] = 'minutes';
 $string['miscellaneous'] = 'Miscellaneous';
 $string['missingcategory'] = 'You need to choose a category';
 $string['missingcity'] = 'Missing city/town';
@@ -777,6 +806,7 @@ $string['nopotentialadmins'] = 'No potential admins';
 $string['nopotentialcreators'] = 'No potential course creators';
 $string['nopotentialstudents'] = 'No potential students';
 $string['nopotentialteachers'] = 'No potential teachers';
+$string['noresults'] = 'No results';
 $string['normal'] = 'Normal';
 $string['normalfilter'] = 'Normal search';
 $string['nostudentsfound'] = 'No $a found';
@@ -789,7 +819,7 @@ $string['noteuserschangednonetocourse'] = 'Note: course users need to be restore
 $string['nothingnew'] = 'Nothing new since your last login';
 $string['noticenewerbackup'] = 'This backup file has been created with Moodle $a->backuprelease ($a->backupversion) and it\'s newer than your currently installed Moodle $a->serverrelease ($a->serverversion). This could cause some inconsistencies because backwards compatibility of backup files cannot be guaranteed.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, User: $a->info';
-$string['notifyloginfailuresmessageend'] = 'You can view these logs at $a/course/log.php?id=1&amp;chooselog=1&amp;modid=site_errors.';
+$string['notifyloginfailuresmessageend'] = 'You can view these logs at $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
 $string['notifyloginfailuresmessagestart'] = 'Here is a list of failed login attempts at $a since you were last notified ';
 $string['notifyloginfailuressubject'] = '$a :: Failed logins notification';
 $string['notincluded'] = 'Not included';
@@ -822,10 +852,10 @@ $string['passwordconfirmchange'] = 'Confirm password change';
 $string['passwordrecovery'] = 'Yes, help me log in';
 $string['passwordsdiffer'] = 'These passwords do not match';
 $string['passwordsent'] = 'Password has been sent';
-$string['passwordsenttext'] = '   <p>An email has been sent to your address at $a->email.
-   <p><b>Please check your email for your new password</b>
+$string['passwordsenttext'] = '   <p>An email has been sent to your address at $a->email.</p>
+   <p><b>Please check your email for your new password</b></p>
    <p>The new password was automatically generated, so you might like to
-   <a href=$a->link>change it to something easier to remember</a>.';
+   <a href=\"$a->link\">change it to something easier to remember</a>.</p>';
 $string['pathnotexists'] = 'Path doesn\'t exist in your server!';
 $string['pathslasherror'] = 'Path can\'t end with a slash!!';
 $string['paymentinstant'] = 'Use the button below to pay and be enrolled within minutes!';
@@ -863,12 +893,12 @@ $string['registration'] = 'Moodle Registration';
 $string['registrationemail'] = 'Email notifications';
 $string['registrationinfo'] = '<p>This page allows you to register your Moodle site with moodle.org.  Registration is free.
 The main benefit of registering is that you will be added to a low-volume mailing list
-for important notifications such as security alerts and new releases of Moodle.
+for important notifications such as security alerts and new releases of Moodle.</p>
 <p>By default, your information will be kept private, and will never be sold or passed on to anyone else.  The only
    reason for collecting this information is for support purposes, and to help build up a statistical
-   picture of the Moodle community as a whole.
-<p>If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.
-<p>All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time by resubmitting this form.';
+   picture of the Moodle community as a whole.</p>
+<p>If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.</p>
+<p>All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time by resubmitting this form.</p>';
 $string['registrationno'] = 'No, I do not want to receive email';
 $string['registrationsend'] = 'Send registration information to moodle.org';
 $string['registrationyes'] = 'Yes, please notify me about important issues';
@@ -926,6 +956,7 @@ $string['shortname'] = 'Short name';
 $string['shortnametaken'] = 'Short name is already used for another course ($a)';
 $string['shortsitename'] = 'Short name for site (eg single word)';
 $string['show'] = 'Show';
+$string['showadvancedsettings'] = 'Show advanced settings';
 $string['showall'] = 'Show all $a';
 $string['showallcourses'] = 'Show all courses';
 $string['showalltopics'] = 'Show all topics';
@@ -942,12 +973,13 @@ $string['showtheselogs'] = 'Show these logs';
 $string['since'] = 'Since';
 $string['sincelast'] = ' since last login';
 $string['site'] = 'Site';
+$string['sitedefault'] = 'Site Default';
 $string['siteerrors'] = 'Site errors';
 $string['sitefiles'] = 'Site files';
 $string['sitelogs'] = 'Site logs';
+$string['sitenews'] = 'Site news';
 $string['sitepartlist0'] = 'You must be a site teacher to be allowed to see the site participants list';
 $string['sitepartlist1'] = 'You must be a teacher to be allowed to see the site participants list';
-$string['sitenews'] = 'Site news';
 $string['sites'] = 'Sites';
 $string['sitesection'] = 'Include a topic section';
 $string['sitesettings'] = 'Site settings';
@@ -1040,10 +1072,10 @@ $string['updatingain'] = 'Updating $a->what in $a->in';
 $string['upload'] = 'Upload';
 $string['uploadafile'] = 'Upload a file';
 $string['uploadedfile'] = 'File uploaded successfully';
-$string['uploadfailednotrecovering'] = 'Your file upload has failed because there was a problem with one of the files, $a->name.<br/> Here is a log of the problems:<br />$a->problem<br />Not recovering.';
-$string['uploadfilelog'] = 'Upload log for file $a';
 $string['uploadedfileto'] = 'Uploaded $a->file to $a->directory';
 $string['uploadedfiletoobig'] = 'Sorry, but that file is too big (limit is $a bytes)';
+$string['uploadfailednotrecovering'] = 'Your file upload has failed because there was a problem with one of the files, $a->name.<br /> Here is a log of the problems:<br />$a->problem<br />Not recovering.';
+$string['uploadfilelog'] = 'Upload log for file $a';
 $string['uploadformlimit'] = 'Uploaded file exceeded the maximum size limit set by the form';
 $string['uploadlabel'] = 'Title:';
 $string['uploadnofilefound'] = 'No file was found - are you sure you selected one to upload?';
@@ -1071,15 +1103,28 @@ $string['userprofilefor'] = 'User profile for $a';
 $string['users'] = 'Users';
 $string['usersnew'] = 'New users';
 $string['userzones'] = 'User zones';
+$string['usethiscourse'] = 'Use this course';
 $string['usingexistingcourse'] = 'Using existing course';
 $string['version'] = 'Version';
 $string['view'] = 'View';
-$string['virusfoundsubject'] = '$a: Virus found!';
 $string['virusfound'] = 'Attention administrator! Clam AV has found a virus in a file uploaded by $a->user for the course $a->course. Here is the output of clamscan:';
+$string['virusfoundlater'] = 'A file you uploaded on $a->date with the filename $a->filename for the course $a->course has since been found to contain a virus.  Here is a summary of what has happened to your file:
+
+$a->action
+
+If this was submitted work, you may want to resubmit it so that your tutor can see it.';
+$string['virusfoundlateradmin'] = 'Attention administrator! A file that was uploaded on $a->date with the filename $a->filename for the course $a->course by the user $a->user has since been found to contain a virus.  Here is a summary of what has happened to the file:
+
+$a->action
+
+The user has also been notified.';
+$string['virusfoundlateradminnolog'] = 'Attention administrator! A file that was uploaded with the filename $a->filename has since been found to contain a virus. Moodle was unable to resolve this file back to the user that originally uploaded it.
+
+Here is a summary of what has happened to the file:
+
+$a->action';
+$string['virusfoundsubject'] = '$a: Virus found!';
 $string['virusfounduser'] = 'The file you have uploaded, $a->filename, has been scanned by a virus checker and found to be infected! Your file upload was NOT successful.';
-$string['virusfoundlater'] = 'A file you uploaded on $a->date with the filename $a->filename for the course $a->course has since been found to contain a virus.  Here is a summary of what has happened to your file:'."\n\n".'$a->action'."\n\n".'If this was submitted work, you may want to resubmit it so that your tutor can see it.';
-$string['virusfoundlateradmin'] = 'Attention administrator! A file that was uploaded on $a->date with the filename $a->filename for the course $a->course by the user $a->user has since been found to contain a virus.  Here is a summary of what has happened to the file:'."\n\n".'$a->action'."\n\n".'The user has also been notified.';
-$string['virusfoundlateradminnolog'] = 'Attention administrator! A file that was uploaded with the filename $a->filename has since been found to contain a virus. Moodle was unable to resolve this file back to the user that originally uploaded it.'."\n\n".'Here is a summary of what has happened to the file:'."\n\n".'$a->action';
 $string['virusplaceholder'] = 'This file that has been uploaded was found to contain a virus and has been moved or delted and the user notified.';
 $string['webpage'] = 'Web page';
 $string['week'] = 'Week';
@@ -1123,4 +1168,5 @@ $string['yourlastlogin'] = 'Your last login was';
 $string['yourself'] = 'yourself';
 $string['yourteacher'] = 'your $a';
 $string['zippingbackup'] = 'Zipping backup';
+
 ?>

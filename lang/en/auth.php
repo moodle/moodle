@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['auth_common_settings'] = 'Common settings';
 $string['auth_data_mapping'] = 'Data mapping';
 $string['auth_dbdescription'] = 'This method uses an external database table to check whether a given username and password is valid.  If the account is a new one, then information from other fields may also be copied across into Moodle.';
-$string['auth_dbextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>external database fields</b> that you specify here. <p>If you leave these blank, then defaults will be used.<p>In either case, the user will be able to edit all of these fields after they log in.';
+$string['auth_dbextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>external database fields</b> that you specify here. <p>If you leave these blank, then defaults will be used.</p><p>In either case, the user will be able to edit all of these fields after they log in.</p>';
 $string['auth_dbfieldpass'] = 'Name of the field containing passwords';
 $string['auth_dbfielduser'] = 'Name of the field containing usernames';
 $string['auth_dbhost'] = 'The computer hosting the database server.';
@@ -36,7 +36,7 @@ $string['auth_ldap_bind_dn'] = 'If you want to use bind-user to search users, sp
 $string['auth_ldap_bind_pw'] = 'Password for bind-user.';
 $string['auth_ldap_bind_settings'] = 'Bind settings';
 $string['auth_ldap_contexts'] = 'List of contexts where users are located. Separate different contexts with \';\'. For example: \'ou=users,o=org; ou=others,o=org\'';
-$string['auth_ldap_create_context'] = 'If you enable user creation with email confirmation, specify the context where users are created. This context should be different from other users to prevent security issues. You don\'t need to add this context to ldap_context-variable, Moodle will search for users from this context automatically.<br/><b>Note!</b> You have to modify function auth_user_create() in file auth/ldap/lib.php to make user creation work';
+$string['auth_ldap_create_context'] = 'If you enable user creation with email confirmation, specify the context where users are created. This context should be different from other users to prevent security issues. You don\'t need to add this context to ldap_context-variable, Moodle will search for users from this context automatically.<br /><b>Note!</b> You have to modify function auth_user_create() in file auth/ldap/lib.php to make user creation work';
 $string['auth_ldap_creators'] = 'List of groups whose members are allowed to create new courses. Separate multiple groups with \';\'. Usually something like \'cn=teachers,ou=staff,o=myorg\'';
 $string['auth_ldap_expiration_desc'] = 'Select No to disable expired password checking or LDAP to read passwordexpiration time directly from LDAP';
 $string['auth_ldap_expiration_warning_desc'] = 'Number of days before password expiration warning is issued.';
@@ -65,7 +65,7 @@ $string['auth_ldapdescription'] = 'This method provides authentication against a
                                   wanted fields in Moodle.  For following logins only the username and 
 
                                   password are checked.';
-$string['auth_ldapextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>LDAP fields</b> that you specify here. <p>If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.<p>In either case, the user will be able to edit all of these fields after they log in.';
+$string['auth_ldapextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>LDAP fields</b> that you specify here. <p>If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.</p><p>In either case, the user will be able to edit all of these fields after they log in.</p>';
 $string['auth_ldaptitle'] = 'Use an LDAP server';
 $string['auth_manualdescription'] = 'This method removes any way for users to create their own accounts.  All accounts must be manually created by the admin user.';
 $string['auth_manualtitle'] = 'Manual accounts only';

@@ -108,5 +108,10 @@ $string['wordclean'] = 'Clean Word HTML';
 $string['zip'] = 'Zip';
 $string['createanchor'] = 'Create anchor';
 $string['anchorname'] = 'Anchorname';
+$string['fontname'] = 'Fontname';
+$string['fontsize'] = 'Font-size';
+$string['formatblock'] = 'Format';
+$string['nolink'] = 'Prevent glossary link';
+$string['alertnoselectedtext'] = 'You must select text first!';
 
 ?>

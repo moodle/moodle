@@ -11,7 +11,7 @@ $string['calendarsettings'] = 'Calendar';
 $string['confirmation'] = 'Confirmation';
 $string['confirmdeletedst'] = 'Deleting the preset named <strong>$a</strong> will immediately disable DST for all users of that preset. This could possibly change their perception of time without warning. Are you sure you want to continue?';
 $string['confirmdeletedstdefault'] = '<strong>The preset named $a is being used for all users of this site!</strong> Deleting it will change their perception of time without warning. Are you sure you want to continue?';
-$string['cronwarning'] = 'The cron.php maintenance script has not run recently (at least not in the last 24 hs). <br>If you have not configured it yet, check the installation instructions, in the <em>Set up cron</em> section.';
+$string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours. <br />The <a href=\"../doc/?frame=install.html&sub=cron\">installation documentation</a> explains how you can automate this.';
 $string['dstisapreference'] = 'Each user can choose which preset to use';
 $string['dstisforcedto'] = 'Force all users to use';
 $string['dstpresets'] = 'DST Presets';
