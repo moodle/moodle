@@ -32,15 +32,15 @@
 
     $courseid = (integer)$args[0];
 
-    $course = get_record("course", "id", $courseid);
+    if (!$course = get_record("course", "id", $courseid)) {  // Course ID must be specified
+        error("Invalid course ID");
+    }
 
     if ($course->category) {
         require_login($courseid);
     } else if ($CFG->forcelogin) {
         require_login();
     }
-
-    // it's OK to get here if no course was specified
 
     $pathname = "$CFG->dataroot$pathinfo";
     if ($pathargs = explode("?",$pathname)) {
