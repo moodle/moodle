@@ -414,17 +414,17 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     echo calendar_top_controls('month', array('m' => $m, 'y' => $y));
 
     // Start calendar display
-    echo '<table class="calendarmonth"><tr>'; // Begin table. First row: day names
+    echo '<table class="calendarmonth"><thead><tr>'; // Begin table. First row: day names
 
     // Print out the names of the weekdays
     $days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
     for($i = $display->minwday; $i <= $display->maxwday; ++$i) {
         // This uses the % operator to get the correct weekday no matter what shift we have
         // applied to the $display->minwday : $display->maxwday range from the default 0 : 6
-        echo '<td class="calendarheader">'.get_string($days[$i % 7], 'calendar')."</td>\n";
+        echo '<td class="calendarheader">'.get_string($days[$i % 7], 'calendar').'</td>';
     }
 
-    echo '</tr><tr>'; // End of day names; prepare for day numbers
+    echo '</tr></thead><tbody><tr>'; // End of day names; prepare for day numbers
 
     // For the table display. $week is the row; $dayweek is the column.
     $week = 1;
@@ -432,7 +432,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
 
     // Paddding (the first week may have blank days in the beginning)
     for($i = $display->minwday; $i < $startwday; ++$i) {
-        echo '<td class="calendardaymonth">&nbsp;</td>'."\n";
+        echo '<td>&nbsp;</td>'."\n";
     }
 
     // Now display all the calendar
@@ -445,15 +445,14 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         }
 
         // Reset vars
-        $class = '';
         $cell = '';
         if($dayweek % 7 == 0 || $dayweek % 7 == 6) {
             // Weekend. This is true no matter what the exact range is.
-            $class = 'calendardaymonth calendarweekend';
+            $class = 'cal_weekend';
         }
         else {
             // Normal working day.
-            $class = 'calendardaymonth';
+            $class = '';
         }
 
         // Special visual fx if an event is defined
@@ -502,12 +501,16 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         }
 
         // Just display it
-        echo '<td class="'.$class.'">'.$cell;
+        if(!empty($class)) {
+            $class = ' class="'.trim($class).'"';
+        }
+        echo '<td'.$class.'>'.$cell;
+
         if(isset($eventsbyday[$day])) {
             echo '<table>';
             foreach($eventsbyday[$day] as $eventindex) {
-                echo '<tr><td valign="top"><strong>&middot;</strong></td>';
-                echo '<td><a href="'.CALENDAR_URL.'view.php?view=event&amp;id='.$events[$eventindex]->id.'">'.$events[$eventindex]->name.'</a></td></tr>';
+                echo '<tr><td style="vertical-align: top; width: 10px;"><strong>&middot;</strong></td>';
+                echo '<td style="width: 100%;"><a href="'.CALENDAR_URL.'view.php?view=event&amp;id='.$events[$eventindex]->id.'">'.$events[$eventindex]->name.'</a></td></tr>';
             }
             echo '</table>';
         }
@@ -521,9 +524,9 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
 
     // Paddding (the last week may have blank days at the end)
     for($i = $dayweek; $i <= $display->maxwday; ++$i) {
-        echo '<td class="calendardaymonth">&nbsp;</td>';
+        echo '<td>&nbsp;</td>';
     }
-    echo "</tr>\n"; // Last row ends
+    echo "</tr>\n</tbody>\n"; // Last row ends
 
     echo "</table>\n<br />\n"; // Tabular display of days ends
 

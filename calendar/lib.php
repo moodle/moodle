@@ -114,17 +114,18 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     // Arguments passed by reference.
     calendar_events_by_day($events, $display->tstart, $eventsbyday, $durationbyday, $typesbyday);
 
-    $content .= '<table class="calendarmini"><tr>'; // Begin table. First row: day names
+    $content .= '<table class="calendarmini">'; // Begin table
+    $content .= '<thead><tr>'; // Header row: day names
 
     // Print out the names of the weekdays
     $days = array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');
     for($i = $display->minwday; $i <= $display->maxwday; ++$i) {
         // This uses the % operator to get the correct weekday no matter what shift we have
         // applied to the $display->minwday : $display->maxwday range from the default 0 : 6
-        $content .= '<td class="calendarheader">'.get_string($days[$i % 7], 'calendar')."</td>\n";
+        $content .= '<td>'.get_string($days[$i % 7], 'calendar').'</td>';
     }
 
-    $content .= '</tr><tr>'; // End of day names; prepare for day numbers
+    $content .= '</tr></thead><tbody><tr>'; // End of day names; prepare for day numbers
 
     // For the table display. $week is the row; $dayweek is the column.
     $week = 1;
@@ -132,7 +133,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
     // Paddding (the first week may have blank days in the beginning)
     for($i = $display->minwday; $i < $startwday; ++$i) {
-        $content .= '<td class="calendardaymini">&nbsp;</td>'."\n";
+        $content .= '<td>&nbsp;</td>'."\n";
     }
 
     // Now display all the calendar
@@ -143,16 +144,16 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             $dayweek = $display->minwday;
             ++$week;
         }
+
         // Reset vars
-        $class = '';
         $cell = '';
         if($dayweek % 7 == 0 || $dayweek % 7 == 6) {
             // Weekend. This is true no matter what the exact range is.
-            $class = 'cal_day_mini calendarweekend';
+            $class = 'cal_weekend';
         }
         else {
             // Normal working day.
-            $class = 'cal_day_mini';
+            $class = '';
         }
 
         // Special visual fx if an event is defined
@@ -210,16 +211,19 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
         }
 
         // Just display it
-        $content .= '<td class="'.$class.'">'.$cell."</td>\n";
+        if(!empty($class)) {
+            $class = ' class="'.trim($class).'"';
+        }
+        $content .= '<td'.$class.'>'.$cell."</td>\n";
     }
 
     // Paddding (the last week may have blank days at the end)
     for($i = $dayweek; $i <= $display->maxwday; ++$i) {
-        $content .= '<td class="calendardaymini">&nbsp;</td>';
+        $content .= '<td>&nbsp;</td>';
     }
     $content .= '</tr>'; // Last row ends
 
-    $content .= '</table>'; // Tabular display of days ends
+    $content .= '</tbody></table>'; // Tabular display of days ends
 
     return $content;
 }
