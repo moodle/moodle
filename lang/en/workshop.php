@@ -162,6 +162,7 @@ $string['repeatanalysis'] = "Repeat Analysis";
 $string['reply'] = "Reply";
 $string['returntosubmissionpage'] = "Return to Submission Page";
 $string['rubric'] = "Rubric";
+$string['saveleaguetableoptions'] = "Save League Table Options";
 $string['savemyassessment'] = "Save my Assessment";
 $string['savemycomment'] = "Save my Comment";
 $string['saveoverallocation'] = "Save Over Allocation Level";
