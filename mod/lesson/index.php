@@ -50,10 +50,10 @@
         $table->head  = array ($strweek, $strname, $strgrade, $strdeadline);
         $table->align = array ("CENTER", "LEFT", "CENTER", "CENTER");
     } else if ($course->format == "topics") {
-        $table->head  = array ($strtopic, $strname);
+        $table->head  = array ($strtopic, $strname, $strgrade, $strdeadline);
         $table->align = array ("CENTER", "LEFT", "CENTER", "CENTER");
     } else {
-        $table->head  = array ($strname);
+        $table->head  = array ($strname, $strgrade, $strdeadline);
         $table->align = array ("LEFT", "CENTER", "CENTER");
     }
 
