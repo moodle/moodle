@@ -35,19 +35,19 @@ class MoodleBlock {
         return NULL;
     }
     function get_title() {
-        // Intentionally doesn't check if a title is set, for _test_self()
+        // Intentionally doesn't check if a title is set. This is already done in _self_test()
         return $this->title;
     }
     function get_content_type() {
-        // Intentionally doesn't check if a content_type is set, for _test_self()
+        // Intentionally doesn't check if a content_type is set. This is already done in _self_test()
         return $this->content_type;
     }
     function get_version() {
-        // Intentionally doesn't check if a version is set, for _test_self()
+        // Intentionally doesn't check if a version is set. This is already done in _self_test()
         return $this->version;
     }
     function get_header() {
-        // Intentionally doesn't check if a header is set, for _test_self()
+        // Intentionally doesn't check if a header is set. This is already done in _self_test()
         return $this->header;
     }
     function refresh_content() {
@@ -314,12 +314,11 @@ class MoodleBlock {
         }
         global $CFG, $USER, $THEME;
 
-        if(is_file($CFG->dirroot.'/blocks/'. $this->name() .'/config_instance.html')) {
+        if(is_file($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html')) {
             print_simple_box_start('center', '', $THEME->cellheading);
-            include($CFG->dirroot.'/blocks/'. $this->name() .'/config_instance.html');
+            include($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html');
             print_simple_box_end();
-        }
-        else {
+        } else {
             notice(get_string('blockconfigbad'), str_replace('blockaction=', 'dummy=', qualified_me()));
         }
         
