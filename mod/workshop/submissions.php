@@ -1194,7 +1194,7 @@
         foreach ($users as $user) {
             if ($submissions = workshop_get_user_submissions($workshop, $user)) {
                 foreach ($submissions as $submission) {
-                    echo "<tr><td>".fullname($user)".</td>";
+                    echo "<tr><td>".fullname($user)."</td>";
                     echo "<td>".workshop_print_submission_title($workshop, $submission)."</td>\n";
                     if ($useteachersgrades) {
                         echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, "teacher")."</td>";
