@@ -1605,13 +1605,20 @@ function obfuscate_text($plaintext) {
     $i=0;
     $length = strlen($plaintext);
     $obfuscated="";
+    $prev_obfuscated = false;
     while ($i < $length) {
-        if (rand(0,2)) {
+        $c = ord($plaintext{$i});
+        $numerical = ($c >= ord('0')) && ($c <= ord('9'));
+        if ($prev_obfuscated and $numerical ) {
             $obfuscated.='&#'.ord($plaintext{$i});
+        } else if (rand(0,2)) {
+            $obfuscated.='&#'.ord($plaintext{$i});
+            $prev_obfuscated = true;
         } else {
             $obfuscated.=$plaintext{$i};
+            $prev_obfuscated = false;
         }
-        $i++;
+      $i++;
     }
     return $obfuscated;
 }
