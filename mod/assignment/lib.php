@@ -857,7 +857,7 @@ function assignment_email_teachers($course, $cm, $assignment, $submission) {
         $teachers = get_course_teachers($course->id);
     }
 
-    if (!$teachers) {
+    if ($teachers) {
        
         $strassignments = get_string('modulenameplural', 'assignment');
         $strassignment  = get_string('modulename', 'assignment');
@@ -866,14 +866,14 @@ function assignment_email_teachers($course, $cm, $assignment, $submission) {
         foreach ($teachers as $teacher) {
             unset($info);
             $info->username = fullname($user);
-            $info->assignment = "$submission->name";
-            $info->url = "$CFG->wwwroot/mod/assignment/view.php?id=$cm->id";
+            $info->assignment = $assignment->name;
+            $info->url = "$CFG->wwwroot/mod/assignment/submissions.php?id=$assignment->id";
 
             $postsubject = "$strsubmitted: $info->username -> $assignment->name";
             $posttext  = "$course->shortname -> $strassignments -> $assignment->name\n";
             $posttext .= "---------------------------------------------------------------------\n";
             $posttext .= get_string("emailteachermail", "assignment", $info);
-            $posttext .= "---------------------------------------------------------------------\n";
+            $posttext .= "\n---------------------------------------------------------------------\n";
 
             if ($user->mailformat == 1) {  // HTML
                 $posthtml = "<p><font face=\"sans-serif\">".
@@ -887,7 +887,7 @@ function assignment_email_teachers($course, $cm, $assignment, $submission) {
                 $posthtml = "";
             }
 
-            @email_to_user($user, $teacher, $postsubject, $posttext, $posthtml);  // If it fails, oh well, too bad.
+            @email_to_user($teacher, $user, $postsubject, $posttext, $posthtml);  // If it fails, oh well, too bad.
         }
     }
 }
