@@ -46,6 +46,7 @@ CREATE TABLE prefix_dialogue_conversations (
   lastid int(10) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
   closed tinyint(3) NOT NULL default '0',
+  seenon int(10) unsigned NOT NULL default '0',
   ctype tinyint(3) NOT NULL default '0',
   format tinyint(2) NOT NULL default '0',
   subject varchar(100) not null default '',

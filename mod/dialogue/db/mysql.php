@@ -11,6 +11,10 @@ function dialogue_upgrade($oldversion) {
 		execute_sql(" ALTER TABLE `{$CFG->prefix}dialogue_conversations` ADD `subject` VARCHAR(100) NOT NULL DEFAULT ''");
 		}
 
+	if ($oldversion < 2003101300) {
+		execute_sql(" ALTER TABLE `{$CFG->prefix}dialogue_conversations` ADD `seenon` INT(10) unsigned NOT NULL DEFAULT '0' AFTER `closed`");
+		}
+
     $result = true;
     return $result;
 }

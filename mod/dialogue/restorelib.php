@@ -105,7 +105,7 @@ dialogue<?PHP //$Id$
         //Iterate over conversations
         for($i = 0; $i < sizeof($converstions); $i++) {
             $conversation_info = $conversations[$i];
-            //traverse_xmlize($conversation_info);                                                      //Debug
+            //traverse_xmlize($conversation_info);                                               //Debug
             //print_object ($GLOBALS['traverse_array']);                                         //Debug
             //$GLOBALS['traverse_array']="";                                                     //Debug
 
@@ -120,6 +120,7 @@ dialogue<?PHP //$Id$
             $conversation->lastid = backup_todb($conversation_info['#']['LASTID']['0']['#']);
             $conversation->timemodified = backup_todb($conversation_info['#']['TIMEMODIFIED']['0']['#']);
             $conversation->closed = backup_todb($conversation_info['#']['CLOSED']['0']['#']);
+            $conversation->seenon = backup_todb($conversation_info['#']['SEENON']['0']['#']);
             $conversation->ctype = backup_todb($conversation_info['#']['CTYPE']['0']['#']);
             $conversation->format = backup_todb($conversation_info['#']['FORMAT']['0']['#']);
             $conversation->subject = backup_todb($conversation_info['#']['SUBJECT']['0']['#']);

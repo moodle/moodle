@@ -357,6 +357,8 @@ function dialogue_delete_expired_conversations() {
     }
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////
 function dialogue_get_participants($dialogueid) {
 //Returns the users with data in one dialogue
 //(users with records in dialogue_conversations, creators and receivers)
@@ -490,17 +492,19 @@ global $USER;
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-function dialogue_get_conversations($dialogue, $user, $condition = '') {
+function dialogue_get_conversations($dialogue, $user, $condition = '', $order = '') {
     global $CFG;
 	
 	if (!empty($condition)) {
-		return get_records_select("dialogue_conversations", "dialogueid = $dialogue->id AND 
-                (userid = $user->id OR recipientid = $user->id) AND $condition", "timemodified DESC");
-	}
-	else {
-		return get_records_select("dialogue_conversations", "dialogueid = $dialogue->id AND 
-                (userid = $user->id OR recipientid = $user->id)", "timemodified DESC");
-	}
+        $condition = ' AND '.$condition;
+    }
+    if (empty($order)) {
+        $order = "timemodified DESC";
+    }
+    return get_records_select("dialogue_conversations", "dialogueid = $dialogue->id AND 
+            (userid = $user->id OR recipientid = $user->id) $condition", $order);
+    
+    
 }
 
 
@@ -573,7 +577,9 @@ function dialogue_get_closed_logs($course, $timestart) {
 // OTHER dialogue FUNCTIONS ///////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////////
-function dialogue_list_conversations_closed($dialogue, $user) {
+function dialogue_list_conversations_closed($dialogue) {
+// list the closed for the current user
+    global $USER;
 	
 	if (! $course = get_record("course", "id", $dialogue->course)) {
         error("Course is misconfigured");
@@ -582,19 +588,10 @@ function dialogue_list_conversations_closed($dialogue, $user) {
         error("Course Module ID was incorrect");
     }
 	
-    if ($conversations = dialogue_get_conversations($dialogue, $user, "closed = 1")) {
-		print_simple_box_start();
-		$table->head = array (get_string("dialoguewith", "dialogue"),  
-            get_string("numberofentries", "dialogue"), get_string("lastentry", "dialogue"), 
-            get_string("status", "dialogue"));
-		$table->width = "100%";
-		$table->align = array ("left", "center", "left", "left");
-		$table->size = array ("*", "*", "*", "*");
-		$table->cellpadding = 2;
-		$table->cellspacing = 0;
-
-		foreach ($conversations as $conversation) {
-			if ($user->id != $conversation->userid) {
+    if ($conversations = dialogue_get_conversations($dialogue, $USER, "closed = 1")) {
+        // reorder the conversations by (other) name
+        foreach ($conversations as $conversation) {
+			if ($USER->id != $conversation->userid) {
 				if (!$with = get_record("user", "id", $conversation->userid)) {
 					error("User's record not found");
 				}
@@ -604,15 +601,33 @@ function dialogue_list_conversations_closed($dialogue, $user) {
 					error("User's record not found");
 				}
 			}
-			$total = dialogue_count_entries($dialogue, $conversation);
-			$byuser = dialogue_count_entries($dialogue, $conversation, $user);
+            $names[$conversation->id] = "$with->firstname $with->lastname";
+        }
+        asort($names);
+        
+		print_simple_box_start();
+		$table->head = array (get_string("dialoguewith", "dialogue"), get_string("subject", "dialogue"),  
+            get_string("numberofentries", "dialogue"), get_string("lastentry", "dialogue"), 
+            get_string("status", "dialogue"));
+		$table->width = "100%";
+		$table->align = array ("left", "left", "center", "left", "left");
+		$table->size = array ("*", "*", "*", "*", "*");
+		$table->cellpadding = 2;
+		$table->cellspacing = 0;
+
+		foreach ($names as $cid=>$name) {
+            if (!$conversation = get_record("dialogue_conversations", "id", $cid)) {
+                error("Closed conversations: could not find conversation record");
+            }
+		    $total = dialogue_count_entries($dialogue, $conversation);
+			$byuser = dialogue_count_entries($dialogue, $conversation, $USER);
 			if ($conversation->closed) {
 				$status = get_string("closed", "dialogue");
 			} else {
 				$status = get_string("open", "dialogue");
 			}
-			$table->data[] = array("<a href=\"dialogues.php?id=$cm->id&action=showdialogue&conversationid=$conversation->id\">".
-				"$with->firstname $with->lastname</a>", $byuser." ".get_string("of", "dialogue")." ".$total,
+			$table->data[] = array("<a href=\"dialogues.php?id=$cm->id&action=showdialogues&cid=$conversation->id\">".
+				"$name</a>", $conversation->subject, $byuser." ".get_string("of", "dialogue")." ".$total,
 				userdate($conversation->timemodified), $status);
 			}
 		print_table($table);
@@ -622,9 +637,9 @@ function dialogue_list_conversations_closed($dialogue, $user) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-function dialogue_list_conversations_other($dialogue, $user) {
-// list the conversations awaiting response from the other person
-    global $THEME;
+function dialogue_list_conversations_other($dialogue) {
+// list the conversations of the current user awaiting response from the other person
+    global $THEME, $USER;
 	
 	if (! $course = get_record("course", "id", $dialogue->course)) {
         error("Course is misconfigured");
@@ -633,95 +648,59 @@ function dialogue_list_conversations_other($dialogue, $user) {
         error("Course Module ID was incorrect");
     }
 	
-	$timenow = time();
-	$showbutton = false;
-	$showemoticon = false;  // never show emoticons for now - need to close or reload the  popup 
-                            // window to get the focus into the correct textarea on the second time round
-	
-	echo "<form name=\"replies\" method=\"post\" action=\"dialogues.php\">\n";
-	echo "<input type=\"hidden\" name=\"action\" value=\"insertentries\">\n";
-	echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-	echo "<input type=\"hidden\" name=\"pane\" value=\"2\">\n";
-
-	if ($conversations = dialogue_get_conversations($dialogue, $user, "lastid = $user->id AND closed = 0")) {
-		$showbutton = true;
-		print_simple_box_start("center", "", $THEME->cellcontent2);
-		foreach ($conversations as $conversation) {
-			echo "<center><table border=\"1\" cellspacing=\"0\" valign=\"top\" cellpadding=\"4\" 
-                width=\"100%\">\n";
-			echo "<tr><td bgcolor=\"$THEME->cellheading2\" valign=\"top\">\n";
-			if ($conversation->userid == $user->id) {
-				if (!$otheruser = get_record("user", "id", $conversation->recipientid)) {
-					error("User not found");
-					}
+    $timenow = time();
+    if ($conversations = dialogue_get_conversations($dialogue, $USER, "lastid = $USER->id AND closed = 0")) {
+        // reorder the conversations by (other) name
+        foreach ($conversations as $conversation) {
+			if ($USER->id != $conversation->userid) {
+				if (!$with = get_record("user", "id", $conversation->userid)) {
+					error("User's record not found");
+				}
 			}
 			else {
-				if (!$otheruser = get_record("user", "id", $conversation->userid)) {
-					error("User not found");
+				if (!$with = get_record("user", "id", $conversation->recipientid)) {
+					error("User's record not found");
 				}
 			}
-			// print_user_picture($user->id, $course->id, $user->picture);
-			echo "<b>".get_string("dialoguewith", "dialogue", "$otheruser->firstname $otheruser->lastname").
-                "</b></td>";
-			echo "<td bgcolor=\"$THEME->cellheading2\"><i>$conversation->subject&nbsp;</i><br />\n";
-			echo "<div align=\"right\">\n";
-			echo "<a href=\"dialogues.php?action=confirmclose&id=$cm->id&cid=$conversation->id&pane=2\">".
-				get_string("close", "dialogue")."</a>\n";
-			helpbutton("closedialogue", get_string("close", "dialogue"), "dialogue");
-			echo "</div></td></tr>\n";
-		
-			if ($entries = get_records_select("dialogue_entries", "conversationid = $conversation->id", "id")) {
-				foreach ($entries as $entry) {
-					if ($entry->userid == $user->id) {
-						echo "<tr><td colspan=\"2\" bgcolor=\"#FFFFFF\">\n";
-						echo text_to_html("<font size=\"1\">".get_string("onyouwrote", "dialogue", 
-                               userdate($entry->timecreated)).":</font><br />".$entry->text);
-					}
-					else {
-						echo "<tr><td colspan=\"2\" bgcolor=\"$THEME->body\">\n";
-						echo text_to_html("<font size=\"1\">".get_string("onwrote", "dialogue", 
-                            userdate($entry->timecreated)." ".$otheruser->firstname).":</font><br />".
-                            $entry->text);
-					}
-				}
-    			echo "</td></tr>\n";
+            $names[$conversation->id] = "$with->firstname $with->lastname";
+        }
+        asort($names);
+        
+		print_simple_box_start();
+		$table->head = array (get_string("dialoguewith", "dialogue"), get_string("subject", "dialogue"),  
+            get_string("numberofentries", "dialogue"), get_string("lastentry", "dialogue"), 
+            get_string("status", "dialogue"));
+		$table->width = "100%";
+		$table->align = array ("left", "left", "center", "left", "left");
+		$table->size = array ("*", "*", "*", "*", "*");
+		$table->cellpadding = 2;
+		$table->cellspacing = 0;
+
+		foreach ($names as $cid=>$name) {
+            if (!$conversation = get_record("dialogue_conversations", "id", $cid)) {
+                error("Closed conversations: could not find conversation record");
+            }
+		    $total = dialogue_count_entries($dialogue, $conversation);
+			$byuser = dialogue_count_entries($dialogue, $conversation, $USER);
+			if ($conversation->seenon) {
+				$status = get_string("seen", "dialogue", format_time($timenow - $conversation->seenon));
+			} else {
+				$status = get_string("notyetseen", "dialogue");
 			}
-			echo "<tr><td colspan=\"2\" align=\"center\" valign=\"top\"><i>".
-                get_string("typefollowup", "dialogue")."</i></td></tr>\n";
-			echo "<tr><td valign=\"top\" align=\"right\">\n";
-			helpbutton("writing", get_string("helpwriting"), "dialogue", true, true);
-			echo "<br />";
-			if ($showemoticon) {
-				emoticonhelpbutton("replies", "reply$conversation->id");
-				$showemoticon = false;
+			$table->data[] = array("<a href=\"dialogues.php?id=$cm->id&action=printdialogue&cid=$conversation->id\">".
+				"$name</a>", $conversation->subject, $byuser." ".get_string("of", "dialogue")." ".$total,
+				userdate($conversation->timemodified), $status);
 			}
-			echo "</td><td>\n";
-			// use a cumbersome name on the textarea as the emoticonhelp doesn't like an "array" name 
-			echo "<textarea name=\"reply$conversation->id\" rows=\"5\" cols=\"60\" wrap=\"virtual\">";
-			echo "</textarea>\n";
-			echo "</td></tr>";
-			echo "</table></center><br />\n";
-		}
-		print_simple_box_end();
-	}
-	if ($showbutton) {
-		echo "<hr />\n";
-		echo "<b>".get_string("sendmailmessages", "dialogue").":</b> \n";
-		if ($dialogue->maildefault) {
-			echo "<input type=\"checkbox\" name=\"sendthis\" value=\"1\" checked>\n";
-		}
-		else {
-			echo "<input type=\"checkbox\" name=\"sendthis\" value=\"1\">\n";
-		}
-		echo "<br /><input type=\"submit\" value=\"".get_string("addmynewentries", "dialogue")."\">\n";
-	}
-	echo "</form>\n";
+		print_table($table);
+	    print_simple_box_end();
+	} 
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-function dialogue_list_conversations_self($dialogue, $user) {
-    global $THEME;
+function dialogue_list_conversations_self($dialogue) {
+// list open conversations of the current user awaiting their reply
+    global $THEME, $USER;
 	
 	if (! $course = get_record("course", "id", $dialogue->course)) {
         error("Course is misconfigured");
@@ -740,15 +719,21 @@ function dialogue_list_conversations_self($dialogue, $user) {
 	echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
 	echo "<input type=\"hidden\" name=\"pane\" value=\"1\">\n";
 
-	// first the ones requiring a resonse from the user
-	if ($conversations = dialogue_get_conversations($dialogue, $user, "lastid != $user->id AND closed = 0")) {
+	// list the conversations requiring a resonse from this user in full
+	if ($conversations = dialogue_get_conversations($dialogue, $USER, "lastid != $USER->id AND closed = 0")) {
 		$showbutton = true;
 		print_simple_box_start("center");
 		foreach ($conversations as $conversation) {
+            // set seenon if required
+            if (!$conversation->seenon) {
+                if (!set_field("dialogue_conversations", "seenon", $timenow, "id", $conversation->id)) {
+                    error("List conversations self: could not set seenon");
+                }
+            }
 			echo "<center><table border=\"1\" cellspacing=\"0\" valign=\"top\" cellpadding=\"4\" 
                 width=\"100%\">\n";
 			echo "<tr><TD BGCOLOR=\"$THEME->cellheading2\" valign=\"top\">\n";
-			if ($conversation->userid == $user->id) {
+			if ($conversation->userid == $USER->id) {
 				if (!$otheruser = get_record("user", "id", $conversation->recipientid)) {
 					error("User not found");
 				}
@@ -763,7 +748,14 @@ function dialogue_list_conversations_self($dialogue, $user) {
                 "</b></td>";
 			echo "<td bgcolor=\"$THEME->cellheading2\"><i>$conversation->subject&nbsp;</i><br />\n";
             echo "<div align=\"right\">\n";
-			if (dialogue_count_entries($dialogue, $conversation)) {
+			if (!$conversation->subject) {
+                // conversation does not have a subject, show add subject link
+                echo "<a href=\"dialogues.php?action=getsubject&id=$cm->id&cid=$conversation->id&pane=2\">".
+	    			get_string("addsubject", "dialogue")."</a>\n";
+		    	helpbutton("addsubject", get_string("addsubject", "dialogue"), "dialogue");
+                echo "&nbsp; | ";
+            }
+    		if (dialogue_count_entries($dialogue, $conversation)) {
 				echo "<a href=\"dialogues.php?action=confirmclose&id=$cm->id&cid=$conversation->id&pane=1\">".
 					get_string("close", "dialogue")."</a>\n";
 				helpbutton("closedialogue", get_string("close", "dialogue"), "dialogue");
@@ -775,7 +767,7 @@ function dialogue_list_conversations_self($dialogue, $user) {
 		
 			if ($entries = get_records_select("dialogue_entries", "conversationid = $conversation->id", "id")) {
 				foreach ($entries as $entry) {
-					if ($entry->userid == $user->id) {
+					if ($entry->userid == $USER->id) {
 						echo "<tr><td colspan=\"2\" bgcolor=\"#FFFFFF\">\n";
 						echo text_to_html("<font size=\"1\">".get_string("onyouwrote", "dialogue", 
                             userdate($entry->timecreated)).":</font><br />".$entry->text);
@@ -818,11 +810,12 @@ function dialogue_list_conversations_self($dialogue, $user) {
 		echo "<hr />\n";
 		echo "<b>".get_string("sendmailmessages", "dialogue").":</b> \n";
 		if ($dialogue->maildefault) {
-			echo "<input type=\"checkbox\" name=\"sendthis\" value=\"1\" checked>\n";
+			echo "<input type=\"checkbox\" name=\"sendthis\" value=\"1\" checked> \n";
 		}
 		else {
-			echo "<input type=\"checkbox\" name=\"sendthis\" value=\"1\">\n";
+			echo "<input type=\"checkbox\" name=\"sendthis\" value=\"1\"> \n";
 		}
+		helpbutton("sendmail", get_string("sendmailmessages", "dialogue"), "dialogue");
 		echo "<br /><input type=\"submit\" value=\"".get_string("addmynewentries", "dialogue")."\">\n";
 	}
 	echo "</form>\n";
@@ -831,38 +824,104 @@ function dialogue_list_conversations_self($dialogue, $user) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-function dialogue_print_feedback($course, $entry, $grades) {
-    global $CFG, $THEME;
-
-    if (! $teacher = get_record("user", "id", $entry->teacher)) {
-        error("Weird dialogue error");
+function dialogue_print_conversation($dialogue, $conversation) {
+// print a conversation and allow a new entry
+    global $THEME, $USER;
+	
+	if (! $course = get_record("course", "id", $dialogue->course)) {
+        error("Course is misconfigured");
     }
-
-    echo "\n<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1 ALIGN=CENTER><TR><TD BGCOLOR=#888888>";
-    echo "\n<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 VALIGN=TOP>";
-
-    echo "\n<TR>";
-    echo "\n<TD ROWSPAN=3 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
-    print_user_picture($teacher->id, $course->id, $teacher->picture);
-    echo "</TD>";
-    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">$teacher->firstname $teacher->lastname";
-    echo "&nbsp;&nbsp;<FONT SIZE=2><I>".userdate($entry->timemarked)."</I>";
-    echo "</TR>";
-
-    echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
-
-    echo "<P ALIGN=RIGHT><FONT SIZE=-1><I>";
-    if ($grades[$entry->rating]) {
-        echo get_string("grade").": ";
-        echo $grades[$entry->rating];
-    } else {
-        print_string("nograde");
+    if (! $cm = get_coursemodule_from_instance("dialogue", $dialogue->id, $course->id)) {
+        error("Course Module ID was incorrect");
     }
-    echo "</I></FONT></P>";
+	
+	$timenow = time();
+	$showbutton = false;
+	$showemoticon = false;  // never show emoticons for now - need to close or reload the  popup 
+                            // window to get the focus into the correct textarea on the second time round
+	
+	echo "<form name=\"replies\" method=\"post\" action=\"dialogues.php\">\n";
+	echo "<input type=\"hidden\" name=\"action\" value=\"insertentries\">\n";
+	echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
+	echo "<input type=\"hidden\" name=\"pane\" value=\"2\">\n";
 
-    echo text_to_html($entry->comment);
-    echo "</TD></TR></TABLE>";
-    echo "</TD></TR></TABLE>";
+    $showbutton = true;
+    print_simple_box_start("center", "", $THEME->cellcontent2);
+    echo "<center><table border=\"1\" cellspacing=\"0\" valign=\"top\" cellpadding=\"4\" 
+        width=\"100%\">\n";
+    echo "<tr><td bgcolor=\"$THEME->cellheading2\" valign=\"top\">\n";
+    if ($conversation->userid == $USER->id) {
+        if (!$otheruser = get_record("user", "id", $conversation->recipientid)) {
+            error("User not found");
+        }
+    }
+    else {
+        if (!$otheruser = get_record("user", "id", $conversation->userid)) {
+            error("User not found");
+        }
+    }
+    // print_user_picture($user->id, $course->id, $user->picture);
+    echo "<b>".get_string("dialoguewith", "dialogue", "$otheruser->firstname $otheruser->lastname").
+        "</b></td>";
+    echo "<td bgcolor=\"$THEME->cellheading2\"><i>$conversation->subject&nbsp;</i><br />\n";
+    echo "<div align=\"right\">\n";
+    if (!$conversation->subject) {
+        // conversation does not have a subject, show add subject link
+        echo "<a href=\"dialogues.php?action=getsubject&id=$cm->id&cid=$conversation->id&pane=2\">".
+            get_string("addsubject", "dialogue")."</a>\n";
+        helpbutton("addsubject", get_string("addsubject", "dialogue"), "dialogue");
+        echo "&nbsp; | ";
+    }
+    echo "<a href=\"dialogues.php?action=confirmclose&id=$cm->id&cid=$conversation->id&pane=2\">".
+        get_string("close", "dialogue")."</a>\n";
+    helpbutton("closedialogue", get_string("close", "dialogue"), "dialogue");
+    echo "</div></td></tr>\n";
+
+    if ($entries = get_records_select("dialogue_entries", "conversationid = $conversation->id", "id")) {
+        foreach ($entries as $entry) {
+            if ($entry->userid == $USER->id) {
+                echo "<tr><td colspan=\"2\" bgcolor=\"#FFFFFF\">\n";
+                echo text_to_html("<font size=\"1\">".get_string("onyouwrote", "dialogue", 
+                            userdate($entry->timecreated)).":</font><br />".$entry->text);
+            }
+            else {
+                echo "<tr><td colspan=\"2\" bgcolor=\"$THEME->body\">\n";
+                echo text_to_html("<font size=\"1\">".get_string("onwrote", "dialogue", 
+                            userdate($entry->timecreated)." ".$otheruser->firstname).":</font><br />".
+                        $entry->text);
+            }
+        }
+        echo "</td></tr>\n";
+    }
+    echo "<tr><td colspan=\"2\" align=\"center\" valign=\"top\"><i>".
+        get_string("typefollowup", "dialogue")."</i></td></tr>\n";
+    echo "<tr><td valign=\"top\" align=\"right\">\n";
+    helpbutton("writing", get_string("helpwriting"), "dialogue", true, true);
+    echo "<br />";
+    if ($showemoticon) {
+        emoticonhelpbutton("replies", "reply$conversation->id");
+        $showemoticon = false;
+    }
+    echo "</td><td>\n";
+    // use a cumbersome name on the textarea as the emoticonhelp doesn't like an "array" name 
+    echo "<textarea name=\"reply$conversation->id\" rows=\"5\" cols=\"60\" wrap=\"virtual\">";
+    echo "</textarea>\n";
+    echo "</td></tr>";
+    echo "</table></center><br />\n";
+	print_simple_box_end();
+	if ($showbutton) {
+		echo "<hr />\n";
+		echo "<b>".get_string("sendmailmessages", "dialogue").":</b> \n";
+		if ($dialogue->maildefault) {
+			echo "<input type=\"checkbox\" name=\"sendthis\" value=\"1\" checked> \n";
+		}
+		else {
+			echo "<input type=\"checkbox\" name=\"sendthis\" value=\"1\"> \n";
+		}
+		helpbutton("sendmail", get_string("sendmailmessages", "dialogue"), "dialogue");
+		echo "<br /><input type=\"submit\" value=\"".get_string("addmynewentry", "dialogue")."\">\n";
+	}
+	echo "</form>\n";
 }
 
 
@@ -953,59 +1012,8 @@ function dialogue_print_tabbed_heading($tabs) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-function dialogue_print_user_entry($course, $user, $entry, $teachers, $grades) {
+function dialogue_show_conversation($dialogue, $conversation) {
     global $THEME, $USER;
-
-    if ($entry->timemarked < $entry->modified) {
-        $colour = $THEME->cellheading2;
-    } else {
-        $colour = $THEME->cellheading;
-    }
-
-    echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10>";
-        
-    echo "\n<TR>";
-    echo "\n<TD ROWSPAN=2 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
-    print_user_picture($user->id, $course->id, $user->picture);
-    echo "</TD>";
-    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$colour\">$user->firstname $user->lastname";
-    if ($entry) {
-        echo "&nbsp;&nbsp;<FONT SIZE=1>".get_string("lastedited").": ".userdate($entry->modified)."</FONT>";
-    }
-    echo "</TR>";
-
-    echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
-    if ($entry) {
-        echo format_text($entry->text, $entry->format);
-    } else {
-        print_string("noentry", "dialogue");
-    }
-    echo "</TD></TR>";
-
-    if ($entry) {
-        echo "\n<TR>";
-        echo "<TD WIDTH=35 VALIGN=TOP>";
-        if (!$entry->teacher) {
-            $entry->teacher = $USER->id;
-        }
-        print_user_picture($entry->teacher, $course->id, $teachers[$entry->teacher]->picture);
-        echo "<TD BGCOLOR=\"$colour\">".get_string("feedback").":";
-        choose_from_menu($grades, "r$entry->id", $entry->rating, get_string("nograde")."...");
-        if ($entry->timemarked) {
-            echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($entry->timemarked)."</FONT>";
-        }
-        echo "<BR><TEXTAREA NAME=\"c$entry->id\" ROWS=12 COLS=60 WRAP=virtual>";
-        p($entry->comment);
-        echo "</TEXTAREA><BR>";
-        echo "</TD></TR>";
-    }
-    echo "</TABLE><BR CLEAR=ALL>\n";
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-function dialogue_show_conversation($dialogue, $conversation, $user) {
-    global $THEME;
 	
 	if (! $course = get_record("course", "id", $dialogue->course)) {
         error("Course is misconfigured");
@@ -1020,7 +1028,7 @@ function dialogue_show_conversation($dialogue, $conversation, $user) {
 		
 	echo "<tr>";
 	echo "<td bgcolor=\"$THEME->cellheading2\" valign=\"top\">\n";
-	if ($conversation->userid == $user->id) {
+	if ($conversation->userid == $USER->id) {
 		if (!$otheruser = get_record("user", "id", $conversation->recipientid)) {
 			error("User not found");
 		}
@@ -1033,11 +1041,11 @@ function dialogue_show_conversation($dialogue, $conversation, $user) {
 	// print_user_picture($user->id, $course->id, $user->picture);
 	echo "<b>".get_string("dialoguewith", "dialogue", "$otheruser->firstname $otheruser->lastname").
         "</b></td>";
-	echo "<td bgcolor=\"$THEME->cellheading2\" valign=\"top\">$conversation->subject&nbsp;</td></tr>";
+	echo "<td bgcolor=\"$THEME->cellheading2\" valign=\"top\"><i>$conversation->subject&nbsp;</i></td></tr>";
 
 	if ($entries = get_records_select("dialogue_entries", "conversationid = $conversation->id", "id")) {
 		foreach ($entries as $entry) {
-			if ($entry->userid == $user->id) {
+			if ($entry->userid == $USER->id) {
 				echo "<tr><td  colspan=\"2\" bgcolor=\"#FFFFFF\">\n";
 				echo text_to_html("<font size=\"1\">".get_string("onyouwrote", "dialogue", 
                     userdate($entry->timecreated)).
@@ -1061,7 +1069,7 @@ function dialogue_show_conversation($dialogue, $conversation, $user) {
 //////////////////////////////////////////////////////////////////////////////////////
 function dialogue_show_other_conversations($dialogue, $conversation) {
 // prints the other CLOSED conversations for this pair of users
-    global $THEME, $USER;
+    global $THEME;
 	
 	if (! $course = get_record("course", "id", $dialogue->course)) {
         error("Course is misconfigured");
@@ -1078,14 +1086,14 @@ function dialogue_show_other_conversations($dialogue, $conversation) {
 		}
 	
 	if ($conversations = get_records_select("dialogue_conversations", "dialogueid = $dialogue->id AND 
-			(userid = $user->id AND recipientid = $otheruser->id) OR (userid = $otheruser->id AND 
-            recipientid = $user->id) AND closed = 1", "timemodified DESC")) {
+			((userid = $user->id AND recipientid = $otheruser->id) OR (userid = $otheruser->id AND 
+            recipientid = $user->id)) AND closed = 1", "timemodified DESC")) {
 		if (count($conversations) > 1) {
 			$timenow = time();
 			foreach ($conversations as $otherconversation) {
 				if ($conversation->id != $otherconversation->id) {
 					// for this conversation work out which is the other user
-                    if ($otherconversation->userid == $USER->id) {
+                    if ($otherconversation->userid == $user->id) {
                         if (!$otheruser = get_record("user", "id", $otherconversation->recipientid)) {
                             error("Show other conversations: could not get user record");
                         }
@@ -1103,11 +1111,11 @@ function dialogue_show_other_conversations($dialogue, $conversation) {
 				    // print_user_picture($otheruser->id, $course->id, $otheruser->picture);
 				    echo "<b>".get_string("dialoguewith", "dialogue", 
                         "$otheruser->firstname $otheruser->lastname")."</b></td>";
-                    echo "<td bgcolor=\"$THEME->cellheading2\" valign=\"top\">$conversation->subject&nbsp;</td></tr>";
+                    echo "<td bgcolor=\"$THEME->cellheading2\" valign=\"top\"><i>$otherconversation->subject&nbsp;</i></td></tr>";
 				    if ($entries = get_records_select("dialogue_entries", 
                             "conversationid = $otherconversation->id", "id")) {
 						foreach ($entries as $entry) {
-							if ($entry->userid == $USER->id) {
+							if ($entry->userid == $user->id) {
 								echo "<tr><td  colspan=\"2\" bgcolor=\"#FFFFFF\">\n";
 								echo text_to_html("<font size=\"1\">".get_string("onyouwrote", "dialogue", 
                                     userdate($entry->timecreated)).":</font><br />".$entry->text);

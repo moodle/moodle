@@ -26,6 +26,7 @@
     if (!isset($form->maildefault)) {
         $form->maildefault = 0;
     }
+print_heading_with_help(get_string("furtherinformation", "dialogue"), "info", "dialogue"); 
 ?>
 
 <form name="form" method="post" <?php echo $onsubmit ?> action="mod.php">

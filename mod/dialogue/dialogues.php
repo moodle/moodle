@@ -3,10 +3,13 @@
 /*************************************************
 	ACTIONS handled are:
 
-	closeconversation
+    closeconversation
 	confirmclose
+    getsubject
 	insertentries
 	openconversation
+    showdialogues
+    updatesubject
 	
 ************************************************/
 
@@ -94,7 +97,28 @@
 			 "view.php?id=$cm->id&pane=$pane");
 	}
 	
+	/****************** get subject ************************************/
+	elseif ($action == 'getsubject' ) {
+
+		if (empty($_GET['cid'])) {
+			error("Confirm Close: conversation id missing");
+		}
+        print_heading(get_string("addsubject", "dialogue"));
+        echo "<form name=\"getsubjectform\" method=\"post\" action=\"dialogues.php\">\n";
+        echo "<input type=\"hidden\" name=\"action\" value=\"updatesubject\">\n";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$_GET[id]\">\n";
+        echo "<input type=\"hidden\" name=\"cid\" value=\"$_GET[cid]\">\n";
+        echo "<input type=\"hidden\" name=\"pane\" value=\"$_GET[pane]\">\n";
+        echo "<center><table border=\"1\" width=\"60%\">\n";
+        echo "<tr><td align=\"right\"><b>".get_string("subject", "dialogue")."</b></td>";
+        echo "<td><input type=\"text\" size=\"50\" maxsize=\"100\" name=\"subject\" 
+                value=\"\"></td></tr>\n";
+        echo "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"".
+            get_string("addsubject", "dialogue")."\"></td></tr>\n";
+        echo "</table></center></form>\n";
+	}
 	
+		
 	/****************** insert conversation entries ******************************/
 	elseif ($action == 'insertentries' ) {
 
@@ -118,11 +142,16 @@
 						error("Insert Entries: Could not insert dialogue record!");
 					}
 					if (!set_field("dialogue_conversations", "lastid", $USER->id, "id", $conversation->id)) {
-						error("Insert Entries: could not set lastid");
+						error("Insert Dialogue Entries: could not set lastid");
 					}
 					if (!set_field("dialogue_conversations", "timemodified", $timenow, "id", 
                             $conversation->id)) {
-						error("Insert Entries: could not set lastid");
+						error("Insert Dialogue Entries: could not set lastid");
+					}
+                    // reset seenon time
+					if (!set_field("dialogue_conversations", "seenon", 0, "id", 
+                            $conversation->id)) {
+						error("Insert Dialogue Entries: could not reset seenon");
 					}
 					add_to_log($course->id, "dialogue", "add entry", "view.php?id=$cm->id", "$item->id");
 					$n++;
@@ -140,7 +169,7 @@
 		print_simple_box( text_to_html($dialogue->intro) , "center");
 		echo "<br />";
 		
-		dialogue_list_closed_conversations($dialogue, $USER);
+		dialogue_list_closed_conversations($dialogue);
 	}
 		
 	/****************** open conversation ************************************/
@@ -186,10 +215,25 @@
 	}
 	
 
-    /****************** show dialogue ****************************************/
-	elseif ($action == 'showdialogue') {
+    /****************** print dialogue (allowing new entry)********************/
+	elseif ($action == 'printdialogue') {
 	
-		if (!$conversation = get_record("dialogue_conversations", "id", $_GET['conversationid'])) {
+		if (!$conversation = get_record("dialogue_conversations", "id", $_GET['cid'])) {
+			error("Print Dialogue: can not get conversation record");
+		}
+			
+		echo "<center>\n";
+		print_simple_box( text_to_html($dialogue->intro) , "center");
+		echo "<br />";
+		
+		dialogue_print_conversation($dialogue, $conversation);
+	}
+	
+
+    /****************** show dialogues ****************************************/
+	elseif ($action == 'showdialogues') {
+	
+		if (!$conversation = get_record("dialogue_conversations", "id", $_GET['cid'])) {
 			error("Show Dialogue: can not get conversation record");
 		}
 			
@@ -197,8 +241,24 @@
 		print_simple_box( text_to_html($dialogue->intro) , "center");
 		echo "<br />";
 		
-		dialogue_show_conversation($dialogue, $conversation, $USER);
+		dialogue_show_conversation($dialogue, $conversation);
 		dialogue_show_other_conversations($dialogue, $conversation);
+	}
+	
+
+    /****************** update subject ****************************************/
+	elseif ($action == 'updatesubject') {
+	
+		if (!$conversation = get_record("dialogue_conversations", "id", $_POST['cid'])) {
+			error("Update Subject: can not get conversation record");
+		}
+			
+        if (!$_POST['subject']) {
+            redirect("view.php?id=$cm->id&pane=$_POST[pane]", get_string("nosubject", "dialogue"));
+        } elseif (!set_field("dialogue_conversations", "subject", $_POST['subject'], "id", $_POST['cid'])) {
+            error("Update subject: could not update conversation record");
+        }
+        redirect("view.php?id=$cm->id&pane=$_POST[pane]", get_string("subjectadded", "dialogue"));
 	}
 	
 

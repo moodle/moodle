@@ -83,6 +83,7 @@
                 fwrite ($bf,full_tag("LASTID",6,false,$conversation->lastid));
                 fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$conversation->timemodified));
                 fwrite ($bf,full_tag("CLOSED",6,false,$conversation->closed));
+                fwrite ($bf,full_tag("SEENON",6,false,$conversation->seenon));
                 fwrite ($bf,full_tag("CTYPE",6,false,$conversation->ctype));
                 fwrite ($bf,full_tag("FORMAT",6,false,$conversation->format));
                 fwrite ($bf,full_tag("SUBJECT",6,false,$conversation->subject));
