@@ -22,9 +22,13 @@
         require_login($course->id);
     }
 
-    $countries = get_list_of_countries();
-
     add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
+
+    if ($student = get_record("user_students", "userid", $user->id, "course", $course->id)) {
+        $user->lastaccess = $student->timeaccess;
+    } else if ($teacher = get_record("user_teachers", "userid", $user->id, "course", $course->id)) {
+        $user->lastaccess = $teacher->timeaccess;
+    }
 
     $fullname = "$user->firstname $user->lastname";
     $personalprofile = get_string("personalprofile");
@@ -92,6 +96,7 @@
     echo "<table border=\"0\" cellpadding=\"5\" cellspacing=\"2\"";
 
     if ($user->city or $user->country) {
+        $countries = get_list_of_countries();
         print_row(get_string("location").":", "$user->city, ".$countries["$user->country"]);
     }
 
