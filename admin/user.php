@@ -261,7 +261,9 @@
 
         print_table($table);
 
-        print_heading("<A HREF=\"user.php?newuser=true\">".get_string("addnewuser")."</A>");
+        if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual"){
+            print_heading("<A HREF=\"user.php?newuser=true\">".get_string("addnewuser")."</A>");
+        }
 
         print_footer();
     }
