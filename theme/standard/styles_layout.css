@@ -458,6 +458,12 @@ td.cal_event_description {
     padding:10px;
 }
 
+/* blocklib.php */
+
+#block_adminblock .sideblockmain {
+    text-align: center;
+}
+
 /* block_quiz_results.php */
 #block_quiz_results {
     text-align: center;
