@@ -332,9 +332,8 @@
             }
             echo "</form>";    
             echo "</td></tr></table>";
-            if (is_internal_auth()){
-                print_heading("<a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a>");
-            }
+            print_heading("<a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a>");
+
 
             print_table($table);
 
@@ -344,9 +343,8 @@
 
         }
 
-        if (is_internal_auth()){
-            print_heading("<a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a>");
-        }
+        print_heading("<a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a>");
+
 
         print_footer();
     }
