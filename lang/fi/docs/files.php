@@ -1,18 +1,18 @@
 <?PHP // $Id$
       // Names of the documentation files
 
-$string['intro.html'] = "Introduction";
-$string['background.html'] = "Background";
-$string['features.html'] = "Features";
-$string['release.html'] = "Release Notes";
-$string['install.html'] = "Installation";
-$string['upgrade.html'] = "Upgrading";
-$string['teacher.html'] = "Teacher Manual";
-$string['developer.html'] = "Developer Manual";
-$string['cvs.html'] = "Using CVS";
-$string['future.html'] = "Future";
+$string['intro.html'] = "Johdanto";
+$string['background.html'] = "Tausta";
+$string['features.html'] = "Ominaisuudet";
+$string['release.html'] = "Julkaisu tiedotteet";
+$string['install.html'] = "Asennus";
+$string['upgrade.html'] = "Päivitys";
+$string['teacher.html'] = "Opettajan käsikija";
+$string['developer.html'] = "Kehittäjän käsikirja";
+$string['cvs.html'] = "CVS käyttö";
+$string['future.html'] = "Tulevaisuus";
 $string['credits.html'] = "Credits";
-$string['licence.html'] = "License";
+$string['licence.html'] = "Lisenssi";
 
 
 ?>

@@ -1,16 +1,15 @@
-Moodle documentation
+Moodle dokumentointi 
 --------------------
 
-If you want to translate this documentation into another language,
-I would suggest that you:
+Jos haluat auttaa Moodlen dokumentoinnin kääntämisessä suomeksi, olisi hyvä
+että:
+ 1) Älä jätä englanninkielisiä tiedostoja kääntämättä /lang/fi/docs
+    hakemistoon. Alkuperäisiä englanninkielisiä tiedostoja käytetään
+    automaatisesti jos käännetty versio puuttuu.
 
- 1) don't include English versions of the files in this directory
-    because they will be used automatically anyway if it is missing
-    from your language pack.
-
- 2) translate them in this order (starting with the important ones):
+ 2) käännä tiedostot tässä järjestyksessä (aloitetaan tärkeimmistä):
   
-    MOST IMPORTANT
+    TÄKEIMMÄT
     |-------------------
     |
     |   - files.php
@@ -40,5 +39,5 @@ I would suggest that you:
     |   - credits.html
     |
     |-------------------
-    LEAST IMPORTANT
+    VÄHEMMÄN TÄRKEÄT
 
