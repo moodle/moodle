@@ -1979,7 +1979,7 @@ function forum_user_can_post_discussion($forum, $currentgroup=false) {
     } else if ($forum->type == "teacher") {
         return isteacher($forum->course);
     } else if ($currentgroup) {
-        return (isteacheredit($forum->course) or ismember($currentgroup));
+        return (isteacheredit($forum->course) or (ismember($currentgroup) and $forum->open == 2));
     } else if (isteacher($forum->course)) {
         return true;
     } else {
