@@ -14,6 +14,7 @@ $string['bynameondate'] = "de \$a->name - \$a->date";
 $string['configdisplaymode'] = "La forma de visualización por defecto, si no se ha configurado ninguna.";
 $string['configlongpost'] = "Cualquier mensaje que exceda este largo (sin incluir código HTML) se considera largo.";
 $string['configmanydiscussions'] = "Máximo número de temas mostrados en una página de foro.";
+$string['configmaxbytes'] = "Tamaño máximo por defecto para los archivos adjuntos a los mensajes de los foros en este sitio (sujeto a los límites del curso y otras configuraciones del servidor)";
 $string['configshortpost'] = "Cualquier mensaje menor que este largo (sin incluir código HTML) se considera corto.";
 $string['couldnotadd'] = "No se puede colocar su mensaje debido a un problema desconocido.";
 $string['couldnotdeleteratings'] = "Lo sentimos, no podemos borrar este mensaje debido a que ha sido calificado.";
@@ -50,6 +51,7 @@ $string['introsocial'] = "Foro abierto a todos los temas";
 $string['introteacher'] = "Foro exclusivo para profesores";
 $string['lastpost'] = "Último mensaje";
 $string['learningforums'] = "Foros de aprendizaje";
+$string['maxattachmentsize'] = "Tamaño máximo del archivo adjunto";
 $string['maxtimehaspassed'] = "Lo sentimos, pero el tiempo máximo para editar (\$a) ya venció.";
 $string['message'] = "Mensaje";
 $string['modeflatnewestfirst'] = "Ordenar desde el más reciente";
@@ -78,13 +80,11 @@ $string['olderdiscussions'] = "mensajes anteriores";
 $string['openmode0'] = "No se pueden colocar temas ni respuestas ";
 $string['openmode1'] = "No se puede colocar temas, sólo respuestas";
 $string['openmode2'] = "Permitir nuevos temas y respuestas";
-$string['parent'] = "Mensajes anteriores";
+$string['parent'] = "Mostrar mensaje anterior";
 $string['parentofthispost'] = "Anterior a este mensaje";
 $string['postadded'] = "Su mensaje se ha colocado con éxito.<P>Tiene \$a para hacer cualquier cambio.";
 $string['postincontext'] = "Ver el mensaje en su contexto";
 $string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a.
-
-
 
 Para responder a este mensaje diríjase a:";
 $string['postrating1'] = "Muy individualista";

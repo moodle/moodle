@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.9 Beta 1 + (2003051700)
+      // assignment.php - created with Moodle 1.1 (2003082800)
 
 
 $string['allowresubmit'] = "Permitir corrección";
@@ -10,12 +10,10 @@ Puedes ver sus comentarios en:
 
 \$a->url";
 $string['assignmentmailhtml'] = "El profesor \$a->teacher ya ha revisado tu tarea '<i>\$a->assignment</i>'<br /><br />
-
-
-
 Puedes ver sus comentarios <a href=\\\"\$a->url\\\">aquí</a>.";
 $string['assignmentname'] = "Título";
 $string['assignmenttype'] = "Tipo de tarea";
+$string['configmaxbytes'] = "Tamaño máximo permitido por defecto para todas las tareas del sitio (sujeto a los límites del curso y otras variables del servidor)";
 $string['description'] = "Descripción";
 $string['duedate'] = "Fecha de entrega";
 $string['early'] = "\$a antes";
