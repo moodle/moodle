@@ -35,7 +35,7 @@
 ?>
 <html style="width: 320px; height: 350px;">
 <head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="content-type" content="text/html; <?php print_string("thischarset");?>" />
 <meta name=vs_targetSchema content="HTML 4.0">
 <meta name="GENERATOR" content="Microsoft Visual Studio 7.0">
 <LINK rel="stylesheet" type="text/css" href="dialog.css">
@@ -52,16 +52,12 @@ function attr(name, value) {
 }
 function insert(img,text) {
 	if (img) {
-			var src = img;
-			var alt = text;
+			var strImage = img;
+			var strAlt = text;
+			var imgString = "<img src=\"" + strImage +"\" alt=\"" + strAlt +"\" />";
 	}
   // pass data back to the calling window
-  var fields = ["f_url","f_alt"];
-  var param = new Object();
-  param['f_url'] = src;
-  param['f_alt'] = alt;
- 
-  __dlg_close(param);
+  __dlg_close(imgString);
   return false;
 };
 
