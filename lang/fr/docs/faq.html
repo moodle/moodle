@@ -57,13 +57,13 @@
 
 <p class="answer">Votre serveur web doit &ecirc;tre configur&eacute; de mani&egrave;re que la partie de l'URL apr&egrave;s le nom du script soit pass&eacute;e directement au script. Ce r&eacute;glage est en g&eacute;n&eacute;ral activ&eacute; par d&eacute;faut sur Apache 1, mais d&eacute;sactiv&eacute; sur Apache 2. Pour l'activer, ajoutez cette ligne &agrave; votre fichier httpd.conf, ou &agrave; un fichier .htaccess dans votre dossier moodle (voir pour plus de d&eacute;tails le <a href="./?file=install.html#webserver">Guide d'installation</a>)&nbsp;:</p>
 
-<p class="answercode"><b>AcceptPathInfo</b> on</p>
+<p class="answercode"><strong>AcceptPathInfo</strong> on</p>
 
 <p class="answer">Il est &agrave; noter que cela ne fonctionnera QUE pour Apache version 2.x.</p>
 
 <p class="answer">Si vous avez ce probl&egrave;me et n'utilisez pas Apache 2 (c'est tr&egrave;s improbable), vous pouvez indiquer &agrave; Moodle d'utiliser une autre m&eacute;thode. Les inconv&eacute;nients sont une leg&egrave;re perte de performance pour vos utilisateurs et qu'il sera impossible d'utiliser des liens relatifs dans vos ressources HTML.</p>
 
-<p class="answer">Pour utiliser cette alternative, connectez-vous comme administrateur, allez sur la page &laquo;&nbsp;Param&egrave;tres techniques&nbsp;&raquo; et modifiez le r&eacute;glage pour &laquo;&nbsp;<b>slasharguments</b>&nbsp;&raquo;. Le probl&egrave;me devrait alors &ecirc;tre r&eacute;gl&eacute;.</p>
+<p class="answer">Pour utiliser cette alternative, connectez-vous comme administrateur, allez sur la page &laquo;&nbsp;Param&egrave;tres techniques&nbsp;&raquo; et modifiez le r&eacute;glage pour &laquo;&nbsp;<strong>slasharguments</strong>&nbsp;&raquo;. Le probl&egrave;me devrait alors &ecirc;tre r&eacute;gl&eacute;.</p>
 
 <p class="answer">&nbsp;</p>
 
@@ -187,7 +187,7 @@
 
 <h3><a name="resource1"></a>Quand j'essaie d'ajouter une ressource, je re&ccedil;ois des messages d'erreur.</h3>
 
-<p class="answer">En admettant que vous utilisez Apache, il est probable que votre r&eacute;glage de $CFG-&gt;wwwroot dans le fichier config.php est diff&eacute;rent de l'URL que vous utilisez pour acc&eacute;der au site. Essayez aussi de d&eacute;sactiver le r&eacute;glage &laquo;&nbsp;<b>secureforms</b>&nbsp;&raquo; dans la configuration des param&egrave;tres du site.</p>
+<p class="answer">En admettant que vous utilisez Apache, il est probable que votre r&eacute;glage de $CFG-&gt;wwwroot dans le fichier config.php est diff&eacute;rent de l'URL que vous utilisez pour acc&eacute;der au site. Essayez aussi de d&eacute;sactiver le r&eacute;glage &laquo;&nbsp;<strong>secureforms</strong>&nbsp;&raquo; dans la configuration des param&egrave;tres du site.</p>
 
 <p class="answer">&nbsp;</p>
 
@@ -209,7 +209,7 @@
 
 <p class="answer">La cause principale de ce probl&egrave;me est que votre ordinateur (et non le serveur sur lequel est install&eacute; Moodle) a une programme pare-feu (firewall) actif, qui filtre des informations (referrer) de votre navigateur. Voici quelques instructions (en anglais) pour corriger cela avec <a href="http://service1.symantec.com/SUPPORT/nip.nsf/46f26a2d6dafb0a788256bc7005c3fa3/b9b47ad7eddd343b88256c6b006a85a8?OpenDocument&amp;src=bar_sch_nam">Norton firewall</a>.</p>
 
-<p class="answer">L'administrateur du serveur Moodle peut aussi corriger cela en r&eacute;glant sur la page de configuration des param&egrave;tres le r&eacute;glage &laquo;&nbsp;<b>secureforms</b>&nbsp;&raquo; sur &laquo;&nbsp;Non&nbsp;&raquo;.</p>
+<p class="answer">L'administrateur du serveur Moodle peut aussi corriger cela en r&eacute;glant sur la page de configuration des param&egrave;tres le r&eacute;glage &laquo;&nbsp;<strong>secureforms</strong>&nbsp;&raquo; sur &laquo;&nbsp;Non&nbsp;&raquo;.</p>
 
 <p class="answer">Une autre cause possible de ce probl&egrave;me est une mauvaise configuration des sessions sur le serveur. Vous pouvez tester cela en appelant le script http://yourserver/moodle/lib/session-test.php dans votre navigateur.</p>
 

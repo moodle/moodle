@@ -1,6 +1,6 @@
 <!-- $Id$ -->
 
-<p align="center"><b>Importer des fichiers &laquo;&nbsp;Course Test Manager&nbsp;&raquo;</b></p>
+<p align="center"><strong>Importer des fichiers &laquo;&nbsp;Course Test Manager&nbsp;&raquo;</strong></p>
 
 <p>Course Test Manager est un logiciel en fin de vie de l'entreprise Course Technology. Il n'est plus d&eacute;velopp&eacute;, car il a &eacute;t&eacute; remplac&eacute; par un autre produit appel&eacute; ExamView. Cependant aucun moyen n'a mis &eacute;t&eacute; &agrave; disposition pour permettre de transf&eacute;rer les tests CTM vers d'autres format de tests. C'est la raison d'&ecirc;tre de ce module.</p>
 
@@ -16,7 +16,7 @@
 
 </p>Le processus d'importation est quelque peu diff&eacute;rent, selon que vous utilisez Moodle sous Windows ou Linux. Dans tous les cas, il vous faudra une machine Windows (Windows 200 ou XP) sur le m&ecirc;me r&eacute;seau que votre machine Moodle pour h&eacute;berger les bases de donn&eacute;es Access durant l'importation des questions.</p>
 
-<p>L'importation sera plus facile sur un Moodle tournant sous <b>Windows</b>. Les &eacute;tapes sont les suivantes&nbsp;:</p>
+<p>L'importation sera plus facile sur un Moodle tournant sous <strong>Windows</strong>. Les &eacute;tapes sont les suivantes&nbsp;:</p>
 
 <ol>
 
@@ -26,7 +26,7 @@
 
 </ol>
 
-<p>L'importation sur un Moodle tournant sous <b>Linux</b> requiert un logiciel suppl&eacute;mentaire appel&eacute; <a href="http://odbcsock.sourceforge.net/" target="_new"><b>ODBC Socket Server</b></a>. Afin d'importer des questions CTM sur Linux, vous devez d'abord t&eacute;l&eacute;charger et installer ce petit programme sur le syst&egrave;me Windows h&eacute;bergeant les bases de donn&eacute;es CTM. <b>Ne suivez pas</b> les instructions d'installation donn&eacute;es dans ODBC Socket Server Installation. Elles sont plus compliqu&eacute;es que n&eacute;cessaires&nbsp;! Suivez plut&ocirc;t les &eacute;tapes suivantes&nbsp;:</p>
+<p>L'importation sur un Moodle tournant sous <strong>Linux</strong> requiert un logiciel suppl&eacute;mentaire appel&eacute; <a href="http://odbcsock.sourceforge.net/" target="_new"><strong>ODBC Socket Server</strong></a>. Afin d'importer des questions CTM sur Linux, vous devez d'abord t&eacute;l&eacute;charger et installer ce petit programme sur le syst&egrave;me Windows h&eacute;bergeant les bases de donn&eacute;es CTM. <strong>Ne suivez pas</strong> les instructions d'installation donn&eacute;es dans ODBC Socket Server Installation. Elles sont plus compliqu&eacute;es que n&eacute;cessaires&nbsp;! Suivez plut&ocirc;t les &eacute;tapes suivantes&nbsp;:</p>
 
 <ol>
 
@@ -36,17 +36,17 @@
 
 <li>Installez le ODBC Socket Server comme un Service sur le syst&egrave;me Windows avec la commande&nbsp;:<br />
 
-<b>&lt;chemin du fichier ci-dessus&gt;ODBCSocketServer.exe /Service</b><br />
+<strong>&lt;chemin du fichier ci-dessus&gt;ODBCSocketServer.exe /Service</strong><br />
 
 Vous pouvez faire cela en tapant la commande depuis le menu D&eacute;marrer-&gt;Commande... ou une fen&ecirc;tre terminal.</li>
 
-<li>Ouvrez le Service Manager soit depuis le menu D&eacute;marrer-&gt;Settings-&gt;Control Panels-&gt;Administrative Tools-&gt;Services ou en cliquant avec le bouton droit de la souris sur <b>Mon ordinateur</b>, en s&eacute;lectionnant <b>Administrer</b>, puis en choisissant <b>Services et Applications-&gt;Services</b>. Le Gestionnaire de Services est aussi accessible en tapant <b>services.msc</b> depuis le menu D&eacute;marrer-&gt;Commande...</li>
+<li>Ouvrez le Service Manager soit depuis le menu D&eacute;marrer-&gt;Settings-&gt;Control Panels-&gt;Administrative Tools-&gt;Services ou en cliquant avec le bouton droit de la souris sur <strong>Mon ordinateur</strong>, en s&eacute;lectionnant <strong>Administrer</strong>, puis en choisissant <strong>Services et Applications-&gt;Services</strong>. Le Gestionnaire de Services est aussi accessible en tapant <strong>services.msc</strong> depuis le menu D&eacute;marrer-&gt;Commande...</li>
 
 <li>Dans le Gestionnaire de Services, cliquez avec le bouton droit de la souris sur ODBC Socket Server et s&eacute;lectionnez &laquo;&nbsp;D&eacute;marrer&nbsp;&raquo;. Le statut devrait changer en indiquant que le service a d&eacute;marr&eacute;. Apr&egrave;s l'importation, vous pourrez arr&ecirc;ter ou d&eacute;sactiver compl&egrave;tement ce service.</li>
 
 <li>Assurez-vous que les fichiers system.mda et ctm.mdb sont bien sur la machine et que le pilote MS Access ODBC est install&eacute; (c'est le cas dans une installation standard de Windows). Vous pouvez v&eacute;rifier cela en ouvrant &laquo;&nbsp;Sources de donn&eacute;es&nbsp;&raquo; dans les Outils d'Administration, sur l'onglet &laquo;&nbsp;Pilotes &raquo;. Vous allez devoir indiquer o&ugrave; CTM est install&eacute; et l'endroit o&ugrave; sont les fichiers system.mda et ctm.mdb ou d'autres bases de donn&eacute;es que vous d&eacute;sirez importer. Prenez note des chemins d'acc&egrave;s complets de ces fichiers, ainsi que de l'adresse IP ou du nom de cette machine Windows. Ces informations seront utilis&eacute;es lors de l'importation.</li>
 
-<li>Vous pouvez maintenant importer les questions d&eacute;sir&eacute;es dans Moodle. Cr&eacute;er un nouveau test et s&eacute;lectionnez &laquo;&nbsp;Importer les questions d'un fichier&nbsp;&raquo;. <b>&Agrave; PARTIR D'ICI LE PROCESSUS EST DIFF&Eacute;RENT SOUS LINUX -</b> VOUS DEVEZ SP&Eacute;CIFIER UN NOM DE FICHIER BIDON POUR D&Eacute;MARRER LE PROCESSUS D'IMPORTATION. CE FICHIER BIDON <b>NE SERA EN FAIT PAS IMPORT&Eacute;</b>, IL S'AGIT SEULEMENT D'UN EMPLACEMENT QUI VOUS PERMETTRA DE SP&Eacute;CIFIER LES INFORMATIONS DU SERVEUR WINDOWS. Une page s'affichera ensuite o&ugrave; vous pouvez taper l'adresse IP ou le nom du serveur Windows ainsi que les chemins des diff&eacute;rents fichiers que vous avez relev&eacute;s &agrave; l'&eacute;tape pr&eacute;c&eacute;dente. Tapez ces informations et cliquez sur &laquo;&nbsp;Connexion au serveur&nbsp;&raquo;. Si aucune erreur n'a &eacute;t&eacute; faite, un autre formulaire vous permettra de choisir la sous-cat&eacute;gorie des questions &agrave; importer de la base de donn&eacute;es. Cette &eacute;tape est n&eacute;cessaire, car bon nombre de tests CTM comportent beaucoup de questions en diff&eacute;rentes cat&eacute;gories. SI VOUS ARRIVEZ ICI SANS MESSAGE D'ERREUR, VOTRE SERVEUR EST CONFIGUR&Eacute; CORRECTEMENT ET VOUS COMMENCEZ &Agrave; IMPORTER DES QUESTIONS DANS MOODLE&nbsp;!</li>
+<li>Vous pouvez maintenant importer les questions d&eacute;sir&eacute;es dans Moodle. Cr&eacute;er un nouveau test et s&eacute;lectionnez &laquo;&nbsp;Importer les questions d'un fichier&nbsp;&raquo;. <strong>&Agrave; PARTIR D'ICI LE PROCESSUS EST DIFF&Eacute;RENT SOUS LINUX -</strong> VOUS DEVEZ SP&Eacute;CIFIER UN NOM DE FICHIER BIDON POUR D&Eacute;MARRER LE PROCESSUS D'IMPORTATION. CE FICHIER BIDON <strong>NE SERA EN FAIT PAS IMPORT&Eacute;</strong>, IL S'AGIT SEULEMENT D'UN EMPLACEMENT QUI VOUS PERMETTRA DE SP&Eacute;CIFIER LES INFORMATIONS DU SERVEUR WINDOWS. Une page s'affichera ensuite o&ugrave; vous pouvez taper l'adresse IP ou le nom du serveur Windows ainsi que les chemins des diff&eacute;rents fichiers que vous avez relev&eacute;s &agrave; l'&eacute;tape pr&eacute;c&eacute;dente. Tapez ces informations et cliquez sur &laquo;&nbsp;Connexion au serveur&nbsp;&raquo;. Si aucune erreur n'a &eacute;t&eacute; faite, un autre formulaire vous permettra de choisir la sous-cat&eacute;gorie des questions &agrave; importer de la base de donn&eacute;es. Cette &eacute;tape est n&eacute;cessaire, car bon nombre de tests CTM comportent beaucoup de questions en diff&eacute;rentes cat&eacute;gories. SI VOUS ARRIVEZ ICI SANS MESSAGE D'ERREUR, VOTRE SERVEUR EST CONFIGUR&Eacute; CORRECTEMENT ET VOUS COMMENCEZ &Agrave; IMPORTER DES QUESTIONS DANS MOODLE&nbsp;!</li>
 
 </ol>
 

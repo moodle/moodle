@@ -97,7 +97,7 @@
 
 <p>Apr&egrave;s avoir t&eacute;l&eacute;charg&eacute; et d&eacute;compress&eacute; l'archive ou obtenu les fichiers par CVS, vous aurez sous les yeux un dossier nomm&eacute; &laquo;&nbsp;moodle&nbsp;&raquo;, contenant un certain nombre de dossiers et de fichiers.</p>
 
-<p>Vous pouvez placer ce dossier int&eacute;gralement dans le dossier documents de votre serveur web. Dans ce cas, le site Moodle sera accessible  &agrave; l'adresse <b>http://votreserveur.com/moodle/</b>. Vous pouvez aussi copier le contenu de ce dossier dans le dossier documents de votre serveur. Dans ce cas, le site Moodle sera accessible simplement &agrave; l'adresse <b>http://votreserveur.com/</b>.</p> </blockquote>
+<p>Vous pouvez placer ce dossier int&eacute;gralement dans le dossier documents de votre serveur web. Dans ce cas, le site Moodle sera accessible  &agrave; l'adresse <strong>http://votreserveur.com/moodle/</strong>. Vous pouvez aussi copier le contenu de ce dossier dans le dossier documents de votre serveur. Dans ce cas, le site Moodle sera accessible simplement &agrave; l'adresse <strong>http://votreserveur.com/</strong>.</p> </blockquote>
 
 <p>&nbsp;</p>
 
@@ -220,7 +220,7 @@ index.php&nbsp;: la page d'accueil du site</p>
 
 <p>Contr&ocirc;lez simplement que index.php soit dans la liste (et de pr&eacute;f&eacute;rence au d&eacute;but de la liste, pour des raisons de performance).</p>
 
-<p>Deuxi&egrave;mement, <b>si vous utilisez Apache 2</b>, vous devrez activer la variable <i>AcceptPathInfo</i>, qui permet de passer des arguments &agrave; des scripts, comme http://serveur/file.php/arg1/arg2. Cela est essentiel, pour permettre des liens relatifs entre vos ressources, et &eacute;galement pour offrir un gain de performance aux utilisateurs de votre site Moodle. Vous pouvez activer cette variable en ajoutant la ligne ci-dessous &agrave; votre fichier &laquo;&nbsp;httpd.conf&nbsp;&raquo;.
+<p>Deuxi&egrave;mement, <strong>si vous utilisez Apache 2</strong>, vous devrez activer la variable <i>AcceptPathInfo</i>, qui permet de passer des arguments &agrave; des scripts, comme http://serveur/file.php/arg1/arg2. Cela est essentiel, pour permettre des liens relatifs entre vos ressources, et &eacute;galement pour offrir un gain de performance aux utilisateurs de votre site Moodle. Vous pouvez activer cette variable en ajoutant la ligne ci-dessous &agrave; votre fichier &laquo;&nbsp;httpd.conf&nbsp;&raquo;.
 
   <blockquote>
 
@@ -228,7 +228,7 @@ index.php&nbsp;: la page d'accueil du site</p>
 
   </blockquote>
 
-<p>Troisi&egrave;mement, pour fonctionner, Moodle n&eacute;cessite un certain nombre de r&eacute;glages PHP. <b>Sur la plupart des serveurs, ces r&eacute;glages sont actifs par d&eacute;faut</b>. Cependant, certains serveurs PHP (et avec certaines des versions les plus r&eacute;centes de PHP) peuvent avoir des r&eacute;glages diff&eacute;rents. Ces r&eacute;glages sont d&eacute;finis dans le fichier de configuration de PHP (dont le nom est habituellement php.ini)&nbsp;:</p>
+<p>Troisi&egrave;mement, pour fonctionner, Moodle n&eacute;cessite un certain nombre de r&eacute;glages PHP. <strong>Sur la plupart des serveurs, ces r&eacute;glages sont actifs par d&eacute;faut</strong>. Cependant, certains serveurs PHP (et avec certaines des versions les plus r&eacute;centes de PHP) peuvent avoir des r&eacute;glages diff&eacute;rents. Ces r&eacute;glages sont d&eacute;finis dans le fichier de configuration de PHP (dont le nom est habituellement php.ini)&nbsp;:</p>
 
   <blockquote>
 
@@ -242,7 +242,7 @@ session.bug_compat_warn = 0</pre>
 
 <p>Si vous n'avez acc&egrave;s ni au fichier httpd.conf, ni au fichier php.ini de votre serveur, ou si Moodle est install&eacute; sur un serveur avec des applications n&eacute;cessitant des r&eacute;glages diff&eacute;rents, vous pouvez cependant CONTOURNER tous ces r&eacute;glages par d&eacute;faut.</p>
 
-<p>Pour le faire, il vous faudra cr&eacute;er dans le dossier de Moodle un fichier nomm&eacute; <b>.htaccess</b>, contenant les d&eacute;finitions ad&eacute;quates pour ces r&eacute;glages. Cela ne fonctionne que pour les serveurs Apaches et seulement si le privil&egrave;ge Overrides est accord&eacute;. Voici un exemple du contenu d'un fichier .htaccess&nbsp;:</p>
+<p>Pour le faire, il vous faudra cr&eacute;er dans le dossier de Moodle un fichier nomm&eacute; <strong>.htaccess</strong>, contenant les d&eacute;finitions ad&eacute;quates pour ces r&eacute;glages. Cela ne fonctionne que pour les serveurs Apaches et seulement si le privil&egrave;ge Overrides est accord&eacute;. Voici un exemple du contenu d'un fichier .htaccess&nbsp;:</p>
 
 <blockquote>
 
@@ -250,7 +250,7 @@ session.bug_compat_warn = 0</pre>
 DirectoryIndex index.php index.html index.htm
 
 &lt;IfDefine APACHE2>
-     <b>AcceptPathInfo</b> on
+     <strong>AcceptPathInfo</strong> on
 &lt;/IfDefine>
 
 php_flag magic_quotes_gpc 1
@@ -308,7 +308,7 @@ php_value post_max_size 2M
 
 <p>La page d'aministration devrait &ecirc;tre maintenant active &agrave; l'adresse <u>http://exemple.com/moodle/admin</u>. Si vous essayez d'acc&eacute;der &agrave; la page d'accueil de votre site, vous y arriverez directement malgr&eacute; tout. La premi&egrave;re fois que vous acc&eacute;derez &agrave; la page d'administration, un condens&eacute; de la licence GPL vous sera pr&eacute;sent&eacute;. Vous devez l'accepter avant de continuer la mise en service de votre installation.</p>
 
-<p>(Moodle va aussi essayer de placer des cookies dans votre navigateur. Si celui-ci vous permet d'accepter ou non les cookies, vous <b>devez</b> accepter les cookies de Moodle, ou alors Moodle ne fonctionnera pas.)</p>
+<p>(Moodle va aussi essayer de placer des cookies dans votre navigateur. Si celui-ci vous permet d'accepter ou non les cookies, vous <strong>devez</strong> accepter les cookies de Moodle, ou alors Moodle ne fonctionnera pas.)</p>
 
 <p>Moodle va maintenant mettre en place votre base de donn&eacute;es et cr&eacute;er les tables qui contiendront les donn&eacute;es. Les tables de la base de donn&eacute;es principale sont d'abord cr&eacute;&eacute;es. Un certain nombre de commandes SQL seront affich&eacute;es, suivies de messages (en rouge ou en vert) de ce type :</p>
 
@@ -388,7 +388,7 @@ php_value post_max_size 2M
 
 <p>Le script qui effectue ces contr&ocirc;les est situ&eacute; dans le dossier admin. Il porte le nom cron.php. Ce script ne peut pas se lancer tout seul. Vous devez donc mettre en place un m&eacute;canisme permettant de le lancer r&eacute;guli&egrave;rement (par exemple toutes les 5 ou 10 minutes). On donne ainsi &agrave; Moodle des &laquo;&nbsp;battements de c&oelig;ur&nbsp;&raquo;, et le script peut effectuer les op&eacute;rations d&eacute;finies par chaque module.</p>
 
-<p>Il est &agrave; remarquer que l'ordinateur effectuant le cron <b>n'est pas obligatoirement l'ordinateur sur lequel Moodle est install&eacute;</b>. Par exemple, si vous disposez d'un serveur web qui n'offre pas de tel m&eacute;canisme, vous pourrez lancer le cron sur un autre serveur, ou m&ecirc;me sur l'ordinateur de la maison. La seule chose qui importe est de charger r&eacute;guli&egrave;rement le fichier cron.php.</p>
+<p>Il est &agrave; remarquer que l'ordinateur effectuant le cron <strong>n'est pas obligatoirement l'ordinateur sur lequel Moodle est install&eacute;</strong>. Par exemple, si vous disposez d'un serveur web qui n'offre pas de tel m&eacute;canisme, vous pourrez lancer le cron sur un autre serveur, ou m&ecirc;me sur l'ordinateur de la maison. La seule chose qui importe est de charger r&eacute;guli&egrave;rement le fichier cron.php.</p>
 
 <p>L'appel de ce fichier ne surcharge pas le serveur. Une fr&eacute;quence d'appel de 5 minutes est donc raisonnable, mais peut fort bien &ecirc;tre port&eacute;e &agrave; 15 ou 30 minutes. Il n'est pas recommand&eacute; de fixer une trop longue p&eacute;riode, car cela g&eacute;n&eacute;rera des d&eacute;lais dans l'envoi des courriels, ce qui peut rallentir l'activit&eacute; des cours.</p>
 
@@ -433,7 +433,7 @@ php_value post_max_size 2M
 
 <h4>Lancer automatiquement le script toutes les 5 minutes</h4>
 
-<p><b>Sur Unix</b>&nbsp;: utilisez <b>cron</b>. En ligne de commande, &eacute;ditez les r&eacute;glages de cron avec &laquo;&nbsp;crontab -e&nbsp;&raquo; et ajouter une ligne de la forme&nbsp;:</p>
+<p><strong>Sur Unix</strong>&nbsp;: utilisez <strong>cron</strong>. En ligne de commande, &eacute;ditez les r&eacute;glages de cron avec &laquo;&nbsp;crontab -e&nbsp;&raquo; et ajouter une ligne de la forme&nbsp;:</p>
 
 <blockquote>
 
@@ -443,9 +443,9 @@ php_value post_max_size 2M
 
 <p>Habituellement, la commande &laquo;&nbsp;crontab&nbsp;&raquo; lance l'&eacute;diteur &laquo;&nbsp;vi&nbsp;&raquo;. On passe en mode insertion en tapant &laquo;&nbsp;i&nbsp;&raquo;, puis on tape une ligne comme ci-dessus. On sort ensuite du mode insertion en tapant la touche &lt;ESC&gt;. Il ne reste qu'&agrave; enregistrer et quitter en tapant &laquo;&nbsp;:wq&amp;nbsp&raquo;, ou &agrave; quitter sans enregistrer avec &laquo;&nbsp;:q!&nbsp;&raquo; (tout cela sans guillemets).</p>
 
-<p><b>Sous Windows</b>&nbsp;: la fa&ccedil;on la plus simple est d'utiliser le petit programme <a href="http://moodle.org/download/moodle-cron-for-windows.zip" title="Click to download this package (150k)" target="_blank">moodle-cron-for-windows.zip</a> qui rend le processus tr&egrave;s simple. vous pouvez aussi essayer d'utiliser l'utilitaire Windows &laquo;&nbsp;Scheduled Tasks&nbsp;&raquo;.</p>
+<p><strong>Sous Windows</strong>&nbsp;: la fa&ccedil;on la plus simple est d'utiliser le petit programme <a href="http://moodle.org/download/moodle-cron-for-windows.zip" title="Click to download this package (150k)" target="_blank">moodle-cron-for-windows.zip</a> qui rend le processus tr&egrave;s simple. vous pouvez aussi essayer d'utiliser l'utilitaire Windows &laquo;&nbsp;Scheduled Tasks&nbsp;&raquo;.</p>
 
-<p><b>Chez un h&eacute;bergeur web</b>&nbsp;: votre interface web de r&eacute;glages poss&egrave;de peut-&ecirc;tre une page vous permettant de mettre en place des crons. Demandez &agrave; votre administrateur des d&eacute;tails concernant leur utilisation.</p>
+<p><strong>Chez un h&eacute;bergeur web</strong>&nbsp;: votre interface web de r&eacute;glages poss&egrave;de peut-&ecirc;tre une page vous permettant de mettre en place des crons. Demandez &agrave; votre administrateur des d&eacute;tails concernant leur utilisation.</p>
 
 </blockquote>
 
