@@ -40,3 +40,28 @@ CREATE TABLE prefix_backup_config (
    name varchar(255) UNIQUE NOT NULL default '',
    value varchar(255) NOT NULL default ''
 );
+
+#
+# Table structure for table prefix_backup_courses
+#
+
+CREATE TABLE prefix_backup_courses (
+    id SERIAL PRIMARY KEY,
+    courseid int8 UNIQUE NOT NULL default '0',
+    laststarttime int8 NOT NULL default '0',
+    lastendtime int8 NOT NULL default '0',
+    laststatus varchar(1) NOT NULL default '0',
+    nextstarttime int8 NOT NULL default '0'
+);
+
+#
+# Table structure for table prefix_backup_log
+#
+
+CREATE TABLE prefix_backup_log
+    id SERIAL PRIMARY KEY,
+    courseid int8 NOT NULL default '0',
+    time int8 NOT NULL default '0',
+    laststarttime int8 NOT NULL default '0',
+    info varchar(255) NOT NULL default ''
+);

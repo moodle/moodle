@@ -77,7 +77,31 @@ function backup_upgrade($oldversion=0) {
                       `value` varchar(255) NOT NULL default '',
                       PRIMARY KEY  (`id`),
                       UNIQUE KEY `name` (`name`)
-                    ) TYPE=MyISAM COMMENT='To store backup configuration variables'");
+                  ) TYPE=MyISAM COMMENT='To store backup configuration variables'");
+    }
+
+    if ($oldversion < 2003120800 and $result) {
+        $result = execute_sql("CREATE TABLE `{$CFG->prefix}backup_courses` (
+                      `id` int(10) unsigned NOT NULL auto_increment,
+                      `courseid` int(10) unsigned NOT NULL default '0',
+                      `laststarttime` int(10) unsigned NOT NULL default '0',
+                      `lastendtime` int(10) unsigned NOT NULL default '0',
+                      `laststatus` varchar(1) NOT NULL default '0',
+                      `nextstarttime` int(10) unsigned NOT NULL default '0',
+                      PRIMARY KEY  (`id`),
+                      UNIQUE KEY `courseid` (`courseid`)
+                  ) TYPE=MyISAM COMMENT='To store every course backup status'");
+
+        if ($result) {
+            $result = execute_sql("CREATE TABLE `{$CFG->prefix}backup_log` (    
+                          `id` int(10) unsigned NOT NULL auto_increment, 
+                          `courseid` int(10) unsigned NOT NULL default '0',
+                          `time` int(10) unsigned NOT NULL default '0',
+                          `laststarttime` int(10) unsigned NOT NULL default '0',
+                          `info` varchar(255) NOT NULL default '',
+                          PRIMARY KEY  (`id`)
+                      ) TYPE=MyISAM COMMENT='To store every course backup log info'");
+        }
     }
 
     //Finally, return result

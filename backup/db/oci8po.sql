@@ -41,7 +41,7 @@ COMMENT on table prefix_backup_ids is 'To store and convert ids in backup/restor
 
 rem --------------------------------------------------------
 rem
-rem Table structure for table prefix_backup_ids
+rem Table structure for table prefix_backup_config
 rem
 
 drop TABLE prefix_backup_config;
@@ -66,4 +66,65 @@ create or replace trigger p_backup_config_trig
   begin
     select p_backup_config_seq.nextval into :new_row.id from dual;
   end;
+
+rem --------------------------------------------------------
+rem
+rem Table structure for table prefix_backup_courses
+rem
+
+drop TABLE prefix_backup_courses;
+
+CREATE TABLE prefix_backup_courses (
+    id number(10) default '0' NOT NULL,      
+    courseid number(10) default '0' NOT NULL, 
+    laststarttime number(10) default '0' NOT NULL,
+    lastendtime number(10) default '0' NOT NULL,
+    laststatus varchar2(1) default '0' NOT NULL,
+    nextstarttime number(10) default '0' NOT NULL,
+    constraint pk_bacu primary key (id),
+    constraint uk_bacu_courseid unique (courseid)
+);
+
+COMMENT on table prefix_backup_courses is 'To store every course backup status';
+
+drop sequence p_backup_courses_seq;
+create sequence p_backup_courses_seq;
+
+create or replace trigger p_backup_courses_trig
+  before insert on prefix_backup_courses
+  referencing new as new_row
+  for each row
+  begin
+    select p_backup_courses_seq.nextval into :new_row.id from dual;
+  end;
+
+rem --------------------------------------------------------
+rem
+rem Table structure for table prefix_backup_log
+rem
+
+drop TABLE prefix_backup_log;
+
+CREATE TABLE prefix_backup_log (
+    id number(10) default '0' NOT NULL,
+    courseid number(10) default '0' NOT NULL,
+    time number(10) default '0' NOT NULL,
+    laststarttime number(10) default '0' NOT NULL,
+    info varchar2(255) default '0' NOT NULL,
+    constraint pk_balo primary key (id)
+);
+
+COMMENT on table prefix_backup_log is 'To store every course backup log info';
+
+drop sequence p_backup_log_seq;
+create sequence p_backup_log_seq;
+
+create or replace trigger p_backup_log_trig
+  before insert on prefix_backup_log
+  referencing new as new_row
+  for each row
+  begin
+    select p_backup_log_seq.nextval into :new_row.id from dual;
+  end;
+
 /

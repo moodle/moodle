@@ -38,3 +38,34 @@ CREATE TABLE `prefix_backup_config` (
   UNIQUE KEY `name` (`name`)
 ) TYPE=MyISAM COMMENT='To store backup configuration variables';
 # --------------------------------------------------------
+
+#
+# Table structure for table `prefix_backup_courses`
+#
+
+CREATE TABLE `prefix_backup_courses` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `courseid` int(10) unsigned NOT NULL default '0',
+  `laststarttime` int(10) unsigned NOT NULL default '0',
+  `lastendtime` int(10) unsigned NOT NULL default '0',
+  `laststatus` varchar(1) NOT NULL default '0',
+  `nextstarttime` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `courseid` (`courseid`)
+) TYPE=MyISAM COMMENT='To store every course backup status';
+
+# --------------------------------------------------------
+
+#
+# Table structure for table `prefix_backup_log`
+#
+
+CREATE TABLE `prefix_backup_log` (
+  `id` int(10) unsigned NOT NULL auto_increment, 
+  `courseid` int(10) unsigned NOT NULL default '0',
+  `time` int(10) unsigned NOT NULL default '0',
+  `laststarttime` int(10) unsigned NOT NULL default '0',
+  `info` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`)
+) TYPE=MyISAM COMMENT='To store every course backup log info';
+# --------------------------------------------------------
