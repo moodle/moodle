@@ -736,7 +736,7 @@ function displaydir ($wdir) {
             } else if ($icon == "zip.gif") {
                 $edittext = "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">$strunzip</A>&nbsp;";
                 $edittext .= "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=listzip\">$strlist</A> ";
-                if ($CFG->backup_version && isadmin()) {
+                if (!empty($CFG->backup_version) && isadmin()) {
                     $edittext .= "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$filesafe&action=restore\">$strrestore</A> ";
                 }
             } else {
