@@ -143,7 +143,11 @@
 
         $myxls->write_string(0,0,get_string("firstname"));
         $myxls->write_string(0,1,get_string("lastname"));
-        $pos=2;
+        $myxls->write_string(0,2,get_string("idnumber"));
+        $myxls->write_string(0,3,get_string("institution"));
+        $myxls->write_string(0,4,get_string("department"));
+        $myxls->write_string(0,5,get_string("email"));
+        $pos=6;
         foreach ($columns as $column) {
             $myxls->write_string(0,$pos++,strip_tags($column));
         }
@@ -159,7 +163,11 @@
     
             $myxls->write_string($i,0,$student->firstname);
             $myxls->write_string($i,1,$student->lastname);
-            $j=2;
+            $myxls->write_string($i,2,$student->idnumber);
+            $myxls->write_string($i,3,$student->institution);
+            $myxls->write_string($i,4,$student->department);
+            $myxls->write_string($i,5,$student->email);
+            $j=6;
             foreach ($studentgrades as $grade) {
                 $myxls->write_string($i,$j++,strip_tags($grade));
             }
@@ -179,7 +187,12 @@
 
 /// Print names of all the fields
 
-        echo get_string("firstname")."\t".get_string("lastname");
+        echo get_string("firstname")."\t".
+             get_string("lastname")."\t".
+             get_string("idnumber")."\t".
+             get_string("institution")."\t".
+             get_string("department")."\t".
+             get_string("email");
         foreach ($columns as $column) {
             $column = strip_tags($column);
             echo "\t$column";
@@ -190,7 +203,7 @@
 
         foreach ($grades as $studentid => $studentgrades) {
             $student = $students[$studentid];
-            echo "$student->firstname\t$student->lastname";
+            echo "$student->firstname\t$student->lastname\t$student->idnumber\t$student->institution\t$student->department\t$student->email";
             foreach ($studentgrades as $grade) {
                 $grade = strip_tags($grade);
                 echo "\t$grade";
