@@ -111,7 +111,7 @@ function choice_update_instance($choice) {
         if (strstr($name, "oldoption")) {  // Old option
             if ($value) {
                 $option = NULL;
-                $option->id = substr($name, 10); // Get the ID of the answer that needs to be updated.
+                $option->id = substr($name, 9); // Get the ID of the answer that needs to be updated.
                 $option->text = $value;
                 $option->choiceid = $choice->id;
                 $option->timemodified = time();
