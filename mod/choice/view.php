@@ -274,7 +274,7 @@
                 } else {
                     continue;
                 }
-                echo choice_get_option_text($choice, $optionid);
+                echo format_string(choice_get_option_text($choice, $optionid));
                 echo "</th>";
             }
             echo "</tr>";
