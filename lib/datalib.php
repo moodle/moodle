@@ -1480,7 +1480,11 @@ function get_all_instances_in_course($modulename, $course) {
 
     foreach ($modinfo as $mod) {
         if ($mod->mod == $modulename and $mod->visible > $invisible) {
-            $outputarray[] = $rawmods[$mod->cm];
+            $instance = $rawmods[$mod->cm];
+            if (!empty($mod->extra)) {
+                $instance->extra = $mod->extra;
+            }
+            $outputarray[] = $instance;
         }
     }
 

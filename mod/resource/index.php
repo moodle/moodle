@@ -50,25 +50,29 @@
                 $tt = "$resource->section";
             }
         } else {
-            $tt = "<FONT SIZE=1>".userdate($resource->timemodified);
+            $tt = "<font size=1>".userdate($resource->timemodified);
+        }
+        if (!empty($resource->extra)) {
+            $extra = urldecode($resource->extra);
+        } else {
+            $extra = "";
         }
         if (!$resource->visible) {
            //Show dimmed if the mod is hidden
-           $table->data[] = array ($tt, "<A class=\"dimmed\" HREF=\"view.php?id=$resource->coursemodule\">$resource->name</A>",
+           $table->data[] = array ($tt, "<a class=\"dimmed\" $extra href=\"view.php?id=$resource->coursemodule\">$resource->name</a>",
                                    text_to_html($resource->summary) );
         } else {
            //Show normal if the mod is visible
-           $table->data[] = array ($tt, "<A HREF=\"view.php?id=$resource->coursemodule\">$resource->name</A>",
+           $table->data[] = array ($tt, "<a $extra href=\"view.php?id=$resource->coursemodule\">$resource->name</a>",
                                    text_to_html($resource->summary) );
         }
     }
 
-    echo "<BR>";
+    echo "<br />";
 
     print_table($table);
 
     print_footer($course);
-
  
 ?>
 
