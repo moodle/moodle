@@ -559,10 +559,11 @@ function calendar_top_controls($type, $data) {
     return $content;
 }
 
-function calendar_filter_controls($type, $vars = NULL) {
+function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
     global $CFG, $SESSION, $USER;
 
     $groupevents = true;
+    $getvars = '';
 
     switch($type) {
         case 'upcoming':
@@ -573,13 +574,13 @@ function calendar_filter_controls($type, $vars = NULL) {
         break;
         case 'course':
             $getvars = '&amp;from=course&amp;id='.$_GET['id'];
-            if($course->groupmode == NOGROUPS && $course->groupmodeforce) {
+            if (isset($course->groupmode) and !$course->groupmode and $course->groupmodeforce) {
                 $groupevents = false;
             }
         break;
     }
 
-    if(!empty($vars)) {
+    if (!empty($vars)) {
         $getvars .= '&amp;'.$vars;
     }
 
