@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.4.3 + (2004083132)
+      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['calendar'] = '日历';
-$string['calendarheading'] = '$a 日历';
+$string['calendarheading'] = '{$a}日历';
 $string['clickhide'] = '点击隐藏';
 $string['clickshow'] = '点击显示';
 $string['confirmeventdelete'] = '你确定要删除这个事件么?';
@@ -15,6 +15,12 @@ $string['default'] = '缺省';
 $string['deleteevent'] = '删除事件';
 $string['detailedmonthview'] = '详细的月视图';
 $string['dstadjusttime'] = '移动时间';
+$string['dstat'] = '在';
+$string['dstdefaultpresetname'] = '新DST预设值';
+$string['dstpresetactivated'] = '激活';
+$string['dstpresetadjusttime'] = '时间调整';
+$string['dstpresetdeactivated'] = '失效';
+$string['dstpresetname'] = '预设名称';
 $string['durationminutes'] = '持续多少分钟';
 $string['durationnone'] = '不持续';
 $string['durationuntil'] = '直到';
@@ -38,8 +44,11 @@ $string['eventstarttime'] = '开始时间';
 $string['eventtime'] = '时间';
 $string['eventview'] = '事件详情';
 $string['expired'] = '过期';
+$string['explain_dstpreset'] = '如果需要，你可以从下拉列表中选择哪个区域要使用DST设置。';
+$string['explain_dstpresetforced'] = '站点管理员不允许用户修改这个选项。';
 $string['explain_lookahead'] = '此处设置最多未来多少天之内将会发生的事件会显示为即将发生的事件。在此天数之外的事件不会被显示出来。请注意，系统<strong>并不保证</strong>此天数之内所有的事件都会被显示出来，如果事件总数超过了“最多显示几条即将发生的事件”的设置，系统将不显示最后发生的事件。';
 $string['explain_maxevents'] = '此处设置了显示出来的即将发生事件的最大数目。如果您在此设置的数值较大，即将发生事件的显示区域将会占据屏幕上的很大空间。';
+$string['explain_persistflt'] = '如果激活，则Moodle将会记住你最后一次使用的事件过滤设定并在每次登录时自动恢复。';
 $string['explain_startwday'] = '日历中每周的起始日期将会根据您在此处的选择来显示。';
 $string['explain_timeformat'] = '您可以选择以12小时或24小时的格式来显示时间。如果你选择“缺省”，系统将根据您所使用的语言自动选择格式。';
 $string['first'] = '第一';
@@ -57,10 +66,12 @@ $string['monthlyview'] = '月视图';
 $string['newevent'] = '新事件';
 $string['notusingdst'] = '不使用夏时制';
 $string['noupcomingevents'] = '没有即将发生的事件';
+$string['nth'] = '第{$a}';
 $string['oneevent'] = '1条消息';
 $string['pref_dstpreset'] = '夏时制';
 $string['pref_lookahead'] = '显示几日内即将发生的事件';
 $string['pref_maxevents'] = '最多显示几条即将发生的事件';
+$string['pref_persistflt'] = '记录过滤器设定';
 $string['pref_startwday'] = '周的第一天';
 $string['pref_timeformat'] = '时间显示格式';
 $string['preferences'] = '偏好';
