@@ -724,7 +724,7 @@ function forum_shorten_post($message) {
    $truncate = 0;
 
    for ($i=0; $i<$length; $i++) {
-       $char = $string[$i];
+       $char = $message[$i];
 
        switch ($char) {
            case "<": 
@@ -737,12 +737,13 @@ function forum_shorten_post($message) {
                if (!$tag) {
                    if ($stopzone) {
                        if ($char == " " or $char == ".") {
-                           $truncate = $i;
+                           $truncate = $i+1;
                            break 2;
                        }
                    }
                    $count++;
                }
+               break;
        }
        if (!$stopzone) {
            if ($count > FORUM_SHORT_POST) {
@@ -752,14 +753,10 @@ function forum_shorten_post($message) {
    }
 
    if (!$truncate) {
-       if ($i < FORUM_LONG_POST) {
-           $truncate = $i;
-       } else {
-           $truncate = FORUM_LONG_POST;
-       }
+       $truncate = $i;
    }
 
-   return substr($message, 0, $truncate);
+   return substr($message, 0, $truncate)."<BR>";
 }
 
 
