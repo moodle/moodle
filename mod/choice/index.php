@@ -1,6 +1,7 @@
 <?PHP  // $Id$
 
     require("../../config.php");
+    require("lib.php");
 
     require_variable($id);   // course
 
@@ -16,8 +17,11 @@
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
     }
 
-    print_header("$course->shortname: Choices", "$course->fullname",
-                 "$navigation Choices", "");
+    $strchoice = get_string("modulename", "choice");
+    $strchoices = get_string("modulenameplural", "choice");
+
+    print_header("$course->shortname: $strchoices", "$course->fullname",
+                 "$navigation $strchoices", "");
 
 
     if (! $choices = get_all_instances_in_course("choice", $course->id, "cw.section ASC")) {
@@ -37,29 +41,19 @@
     $timenow = time();
 
     if ($course->format == "weeks") {
-        $table->head  = array ("Week", "Question", "Answer");
+        $table->head  = array (get_string("week"), get_string("question"), get_string("answer"));
         $table->align = array ("CENTER", "LEFT", "LEFT");
     } else if ($course->format == "topics") {
-        $table->head  = array ("Topic", "Question", "Answer");
+        $table->head  = array (get_string("topic"), get_string("question"), get_string("answer"));
         $table->align = array ("CENTER", "LEFT", "LEFT");
     } else {
-        $table->head  = array ("Question", "Answer");
+        $table->head  = array (get_string("question"), get_string("answer"));
         $table->align = array ("LEFT", "LEFT");
     }
 
     foreach ($choices as $choice) {
         $answer = $answers[$choice->id];
-        switch ($answer->answer) {
-            case 1:
-                $aa = "$choice->answer1";
-                break;
-            case 2:
-                $aa = "$choice->answer2";
-                break;
-            default:
-                $aa = "Undecided";
-                break;
-        }
+        $aa = choice_get_answer($choice, $answer->answer);
 
         if ($course->format == "weeks" || $course->format == "topics") {
             $table->data[] = array ("$choice->section",
@@ -74,7 +68,6 @@
     print_table($table);
 
     print_footer($course);
-
  
 ?>
 

@@ -1,6 +1,7 @@
 <?PHP  // $Id$
 
     require("../../config.php");
+    require("lib.php");
 
     require_variable($id);   // course module
 
@@ -22,12 +23,16 @@
         error("Course module is incorrect");
     }
 
+    $strchoice = get_string("modulename", "choice");
+    $strchoices = get_string("modulenameplural", "choice");
+    $strresponses = get_string("responses", "choice");
+
     add_to_log($course->id, "choice", "report", "report.php?id=$cm->id", "$choice->id");
 
-    print_header("$course->shortname: $choice->name: Responses", "$course->fullname",
+    print_header("$course->shortname: $choice->name: $strresponses", "$course->fullname",
                  "<A HREF=/course/view.php?id=$course->id>$course->shortname</A> ->
-                  <A HREF=index.php?id=$course->id>Choices</A> ->
-                  <A HREF=view.php?id=$cm->id>$choice->name</A> -> Responses", "");
+                  <A HREF=index.php?id=$course->id>$strchoices</A> ->
+                  <A HREF=view.php?id=$cm->id>$choice->name</A> -> $strresponses", "");
 
 
     if (! $participants = get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t
@@ -71,18 +76,7 @@
         echo "</P> </TD>";
 
         echo "<TD ALIGN=CENTER BGCOLOR=\"$THEME->cellcontent\"><P>";
-        switch ($answer->answer) {
-            case 1:
-                echo "$choice->answer1";
-                break;
-            case 2:
-                echo "$choice->answer2";
-                break;
-            default:
-                echo "Undecided";
-                break;
-                
-        }
+        echo choice_get_answer($choice, $answer->answer);
         echo "</P></TD></TR>";
     }
     echo "</TABLE>";

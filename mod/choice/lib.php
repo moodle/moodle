@@ -29,9 +29,9 @@ function choice_user_complete($course, $user, $mod, $choice) {
             $result->info = "'$choice->answer2'";
         }
         $result->time = $current->timemodified;
-        echo "Answered: $result->info , last updated ".userdate($result->time);
+        echo get_string("answered", "choice").": $result->info , last updated ".userdate($result->time);
     } else {
-        echo "Not answered yet";
+        print_string("notanswered", "choice");
     }
 }
 
@@ -80,6 +80,41 @@ function choice_delete_instance($id) {
     }
 
     return $result;
+}
+
+
+function choice_add_new_to_database($choice, $answer) {
+    global $db;
+    global $USER;
+
+    $timenow = time();
+
+    $rs = $db->Execute("INSERT INTO choice_answers (choice, user, answer, timemodified)
+                        VALUES ( '$choice->id', '$USER->id', '$answer', '$timenow')");
+    return $rs;
+}
+
+function choice_update_in_database($current, $answer) {
+    global $db;
+
+    $timenow = time();
+
+    $rs = $db->Execute("UPDATE choice_answers
+                        SET answer='$answer', timemodified='$timenow' 
+                        WHERE id = '$current->id'");
+    return $rs;
+}
+
+function choice_get_answer($choice, $code) {
+// Returns text string which is the answer that matches the code
+    switch ($code) {
+        case 1:
+            return "$choice->answer1";
+        case 2:
+            return "$choice->answer2";
+        default:
+            return get_string("undecided");
+    }
 }
 
 

@@ -3,39 +3,39 @@
 <table cellpadding=5>
 
 <tr valign=top>
-    <td align=right><P><B>Choice Name:</B></P></TD>
+    <td align=right><P><B><? print_string("choicename","choice") ?>:</B></P></TD>
     <td>
         <input type="text" name="name" size=30 value="<? p($form->name) ?>">
     </td>
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B>Choice Text:</B></P></TD>
+    <td align=right><P><B><? print_string("choicetext","choice") ?>:</B></P></TD>
     <td>
         <textarea name="text" rows=15 cols=30 wrap="virtual"><? p($form->text) ?></textarea>
     </td>
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B>First choice:</B></P></TD>
+    <td align=right><P><B><? print_string("choice1","choice") ?>:</B></P></TD>
     <td>
         <input type="text" name="answer1" size=30 value="<? 
         if ($form->answer1) {
             p($form->answer1);
         } else {
-            echo "Yes";
+            print_string("yes");
         } ?>">
     </td>
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B>Second choice:</B></P></TD>
+    <td align=right><P><B><? print_string("choice2","choice") ?>:</B></P></TD>
     <td>
         <input type="text" name="answer2" size=30 value="<? 
         if ($form->answer2) {
             p($form->answer2);
         } else {
-            echo "No";
+            print_string("no");
         } ?>">
     </td>
 </tr>
@@ -50,6 +50,6 @@
 <input type="hidden" name=modulename value="<? p($form->modulename) ?>">
 <input type="hidden" name=instance   value="<? p($form->instance) ?>">
 <input type="hidden" name=mode       value="<? p($form->mode) ?>">
-<input type="submit" value="Save these settings">
+<input type="submit" value="<? print_string("savechanges") ?>">
 </CENTER>
 </FORM>
