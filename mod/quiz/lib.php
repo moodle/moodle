@@ -2494,5 +2494,63 @@ $oldalternativeids);
     return $answers;       
 }
 
+function quiz_get_recent_quizzes($sincetime, $quiz="0") {
+// Returns all quizzes since a given time.  If quiz is specified then
+// this restricts the results
+
+    global $CFG;
+
+    if ($quiz) {
+        $quizselect = " AND q.id = '$quiz'";
+    } else {
+        $quizselect = "";
+    }
+
+    return get_records_sql("SELECT qa.*, q.name, u.firstname, u.lastname, u.picture, q.course, q.sumgrades as maxgrade
+                              FROM {$CFG->prefix}quiz_attempts qa,
+                                   {$CFG->prefix}quiz q,
+                                   {$CFG->prefix}user u
+                             WHERE qa.timefinish > '$sincetime' $quizselect
+                               AND qa.userid = u.id
+                               AND qa.quiz = q.id
+                             ORDER BY qa.timefinish ASC");
+}
+
+function quiz_print_recent_instance_activity($quiz, $timestart, $detail=false) {
+
+    global $CFG, $THEME;
+
+    if (!$quizzes = quiz_get_recent_quizzes($timestart, $quiz->id)) {
+        return false;
+    }
+
+    foreach ($quizzes as $aquiz) {
+        echo '<table border="0" cellpadding="3" cellspacing="0" class="sideblock">';
+        echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"\" width=\"35\" valign=\"top\">";
+        print_user_picture($aquiz->userid, $quiz->course, $aquiz->picture);
+        echo "</td>";
+
+        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"\" width=\"100%\">";
+
+        echo "<p>";
+        echo "<font size=2>";
+
+
+        $fullname = fullname($aquiz);
+        echo "<a href=\"$CFG->wwwroot/user/view.php?id=$aquiz->userid&course=$aquiz->course\">$fullname</a>";
+
+        if (isteacher($USER)) {
+            $grade = "$aquiz->sumgrades / $aquiz->maxgrade";
+            echo " (<a href=\"$CFG->wwwroot/mod/quiz/review.php?q=$aquiz->quiz&attempt=$aquiz->id\">$grade</a>)";
+            echo  get_string("attempt", "quiz") . " - $aquiz->attempt";
+
+        }
+
+        echo "<br>";
+        echo userdate($aquiz->timemodified);
+
+        echo "</font></p></td></tr></table>";
+    }
+}
 
 ?>
