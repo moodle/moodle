@@ -24,9 +24,9 @@ aussi pr&eacute;cis&eacute;ment que possible.</p>
   format texte Unix (la plupart des &eacute;diteurs de texte
   permettent cela).</li>
   <li class="spaced">Toutes les balises php doivent &ecirc;tre
-  en forme compl&egrave;te, par exemple <font color="#339900">&lt;?php
-  ... ?&gt;</font> et non en forme abr&eacute;g&eacute;e comme 
-  <font color="#339900">&lt;? ... ?&gt;</font>.</li>
+  en forme compl&egrave;te, par exemple <font color="#339900"><?php
+  ... ?></font> et non en forme abr&eacute;g&eacute;e comme 
+  <font color="#339900"><? ... ?></font>.</li>
   <li class="spaced">Toutes les indications de copyright doivent
   &ecirc;tre conserv&eacute;e. Vous pouvez ajouter les v&ocirc;tres au besoin.</li>
   <li class="spaced">Tous les fichiers doivent inclure le
@@ -48,8 +48,10 @@ aussi pr&eacute;cis&eacute;ment que possible.</p>
   ou au moins leur existence doit &ecirc;tre test&eacute;e avec isset() ou
   empty() avant leur utilisation.</li>
   <li class="spaced">Toutes les cha&icirc;nes de caract&egrave;res doivent
-  &ecirc;tre traductibles. Placez-les dans des fichiers de &laquo;&nbsp;lang/en&nbsp;&raquo; et
-  appelez-les avec les fonctions get_string() ou print_string().</li>
+  &ecirc;tre traduisibles. Cr&eacute;ez les nouvelles cha&icirc;nes dans les fichiers
+  du dossier &laquo;&nbsp;lang/en&nbsp;&raquo;, donnez-leur des noms en minuscules,
+  brefs, en anglais, et utilisez-les dans votre code par l'interm&eacute;diaire
+  des fonctions get_string() ou print_string().</li>
   <li class="spaced">Tous les fichiers d'aide doivent &ecirc;tre
   traductibles. Cr&eacute;ez-les dans le dossier &laquo;&nbsp;lang/en/help&nbsp;&raquo; et
   appelez-les avec la fonction helpbutton().</li>
@@ -84,11 +86,11 @@ s'il vous pla&icirc;t.</p>
   &ecirc;tre en majuscules, et toujours commencer par le nom du module. Les
   mots qui les constituent doivent &ecirc;tre s&eacute;par&eacute;s par des
   caract&egrave;res &laquo;&nbsp;soulign&eacute;&nbsp;&raquo; (underscore).
-    <p class="examplecode"><font color="#006600">define(&quot;FORUM_MODE_FLATOLDEST&quot;, 
+    <p class="examplecode"><font color="#006600">define("FORUM_MODE_FLATOLDEST", 
       1);</font></p>
   </li>
   <li class="spaced">Les noms des <strong>fonctions</strong> doivent &ecirc;tre de
-  simples mots anglais, et commencent avec le nom du module pour
+  simples mots anglais en minsucules, et commencer avec le nom du module pour
   &eacute;viter les conflits entre modules. Les mots qui les constituent
   doivent &ecirc;tre s&eacute;par&eacute;s par des caract&egrave;res &laquo;&nbsp;soulign&eacute;&nbsp;&raquo; (underscore).
   Les param&egrave;tres doivent avoir si possible une valeur par d&eacute;faut
@@ -101,25 +103,25 @@ s'il vous pla&icirc;t.</p>
       <br />
       &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$mode</font><font color="#007700">) 
       {<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode 
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$USER</font><font color="#007700">-></font><font color="#0000BB">mode 
       </font><font color="#007700">= </font><font color="#0000BB">$mode</font><font color="#007700">;<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;} else if (empty(</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode</font><font color="#007700">)) 
+      &nbsp;&nbsp;&nbsp;&nbsp;} else if (empty(</font><font color="#0000BB">$USER</font><font color="#007700">-></font><font color="#0000BB">mode</font><font color="#007700">)) 
       {<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode 
-      </font><font color="#007700">= </font><font color="#0000BB">$CFG</font><font color="#007700">-&gt;</font><font color="#0000BB">forum_displaymode</font><font color="#007700">;<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$USER</font><font color="#007700">-></font><font color="#0000BB">mode 
+      </font><font color="#007700">= </font><font color="#0000BB">$CFG</font><font color="#007700">-></font><font color="#0000BB">forum_displaymode</font><font color="#007700">;<br />
       &nbsp;&nbsp;&nbsp;&nbsp;}<br />
       }</font></p>
   </li>
   <li class="spaced">Les <strong>blocs</strong> doivent toujours &ecirc;tre
   plac&eacute;s entre accolades (m&ecirc;me s'ils ne sont constitu&eacute;s que d'une ligne).
   Moodle utilise le style suivant&nbsp;:
-    <p class="examplecode"> <font color="#006600">if (</font><font color="#0000CC">$quiz</font><font color="#006600">-&gt;</font><font color="#0000CC">attempts</font><font color="#006600">) 
+    <p class="examplecode"> <font color="#006600">if (</font><font color="#0000CC">$quiz</font><font color="#006600">-></font><font color="#0000CC">attempts</font><font color="#006600">) 
       {<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000CC">$numattempts </font><font color="#006600">&gt; 
-      </font><font color="#0000CC">$quiz</font><font color="#006600">-&gt;</font><font color="#0000CC">attempts</font><font color="#006600">) 
+      &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000CC">$numattempts </font><font color="#006600">> 
+      </font><font color="#0000CC">$quiz</font><font color="#006600">-></font><font color="#0000CC">attempts</font><font color="#006600">) 
       {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000CC">error</font><font color="#006600">(</font><font color="#0000BB">$strtoomanyattempts</font><font color="#006600">, 
-      </font><font color="#CC0000">"view.php?id=$cm</font><font color="#006600">-&gt;</font><font color="#CC0000">id"</font><font color="#006600">);<br />
+      </font><font color="#CC0000">"view.php?id=$cm</font><font color="#006600">-></font><font color="#CC0000">id"</font><font color="#006600">);<br />
       &nbsp;&nbsp;&nbsp;&nbsp;}<br />
       }</font></p>
   </li>
@@ -128,9 +130,9 @@ s'il vous pla&icirc;t.</p>
   guillemets) lorsque c'est possible, afin d'am&eacute;liorer les performances.
     <p class="examplecode"> <font color="#006600">$var = 'some text without any 
       variables';<br />
-      $var = &quot;with special characters like a new line \n&quot;;<br />
+      $var = "with special characters like a new line \n";<br />
       $var = 'a very, very long string with a '.$single.' variable in it';<br />
-      $var = &quot;some $text with $many variables $within it&quot;; </font></p>
+      $var = "some $text with $many variables $within it"; </font></p>
   </li>
   <li class="spaced">Les <strong>commentaires</strong> doivent utiliser
   deux ou trois barres obliques et &ecirc;tre align&eacute;s avec le code. 
@@ -164,7 +166,7 @@ s'il vous pla&icirc;t.</p>
   entre les parenth&egrave;ses et les instructions normales, mais aucun
   espace entre les parenth&egrave;ses et les variables ou fonctions&nbsp;:
     <p class="examplecode"> <font color="#007700">foreach (</font><font color="#0000BB">$objects 
-      </font><font color="#007700">as </font><font color="#0000BB">$key </font><font color="#007700">=&gt;</font><font color="#0000BB"> 
+      </font><font color="#007700">as </font><font color="#0000BB">$key </font><font color="#007700">=></font><font color="#0000BB"> 
       $thing</font><font color="#007700">)</font><font color="#006600"> {<br />
       </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">process($thing);</font><font color="#006600"> 
       <br />
