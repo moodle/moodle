@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.3 development (2004032800)
+      // lesson.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['actionaftercorrectanswer'] = 'Actie na juist antwoord';
@@ -25,7 +25,7 @@ $string['deleting'] = 'Verwijderen';
 $string['deletingpage'] = 'Pagina $a aan het verwijderen';
 $string['description'] = 'Beschrijving';
 $string['displayofgrade'] = 'Tonen van het cijfer (voor de leerling)';
-$string['endofbranch'] = 'Ende vertakking';
+$string['endofbranch'] = 'Einde vertakking';
 $string['endoflesson'] = 'Einde van de les';
 $string['fileformat'] = 'Bestandsformaat';
 $string['firstanswershould'] = 'Het eerste antwoord moet naar de &quot;juiste&quot; pagina verwijzen';
