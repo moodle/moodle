@@ -31,3 +31,5 @@ CREATE TABLE prefix_resource (
 #
 
 INSERT INTO prefix_log_display VALUES ('resource', 'view', 'resource', 'name');
+INSERT INTO prefix_log_display VALUES ('resource', 'update', 'resource', 'name');
+INSERT INTO prefix_log_display VALUES ('resource', 'add', 'resource', 'name');

@@ -10,6 +10,11 @@ function resource_upgrade($oldversion) {
         table_column("resource", "course", "course", "integer", "10", "unsigned", "0");
     }
 
+    if ($oldversion < 2004013101) {
+        modify_database("", "INSERT INTO prefix_log_display VALUES ('resource', 'update', 'resource', 'name');");
+        modify_database("", "INSERT INTO prefix_log_display VALUES ('resource', 'add', 'resource', 'name');");
+    }
+
     return true;
 }
 
