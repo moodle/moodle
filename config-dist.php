@@ -38,8 +38,9 @@
 //                                                                       //
 //   mysql      - the prefix is optional, but useful when installing     //
 //                into databases that already contain tables.            //
+//
 //   postgres7  - the prefix is REQUIRED, regardless of whether the      //
-//                database is empty of not.                              //
+//                database already contains tables.                      //
 
 $CFG->dbtype    = "mysql";       // mysql or postgres7 (for now)
 $CFG->dbhost    = "localhost";   // eg localhost or db.isp.com 
@@ -54,7 +55,9 @@ $CFG->prefix    = "mdl_";        // Prefix to use for all table names
 // 2. WEB SITE LOCATION
 //=========================================================================
 // Now you need to tell Moodle where it is located. Specify the full
-// web address where moodle has been installed (without trailing slash)
+// web address to where moodle has been installed.  If your web site 
+// is accessible via multiple URLs then choose the most natural one 
+// that your students would use.  Do not include a trailing slash.
 
 $CFG->wwwroot   = "http://example.com/moodle";
 
@@ -63,7 +66,12 @@ $CFG->wwwroot   = "http://example.com/moodle";
 // 3. SERVER FILES LOCATION
 //=========================================================================
 // Next, specify the full OS directory path to this same location
-// For Windows this might be something like "C:\apache\htdocs\moodle"
+// For Windows this might be something like this:
+//
+//    $CFG->dirroot = "C:\Program Files\Easyphp\www\moodle"
+//
+// Make sure all the upper/lower case is exactly the same as it is on your
+// computer otherwise you may experience some problems (a known bug in PHP)
 
 $CFG->dirroot   = "/web/moodle";
 
@@ -72,10 +80,13 @@ $CFG->dirroot   = "/web/moodle";
 // 4. DATA FILES LOCATION
 //=========================================================================
 // Now you need a place where Moodle can save uploaded files.  This
-// directory should be writeable by the web server user (usually 'nobody'
-// or 'apache'), but it should not be accessible directly via the web.
+// directory should be readable AND WRITEABLE by the web server user 
+// (usually 'nobody' or 'apache'), but it should not be accessible 
+// directly via the web.
+//
 // - On hosting systems you might need to make sure that your "group" has
 //   no permissions at all, but that "others" have full permissions.
+//
 // - On Windows systems you might specify something like "C:\moodledata"
 
 $CFG->dataroot  = "/home/moodledata";
@@ -98,7 +109,7 @@ $CFG->buggy_referer = false;
 //=========================================================================
 
 
-$CFG->libdir    = "$CFG->dirroot/lib";   // Do not change this
+$CFG->libdir    = "$CFG->dirroot/lib";        // Do not change this
 require_once("$CFG->libdir/setup.php");       // Do not change this
 
 // MAKE SURE WHEN YOU EDIT THIS FILE THAT THERE ARE NO SPACES, BLANK LINES, 
