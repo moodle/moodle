@@ -31,6 +31,10 @@ CREATE TABLE prefix_dialogue (
   name varchar(255) default NULL,
   intro text
 ) ;
+
+CREATE INDEX prefix_dialogue_course_idx ON prefix_dialogue (course);
+
+
 # --------------------------------------------------------
 
 #
@@ -52,6 +56,8 @@ CREATE TABLE prefix_dialogue_conversations (
 ) ;
 CREATE INDEX prefix_dialogue_conversations_timemodified_idx ON prefix_dialogue_conversations  (timemodified) ;
 CREATE INDEX prefix_dialogue_conversations_dialogueid_idx ON prefix_dialogue_conversations  (dialogueid) ;
+CREATE INDEX prefix_dialogue_conversations_userid_idx ON prefix_dialogue_conversations (userid);
+CREATE INDEX prefix_dialogue_conversations_recipientid_idx ON prefix_dialogue_conversations (recipientid);
 
 #
 # Table structure for table dialogue_entries
@@ -67,6 +73,8 @@ CREATE TABLE prefix_dialogue_entries (
   text text NOT NULL default ''
 ) ;
 CREATE INDEX prefix_dialogue_entries_conversationid_idx ON prefix_dialogue_entries  (conversationid) ;
+CREATE INDEX prefix_dialogue_entries_dialogueid_idx ON prefix_dialogue_entries (dialogueid);
+CREATE INDEX prefix_dialogue_entries_userid_idx ON prefix_dialogue_entries (userid);
 
 #
 # Data for the table log_display
