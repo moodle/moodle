@@ -1174,7 +1174,7 @@ function quiz_print_question_list($questionlist, $grades, $allowdelete=true) {
     echo "<form method=\"post\" action=\"edit.php\">";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
     echo "<table border=\"0\" cellpadding=\"5\" cellspacing=\"2\" width=\"100%\">\n";
-    echo "<tr><th width=\"*\" colspan=\"3\" nowrap=\"nowrap\">$strorder</th><th align=\"left\" width=\"100%\" nowrap=\"nowrap\">$strquestionname</th><th width=\"*\" nowrap=\"nowrap\">$strtype</th><th width=\"*\" nowrap=\"nowrap\">$strgrade</th><th width=\"*\" nowrap=\"nowrap\">$stredit</th></tr>\n";
+    echo "<tr><th width=\"*\" colspan=\"3\" nowrap=\"nowrap\">$strorder</th><th align=\"left\" width=\"100%\" nowrap=\"nowrap\">$strquestionname</th><th width=\"*\" nowrap=\"nowrap\">$strtype</th><th width=\"*\" nowrap=\"nowrap\">$strgrade</th><th align=\"center\" width=\"60\" nowrap=\"nowrap\">$stredit</th></tr>\n";
     foreach ($order as $qnum) {
         if (empty($questions[$qnum])) {
             continue;
@@ -1207,7 +1207,7 @@ function quiz_print_question_list($questionlist, $grades, $allowdelete=true) {
             choose_from_menu(quiz_gradesmenu_options($question->defaultgrade),
                              "q$qnum", (string)$grades[$qnum], "");
         }
-        echo "<td>";
+        echo '<td align="center">';
 
         if ($canedit) {
             echo "<a title=\"$stredit\" href=\"question.php?id=$qnum\">
@@ -1330,7 +1330,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
     }
     echo "<th width=\"100%\" align=\"left\" nowrap=\"nowrap\">$strquestionname</th><th width=\"*\" nowrap=\"nowrap\">$strtype</th>";
     if ($canedit) {
-        echo "<th width=\"*\" nowrap=\"nowrap\">$stredit</th>";
+        echo "<th width=\"70\" nowrap=\"nowrap\">$stredit</th>";
     }
     echo "</tr>\n";
     foreach ($questions as $question) {
