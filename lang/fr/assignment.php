@@ -34,6 +34,7 @@ $string['maximumsize'] = 'Taille maximale';
 $string['modulename'] = 'Devoir';
 $string['modulenameplural'] = 'Devoirs';
 $string['newsubmissions'] = 'Devoirs rendus';
+$string['noassignments'] = 'Il n\'y a pas encore de devoir';
 $string['notgradedyet'] = 'Pas encore de note';
 $string['notsubmittedyet'] = 'Pas encore rendu';
 $string['overwritewarning'] = 'Attention ! un nouvel envoi remplacera votre devoir déjà remis';
