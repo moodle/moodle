@@ -4,8 +4,8 @@
 $string['action'] = 'Action';
 $string['activities'] = 'Activités';
 $string['activity'] = 'Activité';
-$string['activityclipboard'] = 'Activitén cours de déacement: <b>$a</b>';
-$string['activityiscurrentlyhidden'] = 'Désolé, cette activitée n\'est pas visible actuellement';
+$string['activityclipboard'] = 'Activité en cours de déplacement : <b>$a</b>';
+$string['activityiscurrentlyhidden'] = 'Désolé, cette activité n\'est pas visible actuellement';
 $string['activitymodule'] = 'Module d\'activité';
 $string['activityreport'] = 'Journal d\'activité';
 $string['activityselect'] = 'Sélectionner cette activité pour la déplacer';
