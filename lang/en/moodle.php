@@ -530,6 +530,7 @@ $string['removeteacher'] = "Remove teacher";
 $string['rename'] = "Rename";
 $string['resources'] = "Resources";
 $string['restore'] = "Restore";
+$string['restorecancelled'] = "Restore cancelled";
 $string['restoreto'] = "Restore to";
 $string['returningtosite'] = "Returning to this web site?";
 $string['requireskey'] = "This course requires an enrolment key";
