@@ -1,251 +1,365 @@
 <html>
 <head>
-<title>Documentación de Moodle: Cómo usar el CVS</title>
-    <link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-		<style type="text/css">
-    <!--
-    .sectionheading {
-	  font-size: medium;
-	  font-weight: bold;
-	  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-	  border: 1px dotted;
-	  padding: 10px;
-	  background-color: #EEEEEE;
-    }
-    -->
+<title>Moodle Docs: Utilizando el CVS</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+.style1 {color: #990000}
+.style3 {color: #990000; font-weight: bold; }
+.style4 {
+	color: #0000CC;
+	font-weight: bold;
+}
+-->
     </style>
 </head>
 <body bgcolor="#ffffff">
-<h2>Cómo usar el <abbr title="Concurrent Versions System"
- lang="en">CVS</abbr> para acceder al código fuente de Moodle y actualizarlo</h2>
-
-<div style="padding-left: 3em;">
-
-  <p><abbr title="Concurrent Versions System" lang="en">CVS</abbr> es un Sistema 
-    Concurrente de Versiones. Normalmente se usa como un forma de almacenar el 
-    código fuente, ya que mantiene las versiones de todos los archivos de manera 
-    que no se pierda nada, y se registra el uso que hacen diferentes personas. 
-    También proporciona heramientas para combinar código si hay dos o más personas 
-    trabajando en el mismo archivo. Todo el código y todas las versiones se almacenan 
-    en un servidor central (en este caso, en <a target="_top"
-
- href="http://www.sf.net/">Sourceforge</a>).</p>
-  <p>Si lo &uacute;nico que quiere es acceder a la versi&oacute;n actual de Moodle 
-    en CVS con acceso de s&oacute;lo lectura, entonces no necesita leer esta p&aacute;gina 
-    - siga las instrucciones para usar el CVS de la <a target="_top" href="http://moodle.org/download">p&aacute;gina 
-    de descarga de Moodle</a>, que son m&aacute;s sencillas.</p>
-  <p>Para usar el <a target="_top" href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/moodle/moodle/">Repositorio 
-    CVS de Moodle</a> (como <a
-
- href="http://sourceforge.net/project/memberlist.php?group_id=30935">desarrollador 
-    con acceso de escritura</a>), necesitará tener antes una <a
-
- href="http://sourceforge.net/account/register.php">cuenta en Sourceforge</a>. 
-    Para los ejemplos que presentamos en esta página vamos a asumir que su nombre 
-    de usuario (<span lang="en">username</span>) es <strong
-
- style="color: rgb(153, 0, 0); background-color: transparent;">usuario</strong> 
-    y que su contraseña es <strong
-
- style="color: rgb(153, 0, 0); background-color: transparent;">contraseña</strong>. 
-    Fíjese especialmente en las instrucciones de Sourforge para <a target="_top" href="http://sourceforge.net/docman/display_doc.php?docid=768&group_id=1#develhomedir">crear 
-    su directorio principal CVS</a> - una cosa que tiene que hacer con cada nueva 
-    cuenta para habilitarla en el CVS. Básicamente tendrá que usar ssh para conectar 
-    de forma interactiva con cvs.sourforge.net.</p>
-  <p>Una vez que tenga su cuenta de Sourceforge, entre en contacto conmigo (<a
-
- href="http://dougiamas.com/">Martin Dougiamas</a>) para que pueda darle su acceso 
-    con permiso de escritura a determinados directorios.</p>
-  <p>Para evitar la solicitud de su contraseña (<strong
-
- style="color: rgb(153, 0, 0); background-color: transparent;">contraseña</strong>) 
-    cada vez que ejecute el comando de CVS, siga las <a
-
- href="http://sourceforge.net/account/editsshkeys.php">Instrucciones para usar 
-    claves autorizadas en Sourceforge</a>. Este paso es opcional, pero puede hacer 
-    que su experiencia del uso de CVS sea más agradable.</p>
-
-<p>Una vez hecho esto debe tener todos los permisos que necesita, de
-
-manera que sólo necesitará arrancar su máquina y
-
-descargar los actuales códigos fuente para poder empezar a
-
-trabajar en ellos. A continuación hay instrucciones para los
-
-sistemas Unix y Windows.</p>
-
-<h3 class="sectionheading">1. Usar el CVS en Unix</h3>
+<h1>CVS para Desarrolladores de Moodle </h1>
 <blockquote>
-  <p>El CVS de Sourceforge usa <span>ssh</span> como <span
-
- lang="en">capa de transporte</span>por seguridad , 
- de manera que usted tendrá que establecer 
-esta variable del entorno CVS_RSH en Unix:</p>
-
-<blockquote>
-
-  <pre><strong>setenv CVS_RSH ssh</strong> (para csh, tcsh etc.)</pre>
-
-  <pre><strong>export CVS_RSH=ssh</strong> (para sh, bash etc.)</pre>
-
-</blockquote>
-
-<p>Lo mejor es poner esto en su .bashrc o .cshrc de manera que no tenga
-
-que escribirlo todas las veces. Entonces, revise Moodle usando lo
-
-siguiente (todo en una línea): </p>
-
-<blockquote>
-
-      <pre><strong>cvs -z3 -d:ext:usuario@cvs.moodle.sourceforge.net:/cvsroot/moodle co moodle</strong></pre>
-
-</blockquote>
-
-  <p>No intente ejecutar este primer comando CVS dentro de un directorio &quot;moodle&quot; 
-    que ya exista. Comience con un directorio nuevo.</p>
-
-  <p>Advierta que se le solitita su contraseña (<strong
-
- style="color: rgb(153, 0, 0); background-color: transparent;">contraseña</strong>) para 
-    cada comando a menos que establezca una <a
-
- href="http://sourceforge.net/account/editsshkeys.php">contraseña autorizada</a></p>
-
-  <p>Ahora tiene un nuevo directorio llamado "moodle". Puede renombrarlo y moverlo 
-    si lo desea. Vaya a:</p>
-
-<blockquote>
-
-  <pre><strong>cd moodle </strong></pre>
-
-</blockquote>
-
-<p>Aparecerán todos los últimos archivos de Moodle. Ahora
-
-usted puede cambiar archivos en su copia. Para comparar sus archivos
-
-con la copia del servidor CVS principal use <span>cvs diff</span>, por
-
-ejemplo: </p>
-
-<blockquote>
-
-  <pre><strong>cvs diff -c config-dist.php<br>cvs diff -c lang</strong></pre>
-
-</blockquote>
-
-  <p>Para traer las últimas actualizaciones del servidor, use:</p>
-
-<blockquote>
-
-  <pre><strong>cvs update -dP</strong> </pre>
-
-</blockquote>
-
-<p>Para copiar sus nuevos archivos de vuelta en el servidor
-
-podría hacer algo como:</p>
-
-<blockquote>
-
-  <pre><strong>cd lang/ca <br>cvs commit</strong> </pre>
-
-</blockquote>
-
-<p>Se le pedirá que añada algunos comentarios (esto
-
-depende de su editor de texto) ... añada un comentario
-
-significativo y cierre el editor ... los archivos se enviarán a
-
-Sourceforge y serán almacenados. &iexcl;Hecho! </p>
-
-<p>Para ahorrar tiempo puede poner argumentos por omisión en el
-
-archivo llamado <span>.cvsrc </span> en su directorio principal. Por
-
-ejemplo, el mío contiene:</p>
-
-<blockquote>
-
-  <pre><strong>diff -c <br>update -dP</strong> </pre>
-
-</blockquote>
-
-<p>Intente "cvs help" para obtener más detalles ... </p>
-
-<p>&nbsp;</p>
-</blockquote>
-<h3 class="sectionheading">2. Usar CVS en Windows</h3>
+  <p>CVS es un <strong>Sistema Concurrente de Versiones</strong>,
+    una forma de trabajo habitualmente utilizada para almacenar el c&oacute;digo fuente
+    de grandes proyectos de software. CVS almacen todas las versiones de todos
+    lo ficheros de tal forma que nada es nunca perdido, y su utilizaci&oacute;n por
+    varias personas es registrado. Tambi&eacute;n proporciona una forma de combinar
+    el c&oacute;digo de dos o m&aacute;s personas que est&eacute;n trabajando simultaneamente en el
+    mismo fichero. Todo el c&oacute;digo y sus versiones son almacenados en un servidor
+    central (en el caso de Moodle, el de <a target="_top" href="http://www.sf.net/">Sourceforge</a>). </p>
+  <p>Si &uacute;nicamente quieres utilizar el CVS para descargar Moodle yponerlo en
+    marcha, posiblemente no necesitas esta p&aacute;gina - simplemente sigue las instrucciones
+    que aparecen en la <a target="_top" href="http://moodle.org/download">Pagina
+    de Descargas de Moodle</a>.</p>
+  <p>&nbsp;</p>
+  <ol>
+    <li><a href="#1">Uni&eacute;ndote al proyecto como desarrollador </a></li>
+    <li><a href="#2">M&oacute;dulos CVS </a> </li>
+    <li><a href="#3">Comandos b&aacute;sicos CVS </a> <br>
+      3.1. <a href="#3.1">CVS en Unix</a> <br>
+      3.2. <a href="#3.2">CVS en Windows</a></li>
+    <li> <a href="#4">Trabajando con ramas </a><br>
+      4.1. <a href="#4.1">Desarrollando en el tronco (trunk) </a><br>
+      4.2. <a href="#4.2">Ramas (branches) estables para cada versi&oacute;n </a><br>
+      4.3. <a href="#4.3">Ramas de funcionalidades para grandes cambios </a> </li>
+  </ol>
+  <p>&nbsp;</p>
+  <h2><a name="1"></a>1. Uni&eacute;ndote al proyecto como desarrollador </h2>
+  <blockquote>
+    <p>&iexcl;Entonces, se te han ofrecido permisos de escritura en CVS para
+      ayudarnos a desarrollar y mantener Moodle! <a href="http://sourceforge.net/project/memberlist.php?group_id=30935">&iexcl;Bienvenido
+      a bordo!</a></p>
+    <p>Para poder escribir cambios en el <a target="_top" href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/moodle/moodle/">archivo
+        de CVS Moodle</a>,
+      primero necesitas tener una cuenta en Sourceforge (<a href="http://sourceforge.net/account/register.php">el
+      registro es libre y sencillo</a>).
+      Para los ejemplos en esta p&aacute;gina asumiremos que tu nombre de usuario
+      es <strong><font color="#990000">miusuario</font></strong> y tu contrase&ntilde;a
+      es <strong><font color="#990000">micontrase&ntilde;a</font></strong>.
+        Presta especial atenci&oacute;n a las instruciones de sourceforge para <a target="_top" href="http://sourceforge.net/docman/display_doc.php?docid=768&group_id=1#develhomedir">crear
+        tu directorio  de CVS </a> -
+        algo que tendr&aacute;s que hacer con cada cuenta para "activarla" para
+        CVS. B&aacute;sicamente tienes que utilizar ssh para conectarte interactivamente
+        con cvs.sourceforge.net.</p>
+    <p>Una vez que tengas una cuenta funcionando en Sourceforge, contacta con      <a 
+  target="_top" href="http://moodle.org/user/view.php?id=1&course=1">Martin Dougiamas</a> para
+      que &eacute;l pueda configurar tu cuenta con los accesos correpondientes a los
+      directorios de Moodle.</p>
+    <p>Para evitar que cada vez que ejecutas un comando de CVS el sistema te
+      pregunte <strong><font color="#990000">micontrase&ntilde;a</font></strong>,
+      sigue las <a target="_top" href="http://sourceforge.net/account/editsshkeys.php">instrucciones
+      de Sourceforge para utilizar claves autorizadas</a>. Este paso es opcional,
+      pero puede hacer tu experiencia con CVS mucho m&aacute;s c&oacute;moda.</p>
+    <p>Con todo esto hecho, deber&iacute;as tener todos los permisos necesarios, as&iacute;
+      que &uacute;nicamente necesitas configurar tu ordenador y descargar los fuentes
+      actuales para empezar a trabajar con ellos.</p>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h2><a name="2" id="2"></a>2. M&oacute;dulos CVS </h2>
+  <blockquote>
+    <p>Dentro de CVS la palabra &quot;m&oacute;dulos&quot; se hace referencia a colecciones separadas
+      de c&oacute;digo. En Moodle tenemos los siguientes m&oacute;dulos en nuestro repositorio:</p>
     <blockquote>
-      <p>Antes que nada, necesita descargar una copia nueva de Moodle usando su 
-        cuenta de desarrollador.</p>
-      <blockquote> 
-        <p> 1. Descargue TortoiseCVS de <a target="_top" href="http://www.tortoisecvs.org/">tortoisecvs.org</a> 
-          e instálelo, luego reinicie el ordenador.<br>
-          <br>
-          2. Localice una carpeta o cree una nueva en algún lugar donde 
-          quiera descargar Moodle.<br>
-          <br>
-          3. Haga clic con el botón derecho en esa carpeta y elija &quot;<strong>CVS 
-          Checkout</strong>&quot; del menú. Debería ver un cuadro 
-          de diálogo.<br>
-          <br>
-          4. Copie este texto en el campo CVSROOT (&iexcl;utilizando su propio 
-          nombre de usuario!):</p>
-        <blockquote> 
-          
-        <pre> :ext:<font color="#990000">usuario</font>@cvs.moodle.sourceforge.net:/cvsroot/moodle</pre>
-        </blockquote>
-        <p><br>
-          5. Presione el botón: &quot;<strong>Fetch list...</strong>&quot;.<br>
-          <br>
-          6. A la derecha del botón debería ver una lista de módulos: 
-          elija &quot;<strong>moodle</strong>&quot; en esa lista.<br>
-          <br>
-          7. Apriete el botón: &quot;<strong>OK</strong>&quot; y se debería 
-          descargar todo.<br>
-        </p>
-      </blockquote>
-      <p>Los archivos en proceso de descarga se muestran en un cuadro de diálogo, 
-        y en poco tiempo debería tener una copia completa de Mooodle. Después 
-        de esta primera comprobación (<em>checkout</em>), puede traerse 
-        los últimos archivos actualizados del servidor CVS.</p>
-      <blockquote> 
-        <p> 1. Haga clic con el botón derecho del ratón en su carpeta 
-          moodle (o en cualquier archivo) y seleccione &quot;<strong>CVS Update</strong>&quot;. 
-          <br>
-        </p>
-      </blockquote>
-      <p>Tras haber modificado algún archivo (se dará cuenta de 
-        que cambian de color verde a rojo), puede enviarlos de nuevo al servidor 
-        CVS de esta forma:</p>
-      <blockquote> 
-        <p> 1. Haga clic con el botón derecho en su carpeta moodle (o en 
-          cualquier archivo) y seleccione &quot;<strong>CVS Commit...</strong>&quot;.<br>
-          <br>
-          2. En el cuadro de diálogo, teclee una descripción clara 
-          de los cambios que está enviando.<br>
-          <br>
-          3. Haga clic en &quot;OK&quot;. Los cambios serán enviados al 
-          servidor.<br>
-      </p>
+      <p><strong>moodle</strong> - el c&oacute;digo fuente principal de Moodle</p>
+      <p><strong>contrib</strong> - contribuciones de los usuarios y todo tipo
+        de c&oacute;digo en desarrollo</p>
+      <p><strong>mysql</strong> - un phpMyAdmin personalizado para trabajar con
+        la base de datos de Moodle</p>
+      <p><strong>windows-cron</strong> - un peque&ntilde;o paquete que hace posible
+        el funcionamiento del cron en Windows </p>
+      <p><strong>docs</strong> - varia documentacion extra generada por los usuarios </p>
+    </blockquote>
+    <p>La mayor&iacute;a de la gente est&aacute; trabajando en las funcionalidades existentes
+      en el m&oacute;dulo <strong>moodle</strong>,
+      pero muchos tambi&eacute;n est&aacute;n contribuyendo con nuevas ideas en el m&oacute;dulo <strong>contrib</strong>.
+      Una vez que el c&oacute;digo alcanza cierto nivel de madurez en la zona de <strong>contrib</strong> puede
+      ser movido a la zona principal de <strong>moodle.</strong></p>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h2><a name="3" id="3"></a>3. Comandos b&aacute;sicos CVS </h2>
+  <blockquote>
+    <h3><a name="3.1" id="3.1"></a>3.1 CVS en Unix </h3>
+    <blockquote>
+      <p>El sistema CVS de Sourceforge utiliza ssh como una capa 
+        de transporte para seguridad, por lo que tendr&aacute;s que tener definida la
+        variable de entorno  CVS_RSH en tu sesi&oacute;n de Unix. Lo mejor es poner
+        estos comandos en tus archivos .bashrc o .cshrc para que no tengas que
+        teclearlos repetidamente <strong>:</strong></p>
+       <div class="commandline">setenv CVS_RSH ssh <em>(para csh, tcsh etc)</em><br /> 
+	    export CVS_RSH=ssh <em>(<em>para</em> sh, bash etc)</em></div>  
+      <p>A continuaci&oacute;n puedes obtener (checkout) la &uacute;ltima versi&oacute;n de desarrollo
+        de Moodle usando esto (todo en la misma l&iacute;nea): </p>
+       <div class="commandline">cvs -z3 -d:ext:<span class="style1">miusuario</span>@cvs.sourceforge.net:/cvsroot/moodle
+         co moodle</div>      
+       <p>El comando es similar para  otros m&oacute;dulos CVS:</p>
+       <div class="commandline">cvs -z3 -d:ext:<span class="style1">miusuario</span>@cvs.sourceforge.net:/cvsroot/moodle co contrib</div>      
+      <p>No intentes ejecutar este primer comando CVS sobre una instalaci&oacute;n existente
+        de Moodle: empieza con un directorio vac&iacute;o.</p>
+      <p>Cada vez que ejecutes un comando CVS se te preguntar&aacute; <strong><font color="#990000">micontrase&ntilde;a</font></strong> a
+        nos ser que configures las <a target="_top" href="http://sourceforge.net/account/editsshkeys.php">claves
+        autorizadas</a>.</p>
+      <p>Ahora, deber&iacute;as tener un nuevo directorio 
+        'moodle'. Puedes renombrarlo y moverl donde quieras.
+        Entra en &eacute;l: </p>
+       <div class="commandline">cd moodle </div>      
+      <p>Todos los ficheros de Moodle deber&iacute;an estar ah&iacute;. Ahora puedes modificarlos
+        localmente. Para comparar tus ficheros y directorios con los que existen
+        en la copias principal del servidor CVS utiliza
+        cvs diff, p.ej.: </p>
+       <div class="commandline">cvs diff -c config-dist.php<br />
+       cvs diff -c lang </div>
+      <p>Para obtener las &uacute;ltimas actualizaciones desde el servidor utiliza:</p>
+      <div class="commandline">cvs update -dP</div>
+      <p>Para copiar tus nuevos ficheros de vuelta al servidor deber&iacute;as hacer
+        algo como:</p>
+      <div class="commandline">cd lang/ca <br />
+cvs commit</div>
+      <p>Se te requerir&aacute; que a&ntilde;adas algunos comentarios sobre los cambios (depende
+        de tu editor de texto por defecto) ... escribe alg&uacute;n comentario con significado
+        y cierra el editor ... los ficheros ser&aacute;n enviados a Sourceforge y almacenados
+        all&iacute;. &iexcl;Hecho! </p>
+      <p>Para ahorrar algo de tiempo, puedes poner algunos argumentos por defecto
+        en un fichero llamado .cvsrc en tu directorio. Por ejemplo, el m&iacute;o contiene: </p>
+      <div class="commandline">diff -c <br />
+update -dP</div>
+      <p>Utiliza  'cvs help' para obtener m&aacute;s informaci&oacute;n... </p>
+      <p>&nbsp;</p>
+    </blockquote>
+    <h3><a name="3.2" id="3.2"></a>3.2 CVS en Windows </h3>
+    <blockquote>
+      <p>En primer lugar necesitas descargas una copia nueva de Moodle utilizando
+        tu cuenta de desarrollador.</p>
+    </blockquote>
+    <ol>
+      <ol>
+        <ol>
+          <li> Descarga TortoiseCVS desde <a target="_top" href="http://www.tortoisecvs.org/">tortoisecvs.org</a> e
+            inst&aacute;lalo, entonces reinicia. </li>
+          <li>Busca o crea una carpeta en la que quieras que Moodle sea descargado.</li>
+          <li>Selecionala con el bot&oacute;n derecho del rat&oacute;n y selecciona &quot;<strong>CVS
+              Checkout</strong>&quot; en el men&uacute;. Ver&aacute;s una caja de di&aacute;logo. </li>
+          <li>Copia este texto en el campo CVSROOT  (&iexcl;utilizando tu propio nombre
+            de usuario!):
+            <pre> :ext:<font color="#990000">miusuario</font>@cvs.sourceforge.net:/cvsroot/moodle</pre>
+          </li>
+          <li>En el campo &quot;Module&quot;, teclea &quot;<strong>moodle</strong>&quot; para
+            obtener la &uacute;ltima versi&oacute;n de Moodle, &quot;<strong>contrib</strong>&quot; para
+            obtener el directorio de contribuciones ,
+            o&quot;<strong>mysql</strong>&quot; para descargar el m&oacute;dulo MySQL
+            Admin.</li>
+          <li>Selecciona el bot&oacute;n&quot;<strong>OK</strong>&quot; y todo
+            deber&iacute;a ser descargado. <br>
+          </li>
+        </ol>
+      </ol>
+    </ol>
+    <blockquote>
+      <p>Un di&aacute;logo deber&iacute;a mostrarte todos los ficheros que est&aacute;n siendo descargados
+        y, tras un rato, deber&iacute;as tener una copia completa de Moodle. Despu&eacute;s
+        de esta primera descarga (checkout) puedes obtener los &uacute;ltimos cambios
+        desde el servidor CVS:</p>
+    </blockquote>
+    <ol>
+      <ol>
+        <ol>
+          <li> Con el bot&oacute;n derecho del rat&oacute;n encima de tu carpeta Moodle (o
+            de cualquier otro fichero) selecciona &quot;<strong>CVS
+              Update</strong>&quot;. </li>
+          <li>Si&eacute;ntate y examina los registros atentamente. Apunta los conflictos
+            que pudieran aparecer si han realizado modificaciones en tu copia
+            local que entran en conflicto con cambios en las versiones que te
+            est&aacute;s descargando - necesitaras editar estos ficheros y resolver
+            los conflictos manualmente. <br>
+          </li>
+        </ol>
+      </ol>
+    </ol>
+    <blockquote>
+      <p>Despu&eacute;s de modificar ficheros (notar&aacute;s que sus iconos cambian de verde
+        a rojo) puedes enviar esos cambios al servidor CVS as&iacute;:</p>
+    </blockquote>
+    <ol>
+      <ol>
+        <ol>
+          <li> Con el bot&oacute;n derecho del rat&oacute;n encima de tu carpeta
+          Moodle (o de cualquier otro fichero) selecciona &quot;<strong>CVS Commit...</strong>&quot;.</li>
+          <li>En el di&aacute;logo que aparece, introduce una descripci&oacute;n clara de los
+            cambios que est&aacute;s enviando.</li>
+          <li>Selecciona &quot;OK&quot;. Tus cambios ser&aacute;n enviados al servidor. <br>
+          </li>
+        </ol>
+      </ol>
+    </ol>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h2><a name="4" id="4"></a>4. Trabajando con ramas </h2>
+  <blockquote>
+    <p>Este diagrama te muestra como el m&oacute;dulo <strong>moodle</strong> se
+      divide en diferentes ramas (branches) a lo largo del tiempo.</p>
+    <p align="center"><img src="pix/cvstree.png" width="500" height="200"></p>
+    <p align="left">Para ver todas las etiquetas y ramas existentes que est&aacute;n
+      disponibles, utiliza este comando en cualquier fichero antiguo  (como el
+      index.php en el directorio principal de Moodle):</p>
+    <div class="commandline">cvs status -v index.php</div>
+    <p>Algunas instrucciones sobre las etiquetas (tags):</p>
+    <ul>
+      <li>Las los nombres de las etiquetas y de las ramas siempre deben ser escritas
+        en may&uacute;sculas.</li>
+      <li>Las etiquetas y las ramas deben ser SIEMPRE aplicadas a <strong>todo
+          el m&oacute;dulo </strong> (todo Moodle). No crees etiquetas para ficheros
+          o carpetas individuales.</li>
+      <li>No permitimos renombrar etiquetas porque muchas personas las utilizan,
+        as&iacute; que &iexcl;cr&eacute;alas bien la primera vez!</li>
+    </ul>
+    <p><br />
+    </p>
+    <p>&nbsp;</p>
+    <h3><a name="4.1" id="4.1"></a>4.1 Desarrollando en el tronco (trunk) </h3>
+    <blockquote>
+      <p>El Tronco del CVS es la versi&oacute;n de desarrollo principal de Moodle. En
+        CVS tambi&eacute;n es conociddo como el <span class="style4">HEAD</span>,
+        o rama por defecto (default branch).</p>
+      <p>Los desarrolladores de Moodle intentan mantenerlo tan estable como es
+        posible, pero normalmente contiene nuevo c&oacute;digo con errores y peque&ntilde;as
+        inestabilidades.</p>
+      <p>En cuaquier momento podemos decidir que el producto tiene las funcionalidades
+        necesarias para publicar una nueva versi&oacute;n. En ese momento, el tronco
+        es marcado con una etiqueta <strong>MOODLE_XX_BETA</strong> tag
+        (por si en alg&uacute;n momento queremos volver a ese punto) y una nueva rama
+        es creada para esa versi&oacute;n con el nombre <span class="style1">MOODLE_XX_STABLE</span>. </p>
+      <p>En ese momento, un paquete Beta es tambi&eacute;n publicado - es para los usuario
+        que no utilizan el CVS pero quieren comprobar las nuevas funcionalidades
+        y ayudar en la detecci&oacute;n de errores.</p>
     </blockquote>
     <p>&nbsp;</p>
- </blockquote>
-</div>
-    <p align="center">&iexcl;Buena suerte!</p>
-    
-<p>&nbsp;</p>
+    <h3><a name="4.2" id="4.2"></a>4.2 Ramas (branches) estables
+    para cada versi&oacute;n</h3>
+    <blockquote>
+      <p>En cuanto la rama estable <span class="style3">MOODLE_XX_STABLE</span> es
+        creada, los esfuerzos de los desarrolladores se dividir&aacute;n en dos objetivos
+        durante cierto tiempo. Algunas personas continuar&aacute;n trabajando en nuevas
+        funcionalidades en el tronco para la pr&oacute;xima versi&oacute;n, pero la mayor&iacute;a
+        de nosotros nos concentraremos en utilizar la rama <span class="style1"><strong>STABLE</strong></span> y
+        solucionar los problemas que sean encontrados en ella.</p>
+      <p>Puedes cambiar tu copia loca de Moodle a la rama <span class="style1"><strong>STABLE</strong></span> utilizando
+        el siguiente comando en Unix desde tu directorio base de Moodle:</p>
+      <div class="commandline">cvs update -dP -r <span class="style1">MOODLE_XX_STABLE</span></div>
+      <p>Despu&eacute;s de esto, todos los comando descritos anteriormente ser&aacute;n aplicados
+        a la rama stable. Para volver al tronco, simplemente teclea:</p>
+      <div class="commandline">cvs update -dPA</div>
+      <p>En clientes Windows deber&iacute;a tener un men&uacute; en el que puedes seleccionar
+        la rama que deseas.</p>
+      <p>Una vez que la rama STABLE realmente se estabiliza, una versi&oacute;n oficial
+        puede ser creada. Se crean los paquetes necesarios para la distribuci&oacute;n
+        y la rama es marcada (por Martin) con una etiqueta llamada <strong>MOODLE_XXX</strong></p>
+      <p>Peri&oacute;dicamente, los problemas solucionados en la rama  STABLE deben
+        ser combinados (merge) con el tronco para que tambi&eacute;n sean solucionados
+        para futuras versiones de Moodle. Una etiqueta flotante llamada MOODLE_XX_MERGED
+        debe ser mantenida para marcar el punto en el que se realiz&oacute; la &uacute;ltima
+        combinaci&oacute;n. El procedimiento para realizar dicha combinaci&oacute;n es el siguiente:</p>
+      <ol>
+        <ol>
+          <li>Obt&eacute;n la &uacute;ltima version del tronco:<br>
+            <br>
+            <div class="commandline">cvs update -dPA</div>
+          </li>
+          <li>Combina todo desde la rama desde la &uacute;ltima combinaci&oacute;n, en el tronco:<br>
+            <br>
+            <div class="commandline">cvs update -kk -j MOODLE_13_MERGED -j MOODLE_13_STABLE</div>
+	      </li>
+          <li>Observa atentamente los registros para ver si se producen conflictos,
+            y soluciona cada fichero que veas que presenta problemas. </li>
+          <li>Guarda (commit) los cambios de la combinaci&oacute;n en el tronco CVS:<br>
+            <br>
+            <div class="commandline">cvs commit</div>
+          </li>
+          <li>Vuelve a la rama: <br>
+            <br>
+            <div class="commandline">cvs update -dPr MOODLE_13_STABLE</div>
+		  </li>
+          <li>Actualiza la etiqueta flotante para que todo este proceso pueda
+            desarrollarse la pr&oacute;xima vez:<br>
+            <br>
+            <div class="commandline">cvs tag -RF MOODLE_13_MERGED</div>
+          </li>
+        </ol>
+      </ol>
+      <p><br>
+        Por &uacute;ltimo, los valores de la variable <em>$version</em> en todos
+        los ficheros version.php de Moodle en la ramas no debe ser actualizado
+        en la medida de lo posible (excepto el &uacute;ltimo d&iacute;gito si es verdaderamente
+        necesario). La raz&oacute;n para esto es que alguien actualiz&aacute;ndose desde una
+        versi&oacute;n estable a la siguiente podr&iacute;a perder actualizaciones de la base
+        de datos que hayan sucedido en el tronco.</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h3><a name="4.3" id="4.3"></a>4.3 Ramas de funcionalidades para grandes
+    cambios</h3>
+    <blockquote>
+      <p>De vez en cuando, puede haber alguna funcionalidad que necesita estar
+        controlada para que distintas personas puedan trabajar en ella, pero
+        que es muy inestable para ser incluida en el tronco de desarrollo.</p>
+      <p>En estos casos, una rama temporal es creada para trabajar en la funcionalidad
+        para, tan pronto como sea posible, combinarla con el tronco de nuevo.
+        En el diagrama mostrado anteriormente se ha incluido un ejemplo  llamado <span class="style1"><strong>MOODLE_14_WIDGET</strong></span> de
+        este tipo de rama.</p>
+      <p>Si necesitas hacer esto para tu nueva  WIDGET, sige estos pasos: </p>
 
-
-
-<p align="CENTER"><font size="1"><a href="." target="_top">Documentación 
-  de Moodle</a></font></p>
-<p align="CENTER"><font size="1">Version: $Id: cvs.html,v 1.9 2003/06/21 08:25:15 
-  moodler Exp $</font></p>
+      <ol>
+        <ol>
+          <li>&iexcl;Disc&uacute;telo con otros desarrolladores para estar seguro de que es
+            necesaria! </li>
+          <li>Crea una nueva etiqueta en el <strong>tronco</strong> (para todo
+            Moodle) llamada <strong>MOODLE_XX_WIDGET_PRE</strong>
+		  <br>
+		  <br>
+          <div class="commandline">cvs tag -R MOODLE_XX_WIDGET_PRE</div></li>
+          <li>Crea tu rama llamada <span class="style1"><strong>MOODLE_XX_WIDGET</strong></span>
+		  <br>
+		  <br>
+            <div class="commandline">cvs tag -Rb <span class="style1">MOODLE_XX_WIDGET</span></strong></div></li>
+          <li>Trabaja en esa rama hasta que la funcionalidad sea razonablemente
+            estable. Envia los cambios al servidor CVS cuando sea necesario:<br>
+		  <br>
+          <div class="commandline">cvs commit</div></li>
+          <li>Cuando la funcionalidad est&eacute; lista, combina toda la rama en el
+            tronco, soluciona los posibles conflicots, gu&aacute;rdala en el tronco
+            y abandona la rama:<br>
+		  <br>
+            <div class="commandline">
+            <strong>cvs update -dPA</strong><br />
+            <strong>cvs update -kk -j <span class="style1">MOODLE_XX_WIDGET</span></strong><br />
+            <strong>cvs commit </strong></div>
+          </li>
+      </ol>
+    </ol>
+   </blockquote>
+    <blockquote>
+      <p>&nbsp;</p>
+    </blockquote>
+  </blockquote>
+  <p align="center">&iexcl;Buena suerte, ten cuidado y divi&eacute;rtete!</p>
+  <p>&nbsp;</p>
+</blockquote>
+<p align="CENTER"><font size="1"><a href="." target="_top">Documentaci&oacute;n de Moodle </a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
 </body>
 </html>
