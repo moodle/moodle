@@ -5,6 +5,7 @@
 
     require_once("../../config.php");
     require_once("lib.php");
+    require_once("$CFG->dirroot/rss/rsslib.php");
 
     require_variable($id);   // course
 
@@ -21,6 +22,7 @@
 
     $strglossarys = get_string("modulenameplural", "glossary");
     $strglossary  = get_string("modulename", "glossary");
+    $strrss = get_string("rss");
 
 
 /// Print the header
@@ -57,6 +59,14 @@
         $table->align = array ("LEFT", "CENTER");
     }
 
+    $can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin());
+
+    if ($show_rss = ($can_subscribe && isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
+                     $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds)) {
+        $table->head[] = $strrss;
+        $table->align[] = "CENTER";
+    }
+
     $currentsection = "";
 
     foreach ($glossarys as $glossary) {
@@ -80,11 +90,28 @@
 
         $count = count_records_sql("SELECT COUNT(*) FROM {$CFG->prefix}glossary_entries where (glossaryid = $glossary->id or sourceglossaryid = $glossary->id)");
 
-        if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($printsection, $link, $count);
-        } else {
-            $table->data[] = array ($link, $count);
+        //If this glossary has RSS activated, calculate it
+        if ($show_rss) {
+            $rsslink = '';
+            if ($glossary->rsstype and $glossary->rssarticles) {
+                //Calculate the tolltip text
+                $tooltiptext = get_string("rsssubscriberss","glossary",$glossary->name);
+                //Get html code for RSS link
+                $rsslink = rss_get_link($course->id, $USER->id, "glossary", $glossary->id, $tooltiptext);
+            }
         }
+
+        if ($course->format == "weeks" or $course->format == "topics") {
+            $linedata = array ($printsection, $link, $count);
+        } else {
+            $linedata = array ($link, $count);
+        }
+
+        if ($show_rss) {
+            $linedata[] = $rsslink;
+        }
+
+        $table->data[] = $linedata;
     }
 
     echo "<br />";
