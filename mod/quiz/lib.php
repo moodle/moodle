@@ -34,14 +34,6 @@ $QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz")
                               MULTIANSWER   => get_string("multianswer", "quiz")
                               );
 
-$QUIZ_FILE_FORMAT = array ( "custom"   => get_string("custom", "quiz"),
-                            "missingword" => get_string("missingword", "quiz"),
-                            "blackboard" => get_string("blackboard", "quiz"),
-                            "aon" => "AON",
-                            "aiken" => "Aiken",
-                            "multianswer" => get_string("multianswer", "quiz"),
-                            "coursetestmanager" => "Course Test Manager"
-                            );
 
 define("QUIZ_PICTURE_MAX_HEIGHT", "600");   // Not currently implemented
 define("QUIZ_PICTURE_MAX_WIDTH",  "600");   // Not currently implemented

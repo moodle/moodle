@@ -49,12 +49,12 @@
 
         } else {  // Valid file is found
 
-            if (! is_readable("format/$form->format".".php")) {
+            if (! is_readable("format/$form->format/format.php")) {
                 error("Format not known ($form->format)");
             }
 
-            require("format/default.php");  // Parent class
-            require("format/$form->format".".php");
+            require("format.php");  // Parent class
+            require("format/$form->format/format.php");
 
             $format = new quiz_file_format();
 
@@ -83,6 +83,18 @@
         error("No categories!");
     }
 
+    $fileformats = get_list_of_plugins("mod/quiz/format");
+    $fileformatname = array();
+    foreach ($fileformats as $key => $fileformat) {
+        $formatname = get_string($fileformat, 'quiz');
+        if ($formatname == "[[$fileformat]]") {
+            $formatname = $fileformat;  // Just use the raw folder name
+        }
+        $fileformatnames[$fileformat] = $formatname;
+    }
+    natcasesort($fileformatnames);
+
+
     print_heading_with_help($strimportquestions, "import", "quiz");
 
     print_simple_box_start("center", "", "$THEME->cellheading");
@@ -92,14 +104,13 @@
     echo "<tr><td align=right>";
     print_string("category", "quiz");
     echo ":</td><td>";
-    asort($QUIZ_FILE_FORMAT);
     choose_from_menu($categories, "category", "$category->id", "");
     echo "</tr>";
 
     echo "<tr><td align=right>";
     print_string("fileformat", "quiz");
     echo ":</td><td>";
-    choose_from_menu($QUIZ_FILE_FORMAT, "format", "custom", "");
+    choose_from_menu($fileformatnames, "format", "gift", "");
     helpbutton("import", $strimportquestions, "quiz");
     echo "</tr>";
 

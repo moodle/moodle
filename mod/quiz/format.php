@@ -1,12 +1,12 @@
 <?PHP  // $Id$ 
 
 ////////////////////////////////////////////////////////////////////
-/// Default class for file imports/exports.                       //
+/// format.php  - Default format class for file imports/exports.  //
 ///                                                               //
 /// Doesn't do everything on it's own -- it needs to be extended. //
 ////////////////////////////////////////////////////////////////////
 
-// Included by ../import.php
+// Included by import.php
 
 class quiz_default_format {
 
