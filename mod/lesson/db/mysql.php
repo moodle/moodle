@@ -46,7 +46,7 @@ function lesson_upgrade($oldversion) {
 	
 	if ($oldversion < 2004072100) {
 		execute_sql(" create table mdl_lesson_high_scores
-					( id int(10) unsigned not null auto_increment primary key,
+					( id int(10) unsigned not null auto_increment,
 					  lessonid int(10) unsigned not null,
 					  userid int(10) unsigned not null,
 					  gradeid int(10) unsigned not null,
@@ -55,7 +55,7 @@ function lesson_upgrade($oldversion) {
 					)");
 
 		execute_sql(" create table mdl_lesson_essay
-					( id int(10) unsigned not null auto_increment primary key,
+					( id int(10) unsigned not null auto_increment,
 					  lessonid int(10) unsigned not null,
 					  userid int(10) unsigned not null,
 					  pageid int(10) unsigned not null,
@@ -71,7 +71,7 @@ function lesson_upgrade($oldversion) {
 					)");
 
 		execute_sql(" create table mdl_lesson_branch
-					( id int(10) unsigned not null auto_increment primary key,
+					( id int(10) unsigned not null auto_increment,
 					  lessonid int(10) unsigned not null,
 					  userid int(10) unsigned not null,
 					  pageid int(10) unsigned not null,
@@ -83,7 +83,7 @@ function lesson_upgrade($oldversion) {
 
 		
 		execute_sql(" create table mdl_lesson_timer
-					( id int(10) unsigned not null auto_increment primary key,
+					( id int(10) unsigned not null auto_increment,
   					lessonid int(10) unsigned not null,
 					userid int(10) unsigned not null,
 					starttime int(10) unsigned not null,
