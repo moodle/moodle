@@ -39,7 +39,7 @@
     $strassignment  = get_string("modulename", "assignment");
 
     print_header_simple($assignment->name, "",
-                 "<a href=index.php?id=$course->id>$strassignments</a> -> $assignment->name", 
+                 "<a href=\"index.php?id=$course->id\">$strassignments</a> -> $assignment->name", 
                   "", "", true, update_module_button($cm->id, $course->id, $strassignment), navmenu($course, $cm));
 
     if (isteacher($course->id)) {
@@ -64,8 +64,8 @@
         notice(get_string("activityiscurrentlyhidden"));
     }
 
-    print_simple_box_start("CENTER");
-    print_heading($assignment->name, "CENTER");
+    print_simple_box_start("center");
+    print_heading($assignment->name, "center");
 
     $timedifference = $assignment->timedue - time();
     if ($timedifference < 31536000) {      // Don't bother showing dates over a year in the future

@@ -28,13 +28,13 @@
 <form name="form" method="post" action="mod.php">
 <table cellpadding="5">
 <tr valign="top">
-    <td align=right><p><b><?php print_string("assignmentname", "assignment") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("assignmentname", "assignment") ?>:</b></td>
     <td>
-        <input type="text" name="name" size=60 value="<?php p($form->name) ?>" />
+        <input type="text" name="name" size="60" value="<?php p($form->name) ?>" alt="<?php print_string("assignmentname", "assignment") ?>" />
     </td>
 </tr>
 <tr valign="top">
-    <td align=right><p><b><?php print_string("description", "assignment") ?>:</b></p>
+    <td align="right"><b><?php print_string("description", "assignment") ?>:</b><br />
     <font size="1">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
@@ -71,7 +71,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align=right><p><b><?php print_string("assignmenttype", "assignment") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("assignmenttype", "assignment") ?>:</b></td>
     <td>
     <?php
        require_once("$CFG->dirroot/mod/assignment/lib.php");
@@ -82,7 +82,7 @@
     </td>
 </tr>
 <tr>
-    <td align=right><p><b><?php print_string("allowresubmit", "assignment") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("allowresubmit", "assignment") ?>:</b></td>
     <td>
     <?php 
         $options[0] = get_string("no"); $options[1] = get_string("yes");
@@ -91,24 +91,24 @@
     ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("grade") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><b><?php print_string("grade") ?>:</b></td>
     <td>
         <?php
         print_grade_menu($course->id, "grade", "$form->grade");
         ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("maximumsize", "assignment") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><b><?php print_string("maximumsize", "assignment") ?>:</b></td>
 	<td><?php
     $choices = get_max_upload_sizes($CFG->maxbytes, $course->maxbytes);
     choose_from_menu ($choices, "maxbytes", $form->maxbytes, "");
     ?>
 	</td>
 </tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("duedate", "assignment") ?>:</b></td>
+<tr valign="top">
+    <td align="right"><b><?php print_string("duedate", "assignment") ?>:</b></td>
     <td><?php
            print_date_selector("dueday", "duemonth", "dueyear", $form->timedue);
            echo "&nbsp;-&nbsp;";
@@ -118,14 +118,14 @@
 </table>
 <br />
 <center>
-<input type="hidden" name=course     value="<?php p($form->course) ?>" />
-<input type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>" />
-<input type="hidden" name=section       value="<?php p($form->section) ?>" />
-<input type="hidden" name=module     value="<?php p($form->module) ?>" />
-<input type="hidden" name=modulename value="<?php p($form->modulename) ?>" />
-<input type="hidden" name=instance   value="<?php p($form->instance) ?>" />
-<input type="hidden" name=mode       value="<?php p($form->mode) ?>" />
-<input type="submit" value="<?php print_string("savechanges") ?>" />
-<input type="submit" name=cancel value="<?php print_string("cancel") ?>" />
+<input type="hidden" name="course"        value="<?php p($form->course) ?>" />
+<input type="hidden" name="coursemodule"  value="<?php p($form->coursemodule) ?>" />
+<input type="hidden" name="section"       value="<?php p($form->section) ?>" />
+<input type="hidden" name="module"        value="<?php p($form->module) ?>" />
+<input type="hidden" name="modulename"    value="<?php p($form->modulename) ?>" />
+<input type="hidden" name="instance"      value="<?php p($form->instance) ?>" />
+<input type="hidden" name="mode"          value="<?php p($form->mode) ?>" />
+<input type="submit"                      value="<?php print_string("savechanges") ?>" />
+<input type="submit" name="cancel"        value="<?php print_string("cancel") ?>" />
 </center>
 </form>

@@ -544,27 +544,28 @@ function assignment_print_difference($time) {
 function assignment_print_submission($assignment, $user, $submission, $teachers, $grades) {
     global $THEME, $USER;
 
-    echo "\n<table BORDER=1 CELLSPACING=0 valign=top cellpadding=10 align=center>";
+    echo "\n<table border=\"1\" cellspacing=\"0\" cellpadding=\"10\" align=\"center\">";
 
     echo "\n<tr>";
     if ($assignment->type == OFFLINE) {
-        echo "\n<td BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
+        echo "\n<td bgcolor=\"$THEME->body\" width=\"35\" valign=\"top\">";
     } else {
-        echo "\n<td ROWSPAN=2 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
+        echo "\n<td rowspan=\"2\" bgcolor=\"$THEME->body\" width=\"35\" valign\"top\">";
     }
     print_user_picture($user->id, $assignment->course, $user->picture);
     echo "</td>";
-    echo "<td NOWRAP BGCOLOR=\"$THEME->cellheading\">".fullname($user, true);
+    echo "<td nowrap=\"nowrap\" bgcolor=\"$THEME->cellheading\">".fullname($user, true);
     if ($assignment->type != OFFLINE and $submission->timemodified) {
         echo "&nbsp;&nbsp;<font SIZE=1>".get_string("lastmodified").": ";
         echo userdate($submission->timemodified);
         echo assignment_print_difference($assignment->timedue - $submission->timemodified);
         echo "</font>";
     }
+    echo "</td>\n";
     echo "</tr>";
 
     if ($assignment->type != OFFLINE) {
-        echo "\n<tr><td BGCOLOR=\"$THEME->cellcontent\">";
+        echo "\n<tr><td bgcolor=\"$THEME->cellcontent\">";
         if ($submission->timemodified) {
             assignment_print_user_files($assignment, $user);
         } else {
@@ -574,11 +575,12 @@ function assignment_print_submission($assignment, $user, $submission, $teachers,
     }
 
     echo "\n<tr>";
-    echo "<td width=35 valign=TOP>";
+    echo "<td width=\"35\" valign=\"top\">";
     if (!$submission->teacher) {
         $submission->teacher = $USER->id;
     }
     print_user_picture($submission->teacher, $assignment->course, $teachers[$submission->teacher]->picture);
+    echo "</td>\n";
     if ($submission->timemodified > $submission->timemarked) {
         echo "<td bgcolor=\"$THEME->cellheading2\">";
     } else {
@@ -592,7 +594,7 @@ function assignment_print_submission($assignment, $user, $submission, $teachers,
     if ($submission->timemarked) {
         echo "&nbsp;&nbsp;<font size=1>".userdate($submission->timemarked)."</font>";
     }
-    echo "<br /><textarea name=\"c$submission->id\" rows=6 cols=60 wrap=virtual>";
+    echo "<br /><textarea name=\"c$submission->id\" rows=\"6\" cols=\"60\">";
     p($submission->comment);
     echo "</textarea><br />";
     echo "</td></tr>";
@@ -607,20 +609,20 @@ function assignment_print_feedback($course, $submission, $assignment) {
         error("Weird assignment error");
     }
 
-    echo "\n<table border=0 cellpadding=1 cellspacing=1 align=CENTER><tr><td bgcolor=#888888>";
-    echo "\n<table border=0 cellpadding=3 cellspacing=0 valign=TOP>";
+    echo "\n<table border=\"0\" cellpadding=\"1\" cellspacing=\"1\" align=\"center\"><tr><td bgcolor=\"#888888\">";
+    echo "\n<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" valign=\"top\">";
 
     echo "\n<tr>";
-    echo "\n<td rowspan=3 bgcolor=\"$THEME->body\" width=35 valign=TOP>";
+    echo "\n<td rowspan=\"3\" bgcolor=\"$THEME->body\" width=\"35\" valign=\"top\">";
     print_user_picture($teacher->id, $course->id, $teacher->picture);
     echo "</td>";
-    echo "<td NOWRAP width=100% bgcolor=\"$THEME->cellheading\">".fullname($teacher);
-    echo "&nbsp;&nbsp;<font size=2><i>".userdate($submission->timemarked)."</i>";
+    echo "<td nowrap=\"nowrap\" width=\"100%\" bgcolor=\"$THEME->cellheading\">".fullname($teacher);
+    echo "&nbsp;&nbsp;<font size=\"2\"><i>".userdate($submission->timemarked)."</i>";
     echo "</tr>";
 
-    echo "\n<tr><td width=100% bgcolor=\"$THEME->cellcontent\">";
+    echo "\n<tr><td width=\"100%\" bgcolor=\"$THEME->cellcontent\">";
 
-    echo "<p align=RIGHT><font size=-1><i>";
+    echo "<p align=\"right\"><font size=\"-1\"><i>";
     if ($assignment->grade) {
         if ($submission->grade or $submission->timemarked) {
             echo get_string("grade").": $submission->grade";
