@@ -72,6 +72,7 @@ $string['nonews'] = 'Aucune brève n\'a été encore publiée';
 $string['noposts'] = 'Aucun message';
 $string['nopostscontaining'] = 'Aucun message contenant « $a » n\'a été trouvé';
 $string['nosubscribers'] = 'Personne encore ne reçoit de copie des messages de ce forum';
+$string['notingroup'] = 'Désolé, vous devez faire partie d\'un groupe pour consulter ce forum.';
 $string['nownotsubscribed'] = '$a->name NE recevra PAS de copies des messages du forum « $a->forum » par courriel.';
 $string['nowsubscribed'] = '$a->name recevra une copie des messages du forum « $a->forum » par courriel.';
 $string['numposts'] = '$a messages';

@@ -35,7 +35,6 @@ $string['authorofsubmission'] = 'Auteur du travail';
 $string['averageerror'] = 'Erreur moyenne';
 $string['awaitinggradingbyteacher'] = 'En attente de la note de l\'enseignant';
 $string['beforedeadline'] = 'Avant l\'échéance : $a';
-$string['beforedeadline'] = 'Avant l\'échéance : $a';
 $string['calculationoffinalgrades'] = 'Calcul de la note finale';
 $string['closeassignment'] = 'Travail fermé';
 $string['comment'] = 'Commentaire';
@@ -111,13 +110,12 @@ $string['noassessmentsdone'] = 'Pas d\'évaluation effectuée';
 $string['nosubmission'] = 'Aucun travail remis';
 $string['nosubmissionsavailableforassessment'] = 'Aucun travail disponible pour évaluation';
 $string['notavailable'] = 'Pas disponible';
-$string['noteonassessmentelements'] = 
-    'L\'évaluation se fait à partir de divers éléments. Ceci facilite l\'attribution<br />
-	d\'une note et assure une plus grande équité. Vous devez spécifier ces éléments<br />
-	avant de rendre disponible cet atelier aux étudiants. Pour ce faire, cliquez<br />
-	sur l\'atelier dans le cours et on vous demandera d\'ajouter des éléments s\'il n\'y<br />
-	en a encore aucun. Vous pourrez en ajouter d\'autres plus tard à l\'aide du menu<br />
-	d\'édition. Vous pouvez modifier les critères à l\'aide de la commande « Gestion des évaluations ».';
+$string['noteonassessmentelements'] = 'L\'évaluation se fait à partir de divers éléments. Ceci facilite l\'attribution<br />
+d\'une note et assure une plus grande équité. Vous devez spécifier ces éléments<br />
+avant de rendre disponible cet atelier aux étudiants. Pour ce faire, cliquez<br />
+sur l\'atelier dans le cours et on vous demandera d\'ajouter des éléments s\'il n\'y<br />
+en a encore aucun. Vous pourrez en ajouter d\'autres plus tard à l\'aide du menu<br />
+d\'édition. Vous pouvez modifier les critères à l\'aide de la commande « Gestion des évaluations ».';
 $string['notgraded'] = 'Sans note';
 $string['notitlegiven'] = 'Aucun titre fourni';
 $string['numberofassessmentelements'] = 'Nombre de commentaires, d\'éléments d\'évaluation, de critères, de notes ou de catégories dans une rubrique';
@@ -216,9 +214,9 @@ $string['ungradedassessmentsofstudentsubmissions'] = '$a évaluations sans notes 
 $string['ungradedassessmentsofteachersubmissions'] = '$a évaluations sans notes (exemples de l\'enseignant)';
 $string['verypoor'] = 'Très faible';
 $string['view'] = 'Afficher';
-$string['viewassessmentofteacher'] = 'Voir l\'évaluation de $a'; // de l\'enseignant ?
+$string['viewassessmentofteacher'] = 'Voir l\'évaluation de $a';
 $string['viewotherassessments'] = 'Voir les autres évaluations';
-$string['warningonamendingelements'] = 'Attention : des travaux ont été remis.<br />
+$string['warningonamendingelements'] = 'Attention ! Des travaux ont été remis.<br />
  Ne modifiez pas le nombre des éléments d\'évaluation, ni les barèmes, ni la pondération des éléments.';
 $string['weight'] = 'Coefficient';
 $string['weightederrorcount'] = 'Nombre d\'erreurs pondérées : $a';
