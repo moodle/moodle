@@ -5,7 +5,7 @@
 //  This fragment is called by /admin/index.php
 ////////////////////////////////////////////////////////////////////////////////
 
-$module->version  = 2002080500;
+$module->version  = 2002080701;
 $module->cron     = 60;
 
 function assignment_upgrade($oldversion) {
@@ -51,8 +51,12 @@ function assignment_upgrade($oldversion) {
         execute_sql(" INSERT INTO log_display VALUES ('assignment', 'update', 'assignment', 'name') ");
         execute_sql(" INSERT INTO log_display VALUES ('assignment', 'view submissions', 'assignment', 'name') ");
         execute_sql(" INSERT INTO log_display VALUES ('assignment', 'upload', 'assignment', 'name') ");
-
     }
+
+    if ($oldversion < 2002080701) {
+        execute_sql(" ALTER TABLE `assignment_submissions` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ");
+    }
+
     return true;
 }
 

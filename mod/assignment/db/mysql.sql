@@ -21,7 +21,7 @@ CREATE TABLE `assignment` (
 #
 
 CREATE TABLE `assignment_submissions` (
-  `id` int(10) unsigned NOT NULL default '0',
+  `id` int(10) unsigned NOT NULL auto_increment,
   `assignment` int(10) unsigned NOT NULL default '0',
   `user` int(10) unsigned NOT NULL default '0',
   `timecreated` int(10) unsigned NOT NULL default '0',
