@@ -1,18 +1,17 @@
-ABOUT THIS DIRECTORY
---------------------
+ÜBER DIESES VERZEICHNIS
+-----------------------
 
-DO NOT CHANGE, RENAME OR MOVE ANY OF THE FILES 
-IN THIS DIRECTORY unless you REALLY know what 
-you are doing.  
+SIE SOLLTEN KEINE DER DATEIEN IN DIESEM VERZEICHNIS VERÄNDERN,
+UMBENENNEN ODER VERSCHIEBEN
+wenn Sie sich nicht ganz sicher sind, was Sie tun.
 
-Changing these files could mess up your course.
+Veränderungen dieser Dateien können die Funktionsfähigkeit
+Ihres Lehrgangs beeinträchtigen.
 
-This directory contains files uploaded to your 
-course within particular modules (mostly by 
-students), such as assignment submissions and 
-forum attachments.
+Dieses Verzeichnis enthält Dateien, die in verschiedenen
+Anwendungsbereichen (zumeist von Teilnehmer/innen) hochgeladen
+wurden. Dies können zum Beispiel eingereichte Prüfungsarbeiten
+oder Forumsbeiträge sein.
 
-The names of the directories and files within 
-this directory are very specific and are 
-automatically maintained by Moodle.
-
+Die Namen der Verzeichnisse oder der Dateien sind automatisch
+von moodle erstellt und dürfen auf keinen Fall verändert werden.

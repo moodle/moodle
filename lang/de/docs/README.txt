@@ -1,16 +1,14 @@
-Moodle documentation
---------------------
 
-If you want to translate this documentation into another language,
-I would suggest that you:
+Wenn Sie diese Dokumentation in eine andere Sprache übersetzen wollen,
+empfehle ich Ihnen:
 
- 1) don't include English versions of the files in this directory
-    because they will be used automatically anyway if it is missing
-    from your language pack.
+ 1) die englischen Versionen der Dateien nicht in dieses Verzeichnis zu kopieren.
+    Wenn das Programm im von Ih en gewählten Sprachverzeichnis keine Übersetzung dieser
+    Datei findet, nutzt es automatisch die englische Fassung.
 
- 2) translate them in this order (starting with the important ones):
-  
-    MOST IMPORTANT
+ 2) übersetzen Sie in der folgenden Reihenfolge (beginnen Sie mit den wichtigsten Dateien):
+
+    DIE WICHTIGSTEN DATEIEN
     |-------------------
     |
     |   - files.php
@@ -21,9 +19,9 @@ I would suggest that you:
     |
     |   - teacher.html
     |   - module_files.txt
-    | 
+    |
     |  -----------------
-    |   
+    |
     |   - intro.html
     |   - features.html
     |   - release.html
@@ -35,10 +33,9 @@ I would suggest that you:
     |   - future.html
     |
     |  -----------------
-    |   
+    |
     |   - license.html
     |   - credits.html
     |
     |-------------------
-    LEAST IMPORTANT
-
+    WENIGER WICHTIGE DATEIEN

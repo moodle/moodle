@@ -1,0 +1,394 @@
+<HEAD>
+    <TITLE>Moodle Dokumentation Anmerkungen zu den verschiedenen Versionen</TITLE>
+        <LINK REL="stylesheet" HREF="../theme/standard/styles.php" TYPE="TEXT/CSS">
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <style type="text/css">
+       DT {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
+       DD {margin-bottom:1em;}
+    </style>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+<H2>Versionshinweise</H2>
+
+<H3> Neu in Moodle 1.0.8.1 (12. Januar 2003) :</H3>
+<UL><DL>
+<DT> Keine neuen Features, nur Fehlerberichtigungen:</DT>
+<DD>
+   <LI> Fehler in der E-Mail-Best&auml;tigung behoben
+   <LI> Feedback-Text im Modul TextQuiz kann gestaltet werden
+   <LI> Fehlerreaktion wenn ein Modul nicht gelesen werden kann verbessert
+   <LI> Fehler bei Zeiteinstellungen (Module Pr&uuml;fungen und Quiz) behoben, wenn die Zeitzone des Anwenders und des Server nicht &uuml;bereinstimmen
+   <LI> Anzeige der Kalendermonate auf einigen Servern
+   <LI> Richtext Editor arbeiten nun besser mit dem Wahl-Modul zusammen
+   <LI> H&ouml;here Stabilit&auml;t
+   <LI> Installationsprozess pr&uuml;ft, ob in das Sessions-Verzeichnis geschrieben werden darf
+   <LI> Erg&auml;nzung eines kleinen Test-Programms f&uuml;r die Sessionsunterst&uuml;tzung
+</DD>
+</DL></UL>
+
+<HR>
+
+
+<H3> Neu in Moodle 1.0.8 (6. Januar 2003) :</H3>
+<UL><DL>
+<DT> Datenbank</DT>
+<DD> Moodle unterst&uuml;tzt nun <B>PostgreSQL 7</B> Datenbanken (Dank an
+     Mary Hunter f&uuml;r die SQL Dateien und andere Anregungen!).
+     Moodle unterst&uuml;tzt nun Tabellen-Prefixes. Sie k&ouml;nnen Moodle nun in
+     jeder Datenbank installieren, auch wenn sie Tabellen von anderen
+     Anwendungsprogrammen enth&auml;lt.
+     Eine Reihe weiterer Ver&auml;nderungen in der Codestruktur erm&ouml;glichen nun die Unterst&uuml;tzung anderer Datenbanktypen.</DD>
+
+<DT> Sprachen </DT>
+<DD> <B><U>Sechs neue Sprachen wurden hinzugef&uuml;gt</U> </B>  Chinesisch (von Zhang Dexuan),
+     Arabisch (von Ahmed Nabil), T&uuml;rkisch (von M. C&uuml;neyt Birk&ouml;k), Schwedisch (von Set Lonnert),
+     Thail&auml;ndisch (von Wim Singhanart) und Niederl&auml;ndisch (von Hans Zwart und Jacob Romeyn).  Vielen Dank an alle diese hart arbeiten Mitarbeiter!  Die meisten anderen Sprachen wurde seit der Version 1.0.7. angepasst und verbessert.
+     Der Editor f&uuml;r die Bearbeitung der Sprachversionen wurde verbeseerrt. Es ist nun einfacher, neue Textelemente zu erkennen und fehlende &Uuml;bersetzungen einzuf&uuml;gen.  Die wichtigsten Teile der Dokumentation k&ouml;nnen nun ebenfalls lokalisiert werden und werden in der gew&auml;hlten Sprachversion angezeigt, wenn eine Sprachdatei zur Verf&uuml;gung steht.</DD>
+
+<DT> Layout</DT>
+<DD> Eine Reihe kleiner Entwicklungen im Layout (z.B. beim Eintragen von Beitr&auml;gen im Forum)
+machen die Anwendung einfacher und &uuml;bersichtlicher.  Fast alle Felder mit Texteintr&auml;gen verf&uuml;gen nun &uuml;ber eigene Hilfetexte. In den Forum gibt es nun eine Schnell-Suche auf jeder Seite.</DD>
+
+<DT> Fertige Ansichten (Themes) </DT>
+<DD> Die Unterst&uuml;tzung durch CSS wurde erweitert. Sie erm&ouml;glicht jedem Anwender
+     die individuelle Anpassung des Aussehens von Moodle. Weitere neue Standard-Ansichten wurden beigef&uuml;gt.</DD>
+
+<DT> Materialien/Quellen (Resources)</DT>
+<DD> Nun k&ouml;nnen auch "Programme" als Materialien eingef&uuml;gt werden. Dadurch kann Moodle mit anderen  Web-Anwendungsprogrammen zusammen arbeiten und Informationen &uuml;ber den Nutzer und die aktuelle Sitzung austauschen.   Hochgeladene HTML-Dateien k&ouml;nnen nun mit einem WYSIWYG HTML Editor bearbeitet werden. </DD>
+
+<DT> Wahlen (Choices)</DT>
+<DD> Ergebnisse k&ouml;nnen nun ver&ouml;ffentlicht werden (mit Namen oder anonym) so dass jeder eine Statistik der Ergebnisse sehen kann.  Der Text der Wahlen (Choice)kamm mit dem HTML Editor bearbeitet werden.</DD>
+
+<DT> Bewertungen</DT>
+<DD> Die Teilnehmer/innen k&ouml;nnen nun alle Bewertungen, die sie in ihrem Kurs erhalten haben auf einer Seite einsehen.</DD>
+
+<DT> Quiz</DT>
+<DD> Die Teilnehmer/innen k&ouml;nnen alle Ergebnisse ihrer fr&uuml;heren Versuche beim Test einsehen wenn der ozent dies zul&auml;sst und der Quiz abgeschlossen ist.</dd>
+
+<DT> Zugangsberechtigungen </DT>
+<DD> Das Datenbbankmodul unterst&uuml;tzt nun auch md5-verschl&uuml;sstelte Passw&ouml;rter.
+     Es ist damit kompatibel mit Systemen wie PostNuke. Wenn andere Zugangsberechtigungen genutzt werden sollten die Teilnehmer/innen ihre pers&ouml;nliche Informatione eintragen, bevor sie einen Kurs belegen. Ein ADOdb-Fehler war die Ursache f&uuml;r einge Fehler, wenn die externe Datenbank der Moodle Datenbank &auml;hnelte. Jetzt sind alle Funktionen nutzbar.   </DD>
+
+<DT> Verwaltung </DT>
+<DD> Der Administrator kann nun weitere Personen als Admin eintragen.  Die Oberfl&auml;che der Datenbankverwaltung wurde &uuml;berarbeitet und nutzt die eingestellte Sprachversion (siehe hierzu den gesonderten Download unter <A HREF="http://moodle.com/mod/resource/view.php?id=8">moodle-1.0.8-mysql-admin.zip</A>).</DD>
+
+<DT> Debugging Modus </DT>
+<DD> Admins und Entwickler k&ouml;nnen den "Debugging Modus" verwenden. Er zeigt weitere Informationen und Warnhinweise &uuml;ber fehlerhafte Einstellungen und macht die Identifikation von Fehlern einfacher. Dazu wurde ein gro&szlig;er Teil des Moddle Codes bereinigt und das gesamte System stabiler.  </DD>
+
+<DT> Weitere Ver&auml;nderungen</DT>
+<DD>
+     <LI> Ein Unpacked template module wird von Moodle ignoriert.
+     <LI> Die L&auml;ndereinstellung kann vom Admin eingestellt werden
+     <LI> In einigen Sprachen fehlte der Source-Button im Richtext-Editor
+     <LI> Ein Fehler auf der Benotungsseite in einigen Installationen wurde behoben.
+     <LI> Probleme beim Hochladen von Dateien in PHP-Version 4.3.0 wurden beseitigt.
+     <LI> Einige kleinere Probleme bei der Anzeige von Statistiken wurden beseitigt.
+     <LI> Verbesserte GD-Erkennung, die mit PHP 4.3.0 zusammen arbeitet
+     <LI> Auch wenn GD nicht installiert ist, l&auml;uft Moodle nun besser
+     <LI> Ein Fehler, der zu einer fehlerdhaften Datumsanzeige f&uuml;hrte, wurde beseitigt.
+     <LI> Usernamen k&ouml;nnen nun auch "." und "-" Zeichen umfassen.
+     <LI> Cookies verwenden nun Tabellen-Vorzeichen f&uuml;r ein eeinheitliche Namensgebung, dadurch k&ouml;nnen
+          k&ouml;nnen verschiedene Moodle-Installationen auf einer Webseite und der gleichen Datenbank laufen.
+     <LI> Die Kopfzeile der Seite News Forum kann nun gestaltet werden.
+     <LI> Verbesserter Code zur Formulareingabe
+     <LI> Die fehlerhafte referrer Variable ist &uuml;berarbeitet und funktioniert nun korrekt
+     <LI> Einige kleinere Leistungsverbesserungen hier und da.
+     <LI> Einige Entwicklungen, die ich leider wieder vergessen habe
+     <LI> Viele kleine Bereinigungen im Code.
+</DD>
+
+</DL></UL>
+
+<H3>  Fr&uuml;here Ver&auml;nderungen in Moodle werden nicht &uuml;bersetzt.
+      'Historiker' m&ouml;gen auf den nachfolgenden Originaltext zur&uuml;ckgreifen.   </H3>
+
+<HR>
+<H3>  New in Moodle 1.0.7 (10th December, 2002):   </H3>
+<UL><DL>
+<DT> Simpler version numbers!</DT>
+<DD> The four-digit version numbers were getting a bit ridiculous (too complex),
+     so I've switched back to simpler 3-digit numbers.  The first digit is the
+     major structural version, the second digit is for decent-sized upgrades
+     and the third digit is for minor upgrades.</DD>
+
+<DT> Languages</DT>
+<DD> Two completely new languages have been added: Indonesian (from Arfan Hidayat)
+     and Japanese (from Mitsuhiro Yoshida).  A US English version was added too.
+     Most other languages contain some updates.  All languages now contain locale
+     information, which means that when a user changes the language all the dates
+     will display properly too.</DD>
+
+<DT> Database access</DT>
+<DD> ADOdb was upgraded to 2.50 which should fix some problems with very
+     new versions of PHP (4.3.0).</DD>
+
+<DT> Layout improvements</DT>
+<DD> Cleaned up the display of "side boxes" and added CSS style control over
+     more elements on the site and course pages.  You may need to upgrade
+     your custom themes to get the full effect.  Changes are in styles.php,
+     config.php and one line in header.html.
+
+     <P>The interface when
+     courses are on front page and there is more than one category has
+     been improved (no longer just shows short course names).</P>
+
+     </DD>
+
+<DT> Class interface</DT>
+<DD> A wrapper file provides a class interface to main Moodle library
+     (for external programs interfacing to Moodle) - moodle/lib/makeclass.php</DD>
+
+<DT> Small improvements and bug fixes</DT>
+<DD>
+     <LI> Quizzes now have a confirmation dialog when submitting an attempt
+     <LI> Courses now default to having "show recent activity" on (again).
+     <LI> Abolished leading zeroes in dates (introduced in last release)
+     <LI> Some formatting fixes for Japanese and old Netscape browsers
+     <LI> Teacher can allow larger assignments to be uploaded
+     <LI> Change password button on user page now always functions like the one on login page
+     <LI> Forum search now searches subjects as well as messages
+     <LI> Various HTML fixes
+     <LI> Fixes to grades display when there are no grades, also no forum ratings
+     <LI> Slashes in requested filenames are now stripped
+     <LI> Updates to the documentation
+</DD>
+
+
+</DL></UL>
+
+
+
+<HR>
+<H3>  New in Moodle 1.0.6.4 (24th November, 2002) : </H3>
+<UL><DL>
+
+<DT> Authentication</DT>
+<DD> Moodle now features seven different authentication mechanisms,
+     making it possible to hook Moodle up to nearly any external list
+     of users!</P>
+     <P>New methods just added include IMAP, POP3 and NNTP servers (including
+     those using SSL or certificate-based authentication), and also
+     authentication against user-specified fields in ANY
+     external database table.</P>
+     <P>The login page can now be partially customised
+     by the admin with personalised instructions, and the guest login can be
+     hidden if desired.  </P>
+     <P>"Mappings" can be defined so that other fields (such as email, firstname,
+     lastname, department, language etc) can also be copied from LDAP or an
+     external database when accounts are first used.</P>
+
+     <P>Finally, Moodle now sports a cool
+     new admin GUI for configuring all of this, so it should be pretty
+     easy now to set up external authentication.
+     Many thanks to contributor Petri Asikainen for helping with the admin GUI.</P></DD>
+
+<DT> Languages</DT>
+<DD> Complete new Norwegian translation (from Jøran Sørbø), and updates for several others.</DD>
+
+<DT> Assignments</DT>
+<DD> Students can now resubmit assignments after grading if the teacher allows it</DD>
+
+<DT> Contributed code</DT>
+<DD> Standalone user-contributed code is now distributed under the /contrib directory.  This directory
+     could get quite large, and the quality/security of it has usually not been checked by me,
+     and so this code is not included in the standard releases and nightlies.  However, people
+     who are interested in it can access it via CVS (or see <A HREF="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/moodle/moodle/contrib/">CVS web view</A>).  As these new features become polished or if demand grows for them,
+     then I'll integrate them into the main Moodle distribution.
+     <BR><BR>
+     The first contributor is Holger Schadeck (compuproggy), who has written some <A HREF="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/moodle/moodle/contrib/compuproggy/">interesting code</A>   to help with translating all the Moodle help files.  Check it out!</DD>
+
+<DT> Bug fixes</DT>
+<DD>
+     <LI> Day value in dates (eg forum posts, weekly listing) are
+          now displayed correctly on Windows servers.
+     <LI> config-dist.php and README.txt is now in DOS format to make it easier for Windows users to get started (Unix users shouldn't be affected).
+     <LI> Added a workaround (and new config switch in config-dist.php) for
+          some systems which have buggy referer variables.  This should help
+          those people getting "stuck" on a form during setup.
+     <LI> Logout now sends you to the home page and clears the session completely.
+     <LI> Timezones now range between -13 to 13 hours (for daylight saving).
+     <LI> Character set in email now matches current language.
+     <LI> User pictures are now uploaded even if other fields have errors.
+     <LI> Full-size user pictures on user profile page no longer clickable.
+     <LI> Long user listing now has a small notice at the bottom about automatic unenrolment
+     <LI> Unenrol and change password buttons are hidden for guest student
+     <LI> Fixed occasional case where submitted assignments were sometimes having their owner changed.
+     <LI> User log graphs are now faster, cleaner and translatable.
+     <LI> Fixed HTML display errors with courses in category boxes on front page.
+     <LI> Admin and guest accounts now always work, even with external authentication activated.
+     <LI> Slightly more security when writing/reading files (now checks for embedded scripting).
+     <LI> The same user can now be deleted more than once (create, delete, recreate, delete caused error).
+     <LI> Language editor now works with multibyte languages (Thanks, Mits)
+</DD>
+
+</DL></UL>
+
+
+<HR>
+<H3>  New in Moodle 1.0.6.3 (14th November, 2002) :   </H3>
+<UL><DL>
+
+<DT> Bug fix for no-name forums.</DT>
+<DD> New sites created with 1.0.6.2 had some forums appearing with no names
+     (for example the News forum on the home page).
+     A workaround is to add a new activity to that section (all the names
+     will be refreshed), but this release will fix it too. </DD>
+
+<DT> New languages!</DT>
+<DD> Catalan and Spanish (Spain) translations have arrived!</DD>
+
+<DT> Some display improvements for old Netscape browsers (headers and quizzes)</DT>
+
+<DT> Guest language now ALWAYS the same as the current site language</DT>
+
+<DT> "Recent Activity" can now be disabled completely if desired </DT>
+
+<DT> For very large classes (larger than 500) participant list is not displayed</DT>
+
+</DL></UL>
+
+<HR>
+
+<H3>  New in Moodle 1.0.6.2 (11th November, 2002) :   </H3>
+<UL><DL>
+<DT> Course formatting improvements </DT>
+<DD> The weekly and topic formats now have an extra "general" area up
+     the top where "general" activities are listed - these are things
+     that apply throughout the course, not just to one particular topic
+     or week.  This general area is not shown if it is completely empty.</DD>
+
+<DT> Popup "jump" menu. </DT>
+<DD> You can now jump from one activity directly to any other using a
+     popup menu in the upper-right corner of the page</DD>
+
+<DT> Speed improvements </DT>
+<DD> Course activity details are now cached for each course, which
+     greatly reduces the amount of database access required to display
+     the course page.  On heavily accessed systems this should improve speed.</DD>
+
+<DT> Languages </DT>
+<DD> Surveys are now completely translatable.</DD>
+
+<DT> Admin improvements </DT>
+<DD> Paging was added to the user admin page, so that the admin can now
+     browse large numbers of users.  </DD>
+
+<DT> Fixes and tweaks </DT>
+<DD> Various other small improvements to formatting</DD>
+</DL></UL>
+
+
+<HR>
+
+<H3>  New in Moodle 1.0.6.1 (6th November, 2002) :   </H3>
+<UL><DL>
+<DT> New assignment type: offline assignments </DT>
+<DD> In addition to "upload a file" assignments, you can now have "offline"
+     assignments.  These don't require the student to do anything online.
+     They are useful for grading activities that are not on in Moodle, and a
+     also useful for adding "manual" columns to the grade page.</DD>
+
+<DT> Languages </DT>
+<DD> Spanish (Mexican) has been added to the distribution.  Other languages have various improvements.</DD>
+
+<DT> SMTP authentication </DT>
+<DD> SMTP mail now supports SMTP username and password if needed</DD>
+
+<DT> Documentation </DT>
+<DD> Some parts rewritten, and documentation cleaned up (upgrade info now part of main docs)</DD>
+
+<DT> Other fixes </DT>
+<UL><LI>Better checking on teachers using "loginas" to stop them roaming other courses as a student
+         <LI>While using "loginas", teachers can return to their own identity using a link in the footer
+         <LI>Some strings fixed in assignments, journals, and forums.
+         <LI>Guest language is now the same as the site
+         <LI>etc
+     </UL></DD>
+
+</DL></UL>
+
+
+<HR>
+<H3>  New in Moodle 1.0.6 (26th October, 2002) :   </H3>
+
+<UL><DL>
+<DT> New feature - WYSIWYG Text editing! </DT>
+<DD> A WYSIWYG text editor has been added to many of the forms in Moodle.  These are currently
+     only visible when using Microsoft Internet Explorer 5.5 or later - other browsers see the
+     normal forms exactly as before.</DD>
+
+<DT> New feature - Quiz module! </DT>
+<DD> Finally, the most requested new module is here!  Multiple choice, short answer, and true-false
+     questions with automatic marking, multiple attempts, teacher regrading and many other features.
+     Questions are stored in a categorised database, and may be "published" to other courses.</DD>
+
+<DT> New feature - Grade manager! </DT>
+<DD> A new tool has been added for teachers to see all grades for a course on one page.
+     You can also download/export grades as a tab-separated text file or an Excel
+     Spreadsheet.  In future more features will be added to this page like sorting, manual
+     columns and calculations, but it's still pretty useful right now.</DD>
+
+<DT> New feature - LDAP authentication! </DT>
+<DD> Moodle can now authenticate against external directories that use the
+     LDAP protocol (including Novell etc).  Many thanks to Petri Asikainen for
+     developing this authentication plug-in!</DD>
+
+<DT> New feature - New smilies </DT>
+<DD> Many new smilies have been added, and are now also accessible using a GUI in the text editor.</DD>
+
+<DT> Improved text editing </DT>
+<DD> You can now include all major HTML tags in all texts.  This is now safe because
+     of newly added functionality that strips all Javascript and faulty tags from texts
+     before they can cause security or display problems.</DD>
+
+<DT> Languages </DT>
+<DD> German and Italian have been added!  Many thanks to the translators (see the credits).</DD>
+
+<DT> Reading module => Resource module </DT>
+<DD> After much thought and a vote of support (21 "yes" to 6 "no") on the "Using Moodle"
+     web site I changed the name of the "reading" module to "resource" (at the code level
+     and also the language packs).  It was better to do this earlier than later.
+     This more generic name will be more meaningful to more people and opens the way to
+     some real development on a resource library.
+     But I don't want to ever change a module name again!  :-)
+     If you have any hard-coded URLs pointing to readings that you don't want to break,
+     you can add a line like this to your Apache httpd.conf to redirect them:
+     <P><CODE>Redirect /mod/reading http://yourserver.com/mod/resource</CODE></P>
+     <FONT COLOR=RED>Note: if upgrading to 1.0.6 you may have some "reading" errors in "Recent activity" ... logging
+     out and then logging in again will fix this</FONT></DD>
+
+<DT> Other additions </DT>
+<DD> An admin script to totally delete the Moodle data directory has been included (admin/delete.php)
+     for people who need to tear down a Moodle installation but don't have root access on their
+     server.</DD>
+
+<DT> Miscellaneous </DT>
+<DD> Many small improvements have been made to the interface, and many small bugs have been fixed.
+     Some examples:
+     <UL>
+     <LI> Big "Edit this page" buttons at the top of pages (replacing the tiny icon)
+     <LI> LDAP authentication module (thanks to Petri)
+     <LI> Authentication from external sources can now import any fields
+     <LI> Student assignment list now shows submission status properly
+     <LI> Default language for users is now the site language
+     <LI> Users have a 'Change Password' button on their profile page
+     <LI> Journals that need teacher feedback are highlighted
+     <LI> More documentation and more context help buttons
+     <LI> Database-specific upgrade code
+     <LI> Uses character-set codes to make the browser do the right thing
+     <LI> User's name in footer is now a link
+     <LI> News and social forums are now editable
+     <LI> Forums that don't allow posting don't have uneccessary "discuss" links
+     <LI> Improved algorithm for shortening posts in forum listings
+     <LI> Choice module now allows up to six choices
+     </UL>
+</DD>
+</DL></UL>
+
+<P>&Auml;ltere Versionen finden Sie im <A HREF="http://moodle.com/mod/forum/view.php?f=1">Moodle.com announcement forum</A>.
+
+
+<P>&nbsp;</P>
+<P ALIGN="CENTER"><FONT SIZE="1"><A HREF="../doc/" TARGET="_top">Moodle Dokumentation</A></FONT></P>
+<P ALIGN="CENTER"><FONT SIZE="1">Version: $Id$</FONT></P>
