@@ -3,7 +3,6 @@
 /**
  * Library of functions for database manipulation.
  * 
- * Library of functions for database manipulation.
  * Other main libraries:
  * - weblib.php - functions that produce web output
  * - moodlelib.php - general-purpose Moodle functions
@@ -18,7 +17,7 @@
 
 if ($SITE = get_site()) {
     /**
-     * If $SITE global from get_site() function exists then set it to that id, otherwise set to 1.
+     * If $SITE global from {@link get_site()} is set then SITEID to $SITE->id, otherwise set to 1.
      */
     define('SITEID', $SITE->id);
 } else {
@@ -35,8 +34,9 @@ if ($SITE = get_site()) {
  *
  * Completely general function - it just runs some SQL and reports success.
  *
- * @param string $command the sql string to be executed
- * @param boolean $feedback should the output of this command be returned? Default is true.
+ * @uses $db
+ * @param string $command The sql string you wish to be executed.
+ * @param boolean $feedback Set this argument to true if the results generated should be printed. Default is true.
  * @return string
  */
 function execute_sql($command, $feedback=true) {
@@ -48,12 +48,12 @@ function execute_sql($command, $feedback=true) {
 
     if ($result) {
         if ($feedback) {
-            echo '<p><font color="green"><b>'. get_string('success') .'</b></font></p>';
+            echo '<p><font color="green"><strong>'. get_string('success') .'</strong></font></p>';
         }
         return true;
     } else {
         if ($feedback) {
-            echo '<p><font color="red"><b>'. get_string('error') .'</b></font></p>';
+            echo '<p><font color="red"><strong>'. get_string('error') .'</strong></font></p>';
         }
         return false;
     }
@@ -68,9 +68,11 @@ function execute_sql($command, $feedback=true) {
  * Lines that are blank or that start with "#" are ignored.
  * Only tested with mysql dump files (mysqldump -p -d moodle)
  *
+ * @uses $CFG
  * @param string $sqlfile The path where a file with sql commands can be found on the server.
  * @param string $sqlstring If no path is supplied then a string with semicolon delimited sql 
  * commands can be supplied in this argument.
+ * @return boolean Returns true if databse was modified successfully.
  */
 function modify_database($sqlfile='', $sqlstring='') {
 
@@ -118,13 +120,13 @@ function modify_database($sqlfile='', $sqlstring='') {
 /// FUNCTIONS TO MODIFY TABLES ////////////////////////////////////////////
 
 /**
-* Add a new field to a table, or modify an existing one (if oldfield is defined).
-*
-* Add a new field to a table, or modify an existing one (if oldfield is defined).
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Add a new field to a table, or modify an existing one (if oldfield is defined).
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param    type description
+ * @todo Finish documenting this function
+ */
 
 function table_column($table, $oldfield, $field, $type='integer', $size='10',
                       $signed='unsigned', $default='0', $null='not null', $after='') {
@@ -264,13 +266,18 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
 /// GENERIC FUNCTIONS TO CHECK AND COUNT RECORDS ////////////////////////////////////////
 
 /**
-* Returns true or false depending on whether the specified record exists
-*
-* Returns true or false depending on whether the specified record exists
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns true or false depending on whether the specified record exists
+ *
+ * @uses $CFG
+ * @param string $table The database table to be checked for the record.
+ * @param string $field1 The first table field to be checked for a given value. Do not supply a field1 string to leave out a WHERE clause altogether.
+ * @param string $value1 The value to match if field1 is specified.
+ * @param string $field2 The second table field to be checked for a given value. 
+ * @param string $value2 The value to match if field2 is specified.
+ * @param string $field3 The third table field to be checked for a given value. 
+ * @param string $value3 The value to match if field3 is specified.
+ * @return boolean True is record exists
+ */
 function record_exists($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
     global $CFG;
@@ -292,12 +299,14 @@ function record_exists($table, $field1='', $value1='', $field2='', $value2='', $
 
 
 /**
-* Returns true or false depending on whether the specified record exists
+* Determine whether a specified record exists.
 *
-* The sql statement is provided as a string.
+* This function returns true if the SQL executed returns records.
 *
-* @param    type description
-* @todo Finish documenting this function
+* @uses $CFG
+* @uses $db
+* @param string $sql The SQL statement to be executed.
+* @return boolean
 */
 function record_exists_sql($sql) {
 
@@ -319,13 +328,18 @@ function record_exists_sql($sql) {
 
 
 /**
-* Get all the records and count them
-*
-* Get all the records and count them
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Get all specified records from the specified table and return the count of them
+ *
+ * @uses $CFG
+ * @param string $table The database table to be checked against.
+ * @param string $field1 The first table field to be checked for a given value. Do not supply a field1 string to leave out a WHERE clause altogether.
+ * @param string $value1 The value to match if field1 is specified.
+ * @param string $field2 The second table field to be checked for a given value. 
+ * @param string $value2 The value to match if field2 is specified.
+ * @param string $field3 The third table field to be checked for a given value. 
+ * @param string $value3 The value to match if field3 is specified.
+ * @return int The count of records returned from the specified criteria.
+ */
 function count_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
     global $CFG;
@@ -346,14 +360,14 @@ function count_records($table, $field1='', $value1='', $field2='', $value2='', $
 }
 
 /**
-* Get all the records and count them
-*
-* Get all the records and count them
-*
-* @param    type description
-* @todo Finish documenting this function
-*
-*/
+ * Get all the records and count them
+ *
+ * @uses $CFG
+ * @param string $table The database table to be checked against.
+ * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
+ * @param string $countitem The count string to be used in the SQL call. Default is COUNT(*).
+ * @return int The count of records returned from the specified criteria.
+ */*
 function count_records_select($table, $select='', $countitem='COUNT(*)') {
 
     global $CFG;
@@ -367,13 +381,13 @@ function count_records_select($table, $select='', $countitem='COUNT(*)') {
 
 
 /**
-* Get all the records and count them
-*
-* The sql statement is provided as a string.
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Get all the records returned from the specified SQL call and return the count of them
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param string $sql The SQL string you wish to be executed.
+ * @return int The count of records returned from the specified SQL string.
+ */
 function count_records_sql($sql) {
 
     global $CFG, $db;
@@ -395,19 +409,19 @@ function count_records_sql($sql) {
 /// GENERIC FUNCTIONS TO GET, INSERT, OR UPDATE DATA  ///////////////////////////////////
 
 /**
-* Get a single record as an object
-*
-* Get a single record as an object
-*
-* @param    string  $table the name of the table to select from
-* @param    string  $field1 the name of the field for the first criteria
-* @param    string  $value1 the value of the field for the first criteria
-* @param    string  $field2 the name of the field for the second criteria
-* @param    string  $value2 the value of the field for the second criteria
-* @param    string  $field3 the name of the field for the third criteria
-* @param    string  $value3 the value of the field for the third criteria
-* @return   object(fieldset)    a fieldset object containing the first record selected
-*/
+ * Get a single record as an object
+ *
+ * @uses $CFG
+ * @param    string  $table The name of the table to select from
+ * @param    string  $field1 The name of the field for the first criteria
+ * @param    string  $value1 The value of the field for the first criteria
+ * @param    string  $field2 The name of the field for the second criteria
+ * @param    string  $value2 The value of the field for the second criteria
+ * @param    string  $field3 The name of the field for the third criteria
+ * @param    string  $value3 The value of the field for the third criteria
+ * @return   object(fieldset) A fieldset object containing the first record selected
+ * @todo Isn't the return from this function an associative array (array type) ?
+ */
 function get_record($table, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
 
     global $CFG ;
@@ -425,14 +439,16 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
 }
 
 /**
-* Get a single record as an object
-*
-* The sql statement is provided as a string.
-* A LIMIT is normally added to only look for 1 record
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Get a single record as an object using the specified SQL statement
+ *
+ * A LIMIT is normally added to only look for 1 record
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param string $sql The SQL string you wish to be executed.
+ * @return boolean
+ * @todo include code example of SQL calls including using LIMIT for only 1 record
+ */
 function get_record_sql($sql) {
 
     global $db, $CFG;
@@ -472,13 +488,14 @@ function get_record_sql($sql) {
 }
 
 /**
-* Gets one record from a table, as an object
-*
-* "select" is a fragment of SQL to define the selection criteria
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Gets one record from a table, as an object
+ *
+ * @uses $CFG
+ * @param string $table The database table to be checked against.
+ * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @return array An associative array with the results from the SQL call.
+ */*
 function get_record_select($table, $select='', $fields='*') {
 
     global $CFG;
@@ -492,16 +509,24 @@ function get_record_select($table, $select='', $fields='*') {
 
 
 /**
-* Get a number of records as an array of objects
-*
-* Can optionally be sorted eg "time ASC" or "time DESC"
-* If "fields" is specified, only those fields are returned
-* The "key" is the first column returned, eg usually "id"
-* limitfrom and limitnum must both be specified or not at all
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Get a number of records as an array of objects
+ *
+ * Can optionally be sorted eg "time ASC" or "time DESC"
+ * If "fields" is specified, only those fields are returned
+ * The "key" is the first column returned, eg usually "id"
+ * limitfrom and limitnum must both be specified or not at all
+ *
+ * @uses $CFG
+ * @param string $table The database table to be checked against.
+  * @param string $field ?
+  * @param string $value ?
+  * @param string $sort ?
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @param int $limitfrom ?
+ * @param int $limitnum ?
+ * @return array | false An associative array with the results from the SQL call or false if error.
+ * @todo Finish documenting this function
+ */
 function get_records($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
 
     global $CFG;
@@ -535,16 +560,23 @@ function get_records($table, $field='', $value='', $sort='', $fields='*', $limit
 }
 
 /**
-* Get a number of records as an array of objects
-*
-* Can optionally be sorted eg "time ASC" or "time DESC"
-* "select" is a fragment of SQL to define the selection criteria
-* The "key" is the first column returned, eg usually "id"
-* limitfrom and limitnum must both be specified or not at all
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Get a number of records as an array of objects
+ *
+ * Can optionally be sorted eg "time ASC" or "time DESC"
+ * "select" is a fragment of SQL to define the selection criteria
+ * The "key" is the first column returned, eg usually "id"
+ * limitfrom and limitnum must both be specified or not at all
+ *
+ * @uses $CFG
+ * @param string $table The database table to be checked against.
+ * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
+ * @param string $sort ?
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @param int $limitfrom ?
+ * @param int $limitnum ?
+ * @return array | false An associative array with the results from the SQL call or false if error.
+ * @todo Finish documenting this function
+ */
 function get_records_select($table, $select='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
 
     global $CFG;
@@ -577,16 +609,22 @@ function get_records_select($table, $select='', $sort='', $fields='*', $limitfro
 
 
 /**
-* Get a number of records as an array of objects
-*
-* Differs from get_records() in that the values variable
-* can be a comma-separated list of values eg  "4,5,6,10"
-* Can optionally be sorted eg "time ASC" or "time DESC"
-* The "key" is the first column returned, eg usually "id"
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Get a number of records as an array of objects
+ *
+ * Differs from get_records() in that the values variable
+ * can be a comma-separated list of values eg  "4,5,6,10"
+ * Can optionally be sorted eg "time ASC" or "time DESC"
+ * The "key" is the first column returned, eg usually "id"
+ *
+ * @uses $CFG
+ * @param string $table The database table to be checked against.
+ * @param string $field ?
+ * @param string $values ?
+ * @param string $sort ?
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @return array| false An associative array with the results from the SQL call or false if error.
+ * @todo Finish documenting this function
+ */
 function get_records_list($table, $field='', $values='', $sort='', $fields='*') {
 
     global $CFG;
@@ -607,17 +645,19 @@ function get_records_list($table, $field='', $values='', $sort='', $fields='*') 
 
 
 /**
-* Get a number of records as an array of objects
-*
-* The "key" is the first column returned, eg usually "id"
-* The sql statement is provided as a string.
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Get a number of records as an array of objects
+ *
+ * The "key" is the first column returned, eg usually "id"
+ * The sql statement is provided as a string.
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param string $sql The SQL string you wish to be executed.
+ * @return array | false Returns an associative array with found records or false if no records or error occured.
+ */
 function get_records_sql($sql) {
 
-    global $CFG,$db;
+    global $CFG, $db;
 
     if (!$rs = $db->Execute($sql)) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
@@ -647,7 +687,13 @@ function get_records_sql($sql) {
 * If "fields" is specified, only those fields are returned
 * The "key" is the first column returned, eg usually "id"
 *
-* @param    type description
+ * @uses $CFG
+ * @param string $table The database table to be checked against.
+ * @param string $field ?
+ * @param string $value ?
+ * @param string $sort ?
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @return array An associative array with the results from the SQL call.
 * @todo Finish documenting this function
 */
 function get_records_menu($table, $field='', $value='', $sort='', $fields='*') {
@@ -667,16 +713,22 @@ function get_records_menu($table, $field='', $value='', $sort='', $fields='*') {
     return get_records_sql_menu('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select .' '. $sort);
 }
 
+
 /**
-* Get a number of records as an array of values
-* 
-* Can optionally be sorted eg "time ASC" or "time DESC"
-* "select" is a fragment of SQL to define the selection criteria
-* Returns associative array of first two fields
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Get a number of records as an array of values
+ * 
+ * Can optionally be sorted eg "time ASC" or "time DESC"
+ * "select" is a fragment of SQL to define the selection criteria
+ * Returns associative array of first two fields
+ *
+ * @uses $CFG
+ * @param string $table The database table to be checked against.
+ * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
+ * @param string $sort ?
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @return array An associative array with the results from the SQL call.
+ * @todo Finish documenting this function
+ */
 function get_records_select_menu($table, $select='', $sort='', $fields='*') {
 
     global $CFG;
@@ -694,15 +746,19 @@ function get_records_select_menu($table, $select='', $sort='', $fields='*') {
 
 
 /**
-* Given an SQL select, this function returns an associative
-*
-* array of the first two columns.  This is most useful in
-* combination with the choose_from_menu function to create
-* a form menu.
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Retrieve an array of the first two columns returned from a SQL statment.
+ *
+ * Given a SQL statement, this function returns an associative
+ * array of the first two columns.  This is most useful in
+ * combination with the {@link choose_from_menu()} function to create
+ * a form menu.
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param string $sql The SQL string you wish to be executed.
+ * @return boolean
+ * @todo Finish documenting this function
+ */
 function get_records_sql_menu($sql) {
 
     global $CFG, $db;
@@ -727,13 +783,20 @@ function get_records_sql_menu($sql) {
 }
 
 /**
-* Get a single field from a database record
-*
-* longdesc
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Get a single field from a database record
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param string $table The database table to be checked against.
+ * @param string $field1 The first table field to be checked for a given value. Do not supply a field1 string to leave out a WHERE clause altogether.
+ * @param string $value1 The value to match if field1 is specified.
+ * @param string $field2 The second table field to be checked for a given value. 
+ * @param string $value2 The value to match if field2 is specified.
+ * @param string $field3 The third table field to be checked for a given value. 
+ * @param string $value3 The value to match if field3 is specified.
+ * @return mixed | false Returns the value return from the SQL statment or false if an error occured.
+ * @todo Finish documenting this function
+ */
 function get_field($table, $return, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
 
     global $db, $CFG;
@@ -764,13 +827,14 @@ function get_field($table, $return, $field1, $value1, $field2='', $value2='', $f
 
 
 /**
-* Get a single field from a database record
-*
-* longdesc
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Get a single field from a database record
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param string $sql The SQL string you wish to be executed.
+ * @return mixed | false Returns the value return from the SQL statment or false if an error occured.
+ * @todo Finish documenting this function
+ */
 function get_field_sql($sql) {
 
     global $db, $CFG;
@@ -791,13 +855,20 @@ function get_field_sql($sql) {
 }
 
 /**
-* Set a single field in a database record
-*
-* longdesc
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Set a single field in a database record
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param string $table The database table to be checked against.
+ * @param string $field1 The first table field to be checked for a given value. Do not supply a field1 string to leave out a WHERE clause altogether.
+ * @param string $value1 The value to match if field1 is specified.
+ * @param string $field2 The second table field to be checked for a given value. 
+ * @param string $value2 The value to match if field2 is specified.
+ * @param string $field3 The third table field to be checked for a given value. 
+ * @param string $value3 The value to match if field3 is specified.
+ * @return array An associative array with the results from the SQL call.
+ * @todo Verify return type
+ */
 function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
 
     global $db, $CFG;
@@ -814,15 +885,21 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
     return $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '. $newfield  .' = \''. $newvalue .'\' '. $select);
 }
 
-
 /**
-* Delete one or more records from a table
-*
-* Delete one or more records from a table
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Delete one or more records from a table
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param string $table The database table to be checked against.
+ * @param string $field1 The first table field to be checked for a given value. Do not supply a field1 string to leave out a WHERE clause altogether.
+ * @param string $value1 The value to match if field1 is specified.
+ * @param string $field2 The second table field to be checked for a given value. 
+ * @param string $value2 The value to match if field2 is specified.
+ * @param string $field3 The third table field to be checked for a given value. 
+ * @param string $value3 The value to match if field3 is specified.
+ * @return array An associative array with the results from the SQL call.
+ * @todo Verify return type
+ */
 function delete_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
     global $db, $CFG;
@@ -843,13 +920,15 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
 }
 
 /**
-* Delete one or more records from a table
-*
-* "select" is a fragment of SQL to define the selection criteria
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Delete one or more records from a table
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param string $table The database table to be checked against.
+ * @param string $select A fragment of SQL to be used in a where clause in the SQL call (used to define the selection criteria).
+ * @return array An associative array with the results from the SQL call.
+ * @todo Verify return type.
+ */
 function delete_records_select($table, $select='') {
 
     global $CFG, $db;
@@ -861,16 +940,21 @@ function delete_records_select($table, $select='') {
     return $db->Execute('DELETE FROM '. $CFG->prefix . $table .' '. $select);
 }
 
-
 /**
-* Insert a record into a table and return the "id" field if required
-*
-* If the return ID isn't required, then this just reports success as true/false.
-* $dataobject is an object containing needed data
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Insert a record into a table and return the "id" field if required
+ *
+ * If the return ID isn't required, then this just reports success as true/false.
+ * $dataobject is an object containing needed data
+ *
+ * @uses $db
+ * @uses $CFG
+ * @param string $table The database table to be checked against.
+ * @param array $dataobject An associative array with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
+ * @param boolean $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
+ * @param string $primarykey Defaults to 'id'. The primary key to use against the specified table when inserting the contents of $dataobject.
+ * @return int | false Returns the id for the new record created or false if an error occured.
+ * @todo Finish documenting this function. Dataobject is actually an associateive array, correct?
+ */
 function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
     global $db, $CFG;
@@ -916,15 +1000,19 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
 
 /**
-* Update a record in a table
-*
-* $dataobject is an object containing needed data
-* Relies on $dataobject having a variable "id" to
-* specify the record to update
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Update a record in a table
+ *
+ * $dataobject is an object containing needed data
+ * Relies on $dataobject having a variable "id" to
+ * specify the record to update
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param string $table The database table to be checked against.
+ * @param array $dataobject An associative array with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
+ * @return boolean
+ * @todo Finish documenting this function. Dataobject is actually an associateive array, correct?
+ */
 function update_record($table, $dataobject) {
 
     global $db, $CFG;
@@ -975,14 +1063,19 @@ function update_record($table, $dataobject) {
 /// USER DATABASE ////////////////////////////////////////////////
 
 /**
-* Get a complete user record, which includes all the info
-*
-* in the user record, as well as membership information
-* Suitable for setting as $USER session cookie.
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Get a complete user record, which includes all the info
+ *
+ * in the user record, as well as membership information
+ * Suitable for setting as $USER session cookie.
+ *
+ * @uses $CFG
+ * @uses SITEID
+ * @param string $field The first table field to be checked for a given value. 
+ * @param string $value The value to match for $field.
+ * @return array
+ * @todo Finish documenting this function
+ */
+ */
 function get_user_info_from_db($field, $value) {
 
     global $CFG;
@@ -1039,13 +1132,13 @@ function get_user_info_from_db($field, $value) {
 
 
 /**
-* Does this username and password specify a valid admin user?
-*
-* longdesc
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Does this username and password specify a valid admin user?
+ *
+ * @uses $CFG
+ * @param string $username The name of the user to be tested for admin rights
+ * @param string $md5password The password supplied by the user in md5 encrypted format.
+ * @return boolean
+ */
 function adminlogin($username, $md5password) {
 
     global $CFG;
@@ -1058,28 +1151,24 @@ function adminlogin($username, $md5password) {
                                 AND u.password = '$md5password'");
 }
 
-
 /**
-* Get the guest user information from the database
-*
-* longdesc
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Get the guest user information from the database
+ *
+ * @return object(user) An associative array with the details of the guest user account.
+ * @todo Is object(user) a correct return type? Or is array the proper return type with a note that the contents include all details for a user.
+ */
 function get_guest() {
     return get_user_info_from_db('username', 'guest');
 }
 
 
 /**
-* Returns $user object of the main admin user
-*
-* longdesc
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns $user object of the main admin user
+ *
+ * @uses $CFG
+ * @return object(admin) An associative array representing the admin user.
+ * @todo Verify documentation of this function
+ */
 function get_admin () {
 
     global $CFG;
@@ -1094,13 +1183,12 @@ function get_admin () {
 }
 
 /**
-* Returns list of all admins
-*
-* longdesc
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns list of all admins
+ *
+ * @uses $CFG
+ * @return array An associative array of user records.
+ * @todo Finish documenting this function
+ */
 function get_admins() {
 
     global $CFG;
@@ -1113,13 +1201,12 @@ function get_admins() {
 }
 
 /**
-* Returns list of all creators
-*
-* longdesc
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns list of all creators
+ *
+ * @uses $CFG
+ * @return array An associative array.
+ * @todo Finish documenting this function
+ */
 function get_creators() {
 
     global $CFG;
@@ -1132,13 +1219,13 @@ function get_creators() {
 }
 
 /**
-* Returns $user object of the main teacher for a course
-*
-* longdesc
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns $user object of the main teacher for a course
+ *
+ * @uses $CFG
+ * @param int $courseid The course in question.
+ * @return array | false An associative array representing the user record of the main teacher for the specified course or false if error.
+ * @todo Finish documenting this function
+ */
 function get_teacher($courseid) {
 
     global $CFG;
@@ -1155,13 +1242,15 @@ function get_teacher($courseid) {
 }
 
 /**
-* Searches logs to find all enrolments since a certain date
-*
-* used to print recent activity
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Searches logs to find all enrolments since a certain date
+ *
+ * used to print recent activity
+ *
+ * @uses $CFG
+ * @param int $courseid The course in question.
+ * @return array | false An associative array with the results from the SQL call or false if error.
+ * @todo Finish documenting this function
+ */
 function get_recent_enrolments($courseid, $timestart) {
 
     global $CFG;
@@ -1181,12 +1270,25 @@ function get_recent_enrolments($courseid, $timestart) {
 }
 
 /**
-* Returns array of userinfo of all students in this course
-* or on this site if courseid is id of site
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns array of userinfo of all students in this course
+ * or on this site if courseid is id of site
+ *
+ * @uses $CFG
+ * @uses SITEID
+ * @param int $courseid The course in question.
+ * @param string $sort ?
+ * @param string $dir ?
+ * @param int $page ?
+ * @param int $recordsperpage ?
+ * @param string $firstinitial ?
+ * @param string $lastinitial ?
+ * @param ? $group ?
+ * @param string $search ?
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @param string $exceptions ?
+ * @return array An associative array with the users requested.
+ * @todo Finish documenting this function
+ */
 function get_course_students($courseid, $sort='s.timeaccess', $dir='', $page=0, $recordsperpage=99999,
                              $firstinitial='', $lastinitial='', $group=NULL, $search='', $fields='', $exceptions='') {
 
@@ -1307,12 +1409,19 @@ function get_course_students($courseid, $sort='s.timeaccess', $dir='', $page=0, 
     return $teachers + $students;
 }
 
+
 /**
-* Counts the students in a given course (or site), or a subset of them
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Counts the students in a given course (or site), or a subset of them
+ *
+ * @param object $course The course in question as a course object.
+ * @param string $search ?
+ * @param string $firstinitial ? 
+ * @param string $lastinitial ?
+ * @param ? $group ?
+ * @param string $exceptions ? 
+ * @return int
+ * @todo Finish documenting this function
+ */
 function count_course_students($course, $search='', $firstinitial='', $lastinitial='', $group=NULL, $exceptions='') {
 
     if ($students = get_course_students($course->id, '', '', 0, 999999, $firstinitial, $lastinitial, $group, $search, '', $exceptions)) {
@@ -1323,12 +1432,18 @@ function count_course_students($course, $search='', $firstinitial='', $lastiniti
 
 
 /**
-* Returns list of all teachers in this course
-* (also works for site)
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns list of all teachers in this course
+ *
+ * If $courseid matches the site id then this function
+ * returns a list of all teachers for the site.
+ *
+ * @uses $CFG
+ * @param int $courseid The course in question.
+ * @param string $sort ?
+ * @param string $exceptions ? 
+ * @return array An associative array with the results from the SQL call.
+ * @todo Finish documenting this function
+ */
 function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='') {
 
     global $CFG;
@@ -1350,11 +1465,15 @@ function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='')
 }
 
 /**
-* Returns all the users of a course: students and teachers
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns all the users of a course: students and teachers
+ *
+ * @param int $courseid The course in question.
+ * @param string $sort ?
+ * @param string $exceptions ?
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @return array An associative array.
+ * @todo Finish documenting this function
+ */
 function get_course_users($courseid, $sort='timeaccess DESC', $exceptions='', $fields='') {
 
     /// Using this method because the single SQL is too inefficient
@@ -1372,14 +1491,23 @@ function get_course_users($courseid, $sort='timeaccess DESC', $exceptions='', $f
 
 }
 
-
 /**
-* Search through course users
-* If used for the site course searches through all undeleted, confirmed users
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Search through course users
+ *
+ * If $coursid specifies the site course then this function searches 
+ * through all undeleted and confirmed users
+ *
+ * @uses $CFG
+ * @uses SITEID
+ * @param int $courseid The course in question.
+ * @param int $groupid The group in question.
+ * @param string $searchtext ?
+ * @param string $sort ?
+ * @param string $exceptions ? 
+ * @return array An associative array.
+ * @todo Finish documenting this function
+ */
+ */
 function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions='') {
     global $CFG;
 
@@ -1450,12 +1578,15 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
 
 
 /**
-* Returns a list of all site users
-* Obsolete, just calls get_course_users(SITEID)
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns a list of all site users
+ * Obsolete, just calls get_course_users(SITEID)
+ *
+ * @uses SITEID
+ * @deprecated use {@link get_course_users()} instead.
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @return array | false An associative array with the results from the SQL call or false if error.
+ * @todo Finish documenting this function. The return type need to be better defined.
+ */
 function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') {
 
     return get_course_users(SITEID, $sort, $exceptions, $fields);
@@ -1463,21 +1594,22 @@ function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') 
 
 
 /**
-* Returns a subset of users
-*
-* longdesc
-*
-* @param    boolean $get    if false then only a count of the records is returned
-* @param    string  $search a simple string to search for
-* @param    boolean $confirmed  a switch to allow/disallow unconfirmed users
-* @param    array(int)  $exceptions a list of IDs to ignore, eg 2,4,5,8,9,10
-* @param    string  $sort   a SQL snippet for the sorting criteria to use
-* @param    string  $firstinitial
-* @param    string  $lastinitial
-* @param    string  $page
-* @param    string  $recordsperpage
-* @param    string  $fields a comma separated list of fields
-*/
+ * Returns a subset of users
+ *
+ * @uses $CFG
+ * @param boolean $get If false then only a count of the records is returned
+ * @param string $search A simple string to search for
+ * @param boolean $confirmed A switch to allow/disallow unconfirmed users
+ * @param array(int) $exceptions A list of IDs to ignore, eg 2,4,5,8,9,10
+ * @param string $sort A SQL snippet for the sorting criteria to use
+ * @param string $firstinitial ?
+ * @param string $lastinitial ?
+ * @param string $page ?
+ * @param string $recordsperpage ?
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @return array | false | int An associative array with the results from the SQL call unless get is true in which case the integer count of the records found is returned. False is returned if an error is encountered.
+ * @todo Finish documenting this function. The return type needs to be better defined.
+ */
 function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sort='firstname ASC',
                    $firstinitial='', $lastinitial='', $page=0, $recordsperpage=99999, $fields='*') {
 
@@ -1536,13 +1668,22 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
 
 
 /**
-* shortdesc
-*
-* longdesc
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * shortdesc (optional)
+ *
+ * longdesc
+ *
+ * @uses $CFG
+ * @param string $sort ?
+ * @param string $dir ?
+ * @param int $categoryid ?
+ * @param int $categoryid ?
+ * @param string $search ?
+ * @param string $firstinitial ?
+ * @param string $lastinitial ?
+ * @return array
+ * @todo Finish documenting this function
+ */
+
 function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=99999,
                            $search='', $firstinitial='', $lastinitial='') {
 
@@ -1592,13 +1733,14 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
 
 
 /**
-* shortdesc
-*
-* longdesc
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * shortdesc (optional)
+ *
+ * longdesc
+ *
+ * @uses $CFG
+ * @return array
+ * @todo Finish documenting this function
+ */
 function get_users_confirmed() {
     global $CFG;
     return get_records_sql("SELECT *
@@ -1611,13 +1753,15 @@ function get_users_confirmed() {
 
 
 /**
-* shortdesc
-*
-* longdesc
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * shortdesc (optional)
+ *
+ * longdesc
+ *
+ * @uses $CFG
+ * @param string $cutofftime ?
+ * @return array
+ * @todo Finish documenting this function
+ */
 function get_users_unconfirmed($cutofftime=2000000000) {
     global $CFG;
     return get_records_sql("SELECT *
@@ -1629,13 +1773,15 @@ function get_users_unconfirmed($cutofftime=2000000000) {
 
 
 /**
-* shortdesc
-*
-* longdesc
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * shortdesc (optional)
+ *
+ * longdesc
+ *
+ * @uses $CFG
+ * @param string $cutofftime ?
+ * @return array
+ * @todo Finish documenting this function
+ */
 function get_users_longtimenosee($cutofftime) {
     global $CFG;
     return get_records_sql("SELECT DISTINCT *
@@ -1645,13 +1791,16 @@ function get_users_longtimenosee($cutofftime) {
 }
 
 /**
-* Returns an array of group objects that the user is a member of
-* in the given course.  If userid isn't specified, then return a
-* list of all groups in the course.
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns an array of group objects that the user is a member of
+ * in the given course.  If userid isn't specified, then return a
+ * list of all groups in the course.
+ *
+ * @uses $CFG
+ * @param int $courseid The course in question.
+ * @param int $userid The id of the user in question as found in the 'user' table 'id' field.
+ * @return array
+ * @todo Finish documenting this function
+ */
 function get_groups($courseid, $userid=0) {
     global $CFG;
 
@@ -1670,11 +1819,15 @@ function get_groups($courseid, $userid=0) {
 
 
 /**
-* Returns an array of user objects
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns an array of user objects
+ *
+ * @uses $CFG
+ * @param int $groupid The group in question.
+ * @param string $sort ?
+ * @param string $exceptions ?
+ * @return array
+ * @todo Finish documenting this function
+ */
 function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='') {
     global $CFG;
     if (!empty($exceptions)) {
@@ -1691,24 +1844,28 @@ function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='') {
 }
 
 /**
-* An efficient way of finding all the users who aren't in groups yet
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * An efficient way of finding all the users who aren't in groups yet
+ *
+ * Currently unimplemented.
+ * @uses $CFG
+ * @param int $courseid The course in question.
+ * @return array
+ */
 function get_users_not_in_group($courseid) {
     global $CFG;
 
     return array();     /// XXX TO BE DONE
 }
 
-
 /**
-* Returns an array of user objects
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns an array of user objects
+ *
+ * @uses $CFG
+ * @param int $groupid The group in question.
+ * @param string $sort ?
+ * @return array
+ * @todo Finish documenting this function
+ */
 function get_group_students($groupid, $sort='u.lastaccess DESC') {
     global $CFG;
     return get_records_sql("SELECT DISTINCT u.*
@@ -1724,13 +1881,15 @@ function get_group_students($groupid, $sort='u.lastaccess DESC') {
                           ORDER BY $sort");
 }
 
-
 /**
-* Returns the user's group in a particular course
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns the user's group in a particular course
+ *
+ * @uses $CFG
+ * @param int $courseid The course in question.
+ * @param int $userid The id of the user as found in the 'user' table.
+ * @return array
+ * @todo Finish documenting this function
+ */
 function user_group($courseid, $userid) {
     global $CFG;
 
@@ -1749,13 +1908,11 @@ function user_group($courseid, $userid) {
 
 
 /**
-* Returns $course object of the top-level site.
-*
-* Returns $course object of the top-level site.
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns $course object of the top-level site.
+ *
+ * @return array
+ * @todo Finish documenting this function. Is $course an 'object(course)' or an associative 'array(course)' or simply an 'array'?
+ */
 function get_site () {
 
     if ( $course = get_record('course', 'category', 0)) {
@@ -1765,15 +1922,17 @@ function get_site () {
     }
 }
 
-
 /**
-* Returns list of courses, for whole site, or category
-*
-* Returns list of courses, for whole site, or category
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns list of courses, for whole site, or category
+ *
+ * @uses $CFG
+ * @uses $USER
+ * @param int $categoryid ?
+ * @param string $sort ?
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @return array
+ * @todo Finish documenting this function
+ */
 function get_courses($categoryid='all', $sort='c.sortorder ASC', $fields='c.*') {
 /// This function deliberately uses PHP to do the checking at the end, 
 /// because MySQL has been known to really bog down when trying to do a JOIN
@@ -1802,12 +1961,12 @@ function get_courses($categoryid='all', $sort='c.sortorder ASC', $fields='c.*') 
     }
 
     if ($select) {
-        $selectsql = "{$CFG->prefix}course c WHERE ".implode(' AND ', $select);
+        $selectsql = $CFG->prefix .'course c WHERE '. implode(' AND ', $select);
     } else {
-        $selectsql = "{$CFG->prefix}course c ";
+        $selectsql = $CFG->prefix .'course c ';
     }
 
-    $courses = get_records_sql("SELECT DISTINCT $fields FROM $selectsql ORDER BY $sort");
+    $courses = get_records_sql('SELECT DISTINCT '. $fields .' FROM '. $selectsql .' ORDER BY '. $sort);
 
     if ($courses and (!$hideallinvisible) and (!$showallinvisible)) { // For ordinary users we need to check visibility
         foreach ($courses as $key => $course) {
@@ -1822,14 +1981,22 @@ function get_courses($categoryid='all', $sort='c.sortorder ASC', $fields='c.*') 
     return $courses;
 }
 
-
 /**
-* Returns list of courses, for whole site, or category
-*
-* Similar to get_courses, but allows paging
-*
-* @param    type description
-*/
+ * Returns list of courses, for whole site, or category
+ *
+ * Similar to get_courses, but allows paging
+ *
+ * @uses $CFG
+ * @uses $USER
+ * @param int $categoryid ?
+ * @param string $sort ?
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @param int $totalcount Passed by reference. ?
+ * @param int $limitfrom ?
+ * @param int $limitnum ? 
+ * @return array
+ * @todo Finish documenting this function
+ */
 function get_courses_page($categoryid='all', $sort='c.sortorder ASC', $fields='c.*',
                           &$totalcount, $limitfrom='', $limitnum='') {
 
@@ -1842,7 +2009,7 @@ function get_courses_page($categoryid='all', $sort='c.sortorder ASC', $fields='c
     $select = array();
 
     if ($categoryid != 'all') {
-        $select[] = "c.category = '$categoryid'";
+        $select[] = 'c.category = \''. $categoryid .'\'';
     }
 
     /// Admins can always see invisible courses
@@ -1860,12 +2027,12 @@ function get_courses_page($categoryid='all', $sort='c.sortorder ASC', $fields='c
     }
 
     if ($select) {
-        $selectsql = "{$CFG->prefix}course c WHERE ".implode(' AND ', $select);
+        $selectsql = $CFG->prefix .'course c WHERE '.implode(' AND ', $select);
     } else {
-        $selectsql = "{$CFG->prefix}course c ";
+        $selectsql = $CFG->prefix .'course c ';
     }
 
-    $courses = get_records_sql("SELECT DISTINCT $fields FROM $selectsql ORDER BY $sort");
+    $courses = get_records_sql('SELECT DISTINCT '. $fields .' FROM '. $selectsql .' ORDER BY '. $sort);
 
     if ($courses and (!$hideallinvisible) and (!$showallinvisible)) { // For ordinary users we need to check visibility
         foreach ($courses as $key => $course) {
@@ -1888,13 +2055,16 @@ function get_courses_page($categoryid='all', $sort='c.sortorder ASC', $fields='c
 
 
 /**
-* shortdesc
-*
-* longdesc
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * shortdesc (optional)
+ *
+ * longdesc
+ *
+ * @uses $CFG
+ * @param int $userid ?
+ * @param string $sort ?
+ * @return array
+ * @todo Finish documenting this function
+ */
 function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
 
     global $CFG;
@@ -1933,13 +2103,17 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
 
 
 /**
-* Returns a list of courses that match a search
-*
-* Returns a list of courses that match a search
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns a list of courses that match a search
+ *
+ * @uses $CFG
+ * @param array $searchterms ?
+ * @param string $sort ?
+ * @param int $page ?
+ * @param int $recordsperpage ?
+ * @param int $totalcount Passed in by reference. ?
+ * @return array
+ * @todo Finish documenting this function
+ */
 function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $recordsperpage=50, &$totalcount) {
 
     global $CFG;
@@ -2016,13 +2190,13 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 
 
 /**
-* Returns a sorted list of categories
-*
-* Returns a sorted list of categories
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns a sorted list of categories
+ *
+ * @param string $parent ?
+ * @param string $sort ?
+ * @return ?
+ * @todo Finish documenting this function
+ */
 function get_categories($parent='none', $sort='sortorder ASC') {
 
     if ($parent == 'none') {
@@ -2045,11 +2219,13 @@ function get_categories($parent='none', $sort='sortorder ASC') {
 
 
 /**
-* This recursive function makes sure that the courseorder is consecutive
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * This recursive function makes sure that the courseorder is consecutive
+ *
+ * @param int $categoryid ?
+ * @param int $n ?
+ * @return ?
+ * @todo Finish documenting this function
+ */
 function fix_course_sortorder($categoryid=0, $n=0) {
 
     $count = 0;
@@ -2071,18 +2247,18 @@ function fix_course_sortorder($categoryid=0, $n=0) {
     return $n;
 }
 
+
 /**
-* This function creates a default separated/connected scale
-*
-* This function creates a default separated/connected scale
-* so there's something in the database.  The locations of
-* strings and files is a bit odd, but this is because we
-* need to maintain backward compatibility with many different
-* existing language translations and older sites.
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * This function creates a default separated/connected scale
+ *
+ * This function creates a default separated/connected scale
+ * so there's something in the database.  The locations of
+ * strings and files is a bit odd, but this is because we
+ * need to maintain backward compatibility with many different
+ * existing language translations and older sites.
+ *
+ * @uses $CFG
+ */
 function make_default_scale() {
 
     global $CFG;
@@ -2116,14 +2292,17 @@ function make_default_scale() {
     }
 }
 
+
 /**
-* Returns a menu of all available scales from the site as well as the given course
-*
-* Returns a menu of all available scales from the site as well as the given course
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Returns a menu of all available scales from the site as well as the given course
+ *
+ * Returns a menu of all available scales from the site as well as the given course
+ *
+ * @uses $CFG
+ * @param int $courseid The id of the course as found in the 'course' table.
+ * @return array
+ * @todo Finish documenting this function
+ */
 function get_scales_menu($courseid=0) {
 
     global $CFG;
@@ -2144,13 +2323,13 @@ function get_scales_menu($courseid=0) {
 /// MODULE FUNCTIONS /////////////////////////////////////////////////
 
 /**
-* Just gets a raw list of all modules in a course
-*
-* Just gets a raw list of all modules in a course
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Just gets a raw list of all modules in a course
+ *
+ * @uses $CFG
+ * @param int $courseid The id of the course as found in the 'course' table.
+ * @return array
+ * @todo Finish documenting this function
+ */
 function get_course_mods($courseid) {
     global $CFG;
 
@@ -2162,14 +2341,17 @@ function get_course_mods($courseid) {
                             AND cm.module = m.id ");
 }
 
+
 /**
-* Given an instance of a module, finds the coursemodule description
-*
-* Given an instance of a module, finds the coursemodule description
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Given an instance of a module, finds the coursemodule description
+ *
+ * @uses $CFG
+ * @param string $modulename ?
+ * @param string $instance ?
+ * @param int $courseid The id of the course as found in the 'course' table.
+ * @return array
+ * @todo Finish documenting this function
+ */
 function get_coursemodule_from_instance($modulename, $instance, $courseid) {
 
     global $CFG;
@@ -2187,16 +2369,19 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid) {
 
 }
 
+
 /**
-* Returns an array of all the active instances of a particular module in a given course, sorted in the order they are defined
-*
-* Returns an array of all the active instances of a particular
-* module in a given course, sorted in the order they are defined
-* in the course.   Returns false on any errors.
-*
-* @param    string  $modulename the name of the module to get instances for
-* @param        object(course)  $course this depends on an accurate $course->modinfo
-*/
+ * Returns an array of all the active instances of a particular module in a given course, sorted in the order they are defined
+ *
+ * Returns an array of all the active instances of a particular
+ * module in a given course, sorted in the order they are defined
+ * in the course.   Returns false on any errors.
+ *
+ * @uses $CFG
+ * @param string  $modulename The name of the module to get instances for
+ * @param object(course)  $course This depends on an accurate $course->modinfo
+ * @todo Finish documenting this function. Is a course object to be documented as object(course) or array(course) since a coures object is really just an associative array, not a php object?
+ */
 function get_all_instances_in_course($modulename, $course) {
 
     global $CFG;
@@ -2242,15 +2427,18 @@ function get_all_instances_in_course($modulename, $course) {
 
 
 /**
-* determine whether a module instance is visible within a course
-*
-* Given a valid module object with info about the id and course,
-* and the module's type (eg "forum") returns whether the object
-* is visible or not
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Determine whether a module instance is visible within a course
+ *
+ * Given a valid module object with info about the id and course,
+ * and the module's type (eg "forum") returns whether the object
+ * is visible or not
+ *
+ * @uses $CFG
+ * @param $moduletype ?
+ * @param $module ?
+ * @return boolean
+ * @todo Finish documenting this function
+ */
 function instance_is_visible($moduletype, $module) {
 
     global $CFG;
@@ -2278,20 +2466,25 @@ function instance_is_visible($moduletype, $module) {
 
 
 /**
-* Add an entry to the log table.
-*
-* Add an entry to the log table.  These are "action" focussed rather
-* than web server hits, and provide a way to easily reconstruct what
-* any particular student has been doing.
-*
-* @param    int     $course  the course id
-* @param    string  $module  the module name - e.g. forum, journal, resource, course, user etc
-* @param    string  $action  view, edit, post (often but not always the same as the file.php)
-* @param    string  $url     the file and parameters used to see the results of the action
-* @param    string  $info    additional description information
-* @param    string  $cm      the course_module->id if there is one
-* @param    string  $user    if log regards $user other than $USER
-*/
+ * Add an entry to the log table.
+ *
+ * Add an entry to the log table.  These are "action" focussed rather
+ * than web server hits, and provide a way to easily reconstruct what
+ * any particular student has been doing.
+ *
+ * @uses $CFG
+ * @uses $USER
+ * @uses $db
+ * @uses $REMOTE_ADDR
+ * @uses SITEID
+ * @param    int     $course  The course id
+ * @param    string  $module  The module name - e.g. forum, journal, resource, course, user etc
+ * @param    string  $action  View, edit, post (often but not always the same as the file.php)
+ * @param    string  $url     The file and parameters used to see the results of the action
+ * @param    string  $info    Additional description information
+ * @param    string  $cm      The course_module->id if there is one
+ * @param    string  $user    If log regards $user other than $USER
+ */
 function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user=0) {
 
     global $db, $CFG, $USER, $REMOTE_ADDR;
@@ -2331,13 +2524,17 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 
 
 /**
-* select all log records based on SQL criteria
-*
-* select all log records based on SQL criteria
-*
-* @param    string  $select SQL select criteria
-* @param    string  $order  SQL order by clause to sort the records returned
-*/
+ * Select all log records based on SQL criteria
+ *
+ * @uses $CFG
+ * @param string $select SQL select criteria
+ * @param string $order SQL order by clause to sort the records returned
+ * @param string $limitfrom ?
+ * @param int $limitnum ?
+ * @param int $totalcount Passed in by reference.
+ * @return array
+ * @todo Finish documenting this function
+ */
 function get_logs($select, $order='l.time DESC', $limitfrom='', $limitnum='', &$totalcount) {
     global $CFG;
 
@@ -2360,7 +2557,7 @@ function get_logs($select, $order='l.time DESC', $limitfrom='', $limitnum='', &$
         $order = 'ORDER BY '. $order;
     }
 
-    $selectsql = "{$CFG->prefix}log l LEFT JOIN {$CFG->prefix}user u ON l.userid = u.id ".((strlen($select) > 0) ? "WHERE $select" : "");
+    $selectsql = $CFG->prefix .'log l LEFT JOIN '. $CFG->prefix .'user u ON l.userid = u.id '. ((strlen($select) > 0) ? 'WHERE '. $select : '');
     $totalcount = count_records_sql('SELECT COUNT(*) FROM '. $selectsql);
 
     return get_records_sql('SELECT l.*, u.firstname, u.lastname, u.picture
@@ -2369,13 +2566,14 @@ function get_logs($select, $order='l.time DESC', $limitfrom='', $limitnum='', &$
 
 
 /**
-* select all log records for a given course and user
-*
-* select all log records for a given course and user
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Select all log records for a given course and user
+ *
+ * @uses $CFG
+ * @param int $userid The id of the user as found in the 'user' table.
+ * @param int $courseid The id of the course as found in the 'course' table.
+ * @param string $coursestart ?
+ * @todo Finish documenting this function
+ */
 function get_logs_usercourse($userid, $courseid, $coursestart) {
     global $CFG;
 
@@ -2393,13 +2591,15 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
 }
 
 /**
-* select all log records for a given course, user, and day
-*
-* select all log records for a given course, user, and day
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Select all log records for a given course, user, and day
+ *
+ * @uses $CFG
+ * @param int $userid The id of the user as found in the 'user' table.
+ * @param int $courseid The id of the course as found in the 'course' table.
+ * @param string $daystart ?
+ * @return array
+ * @todo Finish documenting this function
+ */
 function get_logs_userday($userid, $courseid, $daystart) {
     global $CFG;
 
@@ -2424,9 +2624,10 @@ function get_logs_userday($userid, $courseid, $daystart) {
  * number of accounts.  For non-admins, only the attempts on the given user
  * are shown.
  *
- * @param mode      - admin, teacher or everybody
- * @param username  - the username we are searching for
- * @param lastlogin - the date from which we are searching
+ * @param string $mode Either 'admin', 'teacher' or 'everybody'
+ * @param string $username The username we are searching for
+ * @param string $lastlogin The date from which we are searching
+ * @return int
  */
 
 function count_login_failures($mode, $username, $lastlogin) {
@@ -2450,14 +2651,13 @@ function count_login_failures($mode, $username, $lastlogin) {
 /// GENERAL HELPFUL THINGS  ///////////////////////////////////
 
 /**
-* dump a given object's information in a PRE block
-*
-* dump a given object's information in a PRE block
-* Mostly just for debugging
-*
-* @param    type description
-* @todo Finish documenting this function
-*/
+ * Dump a given object's information in a PRE block.
+ *
+ * Mostly just used for debugging.
+ *
+ * @param mixed $object The data to be printed
+ * @todo add example usage and example output
+ */
 function print_object($object) {
 
     echo '<pre>';
