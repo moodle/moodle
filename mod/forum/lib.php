@@ -11,7 +11,7 @@ $FORUM_DISCUSS_MODES = array ( "1"  => "Display replies flat, with oldest first"
 
 // These are course content forums that can be added to the course manually
 $FORUM_TYPE   = array ("general"    => "General forum",
-                       "eachuser"   => "Each $student posts one discussion",
+                       "eachuser"   => "Each person posts one discussion",
                        "single"     => "A single simple discussion");
 
 $FORUM_POST_RATINGS = array ("3" => "Shows a more connected approach", 

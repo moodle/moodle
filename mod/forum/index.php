@@ -10,7 +10,7 @@
             error("Course ID is incorrect");
         }
     } else {
-        if (! $course = get_record("course", "category", 0)) {
+        if (! $course = get_site()) {
             error("Could not find a top-level course!");
         }
     }
@@ -21,23 +21,30 @@
 
     unset($SESSION->fromdiscussion);
 
-    add_to_log($course->id, "forum", "view forums", "index.php?id=$course->id", "");
+    add_to_log($course->id, "forum", "view forums", "index.php?id=$course->id");
+
+    $strforums = get_string("forums", "forum");
 
     if ($course->category) {
-        print_header("$course->shortname: Forums", "$course->fullname",
-                    "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> Forums", "");
+        print_header("$course->shortname: $strforums", "$course->fullname",
+                    "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> $strforums");
     } else {
-        print_header("$course->shortname: Forums", "$course->fullname", "Forums", "");
+        print_header("$course->shortname: $strforums", "$course->fullname", "$strforums");
     }
+    $strforum = get_string("forum", "forum");
+    $strdescription = get_string("description", "forum");
+    $strdiscussions = get_string("discussions", "forum");
+    $strsubscribed = get_string("subscribed", "forum");
 
-    $can_subscribe = (isstudent($course->id) || isteacher($course->id) || isadmin());
+    $table->head  = array ($strforum, $strdescription, $strdiscussions);
+    $table->align = array ("LEFT", "LEFT", "CENTER");
+
+    $can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin());
+
     if ($can_subscribe) {
-        $table->head = array ("Forum", "Description", "Topics", "Subscribed");
-    } else {
-        $table->head = array ("Forum", "Description", "Topics");
+        $table->head[] = $strsubscribed;
+        $table->align[] = "CENTER";
     }
-    $table->align = array ("LEFT", "LEFT", "CENTER", "CENTER");
-
 
     if ($forums = get_records("forum", "course", $id, "name ASC")) {
         foreach ($forums as $forum) {
@@ -61,14 +68,16 @@
 
             if ($can_subscribe) {
                 if (forum_is_forcesubscribed($forum->id)) {
-                    $sublink = "YES";
+                    $sublink = get_string("yes");
                 } else {
                     if (forum_is_subscribed($USER->id, $forum->id)) {
-                        $subscribed = "YES";
+                        $subscribed = get_string("yes");
+                        $subtitle = get_string("unsubscribe", "forum");
                     } else {
-                        $subscribed = "NO";
+                        $subscribed = get_string("no");
+                        $subtitle = get_string("subscribe", "forum");
                     }
-                    $sublink = "<A TITLE=\"Change your subscription\" HREF=\"subscribe.php?id=$forum->id\">$subscribed</A>";
+                    $sublink = "<A TITLE=\"$subtitle\" HREF=\"subscribe.php?id=$forum->id\">$subscribed</A>";
                 }
                 $table->data[] = array ("<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
                                         "$forum->intro", "$count", "$sublink");
@@ -77,34 +86,33 @@
                                         "$forum->intro", "$count");
             }
         }
-        print_heading("General Forums");
+        print_heading(get_string("generalforums", "forum"));
         print_table($table);
         unset($table->data);
     } 
 
-    if ($can_subscribe) {
-        $table->head = array ("", "Forum", "Description", "Topics", "Subscribed");
-    } else {
-        $table->head = array ("", "Forum", "Description", "Topics");
-    }
-    $table->align = array ("CENTER", "LEFT", "LEFT", "CENTER", "CENTER");
+    // Add extra field for section number, at the front
+    array_unshift($table->head, "");
+    array_unshift($table->align, "CENTER");
 
-    if ($moduleforums = get_all_instances_in_course("forum", $course->id)) {
-        foreach ($moduleforums as $forum) {
+    if ($learningforums = get_all_instances_in_course("forum", $course->id)) {
+        foreach ($learningforums as $forum) {
             $count = count_records("forum_discussions", "forum", "$forum->id");
 
             $forum->intro = forum_shorten_post($forum->intro);
 
             if ($can_subscribe) {
                 if (forum_is_forcesubscribed($forum->id)) {
-                    $sublink = "YES";
+                    $sublink = get_string("yes");
                 } else {
                     if (forum_is_subscribed($USER->id, $forum->id)) {
-                        $subscribed = "YES";
+                        $subscribed = get_string("yes");
+                        $subtitle = get_string("unsubscribe", "forum");
                     } else {
-                        $subscribed = "NO";
+                        $subscribed = get_string("no");
+                        $subtitle = get_string("subscribe", "forum");
                     }
-                    $sublink = "<A TITLE=\"Change your subscription\" HREF=\"subscribe.php?id=$forum->id\">$subscribed</A>";
+                    $sublink = "<A TITLE=\"$subtitle\" HREF=\"subscribe.php?id=$forum->id\">$subscribed</A>";
                 }
                 $table->data[] = array ("$forum->section", "<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
                                         "$forum->intro", "$count", "$sublink");
@@ -113,7 +121,7 @@
                                         "$forum->intro", "$count");
             }
         }
-        print_heading("Course content");
+        print_heading(get_string("learningforums", "forum"));
         print_table($table);
     }
 

@@ -49,7 +49,7 @@
         $navtail = "<A HREF=\"discuss.php?d=$discussion->id\">$discussion->name</A> -> $post->subject";
     }
 
-    $navmiddle = "<A HREF=\"../forum/index.php?id=$course->id\">Forums</A> -> <A HREF=\"../forum/view.php?f=$forum->id\">$forum->name</A>";
+    $navmiddle = "<A HREF=\"../forum/index.php?id=$course->id\">".get_string("forums", "forum")."</A> -> <A HREF=\"../forum/view.php?f=$forum->id\">$forum->name</A>";
 
     if ($cm->id) {
         $updatebutton = update_module_icon($cm->id, $course->id);
