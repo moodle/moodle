@@ -143,7 +143,8 @@
                     // check for required values
                     if ($required[$name] and !$value) {
                         error(get_string('missingfield', 'error', $name). " ".
-                              get_string('erroronline', 'error', $linenum), 
+                              get_string('erroronline', 'error', $linenum) .". ".
+                              get_string('processingstops', 'error'), 
                               'uploaduser.php?sesskey='.$USER->sesskey);
                     }
                     // password needs to be encrypted
@@ -184,7 +185,7 @@
                         }
                     }
                 }
-                if (! $user->id = insert_record("user", $user)) {
+                if (get_record("user","username",$username) || !($user->id = insert_record("user", $user))) {
                     if (!$user = get_record("user", "username", "changeme")) {   // half finished user from another time
                         //Record not added - probably because user is already registered
                         //In this case, output userid from previous registration
