@@ -96,7 +96,7 @@ global $CFG;
     $glossary->timemodified = time();
     $glossary->id = $glossary->instance;
 
-    if (!$glossary->userating) {
+    if (!isset($glossary->userating) || !$glossary->userating) {
         $glossary->assessed = 0;
     }
 
