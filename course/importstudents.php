@@ -63,20 +63,20 @@
 /// A form was submitted so process the input
 
     } else {
-        if (!empty($frm->add) and !empty($frm->addselect)) {
+        if (!empty($frm->add) and !empty($frm->addselect) and confirm_sesskey()) {
             $timestart = $timeend = 0;
             foreach ($frm->addselect as $addcourse) {
                 if (!add_to_metacourse($course->id,$addcourse)) {
                     error("Could not add the selected course to this meta course!");
                 }
             }
-        } else if (!empty($frm->remove) and !empty($frm->removeselect)) {
+        } else if (!empty($frm->remove) and !empty($frm->removeselect) and confirm_sesskey()) {
             foreach ($frm->removeselect as $removecourse) {
                 if (! remove_from_metacourse($course->id,$removecourse)) {
                     error("Could not remove the selected course to this meta course!");
                 }
             }
-        } else if (!empty($frm->showall)) {
+        } else if (!empty($frm->showall) and confirm_sesskey()) {
             unset($frm->searchtext);
             $frm->previoussearch = 0;
         }
@@ -93,7 +93,7 @@
 
 
 /// Get search results excluding any users already in this course
-    if (!empty($frm->searchtext) and $previoussearch) {
+    if (!empty($frm->searchtext) and $previoussearch and confirm_sesskey()) {
         $searchcourses = get_courses_search(explode(" ",$frm->searchtext),'fullname ASC',0,99999,$numcourses);
         foreach ($searchcourses as $tmp) {
             if (array_key_exists($tmp->id,$alreadycourses)) {
