@@ -439,17 +439,23 @@ a.autolink:link {
     text-decoration: none;
     color: #000000;
     background-color: <?PHP echo $THEME->autolink?>;
+	border-bottom: dashed 1px #000000;
+	cursor: help;
 }
 
 a.autolink:visited {
     text-decoration: none;
     color: #000000;
     background-color: <?PHP echo $THEME->autolink?>;
+	border-bottom: dashed 1px #000000;
+	cursor: help;
 }
 
 a.autolink:hover {
-    text-decoration: underline;
-    color: #990000;
+    text-decoration: none;
+	border-bottom: solid 1px #000000;
+    color: #000000;
+	cursor: help;
 }
 
 .userinfobox {
