@@ -2678,6 +2678,8 @@ function workshop_print_time_to_deadline($time) {
 function workshop_print_upload_form($workshop) {
 // Arguments are objects, needs title coming in
 
+    global $CFG;
+
     if (! $course = get_record("course", "id", $workshop->course)) {
         error("Course is misconfigured");
     }
@@ -2687,10 +2689,9 @@ function workshop_print_upload_form($workshop) {
 
     echo "<div align=\"center\">";
     echo "<form enctype=\"multipart/form-data\" method=\"POST\" action=\"upload\".php>";
-    echo " <input type=\"hidden\" name=MAX_FILE_SIZE value=\"$workshop->maxbytes\" />";
     echo " <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
-    echo "<b>".get_string("title", "workshop")."</b>: <input name=\"title\" type=\"text\" size=\"60\" maxsize=\"100\" /><br /><br />\n";
-    echo " <input name=\"newfile\" type=\"file\" size=\"50\" />";
+    require_once($CFG->dirroot.'/lib/uploadlib.php');
+    upload_print_form_fragment(1,array('newfile'),null,true,array('title'),$course->maxbytes,$workshop->maxbytes,false);
     echo " <input type=\"submit\" name=\"save\" value=\"".get_string("uploadthisfile")."\" />";
     echo "</form>";
     echo "</div>";

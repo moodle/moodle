@@ -2,6 +2,7 @@
 /** This expects the output from a command like
  * clamscan -r --infected --no-summary <files> 2>&1 | php thisfile.php 
  * also it's important that the output of clamscan prints the FULL PATH to each infected file, so use absolute paths for area to scan
+ * also it should be run as root, or whatever the webserver runs as so that it has the right permissions in the quarantine dir etc.
  */
 
 
