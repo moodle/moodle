@@ -57,6 +57,7 @@
             $glossary->showalphabet = backup_todb($info['MOD']['#']['SHOWALPHABET']['0']['#']);
             $glossary->showall = backup_todb($info['MOD']['#']['SHOWALL']['0']['#']);
             $glossary->allowcomments = backup_todb($info['MOD']['#']['ALLOWCOMMENTS']['0']['#']);
+            $glossary->allowprintview = backup_todb($info['MOD']['#']['ALLOWPRINTVIEW']['0']['#']);
             $glossary->usedynalink = backup_todb($info['MOD']['#']['USEDYNALINK']['0']['#']);
             $glossary->defaultapproval = backup_todb($info['MOD']['#']['DEFAULTAPPROVAL']['0']['#']);
             $glossary->globalglossary = backup_todb($info['MOD']['#']['GLOBALGLOSSARY']['0']['#']);

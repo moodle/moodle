@@ -11,6 +11,9 @@ if (!isset($form->allowduplicatedentries)) {
 if (!isset($form->allowcomments)) {
     $form->allowcomments = $CFG->glossary_allowcomments;
 }
+if (!isset($form->allowprintview)) {
+    $form->allowprintview = 1;
+}
 if (!isset($form->usedynalink)) {
     $form->usedynalink = $CFG->glossary_linkbydefault;
 }
@@ -205,6 +208,25 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
    ?>><?php echo get_string("no") ?>
   </option>
   </select> <?php helpbutton("allowcomments", get_string("allowcomments", "glossary"), "glossary") ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><b><?php echo get_string("allowprintview", "glossary") ?>:</b></td>
+    <td align="left">
+  <select size="1" name="allowprintview">
+  <option value="1" <?php
+   if ( $form->allowprintview ) {
+      echo "selected=\"selected\"";
+   }
+   ?>
+   ><?php echo get_string("yes") ?></option>
+  <option value="0" <?php
+   if ( !$form->allowprintview ) {
+      echo "selected=\"selected\"";
+   }
+   ?>><?php echo get_string("no") ?>
+  </option>
+  </select> <?php helpbutton("allowprintview", get_string("allowprintview", "glossary"), "glossary") ?>
     </td>
 </tr>
 <tr valign="top">

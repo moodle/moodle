@@ -238,8 +238,10 @@
     echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
     if ( $isuserframe and $mode != 'search') {
     /// the "Print" icon
-        echo " <a title =\"". get_string("printerfriendly","glossary") . "\" target=\"printview\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\">\n";
-        echo '<img border="0" src="print.gif" alt="" /></a>';
+        if (isteacher($course->id) or $glossary->allowprintview) {
+            echo " <a title =\"". get_string("printerfriendly","glossary") . "\" target=\"printview\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\">\n";
+            echo '<img border="0" src="print.gif" alt="" /></a>';
+        }
     }
     echo '</b></font></p>';
 

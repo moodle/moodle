@@ -53,6 +53,7 @@
                 fwrite ($bf,full_tag("SHOWALPHABET",4,false,$glossary->showalphabet));
                 fwrite ($bf,full_tag("SHOWALL",4,false,$glossary->showall));
                 fwrite ($bf,full_tag("ALLOWCOMMENTS",4,false,$glossary->allowcomments));
+                fwrite ($bf,full_tag("ALLOWPRINTVIEW",4,false,$glossary->allowprintview));
                 fwrite ($bf,full_tag("USEDYNALINK",4,false,$glossary->usedynalink));
                 fwrite ($bf,full_tag("DEFAULTAPPROVAL",4,false,$glossary->defaultapproval));
                 fwrite ($bf,full_tag("GLOBALGLOSSARY",4,false,$glossary->globalglossary));

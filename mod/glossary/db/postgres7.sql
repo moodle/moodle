@@ -21,6 +21,7 @@ CREATE TABLE prefix_glossary (
      showalphabet int2 NOT NULL default '1',
      showall int2 NOT NULL default '1',
      allowcomments int2 NOT NULL default '0',
+     allowprintview int2 NOT NULL default '1',
      usedynalink int2 NOT NULL default '1',
      defaultapproval int2 NOT NULL default '1',
      globalglossary int2 NOT NULL default '0',

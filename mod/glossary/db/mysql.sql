@@ -21,6 +21,7 @@ CREATE TABLE prefix_glossary (
      showalphabet tinyint(2) unsigned NOT NULL default '1',
      showall tinyint(2) unsigned NOT NULL default '1',
      allowcomments tinyint(2) unsigned NOT NULL default '0',
+     allowprintview tinyint(2) unsigned NOT NULL default '1',
      usedynalink tinyint(2) unsigned NOT NULL default '1',
      defaultapproval tinyint(2) unsigned NOT NULL default '1',
      globalglossary tinyint(2) unsigned NOT NULL default '0',

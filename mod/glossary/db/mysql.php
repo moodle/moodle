@@ -386,6 +386,17 @@ function glossary_upgrade($oldversion) {
           }
       }
   }
+
+  //Allowprintview flag
+  if ($oldversion < 2005011200) {
+      table_column('glossary','','allowprintview','tinyint','2', 'unsigned', '1', '', 'allowcomments');
+      $glossaries = get_records('glossary', '', '', '', 'id, name');
+      if ($glossaries) {
+          foreach ($glossaries as $glossary) { 
+              set_field('glossary', 'allowprintview', '1', 'id', "$glossary->id");
+          }
+      }
+  }
     
   return true;
 }

@@ -42,6 +42,10 @@
         notice(get_string("activityiscurrentlyhidden"));
     }
 
+    if (!isteacher($course->id) and !$glossary->allowprintview) {
+        notice(get_string('printviewnotallowed', 'glossary'));
+    }
+
 /// setting the default values for the display mode of the current glossary
 /// only if the glossary is viewed by the first time
     if ( $dp = get_record('glossary_formats','name', addslashes($glossary->displayformat)) ) {
