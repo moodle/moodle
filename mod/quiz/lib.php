@@ -403,13 +403,13 @@ function quiz_get_attempt_responses($attempt) {
 function quiz_print_comment($text) {
     global $THEME;
 
-    echo "<span class=feedbacktext>".text_to_html($text, true, false)."</span>";
+    echo "<span class=\"feedbacktext\">".text_to_html($text, true, false)."</span>";
 }
 
 function quiz_print_correctanswer($text) {
     global $THEME;
 
-    echo "<p align=right><span class=highlight>$text</span></p>";
+    echo "<p align=\"right\"><span class=\"highlight\">$text</span></p>";
 }
 
 function quiz_print_question_icon($question, $editlink=true) {
@@ -422,31 +422,31 @@ function quiz_print_question_icon($question, $editlink=true) {
     }
     switch ($question->qtype) {
         case SHORTANSWER:
-            echo '<img border=0 height=16 width=16 src="pix/sa.gif">';
+            echo '<img border=\"0\" height=\"16\" width=\"16\" src="pix/sa.gif">';
             break;
         case TRUEFALSE:
-            echo '<img border=0 height=16 width=16 src="pix/tf.gif">';
+            echo '<img border=\"0\" height=\"16\" width=\"16\" src="pix/tf.gif">';
             break;
         case MULTICHOICE:
-            echo '<img border=0 height=16 width=16 src="pix/mc.gif">';
+            echo '<img border=\"0\" height=\"16\" width=\"16\" src="pix/mc.gif">';
             break;
         case RANDOM:
-            echo '<img border=0 height=16 width=16 src="pix/rs.gif">';
+            echo '<img border=\"0\" height=\"16\" width=\"16\" src="pix/rs.gif">';
             break;
         case MATCH:
-            echo '<img border=0 height=16 width=16 src="pix/ma.gif">';
+            echo '<img border=\"0\" height=\"16\" width=\"16\" src="pix/ma.gif">';
             break;
         case RANDOMSAMATCH:
-            echo '<img border=0 height=16 width=16 src="pix/rm.gif">';
+            echo '<img border=\"0\" height=\"16\" width=\"16\" src="pix/rm.gif">';
             break;
         case DESCRIPTION:
-            echo '<img border=0 height=16 width=16 src="pix/de.gif">';
+            echo '<img border=\"0\" height=\"16\" width=\"16\" src="pix/de.gif">';
             break;
         case NUMERICAL:
-            echo '<img border=0 height=16 width=16 src="pix/nu.gif">';
+            echo '<img border=\"0\" height=\"16\" width=\"16\" src="pix/nu.gif">';
             break;
         case MULTIANSWER:
-            echo '<img border=0 height=16 width=16 src="pix/mu.gif">';
+            echo '<img border=\"0\" height=\"16\" width=\"16\" src="pix/mu.gif">';
             break;
     }
     if ($editlink) {
@@ -499,35 +499,35 @@ function quiz_print_question($number, $question, $grade, $quizid,
     $stranswer = get_string("answer", "quiz");
     $strmarks  = get_string("marks", "quiz");
 
-    echo "<table width=100% cellspacing=10>";
-    echo "<tr><td nowrap width=100 valign=top>";
-    echo "<p align=center><b>$number</b></p>";
+    echo "<table width=\"100%\" cellspacing=\"10\">";
+    echo "<tr><td nowrap=\"nowrap\" width=\"100\" valign=\"top\">";
+    echo "<p align=\"center\"><b>$number</b></p>";
     if ($showgrades) {
         if ($feedback or $response) {
-            echo "<p align=center><font size=1>$strmarks: $actualgrade/$grade</font></p>";
+            echo "<p align=\"center\"><font size=\"1\">$strmarks: $actualgrade/$grade</font></p>";
         } else {
-            echo "<p align=center><font size=1>$grade $strmarks</font></p>";
+            echo "<p align=\"center\"><font size=\"1\">$grade $strmarks</font></p>";
         }
     }
     print_spacer(1,100);
     
     if (isset($question->recentlyadded) and $question->recentlyadded) {
-        echo "</td><td valign=top align=right>";
+        echo "</td><td valign=\"top\" align=\"right\">";
         // Notify the user of this recently added question
         echo '<font color="red">';
         echo get_string('recentlyaddedquestion', 'quiz');
         echo '</font>';
-        echo '</td></tr><tr><td></td><td valign=top>';
+        echo '</td></tr><tr><td></td><td valign=\"top\">';
 
     } else { // The normal case
-        echo "</td><td valign=top>";
+        echo "</td><td valign=\"top\">";
     }
 
 
     if (empty($realquestion)) { 
         $realquestion->id = $question->id;
     } else {    // Add a marker to connect this question to the actual random parent
-        echo "<input type=\"hidden\" name=\"q{$realquestion->id}rq$question->id\" value=\"x\">\n";
+        echo "<input type=\"hidden\" name=\"q{$realquestion->id}rq$question->id\" value=\"x\" />\n";
     }
 
     switch ($question->qtype) {
@@ -537,13 +537,13 @@ function quiz_print_question($number, $question, $grade, $quizid,
            echo text_to_html($question->questiontext);
            quiz_print_possible_question_image($quizid, $question);
            if ($response) {
-               $value = "VALUE=\"$response[0]\"";
+               $value = "value=\"$response[0]\"";
            } else {
                $value = "";
            }
-           echo "<P ALIGN=RIGHT>$stranswer: <INPUT TYPE=TEXT NAME=q$realquestion->id SIZE=20 $value></P>";
+           echo "<p align=\"right\">$stranswer: <input type=\"text\" name=\"q$realquestion->id\" size=\"20\" $value /></p>";
            if ($feedback) {
-               quiz_print_comment("<P ALIGN=right>$feedback[0]</P>");
+               quiz_print_comment("<p align=\"right\">$feedback[0]</p>");
            }
            if ($correct) {
                $correctanswers = implode(", ", $correct);
@@ -574,10 +574,10 @@ function quiz_print_question($number, $question, $grade, $quizid,
            $falsechecked = "";
 
            if (!empty($response[$true->id])) {
-               $truechecked = "CHECKED";
+               $truechecked = "checked=\"checked\"";
                $feedbackid = $true->id;
            } else if (!empty($response[$false->id])) {
-               $falsechecked = "CHECKED";
+               $falsechecked = "checked=\"checked\"";
                $feedbackid = $false->id;
            }
 
@@ -585,20 +585,20 @@ function quiz_print_question($number, $question, $grade, $quizid,
            $falsecorrect = "";
            if ($correct) {
                if (!empty($correct[$true->id])) {
-                   $truecorrect = "CLASS=highlight";
+                   $truecorrect = "class=\"highlight\"";
                }
                if (!empty($correct[$false->id])) {
-                   $falsecorrect = "CLASS=highlight";
+                   $falsecorrect = "class=\"highlight\"";
                }
            }
-           echo "<TABLE ALIGN=right cellpadding=5><TR><TD align=right>$stranswer:&nbsp;&nbsp;";
-           echo "<TD $truecorrect>";
-           echo "<INPUT $truechecked TYPE=RADIO NAME=\"q$realquestion->id\" VALUE=\"$true->id\">$true->answer";
-           echo "</TD><TD $falsecorrect>";
-           echo "<INPUT $falsechecked TYPE=RADIO NAME=\"q$realquestion->id\" VALUE=\"$false->id\">$false->answer";
-           echo "</TD></TR></TABLE><BR CLEAR=ALL>";
+           echo "<table align=\"right\" cellpadding=\"5\"><tr><td align=\"right\">$stranswer:&nbsp;&nbsp;";
+           echo "<td $truecorrect>";
+           echo "<input $truechecked type=\"radio\" name=\"q$realquestion->id\" value=\"$true->id\" />$true->answer";
+           echo "</td><td $falsecorrect>";
+           echo "<input $falsechecked type=\"radio\" name=\"q$realquestion->id\" value=\"$false->id\" />$false->answer";
+           echo "</td></tr></table><br clear=\"all\">";// changed from CLEAR=ALL jm
            if ($feedback) {
-               quiz_print_comment("<P ALIGN=right>$feedback[$feedbackid]</P>");
+               quiz_print_comment("<p align=\"right\">$feedback[$feedbackid]</p>");
            }
 
            break;
@@ -612,9 +612,9 @@ function quiz_print_question($number, $question, $grade, $quizid,
            }
            echo text_to_html($question->questiontext);
            quiz_print_possible_question_image($quizid, $question);
-           echo "<TABLE ALIGN=right>";
-           echo "<TR><TD valign=top>$stranswer:&nbsp;&nbsp;</TD><TD>";
-           echo "<TABLE>";
+           echo "<table align=\"right\">";
+           echo "<tr><td valign=\"top\">$stranswer:&nbsp;&nbsp;</td><td>";
+           echo "<table>";
            $answerids = explode(",", $options->answers);
 
            if ($shuffleanswers) {
@@ -628,31 +628,31 @@ function quiz_print_question($number, $question, $grade, $quizid,
                if (empty($response[$answerid])) {
                    $checked = "";
                } else {
-                   $checked = "CHECKED";
+                   $checked = "checked=\"checked\"";
                }
-               echo "<TR><TD valign=top>";
+               echo "<tr><td valign=\"top\">";
                if ($options->single) {
-                   echo "<INPUT $checked TYPE=RADIO NAME=q$realquestion->id VALUE=\"$answer->id\">";
+                   echo "<input $checked type=\"radio\" name=\"q$realquestion->id\" value=\"$answer->id\" />";
                } else {
-                   echo "<INPUT $checked TYPE=CHECKBOX NAME=q$realquestion->id"."a$answer->id VALUE=\"$answer->id\">";
+                   echo "<input $checked type=\"checkbox\" name=\"q$realquestion->id"."a$answer->id\" value=\"$answer->id\" />";
                }
-               echo "</TD>";
+               echo "</td>";
                if (empty($feedback) or empty($correct[$answer->id])) {
-                   echo "<TD valign=top>$qnumchar. $answer->answer</TD>";
+                   echo "<td valign=\"top\">$qnumchar. $answer->answer</td>";
                } else {
-                   echo "<TD valign=top CLASS=highlight>$qnumchar. $answer->answer</TD>";
+                   echo "<td valign=\"top\" class=\"highlight\">$qnumchar. $answer->answer</td>";
                }
                if (!empty($feedback)) {
-                   echo "<TD valign=top>&nbsp;";
+                   echo "<td valign=\"top\">&nbsp;";
                    if (!empty($response[$answerid])) {
                        quiz_print_comment($feedback[$answerid]);
                    }
-                   echo "</TD>";
+                   echo "</td>";
                }
-               echo "</TR>";
+               echo "</tr>";
            }
-           echo "</TABLE>";
-           echo "</TABLE>";
+           echo "</table>";
+           echo "</td></tr></table>";
            break;
 
        case MATCH: 
@@ -676,24 +676,24 @@ function quiz_print_question($number, $question, $grade, $quizid,
 
            $answers = draw_rand_array($answers, count($answers));
 
-           echo "<table border=0 cellpadding=10 align=right>";
+           echo "<table border=\"0\" cellpadding=\"10\" align=\"right\">";
            foreach ($subquestions as $key => $subquestion) {
-               echo "<tr><td align=left valign=top>";
+               echo "<tr><td align=\"left\" valign=\"top\">";
                echo $subquestion->questiontext;
                echo "</td>";
                if (empty($response)) {
-                   echo "<td align=right valign=top>";
+                   echo "<td align=\"right\" valign=\"top\">";
                    choose_from_menu($answers, "q$realquestion->id"."r$subquestion->id");
                } else {
                    if (empty($response[$key])) {
-                       echo "<td align=right valign=top>";
+                       echo "<td align=\"right\" valign=\"top\">";
                        choose_from_menu($answers, "q$realquestion->id"."r$subquestion->id");
                    } else {
                        if ($response[$key] == $correct[$key]) {
-                           echo "<td align=right valign=top class=highlight>";
+                           echo "<td align=\"right\" valign=\"top\" class=\"highlight\">";
                            choose_from_menu($answers, "q$realquestion->id"."r$subquestion->id", $response[$key]);
                        } else {
-                           echo "<td align=right valign=top>";
+                           echo "<td align=\"right\" valign=\"top\">";
                            choose_from_menu($answers, "q$realquestion->id"."r$subquestion->id", $response[$key]);
                        }
                    }
@@ -763,18 +763,18 @@ function quiz_print_question($number, $question, $grade, $quizid,
                break;
            }
 
-           echo "<table border=0 cellpadding=10>";
+           echo "<table border=\"0\" cellpadding=\"10\">";
            foreach ($randomquestions as $key => $randomquestion) {
-               echo "<tr><td align=left valign=top>";
+               echo "<tr><td align=\"left\" valign=\"top\">";
                echo $randomquestion->questiontext;
                echo "</td>";
-               echo "<td align=right valign=top>";
+               echo "<td align=\"right\" valign=\"top\">";
                if (empty($response)) {
                    choose_from_menu($randomanswers, "q$realquestion->id"."r$randomquestion->id");
                } else {
                    if (!empty($correct[$key])) {
                        if ($randomanswers[$responseanswer[$key]] == $correct[$key]) {
-                           echo "<span=highlight>";
+                           echo "<span=\"highlight\">";
                            choose_from_menu($randomanswers, "q$realquestion->id"."r$randomquestion->id", $responseanswer[$key]);
                            echo "</span><br \>";
                        } else {
@@ -837,7 +837,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
                 switch ($multianswer->answertype) {
                     case SHORTANSWER:
                     case NUMERICAL:
-                        echo " <input $style $inputname value=\"$actualresponse\" type=\"TEXT\" size=\"8\"/> ";
+                        echo " <input $style $inputname value=\"$actualresponse\" type=\"text\" size=\"8\" /> ";
                     break;
                     case MULTICHOICE:
                         echo (" <select $style $inputname>");
@@ -865,14 +865,14 @@ function quiz_print_question($number, $question, $grade, $quizid,
        case RANDOM:
            // This can only happen if it is a recently added question
 
-           echo '<P>' . get_string('random', 'quiz') . '</P>';
+           echo '<p>' . get_string('random', 'quiz') . '</p>';
            break;
 
        default: 
            notify("Error: Unknown question type!");
     }
 
-    echo "</TD></TR></TABLE>";
+    echo "</td></tr></table>";
 }
 
 
@@ -960,8 +960,8 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
         $onsubmit = "onsubmit=\"return confirm('$strconfirmattempt');\"";
     }
 
-    echo "<FORM METHOD=POST ACTION=attempt.php $onsubmit>";
-    echo "<INPUT TYPE=hidden NAME=q VALUE=\"$quiz->id\">";
+    echo "<form method=\"post\" action=\"attempt.php\" $onsubmit>\n";
+    echo "<input type=\"hidden\" name=\"q\" value=\"$quiz->id\" />\n";
 
     $count = 0;
     $questionorder = array();
@@ -1009,20 +1009,20 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
         }
 
 
-        print_simple_box_start("CENTER", "90%");
+        print_simple_box_start("center", "90%");
         quiz_print_question($count, $question, $grades[$question->id]->grade, $quiz->id, 
                             $feedback, $response, $actualgrades, $correct, 
                             $randomquestion, $quiz->shuffleanswers, $quiz->grade);
         print_simple_box_end();
-        echo "<br \>";
+        echo "<br />";
     }
 
     if (empty($results) || $results->attemptbuildsonthelast) {
         if (!empty($quiz->shufflequestions)) {  // Things have been mixed up, so pass the question order
             $shuffleorder = implode(',', $questionorder);
-            echo "<input type=hidden name=shuffleorder value=\"$shuffleorder\">\n";
+            echo "<input type=\"hidden\" name=\"shuffleorder\" value=\"$shuffleorder\" />\n";
         }
-        echo "<center><input type=submit value=\"".get_string("savemyanswers", "quiz")."\"></center>";
+        echo "<center>\n<input type=\"submit\" value=\"".get_string("savemyanswers", "quiz")."\" />\n</center>";
     }
     echo "</form>";
 
@@ -1085,18 +1085,18 @@ function quiz_print_category_form($course, $current) {
     $strshow = get_string("show", "quiz");
     $streditcats = get_string("editcategories", "quiz");
 
-    echo "<TABLE width=\"100%\"><TR><TD NOWRAP>";
-    echo "<FORM METHOD=POST ACTION=edit.php>"; 
-    echo "<B>$strcategory:</B>&nbsp;";
+    echo "<table width=\"100%\"><tr><td nowrap=\"nowrap\">";
+    echo "<form method=\"post\" action=\"edit.php\">"; 
+    echo "<b>$strcategory:</b>&nbsp;";
     choose_from_menu($catmenu, "cat", "$current");
-    echo "<INPUT TYPE=submit VALUE=\"$strshow\">";
-    echo "</FORM>";
-    echo "</TD><TD align=right>";
-    echo "<FORM METHOD=GET ACTION=category.php>"; 
-    echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
-    echo "<INPUT TYPE=submit VALUE=\"$streditcats\">";
-    echo "</FORM>";
-    echo "</TD></TR></TABLE>";
+    echo "<input type=\"submit\" value=\"$strshow\" />";
+    echo "</form>";
+    echo "</td><td align=\"right\">";
+    echo "<form method=\"get\" action=\"category.php\">"; 
+    echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
+    echo "<input type=\"submit\" value=\"$streditcats\" />";
+    echo "</form>";
+    echo "</td></tr></table>";
 }
 
 
@@ -1180,18 +1180,18 @@ function quiz_print_question_list($questionlist, $grades) {
     global $THEME;
 
     if (!$questionlist) {
-        echo "<P align=center>";
+        echo "<p align=\"center\">";
         print_string("noquestions", "quiz");
-        echo "</P>";
+        echo "</p>";
         return;
     }
 
     $order = explode(",", $questionlist);
 
     if (!$questions = get_records_list("quiz_questions", "id", $questionlist)) {
-        echo "<P align=center>";
+        echo "<p align=\"center\">";
         print_string("noquestions", "quiz");
-        echo "</P>";
+        echo "</p>";
         return;
 
     }
@@ -1209,57 +1209,57 @@ function quiz_print_question_list($questionlist, $grades) {
     $count = 0;
     $sumgrade = 0;
     $total = count($order);
-    echo "<FORM METHOD=post ACTION=edit.php>";
-    echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2 WIDTH=\"100%\">";
-    echo "<TR><TH WIDTH=\"*\" COLSPAN=3 NOWRAP>$strorder</TH><TH align=left WIDTH=\"100%\" NOWRAP>$strquestionname</TH><TH width=\"*\" NOWRAP>$strtype</TH><TH WIDTH=\"*\" NOWRAP>$strgrade</TH><TH WIDTH=\"*\" NOWRAP>$stredit</TH></TR>";
+    echo "<form method=\"post\" action=\"edit.php\">";
+    echo "<table border=\"0\" cellpadding=\"5\" cellspacing=\"2\" width=\"100%\">\n";
+    echo "<tr><th width=\"*\" colspan=\"3\" nowrap=\"nowrap\">$strorder</th><th align=\"left\" width=\"100%\" nowrap=\"nowrap\">$strquestionname</th><th width=\"*\" nowrap=\"nowrap\">$strtype</th><th width=\"*\" nowrap=\"nowrap\">$strgrade</th><th width=\"*\" nowrap=\"nowrap\">$stredit</th></tr>\n";
     foreach ($order as $qnum) {
         if (empty($questions[$qnum])) {
             continue;
         }
         $question = $questions[$qnum];
         $count++;
-        echo "<TR BGCOLOR=\"$THEME->cellcontent\">";
-        echo "<TD>$count</TD>";
-        echo "<TD>";
+        echo "<tr bgcolor=\"$THEME->cellcontent\">";
+        echo "<td>$count</td>";
+        echo "<td>";
         if ($count != 1) {
-            echo "<A TITLE=\"$strmoveup\" HREF=\"edit.php?up=$qnum\"><IMG 
-                 SRC=\"../../pix/t/up.gif\" BORDER=0></A>";
+            echo "<a title=\"$strmoveup\" href=\"edit.php?up=$qnum\"><img 
+                 src=\"../../pix/t/up.gif\" border=\"0\"></a>";
         }
-        echo "</TD>";
-        echo "<TD>";
+        echo "</td>";
+        echo "<td>";
         if ($count != $total) {
-            echo "<A TITLE=\"$strmovedown\" HREF=\"edit.php?down=$qnum\"><IMG 
-                 SRC=\"../../pix/t/down.gif\" BORDER=0></A>";
+            echo "<a title=\"$strmovedown\" href=\"edit.php?down=$qnum\"><img 
+                 src=\"../../pix/t/down.gif\" border=\"0\"></a>";
         }
-        echo "</TD>";
-        echo "<TD>$question->name</TD>";
-        echo "<TD ALIGN=CENTER>";
+        echo "</td>";
+        echo "<td>$question->name</td>";
+        echo "<td align=\"center\">";
         quiz_print_question_icon($question);
-        echo "</TD>";
-        echo "<TD>";
+        echo "</td>";
+        echo "<td>";
         if ($question->qtype == DESCRIPTION) {
-            echo "<INPUT TYPE=hidden NAME=q$qnum VALUE=\"0\"> ";
+            echo "<input type=\"hidden\" name=\"q$qnum\" value=\"0\" /> \n";
         } else {
             choose_from_menu(quiz_gradesmenu_options($question->defaultgrade),
                              "q$qnum", (string)$grades[$qnum], "");
         }
-        echo "<TD>";
-            echo "<A TITLE=\"$strdelete\" HREF=\"edit.php?delete=$qnum\"><IMG 
-                 SRC=\"../../pix/t/delete.gif\" BORDER=0></A>&nbsp;";
-            echo "<A TITLE=\"$stredit\" HREF=\"question.php?id=$qnum\"><IMG 
-                 SRC=\"../../pix/t/edit.gif\" BORDER=0></A>";
-        echo "</TD>";
+        echo "<td>";
+            echo "<a title=\"$strdelete\" href=\"edit.php?delete=$qnum\"><img 
+                 src=\"../../pix/t/delete.gif\" border=\"0\"></a>&nbsp;";
+            echo "<a title=\"$stredit\" href=\"question.php?id=$qnum\"><img 
+                 src=\"../../pix/t/edit.gif\" border=\"0\"></a>\n";
+        echo "</td>";
 
         $sumgrade += $grades[$qnum];
     }
-    echo "<TR><TD COLSPAN=5 ALIGN=right>";
-    echo "<INPUT TYPE=submit VALUE=\"$strsavegrades:\">";
-    echo "<INPUT TYPE=hidden NAME=setgrades VALUE=\"save\">";
-    echo "<TD ALIGN=LEFT BGCOLOR=\"$THEME->cellcontent\">";
-    echo "<B>$sumgrade</B>";
-    echo "</TD><TD></TD></TR>";
-    echo "</TABLE>";
-    echo "</FORM>";
+    echo "<tr><td colspan=5 align=\"right\">\n";
+    echo "<input type=\"submit\" value=\"$strsavegrades:\" />\n";
+    echo "<input type=\"hidden\" name=\"setgrades\" value=\"save\" />\n";
+    echo "<td align=\"left\" bgcolor=\"$THEME->cellcontent\">\n";
+    echo "<b>$sumgrade</b>";
+    echo "</td><td>\n</td></tr>\n";
+    echo "</table>\n";
+    echo "</form>\n";
 
     return $sumgrade;
 }
@@ -1286,7 +1286,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
     $strcreatemultiple = get_string("createmultiple", "quiz");
 
     if (!$categoryid) {
-        echo "<p align=center><b>";
+        echo "<p align=\"center\"><b>";
         print_string("selectcategoryabove", "quiz");
         echo "</b></p>";
         if ($quizselected) {
@@ -1301,85 +1301,85 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
         notify("Category not found!");
         return;
     }
-    echo "<CENTER>";
+    echo "<center>";
     echo text_to_html($category->info);
 
-    echo "<TABLE><TR>";
-    echo "<TD valign=top><B>$straddquestions:</B></TD>";
-    echo "<TD valign=top align=right>";
-    echo "<FORM METHOD=GET ACTION=question.php>"; 
+    echo "<table><tr>";
+    echo "<td valign=\"top\"><b>$straddquestions:</b></td>";
+    echo "<td valign=\"top\" align=\"right\">";
+    echo "<form method=\"get\" action=\"question.php\">"; 
     choose_from_menu($QUIZ_QUESTION_TYPE, "qtype", "", "");
-    echo "<INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
-    echo "<INPUT TYPE=submit VALUE=\"$strcreatenewquestion\">";
+    echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
+    echo "<input type=\"submit\" value=\"$strcreatenewquestion\" />";
     helpbutton("questiontypes", $strcreatenewquestion, "quiz");
-    echo "</FORM>";
+    echo "</form>";
 
-    echo "<FORM METHOD=GET ACTION=import.php>"; 
-    echo "<INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
-    echo "<INPUT TYPE=submit VALUE=\"$strimportquestions\">";
+    echo "<form method=\"get\" action=\"import.php\">"; 
+    echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
+    echo "<input type=\"submit\" value=\"$strimportquestions\" />";
     helpbutton("import", $strimportquestions, "quiz");
-    echo "</FORM>";
+    echo "</form>";
 
-    echo "<FORM METHOD=GET ACTION=multiple.php>"; 
-    echo "<INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
-    echo "<INPUT TYPE=submit VALUE=\"$strcreatemultiple\">";
+    echo "<form method=\"get\" action=\"multiple.php\">"; 
+    echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
+    echo "<input type=\"submit\" value=\"$strcreatemultiple\" />";
     helpbutton("createmultiple", $strcreatemultiple, "quiz");
-    echo "</FORM>";
+    echo "</form>";
 
-    echo "</TR></TABLE>";
+    echo "</tr></table>";
 
-    echo "</CENTER>";
+    echo "</center>";
 
     if (!$questions = get_records("quiz_questions", "category", $category->id, "qtype ASC")) {
-        echo "<P align=center>";
+        echo "<p align=\"center\">";
         print_string("noquestions", "quiz");
-        echo "</P>";
+        echo "</p>";
         return;
     }
 
     $canedit = isteacheredit($category->course);
 
-    echo "<FORM METHOD=post ACTION=edit.php>";
-    echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2 WIDTH=\"100%\">";
-    echo "<TR>";
+    echo "<form method=\"post\" action=\"edit.php\">";
+    echo "<table border=\"0\" cellpadding=\"5\" cellspacing=\"2\" width=\"100%\">";
+    echo "<tr>";
     if ($quizselected) {
-        echo "<TH width=\"*\" NOWRAP>$strselect</TH>";
+        echo "<th width=\"*\" nowrap=\"nowrap\">$strselect</th>";
     }
-    echo "<TH width=\"100%\" align=left NOWRAP>$strquestionname</TH><TH WIDTH=\"*\" NOWRAP>$strtype</TH>";
+    echo "<th width=\"100%\" align=\"left\" nowrap=\"nowrap\">$strquestionname</th><th width=\"*\" nowrap=\"nowrap\">$strtype</th>";
     if ($canedit) {
-        echo "<TH width=\"*\" NOWRAP>$stredit</TH>";
+        echo "<th width=\"*\" nowrap=\"nowrap\">$stredit</th>";
     }
-    echo "</TR>";
+    echo "</tr>\n";
     foreach ($questions as $question) {
-        echo "<TR BGCOLOR=\"$THEME->cellcontent\">";
+        echo "<tr bgcolor=\"$THEME->cellcontent\">\n";
         if ($quizselected) {
-            echo "<TD ALIGN=CENTER>";
-            echo "<INPUT TYPE=CHECKBOX NAME=q$question->id VALUE=\"1\">";
-            echo "</TD>";
+            echo "<td align=\"center\">";
+            echo "<input type=\"checkbox\" name=\"q$question->id\" value=\"1\" />\n";
+            echo "</td>";
         }
-        echo "<TD>".$question->name."</TD>";
-        echo "<TD ALIGN=CENTER>";
+        echo "<td>".$question->name."</td>\n";
+        echo "<td align=\"center\">\n";
         quiz_print_question_icon($question);
-        echo "</TD>";
+        echo "</td>\n";
         if ($canedit) {
-            echo "<TD>";
-                echo "<A TITLE=\"$strdelete\" HREF=\"question.php?id=$question->id&delete=$question->id\"><IMG 
-                     SRC=\"../../pix/t/delete.gif\" BORDER=0></A>&nbsp;";
-                echo "<A TITLE=\"$stredit\" HREF=\"question.php?id=$question->id\"><IMG 
-                     SRC=\"../../pix/t/edit.gif\" BORDER=0></A>";
-            echo "</TD></TR>";
+            echo "<td>\n";
+                echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&delete=$question->id\">\n<img 
+                     src=\"../../pix/t/delete.gif\" border=0></a>&nbsp;";
+                echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img 
+                     src=\"../../pix/t/edit.gif\" border=0></a>";
+            echo "</td>\n";// deleted </tr> jm
         }
-        echo "</TR>";
+        echo "</tr>\n";
     }
     if ($quizselected) {
-        echo "<TR><TD COLSPAN=3>";
-        echo "<INPUT TYPE=submit NAME=add VALUE=\"<< $straddselectedtoquiz\">";
-        //echo "<INPUT TYPE=submit NAME=delete VALUE=\"XX Delete selected\">";
-        echo "<INPUT type=button onclick=\"checkall()\" value=\"$strselectall\">";
-        echo "</TD></TR>";
+        echo "<tr>\n<td colspan=\"3\">";
+        echo "<input type=\"submit\" name=\"add\" value=\"<< $straddselectedtoquiz\" />\n";
+        //echo "<input type=submit name=\"delete\" value=\"XX Delete selected\">";
+        echo "<input type=\"button\" onclick=\"checkall()\" value=\"$strselectall\" />\n"; // not sure about onclick case jm
+        echo "</td></tr>";
     }
-    echo "</TABLE>";
-    echo "</FORM>";
+    echo "</table>\n";
+    echo "</form>\n";
 }
 
 
@@ -1414,7 +1414,7 @@ function quiz_get_user_attempts_string($quiz, $attempts, $bestgrade) {
     foreach ($attempts as $attempt) {
         $attemptgrade = format_float(($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade);
         if ($attemptgrade == $bestgrade) {
-            $userattempts[] = "<span class=highlight><a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</a></span>";
+            $userattempts[] = "<span class=\"highlight\"><a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</a></span>";
         } else {
             $userattempts[] = "<a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</a>";
         }
@@ -1615,6 +1615,9 @@ function quiz_grade_attempt_question_result($question,
             $response[0] = $question->answer;
             $bestshortanswer = 0;
             foreach ($answers as $answer) {  // There might be multiple right answers
+
+                $answer->answer = trim($answer->answer);  // Just in case
+
                 if ($answer->fraction > $bestshortanswer) {
                     $correct[$answer->id] = $answer->answer;
                     $bestshortanswer = $answer->fraction;
@@ -1902,7 +1905,7 @@ function quiz_save_question_options($question) {
                 if ($dataanswer != "") {
                     if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                         $answer = $oldanswer;
-                        $answer->answer   = $dataanswer;
+                        $answer->answer   = trim($dataanswer);
                         $answer->fraction = $question->fraction[$key];
                         $answer->feedback = $question->feedback[$key];
                         if (!update_record("quiz_answers", $answer)) {
@@ -1911,7 +1914,7 @@ function quiz_save_question_options($question) {
                         }
                     } else {    // This is a completely new answer
                         unset($answer);
-                        $answer->answer   = $dataanswer;
+                        $answer->answer   = trim($dataanswer);
                         $answer->question = $question->id;
                         $answer->fraction = $question->fraction[$key];
                         $answer->feedback = $question->feedback[$key];
