@@ -2597,11 +2597,9 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
         case FORUM_MODE_FLATOLDEST :
         case FORUM_MODE_FLATNEWEST :
         default:
-            echo "<ul><li>";
             if (forum_print_posts_flat($post->discussion, $course->id, $mode, $ratings, $reply)) {
                 $ratingsmenuused = true;
             }
-            echo "</li></ul>";
             break;
 
         case FORUM_MODE_THREADED :
@@ -2662,7 +2660,7 @@ function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply) 
     if ($posts = forum_get_child_posts($parent)) {
         foreach ($posts as $post) {
 
-            echo "<ul><li>";
+            echo '<div style="margin-left:20px">';
             if ($depth > 0) {
                 $ownpost = ($USER->id == $post->userid);
                 if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings)) {
@@ -2680,7 +2678,7 @@ function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply) 
             if (forum_print_posts_threaded($post->id, $course, $depth-1, $ratings, $reply)) {
                 $ratingsmenuused = true;
             }
-            echo "</li></ul>\n";
+            echo "</div>\n";
         }
     }
     return $ratingsmenuused;
@@ -2701,7 +2699,7 @@ function forum_print_posts_nested($parent, $course, $ratings, $reply) {
                 $ownpost = ($USER->id == $post->userid);
             }
 
-            echo "<ul><li>";
+            echo '<div style="margin-left:20px">';
             if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings)) {
                 $ratingsmenuused = true;
             }
@@ -2709,7 +2707,7 @@ function forum_print_posts_nested($parent, $course, $ratings, $reply) {
             if (forum_print_posts_nested($post->id, $course, $ratings, $reply)) {
                 $ratingsmenuused = true;
             }
-            echo "</li></ul>\n";
+            echo "</div>\n";
         }
     }
     return $ratingsmenuused;
