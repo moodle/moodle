@@ -91,9 +91,9 @@
     print_simple_box_start("center", "100%", "$THEME->cellheading");
     print_heading($options[$auth]);
 
-    echo "<CENTER><P>";
+    echo "<BLOCKQUOTE><CENTER><P>";
     print_string("auth_$auth"."description", "auth");
-    echo "</P></CENTER>";
+    echo "</P></CENTER></BLOCKQUOTE>";
 
     echo "<HR>";
 
