@@ -757,8 +757,8 @@ function print_course_admin_links($course, $width=180) {
             }
         }
 
-        if (!$course->teachers) {
-            $course->teachers = get_string("defaultcourseteachers");
+        if (!$course->students) {
+            $course->students = get_string("defaultcoursestudents");
         }
         $admindata[]="<a href=\"student.php?id=$course->id\">$course->students...</a>";
         $adminicon[]="<img src=\"$pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
