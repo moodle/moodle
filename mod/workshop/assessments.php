@@ -172,7 +172,7 @@
 					$element->elementno = $i;
 					$element->feedback   = $form->{"feedback_$i"};
 					if (!$element->id = insert_record("workshop_grades", $element)) {
-						error("Could not insert workshop element!");
+						error("Could not insert workshop grade!");
 					}
 				}
 				$grade = 0; // set to satisfy save to db
@@ -188,7 +188,7 @@
 					$element->feedback   = $form->{"feedback_$key"};
 					$element->grade = $thegrade;
 					if (!$element->id = insert_record("workshop_grades", $element)) {
-						error("Could not insert workshop element!");
+						error("Could not insert workshop grade!");
 						}
 					}
 				// now work out the grade...
@@ -217,7 +217,7 @@
 					$element->feedback   = $form->{"feedback_$i"};
 					$element->grade = $form->grade[$i];
 					if (!$element->id = insert_record("workshop_grades", $element)) {
-						error("Could not insert workshop element!");
+						error("Could not insert workshop grade!");
 					}
 	    			if (empty($form->grade[$i])){
 						$error += $WORKSHOP_EWEIGHTS[$elements[$i]->weight];
@@ -231,7 +231,7 @@
 				$element->elementno = $i;
 				$element->grade = $form->grade[$i];
 				if (!$element->id = insert_record("workshop_grades", $element)) {
-					error("Could not insert workshop element!");
+					error("Could not insert workshop grade!");
 				}
 				$grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i]) * 100 / $workshop->grade;
                 // do sanity check
@@ -251,7 +251,7 @@
 				$element->elementno = 0;
 				$element->grade = $form->grade[0];
 				if (!$element->id = insert_record("workshop_grades", $element)) {
-					error("Could not insert workshop element!");
+					error("Could not insert workshop grade!");
 				}
 				// now save the adjustment in element one
 				unset($element);
@@ -260,7 +260,7 @@
 				$element->elementno = 1;
 				$element->grade = $form->grade[1];
 				if (!$element->id = insert_record("workshop_grades", $element)) {
-					error("Could not insert workshop element!");
+					error("Could not insert workshop grade!");
 				}
 				$grade = ($elements[$form->grade[0]]->maxscore + $form->grade[1]);
 				break;
@@ -275,7 +275,7 @@
 					$element->feedback   = $form->{"feedback_$key"};
 					$element->grade = $thegrade;
 					if (!$element->id = insert_record("workshop_grades", $element)) {
-						error("Could not insert workshop element!");
+						error("Could not insert workshop grade!");
 					}
 				}
 				// now work out the grade...
@@ -443,7 +443,7 @@
 				    	$element->feedback = '';
 					    $element->grade = 1;
 	    				if (!$element->id = insert_record("workshop_grades", $element)) {
-		    				error("Could not insert workshop element!");
+		    				error("Could not insert workshop grade!");
 			    		}
 	    			}
     				// now set the adjustment
@@ -454,7 +454,7 @@
 				    $element->elementno = $i;
 			    	$element->grade = 0;
     				if (!$element->id = insert_record("workshop_grades", $element)) {
-	    				error("Could not insert workshop element!");
+	    				error("Could not insert workshop grade!");
 		    		}
                 }
             }
@@ -1020,7 +1020,7 @@
 					$element->elementno = $i;
 					$element->feedback   = $form->{"feedback_$i"};
 					if (!$element->id = insert_record("workshop_grades", $element)) {
-						error("Could not insert workshop element!");
+						error("Could not insert workshop grade!");
 					}
 				}
 				$grade = 0; // set to satisfy save to db
@@ -1036,7 +1036,7 @@
 					$element->feedback   = $form->{"feedback_$key"};
 					$element->grade = $thegrade;
 					if (!$element->id = insert_record("workshop_grades", $element)) {
-						error("Could not insert workshop element!");
+						error("Could not insert workshop grade!");
 						}
 					}
 				// now work out the grade...
@@ -1065,7 +1065,7 @@
 					$element->feedback   = $form->{"feedback_$i"};
 					$element->grade = $form->grade[$i];
 					if (!$element->id = insert_record("workshop_grades", $element)) {
-						error("Could not insert workshop element!");
+						error("Could not insert workshop grade!");
 					}
 	    			if (empty($form->grade[$i])){
 						$error += $WORKSHOP_EWEIGHTS[$elements[$i]->weight];
@@ -1079,7 +1079,7 @@
 				$element->elementno = $i;
 				$element->grade = $form->grade[$i];
 				if (!$element->id = insert_record("workshop_grades", $element)) {
-					error("Could not insert workshop element!");
+					error("Could not insert workshop grade!");
 				}
 				$grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i]) * 100 / $workshop->grade;
                 // do sanity check
@@ -1099,7 +1099,7 @@
 				$element->elementno = 0;
 				$element->grade = $form->grade[0];
 				if (!$element->id = insert_record("workshop_grades", $element)) {
-					error("Could not insert workshop element!");
+					error("Could not insert workshop grade!");
 				}
 				// now save the adjustment in element one
 				unset($element);
@@ -1108,7 +1108,7 @@
 				$element->elementno = 1;
 				$element->grade = $form->grade[1];
 				if (!$element->id = insert_record("workshop_grades", $element)) {
-					error("Could not insert workshop element!");
+					error("Could not insert workshop grade!");
 				}
 				$grade = ($elements[$form->grade[0]]->maxscore + $form->grade[1]);
 				break;
@@ -1123,7 +1123,7 @@
 					$element->feedback   = $form->{"feedback_$key"};
 					$element->grade = $thegrade;
 					if (!$element->id = insert_record("workshop_grades", $element)) {
-						error("Could not insert workshop element!");
+						error("Could not insert workshop grade!");
 					}
 				}
 				// now work out the grade...
@@ -1194,7 +1194,7 @@
 					$element->elementno = $i;
 					$element->feedback = $form->{"feedback_$i"};
 					if (!$element->id = insert_record("workshop_grades", $element)) {
-						error("Could not insert workshop element!");
+						error("Could not insert workshop grade!");
 					}
 				}
 				$grade = 0; // set to satisfy save to db
@@ -1210,7 +1210,7 @@
 					$element->feedback   = $form->{"feedback_$key"};
 					$element->grade = $thegrade;
 					if (!$element->id = insert_record("workshop_grades", $element)) {
-						error("Could not insert workshop element!");
+						error("Could not insert workshop grade!");
 						}
 					}
 				// now work out the grade...
@@ -1239,7 +1239,7 @@
 					$element->feedback   = $form->{"feedback_$i"};
 					$element->grade = $form->grade[$i];
 					if (!$element->id = insert_record("workshop_grades", $element)) {
-						error("Could not insert workshop element!");
+						error("Could not insert workshop grade!");
 					}
 	    			if (empty($form->grade[$i])){
 						$error += $WORKSHOP_EWEIGHTS[$elements[$i]->weight];
@@ -1253,7 +1253,7 @@
 				$element->elementno = $i;
 				$element->grade = $form->grade[$i];
 				if (!$element->id = insert_record("workshop_grades", $element)) {
-					error("Could not insert workshop element!");
+					error("Could not insert workshop grade!");
 				}
 				$grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i]) * 100 / $workshop->grade;
                 // do sanity check
@@ -1273,7 +1273,7 @@
 				$element->elementno = 0;
 				$element->grade = $form->grade[0];
 				if (!$element->id = insert_record("workshop_grades", $element)) {
-					error("Could not insert workshop element!");
+					error("Could not insert workshop grade!");
 				}
 				// now save the adjustment in element one
 				unset($element);
@@ -1282,7 +1282,7 @@
 				$element->elementno = 1;
 				$element->grade = $form->grade[1];
 				if (!$element->id = insert_record("workshop_grades", $element)) {
-					error("Could not insert workshop element!");
+					error("Could not insert workshop grade!");
 				}
 				$grade = ($elements[$form->grade[0]]->maxscore + $form->grade[1]);
 				break;
@@ -1297,7 +1297,7 @@
 					$element->feedback = $form->{"feedback_$key"};
 					$element->grade = $thegrade;
 					if (!$element->id = insert_record("workshop_grades", $element)) {
-						error("Could not insert workshop element!");
+						error("Could not insert workshop grade!");
 					}
 				}
 				// now work out the grade...
