@@ -412,12 +412,12 @@ If you need help, please contact the site administrator,
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: change password confirmation';
 $string['emailpasswordconfirmsent'] = 'An email should have been sent to your address at <b>$a</b>.
-<p>It contains easy instructions to confirm and complete this password change.
+<br />It contains easy instructions to confirm and complete this password change.
 If you continue to have difficulty, contact the site administrator.';
 $string['emailpasswordsent'] = 'Thank you for confirming the change of password.
-<p>An email containing your new password has been sent to your address at <b>$a->email</b>.
-<p>The new password was automatically generated - you might like to
-<a href=$a->link>change your password</a> to something easier to remember.';
+An email containing your new password has been sent to your address at<br /><b>$a->email</b>.<br />
+The new password was automatically generated - you might like to
+<a href=\"$a->link\">change your password</a> to something easier to remember.';
 $string['enable'] = 'Enable';
 $string['encryptedcode'] = 'Encrypted code';
 $string['enrolledincourse'] = 'Enrolled in course \"$a\"';
@@ -620,7 +620,7 @@ $string['loginsteps'] = 'Hi! For full access to courses you\'ll need to take
    Each of the individual courses may also have a one-time
    \"enrolment key\", which you won\'t need until later. Here are
    the steps:
-   <ol size=\"2\">
+   <ol>
    <li>Fill out the <a href=\"$a\">New Account</a> form with your details.</li>
    <li>An email will be immediately sent to your email address.</li>
    <li>Read your email, and click on the web link it contains.</li>
