@@ -1218,6 +1218,10 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
 function print_whole_category_list($category=NULL, $displaylist=NULL, $parentslist=NULL, $depth=-1) {
 /// Recursive function to print out all the categories in a nice format 
 /// with or without courses included
+    global $CFG;
+    if (isset($CFG->max_category_depth)&&($depth >= $CFG->max_category_depth)) {
+      return;
+    }
 
     if (!$displaylist) {
         make_categories_list($displaylist, $parentslist);
@@ -1297,7 +1301,7 @@ function print_category_info($category, $depth) {
         echo "<td class=\"categoryname\">&nbsp;</td>";
         echo "</tr>\n";
 
-        if ($courses) {
+        if ($courses && !(isset($CFG->max_category_depth)&&($depth>=$CFG->max_category_depth-1))) {
             foreach ($courses as $course) {
                 $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
                 echo "<tr><td valign=\"top\" width=\"30\">&nbsp;";
