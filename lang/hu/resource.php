@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.0.8.1 (2003011200)
+      // resource.php - created with Moodle 1.1.1 (2003091111)
 
 
 $string['addresource'] = "Tananyag hozzáadása";
@@ -13,6 +13,16 @@ $string['htmlfragment'] = "HTML részlet";
 $string['modulename'] = "Tananyag";
 $string['modulenameplural'] = "Tananyagok";
 $string['neverseen'] = "Ismeretlen";
+$string['newfullscreen'] = "Teljes képernyõs";
+$string['newheight'] = "Alapértelmezett ablakmagasság (pixel)";
+$string['newmenubar'] = "Menüsor megjelenítése";
+$string['newresizable'] = "Ablak átméretezésének engedélyezése";
+$string['newscrollbars'] = "Ablak gördítésének engedélyezése";
+$string['newstatus'] = "Státuszsor megmutatása";
+$string['newtoolbar'] = "Eszköztár megmutatása";
+$string['newwidth'] = "Alapértelmezett ablakszélesség (pixelben)";
+$string['newwindow'] = "Új ablak";
+$string['newwindowopen'] = "Ez a ttananyag új ablakban jelenjen meg";
 $string['note'] = "Megjegyzés";
 $string['notefile'] = "Egy vagy több fájl feltöltéséhez (ezután jelenik meg a listán) használja a 
 <A HREF=\$a >Fájl Menedzsert</A>.";
@@ -25,5 +35,6 @@ $string['resourcetype4'] = "Egyszerû szöveg";
 $string['resourcetype5'] = "Web hivatkozás";
 $string['resourcetype6'] = "HTML szöveg";
 $string['resourcetype7'] = "Program";
+$string['resourcetype8'] = "Wiki szöveg";
 
 ?>

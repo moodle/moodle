@@ -1,9 +1,12 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.8.1 (2003011200)
+      // assignment.php - created with Moodle 1.1.1 (2003091111)
 
 
 $string['allowresubmit'] = "Újraküldés engedélyezése";
 $string['assignmentdetails'] = "Feladat részletei";
+$string['assignmentmail'] = "\$a->teacher véleményezte a '\$a->assignment' feladatot. A vélemény a feladathoz csatolva megtekinthetõ a következõ helyen: \$a->url";
+$string['assignmentmailhtml'] = "\$a->teacher véleményezte a '<i>\$a->assignment</i>' feladatot <br /><br />
+A vélemény a feladathoz csatolva megtekinthetõ a következõ helyen:<a href=\\\"\$a->url\\\">feladat</a>.";
 $string['assignmentname'] = "Feladat neve";
 $string['assignmenttype'] = "Feladat típusa";
 $string['description'] = "Leírás";
@@ -18,6 +21,7 @@ $string['maximumsize'] = "Maximális méret";
 $string['modulename'] = "Feladat";
 $string['modulenameplural'] = "Feladatok";
 $string['newsubmissions'] = "Beküldött feladatok";
+$string['notgradedyet'] = "Még nincs értékelve";
 $string['notsubmittedyet'] = "Még nincs elküldve";
 $string['overwritewarning'] = "Vigyázat: az újra feltöltés FELÜLÍRJA az elõzõt";
 $string['saveallfeedback'] = "Minden visszajelzés mentése";

@@ -38,15 +38,19 @@ $string['deletequestioncheck'] = "Are you absolutely sure you want to delete '\$
 $string['editcategories'] = "Kategóriák szerkesztése";
 $string['editingmultichoice'] = "Editing a multiple choice question";
 $string['editingquestion'] = "Kérdés szerkesztése";
-$string['editingquiz'] = "Quiz szerkesztése";
+$string['editingquiz'] = "Editing quiz";
 $string['editingshortanswer'] = "Editing a short answer question";
 $string['editingtruefalse'] = "Editing a true/false question";
 $string['false'] = "Hamis";
 $string['feedback'] = "Visszajelzés";
 $string['filloutoneanswer'] = "You must fill out at least one possible answer.  Answers left blank will not be used.";
 $string['fillouttwochoices'] = "You must fill out at least two choices.  Choices left blank will not be used.";
-$string['fractionsaddwrong'] = "The positive grades you have chosen do not add up to 100%% <BR>Instead, they add up to \$a%% <BR>Do you want to go back and fix this question?";
-$string['fractionsnomax'] = "One of the answers should be 100%%, so that it is <BR>possible to get a full grade for this question. <BR>Do you want to go back and fix this question?";
+$string['fractionsaddwrong'] = "The positive grades you have chosen do not add up to 100%%
+<BR>Instead, they add up to \$a%%
+<BR>Do you want to go back and fix this question?";
+$string['fractionsnomax'] = "One of the answers should be 100%%, so that it is
+<BR>possible to get a full grade for this question.
+<BR>Do you want to go back and fix this question?";
 $string['gradeaverage'] = "Average grade";
 $string['gradehighest'] = "Highest grade";
 $string['grademethod'] = "Grading method";
@@ -82,7 +86,7 @@ $string['rename'] = "Átnevezés";
 $string['report'] = "Reports";
 $string['save'] = "Mentés";
 $string['savegrades'] = "Save grades";
-$string['savemyanswers'] = "Válaszok mentése";
+$string['savemyanswers'] = "Save my answers";
 $string['savequiz'] = "Save this whole quiz";
 $string['score'] = "Raw score";
 $string['select'] = "Select";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.8.1 (2003011200)
+      // survey.php - created with Moodle 1.1.1 (2003091111)
 
 
 $string['actual'] = "Aktuális";
@@ -156,6 +156,7 @@ $string['downloadexcel'] = "Adatok letöltése Excel munkalapként";
 $string['downloadinfo'] = "A kérdõív összes nyers adatát letöltheti Excel, SPSS, vagy más program számára megfelelõ formátumban.";
 $string['downloadtext'] = "Adatok letöltése egyzserû szöveges fájlként";
 $string['editingasurvey'] = "Kérdõív szerkesztése";
+$string['guestsnotallowed'] = "Vendégek nem tölthetnek ki kérdõívet";
 $string['helpsurveys'] = "Különbözõ típusú kérdõívek súgója";
 $string['howlong'] = "Mennyi ideig tartott a kérdõív kitöltése?";
 $string['howlongoptions'] = "1 perc,1-2 perc,2-3 perc,3-4 perc,4-5-perc,5-10 perc,több mint 10 perc alatt";

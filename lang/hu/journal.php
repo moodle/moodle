@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.0.8.1 (2003011200)
+      // journal.php - created with Moodle 1.1.1 (2003091111)
 
 
 $string['alwaysopen'] = "Mindig nyitva";
@@ -7,7 +7,14 @@ $string['blankentry'] = "Üres bejegyzés";
 $string['daysavailable'] = "Elérhetõ napok";
 $string['editingended'] = "A szerkesztési idõszak lejárt";
 $string['editingends'] = "A szerkesztési idõszak lejár";
+$string['entries'] = "Bejegyzések";
 $string['feedbackupdated'] = "\$a bejegyzések visszajelzése frissítve";
+$string['journalmail'] = "\$a->teacher megjegyzét fûzött a '\$a->journal'
+ -beli bejegyzéséhez.
+Ezt a bejegyzéshez csatolva megtekintheti a következõ helyen: \$a->url";
+$string['journalmailhtml'] = "\$a->teacher megjegyzét fûzött a '<i>\$a->journal</i>'<br />
+ -beli bejegyzéséhez.
+Ezt a bejegyzéshez csatolva megtekintheti a következõ helyen: <a href=\\\"\$a->url\\\">bejegyzés</a>.";
 $string['journalname'] = "Napló neve";
 $string['journalquestion'] = "Napló kérdés";
 $string['journalrating1'] = "Nem kielégítõ";
