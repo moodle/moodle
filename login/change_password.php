@@ -45,7 +45,7 @@
             $strpasswordchanged = get_string("passwordchanged");
 
             if ($course->id) {
-                add_to_log($course->id, "user", "change password", "view.php?id=$user->id&course=$course->id", "$course->id");
+                add_to_log($course->id, "user", "change password", "view.php?id=$user->id&course=$course->id", "$user->id");
                 $fullname = fullname($USER, true);
                 print_header($strpasswordchanged, $strpasswordchanged,
                              "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
