@@ -124,7 +124,7 @@ function tex_filter ($courseid, $text) {
         $text = str_replace($matches[0][$i],$replacement,$text);
     }
 
-    if (isadmin()) { error_reporting (E_ALL); }; //for debugging
+    //if (isadmin()) { error_reporting (E_ALL); }; //for debugging
 
     // <tex> TeX expression </tex>
     // or $$ TeX expression $$

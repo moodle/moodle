@@ -132,7 +132,7 @@ function algebra_filter ($courseid, $text) {
         $text = str_replace($matches[0][$i],$replacement,$text);
     }
 
-    if (isadmin()) { error_reporting (E_ALL); }; //for debugging
+    //if (isadmin()) { error_reporting (E_ALL); }; //for debugging
      
     // <algebra> some algebraic input expression </algebra>
     // or @@ some algebraic input expression @@
