@@ -75,7 +75,7 @@
 
 /// Increase memory limits if possible
 
-    @ini_set('memory_limit' , '16M');
+    @ini_set('memory_limit' , '64M');    // We should never NEED this much but just in case...
 
 
 /// Load up any configuration from the config table
