@@ -92,7 +92,7 @@
             $form->maxbytes = get_real_size("500K");
         }
         ksort($filesize, SORT_NUMERIC);
-        choose_from_menu($filesize, "maxbytes", "$form->maxbytes");
+        choose_from_menu($filesize, "maxbytes", "$form->maxbytes", "");
         ?>
     </td>
 </tr>
