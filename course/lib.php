@@ -21,7 +21,8 @@ define("FRONTPAGECOURSELIST",     1);
 define("FRONTPAGECATEGORYNAMES",  2);
 
 
-function print_log_selector_form($course, $selecteduser=0, $selecteddate="today") {
+function print_log_selector_form($course, $selecteduser=0, $selecteddate="today",
+                                 $mod="", $modpage="", $modid=0) {
 
     global $USER, $CFG;
 
@@ -58,6 +59,38 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
         asort($courses);
     }
 
+    $activities = array();
+    $selectedactivity = "";
+
+    if ($modinfo = unserialize($course->modinfo)) {
+        $section = 0;
+        if ($course->format == 'weeks') {  // Bodgy
+            $strsection = get_string("week");
+        } else {
+            $strsection = get_string("topic");
+        }
+        foreach ($modinfo as $mod) {
+            if ($mod->mod == "label") {
+                continue;
+            }
+            if ($mod->section > 0 and $section <> $mod->section) {
+                $activities["section/$mod->section"] = "-------------- $strsection $mod->section --------------";
+            }
+            $section = $mod->section;
+            $mod->name = urldecode($mod->name);
+            if (strlen($mod->name) > 55) {
+                $mod->name = substr($mod->name, 0, 50)."...";
+            }
+            if (!$mod->visible) {
+                $mod->name = "(".$mod->name.")";
+            }
+            $activities["$mod->mod/view.php?id=$mod->cm"] = $mod->name;
+
+            if ($mod->cm == $modid) {
+                $selectedactivity = "$mod->mod/view.php?id=$mod->cm";
+            }
+        }
+    }
 
     $strftimedate = get_string("strftimedate");
     $strftimedaydate = get_string("strftimedaydate");
@@ -92,19 +125,20 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
         $selecteddate = $today;
     }
 
-    echo "<CENTER>";
-    echo "<FORM ACTION=log.php METHOD=get>";
-    echo "<INPUT TYPE=hidden NAME=chooselog VALUE=\"1\">";
+    echo '<center>';
+    echo '<form action="log.php" method="get">';
+    echo '<input type=hidden name=chooselog value="1">';
     if (isadmin()) {
         choose_from_menu ($courses, "id", $course->id, "");
     } else {
-        echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
+        echo "<input type=hidden name=id value=\"$course->id\">";
     }
     choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
     choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
-    echo "<INPUT TYPE=submit VALUE=\"".get_string("showtheselogs")."\">";
-    echo "</FORM>";
-    echo "</CENTER>";
+    choose_from_menu ($activities, "url", $selectedactivity, get_string("allactivities"), "", "");
+    echo "<input type=submit value=\"".get_string("showtheselogs")."\">";
+    echo "</form>";
+    echo "</center>";
 }
 
 function make_log_url($module, $url) {
@@ -124,11 +158,13 @@ function make_log_url($module, $url) {
 }
 
 
-function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100, $url="") {
+function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100, 
+                   $url="", $mod="", $modpage="", $modid=0) {
+
 // It is assumed that $date is the GMT time of midnight for that day, 
 // and so the next 86400 seconds worth of logs are printed.
 
-    global $CFG;
+    global $CFG, $db;
 
     if ($course->category) {
         $selector = "l.course='$course->id' AND l.userid = u.id";
@@ -142,6 +178,14 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         }
     }
 
+    if ($mod) {
+        $selector .= " AND l.module = '$mod'";
+    }
+
+    if ($modpage and $modid) {
+        $selector .= " AND l.url = '$modpage.php?id=$modid'";
+    }
+
     if ($user) {
         $selector .= " AND l.userid = '$user'";
     }
@@ -150,6 +194,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         $enddate = $date + 86400;
         $selector .= " AND l.time > '$date' AND l.time < '$enddate'";
     }
+
 
     $totalcount = 0;  // Initialise
 

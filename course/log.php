@@ -7,6 +7,7 @@
     require_variable($id);    // Course ID
     optional_variable($user, 0); // User to display
     optional_variable($date, 0); // Date to display
+    optional_variable($url, ""); // eg resource/view.php?id=66
     optional_variable($page, "0");     // which page to show
     optional_variable($perpage, "100"); // how many per page
 
@@ -44,42 +45,56 @@
             $dateinfo = userdate($date, get_string("strftimedaydate"));
         }
 
+        if ($url) {     // parse into parts:  resource/view.php?id=66 
+            $urlraw = urldecode($url);
+            $urlparts = split("/", $urlraw);
+            if ($urlparts[0] != "section" and $urlparts[0] != "") {
+                $modname = $urlparts[0];
+                $modparts = split('.php\?id=', $urlparts[1]);
+                if (count($modparts) == 2) {
+                    $modpage = $modparts[0];
+                    $modid = $modparts[1];
+                }
+            }
+        }
+
         if ($course->category) {
             print_header("$course->shortname: $strlogs", "$course->fullname", 
-                         "<A HREF=\"view.php?id=$course->id\">$course->shortname</A> ->
-                          <A HREF=\"log.php?id=$course->id\">$strlogs</A> -> $userinfo, $dateinfo", "");
+                         "<a href=\"view.php?id=$course->id\">$course->shortname</a> ->
+                          <a href=\"log.php?id=$course->id\">$strlogs</a> -> $userinfo, $dateinfo", "");
         } else {
             print_header("$course->shortname: $strlogs", "$course->fullname", 
-                         "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> ->
-                          <A HREF=\"log.php?id=$course->id\">$strlogs</A> -> $userinfo, $dateinfo", "");
+                         "<a href=\"../$CFG->admin/index.php\">$stradministration</a> ->
+                          <a href=\"log.php?id=$course->id\">$strlogs</a> -> $userinfo, $dateinfo", "");
         }
         
         print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
 
-        print_log_selector_form($course, $user, $date);
+        print_log_selector_form($course, $user, $date, $modname, $modpage, $modid);
 
         print_log($course, $user, $date, "l.time DESC", $page, $perpage, 
-                  "log.php?id=$course->id&chooselog=1&user=$user&date=$date");
+                  "log.php?id=$course->id&chooselog=1&user=$user&date=$date&url=$url", 
+                  $modname, $modpage, $modid);
 
     } else {
         if ($course->category) {
             print_header("$course->shortname: $strlogs", "$course->fullname", 
-                     "<A HREF=\"view.php?id=$course->id\">$course->shortname</A> -> $strlogs", "");
+                     "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strlogs", "");
         } else {
             print_header("$course->shortname: $strlogs", "$course->fullname", 
-                     "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> $strlogs", "");
+                     "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> $strlogs", "");
         }
 
         print_heading(get_string("chooselogs").":");
 
         print_log_selector_form($course);
 
-        echo "<BR>";
+        echo "<br />";
         print_heading(get_string("chooselivelogs").":");
 
-        echo "<CENTER><H3>";
+        echo "<center><h3>";
         link_to_popup_window("/course/loglive.php?id=$course->id","livelog", get_string("livelogs"), 500, 800);
-        echo "</H3></CENTER>";
+        echo "</h3></center>";
     }
 
     print_footer($course);
