@@ -56,9 +56,6 @@
                 if (is_string($return)) {
                     error($return, "view.php?id=$mod->course");
                 }
-                add_to_log($mod->course, "course", "update mod", 
-                           "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
-                           "$mod->modulename $mod->instance", $mod->coursemodule); 
                 add_to_log($mod->course, $mod->modulename, "update", 
                            "view.php?id=$mod->coursemodule", 
                            "$mod->instance", $mod->coursemodule); 
@@ -97,9 +94,6 @@
                 if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
                     error("Could not update the course module with the correct section");
                 }   
-                add_to_log($mod->course, "course", "add mod", 
-                           "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
-                           "$mod->modulename $mod->instance", $mod->coursemodule); 
                 add_to_log($mod->course, $mod->modulename, "add", 
                            "view.php?id=$mod->coursemodule", 
                            "$mod->instance", $mod->coursemodule); 
@@ -116,7 +110,7 @@
                 }
                 add_to_log($mod->course, "course", "delete mod", 
                            "view.php?id=$mod->course", 
-                           "$mod->modulename $mod->instance"); 
+                           "$mod->modulename $mod->instance", $mod->coursemodule); 
                 break;
             default:
                 error("No mode defined");
