@@ -720,6 +720,7 @@
                 fwrite ($bf,start_tag("USER",3,true));
                 //Output all user data
                 fwrite ($bf,full_tag("ID",4,false,$user_data->id));
+                fwrite ($bf,full_tag("AUTH",4,false,$user_data->auth));
                 fwrite ($bf,full_tag("CONFIRMED",4,false,$user_data->confirmed));
                 fwrite ($bf,full_tag("DELETED",4,false,$user_data->deleted));
                 fwrite ($bf,full_tag("USERNAME",4,false,$user_data->username));
