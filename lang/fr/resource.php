@@ -3,12 +3,28 @@
 
 
 $string['addresource'] = "Ajouter une ressource";
-$string['chooseafile'] = "Choisir un fichier";
+$string['chooseafile'] = "Choisir ou déposer un fichier";
+$string['configdefaulturl'] = "Ce champ permet de pré-remplir le champ de l'URL qui apparaît lors de la création d'une ressource de type URL.";
+$string['configfilterexternalpages'] = "L'activation de ce réglage permettra le filtrage des ressources externes (pages web, fichiers HTML déposés) par les filtres définis dans le site (comme les liens des glossaires). Lorsque ce réglage est actif, l'affichage de vos pages sera ralenti de façon sensible. À utiliser avec précaution.";
 $string['configframesize'] = "Quand un page web ou un fichier est affiché dans un cadre (frame), cette valeur indique (en pixels) la taille du cadre contenant la navigation (en haut de la fenêtre).";
+$string['configpopup'] = "Lors de l'ajout d'une ressource pouvant être affichée dans une fenêtre « pop-up », cette option doit-elle être activée par défaut ?";
+$string['configpopupdirectories'] = "Les fenêtres « pop-up » affichent le lien du dossier par défaut";
+$string['configpopupheight'] = "Hauteur par défaut des fenêtres « pop-up »";
+$string['configpopuplocation'] = "La barre de l'URL est affichée par défaut dans les fenêtres « pop-up »";
+$string['configpopupmenubar'] = "La barre des menus est affichée par défaut dans les fenêtres « pop-up »";
+$string['configpopupresizable'] = "Les fenêtres « pop-up » sont redimensionnables par défaut";
+$string['configpopupscrollbars'] = "Les barres de défilement sont affichées par défaut dans les fenêtres « pop-up »";
+$string['configpopupstatus'] = "La barre d'état est affichée par défaut dans les fenêtres « pop-up »";
+$string['configpopuptoolbar'] = "La barre des outils est affichée par défaut dans les fenêtres « pop-up »";
+$string['configpopupwidth'] = "Largeur par défaut des fenêtres « pop-up »";;
+$string['configwebsearch'] = "URL affichée lors de l'ajout d'une page web ou d'un lien, pour permettre à l'utilisateur de rechercher l'URL désirée.";
 $string['editingaresource'] = "Modifier une ressource";
 $string['example'] = "Exemple";
 $string['examplereference'] = "Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.";
 $string['exampleurl'] = "http://www.exemple.fr/dossier/fichier.html";
+$string['fetchclienterror'] = "Votre navigateur web a rencontré une erreur en essayant de charger la page web (peut-être une mauvaise URL).";
+$string['fetcherror'] = "Une erreur est survenue lors du chargement de la page web.";
+$string['fetchservererror'] = "Une erreur est survenue lors du chargement de la page web sur le serveur qui l'hŽberge.</p>";
 $string['filename'] = "Nom du fichier";
 $string['fulltext'] = "Texte intégral";
 $string['htmlfragment'] = "Fragment de code HTML";
@@ -28,14 +44,12 @@ $string['newwidth'] = "Largeur de fenêtre par défaut (en pixels)";
 $string['newwindow'] = "Nouvelle fenêtre";
 $string['newwindowopen'] = "Afficher cette ressource dans une nouvelle fenêtre";
 $string['note'] = "Remarque";
-$string['notefile'] = "Pour déposer des fichiers dans le cours (afin qu'ils apparaissent dans cette liste), utiliser le
-
-<a href=\$a>Gestionnaire de fichiers</a>.";
+$string['notefile'] = "Pour déposer des fichiers dans le cours (afin qu'ils apparaissent dans cette liste), utiliser le <a href=\$a>Gestionnaire de fichiers</a>.";
 $string['notypechosen'] = "Vous devez choisir un type. Utiliser le bouton « Retour » de votre navigateur et recommencer.";
 $string['resourcetype'] = "Type de ressource";
 $string['resourcetype1'] = "Référence";
 $string['resourcetype2'] = "Page Web";
-$string['resourcetype3'] = "Fichier envoyé";
+$string['resourcetype3'] = "Fichier déposé";
 $string['resourcetype4'] = "Texte";
 $string['resourcetype5'] = "Lien vers une page Web";
 $string['resourcetype6'] = "Texte HTML";
