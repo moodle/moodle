@@ -7,7 +7,8 @@
 <body bgcolor="#ffffff">
 <h1>Utiliser CVS pour acc&eacute;der au code de Moodle et le modifier</h1>
 <blockquote> 
-  <p>CVS signifie Concurrent Versioning System. C'est une fa&ccedil;on pratique
+  <p>CVS est un acronyme pour &laquo;&nbsp;Concurrent Versioning System&nbsp;&raquo;.
+  C'est une fa&ccedil;on pratique
   stoquer le code source, car elle permet de conserver les versions de
   tous les fichiers de sorte que rien n'est jamais perdu, et que les traces
   de l'utilisation par les diff&eacute;rentes personnes sont conserv&eacute;es. Le
@@ -103,58 +104,55 @@ update -dP</strong> </pre>
   </blockquote>
   <h2>2. Utilisation de CVS sous Windows</h2>
   <blockquote> 
-    <p>First, you need to download a completely fresh copy of Moodle using your 
-      developer account.</p>
+    <p>Pour commencer, il vous faut t&eacute;l&eacute;charger une copie compl&egrave;te de Moodle avec
+    votre compte d&eacute;veloppeur.</p>
     <blockquote> 
-      <p> 1. Get TortoiseCVS from <a target="_top" href="http://www.tortoisecvs.org/">tortoisecvs.org</a> 
-        and install it, then reboot.<br />
-        <br />
-        2. Find or create a new folder somewhere where you want Moodle to be downloaded 
-        to.<br />
-        <br />
-        3. Right-mouse-click that folder and choose &quot;<strong>CVS Checkout</strong>&quot; 
-        from the menu. You should see a dialog box.<br />
-        <br />
-        4. Copy this text into the CVSROOT field (using your own username!):</p>
+      <p>1. T&eacute;l&eacute;chargez TortoiseCVS depuis le site
+      <a target="_top" href="http://www.tortoisecvs.org/">tortoisecvs.org</a> 
+      et installez-le, puis red&eacute;marrez votre machine.<br /><br />
+      2. Trouvez ou cr&eacute;ez un nouveau dossier dans lequel vous allez t&eacute;l&eacute;charger
+      Moodle.<br /><br />
+      3. Cliquez avec le bouton droit de la souris et s&eacute;lectionnez dans le menu l'option
+      &laquo;&nbsp;<strong>CVS Checkout</strong>&nbsp;&raquo;. Une bo&icirc;te de dialogue s'affiche
+      alors.<br /><br />
+      4. Copiez le texte ci-dessous dans le champ CVSROOT (en y pla&ccedil;ant votre
+      nom d'utilisateur&nbsp;!)&nbsp;:</p>
       <blockquote> 
-        <pre> :ext:<font color="#990000">myusername</font>@cvs.moodle.sourceforge.net:/cvsroot/moodle</pre>
+        <pre>:ext:<font color="#990000">myusername</font>@cvs.moodle.sourceforge.net:/cvsroot/moodle</pre>
       </blockquote>
-      <p><br />
-        5. Press the button: &quot;<strong>Fetch list...</strong>&quot;.<br />
-        <br />
-        6. To the right of the button you should see a list of modules: choose 
-        &quot;<strong>moodle</strong>&quot; from that list.<br />
-        <br />
-        7. Press the button: &quot;<strong>OK</strong>&quot; and everything should 
-        be downloaded.<br />
-      </p>
+      <p>
+      5. Cliquez sur le bouton &laquo;&nbsp;<strong>Fetch list...</strong>&nbsp;&raquo;.<br /><br />
+      6. Une liste de modules est affich&eacute;e &agrave; droite du bouton&nbsp;: s&eacute;lectionnez-y
+      &laquo;&nbsp;<strong>moodle</strong>&nbsp;&raquo;.<br /><br />
+      7.  Cliquez sur le bouton &laquo;&nbsp;<strong>OK</strong>&nbsp;&raquo; tout sera alors
+      t&eacute;l&eacute;charg&eacute;.</p>
     </blockquote>
-    <p>A dialog box should show all the files being downloaded, and after a while 
-      you should have a complete copy of Moodle. After this first checkout, you 
-      can fetch the latest updated files from the CVS server:</p>
+    <p>Une bo&icirc;te de dialogue affichera tous les fichiers en cours de t&eacute;l&eacute;chargement,
+    et apr&egrave;s quelques instants vous aurez votre copie compl&egrave;te de Moodle.
+    Apr&egrave;s ce premier &laquo;&nbsp;check out&nbsp;&raquo;, vous pourrez r&eacute;cup&eacute;rer
+    les derniers fichiers modifi&eacute;s sur le serveur CVS&nbsp;:</p>
     <blockquote> 
-      <p> 1. Right-mouse-click on your Moodle folder (or any file) and select 
-        &quot;<strong>CVS Update</strong>&quot;. <br />
-      </p>
+      <p>1.  Cliquez avec le bouton droit de la souris sur votre dossier Moodle (ou
+      sur n'importe quel fichier) et s&eacute;lectionnez &laquo;&nbsp;<strong>CVS Update</strong>&nbsp;&raquo;.</p>
     </blockquote>
-    <p>After modifying files (you will note they change from green top red!), 
-      you can commit them back to the CVS server like this:</p>
+    <p>Apr&egrave;s une modification de fichier (vous remarquerez que la couleur
+    change de vert &agrave; rouge), vous pouvez les d&eacute;poser sur le serveur CVS de
+    la fa&ccedil;on suivante&nbsp;:</p>
     <blockquote> 
-      <p> 1. Right-mouse-click on your Moodle folder (or any file) and select 
-        &quot;<strong>CVS Commit...</strong>&quot;.<br />
-        <br />
-        2. In the dialog box, type a clear description of the changes you are 
-        committing. <br />
-        <br />
-        3. Click &quot;OK&quot;. Your changes will be sent to the server.<br />
-      </p>
+      <p>1.  Cliquez avec le bouton droit de la souris sur votre dossier Moodle (ou
+      sur n'importe quel fichier) et s&eacute;lectionnez &laquo;&nbsp;<strong>CVS
+      Commit...</strong>&nbsp;&raquo;.<br /><br />
+      2. Dans la bo&icirc;te de dialogue, taper une description claire des changements
+      que vous avez effectu&eacute;s.<br /><br />
+      3. Cliquez &laquo;&nbsp;OK&nbsp;&raquo;. Vos modifications sont alors envoy&eacute;es vers
+      le serveur CVS.</p>
     </blockquote>
   </blockquote>
   <p>&nbsp;</p>
-  <p align="center">Good luck!</p>
+  <p align="center">Bonne chance&nbsp;!</p>
   <p>&nbsp;</p>
 </blockquote>
-<p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="CENTER"><font size="1"><a href="." target="_top">Documentation Moodle</a></font></p>
 <p align="CENTER"><font size="1">Version: $Id$</font></p>
 </body>
 </html>
