@@ -193,7 +193,7 @@
 		     <form name=\"navform\" method=\"POST\" action=\"playscorm.php?id=$cm->id\" target=\"_top\">
 		     	<input name=\"scoid\" type=\"hidden\" />
 		     	<input name=\"mode\" type=\"hidden\" value=\"".$mode."\" />
-		     	<input name=\"prev\" type=\"button\" value=\"".get_string("prev","scorm")."\" onClick=\"top.changeSco('prev');\" />&nbsp;\n";
+		     	<input name=\"prev\" type=\"button\" value=\"".get_string("prev","scorm")."\" onClick=\"top.changeSco('previous');\" />&nbsp;\n";
 		     	
 	if ($scorm->popup == "") {
 	    if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' order by id ASC")){
@@ -217,7 +217,7 @@
 	    }
 	    choose_from_menu($options, "courseStructure", "", "", "document.navform.scoid.value=document.navform.courseStructure.options[document.navform.courseStructure.selectedIndex].value;document.navform.submit();");
 	}
-	echo "     	&nbsp;<input name=\"next\" type=\"button\" value=\"".get_string("next","scorm")."\" onClick=\"top.changeSco('next')\" />\n";
+	echo "     	&nbsp;<input name=\"next\" type=\"button\" value=\"".get_string("next","scorm")."\" onClick=\"top.changeSco('continue')\" />\n";
 	echo "	     </form>
 		</td>\n";
 	
@@ -241,7 +241,7 @@
             echo "<head><title>$course->shortname: $scorm->name</title></head>\n";
             echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id&mode=".$mode.$scoid."\"></script>\n";
 	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onLoad=\"SCOInitialize();\">\n";
-            echo "\t    <frame name=\"nav\" src=\"playscorm.php?id=$cm->id&mode=".$mode."&frameset=top\">\n";
+            echo "\t    <frame name=\"navigation\" src=\"playscorm.php?id=$cm->id&mode=".$mode."&frameset=top\">\n";
             echo "\t    <frame name=\"main\" src=\"\">\n";
             echo "</frameset>\n";
             echo "</html>\n";

@@ -46,6 +46,15 @@ function SCORMapi() {
 	    //
 	    // end CMI Initialization
 	    //
+	    
+	    nav = new Object();
+	    <?php 
+	        if ($scorm->auto) {
+	    	    echo 'nav.event = "continue";'."\n";
+	    	} else {
+	            echo 'nav.event = "";'."\n";
+	        }
+	    ?>
 
 	    return "true";
 	} else {
@@ -93,14 +102,28 @@ function SCORMapi() {
     function LMSSetValue (param,value) {
 	if (Initialized) {
 	    //top.status="SET "+param+" = "+value;
-	    //top.alert("SET "+param+" = "+value);
+	    top.alert("SET "+param+" = "+value);
 	    switch (param) {
 		case "cmi.core.session_time":
-		    cmi.core.total_time = AddTime(cmi.core.total_time, value);
-		    //top.status="SET cmi.core.total_time = "+cmi.core.total_time;
-		    eval(param+'="'+value+'";');
-		    errorCode = 0;
-		    return "true";
+		    //top.alert(typeof(value));
+		    if (typeof(value) == "string") {
+		        var parsedtime = value.match(/[0-9]+/g);
+		        if (((parsedtime.length == 3) || (parsedtime.length == 4)) && (parsedtime[0]>=0) && (parsedtime[0]<=9999) && (parsedtime[1]>=0) && (parsedtime[1]<=59) && (parsedtime[2]>=0) && (parsedtime[2]<=59)) {
+		            if ((parsedtime.length == 4) && (parsedtime[3]<=0) && (parsedtime[3]>=99)) {
+		                errorCode = 405;
+		        	return "false";
+		       	    }
+		            eval(param+'="'+value+'";');
+		            errorCode = 0;
+		            return "true";
+		        } else {
+		            errorCode = 405;
+		            return "false";
+		       	}
+		    } else {
+		        errorCode = 405;
+		        return "false";
+		    }
 		break;
 		case "cmi.core.lesson_status":
 		    if ((value!="passed")&&(value!="completed")&&(value!="failed")&&(value!="incomplete")&&(value!="browsed")) {
@@ -159,6 +182,17 @@ function SCORMapi() {
 		    errorCode = 403;
 		    return "false";
 		break;
+		case "nav.event":
+		    if ((value == "previous") || (value == "continue")) {
+		        eval(param+'="'+value+'";');
+		    	//changeSco(value);
+		    	errorCode = 0;
+		    	return "true";
+		    } else {
+		        erroCode = 405;
+		        return "false";
+		    }
+		break;	
 		default:
 		    //errorCode = 401;  This is more correct but may have problem with some SCOes
 		    errorCode = 0; // With this disable any possible SCO errors alert
@@ -183,8 +217,6 @@ function SCORMapi() {
 		cmiform.cmi_core_lesson_location.value = cmi.core.lesson_location;
 		cmiform.cmi_core_lesson_status.value = cmi.core.lesson_status;
 		cmiform.cmi_core_exit.value = cmi.core.exit;
-		cmiform.cmi_core_session_time.value = cmi.core.session_time;
-		cmiform.cmi_core_total_time.value = cmi.core.total_time;
 		cmiform.cmi_core_score_raw.value = cmi.core.score.raw;
 		cmiform.cmi_suspend_data.value = cmi.suspend_data;
 		cmiform.submit();
@@ -208,16 +240,23 @@ function SCORMapi() {
 	} else {
 	    Initialized = false;
 	    errorCode = 0;
+	    cmi.core.total_time = AddTime(cmi.core.total_time, cmi.core.session_time);
+	    if (<?php echo $navObj ?>cmi.document.theform) {
+		cmiform = <?php echo $navObj ?>cmi.document.forms[0];
+		cmiform.scoid.value = "<?php echo $sco->id; ?>";
+		cmiform.cmi_core_total_time.value = cmi.core.total_time;
+		cmiform.submit();
+	    }
+            if (nav.event != "") {
             <?php
-		 if ($scorm->auto) {
-		     if ($sco != $last) {
-	                 echo "setTimeout('".$navObj."document.navform.next.click();',500);\n";
-		     } else {
-			 echo "exitloc = '".$CFG->wwwroot."/mod/scorm/view.php?id=".$cm->id."';\n";
-			 echo "setTimeout('top.location = exitloc;',500);\n";
-		     }
+		if ($sco != $last) {
+	            echo "setTimeout('top.changeSco(nav.event);',500);\n";
+		} else {
+		    echo "exitloc = '".$CFG->wwwroot."/mod/scorm/view.php?id=".$cm->id."';\n";
+		    echo "setTimeout('top.location = exitloc;',500);\n";
 		} 
 	    ?>
+	    }
 	    return "true";
 	}    
     }

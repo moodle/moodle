@@ -47,6 +47,7 @@
                 fwrite ($bf,full_tag("LAUNCH",4,false,$scorm->launch));
                 fwrite ($bf,full_tag("SUMMARY",4,false,$scorm->summary));
                 fwrite ($bf,full_tag("AUTO",4,false,$scorm->auto));
+                fwrite ($bf,full_tag("POPUP",4,false,$scorm->popup));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$scorm->timemodified));
                 $status = backup_scorm_scoes($bf,$preferences,$scorm->id);
  

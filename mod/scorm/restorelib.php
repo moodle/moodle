@@ -51,6 +51,7 @@
             $scorm->launch = backup_todb($info['MOD']['#']['LAUNCH']['0']['#']);
             $scorm->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
             $scorm->auto = backup_todb($info['MOD']['#']['AUTO']['0']['#']);
+            $scorm->popup = backup_todb($info['MOD']['#']['POPUP']['0']['#']);
             $scorm->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
             //The structure is equal to the db, so insert the scorm

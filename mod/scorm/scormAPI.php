@@ -40,7 +40,21 @@
         //
 	if (!empty($scoid)) {	
 	    // Direct sco request
-	    $sco = get_record("scorm_scoes","id",$scoid);
+	    //$sco = get_record("scorm_scoes","id",$scoid);
+	    if ($sco = get_record("scorm_scoes","id",$scoid)) {
+	        if ($sco->launch == '') {
+	            // Search for th first launchable sco 
+	            if ($scoes = get_records("scorm_scoes","scorm",$scorm->id,"id ASC")) {
+	                $sco = current($scoes);
+	                while ($sco->id < $scoid) {
+	                    $sco = next($scoes);
+	                }
+	                while ($sco->launch == '') {
+	                    $sco = next($scoes);
+	                }
+	            }
+	        }
+	    }
 	} else {
 	    // Search for first incomplete sco
 	    foreach ( $scoes_user as $sco_user ) {
@@ -134,7 +148,7 @@
     }
     $navObj = "top.";
     if ($scorm->popup == "")
-        $navObj = "top.nav.";
+        $navObj = "top.navigation.";
         
     include("api1_2.php");
 
@@ -169,7 +183,7 @@ function SCOInitialize() {
 } 
 
 function changeSco(direction) {
-	if (direction == "prev")
+	if (direction == "previous")
 	    <?php echo $navObj ?>document.navform.scoid.value="<?php echo $prevsco; ?>";
 	else
 	    <?php echo $navObj ?>document.navform.scoid.value="<?php echo $nextsco; ?>";
