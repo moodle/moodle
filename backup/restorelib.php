@@ -711,6 +711,29 @@
         // in our hands and arrange the blocks accordingly.
         $pageinstances = array();
         foreach($info->instances as $instance) {
+
+            //pagetype and pageid black magic, we have to handle the case of blocks for the
+            //course, blocks from other pages in that course etc etc etc.
+
+            if($instance->pagetype == PAGE_COURSE_VIEW) {
+                // This one's easy...
+                $instance->pageid  = $restore->course_id;
+            }
+            else {
+                $parts = explode('-', $instance->pagetype);
+                if($parts[0] == 'mod') {
+                    if(!$restore->mods[$parts[1]]->restore) {
+                        continue;
+                    }
+                    $getid = backup_getid($restore->backup_unique_code, $parts[1], $instance->pageid);
+                    $instance->pageid = $getid->new_id;
+                }
+                else {
+                    // Not invented here ;-)
+                    continue;
+                }
+            }
+
             if(!isset($pageinstances[$instance->pagetype])) {
                 $pageinstances[$instance->pagetype] = array();
             }
@@ -743,27 +766,6 @@
                     //If we have already added this block once and multiples aren't allowed, disregard it
                     if(!$blocks[$instance->name]->multiple && isset($addedblocks[$instance->name])) {
                         continue;
-                    }
-
-                    //pagetype and pageid black magic, we have to handle the case of blocks for the
-                    //course, blocks from other pages in that course etc etc etc.
-
-                    if($instance->pagetype == PAGE_COURSE_VIEW) {
-                        // This one's easy...
-                        $instance->pageid  = $restore->course_id;
-                    }
-                    else {
-                        $parts = explode('-', $instance->pagetype);
-                        switch($parts[0]) {
-                            case 'mod':
-                                $getid = backup_getid($restore->backup_unique_code, $parts[1], $instance->pageid);
-                                $instance->pageid = $getid->new_id;
-                            break;
-                            default:
-                                // Not invented here ;-)
-                                continue;
-                            break;
-                        }
                     }
 
                     //If its the first block we add to a new position, start weight counter equal to 0.
