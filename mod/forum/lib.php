@@ -1489,8 +1489,10 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
             if (($isteacher or $ratings->assesspublic) and !$mypost) {
                 forum_print_ratings_mean($post->id, $ratings->scale, $isteacher);
-                forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
-                $ratingsmenuused = true;
+                if (!empty($ratings->allow)) {
+                    forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
+                    $ratingsmenuused = true;
+                }
 
             } else if ($mypost) {
                 forum_print_ratings_mean($post->id, $ratings->scale, true);
