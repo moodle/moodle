@@ -1076,7 +1076,7 @@ function print_table($table) {
 function print_editing_switch($courseid) {
     global $CFG, $USER;
 
-    if (isteacher($courseid)) {
+    if (isteacheredit($courseid)) {
         if ($USER->editing) {
             echo "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=off\">turn editing off</a>";
         } else {
@@ -1116,7 +1116,7 @@ function update_course_icon($courseid) {
 // Used to be an icon, but it's now a simple form button
     global $CFG, $USER;
 
-    if (isteacher($courseid) and iscreator()) {
+    if (isteacheredit($courseid)) {
         if (!empty($USER->editing)) {
             $string = get_string("turneditingoff");
             $edit = "off";
@@ -1135,12 +1135,14 @@ function update_module_button($moduleid, $courseid, $string) {
 // Prints the editing button on a module "view" page
     global $CFG;
 
-    if (isteacher($courseid)) {
+    if (isteacheredit($courseid)) {
         $string = get_string("updatethis", "", $string);
         return "<form target=_parent method=get action=\"$CFG->wwwroot/course/mod.php\">".
                "<input type=hidden name=update value=\"$moduleid\">".
                "<input type=hidden name=return value=\"true\">".
                "<input type=submit value=\"$string\"></form>";
+    } else {
+        return "";
     }
 }
 
