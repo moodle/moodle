@@ -127,7 +127,7 @@
     if ($user->lastaccess) {
         $datestring = userdate($user->lastaccess)."&nbsp (".format_time(time() - $user->lastaccess).")";
     } else {
-        $datestring = "-";
+        $datestring = get_string("never");
     }
     print_row(get_string("lastaccess").":", $datestring);
 
