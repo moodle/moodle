@@ -59,7 +59,7 @@
         notice(get_string("activityiscurrentlyhidden"));
     }
 
-    $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose);
+    $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose) || isteacher($course->id);
 
 // Print the main part of the page
 
