@@ -510,6 +510,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
 }
 
 function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $maxevents) {
+    global $USER;
 
     $events = calendar_get_upcoming($courses, $groups, $users, $futuredays, $maxevents);
 
