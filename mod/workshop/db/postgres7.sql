@@ -12,8 +12,8 @@ CREATE TABLE prefix_workshop (
   format INT2  NOT NULL default '0',
   gradingstrategy INT2  NOT NULL default '1',
   resubmit INT2  NOT NULL default '0',
-  graded INT2  NOT NULL default '1',
-  showgrades INT2  NOT NULL default '0',
+  agreeassessments INT2  NOT NULL default '0',
+  hidegrades INT2  NOT NULL default '0',
   anonymous INT2  NOT NULL default '0',
   includeself INT2  NOT NULL default '0',
   maxbytes INT8  NOT NULL default '100000',
@@ -28,7 +28,8 @@ CREATE TABLE prefix_workshop (
   includeteachersgrade INT  NOT NULL default '0',
   biasweight INT  NOT NULL default '5',
   reliabilityweight INT  NOT NULL default '5',
-  gradingweight INT  NOT NULL default '5'
+  gradingweight INT  NOT NULL default '5',
+  timeagreed INT8 NOT NULL default '0'
 );
 # --------------------------------------------------------
 
@@ -100,6 +101,16 @@ CREATE TABLE prefix_workshop_grades (
   grade INT NOT NULL default '0'
 );
 # --------------------------------------------------------
+CREATE TABLE prefix_workshop_comments (
+  id SERIAL8 PRIMARY KEY,
+  workshopid int8 NOT NULL default '0',
+  assessmentid int8  NOT NULL default '0',
+  userid int8 NOT NULL default '0',
+  timecreated int8  NOT NULL default '0',
+  mailed int2  NOT NULL default '0',
+  comments text NOT NULL
+);
+
 
 INSERT INTO prefix_log_display VALUES ('workshop', 'assess', 'workshop', 'name');
 INSERT INTO prefix_log_display VALUES ('workshop', 'close', 'workshop', 'name');
