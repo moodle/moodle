@@ -62,6 +62,17 @@ CREATE TABLE prefix_glossary_categories (
 );
 
 #
+# Table structure for table `glossary_alias`
+#
+
+CREATE TABLE prefix_glossary_alias (
+     id SERIAL,
+     entryid int4 NOT NULL default '0',
+     alias TEXT NOT NULL,
+     PRIMARY KEY  (id)
+);
+
+#
 # Table structure for table `glossary_entries_category`
 #
 

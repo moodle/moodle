@@ -156,6 +156,15 @@ function glossary_upgrade($oldversion) {
             }
         }
     }
+
+    if ( $oldversion < 2003110400 ) {
+        execute_sql("CREATE TABLE `{$CFG->prefix}glossary_alias` (
+                    `id` INT(10) unsigned NOT NULL auto_increment,
+                    `entryid` INT(10) UNSIGNED NOT NULL default '0',
+                    `alias` TEXT NOT NULL default '',
+                    PRIMARY KEY  (`id`)
+                    ) TYPE=MyISAM COMMENT='entries alias'");
+    }
     return true;
 }
 

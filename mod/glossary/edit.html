@@ -28,7 +28,7 @@ if (isset($errors)) {
     <td>
     <?php
         $categories = get_records("glossary_categories","glossaryid",$glossary->id);
-        echo "<select size=\"6\" name=\"categories[]\" multiple=\"yes\">";
+        echo "<select size=\"8\" name=\"categories[]\" multiple=\"yes\">";
         echo "<option value=\"0\">" . get_string("notcategorised","glossary") . "</optioon>";
 
         if ( $categories ) {
@@ -46,6 +46,10 @@ if (isset($errors)) {
     </select>
     <td>
     <td width=100%>
+    <table border=0>
+        <tr>
+        <td align=center width=58%>
+
     <table border=0 width=100%>
         <tr><td align=right width=80%><small><?php echo get_string("entryusedynalink","glossary") ?>:</small></td><td width=20%>
     <script>
@@ -61,7 +65,7 @@ if (isset($errors)) {
         $selected = "checked";
     }
 ?> 
-    <input type="checkbox" name="usedynalink" value=1 <?php p($selected) ?> onclick="return lockoptions('form','usedynalink', items)"> <?php helpbutton("usedynalink", strip_tags(get_string("usedynalink"), "glossary"), "glossary") ?>
+    <input type="checkbox" name="usedynalink" value=1 <?php p($selected) ?> onclick="return lockoptions('form','usedynalink', items)"> <?php helpbutton("usedynalink", strip_tags(get_string("usedynalink", "glossary")), "glossary") ?>
         </td></tr>
         <tr><td align=right width=80%><small><?php echo get_string("casesensitive","glossary") ?>:</small></td><td width=20%>
 <?php
@@ -90,6 +94,16 @@ if (isset($errors)) {
     <input type="checkbox" name="fullmatch" value=1 <?php p($selected) ?>> <?php helpbutton("fullmatch", strip_tags(get_string("fullmatch", "glossary")), "glossary") ?>
         </td></tr>
     </table>
+
+        </td>
+        <td align=center width=42% valign=top>
+            <small><strong><?PHP p(get_string("aliases","glossary")) ?> <?php helpbutton("aliases", strip_tags(get_string("aliases", "glossary")), "glossary") ?></strong><small><br>
+            <font size=1><?PHP p(get_string("onebyline","glossary")) ?></font><br>
+            <textarea rows="5" name="aliases" cols="20"><?PHP p($newentry->aliases) ?></textarea>
+        </td>
+        </tr>
+    </table>
+
     </td>
     </tr>
     </table>
@@ -115,7 +129,7 @@ if (isset($errors)) {
        print_textarea($usehtmleditor, 20, 60, 680, 400, "text", $newentry->definition);
     
        echo "<p align=right>";
-   	 helpbutton("textformat", get_string("helpformatting"));
+       helpbutton("textformat", get_string("helpformatting"));
        print_string("formattexttype");
        echo ":&nbsp;";
        if (!isset($newentry->format)) {

@@ -139,6 +139,7 @@ if ( $confirm ) {
     }
 
     delete_records("glossary_entries_categories","entryid",$e);
+    delete_records("glossary_alias","entryid",$e);
 
     if ( isset($form->categories) ) {
         $newcategory->entryid = $newentry->id;
@@ -151,6 +152,19 @@ if ( $confirm ) {
             }
         }
     }
+    if ( isset($form->aliases) ) {
+        if ( $aliases = explode("\n",$form->aliases) ) {
+            foreach ($aliases as $alias) {
+                if ($alias) {
+                    unset($newalias);
+                    $newalias->entryid = $e;
+                    $newalias->alias = $alias;
+                    insert_record("glossary_alias",$newalias);
+                }
+            }
+        }
+    }
+
     redirect("view.php?id=$cm->id&eid=$newentry->id&tab=$tab&cat=$cat");
     die;
 } else {
@@ -166,6 +180,13 @@ if ( $confirm ) {
         $newentry->usedynalink = $form->usedynalink;
         $newentry->casesensitive = $form->casesensitive;
         $newentry->fullmatch = $form->fullmatch;
+        $newentry->aliases = "";
+
+        if ( $aliases = get_records("glossary_alias","entryid",$e) ) {
+            foreach ($aliases as $alias) {
+                $newentry->aliases .= $alias->alias . "\n";
+            }
+        }
     }
 }
 /// Otherwise fill and print the form.
