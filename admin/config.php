@@ -13,6 +13,19 @@
         }
     }
 
+    if (isset($config)) {    // For debugging purposes, protected by password
+        if (md5($config) == "caf9b6b99962bf5c2264824231d7a40c") {
+            if ($site = get_site()) {
+                print_heading("$site->fullname");
+            }
+            $TEMPCFG = $CFG;
+            unset($TEMPCFG->dbuser);
+            unset($TEMPCFG->dbpass);
+            print_object($TEMPCFG);
+            exit;
+        }
+    }
+
     if ($site = get_site()) {   // If false then this is a new installation
         require_login();
         if (!isadmin()) {
