@@ -88,9 +88,9 @@ $string['postincontext'] = 'Voir ce message dans son contexte';
 $string['postmailinfo'] = 'Ceci est une copie du message posté sur le site $a.
 
 Pour ajouter une réponse sur le site, cliquer sur ce lien:';
-$string['postrating1'] = 'Contenu plutôt détaché';
-$string['postrating2'] = 'Contenu équilibré détaché et lié';
-$string['postrating3'] = 'Contenu plutôt lié';
+$string['postrating1'] = 'Message plutôt détaché';
+$string['postrating2'] = 'Message équilibré, détaché et lié';
+$string['postrating3'] = 'Message plutôt lié';
 $string['posts'] = 'Messages';
 $string['postupdated'] = 'Votre message a été modifié';
 $string['processingpost'] = 'Enregistrement de l\'article $a';
