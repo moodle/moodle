@@ -1893,8 +1893,8 @@ function print_simple_box_end() {
  * @param string $method ?
  * @todo Finish documenting this function
  */
-function print_single_button($link, $options, $label='OK', $method='get') {
-    echo '<form action="'. $link .'" method="'. $method .'">';
+function print_single_button($link, $options, $label='OK', $method='get', $target='_self') {
+    echo '<form action="'. $link .'" method="'. $method .'" target="'.$target.'">';
     if ($options) {
         foreach ($options as $name => $value) {
             echo '<input type="hidden" name="'. $name .'" value="'. $value .'" />';
@@ -1967,13 +1967,13 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='')
  * @param int $userid ?
  * @param int $courseid ?
  * @param boolean $picture Print the user picture?
- * @param boolean $large Should the picture be printed at 100 pixels or 35?
+ * @param int $size Size in pixels.  Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatability
  * @param boolean $returnstring If false print picture to current page, otherwise return the output as string
  * @param boolean $link Enclose printed image in a link to view specified course?
  * return string
  * @todo Finish documenting this function
  */
-function print_user_picture($userid, $courseid, $picture, $large=false, $returnstring=false, $link=true) {
+function print_user_picture($userid, $courseid, $picture, $size=0, $returnstring=false, $link=true) {
     global $CFG;
 
     if ($link) {
@@ -1981,12 +1981,16 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
     } else {
         $output = '';
     }
-    if ($large) {
-        $file = 'f1';
-        $size = 100;
-    } else {
+    if (empty($size)) {
         $file = 'f2';
         $size = 35;
+    } else if ($size === true or $size == 1) {
+        $file = 'f1';
+        $size = 100;
+    } else if ($size >= 50) {
+        $file = 'f1';
+    } else {
+        $file = 'f2';
     }
     if ($picture) {  // Print custom user picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
