@@ -20,6 +20,7 @@
     echo "<pre>\n";
 
     $timenow  = time();
+    echo "Server Time: ".date('r',$timenow)."\n\n";
 
 /// Run all cron jobs for each module
 
