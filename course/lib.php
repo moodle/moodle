@@ -137,7 +137,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
         }
 
         echo '<form action="recent.php" method="get">';
-        echo '<input type=hidden name=chooserecent value="1">';
+        echo '<input type="hidden" name="chooserecent" value="1" />';
         echo "<center>";
         echo "<table>";
 
@@ -146,7 +146,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
             choose_from_menu ($courses, "id", $course->id, "");
             echo "</td></tr>";
         } else {
-            echo "<input type=hidden name=id value=\"$course->id\">";
+            echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         }
 
         $sortfields = array("default" => get_string("bycourseorder"),"dateasc" => get_string("datemostrecentlast"), "datedesc" => get_string("datemostrecentfirst"));
@@ -155,7 +155,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
         choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
         echo "</td>";
 
-        echo "<td align='right'><b>" . get_string("since") . "</b></td><td>";
+        echo '<td align="right"><b>' . get_string("since") . '</b></td><td>';
         choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
         echo "</td></tr>";
 
@@ -163,7 +163,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
         choose_from_menu ($activities, "modid", $selectedactivity, "");
         echo "</td>";
 
-        echo "<td align='right'><b>" . get_string("sortby") . "</b></td><td>";
+        echo '<td align="right"><b>' . get_string("sortby") . "</b></td><td>";
         choose_from_menu ($sortfields, "sortby", $selectedsort, "");
         echo "</td></tr>";
 
@@ -186,8 +186,8 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
         }
 
 
-        echo "<td colspan='2' align='right'>";
-        echo "<input type=submit value=\"".get_string("showrecent")."\">";
+        echo '<td colspan="2" align="right">';
+        echo '<input type="submit" value="'.get_string('showrecent').'" />';
         echo "</td></tr>";
 
         echo "</table>";
@@ -365,11 +365,11 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
 
     echo '<center>';
     echo '<form action="log.php" method="get">';
-    echo '<input type=hidden name=chooselog value="1">';
+    echo '<input type="hidden" name="chooselog" value="1" />';
     if (isadmin()) {
         choose_from_menu ($courses, "id", $course->id, "");
     } else {
-        echo "<input type=hidden name=id value=\"$course->id\">";
+        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
     }
 
     if ($showgroups) {
@@ -383,7 +383,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
     choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
     choose_from_menu ($activities, "modid", $selectedactivity, get_string("allactivities"), "", "");
-    echo "<input type=submit value=\"".get_string("showtheselogs")."\">";
+    echo '<input type="submit" value="'.get_string('showtheselogs').'" />';
     echo "</form>";
     echo "</center>";
 }
@@ -392,7 +392,6 @@ function make_log_url($module, $url) {
     switch ($module) {
         case "user":
         case "course":
-        case "user":
         case "file":
         case "login":
         case "lib":
@@ -506,13 +505,13 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     $strftimedatetime = get_string("strftimedatetime");
     $isteacher = isteacher($course->id);
 
-    echo "<p align=center>";
+    echo '<p align="center">';
     print_string("displayingrecords", "", $totalcount);
     echo "</p>";
 
     print_paging_bar($totalcount, $page, $perpage, "$url&perpage=$perpage&");
 
-    echo '<table border=0 align=center cellpadding=3 cellspacing=3>';
+    echo '<table border="0" align="center" cellpadding="3" cellspacing="3">';
     foreach ($logs as $log) {
 
         if (isset($ldcache[$log->module][$log->action])) {
@@ -530,19 +529,19 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
         echo '<tr nowrap="nowrap">';
         if (! $course->category) {
-            echo '<td nowrap="nowrap"><font size=2><a href="view.php?id='.$log->course.'">'.$courses[$log->course].'</a></td>';
+            echo '<td nowrap="nowrap"><font size="2"><a href="view.php?id='.$log->course.'">'.$courses[$log->course].'</a></td>';
         }
-        echo '<td nowrap align=right><font size=2>'.userdate($log->time, '%a').'</td>';
-        echo '<td nowrap><font size=2>'.userdate($log->time, $strftimedatetime).'</td>';
-        echo '<td nowrap><font size=2>';
+        echo '<td nowrap align=right><font size="2">'.userdate($log->time, '%a').'</td>';
+        echo '<td nowrap="nowrap"><font size="2">'.userdate($log->time, $strftimedatetime).'</td>';
+        echo '<td nowrap="nowrap"><font size="2">';
         link_to_popup_window("/lib/ipatlas/plot.php?address=$log->ip&user=$log->userid", 'ipatlas',$log->ip, 400, 700);
         echo '</td>';
         $fullname = fullname($log, $isteacher);
-        echo '<td nowrap><font size=2><a href="../user/view.php?id='."$log->userid&course=$log->course".'"><b>'.$fullname.'</b></td>';
-        echo '<td nowrap><font size=2>';
+        echo '<td nowrap="nowrap"><font size="2"><a href="../user/view.php?id='."$log->userid&course=$log->course".'"><b>'.$fullname.'</b></td>';
+        echo '<td nowrap="nowrap"><font size="2">';
         link_to_popup_window( make_log_url($log->module,$log->url), 'fromloglive',"$log->module $log->action", 400, 600);
         echo '</td>';
-        echo '<td nowrap><font size=2>'.$log->info.'</td>';
+        echo '<td nowrap="nowrap"><font size="2">'.$log->info.'</td>';
         echo '</tr>';
     }
     echo '</table>';
@@ -556,7 +555,8 @@ function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
     if (empty($CFG->gdversion)) {
         echo "(".get_string("gdneed").")";
     } else {
-        echo "<IMG BORDER=0 SRC=\"$CFG->wwwroot/course/loggraph.php?id=$course->id&user=$userid&type=$type&date=$date\">";
+        echo '<img border="0" src="'.$CFG->wwwroot.'/course/loggraph.php?id='.$course->id.
+             '&user='.$userid.'&type='.$type.'&date='.$date.'" />';
     }
 }
 
@@ -603,7 +603,7 @@ function print_recent_activity($course) {
                 $content = true;
             }
             $fullname = fullname($user, $isteacher);
-            echo '<font size=1><a href="'.$CFG->wwwroot."/user/view.php?id=$user->id&course=$course->id\">$fullname</a></font><br />";
+            echo '<font size="1"><a href="'.$CFG->wwwroot."/user/view.php?id=$user->id&course=$course->id\">$fullname</a></font><br />";
         }
         echo "</p>";
     }
@@ -666,7 +666,7 @@ function print_recent_activity($course) {
                 print_headline(get_string("courseupdates").":");
                 $content = true;
                 foreach ($changes as $changeinfo => $change) {
-                    echo "<p><font size=1>".$change["text"]."</font></p>";
+                    echo '<p><font size="1">'.$change['text'].'</font></p>';
                 }
             }
         }
@@ -699,7 +699,7 @@ function print_recent_activity($course) {
     }
 
     if (! $content) {
-        echo "<font size=2>".get_string("nothingnew")."</font>";
+        echo '<font size="2">'.get_string('nothingnew').'</font>';
     }
 }
 
@@ -898,10 +898,11 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     if ($mod->id == $USER->activitycopy) {
                         continue;
                     }
-                    echo "<a title=\"$strmovefull\"".
-                         " href=\"$CFG->wwwroot/course/mod.php?moveto=$mod->id\">".
-                         "<img height=\"16\" width=\"80\" src=\"$CFG->pixpath/movehere.gif\" ".
-                         " alt=\"$strmovehere\" border=\"0\"></a><br />\n";
+                    echo '<a title="'.$strmovefull.'"'.
+                         ' href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'">'.
+                         '<img height="16" width="80" src="'.$CFG->pixpath.'/movehere.gif" '.
+                         ' alt="'.$strmovehere.'" border="0" /></a><br />
+                         ';
                 }
                 $instancename = urldecode($modinfo[$modnumber]->name);
                 if (!empty($CFG->filterall)) {
@@ -935,10 +936,11 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
                 } else { // Normal activity
                     $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
-                    echo "<img src=\"$icon\"".
-                         " height=16 width=16 alt=\"$mod->modfullname\">".
-                         " <font size=2><a title=\"$mod->modfullname\" $linkcss $extra".
-                         " href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a></font>";
+                    echo '<img src="'.$icon.'"'.
+                         ' height="16" width="16" alt="'.$mod->modfullname.'" />'.
+                         ' <font size="2"><a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
+                         ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.
+                         $instancename.'</a></font>';
                 }
                 if ($isediting) {
                     if ($groupbuttons) {
@@ -958,10 +960,11 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
         }
     }
     if ($ismoving) {
-        echo "<tr><td><a title=\"$strmovefull\"".
-             " href=\"$CFG->wwwroot/course/mod.php?movetosection=$section->id\">".
-             "<img height=\"16\" width=\"80\" src=\"$CFG->pixpath/movehere.gif\" ".
-             " alt=\"$strmovehere\" border=\"0\"></a></td></tr>\n";
+        echo '<tr><td><a title="'.$strmovefull.'"'.
+             ' href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'">'.
+             '<img height="16" width="80" src="'.$CFG->pixpath.'/movehere.gif" '.
+             ' alt="'.$strmovehere.'" border="0" /></a></td></tr>
+             ';
     }
     echo "</table>\n\n";
 }
@@ -1131,12 +1134,12 @@ function print_category_info($category, $depth) {
     $catlinkcss = $category->visible ? "" : " class=\"dimmed\" ";
 
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
-        $catimage = "<img src=\"$CFG->pixpath/i/course.gif\" width=16 height=16 border=0>";
+        $catimage = '<img src="'.$CFG->pixpath.'/i/course.gif" width="16" height="16" border="0" />';
     } else {
         $catimage = "&nbsp";
     }
 
-    echo "\n\n<table border=0 cellpadding=3 cellspacing=0 width=\"100%\"><tr>";
+    echo "\n\n".'<table border="0" cellpadding="3" cellspacing="0" width="100%"><tr>';
 
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
         $courses = get_courses($category->id);
@@ -1146,7 +1149,7 @@ function print_category_info($category, $depth) {
         if ($depth) {
             $indent = $depth*30;
             $rows = count($courses) + 1;
-            echo "<td rowspan=\"$rows\" valign=\"top\" width=\"$indent\">";
+            echo '<td rowspan="'.$rows.'" valign="top" width="'.$indent.'">';
             print_spacer(10, $indent);
             echo "</td>";
         }
@@ -1325,25 +1328,25 @@ function print_course_search($value="", $return=false, $format="plain") {
 
     $strsearchcourses= get_string("searchcourses");
 
-    if ($format == "plain") {
-        $output  = "<center><p align=\"center\" class=\"coursesearchbox\">";
-        $output .= "<form name=\"coursesearch\" action=\"$CFG->wwwroot/course/search.php\" method=\"get\">";
-        $output .= "<input type=\"text\" size=30 name=\"search\" value=\"$value\">";
-        $output .= "<input type=\"submit\" value=\"$strsearchcourses\">";
-        $output .= "</form></p></center>";
-    } else if ($format == "short") {
-        $output  = "<center><p align=\"center\" class=\"coursesearchbox\">";
-        $output .= "<form name=\"coursesearch\" action=\"$CFG->wwwroot/course/search.php\" method=\"get\">";
-        $output .= "<input type=\"text\" size=12 name=\"search\" value=\"$value\">";
-        $output .= "<input type=\"submit\" value=\"$strsearchcourses\">";
-        $output .= "</form></p></center>";
-    } else if ($format == "navbar") {
-        $output = "<table border=0 cellpadding=0 cellspacing=0><tr><td nowrap>";
-        $output .= "<form name=\"coursesearch\" action=\"$CFG->wwwroot/course/search.php\" method=\"get\">";
-        $output .= "<input type=\"text\" size=20 name=\"search\" value=\"$value\">";
-        $output .= "<input type=\"submit\" value=\"$strsearchcourses\">";
-        $output .= "</form>";
-        $output .= "</td></tr></table>";
+    if ($format == 'plain') {
+        $output  = '<center><p align="center" class="coursesearchbox">';
+        $output .= '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
+        $output .= '<input type="text" size="30" name="search" value="'.$value.'" />';
+        $output .= '<input type="submit" value="'.$strsearchcourses.'" />';
+        $output .= '</form></p></center>';
+    } else if ($format == 'short') {
+        $output  = '<center><p align="center" class="coursesearchbox">';
+        $output .= '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
+        $output .= '<input type="text" size="12" name="search" value="'.$value.'" />';
+        $output .= '<input type="submit" value="'.$strsearchcourses.'" />';
+        $output .= '</form></p></center>';
+    } else if ($format == 'navbar') {
+        $output = '<table border="0" cellpadding="0" cellspacing="0"><tr><td nowrap="nowrap">';
+        $output .= '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
+        $output .= '<input type="text" size="20" name="search" value="'.$value.'" />';
+        $output .= '<input type="submit" value="'.$strsearchcourses.'" />';
+        $output .= '</form>';
+        $output .= '</td></tr></table>';
     }
 
     if ($return) {
