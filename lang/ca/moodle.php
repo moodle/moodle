@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004032800)
+      // moodle.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['action'] = 'Acció';
@@ -42,6 +42,7 @@ $string['adminhelpcourses'] = 'Definiu cursos i categories i assigneu-los person
 $string['adminhelpedituser'] = 'Navegueu per la llista de comptes d\'usuari i editeu-los';
 $string['adminhelplanguage'] = 'Comproveu i editeu el paquet de llenguatge actual';
 $string['adminhelplogs'] = 'Navegueu pels registres de tota l\'activitat d\'aquest lloc';
+$string['adminhelpmanageblocks'] = 'Gestioneu els blocs instal·lats i els seus paràmetres';
 $string['adminhelpmanagedatabase'] = 'Accediu directament a la base de dades (tingueu compte!)';
 $string['adminhelpmanagefilters'] = 'Trieu els filtres de text i paràmetres relacionats';
 $string['adminhelpmanagemodules'] = 'Gestioneu els mòduls instal·lats i els seus paràmetres';
@@ -100,6 +101,8 @@ $string['backupsavetohelp'] = 'Camí complet del directori on voleu desar els fit
 $string['backupuserfileshelp'] = 'Trieu si voleu que els fitxers dels usuaris (p. e. la imatge del perfil) s\'incloguin a les còpies de seguretat automàtiques';
 $string['backupusershelp'] = 'Trieu si voleu incloure tots els usuaris del servidor o només els necessaris per a cada curs.';
 $string['backupversion'] = 'Versió de la còpia';
+$string['blocksetup'] = 'S\'estan configurant les taules de blocs';
+$string['blocksuccess'] = 'S\'han configurat correctament $a taules';
 $string['bycourseorder'] = 'Curs';
 $string['cancel'] = 'Cancel·la';
 $string['categories'] = 'Categories de cursos';
@@ -109,7 +112,7 @@ $string['categorydeleted'] = 'S\'ha suprimit la categoria \'$a\'';
 $string['categoryduplicate'] = 'Ja existeix una categoria anomenada \'$a\'!';
 $string['changedpassword'] = 'S\'ha canviat la contrasenya';
 $string['changepassword'] = 'Canvia la contrasenya';
-$string['changessaved'] = 'Canvis desats';
+$string['changessaved'] = 'S\'han desat els canvis';
 $string['checkingbackup'] = 'S\'està comprovant la còpia de seguretat';
 $string['checkingcourse'] = 'S\'està comprovant el curs';
 $string['checkinginstances'] = 'S\'estan comprovant les instàncies';
@@ -221,7 +224,8 @@ $string['databasechecking'] = 'S\'està actualitzant la base de dades de Moodle d
 $string['databaseperformance'] = 'Rendiment de la base de dades';
 $string['databasesetup'] = 'S\'està configurant la base de dades';
 $string['databasesuccess'] = 'La base de dades s\'ha actualitzat amb èxit';
-$string['databaseupgradebackups'] = 'La versió del sistema de còpies ara és $a';
+$string['databaseupgradebackups'] = 'La versió de les còpies de seguretat és ara $a';
+$string['databaseupgradeblocks'] = 'La versió dels blocs és ara $a';
 $string['databaseupgrades'] = 'S\'està actualitzant la base de dades';
 $string['datemostrecentfirst'] = 'Data - començant pel més recent';
 $string['datemostrecentlast'] = 'Data - el més recent al final';
@@ -523,6 +527,7 @@ $string['logs'] = 'Registres';
 $string['mainmenu'] = 'Menú principal';
 $string['makeafolder'] = 'Crea una carpeta';
 $string['makeeditable'] = 'Si feu \'$a\' editable pel procés del servidor web (p.e. apache), aleshores podreu editar aquest fitxer directament en aquesta pàgina';
+$string['manageblocks'] = 'Blocs';
 $string['managedatabase'] = 'Base de dades';
 $string['managefilters'] = 'Filtres';
 $string['managemodules'] = 'Mòduls';
@@ -694,6 +699,7 @@ $string['readinginfofrombackup'] = 'S\'està llegint la informació de la còpia de
 $string['readme'] = 'LLEGIU-ME';
 $string['recentactivity'] = 'Activitat recent';
 $string['recentactivityreport'] = 'Informe complet d\'activitat recent...';
+$string['refreshingevents'] = 'S\'estan refrescant els esdeveniments';
 $string['registration'] = 'Registre de Moodle';
 $string['registrationemail'] = 'Notificacions per correu';
 $string['registrationinfo'] = '<p>Aquesta pàgina us permet registrar el vostre lloc  Moodle en moodle.org.  El registre és gratuït.
