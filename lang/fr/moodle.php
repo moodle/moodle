@@ -390,6 +390,7 @@ $string['failedloginattempts'] = '$a->attempts tentatives de connexion depuis vo
 $string['failedloginattemptsall'] = '$a->attempts tentatives de connexion pour $a->accounts comptes';
 $string['feedback'] = 'Feedback';
 $string['filemissing'] = '$a est manquant';
+$string['file'] = 'Fichier';
 $string['files'] = 'Fichiers';
 $string['filesfolders'] = 'Fichiers/dossiers';
 $string['filloutallfields'] = 'Merci de remplir tous les champs de ce formulaire';
