@@ -1241,6 +1241,7 @@
                         $gro->courseid = backup_todb($info['GROUP']['#']['COURSEID']['0']['#']);
                         $gro->name = backup_todb($info['GROUP']['#']['NAME']['0']['#']);
                         $gro->description = backup_todb($info['GROUP']['#']['DESCRIPTION']['0']['#']);
+                        $gro->password = backup_todb($info['GROUP']['#']['PASSWORD']['0']['#']);
                         $gro->lang = backup_todb($info['GROUP']['#']['LANG']['0']['#']);
                         $gro->picture = backup_todb($info['GROUP']['#']['PICTURE']['0']['#']);
                         $gro->hidepicture = backup_todb($info['GROUP']['#']['HIDEPICTURE']['0']['#']);

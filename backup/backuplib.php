@@ -1108,6 +1108,7 @@
                 fwrite ($bf,full_tag("COURSEID",4,false,$group->courseid));
                 fwrite ($bf,full_tag("NAME",4,false,$group->name));
                 fwrite ($bf,full_tag("DESCRIPTION",4,false,$group->description));
+                fwrite ($bf,full_tag("PASSWORD",4,false,$group->password));
                 fwrite ($bf,full_tag("LANG",4,false,$group->lang));
                 fwrite ($bf,full_tag("PICTURE",4,false,$group->picture));
                 fwrite ($bf,full_tag("HIDEPICTURE",4,false,$group->hidepicture));
