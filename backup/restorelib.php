@@ -487,8 +487,8 @@
         //Now, get evey user_id from $info and user data from $backup_ids
         //and create the necessary records (users, user_students, user_teachers
         //user_course_creators and user_admins
-        if ($info) {
-            //For each, user, take its info from backup_ids
+        if (!empty($info->users)) {
+            //For each user, take its info from backup_ids
             foreach ($info->users as $userid) {
                 $rec = backup_getid($restore->backup_unique_code,"user",$userid); 
                 $user = $rec->info;
@@ -625,8 +625,6 @@
                     }
                 }
             }
-        } else {
-            $status = false;
         }
 
         return $status;
