@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2004021000)
+      // moodle.php - created with Moodle 1.2 development (2004021500)
 
 
 $string['action'] = 'Azione';
@@ -158,6 +158,7 @@ $string['configsmtphosts'] = 'Impostare il nome intero di uno o più servers loca
 $string['configsmtpuser'] = 'Se hai specificato un server SMPT ed esso richiede autenticazione, allora indica qui l\'username e la password.';
 $string['configteacherassignteachers'] = 'Possono i docenti assegnare altri docenti ai corsi in cui insegnano? Se \'No\', gli unici che possono assegnare docenti sono i creatori di corsi e gli amministratori.';
 $string['configtextfilters'] = 'I filtri di testo elaborano il testo in modi diversi. Impostate il percorso relativo ai filtri di testo che volete utilizzare nell\'ordine in cui devono essere applicati ai testi, separati da virgole. (Per esempio,mod/glossary/dynalink.php, filter/censor/censor.php)';
+$string['configtimezone'] = 'Qui si può impostare il fuso orario standard. Questo è l\'unico fuso orario standard per la visualizzazione delle date - ogni utente può scegliere la propria impostazione nel suo profilo. Impostare \"Server time\" qui lo farà coincidere con l\'impostazione del sistema operativo del server, mentre impostandolo nel profilo utente corrisponderà a impostarlo a questo valore.';
 $string['configunzip'] = 'Indica la path del tuo programma di compressione dati (Solo per Unix). Questo è necessario per decomprimere gli archivi sul server.';
 $string['configuration'] = 'Configurazione';
 $string['configvariables'] = 'Configura variabili';
@@ -346,6 +347,7 @@ $string['firsttime'] = 'È la prima volta che hai accesso qui?';
 $string['followingoptional'] = 'I seguenti items sono opzionali';
 $string['followingrequired'] = 'I seguenti items sono richiesti';
 $string['force'] = 'Forza';
+$string['forcedmode'] = 'Modo forzato';
 $string['forcelanguage'] = 'Forza lingua';
 $string['forceno'] = 'Non forzare';
 $string['forgotten'] = 'Dimenticato il tuo username o la password?';
@@ -425,6 +427,7 @@ $string['helptext'] = 'Come scrivere del testo';
 $string['helpwiki'] = 'Come scrivere del testo Wiki';
 $string['helpwriting'] = 'Scrivi con attenzione';
 $string['hide'] = 'Nascondi';
+$string['hidepicture'] = 'Nascondi immagine';
 $string['hits'] = 'Accessi';
 $string['hitsoncourse'] = 'Accessi al corso $a->coursename dell\'utente $a->username';
 $string['hitsoncoursetoday'] = 'Accessi di oggi al corso $a->coursename dell\'utente $a->username';
@@ -459,7 +462,7 @@ $string['langrtl'] = 'Scrittura da destra a sinistra';
 $string['language'] = 'Lingua';
 $string['languagegood'] = 'Questa versione linguistica è aggiornata! :-)';
 $string['lastaccess'] = 'Ultimo accesso';
-$string['lastedited'] = 'Ultima editazione';
+$string['lastedited'] = 'Ultima modifica';
 $string['lastlogin'] = 'Ultimo accesso';
 $string['lastmodified'] = 'Ultime modifiche';
 $string['lastname'] = 'Cognome';
