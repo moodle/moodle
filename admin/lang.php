@@ -206,8 +206,8 @@
             $envalue = str_replace("\\","",$envalue);              // Delete all slashes
 
             echo "<tr>";
-            echo "<td width=20% bgcolor=\"$THEME->cellheading\" nowrap valign=top>$key</td>";
-            echo "<td width=40% bgcolor=\"$THEME->cellheading\" valign=top>$envalue</td>";
+            echo "<td dir=ltr lang=en width=20% bgcolor=\"$THEME->cellheading\" nowrap valign=top>$key</td>";
+            echo "<td dir=ltr lang=en width=40% bgcolor=\"$THEME->cellheading\" valign=top>$envalue</td>";
 
             $value = $string[$key];
             $value = str_replace("\r","",$value);              // Bad character caused by Windows
