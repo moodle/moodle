@@ -155,7 +155,7 @@ Restore Details:
               x separate every mod..............................DONE
               x xmlize (to array) and serialize it..............DONE
               x save to db (backup_ids).........................DONE
-           - Mods Info..........................................NO EXISTS
+           - Mods Info..........................................IN PROGRESS
               x assignments.....................................NO EXISTS
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
@@ -176,10 +176,10 @@ Restore Details:
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
                  + files........................................NO EXISTS
-              x resources.......................................NO EXISTS
-                 + course data..................................NO EXISTS
-                 + user data....................................NO EXISTS
-                 + files........................................NO EXISTS
+              x resources.......................................IN PROGRESS
+                 + course data..................................IN PROGRESS
+                 + user data....................................IN PROGRESS
+                 + files.(ARE COURSE FILES !!!).................DONE
               x surveys.........................................NO EXISTS
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS

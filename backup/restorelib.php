@@ -657,10 +657,21 @@
         }
         //Get info from xml
         if ($status) {
-            //info will contain the old_id of every module
+            //info will contain the id and modtype of every module
             //in backup_ids->info will be the real info (serialized)
             $info = restore_read_xml_modules($restore,$xml_file);
         }
+
+        //Now, if we have anything in info, we have to restore that mods
+        //from backup_ids (calling every mod restore function)
+        if ($info) {
+print_object($info);
+
+        } else {
+            $status = false;
+        }
+
+       return $status; 
 
     }
 
@@ -677,7 +688,8 @@
         var $tree = array();   //Array of levels we are
         var $content = "";     //Content under current level
         var $todo = "";        //What we hav to do when parsing
-        var $info = "";        //Information collected. Temp storage.
+        var $info = "";        //Information collected. Temp storage. Used to return data after parsing.
+        var $temp = "";        //Temp storage.
         var $preferences = ""; //Preferences about what to load !!
         var $finished = false; //Flag to say xml_parse to stop
 
@@ -740,7 +752,7 @@
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
             //If we are under a MOD tag under a MODULES zone, accumule it
             if (($this->tree[4] == "MOD") and ($this->tree[3] == "MODULES")) {
-                $this->info .= "<".$tagName.">";
+                $this->temp .= "<".$tagName.">";
             }
         }
 
@@ -1202,11 +1214,11 @@
                 //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
                 //Acumulate data to info (content + close tag)
                 //Reconvert it to utf & htmlchars and trim to generate xml data
-                $this->info .= utf8_encode(htmlspecialchars(trim($this->content)))."</".$tagName.">";
+                $this->temp .= utf8_encode(htmlspecialchars(trim($this->content)))."</".$tagName.">";
                 //If we've finished a mod, xmlize it an save to db
                 if (($this->level == 4) and ($tagName == "MOD")) {
                     //Prepend XML standard header to info gathered
-                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->info;
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
                     //Call to xmlize for this portion of xml data (one MOD)
                     $data = xmlize($xml_data);
                     //traverse_xmlize($data);                                                                     //Debug
@@ -1225,14 +1237,12 @@
                         //Save to db
                         backup_putid($this->preferences->backup_unique_code,$mod_type,$mod_id,
                                      null,$sla_mod_temp);
+                        //Create returning info
+                        $this->info[] = array(id => $mod_id,modtype => $mod_type);
                     }
                     //Reset info to empty
-                    $this->info = "";
+                    $this->temp = "";
                 }
-
-
-
-
             }
 
             //Stop parsing if todo = MODULES and tagName = MODULES (en of the tag, of course)
