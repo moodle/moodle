@@ -1,0 +1,37 @@
+<form method="post" action="module.php" name="form">
+
+<table cellpadding=9 cellspacing=0 >
+<tr valign=top>
+	<td align=right><p>chat_refresh_room:</td>
+	<td>
+    <input name=chat_refresh_room type=text size=5 value="<?php p($CFG->chat_refresh_room) ?>">
+    </td>
+    <td>
+    <?php print_string("configrefreshroom", "chat") ?>
+    </td>
+</tr>
+<tr valign=top>
+	<td align=right><p>chat_refresh_userlist:</td>
+	<td>
+    <input name=chat_refresh_userlist type=text size=5 value="<?php p($CFG->chat_refresh_userlist) ?>">
+    </td>
+    <td>
+    <?php print_string("configrefreshuserlist", "chat") ?>
+    </td>
+</tr>
+<tr valign=top>
+	<td align=right><p>chat_old_ping:</td>
+	<td>
+    <input name=chat_old_ping type=text size=5 value="<?php p($CFG->chat_old_ping) ?>">
+    </td>
+    <td>
+    <?php print_string("configoldping", "chat") ?>
+    </td>
+</tr>
+<tr>
+    <td colspan=3 align=center>
+	<input type="submit" value="<?php print_string("savechanges") ?>"></td>
+</tr>
+</table>
+
+</form>

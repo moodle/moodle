@@ -2,10 +2,16 @@
 
 /// Library of functions and constants for module chat
 
+if (!isset($CFG->chat_refresh_room)) {
+    set_config("chat_refresh_room", 5);
+} 
+if (!isset($CFG->chat_refresh_userlist)) {
+    set_config("chat_refresh_userlist", 10);
+} 
+if (!isset($CFG->chat_old_ping)) {
+    set_config("chat_old_ping", 30);
+} 
 
-define("CHAT_REFRESH_ROOM", 10);
-define("CHAT_REFRESH_USERLIST", 10);
-define("CHAT_OLD_PING", 30);
 
 define("CHAT_DRAWBOARD", false);  // Look into this later
 
@@ -217,7 +223,9 @@ function chat_login_user($chatid, $version="header_js") {
 function chat_delete_old_users() {
 // Delete the old and in the way
 
-    $timeold = time() - CHAT_OLD_PING;
+    global $CFG;
+
+    $timeold = time() - $CFG->chat_old_ping;
 
     if ($oldusers = get_records_select("chat_users", "lastping < '$timeold'") ) {
         delete_records_select("chat_users", "lastping < '$timeold'");

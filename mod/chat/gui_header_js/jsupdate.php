@@ -31,7 +31,7 @@ header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
 header("Cache-Control: no-cache, must-revalidate");
 header("Pragma: no-cache");
 header("Content-Type: text/html");
-header("Refresh: 4; URL=jsupdate.php?chat_sid=".$chat_sid."&chat_lasttime=".$chat_newlasttime);
+header("Refresh: $CFG->chat_refresh_room; URL=jsupdate.php?chat_sid=".$chat_sid."&chat_lasttime=".$chat_newlasttime);
 
 ?>
   <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
