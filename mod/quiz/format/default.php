@@ -78,11 +78,17 @@ class quiz_default_format {
     /// Returns complete file with an array, one item per line
 
         if (is_readable($filename)) {
-            return file($filename);
+            $filearray = file($filename);
+
+            /// Check for Macintosh OS line returns (ie file on one line), and fix
+            if (ereg("\r", $filearray[0]) AND !ereg("\n", $filearray[0])) {
+                return explode("\r", $filearray[0]);
+            } else {
+                return $filearray;
+            }
         }
         return false;
     }
-
 
     function readquestions($lines) {
     /// Parses an array of lines into an array of questions, 
