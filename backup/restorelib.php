@@ -407,6 +407,7 @@
             $course->lang = addslashes($course_header->course_lang);
             $course->marker = addslashes($course_header->course_marker);
             $course->visible = addslashes($course_header->course_visible);
+            $course->hiddentopics = addslashes($course_header->course_hiddentopics);
             $course->timecreated = addslashes($course_header->course_timecreated);
             $course->timemodified = addslashes($course_header->course_timemodified);
             //Adjust blockinfo field.
@@ -2072,6 +2073,9 @@
                             break;
                         case "VISIBLE":
                             $this->info->course_visible = $this->getContents();
+                            break;
+                        case "HIDDENTOPICS":
+                            $this->info->course_hiddentopics = $this->getContents();
                             break;
                         case "TIMECREATED":
                             $this->info->course_timecreated = $this->getContents();

@@ -568,6 +568,7 @@
             fwrite ($bf,full_tag("LANG",3,false,$course->lang));
             fwrite ($bf,full_tag("MARKER",3,false,$course->marker));
             fwrite ($bf,full_tag("VISIBLE",3,false,$course->visible));
+            fwrite ($bf,full_tag("HIDDENTOPICS",3,false,$course->hiddentopics));
             fwrite ($bf,full_tag("TIMECREATED",3,false,$course->timecreated));
             $status = fwrite ($bf,full_tag("TIMEMODIFIED",3,false,$course->timemodified));
             //Print header end
