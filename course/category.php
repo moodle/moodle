@@ -168,7 +168,7 @@
             $movecourse = NULL;
             $swapcourse = NULL;
 
-            $courses = get_courses($category->id);
+            $courses = get_courses($category->id,'c.sortorder ASC', 'c.id,c.sortorder');
 
             if (isset($moveup)) {
                 if ($movecourse = get_record("course", "id", $moveup)) {
