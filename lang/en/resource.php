@@ -25,5 +25,6 @@ $string['resourcetype3'] = "Uploaded File";
 $string['resourcetype4'] = "Plain text";
 $string['resourcetype5'] = "Web Link";
 $string['resourcetype6'] = "HTML text";
+$string['resourcetype7'] = "Program";
 
 ?>
