@@ -167,6 +167,11 @@ function survey_upgrade($oldversion) {
         execute_sql("INSERT INTO `{$CFG->prefix}survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (73, 'ciq5', 'ciq5short', '', '', 0, '')");
     }
 
+    if ($oldversion < 2004021602) {
+        table_column("survey_answers", "answer1", "answer1", "text", "", "", "");
+        table_column("survey_answers", "answer2", "answer2", "text", "", "", "");
+    }
+
     return true;
 }
 

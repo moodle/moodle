@@ -68,8 +68,8 @@ CREATE TABLE prefix_survey_answers (
   survey int(10) unsigned NOT NULL default '0',
   question int(10) unsigned NOT NULL default '0',
   time int(10) unsigned default NULL,
-  answer1 char(255) default NULL,
-  answer2 char(255) default NULL,
+  answer1 text default NULL,
+  answer2 text default NULL,
   PRIMARY KEY  (id),
   UNIQUE KEY id (id)
 ) TYPE=MyISAM;

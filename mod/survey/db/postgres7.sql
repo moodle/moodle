@@ -65,8 +65,8 @@ CREATE TABLE prefix_survey_answers (
   survey integer NOT NULL default '0',
   question integer NOT NULL default '0',
   time integer default NULL,
-  answer1 char(255) default NULL,
-  answer2 char(255) default NULL
+  answer1 text default NULL,
+  answer2 text default NULL
 );
 
 #
