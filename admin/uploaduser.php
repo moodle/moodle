@@ -68,6 +68,7 @@
                           "url" => 1,
                           "description" => 1, 
                           "mailformat" => 1, 
+                          "maildisplay" => 1, 
                           "htmleditor" => 1, 
                           "autosubscribe" => 1,
                           "idnumber" => 1, 
