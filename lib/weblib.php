@@ -3242,7 +3242,7 @@ function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $str
     $flag = false;
     $menu = array();
 
-    $menu[] = '<ul class="navmenulist"><li class="jumpto section">'.$strjumpto.'<ul>';
+    $menu[] = '<ul class="navmenulist"><li class="jumpto section"><span class="item">'.$strjumpto.'</span><ul>';
     foreach ($modinfo as $mod) {
         if ($mod->mod == 'label') {
             continue;
@@ -3261,14 +3261,15 @@ function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $str
                     $menu[] = '</ul></li>';
                 }
                 if ($course->format == 'weeks' or empty($thissection->summary)) {
-                    $menu[] = '<li class="section">'. $strsection ." ". $mod->section;
+                    $item = $strsection ." ". $mod->section;
                 } else {
                     if (strlen($thissection->summary) < ($width-3)) {
-                        $menu[] = '<li class="section">'.$thissection->summary;
+                        $item = $thissection->summary;
                     } else {
-                        $menu[] = '<li class="section">'.substr($thissection->summary, 0, $width).'...';
+                        $item = substr($thissection->summary, 0, $width).'...';
                     }
                 }
+                $menu[] = '<li class="section"><span class="item">'.$item.'</span>';
                 $menu[] = '<ul>';
                 $doneheading = true;
             }
@@ -3292,9 +3293,9 @@ function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $str
             }
             $class = 'activity '.$mod->mod;
             $class .= ($cmid == $mod->cm) ? ' selected' : '';
-            $menu[] = '<li class="'.$class.'">'.
-                      '<img src="'.$CFG->modpixpath.'/'.$mod->mod.'/icon.gif" border="0">'.
-                      '<a href="'.$CFG->wwwroot.'/mod/'.$url.'">'.$mod->name.'</a></li>';
+            $menu[] = '<li class="'.$class.'"><span class="item">'.
+                      '<img src="'.$CFG->modpixpath.'/'.$mod->mod.'/icon.gif" border="0" />'.
+                      '<a href="'.$CFG->wwwroot.'/mod/'.$url.'">'.$mod->name.'</a></span></li>';
             $previousmod = $mod;
         }
     }
