@@ -465,12 +465,11 @@ function rss_get_form($act, $url, $rssid, $rsstype, $printnow=true) {
     $returnstring .= '<input type="hidden" name="blogid" value="'. $blogid .'" />'."\n";
     $returnstring .= '<input type="hidden" name="user" value="'. $USER->id .'" />'."\n";
     $returnstring .= '<br /><input type="submit" value="';
+        $validatestring = "<a href=\"#\" onClick=\"window.open('http://feedvalidator.org/check.cgi?url='+document.block_rss.elements['url'].value,'validate','width=640,height=480,scrollbars=yes,status=yes,resizable=yes');return true;\">Validate</a>";
     if ($act == 'rss_edit') {
-        $returnstring .= $stredit; 
-        $validatestring =  '<a href="http://feeds.archive.org/validator/check?url='. $res->fields['url'] .'">(Validate)</a>';
+        $returnstring .= $stredit;
     } else {
         $returnstring .= $stradd;
-        $validatestring = '';
     }
     $returnstring .= '" />&nbsp;'. $validatestring .'</form>'."\n";
     $returnstring .= '</td></tr></tbody></table>'."\n";
