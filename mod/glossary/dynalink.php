@@ -11,6 +11,14 @@
 
         $GLOSSARY_CONCEPT_IS_ENTRY = 0;
         $GLOSSARY_CONCEPT_IS_CATEGORY = 1;
+        switch ($CFG->dbtype) {
+        case 'postgres7':
+     		$as = 'as';
+        break;
+        case 'mysql':
+     		$as = '';
+        break;
+        }    
 
         $glossarieslist = get_records_select("glossary", "usedynalink != 0 and (course = $courseid or globalglossary != 0)","globalglossary, id");
         if ( $glossarieslist ) {
@@ -33,8 +41,8 @@
                 break;
             }
             
-            $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink != 0 and approved != 0 and concept != ''","$ebylenght glossaryid","id,glossaryid, concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY category,fullmatch");
-            $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries) AND usedynalink != 0", "$cbylenght glossaryid","id,glossaryid, name concept, 1 casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY category, 1 fullmatch");
+            $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink != 0 and approved != 0 and concept != ''","$ebylenght glossaryid","id,glossaryid, concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY $as category,fullmatch");
+            $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries) AND usedynalink != 0", "$cbylenght glossaryid","id,glossaryid, name $as concept, 1 $as casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY $as category, 1 $as fullmatch");
             if ( $entries and $categories ) {
                 $concepts = array_merge($entries, $categories);
                 usort($concepts,'glossary_sort_entries_by_lenght');

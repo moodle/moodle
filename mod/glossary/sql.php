@@ -13,6 +13,15 @@
 
 /// fullpivot indicate if the whole pivot should be compared agasint the db or just the first letter
 /// printpivot indicate if the pivot should be printed or not
+    switch ($CFG->dbtype) {
+    case 'postgres7':
+ 		$as = 'as';
+    break;
+    case 'mysql':
+ 		$as = '';
+    break;
+    }    
+
     switch ( $sortkey ) {    
     case "CREATION": 
         $sqlsortkey = "timecreated";
@@ -34,7 +43,7 @@
     case GLOSSARY_CATEGORY_VIEW:
         if ($hook == GLOSSARY_SHOW_ALL_CATEGORIES  ) { 
 
-            $sqlselect = "SELECT gec.id, gc.name pivot, ge.*";
+            $sqlselect = "SELECT gec.id, gc.name $as pivot, ge.*";
             $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge,
                          {$CFG->prefix}glossary_entries_categories gec,
                          {$CFG->prefix}glossary_categories gc";
@@ -51,7 +60,7 @@
         } elseif ($hook == GLOSSARY_SHOW_NOT_CATEGORISED ) { 
 
             $printpivot = 0;
-            $sqlselect = "SELECT concept pivot, ge.*";
+            $sqlselect = "SELECT concept $as pivot, ge.*";
             $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge";
             $sqlwhere  = "WHERE (glossaryid = '$glossary->id' OR sourceglossaryid = '$glossary->id') AND
                           (ge.approved != 0 $userid)";
@@ -62,7 +71,7 @@
         } else {
 
             $printpivot = 0;
-            $sqlselect  = "SELECT ce.id, c.name pivot, ge.*";
+            $sqlselect  = "SELECT ce.id, c.name $as pivot, ge.*";
             $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}glossary_entries_categories ce, {$CFG->prefix}glossary_categories c";
             $sqlwhere   = "WHERE ge.id = ce.entryid AND ce.categoryid = $hook AND
                                  ce.categoryid = c.id AND ge.approved != 0 AND
@@ -99,7 +108,7 @@
             $where = '';
         }
 
-        $sqlselect  = "SELECT ge.id, $usernamefield pivot, u.id uid, ge.*";
+        $sqlselect  = "SELECT ge.id, $usernamefield $as pivot, u.id uid, ge.*";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}user u";
         $sqlwhere   = "WHERE ge.userid = u.id  AND
                              (ge.approved != 0 $userid)
@@ -123,7 +132,7 @@
             }
         }
 
-        $sqlselect  = "SELECT ge.concept pivot, ge.*";
+        $sqlselect  = "SELECT ge.concept $as pivot, ge.*";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge";
         $sqlwhere   = "WHERE (ge.glossaryid = $glossary->id OR ge.sourceglossaryid = $glossary->id) AND
                              ge.approved = 0 $where";
@@ -137,7 +146,7 @@
     case GLOSSARY_DATE_VIEW:
     case GLOSSARY_STANDARD_VIEW:
     default:
-        $sqlselect  = "SELECT ge.concept pivot, ge.*";
+        $sqlselect  = "SELECT ge.concept $as pivot, ge.*";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge";
 
         $where = '';
