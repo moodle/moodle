@@ -35,16 +35,11 @@
                   <A HREF=view.php?id=$cm->id>$choice->name</A> -> $strresponses", "");
 
 
-    if (! $participants = get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t
-                                       WHERE (s.course = '$course->id' AND s.user = u.id) 
-                                          OR (t.course = '$course->id' AND t.user = u.id)
-                                       ORDER BY u.lastaccess DESC")) {
-
-        notify("No participants (strange)", "/course/view.php?id=$course->id");
-        die;
+    if (! $users = get_course_users($course->id)) {
+        error("No users found (very strange)");
     }
 
-    if ( $allanswers = get_records_sql("SELECT * FROM choice_answers WHERE choice='$choice->id'")) {
+    if ( $allanswers = get_records("choice_answers", "choice", $choice->id)) {
         foreach ($allanswers as $aa) {
             $answers[$aa->user] = $aa;
         }
@@ -52,34 +47,50 @@
     } else {
         $answers = array () ;
     }
-    
-
 
     $timenow = time();
 
-    echo "<TABLE BORDER=1 CELLSPACING=0 valign=top align=center cellpadding=10>";
-    foreach ($participants as $user) {
+    foreach ($users as $user) {
         $answer = $answers[$user->id];
-
-        echo "<TR>";
-
-        echo "<TD BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
-        print_user_picture($user->id, $course->id, $user->picture);
-        echo "</TD>";
-
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\">$user->firstname $user->lastname</TD>";
-        echo "<TD><P>&nbsp;";
-        if ($answer->timemodified) {
-            echo userdate($answer->timemodified);
-        } 
-        
-        echo "</P> </TD>";
-
-        echo "<TD ALIGN=CENTER BGCOLOR=\"$THEME->cellcontent\"><P>";
-        echo choice_get_answer($choice, $answer->answer);
-        echo "</P></TD></TR>";
+        $useranswer[(int)$answer->answer][] = $user;
     }
-    echo "</TABLE>";
+    ksort($useranswer);
+
+    $tablewidth = (int) (100.0 / count($useranswer));
+
+    echo "<TABLE CELLPADDING=5 CELLSPACING=10 ALIGN=CENTER>";
+    echo "<TR>";
+    foreach ($useranswer as $key => $answer) {
+        if ($key) {
+            echo "<TH WIDTH=\"$tablewidth%\">";
+        } else {
+            echo "<TH BGCOLOR=\"$THEME->body\" WIDTH=\"$tablewidth%\">";
+        }
+        echo choice_get_answer($choice, $key);
+        echo "</TH>";
+    }
+    echo "</TR><TR>";
+
+    foreach ($useranswer as $key => $answer) {
+        if ($key) {
+            echo "<TD WIDTH=\"$tablewidth%\" VALIGN=TOP NOWRAP BGCOLOR=\"$THEME->cellcontent\">";
+        } else {
+            echo "<TD WIDTH=\"$tablewidth%\" VALIGN=TOP NOWRAP BGCOLOR=\"$THEME->body\">";
+        }
+
+        echo "<TABLE WIDTH=100%>";
+        foreach ($answer as $user) {
+            echo "<TR><TD WIDTH=10 NOWRAP>";
+            print_user_picture($user->id, $course->id, $user->picture);
+            echo "</TD><TD WIDTH=100% NOWRAP>";
+            echo "<P>$user->firstname $user->lastname</P>";
+            echo "</TD></TR>";
+        }
+        echo "</TABLE>";
+
+        echo "</TD>";
+    }
+    echo "</TR></TABLE>";
 
     print_footer($course);
 

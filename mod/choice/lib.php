@@ -91,7 +91,7 @@ function choice_get_answer($choice, $code) {
         case 2:
             return "$choice->answer2";
         default:
-            return get_string("undecided");
+            return get_string("notanswered", "choice");
     }
 }
 
