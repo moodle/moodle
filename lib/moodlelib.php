@@ -747,6 +747,12 @@ function create_user_record($username, $password, $auth='') {
         }
     }
 
+    if (!empty($newuser->email)) {
+        if (email_is_not_allowed($newuser->email)) {
+            unset($newuser->email);
+        }
+    }
+
     $newuser->auth = (empty($auth)) ? $CFG->auth : $auth;
     $newuser->username = $username;
     $newuser->password = md5($password);
@@ -1640,6 +1646,40 @@ function send_password_change_confirmation_email($user) {
 }
 
 
+function email_is_not_allowed($email) {
+/// Check that an email is allowed.  It returns an error message if there 
+/// was a problem.
+
+    global $CFG;
+
+    if (!empty($CFG->allowemailaddresses)) {
+        $allowed = explode(' ', $CFG->allowemailaddresses);
+        foreach ($allowed as $allowedpattern) {
+            $allowedpattern = trim($allowedpattern);
+            if (!$allowedpattern) {
+                continue;
+            }
+            if (strpos($email, $allowedpattern) !== false) {  // Match!
+                return false;
+            }
+        }
+        return get_string("emailonlyallowed", '', $CFG->allowemailaddresses);
+
+    } else if (!empty($CFG->denyemailaddresses)) {
+        $denied = explode(' ', $CFG->denyemailaddresses);
+        foreach ($denied as $deniedpattern) {
+            $deniedpattern = trim($deniedpattern);
+            if (!$deniedpattern) {
+                continue;
+            }
+            if (strpos($email, $deniedpattern) !== false) {   // Match!
+                return get_string("emailnotallowed", '', $CFG->denyemailaddresses);
+            }
+        }
+    }
+
+    return false;
+}
 
 
 /// FILE HANDLING  /////////////////////////////////////////////

@@ -147,29 +147,8 @@ function validate_form($user, &$err) {
     }
 
     if (empty($err->email)) {
-        if (!empty($CFG->allowemailaddresses)) {
-            $allowed = explode(' ', $CFG->allowemailaddresses);
-            $err->email = get_string("emailonlyallowed", '', $CFG->allowemailaddresses);   // Default
-            foreach ($allowed as $allowedpattern) {
-                $allowedpattern = trim($allowedpattern);
-                if (!$allowedpattern) {
-                    continue;
-                }
-                if (strpos($user->email, $allowedpattern) !== false) {
-                    unset($err->email);
-                }
-            }
-        } else if (!empty($CFG->denyemailaddresses)) {
-            $denied = explode(' ', $CFG->denyemailaddresses);
-            foreach ($denied as $deniedpattern) {
-                $deniedpattern = trim($deniedpattern);
-                if (!$deniedpattern) {
-                    continue;
-                }
-                if (strpos($user->email, $deniedpattern) !== false) {
-                    $err->email = get_string("emailnotallowed", '', $CFG->denyemailaddresses);
-                }
-            }
+        if ($error = email_is_not_allowed($user->email)) {
+            $err->email = $error;
         }
     }
 
