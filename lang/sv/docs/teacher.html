@@ -1,0 +1,256 @@
+<head>
+    <title>Moodle Docs: Teachers Manual</title>
+	<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<style type="text/css">
+    <!--
+    .sectionheading {
+	  font-size: medium;
+	  font-weight: bold;
+	  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	  border: 1px dotted;
+	  padding: 10px;
+    }
+    -->
+    </style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Teacher Manual</h2>
+<p>This page is a very quick guide to creating online courses with Moodle. It 
+  outlines the main functions that are available, as well as some of the main 
+  decisions you'll need to make.</p>
+
+<p>Sections in this document:</p>
+<ol>
+  <li><a href="#started">Getting started</a></li>
+  <li><a href="#settings">Course settings</a></li>
+  <li><a href="#upload">Uploading files</a></li>
+  <li><a href="#activities">Setting up activities</a></li>
+  <li><a href="#course">Running the course</a></li>
+  <li><a href="#further">Further information</a></li>
+</ol>
+<h3 class="sectionheading"><a name="started"></a>Getting started</h3>
+<blockquote> 
+  <p>This document assumes your site administrator has set up Moodle and given 
+    you new, blank course to start with. It also assumes you have logged in to 
+    your course using your teacher account.</p>
+  <p>Here are three general tips that will help you get started.</p>
+  <ol>
+    <li><strong>Don't be afraid to experiment:</strong>
+    <blockquote>feel free to poke around and change things. It's hard to break anything 
+      in a Moodle course, and even if you do it's usually easy to fix it.
+    </blockquote>
+    <li><strong>Notice and use these little icons</strong>: 
+      <blockquote> 
+        <p>&nbsp;<img src="../pix/i/edit.gif"> - the <strong>edit icon</strong> 
+          lets you edit whatever it is next to.</p>
+        <p><img src="../pix/help.gif" width="22" height="17"> - the <strong>help 
+          icon</strong> will provide you with a popup help window </p>
+        <p>&nbsp;<img src="../pix/i/hide.gif" width="16" height="16"> - the <strong>open-eye 
+          icon</strong> will let you hide something from students</p>
+        <p>&nbsp;<img src="../pix/i/show.gif" width="16" height="16"> - the <strong>closed-eye 
+          icon</strong> will make a hidden item available</p>
+      </blockquote>
+    </li>
+    <li><strong>Use the navigation bar at the top of each page</strong>
+	<blockquote>this 
+      should help remind you where you are and prevent getting lost.
+    </blockquote></li>
+  </ol>
+  
+<p>&nbsp;</p></blockquote>
+<h3 class="sectionheading"><a name="settings"></a>Course settings</h3>
+<blockquote> 
+  <p>The first thing you should do is look under the &quot;Administration&quot; 
+    on your course home page and click on &quot;<strong>Settings...</strong>&quot; 
+    (Note that this link, and in fact the whole Administration section is only 
+    available to you (and the site administrator). Students will not even see 
+    these links).</p>
+  <p>On the Settings page you can change a number of settings about your course, 
+    ranging from its name to what day it starts. I won't talk here about all these, 
+    as they all have a help icon next to them which explains them all in detail. 
+    However, I will talk about the most important of these - the <strong>course 
+    format</strong>.</p>
+  <p>The course format that you choose will decide the basic layout of your course, 
+    like a template. Moodle version 1.0 has three formats - in future there will 
+    probably be many more (please send new ideas to <a href="mailto:martin@moodle.org">martin@moodle.org</a>!)</p>
+  <p>Here are some screenshots of three sample courses in each of these three 
+    formats (ignore the different colours, which are set for a whole site by the 
+    site administrator):</p>
+  <p align="center"><strong>Weekly format:</strong></p>
+  <p align="center"><img src="pix/weekly.jpg" width="570" height="527"></p>
+  <p align="center">&nbsp;</p>
+  <p align="center"><strong>Topics format:</strong></p>
+  <p align="center"><img src="pix/topics.jpg" width="570" height="463"></p>
+  <p align="center">&nbsp;</p>
+  <p align="center"><strong>Social format:</strong></p>
+  <p align="center"><img src="pix/social.jpg" width="570" height="429"></p>
+  <p>&nbsp;</p>
+  <p>Note that the weekly and topics formats are very similar in structure. The 
+    main difference is that each box in the weekly format covers exactly one week, 
+    whereas in the topic format each box can cover whatever you like. The social 
+    format doesn't use much content at all and is based around just one forum 
+    - this is displayed on the main page.</p>
+  <p>See the help buttons on the Course Settings page for more details.</p>
+  
+<p>&nbsp;</p></blockquote>
+<h3 class="sectionheading"><a name="upload"></a>Uploading files</h3>
+<blockquote> 
+  <p>You may have existing content that you want to add to your course, such as 
+    web pages, audio files, video files, word documents, or flash animations. 
+    Any type of file that exists can be uploaded into your course and stored on 
+    the server. While your files are on the server you can move, rename, edit 
+    or delete them.</p>
+  <p>All of this is achieved through the <strong>Files</strong> link in your Administration 
+    menu. The Files section looks like this:</p>
+  <p align="center"><img src="pix/files.jpg" width="400" height="347"></p>
+  <p>&nbsp;</p>
+  <p>This interface is only available to teachers - it is not accessible by students. 
+    Individual files are made available to students later on (as &quot;Resources&quot; 
+    - see the next section).</p>
+  <p>As you can see in the screenshot, files are listed alongside subdirectories. 
+    You can create any number of subdirectories to organise your files and move 
+    your files from one to the other.</p>
+  <p>Uploading files via the web is currently restricted to one file at a time. 
+    If you want to upload a lot of files at once (for example a whole web site), 
+    it can be a lot easier to use a <strong>zip program</strong> to compress them 
+    into a single file, upload the zip file and then unzip them again on the server 
+    (you will see an &quot;unzip&quot; link next to zip archives).</p>
+  <p>To preview any file you have uploaded just click on its name. Your web browser 
+    will take care of either displaying it or downloading it to your computer.</p>
+  <p>HTML and text files can be edited in-place online. Other files will need 
+    to be edited on your local computer and uploaded again. if you upload a file 
+    with the same name as an existing file it will automatically be overwritten.</p>
+  <p>A final note: if your content resides out on the web then you don't need 
+    to upload the files at all - you can link directly to them from inside the 
+    course (see the Resources module and the next section).</p>
+  
+<p>&nbsp;</p></blockquote>
+<h3 class="sectionheading"><a name="activities"></a>Setting up activities</h3>
+<blockquote> 
+  <p>Building a course involves adding course activity modules to the main page 
+    in the order that students will be using them. You can shuffle the order any 
+    time you like.</p>
+  <p>To turn on editing, click &quot;Turn on editing&quot; under Administration. 
+    This toggle switch shows or hides the extra controls that allow you to manipulate 
+    your main course page. Note in the first screenshot above (of the Weekly format 
+    course) that the editing controls are turned on.</p>
+  <p>To add a new activity, simply go to the week or topic or section of the screen 
+    where you want to add it, and select the type of activity from the popup menu. 
+    Here is a summary of all the standard activities in Moodle 1.0:</p>
+  <dl>
+    <dt><strong>Assignment</strong></dt>
+    <dd>An assignment is where you set a task with a due date and a maximum grade. 
+      Students will be able to upload one file to satisify the requirements. The 
+      date they upload their file is recorded. Afterwards, you will have a single 
+      page on which ou can view each file (and how late or early it is), and then 
+      record a grade and a comment. Half an hour after you grade any particular 
+      student, Moodle will automatically email that student a notification. </dd>
+    <br>
+    <br>
+    <dt><strong>Choice</strong></dt>
+    <dd>A choice activity is very simple - you ask a question and specify a choice 
+      of responses. Students can make their choice, and you have a report screen 
+      where you can see the results. I use it to gather research consent from 
+      my students, but you could use it for quick polls or class votes.</dd>
+    <br>
+    <br>
+    <dt><strong>Forum</strong></dt>
+    <dd>This module is by far the most important - it is here that discussion 
+      takes place. When you add a new forum, yu will presented with a choice of 
+      different types - a simple single-topic discussion, a free-for-all general 
+      forum, or a one-discussion-thread-per-user.</dd>
+    <br>
+    <br>
+    <dt><strong>Journal</strong></dt>
+    <dd>Each journal activity is an entry in the whole course journal. For each 
+      one you can specify an open-ended question that guides what students write, 
+      as well as a window of time in which the journal is open (weekly course 
+      format only). A general rule of thumb is to create one journal per week. 
+      Encourage students to write reflectively and critically in these journals, 
+      as they are only available to them and you. Afterwards, you will be able 
+      to grade and comment all the entries for that week or topic, and students 
+      will receive an automatic email informing them of your feedback. Journals 
+      are not designed to be continually added to - if you need to do that then 
+      add more journal activities.</dd>
+    <br>
+    <br>
+    <dt><strong>Resource</strong></dt>
+    <dd>Resources are the content of your course. Each resource can be any file 
+      you have uploaded or can point to using a URL. You can also maintain simple 
+      text-based pages by typing them directly into a form.</dd>
+    <br>
+    <br>
+    <dt><strong>Quiz</strong></dt>
+    <dd>This module allows you to design and set quiz tests, consisting of multiple 
+      choice, true-false, and short answer questions. These questions are kept 
+      in a categorised database, and can be re-used within courses and even between 
+      courses. Quizzes can allow multiple attempts. Each attempt is automatically 
+      marked, and the teacher can choose whether to give feedback or to show correct 
+      answers. This module includes grading facilities. </dd>
+    <br>
+    <br>
+    <dt><strong>Survey</strong></dt>
+    <dd>The survey module provides a number of predefined survey instruments that 
+      are useful in evaluating and understanding your class. Currently they include 
+      the COLLES and the ATTLS instruments. They can be given to students early 
+      in the course as a diagnostic tool and at the end of the course as an evaluation 
+      tool (I use one every week in my courses).</dd>
+  </dl>
+  <br>
+  <p>After adding your activities you can move them up and down in your course 
+    layout by clicking on the little arrow icons (<img src="../pix/t/up.gif" width="9" height="10"> 
+    <img src="../pix/t/down.gif" width="9" height="10">) next to each one. You 
+    can also delete them using the cross icon <img src="../pix/t/delete.gif" width="10" height="10">, 
+    and re-edit them using the edit icon <img src="../pix/t/edit.gif" width="10" height="11">.</p>
+  
+<p>&nbsp;</p></blockquote>
+<h3 class="sectionheading"><a name="course"></a>Running the course</h3>
+<blockquote> 
+  <p>There are some big plans to extend this document into a more comprehensive 
+    tutorial. Until then here are a few ideas:</p>
+  <ol>
+    <li>Subscribe yourself to all the forums so you keep in touch with your class 
+      activity. </li>
+    <li>Encourage all the students fill out their user profile (including photos) 
+      and read them all - this will help provide some context to their later writings 
+      and help you to respond in ways that are tailored to their own needs.</li>
+    <li>Keep notes to yourself in the private &quot;<strong>Teacher's Forum</strong>&quot; 
+      (under Administration). This is especially useful when team teaching.</li>
+    <li>Use the &quot;<strong>Logs</strong>&quot; link (under Administration) 
+      to get access to complete, raw logs. In there you'll see a link to a popup 
+      window that updates every sixty seconds and shows the last hour of activity. 
+      This is useful to keep open on your desktop all day so you can feel in touch 
+      with what's going on in the course.</li>
+    <li>Use the &quot;<strong>Activity Reports</strong>&quot; (next to each name 
+      in the list of all people, or from any user profile page). These provide 
+      a great way to see what any particular person has been up to in the course.</li>
+    <li>Respond quickly to students. Don't leave it for later - do it right away. 
+      Not only is it easy to become overwhelmed with the volume that can be generated, 
+      but it's a crucial part of building and maintaining a community feel in 
+      your course.</li>
+  </ol>
+  
+<p>&nbsp;</p></blockquote>
+<h3 class="sectionheading"><a name="further"></a>Further information</h3>
+<blockquote> 
+  <p>If you have any particular problems with your site, you should contact your 
+    local site administrator.</p>
+  <p>If you have some great ideas for improvements to Moodle, or even some good 
+    stories, come over to <a href="http://moodle.org/" target="_top">moodle.org</a> 
+    and join us in the course called "<a href="http://moodle.org/course/view.php?id=5" target=_top >Using 
+    Moodle</a>". We'd love to hear from you, and you can help Moodle improve.</p>
+  <p>If you want to contribute to coding new modules, or writing documentation, 
+    or papers, contact me: <a href="http://moodle.org/user/view.php?id=1&course=1" target="_top">Martin 
+    Dougiamas</a> or browse the &quot;bug tracker&quot; site for Moodle, at <a href="http://moodle.org/bugs/" target="_top">moodle.org/bugs</a></p>
+  <p align="center">Thanks for using Moodle - and good luck with your teaching!</p>
+  <hr>
+  <p>&nbsp;</p>
+</blockquote>
+<p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id: teacher.html,v 1.4 2002/08/18 10:00:01 
+  martin Exp $</font></p>
+
+</body>

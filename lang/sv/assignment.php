@@ -1,38 +1,51 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.5 dev (2002092300)
+      // assignment.php - created with Moodle 1.1.1 (2003091111)
 
-$string['allowresubmit'] = "Tillåt återpostning";
-$string['assignmentdetails'] = "Uppgiftsdetaljer";
+
+$string['allowresubmit'] = "Låt användarna skicka om sina bidrag";
+$string['assignmentdetails'] = "Detaljer om uppgifter ";
+$string['assignmentmail'] = "\$a->teacher har skrivit in viss återkoppling på den uppgift '\$a->assignment' som Du har skickat in.
+
+Du hittar den som ett tillägg till Ditt inskickade bidrag. '\$a->url'";
+$string['assignmentmailhtml'] = "\$a->teacher har skrivit viss återkoppling på den uppgift som Du har skickat in '<i>\$a->assignment</i>'<br /><br />
+Du hittar den som ett tillägg till Ditt <a href=\\\"\$a->url\\\">inskickade bidrag.</a>
+";
 $string['assignmentname'] = "Uppgiftens namn";
 $string['assignmenttype'] = "Uppgiftens typ";
+$string['configmaxbytes'] = "Standardinställningen för den maximala storleken på inskickade uppgifter (det går att ställa in ett eget värde för varje kurs och även andra lokala begränsningar är möjliga.";
 $string['description'] = "Beskrivning";
 $string['duedate'] = "Utgångsdatum";
+$string['duedateno'] = "Inget stoppdatum/tid";
 $string['early'] = "\$a tidigt";
-$string['failedupdatefeedback'] = "Misslyckades att uppdatera återkopplingen för det inskickade bidraget av användaren \$a";
-$string['feedbackupdated'] = "Återkopplingen för inskickat bidrag uppdaterat för \$a användare";
+$string['failedupdatefeedback'] = "Uppdateringen av återkopplingen för det inskickade bidraget av användaren \$a fungerade inte";
+$string['feedback'] = "Återkoppling";
+$string['feedbackupdated'] = "Återkopplingen för inskickade bidrag för \$a användare har uppdaterats";
 $string['late'] = "\$a sent";
 $string['maximumgrade'] = "Maximum betyg";
 $string['maximumsize'] = "Maximum storlek";
 $string['modulename'] = "Uppgift";
 $string['modulenameplural'] = "Uppgifter";
-$string['newsubmissions'] = "Bidrag inskickade";
-$string['notsubmittedyet'] = "Ännu inte inskickade bidrag";
-$string['overwritewarning'] = "Varning: uppladdning igen kommer att ERSÄTTA ditt nuvarande redan inskickade bidrag";
-$string['submissionfeedback'] = "Återkoppling för inskickat bidrag";
-$string['submissions'] = "Inskickade bidrag";
-$string['submitassignment'] = "Skicka in din uppgift med detta formulär";
+$string['newsubmissions'] = "Uppgifterna är inskickade";
+$string['notgradedyet'] = "Ännu ej bedömd";
+$string['notsubmittedyet'] = "Ännu inte inskickade uppgifter";
+$string['overwritewarning'] = "Varning: uppladdning igen kommer att ERSÄTTA Ditt nuvarande redan inskickade bidrag";
+$string['saveallfeedback'] = "Spara alla återkopplingar";
+$string['submissionfeedback'] = "Återkoppling för inskickad uppgift";
+$string['submissions'] = "Inskickade uppgifter";
+$string['submitassignment'] = "Skicka in Din uppgift med detta formulär";
 $string['submitted'] = "Inskickad";
 $string['typeoffline'] = "Offline aktivitet";
 $string['typeuploadsingle'] = "Ladda upp en enskild fil";
 $string['uploadbadname'] = "Detta filnamn innehåller konstiga tecken och filen kunde inte laddas upp";
-$string['uploadedfiles'] = "uppladdade filer";
+$string['uploadedfiles'] = "Uppladdade filer";
 $string['uploaderror'] = "Ett fel inträffade när filen sparades på servern";
-$string['uploadfailnoupdate'] = "Filen uppladdades korrekt, men kunde inte uppdatera ditt inskickade bidrag!";
+$string['uploadfailnoupdate'] = "Filen laddades på korrekt, men Ditt inskickade bidrag blev inte uppdaterat.";
 $string['uploadfiletoobig'] = "Tyvärr, men den filen är för stor (begränsningen är \$a byte)";
-$string['uploadnofilefound'] = "Ingen fil hittades - är du säker på att du valde en för att ladda upp?";
-$string['uploadnotregistered'] = "'\$a' lyckades laddas upp, men det inskickade bidraget registrerades inte!";
+$string['uploadnofilefound'] = "Ingen fil hittades - är Du säker på att Du valde en för att ladda upp?";
+$string['uploadnotregistered'] = "'\$a' blev uppladdad, men det inskickade bidraget registrerades inte!";
 $string['uploadsuccess'] = "Uppladdningen av '\$a' lyckades";
-$string['viewfeedback'] = "Visa uppgiftsbetyg och återkoppling";
+$string['viewfeedback'] = "Visa betyg och återkoppling på uppgifterna";
 $string['viewsubmissions'] = "Visa \$a inskickade bidrag";
-$string['yoursubmission'] = "Ditt inskickade bidrag";
+$string['yoursubmission'] = "Din inskickade uppgift";
+
 ?>

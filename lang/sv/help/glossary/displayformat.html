@@ -1,0 +1,32 @@
+<p align="center"><b>Visningsformat</b></p>
+
+<p>
+Systemet har tre inbyggda format f&ouml;r att visa bidrag. 
+Du kan skapa Ditt eget format om Du vill.</p>
+<p>
+Standardinst&auml;llningen inneb&auml;r en ganska enkel 
+form av presentation. Det ser ut som en vanlig ordlista (ordboksartikel).
+</p>
+<p>
+Det andra visningsformatet visar bidraget i ett forumliknande format,
+utan data om f&ouml;rfattaren.
+</p>
+<p>
+Och det tredje visar ocks&aring; bidraget i i ett forumliknande format,
+men med data om f&ouml;rfattaren.
+</p>
+<hr />
+<p>
+Om Du vill skapa Ditt eget format s&aring; ska Du skapa en .php-fil
+och ge den ett nummer som namn. Titta efter i mod/glossary/format f&ouml;r att
+f&aring; veta vilket det n&auml;sta numret b&ouml;r vara.
+</p>
+<p>
+Skapa sedan en funktion som Du kallar
+<b>glossary_print_entry_by_format($course, $cm, $glossary,
+ $entry)</b> och fyll p&aring; med all Din kreativitet.</p>
+<p>
+Det sista steget &auml;r att l&auml;gga in ett bidrag till varje spr&aring;kpaket
+som Du anv&auml;nder. Det kallar Du <b>displayformat[number]</b>, 
+och ger det en meningsfull beskrivning.
+</p>

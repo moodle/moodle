@@ -1,0 +1,182 @@
+<p align="center"><b>Hj&auml;lp med att skriva in Wiki-formatterade sidor</b></p>
+
+<p>
+   Wiki-formatterade sidor erbjuder en funktion f&ouml;r att m&auml;rka upp
+   ren text med intuitiv formatering i en form som &auml;r l&auml;sbar f&ouml;r
+   m&auml;nniskor. Den omvandlas till XHTML n&auml;r den visas. Den stora 
+   f&ouml;rdelen &auml;r att Du inte beh&ouml;ver l&auml;ra Dig HTML f&ouml;r att
+   skapa ganska avancerade sidor. Den text som Du skriver in ser bra ut t o m f&ouml;re 
+   omvandlingen. Det &auml;r ett bra alternativ till att spara Word-dokument som HTML
+   samtidigt som Du har kvar m&ouml;jligheten att redigera resursen online.
+</p>
+
+<p>
+Du b&ouml;r huvudsakligen mata in ren text. Det finns d&auml;rut&ouml;ver ett antal 
+<em>specialtecken</em> som Du kan anv&auml;nda f&ouml;r att l&auml;gga
+in formatering.
+</p>
+<h3>Formatering p&aring; blockniv&aring;</h3>
+
+<p>
+Block i form av stycken &aring;tskiljs av &aring;tminstone en tom rad.
+Om Du vill l&auml;gga till specialformatering till ett stycke s&aring; f&aring;r Du
+anv&auml;nda ett av de nedanst&aring;ende specialtecknen som det f&ouml;rsta 
+tecknet p&aring; den f&ouml;rsta raden i blocket, f&ouml;ljt av ett mellanslag.
+</p>
+
+<table>
+  <tr><th align="left">Tecken</th><th align="left">Typ av block</th></tr>
+  <tr><td>Tomrad&nbsp;</td><td>&nbsp;Vanligt stycke</td></tr>
+  <tr><td>&gt;&nbsp;</td><td>&nbsp;Citat</td></tr>
+  <tr><td>Mellanslag&nbsp;</td><td>&nbsp;F&ouml;rformaterad text (Monospaced)</td></tr>
+  <tr><td>%&nbsp;</td><td>&nbsp;F&ouml;rformaterad <em>och</em><br /> Wiki-formatering avaktiveras</td></tr>
+  <tr><td>!#&nbsp;</td><td>&nbsp;Rubrik - # &auml;r 1-6, olika storlekar</td></tr>
+  <tr><td>Q.&nbsp;</td><td>&nbsp;Fr&aring;ga - ger fr&aring;gor en viss stil</td></tr>
+  <tr><td>A.&nbsp;</td><td>&nbsp;Som ovan - fast svar</td></tr>
+</table>
+
+<h3>Att formatera listor</h3>
+
+<p>
+Du kan l&auml;tt skapa enkla listor genom att placera ett specialtecken 
+i b&ouml;rjan p&aring; varje rad, f&ouml;ljt av ett mellanslag.
+Listan avslutas med en tom rad. Du kan n&auml;stla listor fritt - 
+och de n&auml;stlade listorna kan &auml;ndra typ. Du kan blanda t ex definitionslistor
+och texttyper som Du vill f&ouml;r att &aring;stadkomma den effekt Du &auml;r ute efter.
+<br />
+H&auml;r nedan f&ouml;ljer specialtecknen.</p>
+
+<table>
+  <tr><th>Tecken</th><th>Typ av element i en lista</th></tr>
+  <tr><td>*</td><td>Lista som inte &auml;r ordnad i visst m&ouml;nster (runda punkter)</td></tr>
+  <tr><td>#</td><td>Ordnad lista (1,2,3 etc)</td></tr>
+  <tr><td>:</td><td>Definitionslista definition</td></tr>
+  <tr><td>;</td><td>Definitionslista, text</td></tr>
+</table>  
+
+<p>N&auml;stlade listor exempel:</p>
+<p><pre>
+  * F&ouml;rsta punkten
+  * Andra punkten
+  ## n&auml;stlad rad 1
+  ## n&auml;stlad rad 2
+  * Tredje punkten
+</pre></p>
+<p>Skapar:
+<ul><li>F&ouml;rsta punkten</li>
+  <li>Andra punkten</li>
+  <ol><li>n&auml;stlad rad 1</li>
+    <li>n&auml;stlad rad 2</li></ol>
+  <li>Tredje punkten</li>
+</ul></p>
+
+<h3>'Inline'-formatering</h3>
+
+<p>
+Med 'inline'-formatering kan Du markera en del av en rad och ge den en egen stil.
+Specialtecknen kan Du anv&auml;nda var som helst p&aring; raden. L&auml;gg dock m&auml;rke 
+till att den h&auml;r typen av formatering inte kan str&auml;cka sig &ouml;ver rader.
+<br />
+H&auml;r f&ouml;ljer koderna:
+</p>
+
+<table>
+  <tr><th align="left">Exempel</th><th align="left">Exempel</th><th align="left">Formatering</th></tr>
+  <tr><td>*hall&aring; v&auml;rlden*&nbsp;</td><td><strong>&nbsp;hall&aring; v&auml;rlden</strong></td><td>&nbsp;(Strong) eller Fet</td></tr>
+  <tr><td>/hall&aring; v&auml;rlden/&nbsp;</td><td><em>&nbsp;hall&aring; v&auml;rlden</em></td><td>&nbsp;Emfas eller kursiv</td></tr>
+  <tr><td>+hall&aring; v&auml;rlden+&nbsp;</td><td><ins>&nbsp;hall&aring; v&auml;rlden</ins></td><td>&nbsp;Insatt text</td></tr>
+  <tr><td>-hall&aring; v&auml;rlden-&nbsp;</td><td><del>&nbsp;hall&aring; v&auml;rlden</del></td><td>&nbsp;Raderad eller genomstruken</td></tr>
+  <tr><td>hall&aring; ~v&auml;rlden~&nbsp;</td><td>&nbsp;hall&aring; <sub>v&auml;rlden</sub></td><td>&nbsp;Neds&auml;nkt</td></tr>
+  <tr><td>hall&aring; ^v&auml;rlden^&nbsp;</td><td>&nbsp;hall&aring; <sup>v&auml;rlden</sup></td><td>&nbsp;Upph&ouml;jd</td></tr>
+  <tr><td>"hall&aring; v&auml;rlden"&nbsp;</td><td>&nbsp;&#8220;hall&aring; v&auml;rlden&#8221;</td><td>&nbsp;Citerad</td></tr>
+  <tr><td>%hall&aring; v&auml;rlden%&nbsp;</td><td><code>&nbsp;hall&aring; v&auml;rlden</code></td><td>&nbsp;Kod eller 'Monospaced'</td></tr>
+  <tr><td>@hall&aring; v&auml;rlden@&nbsp;</td><td><cite>&nbsp;hall&aring; v&auml;rlden</cite></td><td>&nbsp;Citat</td></tr>
+</table>  
+
+<h3>Akronymer</h3>
+<p>
+Om Du vill anv&auml;nda en akronym s&aring; skriver Du in den i stora bokst&auml;ver
+f&ouml;ljt av en beskrivning inom parentes. Det ska inte vara n&aring;got mellanslag
+mellan akronymen och parentesen. 
+<br />
+Exempel:
+<p>HTML(Hypertext Markup Language) <br /><acronym title="Hypertext Markup Language">HTML</acronym></p>
+<h3>L&auml;nkar</h3>
+<p>
+Du kan b&auml;dda in l&auml;nkar i texten, &aring;tf&ouml;ljda av den text som 
+ska visas inom parentes. 
+<br />
+Exempel: 
+</em>http://www.google.com/(S&ouml;k nu)</em> kommer att omvandlas till
+<a href="http://www.google.com/">S&ouml;k nu</a>.</p>
+
+<p>Du kan &aring;stadkomma e-postadresser p&aring; samma s&auml;tt, t ex</p>
+<p>ingen@exempel.com(Testanv&auml;ndare) kommer att omvandlas till 
+<a href="mailto:ingen@exempel.com">Testanv&auml;ndare</a></p>
+
+<h3>L&auml;nkar mellan olika moduler i Moodle</h3>
+<p>
+Om Du kan id-numret i Moodle (kolla efter ?id=nn i slutet p&aring; adressen till modulen)
+och namnet p&aring; modulen s&aring; kan Du l&auml;nka direkt till den resursen genom
+att anv&auml;nda f&ouml;ljande syntax:
+</p>
+<p>ModulNamn:nn(Beskrivande text)</p>
+<p>t ex <em>resource:36(min nya sida)</em>   <em>forum:10(Hoppa till forum)</em></p>
+<h3>Bildl&auml;nkar i Moodle</h3>
+<p>
+Du kan placera ut grafik (bilder) p&aring; wiki-sidor. Du beh&ouml;ver ladda upp
+bilden och sedan skriva in s&ouml;kv&auml;gen till den i omr&aring;det f&ouml;r filuppladdning.
+<br />
+S&aring; h&auml;r ser syntaxen ut:
+</p>
+<p>/<em>..s&ouml;kv&auml;g till fil..</em>(alt text)</p>
+<p>till exempel,  /MinaBilder/graf.jpg(Bild p&aring; personal)</p>
+<h3>L&auml;nkar till filer i Moodle</h3>
+<p>
+Den h&auml;r m&ouml;jligheten kan Du anv&auml;nda f&ouml;r att l&auml;nka till tidigare
+uppladdade filer p&aring; en wiki-sida. Tillv&auml;gag&aring;ngss&auml;ttet &auml;r n&auml;stan detsamma
+som med bildl&auml;nkar (se ovan).
+<br />
+S&aring; h&auml;r g&ouml;r Du:
+</p>
+<p><b>file:</b><em>..s&ouml;kv&auml;g till fil</em>(l&auml;nktext)</p>
+<p>till exempel, file:/pdfs/moodle.pdf(Information om Moodle)</p>
+<h3>Automatisk omformatering</h3>
+<p>
+M&aring;nga &aring;terkommande funktioner omvandlas automatiskt till sina motsvarigheter
+i XHTML. 
+<br />
+De vanligaste &auml;r f&ouml;ljande:</p>
+<ul>
+  <li>HTTP l&auml;nkar omvandlas till aktiva l&auml;nkar</li>
+  <li> ..., (R), (TM), (C), 1/4, 1/2, 3/4 omvandlas alla till r&auml;tt tecken</li>
+  <li> 'siffror x siffror' omvandlas till den r&auml;tta symbolen f&ouml;r multiplikation</li> 
+  <li>En rad som inleds med &aring;tminstone fyra _ omvandlas till en linjal</li>
+ </ul>  
+
+<h3>Stavningskontroll (f&ouml;rs&ouml;ksvariant)</h3>
+<p>
+Wiki-formateraren kan st&auml;llas om till att kontrollera stavningen.
+Placera f&ouml;ljande p&aring; en rad f&ouml;r sig sj&auml;lv i texten.
+Allt som kommer efter detta kommer att kontrolleras...
+<pre>
+!SPELL:spr&aring;k_kod:variant_av_spr&aring;k
+Exempel:
+	!SPELL:en:british
+	!SPELL:sp
+</pre>
+<p>
+"spr&aring;k_kod" ska bytas ut mot &ouml;nskad kod
+(t ex, EN, FR, SV etc), "variant_av_spr&aring;k" (tillsammans med kolonet) 
+&auml;r ett frivilligt tillval och kan vara t ex "american", "british", eller 
+"canadian" om spr&aring;kkoden &auml;r EN.</p>
+<p>
+N&auml;r ett ok&auml;nt ord visas s&aring; markeras det och om Du
+h&aring;ller musen &ouml;ver ordet s&aring; kan Du se f&ouml;rslag till
+&auml;ndringar.
+</p>
+<p><em>OBS: stavningsfunktionen anv&auml;nder <strong>'pspell libraries'</strong>. 
+Dessa och de n&ouml;dv&auml;ndiga ordlistorna m&aring;ste finnas p&aring; Din server
+f&ouml;r att stavningskontrollen ska fungera. Windowsplattformen (f&ouml;r servrar)
+st&ouml;der normalt sett inte detta automatiskt.
+</em></p>

@@ -1,118 +1,132 @@
-<?PHP // $Id$
+<?PHP // $Id$ 
+      // forum.php - created with Moodle 1.1.1 (2003091111)
 
-#------------------------------------------------------------
-$string['modulename'] = "Forum";
-$string['modulenameplural'] = "Forum";
-#------------------------------------------------------------
 
 $string['addanewdiscussion'] = "Lägg till ett nytt diskussionsämne";
+$string['addanewtopic'] = "Lägg till ett nytt ämne";
 $string['allowchoice'] = "Tillåt alla att välja";
-$string['allowdiscussions'] = "Kan en \$a posta till detta forum?";
-$string['allowratings'] = "Tillåt postningar att bedömas?";
-$string['allowsdiscussions'] = "Detta forum tillåter varje person att starta ett diskussionsämne.";
+$string['allowdiscussions'] = "Kan en \$a göra inlägg i detta forum?";
+$string['allowratings'] = "Vill Du att det ska vara tillåtet att bedöma/värdera inlägg?";
+$string['allowsdiscussions'] = "Detta forum tillåter var och en att starta ett diskussionsämne.";
 $string['anyfile'] = "Vilken fil som helst";
 $string['attachment'] = "Bilaga";
 $string['bynameondate'] = "av \$a->name - \$a->date";
-$string['couldnotadd'] = "Kan inte lägga till din postning på grund av okänt fel";
-$string['couldnotdeleteratings'] = "Tyvärr, det kan inte tas bort eftersom folk redan har bedömt det";
-$string['couldnotdeletereplies'] = "Tyvärr, det kan inte tas bort eftersom folk redan har svarat på det";
-$string['couldnotupdate'] = "Kunde inte uppdatera din postning på grund av okänt fel";
+$string['configdisplaymode'] = "Det förinställda sättet att visa diskussionsämnen, om Du inte har ställt in ett annat.";
+$string['configlongpost'] = "Alla inlägg som överskrider den här längden (förutom HTML) anses vara långa.";
+$string['configmanydiscussions'] = "Maximalt antal diskussionsämnen som visas per sida i ett forum.";
+$string['configmaxbytes'] = "Standardval (förinställt värde) för den maximala storleken på bifogade filer på den här webbsajten (det finns även lokala inställningar för t ex varje enskild kurs)";
+$string['configshortpost'] = "Alla inlägg som överskrider den här längden (förutom HTML) anses vara långa.";
+$string['couldnotadd'] = "Det gick inte att lägga till Ditt inlägg på grund av okänt fel.";
+$string['couldnotdeleteratings'] = "Tyvärr, detta kan inte tas bort eftersom folk redan har värderat det.";
+$string['couldnotdeletereplies'] = "Tyvärr, det kan inte tas bort eftersom folk redan har svarat på det.";
+$string['couldnotupdate'] = "Det gick inte att uppdatera Ditt inlägg på grund av okänt fel.";
 $string['delete'] = "Ta bort";
 $string['deleteddiscussion'] = "Diskussionsämnet har tagits bort";
-$string['deletedpost'] = "Postningen har tagits bort";
-$string['deletesure'] = "Är du säker på att du vill ta bort denna postning?";
-$string['discussion'] = "Diskussion";
-$string['discussions'] = "Diskussioner";
-$string['discussionsstartedby'] = "Diskussionen startades av \$a";
+$string['deletedpost'] = "Inlägget har tagits bort";
+$string['deletesure'] = "Är Du säker på att Du vill ta bort detta inlägg?";
+$string['discussion'] = "Diskussionsämne";
+$string['discussionmoved'] = "Den här diskussionsämnet har flyttats till '\$a'.";
+$string['discussions'] = "Diskussionsämnen";
+$string['discussionsstartedby'] = "\$a  inledde det här diskussionsämnet";
+$string['discussionsstartedbyrecent'] = "Diskussioner som nyligen har inletts av '\$a'.";
 $string['discussthistopic'] = "Diskutera detta ämne";
-$string['eachuserforum'] = "Varje person postar en diskussion";
+$string['eachuserforum'] = "Var och en  bidrar med ett  diskussionsämne";
 $string['edit'] = "Redigera";
 $string['editing'] = "Redigering";
-$string['emptymessage'] = "Något var fel med din postning.  Kanske lämnade du den tom, eller bilagan var för stor.  Dina ändringar har INTE sparats.";
+$string['emptymessage'] = "Något var fel med Ditt inlägg.  Kanske lämnade Du skrev Du inte in någon text, eller så var bilagan för stor.  Dina ändringar har INTE sparats.";
 $string['everyonecanchoose'] = "Alla kan välja att prenumerera";
 $string['everyoneissubscribed'] = "Alla prenumererar på detta forum";
 $string['forcesubscribe'] = "Tvinga alla att prenumerera";
 $string['forcesubscribeq'] = "Tvinga alla att prenumerera?";
 $string['forum'] = "Forum";
 $string['forumintro'] = "Introduktion till forum";
-$string['forumname'] = "Forumnamn";
+$string['forumname'] = "Forumets namn";
 $string['forums'] = "Forum";
-$string['forumtype'] = "Forumtyp";
-$string['generalforum'] = "Standardforum för generell användning";
-$string['generalforums'] = "Generella forum";
+$string['forumtype'] = "Typ av forum";
+$string['generalforum'] = "Standardforum för allmänt bruk";
+$string['generalforums'] = "Allmänna forum";
 $string['inforum'] = "i \$a";
-$string['intronews'] = "Generella nyheter och annonseringar";
-$string['introsocial'] = "Ett öppet forum att diskutera vad du vill";
-$string['introteacher'] = "Ett forum för endast lärare med noteringar och diskussion";
-$string['learningforums'] = "Learning forums";
-$string['maxtimehaspassed'] = "Tyvärr, men maximitid för att redigera denna postning (\$a) har passerat!";
+$string['intronews'] = "Allmänna nyheter och meddelanden";
+$string['introsocial'] = "Ett öppet forum där Du kan diskutera vad Du vill";
+$string['introteacher'] = "Ett forum endast för lärares anteckningar och diskussionsämnen";
+$string['lastpost'] = "Senaste inlägg";
+$string['learningforums'] = "Forum för lärande";
+$string['maxattachmentsize'] = "Maximal storlek på bifogad fil";
+$string['maxtimehaspassed'] = "Tyvärr, men maximitiden för att redigera detta inlägg (\$a) har passerat!";
 $string['message'] = "Meddelande";
-$string['modeflatoldestfirst'] = "Visa svarslista, med det älsta först";
 $string['modeflatnewestfirst'] = "Visa svarslista, med det senaste först";
+$string['modeflatoldestfirst'] = "Visa svarslista, med det äldsta först";
 $string['modenested'] = "Visa svar i nästlad form";
 $string['modethreaded'] = "Visa svar i trådad form";
+$string['modulename'] = "Forum";
+$string['modulenameplural'] = "Forum";
 $string['more'] = "mer";
+$string['movethisdiscussionto'] = "Flytta det här diskussionsämnet  till...";
 $string['namenews'] = "Nyhetsforum";
-$string['namesocial'] = "Socialt forum";
+$string['namesocial'] = "Gemenskapsforum";
 $string['nameteacher'] = "Lärarforum";
-$string['newforumposts'] = "Nya forumpostningar";
+$string['newforumposts'] = "Nya inlägg i forum";
 $string['nodiscussions'] = "Det finns ännu inga diskussionsämnen i detta forum";
-$string['noguestpost'] = "Tyvärr, gäster har ingen behörighet att posta";
-$string['noposts'] = "Inga postningar";
-$string['nopostscontaining'] = "Inga postningar innehållande '\$a' hittades";
+$string['noguestpost'] = "Tyvärr, gäster har ingen behörighet att göra inlägg här";
+$string['nomorepostscontaining'] = "Det gick inte att hitta några inlägg som innehåller '\$a' ";
+$string['nonews'] = "Inga nya inlägg ännu";
+$string['noposts'] = "Inga inlägg";
+$string['nopostscontaining'] = "Det gick inte att hitta  några inlägg som innehåller '\$a' ";
 $string['nosubscribers'] = "Det finns ännu inga prenumeranter på detta forum";
-$string['nownotsubscribed'] = "\$a->name kommmer INTE få kopior av '\$a->forum' med epost.";
-$string['nowsubscribed'] = "\$a->name kommer få kopior av '\$a->forum' med epost.";
-$string['numposts'] = "\$a postningar";
-$string['olderdiscussions'] = "Äldre diskussioner";
-$string['openmode0'] = "Inga diskussioner, inga svar";
-$string['openmode1'] = "Inga diskussioner, men svar tillåts";
-$string['openmode2'] = "Diskussioner och svar är tillåtna";
-$string['parentofthispost'] = "Föräldern till denna postning";
-$string['postadded'] = "Din postning har lagts till.<P>Du har \$a för att redigera den om du vill göra ändringar.";
-$string['postincontext'] = "Se denna postning i sitt sammanhang";
-$string['postmailinfo'] = "Detta är en kopia på ett meddelande postat på \$a webbplats.
-För att lägga till ditt svar via webbplatsen, klicka på denna länk:";
-
-$string['postingtip'] = "<B>Postnings tips:</B>
-När du svarar:
-<UL>
-<LI>läs deras postning noggrannt och
-<LI>titta speciellt efter saker du kan kommentera
-</UL>
-
-När du skriver:
-<UL>
-<LI>håll dina svar korta och till ämnet
-<LI>förklara dina egna idéer klart
-<LI>tänk på frågor du kan ställa
-</UL>";
-
-$string['postrating1'] = "Visa mest SEPARATE knowing";
-$string['postrating2'] = "Lika Equally separate and connected";
-$string['postrating3'] = "Visa mest CONNECTED knowing";
-$string['postupdated'] = "Din postning uppdaterades";
-$string['processingpost'] = "Processar post \$a";
-$string['rate'] = "Bedömning";
-$string['ratings'] = "Bedömningar";
+$string['nownotsubscribed'] = "\$a->name kommmer INTE få kopior av '\$a->forum' med e-post.";
+$string['nowsubscribed'] = "\$a->name kommer få kopior av '\$a->forum' med e-post.";
+$string['numposts'] = "\$a inlägg";
+$string['olderdiscussions'] = "Äldre diskussionsämnen";
+$string['openmode0'] = "Inga diskussionsämnen, inga svar";
+$string['openmode1'] = "Inga diskussionsämnen, men svar är tillåtna";
+$string['openmode2'] = "Diskussionsämnen och svar är tillåtna";
+$string['parent'] = "Visa 'föräldern' till detta inlägg";
+$string['parentofthispost'] = "Föräldern till detta inlägg";
+$string['postadded'] = "Ditt inlägg har lagts till.<P>Du har \$a för att redigera det om Du vill göra ändringar.";
+$string['postincontext'] = "Se detta inlägg i sitt sammanhang";
+$string['postmailinfo'] = "Detta är en kopia på ett meddelande inlagt på \$a webbplats.
+För att lägga till Ditt svar via webbplatsen, klicka på denna länk:";
+$string['postrating1'] = "Visa mest enskilt, (rationellt) inriktat  vetande (kunskap)";
+$string['postrating2'] = "Enskilt, (rationellt) inriktat  vetande (kunskap) och socialt, (empatiskt) inriktat vetande (kunskap)";
+$string['postrating3'] = "Visa mest socialt, (empatiskt) inriktat vetande (kunskap)";
+$string['posts'] = "Inlägg";
+$string['postupdated'] = "Ditt inlägg har blivit uppdaterat";
+$string['processingpost'] = "Bearbetar inlägg \$a ...";
+$string['rate'] = "Omdöme";
+$string['rating'] = "Bedömning/värdering";
+$string['ratingeveryone'] = "Alla kan bedöma/värdera ett inlägg";
+$string['ratingno'] = "Ingen bedömning/värdering";
+$string['ratingonlyteachers'] = "Endast \$a kan bedöma/värdera inlägg";
+$string['ratings'] = "Bedömning/värdering";
+$string['ratingssaved'] = "bedömningarna/värderingarna har blivit  sparade";
+$string['ratingsuse'] = "Använd bedömningar/värderingar ";
+$string['ratingtime'] = "Begränsa bedömning/värdering till inlägg med datum i det här intervallet:";
+$string['re'] = "Svar:";
 $string['readtherest'] = "Läs fortsättningen på detta ämne";
-$string['re'] = "Re:";    // Put in front of subjects that are replies to another post
+$string['replies'] = "Svar:";
 $string['repliesmany'] = "\$a svar så långt";
 $string['repliesone'] = "\$a svar så långt";
 $string['reply'] = "Besvara";
 $string['search'] = "Sök";
-$string['searchresults'] = "Sökresultat";
 $string['searchforums'] = "Sök forum";
-$string['sendinratings'] = "Sänd in mina senaste bedömingar";
+$string['searcholderposts'] = "Sök äldre inlägg...";
+$string['searchresults'] = "Sökresultat";
+$string['sendinratings'] = "Sänd in mina senaste bedömningar/värderingar";
 $string['showsubscribers'] = "Visa prenumeranter";
-$string['singleforum'] = "En enkel enskild diskussion";
+$string['singleforum'] = "Ett enkelt enskilt diskussionsämne";
+$string['startedby'] = "Påbörjad av:";
 $string['subject'] = "Ämne";
 $string['subscribe'] = "Prenumerera på detta forum";
 $string['subscribed'] = "Prenumererar";
 $string['subscribers'] = "Prenumeranter";
 $string['subscribersto'] = "Prenumerera till '\$a'";
+$string['subscribestart'] = "Skicka e-postkopior av inlägg i detta forum till mig ";
+$string['subscribestop'] = "Skicka INTE e-postkopior av inlägg i detta forum  till mig ";
+$string['subscription'] = "Prenumeration";
+$string['subscriptions'] = "Prenumerationer";
 $string['unsubscribe'] = "Avbeställ prenumeration från detta forum";
-$string['youratedthis'] = "Du bedömde detta";
+$string['unsubscribed'] = "Avbeställd";
+$string['youratedthis'] = "Du värderade detta";
 $string['yournewtopic'] = "Ditt nya diskussionsämne";
 $string['yourreply'] = "Ditt svar";
 

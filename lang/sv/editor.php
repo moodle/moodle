@@ -1,0 +1,76 @@
+<?PHP // $Id$ 
+      // editor.php - created with Moodle 1.1.1 (2003091111)
+
+
+$string['about'] = "Om den här redigeraren";
+$string['absbottom'] = "Absbottom";
+$string['absmiddle'] = "Absmiddle";
+$string['address'] = "Adress";
+$string['alignment'] = "Alignment";
+$string['alternatetext'] = "Alternativ text";
+$string['baseline'] = "Baslinje";
+$string['bold'] = "Fet";
+$string['borderthickness'] = "Tjocklek på tabellram";
+$string['bottom'] = "Batten";
+$string['browse'] = "Bläddra";
+$string['cancel'] = "Avbryt";
+$string['cellpadding'] = "Cellpadding";
+$string['cellspacing'] = "Cellspacing";
+$string['choosechar'] = "Välj tecken";
+$string['chooseicon'] = "Välj en ikon som Du vill lägga in";
+$string['close'] = "Stäng";
+$string['cols'] = "Kolumner";
+$string['copy'] = "Kopiera urvalet";
+$string['createlink'] = "Lägga in en webblänk";
+$string['cut'] = "Klipp ut urvalet";
+$string['forecolor'] = "Färg på typsnittet";
+$string['heading'] = "Rubrik";
+$string['hilitecolor'] = "bakgrundsfärg";
+$string['horizontal'] = "Horisontell";
+$string['horizontalrule'] = "Horisontell linje (linjal)";
+$string['htmlmode'] = "Byt till  HTML-källa";
+$string['imageurl'] = "URL till bild";
+$string['indent'] = "Öka indrag";
+$string['insertchar'] = "Lägg in specialtecken";
+$string['insertimage'] = "Lägg in bild";
+$string['insertsmile'] = "Lägg in  en 'smiley'";
+$string['inserttable'] = "Lägg in en tabell";
+$string['italic'] = "Kursiv";
+$string['justifycenter'] = "Centrera";
+$string['justifyfull'] = "Ställ in helrad";
+$string['justifyleft'] = "Justera åt vänster";
+$string['justifyright'] = "Justera åt höger";
+$string['layout'] = "Layout";
+$string['left'] = "Vänster";
+$string['middle'] = "Mitten";
+$string['normal'] = "Normal";
+$string['notset'] = "Ej angivet";
+$string['ok'] = "OK";
+$string['orderedlist'] = "Ordnad lista";
+$string['outdent'] = "Minska indrag";
+$string['paste'] = "Klistra in från 'clipboard'";
+$string['path'] = "(sök)väg";
+$string['percent'] = "Procent";
+$string['pixels'] = "Pixlar";
+$string['popupeditor'] = "Förstora redigeraren";
+$string['preformatted'] = "Förformatterad";
+$string['preview'] = "Förhandsgranska";
+$string['redo'] = "Gör om Din senast aktivitet";
+$string['right'] = "Höger";
+$string['rows'] = "Rader";
+$string['showhelp'] = "Hjälp med att använda redigeraren";
+$string['spacing'] = "Radavstånd";
+$string['strikethrough'] = "Genomstruken";
+$string['subscript'] = "Nedsänkt skrift";
+$string['superscript'] = "Upphöjd skrift";
+$string['textindicator'] = "Aktuell stil ";
+$string['textmode'] = "Du är i 'TEXT MODE'.  Använd [<>] knappen för att gå tillbaka till 'WYSIWYG MODE'.";
+$string['texttop'] = "Längst upp på sidan";
+$string['top'] = "Upp";
+$string['underline'] = "Understrykning";
+$string['undo'] = "Ångra senaste aktivitet";
+$string['unorderedlist'] = "Lista med 'ringar'";
+$string['vertical'] = "Vertikal";
+$string['width'] = "Vidd";
+
+?>
