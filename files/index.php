@@ -21,6 +21,14 @@
         error("Only teachers can edit files");
     }
 
+    if (!$CFG->zip) {
+        $CFG->zip = "/usr/bin/zip";
+    }
+
+    if (!$CFG->unzip) {
+        $CFG->unzip = "/usr/bin/unzip";
+    }
+
     function html_footer() {
         global $course;
         echo "</td></tr></table></body></html>";
@@ -29,9 +37,11 @@
     
     function html_header($formfield=""){
         global $course;
+
+        $strfiles = get_string("files");
     
-        print_header("$course->shortname: Files", "$course->shortname: Files", 
-                    "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> -> Files", $formfield);
+        print_header("$course->shortname: $strfiles", "$course->fullname", 
+                    "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> -> $strfiles", $formfield);
         echo "<table border=0 align=center cellspacing=3 cellpadding=3 width=640>";
         echo "<tr>";
         echo "<td colspan=\"2\">";
@@ -293,7 +303,7 @@
                     $files .= basename($file);
                     $files .= " ";
                 }
-                $command = "cd $basedir/$wdir ; /usr/bin/zip -r $name $files";
+                $command = "cd $basedir/$wdir ; $CFG->zip -r $name $files";
                 Exec($command);
                 clearfilelist();
                 displaydir($wdir);
@@ -338,7 +348,7 @@
                 print_simple_box_start("center");
                 echo "<PRE>";
                 $file = basename($file);
-                $command = "cd $basedir/$wdir ; /usr/bin/unzip -o $file 2>&1";
+                $command = "cd $basedir/$wdir ; $CFG->unzip -o $file 2>&1";
                 passthru($command);
                 echo "</PRE>";
                 print_simple_box_end();

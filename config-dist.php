@@ -93,6 +93,13 @@ $CFG->gdversion = 1;
 $CFG->longtimenosee = 100;
 
 
+// These programs are used by the file management code to zip and unzip 
+// uploaded files.  This only works on Unix systems right now.
+
+$CFG->zip   = "/usr/bin/zip";
+$CFG->unzip = "/usr/bin/unzip";
+
+
 // You should not need to change anything else. To continue setting up 
 // Moodle, use your web browser to go to the moodle/admin web page.
 ///////////////////////////////////////////////////////////////////////////
