@@ -126,6 +126,15 @@
         add_to_log($course->id, "assignment", "view submissions", "submissions.php?id=$assignment->id", "$assignment->id");
     }
 
+    $grades = array();
+
+    if ($assignment->grade < 0) {
+        $scaleid = - ($assignment->grade);
+        if ($scale = get_record("scale", "id", $scaleid)) {
+            $grades = make_menu_from_list($scale->scale);
+        }
+    }
+
     for ($i=$assignment->grade; $i>=0; $i--) {
         $grades[$i] = $i;
     }

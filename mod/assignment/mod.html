@@ -95,9 +95,14 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><p><b><?php print_string("maximumgrade") ?>:</b></p></td>
+    <td align=right><p><b><?php print_string("grade") ?>:</b></p></td>
     <td>
         <?php
+        $scales = get_scales_menu($course->id);
+        $strscale = get_string("scale");
+        foreach ($scales as $i => $scalename) {
+            $grades[-$i] = "$strscale: $scalename";
+        }
         for ($i=100; $i>=0; $i--) {
             $grades[$i] = $i;
         }

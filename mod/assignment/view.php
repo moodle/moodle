@@ -70,13 +70,25 @@
     print_simple_box_start("CENTER");
     print_heading($assignment->name, "CENTER");
     print_simple_box_start("CENTER");
-    echo "<B>".get_string("duedate", "assignment")."</B>: $strduedate<BR>";
-    echo "<B>".get_string("maximumgrade")."</B>: $assignment->grade<BR>";
+    echo "<b>".get_string("duedate", "assignment")."</b>: $strduedate<br />";
+
+    if ($assignment->grade < 0) {
+        $scaleid = - ($assignment->grade);
+        if ($scale = get_record("scale", "id", $scaleid)) {
+            $scalegrades = make_menu_from_list($scale->scale);
+            echo "<b>".get_string("grade")."</b>: $scale->name ";
+            print_scale_menu_helpbutton($course->id, $scale);
+            echo "<br />";
+        }
+    } else if ($assignment->grade < 0) {
+        echo "<b>".get_string("maximumgrade")."</b>: $assignment->grade<br>";
+    }
+
     print_simple_box_end();
-    echo "<BR>";
+    echo "<br />";
     echo format_text($assignment->description, $assignment->format);
     print_simple_box_end();
-    echo "<BR>";
+    echo "<br />";
 
     if (!isteacher($course->id) and !isguest()) {
         $submission = assignment_get_submission($assignment, $USER);
@@ -88,26 +100,29 @@
         } else {
             if ($submission and $submission->timemodified) {
                 print_simple_box_start("center");
-                echo "<CENTER>";
-                print_heading(get_string("yoursubmission","assignment").":", "CENTER");
-                echo "<P><FONT SIZE=-1><B>".get_string("lastmodified")."</B>: ".userdate($submission->timemodified)."</FONT></P>";
+                echo "<center>";
+                print_heading(get_string("yoursubmission","assignment").":", "center");
+                echo "<p><font size=-1><b>".get_string("lastmodified")."</b>: ".userdate($submission->timemodified)."</font></p>";
                 assignment_print_user_files($assignment, $USER);
                 print_simple_box_end();
             } else {
                 print_heading(get_string("notsubmittedyet","assignment"));
             }
         
-            echo "<HR SIZE=1 NOSHADE>";
+            echo "<hr size=1 noshade>";
         
             if ($submission and $submission->timemarked) {
-                print_heading(get_string("submissionfeedback", "assignment").":", "CENTER");
+                print_heading(get_string("submissionfeedback", "assignment").":", "center");
+                if (isset($scalegrades)) {
+                    $submission->grade = $scalegrades[$submission->grade];
+                }
                 assignment_print_feedback($course, $submission);
             }
             if (!$submission->timemarked or $assignment->resubmit) {
                 if ($submission and $submission->timemodified) {
                     echo "<P ALIGN=CENTER>".get_string("overwritewarning", "assignment")."</P>";
                 }
-                print_heading(get_string("submitassignment", "assignment").":", "CENTER");
+                print_heading(get_string("submitassignment", "assignment").":", "center");
                 assignment_print_upload_form($assignment);
             }
         }
