@@ -765,13 +765,13 @@ function insert_record($table, $dataobject, $returnid=true) {
         if ($column->name <> "id") {
             if (isset($data[$column->name])) { 
                 if ((string)$data[$column->name] == "" and !empty($column->has_default) and !empty($column->default_value)) {
-                    $ddd[$column->name] = $column->default_value;
+                    $ddd[$column->name] = 'DEFAULT';
                 } else {
                     $ddd[$column->name] = $data[$column->name];
                 }
             } else {
                 if (!empty($column->has_default) and !empty($column->default_value)) {
-                    $ddd[$column->name] = $column->default_value;
+                    $ddd[$column->name] = 'DEFAULT';
                 } 
             }
         }
@@ -796,7 +796,7 @@ function insert_record($table, $dataobject, $returnid=true) {
                 $select .= " AND ";
             }
             $inscolumns .= "$key";
-            $insvalues .= "'$value'";
+            $insvalues .= ($value != 'DEFAULT')  ? "'$value'" : $value ;
             $select .= "$key = '$value'";
         }
     }
