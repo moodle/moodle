@@ -94,17 +94,5 @@ $string['wednesday'] = 'Mercredi';
 $string['thursday'] = 'Jeudi';
 $string['friday'] = 'Vendredi';
 $string['saturday'] = 'Samedi';
-$string['january'] = 'Janvier';
-$string['february'] = 'Février';
-$string['march'] = 'Mars';
-$string['april'] = 'Avril';
-$string['may'] = 'Mai';
-$string['june'] = 'Juin';
-$string['july'] = 'Juillet';
-$string['august'] = 'Août';
-$string['september'] = 'Septembre';
-$string['october'] = 'Octobre';
-$string['november'] = 'Novembre';
-$string['december'] = 'Décembre';
 
 ?>
