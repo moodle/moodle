@@ -372,6 +372,7 @@ $string[undecided] = "Undecided";
 $string[unenrol] = "Unenrol";
 $string[unenrolme] = "Unenrol me from \$a";
 $string[unenrolsure] = "Are you sure you want to unenrol \$a from this course?";
+$string[unsafepassword] = "Unsafe password - try something else";
 $string[unzip] = "Unzip";
 $string[update] = "Update";
 $string[updated] = "Updated \$a";

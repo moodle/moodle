@@ -207,6 +207,9 @@ function find_form_errors(&$user, &$usernew, &$err) {
 
         if (empty($usernew->newpassword) and empty($user->password))
             $err["newpassword"] = get_string("missingpassword");
+
+        if ($usernew->newpassword == md5("admin") or $user->password == md5("admin"))
+            $err["newpassword"] = get_string("unsafepassword");
     }
 
     if (empty($usernew->email))
