@@ -33,6 +33,7 @@
 
 				$USER->loggedin = true;
 				$USER->confirmed = 1;
+				$USER->site = $CFG->wwwroot;
 
                 save_session("USER");
 
