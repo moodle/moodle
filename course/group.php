@@ -66,14 +66,18 @@
         echo '<div align="center">';
         print_group_picture($group, $course->id, true, false, false);
         echo '</div>';
-        print_simple_box($group->description, 'center', '50%');
+        if ($group->description) {
+            print_simple_box($group->description, 'center', '50%');
+        }
 
     } else {                            // Just display the information 
         print_heading($group->name);
         echo '<div align="center">';
         print_group_picture($group, $course->id, true, false, false);
         echo '</div>';
-        print_simple_box($group->description, 'center', '50%');
+        if ($group->description) {
+            print_simple_box($group->description, 'center', '50%');
+        }
     }
 
     echo '<br />';
