@@ -809,7 +809,7 @@ function get_all_sections($courseid) {
 function course_set_display($courseid, $display=0) {
     global $USER;
 
-    if (empty($USER)) {
+    if (empty($USER->id)) {
         return false;
     }
 

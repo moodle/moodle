@@ -595,7 +595,7 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
         $content .= '<td style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_showcourse', 'calendar').'">'.get_string('courseevents', 'calendar').'</a></td>'."\n";
     }
 
-    if(!empty($USER) && !isguest()) {
+    if(!empty($USER->id) && !isguest()) {
         $content .= "</tr>\n<tr>";
 
         if($groupevents) {
@@ -866,13 +866,13 @@ function calendar_get_course_cached(&$coursecache, $courseid) {
 function calendar_session_vars() {
     global $SESSION, $USER;
 
-    if(isset($USER) && isset($USER->realuser) && !isset($SESSION->cal_loggedinas)) {
+    if(!empty($USER->id) && isset($USER->realuser) && !isset($SESSION->cal_loggedinas)) {
         // We just logged in as someone else, update the filtering
         unset($SESSION->cal_users_shown);
         unset($SESSION->cal_courses_shown);
         $SESSION->cal_loggedinas = true;
     }
-    else if(isset($USER) && !isset($USER->realuser) && isset($SESSION->cal_loggedinas)) {
+    else if(!empty($USER->id) && !isset($USER->realuser) && isset($SESSION->cal_loggedinas)) {
         // We just logged back to our real self, update again
         unset($SESSION->cal_users_shown);
         unset($SESSION->cal_courses_shown);
@@ -1012,7 +1012,7 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
 function calendar_edit_event_allowed($event) {
     global $USER;
 
-    if(empty($USER) || isguest($USER->id)) {
+    if(empty($USER->id) || isguest($USER->id)) {
         return false;
     }
 
@@ -1047,7 +1047,7 @@ function calendar_get_default_courses($ignoreref = false) {
         return array($SESSION->cal_course_referer => SITEID);
     }
 
-    if(empty($USER)) {
+    if(empty($USER->id)) {
         return array();
     }
 

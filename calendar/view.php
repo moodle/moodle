@@ -105,7 +105,7 @@
         }
     }
 
-    if (empty($USER) or isguest()) {
+    if (empty($USER->id) or isguest()) {
         $defaultcourses = calendar_get_default_courses();
         calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
 
@@ -198,7 +198,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
     $events = calendar_get_upcoming($courses, $groups, $users, 1, 100, $starttime);
 
     // New event button
-    if (empty($USER) || isguest()) {
+    if (empty($USER->id) || isguest()) {
         $text = get_string('dayview', 'calendar').': '.calendar_course_filter_selector($getvars);
     } else {
         $text = '<div style="float: left;">'.get_string('dayview', 'calendar').': '.
@@ -319,7 +319,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday);
 
     // New event button
-    if(empty($USER) || isguest()) {
+    if(empty($USER->id) || isguest()) {
         $text = get_string('detailedmonthview', 'calendar').': '.calendar_course_filter_selector($getvars);
     }
     else {
@@ -482,7 +482,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
 
     echo "</tr>\n";
 
-    if(!empty($USER) && !isguest()) {
+    if(!empty($USER->id) && !isguest()) {
         echo '<tr>';
         // Group events
         if($SESSION->cal_show_groups) {
@@ -515,7 +515,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
     $events = calendar_get_upcoming($courses, $groups, $users, $futuredays, $maxevents);
 
     // New event button
-    if(empty($USER) || isguest()) {
+    if(empty($USER->id) || isguest()) {
         $text = get_string('upcomingevents', 'calendar').': '.calendar_course_filter_selector('from=upcoming');
 
     } else {
@@ -601,7 +601,7 @@ function calendar_print_event($event) {
 function calendar_course_filter_selector($getvars = '') {
     global $USER, $SESSION;
 
-    if (empty($USER) or isguest()) {
+    if (empty($USER->id) or isguest()) {
         return '';
     }
 
