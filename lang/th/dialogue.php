@@ -63,7 +63,7 @@ $string['subjectadded'] = 'หัวข้อที่เพิ่ม';
 $string['teachertostudent'] = 'ครูกับนักเรียน';
 $string['typefirstentry'] = 'พิมพ์ข้อความแรกที่นี่';
 $string['typefollowup'] = 'พิมพ์ข้อความต่อไปที่นี่';
-$string['typeofdialogue'] = 'ชนิดของบทสนทนา';
+$string['typeofdialogue'] = 'ประเภทของบทสนทนา';
 $string['typereply'] = 'พิมพ์ตอบที่นี่';
 $string['viewallentries'] = 'ดู $a บทสนทนาที่เข้ามา';
 

@@ -2,9 +2,9 @@
       // glossary.php - created with Moodle 1.3 (2004052500)
 
 
-$string['addcomment'] = 'เพิ่มเติมข้อคิดเห็น';
+$string['addcomment'] = 'เพิ่มเติมความคิดเห็น';
 $string['addentry'] = 'เพิ่มคำศัพท์ใหม่';
-$string['addingcomment'] = 'เพิ่มเติมข้อคิดเห็น';
+$string['addingcomment'] = 'เพิ่มเติมความคิดเห็น';
 $string['aliases'] = 'คำที่ใช้ในการหา';
 $string['allcategories'] = 'ทุกหัวข้อ';
 $string['allentries'] = 'ทั้งหมด';
@@ -28,7 +28,7 @@ $string['categories'] = 'ประเภทคำศัพท์';
 $string['category'] = 'ประเภทคำศัพท์';
 $string['categorydeleted'] = 'ประเภทคำศัพท์ถูกลบออก';
 $string['categoryview'] = 'เลือกดูจากรายการประเภทศัพท์';
-$string['cnfallowcomments'] = 'เลือกให้ผู้อ่านแสดงข้อคิดเห็นในคำศัพท์ได้';
+$string['cnfallowcomments'] = 'เลือกให้ผู้อ่านแสดงความคิดเห็นในคำศัพท์ได้';
 $string['cnfallowdupentries'] = 'เลือกให้เพิ่มคำศัพท์ซ้ำได้';
 $string['cnfapprovalstatus'] = 'เลือกให้การเพิ่มคำศัพท์โดยนักเรียนต้องได้รับการอนุมัติหรือไม่';
 $string['cnfcasesensitive'] = 'เลือกให้การเพิ่มคำศัพท์ภาษาอังกฤษนับตัวพิมพ์เล็กว่าไม่เหมือนกับตัวใหญ่ CAT ต่างจาก cat';

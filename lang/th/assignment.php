@@ -3,14 +3,14 @@
 
 
 $string['allowresubmit'] = 'อนุญาตให้ส่งการบ้านซ้ำอีกครั้ง';
-$string['assignmentdetails'] = 'เนื้อหาของการบ้าน';
+$string['assignmentdetails'] = 'รายละเอียดของการบ้าน';
 $string['assignmentmail'] = '$a->teacher  ได้ทำการตรวจงาน \'$a->assignment\' ของคุณแล้ว
 
 คุณสามารถดูผลการตรวจได้ที่:
 
 $a->url';
 $string['assignmentmailhtml'] = '$a->teacher ได้ทำการตรวจงาน  \'<i>$a->assignment</i>\'<br /><br />
-คุณสามารถดูผลการตรวจได้: <a href=\"$a->url\"> โดยคลิ้กที่นี่ </a>.';
+คุณสามารถดูผลการตรวจได้: <a href=\"$a->url\"> โดยคลิกที่นี่ </a>.';
 $string['assignmentname'] = 'หัวข้อการบ้าน ';
 $string['assignmenttype'] = 'ประเภท';
 $string['configmaxbytes'] = 'ขนาดของไฟล์งานที่ส่งที่กำหนดไว้';

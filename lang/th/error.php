@@ -2,11 +2,11 @@
       // error.php - created with Moodle 1.3 (2004052500)
 
 
-$string['coursegroupunknown'] = 'ไม่ได้กำหนดรายวิชาที่เกี่ยวข้อกับกับกลุ่ม $a';
+$string['coursegroupunknown'] = 'ไม่ได้มีีรายวิชาที่เกี่ยวข้องกับกับกลุ่ม $a';
 $string['erroronline'] = 'บรรทัดที่  $a ผิดพลาด';
 $string['fieldrequired'] = 'คุณต้องใส่  $a';
-$string['groupalready'] = 'ผู้ใช้อยู่กลุ่ม $a อยู่แล้ว';
-$string['groupunknown'] = 'กลุ่ม $a ไม่เกี่ยวข้องกับคอร์สที่คุณเลือก';
+$string['groupalready'] = 'สมาชิกอยู่ในกลุ่ม $a อยู่แล้ว';
+$string['groupunknown'] = 'กลุ่ม $a ไม่เกี่ยวข้องกับรายวิชาที่คุณเลือก';
 $string['invalidfieldname'] = 'ชื่อ  $a ไม่ถูกต้อง';
 $string['missingfield'] = 'ข้อมูล  $a  หายไป';
 $string['modulerequirementsnotmet'] = 'โมดูล \"$a->modulename\" ($a->moduleversion) ยังไม่มีการติดตั้ง คุณต้องติดตั้ง moodle เวอร์ชั่นใหม่ค่ะ ขณะนี้คุณกำลังใช้  $a->currentmoodle, คุณต้องใช้ $a->requiremoodle';
