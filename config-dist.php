@@ -64,16 +64,11 @@ $CFG->theme     = "standard";
 $CFG->lang     = "en";
 
 
-// Give the full name (eg mail.example.com) of an SMTP server that the 
-// web server machine has access to (to send mail).  You can specify 
-// more than one server like this: "mail1.example.com;mail2.example.com"
+// Give the full names of local SMTP servers that Moodle should use to
+// send mail (eg "mail.a.com" or "mail.a.com;mail.b.com").
+// If this is left empty (eg "") then Moodle will attempt to use PHP mail.
 
-$CFG->smtphosts  = "mail.example.com";
-
-// Choose a password to be used by the cron script.  This helps avoid
-// any problems caused by someone spamming moodle/admin/cron.php
-
-$CFG->cronpassword = "fr0o6y";
+$CFG->smtphosts  = "";
 
 
 // You should not need to change anything else. To continue setting up 
