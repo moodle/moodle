@@ -2203,6 +2203,36 @@ function workshop_list_submissions_for_admin($workshop, $order) {
         print_simple_box_end();
     }
 
+    echo "<br />";
+    print_simple_box_start("center");
+    print_heading_with_help(get_string("leaguetable", "workshop"), "leaguetable", "workshop");
+    echo "<form name=\"leagueform\" method=\"post\" action=\"submissions.php\">\n";
+    echo "<INPUT TYPE=\"hidden\" NAME=\"id\" VALUE=\"$cm->id\">\n";
+    echo "<input type=\"hidden\" name=\"action\" value=\"updateleaguetable\">\n";
+    echo "<center><TABLE WIDTH=\"90%\" BORDER=\"1\">\n";
+    echo "<tr><td align=\"right\"><p><b>".get_string("numberofentries", "workshop").": </b><p></td>\n";
+    echo "<TD>";
+    unset($numbers);
+    $numbers[22] = 'All';
+    $numbers[21] = 50;
+    for ($i=20; $i>=0; $i--) {
+        $numbers[$i] = $i;
+    }
+    $nentries = $workshop->showleaguetable;
+    if ($nentries == 99) {
+        $nentries = 'All';
+    }
+    choose_from_menu($numbers, "nentries", "$nentries", "");
+    echo "</td></tr>\n";
+    echo "<tr><td align=right><p>".get_string("hidenamesfromstudents", "workshop", $course->students)."</p></td><td>\n";
+    $options[0] = get_string("no"); $options[1] = get_string("yes");
+    choose_from_menu($options, "anonymous", $workshop->anonymous, "");
+    echo "</td></tr>\n";
+    echo "</table><br />\n";
+    echo "<INPUT TYPE=submit VALUE=\"".get_string("saveleaguetableoptions", "workshop")."\">\n";
+    echo "</center></form>\n";
+    print_simple_box_end();
+
 	// list any teacher submissions
 	$table->head = array (get_string("title", "workshop"), get_string("submittedby", "workshop"), get_string("action", "workshop"));
 	$table->align = array ("left", "left", "left");

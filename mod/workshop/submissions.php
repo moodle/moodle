@@ -1372,6 +1372,29 @@
 		}
 	
 
+	/*************** update (league table options teacher) ***************************/
+	elseif ($action == 'updateleaguetable') {
+		
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+		}
+
+		$form = (object)$_POST;
+		
+		// save number of entries in showleaguetable option
+		if ($form->nentries == 'All') {
+			$form->nentries = 99;
+			}
+		set_field("workshop", "showleaguetable", $form->nentries, "id", "$workshop->id");
+		
+		// save the anonymous option
+		set_field("workshop", "anonymous", $form->anonymous, "id", "$workshop->id");
+		add_to_log($course->id, "workshop", "league table", "view.php?id=$cm->id", $form->nentries);
+
+		redirect("submissions.php?action=adminlist&id=$cm->id");
+		}
+
+
 	/*************** update over allocation (by teacher) ***************************/
 	elseif ($action == 'updateoverallocation') {
 		
