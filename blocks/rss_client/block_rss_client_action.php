@@ -20,7 +20,7 @@
     optional_variable($rssid, 'none');
     optional_variable($courseid, 'none');
     optional_variable($url);
-    optional_variable($preferredtitle);
+    optional_variable($preferredtitle, '');
     optional_variable($item);
     
     $straddedit = get_string('block_rss_feeds_add_edit', 'block_rss_client');
@@ -83,7 +83,8 @@
             error('There was an error trying to update rss feed with id:'. $rssid);
         }
 
-        rss_display_feeds($rssid);
+//        rss_display_feeds($rssid);
+        rss_display_feeds();
         print '<strong>'. get_string('block_rss_feed_updated', 'block_rss_client') .'</strong>';                
         rss_get_form($act, $dataobject->url, $rssid, $dataobject->preferredtitle);
 
@@ -131,9 +132,12 @@
     } else if ( $act == 'rss_edit') {
         
         $rss_record = get_record('block_rss_client', 'id', $rssid);
-        $fname = stripslashes_safe($rss_record->title);
-        $url = stripslashes_safe($rss_record->url);
         $preferredtitle = stripslashes_safe($rss_record->preferredtitle);
+        if (empty($preferredtitle)) {
+            $preferredtitle = stripslashes_safe($rss_record->title);
+        }
+        $url = stripslashes_safe($rss_record->url);
+        rss_display_feeds($rssid);
         rss_get_form($act, $url, $rssid, $preferredtitle);
 
     } else if ($act == 'delfeed') {
@@ -232,7 +236,7 @@ function rss_get_form($act, $url, $rssid, $preferredtitle, $printnow=true) {
     } else { 
         $returnstring .= $straddfeed; 
     }
-    $returnstring .= '<br /><input type="text" size="60" maxlength="256" name="url" value="';
+    $returnstring .= "\n".'<br /><input type="text" size="60" maxlength="256" name="url" value="';
     if ($act == 'rss_edit') { 
         $returnstring .= $url; 
     }
