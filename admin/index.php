@@ -80,7 +80,7 @@
         $strdatabaseupgrades = get_string("databaseupgrades");
         print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
         if (insert_record("config", $dversion)) {
-            notify("You are currently using Moodle version $version");
+            notify("You are currently using Moodle version $release ($version)");
             print_continue("index.php");
             die;
         } else {
@@ -92,6 +92,18 @@
             }
             $db->debug=false;
         }
+    }
+
+    // Updated human-readable release version if necessary
+
+    if ($drelease = get_field("config", "value", "name", "release")) { 
+        if ($release <> $drelease) {  // Update the release version
+            set_field("config", "value", "$release", "name", "release");
+        }
+    } else {
+        $drelease->name  = "release";
+        $drelease->value = $release;
+        insert_record("config", $drelease);
     }
 
 

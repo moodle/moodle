@@ -53,9 +53,12 @@ function print_footer ($course=NULL) {
     if ($course) {
         if ($course == "home") {   // special case for site home page - please do not remove
             if (!$dversion = get_field("config", "value", "name", "version")) {
-                $dversion = "unknown!";
+                $dversion = "xxx";
             }
-            $homelink  = "<P ALIGN=center><A TITLE=\"Version $dversion: Click to visit moodle.com\" HREF=\"http://moodle.com/\">";
+            if (!$drelease = get_field("config", "value", "name", "release")) {
+                $drelease = "xxx";
+            }
+            $homelink  = "<P ALIGN=center><A TITLE=\"Moodle $drelease ($dversion)\" HREF=\"http://moodle.com/\">";
             $homelink .= "<BR><IMG WIDTH=130 HEIGHT=19 SRC=\"pix/madewithmoodle2.gif\" BORDER=0></A></P>";
         } else {
             $homelink = "<A TARGET=_top HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A>";

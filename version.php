@@ -9,7 +9,8 @@
 // Moodle installed, which can be compared against
 // a previous version (see the "config" table).
 //
-// To do this, visit the "admin" page.
+// To do this, visit the "admin" page or the site
+// home page while logged in as an admin.
 //
 // The upgrade function in this file will attempt
 // to perform all the necessary actions to upgrade
@@ -17,7 +18,10 @@
 // If there's something it cannot do itself, it 
 // will tell you what you need to do.
 
-$version = 2002090501;
+$version = 2002090501;   // The current version is a date (YYYYMMDDXX) where 
+                         //    XX is a number that increments during the day
+
+$release = "1.0.3.1";    // For humans only, not used for the upgrade process
 
 function upgrade_moodle($oldversion=0) {
 
