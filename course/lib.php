@@ -1045,7 +1045,7 @@ function print_category_info($category, $depth) {
         echo "<td valign=\"top\" width=\"100%\" class=\"categoryname\">";
         echo "<a $catlinkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
         echo "</td>";
-        echo "<td valign=\"top\" class=\"categoryname\">$category->coursecount</td></tr>";
+        echo "<td valign=\"top\" class=\"categorynumber\">$category->coursecount</td></tr>";
     }
     echo "\n</table>\n";
 }
