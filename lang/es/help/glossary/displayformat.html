@@ -1,6 +1,37 @@
-<P ALIGN=CENTER><B>¿Incluir los datos del usuario en cada entrada?</B></P>
+<P ALIGN=CENTER><B>Formato de vista</B></P>
 
-<P>El sistema le permite especificar la forma en que desea sean vistas las definiciones.
+<P>Esta variable define la manera cómo se mostrará cada entrada dentro del glosario.  
+Los formatos disponibles son:</p>
+<blockquote>
+<dl>
+<dt><b>Diccionario simple</b>:</dt>
+<dd>Luce como un diccionario convencional, con las entradas separadas. No se 
+muestra a ningún autor y los archivos adjuntos aparecen como enlaces.</dd>
+<dt><b>Contínuo</b>:</dt>
+<dd>Presenta las entradas una después de la otra sin otra separación que los 
+iconos de separación.</dd>
+<dt><b>Completo con autor</b>:</dt>
+<dd>Un formato semajante al de los foros, que muestra la información del autor 
+de cada entrada. Los archivos adjuntos aparecen como enlaces.</dd>
+<dt><b>Completo sin autor</b>:</dt>
+<dd>Un formato semajante al de los foros, que no muestra la información del autor 
+de cada entrada. Los archivos adjuntos aparecen como enlaces.</dd>
+<dt><b>Enciclopedia</b>:</dt>
+<dd>Semejante a 'Completo con autor' pero en el que las imágenes adjuntas se muestran 
+en línea.</dd>
+<dt><b>FAQ</b>:</dt>
+<dd>Útil para presentar listas de Preguntas Frecuentemente Respondidas. Automáticamente 
+añade las palabras Pregunta y Respuesta en el concepto y la definición respectivamente.</dd>
+</dl>
+</blockquote>
 
-<p>Si los estudiantes pueden crear definiciones, quizas desee saber quién creó cada una. 
-O bien, si sólo los profesores las crean, no deseen utilizar esta característica.
+<hr>
+<p>Los administradores de Moodle pueden crear nuevos formatos como sigue:
+<ol>
+<li> Busque en el mod/glossary/formats... usted debe ver un archivo numerado para cada   
+formato existente.
+<li> Copie uno de éstos y llámelo con otro número N (note que el 0 y el 1 están reservados).
+<li> Edite este archivo para crear su propio formato (requiere cierto conocimiento de PHP).
+<li> Finalmente, inserte una nueva entrada en cada paquete del idioma que usted 
+use llamado <b>displayformatN</b>, y dele un nombre corto pero significativo.
+</ol>
