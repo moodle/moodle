@@ -122,7 +122,7 @@
             }
         }
     
-        if ($somethingfound) {
+        if (!empty($somethingfound)) {
             print_continue("lang.php");
         } else {
             notice(get_string("languagegood"), "lang.php");

@@ -4,6 +4,8 @@
 
 $COURSE_MAX_LOG_DISPLAY = 150;       // days
 
+$COURSE_MAX_LOGS_PER_PAGE = 1000;    // records
+
 $COURSE_TEACHER_COLOR = "#990000";   // To hilight certain items that are teacher-only
 
 $COURSE_LIVELOG_REFRESH = 60;        // Seconds
@@ -107,7 +109,7 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
 // It is assumed that $date is the GMT time of midnight for that day, 
 // and so the next 86400 seconds worth of logs are printed.
 
-    global $CFG;
+    global $CFG, $COURSE_MAX_LOGS_PER_PAGE;
 
     if ($course->category) {
         $selector = "WHERE l.course='$course->id' AND l.userid = u.id";
@@ -139,11 +141,23 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
     $count=0;
     $tt = getdate(time());
     $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
+    if (($totalcountlogs = count($logs)) > $COURSE_MAX_LOGS_PER_PAGE) {
+        $totalcountlogs = "$COURSE_MAX_LOGS_PER_PAGE/$totalcountlogs";
+    }
+
     echo "<P ALIGN=CENTER>";
-    print_string("displayingrecords", "", count($logs));
+    print_string("displayingrecords", "", $totalcountlogs);
     echo "</P>";
+
+    $countlogs = 0;
     echo "<TABLE BORDER=0 ALIGN=center CELLPADDING=3 CELLSPACING=3>";
     foreach ($logs as $log) {
+
+        $countlogs++;
+
+        if ($countlogs > $COURSE_MAX_LOGS_PER_PAGE) {
+            break;
+        }
 
         if ($ld = get_record("log_display", "module", "$log->module", "action", "$log->action")) {
             $log->info = get_field($ld->mtable, $ld->field, "id", $log->info);

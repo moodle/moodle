@@ -66,12 +66,12 @@
 
 /// Add a teacher if one is specified
 
-    if ($add) {
+    if (!empty($add)) {
         if (! $user = get_record("user", "id", $add)) {
             error("That teacher (id = $add) doesn't exist", "teacher.php?id=$course->id");
         }
 
-        if ($teachers) {
+        if (!empty($teachers)) {
             foreach ($teachers as $tt) {
                 if ($tt->id == $user->id) {
                     error("That user is already a teacher for this course.", "teacher.php?id=$course->id");
@@ -81,13 +81,13 @@
 
         $teacher->userid   = $user->id;
         $teacher->course = $course->id;
-        if ($teachers) {
+        if (!empty($teachers)) {
             $teacher->authority = 2;
         } else {
             $teacher->authority = 1;   // First teacher is the main teacher
         }
         $teacher->id = insert_record("user_teachers", $teacher);
-        if (! $teacher->id) {
+        if (empty($teacher->id)) {
             error("Could not add that teacher to this course!");
         }
         $teachers[] = $user;
@@ -95,11 +95,11 @@
 
 /// Remove a teacher if one is specified.
 
-    if ($remove) {
+    if (!empty($remove)) {
         if (! $user = get_record("user", "id", $remove)) {
             error("That teacher (id = $remove) doesn't exist", "teacher.php?id=$course->id");
         }
-        if ($teachers) {
+        if (!empty($teachers)) {
             foreach ($teachers as $key => $tt) {
                 if ($tt->id == $user->id) {
                     remove_teacher($user->id, $course->id);
@@ -118,7 +118,7 @@
 
 /// First, show existing teachers for this course
 
-    if (! $teachers) { 
+    if (empty($teachers)) { 
         echo "<P ALIGN=CENTER>$strnoexistingteachers</A>";
 
     } else {
@@ -131,16 +131,17 @@
 
 /// Print list of potential teachers
 
-    if ($search) {
+    if (!empty($search)) {
         $users = get_users_search($search);
+
     } else {
         $users = get_users_confirmed();
     }
 
     
-    if ($users) {
+    if (!empty($users)) {
         foreach ($users as $user) {  // Remove users who are already teachers
-            if ($teachers) {
+            if (!empty($teachers)) {
                 foreach ($teachers as $teacher) {
                     if ($teacher->id == $user->id) {
                         continue 2;
@@ -151,7 +152,7 @@
         }
     }
 
-    if (! $potential) { 
+    if (empty($potential)) { 
         echo "<P ALIGN=CENTER>$strnopotentialteachers</A>";
         if ($search) {
             echo "<FORM ACTION=teacher.php METHOD=GET>";
@@ -162,7 +163,7 @@
         }
 
     } else {
-        if ($search) {
+        if (!empty($search)) {
             echo "<P ALIGN=CENTER>($strsearchresults)</P>";
         }
         if (count($potential) <= 20) {
