@@ -299,7 +299,7 @@ function resource_get_coursemodule_info($coursemodule) {
    $info = NULL;
 
    if ($resource = get_record("resource", "id", $coursemodule->instance)) {
-       if (($resource->type == UPLOADEDFILE or $resource->type == WEBLINK) and !empty($resource->popup)) {
+       if (!empty($resource->popup)) {
            $info->extra =  urlencode("target=\"resource$resource->id\" onClick=\"return ".
                             "openpopup('/mod/resource/view.php?inpopup=true&id=".
                             $coursemodule->id.
@@ -308,11 +308,11 @@ function resource_get_coursemodule_info($coursemodule) {
 
        require_once("$CFG->dirroot/files/mimetypes.php");
 
-       if ($resource->type == 'file' or $resource->type == 'url') {
+       if ($resource->type == 'file') {
 	       $icon = mimeinfo("icon", $resource->reference);
            if ($icon != 'unknown.gif') {
 		       $info->icon ="f/$icon";
-           } else if ($resource->type == 'url') {
+           } else {
 		       $info->icon ="f/web.gif";
            }
        } else if ($resource->type == 'directory') {
