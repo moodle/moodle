@@ -1521,7 +1521,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     
     $mail = new phpmailer;
 
-    $mail->Version = "Moodle $CFG->moodleversion";     // mailer version 
+    $mail->Version = "Moodle $CFG->version";           // mailer version 
     $mail->PluginDir = "$CFG->libdir/phpmailer/";      // plugin directory (eg smtp plugin)
 
     if ($CFG->smtphosts) {
