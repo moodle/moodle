@@ -14,7 +14,9 @@
         if (! $question = get_record("quiz_questions", "id", $id)) {
             error("This question doesn't exist");
         }
-
+        if (!empty($category)) {
+            $question->category = $category;
+        }
         if (! $category = get_record("quiz_categories", "id", $question->category)) {
             error("This question doesn't belong to a valid category!");
         }
