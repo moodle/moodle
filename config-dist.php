@@ -210,6 +210,10 @@ $CFG->admin = 'admin';
 // Enabling this will make most text-based filters only match the first time
 // a phrase occurs in a given text.  Otherwise all are matched.
 //      $CFG->filtermatchonepertext = true;
+//
+// Enabling this will make most text-based filters only match the first time
+// a phrase occurs in a given page.  Otherwise all are matched.
+//      $CFG->filtermatchoneperpage = true;
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

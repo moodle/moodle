@@ -129,6 +129,13 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
     /// Quote any regular expression characters and the delimiter
         $linkobject->phrase = preg_quote($linkobject->phrase, '/');
     
+    /// If $CFG->filtermatchoneperpage, avoid previously (request) linked phrases
+        if (!empty($CFG->filtermatchoneperpage)) {
+            if (!empty($_REQUEST['LINKEDPHRASES']) && in_array($linkobject->phrase,$_REQUEST['LINKEDPHRASES'])) {
+                continue;
+            }
+        }
+
     /// Regular expression modifiers
         $modifiers = ($linkobject->casesensitive) ? 's' : 'is';
     
@@ -151,14 +158,23 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
         }
 
     /// Finally we do our highlighting
-        if (!empty($CFG->filtermatchonepertext)) {
-            $text = preg_replace('/('.$linkobject->phrase.')/'.$modifiers, 
+        if (!empty($CFG->filtermatchonepertext) || !empty($CFG->filtermatchoneperpage)) {
+            $resulttext = preg_replace('/('.$linkobject->phrase.')/'.$modifiers, 
                                       $linkobject->hreftagbegin.'$1'.$linkobject->hreftagend, $text, 1);
         } else {
-            $text = preg_replace('/('.$linkobject->phrase.')/'.$modifiers, 
+            $resulttext = preg_replace('/('.$linkobject->phrase.')/'.$modifiers, 
                                       $linkobject->hreftagbegin.'$1'.$linkobject->hreftagend, $text);
         }
 
+    /// If $CFG->filtermatchoneperpage, save linked phrases to request
+        if (!empty($CFG->filtermatchoneperpage)) {
+            if ($resulttext != $text) { //Texts are different so we have linked the phrase
+                $_REQUEST['LINKEDPHRASES'][] = $linkobject->phrase;
+            }
+        }
+
+    /// Set $text to $resulttext
+        $text = $resulttext;
 
     /// Replace the not full matches before cycling to next link object
         if (!empty($notfullmatches)) {
