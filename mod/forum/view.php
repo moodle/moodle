@@ -111,7 +111,7 @@
             print_simple_box(text_to_html($forum->intro), "CENTER");
             echo "<P ALIGN=CENTER>";
             if (forum_user_can_post_discussion($forum)) {
-                echo "This forum allows one discussion topic to be posted per person.";
+                echo "This forum allows each person to start one discussion topic.";
             } else {
                 echo "&nbsp";
             }
