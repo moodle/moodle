@@ -455,6 +455,8 @@ $string['force'] = 'Imposer ';
 $string['forcedmode'] = 'mode imposé';
 $string['forcelanguage'] = 'Imposer la langue';
 $string['forceno'] = 'Ne pas imposer';
+$string['forcepasswordchange'] = 'Imposerle changement du mot de passe';
+$string['forcepasswordchangehelp'] = 'Demande à l\'utilisateur de changer son mot de passe lors de la prochaine connexion';
 $string['forgotten'] = 'Vous avez oublié votre nom d\'utilisateur et/ou votre mot de passe ?';
 $string['format'] = 'Format du cours';
 $string['formathtml'] = 'Format HTML';
@@ -481,6 +483,7 @@ $string['gd1'] = 'GD 1.x est installé';
 $string['gd2'] = 'GD 2.x est installé';
 $string['gdneed'] = 'GD doit être installé pour visualiser ce graphique';
 $string['gdnot'] = 'GD n\'est pas installé';
+$string['go'] = 'Aller';
 $string['gpl'] = 'Copyright (C) 1999-2004 Martin Dougiamas (http://dougiamas.com)
 
 This program is free software; you can redistribute it and/or modify
@@ -578,6 +581,7 @@ $string['institution'] = 'Institution';
 $string['invalidemail'] = 'Adresse de courriel incorrecte';
 $string['invalidlogin'] = 'La connexion a échoué, merci d\'essayer de nouveau';
 $string['ip_address'] = 'Adresse IP';
+$string['jump'] = 'Sauter';
 $string['jumpto'] = 'Aller à...';
 $string['keep'] = 'Conserver';
 $string['langltr'] = 'La langue est écrite de gauche à droite';
