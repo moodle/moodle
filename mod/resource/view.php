@@ -244,10 +244,10 @@
                     echo '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
                     echo '        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
                     echo '        width="600" height="70" id="mp3player" align="">';
-                    echo "<param name=movie value=\"$CFG->wwwroot/lib/mp3player.swf?src=$fullurl&autostart=yes\">";
+                    echo "<param name=movie value=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=$fullurl&autostart=yes\">";
                     echo '<param name=quality value=high>';
                     echo '<param name=bgcolor value="#333333">';
-                    echo "<embed src=\"$CFG->wwwroot/lib/mp3player.swf?src=$fullurl&autostart=yes\" ";
+                    echo "<embed src=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=$fullurl&autostart=yes\" ";
                     echo " quality=high bgcolor=\"#333333\" width=\"600\" height=\"70\" name=\"mp3player\" ";
                     echo ' type="application/x-shockwave-flash" ';
                     echo ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
