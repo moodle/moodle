@@ -19,7 +19,7 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td colspan=2><BR><P><B>Please supply some information about yourself:</B></P>
+	<td colspan=2><BR><P><B>Please supply some information about yourself:</B><BR>(Note: your email address must be a real one)</P>
 </tr>
 <tr valign=top>
 	<td><P>Email address:</td>
