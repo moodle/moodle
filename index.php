@@ -31,7 +31,6 @@
          $sections = get_all_sections($site->id);
       
          if ($site->newsitems > 0 or $sections[0]->sequence or isediting($site->id)) {
-             echo "<IMG SRC=\"pix/spacer.gif\" WIDTH=200 HEIGHT=0><BR>";
       
              if ($sections[0]->sequence or isediting($site->id)) {
                  get_all_mods($site->id, $mods, $modnames, $modnamesplural, $modnamesused);
@@ -53,6 +52,7 @@
                  print_simple_box(get_string("courses"), "CENTER", "100%", "$THEME->cellheading");
                  print_all_courses($cat=1, "minimal", 10);
              } 
+             echo "<IMG SRC=\"pix/spacer.gif\" WIDTH=200 HEIGHT=0><BR>";
          }
      
          if (isadmin()) {
