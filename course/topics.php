@@ -51,7 +51,7 @@
     print_simple_box("People", $align="CENTER", $width="100%", $color="$THEME->cellheading");
     $moddata[]="<A HREF=\"../user/index.php?id=$course->id\">List of all people</A>";
     $modicon[]="<IMG SRC=\"../user/users.gif\" HEIGHT=16 WIDTH=16 ALT=\"List of everyone\">";
-    $editmyprofile = "<A HREF=\"../user/view.php?id=$USER->id&course=$course->id\">Edit my profile</A>"
+    $editmyprofile = "<A HREF=\"../user/view.php?id=$USER->id&course=$course->id\">Edit my profile</A>";
     if ($USER->description) {
         $moddata[]= $editmyprofile;
     } else {
