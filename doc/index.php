@@ -11,7 +11,7 @@
         $include = true;
     }
 
-    $info = document_file($file, $include);
+    document_file($file, $include);
 
     if ($include) {
         exit;
@@ -27,6 +27,6 @@
     <FRAME NAME="top" SRC="top.php">
     <FRAMESET COLS="200,*">
         <FRAME NAME="contents" SRC="contents.php">
-        <FRAME NAME="main" SRC="<?PHP echo "$info->urlpath"; ?>">
+        <FRAME NAME="main" SRC="index.php?file=<?PHP echo "$file"; ?>">
     </FRAMESET>
 </FRAMESET>
