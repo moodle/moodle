@@ -55,6 +55,7 @@ $string['forcesubscribeq'] = 'Moet iedereen verplicht lid zijn?';
 $string['forum'] = 'Forum';
 $string['forumintro'] = 'De inleiding van het forum';
 $string['forumname'] = 'Naam van het forum';
+$string['forumposts'] = 'Forumberichten';
 $string['forums'] = 'Forums';
 $string['forumtype'] = 'Soort forum';
 $string['generalforum'] = 'Standaardforum voor algemeen gebruik ';
