@@ -30,7 +30,12 @@
     backup_required_functions();
     
     //Check backup_version
-    upgrade_backup_db("backup.php");
+    if ($id) {
+        $linkto = "backup.php?id=".$id;
+    } else {
+        $linkto = "backup.php";
+    }
+    upgrade_backup_db($linkto);
 
     //Get strings
     $strcoursebackup = get_string("coursebackup");
