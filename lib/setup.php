@@ -50,6 +50,7 @@
     $CFG->stylesheet  = "$CFG->wwwroot/theme/$CFG->theme/styles.css";
     $CFG->header      = "$CFG->dirroot/theme/$CFG->theme/header.html";
     $CFG->footer      = "$CFG->dirroot/theme/$CFG->theme/footer.html";
+    $CFG->moddata     = "moddata";
 
 // Load up theme variables (colours etc)
 

@@ -189,7 +189,9 @@ function assignment_cron () {
 
 function assignment_file_area_name($assignment, $user) {
 //  Creates a directory file name, suitable for make_upload_directory()
-    return "$assignment->course/assignment/$assignment->id/$user->id";
+    global $CFG;
+
+    return "$assignment->course/$CFG->moddata/assignment/$assignment->id/$user->id";
 }
 
 function assignment_file_area($assignment, $user) {

@@ -5,12 +5,14 @@
 //  This fragment is called by /admin/index.php
 ////////////////////////////////////////////////////////////////////////////////
 
-$module->version  = 2002082000;
+$module->version  = 2002082805;
 $module->cron     = 60;
 
 function assignment_upgrade($oldversion) {
 // This function does anything necessary to upgrade
 // older versions to match current functionality
+
+    global $CFG;
 
     if ($oldversion < 2002080500) {
 
@@ -55,6 +57,32 @@ function assignment_upgrade($oldversion) {
 
     if ($oldversion < 2002080701) {
         execute_sql(" ALTER TABLE `assignment_submissions` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ");
+    }
+
+    if ($oldversion < 2002082805) {
+        // assignment file area was moved, so rename all the directories in existing courses
+
+        $basedir = opendir("$CFG->dataroot");
+        while ($dir = readdir($basedir)) {
+            if ($dir == "." || $dir == ".." || $dir == "users") {
+                continue;
+            }
+            if (filetype("$CFG->dataroot/$dir") != "dir") {
+                continue;
+            }
+            $coursedir = "$CFG->dataroot/$dir";
+
+            if (! $coursemoddata = make_mod_upload_directory($dir)) {
+                echo "Error: could not create mod upload directory: $coursemoddata";
+                continue;
+            }
+
+            if (file_exists("$coursedir/assignment")) {
+                if (! rename("$coursedir/assignment", "$coursemoddata/assignment")) {
+                    echo "Error: could not move $coursedir/assignment to $coursemoddata/assignment\n";
+                }
+            }
+        }
     }
 
     return true;

@@ -294,6 +294,7 @@ $string[phone] = "Phone";
 $string[preview] = "Preview";
 $string[previeworchoose] = "Preview or choose a theme";
 $string[question] = "Question";
+$string[readme] = "README";   // This is a file name
 $string[recentactivity] = "Recent activity";
 $string[resources] = "Resources";
 $string[returningtosite] = "Returning to this web site?";

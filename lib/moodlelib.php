@@ -1323,18 +1323,36 @@ function make_upload_directory($directory) {
     return $currdir;
 }
 
+function make_mod_upload_directory($courseid) {
+    global $CFG;
 
-function get_directory_list( $rootdir ) {
+    if (! $moddata = make_upload_directory("$courseid/$CFG->moddata")) {
+        return false;
+    }
+
+    $strreadme = get_string("readme");
+
+    if (file_exists("$CFG->dirroot/lang/$CFG->lang/docs/module_files.txt")) {
+        copy("$CFG->dirroot/lang/$CFG->lang/docs/module_files.txt", "$moddata/$strreadme.txt");
+    } else {
+        copy("$CFG->dirroot/lang/en/docs/module_files.txt", "$moddata/$strreadme.txt");
+    }
+    return $moddata;
+}
+
+
+function get_directory_list($rootdir, $excludefile="") {
 // Returns an array with all the filenames in 
 // all subdirectories, relative to the given rootdir.
+// If excludefile is defined, then that file/directory is ignored
 
     $dirs = array();
    
     $dir = opendir( $rootdir );
 
-    while( $file = readdir( $dir ) ) {
-        $fullfile = $rootdir."/".$file;
-        if ($file != "." and $file != "..") {
+    while ($file = readdir($dir)) {
+        if ($file != "." and $file != ".." and $file != $excludefile) {
+            $fullfile = $rootdir."/".$file;
             if (filetype($fullfile) == "dir") {
                 $subdirs = get_directory_list($fullfile);
                 foreach ($subdirs as $subdir) {
