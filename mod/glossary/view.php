@@ -224,8 +224,17 @@
     echo '<p align="center">';
     echo '<form method="POST" action="view.php">';
     echo '<input type="submit" value="'.$strsearch.'" name="searchbutton"> ';
-    echo '<input type="text" name="hook" size="20" value=""> ';
-    echo '<input type="checkbox" name="fullsearch" value="1">';
+    if ($mode == 'search') {
+        echo '<input type="text" name="hook" size="20" value="'.$hook.'"> ';
+    } else {
+        echo '<input type="text" name="hook" size="20" value=""> ';
+    }
+    if ($fullsearch) {
+        $fullsearchchecked = 'checked="checked"';
+    } else {
+        $fullsearchchecked = '';
+    }
+    echo '<input type="checkbox" name="fullsearch" value="1" '.$fullsearchchecked.'>';
     echo '<input type="hidden" name="mode" value="search">';
     echo '<input type="hidden" name="id" value="'.$cm->id.'">';
     echo $strsearchindefinition;
