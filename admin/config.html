@@ -386,9 +386,6 @@
 <tr valign=top>
 	<td align=right><p>textfilters:</td>
 	<td>
-    <?php 
-        $config->textfilters = str_replace(',',"\n", $config->textfilters);
-    ?>
     <textarea name=textfilters rows=3 cols=30><?php p($config->textfilters) ?></textarea>
     </td>
     <td>
