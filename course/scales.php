@@ -422,12 +422,6 @@
     if ($scales) {
         //Calculate the base path
         $path = "$CFG->wwwroot/course";
-        //Calculate pixpath
-        if (empty($THEME->custompix)) {
-            $pixpath = "$path/../pix";
-        } else {
-            $pixpath = "$path/../theme/$CFG->theme/pix";
-        }
 
         $data = array();
         $incustom = true;
@@ -454,17 +448,17 @@
             $buttons = "";
             if (empty($scales_uses) && ($incustom || isadmin())) {
                 $buttons .= "<a title=\"$stredit\" href=\"$path/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=edit\"><img".
-                            " src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+                            " src=\"$CFG->pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
                 if ($incustom && isadmin()) {
                     $buttons .= "<a title=\"$strdown\" href=\"$path/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=down&amp;sesskey=$USER->sesskey\"><img".
-                                " src=\"$pixpath/t/down.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+                                " src=\"$CFG->pixpath/t/down.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
                 }
                 if (!$incustom && isadmin()) {
                     $buttons .= "<a title=\"$strup\" href=\"$path/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=up&amp;sesskey=$USER->sesskey\"><img".
-                                " src=\"$pixpath/t/up.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+                                " src=\"$CFG->pixpath/t/up.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
                 }
                 $buttons .= "<a title=\"$strdelete\" href=\"$path/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=delete&amp;sesskey=$USER->sesskey\"><img".
-                            " src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+                            " src=\"$CFG->pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
             }
             $line[] = $buttons;
             

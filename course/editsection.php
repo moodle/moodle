@@ -55,7 +55,7 @@
                   -> $stredit");
 
     print_heading(get_string("summaryof", "", "$sectionname $form->section"));
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start("center");
     include("editsection.html");
     print_simple_box_end();
 

@@ -207,7 +207,7 @@
     $form->sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
     print_heading($streditcoursesettings);
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start("center");
     include("edit.html");
     print_simple_box_end();
 

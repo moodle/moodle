@@ -309,10 +309,9 @@
 function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $up=false, $down=false) {
 /// Recursive function to print all the categories ready for editing
 
-    global $THEME, $CFG, $USER;
+    global $CFG, $USER;
 
     static $str = '';
-    static $pixpath = '';
     
     if (empty($str)) {
         $str->delete   = get_string("delete");
@@ -323,16 +322,8 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
         $str->show     = get_string("show");
     }
     
-    if (empty($pixpath)) {
-        if (empty($THEME->custompix)) {
-            $pixpath = "$CFG->wwwroot/pix";
-        } else {
-            $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
-        }
-    }
-
     if ($category) {
-        echo "<tr><td align=\"left\" nowrap=\"nowrap\" bgcolor=\"$THEME->cellcontent\">";
+        echo "<tr><td align=\"left\" nowrap=\"nowrap\">";
         echo "<p>";
         for ($i=0; $i<$depth;$i++) {
             echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -347,23 +338,23 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
         echo "<td nowrap=\"nowrap\">";    /// Print little icons
 
         echo "<a title=\"$str->delete\" href=\"index.php?delete=$category->id&amp;sesskey=$USER->sesskey\"><img".
-             " src=\"$pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+             " src=\"$CFG->pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
 
         if (!empty($category->visible)) {
             echo "<a title=\"$str->hide\" href=\"index.php?hide=$category->id&amp;sesskey=$USER->sesskey\"><img".
-                 " src=\"$pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+                 " src=\"$CFG->pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
         } else {
             echo "<a title=\"$str->show\" href=\"index.php?show=$category->id&amp;sesskey=$USER->sesskey\"><img".
-                 " src=\"$pixpath/t/show.gif\" height=\"11\" width=\"11\" border=\"0\"alt=\"\" /></a> ";
+                 " src=\"$CFG->pixpath/t/show.gif\" height=\"11\" width=\"11\" border=\"0\"alt=\"\" /></a> ";
         }
 
         if ($up) {
             echo "<a title=\"$str->moveup\" href=\"index.php?moveup=$category->id&amp;sesskey=$USER->sesskey\"><img".
-                 " src=\"$pixpath/t/up.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+                 " src=\"$CFG->pixpath/t/up.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
         }
         if ($down) {
             echo "<a title=\"$str->movedown\" href=\"index.php?movedown=$category->id&amp;sesskey=$USER->sesskey\"><img".
-                 " src=\"$pixpath/t/down.gif\" height=\"11\" width=\"11\" border=\"0\"alt=\"\" /></a> ";
+                 " src=\"$CFG->pixpath/t/down.gif\" height=\"11\" width=\"11\" border=\"0\"alt=\"\" /></a> ";
         }
         echo "</td>";
 

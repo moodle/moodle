@@ -659,7 +659,7 @@ function print_recent_activity($course) {
     // This function trawls through the logs looking for
     // anything new since the user's last login
 
-    global $CFG, $USER, $THEME, $SESSION;
+    global $CFG, $USER, $SESSION;
 
     $isteacher = isteacher($course->id);
 
@@ -1132,10 +1132,9 @@ function rebuild_course_cache($courseid=0) {
 
 
 function print_heading_block($heading, $width="100%", $class="headingblock") {
-    global $THEME;
 
     echo "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"5\">";
-    echo "<tr><td bgcolor=\"$THEME->cellheading\" class=\"$class\">";
+    echo "<tr><td class=\"$class\">";
     echo stripslashes($heading);
     echo "</td></tr></table>";
 }
@@ -1312,7 +1311,7 @@ function print_category_info($category, $depth) {
 function print_courses($category, $width="100%") {
 /// Category is 0 (for all courses) or an object
 
-    global $CFG, $THEME;
+    global $CFG;
 
     if (empty($category)) {
         $categories = get_categories(0);  // Parent = 0   ie top-level categories only
@@ -1342,7 +1341,7 @@ function print_courses($category, $width="100%") {
 
 function print_course($course, $width="100%") {
 
-    global $CFG, $THEME;
+    global $CFG;
 
     static $enrol;
 
@@ -1351,7 +1350,7 @@ function print_course($course, $width="100%") {
         $enrol = new enrolment_plugin;
     }
 
-    print_simple_box_start("center", "$width", $THEME->cellcontent, 5, "coursebox");
+    print_simple_box_start("center", "$width", '', 5, "coursebox");
 
     $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
 
@@ -1762,7 +1761,7 @@ function move_module($cm, $move) {
 }
 
 function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-1) {
-    global $CFG, $THEME, $USER;
+    global $CFG, $USER;
 
     static $str;
 
@@ -1790,32 +1789,26 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
         $path = ".";
     }
 
-    if (empty($THEME->custompix)) {
-        $pixpath = "$path/../pix";
-    } else {
-        $pixpath = "$path/../theme/$CFG->theme/pix";
-    }
-
     if ($mod->visible) {
         $hideshow = "<a title=\"$str->hide\" href=\"$path/mod.php?hide=$mod->id&amp;sesskey=$USER->sesskey\"><img".
-                    " src=\"$pixpath/t/hide.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"$str->hide\" /></a> ";
+                    " src=\"$CFG->pixpath/t/hide.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"$str->hide\" /></a> ";
     } else {
         $hideshow = "<a title=\"$str->show\" href=\"$path/mod.php?show=$mod->id&amp;sesskey=$USER->sesskey\"><img".
-                    " src=\"$pixpath/t/show.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
+                    " src=\"$CFG->pixpath/t/show.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
                     "border=\"0\" alt=\"$str->show\" /></a> ";
     }
     if ($mod->groupmode !== false) {
         if ($mod->groupmode == SEPARATEGROUPS) {
             $grouptitle = $str->groupsseparate;
-            $groupimage = "$pixpath/t/groups.gif";
+            $groupimage = "$CFG->pixpath/t/groups.gif";
             $grouplink  = "$path/mod.php?id=$mod->id&amp;groupmode=0&amp;sesskey=$USER->sesskey";
         } else if ($mod->groupmode == VISIBLEGROUPS) {
             $grouptitle = $str->groupsvisible;
-            $groupimage = "$pixpath/t/groupv.gif";
+            $groupimage = "$CFG->pixpath/t/groupv.gif";
             $grouplink  = "$path/mod.php?id=$mod->id&amp;groupmode=1&amp;sesskey=$USER->sesskey";
         } else {
             $grouptitle = $str->groupsnone;
-            $groupimage = "$pixpath/t/groupn.gif";
+            $groupimage = "$CFG->pixpath/t/groupn.gif";
             $grouplink  = "$path/mod.php?id=$mod->id&amp;groupmode=2&amp;sesskey=$USER->sesskey";
         }
         if ($mod->groupmodelink) {
@@ -1833,37 +1826,37 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
 
     if ($moveselect) {
         $move =     "<a title=\"$str->move\" href=\"$path/mod.php?copy=$mod->id&amp;sesskey=$USER->sesskey\"><img".
-                    " src=\"$pixpath/t/move.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
+                    " src=\"$CFG->pixpath/t/move.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
                     " border=\"0\" alt=\"$str->move\" /></a>";
     } else {
         $move =     "<a title=\"$str->moveup\" href=\"$path/mod.php?id=$mod->id&amp;move=-1&amp;sesskey=$USER->sesskey\"><img".
-                    " src=\"$pixpath/t/up.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
+                    " src=\"$CFG->pixpath/t/up.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
                     " border=\"0\" alt=\"$str->moveup\" /></a>".
                     "<a title=\"$str->movedown\" href=\"$path/mod.php?id=$mod->id&amp;move=1&amp;sesskey=$USER->sesskey\"><img".
-                    " src=\"$pixpath/t/down.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
+                    " src=\"$CFG->pixpath/t/down.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
                     " border=\"0\" alt=\"$str->movedown\" /></a>";
     }
 
     $leftright = "";
     if ($indent > 0) {
         $leftright .= "<a title=\"$str->moveleft\" href=\"$path/mod.php?id=$mod->id&amp;indent=-1&amp;sesskey=$USER->sesskey\"><img".
-                      " src=\"$pixpath/t/left.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
+                      " src=\"$CFG->pixpath/t/left.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
                       " border=\"0\" alt=\"$str->moveleft\" /></a>";
     }
     if ($indent >= 0) {
         $leftright .= "<a title=\"$str->moveright\" href=\"$path/mod.php?id=$mod->id&amp;indent=1&amp;sesskey=$USER->sesskey\"><img".
-                      " src=\"$pixpath/t/right.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
+                      " src=\"$CFG->pixpath/t/right.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
                       " border=\"0\" alt=\"$str->moveright\" /></a>";
     }
 
     return "$leftright$move".
            "<a title=\"$str->update\" href=\"$path/mod.php?update=$mod->id&amp;sesskey=$USER->sesskey\"><img".
-           " src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" ".
+           " src=\"$CFG->pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" ".
            " alt=\"$str->update\" /></a>".
       //   Following line is commented out until this feature is more definite -- martin
       //     "<a title=\"$str->duplicate\" href=\"$path/mod.php?duplicate=$mod->id&amp;sesskey=$USER->sesskey\"> 2 </a>".
            "<a title=\"$str->delete\" href=\"$path/mod.php?delete=$mod->id&amp;sesskey=$USER->sesskey\"><img".
-           " src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" ".
+           " src=\"$CFG->pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" ".
            " alt=\"$str->delete\" /></a>$hideshow$groupmode";
 }
 
