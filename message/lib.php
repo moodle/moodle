@@ -968,4 +968,23 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
     return $savemessage->id;
 }
 
+
+/* 
+ * Returns a list of all user ids who have used messaging in the site
+ * This was the simple way to code the SQL ... is it going to blow up
+ * on large datasets?
+ */
+function message_get_participants() {
+
+    global $CFG;
+
+    return get_records_sql("SELECT DISTINCT u.id 
+                              FROM {$CFG->prefix}message as m, 
+                                   {$CFG->prefix}message_read as mr
+                             WHERE m.useridfrom = u.id 
+                                OR m.useridto = u.id
+                                OR mr.useridfrom = u.id
+                                OR mr.useridto = u.id");
+}
+
 ?>
