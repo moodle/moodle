@@ -4,19 +4,6 @@
     require_once("lib.php");
     require_once("$CFG->libdir/rsslib.php");
 
-/// Page timer:
-if ($CFG->debug and $CFG->debug > 7) {
-function benchmark() {
-   // microtime() outputs the seconds and the milli seconds
-   // separated with a space, so you have to explode it to
-   // access the parts independently
-  list($usec, $sec) = explode(' ', microtime());
-   return ((double)$usec + (double)$sec);
-}
-$start = benchmark();
-}
-/// /Page timer.
-
     optional_variable($id);          // course
 
     if ($id) {
@@ -383,9 +370,5 @@ $start = benchmark();
     }
 
     print_footer($course);
-
-/// Page timer:
-if ($CFG->debug and $CFG->debug > 7) echo 'Page took: ' . round((benchmark() - $start), 5) . ' seconds.';
-/// /Page timer.
 
 ?>
