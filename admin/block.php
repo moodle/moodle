@@ -30,17 +30,30 @@
         error('Problem in instantiating block object');
     }
 
-/// If data submitted, then process and store.
+    // Define the data we're going to silently include in the instance config form here,
+    // so we can strip them from the submitted data BEFORE handling it.
+    $hiddendata = array(
+        'block' => $blockid,
+        'sesskey' => $USER->sesskey
+    );
+
+    /// If data submitted, then process and store.
 
     if ($config = data_submitted()) {
-        unset($config->block); // This will always be set if we have reached this point
-        $block->handle_config($config);
+        if(!$block->has_config()) {
+            error('This block does not support global configuration');
+        }
+        $remove = array_keys($hiddendata);
+        foreach($remove as $item) {
+            unset($config->$item);
+        }
+        $block->config_save($config);
         print_header();
         redirect("$CFG->wwwroot/$CFG->admin/blocks.php", get_string("changessaved"), 1);
         exit;
     }
 
-/// Otherwise print the form.
+    /// Otherwise print the form.
 
     $stradmin = get_string('administration');
     $strconfiguration = get_string('configuration');
@@ -57,8 +70,14 @@
     print_simple_box('<center>'.get_string('configwarning').'</center>', 'center', '50%');
     echo '<br />';
 
-    $block->print_config();
-
+    echo '<form method="post" action="block.php">';
+    echo '<p>';
+    foreach($hiddendata as $name => $val) {
+        echo '<input type="hidden" name="'. $name .'" value="'. $val .'" />';
+    }
+    echo '</p>';
+    $block->config_print();
+    echo '</form>';
     print_footer();
 
 ?>
