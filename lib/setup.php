@@ -73,6 +73,9 @@
     require_once("$CFG->libdir/moodlelib.php");       // Other general-purpose functions
 
 
+/// Increase memory limits if possible
+
+    @ini_set('memory_limit' , '16M');
 
 
 /// Load up any configuration from the config table
