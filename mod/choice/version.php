@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 $module->version  = 2004070102;
-$module->requires = 2004082300;  // Requires this Moodle version
+$module->requires = 2004052505;  // Requires this Moodle version
 $module->cron     = 0;
 
 ?>
