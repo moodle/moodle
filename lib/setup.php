@@ -8,8 +8,6 @@
 // 
 // Normally this file does not need to be edited.
 //
-// XXX this might need some rationalisation
-//
 //////////////////////////////////////////////////////////////
 
 // Error reporting and bug hunting
