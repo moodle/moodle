@@ -266,6 +266,16 @@ function quiz_upgrade($oldversion) {
                                KEY `question` (`question`)
                 ) TYPE=MyISAM COMMENT='Options for questions of type calculated'; ");
     }
+
+    if ($oldversion < 2004073002) {
+        modify_database('','ALTER TABLE prefix_quiz ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_quiz_calculated ADD INDEX answer (answer);');
+        modify_database('','ALTER TABLE prefix_quiz_categories ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_quiz_dataset_definitions ADD INDEX category (category);');
+        modify_database('','ALTER TABLE prefix_quiz_numerical ADD INDEX question (question);');
+        modify_database('','ALTER TABLE prefix_quiz_numerical_units ADD INDEX question (question);');
+        modify_database('','ALTER TABLE prefix_quiz_questions ADD INDEX category (category);');
+    }
     
     return true;
 }
