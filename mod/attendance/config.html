@@ -1,0 +1,81 @@
+<form method="post" action="module.php" name="form">
+
+<table cellpadding=9 cellspacing=0 >
+<tr valign=top>
+	<td align=right><p>attendance_dynsection:</td>
+	<td>
+	<input type="checkbox" name="attendance_dynsection" value="1" <? echo !empty($CFG->attendance_dynsection) ? 'checked' : '' ?> >
+    </td>
+    <td>
+		<? p(get_string("defaultdynamicsection","attendance")) ?>
+	</td>
+</tr>
+
+<tr valign=top>
+	<td align=right><p>attendance_default_hours:</td>
+	<td>
+		<? for ($i=1;$i<=24;$i++){ $opt[$i] = $i; }
+		choose_from_menu($opt, "attendance_default_hours", $CFG->attendance_default_hours, ""); ?>
+    </td>
+    <td>
+    	<?php p(get_string("defaulthoursinclass","attendance")) ?>
+    </td>
+</tr>
+
+<tr valign=top>
+	<td align=right><p>attendance_tardies_per_absence:</td>
+	<td>
+		<? for ($i=1;$i<=24;$i++){ $opt2[$i] = $i; }
+		choose_from_menu($opt2, "attendance_tardies_per_absence", $CFG->attendance_tardies_per_absence, "none","","0"); ?>
+    </td>
+    <td>
+    	<?php p(get_string("tardiesperabsence","attendance")) ?>
+    </td>
+</tr>
+
+<tr valign=top>
+	<td align=right><p>attendance_hours_in_full_report:</td>
+	<td>
+		<? for ($i=10;$i<=24;$i++){ $opt3[$i] = $i; }
+		choose_from_menu($opt3, "attendance_hours_in_full_report", $CFG->attendance_tardies_per_absence, ""); ?>
+    </td>
+    <td>
+    	<?php p(get_string("hoursinfullreport","attendance")) ?>
+    </td>
+</tr>
+
+<tr valign=top>
+	<td align=right><p>attendance_default_student_status:</td>
+	<td>
+		<?
+      $A = get_string("absentlong","attendance");
+      $T = get_string("tardylong","attendance");
+      $P = get_string("presentlong","attendance");  
+
+			$r1c=$r2c=$r3c=" ";
+	    if ($CFG->attendance_default_student_status == 1) {$r2c="checked";}
+	    elseif ($CFG->attendance_default_student_status == 2) {$r3c="checked";}
+	    else {$r1c="checked";}
+      $radio1="<input type=\"radio\" name=\"attendance_default_student_status\" value=\"0\" ".$r1c.">";
+ 	    $radio2="<input type=\"radio\" name=\"attendance_default_student_status\" value=\"1\" ".$r2c.">";
+      $radio3="<input type=\"radio\" name=\"attendance_default_student_status\" value=\"2\" ".$r3c.">";  	
+      echo "<table><tr><td align=\"left\" nowrap class=\"generaltablecell\">".
+        $radio1.$P."</td>\n";
+      echo "<td align=\"left\" nowrap class=\"generaltablecell\">".
+        $radio2.$T."</td>\n";
+      echo "<td align=\"left\" nowrap class=\"generaltablecell\">".
+        $radio3.$A."</td></tr></table>\n";
+?>
+    </td>
+    <td>
+    	<?php p(get_string("defaultstudentstatus","attendance")) ?>
+    </td>
+</tr>
+
+<tr>
+    <td colspan=3 align=center>
+	<input type="submit" value="<?php print_string("savechanges") ?>"></td>
+</tr>
+</table>
+
+</form>
