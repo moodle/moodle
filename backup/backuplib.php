@@ -534,18 +534,12 @@
         fwrite ($bf,start_tag("HEADER",2,true));
 
         //Get info from course
-        $course=false;
-        if ($courses = get_records("course","id",$preferences->backup_course)) {
-            $course = $courses[$preferences->backup_course];
-        }
+        $course = get_record("course","id",$preferences->backup_course);
         if ($course) {
             //Prints course info
             fwrite ($bf,full_tag("ID",3,false,$course->id));
             //Obtain the category
-            $category = false;
-            if ($categories = get_records("course_categories","id","$course->category")) {
-                $category = $categories[$course->category];
-            }
+            $category = get_record("course_categories","id","$course->category");
             if ($category) {
                 //Prints category info
                 fwrite ($bf,start_tag("CATEGORY",3,true));
@@ -721,6 +715,7 @@
                 //Output all user data
                 fwrite ($bf,full_tag("ID",4,false,$user_data->id));
                 fwrite ($bf,full_tag("AUTH",4,false,$user_data->auth));
+                fwrite ($bf,full_tag("GUID",4,false,$user_data->guid));
                 fwrite ($bf,full_tag("CONFIRMED",4,false,$user_data->confirmed));
                 fwrite ($bf,full_tag("DELETED",4,false,$user_data->deleted));
                 fwrite ($bf,full_tag("USERNAME",4,false,$user_data->username));

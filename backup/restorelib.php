@@ -2443,6 +2443,9 @@
                         case "AUTH": 
                             $this->info->tempuser->auth = $this->getContents();
                             break;
+                        case "GUID": 
+                            $this->info->tempuser->guid = $this->getContents();
+                            break;
                         case "CONFIRMED": 
                             $this->info->tempuser->confirmed = $this->getContents();
                             break;
