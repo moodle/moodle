@@ -19,8 +19,13 @@
         error("No such course id");
     }
 
-    if ($course->category or $CFG->forcelogin or !empty($CFG->forceloginforprofiles)) { 
+    if ($course->category) {
         require_login($course->id);
+    } else if ($CFG->forcelogin or !empty($CFG->forceloginforprofiles)) { 
+        if (isguest()) {
+            redirect("$CFG->wwwroot/login/index.php");
+        }
+        require_login();
     }
 
     add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
