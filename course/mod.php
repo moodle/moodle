@@ -206,11 +206,11 @@
         print_header("$course->shortname: Editing a $module->fullname", 
                      "$course->shortname: Editing a $module->fullname",
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
-                      Editing a $module->fullname", "form.name");
+                      Editing a $module->fullname", "form.name", "", false);
     } else {
         print_header("$course->shortname: Editing a $module->fullname", 
                      "$course->shortname: Editing a $module->fullname",
-                     "Editing a $module->fullname", "form.name");
+                     "Editing a $module->fullname", "form.name", "", false);
     }
 
     $modform = "../mod/$module->name/mod.html";
