@@ -1,15 +1,23 @@
-<?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.8.1 (2003011200)
+<?PHP
 
+// This translation was made by Learning Centre "Microtest"  2003
+// If you have any questions or suggestions concerning it 
+// please contact us contact@elearning.microtest.ru
+// or write some notes in forum http://moodle.org/mod/forum/discuss.php?d=1783
+
+#------------------------------------------------------------
+$string['modulename'] = "Форум";
+$string['modulenameplural'] = "Форумы";
+#------------------------------------------------------------
 
 $string['addanewdiscussion'] = "Добавить тему для обсуждения";
-$string['allowchoice'] = "Разрешить всем выбор";
+$string['allowchoice'] = "Разрешить выбор";
 $string['allowdiscussions'] = "Ограничения";
-$string['allowratings'] = "Оценки для собщений";
+$string['allowratings'] = "Оценки для сообщений";
 $string['allowsdiscussions'] = "В этом форуме каждый может создать одну тему для обсуждения";
 $string['anyfile'] = "Любые файлы";
 $string['attachment'] = "Вложения";
-$string['bynameondate'] = "автор \$a->name - \$a->date";
+$string['bynameondate'] = "Автор \$a->name - \$a->date";
 $string['couldnotadd'] = "<B>Сообщение не добавлено из-за неизвестной ошибки</B>";
 $string['couldnotdeleteratings'] = "Удаление невозможно: данное сообщение уже было оценено";
 $string['couldnotdeletereplies'] = "Удаление невозможно: на данное сообщение уже были ответы";
@@ -19,13 +27,14 @@ $string['deleteddiscussion'] = "Тема для обсуждения была удалена";
 $string['deletedpost'] = "Сообщение было удалено";
 $string['deletesure'] = "Вы уверены, что хотите удалить это сообщение?";
 $string['discussion'] = "Обсуждение";
+$string['discussionmoved'] = "Обсуждение перемещено в '\$a'.";
 $string['discussions'] = "Обсуждения";
 $string['discussionsstartedby'] = "Обсуждения начатые  \$a";
 $string['discussthistopic'] = "Обсудить";
 $string['eachuserforum'] = "Каждый посылает одну тему";
 $string['edit'] = "Редактировать";
 $string['editing'] = "Редактирование";
-$string['emptymessage'] = "Что-то не так с вашим сообщением.  Вероятнее всего, вы оставили его пустым или превысили допустимый размер вложения.  <BR><B>Сообщение не было сохранено.</B>";
+$string['emptymessage'] = "Произошла ошибка при обработке Вашего сообщения. Вероятнее всего, вы оставили его пустым или превысили допустимый размер вложения.  <BR><B>Сообщение не было сохранено.</B>";
 $string['everyonecanchoose'] = "Все могут подписаться на этот форум";
 $string['everyoneissubscribed'] = "Все подписаны на этот форум";
 $string['forcesubscribe'] = "Подписать всех на этот форум";
@@ -39,8 +48,9 @@ $string['generalforum'] = "Стандартный общецелевой форум";
 $string['generalforums'] = "Общие форумы";
 $string['inforum'] = "в \$a";
 $string['intronews'] = "Новости и объявления";
-$string['introsocial'] = "Открытый форум для болтовни";
+$string['introsocial'] = "Открытый форум";
 $string['introteacher'] = "Учительский форум";
+$string['lastpost'] = "Последнее сообщение";
 $string['learningforums'] = "Форумы обучения";
 $string['maxtimehaspassed'] = "(\$a), в течении которых редактирование было возможно, истекли!";
 $string['message'] = "Сообщение";
@@ -48,9 +58,8 @@ $string['modeflatnewestfirst'] = "Плоско, впереди новые";
 $string['modeflatoldestfirst'] = "Плоско, впереди старые";
 $string['modenested'] = "Древовидно";
 $string['modethreaded'] = "Древовидно, свернуто";
-$string['modulename'] = "Форум";
-$string['modulenameplural'] = "Форумы";
 $string['more'] = "<BR>еще";
+$string['movethisdiscussionto'] = "Переместить обсуждение в ...";
 $string['namenews'] = "Новости";
 $string['namesocial'] = "Общий форум";
 $string['nameteacher'] = "Учительский форум";
@@ -62,7 +71,7 @@ $string['nopostscontaining'] = "Сообщений, содержащих '\$a', найдено не было";
 $string['nosubscribers'] = "У этого форума нет подписчиков";
 $string['nownotsubscribed'] = "\$a->name больше НЕ будет получать копии сообщений форума '\$a->forum' на e-mail.";
 $string['nowsubscribed'] = "\$a->name будет получать копии сообщений форума '\$a->forum' на e-mail.";
-$string['numposts'] = "\$a сообщений";
+$string['numposts'] = "сообщений - \$a";
 $string['olderdiscussions'] = "Старые обсуждения";
 $string['openmode0'] = "Спрашивать и отвечать нельзя";
 $string['openmode1'] = "Спрашивать нельзя, отвечать можно";
@@ -74,6 +83,7 @@ $string['postmailinfo'] = "Это копия сообщения с \$a. Чтобы ответить на него на 
 $string['postrating1'] = "В основном не по теме";
 $string['postrating2'] = "Не плохо";
 $string['postrating3'] = "Хорошо";
+$string['posts'] = "Сообщения";
 $string['postupdated'] = "Ваше сообщение было сохранено";
 $string['processingpost'] = "Обрабатывается \$a...";
 $string['rate'] = "Оценить..";
@@ -81,6 +91,7 @@ $string['ratings'] = "Оценки";
 $string['ratingssaved'] = "Оценки сохранены";
 $string['re'] = "Re:";
 $string['readtherest'] = "Прочитать  оставшиеся сообщения";
+$string['replies'] = "Ответы";
 $string['repliesmany'] = "Пока \$a ответов";
 $string['repliesone'] = "Пока \$a ответ";
 $string['reply'] = "Ответить";
@@ -90,15 +101,32 @@ $string['searchresults'] = "Результаты поиска";
 $string['sendinratings'] = "Оценить";
 $string['showsubscribers'] = "Показать подписчиков";
 $string['singleforum'] = "Простое обсуждение";
+$string['startedby'] = "Начато";
 $string['subject'] = "Тема";
 $string['subscribe'] = "Подписаться на форум";
 $string['subscribed'] = "Подписан";
 $string['subscribers'] = "Подписчики";
 $string['subscribersto'] = "Подписчики '\$a'";
+$string['subscribestart'] = "Отправлять ";
 $string['unsubscribe'] = "Аннулировать подписку";
 $string['youratedthis'] = "Ваша оценка сохранена";
 $string['yournewtopic'] = "Тема для обсуждений";
 $string['yourreply'] = "Ваш ответ";
-
+$string['subscription'] = "Подписка";
+$string['subscriptions'] = "Подписки";
+$string['unsubscribed'] = "Не подписаны";
+$string['discussionsstartedbyrecent'] = "Обсуждение начато: \$a";
+$string['subscribestop'] = "Я не хочу получать e-mail копии сообщений в этом форуме";
+$string['addanewtopic'] = "Добавить новую тему";
+$string['nonews'] = "Новых разделов нет";
+$string['nomorepostscontaining'] = "Сообщений, содержащих '\$a' не найдено";
+$string['searcholderposts'] = "Поиск старых сообщений...";
+$string['ratingeveryone'] = "Любой может оценивать сообщения";
+$string['ratingno'] = "Не оценивать сообщения";
+$string['ratingonlyteachers'] = "Оценивают сообщения - только \$a ";
+$string['rating'] = "Рейтинг";
+$string['configdisplaymode'] = "Используемый по умолчанию режим обсуждения.";
+$string['configlongpost'] = "Любое сообщение превышающее этот размер (исключение - HTML) считать большим.";
+$string['configmanydiscussions'] = "Максимальное количество обсуждений, показываемое на одной странице";
+$string['configshortpost'] = "Любое сообщение меньшее этого размер (исключение - HTML) считать маленьким.";
 ?>
-

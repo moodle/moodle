@@ -1,196 +1,184 @@
-<?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.7 (2002121000)
+<?PHP
+    
+// This translation was made by Learning Centre "Microtest"  2003
+// If you have any questions or suggestions concerning it 
+// please contact us contact@elearning.microtest.ru
+// or write some notes in forum http://moodle.org/mod/forum/discuss.php?d=1783
 
-$string['colles18short'] = "students praise me";
-$string['actual'] = "Actual";
-$string['actualclass'] = "Class actual";
-$string['actualstudent'] = "\$a actual";
-$string['allquestions'] = "All questions in order, all students";
-$string['allscales'] = "All scales, all students";
-$string['alreadysubmitted'] = "You have already submitted this survey";
-$string['analysisof'] = "Analysis of \$a";
-$string['attls1'] = "In evaluating what someone says, I focus on the quality of their argument, not on the person who's presenting it.";
-$string['attls10'] = "It's important for me to remain as objective as possible when I analyze something.";
-$string['attls10short'] = "remain objective";
-$string['attls11'] = "I try to think with people instead of against them.";
-$string['attls11short'] = "think WITH people";
-$string['attls12'] = "I have certain criteria I use in evaluating arguments.";
-$string['attls12short'] = "use criteria to evaluate";
-$string['attls13'] = "I'm more likely to try to understand someone else's opinion than to try to evaluate it.";
-$string['attls13short'] = "try to understand";
-$string['attls14'] = "I try to point out weaknesses in other people's thinking to help them clarify their arguments.";
-$string['attls14short'] = "point out weaknesses";
-$string['attls15'] = "I tend to put myself in other people's shoes when discussing controversial issues, to see why they think the way they do.";
-$string['attls15short'] = "put myself in their shoes";
-$string['attls16'] = "One could call my way of analysing things 'putting them on trial' because I am careful to consider all the evidence.";
-$string['attls16short'] = "putting on trial";
-$string['attls17'] = "I value the use of logic and reason over the incorporation of my own concerns when solving problems.";
-$string['attls17short'] = "i value logic most";
-$string['attls18'] = "I can obtain insight into opinions that differ from mine through empathy.";
-$string['attls18short'] = "insight from empathy";
-$string['attls19'] = "When I encounter people whose opinions seem alien to me, I make a deliberate effort to 'extend' myself into that person, to try to see how they could have those opinions.";
-$string['attls19short'] = "make effort to extend";
-$string['attls1short'] = "focus quality of argument";
-$string['attls2'] = "I like playing devil's advocate - arguing the opposite of what someone is saying.";
-$string['attls20'] = "I spend time figuring out what's 'wrong' with things. For example, I'll look for something in a literary interpretation that isn't argued well enough.";
-$string['attls20short'] = "what's wrong?";
-$string['attls2short'] = "play devil's advocate";
-$string['attls3'] = "I like to understand where other people are 'coming from', what experiences have led them to feel the way they do.";
-$string['attls3short'] = "where people come from";
-$string['attls4'] = "The most important part of my education has been learning to understand people who are very different to me.";
-$string['attls4short'] = "understand different people";
-$string['attls5'] = "I feel that the best way for me to achieve my own identity is to interact with a variety of other people.";
-$string['attls5short'] = "interact with variety";
-$string['attls6'] = "I enjoy hearing the opinions of people who come from backgrounds different to mine - it helps me to understand how the same things can be seen in such different ways.";
-$string['attls6short'] = "enjoy hearing opinions";
-$string['attls7'] = "I find that I can strengthen my own position through arguing with someone who disagrees with me.";
-$string['attls7short'] = "strengthen by argue";
-$string['attls8'] = "I am always interested in knowing why people say and believe the things they do.";
-$string['attls8short'] = "know why people do";
-$string['attls9'] = "I often find myself arguing with the authors of books that I read, trying to logically figure out why they're wrong.";
-$string['attls9short'] = "argue with authors";
-$string['attlsintro'] = "The purpose of this questionnaire is to help us evaluate your attitudes towards thinking and learning.
+#------------------------------------------------------------
+$string['modulename'] = "Анкета";
+$string['modulenameplural'] = "Анкеты";
+#------------------------------------------------------------
 
-There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.";
-$string['attlsm1'] = "Attitudes Towards Thinking and Learning";
-$string['attlsm2'] = "Connected Learning";
-$string['attlsm3'] = "Separate Learning";
-$string['attlsmintro'] = "In discussion ...";
-$string['attlsname'] = "ATTLS (20 item version)";
-$string['clicktocontinue'] = "Click here to continue";
-$string['clicktocontinuecheck'] = "Click here to check and continue";
-$string['colles1'] = "my learning focuses on issues that interest me.";
-$string['colles10'] = "I ask other students to explain their ideas.";
-$string['colles10short'] = "I ask for explanations";
-$string['colles11'] = "other students ask me to explain my ideas.";
-$string['colles11short'] = "I'm asked to explain";
-$string['colles12'] = "other students respond to my ideas.";
-$string['colles12short'] = "students respond to me";
-$string['colles13'] = "the tutor stimulates my thinking.";
-$string['colles13short'] = "tutor stimulates thinking";
-$string['colles14'] = "the tutor encourages me to participate.";
-$string['colles14short'] = "tutor encourages me";
-$string['colles15'] = "the tutor models good discourse.";
-$string['colles15short'] = "tutor models discourse";
-$string['colles16'] = "the tutor models critical self-reflection.";
-$string['colles16short'] = "tutor models self-reflection";
-$string['colles17'] = "other students encourage my participation.";
-$string['colles17short'] = "students encourage me";
-$string['colles18'] = "other students praise my contribution.";
-$string['colles18hort'] = "students praise me";
-$string['colles19'] = "other students value my contribution.";
-$string['colles19short'] = "students value me";
-$string['colles1short'] = "focus on interesting issues";
-$string['colles2'] = "what I learn is important for my professional practice.";
-$string['colles20'] = "other students empathise with my struggle to learn.";
-$string['colles20short'] = "students empathise";
-$string['colles21'] = "I make good sense of other students' messages.";
-$string['colles21short'] = "I understand other students";
-$string['colles22'] = "other students make good sense of my messages.";
-$string['colles22short'] = "students understand me";
-$string['colles23'] = "I make good sense of the tutor's messages.";
-$string['colles23short'] = "I understand the tutor";
-$string['colles24'] = "the tutor makes good sense of my messages.";
-$string['colles24short'] = "tutor understands me";
-$string['colles2short'] = "important to my practice";
-$string['colles3'] = "I learn how to improve my professional practice.";
-$string['colles3short'] = "improve my practice";
-$string['colles4'] = "what I learn connects well with my professional practice.";
-$string['colles4short'] = "connects with my practice";
-$string['colles5'] = "I think critically about how I learn.";
-$string['colles5short'] = "I'm critical of my learning";
-$string['colles6'] = "I think critically about my own ideas.";
-$string['colles6short'] = "I'm critical of my own ideas";
-$string['colles7'] = "I think critically about other students' ideas.";
-$string['colles7short'] = "I'm critical of other students";
-$string['colles8'] = "I think critically about ideas in the readings.";
-$string['colles8short'] = "I'm critical of readings";
-$string['colles9'] = "I explain my ideas to other students.";
-$string['colles9short'] = "I explain my ideas";
-$string['collesaintro'] = "The purpose of this survey is to help us understand how well the online delivery of this unit enabled you to learn.
-
-Each one of the 24 statements below asks about your experience in this unit.
-
-There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.
-
-Your carefully considered responses will help us improve the way this unit is presented online in the future.
-
-Thanks very much.";
-$string['collesaname'] = "COLLES (Actual)";
-$string['collesapintro'] = "The purpose of this questionnaire is to help us understand how well the online delivery of this unit enabled you to learn. 
-
-Each one of the 24 statements below asks you to compare your <B>preferred</B> (ideal) and <B>actual</B> experience in this unit.
-
-There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.
-
-Your carefully considered responses will help us improve the way this unit is presented online in the future.
-
-Thanks very much.";
-$string['collesapname'] = "COLLES (Preferred and Actual)";
-$string['collesm1'] = "Relevance";
-$string['collesm1short'] = "Relevance";
-$string['collesm2'] = "Reflective Thinking";
-$string['collesm2short'] = "Reflective Thinking";
-$string['collesm3'] = "Interactivity";
-$string['collesm3short'] = "Interactivity";
-$string['collesm4'] = "Tutor Support";
-$string['collesm4short'] = "Tutor Support";
-$string['collesm5'] = "Peer Support";
-$string['collesm5short'] = "Peer Support";
-$string['collesm6'] = "Interpretation";
-$string['collesm6short'] = "Interpretation";
-$string['collesmintro'] = "In this online unit...";
-$string['collespintro'] = "The purpose of this survey is to help us understand what you value in an online learning experience.
-
-Each one of the 24 statements below asks about your <B>preferred</B> (ideal) experience in this unit.
-
-There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.
-
-Your carefully considered responses will help us improve the way this unit is presented online in the future.
-
-Thanks very much.";
-$string['collespname'] = "COLLES (Preferred)";
-$string['done'] = "Done";
-$string['download'] = "Download";
-$string['downloadexcel'] = "Download data as Excel spreadsheet";
-$string['downloadinfo'] = "You can download the complete raw data for this survey in a form suitable for analysis in Excel, SPSS or other package.";
-$string['downloadtext'] = "Download data as a plain text file";
-$string['editingasurvey'] = "тЕДБЛФЙТПЧБОЙЕ ПРТПУБ";
-$string['helpsurveys'] = "Help on the different types of surveys";
-$string['howlong'] = "How long did this survey take you to complete?";
-$string['howlongoptions'] = "under 1 min,1-2 min,2-3 min,3-4 min,4-5-min,5-10 min,more than 10";
-$string['ifoundthat'] = "I found that";
-$string['introtext'] = "чЧПДОЩК ФЕЛУФ";
-$string['ipreferthat'] = "I prefer that";
-$string['modulename'] = "пРТПУ";
-$string['modulenameplural'] = "пРТПУЩ";
-$string['name'] = "Name";
-$string['newsurveyresponses'] = "New survey responses";
-$string['nobodyyet'] = "Nobody has yet completed this survey";
-$string['notdone'] = "Not done yet";
-$string['notes'] = "Your private analysis and notes";
-$string['othercomments'] = "Do you have any other comments?";
-$string['peoplecompleted'] = "\$a people have completed this survey so far";
-$string['preferred'] = "Preferred";
-$string['preferredclass'] = "Class preferred";
-$string['preferredstudent'] = "\$a preferred";
-$string['question'] = "Question";
-$string['questions'] = "Questions";
-$string['questionsnotanswered'] = "Some of the multiple choice questions have not been answered.";
-$string['report'] = "Survey report";
-$string['savednotes'] = "Your notes were saved";
-$string['scaleagree5'] = "Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree";
-$string['scales'] = "Scales";
-$string['scaletimes5'] = "Almost Never,Seldom,Sometimes,Often,Almost Always";
-$string['seemoredetail'] = "Click here to see more detail";
-$string['selectedquestions'] = "Selected questions from a scale, all students";
-$string['summary'] = "Summary";
-$string['surveycompleted'] = "You've completed this survey.  The graph below shows a summary of your results compared to the class averages.";
-$string['surveyname'] = "оБЪЧБОЙЕ ПРТПУБ";
-$string['surveysaved'] = "Survey saved";
-$string['surveytype'] = "фЙР ПРТПУБ";
-$string['thanksforanswers'] = "Thanks for answering this survey, \$a";
-$string['time'] = "Time";
-$string['viewsurveyresponses'] = "View \$a survey responses";
-
+$string['actual'] = "Фактический";
+$string['allquestions'] = "Все вопросы по порядку, все студенты";
+$string['allscales'] = "Все ответы, все студенты";
+$string['alreadysubmitted'] = "Ваш ответ на анкету уже существует";
+$string['analysisof'] = "Анализы \$a";
+$string['attls1'] = "Оценивая высказывание, я фокусируюсь на качестве аргументов, а не на личности человека";
+$string['attls1short'] = "Фокусироваться на качестве аргументов";
+$string['attls10'] = " Для меня очень важным является остаться как можно более объективным, когда я что-то анализирую";
+$string['attls10short'] = "Оставаться объективным";
+$string['attls11'] = "Я пытаюсь доказать мнение человека, вместо того, чтобы опровергнуть";
+$string['attls11short'] = "Доказать мнение человека";
+$string['attls12'] = "Я использую определенные критерии при оценке аргументов";
+$string['attls12short'] = "Использовать критерии";
+$string['attls13'] = "Я скорее попытаюсь понять мнение человека, чем попытаюсь его оценить";
+$string['attls13short'] = "Попытаться понять человека";
+$string['attls14'] = "Я пытаюсь показать людям слабые места в их размышлениях, чтобы  помочь им уточнить аргументы";
+$string['attls14short'] = "Показывать слабые места аргументов";
+$string['attls15'] = "Я обычно представляю себя на месте оппонента,  во время дискуссии, чтобы понять, почему они так думают";
+$string['attls15short'] = "Представить себя на месте оппонента";
+$string['attls16'] = "При анализе я тщательно учитываю даже незначительные детали";
+$string['attls16short'] = "Тщательный анализ";
+$string['attls17'] = "Обсуждая проблему, я ценю логику выше моих предрассудков";
+$string['attls17short'] = "Ценить логику";
+$string['attls18'] = "Я могу получить понимание мнения, которое отличается от моего через сочувствия.";
+$string['attls18short'] = "Понимать через сочувствие";
+$string['attls19'] = "Когда я сталкиваюсь с людьми, чьи мнения кажутся чуждыми мне, я делаю преднамеренное усилие, чтобы расширить свой кругозор для возможности видеть, как они могли думать таким образом.";
+$string['attls19short'] = "Делаю усилие для расширения кругозора";
+$string['attls2'] = "Мне нравится играть в ‘Адвоката дьявола’ – отстаиваю противоположную точку зрения";
+$string['attls20'] = "Я провожу время в попытках понять что не так. Например, я буду искать примеры в литературной интерпретации.";
+$string['attls20short'] = "Узнавать, что не правильно";
+$string['attls2short'] = "Играть в ‘Адвоката дьявола’";
+$string['attls3'] = "Я стараюсь понять, откуда этот человек, какой приобретенный опыт заставляет его так думать";
+$string['attls3short'] = "понять, откуда человек";
+$string['attls4'] = "Наиболее важной частью моего образования было научиться понимать людей, которые в значительной степени отличаются от меня";
+$string['attls4short'] = "Понять людей";
+$string['attls5'] = "Я думаю, что лучший способ составить свою точку зрения – общаться с большим количеством разных людей";
+$string['attls5short'] = "общаться с разными людьми";
+$string['attls6'] = "Мне нравится слышать мнения людей, которые пришли из другой среды - это помогает мне понять, как можно по-разному взглянуть на одну и ту же вещь";
+$string['attls6short'] = "Нравится слышать мнения";
+$string['attls7'] = "Я считаю, что могу усилить свою позицию через споры с людьми, не согласными со мной";
+$string['attls7short'] = "Усиливаю позицию в спорах";
+$string['attls8'] = "Мне всегда было интересно, почему люди говорят и верят в некоторые вещи";
+$string['attls8short'] = "Узнать почему";
+$string['attls9'] = "Я часто замечаю за собой, что спорю с авторами книг, которые читаю, пытаясь логически доказать где они ошибаются";
+$string['attls9short'] = "Спорить с авторами";
+$string['attlsintro'] = "Цель этой анкеты – помочь нам оценить Ваше отношение к обучению.<BR>В анкете нет верных и не верных ответов, нас интересует только Ваше мнение. Полученные результаты будут обработаны с полной конфиденциальностью, и их содержание никак не отразится на Ваших оценках";
+$string['attlsm1'] = "Отношение к стилю мышления и обучения";
+$string['attlsmintro'] = "При обсуждении…";
+$string['attlsname'] = "ATTLS (20 вопросная версия)";
+$string['ciq5'] = "Какие события произвели на вас наибольшее впечатление";
+$string['clicktocontinue'] = "Продолжить…";
+$string['clicktocontinuecheck'] = "Проверить и продолжить…";
+$string['colles1'] = "Моё обучение фокусируется на темах, которые меня интересуют";
+$string['colles10'] = "Я прошу других студентов объяснить свои мысли";
+$string['colles10short'] = "Прошу объяснить";
+$string['colles11'] = "другие студенты просят меня объяснить мои мысли";
+$string['colles11short'] = "Меня просят объяснить";
+$string['colles12'] = "Другие студенты разделяют мои взгляды";
+$string['colles12short'] = "Студенты поддерживают меня";
+$string['colles13'] = "Преподаватели стимулируют мое мышление";
+$string['colles13short'] = "Преподаватели стимулируют мышление";
+$string['colles14'] = "Преподаватели вдохновляют меня практически применить знания";
+$string['colles14short'] = "Преподаватели вдохновляют меня ";
+$string['colles15'] = "Преподаватель моделирует хорошие темы для обсуждений";
+$string['colles15short'] = "Моделирует хорошие обсуждения";
+$string['colles17'] = "Другие студенты вдохновляют меня на участие";
+$string['colles17short'] = "Студенты вдохновляют меня";
+$string['colles18'] = "Другие студенты высоко ценят мой вклад";
+$string['colles18short'] = "Студенты меня высоко ценят";
+$string['colles19'] = "Другие студенты ценят мой вклад";
+$string['colles19short'] = "Студенты ценят меня";
+$string['colles1short'] = "Фокусироваться на интересных темах";
+$string['colles2'] = "Я изучаю то, что мне пригодится в профессиональной практике";
+$string['colles20'] = "Другие студенты с пониманием относятся к моей борьбе за знания";
+$string['colles20short'] = "Студенты понимают меня";
+$string['colles21'] = "Я";
+$string['colles21short'] = "Я понимаю других студентов";
+$string['colles23short'] = "Я понимаю преподавателей";
+$string['colles24short'] = "Преподаватели понимают меня";
+$string['colles2short'] = "Необходимость для практики";
+$string['colles3'] = "Я изучаю то, что может усовершенствовать мои профессиональные навыки";
+$string['colles3short'] = "Усовершенствование навыков";
+$string['colles4'] = " То, что я изучаю тесно связано с моей профессиональной практикой";
+$string['colles4short'] = "Связано с практикой";
+$string['colles5'] = "Я с критикой отношусь к процессу своего обучения";
+$string['colles5short'] = "Критический подход к обучению";
+$string['colles6'] = "Я с критикой отношусь к своим собственным взглядам";
+$string['colles6short'] = "Критический подход к своим взглядам";
+$string['colles7'] = "Я отношусь критически к взглядам других студентов";
+$string['colles7short'] = "Критический подход к чужим взглядам";
+$string['colles8'] = "Я с критикой отношусь к прочитанным мыслям";
+$string['colles8short'] = "Читать с критикой";
+$string['colles9'] = "Я объясняю свои идеи другим студентам";
+$string['colles9short'] = "Объяснять свои идеи";
+$string['collesm1'] = "Релевантность";
+$string['collesm1short'] = "Релевантность";
+$string['collesm2'] = "Рефлективное мышление";
+$string['collesm2short'] = "Рефлективное мышление";
+$string['collesm3'] = "Интерактивность";
+$string['collesm3short'] = "Интерактивность";
+$string['collesm6'] = "Интерпретация";
+$string['collesm6short'] = "Интерпретация";
+$string['collesmintro'] = "В этом разделе...";
+$string['done'] = "Завершено";
+$string['download'] = "Скачать";
+$string['downloadexcel'] = "Скачать результаты в Exel-формате";
+$string['downloadinfo'] = "Вы можете скачать данные анкетирования в удобной для анализа форме: Excel, SPSS и т.д.";
+$string['downloadtext'] = "Скачать результаты в текстовом формате";
+$string['editingasurvey'] = "Редактирование анкеты";
+$string['helpsurveys'] = "Помощь по различным типам анкет";
+$string['howlong'] = "Как долго Вы заполняли анкету?";
+$string['howlongoptions'] = "меньше 1 мин, 1-2 мин, 2-3 мин, 3-4 мин, 4-5- мин, 5-10 мин, больше, чем 10";
+$string['ifoundthat'] = "Я узнал, что";
+$string['introtext'] = "Вступительный текст";
+$string['ipreferthat'] = "Я предпочитаю";
+$string['name'] = "Имя";
+$string['newsurveyresponses'] = "Новые заполненные анкеты";
+$string['nobodyyet'] = "Никто не заполнил эту анкету";
+$string['notdone'] = "Пока не заполнена";
+$string['notes'] = "Ваши анализы и заметки";
+$string['othercomments'] = "Есть ли у Вас еще комментарии?";
+$string['peoplecompleted'] = "\$a уже заполнил эту анкету";
+$string['preferred'] = "Более предпочтителен ";
+$string['preferredclass'] = "Класс предпочел";
+$string['preferredstudent'] = "\$a более предпочтителен";
+$string['question'] = "Вопрос";
+$string['questions'] = "Вопросы";
+$string['questionsnotanswered'] = "На некоторые вопросы, не было получено ответов";
+$string['report'] = "Отчет по анкете";
+$string['savednotes'] = "Ваши заметки сохранены";
+$string['scaleagree5'] = "Абсолютно нет, Немного не согласен, Не знаю, В чем-то согласен, Абсолютно согласен";
+$string['scales'] = "Шкала";
+$string['scaletimes5'] = "Почти не когда, Редко, Иногда, Часто, Почти всегда";
+$string['seemoredetail'] = "Детали…";
+$string['summary'] = "Вывод";
+$string['surveycompleted'] = "Вы заполнили эту анкету. График показывает Ваши результаты по отношению к усредненным данным других ";
+$string['surveyname'] = "Название";
+$string['surveysaved'] = "Сохранено";
+$string['surveytype'] = "Тип";
+$string['thanksforanswers'] = "Спасибо, что заполнили анкету, \$a";
+$string['time'] = "Время";
+$string['viewsurveyresponses'] = "Посмотреть заполненные анкеты";
+$string['answers'] = "Ответы";
+$string['collesm4'] = "Поддержка преподавателя";
+$string['collesm4short'] = "Поддержка преподавателя";
+$string['collesm5'] = "Поддержка равных по положению";
+$string['collesm5short'] = "Поддержка равных по положению";
+$string['collespname'] = "COLLES (Предпочтения)";
+$string['colles22short'] = "Студенты понимают меня";
+$string['collesaname'] = "COLLES (Фактически)";
+$string['colles22'] = "Другие студенты считают мои сообщения - наделёнными здравым смыслом.";
+$string['colles23'] = "Я считаю сообщения преподавателей - наделёнными здравым смыслом.";
+$string['colles24'] = "Преподаватели считают мои сообщения - наделёнными здравым смыслом.";
+$string['collesapname'] = "COLLES (Предпочтения и Фактически)";
+$string['selectedquestions'] = "Выбранные вопросы в масштабе, Все студенты";
+$string['guestsnotallowed'] = "Гостевой пользователь не может проходить анкетирование";
+$string['ciqname'] = "Критические Инциденты";
+$string['ciqintro'] = "Вспоминая о недавних событиях в классе, ответьте на следующие вопросы.";
+$string['ciq1'] = "В какой момент Вы были больше всего заняты изучением?";
+$string['ciq2'] = "В какой момент Вы были больше всего отдалены от изучения?";
+$string['ciq3'] = "Какое действие от кого-нибудь в форумах Вы находите наиболее полезным?";
+$string['ciq4'] = "Какое действие от кого-нибудь в форумах Вы находите наиболее запутывающим и конфузящим?";
+$string['actualclass'] = "Фактический класс";
+$string['actualstudent'] = "\$a фактический";
+$string['attlsm2'] = "Связанное изучение";
+$string['attlsm3'] = "Раздельное изучение";
+$string['colles16'] = "обучающий моделирует критическое само-отражение.";
+$string['colles16short'] = "обучающий моделирует само-отражение.";
+$string['collesaintro'] = "Цель этого анкетирования состоит в том, чтобы помочь нам понять, как хорошо дистанционное обучение дало возможность Вам учиться. Каждая  из 24 инструкций ниже спрашивает о вашем личном опыте. Здесь нет  'правильных' или 'неправильных' ответов: мы интересуемся только Вашим мнением. Будьте уверены, что ваши ответы будет обработан с высокой степенью конфиденциальности, и никак не отразятся на Ваших оценках. Ваши ответы помогут нам улучшить качество дистанционного обучения в будущем. Заранее благодарим.";
+$string['collesapintro'] = "Цель этого анкетного опроса состоит в том, чтобы помочь нам понять, насколько хорошо дистанционное обучение позволило Вам учиться. Каждое из этих 24 утверждений ниже предполагает, что Вы сравните Ваши, предпочтения (идеал) и фактический опыт в этом вопросе. Здесь нет 'верных', или 'неверных' ответов: мы интересуемся только Вашим мнением. Будьте уверены, что ваши ответы будет рассматриваться с высокой степенью конфиденциальности, и не будут затрагивать Вашу оценку. Ваши ответы помогут нам улучшить качество дистанционного обучения в будущем. Заранее благодарим.";
+$string['collespintro'] = "Цель этого анкетного опроса состоит в том, чтобы помочь нам понять, что Вы наиболее цените в дистанционном обучении. Каждое из этих 24 утверждений ниже предполагает, что Вы сравните Ваши, предпочтения (идеал) и фактический опыт в этом вопросе. Здесь нет 'верных', или 'неверных' ответов: мы интересуемся только Вашим мнением. Будьте уверены, что ваши ответы будет рассматриваться с высокой степенью конфиденциальности, и не будут затрагивать Вашу оценку. Ваши ответы помогут нам улучшить качество дистанционного обучения в будущем. Заранее благодарим.";
 ?>
