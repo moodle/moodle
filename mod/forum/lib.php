@@ -460,40 +460,6 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
 }
 
 
-function forum_print_recent_instance_activity($forum, $timestart, $user="") {
-
-    global $CFG, $THEME;
-
-    if (!$posts = forum_get_recent_posts($timestart, $forum->id, $user)) {
-        return false;
-    }
-
-    foreach ($posts as $post) {
-        echo '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
-        echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
-        print_user_picture($post->userid, $forum->course, $post->picture);
-        echo "</td>";
-
-        if ($post->parent) {
-            echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\" width=\"100%\">";
-        } else {
-            echo "<td nowrap bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\" width=\"100%\">";
-        }
-        echo "<p>";
-        echo "<font size=3>";
-        echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion#$post->id\">";
-        echo $post->subject;
-        echo "</a></font><br>";
-        echo "<font size=2>";
-        $fullname = fullname($post);
-        $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$post->course\">$fullname</a>";
-        $by->date = userdate($post->modified);
-        print_string("bynameondate", "forum", $by);
-        echo "</font></p></td></tr></table>";
-    }
-}
-
-
 function forum_grades($forumid) {
 /// Must return an array of grades, indexed by user, and a max grade.
 
@@ -958,34 +924,6 @@ function forum_subscribed_users($course, $forum) {
                                AND u.deleted <> 1
                           ORDER BY u.email ASC");
 }
-
-function forum_get_recent_posts($sincetime, $forum="0", $user="") {
-// Returns all forum posts since a given time.  If forum is specified then 
-// this restricts the results
-
-    global $CFG;
-
-    if ($forum) {
-        $forumselect = " AND d.forum = '$forum'";
-    } else {
-        $forumselect = "";
-    }
-    if ($user) {
-        $userselect = " AND u.id = '$user'";
-    } else {
-        $userselect = "";
-    }
-
-    return get_records_sql("SELECT p.*, d.name, u.firstname, u.lastname, u.picture, d.course
-                              FROM {$CFG->prefix}forum_posts p, 
-                                   {$CFG->prefix}forum_discussions d,
-                                   {$CFG->prefix}user u
-                             WHERE p.modified > '$sincetime' $forumselect
-                               AND p.userid = u.id $userselect
-                               AND p.discussion = d.id
-                             ORDER BY p.modified ASC");
-}
-
 
 /// OTHER FUNCTIONS ///////////////////////////////////////////////////////////
 
@@ -2331,6 +2269,112 @@ function forum_print_posts_nested($parent, $course, $ratings, $reply) {
         }
     }
     return $ratingsmenuused;
+}
+
+function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $forum="0", $user="", $groupid="") {
+// Returns all forum posts since a given time.  If forum is specified then
+// this restricts the results
+
+    global $CFG;
+
+    if ($forum) {
+        $forumselect = " AND cm.id = '$forum'";
+    } else {
+        $forumselect = "";
+    }
+
+    if ($user) {
+        $userselect = " AND u.id = '$user'";
+    } else {
+        $userselect = "";
+    }
+
+    if ($groupid) {
+        $groupselect = " AND d.groupid = '$groupid'";
+    } else {
+        $groupselect = "";
+    }
+
+    $posts = get_records_sql("SELECT p.*, d.name, u.firstname, u.lastname,
+                                     u.picture, d.groupid, cm.instance, f.name, cm.section
+                               FROM {$CFG->prefix}forum_posts p,
+                                    {$CFG->prefix}forum_discussions d,
+                                    {$CFG->prefix}user u,
+                                    {$CFG->prefix}course_modules cm,
+                                    {$CFG->prefix}forum f
+                              WHERE p.modified > '$sincetime' $forumselect
+                                AND p.userid = u.id $userselect
+                                AND d.course = '$courseid'
+                                AND p.discussion = d.id $groupselect
+                                AND cm.instance = f.id
+                                AND cm.course = d.course
+                                AND cm.course = f.course
+                                AND f.id = d.forum
+                              ORDER BY d.id");
+
+  if (empty($posts))
+    return;
+
+  foreach ($posts as $post) {
+    $tmpactivity->type = "forum";
+    $tmpactivity->defaultindex = $index;
+    $tmpactivity->instance = $post->instance;
+    $tmpactivity->name = $post->name;
+    $tmpactivity->section = $post->section;
+
+    $tmpactivity->content->id = $post->id;
+    $tmpactivity->content->discussion = $post->discussion;
+    $tmpactivity->content->subject = $post->subject;
+    $tmpactivity->content->parent = $post->parent;
+
+    $tmpactivity->user->userid = $post->userid;
+    $tmpactivity->user->fullname = fullname($post);
+    $tmpactivity->user->picture = $post->picture;
+
+    $tmpactivity->timestamp = $post->modified;
+    $activities[] = $tmpactivity;
+
+    $index++;
+  }
+
+  return;
+}
+
+function forum_print_recent_mod_activity($activity, $course, $detail=false) {
+
+    global $CFG;
+
+    echo '<table border="0" cellpadding="3" cellspacing="0">';
+
+    if ($activity->content->parent) {
+        $openformat = "<font size=\"2\"><i>";
+        $closeformat = "</i></font>";
+    } else {
+        $openformat = "<b>";
+        $closeformat = "</b>";
+    }
+
+    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
+    print_user_picture($activity->user->userid, $course, $activity->user->picture);
+    echo "</td><td>$openformat";
+
+    if ($detail) {
+        echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
+             "height=16 width=16 alt=\"$activity->name\">  ";
+    }
+    echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=" . $activity->content->discussion
+         . "#" . $activity->content->id . "\">";
+
+    echo $activity->content->subject;
+    echo "</a>$closeformat";
+
+    echo "<br><font size=\"2\">";
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id=" . $activity->user->userid . "&course=" . "$course\">"
+         . $activity->user->fullname . "</a>";
+    echo " - " . userdate($activity->timestamp) . "</font></td></tr>";
+    echo "</table>";
+
+    return;
 }
 
 ?>
