@@ -536,6 +536,10 @@ function format_text_email($text, $format) {
             return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
             break;
 
+        case FORMAT_HTML:
+            return html_to_text($text);
+            break;
+
         default:  // FORMAT_MOODLE or anything else
             $text = eregi_replace('(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)','\\3 [\\2]', $text);
             return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
@@ -681,6 +685,15 @@ function wiki_to_html($text) {
     $wiki = new Wiki;
     return $wiki->format($text);
 }
+
+function html_to_text($html) {
+/// Given HTML text, make it into plain text using external function
+
+    require_once("$CFG->libdir/html2text.php");
+
+    return html2text($html);
+}
+
 
 function convert_urls_into_links(&$text) {
 /// Given some text, it converts any URLs it finds into HTML links.
