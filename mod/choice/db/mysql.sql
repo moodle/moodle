@@ -27,6 +27,8 @@ CREATE TABLE prefix_choice (
   answer5 varchar(255) default NULL,
   answer6 varchar(255) default NULL,
   publish tinyint(2) unsigned NOT NULL default '0',
+  release tinyint(2) unsigned NOT NULL default '0',
+  allowupdate tinyint(2) unsigned NOT NULL default '0',
   showunanswered tinyint(2) unsigned NOT NULL default '0',
   timeopen int(10) unsigned NOT NULL default '0',
   timeclose int(10) unsigned NOT NULL default '0',

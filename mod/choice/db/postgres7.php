@@ -19,6 +19,10 @@ function choice_upgrade($oldversion) {
         table_column("choice", "", "timeclose", "integer", "10", "unsigned", "0", "", "showunanswered");
         table_column("choice", "", "timeopen", "integer", "10", "unsigned", "0", "", "showunanswered");
     }
+    if ($oldversion < 2004070101) {
+        table_column("choice", "", "release", "integer", "2", "unsigned", "0", "", "publish");
+        table_column("choice", "", "allowupdate", "integer", "2", "unsigned", "0", "", "release");
+    }
 
     return true;
 }
