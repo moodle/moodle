@@ -31,7 +31,7 @@ class block_course_summary extends block_base {
         $this->content->text = format_text($course->summary, FORMAT_HTML, $options);
         if(isediting($this->instance->pageid)) {
             if($this->instance->pageid == SITEID) {
-                $editpage = $CFG->wwwroot.'/admin/site.php';
+                $editpage = $CFG->wwwroot.'/'.$CFG->admin.'/site.php';
             } else {
                 $editpage = $CFG->wwwroot.'/course/edit.php?id='.$this->instance->pageid;
             }
