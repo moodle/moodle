@@ -1513,8 +1513,20 @@ HTMLArea.prototype._insertImage = function(image) {
 			    case "f_align"  : img.align	 = value; break;
 			    case "f_vert"   : img.vspace = parseInt(value || "0"); break;
 			    case "f_horiz"  : img.hspace = parseInt(value || "0"); break;
-			    case "f_width"  : img.width = parseInt(value || "0"); break;
-			    case "f_height"  : img.height = parseInt(value || "0"); break;
+			    case "f_width"  : 
+			        if(value != 0) {
+    			        img.width = parseInt(value); 
+			        } else {
+    			        break;
+			        }
+			        break;
+			    case "f_height"  : 
+			        if(value != 0) {
+    			        img.height = parseInt(value);
+			        } else {
+    			        break;
+			        } 
+			        break;
 			}
 		}
 	}, outparam);
