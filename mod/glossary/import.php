@@ -208,7 +208,7 @@
                         unset($newalias);
         
                         $newalias->entryid = $newentry->id;
-                        $newalias->alias = $xmlalias['#']['NAME'][0]['#'];
+                        $newalias->alias = addslashes(utf8_decode($xmlalias['#']['NAME'][0]['#']));
                         $newalias->id = insert_record("glossary_alias",$newalias);
                     }
 
@@ -219,7 +219,7 @@
                             $xmlcat = $xmlcats[$k];
                             unset($newcat);
         
-                            $newcat->name = $xmlcat['#']['NAME'][0]['#'];
+                            $newcat->name = addslashes(utf8_decode($xmlcat['#']['NAME'][0]['#']));
                             $newcat->usedynalink = $xmlcat['#']['USEDYNALINK'][0]['#'];
                             if ( !$category = get_record("glossary_categories","glossaryid",$glossary->id,"name",$newcat->name) ) {
                                 // Create the category if it does not exist
