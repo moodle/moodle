@@ -482,6 +482,10 @@ function detect_munged_arguments($string) {
     if (ereg('[\|\`]', $string)) {  // check for other bad characters
         return true;
     }
+    if (empty($string) or $string == '/') {
+        return true;
+    }
+
     return false;
 }
 
