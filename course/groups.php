@@ -75,14 +75,20 @@
 
         if (!empty($data->nonmembersadd)) {            /// Add people to a group
             if (!empty($data->nonmembers) and !empty($data->groupid)) {
+                $groupmodified = false;
                 foreach ($data->nonmembers as $userid) {
-                    if (!user_group($courseid, $userid)) {  // Just to make sure (another teacher could be editing)
+                    if (!user_group($course->id, $userid)) {  // Just to make sure (another teacher could be editing)
                         $record->groupid = $data->groupid;
                         $record->userid = $userid;
+                        $record->timeadded = time();
                         if (!insert_record('groups_members', $record)) {
                             notify("Error occurred while adding user $userid to group $data->groupid");
                         }
+                        $groupmodified = true;
                     }
+                }
+                if ($groupmodified) {
+                    set_field('groups', 'timemodified', time(), 'id', $data->groupid);
                 }
             }
             $selectedgroup = $data->groupid;
@@ -110,6 +116,7 @@
                 $newgroup->name = $data->newgroupname;
                 $newgroup->courseid = $course->id;
                 $newgroup->lang = current_language();
+                $newgroup->timecreated = time();
                 if (!insert_record("groups", $newgroup)) {
                     notify("Could not insert the new group '$newgroup->name'");
                 }
@@ -121,6 +128,7 @@
             if (!empty($data->members) and !empty($data->groupid)) {
                 foreach ($data->members as $userid) {
                     delete_records('groups_members', 'userid', $userid, "groupid", $data->groupid);
+                    set_field('groups', 'timemodified', time(), 'id', $data->groupid);
                 }
             }
             $selectedgroup = $data->groupid;
