@@ -41,7 +41,7 @@ function glossary_update_instance($glossary) {
 /// Given an object containing all the necessary data,
 /// (defined by the form in mod.html) this function
 /// will update an existing instance with new data.
-
+global $CFG;
     if ( !isadmin() ) {
         unset($glossary->globalglossary);
     }
@@ -49,9 +49,12 @@ function glossary_update_instance($glossary) {
     $glossary->timemodified = time();
     $glossary->id = $glossary->instance;
 
-    # May have to add extra stuff in here #
+    $return = update_record("glossary", $glossary);
+	if ($return and $glossary->defaultapproval) {
+        execute_sql("update {$CFG->prefix}glossary_entries SET approved = 1 where approved != 1 and glossaryid = " . $glossary->id,false);
+    }
 
-    return update_record("glossary", $glossary);
+    return $return;
 }
 
 
