@@ -231,7 +231,7 @@ function find_form_errors(&$user, &$usernew, &$err) {
     if (empty($usernew->email))
         $err["email"] = get_string("missingemail");
 
-    if (empty($usernew->description))
+    if (empty($usernew->description) and !isadmin())
         $err["description"] = get_string("missingdescription");
 
     if (empty($usernew->city))
