@@ -1074,8 +1074,13 @@ function user_login_string($course, $user=NULL) {
     if (isset($user->id) and $user->id) {
         $fullname = fullname($user, true);
         $username = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
-        $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
+        if (isguest($user->id)) {
+            $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
+                      " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</a>)";
+        } else {
+            $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
                       " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</a>)";
+        }
     } else {
         $loggedinas = get_string("loggedinnot", "moodle").
                       " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</a>)";
