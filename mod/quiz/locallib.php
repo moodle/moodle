@@ -1831,6 +1831,9 @@ function get_question_data( $question ) {
         case MULTIANSWER:
             // nothing to do
             break;
+        case RANDOM:
+            // nothing to do
+            break;
         default:
             notify("No handler for question type $question->qtype in get_question");
     }
