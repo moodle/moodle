@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 	include("../../../config.php");
 ?>
 <html>
@@ -11,7 +11,8 @@ html, body {	margin: 0px; border: 0px; background-color: buttonface; } </style>
 <script type="text/javascript" src="../htmlarea.php<?php print($id != "")?"?id=$id":"";?>"></script>
 <script type="text/javascript" src="../lang/en.php"></script>
 <script type="text/javascript" src="../dialog.js"></script>
-
+<script type="text/javascript" src="../plugins/TableOperations/table-operations.js"></script>
+<script type="text/javascript" src="../plugins/TableOperations/lang/en.js"></script>
 <script type="text/javascript">
 // load same scripts that were present in the opener page
 var scripts = opener.document.getElementsByTagName("script");
@@ -119,6 +120,7 @@ function init() {
 
   // generate editor and resize it
   editor = new HTMLArea("editor", config);
+  editor.registerPlugin(TableOperations);
   editor.generate();
   editor._iframe.style.width = "100%";
   editor._textArea.style.width = "100%";
