@@ -2029,6 +2029,9 @@
                         case "EMAIL": 
                             $this->info->tempuser->email = $this->getContents();
                             break;
+                        case "EMAILSTOP": 
+                            $this->info->tempuser->emailstop = $this->getContents();
+                            break;
                         case "ICQ": 
                             $this->info->tempuser->icq = $this->getContents();
                             break;

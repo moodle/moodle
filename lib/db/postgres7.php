@@ -444,6 +444,10 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2004022000) {
+        table_column("user", "", "emailstop", "integer", "1", "unsigned", "0", "not null", "email");
+    }
+
     return $result;
 
 }

@@ -309,6 +309,7 @@ CREATE TABLE `prefix_user` (
   `firstname` varchar(20) NOT NULL default '',
   `lastname` varchar(20) NOT NULL default '',
   `email` varchar(100) NOT NULL default '',
+  `emailstop` tinyint(1) unsigned NOT NULL default '0',
   `icq` varchar(15) default NULL,
   `phone1` varchar(20) default NULL,
   `phone2` varchar(20) default NULL,
