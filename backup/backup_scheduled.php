@@ -9,6 +9,152 @@ function schedule_backup_cron() {
     
     $status = true;
 
+    //Get now
+    $now = time();
+
+    //First of all, we have to see if the scheduled is active and detect
+    //that there isn't another cron running
+    echo "    Checking status";
+    $backup_config = backup_get_config();
+    if(!isset($backup_config->backup_sche_active) || !$backup_config->backup_sche_active) {
+        echo "...INACTIVE\n";
+        return true;
+    } else if (isset($backup_config->backup_sche_running) && $backup_config->backup_sche_running) {
+        echo "...RUNNING\n";
+        return true;
+    } else {
+        echo "...OK\n";
+        //Mark backup_sche_running
+        backup_set_config("backup_sche_running","1");
+    }
+
+    //Now we get the main admin user (we'll use his timezone, mail...)
+    echo "    Getting admin info\n";
+    $admin = get_admin();
+    if (!$admin) {
+        $status = false;
+    }
+
+    //Now we get a list of courses in the server
+    if ($status) {
+        echo "    Checking courses\n";
+        $courses = get_records("course");
+        //For each course, we check (insert, update) the backup_course table
+        //with needed data
+        foreach ($courses as $course) {
+            if ($status) {
+                echo "        $course->fullname\n";
+                //We check if the course exists in backup_course
+                $backup_course = get_record("backup_courses","courseid",$course->id);
+                //If it doesn't exist, create
+                if (!$backup_course) {
+                    $temp_backup_course->courseid = $course->id;
+                    $newid = insert_record("backup_courses",$temp_backup_course);
+                    //And get it from db
+                    $backup_course = get_record("backup_courses","id",$newid);
+                }
+                //If it doesn't exist now, error
+                if (!$backup_course) {
+                    echo "            ERROR (in backup_courses detection)\n";
+                    $status = false;
+                }
+                //Now we backup every course with nextstarttime < now
+                if ($backup_course->nextstarttime > 0 && $backup_course->nextstarttime < $now) {
+                    //Set laststarttime
+                    set_field("backup_courses","laststarttime",time(),"id",$backup_course->courseid);
+                    //Launch backup
+                    $course_status = schedule_backup_launch_backup($course);
+                    //Set lastendtime
+                    set_field("backup_courses","lastendtime",time(),"id",$backup_course->courseid);
+                    //Set laststatus
+                    if ($course_status) {
+                        set_field("backup_courses","laststatus","1","id",$backup_course->courseid);
+                    } else {
+                        set_field("backup_courses","laststatus","0","id",$backup_course->courseid);
+                    }
+                }
+
+                //Now, calculate next execution of the course
+                $nextstarttime = schedule_backup_next_execution ($backup_course,$backup_config,$now,$admin->timezone);
+                //Save it to db
+                set_field("backup_courses","nextstarttime",$nextstarttime,"id",$backup_course->courseid);
+                //Print it to screen as necessary
+                $showtime = "undefined";
+                if ($nextstarttime > 0) {
+                    $showtime = userdate($nextstarttime,"",$admin->timezone);
+                }
+                echo "            Next execution: $showtime\n";
+            }
+        }
+    }
+
+    //Delete old logs
+    if (!empty($CFG->loglifetime)) {
+        echo "    Deleting old logs\n";
+        $loglifetime = $now - ($CFG->loglifetime * 86400);
+        delete_records_select("backup_log", "laststarttime < '$loglifetime'");
+    }
+
+    //Everything is finished stop backup_sche_running
+    backup_set_config("backup_sche_running","0");
+
+    return $status;
+}
+
+//This function executes the ENTIRE backup of a course (passed as parameter)
+//using all the scheduled backup preferences
+function schedule_backup_launch_backup($course) {
+
+    $preferences = false;
+    $status = false;
+
+    echo "            Executing backup\n";
+    $preferences = schedule_backup_course_configure($course);
+    if ($preferences) {
+        $status = schedule_backup_course_execute($preferences);
+    }
+    if ($status && $preferences) {
+        echo "            End backup OK\n";
+    } else {
+        echo "            End backup with ERROR\n";
+    }
+
+    return $status && $preferences;
+}
+
+//This function returns the next future GMT time to execute the course based in the
+//configuration of the scheduled backups
+function schedule_backup_next_execution ($backup_course,$backup_config,$now,$timezone) {
+
+    $result = -1;
+
+    //Get today's midnight GMT
+    $midnight = usergetmidnight($now,$timezone);
+
+    //Get today's day of week (0=Sunday...6=Saturday)
+    $date = usergetdate($now,$timezone);
+    $dayofweek = $date['wday'];
+
+    //Get number of days (from today) to execute backups
+    $scheduled_days = substr($backup_config->backup_sche_weekdays,$dayofweek).
+                      $backup_config->backup_sche_weekdays;
+    $daysfromtoday = strpos($scheduled_days, "1");
+
+    //If some day has been found
+    if ($daysfromtoday !== false) {
+        //Calculate distance
+        $dist = ($daysfromtoday * 86400) +                     //Days distance
+                ($backup_config->backup_sche_hour*3600) +      //Hours distance
+                ($backup_config->backup_sche_minute*60);       //Minutes distance
+        $result = $midnight + $dist;
+    } 
+
+    //If that time is past, call the function recursively to obtain the next valid day
+    if ($result > 0 && $result < time()) {
+        $result = schedule_backup_next_execution ($backup_course,$backup_config,$now + 86400,$timezone);
+    }
+
+    return $result;
 }
 
 
