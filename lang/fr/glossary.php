@@ -69,6 +69,7 @@ $string['displayformatfullwithoutauthor'] = 'Complet sans auteur';
 $string['displayformats'] = 'Formats d\'affichage';
 $string['displayformatssetup'] = 'Réglages des formats d\'affichage';
 $string['duplicateentry'] = 'Doublon';
+$string['editalways'] = 'Toujours modifier';
 $string['editcategories'] = 'Modifier les catégories';
 $string['editentry'] = 'Modifier l\'article';
 $string['editingcomment'] = 'Modification commentaire';
