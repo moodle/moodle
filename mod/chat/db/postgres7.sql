@@ -14,6 +14,9 @@ CREATE TABLE prefix_chat (
   timemodified INTEGER NOT NULL default '0',
   PRIMARY KEY  (id)
 );
+
+CREATE INDEX prefix_chat_course_idx ON prefix_chat(course);
+
 # --------------------------------------------------------
 
 #
@@ -30,6 +33,12 @@ CREATE TABLE prefix_chat_messages (
   timestamp integer NOT NULL default '0',
   PRIMARY KEY  (id)
 );
+
+CREATE INDEX prefix_chat_messages_chatid_idx ON prefix_chat_messages (chatid);
+CREATE INDEX prefix_chat_messages_userid_idx ON prefix_chat_messages (userid);
+CREATE INDEX prefix_chat_messages_groupid_idx ON prefix_chat_messages (groupid);
+CREATE INDEX prefix_chat_messages_timemodifiedchatid_idx ON prefix_chat_messages(timestamp,chatid);
+
 # --------------------------------------------------------
 
 #
@@ -50,6 +59,10 @@ CREATE TABLE prefix_chat_users (
   PRIMARY KEY  (id)
 );
 
+CREATE INDEX prefix_chat_users_chatid_idx ON prefix_chat_users (chatid);
+CREATE INDEX prefix_chat_users_userid_idx ON prefix_chat_users (userid);
+CREATE INDEX prefix_chat_users_groupid_idx ON prefix_chat_users (groupid);
+CREATE INDEX prefix_chat_users_lastping_idx ON prefix_chat_users (lastping);
 
 INSERT INTO prefix_log_display VALUES ('chat', 'view', 'chat', 'name');
 INSERT INTO prefix_log_display VALUES ('chat', 'add', 'chat', 'name');

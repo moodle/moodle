@@ -37,6 +37,22 @@ function chat_upgrade($oldversion) {
         modify_database("", "INSERT INTO prefix_log_display VALUES ('chat', 'talk', 'chat', 'name');");
     }
 
+    if ($oldversion < 2004111200) {
+        execute_sql('ALTER TABLE prefix_chat DROP INDEX `course`;',false);
+        execute_sql('ALTER TABLE prefix_chat_messages DROP INDEX  `chatid`;',false);
+        execute_sql('ALTER TABLE prefix_chat_messages DROP INDEX `userid`;',false); 
+        execute_sql('ALTER TABLE prefix_chat_messages DROP INDEX `groupid`;',false);
+        execute_sql('ALTER TABLE prefix_chat_users DROP INDEX  `chatid`;',false); 
+        execute_sql('ALTER TABLE prefix_chat_users DROP INDEX  `groupid`;',false);
+
+        modify_database('','ALTER TABLE prefix_chat ADD INDEX `course` (`course`);');
+        modify_database('','ALTER TABLE prefix_chat_messages ADD INDEX  `chatid` (`chatid`);');
+        modify_database('','ALTER TABLE prefix_chat_messages ADD INDEX `userid` (`userid`);');
+        modify_database('','ALTER TABLE prefix_chat_messages ADD INDEX `groupid` (`groupid`);');
+        modify_database('','ALTER TABLE prefix_chat_users ADD INDEX  `chatid` (`chatid`);');
+        modify_database('','ALTER TABLE prefix_chat_users ADD INDEX  `groupid` (`groupid`);');
+    }
+
     return true;
 }
 
