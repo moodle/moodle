@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004042703)
+      // moodle.php - created with Moodle 1.3 development (2004050500)
 
 
 $string['action'] = 'Acció';
@@ -94,6 +94,7 @@ $string['backupfilename'] = 'backup';
 $string['backupfinished'] = 'La còpia de seguretat s\'ha completat amb èxit';
 $string['backupincludemoduleshelp'] = 'Trieu si voleu incloure els mòduls del curs, amb o sense dades dels usuaris, a les còpies de seguretat automàtiques.';
 $string['backupkeephelp'] = 'Quantes còpies de seguretat recents de cada curs voleu conservar? (les més velles s\'esborraran automàticament).';
+$string['backuploglaststatus'] = 'Registre de la darrera execució';
 $string['backuplogshelp'] = 'Si habiliteu aquesta opció, les còpies de seguretat automàtiques inclouran els registres d\'activitat del curs.';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backuporiginalname'] = 'Nom de la còpia';
@@ -101,10 +102,13 @@ $string['backupsavetohelp'] = 'Camí complet del directori on voleu desar els fit
 $string['backupuserfileshelp'] = 'Trieu si voleu que els fitxers dels usuaris (p. e. la imatge del perfil) s\'incloguin a les còpies de seguretat automàtiques';
 $string['backupusershelp'] = 'Trieu si voleu incloure tots els usuaris del servidor o només els necessaris per a cada curs.';
 $string['backupversion'] = 'Versió de la còpia';
+$string['blockdeleteconfirm'] = 'Aneu a suprimir completament el bloc \'$a\'. Això`suprimira completament tots els registres de la base de dades associats amb aquest bloc. Esteu SEGUR que voleu continuar?';
+$string['blockdeletefiles'] = 'S\'han suprimit tots els registres de la base de dades associats amb el bloc \'$a->block\'. Per tal de completar la supressió (i impedir que el bloc es reinstal·li automàticament), ara hauríeu de suprimir aquest directori del servidor: $a->directory';
 $string['blocks'] = 'Blocs';
 $string['blocksetup'] = 'S\'estan configurant les taules de blocs';
-$string['blocksuccess'] = 'S\'han configurat correctament $a taules';
+$string['blocksuccess'] = 'S\'han configurat correctament les taules $a';
 $string['bycourseorder'] = 'Curs';
+$string['byname'] = '$a';
 $string['cancel'] = 'Cancel·la';
 $string['categories'] = 'Categories de cursos';
 $string['category'] = 'Categoria';
@@ -138,6 +142,8 @@ $string['configcachetext'] = 'En llocs grans o llocs que utilitzen filtres de te
 $string['configcountry'] = 'Si definiu aquí un país, quedarà seleccionat per defecte en els nous comptes. Deixeu-lo en blanc per forçar els usuaris a triar un país.';
 $string['configdebug'] = 'Si l\'activeu, s\'incrementaran els informes d\'errors de PHP i apareixeran més avisos. Això només és útil per a desenvolupadors.';
 $string['configdeleteunconfirmed'] = 'Si esteu utilitzant autenticació per correu electronic, aquest es el període de temps durant el qual s\'acceptarà la resposta de l\'usuari. Després d\'aquest períde, els comptes no confirmats se suprimiran.';
+$string['configenablerssfeeds'] = 'Aquest commutador habilitarà l\'RSS en tot el lloc. Per veure realment cap canvi haureu d\'habilitar també l\'RSS en cada mòdul: aneu als paràmetres dels mòduls en el menú de configuració.';
+$string['configenablerssfeedsdisabled'] = 'No està disponible perquè l\'RSS està inhabilitat en tot el lloc. Per habilitar-lo, aneu a les variables en el menú de configuració.';
 $string['configerrorlevel'] = 'Trieu la quantitat d\'avisos de PHP que voleu visualitzar. La millor elecció sol ser Normal.';
 $string['configfilteruploadedfiles'] = 'Habilitar aquest paràmetre farà que Moodle processi amb els filtres, abans de visualitzar-los, tots els fitxers de text i fitxers HTML que es pengin al servidor.';
 $string['configforcelogin'] = 'Normalment la gent pot veure la pàgina inicial del lloc i les llistes de cursos (no els cursos) sense autenticar-se. Si voleu imposar que la gent s\'autentiqui abans que pugui fer RES, aleshores heu d\'habilitar aquest paràmetre.';
@@ -219,6 +225,7 @@ $string['currentcourseadding'] = 'Curs actual, s\'hi estan afegint dades';
 $string['currentcoursedeleting'] = 'Curs actual, primer se suprimirà';
 $string['currentlanguage'] = 'Idioma actual';
 $string['currentlocaltime'] = 'la vostra hora local';
+$string['currentpicture'] = 'Imatge actual';
 $string['currentrelease'] = 'Informació sobre l\'edició actual';
 $string['currentversion'] = 'Versió actual';
 $string['databasechecking'] = 'S\'està actualitzant la base de dades de Moodle de la versió $a->oldversion a $a->newversion...';
@@ -232,6 +239,7 @@ $string['datemostrecentfirst'] = 'Data - començant pel més recent';
 $string['datemostrecentlast'] = 'Data - el més recent al final';
 $string['day'] = 'dia';
 $string['days'] = 'dies';
+$string['decodinginternallinks'] = 'S\'estan descodificant els enllaços interns';
 $string['defaultcoursefullname'] = '101 Nom complet del curs';
 $string['defaultcourseshortname'] = '101NCC';
 $string['defaultcoursestudent'] = 'Estudiant';
@@ -329,8 +337,8 @@ $string['emailpasswordsent'] = 'Gràcies per confirmar el canvi de contrasenya.
 <p>Se us ha enviat un correu amb la contrasenya nova a la vostra adreça: <b>$a->email</b>.
 <p>La contrasenya nova s\'ha generat automàticament - potser voldreu <a href=$a->link>canviar-la</a> per una altra més fàcil de recordar.';
 $string['enable'] = 'Habilita';
-$string['enrolledincourse'] = 'Inscrit al curs \"$a\"';
-$string['enrolledincoursenot'] = 'No inscrit al curs \"$a\"';
+$string['enrolledincourse'] = 'Inscrit al curs ';
+$string['enrolledincoursenot'] = 'No inscrit al curs ';
 $string['enrolmentconfirmation'] = 'Aneu a inscriure-us en aquest curs.<br />Esteu segur que voleu fer això?';
 $string['enrolmentkey'] = 'Clau d\'inscripció';
 $string['enrolmentkeyfrom'] = 'Aquest curs requereix una clau d\'inscripció - una contrasenya<br />d\'un sol ús que us ha d\'haver proporcionat $a
@@ -451,9 +459,9 @@ $string['helpsummaries'] = 'Referent a aquests resums';
 $string['helptext'] = 'Com escriure text';
 $string['helpwiki'] = 'Com escriure text Wiki';
 $string['helpwriting'] = 'Escriviu amb cura';
-$string['hiddentopics'] = 'Temes ocults';
-$string['hiddentopicscollapsed'] = 'Els temes ocults es mostren en forma reduïda';
-$string['hiddentopicsinvisible'] = 'Els temes ocults són completament invisibles';
+$string['hiddensections'] = 'Temes ocults';
+$string['hiddensectionscollapsed'] = 'Els temes ocults es mostren en format reduït';
+$string['hiddensectionsinvisible'] = 'Els temes ocults són completament invisibles';
 $string['hide'] = 'Oculta';
 $string['hidepicture'] = 'Oculta imatge ';
 $string['hits'] = 'Peticions';
@@ -478,7 +486,7 @@ $string['includecoursefiles'] = 'Inclou els fitxers del curs';
 $string['includecourseusers'] = 'Inclou els usuaris del curs';
 $string['included'] = 'Inclòs';
 $string['includelogentries'] = 'Inclou les entrades del registre';
-$string['includemodules'] = 'Inclou&nbsp;Mòduls';
+$string['includemodules'] = 'Inclou Mòduls';
 $string['includeneededusers'] = 'Inclou els usuaris necessaris';
 $string['includeuserfiles'] = 'Inclou els fitxers dels usuaris';
 $string['institution'] = 'Institució';
@@ -511,14 +519,14 @@ $string['login'] = 'Entrada';
 $string['loginas'] = 'Entra com';
 $string['loginguest'] = 'Entra com a visitant';
 $string['loginsite'] = 'Entra en aquest lloc';
-$string['loginsteps'] = 'Hola! L\'accés complet als cursos requereix que dediqueu un minut a la creació d\'un nou compte d\'usuari vàlid en aquest lloc web. Cada curs pot requerir també una &quot;clau d\'inscripció&quot; que no necessitareu fins més tard. Els passos que heu de donar són els següents:
+$string['loginsteps'] = 'Hola! L\'accés complet als cursos requereix que dediqueu un minut a la creació d\'un nou compte d\'usuari vàlid en aquest lloc web. Cada curs pot requerir també una \"clau d\'inscripció\" que no necessitareu fins més tard. Els passos que heu de donar són els següents:
 <OL size=2>
 <LI>Ompliu el formulari de <A HREF=\"$a\">Nou compte</A> amb les vostres dades.</li>
 <LI>Se us enviarà inmediatament un correu a la vostra adreça electrònica.</li>
 <LI>Llegiu el correu i feu clic en l\'enllaç web inclòs.</li>
 <LI>Es confirmarà el vostre compte i podreu entrar-hi.</li>
 <LI>Llavors, seleccioneu el curs en el qual voleu participar.</li>
-<LI>Si se us demana una &quot;clau d\'inscripció&quot;, utilitzeu la que us ha donat el professor. Amb això quedareu inscrit al curs.</li>
+<LI>Si se us demana una \"clau d\'inscripció\", utilitzeu la que us ha donat el professor. Amb això quedareu inscrit al curs.</li>
 <LI>En aquest moment ja tindreu accés complet al curs. En endavant només haureu d\'introduir el vostre nom d\'usuari i la contrasenya (en el formulari d\'aquesta pàgina) per tal d\'entrar i tenir accés a qualsevol curs en el qual estigueu inscrit.</li>
 </OL>';
 $string['loginstepsnone'] = '<P>Per tal de tenir accés complet als cursos us heu de crear un compte d\'usuari.
@@ -568,9 +576,9 @@ $string['missingurl'] = 'Falta l\'URL';
 $string['missingusername'] = 'Falta el nom d\'usuari';
 $string['modified'] = 'Modificat';
 $string['moduledeleteconfirm'] = 'Aneu a suprimir completament el mòdul \'$a\'. Això suprimirà tots els registres de la base de dades associats amb aquest mòdul d\'activitats. Esteu SEGUR que voleu continuar?';
-$string['moduledeletefiles'] = 'S\'han suprimit de la base de dades totes les dades associades amb el mòdul \'$a->module\'. Per completar la supressió (i impedir que el mòdul es reinstal·li per si mateix), ara hauríeu d\'esborrar aquest directori del vostre servidor: $a->directory';
+$string['moduledeletefiles'] = 'S\'han suprimit tots els registres de la base de dades associats amb el mòdul \'$a->module\'. Per tal de completar la supressió (i impedir que el mòdul es reinstal·li automàticament), ara hauríeu de suprimir aquest directori del servidor: $a->directory';
 $string['modulesetup'] = 'S\'estan configurant les taules del mòdul';
-$string['modulesuccess'] = 'S\'han configurat correctament $a taules';
+$string['modulesuccess'] = 'S\'han configurat correctament les taules $a';
 $string['moodleversion'] = 'Versió de Moodle';
 $string['mostrecently'] = 'més recent';
 $string['move'] = 'Mou';
@@ -732,6 +740,8 @@ $string['restoreto'] = 'Restaura a';
 $string['returningtosite'] = 'Torneu a aquest lloc?';
 $string['revert'] = 'Torna';
 $string['role'] = 'Rol';
+$string['rssarticles'] = 'Nombre d\'articles RSS recents';
+$string['rsstype'] = 'RSS d\'aquesta activitat';
 $string['savechanges'] = 'Desa els canvis';
 $string['saveto'] = 'Desa en';
 $string['scale'] = 'Escala';
@@ -800,6 +810,8 @@ $string['strftimedateshort'] = '%%d %%B';
 $string['strftimedatetime'] = '%%d %%B %%Y, %%H:%%M';
 $string['strftimedaydate'] = '%%A, %%d %%B %%Y';
 $string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%H:%%M';
+$string['strftimedayshort'] = '%%A %%B %%d';
+$string['strftimemonthyear'] = '%%B %%Y';
 $string['strftimerecent'] = '%%d %%b, %%H:%%M';
 $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%H:%%M';
 $string['strftimetime'] = '%%H:%%M';

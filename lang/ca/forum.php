@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 Beta (2004022400)
+      // forum.php - created with Moodle 1.3 development (2004050500)
 
 
 $string['addanewdiscussion'] = 'Afegeix un nou tema de debat';
@@ -12,6 +12,7 @@ $string['anyfile'] = 'Qualsevol fitxer';
 $string['attachment'] = 'Fitxer adjunt';
 $string['bynameondate'] = 'per $a->name - $a->date';
 $string['configdisplaymode'] = 'El mode de visualització per defecte dels debats si no se n\'especifica un.';
+$string['configenablerssfeeds'] = 'Aquest commutador habilitarà la possibilitat de tenir RSS en tots els fòrums. Haureu d\'activar l\'RSS en els paràmetres de cada fòrum.';
 $string['configlongpost'] = 'Qualsevol missatge per damunt d\'aquesta mida (exclòs l\'HTML) es considera massa llarg.';
 $string['configmanydiscussions'] = 'Nombre màxim de debats per pàgina';
 $string['configmaxbytes'] = 'Mida màxima per defecte per a tots els fitxers adjuntats als fòrums d\'aquest lloc (subjecte als límits de cada curs i altres paràmetres locals)';
@@ -111,6 +112,8 @@ $string['repliesmany'] = '$a respostes fins ara';
 $string['repliesone'] = '$a resposta fins ara';
 $string['reply'] = 'Contesta';
 $string['replyforum'] = 'Contesta al fòrum';
+$string['rsssubscriberssdiscussions'] = 'Visualitza l\'RSS dels debats \'$a\'';
+$string['rsssubscriberssposts'] = 'Visualitza l\'RSS dels missatges \'$a\'';
 $string['search'] = 'Cerca';
 $string['searchforums'] = 'Cerca als fòrums';
 $string['searcholderposts'] = 'Cerca missatges anteriors...';
@@ -121,7 +124,9 @@ $string['singleforum'] = 'Un debat simple';
 $string['startedby'] = 'Iniciat per';
 $string['subject'] = 'Assumpte';
 $string['subscribe'] = 'Subscriu-me a aquest fòrum';
+$string['subscribeall'] = 'Subscriu a tothom a aquest fòrum';
 $string['subscribed'] = 'Subscrit';
+$string['subscribenone'] = 'Cancel·la totes les subscripcions a aquest fòrum';
 $string['subscribers'] = 'Subscriptors';
 $string['subscribersto'] = 'Subscriptors de \'$a\'';
 $string['subscribestart'] = 'Envia\'m còpia dels missatges d\'aquest fòrum per correu electrònic';
@@ -130,6 +135,7 @@ $string['subscription'] = 'Subscripció';
 $string['subscriptions'] = 'Subscripcions';
 $string['unsubscribe'] = 'Cancel·la la meva subscripció a aquest fòrum';
 $string['unsubscribed'] = 'La vostra subscripció ha estat cancel·lada';
+$string['unsubscribeshort'] = 'Cancel·la subscripció';
 $string['youratedthis'] = 'La vostra valoració';
 $string['yournewtopic'] = 'Nou tema de debat';
 $string['yourreply'] = 'La vostra resposta';

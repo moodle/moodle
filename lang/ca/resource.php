@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 Beta (2004022400)
+      // resource.php - created with Moodle 1.3 development (2004050500)
 
 
 $string['addresource'] = 'Afegeix un recurs';
@@ -19,6 +19,7 @@ $string['configpopuptoolbar'] = 'Les finestres emergents han de mostrar per defe
 $string['configpopupwidth'] = 'Quina amplada han de tenir per defecte les noves finestres emergents?';
 $string['configwebsearch'] = 'Quan s\'està afegint un URL com a pàgina web o com a enllaç web, aquesta ubicació s\'ofereix a l\'usuari per ajudar-lo a cerca l\'URL que desitgi.';
 $string['directlink'] = 'Enllaç directe a aquest fitxer';
+$string['directoryinfo'] = 'Es visualitzaran tots els fitxers del directori escollit.';
 $string['editingaresource'] = 'S\'està editant un recurs';
 $string['example'] = 'Exemple';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
@@ -29,6 +30,7 @@ $string['fetchservererror'] = 'Ha sorgit un error quan s\'intentava recuperar la
 $string['filename'] = 'Nom del fitxer';
 $string['fulltext'] = 'Text complet';
 $string['htmlfragment'] = 'Fragment HTML';
+$string['maindirectory'] = 'Directori principal';
 $string['modulename'] = 'Recurs';
 $string['modulenameplural'] = 'Recursos';
 $string['neverseen'] = 'Mai vist';
@@ -58,5 +60,6 @@ $string['resourcetype5'] = 'Enllaç web';
 $string['resourcetype6'] = 'Text HTML';
 $string['resourcetype7'] = 'Programa';
 $string['resourcetype8'] = 'Text wiki';
+$string['resourcetype9'] = 'Directori';
 
 ?>
