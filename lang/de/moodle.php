@@ -36,6 +36,9 @@ $string['assigncreators'] = "Kursersteller zuweisen";
 $string['assignteachers'] = "Lehrer zuweisen";
 $string['authentication'] = "Bestätigung";
 $string['availablecourses'] = "Verfügbare Kurse";
+$string['backup'] = "Sicherung";
+$string['backupdetails'] = "Sicherungsdetails";
+$string['backupnameformat'] = "%%Y%%m%%d-%%H%%M";
 $string['cancel'] = "Abbrechen";
 $string['categories'] = "Kurs-Kategorie";
 $string['category'] = "Kategorie";
@@ -59,13 +62,19 @@ $string['complete'] = "Fertig";
 $string['configcountry'] = "Wenn Sie hier ein Land einstellen, wird dieses Land alsVorgabe für neue Benutzerkonten gewählt.  Um Benutzer zu zwingen, ein Land zu wählen, lassen Sie dieses Feld leer.";
 $string['configdebug'] = "Wenn Sie dies einschalten, wird das error_reporting von PHP erweitert, so dass mehr Warnungen ausgegeben werden. Dies ist nur nützlich für Entwickler.";
 $string['configerrorlevel'] = "Wählen Sie die Menge der PHP Warnungen, die Sie angezeigt bekommen möchten. Normal ist gebräuchlicherweise die beste Wahl.";
+$string['configframename'] = "Sofern Sie Moodle innerhalb eines Frames einbinden, tragen Sie hier den Namen des Frames ein. Anderenfalls sollte dieser Wert auf '_top' stehen.";
 $string['configgdversion'] = "Zeigt Ihnen die Version von GD an, die installiert. Die Version, die als Standard angezeigt wird, ist die, die automatisch ermittelt worden ist. Ändern Sie diese nicht, es sei denn Sie wissen wirklich, was Sie tun. ";
 $string['confightmleditor'] = "Wählen Sie aus, ob Sie die Verwendung der HTML Text-Eingabe zulassen möchten. Selbst, wenn Sie es zulassen, erscheint diese Text-Eingabe nur, wenn der Benutzer einen geeigneten Browser (wie z.B. den IE 5.5 oder höher) benutzt.
 Die Benutzer können ebenso auswählen, diesen nicht zu benutzen.";
 $string['configintro'] = "Auf dieser Seite können Sie eine Anzahl von Konfigurations-Variablen spezifizieren, die Ihnen helfen, dass Moodle auf Ihrem Server vernünftig läuft. Sorgen Sie sich nicht grossartig - Die Standard-Einstellungen funktionieren normalerweise sehr gut und Sie können jederzeit auf diese Seite zurückkommen und diese ändern.";
+$string['configintroadmin'] = "Auf dieser Seite sollten Sie den Zugang des Hauptverwalters eintichten, der die vollständige Kontrolle über siw Seite hat. Achten Sie datauf, dass Sie hier einen sicheren Benutzernamen samt Kennwort, sowie eine gültige Email-Adresse angeben. Sie können sppäter auch noch mehr Verwalter einrichten.";
+$string['configintrosite'] = "Diese Seite erlaubt es Ihnen, die Startseite und den Namen der neuen Seite einzurichten. Sie können später hierher zurückkehren und diese Einstellungen jederzeit ändern, indem Sie die Verknüpfung 'Seiteneinstellungen' auf der Startseite benutzen.";
 $string['configlang'] = "Wählen Sie die Standard-Sprache für die gesamte Seite. Die Benutzer können diese später überschreiben.";
 $string['configlangdir'] = "In den meisten Sprachen schreibt man von links nach rechts, aber in einigen anderen, wie Arabisch oder Hebräisch, schreibt man von rechts nach links";
+$string['configlanglist'] = "Lassen Sie dies leer, um allen Nutzern zu erlauben, aus jeder Sprache installierten Sprache auszuwählen. Sie können ebenso das Sprachmenü verkürzen, indem Sie eine durch Kommas getrennte Liste der Spachcodes angeben, die Sie für die Auswahl möchten. Zum Beispiel en, es_es, fr, it";
+$string['configlangmenu'] = "Wählen Sie aus, ob Sie generell das Sprach-Auswahlmenü auf Ihrer Startseite angezeigt haben möchten, auf der Anmeldungsseite, etc. Dies betrifft nicht die Möglichkeit des Nutzers, seine bevorzugte Sprache in seinem Profil einzustellen.";
 $string['configlocale'] = "Wählen Sie eine seitenweite locale - diese wird die Anzeige jedes Datums beeinflussen. Sie müssen die Daten dieser localen auf Ihrem Betriebssystem installiert haben. Sofern Sie nicht wissen, was Sie auswählen sollen, lassen Sie dieses Feld leer.";
+$string['configloglifetime'] = "Dies definiert die Länge der Zeit, über die Sie die Staistiken der User-Aktivität behalten möchten. Statistiken, die veralted sind, werden automatisch gelöscht. Am besten ist es, diese so lang wie möglich zu behalten, falls Sie diese benötigen. Wenn Sie einen ausgelasteten Server haben und Geschwindigkeitseinbrüche feststellen, solten Sie den Statistik-Zeitraum reduzieren.";
 $string['configlongtimenosee'] = "Wenn sich Studenten nach einer sehr langen Zeit nicht mehr angemeldet haben, werden Studenten automatisch nach diesem Termin aus dem Kurs ausgetragen.";
 $string['configmaxeditingtime'] = "Hier bestimmen Sie die Zeitspanne, in der die Leute die Foren-Beiträge, Jounal-Antworten, usw. erneut bearbeiten dürfen. Normalerweise sind 30 Minuten ein guter Wert. ";
 $string['configproxyhost'] = "Wenn dieser <B>Server</B> einen Proxy braucht (beispielsweise eine Firewall), um Internetzugriff zu bekommen, dann tragen Sie hier den Namen und den Port des Proxys ein. Anderenfalls lassen sie das Feld leer";
@@ -83,6 +92,8 @@ $string['cookiesenabled'] = "Cookies müssen in Ihrem Browser eingeschaltet sein"
 $string['copyrightnotice'] = "Urheberrechtsvermerk";
 $string['country'] = "Land";
 $string['course'] = "Kurs";
+$string['coursebackup'] = "Kurssicherung";
+$string['coursefiles'] = "Kursdateien";
 $string['courseformats'] = "Kurs-Format";
 $string['courses'] = "Kurse";
 $string['courseupdates'] = "Kurse aktuell";
@@ -91,6 +102,8 @@ $string['createuserandpass'] = "Einen neuen Benutzernamen und Kennwort für den Z
 $string['createziparchive'] = "ZIP-Archiv erstellen";
 $string['currentlanguage'] = "Aktuelle Sprache";
 $string['currentlocaltime'] = "Die lokale Zeit";
+$string['currentrelease'] = "Letze Veröffentlichungsinformation";
+$string['currentversion'] = "Letzte Version";
 $string['databasechecking'] = "Moodle Datenbank von Version \$a->oldversion auf \$a->newversion aktualisieren...";
 $string['databasesetup'] = "Datenbank einspielen";
 $string['databasesuccess'] = "Datenbank wurde erfolgreich aktualisiert";
@@ -121,6 +134,7 @@ $string['deletednot'] = "Kann \$a nicht löschen!";
 $string['deletingcourse'] = "Lösche \$a";
 $string['department'] = "Abteilung";
 $string['description'] = "Beschreibung";
+$string['displayingfirst'] = "Nur die ersten \$a->count \$a->things werden angezeigt";
 $string['displayingrecords'] = "Zeige \$a Einträge";
 $string['displayingusers'] = "Benutzer anzeigen von \$a->start bis \$a->end";
 $string['documentation'] = "Moodle Dokumentation";
@@ -153,6 +167,7 @@ Browsers-Fensters.
 
 
 Grüße von der '\$a->sitename'-Verwaltung, \$a->admin";
+$string['emailconfirmationsubject'] = "\$a: Zugangsinformation";
 $string['emailconfirmsent'] = "   <P>Eine Email sollte an Ihre Adresse <B>\$a</B>
 gesendet worden sein.
    <P>Sie enthält einfache Anweisungen, um Ihre Registrierung zu vervollständigen.
@@ -164,6 +179,27 @@ $string['emaildisplayyes'] = "Jeder darf meine Emailadresse sehen";
 $string['emailexists'] = "Diese Email-Adresse ist bereits registriert.";
 $string['emailformat'] = "Email-Format";
 $string['emailmustbereal'] = "Anmerkung: Ihre Email-Adresse <b>muss</b> existieren";
+$string['emailpasswordconfirmation'] = "Hallo \$a->firstname,
+
+Jemand (wahrscheinlich Sie) hat ein neues Kennwort für Ihren Zugang auf '\$a->sitename' angefordert.
+
+Um dieses zu bestätigen und ein neues Kennwort per Email zugestellt zu bekommen, gehen Sie bitze auf folgende Internet-Seite:
+
+\$a->link
+
+In den meisten Mail-Programmen sollte diese Verknüpfung blau erscheinen, welche Sie nur anzuklicken brauchen.
+Sofern das nicht funktioniert, kopieren Sie die Adresse nitte in die Adresszeile Ihres Internet-Browsers.
+
+Sofern Sie Hilfe benötigen, wenden Sie sich bitte an den Verwalter der Seite,
+\$a->admin";
+$string['emailpasswordconfirmationsubject'] = "\$a: Kennwort-Bestätigung ändern";
+$string['emailpasswordconfirmsent'] = "Eine Email sollte an Ihre Adresse <b>\$a</b> versendet worden sein.
+<p>Sie enthält einfache Anweisungen zur Bestätigung und der Kennwort-Änderung.
+Sofern Sie weiter Schwierigkeiten haben, kontaktieren Sie bitte den Verwalter.";
+$string['emailpasswordsent'] = "Danke für Ihre Bestätigung des neuen Kennworts.
+<p>Eine Email mit dem Inhalt Ihres neuen Kennwortes wurde an Ihre Adresse <b>\$a->email</b> versendet.
+<p>Das Kennwort wurde automatisch generiert -
+Vielleicht möchten Sie <a href=§a->link>Iht Kennwort ändern</a>, um es dich leichter zu merken.";
 $string['enrolmentkey'] = "Zugangs-Schlüssel";
 $string['enrolmentkeyfrom'] = "Für diesen Kurs benötigen Sie einen 'Zugangs-Schlüssel' - ein einmaliges Kennwort,<br>das Sie von \$a bekommen haben sollten<BR>";
 $string['enrolmentkeyhint'] = "Der Zugangs-Schlüssel war falsch, bitte versuchen Sie es erneut<BR>
@@ -186,11 +222,13 @@ $string['followingrequired'] = "Die folgenden Angaben sind zwingend";
 $string['forgotten'] = "Benutzername und Kennwort vergessen?";
 $string['format'] = "Format";
 $string['formathtml'] = "HTML-Format";
+$string['formatplain'] = "Reines Textformat";
 $string['formatsocial'] = "Soziales Format";
 $string['formattext'] = "Moodle Text-Format";
 $string['formattexttype'] = "Formatierung";
 $string['formattopics'] = "Themen-Format";
 $string['formatweeks'] = "Wöchentliches Format";
+$string['formatwiki'] = "Wiki-Format";
 $string['frontpagedescription'] = "Beschreibung auf Eingangsseite";
 $string['frontpageformat'] = "Format der Eingangsseite";
 $string['fulllistofcourses'] = "Alle Kurse";
@@ -216,7 +254,9 @@ $string['helppicture'] = "Wie man ein Foto hochlädt";
 $string['helpquestions'] = "Wie man fragen stellt";
 $string['helpreading'] = "Gewissenhaft lesen";
 $string['helprichtext'] = "Über die Richtext-Eingabe";
+$string['helpsummaries'] = "Über diese Zusammenfassungen";
 $string['helptext'] = "Wie man Text schreibt";
+$string['helpwiki'] = "Wie man einen Wiki-Text schreibt";
 $string['helpwriting'] = "Gewissenhaft schreiben";
 $string['hide'] = "Verstecken";
 $string['hits'] = "Treffer";
@@ -234,6 +274,13 @@ $string['htmleditordisabledbrowser'] = "Die Rich-Text-Eingabe ist nicht verfügba
 $string['htmlformat'] = "Sauberes HTML-Format";
 $string['icqnumber'] = "ICQ-Nummer";
 $string['idnumber'] = "Identifizierungsnummer";
+$string['include'] = "Einbeziehen";
+$string['includeallusers'] = "Alle Nutzer einbeziehem";
+$string['includecoursefiles'] = "Kurs-Dateien einbeziehen";
+$string['includecourseusers'] = "Kurz-Teilnehmer einbeziehen";
+$string['includelogentries'] = "Statistik-Einträge einbeziehen";
+$string['includeneededusers'] = "Notwendige Nutzer einbeziehen";
+$string['includeuserfiles'] = "Nutzer-Dateien einbeziehen";
 $string['invalidemail'] = "Ungültige Email-Adresse";
 $string['invalidlogin'] = "Ungültiger Zugang, bitte versuchen Sie es erneut";
 $string['jumpto'] = "Springen zu...";
@@ -248,6 +295,8 @@ $string['lastname'] = "Nachname";
 $string['latestnews'] = "Neueste Nachrichten";
 $string['leavetokeep'] = "Kennwort-Feld leer lassen, um momentanes Kennwort zu behalten";
 $string['license'] = "GPL-Lizenz";
+$string['list'] = "Liste";
+$string['listfiles'] = "Liste der Dateien in \$a";
 $string['listofallpeople'] = "Liste aller Leute";
 $string['livelogs'] = "Aktuelle Statistiken der letzten Stunde";
 $string['locale'] = "de_DE";
@@ -279,6 +328,7 @@ $string['mainmenu'] = "Hauptmenü";
 $string['makeafolder'] = "Verzeichnis erstellen";
 $string['makeeditable'] = "Sofern Sie '\$a' durch den Internet-Server bearbeitbar machen (beispielsweise Apache) können Sie diese Datei direkt auf dieser Seite bearbeiten";
 $string['managedatabase'] = "Datenbank verwalten";
+$string['markedthistopic'] = "Dieses Thema ist als aktuelles Thema gekennzeichnet";
 $string['markthistopic'] = "Dieses Thema als das gegenwärtige Thema kennzeichnen";
 $string['maximumchars'] = "Höchstens \$a Buchstaben";
 $string['maximumgrade'] = "Beste Note";
@@ -320,7 +370,9 @@ $string['name'] = "Name";
 $string['namesocial'] = "Abschnitt";
 $string['nametopics'] = "Thema";
 $string['nameweeks'] = "Woche";
+$string['needed'] = "Benötigt";
 $string['never'] = "Nie";
+$string['neverdeletelogs'] = "Niemals die Statistiken löschen";
 $string['new'] = "Neu";
 $string['newaccount'] = "Neuer Zugang";
 $string['newpassword'] = "Neues Kennwort";
@@ -360,9 +412,11 @@ $string['nopotentialteachers'] = "Keine potentiellen Lehrer";
 $string['normal'] = "Normal";
 $string['nostudentsyet'] = "Kein Schüler nimmt bislang an diesem Kurs teil";
 $string['nosuchemail'] = "Keine solche Email-Adresse";
+$string['notavailable'] = "Nicht verfügbar";
 $string['noteachersyet'] = "Kein Lehrer bislang in diesem Kurs teil";
 $string['notenrolled'] = "\$a nimmt nicht an diesem Kurs teil.";
 $string['nothingnew'] = "Nichts Neues seit Ihrem letzten Besuch";
+$string['nousersmatching'] = "Keine Nutzer bezüglich '\$a' wurden gefunden";
 $string['nousersyet'] = "Bislang keine Benutzer";
 $string['now'] = "jetzt";
 $string['numberweeks'] = "Anzahl der Wochen/Themen";
@@ -381,6 +435,7 @@ $string['outline'] = "Ausstehend";
 $string['participants'] = "Teilnehmer";
 $string['password'] = "Kennwort";
 $string['passwordchanged'] = "Kennwort wurde geändert";
+$string['passwordconfirmchange'] = "Kennwortänderungen bestätigen";
 $string['passwordrecovery'] = "Ja, hilf mir bei der Anmeldung";
 $string['passwordsdiffer'] = "Dieses Kennwort ist falsch";
 $string['passwordsent'] = "Kennwort wurde gesendet";
@@ -427,8 +482,10 @@ $string['shortname'] = "Kurzname";
 $string['shortnametaken'] = "Der Kurzname wird bereits für einen anderen Kurs (\$a) verwendet";
 $string['shortsitename'] = "Kurzname der Seite (z.B. ein einziges Wort)";
 $string['show'] = "Anzeigen";
+$string['showall'] = "Alle \$a anzeigen";
 $string['showallcourses'] = "Alle Kurse anzeigen";
 $string['showalltopics'] = "Alle Themen Anzeigen";
+$string['showallusers'] = "Alle Nutzer anzeigen";
 $string['showallweeks'] = "Alle Wochen anzeigen";
 $string['showlistofcourses'] = "Die Liste der Kurse anzeigen";
 $string['showonlytopic'] = "Nur Thema \$a anzeigen";
@@ -475,7 +532,9 @@ $string['today'] = "Heute";
 $string['todaylogs'] = "Die heutigen Statistiken";
 $string['toomanytoshow'] = "Es sind zuviele Benutzer um sie alle anzuzeigen";
 $string['topic'] = "Thema";
+$string['topichide'] = "Diese Thema vor \$a verbergen";
 $string['topicoutline'] = "Ausstehendes Thema";
+$string['topicshow'] = "Dieses Thema für \$a anzeigen";
 $string['total'] = "Insgesamt";
 $string['turneditingoff'] = "Bearbeiten ausschalten";
 $string['turneditingon'] = "Bearbeiten einschalten";
@@ -483,6 +542,7 @@ $string['undecided'] = "Unbestimmt";
 $string['unenrol'] = "Abmelden";
 $string['unenrolme'] = "Abmelden von \$a";
 $string['unenrolsure'] = "Sind Sie sicher, dass Sie \$a von diesem Kurs abmelden möchten?";
+$string['unpacking'] = "Entpacke \$a";
 $string['unsafepassword'] = "Unsicheres Kennwort - probieren Sie ein anderes";
 $string['unusedaccounts'] = "Mehr als \$a Tage lang unbenutzte Zugänge werden automatisch entfernt.";
 $string['unzip'] = "Eröffnen";
@@ -501,15 +561,19 @@ $string['uploadnofilefound'] = "Es wurde keine Datei gefunden - Sind Sie sicher,
 $string['uploadproblem'] = "Ein unbekanntes Problem ist während dem Hochladen der Datei aufgetreten
 '\$a' (Vielleicht war diese zu groß?)) ";
 $string['uploadthisfile'] = "Diese Datei hochladen";
+$string['user'] = "Nutzer";
 $string['userdeleted'] = "Dieser Benutzer-Zugang wurde gelöscht";
 $string['userdescription'] = "Beschreibung";
+$string['userfiles'] = "Nutzer-Dateien";
 $string['username'] = "Benutzername";
 $string['usernameexists'] = "Dieser Benutzername existiert, probieren Sie einen anderen";
 $string['userprofilefor'] = "Benutzer-Profil für \$a";
 $string['users'] = "Benutzer";
 $string['webpage'] = "Internet-Seite";
 $string['week'] = "Woche";
+$string['weekhide'] = "Diese Woche vor \$a verbergen";
 $string['weeklyoutline'] = "Wöchentlich ausstehend";
+$string['weekshow'] = "Diese Woche für \$a anzeigen";
 $string['welcometocourse'] = "Willkommen zu \$a";
 $string['welcometocoursetext'] = "Willkommen zu \$a->coursename!
 
@@ -517,6 +581,8 @@ Einer der ersten Schritte, die Sie erledigen sollten, ist, Ihre Profil-Seite inn
 
 \$a->profileurl";
 $string['withchosenfiles'] = "Mit ausgewählten Dateien";
+$string['withoutuserdata'] = "Ohne Nutzer-Daten";
+$string['withuserdata'] = "Mit Nutzer-Daten";
 $string['wordforstudent'] = "Ihre Bezeichnung für Schüler";
 $string['wordforstudenteg'] = "z.B. Student, Teilnehmer, usw.";
 $string['wordforstudents'] = "Ihre Bezeichnung mehrere Schüler";

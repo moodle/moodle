@@ -1,4 +1,6 @@
-<?php
+<?PHP // $Id$ 
+      // forum.php - created with Moodle 1.0.8 dev (2002122301)
+
 
 $string['addanewdiscussion'] = "Ein neues Diskussionsthema hinzufügen";
 $string['allowchoice'] = "Jeder darf auswählen";
@@ -17,6 +19,7 @@ $string['deleteddiscussion'] = "Das Diskussionsthema ist gelöscht worden ";
 $string['deletedpost'] = "Der Eintrag wurde gelöscht";
 $string['deletesure'] = "Möchten Sie diesen Eintrag wirklich löschen?";
 $string['discussion'] = "Diskussion";
+$string['discussionmoved'] = "Diese Diskussion wurde nach '\$a' verschoben";
 $string['discussions'] = "Diskussionen";
 $string['discussionsstartedby'] = "Diskussionen starteten am \$a";
 $string['discussthistopic'] = "Diesen Eintrag diskutieren";
@@ -39,6 +42,7 @@ $string['inforum'] = "in \$a";
 $string['intronews'] = "Allgemeine Nachrichten und Ankündigungen";
 $string['introsocial'] = "Ein offenes Forum, um über alles zu Plaudern";
 $string['introteacher'] = "Ein Forum ausschliesslich für Anmerkungen und Diskussionen der Lehrer";
+$string['lastpost'] = "Letzter Beitrag";
 $string['learningforums'] = "Lernforum";
 $string['maxtimehaspassed'] = "Die Höchstdauer für die Bearbeitung diesen Eintrag (\$a) ist überschritten!";
 $string['message'] = "Mitteilung";
@@ -49,6 +53,7 @@ $string['modethreaded'] = "Anzeige der Antworten geschachtelt hierarchisch";
 $string['modulename'] = "Forum";
 $string['modulenameplural'] = "Foren";
 $string['more'] = "mehr";
+$string['movethisdiscussionto'] = "Diese Diskussion verschieben nach ...";
 $string['namenews'] = "Nachrichtenforum";
 $string['namesocial'] = "Soziales Forum";
 $string['nameteacher'] = "Lehrer-Forum";
@@ -56,10 +61,10 @@ $string['newforumposts'] = "Neue Foren-Beiträge";
 $string['nodiscussions'] = "Es befindet sich noch kein Diskussionsthema in diesem Forum";
 $string['noguestpost'] = "Gäste dürfen hier nicht eintragen";
 $string['noposts'] = "Keine Beiträge";
-$string['nopostscontaining'] = "Es wurden keine in \'\$a\' enthaltenen Beiträge gefunden";
+$string['nopostscontaining'] = "Es wurden keine in '\$a' enthaltenen Beiträge gefunden";
 $string['nosubscribers'] = "Momentan gibt es keine Teilnehmer in diesem Forum";
-$string['nownotsubscribed'] = "\$a->name wird KEINE Kopien von \'\$a->forum\' per Email erhalten";
-$string['nowsubscribed'] = "\$a->name wird Kopien von \'\$a->forum\'  per Email erhalten";
+$string['nownotsubscribed'] = "\$a->name wird KEINE Kopien von '\$a->forum' per Email erhalten";
+$string['nowsubscribed'] = "\$a->name wird Kopien von '\$a->forum'  per Email erhalten";
 $string['numposts'] = "\$a Beiträge";
 $string['olderdiscussions'] = "Ältere Diskussionen";
 $string['openmode0'] = "Keine Diskussionen, keine Antworten";
@@ -73,6 +78,7 @@ Um auf diese zu antworten, folgen Sie bitte diesem Link:";
 $string['postrating1'] = "Durchaus differenziertes Wissen";
 $string['postrating2'] = "Durchaus differenziert und fundiert";
 $string['postrating3'] = "Zeigt ziemlich fundiertes Wissen";
+$string['posts'] = "Beiträge";
 $string['postupdated'] = "Ihr Beitrag wurde aktualisiert";
 $string['processingpost'] = "Bearbeite Beitrag \$a";
 $string['rate'] = "Bewerte";
@@ -80,6 +86,7 @@ $string['ratings'] = "Bewertung";
 $string['ratingssaved'] = "Bewertung gespeichert";
 $string['re'] = "Re:";
 $string['readtherest'] = "Lesen Sie den Rest des Themas";
+$string['replies'] = "Antworten";
 $string['repliesmany'] = "\$a Antworten bis jetzt";
 $string['repliesone'] = "\$a Antwort bis jetzt";
 $string['reply'] = "Antwort";
@@ -89,15 +96,16 @@ $string['searchresults'] = "Suchergebnisse";
 $string['sendinratings'] = "Aktuelle Bewertung senden";
 $string['showsubscribers'] = "Teilnehmer anzeigen";
 $string['singleforum'] = "Eine einzelne, einfache Diskussion";
+$string['startedby'] = "Beginnt mit";
 $string['subject'] = "Betreff";
 $string['subscribe'] = "In diesem Forum anmelden";
 $string['subscribed'] = "Angemeldet";
 $string['subscribers'] = "Teilnehmer";
-$string['subscribersto'] = "Teilnehmer für \'\$a\'";
+$string['subscribersto'] = "Teilnehmer für '\$a'";
+$string['subscriptions'] = "Anmeldungen";
 $string['unsubscribe'] = "Von diesem Forum abmelden";
 $string['youratedthis'] = "Ihre Bewertung";
 $string['yournewtopic'] = "Ihr neues Diskussionsthema";
 $string['yourreply'] = "Ihre Antwort";
-
 
 ?>

@@ -39,6 +39,8 @@ $string['auth_ldapdescription'] = "This method provides authentication against a
                                   password are checked.";
 $string['auth_ldapextrafields'] = "These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <B>LDAP fields</B> that you specify here. <P>If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.<P>In either case, the user will be able to edit all of these fields after they log in.";
 $string['auth_ldaptitle'] = "Use an LDAP server";
+$string['auth_manualdescription'] = "Diese Methode verhindert, dass Nutzer Ihre eigenen Zugänge anlegen können. Jeder Zugang muss manuell vom Administrator selbst eingerichtet werden.";
+$string['auth_manualtitle'] = "Nur manuelle Zugänge";
 $string['auth_nntpdescription'] = "This method uses an NNTP server to check whether a given username and password is valid.";
 $string['auth_nntphost'] = "The NNTP server address. Use the IP number, not DNS name.";
 $string['auth_nntpport'] = "Server port (119 is the most common)";

@@ -27,5 +27,6 @@ $string['resourcetype4'] = "Reiner Text";
 $string['resourcetype5'] = "Internet-Verknüpfung";
 $string['resourcetype6'] = "HTML-Text";
 $string['resourcetype7'] = "Programm";
+$string['resourcetype8'] = "Wiki-Text";
 
 ?>
