@@ -84,14 +84,14 @@
            echo "<br />";
            emoticonhelpbutton("form", "description", "moodle", true, true);
            echo "<br />";
-        } 
+        }
       ?>
       <br />
     </font>
     <td>
-    <?php  
+    <?php
        print_textarea($usehtmleditor, 20, 60, 595, 400, "description", $form->description);
-    
+
        if ($usehtmleditor) {
            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
        } else {
@@ -102,7 +102,7 @@
            if (!$form->format) {
                $form->format = $defaultformat;
            }
-           choose_from_menu(format_text_menu(), "format", $form->format, ""); 
+           choose_from_menu(format_text_menu(), "format", $form->format, "");
            echo '</p>';
        }
     ?>
@@ -158,7 +158,7 @@
 <tr>
     <td align="right"><p><b><?php  print_string("allowresubmit", "workshop") ?>:</b></p></td>
     <td>
-    <?php 
+    <?php
         $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "resubmit", $form->resubmit, "");
         helpbutton("resubmit", get_string("allowresubmit", "workshop"), "workshop");
@@ -239,7 +239,7 @@
 <tr>
     <td align="right"><p><b><?php  print_string("selfassessment", "workshop") ?>:</b></p></td>
     <td>
-    <?php 
+    <?php
         $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "includeself", $form->includeself, "");
         helpbutton("selfassessment", get_string("selfassessment", "workshop"), "workshop");
@@ -250,7 +250,7 @@
 <tr>
     <td align="right"><p><b><?php  print_string("assessmentsmustbeagreed", "workshop") ?>:</b></p></td>
     <td>
-    <?php 
+    <?php
         choose_from_menu($options, "agreeassessments", $form->agreeassessments, "");
         helpbutton("agreeassessments", get_string("assessmentsmustbeagreed", "workshop"), "workshop");
     ?>
@@ -260,7 +260,7 @@
 <tr>
     <td align="right"><p><b><?php  print_string("hidegradesbeforeagreement", "workshop") ?>:</b></p></td>
     <td>
-    <?php 
+    <?php
         choose_from_menu($options, "hidegrades", $form->hidegrades, "");
         helpbutton("showinggrades", get_string("hidegradesbeforeagreement", "workshop"), "workshop");
     ?>
@@ -284,7 +284,7 @@
 </tr>
 
 <tr>
-    <td align="right"><p><b><? print_string("hidenamesfromstudents", "workshop", $course->students) ?>:</b></p></td>
+    <td align="right"><p><b><?php print_string("hidenamesfromstudents", "workshop", $course->students) ?>:</b></p></td>
     <td>
     <?php
         choose_from_menu($options, "anonymous", $form->anonymous, "");
