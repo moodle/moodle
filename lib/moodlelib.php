@@ -859,8 +859,8 @@ function email_to_user($user, $from, $subject, $message) {
     include_once("$CFG->libdir/class.smtp.php");
     include_once("$CFG->libdir/class.phpmailer.php");
 
-    $subject = stripslashes($subject);
-    $message = stripslashes($message);
+    $subject = strip_tags(stripslashes($subject));
+    $message = strip_tags(stripslashes($message));
 
     $mail = new phpmailer;
 
@@ -896,8 +896,8 @@ function email_to_users(&$users, $from, $subject, $message, $link, $footer="") {
         return false;
     }
     
-    $subject = stripslashes($subject);
-    $message = stripslashes($message);
+    $subject = strip_tags(stripslashes($subject));
+    $message = strip_tags(stripslashes($message));
 
     $mail = new phpmailer;
 
