@@ -22,15 +22,15 @@ print_heading_with_help(get_string("furtherinformation", "dialogue"), "info", "d
 
 <form name="form" method="post" action="mod.php">
 <table cellpadding=5>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("dialoguename", "dialogue") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("dialoguename", "dialogue") ?>:</b></p></td>
     <td>
-        <input type="text" name="name" size=30 value="<?php p($form->name) ?>">
+        <input type="text" name="name" size="30" value="<?php p($form->name) ?>" />
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("dialogueintro", "dialogue") ?>:</b></p>
-    <font SIZE="1">
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("dialogueintro", "dialogue") ?>:</b></p>
+    <font size="1">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
         echo "<br />";
@@ -39,13 +39,13 @@ print_heading_with_help(get_string("furtherinformation", "dialogue"), "info", "d
       <br />
     </font>
     
-    </TD>
+    </td>
     <td>
         <?php print_textarea($usehtmleditor, 20, 50, 680, 400, "intro", $form->intro); ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("deleteafter", "dialogue") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("deleteafter", "dialogue") ?>:</b></p></td>
     <td>
     <?php
 		require("$CFG->dirroot/mod/dialogue/lib.php");
@@ -56,7 +56,7 @@ print_heading_with_help(get_string("furtherinformation", "dialogue"), "info", "d
 </tr>
 
 <tr>
-    <td align=right><P><B><?php print_string("typeofdialogue", "dialogue") ?>:</B></P></TD>
+    <td align="right"><p><b><?php print_string("typeofdialogue", "dialogue") ?>:</b></p></td>
     <td>
     <?php 
         $options[0] = get_string("teachertostudent", "dialogue"); 
@@ -69,7 +69,7 @@ print_heading_with_help(get_string("furtherinformation", "dialogue"), "info", "d
 </tr>
 
 <tr>
-    <td align=right><P><B><?php print_string("allowmultiple", "dialogue") ?>:</B></P></TD>
+    <td align="right"><p><b><?php print_string("allowmultiple", "dialogue") ?>:</b></p></td>
     <td>
     <?php 
         unset($options);
@@ -81,13 +81,13 @@ print_heading_with_help(get_string("furtherinformation", "dialogue"), "info", "d
 </tr>
 
 <tr>
-    <td align=right><P><B><?php print_string("maildefault", "dialogue") ?>:</B></P></TD>
+    <td align="right"><p><b><?php print_string("mailnotification", "dialogue") ?>:</b></p></td>
     <td>
     <?php 
         unset($options);
         $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "maildefault", $form->maildefault, "");
-        helpbutton("maildefault", get_string("maildefault", "dialogue"), "dialogue");
+        helpbutton("maildefault", get_string("mailnotification", "dialogue"), "dialogue");
     ?>
     </td>
 </tr>
@@ -95,14 +95,14 @@ print_heading_with_help(get_string("furtherinformation", "dialogue"), "info", "d
 
 </table>
 <center>
-<input type="hidden" name=course     value="<?php p($form->course) ?>">
-<input type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
-<input type="hidden" name=section       value="<?php p($form->section) ?>">
-<input type="hidden" name=module     value="<?php p($form->module) ?>">
-<input type="hidden" name=modulename value="<?php p($form->modulename) ?>">
-<input type="hidden" name=instance   value="<?php p($form->instance) ?>">
-<input type="hidden" name=mode       value="<?php p($form->mode) ?>">
-<input type="submit" value="<?php print_string("savechanges") ?>">
-<input type="submit" name=cancel value="<?php print_string("cancel") ?>">
-</form>
+<input type="hidden" name="course"     value="<?php p($form->course) ?>"/>
+<input type="hidden" name="coursemodule"  value="<?php p($form->coursemodule) ?>"/>
+<input type="hidden" name="section"       value="<?php p($form->section) ?>"/>
+<input type="hidden" name="module"     value="<?php p($form->module) ?>"/>
+<input type="hidden" name="modulename" value="<?php p($form->modulename) ?>"/>
+<input type="hidden" name="instance"   value="<?php p($form->instance) ?>"/>
+<input type="hidden" name="mode"       value="<?php p($form->mode) ?>"/>
+<input type="submit" value="<?php print_string("savechanges") ?>"/>
+<input type="submit" name="cancel" value="<?php print_string("cancel") ?>">
 </center>
+</form>
