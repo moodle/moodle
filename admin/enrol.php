@@ -4,7 +4,7 @@
 
     include("../config.php");
 
-    $enrol = (string)parameter('enrol', $CFG->enrol);
+    $enrol = optional_param('enrol', $CFG->enrol);
 
     require_login();
 

@@ -40,11 +40,65 @@ define('NOGROUPS', 0);
 define('SEPARATEGROUPS', 1);
 define('VISIBLEGROUPS', 2);
 
+define('PARAM_CLEAN',   0x01);
+define('PARAM_INT',     0x02);
+define('PARAM_INTEGER', 0x02);
+
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
+function required_param($varname, $options=PARAM_CLEAN) {
+/// This function will replace require_variable over time
+/// It returns a value for a given variable name.
+
+    if (isset($_POST[$varname])) {       // POST has precedence
+        $param = $_POST[$varname];
+    } else if (isset($_GET[$varname])) {
+        $param = $_GET[$varname];
+    } else {
+        error('A required parameter ($'.$varname.') was missing');
+    }
+
+    return clean_param($param, $options);
+}
+
+function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
+/// This function will replace both of the above two functions over time.
+/// It returns a value for a given variable name.
+
+    if (isset($_POST[$varname])) {       // POST has precedence
+        $param = $_POST[$varname];
+    } else if (isset($_GET[$varname])) {
+        $param = $_GET[$varname];
+    } else {
+        return $default;
+    }
+
+    return clean_param($param, $options);
+}
+
+function clean_param($param, $options) {
+/// Given a parameter and a bitfield of options, this function
+/// will clean it up and give it the required type, etc.
+
+    if ($param == (int)$param) {         // It's just an integer
+        return $param;
+    }
+
+    if ($options & PARAM_CLEAN) {
+        $param = clean_text($param);     // Sweep for scripts, etc
+    }
+
+    if ($options & PARAM_INT) {
+        $param = (int)$param;            // Convert to integer
+    }
+
+    return $param;
+}
+
 function require_variable($var) {
 /// Variable must be present
+/// This old function is retained for backward compatibility
     if (! isset($var)) {
         error("A required parameter was missing");
     }
@@ -52,24 +106,10 @@ function require_variable($var) {
 
 function optional_variable(&$var, $default=0) {
 /// Variable may be present, if not then set a default
+/// This old function is retained for backward compatibility
     if (! isset($var)) {
         $var = $default;
     }
-}
-
-function parameter($varname, $default=NULL) {
-/// This function will replace both of the above two functions over time.
-/// It returns a value for a given variable name.
-
-    if (isset($_POST[$varname])) {       // POST has precedence
-        return $_POST[$varname];
-    }
-
-    if (isset($_GET[$varname])) {
-        return $_GET[$varname];
-    }
-    
-    return $default;
 }
 
 function set_config($name, $value) {
