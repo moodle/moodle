@@ -79,6 +79,10 @@ a img {
     margin:0.2em 0em;
 }
 
+#footer {
+    text-align:center;
+}
+
 .headermenu {
     float:right;
     text-align:right;
