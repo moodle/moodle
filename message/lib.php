@@ -11,6 +11,9 @@ if (!isset($CFG->message_contacts_refresh)) {  // Refresh the contacts list ever
 if (!isset($CFG->message_chat_refresh)) {      // Look for new comments every 5 seconds
     $CFG->message_chat_refresh = 5;
 }
+if (!isset($CFG->message_offline_time)) {
+    $CFG->message_offline_time = 300;
+}
 
 
 function message_print_contacts() {
@@ -65,7 +68,7 @@ function message_print_contacts() {
             }
         /// link to remove from contact list
             $strcontact = message_contact_link($contact->id, 'remove', true);
-            $strhistory = message_contact_link($contact->id, 'history', true);
+            $strhistory = message_history_link($contact->id, 0, true, '', '', 'icon');
             
             echo '<tr><td class="message_pix">';
             print_user_picture($contact->id, SITEID, $contact->picture, 20, false, true, 'userwindow');
@@ -101,7 +104,7 @@ function message_print_contacts() {
             }
         /// link to remove from contact list
             $strcontact = message_contact_link($contact->id, 'remove', true);
-            $strhistory = message_contact_link($contact->id, 'history', true);
+            $strhistory = message_history_link($contact->id, 0, true, '', '', 'icon');
             
             echo '<tr><td class="message_pix">';
             print_user_picture($contact->id, SITEID, $contact->picture, 20, false, true, 'userwindow');
@@ -161,7 +164,7 @@ function message_print_contacts() {
             
             $strcontact = message_contact_link($messageuser->useridfrom, 'add', true);
             $strblock   = message_contact_link($messageuser->useridfrom, 'block', true);
-            $strhistory = message_contact_link($messageuser->useridfrom, 'history', true);
+            $strhistory = message_history_link($messageuser->useridfrom, 0, true, '', '', 'icon');
             
             echo '<tr><td class="message_pix">';
             print_user_picture($messageuser->useridfrom, SITEID, $messageuser->picture, 20, false, true, 'userwindow');
@@ -347,6 +350,7 @@ function message_print_search_results($frm) {
                     $strcontact = message_contact_link($user->id, 'add', true);
                     $strblock   = message_contact_link($user->id, 'block', true);
                 }
+                $strhistory = message_history_link($user->id, 0, true, '', '', 'icon');
                 
                 echo '<tr><td class="message_pix">';
                 print_user_picture($user->id, SITEID, $user->picture, 20, false, true, 'userwindow');
@@ -359,6 +363,7 @@ function message_print_search_results($frm) {
                 
                 echo '<td class="message_link">'.$strcontact.'</td>';
                 echo '<td class="message_link">'.$strblock.'</td>';
+                echo '<td class="message_link">'.$strhistory.'</td>';
                 echo '</tr>';
             }
             echo '</table>';
@@ -471,7 +476,9 @@ function message_print_search_results($frm) {
                 message_print_user($userto, $tocontact, $toblocked);
                 echo '</td>';
                 echo '<td class="message_summary">'.message_get_fragment($message->message, $keywords);
-                echo '<br /><div class="message_summary_link">'.message_history_link($message->useridto, $message->useridfrom, true, $keywordstring, $datestring, $strcontext).'</div>';
+                echo '<br /><div class="message_summary_link">';
+                message_history_link($message->useridto, $message->useridfrom, true, $keywordstring, $datestring, $strcontext);
+                echo '</div>';
                 echo '</td>';
                 echo '<td class="message_date">'.userdate($message->timecreated, $dateformat).'</td>';
                 echo "</tr>\n";
@@ -527,7 +534,7 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
 
 
 /// linktype can be: add, remove, block, unblock
-function message_contact_link($userid, $linktype='add', $return=false) {
+function message_contact_link($userid, $linktype='add', $return=false, $script="index.php?tab=contacts") {
     global $USER, $CFG;
 
     static $str;
@@ -537,31 +544,27 @@ function message_contact_link($userid, $linktype='add', $return=false) {
        $str->unblockcontact =  get_string('unblockcontact', 'message');
        $str->removecontact  =  get_string('removecontact', 'message');
        $str->addcontact     =  get_string('addcontact', 'message');
-       $str->messagehistory =  get_string('messagehistory', 'message');
     }
 
     switch ($linktype) {
-        case 'history':
-            $output = '<a target="message_history_'.$userid.'" title="'.$str->messagehistory.'" href="'.$CFG->wwwroot.'/message/history.php?user1='.$userid.'" onclick="return openpopup(\'/message/history.php?user1='.$userid.'\', \'message_history_'.$userid.'\', \'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500\', 0);"><img src="'.$CFG->pixpath.'/t/log.gif" height="11" width="11" border="0"></a>';
-            break;
         case 'block':
-            $output = '<a href="index.php?tab=contacts&amp;blockcontact='.$userid.
+            $output = '<a target="message" href="'.$script.'&amp;blockcontact='.$userid.
                    '&amp;sesskey='.$USER->sesskey.'" title="'.$str->blockcontact.'">'.
                    '<img src="'.$CFG->pixpath.'/t/go.gif" height="11" width="11" border="0"></a>';
             break;
         case 'unblock':
-            $output = '<a href="index.php?tab=contacts&amp;unblockcontact='.$userid.
+            $output = '<a target="message" href="'.$script.'&amp;unblockcontact='.$userid.
                    '&amp;sesskey='.$USER->sesskey.'" title="'.$str->unblockcontact.'">'.
                    '<img src="'.$CFG->pixpath.'/t/stop.gif" height="11" width="11" border="0"></a>';
             break;
         case 'remove':
-            $output = '<a href="index.php?tab=contacts&amp;removecontact='.$userid.
+            $output = '<a target="message" href="'.$script.'&amp;removecontact='.$userid.
                    '&amp;sesskey='.$USER->sesskey.'" title="'.$str->removecontact.'">'.
                    '<img src="'.$CFG->pixpath.'/t/user.gif" height="11" width="11" border="0"></a>';
             break;
         case 'add':
         default:
-            $output = '<a href="index.php?tab=contacts&amp;addcontact='.$userid.
+            $output = '<a target="message" href="'.$script.'&amp;addcontact='.$userid.
                    '&amp;sesskey='.$USER->sesskey.'" title="'.$str->addcontact.'">'.
                    '<img src="'.$CFG->pixpath.'/t/usernot.gif" height="11" width="11" border="0"></a>';
 

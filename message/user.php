@@ -12,9 +12,33 @@
     $message = optional_param('message', '', PARAM_CLEAN);
     $format  = optional_param('format', FORMAT_MOODLE, PARAM_INT);
 
+    $addcontact     = optional_param('addcontact',     0, PARAM_INT); // adding a contact
+    $removecontact  = optional_param('removecontact',  0, PARAM_INT); // removing a contact
+    $blockcontact   = optional_param('blockcontact',   0, PARAM_INT); // blocking a contact
+    $unblockcontact = optional_param('unblockcontact', 0, PARAM_INT); // unblocking a contact
+
 /// Check the user we are talking to is valid
     if (! $user = get_record("user", "id", $userid)) {
         error("User ID was incorrect");
+    }
+
+/// Possibly change some contacts if requested
+
+    if ($addcontact and confirm_sesskey()) {
+        add_to_log(SITEID, 'message', 'add contact', 'history.php?user1='.$addcontact.'&amp;user2='.$USER->id, $addcontact);
+        message_add_contact($addcontact);
+    }
+    if ($removecontact and confirm_sesskey()) {
+        add_to_log(SITEID, 'message', 'remove contact', 'history.php?user1='.$removecontact.'&amp;user2='.$USER->id, $removecontact);
+        message_remove_contact($removecontact);
+    }
+    if ($blockcontact and confirm_sesskey()) {
+        add_to_log(SITEID, 'message', 'block contact', 'history.php?user1='.$blockcontact.'&amp;user2='.$USER->id, $blockcontact);
+        message_block_contact($blockcontact);
+    }
+    if ($unblockcontact and confirm_sesskey()) {
+        add_to_log(SITEID, 'message', 'unblock contact', 'history.php?user1='.$unblockcontact.'&amp;user2='.$USER->id, $unblockcontact);
+        message_unblock_contact($unblockcontact);
     }
 
 /// By default, print frameset to contain all the various panes
@@ -41,26 +65,47 @@
     switch ($frame) {     /// Put data into all the frames
 
         case 'info':      /// Print the top frame with information and links
-            print_header();
+            $THEME->body = $THEME->cellcontent2;
+            print_header('','','','','',false,'','',false,'leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"');
             echo '<table width="100%" cellpadding="0" cellspacing="0"><tr>';
-            echo '<td>'.print_user_picture($user->id, SITEID, $user->picture, true, true, true, 'userwindow').'</td>';
-            echo '<td>';
+            echo '<td width="100">';
+            echo print_user_picture($user->id, SITEID, $user->picture, true, true, true, 'userwindow').'</td>';
+            echo '<td valign="middle" align="center">';
+
             echo fullname($user);
-            echo '<br /><font size="1">';
+            echo '<br /><font size="1">';     /// Print login status of this user
             if ($user->lastaccess) {
-                $datestring = get_string('ago', 'message', format_time(time() - $user->lastaccess));
+                if (time() - $user->lastaccess > $CFG->message_offline_time) {
+                    echo get_string('offline', 'message');
+                } else {
+                    echo get_string("lastaccess").":".get_string('ago', 'message', format_time(time() - $user->lastaccess));
+                }
             } else {
-                $datestring = get_string("never");
+                echo get_string("lastaccess").":". get_string("never");
             }
-            echo get_string("lastaccess").":", $datestring;
             echo '</font>';
             echo '<br />';
-            message_history_link($user->id);
-            echo '</td>';
-            echo '</tr></table>';
+            echo '<div class="message_users">';
+            if ($contact = get_record('message_contacts', 'userid', $USER->id, 'contactid', $user->id)) {
+                 if ($contact->blocked) {
+                     message_contact_link($user->id, 'add', false, 'user.php?frame=info'); echo "&nbsp;";
+                     message_contact_link($user->id, 'unblock', false, 'user.php?frame=info'); echo "&nbsp;";
+                 } else {
+                     message_contact_link($user->id, 'remove', false, 'user.php?frame=info'); echo "&nbsp;";
+                     message_contact_link($user->id, 'block', false, 'user.php?frame=info'); echo "&nbsp;";
+                 }
+            } else {
+                 message_contact_link($user->id, 'add', false, 'user.php?frame=info'); echo "&nbsp;";
+                 message_contact_link($user->id, 'block', false, 'user.php?frame=info'); echo "&nbsp;";
+            }
+            message_history_link($user->id, 0, false, '', '', 'icon');
+            echo '</div>';
+
+            echo '</td></tr></table>';
+
             echo '</table></table></body>'; // Close possible theme tables off
 
-            $USER->message_user_refresh[$user->id] = time();
+            $USER->message_user_refresh[$user->id] = time();   // Remember this update
         break;
 
         case 'messages':  /// Print the main frame containing the current chat
@@ -110,7 +155,20 @@
                 echo "parent.messages.scroll(1,5000000);\n";
                 echo "</script>\n\n";
             }
-            if ($user->lastaccess > $USER->message_user_refresh[$user->id]) {
+
+            // Update the info pane, but only if the data there is getting too old
+            $timenow = time();
+            if ($timenow - $user->lastaccess > $CFG->message_offline_time) {   // Offline
+                if ($timenow - $USER->message_user_refresh[$user->id] < 30) {   // It's just happened so refresh
+                    $refreshinfo = true;
+                }
+
+            } else {                                                            // Online
+                if ($timenow - $USER->message_user_refresh[$user->id] > 30) {   // Been a while
+                    $refreshinfo = true;
+                }
+            }
+            if (!empty($refreshinfo)) {
                 echo '<script language="Javascript">';
                 echo "parent.info.document.location.replace('$CFG->wwwroot/message/user.php?id=$user->id&frame=info');\n";
                 echo "</script>\n\n";
