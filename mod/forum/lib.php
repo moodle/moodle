@@ -237,11 +237,29 @@ function forum_cron () {
                 continue;
             }
 
+            $groupmode = false;
+            if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+                if ($groupmode = groupmode($course, $cm)) {                  // Groups are being used
+                    if (!$group = user_group($course->id, $userfrom->id)) {  // If user not in a group
+                        continue;                                            // Be safe and don't send it to anyone
+                    }
+                }
+            } 
+
+
             if ($users = forum_subscribed_users($course, $forum)) {
                 $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
 
                 $mailcount=0;
                 foreach ($users as $userto) {
+                    if ($groupmode) {    // Look for a reason not to send this email
+                        if (!isteacheredit($course->id, $userto->id)) {
+                            if (!ismember($group->id, $userto->id)) {
+                                continue;
+                            }
+                        }
+                    }
+                    
                     /// Override the language and timezone of the "current" user, so that 
                     /// mail is customised for the receiver.
                     $USER->lang     = $userto->lang;
@@ -820,7 +838,8 @@ function forum_count_unrated_posts($discussionid, $userid) {
     }
 }
 
-function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC", $user=0, $fullpost=true) {
+function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC", 
+                               $user=0, $fullpost=true, $currentgroup=0) {
 /// Get all discussions in a forum
     global $CFG;
 
@@ -837,14 +856,22 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC", $us
     } else {
         $postdata = "p.*";
     }
+    if ($currentgroup) {
+        $grouptable = ", {$CFG->prefix}groups_members gm ";
+        $groupselect = " AND gm.groupid = '$currentgroup' AND u.id = gm.userid ";
+    } else  {
+        $grouptable = "";
+        $groupselect = "";
+    }
+
     return get_records_sql("SELECT $postdata, d.timemodified, u.firstname, u.lastname, u.email, u.picture
                               FROM {$CFG->prefix}forum_discussions d, 
-                                   {$CFG->prefix}forum_posts p, 
-                                   {$CFG->prefix}user u 
+                                   {$CFG->prefix}forum_posts p,
+                                   {$CFG->prefix}user u $grouptable
                              WHERE d.forum = '$forum' 
                                AND p.discussion = d.id 
                                AND p.parent = 0 
-                               AND p.userid = u.id $userselect
+                               AND p.userid = u.id $groupselect $userselect
                           ORDER BY $forumsort");
 }
 
@@ -1923,7 +1950,7 @@ function forum_user_has_posted_discussion($forumid, $userid) {
     }
 }
 
-function forum_user_can_post_discussion($forum) {
+function forum_user_can_post_discussion($forum, $currentgroup=false) {
 // $forum is an object
     global $USER;
 
@@ -1931,6 +1958,8 @@ function forum_user_can_post_discussion($forum) {
         return (! forum_user_has_posted_discussion($forum->id, $USER->id));
     } else if ($forum->type == "teacher") {
         return isteacher($forum->course);
+    } else if ($currentgroup) {
+        return (isteacheredit($forum->course) or ismember($currentgroup));
     } else if (isteacher($forum->course)) {
         return true;
     } else {
@@ -1957,7 +1986,9 @@ function forum_user_can_post($forum, $user=NULL) {
 }
 
 
-function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $forum_style="plain", $forum_sort="") {
+function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, 
+                                        $forum_style="plain", $forum_sort="", 
+                                        $currentgroup=0) {
     global $CFG, $USER;
     
     if ($forum_id) {
@@ -1981,7 +2012,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
         }
     }
 
-    if (forum_user_can_post_discussion($forum)) {
+    if (forum_user_can_post_discussion($forum, $currentgroup)) {
         echo "<p align=center>";
         echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?forum=$forum->id\">";
         if ($forum->type == "news") {
@@ -2005,7 +2036,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
         $fullpost = true;
     }
 
-    if (! $discussions = forum_get_discussions($forum->id, $forum_sort, 0, $fullpost) ) {
+    if (! $discussions = forum_get_discussions($forum->id, $forum_sort, 0, $fullpost, $currentgroup) ) {
         if ($forum->type == "news") {
             echo "<p align=center><b>(".get_string("nonews", "forum").")</b></p>";
         } else {

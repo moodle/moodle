@@ -8,6 +8,7 @@
     optional_variable($mode);          // Display mode (for single forum)
     optional_variable($search, "");    // search string
     optional_variable($showall, "");   // show all discussions on one page
+    optional_variable($group, "");     // choose the current group
 
     $strforums = get_string("modulenameplural", "forum");
     $strforum = get_string("modulename", "forum");
@@ -68,12 +69,50 @@
         notice(get_string("activityiscurrentlyhidden"));
     }
 
+
+/// Check to see if groups are being used in this forum
+/// and if so, set $currentgroup to reflect the current group
+
+    $groupmode = groupmode($course, $cm);   // Groups are being used
+    $currentgroup = get_and_set_current_group($course, $groupmode, $_GET['group']);
+
+    if ($groupmode and !$currentgroup) {
+        print_heading("Sorry, but you need to be part of a group to see this forum.");
+        print_footer();
+        exit;
+    }
+
+
+/// Print settings and things in a table across the top
+
+    echo '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top">';
+
+    if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
+        if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+            echo '<td>';
+
+            echo '<table><tr><td>';
+            if ($groupmode == VISIBLEGROUPS) {
+                print_string('groupsvisible');
+            } else {
+                print_string('groupsseparate');
+            }
+            echo ':';
+            echo '</td><td nowrap="nowrap" align="left" width="50%">';
+            popup_form("view.php?id=$cm->id&group=", $groups, 'selectgroup', $currentgroup, "", "", "", false, "self");
+            echo '</tr></table>';
+
+            echo '</td>';
+        }
+    }
+
+
     if ($USER) {
+        echo '<td align="right">';
         $SESSION->fromdiscussion = "$FULLME";
         if (forum_is_forcesubscribed($forum->id)) {
             $streveryoneissubscribed = get_string("everyoneissubscribed", "forum");
             $strallowchoice = get_string("allowchoice", "forum");
-            echo "<div align=right>";
             helpbutton("subscription", $streveryoneissubscribed, "forum");
             echo "<font size=1>";
             if (isteacher($course->id)) {
@@ -81,25 +120,24 @@
             } else {
                 echo $streveryoneissubscribed;
             }
-            echo "</font></div>";
+            echo "</font>";
 
         } else {
             $streveryonecanchoose = get_string("everyonecanchoose", "forum");
             $strforcesubscribe = get_string("forcesubscribe", "forum");
             $strshowsubscribers = get_string("showsubscribers", "forum");
 
-            echo "<div align=right>";
             helpbutton("subscription", $streveryonecanchoose, "forum");
             echo "<font size=1>";
 
             if (isteacher($course->id)) {
                 echo "<a title=\"$strforcesubscribe\" href=\"subscribe.php?id=$forum->id&force=yes\">$streveryonecanchoose</a>";
-                echo "</font></div><div align=right><font size=1>";
+                echo "</font><br /><font size=1>";
                 echo "<a href=\"subscribers.php?id=$forum->id\">$strshowsubscribers</a>";
             } else {
                 echo $streveryonecanchoose;
             }
-            echo "</font></div>";
+            echo "</font>";
 
             if (forum_is_subscribed($USER->id, $forum->id)) {
                 $subtexttitle = get_string("subscribestop", "forum");
@@ -108,15 +146,17 @@
                 $subtexttitle = get_string("subscribestart", "forum");
                 $subtext = get_string("subscribe", "forum");
             }
-            echo "<div align=right>";
+            echo "<br />";
             echo "<font size=1><a title=\"$subtexttitle\" href=\"subscribe.php?id=$forum->id\">$subtext</a></font>";
-            echo "</div>";
         }
+        echo '</td>';
     }
+
+    echo '</tr></table>';
 
 
     switch ($forum->type) {
-        case "single":
+        case 'single':
             if (! $discussion = get_record("forum_discussions", "forum", $forum->id)) {
                 if ($discussions = get_records("forum_discussions", "forum", $forum->id, "timemodified ASC")) {
                     notify("Warning! There is more than one discussion in this forum - using the most recent");
@@ -132,41 +172,41 @@
             forum_print_discussion($course, $forum, $discussion, $post, $USER->mode);
             break;
 
-        case "eachuser":
+        case 'eachuser':
             if (!empty($forum->intro)) {
                 print_simple_box(text_to_html($forum->intro), "center");
             }
-            echo "<p align=\"center\">";
+            echo '<p align="center">';
             if (forum_user_can_post_discussion($forum)) {
                 print_string("allowsdiscussions", "forum");
             } else {
-                echo "&nbsp";
+                echo '&nbsp';
             }
-            echo "</p>";
+            echo '</p>';
             if (!empty($showall)) {
-                forum_print_latest_discussions($forum->id, 0, "header");
+                forum_print_latest_discussions($forum->id, 0, 'header', '', $currentgroup);
             } else {
-                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, "header");
+                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup);
             }
             break;
 
-        case "teacher":
+        case 'teacher':
             if (!empty($showall)) {
-                forum_print_latest_discussions($forum->id, 0, "header");
+                forum_print_latest_discussions($forum->id, 0, 'header', '', $currentgroup);
             } else {
-                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, "header");
+                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup);
             }
             break;
 
         default:
             if (!empty($forum->intro)) {
-                print_simple_box(text_to_html($forum->intro), "center");
+                print_simple_box(text_to_html($forum->intro), 'center');
             }
-            echo "<p>&nbsp;</p>";
+            echo '<p>&nbsp;</p>';
             if (!empty($showall)) {
-                forum_print_latest_discussions($forum->id, 0, "header");
+                forum_print_latest_discussions($forum->id, 0, 'header', '', $currentgroup);
             } else {
-                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, "header");
+                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup);
             }
             break;
     }

@@ -92,6 +92,27 @@
                  "$navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
     }
 
+/// Check to see if groups are being used in this forum
+/// If so, make sure the current person is allowed to see this discussion
+
+    $groupmode = groupmode($course, $cm);
+
+    if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id)) {   // Groups must be kept separate
+        require_login();
+        if (!$toppost = get_record("forum_posts", "id", $discussion->firstpost)) {
+            error("Could not find the top post of the discussion");
+        }
+        if (!$group = user_group($course->id, $toppost->userid)) {   // Find the topic's group
+            error("Could not find the appropriate group of this discussion");
+        }
+        if (mygroupid($course->id) != $group->id) {
+            print_heading("Sorry, you can't see this discussion because you are not in this group");
+            print_footer();
+            die;
+        }
+    }
+
+
     echo "<table width=\"100%\"><tr><td width=\"33%\">&nbsp;</td><td width=\"33%\">";
     forum_print_mode_form($discussion->id, $displaymode);
     echo "</td><td width=\"33%\">";
