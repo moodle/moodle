@@ -2,6 +2,7 @@
       // error.php - created with Moodle 1.2 development (2003122600)
 
 $string['coursegroupunknown'] = 'Course corresponding to group $a not specified';
+$string['confirmsesskeybad'] = 'Sorry, but your session key could not be confirmed to carry out this action.  This security feature prevents against accidental or malicious execution of important functions in your name.  Please make sure you really wanted to execute this function.';
 $string['erroronline'] = 'Error on line $a';
 $string['fieldrequired'] = '\"$a\" is a required field';
 $string['filenotfound'] = 'Sorry, the requested file could not be found';
