@@ -1241,7 +1241,7 @@ function auth_ldap_connect($binddn='',$bindpwd=''){
     $urls = explode(";",$CFG->ldap_host_url);
         
     foreach ($urls as $server){
-        $url = trim($url);
+        $url = trim($server);
         if (empty($url)) {
             continue;
         }
@@ -1256,22 +1256,24 @@ function auth_ldap_connect($binddn='',$bindpwd=''){
         if (!empty($binddn)){
             //bind with search-user
             $bindresult=@ldap_bind($connresult, $binddn,$bindpwd);
-    } else {
-        //bind anonymously 
+        } else {
+            //bind anonymously 
             $bindresult=@ldap_bind($connresult);
         }  
        
-        if (isset($CFG->ldap_opt_deref)) {
+        if (!empty($CFG->ldap_opt_deref)) {
             ldap_set_option($connresult, LDAP_OPT_DEREF, $CFG->ldap_opt_deref);
-    }
+        }
 
         if ($bindresult) {
             return $connresult;
         }
-}
+        
+        $debuginfo == "<br/>Server: '$server' <br/> Connection: '$connresult'<br/> Bind result: '$bindresult'</br>";
+    }
 
     //If any of servers are alive we have already returned connection
-    error("LDAP-module cannot connect any LDAP servers : $CFG->ldap_host_url");
+    error("LDAP-module cannot connect any LDAP servers : $debuginfo");
     return false;
 }
 
