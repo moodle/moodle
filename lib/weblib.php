@@ -1618,7 +1618,7 @@ function obfuscate_mailto($email, $label="") {
 function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
 /// Prints a single paging bar to provide access to other pages  (usually in a search)
 
-    $maxdisplay = 20;
+    $maxdisplay = 18;
 
     if ($totalcount > $perpage) {
         echo "<center>";
@@ -1626,7 +1626,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
         $lastpage = ceil($totalcount / $perpage);
         if ($page > 15) {
             $startpage = $page - 10;
-            echo "&nbsp...";
+            echo "&nbsp<a href=\"{$baseurl}page=0\">1</a>&nbsp;...";
         } else {
             $startpage = 0;
         }
@@ -1643,7 +1643,8 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
             $currpage++;
         }
         if ($currpage < $lastpage) {
-            echo "&nbsp...";
+            $lastpageactual = $lastpage - 1;
+            echo "&nbsp;...<a href=\"{$baseurl}page=$lastpageactual\">$lastpage</a>&nbsp;";
         }
         $pagenum = $page + 1;
         if ($pagenum != $displaypage) {

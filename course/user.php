@@ -10,6 +10,8 @@
     require_variable($id);       // course id
     require_variable($user);     // user id
     optional_variable($mode, "todaylogs");
+    optional_variable($page, "0");
+    optional_variable($perpage, "100");
 
     require_login();
 
@@ -68,14 +70,16 @@
             echo "<HR><CENTER>";
             print_log_graph($course, $user->id, "userday.png");
             echo "</CENTER>";
-            print_log($course, $user->id, usergetmidnight(time()), "ORDER BY l.time DESC");
+            print_log($course, $user->id, usergetmidnight(time()), "l.time DESC", $page, $perpage, 
+                      "user.php?id=$course->id&user=$user->id&mode=$mode");
             break;
 
         case "alllogs" :
             echo "<HR><CENTER>";
             print_log_graph($course, $user->id, "usercourse.png");
             echo "</CENTER>";
-            print_log($course, $user->id, 0, "ORDER BY l.time DESC");
+            print_log($course, $user->id, 0, "l.time DESC", $page, $perpage, 
+                      "user.php?id=$course->id&user=$user->id&mode=$mode");
             break;
 
         case "outline" :

@@ -86,6 +86,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
 
     echo "<CENTER>";
     echo "<FORM ACTION=log.php METHOD=get>";
+    echo "<INPUT TYPE=hidden NAME=chooselog VALUE=\"1\">";
     if (isadmin()) {
         choose_from_menu ($courses, "id", $course->id, "");
     } else {
@@ -117,17 +118,17 @@ function make_log_url($module, $url) {
 }
 
 
-function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
+function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100, $url="") {
 // It is assumed that $date is the GMT time of midnight for that day, 
 // and so the next 86400 seconds worth of logs are printed.
 
     global $CFG;
 
     if ($course->category) {
-        $selector = "WHERE l.course='$course->id' AND l.userid = u.id";
+        $selector = "l.course='$course->id' AND l.userid = u.id";
 
     } else {
-        $selector = "WHERE l.userid = u.id";  // Show all courses
+        $selector = "l.userid = u.id";  // Show all courses
         if ($ccc = get_courses(-1)) {
             foreach ($ccc as $cc) {
                 $courses[$cc->id] = "$cc->shortname";
@@ -144,9 +145,7 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
         $selector .= " AND l.time > '$date' AND l.time < '$enddate'";
     }
 
-    $order = $order." LIMIT ".COURSE_MAX_LOGS_PER_PAGE;   // To keep it manageable
-
-    if (!$logs = get_logs($selector, $order)) {
+    if (!$logs = get_logs($selector, $order, $page*$perpage, $perpage, $totalcount)) {
         notify("No logs found!");
         print_footer($course);
         exit;
@@ -155,15 +154,14 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
     $count=0;
     $tt = getdate(time());
     $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
-    if (($totalcountlogs = count($logs)) == COURSE_MAX_LOGS_PER_PAGE) {
-        $totalcountlogs = "$totalcountlogs (+)";
-    }
 
     $strftimedatetime = get_string("strftimedatetime");
 
     echo "<p align=center>";
-    print_string("displayingrecords", "", $totalcountlogs);
+    print_string("displayingrecords", "", $totalcount);
     echo "</p>";
+
+    print_paging_bar($totalcount, $page, $perpage, "$url&perpage=$perpage&");
 
     echo "<table border=0 align=center cellpadding=3 cellspacing=3>";
     foreach ($logs as $log) {
@@ -189,6 +187,8 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
         echo "</tr>";
     }
     echo "</table>";
+
+    print_paging_bar($totalcount, $page, $perpage, "$url&perpage=$perpage&");
 }
 
 

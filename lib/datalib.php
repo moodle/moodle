@@ -1554,14 +1554,36 @@ function add_to_log($course, $module, $action, $url="", $info="") {
 }
 
 
-function get_logs($select, $order) {
+function get_logs($select, $order="l.time DESC", $limitfrom="", $limitnum="", &$totalcount) {
     global $CFG;
 
+    if ($limitfrom !== "") {
+        switch ($CFG->dbtype) {
+            case "mysql":
+                 $limit = "LIMIT $limitfrom,$limitnum";
+                 break;
+            case "postgres7":
+                 $limit = "LIMIT $limitnum OFFSET $limitfrom";
+                 break;
+            default: 
+                 $limit = "LIMIT $limitnum,$limitfrom";
+        }
+    } else {
+        $limit = "";
+    }
+
+    if ($order) {
+        $order = "ORDER BY $order";
+    }
+
+    $selectsql = "{$CFG->prefix}log l, {$CFG->prefix}user u WHERE $select";
+
+    $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
+
     return get_records_sql("SELECT l.*, u.firstname, u.lastname, u.picture 
-                              FROM {$CFG->prefix}log l, 
-                                   {$CFG->prefix}user u 
-                                   $select $order");
+                                FROM $selectsql $order $limit"); 
 }
+
 
 function get_logs_usercourse($userid, $courseid, $coursestart) {
     global $CFG;

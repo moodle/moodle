@@ -7,6 +7,8 @@
     require_variable($id);    // Course ID
     optional_variable($user, 0); // User to display
     optional_variable($date, 0); // Date to display
+    optional_variable($page, "0");     // which page to show
+    optional_variable($perpage, "100"); // how many per page
 
     require_login();
 
@@ -29,7 +31,7 @@
     $stradministration = get_string("administration");
 
 
-    if ($user || $date) {
+    if (!empty($_GET['chooselog'])) {
         $userinfo = get_string("allparticipants");
         $dateinfo = get_string("alldays");
 
@@ -57,7 +59,8 @@
 
         print_log_selector_form($course, $user, $date);
 
-        print_log($course, $user, $date, "ORDER BY l.time DESC");
+        print_log($course, $user, $date, "l.time DESC", $page, $perpage, 
+                  "log.php?id=$course->id&chooselog=1&user=$user&date=$date");
 
     } else {
         if ($course->category) {
