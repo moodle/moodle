@@ -154,7 +154,7 @@ function make_mail_post(&$post, $user, $touser, $course, $ownpost=false, $reply=
 
 
 function print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
-    global $THEME, $USER, $CFG;
+    global $THEME, $USER, $CFG, $FORUM_LONG_POST;
 
     if ($post->parent) {
         echo "<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1><TR><TD BGCOLOR=#888888>";
