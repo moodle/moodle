@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.1 development (2003081503)
+      // quiz.php - created with Moodle 1.1 Beta ++ (2003082600)
 
 
 $string['acceptederror'] = "Error aceptado";
@@ -37,6 +37,9 @@ $string['choice'] = "Elección";
 $string['choices'] = "Opciones disponibles";
 $string['correctanswer'] = "Respuesta correcta";
 $string['correctanswers'] = "Respuesta incorrecta";
+$string['countdown'] = "Cuenta atrás";
+$string['countdownfinished'] = "Este cuestionario está a punto de cerrarse, debe enviar sus respuestas ahora.";
+$string['countdowntenminutes'] = "El cuestionario se cerrará en diez minutos";
 $string['createmultiple'] = "Crear múltiples preguntas";
 $string['createnewquestion'] = "Crear una nueva pregunta";
 $string['custom'] = "Personalizar formato";
@@ -46,9 +49,13 @@ $string['defaultgrade'] = "Calificación de la pregunta por defecto";
 $string['defaultinfo'] = "La categoría por defecto para preguntas";
 $string['deletequestioncheck'] = "¿Está seguro de que desea borrar '\$a'?";
 $string['description'] = "Descripción";
+$string['eachattemptbuildsonthelast'] = "Cada intento se construye sobre el anterior";
 $string['editcategories'] = "Editar categorías";
+$string['editingdescription'] = "Editando una Descripción";
 $string['editingmatch'] = "Editando una pregunta de correspondencia";
+$string['editingmultianswer'] = "Editando respuestas incrustadas (Cloze)";
 $string['editingmultichoice'] = "Editando una pregunta de múltiple opción";
+$string['editingnumerical'] = "Editando una pregunta numérica";
 $string['editingquestion'] = "Editando una pregunta";
 $string['editingquiz'] = "Editando un cuestionario";
 $string['editingrandom'] = "Editar una pregunta al azar";
@@ -82,11 +89,13 @@ $string['introduction'] = "Introducción";
 $string['marks'] = "Punto/s";
 $string['match'] = "Emparejando";
 $string['matchanswer'] = "Emparejar respuesta";
+$string['missingcorrectanswer'] = "Se debe especificar la respuesta correcta";
 $string['missingname'] = "La pregunta no tiene título";
 $string['missingquestiontext'] = "La pregunta no tiene texto";
 $string['missingword'] = "formato de palabra perdido";
 $string['modulename'] = "Cuestionario";
 $string['modulenameplural'] = "Cuestionarios";
+$string['multianswer'] = "Respuestas incrustadas (Cloze)";
 $string['multichoice'] = "Opción múltiple";
 $string['noanswers'] = "No se seleccionó ninguna respuesta";
 $string['noattempts'] = "No se ha hecho ningún intento en este cuestionario";
@@ -107,6 +116,7 @@ $string['questions'] = "Preguntas";
 $string['quizavailable'] = "El cuestionario está disponible hasta el \$a";
 $string['quizclose'] = "Cerrar cuestionario";
 $string['quizclosed'] = "El plazo para contestar este cuestionario finalizó el \$a";
+$string['quizcloses'] = "Cuestionario cerrado";
 $string['quiznotavailable'] = "Este cuestionario no estará disponible hasta el \$a";
 $string['quizopen'] = "Abrir cuestionario";
 $string['random'] = "Organizado al azar";
@@ -116,11 +126,15 @@ $string['randomsamatchcreate'] = "Crear preguntas emparejadas con respuestas cor
 $string['randomsamatchintro'] = "Para cada una de las preguntas siguientes, seleccione desde el menú la respuesta que hace juego.";
 $string['randomsamatchnumber'] = "Número de preguntas a seleccionar";
 $string['readytosend'] = "Está a punto de enviar el cuestionario para ser calificado. ¿Está seguro de que desea continuar?";
+$string['recentlyaddedquestion'] = "¡Pregunta añadida recientemente!";
 $string['regrade'] = "Volver a calificar todos los intentos";
 $string['regradecomplete'] = "Todos los intentos realizados han sido recalificados";
 $string['regradecount'] = "Se han cambiado \$a->changed de \$a->attempt calificaciones";
 $string['rename'] = "Renombrar";
 $string['report'] = "Informes";
+$string['reportoverview'] = "Vista general";
+$string['reportregrade'] = "Recalificar los intentos";
+$string['reportsimplestat'] = "Estadísticas simples";
 $string['review'] = "Revisar";
 $string['save'] = "Guardar";
 $string['savegrades'] = "Guardar calificaciones";
@@ -144,6 +158,7 @@ $string['true'] = "Verdadero";
 $string['truefalse'] = "Verdadero/Falso";
 $string['type'] = "Escriba";
 $string['viewallanswers'] = "Ver \$a cuestionarios resueltos";
+$string['viewallreports'] = "Ver los informes de \$a intentos";
 $string['webct'] = "Formato WebCT";
 $string['yourfinalgradeis'] = "Su calificación final en este cuestionario es \$a";
 

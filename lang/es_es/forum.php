@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1 development (2003081503)
+      // forum.php - created with Moodle 1.1 Beta ++ (2003082600)
 
 
 $string['addanewdiscussion'] = "Añadir un nuevo tema de debate";
@@ -11,6 +11,10 @@ $string['allowsdiscussions'] = "Este foro permite a todos comenzar un tema de de
 $string['anyfile'] = "Cualquier archivo";
 $string['attachment'] = "Archivo adjunto";
 $string['bynameondate'] = "de \$a->name - \$a->date";
+$string['configdisplaymode'] = "La forma de visualización por defecto para los debates, si no se ha configurado ninguna.";
+$string['configlongpost'] = "Cualquier mensaje que exceda esta longitud (sin incluir código HTML) se consiera largo.";
+$string['configmanydiscussions'] = "Máximo número de temas mostrados por página en un foro.";
+$string['configshortpost'] = "Cualquier mensaje de longitud inferior a ésta (sin incluir código HTML) se considera corto.";
 $string['couldnotadd'] = "No se pudo añadir su mensaje debido a un error desconocido.";
 $string['couldnotdeleteratings'] = "Lo sentimos, no es posible borrar este ítem debido a que ha sido calificado.";
 $string['couldnotdeletereplies'] = "Lo sentimos, no es posible borrar este ítem debido a que ya tiene respuestas.";
