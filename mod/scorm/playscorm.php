@@ -102,10 +102,7 @@
 	if ($scorm->popup != "") {
 	    $bodyscripts = "onUnload='SCOFinish(); closeMain();' ";
 	}
-    	//print_header($pagetitle, "$course->fullname",
-	//	"$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\">$scorm->name</a>",
-	//	"", "", true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm, '_top'),"",$bodyscripts);
-    	print_header($pagetitle, "$course->fullname",
+       	print_header($pagetitle, "$course->fullname",
 		"$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\">$scorm->name</a>",
 		"", "", true, update_module_button($cm->id, $course->id, $strscorm), "", "", $bodyscripts);
     	echo "<table width=\"100%\">\n    <tr><td align=\"center\">".text_to_html($scorm->summary, true, false)."</td>\n";
@@ -275,7 +272,7 @@
     		    $options[$sco->id] = $indenting."&gt; ".$sco->title;
 	    	}
 	    }
-	    choose_from_menu($options, "courseStructure", "", "", "document.navform.scoid.value=document.navform.courseStructure.options[document.navform.courseStructure.selectedIndex].value;document.navform.submit();");
+	    choose_from_menu($options, "courseStructure", "", $scoid, "document.navform.scoid.value=document.navform.courseStructure.options[document.navform.courseStructure.selectedIndex].value;document.navform.submit();");
 	}
 	echo "     	&nbsp;<input name=\"next\" type=\"button\" value=\"".get_string("next","scorm")."\" onClick=\"top.changeSco('continue')\" />\n";
 	echo "	     </form>
@@ -296,8 +293,8 @@
             echo "<head><title>$course->shortname: $scorm->name</title></head>\n";
             echo "<script language=\"JavaScript\" type=\"text/javascript\" src=\"request.js\"></script>\n";
             echo "<script language=\"JavaScript\" type=\"text/javascript\" src=\"api.php?id=$cm->id\"></script>\n";
-	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onLoad=\"SCOInitialize();\" onUnload=\"SCOFinish();\">\n";
-            echo "\t    <frame name=\"navigation\" src=\"playscorm.php?id=$cm->id".$modestring.$currentorgstring."&frameset=top\">\n";
+	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onUnload=\"SCOFinish();\">\n";
+            echo "\t    <frame name=\"navigation\" src=\"playscorm.php?id=$cm->id".$modestring.$currentorgstring.$scoidstring."&frameset=top\">\n";
             echo "\t    <frame name=\"main\" src=\"loadSCO.php?id=$cm->id$scoidstring\">\n";
             echo "</frameset>\n";
             echo "</html>\n";

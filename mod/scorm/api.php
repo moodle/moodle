@@ -54,13 +54,13 @@ function closeMain() {
 var errorCode = "0";
 
 function SCORM_Call (call,param,value) {
-    if (arguments.caller.length < 2) {
+    if (arguments.length < 2) {
     	alert ("Invalid SCORM_Call function call: too few arguments.\nYou need pass at least 2 parameters");
-    } else if (arguments.caller.length == 3) {
+    } else if (arguments.length == 3) {
     	param = param.concat("&value=",value);
     }
     var myRequest = NewHttpReq();
-    result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php?id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>&param="+param);
+    result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php?id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>&call="+call+"&param="+param);
     results = result.split('\n');
     
     errorCode = results[1];
@@ -180,7 +180,7 @@ function SCORMapi2004() {
 	errorString["401"] = "Undefinited Data Model";
 	errorString["402"] = "Unimplemented Data Model Element";
 	errorString["403"] = "Data Model Element Value Not Initialized";
-	errorString["404"] = "Data Model Element Is Read Only;
+	errorString["404"] = "Data Model Element Is Read Only";
 	errorString["405"] = "Data Model Element Is Write Only";
 	errorString["406"] = "Data Model Element Type Mismatch";
 	errorString["407"] = "Data Model Element Value Out Of Range";

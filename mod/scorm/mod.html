@@ -43,12 +43,17 @@
     function validate_scorm(theform,filename) {
     	//alert(filename);
         var myRequest = NewHttpReq();
-    	result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/validate.php?id=<?php p($form->course) ?>&reference="+filename+"<?php p($scormid.$datadir) ?>");
+    	result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/validate.php?id=<?php p($form->course) ?>&reference="+filename+"<?php echo $scormid.$datadir ?>");
     	//alert(result);
 	results = result.split('\n');
 	if ((results[0] == "found") || (results[0] == "regular")) {
-	    theform.launch.value = results[1];
 	    theform.datadir.value = results[2];
+	    if (results[1] == 0) {
+	        theform.launch.value = results[1];
+	        if ('<?php echo $scormid ?>' != '') {
+	            return confirm('<?php print_string('trackingloose','scorm') ?>');
+	        }
+	    }
 	    return true;
 	} else {
 	    result = '<?php print_string('validation','scorm') ?>: '+ results[0] + '\n';
@@ -140,10 +145,6 @@
             <td align="right"><b><?php print_string("grademethod", "scorm") ?>:</b></td>
             <td>
             <?php
-                $options = array();
-                $options[0] = get_string("gradescoes", "scorm");
-                $options[1] = get_string("gradehighest", "scorm");
-                $options[2] = get_string("gradeaverage", "scorm");
                 choose_from_menu($SCORM_GRADE_METHOD, "grademethod", "$form->grademethod", "");
                 helpbutton("grademethod", get_string("grademethod","scorm"), "scorm");
             ?>

@@ -115,19 +115,16 @@ function scorm_update_instance($scorm) {
     	$scorm->auto = '0';
     }
     
-    $id = update_record('scorm', $scorm);
-    
     //
     // Check if scorm manifest needs to be reparsed
     //
     if ($scorm->launch == 0) {
 	$basedir = $CFG->dataroot."/".$scorm->course;
        	$scormdir = "/moddata/scorm";
-	$scorm->launch = scorm_parse($basedir,$scormdir.$scorm->datadir."/imsmanifest.xml",$id);
-	set_field("scorm","launch",$scorm->launch,"id",$id);
+	$scorm->launch = scorm_parse($basedir,$scormdir.$scorm->datadir."/imsmanifest.xml",$scorm->id);
     }
     
-    return $id;
+    return update_record('scorm', $scorm);
 }
 
 

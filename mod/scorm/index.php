@@ -8,7 +8,7 @@
         error("Course ID is incorrect");
     }
 
-    require_course_login($course->id, false, $cm);
+    require_course_login($course->id);
 
     add_to_log($course->id, "scorm", "view all", "index.php?id=$course->id", "");
 
@@ -20,7 +20,7 @@
     $strsummary = get_string("summary");
     $strlastmodified = get_string("lastmodified");
 
-    print_header_simple("$strscorms", "", "$navigation $strscorms",
+    print_header_simple("$strscorms", "", "$strscorms",
                  "", "", true, "", navmenu($course));
 
     if ($course->format == "weeks" or $course->format == "topics") {

@@ -5,57 +5,70 @@
 
     require_login();
     
-    //
-    // Create a temporary directory to unzip package and validate imsmanifest
-    //
-
+    
     $reference = clean_param($_GET["reference"], PARAM_PATH);
     $courseid = $_GET["id"];
     $datadir = '';
-    $launch = 0;
     if (isset($_GET["datadir"])) {
         $datadir = $_GET["datadir"];
     }
+    
+    $scormid = 0;
+    $launch = 0;
     $result = '';
-    if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
-        if ($tempdir = scorm_datadir($scormdir, $datadir)) {
-            copy ("$CFG->dataroot/$courseid/$reference", $tempdir."/".basename($reference));
-            unzip_file($tempdir."/".basename($reference), $tempdir, false);
-            $result = scorm_validate($tempdir."/imsmanifest.xml");
-        } else {
-            $result = "packagedir";
-        }
-    } else {
-        $result = "datadir";
-    }
     $errorlogs = '';
-    if (($result != "regular") && ($result != "found")) {
-    	$result = get_string($result,'scorm');
-        if ($CFG->scorm_validate == 'domxml') {
-            foreach ($errors as $error) {
-                $errorlogs .= get_string($error->type,"scorm",$error->data) . ".\n";
+    if (isset($_GET["instance"])) {
+	$scormid = $_GET["instance"];
+	$launch = 1;
+    	$fp = fopen($CFG->dataroot.'/'.$courseid.'/'.$reference,"r");
+    	$fstat = fstat($fp);
+    	fclose($fp);
+    	if ($scorm = get_record("scorm","id",$scormid)) {
+    	    if ((($scorm->timemodified < $fstat["mtime"]) && ($scorm->reference == $reference)) || ($scorm->reference != $reference)) {
+    	    	// This is a new package
+		$launch = 0;
+    	    } else {
+    	    	// Old package already validated
+		$result = 'found';
+    	    }
+    	}
+    }
+    if ($launch == 0) {
+    	//
+    	// Package must be validated
+    	//
+	
+        // Create a temporary directory to unzip package and validate imsmanifest
+        $tempdir = '';
+        $scormdir = '';
+	if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
+	    if ($tempdir = scorm_datadir($scormdir, $datadir)) {
+		copy ("$CFG->dataroot/$courseid/$reference", $tempdir."/".basename($reference));
+		unzip_file($tempdir."/".basename($reference), $tempdir, false);
+		$result = scorm_validate($tempdir."/imsmanifest.xml");
+	    } else {
+		$result = "packagedir";
+	    }
+	} else {
+	    $result = "datadir";
+	}
+	if (($result != "regular") && ($result != "found")) {
+	    // Generate error log string
+	    $result = get_string($result,'scorm');
+	    if ($CFG->scorm_validate == 'domxml') {
+	        foreach ($errors as $error) {
+		    $errorlogs .= get_string($error->type,"scorm",$error->data) . ".\n";
+ 		}
+	    }
+            if (is_dir($tempdir)) {
+                // Delete files and temporary directory
+                scorm_delete_files($tempdir);
+            } else {
+                // Delete package file
+                unlink ($tempdir."/".basename($reference));
             }
-        }
-        //
-        // Delete files and temporary directory
-        //
-        if (is_dir($tempdir))
-            scorm_delete_files($tempdir);
         } else {
-        //
-        // Delete package file
-        //
-        unlink ($tempdir."/".basename($reference));
-        if (isset($_GET["instance"])) {
-            $fp = fopen($CFG->dataroot.'/'.$reference,"r");
-            $fstat = fstat($fp);
-            fclose($fp);
-            if ($scorm = get_record("scorm","id",$_GET["instance"])) {
-            	$launch = $scorm->launch;
-            	if ($scorm->timemodified < $fstat["mtime"]) {
-                    $launch = 0;
-                }
-            }
+            $datadir = substr($tempdir,strlen($scormdir));
         }
     }
     //
@@ -63,7 +76,6 @@
     //
     echo $result . "\n";
     echo $launch . "\n";
-    $datadir = substr($tempdir,strlen($scormdir));
     echo $datadir . "\n";
     if ($errorlogs != '') {
 	echo $errorlogs;
