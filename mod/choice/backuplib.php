@@ -5,15 +5,17 @@
     //This is the "graphical" structure of the choice mod:
     //
     //                      choice                                      
-    //                    (CL,pk->id)
-    //                        |
-    //                        |
-    //                        |
-    //                   choice_options 
-    //               (UL,pk->id, fk->choiceid)     
-    //
-    //                   choice_answers 
-    //               (UL,pk->id, fk->choiceid, fk->optionid)     
+    //                    (CL,pk->id)----------|
+    //                        |                |
+    //                        |                |
+    //                        |                |
+    //                  choice_options         |
+    //             (UL,pk->id, fk->choiceid)   |  
+    //                        |                |
+    //                        |                |
+    //                        |                |
+    //                   choice_answers        |
+    //        (UL,pk->id, fk->choiceid, fk->optionid)     
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -42,19 +44,22 @@
                 fwrite ($bf,full_tag("NAME",4,false,$choice->name));
                 fwrite ($bf,full_tag("TEXT",4,false,$choice->text));
                 fwrite ($bf,full_tag("FORMAT",4,false,$choice->format));
-                fwrite ($bf,full_tag("SHOWUNANSWERED",4,false,$choice->showunanswered));
-                fwrite ($bf,full_tag("TIMEOPEN",4,false,$choice->timeopen));
-                fwrite ($bf,full_tag("TIMECLOSE",4,false,$choice->timeclose));
                 fwrite ($bf,full_tag("PUBLISH",4,false,$choice->publish));
                 fwrite ($bf,full_tag("RELEASE",4,false,$choice->release));
                 fwrite ($bf,full_tag("DISPLAY",4,false,$choice->display));
                 fwrite ($bf,full_tag("ALLOWUPDATE",4,false,$choice->allowupdate));
+                fwrite ($bf,full_tag("SHOWUNANSWERED",4,false,$choice->showunanswered));
+                fwrite ($bf,full_tag("TIMEOPEN",4,false,$choice->timeopen));
+                fwrite ($bf,full_tag("TIMECLOSE",4,false,$choice->timeclose));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$choice->timemodified));
-                //if we've selected to backup users info, then execute backup_choice_responses
-                if ($preferences->mods["choice"]->userinfo) {
+
+                //Now backup choice_options
+                $status = backup_choice_options($bf,$preferences,$choice->id);
+
+                //if we've selected to backup users info, then execute backup_choice_answers
+                if ($preferences->mods["choice"]->userinfo && $status) {
                     $status = backup_choice_answers($bf,$preferences,$choice->id);
                 }
-                backup_choice_options($bf,$preferences,$choice->id);
                 //End mod
                 $status =fwrite ($bf,end_tag("MOD",3,true));
             }
@@ -70,20 +75,19 @@
         $status = true;
 
         $choice_answers = get_records("choice_answers","choiceid",$choice,"id");
-        //If there is submissions
+        //If there is answers
         if ($choice_answers) {
             //Write start tag
             $status =fwrite ($bf,start_tag("ANSWERS",4,true));
             //Iterate over each answer
-            foreach ($choice_answers as $cho_resp) {
+            foreach ($choice_answers as $cho_ans) {
                 //Start answer
                 $status =fwrite ($bf,start_tag("ANSWER",5,true));
-                //Print submission contents
-                fwrite ($bf,full_tag("ID",6,false,$cho_resp->id));
-                fwrite ($bf,full_tag("CHOICEID",6,false,$cho_resp->choiceid));
-                fwrite ($bf,full_tag("USERID",6,false,$cho_resp->userid));
-                fwrite ($bf,full_tag("OPTIONID",6,false,$cho_resp->optionid));
-                fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$cho_resp->timemodified));
+                //Print answer contents
+                fwrite ($bf,full_tag("ID",6,false,$cho_ans->id));
+                fwrite ($bf,full_tag("USERID",6,false,$cho_ans->userid));
+                fwrite ($bf,full_tag("OPTIONID",6,false,$cho_ans->optionid));
+                fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$cho_ans->timemodified));
                 //End answer
                 $status =fwrite ($bf,end_tag("ANSWER",5,true));
             }
@@ -101,20 +105,19 @@
 
         $status = true;
         
-        $choice_options = get_records("choice_options","choice",$choice,"choice");
-        //If there is submissions
+        $choice_options = get_records("choice_options","choiceid",$choice,"id");
+        //If there is options
         if ($choice_options) {            
             //Write start tag
             $status =fwrite ($bf,start_tag("OPTIONS",4,true));
             //Iterate over each answer
-            foreach ($choice_options as $cho_ans) {
-                //Start answer
+            foreach ($choice_options as $cho_opt) {
+                //Start option
                 $status =fwrite ($bf,start_tag("OPTION",5,true));
-                //Print submission contents
-                fwrite ($bf,full_tag("ID",6,false,$cho_ans->id));
-                fwrite ($bf,full_tag("CHOICEID",6,false,$cho_ans->choiceid));
-                fwrite ($bf,full_tag("TEXT",6,false,$cho_ans->text));
-                fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$cho_ans->timemodified));
+                //Print option contents
+                fwrite ($bf,full_tag("ID",6,false,$cho_opt->id));
+                fwrite ($bf,full_tag("TEXT",6,false,$cho_opt->text));
+                fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$cho_opt->timemodified));
                 //End answer
                 $status =fwrite ($bf,end_tag("OPTION",5,true));
             }
