@@ -31,3 +31,5 @@ $string['newattop'] = "Entradas nuevas arriba";
 $string['newatbottom'] = "Entradas nuevas abajo";
 $string['simplehtml'] = "Sólo HTML simple;
 $string['nohtml'] = "No se permite HTML";
+
+?>
