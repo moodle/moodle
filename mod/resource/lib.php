@@ -468,14 +468,11 @@ function resource_redirect_tags($text, $url, $tagtoparse, $keytoparse,$prefix = 
 }
 
 function resource_is_url($path) {
-    $path = strtolower($path);
-    if (substr($path, 0, 7) == "http://") {
+    if (strpos($path, '://')) {
         return true;
+    } else {
+        return false;
     }
-    if (substr($path, 0, 6) == "ftp://") {
-        return true;
-    }
-    return false;
 }
 
 ?>
