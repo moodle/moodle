@@ -5,7 +5,7 @@
 $string['auth_common_settings'] = 'Algemene instellingen';
 $string['auth_data_mapping'] = 'Data mapping';
 $string['auth_dbdescription'] = 'Deze methode gebruikt een externe database om te controleren of een bepaalde gebruikersnaam en een bepaald wachtwoord geldig zijn. Als de account nieuw is dan kan informatie vanuit andere velden ook naar Moodle worden gekopieerd.';
-$string['auth_dbextrafields'] = 'Deze velden zijn niet verplicht. Je kunt ervoor kiezen om sommige Moodle-gebruikersvelden in te vullen met informatie uit de <B>externe database velden</B> die je hier aangeeft. <P>Als je deze niet invult zullen standaardwaarden worden gebruikt. In beide gevallen kan de gebruiker alle velden wijzigen zodra hij/zij is ingelogd.';
+$string['auth_dbextrafields'] = 'Deze velden zijn niet verplicht. Je kunt ervoor kiezen om sommige Moodle-gebruikersvelden in te vullen met informatie uit de <b>externe database velden</b> die je hier aangeeft. <p>Als je deze niet invult zullen standaardwaarden worden gebruikt.</p> <p>In beide gevallen kan de gebruiker alle velden wijzigen zodra hij/zij is ingelogd.</p>';
 $string['auth_dbfieldpass'] = 'Naam van het veld dat de wachtwoorden bevat  ';
 $string['auth_dbfielduser'] = 'Naam van het veld dat de gebruikersnamen bevat  ';
 $string['auth_dbhost'] = 'De computer die de databaseserver host';
@@ -14,7 +14,7 @@ $string['auth_dbpass'] = 'Wachtwoord dat bij de bovengenoemde gebruikersnaam pas
 $string['auth_dbpasstype'] = 'Geef hier aan welk format het wachtwoordveld gebruikt. MD5-encryptie is handig om een verbinding te maken naar andere veel voorkomende webapplicaties zoals PostNuke';
 $string['auth_dbtable'] = 'Naam  van  de  tabel in de database';
 $string['auth_dbtitle'] = 'Gebruik een externe database';
-$string['auth_dbtype'] = 'Het type database (Bekijk <A HREF=../lib/adodb/readme.htm#drivers>ADOdb documentatie</A> voor meer informatie)';
+$string['auth_dbtype'] = 'Het type database (Bekijk <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb documentatie</a> voor meer informatie)';
 $string['auth_dbuser'] = 'Gebruikersnaam met read access tot de database';
 $string['auth_editlock'] = 'Blokkeer deze waarde';
 $string['auth_editlock_expl'] = '<p><b>Blokkeer deze waarde:</b>Als je dit inschakelt, dan kunnen gebruikers en beheerders van Moodle dit veld niet meer rechtstreeks bewerken. Gebruik deze optie als je deze gegevens met een extern authenticatiesysteem beheert.</p>';
@@ -36,7 +36,7 @@ $string['auth_ldap_bind_dn'] = 'Als je \'bind-user\' wilt gebruiken om gebruiker
 $string['auth_ldap_bind_pw'] = 'Wachtwoord voor de \'bind-user\'';
 $string['auth_ldap_bind_settings'] = 'Bind instellingen';
 $string['auth_ldap_contexts'] = 'Lijst met contexten waar de gebruikers gelocaliseerd zijn. Scheid verschillende contexten met \';\'. Bijvoorbeeld: \'ou=users,o=org; ou=others,o=org\'';
-$string['auth_ldap_create_context'] = 'Als je het aanmaken van gebruikers met e-mailbevestiging aanzet, moet je de context aangeven waarin gebruikers worden aangemaakt. Deze context moet verschillen van andere contexten om beveiligingsproblemen te vermijden. Deze context hoef je niet toe te voegen aan ldap_context_variable. Moodle zoekt automatisch de gebruikers uit deze context.';
+$string['auth_ldap_create_context'] = 'Als je het aanmaken van gebruikers met e-mailbevestiging aanzet, moet je de context aangeven waarin gebruikers worden aangemaakt. Deze context moet verschillen van andere contexten om beveiligingsproblemen te vermijden. Deze context hoef je niet toe te voegen aan ldap_context_variable. Moodle zoekt automatisch de gebruikers uit deze context.<br /><b>Merk op!</b> Je moet de functie auth_user_create() in het bestand auth/ldap/lib.php wijzigen om er voor te zorgen dat het aanmaken van gebruikers werkt.';
 $string['auth_ldap_creators'] = 'Lijst met groepen gebruikers. De leden van de groepen mogen nieuwe vakken aanmaken. Scheid verschillende groepen met \';\'. Meestal iets als \'cn=leraren,ou=medewerkers,o=mijnorganisatie\'';
 $string['auth_ldap_expiration_desc'] = 'Kies nee op de controle op verlopen wachtwoorden uit te schakelen of om LDAP de geldigheidsduur van de wachtwoorden rechtstreeks uit LDAP te laten lezen';
 $string['auth_ldap_expiration_warning_desc'] = 'Aantal dagen op voorhand dat er een waarschuwing voor het verlopen van het wachtwoord gegeven wordt.';
@@ -57,7 +57,7 @@ $string['auth_ldap_user_type'] = 'Kies hoe gebruikers in LDAP bewaard worden. De
 $string['auth_ldap_version'] = 'De versie van het LDAP-protocol die jouw server gebruikt.';
 $string['auth_ldapdescription'] = 'Deze methode levert authenticatie door middel van een externe LDAP-server.  
 Als de gebruikersnaam en wachtwoord geldig zijn maakt Moodle een nieuwe gebruiker aan in zijn database. Deze module kan gebruikerseigenschappen vanuit LDAP lezen en bepaalde velden in Moodle alvast invullen. Bij latere aanmeldingen worden alleen de gebruikersnaam en het wachtwoord gecontroleerd.';
-$string['auth_ldapextrafields'] = 'Deze velden zijn niet verplicht. Je kunt ervoor kiezen om sommige Moodle-gebruikersvelden van te voren in te vullen met informatie uit de <B>LDAP-velden</B> die je hier kunt aangeven. <P>Als je deze velden leeg laat zal er niets vanuit LDAP worden overgebracht en worden de standaardwaarden van Moodle gebruikt.<P> In beide gevallen kan de gebruiker al deze velden wijzigingen zodra hij/zij ingelogd is.';
+$string['auth_ldapextrafields'] = 'Deze velden zijn niet verplicht. Je kunt ervoor kiezen om sommige Moodle-gebruikersvelden van te voren in te vullen met informatie uit de <b>LDAP-velden</b> die je hier kunt aangeven. <P>Als je deze velden leeg laat zal er niets vanuit LDAP worden overgebracht en worden de standaardwaarden van Moodle gebruikt.<p> In beide gevallen kan de gebruiker al deze velden wijzigingen zodra hij/zij ingelogd is.</p>';
 $string['auth_ldaptitle'] = 'Gebruik een LDAP-server';
 $string['auth_manualdescription'] = 'Deze methode verwijdert alle mogelijkheden voor gebruikers om hun eigen accounts aan te maken. Alle accounts moeten handmatig worden aangemaakt door de beheerder.';
 $string['auth_manualtitle'] = 'Alleen handmatige accounts';
@@ -79,9 +79,9 @@ $string['auth_pop3port'] = 'De poort van de server (meestal is dat 110)';
 $string['auth_pop3title'] = 'Gebruik een  POP3-server';
 $string['auth_pop3type'] = 'Het type van de server. Als jouw server gebruikt maakt van beveiliging door middel van een certificaat, kies pop3cert.';
 $string['auth_updatelocal'] = 'Update lokale gegevens';
-$string['auth_updatelocal_expl'] = '<p><b>Update lokale gegevens:</b>Als je dit inschakelt, dan zal het veld (van de externe authenticatie) automatisch geüpdatet worden telkens de gebruiker zich aanmeldt of wanneer er een gebruikerssynchronisatie gebeurt. Velden die lokaal worden geüpdatet moeten geblokkeerd worden.';
+$string['auth_updatelocal_expl'] = '<p><b>Update lokale gegevens:</b>Als je dit inschakelt, dan zal het veld (van de externe authenticatie) automatisch geüpdatet worden telkens de gebruiker zich aanmeldt of wanneer er een gebruikerssynchronisatie gebeurt. Velden die lokaal worden geüpdatet moeten geblokkeerd worden.</p>';
 $string['auth_updateremote'] = 'Update externe gegevens';
-$string['auth_updateremote_expl'] = '<p><b>Update de externe gegevens:</b>Als dit ingeschakeld is dan zal de externe authenticatie geüpdatet worden als een gebruikersrecor geüpdatet wordt. De velden mogen niet geblokkeerd zijn om bewerken mogelijk te maken.';
+$string['auth_updateremote_expl'] = '<p><b>Update de externe gegevens:</b>Als dit ingeschakeld is dan zal de externe authenticatie geüpdatet worden als een gebruikersrecor geüpdatet wordt. De velden mogen niet geblokkeerd zijn om bewerken mogelijk te maken.</p>';
 $string['auth_updateremote_ldap'] = '<p><b>Merk op:</b>Voor het updaten van externe LDAP-gegevens is het nodig dat je binddn en bindpw instelt bij een bind-gebruiker met bewerkrechten op alle gebruikersrecords. Op dit ogenblik behoud het geen attributen met meerdere waarden en dus zullen extra waarden bij update verwijderd worden.</p>';
 $string['auth_user_create'] = 'Zet het aanmaken van gebruikers aan';
 $string['auth_user_creation'] = 'Nieuwe (anonieme) gebruikers kunnen gebruikersaccounts aanmaken op de externe authenticatiebron en bevestigen via e-mail. Als je dit aanzet, vergeet dan niet ook de module specifieke opties voor het aanmaken van gebruikers te configureren.';
@@ -104,6 +104,6 @@ $string['stdchangepassword_expl'] = 'Zet dit op ja als het externe systeem toela
 $string['stdchangepassword_explldap'] = 'Merk op: het is aan te raaden om LDAP te gebruiken met een SSL geëncrypteerde tunnel (ldaps://) als de LDAP-server op afstand staat.';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'nl';
+$string['thislanguage'] = 'ï»¿nl';
 
 ?>

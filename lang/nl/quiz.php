@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 development (2004082600)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -246,6 +246,9 @@ $string['shufflequestions'] = 'Mix de vragen';
 $string['significantfigures'] = 'met $a';
 $string['subneterror'] = 'Deze test is zo beveiligd dat hij alleen toegankelijk is vanop bepaalde plaatsen. Jouw computer staat niet in de lijst met toegelaten machines om deze test te maken.';
 $string['substitutedby'] = 'zal vervangen worden door';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '﻿nl';
 $string['time'] = 'Tijd  ';
 $string['timecompleted'] = 'Voltooid';
 $string['timeleft'] = 'Resterende tijd';

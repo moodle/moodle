@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 unstable development (2004083000)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
@@ -147,6 +147,9 @@ $string['subscribestart'] = 'Stuur me een kopie per e-mail wanneer iemand post o
 $string['subscribestop'] = 'Ik wil geen kopie van inzendingen op dit forum per e-mail ontvangen';
 $string['subscription'] = 'Lid worden';
 $string['subscriptions'] = 'Inschrijvingen';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '﻿nl';
 $string['unsubscribe'] = 'Zeg het lidmaatschap van dit forum op';
 $string['unsubscribed'] = 'Lidmaatschap opgezegd';
 $string['unsubscribeshort'] = 'Lidmaatschap opzeggen';

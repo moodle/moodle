@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.4 development (2004060400)
+      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['calendar'] = 'Kalender';
@@ -68,6 +68,9 @@ $string['shown'] = 'Getoond';
 $string['spanningevents'] = 'Komende activiteiten';
 $string['sun'] = 'Zo';
 $string['sunday'] = 'Zondag';
+$string['thischarset'] = 'iso-8859-1 ';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '﻿nl';
 $string['thu'] = 'Do';
 $string['thursday'] = 'Donderdag';
 $string['timeformat_12'] = '12-uur (am/pm)';

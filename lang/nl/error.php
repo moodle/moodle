@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
+      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['coursegroupunknown'] = 'Het vak dat met groep $a overeenkomt is niet gespecifieerd';
@@ -16,10 +16,10 @@ $string['restricteduser'] = 'Sorry, maar je hebt onvoldoende rechten om dat te d
 $string['sessionipnomatch'] = 'Sorry, maar je IP-adres is gewijzigd sinds je aangemeld bent. Deze beveiligingsmethode voorkomt dat crackers je identiteit stelen terwijl je aangemeld bent op deze site. Gewone gebruikers zouden deze melding niet mogen zien - vraag je sitebeheerder om hulp.';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'nl';
+$string['thislanguage'] = '﻿nl';
 $string['unknowncourse'] = 'Onbekend vak \"$a\"';
 $string['usernotaddederror'] = 'Gebruiker \"$a\" niet toegevoegd - onbekende fout';
 $string['usernotaddedregistered'] = 'Gebruiker \"$a\" niet toegevoegd - gebruiker bestaat al';
-$string['usernotavailable'] = 'Je hebt het recht niet om de detailgegevens van deze gebruiker te zien';
+$string['usernotavailable'] = 'Je hebt het recht niet om de detailgegevens van deze gebruiker te zien.';
 
 ?>

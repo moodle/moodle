@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['admindirerror'] = 'De adminmap die je opgeeft is niet juist';
 $string['admindirname'] = 'Adminmap';
-$string['admindirsetting'] = '<p>Enkele webhosts gebruiken /admin als speciale URL  om je toegang te geven tot een controlepaneel of iets dergelijks. Jammer genoeg geeft dit conflicten met de standaardmap voor de Moodle-beheerpagina\'s. Je kunt dit toch aan het werk krijgen door de adminmap van jouw installatie te hernoemen en deze nieuwe mapnaam hier te zetten. Bijvoorbeeld <blockquote>moodleadmin</blockquote>. Dit zal alle beheerslinks in Moodle aanpassen.</p>';
+$string['admindirsetting'] = 'Enkele webhosts gebruiken /admin als speciale URL  om je toegang te geven tot een controlepaneel of iets dergelijks. Jammer genoeg geeft dit conflicten met de standaardmap voor de Moodle-beheerpagina\'s. Je kunt dit toch aan het werk krijgen door de adminmap van jouw installatie te hernoemen en deze nieuwe mapnaam hier te zetten. Bijvoorbeeld <br />&nbsp;<br /><b>moodleadmin</b><br />&nbsp;<br />. Dit zal alle beheerlinks in Moodle aanpassen.';
 $string['caution'] = 'Opgelet';
 $string['chooselanguage'] = 'Kies een taal';
 $string['compatibilitysettings'] = 'Bezig je PHP-instellingen te controleren ...';
@@ -12,13 +12,13 @@ $string['configfilenotwritten'] = 'Het installatiescript kon het bestand config.
 $string['configfilewritten'] = 'Het maken van config.php is gelukt';
 $string['configurationcomplete'] = 'De configuratie is volledig';
 $string['database'] = 'Databank';
-$string['databasesettings'] = 'Nu moet je de databank voor de gegevens van Moodle configureren. Deze databank zou je al aangemaakt moeten hebben, samen met een gebruikersnaam en wachtwoord voor toegang tot die databank.<br/>
-<br /> <br />
-<b>Type:</b> mysql of postgres7<br/>
-<b>Host Server:</b> bv localhost of db.isp.com<br/>
-<b>Naam:</b> databanknaam, bv moodle<br/>
-<b>Gebruiker: de gebruikersnaam voor je databank<br/>
-<b>Wachtwoord:</b> het wachtwoord voor je databank<br/>
+$string['databasesettings'] = 'Nu moet je de databank voor de gegevens van Moodle configureren. Deze databank zou je al aangemaakt moeten hebben, samen met een gebruikersnaam en wachtwoord voor toegang tot die databank.<br />
+<br />&nbsp;<br />
+<b>Type:</b> mysql of postgres7<br />
+<b>Host Server:</b> bv localhost of db.isp.com<br />
+<b>Naam:</b> databanknaam, bv moodle<br />
+<b>Gebruiker: de gebruikersnaam voor je databank<br />
+<b>Wachtwoord:</b> het wachtwoord voor je databank<br />
 <b>Tabelvoorvoegsel:</b> een voorvoegsel dat je wil gebruiken voor alle tabelnamen';
 $string['dataroot'] = 'Gegevens';
 $string['datarooterror'] = 'De \'data-map\' die je opgaf kon niet gevonden of gemaakt worden. Verbeter ofwel het pad of maak die map manueel.';
@@ -45,7 +45,7 @@ $string['fail'] = 'Niet OK';
 $string['fileuploads'] = 'Bestanden uploaden';
 $string['fileuploadserror'] = 'Dit moet ingeschakeld zijn';
 $string['fileuploadshelp'] = '<p>Het lijkt er op dat het uploaden van bestanden uitgeschakeld is op jouw server.</p>
-<p>Moodle kan verder geïnstalleerd worden, maar zonder deze mogelijkheid zul je geen cursusmateriaal of afbeeldingen voor de profielen van je gebruikers kunnen uploaden.
+<p>Moodle kan verder geïnstalleerd worden, maar zonder deze mogelijkheid zul je geen cursusmateriaal of afbeeldingen voor de profielen van je gebruikers kunnen uploaden.</p>
 <p>Om het uploaden van bestanden in te schakelen moet je (of je systeembeheerder) php.ini op je systeem bewerken en volgende instelling wijzigen:
 <b>file_uploads</b> op \'1\' zetten.</p>';
 $string['gdversion'] = 'GD-versie';
@@ -63,15 +63,15 @@ $string['magicquotesruntimehelp'] = '<p>Magic Quotes runtime moet uitgeschakeld 
 $string['memorylimit'] = 'Geheugenlimiet';
 $string['memorylimiterror'] = 'De PHP-geheugenlimiet staat eerder laag ingesteld ...  je zou hierdoor later problemen kunnen krijgen.';
 $string['memorylimithelp'] = '<p>De PHP-geheugenlimiet van je server is ingesteld op $a.</p>
-<p>Hierdoor kan Moodle geheugenproblemen krijgen, vooral als je veel modules installeert en/of veel gebruikers hebt.
+<p>Hierdoor kan Moodle geheugenproblemen krijgen, vooral als je veel modules installeert en/of veel gebruikers hebt.</p>
 
 <p>We raden je aan PHP met een hogere geheugenlimiet te configureren indien mogelijk, bijvoorbeeld 16Mb. Er zijn verschillende mogelijkheden om dat te doen. Je kunt proberen:
 <ol>
 <li>Indien je kunt PHP hercompileren met <i>--enable-memory-limit</i>.
 Hierdoor kan Moodle zelf zijn geheugenlimiet instellen.
-<li>Als je toegang hebt tot het php.ini-bestand, kun je de <b>memory_limit</b>-instelling veranderen naar bv 16Mb. Als je geen toegang hebt kun je je systeembeheerder vragen dit voor je te wijzigen.
+<li>Als je toegang hebt tot het php.ini-bestand, kun je de <b>memory_limit</b>-instelling veranderen naar bv 16Mb. Als je geen toegang hebt kun je je systeembeheerder vragen dit voor je te wijzigen.</li>
 <li>Op sommige PHP-servers kun je een .htaccess-bestand maken in de Moodle-map met volgende lijn: <p><blockquote>php_value memory_limit 16M</blockquote></p>
-<p>Opgelet: op sommige servers zal dit verhinderen dat <b>alle</b> PHP-bestanden uitgevoerd worden. (je zult foutmeldingen zien wanneer je naar php-pagina\'s kijkt) Je zult dan het .htaccess-bestand moeten verwijderen.
+<p>Opgelet: op sommige servers zal dit verhinderen dat <b>alle</b> PHP-bestanden uitgevoerd worden. (je zult foutmeldingen zien wanneer je naar php-pagina\'s kijkt) Je zult dan het .htaccess-bestand moeten verwijderen.</li>
 </ol>';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP is niet goed geconfigureerd met de MySQL-extentie om met MySQL te communiceren. Controleer je php.ini-bestand of hercompileer PHP.';
 $string['pass'] = 'OK';
@@ -90,7 +90,7 @@ $string['sessionautostarthelp'] = '<p>Moodle heeft session support nodig en zal 
 <p>Sessies kunnen ingeschakeld worden in het php.ini-bestand ... zoek naar de session.auto_start parameter.</p>';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'nl';
+$string['thislanguage'] = 'ï»¿nl';
 $string['wwwroot'] = 'Web adres';
 $string['wwwrooterror'] = 'Het webadres lijkt niet geldig te zijn - deze Moodle-installatie is blijkbaar niet op die plaats.';
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // appointment.php - created with Moodle 1.4 development (2004081200)
+      // appointment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['allowresubmit'] = 'Laat opnieuw inzenden toe';
@@ -11,7 +11,7 @@ $string['description'] = 'Beschrijving';
 $string['early'] = '$a vroeg';
 $string['failedupdatefeedback'] = 'Het updaten van de feedback op de inzending voor gebruiker $a is mislukt';
 $string['feedback'] = 'Feedback';
-$string['feedbackupdated'] = 'Feedback voor inzendingen geüpdatet voor $a geruikers';
+$string['feedbackupdated'] = 'Feedback voor inzendingen geüpdated voor $a geruikers';
 $string['late'] = '$a te laat';
 $string['maximumgrade'] = 'Maximumcijfer';
 $string['maximumsize'] = 'Maximumgrootte';
@@ -26,6 +26,9 @@ $string['submissionfeedback'] = 'Feedback bij inzending';
 $string['submissions'] = 'Inzendingen';
 $string['submitappointment'] = 'Stuur je afspraak in met dit formulier';
 $string['submitted'] = 'Ingezonden';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'ï»¿nl';
 $string['timeend'] = 'Einde van de afspraak';
 $string['timestart'] = 'Begin van de afspraak';
 $string['typeoffline'] = 'Off line activiteit';
@@ -36,7 +39,7 @@ $string['uploaderror'] = 'Er is een fout gebeurd tijdens het bewaren van het bes
 $string['uploadfailnoupdate'] = 'Het bestand is goed geüploaded, maar kon je inzending niet updaten!';
 $string['uploadfiletoobig'] = 'Sorry, maar dit bestand is te groot (de limiet is $a bytes)';
 $string['uploadnofilefound'] = 'Er is geen bestand gevonden - ben je er zeker van dat je er één geselecteerd hebt om te uploaden?';
-$string['uploadnotregistered'] = '\'$a\' is goed geüploaded, maar de inzending is niet geregistreerd!';
+$string['uploadnotregistered'] = '\'$a\' is goed geüploadet, maar de inzending is niet geregistreerd!';
 $string['uploadsuccess'] = '\'$a\' met succes geüploaded';
 $string['viewfeedback'] = 'Bekijk de cijfers en de feedback van de afspraak';
 $string['viewsubmissions'] = 'Bekijk $a ingestuurde afspraken';

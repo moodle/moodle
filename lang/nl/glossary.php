@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 unstable development (2004091700)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['addcomment'] = 'Voeg commentaar toe';
@@ -156,6 +156,9 @@ $string['sortchronogically'] = 'Sorteer chronologisch';
 $string['special'] = 'Speciale tekens';
 $string['standardview'] = 'Blader alfabetisch';
 $string['studentcanpost'] = 'Leerlingen kunnen items toevoegen';
+$string['thischarset'] = 'iso-8859-1 ';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '﻿nl';
 $string['totalentries'] = 'Totaal aantal items';
 $string['usedynalink'] = 'Link de items uit de woordenlijst automatisch';
 $string['waitingapproval'] = 'Nog goedkeuren';

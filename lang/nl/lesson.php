@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['actionaftercorrectanswer'] = 'Actie na juist antwoord';
@@ -43,7 +43,7 @@ $string['displayinleftmenu'] = 'Toon in linkermenu?';
 $string['displayleftmenu'] = 'Toon linkermenu';
 $string['displayofgrade'] = 'Tonen van het cijfer (voor de leerling)';
 $string['displayreview'] = 'Toon herwerkknop';
-$string['displayscorewithessays'] = 'Je hebt $a->score punten op $a->tempmaxgrade gehaald voor de automatisch beoordeelde vragen.<br />Je ';
+$string['displayscorewithessays'] = 'Je hebt $a->score punten op $a->tempmaxgrade gehaald voor de automatisch beoordeelde vragen.<br />Je $a->essayquestions open vragen zullen beoordeeld worden <br />en op een later moment toegevoegd worden bij je totaalcijfer.>br /><br />Je resultaat op dit ogenblik, dus zonder de open vragen is $a->score op $a->grade. ';
 $string['displayscorewithoutessays'] = 'Je cijfer is $a->score (op $a->grade).';
 $string['editlessonsettings'] = 'Bewerk de instellingen van deze les';
 $string['editpagecontent'] = 'Bewerk de inhoud van deze pagina';
@@ -164,7 +164,7 @@ $string['thatsthewronganswer'] = 'Dat is het verkeerde antwoord';
 $string['thefollowingpagesjumptothispage'] = 'Volgende pagina verwijst naar deze pagina';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'nl';
+$string['thislanguage'] = '﻿nl';
 $string['thispage'] = 'Deze pagina';
 $string['timed'] = 'Met tijdslimiet';
 $string['topscorestitle'] = 'Top $a->maxhighscores cijfers voor de les $a->name';

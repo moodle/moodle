@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.3 development (2004041800)
+      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['allowresubmit'] = 'Sta herhaald insturen toe';
@@ -8,8 +8,7 @@ $string['assignmentmail'] = '$a->teacher heeft feedback gepost voor je bijdrage 
 Hij is toegevoegd aan je ingestuurde opdracht:
 $a->url';
 $string['assignmentmailhtml'] = '$a->teacher heeft feedback gepost voor je bijdrage aan de opdracht \'<i>$a->assignment</i>\'<br /><br />
-Hij is toegevoegd aan je ingestuurde <a href=\"$a->url\">opdracht</a>.
-';
+Hij is toegevoegd aan je ingestuurde <a href=\"$a->url\">opdracht</a>.';
 $string['assignmentname'] = 'Naam van de opdracht';
 $string['assignmenttype'] = 'Soort opdracht';
 $string['configmaxbytes'] = 'Standaard maximumgrootte voor alle opdrachten op de site (afhankelijk van vaklimieten en andere lokale instellingen)';
@@ -35,18 +34,18 @@ $string['submissionfeedback'] = 'Feedback op de ingestuurde opdracht';
 $string['submissions'] = 'Ingestuurde opdrachten';
 $string['submitassignment'] = 'Stuur je opdracht in door dit formulier in te vullen';
 $string['submitted'] = 'Ingestuurd';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'ï»¿nl';
 $string['typeoffline'] = 'Off line activiteit';
 $string['typeuploadsingle'] = 'Upload een bestand';
-$string['uploadbadname'] = 'In deze bestandsnaam staan rare tekens, het bestand kon daardoor niet worden geüpload
-';
+$string['uploadbadname'] = 'In deze bestandsnaam staan rare tekens, het bestand kon daardoor niet worden geüpload';
 $string['uploadedfiles'] = 'Ingestuurde bestanden';
 $string['uploaderror'] = 'Er is een fout geconstateerd tijdens het opslaan van het bestand op de server';
-$string['uploadfailnoupdate'] = 'Het bestand werd prima geüpload, maar je bijdrage kon niet worden bijgewerkt!
-';
+$string['uploadfailnoupdate'] = 'Het bestand werd prima geüpload, maar je bijdrage kon niet worden bijgewerkt!';
 $string['uploadfiletoobig'] = 'Helaas is dat bestand te groot (de toegestane grootte is $a bytes)';
 $string['uploadnofilefound'] = 'Er werd geen bestand gevonden - weet je zeker dat je er één geselecteerd had om te uploaden?';
-$string['uploadnotregistered'] = '\'$a\' werd prima geüpload, maar je bijdrage werd niet verwerkt!
-';
+$string['uploadnotregistered'] = '\'$a\' werd prima geüpload, maar je bijdrage werd niet verwerkt!';
 $string['uploadsuccess'] = '\'$a\' met succes geüpload  ';
 $string['viewfeedback'] = 'Bekijk de cijfers en feedback voor de opdrachten';
 $string['viewsubmissions'] = 'Bekijk $a ingestuurde opdrachten';

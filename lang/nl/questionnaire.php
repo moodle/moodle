@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // questionnaire.php - created with Moodle 1.4 development (2004081200)
+      // questionnaire.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['alreadyfilled'] = 'Deze enquête heb je voor ons al ingevuld. Bedankt!';
@@ -12,5 +12,8 @@ $string['qmanagetitle'] = 'Onderzoeksbeheer phpESP';
 $string['qtype'] = 'Type';
 $string['questionnaireid'] = 'Onderzoek';
 $string['respondenttype'] = 'Type ondervraagde';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'ï»¿nl';
 
 ?>

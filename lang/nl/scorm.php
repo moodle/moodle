@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 unstable development (2004083000)
+      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['asset'] = 'Bezit';
@@ -66,6 +66,9 @@ $string['scoes'] = 'Scoes';
 $string['score'] = 'Score';
 $string['syntax'] = 'Syntaxfout';
 $string['tag_error'] = 'Onbekende tag ($a->tag) met deze inhoud: $a->value';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '﻿nl';
 $string['too_many_attributes'] = 'Tag $a->tag heeft te veel attributen';
 $string['too_many_children'] = 'Tag $a->tag heeft teveel children';
 $string['trackingloose'] = 'WAARSCHUWING: de gegevens voor opvolging van dit SCORM-pakket zullen verloren gaan';
