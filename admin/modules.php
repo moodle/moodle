@@ -42,7 +42,7 @@
 
 /// If data submitted, then process and store.
 
-    if (!empty($hide)) {
+    if (!empty($hide) and confirm_sesskey()) {
         if (!$module = get_record("modules", "name", $hide)) {
             error("Module doesn't exist!");
         }
@@ -50,7 +50,7 @@
         set_field("course_modules", "visible", "0", "module", $module->id); // Hide all related activity modules
     }
 
-    if (!empty($show)) {
+    if (!empty($show) and confirm_sesskey()) {
         if (!$module = get_record("modules", "name", $show)) {
             error("Module doesn't exist!");
         }
@@ -58,13 +58,13 @@
         set_field("course_modules", "visible", "1", "module", $module->id); // Show all related activity modules
     }
 
-    if (!empty($delete)) {
+    if (!empty($delete) and confirm_sesskey()) {
       
         $strmodulename = get_string("modulename", "$delete");
 
         if (empty($confirm)) {
             notice_yesno(get_string("moduledeleteconfirm", "", $strmodulename), 
-                         "modules.php?delete=$delete&confirm=$delete", 
+                         "modules.php?delete=$delete&confirm=$delete&sesskey=$USER->sesskey", 
                          "modules.php");
             print_footer();
             exit;
@@ -162,7 +162,7 @@
 
         $icon = "<img src=\"$modpixpath/$module->name/icon.gif\" hspace=10 height=16 width=16 border=0>";
 
-        $delete = "<a href=\"modules.php?delete=$module->name\">$strdelete</a>";
+        $delete = "<a href=\"modules.php?delete=$module->name&sesskey=$USER->sesskey\">$strdelete</a>";
 
         if (file_exists("$CFG->dirroot/mod/$module->name/config.html")) {
             $settings = "<a href=\"module.php?module=$module->name&sesskey=$USER->sesskey\">$strsettings</a>";
@@ -173,11 +173,11 @@
         $count = count_records("$module->name");
 
         if ($module->visible) {
-            $visible = "<a href=\"modules.php?hide=$module->name\" title=\"$strhide\">".
+            $visible = "<a href=\"modules.php?hide=$module->name&sesskey=$USER->sesskey\" title=\"$strhide\">".
                        "<img src=\"$pixpath/i/hide.gif\" align=\"absmiddle\" height=16 width=16 border=0></a>";
             $class = "";
         } else {
-            $visible = "<a href=\"modules.php?show=$module->name\" title=\"$strshow\">".
+            $visible = "<a href=\"modules.php?show=$module->name&sesskey=$USER->sesskey\" title=\"$strshow\">".
                        "<img src=\"$pixpath/i/show.gif\" align=\"absmiddle\" height=16 width=16 border=0></a>";
             $class = "class=\"dimmed_text\"";
         }
