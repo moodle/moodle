@@ -108,11 +108,13 @@ function set_parameters() {
                                        'value'   => current_language()),
             'sitename'        => array('langstr' => get_string('fullsitename'),
                                        'value'   => $site->fullname),
+            'serverurl'       => array('langstr' => get_string('serverurl'),
+                                       'value'   => $CFG->wwwroot),
             'currenttime'     => array('langstr' => get_string('time'),
                                        'value'   => time()),
             'encryptedcode'   => array('langstr' => get_string('encryptedcode'),
-                                       'value'   => md5($_SERVER['REMOTE_ADDR'].$CFG->resource_secretphrase)),
-                                                   
+                                       'value'   => $this->set_encrypted_parameter()),
+
             'label6'          => array('langstr' => "",
                                        'value'   =>'/optgroup')
             );
@@ -539,6 +541,19 @@ function setup($form) {
     include("$CFG->dirroot/mod/resource/type/file/file.html");
 
     parent::setup_end();
+}
+
+//backwards compatible with existing resources
+function set_encrypted_parameter() {
+    global $CFG;
+    
+    if (!empty($this->resource->reference) && file_exists($CFG->dirroot ."/mod/resource//type/file/externserverfile.php")) {
+        include $CFG->dirroot ."/mod/resource/type/file/externserverfile.php";
+        if (function_exists(extern_server_file)) {
+            return extern_server_file($this->resource->reference);
+        }
+    }
+    return md5($_SERVER['REMOTE_ADDR'].$CFG->resource_secretphrase);
 }
 
 }
