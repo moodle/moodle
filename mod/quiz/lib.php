@@ -577,9 +577,9 @@ function quiz_print_question($number, $question, $grade, $quizid,
            echo format_text($question->questiontext, $question->questiontextformat, NULL, $courseid);
            quiz_print_possible_question_image($quizid, $question);
            if ($response) {
-               $value = "value=\"$response[0]\"";
+               $value = 'value="'.s($response[0]).'"';
            } else {
-               $value = "";
+               $value = '';
            }
            echo "<p align=\"right\">$stranswer: <input type=\"text\" name=\"q$realquestion->id\" size=\"50\" $value /></p>";
            if ($feedback) {
