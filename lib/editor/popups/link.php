@@ -14,7 +14,7 @@
 <html>
 <head>
 <title><?php print_string("insertlink","editor");?></title>
-<meta http-equiv="Content-Type" content="text/html; <?php print_string("thischarset");?>" />
+<meta http-equiv="Content-Type" content="text/html; charset=<?php print_string("thischarset");?>" />
 <script language="javascript" type="text/javascript">
 
 function onCancel() {
