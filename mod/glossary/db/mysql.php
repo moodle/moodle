@@ -72,6 +72,25 @@ function glossary_upgrade($oldversion) {
 
     }
 
+    if ( $oldversion < 2003101501 ) {
+        execute_sql( "ALTER TABLE `{$CFG->prefix}glossary` " .
+                    "ADD `allowcomments`  TINYINT(2) UNSIGNED NOT NULL DEFAULT '0' AFTER `showall` " );
+
+        execute_sql("CREATE TABLE `{$CFG->prefix}glossary_comments` (
+                    `id` INT(10) unsigned NOT NULL auto_increment,
+                    `entryid` INT(10) UNSIGNED NOT NULL default '0',
+                    `userid` INT(10) UNSIGNED NOT NULL default '0',
+                    `comment` TEXT NOT NULL default '',
+                    `timemodified` INT(10) UNSIGNED NOT NULL default '0',
+                    `format` TINYINT(2) UNSIGNED NOT NULL default '0',
+                    PRIMARY KEY  (`id`)
+                    ) TYPE=MyISAM COMMENT='comments on glossary entries'");
+
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('glossary', 'add comment', 'glossary', 'name') ");
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('glossary', 'update comment', 'glossary', 'name') ");
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('glossary', 'delete comment', 'glossary', 'name') ");
+    }
+
     return true;
 }
 

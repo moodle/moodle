@@ -49,6 +49,7 @@
             $glossary->showspecial = backup_todb($info['MOD']['#']['SHOWSPECIAL']['0']['#']);
             $glossary->showalphabet = backup_todb($info['MOD']['#']['SHOWALPHABET']['0']['#']);
             $glossary->showall = backup_todb($info['MOD']['#']['SHOWALL']['0']['#']);
+            $glossary->allowcomments = backup_todb($info['MOD']['#']['ALLOWCOMMENTS']['0']['#']);
             $glossary->timecreated = backup_todb($info['MOD']['#']['TIMECREATED']['0']['#']);
             $glossary->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
@@ -114,7 +115,6 @@
             $entry->timecreated = backup_todb($ent_info['#']['TIMECREATED']['0']['#']);
             $entry->timemodified = backup_todb($ent_info['#']['TIMEMODIFIED']['0']['#']);
             $entry->teacherentry = backup_todb($ent_info['#']['TEACHERENTRY']['0']['#']);
-
 
             //We have to recode the userid field
             $user = backup_getid($restore->backup_unique_code,"user",$entry->userid);

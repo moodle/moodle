@@ -235,25 +235,34 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview
     $isteacher = isteacher($course->id);
     $ismainglossary = $glossary->mainglossary;
     
-	if ($isteacher or $glossary->studentcanpost and $entry->userid == $USER->id) {
- 	  	echo "<p align=right>";
- 	  	// only teachers can export entries so check it out
-		if ($isteacher and !$ismainglossary and !$importedentry) {
-			$mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
-			if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
-				
+    echo "<table width=100% border=0><tr><td>";
+        
+    $count = count_records("glossary_comments","entryid",$entry->id);
+    echo "<a href=\"comments.php?id=$cm->id&eid=$entry->id\">$count " . get_string("comments","glossary") . "</a>";
+    echo "</td><td align=\"right\">";
+    if ( $glossary->allowcomments ) {
+        echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id\"><img  alt=\"" . get_string("addcomment","glossary") . "\" src=\"comment.gif\" height=16 width=16 border=0></a> ";
+    }
+	
+    if ($isteacher or $glossary->studentcanpost and $entry->userid == $USER->id) {
+        // only teachers can export entries so check it out
+
+        if ($isteacher and !$ismainglossary and !$importedentry) {
+            $mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
+            if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
+
                 echo "<a href=\"exportentry.php?id=$cm->id&entry=$entry->id&currentview=$currentview&cat=$cat\"><img  alt=\"" . get_string("exporttomainglossary","glossary") . "\"src=\"export.gif\" height=11 width=11 border=0></a> ";
 
-			}
-		}
-		
+            }
+        }
+
         if ( $entry->sourceglossaryid ) {
             $icon = "minus.gif";   // graphical metaphor (minus) for deleting an imported entry
         } else {
             $icon = "../../pix/t/delete.gif";
         }
 
-		// Exported entries can be updated/deleted only by teachers in the main glossary
+        // Exported entries can be updated/deleted only by teachers in the main glossary
         if ( !$importedentry and ($isteacher or !$ismainglossary) ) {
             echo "<a href=\"deleteentry.php?id=$cm->id&mode=delete&entry=$entry->id&currentview=$currentview&cat=$cat\"><img  alt=\"" . get_string("delete") . "\"src=\"";
             echo $icon;
@@ -263,7 +272,8 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview
         } elseif ( $importedentry ) {
             echo "<font size=-1>" . get_string("exportedentry","glossary") . "</font>";
         }
-	}
+    }
+    echo "</td></tr></table>";
 }
 
 function glossary_search_entries($searchterms, $glossary, $includedefinition) {
@@ -325,9 +335,9 @@ function glossary_search_entries($searchterms, $glossary, $includedefinition) {
         }
     }
 
-	if ( !$includedefinition ) {
-		$definitionsearch = "0";
-	}
+    if ( !$includedefinition ) {
+        $definitionsearch = "0";
+    }
 
     $selectsql = "{$CFG->prefix}glossary_entries e,
                   {$CFG->prefix}glossary g $onlyvisibletable
@@ -337,7 +347,7 @@ function glossary_search_entries($searchterms, $glossary, $includedefinition) {
 
     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
 
-	return get_records_sql("SELECT e.concept, e.definition, e.userid, e.timemodified, e.id, e.format  FROM
+    return get_records_sql("SELECT e.concept, e.definition, e.userid, e.timemodified, e.id, e.format  FROM
                             $selectsql ORDER BY e.concept ASC $limit");
 }
 
@@ -571,13 +581,13 @@ for ($row = 0; $row < $numrows; $row++) {
                         echo "<a href=\"" . $data[$tabproccessed]->link . "\">";
                     }
 
-					if ( !$data[$tabproccessed]->link ) {
-					    echo "<font color=\"$inactivefontcolor\">";
-					}
+                    if ( !$data[$tabproccessed]->link ) {
+                        echo "<font color=\"$inactivefontcolor\">";
+                    }
                     echo $data[$tabproccessed]->caption;
-					if ( !$data[$tabproccessed]->link ) {
-					    echo "</font>";
-					}
+                    if ( !$data[$tabproccessed]->link ) {
+                        echo "</font>";
+                    }
 
                     if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
                         echo "</a>";
@@ -615,13 +625,13 @@ for ($row = 0; $row < $numrows; $row++) {
                         echo "<a href=\"" . $data[$tabproccessed]->link . "\">";
                     }
 
-					if ( !$data[$tabproccessed]->link ) {
-					    echo "<font color=\"$inactivefontcolor\">";
-					}
+                    if ( !$data[$tabproccessed]->link ) {
+                        echo "<font color=\"$inactivefontcolor\">";
+                    }
                     echo $data[$tabproccessed]->caption;
-					if ( !$data[$tabproccessed]->link ) {
-					    echo "</font>";
-					}
+                    if ( !$data[$tabproccessed]->link ) {
+                        echo "</font>";
+                    }
 
                     if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
                         echo "</a>";
@@ -781,6 +791,51 @@ function glossary_sort_entries ( $entry0, $entry1 ) {
     } else {
         return 0;
     }
+}
+
+function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
+    global $THEME, $CFG, $USER;
+
+//    if ($entry->timemarked < $entry->modified) {
+        $colour = $THEME->cellheading2;
+//    } else {
+//        $colour = $THEME->cellheading;
+//    }
+
+    $user = get_record("user", "id", $comment->userid);
+    $strby = get_string("writtenby","glossary");
+
+    echo "<table class=\"generalbox\"  BORDER=1 CELLSPACING=0 valign=top cellpadding=0 width=70% border=0><tr><td>";
+
+    echo "\n<TABLE width=\"100%\" BORDER=0 CELLSPACING=0 valign=top cellpadding=5><tr>";
+  
+    echo "\n<TD BGCOLOR=\"$THEME->cellheading\" WIDTH=25% VALIGN=TOP align=right >";
+    print_user_picture($user->id, $course->id, $user->picture);
+    echo "<br><FONT SIZE=2>$strby $user->firstname $user->lastname</font>";
+    echo "<br><FONT SIZE=1>(".get_string("lastedited").": ".userdate($comment->timemodified).")</FONT></small><br>";
+    echo "</TD>";
+	
+    echo "<TD NOWRAP valign=top WIDTH=75% BGCOLOR=\"$THEME->cellcontent\">";
+    if ($comment) {
+	    echo format_text($comment->comment, $comment->format);
+    } else {
+	  echo "<center>";
+        print_string("nocomment", "glossary");
+	  echo "</center>";
+    }
+
+    echo "<p align=right>";
+	if ( (time() - $comment->timemodified <  $CFG->maxeditingtime and $USER->id == $comment->userid)  or isteacher($course->id) ) {
+        echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=edit\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a> ";
+	}
+	if ( $USER->id == $comment->userid or isteacher($course->id) ) {
+        echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=delete\"><img  alt=\"" . get_string("delete") . "\" src=\"../../pix/t/delete.gif\" height=11 width=11 border=0></a>";
+	}
+    echo "</td>";
+	
+    echo "</tr></TABLE>\n";
+
+    echo "</td></tr></table>";
 }
 
 ?>

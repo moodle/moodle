@@ -20,6 +20,7 @@ CREATE TABLE prefix_glossary (
      showspecial int2 NOT NULL default '1',
      showalphabet int2 NOT NULL default '1',
      showall int2 NOT NULL default '1',
+     allowcomments int2 NOT NULL default '0',
      timecreated int4 NOT NULL default '0',
      timemodified int4 NOT NULL default '0',
      PRIMARY KEY  (id)
@@ -67,6 +68,20 @@ CREATE TABLE prefix_glossary_entries_categories (
 );
 
 #
+# Table structure for table `glossary_comments`
+#
+
+CREATE TABLE prefix_glossary_comments (
+     id SERIAL,
+     entryid int4 NOT NULL default '0',
+     userid int4 NOT NULL default '0',
+     comment text NOT NULL,
+     format int2 NOT NULL default '0',
+     timemodified int4 NOT NULL default '0',
+     PRIMARY KEY  (id)
+);
+
+#
 # Dumping data for table `log_display`
 #
 
@@ -79,4 +94,6 @@ INSERT INTO prefix_log_display VALUES ('glossary', 'update entry', 'glossary', '
 INSERT INTO prefix_log_display VALUES ('glossary', 'add category', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'update category', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'delete category', 'glossary', 'name');
-
+INSERT INTO prefix_log_display VALUES ('glossary', 'add comment', 'glossary', 'name');
+INSERT INTO prefix_log_display VALUES ('glossary', 'update comment', 'glossary', 'name');
+INSERT INTO prefix_log_display VALUES ('glossary', 'delete comment', 'glossary', 'name');

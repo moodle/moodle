@@ -20,6 +20,7 @@ CREATE TABLE prefix_glossary (
      showspecial tinyint(2) unsigned NOT NULL default '1',
      showalphabet tinyint(2) unsigned NOT NULL default '1',
      showall tinyint(2) unsigned NOT NULL default '1',
+     allowcomments tinyint(2) unsigned NOT NULL default '0',
      timecreated int(10) unsigned NOT NULL default '0',
      timemodified int(10) unsigned NOT NULL default '0',
      PRIMARY KEY  (id)
@@ -66,6 +67,17 @@ CREATE TABLE prefix_glossary_entries_categories (
      PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='categories of each glossary entry';
 
+CREATE TABLE prefix_glossary_comments (
+     id int(10) unsigned NOT NULL auto_increment,
+     entryid int(10) unsigned NOT NULL default '0',
+     userid int(10) unsigned NOT NULL default '0',
+     comment text NOT NULL,
+     format tinyint(2) unsigned NOT NULL default '0',
+     timemodified int(10) unsigned NOT NULL default '0',
+	 
+     PRIMARY KEY  (id)
+) TYPE=MyISAM COMMENT='comments on glossary entries';
+
 #
 # Dumping data for table `log_display`
 #
@@ -79,4 +91,7 @@ INSERT INTO prefix_log_display VALUES ('glossary', 'update entry', 'glossary', '
 INSERT INTO prefix_log_display VALUES ('glossary', 'add category', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'update category', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'delete category', 'glossary', 'name');
+INSERT INTO prefix_log_display VALUES ('glossary', 'add comment', 'glossary', 'name');
+INSERT INTO prefix_log_display VALUES ('glossary', 'update comment', 'glossary', 'name');
+INSERT INTO prefix_log_display VALUES ('glossary', 'delete comment', 'glossary', 'name');
 

@@ -11,6 +11,12 @@
     //                        |                                       |
     //                  glossary_entries -------------- glossary_entries_categories
     //         (UL,pk->id, fk->glossaryid, files)      (UL, [pk->categoryid,entryid]
+    //                        |                                       
+    //                        |                                       
+    //                        |                                       
+    //                  glossary_comments
+    //         (UL,pk->id, fk->entryid)
+    //
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -45,6 +51,7 @@
                 fwrite ($bf,full_tag("SHOWSPECIAL",4,false,$glossary->showspecial));
                 fwrite ($bf,full_tag("SHOWALPHABET",4,false,$glossary->showalphabet));
                 fwrite ($bf,full_tag("SHOWALL",4,false,$glossary->showall));
+                fwrite ($bf,full_tag("ALLOWCOMMENTS",4,false,$glossary->allowcomments));
                 fwrite ($bf,full_tag("TIMECREATED",4,false,$glossary->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$glossary->timemodified));
                 
@@ -52,6 +59,9 @@
 
                 backup_glossary_categories($bf,$preferences,$glossary->id, $preferences->mods["glossary"]->userinfo);
 
+                if ( $preferences->mods["glossary"]->userinfo ) {
+                    backup_glossary_comments($bf,$preferences,$glossary->id, $preferences->mods["glossary"]->userinfo);
+                }
                 //End mod
                 $status =fwrite ($bf,end_tag("MOD",3,true));
             }
@@ -134,7 +144,26 @@
                     fwrite ($bf,full_tag("TIMECREATED",6,false,$glo_ent->timecreated));
                     fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$glo_ent->timemodified));
                     fwrite ($bf,full_tag("TEACHERENTRY",6,false,$glo_ent->teacherentry));
+/*
+                    if ( $userinfo ) {
+                        $comments = get_records("glossary_comments","entryid",$glo_ent->id);
+                        if ( $comments ) {
+                            $status =fwrite ($bf,start_tag("COMMENTS",6,true));
+                            foreach ($comments as $comment) {
+                                $status =fwrite ($bf,start_tag("COMMENT",7,true));
 
+                                fwrite ($bf,full_tag("ID",6,false,$comment->id));
+                                fwrite ($bf,full_tag("USERID",6,false,$comment->userid));
+                                fwrite ($bf,full_tag("COMMENT",6,false,$comment->comment));
+                                fwrite ($bf,full_tag("FORMAT",6,false,$comment->format));
+                                fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$comment->timemodified));
+
+                                $status =fwrite ($bf,end_tag("COMMENT",7,true));
+                            }
+                            $status =fwrite ($bf,end_tag("COMMENTS",6,true));
+                        }
+                    }
+*/
                     $status =fwrite ($bf,end_tag("ENTRY",5,true));
 
                     //Now include entry attachment in backup (if it exists)
@@ -151,7 +180,6 @@
         return $status;
     }
    
-
     //Backup glossary files because we've selected to backup user info
     //or current entry is a teacher entry
     function backup_glossary_files($bf,$preferences,$glossary,$entry) {

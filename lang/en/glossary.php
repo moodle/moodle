@@ -1,20 +1,29 @@
 <?PHP // $Id$ 
       // glossary.php - created with Moodle 1.1 Beta (2003082001)
 
+$string['addcomment'] = "Add comment";
 $string['addentry'] = "Add a new entry";
 $string['allentries'] = "ALL";
 $string['allcategories'] = "All Categories";
+$string['allowcomments'] = "Allow comments on entries";
 $string['allowduplicatedentries'] = "Duplicated entries allowed";
 $string['alphabet'] = "A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z";
 $string['areyousuredelete'] = "Are you sure you want to delete this entry?";
+$string['areyousuredeletecomment'] = "Are you sure you want to delete this comment?";
 $string['attachment'] = "Attachment";
 $string['back'] = "Back";
 $string['categories'] = "Categories";
 $string['categoryview'] = "Browse by category";
 $string['category'] = "Category";
 $string['categorydeleted'] = "Category deleted";
+$string['comment'] = "Comment";
+$string['commentdeleted'] = "The comment has been deleted.";
+$string['commentupdated'] = "The comment has been updated.";
+$string['comments'] = "Comments";
+$string['commentson'] = "Comments on";
 $string['concept'] = "Concept";
 $string['concepts'] = "Concepts";
+$string['deletingcomment'] = "Deleting comment";
 $string['definition'] = "Definition";
 $string['definitions'] = "Definitions";
 $string['deleteentry'] = "Delete entry";
@@ -24,8 +33,9 @@ $string['displayformatdefault'] = "Simple, dictionary style";
 $string['displayformat1'] = "Full without author";
 $string['displayformat2']  = "Full with author";
 $string['displayformat3']  = "Encyclopedia";
-$string['editentry'] = "Edit entry";
 $string['editcategories'] = "Edit categories";
+$string['editentry'] = "Edit entry";
+$string['editingcomment'] = "Editing comment";
 $string['entries'] = "Entries";
 $string['entrieswithoutcategory'] = "Entries without category";
 $string['entry'] = "Entry";
@@ -41,8 +51,11 @@ $string['glossarytype'] = "Glossary Type";
 $string['mainglossary'] = "Main glossary";
 $string['modulename'] = "Glossary";
 $string['modulenameplural'] = "Glossaries";
+$string['maxtimehaspassed'] = "Sorry, but the maximum time for editing this comment (\$a) has passed!";
 $string['newglossaryentries'] = "New glossary entries:";
 $string['notcategorised'] = "Not categorised";
+$string['nocomment'] = "No comment found";
+$string['nocomments'] = "(No comments found on this entry)";
 $string['noentries'] = "No entries found in this section";
 $string['noentry'] = "No entry found.";
 $string['searchindefinition'] = "Search definitions too";
@@ -55,5 +68,6 @@ $string['standardview'] = "Browse by alphabet";
 $string['studentcanpost'] = "Students can add entries";
 $string['warningstudentcapost'] = "(Applies only if the glossary is not the main one)";
 $string['writtenby'] = "by";
+$string['youarenottheauthor'] = "You are not the author of this comment, therefore, you are not allowed to edit it.";
 
 ?>
