@@ -226,7 +226,6 @@ table.formtable td {
 /* course */
 
 #course-view .section td {
-    border-color:#DDDDDD;
     vertical-align:top;
 }
 
@@ -242,7 +241,6 @@ table.formtable td {
     padding:5px;
     border-style:solid;
     border-width:1px;
-    background: #EEEEEE;
 }
 
 #course-view .section .left {
@@ -258,8 +256,7 @@ table.formtable td {
     width: 1.5em;
 }
 
-#course-view .current .side{
-    background: #FFD991;
+#course-view .current .side {
 }
 
 #course-view .topics {
@@ -274,6 +271,8 @@ table.formtable td {
     height:0.5em;
 }
 
+#course-view .section .weekdates {
+}
 
 
 .categoryboxcontent,

@@ -182,24 +182,39 @@ th {
 .headingblock.outline {
     border-color:#DDDDDD; /* borders */
 }
-.weeklyoutlinesidehidden,
-.topicsoutlinesidehidden {
-    border-color:#AAAAAA; /* hidden */
+
+#course-view .section td {
+    border-color:#DDDDDD;
 }
 
-.weeklyoutlinecontent,
-.topicsoutlinecontent {
-    border-color:#DDDDDD; /* cellheading */
+#course-view .section .content {
 }
 
-.weeklyoutlinecontenthighlight, 
-.topicsoutlinecontenthighlight {
-    border-color:#FFC85F; /* cellheading2 */
+#course-view .section .side {
+    background: #EEEEEE;
 }
 
-.weeklyoutlinecontenthidden,
-.topicsoutlinecontenthidden {
-    border-color:#AAAAAA; /* hidden */
+#course-view .section .left {
+}
+
+#course-view .section .right {
+}
+
+#course-view .current .side{
+    background: #FFD991;
+}
+
+#course-view .topics {
+}
+
+#course-view .weeks {
+}
+
+#course-view .section .spacer {
+}
+
+#course-view .section .weekdates {
+    color:#AAAAAA;
 }
 
 .categoryboxcontent,
@@ -208,9 +223,6 @@ th {
     background: #FFFFFF;
 }
 
-.weeklydatetext {
-    color:#DDDDDD; /* cellheading2 */
-}
 
 
 /*****************************
