@@ -170,8 +170,8 @@
     			    $incomplete = true;
     			}
     			$score = "";
-    			if (($sco_user->cmi_core_lesson_status == "passed") || ($sco_user->cmi_core_lesson_status == "failed"))
-    			    $score = "(".get_string("score","scorm").": ".$sco_user->cmi_core_score_raw.")";
+    			if ($sco_user->cmi_core_score_raw > 0)
+    			    $score = "(".get_string("score","scorm").":&nbsp;".$sco_user->cmi_core_score_raw.")";
     		        echo "      &nbsp;$startbold<a href=\"javascript:playSCO(".$sco->id.");\">$sco->title</a> $score$endbold\n    </li>\n";
     		    } else {
 			echo "      &nbsp;$sco->title\n    </li>\n";
