@@ -4,7 +4,7 @@
 
     $nomoodlecookie = true;
     require_once("../../config.php"); 
-    $themeurl = style_sheet_setup(filemtime("styles.php"), 300, $themename);
+    $themeurl = style_sheet_setup(filemtime("styles.php"), 300, 'standard');
 
 /// From here on it's nearly a normal stylesheet. 
 /// First are some CSS definitions for normal tags, 
