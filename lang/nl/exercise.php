@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.4 alpha (2004081500)
+      // exercise.php - created with Moodle 1.4 alpha (2004081900)
 
 
 $string['absent'] = 'Afwezig';
@@ -101,6 +101,7 @@ $string['noteonstudentassessments'] = '{Zelfevaluatie / Cijfer van leraar voor d
 $string['notgraded'] = 'Geen cijfers';
 $string['notitlegiven'] = 'Nog geen titel gegeven';
 $string['numberofassessmentelements'] = 'Aantal commentaren, beoordelingselementen, cijfers, criteria of categorieën in een rubriek';
+$string['numberofcriterionelements'] = 'Het aantal criteria moet meer dan één zijn.';
 $string['numberofentries'] = 'Aantal te tonen taken';
 $string['numberofentriesinleaguetable'] = 'Aantal te tonen taken in de scoretabel';
 $string['numberofnegativeresponses'] = 'Aantal negatieve reacties';
