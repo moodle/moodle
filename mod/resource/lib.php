@@ -22,6 +22,10 @@ if (!isset($CFG->resource_framesize)) {
     set_config("resource_framesize", 130);
 } 
 
+if (!isset($CFG->resource_websearch)) {
+    set_config("resource_websearch", "http://google.com/");
+} 
+
 $RESOURCE_WINDOW_OPTIONS = array("resizable", "scrollbars", "directories", "location", 
                                  "menubar", "toolbar", "status", "height", "width");
 

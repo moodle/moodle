@@ -69,13 +69,20 @@
 
             case WEBPAGE:
                 $strexampleurl = get_string("exampleurl", "resource");
+                $strsearch     = get_string("search");
                 ?>
                 <tr valign="top">
                     <td align="right" nowrap>
                         <p><b><?php echo $strtypename?>:</b></p>
                     </td>
                     <td>
-                        <input name="reference" size="100" value="<?php  p($form->reference) ?>">
+                        <input name="reference" size="80" value="<?php  p($form->reference) ?>">
+                        <?php 
+                          echo "<font size=\"-1\">";
+                          echo "<a target=\"websearch\" href=\"$CFG->resource_websearch\" ".
+                                "onClick=\"return window.open('$CFG->resource_websearch', 'websearch', 'menubar=1,location=1,directories=1,toolbar=1,scrollbars,resizable,width=800,height=600');\">$strsearch</a>\n";
+                          echo "</font>";
+                        ?>
                     </td>
                 </tr>
                 <tr valign="top">
@@ -94,6 +101,7 @@
                 $strexampleurl    = get_string("exampleurl", "resource");
                 $strnewwindow     = get_string("newwindow", "resource");
                 $strnewwindowopen = get_string("newwindowopen", "resource");
+                $strsearch        = get_string("search");
 
                 foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
                     $stringname = "str$optionname";
@@ -145,7 +153,13 @@
                         <p><b><?php p($strtypename) ?>:</b></p>
                     </td>
                     <td>
-                        <input name="reference" size="100" value="<?php p($form->reference) ?>">
+                        <input name="reference" size="80" value="<?php p($form->reference) ?>">
+                        <?php 
+                          echo "<font size=\"-1\">";
+                          echo "<a target=\"websearch\" href=\"$CFG->resource_websearch\" ".
+                                "onClick=\"return window.open('$CFG->resource_websearch', 'websearch', 'menubar=1,location=1,directories=1,toolbar=1,scrollbars,resizable,width=800,height=600');\">$strsearch</a>\n";
+                          echo "</font>";
+                        ?>
                     </td>
                 </tr>
                 <tr valign="top">

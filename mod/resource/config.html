@@ -10,6 +10,15 @@
     <?php print_string("configframesize", "resource") ?>
     </td>
 </tr>
+<tr valign=top>
+	<td align=right><p>resource_websearch:</td>
+	<td>
+    <input name=resource_websearch type=text size=30 value="<?php p($CFG->resource_websearch) ?>">
+    </td>
+    <td>
+    <?php print_string("configwebsearch", "resource") ?>
+    </td>
+</tr>
 <tr>
     <td colspan=3 align=center>
 	<input type="submit" value="<?php print_string("savechanges") ?>"></td>
