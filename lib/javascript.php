@@ -8,7 +8,7 @@ function fillmessagebox(text) {
 function openpopup(url,name,height,width) {
 fullurl = "<?=$CFG->wwwroot ?>" + url;
 options = "menubar=0,location=0,scrollbars,resizable,width="+width+",height="+height;
-windowobj = window.open(fullurl,"name", options);
+windowobj = window.open(fullurl,name, options);
 windowobj.focus();
 }
 
