@@ -85,14 +85,14 @@
     $keep_array[500] = "500";
 ?>
 <form method="post" action="backup.php" name="form">
-<?php echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">"; ?>
+<?php echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\"/>"; ?>
 
 <table cellpadding="9" cellspacing="0" >
 <tr valign="top">
-    <td colspan = 3 align="center"><strong><?php print_string("settings") ?></strong></td>
+    <td colspan ="3" align="center"><strong><?php print_string("settings") ?></strong></td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><?php print_string("includemodules") ?>:</td>
+    <td align="right"><?php print_string("includemodules") ?>:</td>
     <td nowrap="nowrap">
     <?php choose_from_menu($yesno_array, "backup_sche_modules", $backup_config->backup_sche_modules, "") ?>
     <?php choose_from_menu($withwithout_array, "backup_sche_withuserdata", $backup_config->backup_sche_withuserdata, "") ?>
@@ -102,7 +102,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><?php print_string("metacourse") ?>:</td>
+    <td align="right"><?php print_string("metacourse") ?>:</td>
     <td>
     <?php choose_from_menu($yesno_array, "backup_sche_metacourse", $backup_config->backup_sche_metacourse, "") ?>
     </td>
@@ -111,7 +111,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><?php print_string("users") ?>:</td>
+    <td align="right"><?php print_string("users") ?>:</td>
     <td>
     <?php choose_from_menu($courseall_array, "backup_sche_users", $backup_config->backup_sche_users, "") ?>
     </td>
@@ -120,7 +120,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><?php print_string("logs") ?>:</td>
+    <td align="right"><?php print_string("logs") ?>:</td>
     <td>
     <?php choose_from_menu($yesno_array, "backup_sche_logs", $backup_config->backup_sche_logs, "") ?>
     </td>
@@ -129,7 +129,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><?php print_string("userfiles") ?>:</td>
+    <td align="right"><?php print_string("userfiles") ?>:</td>
     <td>
     <?php choose_from_menu($yesno_array, "backup_sche_userfiles", $backup_config->backup_sche_userfiles, "") ?>
     </td>
@@ -138,7 +138,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><?php print_string("coursefiles") ?>:</td>
+    <td align="right"><?php print_string("coursefiles") ?>:</td>
     <td>
     <?php choose_from_menu($yesno_array, "backup_sche_coursefiles", $backup_config->backup_sche_coursefiles, "") ?>
     </td>
@@ -147,7 +147,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><?php print_string("keep") ?>:</td>
+    <td align="right"><?php print_string("keep") ?>:</td>
     <td>
     <?php
         choose_from_menu($keep_array, "backup_sche_keep", $backup_config->backup_sche_keep, "");
@@ -159,10 +159,10 @@
     </td>
 </tr>
 <tr valign="top">
-    <td colspan = 3 align="center"><strong><?php print_string("schedule") ?></strong></td>
+    <td colspan="3" align="center"><strong><?php print_string("schedule") ?></strong></td>
 </tr>
 <tr valign="top">
-    <td colspan = 3 align="center">
+    <td colspan="3" align="center">
         <?php print_string("active") ?>: <?php choose_from_menu($yesno_array, "backup_sche_active", $backup_config->backup_sche_active, "") ?>
     </td>
 </tr>
@@ -188,11 +188,11 @@
                 $stddayofweek = ($i+$firstdayofweek) % 7;
                 //Calculate the status of the checkbox
                 if (substr($backup_config->backup_sche_weekdays,$stddayofweek,1) == "1") {
-                    $strchecked = " checked";
+                    $strchecked = " checked=\"checked\"";
                 } else {
                     $strchecked = "";
                 }
-                $check_names[] = "<input type=\"checkbox\" name=\"dayofweek_$stddayofweek\" value=\"1\"$strchecked>";
+                $check_names[] = "<input type=\"checkbox\" name=\"dayofweek_$stddayofweek\" value=\"1\"$strchecked />";
                 $i++;
             }
             $table->align = array("center","center","center","center","center","center","center");
@@ -203,18 +203,18 @@
     </td>
 </tr>
 <tr valign="top">
-    <td colspan = 3 align="center">
+    <td colspan ="3" align="center">
         <?php print_string("executeat") ?>: <?php print_time_selector("backup_sche_hour","backup_sche_minute",make_timestamp(2000,1,1,$backup_config->backup_sche_hour,$backup_config->backup_sche_minute)) ?>
     </td>
 </tr>
 <tr valign="top">
-    <td colspan = 3 align="center">
-        <?php print_string("saveto") ?>: <input name="backup_sche_destination" type="text" size="40" value="<?php p($backup_config->backup_sche_destination) ?>"><?php helpbutton("directorypaths", strip_tags(get_string("directorypaths"))) ?><br /><?php if (!empty($sche_destination_error)) { formerr($sche_destination_error); echo "<br />"; } ?><?php print_string("backupsavetohelp") ?>
+    <td colspan ="3" align="center">
+        <?php print_string("saveto") ?>: <input name="backup_sche_destination" type="text" size="40" value="<?php p($backup_config->backup_sche_destination) ?>" /><?php helpbutton("directorypaths", strip_tags(get_string("directorypaths"))) ?><br /><?php if (!empty($sche_destination_error)) { formerr($sche_destination_error); echo "<br />"; } ?><?php print_string("backupsavetohelp") ?>
     </td>
 </tr>
 <tr>
     <td colspan="3" align="center">
-        <input type="submit" value="<?php print_string("savechanges") ?>"></td>
+        <input type="submit" value="<?php print_string("savechanges") ?>" /></td>
 </tr>
 </table>
 
