@@ -976,6 +976,27 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
             $menu = "<font size=\"2\"><a target=\"$CFG->framename\" href=\"$wwwroot/login/index.php\">".get_string("login")."</a></font>";
         }
     }
+    
+    if (isset($SESSION->justloggedin)) {
+        unset($SESSION->justloggedin);
+        if (!empty($CFG->displayloginfailures)) {
+            if (!empty($USER->username) and !isguest()) {
+                if ($count = count_login_failures($CFG->displayloginfailures, $USER->username, $USER->lastlogin)) {
+                    $menu .= '&nbsp;<font size="1">';
+                    if (empty($count->accounts)) {
+                        $menu .= get_string('failedloginattempts', '', $count);
+                    } else {
+                        $menu .= get_string('failedloginattemptsall', '', $count);
+                    }
+                    if (isadmin()) {
+                        $menu .= ' (<a href="'.$CFG->wwwroot.'/course/log.php'.
+                                             '?chooselog=1&id=1&modid=site_errors">'.get_string('logs').'</a>)';
+                    }
+                    $menu .= '</font>';
+                }
+            }
+        }
+    }
 
     // Add a stylesheet for the HTML editor
     $meta = "<style type=\"text/css\">@import url($CFG->wwwroot/lib/editor/htmlarea.css);</style>\n$meta\n";
@@ -2292,6 +2313,9 @@ function rebuildnolinktag($text) {
     return $text;
 }
 
+
+
+
 // ================================================
 // THREE FUNCTIONS MOVED HERE FROM course/lib.php
 // ================================================
@@ -2368,6 +2392,8 @@ function print_side_block_start($heading='', $attributes = array()) {
     }
     echo '<tbody style="background-color: '.$THEME->cellcontent2.';"><tr><td class="sideblockmain">';
 }
+
+
 
 function print_side_block_end() {
     echo '</td></tr></tbody></table><br />';

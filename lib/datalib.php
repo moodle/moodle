@@ -307,7 +307,7 @@ function count_records($table, $field1="", $value1="", $field2="", $value2="", $
 * @param    type description
 *
 */
-function count_records_select($table, $select="") {
+function count_records_select($table, $select="", $countitem="COUNT(*)") {
 
     global $CFG;
 
@@ -315,7 +315,7 @@ function count_records_select($table, $select="") {
         $select = "WHERE $select";
     }
 
-    return count_records_sql("SELECT COUNT(*) FROM $CFG->prefix$table $select");
+    return count_records_sql("SELECT $countitem FROM $CFG->prefix$table $select");
 }
 
 
@@ -571,7 +571,7 @@ function get_records_sql($sql) {
         }
         return false;
     }
-
+    
     if ( $rs->RecordCount() > 0 ) {
         if ($records = $rs->GetAssoc(true)) {
             foreach ($records as $key => $record) {
@@ -699,6 +699,33 @@ function get_field($table, $return, $field1, $value1, $field2="", $value2="", $f
 
     if ( $rs->RecordCount() == 1 ) {
         return $rs->fields["$return"];
+    } else {
+        return false;
+    }
+}
+
+
+/**
+* Get a single field from a database record
+* 
+* longdesc
+*
+* @param    type description
+*/
+function get_field_sql($sql) {
+
+    global $db, $CFG;
+
+    $rs = $db->Execute($sql);
+    if (!$rs) {
+        if (isset($CFG->debug) and $CFG->debug > 7) {
+            notify($db->ErrorMsg()."<br /><br />$sql");
+        }
+        return false;
+    }
+
+    if ( $rs->RecordCount() == 1 ) {
+        return $rs->fields[0];
     } else {
         return false;
     }
@@ -2127,7 +2154,7 @@ function add_to_log($courseid, $module, $action, $url="", $info="", $cm=0, $user
         if (isset($USER->realuser)) {  // Don't log
             return;
         }
-        $userid = empty($USER->id) ? "" : $USER->id;
+        $userid = empty($USER->id) ? "0" : $USER->id;
     }
 
     $timenow = time();
@@ -2183,8 +2210,7 @@ function get_logs($select, $order="l.time DESC", $limitfrom="", $limitnum="", &$
         $order = "ORDER BY $order";
     }
 
-    $selectsql = "{$CFG->prefix}log l, {$CFG->prefix}user u WHERE $select";
-
+    $selectsql = "{$CFG->prefix}log l LEFT JOIN {$CFG->prefix}user u ON l.userid = u.id ".((strlen($select) > 0) ? "WHERE $select" : "");
     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
 
     return get_records_sql("SELECT l.*, u.firstname, u.lastname, u.picture 
@@ -2233,6 +2259,37 @@ function get_logs_userday($userid, $courseid, $daystart) {
                              AND `time` > '$daystart' $courseselect
                         GROUP BY hour ");
 }
+
+/**
+ * Returns an object with counts of failed login attempts
+ *
+ * Returns information about failed login attempts.  If the current user is 
+ * an admin, then two numbers are returned:  the number of attempts and the 
+ * number of accounts.  For non-admins, only the attempts on the given user
+ * are shown.
+ *
+ * @param mode      - admin, teacher or everybody
+ * @param username  - the username we are searching for
+ * @param lastlogin - the date from which we are searching
+ */
+
+function count_login_failures($mode, $username, $lastlogin) {
+
+    $select = "module='login' AND action='error' AND time > $lastlogin";
+
+    if (isadmin()) {    // Return information about all accounts
+        if ($count->attempts = count_records_select('log', $select)) {
+            $count->accounts = count_records_select('log', $select, 'COUNT(DISTINCT info)');
+            return $count;
+        }
+    } else if ($mode == 'everybody' or ($mode == 'teacher' and isteacher())) {
+        if ($count->attempts = count_records_select('log', "$select AND info = '$username'")) {
+            return $count;
+        }
+    }
+    return NULL;
+}
+
 
 /// GENERAL HELPFUL THINGS  ///////////////////////////////////
 
