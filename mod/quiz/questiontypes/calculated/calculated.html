@@ -37,7 +37,7 @@
                echo "<br />";
            }
 
-           print_textarea($usehtmleditor, 15, 60, 630, 300, "questiontext", $question->questiontext);
+           print_textarea($usehtmleditor, 20, 60, 630, 300, "questiontext", $question->questiontext);
 
            if ($usehtmleditor) {   /// Trying this out for a while
                echo '<input type="hidden" name="questiontextformat" value="'.FORMAT_HTML.'">';
@@ -140,12 +140,12 @@ for ($i=1; $i<count($units); $i++) {
 ?>
 </TABLE>
 
-<INPUT type="hidden" name=id value="<?php  p($question->id) ?>">
-<INPUT type="hidden" name=qtype value="<?php  p($question->qtype) ?>">
-<INPUT type="submit" onClick="return determineMinAndMax();"  value="<?php  print_string("savechanges") ?>">
-</CENTER>
-</FORM>
-<SCRIPT language="JAVASCRIPT">
+<input type="hidden" name=id value="<?php  p($question->id) ?>">
+<input type="hidden" name=qtype value="<?php  p($question->qtype) ?>">
+<input type="submit" onClick="return determineMinAndMax();"  value="<?php  print_string("savechanges") ?>">
+</center>
+</form>
+<script language="javascript">
 function determineMinAndMax() {
     // This client-side script will determine the values for min and max
     // based on the input for answer and acceptederror.
@@ -168,10 +168,4 @@ function determineMinAndMax() {
         }
     }
 }
-</SCRIPT>
-<?php  
-   if ($usehtmleditor) { 
-       print_richedit_javascript("theform", "questiontext", "no");
-   }
-?>
-
+</script>
