@@ -300,6 +300,28 @@
         return $status;
     }
 
+    //Function to check and create the "user_files" dir to
+    //save all the user files we need from "users" dir
+    function check_and_create_user_files_dir($backup_unique_code) {
+ 
+        global $CFG;
+
+            $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/user_files",true);
+
+        return $status;
+    }
+
+    //Function to check and create the "course_files" dir to
+    //save all the course files we need from "CFG->datadir/course" dir
+    function check_and_create_course_files_dir($backup_unique_code) {
+
+        global $CFG;
+
+            $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/course_files",true);
+
+        return $status;
+    }
+
     //Function to delete all the directory contents recursively
     //Copied from admin/delete.php
     function delete_dir_contents ($rootdir) {
@@ -860,6 +882,107 @@
    
         return $status; 
         
+    }
+
+    //This function copies all the needed files under the "users" directory to the "user_files"
+    //directory under temp/backup
+    function backup_copy_user_files ($preferences) {
+
+        global $CFG;
+
+        $status = true;
+
+        //First we check to "user_files" exists and create it as necessary
+        //in temp/backup/$backup_code  dir
+        $status = check_and_create_user_files_dir($preferences->backup_unique_code);
+ 
+        //Now iterate over directories under "users" to check if that user must be 
+        //copied to backup
+        
+        $rootdir = $CFG->dataroot."/users";
+        //Check if directory exists
+        if (is_dir($rootdir)) {
+            $list = list_directories ($rootdir);
+            if ($list) {
+                //Iterate
+                foreach ($list as $dir) {
+                    //Look for dir like username in backup_ids
+                    $data = get_record ("backup_ids","backup_code",$preferences->backup_unique_code,
+                                                     "table_name","user", 
+                                                     "old_id",$dir);
+                    //If exists, copy it
+                    if ($data) {
+                        $status = backup_copy_file($rootdir."/".$dir,
+                                       $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/user_files/".$dir);
+                    }
+                }
+            }
+        }
+        return $status;
+    }
+
+    //This function copies all the course files under the course directory (except the moddata
+    //directory to the "course_files" directory under temp/backup
+    function backup_copy_course_files ($preferences) {
+
+        global $CFG;
+
+        $status = true;
+
+        //First we check to "course_files" exists and create it as necessary
+        //in temp/backup/$backup_code  dir
+        $status = check_and_create_course_files_dir($preferences->backup_unique_code);
+
+        //Now iterate over files and directories except $CFG->moddata to be
+        //copied to backup
+
+        $rootdir = $CFG->dataroot."/".$preferences->backup_course;
+        //Check if directory exists
+        if (is_dir($rootdir)) {
+            $list = list_directories_and_files ($rootdir);
+            if ($list) {
+                //Iterate
+                foreach ($list as $dir) {
+                    if ($dir !== $CFG->moddata) {
+                        $status = backup_copy_file($rootdir."/".$dir,
+                                       $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/course_files/".$dir);
+                    }
+                }
+            }
+        }
+        return $status;
+    }
+
+    //This function return the names of all directories under a give directory
+    //Not recursive
+    function list_directories ($rootdir) {
+  
+        $dir = opendir($rootdir);
+        while ($file=readdir($dir)) {
+            if ($file=="." || $file=="..") {
+                continue;
+            }
+            if (is_dir($rootdir."/".$file)) {
+                $results[$file] = $file;
+            }
+        }
+        closedir($dir);  
+        return $results;       
+    }
+
+    //This function return the names of all directories and files under a give directory
+    //Not recursive
+    function list_directories_and_files ($rootdir) {
+ 
+        $dir = opendir($rootdir);
+        while ($file=readdir($dir)) {
+            if ($file=="." || $file=="..") {
+                continue;
+            }
+            $results[$file] = $file;
+        }
+        closedir($dir); 
+        return $results;
     }
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -213,16 +213,16 @@
     //Now, if selected, copy user files
     if ($status) {
         if ($preferences->backup_user_files) {
-            echo "<li>Copying user files (not yet)";
-
+            echo "<li>Copying user files";
+            $status = backup_copy_user_files ($preferences);
         }
     }
 
     //Now, if selected, copy course files
     if ($status) {
         if ($preferences->backup_course_files) {
-            echo "<li>Copying course files (not yet)";
-
+            echo "<li>Copying course files";
+            $status = backup_copy_course_files ($preferences);
         }
     }
 
