@@ -143,10 +143,10 @@ function wiki_print_recent_activity($course, $isteacher, $timestart) {
 /// Return true if there was output, or false is there was none.
 
     global $CFG;
-    if (!$logs = get_records_select("log", "time > '$timestart' AND ".
-                                           "course = '$course->id' AND ".
-                                           "module = 'wiki' AND ".
-                                           "action LIKE 'edit%' ", "time ASC")){
+    if (!$logs = get_records_select('log', 'time > \''.$timestart.'\' AND '.
+                                           'course = \''.$course->id.'\' AND '.
+                                           'module = \'wiki\' AND '.
+                                           'action LIKE \'edit%\' ', 'time ASC')){
         return false;
     }
 
@@ -167,15 +167,11 @@ function wiki_print_recent_activity($course, $isteacher, $timestart) {
     }
 
     if ($wikis) {
-        $strftimerecent = get_string("strftimerecent");
         $content = true;
-        print_headline('Updated wiki page'.":");
+        print_headline(get_string('updatedwikipages', 'wiki').':', 3);
         foreach ($wikis as $wiki) {
-            $date = userdate($wiki->time, $strftimerecent);
-            echo $date.' - '.fullname($wiki)."<br />";
-            echo '"<a href="'.$CFG->wwwroot.'/mod/wiki/'.$wiki->url.'">';
-            echo $wiki->pagename;
-            echo '</a>"<br />';
+            print_recent_activity_note($wiki->time, $wiki, $isteacher, $wiki->pagename,
+                                       $CFG->wwwroot.'/mod/wiki/'.$wiki->url);
         }
     }
     return true;  //  True if anything was printed, otherwise false

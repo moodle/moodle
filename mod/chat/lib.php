@@ -166,7 +166,7 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
 
     $timeold = time() - $CFG->chat_old_ping;
 
-    $lastpingsearch = ($CFG->chat_method == 'sockets') ? "": "AND cu.lastping > '$timeold'";
+    $lastpingsearch = ($CFG->chat_method == 'sockets') ? '': 'AND cu.lastping > \''.$timeold.'\'';
 
     if (!$chatusers = get_records_sql("SELECT u.id, cu.chatid, u.firstname, u.lastname
                                         FROM {$CFG->prefix}chat_users as cu,
@@ -186,27 +186,32 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
     foreach ($chatusers as $chatuser) {
         if ($current != $chatuser->chatid) {
             if ($current) {
-                echo "</p>";
+                echo '</ul></div>';  // room
+                $current = 0;
             }
-            if ($chat = get_record("chat", "id", $chatuser->chatid)) {
+            if ($chat = get_record('chat', 'id', $chatuser->chatid)) {
                 if (!($isteacher or instance_is_visible('chat', $chat))) {  // Chat hidden to students
                     continue;
                 }
                 if (!$outputstarted) {
-                    print_headline(get_string("currentchats", "chat").":");
+                    print_headline(get_string('currentchats', 'chat').':');
                     $outputstarted = true;
                 }
-                echo "<p><font size=\"1\"><a href=\"$CFG->wwwroot/mod/chat/view.php?c=$chat->id\">$chat->name</a></font><br />";
+                echo '<div class="room"><p class="head"><a href="'.$CFG->wwwroot.'/mod/chat/view.php?c='.$chat->id.'">'.$chat->name.'</a></p><ul>';
             }
             $current = $chatuser->chatid;
         }
-        $fullname = fullname($chatuser);
-        echo "&nbsp;&nbsp;&nbsp;<font size=\"1\">- $fullname</font><br />";
+        $fullname = fullname($chatuser, $isteacher);
+        echo '<li class="info name">'.$fullname.'</li>';
     }
-    echo "<br />";
+
+    if ($current) {
+        echo '</ul></div>';  // room
+    }
 
     return true;
 }
+
 
 function chat_cron () {
 /// Function to be run periodically according to the moodle cron

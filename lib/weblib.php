@@ -364,8 +364,14 @@ function stripslashes_recursive($var) {
  * @return string
  */
 function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
+    
+    static $currentlang;
 
-    if (in_array(current_language(), array('ja', 'ja_utf8', 'kn_utf8', 'sr_utf8', 'vi_utf8', 'zh_cn', 'zh_tw', 'zh_tw_utf8'))) {  // Multibyte languages
+    if (empty($currentlang)) {
+        $currentlang = current_language();
+    }
+
+    if (in_array(substr($currentlang,0,2), array('ja', 'kn', 'sr', 'vi', 'zh'))) {  // Multibyte languages
         return $string;
     }
 
@@ -2636,6 +2642,24 @@ function make_table($table) {
 
     return $output;
 }
+
+function print_recent_activity_note($time, $user, $isteacher, $text, $link) {
+    static $strftimerecent;
+
+    if (empty($strftimerecent)) {
+        $strftimerecent = get_string('strftimerecent');
+    }
+
+    $date = userdate($time, $strftimerecent);
+    $name = fullname($user, $isteacher);
+
+    echo '<div class="head">';
+    echo '<span class="date">'.$date.'</span> - '.
+         '<span class="name">'.fullname($user, $isteacher).'</span>';
+    echo '</div>';
+    echo '<div class="info"><a href="'.$link.'">'.$text.'</a></div>';
+}
+
 
 /**
  * Prints a basic textarea field.

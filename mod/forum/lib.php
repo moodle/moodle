@@ -732,14 +732,14 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
     $heading = false;
     $content = false;
 
-    if (!$logs = get_records_select("log", "time > '$timestart' AND ".
-                                           "course = '$course->id' AND ".
-                                           "module = 'forum' AND ".
-                                           "action LIKE 'add %' ", "time ASC")){
+    if (!$logs = get_records_select('log', 'time > \''.$timestart.'\' AND '.
+                                           'course = \''.$course->id.'\' AND '.
+                                           'module = \'forum\' AND '.
+                                           'action LIKE \'add %\' ', 'time ASC')){
         return false;
     }
 
-    $strftimerecent = get_string("strftimerecent");
+    $strftimerecent = get_string('strftimerecent');
 
     $isteacheredit = isteacheredit($course->id);
     $mygroupid     = mygroupid($course->id);
@@ -753,20 +753,18 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
             $tempmod->course = $log->course;
             $tempmod->id = $post->forum;
             //Obtain the visible property from the instance
-            $modvisible = instance_is_visible($log->module, $tempmod);
+            $modvisible = instance_is_visible('forum', $tempmod);
         }
 
         //Only if the post exists and mod is visible
         if ($post && $modvisible) {
             /// Check whether this is for teachers only
-            $teacheronly = "";
-            if ($forum = get_record("forum", "id", $post->forum)) {
-                if ($forum->type == "teacher") {
-                    if ($isteacher) {
-                        $teacheronly = "class=\"teacheronly\"";
-                    } else {
-                        continue;
-                    }
+            $teacheronly = '';
+            if ($post->forumtype == 'teacher') {
+                if ($isteacher) {
+                    $teacheronly = 'class=\'teacheronly\'';
+                } else {
+                    continue;
                 }
             }
             /// Check whether this is belongs to a discussion in a group that
@@ -774,10 +772,10 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
 
             if (!$isteacheredit and $post->groupid != -1) {   /// Editing teachers or open discussions
                 if (!isset($cm[$post->forum])) {
-                    $cm[$forum->id] = get_coursemodule_from_instance("forum", $forum->id, $course->id);
-                    $groupmode[$forum->id] = groupmode($course, $cm[$forum->id]);
+                    $cm[$post->forum] = get_coursemodule_from_instance('forum', $post->forum, $course->id);
+                    $groupmode[$post->forum] = groupmode($course, $cm[$post->forum]);
                 }
-                if ($groupmode[$forum->id]) {
+                if ($groupmode[$post->forum]) {
                     if ($mygroupid != $post->groupid) {
                         continue;
                     }
@@ -785,24 +783,24 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
             }
 
             if (! $heading) {
-                print_headline(get_string("newforumposts", "forum").":");
+                print_headline(get_string('newforumposts', 'forum').':');
                 $heading = true;
                 $content = true;
             }
             $date = userdate($post->modified, $strftimerecent);
-            $fullname = fullname($post, $isteacher);
-            echo "<p $teacheronly><font size=\"1\">$date - $fullname<br />";
-            echo "\"<a href=\"$CFG->wwwroot/mod/forum/".str_replace('&', '&amp;', $log->url)."\">";
+
+            $subjectclass = ($log->action == 'add discussion') ? ' bold' : '';
+
+            echo '<div class="head'.$teacheronly.'"><span class="date">';
+            echo $date.'</span> - <span class="name">'.fullname($post, $isteacher);
+            echo '</span></div><div class="info'.$subjectclass.'">';
+            echo '"<a href="'.$CFG->wwwroot.'/mod/forum/'.str_replace('&', '&amp;', $log->url).'">';
             $post->subject = break_up_long_words($post->subject);
             if (!empty($CFG->filterall)) {
-                $post->subject = filter_text("<nolink>$post->subject</nolink>", $course->id);
+                $post->subject = filter_text('<nolink>'.$post->subject.'</nolink>', $course->id);
             }
-            if ($log->action == "add discussion") {
-                echo "<b>$post->subject</b>";
-            } else {
-                echo "$post->subject";
-            }
-            echo "</a>\"</font></p>";
+            echo $post->subject;
+            echo '</a>"</div>';
         }
     }
 
@@ -1110,26 +1108,32 @@ function forum_get_post_from_log($log) {
 
     if ($log->action == "add post") {
 
-        return get_record_sql("SELECT p.*, d.forum, d.groupid, u.firstname, u.lastname, u.email, u.picture
+        return get_record_sql("SELECT p.*, f.type AS forumtype, d.forum, d.groupid, 
+                                           u.firstname, u.lastname, u.email, u.picture
                                  FROM {$CFG->prefix}forum_discussions d,
                                       {$CFG->prefix}forum_posts p,
+                                      {$CFG->prefix}forum f,
                                       {$CFG->prefix}user u
                                 WHERE p.id = '$log->info'
                                   AND d.id = p.discussion
                                   AND p.userid = u.id
-                                  AND u.deleted <> '1'");
+                                  AND u.deleted <> '1'
+                                  AND f.id = d.forum");
 
 
     } else if ($log->action == "add discussion") {
 
-        return get_record_sql("SELECT p.*, d.forum, d.groupid, u.firstname, u.lastname, u.email, u.picture
+        return get_record_sql("SELECT p.*, f.type AS forumtype, d.forum, d.groupid, 
+                                           u.firstname, u.lastname, u.email, u.picture
                                  FROM {$CFG->prefix}forum_discussions d,
                                       {$CFG->prefix}forum_posts p,
+                                      {$CFG->prefix}forum f,
                                       {$CFG->prefix}user u
                                 WHERE d.id = '$log->info'
                                   AND d.firstpost = p.id
                                   AND p.userid = u.id
-                                  AND u.deleted <> '1'");
+                                  AND u.deleted <> '1'
+                                  AND f.id = d.forum");
     }
     return NULL;
 }

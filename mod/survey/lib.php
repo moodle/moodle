@@ -138,10 +138,10 @@ function survey_print_recent_activity($course, $isteacher, $timestart) {
     $content = false;
     $surveys = NULL;
 
-    if (!$logs = get_records_select("log", "time > '$timestart' AND ".
-                                           "course = '$course->id' AND ".
-                                           "module = 'survey' AND ".
-                                           "action = 'submit' ", "time ASC")) {
+    if (!$logs = get_records_select('log', 'time > \''.$timestart.'\' AND '.
+                                           'course = \''.$course->id.'\' AND '.
+                                           'module = \'survey\' AND '.
+                                           'action = \'submit\' ', 'time ASC')) {
         return false;
     }
 
@@ -162,14 +162,10 @@ function survey_print_recent_activity($course, $isteacher, $timestart) {
 
     if ($surveys) {
         $content = true;
-        $strftimerecent = get_string("strftimerecent");
-        print_headline(get_string("newsurveyresponses", "survey").":");
+        print_headline(get_string('newsurveyresponses', 'survey').':');
         foreach ($surveys as $survey) {
-            $date = userdate($survey->time, $strftimerecent);
-            echo "<p><font size=\"1\">$date - ".fullname($survey)."<br />";
-            echo "\"<a href=\"$CFG->wwwroot/mod/survey/$survey->url\">";
-            echo "$survey->name";
-            echo "</a>\"</font></p>";
+            print_recent_activity_note($survey->time, $survey, $isteacher, $survey->name,
+                                       $CFG->wwwroot.'/mod/survey/'.$survey->url);
         }
     }
  

@@ -236,11 +236,11 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
 
     global $CFG;
 
-    if (!$logs = get_records_select("log", "time > '$timestart' AND ".
-                                           "course = '$course->id' AND ".
-                                           "module = 'glossary' AND ".
-                                           "(action = 'add entry' OR ".
-                                           " action  = 'approve entry')", "time ASC")) {
+    if (!$logs = get_records_select('log', 'time > \''.$timestart.'\' AND '.
+                                           'course = \''.$course->id.'\' AND '.
+                                           'module = \'glossary\' AND '.
+                                           '(action = \'add entry\' OR '.
+                                           ' action  = \'approve entry\')', 'time ASC')) {
         return false;
     }
 
@@ -249,7 +249,7 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
     foreach ($logs as $log) {
         //Create a temp valid module structure (course,id)
         $tempmod->course = $log->course;        
-        $entry           = get_record("glossary_entries","id",$log->info);
+        $entry           = get_record('glossary_entries','id',$log->info);
         $tempmod->id = $entry->glossaryid;
         //Obtain the visible property from the instance        
         $modvisible = instance_is_visible($log->module,$tempmod);
@@ -264,23 +264,20 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
 
     $content = false;
     if ($entries) {
-        $strftimerecent = get_string("strftimerecent");
         $content = true;
-        print_headline(get_string("newentries", "glossary").":");
+        print_headline(get_string('newentries', 'glossary').':');
         foreach ($entries as $entry) {
-            $date = userdate($entry->timemodified, $strftimerecent);
-            
-            $user = get_record("user","id",$entry->userid);
-            $fullname = fullname($user, $isteacher);
-            echo "<p><font size=\"1\">$date - $fullname<br />";
-            echo "\"<a href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid&amp;mode=entry&amp;hook=$entry->id\">";
-            echo "$entry->concept";
-            echo "</a>\"</font></p>";
+            $user = get_record('user','id',$entry->userid, '','', '','', 'firstname,lastname');
+
+            print_recent_activity_note($entry->timemodified, $user, $isteacher, $entry->concept,
+                                       $CFG->wwwroot.'/mod/glossary/view.php?g='.$entry->glossaryid.
+                                       '&amp;mode=entry&amp;hook='.$entry->id);
         }
     }
 
     return $content;
 }
+
 
 function glossary_log_info($log) {
     global $CFG;

@@ -190,10 +190,10 @@ function journal_print_recent_activity($course, $isteacher, $timestart) {
     $content = false;
     $journals = NULL;
 
-    if (!$logs = get_records_select("log", "time > '$timestart' AND ".
-                                           "course = '$course->id' AND ".
-                                           "module = 'journal' AND ".
-                                           "(action = 'add entry' OR action = 'update entry')", "time ASC")){
+    if (!$logs = get_records_select('log', 'time > \''.$timestart.'\' AND '.
+                                           'course = \''.$course->id.'\' AND '.
+                                           'module = \'journal\' AND '.
+                                           '(action = \'add entry\' OR action = \'update entry\')', 'time ASC')){
         return false;
     }
 
@@ -219,14 +219,10 @@ function journal_print_recent_activity($course, $isteacher, $timestart) {
 
     if ($journals) {
         $content = true;
-        $strftimerecent = get_string("strftimerecent");
-        print_headline(get_string("newjournalentries", "journal").":");
+        print_headline(get_string('newjournalentries', 'journal').':');
         foreach ($journals as $journal) {
-            $date = userdate($journal->time, $strftimerecent);
-            echo "<p><font size=\"1\">$date - ".fullname($journal)."<br />";
-            echo "\"<a href=\"$CFG->wwwroot/mod/journal/$journal->url\">";
-            echo "$journal->name";
-            echo "</a>\"</font></p>";
+            print_recent_activity_note($journal->time, $journal, $isteacher, $journal->name,
+                                       $CFG->wwwroot.'/mod/journal/'.$journal->url);
         }
     }
  

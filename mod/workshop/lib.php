@@ -9,42 +9,6 @@ require_once($CFG->libdir.'/filelib.php');
 
 /*** Constants **********************************/
 
-$WORKSHOP_TYPE = array (0 => get_string("notgraded", "workshop"),
-                          1 => get_string("accumulative", "workshop"),
-                          2 => get_string("errorbanded", "workshop"),
-                          3 => get_string("criterion", "workshop"),
-                          4 => get_string("rubric", "workshop") );
-
-$WORKSHOP_SHOWGRADES = array (0 => get_string("dontshowgrades", "workshop"),
-                          1 => get_string("showgrades", "workshop") );
-
-$WORKSHOP_SCALES = array( 
-                    0 => array( 'name' => get_string("scaleyes", "workshop"), 'type' => 'radio', 
-                        'size' => 2, 'start' => get_string("yes"), 'end' => get_string("no")),
-                    1 => array( 'name' => get_string("scalepresent", "workshop"), 'type' => 'radio', 
-                        'size' => 2, 'start' => get_string("present", "workshop"), 
-                        'end' => get_string("absent", "workshop")),
-                    2 => array( 'name' => get_string("scalecorrect", "workshop"), 'type' => 'radio', 
-                        'size' => 2, 'start' => get_string("correct", "workshop"), 
-                        'end' => get_string("incorrect", "workshop")), 
-                    3 => array( 'name' => get_string("scalegood3", "workshop"), 'type' => 'radio', 
-                        'size' => 3, 'start' => get_string("good", "workshop"), 
-                        'end' => get_string("poor", "workshop")), 
-                    4 => array( 'name' => get_string("scaleexcellent4", "workshop"), 'type' => 'radio', 
-                        'size' => 4, 'start' => get_string("excellent", "workshop"), 
-                        'end' => get_string("verypoor", "workshop")),
-                    5 => array( 'name' => get_string("scaleexcellent5", "workshop"), 'type' => 'radio', 
-                        'size' => 5, 'start' => get_string("excellent", "workshop"), 
-                        'end' => get_string("verypoor", "workshop")),
-                    6 => array( 'name' => get_string("scaleexcellent7", "workshop"), 'type' => 'radio', 
-                        'size' => 7, 'start' => get_string("excellent", "workshop"), 
-                        'end' => get_string("verypoor", "workshop")),
-                    7 => array( 'name' => get_string("scale10", "workshop"), 'type' => 'selection', 
-                        'size' => 10),
-                    8 => array( 'name' => get_string("scale20", "workshop"), 'type' => 'selection', 
-                            'size' => 20),
-                    9 => array( 'name' => get_string("scale100", "workshop"), 'type' => 'selection', 
-                            'size' => 100)); 
 
 $WORKSHOP_EWEIGHTS = array(  0 => -4.0, 1 => -2.0, 2 => -1.5, 3 => -1.0, 4 => -0.75, 5 => -0.5,  6 => -0.25, 
                              7 => 0.0, 8 => 0.25, 9 => 0.5, 10 => 0.75, 11=> 1.0, 12 => 1.5, 13=> 2.0, 
@@ -55,11 +19,11 @@ $WORKSHOP_FWEIGHTS = array(  0 => 0, 1 => 0.1, 2 => 0.25, 3 => 0.5, 4 => 0.75, 5
 
 
 $WORKSHOP_ASSESSMENT_COMPS = array (
-                          0 => array('name' => get_string("verylax", "workshop"), 'value' => 1),
-                          1 => array('name' => get_string("lax", "workshop"), 'value' => 0.6),
-                          2 => array('name' => get_string("fair", "workshop"), 'value' => 0.4),
-                          3 => array('name' => get_string("strict", "workshop"), 'value' => 0.33),
-                          4 => array('name' => get_string("verystrict", "workshop"), 'value' => 0.2) );
+                          0 => array('name' => get_string('verylax', 'workshop'), 'value' => 1),
+                          1 => array('name' => get_string('lax', 'workshop'), 'value' => 0.6),
+                          2 => array('name' => get_string('fair', 'workshop'), 'value' => 0.4),
+                          3 => array('name' => get_string('strict', 'workshop'), 'value' => 0.33),
+                          4 => array('name' => get_string('verystrict', 'workshop'), 'value' => 0.2) );
 
 
 
@@ -658,7 +622,6 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                 }
             // if we got some "live" ones then output them
             if ($agreecontent) {
-                $strftimerecent = get_string("strftimerecent");
                 print_headline(get_string("workshopagreedassessments", "workshop").":");
                 foreach ($logs as $log) {
                     //Create a temp valid module structure (only need courseid, moduleid)
@@ -666,21 +629,17 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     $tempmod->id = $log->workshopid;
                     //Obtain the visible property from the instance
                     if (instance_is_visible("workshop",$tempmod)) {
-                        $date = userdate($log->time, $strftimerecent);
-                        if (isteacher($course->id, $log->userid)) {
-                            echo "<p><font size=\"1\">$date - ".fullname($log)."<br />";
-                            }
-                        else { // don't break anonymous rule
-                            echo "<p><font size=\"1\">$date - A $course->student<br />";
-                            }
-                        echo "\"<a href=\"$CFG->wwwroot/mod/workshop/".str_replace('&', '&amp;', $log->url)."\">";
-                        echo "$log->name";
-                        echo "</a>\"</font></p>";
+                        if (!isteacher($course->id, $log->userid)) {  // don't break anonymous rule
+                            $log->firstname = $course->student;
+                            $log->lastname = '';
                         }
+                        print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+                                                   $CFG->wwwroot.'/mod/workshop/'.$log->url);
                     }
                 }
             }
         }
+    }
 
     // have a look for new assessments for this user (assess) 
     $assesscontent = false;
@@ -699,7 +658,6 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                 }
             // if we got some "live" ones then output them
             if ($assesscontent) {
-                $strftimerecent = get_string("strftimerecent");
                 print_headline(get_string("workshopassessments", "workshop").":");
                 foreach ($logs as $log) {
                     //Create a temp valid module structure (only need courseid, moduleid)
@@ -707,22 +665,17 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     $tempmod->id = $log->workshopid;
                     //Obtain the visible property from the instance
                     if (instance_is_visible("workshop",$tempmod)) {
-                        $date = userdate($log->time, $strftimerecent);
-                        if (isteacher($course->id, $log->userid)) {
-                            echo "<p><font size=\"1\">$date - ".fullname($log)."<br />";
-                            }
-                        else { // don't break anonymous rule
-                            echo "<p><font size=\"1\">$date - A $course->student<br />";
-                            }
-                        echo "\"<a href=\"$CFG->wwwroot/mod/workshop/".str_replace('&', '&amp;', $log->url)."\">";
-                        echo "$log->name";
-                        echo "</a>\"</font></p>";
+                        if (!isteacher($course->id, $log->userid)) {  // don't break anonymous rule
+                            $log->firstname = $course->student;
+                            $log->lastname = '';
                         }
+                        print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+                                                   $CFG->wwwroot.'/mod/workshop/'.$log->url);
                     }
                 }
             }
         }
-
+    }
     // have a look for new comments for this user (comment) 
     $commentcontent = false;
     if (!$isteacher) { // teachers only need to see submissions
@@ -740,7 +693,6 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                 }
             // if we got some "live" ones then output them
             if ($commentcontent) {
-                $strftimerecent = get_string("strftimerecent");
                 print_headline(get_string("workshopcomments", "workshop").":");
                 foreach ($logs as $log) {
                     //Create a temp valid module structure (only need courseid, moduleid)
@@ -748,16 +700,15 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     $tempmod->id = $log->workshopid;
                     //Obtain the visible property from the instance
                     if (instance_is_visible("workshop",$tempmod)) {
-                        $date = userdate($log->time, $strftimerecent);
-                        echo "<p><font size=\"1\">$date - A $course->student<br />";
-                        echo "\"<a href=\"$CFG->wwwroot/mod/workshop/".str_replace('&', '&amp;', $log->url)."\">";
-                        echo "$log->name";
-                        echo "</a>\"</font></p>";
-                        }
+                        $log->firstname = $course->student;    // Keep anonymous
+                        $log->lastname = '';
+                        print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+                                                   $CFG->wwwroot.'/mod/workshop/'.$log->url);
                     }
                 }
             }
         }
+    }
 
     // have a look for new assessment gradings for this user (grade)
     $gradecontent = false;
@@ -775,7 +726,6 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
             }
         // if we got some "live" ones then output them
         if ($gradecontent) {
-            $strftimerecent = get_string("strftimerecent");
             print_headline(get_string("workshopfeedback", "workshop").":");
             foreach ($logs as $log) {
                 //Create a temp valid module structure (only need courseid, moduleid)
@@ -783,15 +733,14 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                 $tempmod->id = $log->workshopid;
                 //Obtain the visible property from the instance
                 if (instance_is_visible("workshop",$tempmod)) {
-                    $date = userdate($log->time, $strftimerecent);
-                    echo "<p><font size=\"1\">$date - $course->teacher<br />";
-                    echo "\"<a href=\"$CFG->wwwroot/mod/workshop/".str_replace('&', '&amp;', $log->url)."\">";
-                    echo "$log->name";
-                    echo "</a>\"</font></p>";
-                    }
+                    $log->firstname = $course->teacher;    // Keep anonymous
+                    $log->lastname = '';
+                    print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+                                               $CFG->wwwroot.'/mod/workshop/'.$log->url);
                 }
             }
         }
+    }
 
     // have a look for new submissions (only show to teachers) (submit)
     $submitcontent = false;
@@ -810,7 +759,6 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                 }
             // if we got some "live" ones then output them
             if ($submitcontent) {
-                $strftimerecent = get_string("strftimerecent");
                 print_headline(get_string("workshopsubmissions", "workshop").":");
                 foreach ($logs as $log) {
                     //Create a temp valid module structure (only need courseid, moduleid)
@@ -818,16 +766,13 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     $tempmod->id = $log->workshopid;
                     //Obtain the visible property from the instance
                     if (instance_is_visible("workshop",$tempmod)) {
-                        $date = userdate($log->time, $strftimerecent);
-                        echo "<p><font size=\"1\">$date - ".fullname($log)."<br />";
-                        echo "\"<a href=\"$CFG->wwwroot/mod/workshop/".str_replace('&', '&amp;', $log->url)."\">";
-                        echo "$log->name";
-                        echo "</a>\"</font></p>";
-                        }
+                        print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+                                                   $CFG->wwwroot.'/mod/workshop/'.$log->url);
                     }
                 }
             }
         }
+    }
 
     return $agreecontent or $assesscontent or $commentcontent or $gradecontent or $submitcontent;
 }

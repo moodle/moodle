@@ -291,10 +291,10 @@ function assignment_print_recent_activity($course, $isteacher, $timestart) {
     $content = false;
     $assignments = NULL;
 
-    if (!$logs = get_records_select("log", "time > '$timestart' AND ".
-                                           "course = '$course->id' AND ".
-                                           "module = 'assignment' AND ".
-                                           "action = 'upload' ", "time ASC")) {
+    if (!$logs = get_records_select('log', 'time > \''.$timestart.'\' AND '.
+                                           'course = \''.$course->id.'\' AND '.
+                                           'module = \'assignment\' AND '.
+                                           'action = \'upload\' ', 'time ASC')) {
         return false;
     }
 
@@ -314,16 +314,12 @@ function assignment_print_recent_activity($course, $isteacher, $timestart) {
     }
 
     if ($assignments) {
-        $strftimerecent = get_string("strftimerecent");
-        $content = true;
-        print_headline(get_string("newsubmissions", "assignment").":");
+        print_headline(get_string('newsubmissions', 'assignment').':');
         foreach ($assignments as $assignment) {
-            $date = userdate($assignment->time, $strftimerecent);
-            echo "$date - ".fullname($assignment)."<br />";
-            echo "\"<a href=\"$CFG->wwwroot/mod/assignment/$assignment->url\">";
-            echo "$assignment->name";
-            echo '</a>"';
+            print_recent_activity_note($assignment->time, $assignment, $isteacher, $assignment->name,
+                                       $CFG->wwwroot.'/mod/assignment/'.$assignment->url);
         }
+        $content = true;
     }
  
     return $content;
