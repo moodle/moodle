@@ -18,6 +18,7 @@
     optional_variable($file, "");
     optional_variable($wdir, "");
     optional_variable($action, "");
+    optional_variable($usecheckboxes, "");
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
@@ -40,62 +41,133 @@
         if (! $site = get_site()) {
             error("Invalid site!");
         }
-
-        if ($course->id == $site->id) {
-            $strfiles = get_string("sitefiles");
-        } else {
-            $strfiles = get_string("files");
-        }
-    
-        if ($wdir == "/") {
-            $fullnav = "$strfiles";
-        } else {
-            $dirs = explode("/", $wdir);
-            $numdirs = count($dirs);
-            $link = "";
-            $navigation = "";
-            for ($i=1; $i<$numdirs; $i++) {
-               $navigation .= " -> ";
-               $link .= "/".urlencode($dirs[$i]);
-               $navigation .= "<a href=\"".$_SERVER['PHP_SELF']."?id=$course->id&wdir=$link\">".$dirs[$i]."</a>";
-            }
-            $fullnav = "<a href=\"".$_SERVER['PHP_SELF']."?id=$course->id&wdir=/\">$strfiles</a> $navigation";
-        }
-
-        print_header();
+        
         ?>
-	    <script language="javscript" type="text/javascript">
+        <html>
+        <head>
+        <title>coursefiles</title>
+        <script language="javscript" type="text/javascript">
 	    <!--
-	    function set_value(url) {
-		    var str_url = url;
-		    //if(document.all) {
-		    //	window.returnValue = str_url;
-		   // 	window.close();
-	    	//}
-	    	//else {
-		    	window.opener.document.forms[0].url.value = str_url;
-		    	window.close();
-	    	//}
+	    function set_value(params) {
+    	    /// function's argument is an array containing necessary values
+    	    /// to export parent window (url,isize,itype,iwidth,iheight)
+    	    /// set values when user click's an image name.
+    	    var upper = window.parent;
+    	    var insimg = upper.document.getElementById('f_url');
+    	    try {
+        	    if(insimg != null) {
+    	            for(field in params) {
+        	            var value = params[field];
+        	            switch(field) {
+            	            case "url"   :   upper.document.getElementById('f_url').value = value; 
+            	                     upper.ipreview.location.replace('popups/preview.php?id='+ <?php print($course->id);?> +'&imageurl='+ value);
+            	                break;
+            	            case "isize" :   upper.document.getElementById('isize').value = value; break;
+            	            case "itype" :
+            	                if(params[field].indexOf("image/gif") == -1 && params[field].indexOf("image/jpeg") == -1 && params[field].indexOf("image/png") == -1) {
+        		                alert("<?php print_string("notimage","editor");?>");
+        		                return false;
+    		                } else {
+        		                upper.document.getElementById('itype').value = value;
+    		                }
+        		                break;
+        		            case "iwidth":    upper.document.getElementById('f_width').value = value; break;
+        		            case "iheight":   upper.document.getElementById('f_height').value = value; break;
+    		            }
+    		        }
+		        } else {
+    		        for(field in params) {
+        		        var value = params[field];
+        		        switch(field) {
+            		        case "url" : upper.document.getElementById('f_href').value = value; break;
+            		        case "imodified" : upper.document.getElementById('imodified').value = value; break; 
+            		        case "isize" : upper.document.getElementById('isize').value = value; break;
+            		        case "itype" : upper.document.getElementById('itype').value = value; break;
+        		        }
+    		        }
+		        }
+		    } catch(e) {
+    		    alert("Something odd just occurred!!!");
+		    }
+    	    return false;
 	    }
+	    
+	    function set_dir(strdir) {
+    	    // this function will be rewritten in near future - Janne -
+    	    if(window.parent.document.uploader != null) {
+        	    window.parent.document.uploader.wdir.value = strdir;
+    	    }
+    	    if(window.parent.document.cfolder != null) {
+        	    window.parent.document.cfolder.wdir.value = strdir;
+        	    window.parent.document.cfolder.name.value = "";
+    	    }
+    	    if(window.parent.document.irename != null) {
+        	    window.parent.document.irename.wdir.value = strdir;
+    	    }
+	    }
+	    
+	    function set_rename(strfile) {
+    	    if(window.parent.document.irename != null) {
+        	    window.parent.document.irename.file.value = strfile;
+    	    }
+    	    return true;
+	    }
+	    
+	    function reset_value() {
+    	    var upper = window.parent.document;
+    	    for(var i = 0; i < upper.forms.length; i++) {
+                var f = upper.forms[i];
+                for(var j = 0; j < f.elements.length; j++) {
+                    var e = f.elements[j];
+                    if(e.type != "submit" && e.type != "button" && e.type != "hidden") {
+                        try {
+                            e.value = "";
+                        } catch (e) {
+                        }
+                    }
+                }
+            }
+            
+            var ren = upper.getElementById('irename');
+    	    if(ren != null) {
+    	        upper.irename.file.value = "";
+	        }
+	        var prev = window.parent.ipreview;
+	        if(prev != null) {
+    	        prev.location.replace('about:blank');
+	        }
+	        var uploader = window.parent.document.forms['uploader'];
+	        if(uploader != null) {
+    	        uploader.reset();
+	        }
+	        set_dir('<?php print($_REQUEST['wdir']);?>');
+            return true;
+	    }                
         -->
 	    </script>
+	    <style type="text/css">
+	    <!--
+	    body {
+    	    background-color: white;
+    	    margin-top: 2px;
+    	    margin-left: 4px;
+    	    margin-right: 4px;
+	    }
+	    body,p,table,td,input,select,a {
+    	    font-family: Tahoma, sans-serif;
+    	    font-size: 11px;
+	    }
+	    select { 
+    	position: absolute;
+    	top: -20px;
+    	left: 0px;
+	    }
+	    -->
+	    </style>
+        </head>
+        <body onload="reset_value();">
+	    
         <?php
-
-        echo '<table border="0" cellpadding="3" cellspacing="0" width="100%">';
-        echo '<tr>';
-        echo '<td bgcolor="'.$THEME->cellheading.'" class="navbar">';
-        echo '<font size="2"><b>'."$course->shortname -> $fullnav".'</b></font>';
-        echo '</td>';
-        echo '</tr>';
-        echo '</table>';
-
-        if ($course->id == $site->id) {
-            print_heading(get_string("publicsitefileswarning"), "center", 2);
-        }
-
-        echo "<table border=0 align=center cellspacing=3 cellpadding=3 width=640>";
-        echo "<tr>";
-        echo "<td colspan=\"2\">";
     }
 
     if (! $basedir = make_upload_directory("$course->id")) {
@@ -117,7 +189,6 @@
     if (!$wdir) {
         $wdir="/";
     }
-
 
     switch ($action) {
 
@@ -159,17 +230,17 @@
                 $strcancel = get_string("cancel");
 
                 echo "<P>$struploadafile ($strmaxsize) --> <B>$wdir</B>";
-                echo "<TABLE><TR><TD COLSPAN=2>";
+                echo "<TABLE border=\"0\"><TR><TD COLSPAN=2>";
                 echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"post\" ACTION=\"".$_SERVER['PHP_SELF']."\">";
                 echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$upload_max_filesize\">";
                 echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=upload>";
-                echo " <INPUT NAME=\"userfile\" TYPE=\"file\" size=\"60\">";
-                echo " </TD><TR><TD WIDTH=10>";
+                echo " <INPUT NAME=\"userfile\" TYPE=\"file\" size=\"40\">";
+                echo " </TD><TR><TD align=\"right\">";
                 echo " <INPUT TYPE=submit NAME=save VALUE=\"$struploadthisfile\">";
                 echo "</FORM>";
-                echo "</TD><TD WIDTH=100%>";
+                echo "</TD><TD>";
                 echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=\"get\">";
                 echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
@@ -397,7 +468,7 @@
                 }
                 clearfilelist();
                 displaydir($wdir);
-                   
+                    
             } else {
                 html_header($course, $wdir, "form.name");
 
@@ -508,13 +579,13 @@
                 echo "<P ALIGN=CENTER>$strlistfiles:</P>";
                 $file = basename($file);
 
-                include_once('../lib/pclzip/pclzip.lib.php');
+                include_once('../pclzip/pclzip.lib.php');
                 $archive = new PclZip("$basedir/$wdir/$file");
                 if (!$list = $archive->listContent("$basedir/$wdir")) {
                     notify($archive->errorInfo(true));
 
                 } else {
-                    echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\" width=640>";
+                    echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\">";
                     echo "<tr><th align=left>$strname</th><th align=right>$strsize</th><th align=right>$strmodified</th></tr>";
                     foreach ($list as $item) {
                         echo "<tr>";
@@ -542,35 +613,7 @@
             }
             html_footer();
             break;
-
-        case "torte":
-        	if($_POST)
-        	{
-	        	while(list($key, $val) = each($_POST))
-	        	{
-		        	if(ereg("file([0-9]+)", $key, $regs))
-		        	{
-			        	$file = $val;
-		        	}
-	        	}
-	        	if(@filetype($CFG->dataroot ."/". $course->id . $file) == "file")
-	        	{
-		        	if(mimeinfo("icon", $file) == "image.gif")
-		        	{
-		        		$url = $CFG->wwwroot ."/file.php?file=/" .$course->id . $file;
-		        		runjavascript($url);
-	        		}
-	        		else
-	        		{
-		        		print "File is not a image!";
-	        		}
-	        	}
-	        	else
-	        	{
-		        	print "You cannot insert FOLDER into richtext editor!!!";
-	        	}
-        	}
-        	break;
+            
         case "cancel";
             clearfilelist();
 
@@ -646,7 +689,7 @@ function printfilelist($filelist) {
 
     foreach ($filelist as $file) {
         if (is_dir($basedir.$file)) {
-            echo "<IMG SRC=\"$CFG->pixpath/f/folder.gif\" HEIGHT=16 WIDTH=16> $file<BR>";
+            echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\"> $file<br />";
             $subfilelist = array();
             $currdir = opendir($basedir.$file);
             while ($subfile = readdir($currdir)) { 
@@ -658,7 +701,7 @@ function printfilelist($filelist) {
 
         } else { 
             $icon = mimeinfo("icon", $file);
-            echo "<IMG SRC=\"$CFG->pixpath/f/$icon\"  HEIGHT=16 WIDTH=16> $file<BR>";
+            echo "<img src=\"$CFG->pixpath/f/$icon\"  height=\"16\" width=\"16\"> $file<br />";
         }
     }
 }
@@ -666,16 +709,33 @@ function printfilelist($filelist) {
 
 function print_cell($alignment="center", $text="&nbsp;") {
     echo "<TD ALIGN=\"$alignment\" NOWRAP>";
-    echo "<FONT SIZE=\"-1\" FACE=\"Arial, Helvetica\">";
     echo "$text";
-    echo "</FONT>";
     echo "</TD>\n";
+}
+
+function get_image_size($filepath) {
+/// This function get's the image size
+
+    /// Check if file exists
+    if(!file_exists($filepath)) {
+        return false;
+    } else {
+        /// Get the mime type so it really an image.
+        if(mimeinfo("icon", basename($filepath)) != "image.gif") {
+            return false;
+        } else {
+            $array_size = getimagesize($filepath);
+            return $array_size;
+        }
+    }
+    unset($filepath,$array_size);
 }
 
 function displaydir ($wdir) {
 //  $wdir == / or /a or /a/b/c/d  etc
 
     global $basedir;
+    global $usecheckboxes;
     global $id;
     global $USER, $CFG;
 
@@ -695,6 +755,7 @@ function displaydir ($wdir) {
     }
     closedir($directory);
 
+    $strfile = get_string("file");
     $strname = get_string("name");
     $strsize = get_string("size");
     $strmodified = get_string("modified");
@@ -714,19 +775,28 @@ function displaydir ($wdir) {
 
 
     echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=post NAME=dirform>";
-    echo "<TABLE BORDER=0 cellspacing=2 cellpadding=2 width=640>";    
-    echo "<TR>";
-    echo "<TH WIDTH=5></TH>";
-    echo "<TH ALIGN=left>$strname</TH>";
-    echo "<TH ALIGN=right>$strsize</TH>";
-    echo "<TH ALIGN=right>$strmodified</TH>";
-    echo "<TH ALIGN=right>$straction</TH>";
-    echo "</TR>\n";
+    echo "<TABLE BORDER=\"0\" cellspacing=\"2\" cellpadding=\"2\" width=\"100%\">";    
+    //echo "<TR>";
+    //echo "<TH WIDTH=5></TH>";
+    //echo "<TH ALIGN=left>$strname</TH>";
+    //echo "<TH ALIGN=center>$strsize</TH>";
+    //echo "<TH ALIGN=center>$strmodified</TH>";
+    //echo "<TH ALIGN=center>$straction</TH>";
+    //echo "</TR>\n";
 
     if ($wdir == "/") {
         $wdir = "";
+    } else {
+        $bdir = str_replace("/".basename($wdir),"",$wdir);
+        if($bdir == "/") {
+            $bdir = "";
+        }
+        print "<tr><td colspan=\"5\">";
+        print "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$bdir&usecheckboxes=$usecheckboxes\" onclick=\"return reset_value();\">";
+        print "<img src=\"$CFG->wwwroot/lib/editor/images/folderup.gif\" height=\"14\" width=\"24\" border=\"0\" ALT=\"Move up\">";
+        print "</a></td></tr>\n";
     }
-
+    
     $count = 0;
 
     if (!empty($dirlist)) {
@@ -742,11 +812,13 @@ function displaydir ($wdir) {
     
             echo "<TR>";
 
-            print_cell("center", "<INPUT TYPE=checkbox NAME=\"file$count\" VALUE=\"$fileurl\">");
-            print_cell("left", "<A HREF=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$fileurl\"><IMG SRC=\"$CFG->pixpath/f/folder.gif\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"Folder\"></A> <A HREF=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$fileurl\">".htmlspecialchars($dir)."</A>");
-            print_cell("right", "-");
+            if ($usecheckboxes) {
+                print_cell("center", "<input type=checkbox name=\"file$count\" value=\"$fileurl\" onclick=\"return set_rename('$filesafe');\">");
+            }
+            print_cell("left", "<a href=\"".basename($_server['php_self'])."?id=$id&wdir=$fileurl\" onclick=\"return reset_value();\"><img src=\"$CFG->pixpath/f/folder.gif\" height=16 width=16 border=0 alt=\"folder\"></a> <a href=\"".basename($_server['php_self'])."?id=$id&wdir=$fileurl&usecheckboxes=$usecheckboxes\" onclick=\"return reset_value();\">".htmlspecialchars($dir)."</a>");
+            print_cell("right", "&nbsp;");
             print_cell("right", $filedate);
-            print_cell("right", "<A HREF=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</A>");
+            //print_cell("right", "<A HREF=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</A>");
     
             echo "</TR>";
         }
@@ -758,6 +830,7 @@ function displaydir ($wdir) {
         foreach ($filelist as $file) {
 
             $icon = mimeinfo("icon", $file);
+            $imgtype = mimeinfo("type",$file);
 
             $count++;
             $filename    = $fullpath."/".$file;
@@ -765,10 +838,21 @@ function displaydir ($wdir) {
             $filesafe    = rawurlencode($file);
             $fileurlsafe = rawurlencode($fileurl);
             $filedate    = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
-
+            
+            $dimensions = get_image_size($filename);
+            if($dimensions) {
+                $imgwidth = $dimensions[0];
+                $imgheight = $dimensions[1];
+            } else {
+                $imgwidth = "Unknown";
+                $imgheight = "Unknown";
+            }
+            unset($dimensions);
             echo "<tr>";
 
-            print_cell("center", "<INPUT TYPE=\"checkbox\" NAME=\"file$count\" VALUE=\"$fileurl\">");
+            if ($usecheckboxes) {
+                print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" onclick=\"return set_rename('$filesafe');\">");
+            }
             echo "<td align=left nowrap>";
             if ($CFG->slasharguments) {
                 $ffurl = "/file.php/$id$fileurl";
@@ -776,41 +860,56 @@ function displaydir ($wdir) {
                 $ffurl = "/file.php?file=/$id$fileurl";
             }
             link_to_popup_window ($ffurl, "display", 
-                                  "<IMG SRC=\"$CFG->pixpath/f/$icon\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"File\">", 
+                                  "<img src=\"$CFG->pixpath/f/$icon\" height=16 width=16 border=0 align=\"absmiddle\" alt=\"$strfile\">", 
                                   480, 640);
-            echo "<font size=\"-1\" face=\"Arial, Helvetica\">";
+            /*echo "<font size=\"-1\" face=\"Arial, Helvetica\">";
             link_to_popup_window ($ffurl, "display", 
                                   htmlspecialchars($file),
-                                  480, 640);
-            echo "</font></td>";
-
+                                  480, 640);*/
             $file_size = filesize($filename);
-            print_cell("right", display_size($file_size));
-            print_cell("right", $filedate);
+            ?>
+            <script language="javascript" type="text/javascript">
+            <!--
+                var a<?php echo $count; ?> = new Array();
+                a<?php echo $count; ?>['url'] = "<?php print($CFG->wwwroot.$ffurl);?>";
+                a<?php echo $count; ?>['isize'] = "<?php print(display_size($file_size));?>";
+                a<?php echo $count; ?>['itype'] = "<?php echo $imgtype; ?>";
+                a<?php echo $count; ?>['iwidth'] = "<?php echo $imgwidth; ?>";
+                a<?php echo $count; ?>['iheight'] = "<?php echo $imgheight; ?>";
+                a<?php echo $count; ?>['imodified'] = "<?php echo $filedate; ?>";
+                
+            // -->
+            </script>
+            <?php
+            echo "<a onclick=\"return set_value(a".$count.")\" href=\"#\">$file</a>";
+            echo "<!-- </font> --></td>";
 
-            if ($icon == "text.gif" || $icon == "html.gif") {
+            
+            //print_cell("right", display_size($file_size));
+            /*if ($icon == "text.gif" || $icon == "html.gif") {
                 $edittext = "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$fileurl&action=edit\">$stredit</a>";
-            } else if ($icon == "zip.gif") {
+            } else */
+            if ($icon == "zip.gif") {
                 $edittext = "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">$strunzip</a>&nbsp;";
                 $edittext .= "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$fileurl&action=listzip\">$strlist</a> ";
-            } else if ($icon == "image.gif") {
-                $edittext = "<b><a onMouseDown=\"return set_value('$CFG->wwwroot$ffurl')\" href=\"\">$strchoose</a></b>";
-            } else {
-                $edittext = "";
+            } /*else if ($icon == "image.gif") {
+                $edittext = "<b><a onclick=\"return set_value('$CFG->wwwroot$ffurl','".display_size($file_size)."','$imgtype','$imgwidth','$imgheight')\" href=\"#\">$strchoose</a></b>";
+            } */else {
+                $edittext = "&nbsp;";
             }
-            print_cell("right", "$edittext <A HREF=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</A>");
+            print_cell("right", "$edittext ");
+            print_cell("right", $filedate);
     
             echo "</TR>";
         }
     }
     echo "</TABLE>";
-    echo "<hr width=640 align=center noshade size=1>";
 
     if (empty($wdir)) {
         $wdir = "/";
     }
 
-    echo "<TABLE BORDER=0 cellspacing=2 cellpadding=2 width=640>";    
+    echo "<TABLE BORDER=0 cellspacing=2 cellpadding=2>";    
     echo "<TR><TD>";
     echo "<INPUT TYPE=hidden NAME=id VALUE=\"$id\">";
     echo "<INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\"> ";
@@ -834,23 +933,22 @@ function displaydir ($wdir) {
         echo "</FORM>";
     }
     echo "<TD ALIGN=right>";
-        echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=get>";
+       /* echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=get>";
         echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
         echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
         echo " <INPUT TYPE=hidden NAME=action VALUE=mkdir>";
         echo " <INPUT TYPE=submit VALUE=\"$strmakeafolder\">";
-        echo "</FORM>";
+        echo "</FORM>"; */
     echo "</TD>";
     echo "<TD ALIGN=right>";
-        echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=get>";
+      /*  echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=get>";
         echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
         echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
         echo " <INPUT TYPE=hidden NAME=action VALUE=upload>";
         echo " <INPUT TYPE=submit VALUE=\"$struploadafile\">";
-        echo "</FORM>";
+        echo "</FORM>"; */
     echo "</TD></TR>";
     echo "</TABLE>";
-    echo "<HR WIDTH=640 ALIGN=CENTER NOSHADE SIZE=1>";
 
 }
 

@@ -1,15 +1,3 @@
-<?php
-	include("../../../config.php");
-	$lastmodified = filemtime("en.php");
-    $lifetime = 1800;
-	
-    header("Content-type: application/x-javascript");  // Correct MIME type
-    header("Last-Modified: " . gmdate("D, d M Y H:i:s", lastmodified) . " GMT");
-    header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
-    header("Cache-control: max_age = $lifetime"); 
-    header("Pragma: ");
-	
-?>
 // I18N constants
 
 // LANG: "en", ENCODING: UTF-8 | ISO-8859-1
@@ -23,6 +11,10 @@
 //   2. PLEASE TRY TO USE UTF-8 FOR ENCODING;
 //      (if this is not possible, please include a comment
 //       that states what encoding is necessary.)
+<?php
+	include("../../../config.php");
+	
+?>
 HTMLArea.I18N = {
 
 	// the following should be the filename without .js extension
