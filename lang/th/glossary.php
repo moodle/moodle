@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 Beta (2004022400)
+      // glossary.php - created with Moodle 1.3 (2004052500)
 
 
 $string['addcomment'] = 'เพิ่มเติมข้อคิดเห็น';
@@ -49,6 +49,7 @@ $string['commentson'] = 'เปิดให้แสดงความคิดเห็นได้';
 $string['commentupdated'] = 'ความคิดเห็นถูกเพิ่มเติม';
 $string['concept'] = 'คอนเซปต์';
 $string['concepts'] = 'คอนเซปต์';
+$string['configenablerssfeeds'] = 'ตรงนี้ใช้สำหรับเปิดให้การป้อนข้อมูลแบบ RSS เกิดขึ้นได้ในทุกหมวดคำศัพท์  คุณยังจะต้องเปิดการป้อนข้อมูลเองในการตั้งค่าของแต่ละหมวดคำศัพท์';
 $string['currentglossary'] = 'คำศัพท์ปัจจุบัน';
 $string['dateview'] = 'เลือกโดยดุจากวันที่';
 $string['defaultapproval'] = 'สถานะการอนุมัติ';
@@ -96,7 +97,7 @@ $string['exporttomainglossary'] = 'ส่งออกไปยังรายการหลัก';
 $string['filetoimport'] = 'ไฟล์ที่ต้องการส่ง';
 $string['fillfields'] = 'ต้องเติมคอนเซปต์และความหมายของคำนะคะ  เลี่ยงไม่ได้';
 $string['filtername'] = 'ลิ้งค์คำศัพท์อัตโนมัติ';
-$string['fullmatch'] = 'เลือกมาเฉพาะศัพท์ที่ตรงตัวค้นหาเป๊ะ';
+$string['fullmatch'] = 'เลือกมาเฉพาะศัพท์ที่ตรงตัวค้นหา';
 $string['glossarytype'] = 'ชนิดคำศัพท์';
 $string['glosssaryexported'] = 'คำศัพท์ที่ถูกส่งออกไป';
 $string['importcategories'] = 'นำเข้าชนิดคำศัพท์';
@@ -134,12 +135,13 @@ $string['ratingsuse'] = 'ใช้ระดับความน่าสนใจ';
 $string['ratingtime'] = 'จำกัดคะแนนความน่าสนใจไว้ในช่วงนี้';
 $string['rejectedentries'] = 'ไม่รับการเพิ่มคำศัพท์นี้';
 $string['rejectionrpt'] = 'รายงานการปฏิเสธการเพิ่มคำศัพท์';
+$string['rsssubscriberss'] = 'แสดง RSS feed สำหรับ \'$a\'  คอนเซปต์';
 $string['searchindefinition'] = 'หาตัวอักษรทั้งหมด';
-$string['secondaryglossary'] = 'คำศัพท์ระดับรอง';
-$string['sendinratings'] = 'ส่งระดับความน่าสนใจมาให้ฉัน';
-$string['showall'] = 'แสดงลิ้งค์ทั้งหมด';
+$string['secondaryglossary'] = 'อภิธานศัพท์ขั้นรอง';
+$string['sendinratings'] = 'ส่งเข้าในการให้คะแนนล่าสุดของฉัน';
+$string['showall'] = 'แสดงลิงก์ทั้งหมด';
 $string['showalphabet'] = 'แสดงตัวอักษร';
-$string['showspecial'] = 'แสดงลิ้งค์พิเศษ';
+$string['showspecial'] = 'แสดงลิงก์พิเศษ';
 $string['sortby'] = 'เรียงโดย';
 $string['sortbycreation'] = 'วันที่สร้าง';
 $string['sortbylastupdate'] = 'วันที่อัพเดท';
@@ -148,9 +150,11 @@ $string['special'] = 'พิเศษ';
 $string['standardview'] = 'เลือกโดยตัวอักษร';
 $string['studentcanpost'] = 'นักเรียนสามารถเพิ่มคำศัพท์ได้';
 $string['totalentries'] = 'จำนวนคำศัพท์ทั้งหมด';
-$string['usedynalink'] = 'ลิ้งค์ไปที่คำศัพท์อัตโนมัติ';
+$string['usedynalink'] = 'ลิงก์ไปที่คำศัพท์อัตโนมัติ';
 $string['waitingapproval'] = 'รอการอนุมัติอยู่';
-$string['warningstudentcapost'] = '(ใช้ต่อเมื่อคำศัพท์ไม่อยู่ในรายการหลัก)';
+$string['warningstudentcapost'] = '(ใช้ในกรณีที่คำศัพท์ไม่ได้อยู่ในอภิธานศัพท์)';
+$string['withauthor'] = 'คอนเซปต์และชื่อผู้แต่ง';
+$string['withoutauthor'] = 'คอนเซปต์ที่ไม่ชื่อผู้แต่ง';
 $string['writtenby'] = 'โดย';
 $string['youarenottheauthor'] = 'คุณไม่ใช่ผู้ที่เขียนความคิดเห็นนี้ขึ้น  คุณจึงไม่สามารถแก้ไขความคิดเห็นนี้ได้ค่ะ';
 

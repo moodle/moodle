@@ -1,0 +1,99 @@
+<p align="center"><b>Overview</b></p>
+
+<ol>
+<li>A lesson is made up of a number of <b>pages</b> and optionally <b>branch
+    tables</b>.
+<li>A page contains some <b>content</b> and it normally ends with a 
+    <b>question</b>. Thus the term <b>Question Page</b>.
+<li>Each page normally has a set of <b>answers</b>. 
+<li>Each answer can have a short piece of text which is displayed if the answer is
+    chosen. This piece of text is called the <b>response</b>.
+<li>Also associated with each answer is a <b>jump</b>. The jump can be relative - 
+    this page, next page - or absolute - specifying any one of the pages in the 
+    lesson or the end of the lesson.
+<li>By default, the first answer jumps to the <b>next page</b> in the lesson. 
+    The subsequent answers jump to the same page. That is, the student is shown 
+    the same page of the lesson again if they do not chose the first answer.
+<li>The next page is determined by the lesson's <b>logical order</b>. This is 
+    the order of the pages as seen by the teacher. This order can be altered 
+    by moving pages within the lesson.
+<li>The lesson also has a <b>navigation order</b>. This is the order of the 
+    pages as seen by the students. This is determined by the jumps specified
+    for individual answers and it can be very different from the logical order.
+    (Although if the jumps are <i>not</i> changed from their default values
+     the two are strongly related.) The teacher has the option to check the 
+    navigation order.
+<li>When displayed to the students, the answers are usually shuffled. That is, 
+    the first answer from the teacher's point of view will not necessarily be 
+    the first answer in the list shown to the students. (Further, each time the
+    same set of answers is displayed they are likely to appear in a different
+    order.) The exception is sets of answers for matching-type questions, here
+    the answers are shown in the same order as input by the teacher. 
+<li>The number of answers can vary from page to page. For example, it is allowed
+    that some pages can end with a true/false question while others have questions
+    with one correct answer and three, say, distractors. 
+<li>It is possible to set up a page without any answers. The students are shown
+    a <b>Continue</b> link instead of the set of shuffled answers.
+<li>For the purposes of grading the lessons, <b>correct</b> answers are ones which 
+    jump to a page which is further <i>down</i> the logical order than the current page. 
+    <b>Wrong</b> answers are ones which either jump to the same page or to a page
+    further <i>up</i> the logical order than the current page. Thus, if the jumps are
+    <i>not</i> changed, the first answer is a correct answer and the other answers are 
+    wrong answers.
+<li>Questions can have more than one correct answer. For example, if two of the answers
+    jump to the next page then either answer is taken as a correct answer. (Although
+    the same destination page is shown to the students, the responses shown on the way 
+    to that page may well be different for the two answers.)
+<li>In the teacher's view of the lesson the correct answers have underlined Answer 
+    Labels.
+<li><b>Branch tables</b> are simply pages which have a set of links to other 
+    pages in the lesson. Typically a lesson may start with a branch table which
+    acts as a <b>Table of Contents</b>.
+<li>Each link in a branch table has two components, a description and the title
+    of the page to jump to.
+<li>A branch table effectively divides the lesson into a number of 
+    <b>branches</b> (or sections). Each branch can contain a number of pages 
+    (probably all related to the same topic). The end of a branch is usually 
+    marked by an <b>End of Branch</b> page. This is a special page which, by 
+    default, returns the student back to the preceeding branch table. (The 
+    &quot;return&quot; jump in an End of Branch page can be changed, if 
+    required, by editing the page.) 
+<li>There can be more than one branch table in a lesson. For example, a lesson
+    might usefully be structured so that specialist points are sub-branches
+    within the main subject branches.
+<li>It is important to give students a means of ending the lesson. This might
+    be done by including an &quot;End Lesson&quot; link in the main branch 
+    table. This jumps to the (imaginary) <b>End of Lesson</b> page. Another
+    option is for the last branch in the lesson (here &quot;last&quot; is used
+    in the logical ordering sense) to simply continue to the end of the lesson,
+    that is, it is <i>not</i> terminated by an End of Branch page.
+<li>When a lesson includes one or more branch tables it is advisable to set the
+    &quot;Minimum number of Questions&quot; parameter to some reasonable value.
+    This sets a lower limit on the number of pages seen when the grade is 
+    calculated. Without this parameter a student might visit a single branch
+    in the lesson, answer all its questions correctly and leave the lesson 
+    with the maximum grade.
+<li>Further, when a branch table is present a student has the opportunity of
+    re-visiting the same branch more than once. However, the grade is 
+    calculated using the number of <i>unique</i> questions answered. So
+    repeatedly answering the same set of questions does <i>not</i> increase
+    the grade. (In fact, the reverse is true, it lowers the grade as the count
+    of the number of pages seen is used in the denominator when calculating 
+    grades does include repeats.) In order to give students a fair idea of 
+    their progress in the lesson, they are shown details of how many questions
+    they are answered correctly, number of pages seen, and their current grade
+    on every branch table page.
+<li>The <b>end of the lesson</b> is reached by either jumping to that location explicitly 
+    or by jumping to the next page from the last (logical) page of the lesson. When the
+    end of the lesson is reached, the student receives a congratulations message and is 
+    shown their grade. The grade is (the number of questions correctly answered / number of 
+    pages seen) * the grade of the lesson.
+<li>If the end of the lesson is <i>not</i> reached and the student just leaves,
+    when the student goes into the lesson again they are given the choice of 
+    starting at the begining or picking up the lesson where they answered their
+    last correct answer.
+<li> For a lesson which allow re-takes, the teacher has the choice of using the
+    best grade or the average of the grades as the &quot;final&quot; grade from
+    the lesson. That grade is shown on the Grades page, for example.
+</ol>
+

@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
-      // mediaplugin.php - created with Moodle 1.2 Beta (2004022400)
+      // mediaplugin.php - created with Moodle 1.3 (2004052500)
 
 
-$string['filtername'] = 'มัลติมีเดียปลั๊กอิน';
+$string['filtername'] = 'Multimedia Plugins';
 
 ?>

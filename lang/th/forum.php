@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 Beta (2004022400)
+      // forum.php - created with Moodle 1.3 (2004052500)
 
 
 $string['addanewdiscussion'] = 'ตั้งกระทู้';
@@ -12,6 +12,7 @@ $string['anyfile'] = 'ไฟล์ทุกประเภท';
 $string['attachment'] = 'Attachment';
 $string['bynameondate'] = 'โดย  $a->name - $a->date';
 $string['configdisplaymode'] = 'จะแสดงค่าที่ตั้งไว้หากไม่มีการตั้งค่า';
+$string['configenablerssfeeds'] = 'สวิชต์นี้จะเปิดโอกาสให้ป้อน RSS ได้  คุณยังจะต้องเปิดป้อนข้อมูลในแต่ละกระทู้เอง';
 $string['configlongpost'] = 'โพสต์ใดก็ตามที่ยาวมากกว่านี้ จะถือว่า ยาว (ยกเว้น html)';
 $string['configmanydiscussions'] = 'จำนวนความคิดเห็นที่ต้องการแสดงในหนึ่งหน้า';
 $string['configmaxbytes'] = 'ขนาดไฟล์สูงสุดที่สามารถแนบลงบนกระทู้ได้';
@@ -111,6 +112,8 @@ $string['repliesmany'] = '$a คำตอบ';
 $string['repliesone'] = '$a คำตอบ';
 $string['reply'] = 'ตอบ';
 $string['replyforum'] = 'ตอบกลับบนกระดาน';
+$string['rsssubscriberssdiscussions'] = 'แสดง RSS สำหรับ\'$a\'  การสนทนา ';
+$string['rsssubscriberssposts'] = 'แสดง RSS สำหรับ \'$a\' โพสต์';
 $string['search'] = 'ค้นหา';
 $string['searchforums'] = 'เริ่มค้นหา';
 $string['searcholderposts'] = 'ค้นหากระทู้เก่า';
@@ -121,7 +124,9 @@ $string['singleforum'] = 'กระดานหัวข้อเดียวอย่างง่าย';
 $string['startedby'] = 'ถาม';
 $string['subject'] = 'หัวข้อ';
 $string['subscribe'] = 'สมัครเป็นสมาชิกกระดาน';
+$string['subscribeall'] = 'สมัครทุกคนเข้าสู่กระทู้นี้';
 $string['subscribed'] = 'เป็นสมาชิกเรียบร้อย';
+$string['subscribenone'] = 'ต้องการถอนทุกคนออกจากการเป็นสมาชิกกระทู้นี้';
 $string['subscribers'] = 'สมาชิก';
 $string['subscribersto'] = 'สมาชิกของ \'$a\'';
 $string['subscribestart'] = 'ต้องสำเนาโพสต์ในกระทู้นี้ทางอีเมล์';
@@ -130,6 +135,7 @@ $string['subscription'] = 'การเป็นสมาชิก';
 $string['subscriptions'] = 'การเป็นสมาชิก';
 $string['unsubscribe'] = 'ต้องการออกจากการเป็นสมาชิกกระดาน';
 $string['unsubscribed'] = 'ไม่ได้เป็นสมาชิก';
+$string['unsubscribeshort'] = 'ยกเลิกการเป็นสมาชิก';
 $string['youratedthis'] = 'คุณให้คะแนน';
 $string['yournewtopic'] = 'กระทู้ใหม่';
 $string['yourreply'] = 'คำตอบ';

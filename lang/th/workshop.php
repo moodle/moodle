@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 Beta (2004022400)
+      // workshop.php - created with Moodle 1.3 (2004052500)
 
 
 $string['absent'] = 'ขาด';
@@ -29,7 +29,7 @@ $string['assessmentsby'] = 'ประเมินโดย $a';
 $string['assessmentsdone'] = 'ประเมินผลแล้ว';
 $string['assessmentsexcluded'] = 'จำนวนของการประเมินไม่รวม $a';
 $string['assessmentsmustbeagreed'] = 'ผลการประเมินต้องเห็นพ้องกัน';
-$string['assessmentwasagreedon'] = 'ผ $a';
+$string['assessmentwasagreedon'] = 'ผลการประเมินเห็นพ้องกันเมื่อ $a';
 $string['assessor'] = 'ผู้ประเมิน';
 $string['assessthissubmission'] = 'ยอมรับผลการประเมินนี้';
 $string['assignmentnotinthecorrectphase'] = 'มอบหมายกิจกรรมผิดขั้นตอน';
@@ -155,7 +155,7 @@ $string['phase6short'] = 'แสดงเกรด';
 $string['pleaseassesstheseexamplesfromtheteacher'] = 'โปรดประเมินตัวอย่างเหล่านี้ที่มาจาก $a';
 $string['pleaseassessthesestudentsubmissions'] = 'โปรดประเมิน $a ด้วย';
 $string['pleaseassessyoursubmissions'] = 'กรุณาประเมินงานที่ส่งมา';
-$string['poor'] = 'แย่';
+$string['poor'] = 'ต้องปรับปรุง';
 $string['present'] = 'มา';
 $string['reasonforadjustment'] = 'เหตุผลของการปรับ';
 $string['reassess'] = 'ประเมินใหม่อีกครั้ง';
@@ -170,9 +170,9 @@ $string['savemyassessment'] = 'บันทึกการประเมินของฉัน';
 $string['savemycomment'] = 'บันทึกการข้อเสนอแนะของฉัน';
 $string['savemygrading'] = 'บันทึกการให้เกรดของฉัน';
 $string['saveoverallocation'] = 'บันทึกการจัดสรรที่เกิน';
-$string['scale10'] = 'เต็ม 10 คะแนน';
-$string['scale100'] = 'เต็ม 100 คะแนน';
-$string['scale20'] = 'เต็ม 20 คะแนน';
+$string['scale10'] = 'จาก 10 คะแนน';
+$string['scale100'] = 'จาก 100 คะแนน';
+$string['scale20'] = 'จาก 20 คะแนน';
 $string['scalecorrect'] = 'สเกล 2 ระดับ ถูก/ผิด';
 $string['scaleexcellent4'] = 'สเกล 4 ระดับ ดีมาก/ต้องปรับปรุง';
 $string['scaleexcellent5'] = 'สเกล 5 ระดับ ดีมาก/ต้องปรับปรุง';
@@ -225,6 +225,7 @@ $string['weightforbias'] = 'ค่าน้ำหนักการความลำเอียง';
 $string['weightforgradingofassessments'] = 'ค่าน้ำหนักสำหรับระดับคะแนนการประเมิน';
 $string['weightforpeerassessments'] = 'ค่าน้ำหนักสำหรับผู้ร่วมประเมิน';
 $string['weightforreliability'] = 'ค่าน้ำหนักความน่าเชื่อถือ';
+$string['weightforteacherassessments'] = 'ค่าน้ำหนักสำหรับอาจารย์ที่ร่วมประเมิน';
 $string['weights'] = 'ค่าน้ำหนัก';
 $string['weightsusedforfinalgrade'] = 'ค่าน้ำหนักสำหรับระดับคะแนนสุดท้าย';
 $string['weightsusedforsubmissions'] = 'ค่าน้ำหนักสำหรับการนุมัติ';
