@@ -382,7 +382,7 @@ function glossary_get_participants($glossaryid) {
     global $CFG;
 
     //Get students
-    $students = get_records_sql("SELECT DISTINCT u.*
+    $students = get_records_sql("SELECT DISTINCT u.id, u.id
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}glossary_entries g
                                  WHERE g.glossaryid = '$glossaryid' and

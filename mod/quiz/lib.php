@@ -266,7 +266,7 @@ function quiz_get_participants($quizid) {
 
     global $CFG;
 
-    return get_records_sql("SELECT DISTINCT u.*
+    return get_records_sql("SELECT DISTINCT u.id, u.id
                             FROM {$CFG->prefix}user u,
                                  {$CFG->prefix}quiz_attempts a
                             WHERE a.quiz = '$quizid' and

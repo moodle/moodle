@@ -273,13 +273,13 @@ function journal_get_participants($journalid) {
     global $CFG;
 
     //Get students
-    $students = get_records_sql("SELECT DISTINCT u.*
+    $students = get_records_sql("SELECT DISTINCT u.id, u.id
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}journal_entries j
                                  WHERE j.journal = '$journalid' and
                                        u.id = j.userid");
     //Get teachers
-    $teachers = get_records_sql("SELECT DISTINCT u.*
+    $teachers = get_records_sql("SELECT DISTINCT u.id, u.id
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}journal_entries j
                                  WHERE j.journal = '$journalid' and

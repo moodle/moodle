@@ -236,7 +236,7 @@ function chat_get_participants($chatid, $groupid=0) {
     }
 
     //Get students
-    $students = get_records_sql("SELECT DISTINCT u.*
+    $students = get_records_sql("SELECT DISTINCT u.id, u.id
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}chat_messages c
                                  WHERE c.chatid = '$chatid' $groupselect

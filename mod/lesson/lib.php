@@ -308,7 +308,7 @@ function lesson_get_participants($lessonid) {
     global $CFG;
     
     //Get students
-    $students = get_records_sql("SELECT DISTINCT u.*
+    $students = get_records_sql("SELECT DISTINCT u.id, u.id
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}lesson_attempts a
                                  WHERE a.lessonid = '$lessonid' and

@@ -1032,20 +1032,20 @@ function workshop_get_participants($workshopid) {
     global $CFG;
 
     //Get students from workshop_submissions
-    $st_submissions = get_records_sql("SELECT DISTINCT u.*
+    $st_submissions = get_records_sql("SELECT DISTINCT u.id, u.id
                                        FROM {$CFG->prefix}user u,
                                             {$CFG->prefix}workshop_submissions s
                                        WHERE s.workshopid = '$workshopid' and
                                              u.id = s.userid");
     //Get students from workshop_assessments
-    $st_assessments = get_records_sql("SELECT DISTINCT u.*
+    $st_assessments = get_records_sql("SELECT DISTINCT u.id, u.id
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}workshop_assessments a
                                  WHERE a.workshopid = '$workshopid' and
                                        u.id = a.userid");
 
     //Get students from workshop_comments
-    $st_comments = get_records_sql("SELECT DISTINCT u.*
+    $st_comments = get_records_sql("SELECT DISTINCT u.id, u.id
                                    FROM {$CFG->prefix}user u,
                                         {$CFG->prefix}workshop_comments c
                                    WHERE c.workshopid = '$workshopid' and

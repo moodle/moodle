@@ -354,7 +354,7 @@ function attendance_get_participants($attendanceid) {
     global $CFG;
 
     //Get students
-    $students = get_records_sql("SELECT DISTINCT u.*
+    $students = get_records_sql("SELECT DISTINCT u.id, u.id
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}attendance_roll a
                                  WHERE a.dayid = '$attendanceid' and

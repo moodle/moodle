@@ -883,13 +883,13 @@ function forum_get_participants($forumid) {
     global $CFG;
 
     //Get students from forum_subscriptions
-    $st_subscriptions = get_records_sql("SELECT DISTINCT u.*
+    $st_subscriptions = get_records_sql("SELECT DISTINCT u.id, u.id
                                          FROM {$CFG->prefix}user u,
                                               {$CFG->prefix}forum_subscriptions s
                                          WHERE s.forum = '$forumid' and
                                                u.id = s.userid");
     //Get students from forum_posts
-    $st_posts = get_records_sql("SELECT DISTINCT u.*
+    $st_posts = get_records_sql("SELECT DISTINCT u.id, u.id
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}forum_discussions d,
                                       {$CFG->prefix}forum_posts p
@@ -898,7 +898,7 @@ function forum_get_participants($forumid) {
                                        u.id = p.userid");
 
     //Get students from forum_ratings
-    $st_ratings = get_records_sql("SELECT DISTINCT u.*
+    $st_ratings = get_records_sql("SELECT DISTINCT u.id, u.id
                                    FROM {$CFG->prefix}user u,
                                         {$CFG->prefix}forum_discussions d,
                                         {$CFG->prefix}forum_posts p,

@@ -368,13 +368,13 @@ function assignment_get_participants($assignmentid) {
     global $CFG;
 
     //Get students
-    $students = get_records_sql("SELECT DISTINCT u.*
+    $students = get_records_sql("SELECT DISTINCT u.id, u.id
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}assignment_submissions a
                                  WHERE a.assignment = '$assignmentid' and
                                        u.id = a.userid");
     //Get teachers
-    $teachers = get_records_sql("SELECT DISTINCT u.*
+    $teachers = get_records_sql("SELECT DISTINCT u.id, u.id
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}assignment_submissions a
                                  WHERE a.assignment = '$assignmentid' and

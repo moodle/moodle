@@ -582,13 +582,13 @@ function exercise_get_participants($exerciseid) {
     global $CFG;
 
     //Get students from exercise_submissions
-    $st_submissions = get_records_sql("SELECT DISTINCT u.*
+    $st_submissions = get_records_sql("SELECT DISTINCT u.id, u.id
                                        FROM {$CFG->prefix}user u,
                                             {$CFG->prefix}exercise_submissions s
                                        WHERE s.exerciseid = '$exerciseid' and
                                              u.id = s.userid");
     //Get students from exercise_assessments
-    $st_assessments = get_records_sql("SELECT DISTINCT u.*
+    $st_assessments = get_records_sql("SELECT DISTINCT u.id, u.id
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}exercise_assessments a
                                  WHERE a.exerciseid = '$exerciseid' and

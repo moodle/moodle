@@ -61,14 +61,14 @@ function dialogue_get_participants($dialogueid) {
     global $CFG;
 
     //Get conversation's creators
-    $creators = get_records_sql("SELECT DISTINCT u.*
+    $creators = get_records_sql("SELECT DISTINCT u.id, u.id
                                 FROM {$CFG->prefix}user u,
                                      {$CFG->prefix}dialogue_conversations c
                                 WHERE c.dialogueid = '$dialogueid' and
                                       u.id = c.userid");
 
     //Get conversation's receivers
-    $receivers = get_records_sql("SELECT DISTINCT u.*
+    $receivers = get_records_sql("SELECT DISTINCT u.id, u.id
                                 FROM {$CFG->prefix}user u,
                                      {$CFG->prefix}dialogue_conversations c
                                 WHERE c.dialogueid = '$dialogueid' and

@@ -120,7 +120,7 @@ function choice_get_participants($choiceid) {
     global $CFG;
 
     //Get students
-    $students = get_records_sql("SELECT DISTINCT u.*
+    $students = get_records_sql("SELECT DISTINCT u.id, u.id
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}choice_answers c
                                  WHERE c.choice = '$choiceid' and

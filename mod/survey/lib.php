@@ -183,13 +183,13 @@ function survey_get_participants($surveyid) {
     global $CFG;
 
     //Get students from survey_analysis
-    $st_analysis = get_records_sql("SELECT DISTINCT u.*
+    $st_analysis = get_records_sql("SELECT DISTINCT u.id, u.id
                                     FROM {$CFG->prefix}user u,
                                          {$CFG->prefix}survey_analysis a
                                     WHERE a.survey = '$surveyid' and
                                           u.id = a.userid");
     //Get students from survey_answers
-    $st_answers = get_records_sql("SELECT DISTINCT u.*
+    $st_answers = get_records_sql("SELECT DISTINCT u.id, u.id
                                    FROM {$CFG->prefix}user u,
                                         {$CFG->prefix}survey_answers a
                                    WHERE a.survey = '$surveyid' and
