@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.1 development (2003072800)
+      // assignment.php - created with Moodle 1.3 Stable (001) (2004052500)
 
 
 $string['allowresubmit'] = 'Permitir novo envio';
@@ -17,12 +17,12 @@ $string['configmaxbytes'] = 'Maior tamanho definido para todas as tarefas do sit
 $string['description'] = 'Descrição';
 $string['duedate'] = 'Data de entrega';
 $string['duedateno'] = 'Nenhuma data de entrega';
-$string['early'] = '$a cedo';
+$string['early'] = '$a antecipado';
 $string['existingfiledeleted'] = 'Este arquivo foi cancelado: $a';
 $string['failedupdatefeedback'] = 'Falhou a atualização do feedback da tarefa do usuário $a';
 $string['feedback'] = 'Feedback';
 $string['feedbackupdated'] = 'Feedback das tarefas de $a pessoas atualizado';
-$string['late'] = '$a tarde';
+$string['late'] = '$a atrasado';
 $string['maximumgrade'] = 'Nota máxima';
 $string['maximumsize'] = 'Tamanho máximo';
 $string['modulename'] = 'Tarefa';

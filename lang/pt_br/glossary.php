@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2.1 (2004032500)
+      // glossary.php - created with Moodle 1.3 Stable (001) (2004052500)
 
 
 $string['addcomment'] = 'Adicionar comentário';
@@ -9,7 +9,7 @@ $string['aliases'] = 'Palavra chave';
 $string['allcategories'] = 'Todas as categorias';
 $string['allentries'] = 'Todos';
 $string['allowcomments'] = 'Permitir comentários';
-$string['allowduplicatedentries'] = 'Permitir a items repetidos';
+$string['allowduplicatedentries'] = 'Permitir  itens repetidos';
 $string['allowratings'] = 'Permitir a avaliação dos itens?';
 $string['answer'] = 'Resposta';
 $string['approve'] = 'Aprovar';
@@ -49,6 +49,7 @@ $string['commentson'] = 'Comentários sobre';
 $string['commentupdated'] = 'O comentário foi atualizado';
 $string['concept'] = 'Conceito';
 $string['concepts'] = 'Conceitos';
+$string['configenablerssfeeds'] = 'Este parâmetro autoriza a criação de feeds RSS em todos os glossários. É necessário configurar cada glossário para que sejam criados os feeds. ';
 $string['currentglossary'] = 'Glossário atual';
 $string['dateview'] = 'data de publicação';
 $string['defaultapproval'] = 'Status de aprovação predefinido';
@@ -68,6 +69,7 @@ $string['displayformat6'] = 'Lista de itens';
 $string['displayformatcontinuous'] = 'Continuo sem autor';
 $string['displayformatdefault'] = 'Simples, como o dicionário';
 $string['displayformats'] = 'Mostrar formatos';
+$string['displayformatssetup'] = 'Mostrar configuação de formatos';
 $string['duplicateentry'] = 'Duplicar item';
 $string['editcategories'] = 'Editar categorias';
 $string['editentry'] = 'Editar item';
@@ -81,6 +83,7 @@ $string['entryapproved'] = 'Este item foi aprovado';
 $string['entrydeleted'] = 'Item cancelado';
 $string['entryexported'] = 'Item exportado com sucesso';
 $string['entryishidden'] = '(este item está escondido)';
+$string['entryleveldefaultsettings'] = 'Configurações predefinitas';
 $string['entryusedynalink'] = 'Link automático';
 $string['explainaddentry'] = 'Adicionar um novo item ao presente glossário.<br>Conceito e definição são campos obrigatórios.';
 $string['explainall'] = 'Mostrar TODOS os itens em uma página';
@@ -97,6 +100,7 @@ $string['filetoimport'] = 'Arquivo a ser importado';
 $string['fillfields'] = 'Conceito e definição são campos obrigatórios';
 $string['filtername'] = 'Links ao glossário automáticos';
 $string['fullmatch'] = 'Verificar igualdade apenas entre palavras inteiras<br><small>(quando o link é automático)</small>';
+$string['glossaryleveldefaultsettings'] = 'Configurações predefinidas do glossário';
 $string['glossarytype'] = 'Tipo de glossário';
 $string['glosssaryexported'] = 'Glossário exportado';
 $string['importcategories'] = 'Importar categorias';
@@ -134,6 +138,7 @@ $string['ratingsuse'] = 'Usar avaliações';
 $string['ratingtime'] = 'Restringir as avaliações aos itens neste arco de tempo:';
 $string['rejectedentries'] = 'Itens rejeitados';
 $string['rejectionrpt'] = 'Relatório de rejeição';
+$string['rsssubscriberss'] = 'Mostrar  \'$a\'  conceitos no feed RSS';
 $string['searchindefinition'] = 'Buscar também em definições';
 $string['secondaryglossary'] = 'Glossário secundário';
 $string['sendinratings'] = 'Enviar as minhas últimas avaliações';
@@ -151,6 +156,8 @@ $string['totalentries'] = 'Total de itens';
 $string['usedynalink'] = 'Fazer o link automático deste glossário com outros módulos';
 $string['waitingapproval'] = 'Pendente';
 $string['warningstudentcapost'] = '(Não é aplicável ao glossário principal)';
+$string['withauthor'] = 'Conceitos com autor';
+$string['withoutauthor'] = 'Conceitos sem autor';
 $string['writtenby'] = 'por';
 $string['youarenottheauthor'] = 'Apenas o autor do comentário pode editá-lo';
 

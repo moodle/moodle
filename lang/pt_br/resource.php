@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.1 development (2003072800)
+      // resource.php - created with Moodle 1.3 Stable (001) (2004052500)
 
 
 $string['addresource'] = 'Adicionar material';
@@ -19,6 +19,7 @@ $string['configpopuptoolbar'] = 'As janelas popup devem  mostrar a barra de inst
 $string['configpopupwidth'] = 'Qual é a largura predefinida das janelas popup?';
 $string['configwebsearch'] = 'Quando se adiciona uma URL como pagina web ou link, este endereço é apresentado como referimento para ajudar o usuário a buscar a URL que está procurando.';
 $string['directlink'] = 'Direcionar link a este arquivo';
+$string['directoryinfo'] = 'Todos os documentos no diretório selecionado serão visualizados';
 $string['editingaresource'] = 'Editar material';
 $string['example'] = 'Exemplo';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
@@ -27,8 +28,10 @@ $string['fetchclienterror'] = 'Um erro relacionado ao seu navegador impediu o ac
 $string['fetcherror'] = 'Não foi possível o acesso a esta página.';
 $string['fetchservererror'] = 'Um erro de acesso ao servidor remoto foi identificado (provavelmente um erro daquele programa) </p>';
 $string['filename'] = 'Nome do arquivo';
+$string['filtername'] = 'Link automático aos materiais';
 $string['fulltext'] = 'Texto completo';
 $string['htmlfragment'] = 'Fragmento de HTML';
+$string['maindirectory'] = 'Diretório principal';
 $string['modulename'] = 'Material';
 $string['modulenameplural'] = 'Materiais';
 $string['neverseen'] = 'Nunca visto';
@@ -58,5 +61,6 @@ $string['resourcetype5'] = 'Endereço Web (link)';
 $string['resourcetype6'] = 'Texto HTML';
 $string['resourcetype7'] = 'Programa';
 $string['resourcetype8'] = 'Texto Wiki';
+$string['resourcetype9'] = 'Diretório';
 
 ?>
