@@ -161,10 +161,10 @@
             }
         }
 
-        $usercount = get_users_count();
+        $usercount = get_users(false);
 
         if ($search) {
-            $usersearchcount = get_users_count($search);
+            $usersearchcount = get_users(false, $search);
             print_heading("$usersearchcount / $usercount ".get_string("users"));
             $usercount = $usersearchcount;
         } else {

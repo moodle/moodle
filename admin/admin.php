@@ -2,6 +2,8 @@
       // Admin-only script to assign administrative rights to users
       // !!! based on ../course/teacher.php (cut and pasted, then mangled)
 
+    define("MAX_USERS_PER_PAGE", 30);
+
 	require_once("../config.php");
 
     optional_variable($add, "");
@@ -46,10 +48,16 @@
         $$strstringtoload = get_string($stringtoload);
     }
 
+    if ($search) {
+        $searchstring = $strsearchagain;
+    } else {
+        $searchstring = $strsearch;
+    }
+
 	print_header("$site->shortname: $course->shortname: $strassignadmins", 
                  "$site->fullname", 
-                 "<A HREF=\"index.php\">$stradministration</A> -> 
-                  <A HREF=\"{$_SERVER['PHP_SELF']}\">$strassignadmins</A>", "");
+                 "<a href=\"index.php\">$stradministration</a> -> 
+                  <a href=\"{$_server['php_self']}\">$strassignadmins</a>", "");
 
 /// Get all existing admins
     $admins = get_admins();
@@ -96,83 +104,75 @@
 
 
 /// Print the lists of existing and potential admins
-    echo "<TABLE CELLPADDING=2 CELLSPACING=10 ALIGN=CENTER>";
-    echo "<TR><TH WIDTH=50%>$strexistingadmins</TH><TH WIDTH=50%>$strpotentialadmins</TH></TR>";
-    echo "<TR><TD WIDTH=50% NOWRAP VALIGN=TOP>";
+    echo "<table cellpadding=2 cellspacing=10 align=center>";
+    echo "<tr><th width=50%>$strexistingadmins</th><th width=50%>$strpotentialadmins</th></tr>";
+    echo "<tr><td width=50% nowrap valign=top>";
 
 /// First, show existing admins
 
     if (! $admins) { 
-        echo "<P ALIGN=CENTER>$strnoexistingadmins</A>";
+        echo "<p align=center>$strnoexistingadmins</a>";
+
+        $adminlist = "";
 
     } else {
+        $adminarray = array();
+
         foreach ($admins as $admin) {
-            echo "<P ALIGN=right>$admin->firstname $admin->lastname,
+            $adminarray[] = $admin->id;
+            echo "<p align=right>$admin->firstname $admin->lastname,
             $admin->email &nbsp;&nbsp; ";
             if ($primaryadmin->id == $admin->id){
                 print_spacer(10, 9, false);
             } else {
-                echo "<A HREF=\"{$_SERVER['PHP_SELF']}?remove=$admin->id\"
-                TITLE=\"$strremoveadmin\"><IMG SRC=\"../pix/t/right.gif\"
-                BORDER=0></A>";
+                echo "<a href=\"{$_SERVER['PHP_SELF']}?remove=$admin->id\"
+                title=\"$strremoveadmin\"><img src=\"../pix/t/right.gif\"
+                border=0></A>";
             }
-            echo "</P>";
+            echo "</p>";
         }
+        
+        $adminlist = implode(",",$adminarray);
+        unset($adminarray);
     }
 
-    echo "<TD WIDTH=50% NOWRAP VALIGN=TOP>";
+    echo "<td width=50% nowrap valign=top>";
 
 /// Print list of potential admins
 
-    if ($search) {
-        $users = get_users_search($search);
-    } else {
-        $users = get_users_confirmed();
-    }
+    $usercount = get_users(false, $search, true, $adminlist);
 
-    
-    if ($users) {
-        foreach ($users as $user) {  // Remove users who are already admins
-            if ($admins) {
-                foreach ($admins as $admin) {
-                    if ($admin->id == $user->id) {
-                        continue 2;
-                    }
-                }
-            }
-            $potential[] = $user;
-        }
-    }
+    if ($usercount == 0) { 
+        echo "<p align=center>$strnopotentialadmins</p>";
 
-    if (! $potential) { 
-        echo "<P ALIGN=CENTER>$strnopotentialadmins</A>";
-        if ($search) {
-            echo "<FORM ACTION={$_SERVER['PHP_SELF']} METHOD=POST>";
-            echo "<INPUT TYPE=text NAME=search SIZE=20>";
-            echo "<INPUT TYPE=submit VALUE=\"$strsearchagain\">";
-            echo "</FORM>";
-        }
+    } else if ($usercount > MAX_USERS_PER_PAGE) { 
+        echo "<p align=center>$strtoomanytoshow</p>";
 
     } else {
+
         if ($search) {
-            echo "<P ALIGN=CENTER>($strsearchresults)</P>";
+            echo "<p align=center>($strsearchresults)</p>";
         }
-        if (count($potential) <= 20) {
-            foreach ($potential as $user) {
-                echo "<P ALIGN=LEFT><A HREF=\"{$_SERVER['PHP_SELF']}?add=$user->id\"
-                TITLE=\"$straddadmin\"><IMG SRC=\"../pix/t/left.gif\" BORDER=0></A>&nbsp;&nbsp;$user->firstname $user->lastname, $user->email";
-            }
-        } else {
-            echo "<P ALIGN=CENTER>There are too many users to show.<BR>";
-            echo "Enter a search word here.";
-            echo "<FORM ACTION={$_SERVER['PHP_SELF']} METHOD=POST>";
-            echo "<INPUT TYPE=text NAME=search SIZE=20>";
-            echo "<INPUT TYPE=submit VALUE=\"$strsearch\">";
-            echo "</FORM>";
+         
+        if (!$users = get_users(true, $search, true, $adminlist)) {
+            error("Could not get users!");
+        }
+
+        foreach ($users as $user) {
+            echo "<p align=left><A HREF=\"{$_SERVER['PHP_SELF']}?add=$user->id\"".
+                   "title=\"$straddadmin\"><img src=\"../pix/t/left.gif\"".
+                   "border=0></A>&nbsp;&nbsp;$user->firstname $user->lastname, $user->email";
         }
     }
 
-    echo "</TR></TABLE>";
+    if ($search or $usercount > MAX_USERS_PER_PAGE) {
+        echo "<form action={$_SERVER['PHP_SELF']} method=post>";
+        echo "<input type=text name=search size=20>";
+        echo "<input type=submit value=\"$searchstring\">";
+        echo "</form>";
+    }
+
+    echo "</tr></table>";
 
     print_footer();
 

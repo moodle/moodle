@@ -942,7 +942,13 @@ function get_users_search($search, $sort="u.firstname ASC") {
 }
 
 
-function get_users_count($search="") {
+function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sort="firstname ASC") {
+/// Returns a subset of users, 
+/// $get - if false then only a count of the records is returned
+/// $search is a simple string to search for
+/// $confirmed is a switch to allow/disallow unconfirmed users
+/// $exceptions is a list of IDs to ignore, eg 2,4,5,8,9,10
+/// $sort is a sorting criteria to use
 
     if ($search) {
         $search = " AND (firstname LIKE '%$search%'
@@ -950,8 +956,27 @@ function get_users_count($search="") {
                      OR email LIKE '%$search%') ";
     }
 
-    return count_records_select("user", "username <> 'guest' AND deleted <> 1 $search");
+    if ($confirmed) {
+        $confirmed = " AND confirmed = '1' ";
+    }
+
+    if ($exceptions) {
+        $exceptions = " AND id NOT IN ($exceptions) ";
+    }
+
+    if ($sort and $get) {
+        $sort = " ORDER BY $sort ";
+    } else {
+        $sort = "";
+    }
+
+    if ($get) {
+        return get_records_select("user", "username <> 'guest' AND deleted = 0 $search $confirmed $exceptions $sort");
+    } else {
+        return count_records_select("user", "username <> 'guest' AND deleted = 0 $search $confirmed $exceptions $sort");
+    }
 }
+
 
 function get_users_listing($sort, $dir="ASC", $page=1, $recordsperpage=20, $search="") {
     global $CFG;
@@ -1014,7 +1039,6 @@ function get_users_longtimenosee($cutofftime) {
                                AND u.id = s.userid
                           GROUP BY u.id");
 }
-
 
 
 /// MODULE FUNCTIONS /////////////////////////////////////////////////
