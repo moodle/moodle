@@ -271,7 +271,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
                                 ? ' selected="selected" ' : '';
                         $outputoptions .= "<option value=\"$mcanswer->id\" $selected>$mcanswer->answer</option>";
                     }
-                   echo "<select $popup $style name=\"$inputname\" $readonly>";
+                   echo "<select $popup $style name=\"$inputname\">";
                    echo $outputoptions;
                    echo '</select>';
                    break;

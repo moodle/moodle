@@ -1043,7 +1043,7 @@ function quiz_print_quiz_questions($quiz, $questions,
     // $readonly determines if it is an attempt or an review,
     // The condition used here is unfortunatelly somewhat confusing...
     $readonly = !empty($results) && !isset($results->attemptbuildsonthelast)
-            ? ' readonly="readonly" ' : '';
+            ? ' disabled="disabled" ' : '';
 
     foreach ($questions as $question) {
 

@@ -124,7 +124,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
 
         if ($quiz->feedback && isset($answers[$nameprefix])
                 && $feedback = $answers[$nameprefix]->feedback) {
-           quiz_print_comment("<p align=\"right\">$feedback</p>");
+           quiz_print_comment($feedback);
         }
         if ($readonly && $quiz->correctanswers) {
             $delimiter = '';

@@ -204,10 +204,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
                 $checked = !empty($question->response[$nameprefix.$aid])
                         ? ' checked="checked" ' : '';
             }
-            if ($readonly) {
-                $readonly = ' readonly="readonly" disabled="disabled" ';
-            }
-            echo "<input $readonly $name $checked $type  value=\"$answer->id\" />";
+            echo "<input $readonly $name $checked $type  value=\"$answer->id\" alt=\"".s($answer->answer)."\" />";
            
             echo "</td>";
             
