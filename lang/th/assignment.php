@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.9 Beta 1 (2003051600)
+      // assignment.php - created with Moodle 1.1 (2003082800)
 
 
 $string['allowresubmit'] = "อนุญาตให้ส่งการบ้านซ้ำอีกครั้ง";
@@ -25,6 +25,7 @@ $string['maximumsize'] = "ขนาดสูงสุด";
 $string['modulename'] = "การบ้าน";
 $string['modulenameplural'] = "การบ้าน";
 $string['newsubmissions'] = "การบ้านที่ส่งแล้ว";
+$string['notgradedyet'] = "ยังไม่ได้ให้คะแนน";
 $string['notsubmittedyet'] = "ยังไม่ได้ส่งการบ้าน";
 $string['overwritewarning'] = "คำเตือน: ถ้าส่งไฟล์อีกครั้ง ระบบจะทำการบันทึกไฟล์นี้ ทับไฟล์เดิมที่มีอยู่";
 $string['saveallfeedback'] = "บันทึก feedback ทั้งหมด";
