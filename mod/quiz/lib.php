@@ -170,6 +170,10 @@ function quiz_delete_instance($id) {
         $result = false;
     }
 
+    if (! delete_records('block_instance', 'pageid', $quiz->id, 'pagetype', PAGE_QUIZ_VIEW)) {
+        $result = false;
+    }
+
     if ($events = get_records_select('event', "modulename = 'quiz' and instance = '$quiz->id'")) {
         foreach($events as $event) {
             delete_event($event->id);
