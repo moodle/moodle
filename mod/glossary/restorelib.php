@@ -132,7 +132,7 @@
             //Now, build the GLOSSARY_ENTRIES record structure
             $entry->glossaryid = $new_glossary_id;
             $entry->userid = backup_todb($ent_info['#']['USERID']['0']['#']);
-            $entry->concept = backup_todb($ent_info['#']['CONCEPT']['0']['#']);
+            $entry->concept = backup_todb(trim($ent_info['#']['CONCEPT']['0']['#']));
             $entry->definition = backup_todb($ent_info['#']['DEFINITION']['0']['#']);
             $entry->format = backup_todb($ent_info['#']['FORMAT']['0']['#']);
             $entry->attachment = backup_todb($ent_info['#']['ATTACHMENT']['0']['#']);
@@ -311,7 +311,7 @@
 
             //Now, build the GLOSSARY_ALIAS record structure
             $alias->entryid = $new_entry_id;
-            $alias->alias = backup_todb($alias_info['#']['ALIAS_TEXT']['0']['#']);
+            $alias->alias = backup_todb(trim($alias_info['#']['ALIAS_TEXT']['0']['#']));
 
             //The structure is equal to the db, so insert the glossary_comments
             $newid = insert_record ("glossary_alias",$alias);

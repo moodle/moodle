@@ -1576,7 +1576,7 @@ global $CFG;
                 }
                 if ( $entry->approved and $permissiongranted ) {
                     $status = fwrite($h,glossary_start_tag("ENTRY",3,true));
-                    fwrite($h,glossary_full_tag("CONCEPT",4,false,$entry->concept));
+                    fwrite($h,glossary_full_tag("CONCEPT",4,false,trim($entry->concept)));
                     fwrite($h,glossary_full_tag("DEFINITION",4,false,$entry->definition));
                     fwrite($h,glossary_full_tag("FORMAT",4,false,$entry->format));
                     fwrite($h,glossary_full_tag("USEDYNALINK",4,false,$entry->usedynalink));
@@ -1588,7 +1588,7 @@ global $CFG;
                         $status = fwrite ($h,glossary_start_tag("ALIASES",4,true));
                         foreach ($aliases as $alias) {
                             $status = fwrite ($h,glossary_start_tag("ALIAS",5,true));
-                                fwrite($h,glossary_full_tag("NAME",6,false,$alias->alias));
+                                fwrite($h,glossary_full_tag("NAME",6,false,trim($alias->alias)));
                             $status = fwrite($h,glossary_end_tag("ALIAS",5,true));
                         }
                         $status = fwrite($h,glossary_end_tag("ALIASES",4,true));
@@ -1656,7 +1656,7 @@ require_once "../../lib/xmlize.php";
     $line = '';
     if ($h) {
         while ( !feof($h) ) {
-		   $char = fread($h,1024);
+           $char = fread($h,1024);
            $line .= $char;
         }
         fclose($h);

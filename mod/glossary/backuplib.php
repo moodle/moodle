@@ -157,7 +157,7 @@
 
                     fwrite ($bf,full_tag("ID",6,false,$glo_ent->id));
                     fwrite ($bf,full_tag("USERID",6,false,$glo_ent->userid));
-                    fwrite ($bf,full_tag("CONCEPT",6,false,$glo_ent->concept));
+                    fwrite ($bf,full_tag("CONCEPT",6,false,trim($glo_ent->concept)));
                     fwrite ($bf,full_tag("DEFINITION",6,false,$glo_ent->definition));
                     fwrite ($bf,full_tag("FORMAT",6,false,$glo_ent->format));
                     fwrite ($bf,full_tag("ATTACHMENT",6,false,$glo_ent->attachment));
@@ -257,7 +257,7 @@
             foreach ($aliases as $alias) {
                 $status =fwrite ($bf,start_tag("ALIAS",7,true));
 
-                fwrite ($bf,full_tag("ALIAS_TEXT",8,false,$alias->alias));
+                fwrite ($bf,full_tag("ALIAS_TEXT",8,false,trim($alias->alias)));
 
                 $status =fwrite ($bf,end_tag("ALIAS",7,true));        
             }

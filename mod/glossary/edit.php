@@ -46,7 +46,7 @@ if ( $confirm ) {
     $newentry->course = $glossary->course;
     $newentry->glossaryid = $glossary->id;
 
-    $newentry->concept = $form->concept;
+    $newentry->concept = trim($form->concept);
     $newentry->definition = $form->text;
     $newentry->format = $form->format;
     $newentry->usedynalink = $form->usedynalink;
@@ -169,6 +169,7 @@ echo "Creating!!!!!";
     if ( isset($form->aliases) ) {
         if ( $aliases = explode("\n",$form->aliases) ) {
             foreach ($aliases as $alias) {
+                $alias = trim($alias);
                 if ($alias) {
                     unset($newalias);
                     $newalias->entryid = $e;

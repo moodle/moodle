@@ -152,7 +152,7 @@
             $xmlentry = $xmlentries[$i];
 
             unset($newentry);
-            $newentry->concept          = addslashes(utf8_decode($xmlentry['#']['CONCEPT'][0]['#']));
+            $newentry->concept          = addslashes(trim(utf8_decode($xmlentry['#']['CONCEPT'][0]['#'])));
             $newentry->definition       = addslashes(utf8_decode($xmlentry['#']['DEFINITION'][0]['#']));
 
             $permissiongranted = 1;
@@ -208,7 +208,7 @@
                         unset($newalias);
         
                         $newalias->entryid = $newentry->id;
-                        $newalias->alias = addslashes(utf8_decode($xmlalias['#']['NAME'][0]['#']));
+                        $newalias->alias = addslashes(trim(utf8_decode($xmlalias['#']['NAME'][0]['#'])));
                         $newalias->id = insert_record("glossary_alias",$newalias);
                     }
 
