@@ -35,6 +35,7 @@
     $strlogs = get_string('logs');
     $stradministration = get_string('administration');
 
+    session_write_close();
 
     if (!empty($_GET['chooselog'])) {
         $userinfo = get_string('allparticipants');
