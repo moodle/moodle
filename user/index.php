@@ -82,8 +82,8 @@
 
                 $table->data[] = array (print_user_picture($student->id, $course->id, $student->picture, false, true),
                     "<B><A HREF=\"$CFG->wwwroot/user/view.php?id=$student->id&course=$course->id\">$student->firstname $student->lastname</A></B>",
-                    "<FONT SIZE=2>$student->city, ".$COUNTRIES["$student->country"]."</FONT>",
-                    "<FONT SIZE=2>$lastaccess</FONT>");
+                    "<FONT SIZE=1>$student->city, ".$COUNTRIES["$student->country"]."</FONT>",
+                    "<FONT SIZE=1>$lastaccess</FONT>");
             }
             print_table($table, 2, 0);
         }
