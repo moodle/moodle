@@ -29,6 +29,10 @@
 /// If data submitted, process and store
 
     if(($form = data_submitted()) && confirm_sesskey()) {
+        if(isset($form->mode_dst_update)) {
+            redirect('dst_update.php');
+            die();
+        }
         if(isset($form->mode_dst)) {
             // Move to DST presets configuration
             redirect('dst.php');
