@@ -543,20 +543,26 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
                              $absolute=true, $width="100%") {
 
     global $CFG, $USER, $THEME;
+    static $groupbuttons;
     static $isteacher;
     static $isediting;
     static $ismoving;
     static $strmovehere;
     static $strmovefull;
+    static $strcancel;
+    static $stractivityclipboard;
 
     if (!isset($isteacher)) {
+        $groupbuttons = $course->groupmode and !$course->groupmodeforce;
         $isteacher = isteacher($course->id);
-    }
-    if (!isset($isediting)) {
         $isediting = isediting($course->id);
-    }
-    if (!isset($ismoving)) {
         $ismoving = ismoving($course->id);
+        if ($ismoving) {
+            $strmovehere = get_string("movehere");
+            $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
+            $strcancel= get_string("cancel");
+            $stractivityclipboard = $USER->activitycopyname;
+        }
     }
 
     $modinfo = unserialize($course->modinfo);
@@ -564,18 +570,15 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
     $modicon = array();
     $editbuttons = "";
 
+    if ($ismoving) {
+        $modicon[] = "&nbsp;<img align=bottom src=\"$CFG->pixpath/t/move.gif\" height=\"11\" width=\"11\">";
+        $moddata[] = "$USER->activitycopyname&nbsp;(<a href=\"$CFG->wwwroot/course/mod.php?cancelcopy=true\">$strcancel</a>)";
+    }
+
     if (!empty($section->sequence)) {
 
         $sectionmods = explode(",", $section->sequence);
 
-        if ($ismoving) {
-            $strmovehere = get_string("movehere");
-            $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
-            $stractivityclipboard = $USER->activitycopyname;
-            $strcancel= get_string("cancel");
-            $modicon[] = "&nbsp;<img align=bottom src=\"$CFG->pixpath/t/move.gif\" height=\"11\" width=\"11\">";
-            $moddata[] = "$USER->activitycopyname&nbsp;(<a href=\"$CFG->wwwroot/course/mod.php?cancelcopy=true\">$strcancel</a>)";
-        }
 
         foreach ($sectionmods as $modnumber) {
             if (empty($mods[$modnumber])) {
@@ -583,7 +586,10 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
             }
             $mod = $mods[$modnumber];
             if ($isediting and !$ismoving) {
-                $editbuttons = "<br />".make_editing_buttons($mod->id, $absolute, $mod->visible, true);
+                if (!$groupbuttons) {
+                    $mod->groupmode = false;
+                }
+                $editbuttons = "<br />".make_editing_buttons($mod, $absolute, true);
             } else {
                 $editbuttons = "";
             }
@@ -642,6 +648,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 /// Prints a section full of activity modules
     global $CFG, $USER;
 
+    static $groupbuttons;
     static $isteacher;
     static $isediting;
     static $ismoving;
@@ -649,17 +656,14 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     static $strmovefull;
 
     if (!isset($isteacher)) {
+        $groupbuttons = $course->groupmode and !$course->groupmodeforce;
         $isteacher = isteacher($course->id);
-    }
-    if (!isset($isediting)) {
         $isediting = isediting($course->id);
-    }
-    if (!isset($ismoving)) {
         $ismoving = ismoving($course->id);
-    }
-    if ($ismoving) {
-        $strmovehere = get_string("movehere");
-        $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
+        if ($ismoving) {
+            $strmovehere = get_string("movehere");
+            $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
+        }
     }
 
     $modinfo = unserialize($course->modinfo);
@@ -715,8 +719,11 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                          " href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a></font>";
                 }
                 if ($isediting) {
+                    if (!$groupbuttons) {
+                        $mod->groupmode = false;
+                    }
                     echo "&nbsp;&nbsp;";
-                    echo make_editing_buttons($mod->id, $absolute, $mod->visible, true, $mod->indent);
+                    echo make_editing_buttons($mod, $absolute, true, $mod->indent);
                 }
                 echo "</td>";
                 echo "</tr>";
@@ -1373,6 +1380,10 @@ function add_mod_to_section($mod, $beforemod=NULL) {
     }
 }
 
+function set_groupmode_for_module($id, $groupmode) {
+    return set_field("course_modules", "groupmode", $groupmode, "id", $id);
+}
+
 function hide_course_module($mod) {
     return set_field("course_modules", "visible", 0, "id", $mod);
 }
@@ -1595,20 +1606,25 @@ function move_module($cm, $move) {
     }
 }
 
-function make_editing_buttons($moduleid, $absolute=false, $visible=true, $moveselect=true, $indent=-1) {
+function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-1) {
     global $CFG, $THEME;
 
-    static $str = '';
-    if (empty($str)) {
-        $str->delete   = get_string("delete");
-        $str->move     = get_string("move");
-        $str->moveup   = get_string("moveup");
-        $str->movedown = get_string("movedown");
-        $str->moveright   = get_string("moveright");
-        $str->moveleft = get_string("moveleft");
-        $str->update   = get_string("update");
-        $str->hide     = get_string("hide");
-        $str->show     = get_string("show");
+    static $str;
+
+    if (!isset($str)) {
+        $str->delete    = get_string("delete");
+        $str->move      = get_string("move");
+        $str->moveup    = get_string("moveup");
+        $str->movedown  = get_string("movedown");
+        $str->moveright = get_string("moveright");
+        $str->moveleft  = get_string("moveleft");
+        $str->update    = get_string("update");
+        $str->hide      = get_string("hide");
+        $str->show      = get_string("show");
+        $str->clicktochange  = get_string("clicktochange");
+        $str->groupsnone     = get_string("groupsnone");
+        $str->groupsseparate = get_string("groupsseparate");
+        $str->groupsvisible  = get_string("groupsvisible");
     }
 
     if ($absolute) {
@@ -1623,39 +1639,56 @@ function make_editing_buttons($moduleid, $absolute=false, $visible=true, $movese
         $pixpath = "$path/../theme/$CFG->theme/pix";
     }
 
-    if ($visible) {
-        $hideshow = "<a title=\"$str->hide\" href=\"$path/mod.php?hide=$moduleid\"><img".
+    if ($mod->visible) {
+        $hideshow = "<a title=\"$str->hide\" href=\"$path/mod.php?hide=$mod->id\"><img".
                     " src=\"$pixpath/t/hide.gif\" hspace=2 height=11 width=11 border=0></a> ";
     } else {
-        $hideshow = "<a title=\"$str->show\" href=\"$path/mod.php?show=$moduleid\"><img".
+        $hideshow = "<a title=\"$str->show\" href=\"$path/mod.php?show=$mod->id\"><img".
                     " src=\"$pixpath/t/show.gif\" hspace=2 height=11 width=11 border=0></a> ";
+    }
+    if ($mod->groupmode !== false) {
+        if ($mod->groupmode == SEPARATEGROUPS) {
+            $groupmode = "<a title=\"$str->groupsseparate ($str->clicktochange)\" ".
+                         " href=\"$path/mod.php?id=$mod->id&groupmode=0\"><img".
+                         " src=\"$pixpath/t/groups.gif\" hspace=2 height=11 width=11 border=0></a> ";
+        } else if ($mod->groupmode == VISIBLEGROUPS) {
+            $groupmode = "<a title=\"$str->groupsvisible ($str->clicktochange)\" ".
+                         " href=\"$path/mod.php?id=$mod->id&groupmode=1\"><img".
+                         " src=\"$pixpath/t/groupv.gif\" hspace=2 height=11 width=11 border=0></a> ";
+        } else {
+            $groupmode = "<a title=\"$str->groupsnone ($str->clicktochange)\" ".
+                         " href=\"$path/mod.php?id=$mod->id&groupmode=2\"><img".
+                         " src=\"$pixpath/t/groupn.gif\" hspace=2 height=11 width=11 border=0></a> ";
+        }
+    } else {
+        $groupmode = "";
     }
 
     if ($moveselect) {
-        $move =     "<a title=\"$str->move\" href=\"$path/mod.php?copy=$moduleid\"><img".
+        $move =     "<a title=\"$str->move\" href=\"$path/mod.php?copy=$mod->id\"><img".
                     " src=\"$pixpath/t/move.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\"></a>";
     } else {
-        $move =     "<a title=\"$str->moveup\" href=\"$path/mod.php?id=$moduleid&move=-1\"><img".
+        $move =     "<a title=\"$str->moveup\" href=\"$path/mod.php?id=$mod->id&move=-1\"><img".
                     " src=\"$pixpath/t/up.gif\" hspace=\"2\" height=11 width=11 border=0></a>".
-                    "<a title=\"$str->movedown\" href=\"$path/mod.php?id=$moduleid&move=1\"><img".
+                    "<a title=\"$str->movedown\" href=\"$path/mod.php?id=$mod->id&move=1\"><img".
                     " src=\"$pixpath/t/down.gif\" hspace=\"2\" height=11 width=11 border=0></a>";
     }
 
     $leftright = "";
     if ($indent > 0) {
-        $leftright .= "<a title=\"$str->moveleft\" href=\"$path/mod.php?id=$moduleid&indent=-1\"><img".
+        $leftright .= "<a title=\"$str->moveleft\" href=\"$path/mod.php?id=$mod->id&indent=-1\"><img".
                       " src=\"$pixpath/t/left.gif\" hspace=\"2\" height=11 width=11 border=0></a>";
     }
     if ($indent >= 0) {
-        $leftright .= "<a title=\"$str->moveright\" href=\"$path/mod.php?id=$moduleid&indent=1\"><img".
+        $leftright .= "<a title=\"$str->moveright\" href=\"$path/mod.php?id=$mod->id&indent=1\"><img".
                       " src=\"$pixpath/t/right.gif\" hspace=\"2\" height=11 width=11 border=0></a>";
     }
 
     return "$leftright$move".
-           "<a title=\"$str->update\" href=\"$path/mod.php?update=$moduleid\"><img".
+           "<a title=\"$str->update\" href=\"$path/mod.php?update=$mod->id\"><img".
            " src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=11 width=11 border=0></a>".
-           "<a title=\"$str->delete\" href=\"$path/mod.php?delete=$moduleid\"><img".
-           " src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=11 width=11 border=0></a>$hideshow";
+           "<a title=\"$str->delete\" href=\"$path/mod.php?delete=$mod->id\"><img".
+           " src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=11 width=11 border=0></a>$hideshow$groupmode";
 }
 
 ?>

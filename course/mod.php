@@ -278,6 +278,28 @@
         }
         exit;
 
+    } else if (isset($_GET['groupmode'])) {
+
+        if (! $cm = get_record("course_modules", "id", $_GET['id'])) {
+            error("This course module doesn't exist");
+        }
+
+        if (!isteacheredit($cm->course)) {
+            error("You can't modify this course!");
+        }
+   
+        set_groupmode_for_module($cm->id, $_GET['groupmode']);
+
+        rebuild_course_cache($cm->course);
+
+        $site = get_site();
+        if ($site->id == $cm->course) {
+            redirect($CFG->wwwroot);
+        } else {
+            redirect("view.php?id=$cm->course");
+        }
+        exit;
+
     } else if (isset($_GET['copy'])) { // value = course module
 
         if (! $cm = get_record("course_modules", "id", $_GET['copy'])) {

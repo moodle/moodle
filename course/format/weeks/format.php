@@ -47,9 +47,11 @@
     $modicon[]="<img src=\"$CFG->pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
 
     if ($course->groupmode or !$course->groupmodeforce) {
-        if (isteacheredit($course->id) or $course->groupmode == VISIBLEGROUPS) {
+        if ($course->groupmode == VISIBLEGROUPS or isteacheredit($course->id)) {
             $moddata[]="<a title=\"$strgroups\" href=\"groups.php?id=$course->id\">$strgroups</a>";
             $modicon[]="<img src=\"$CFG->pixpath/i/group.gif\" height=16 width=16 alt=\"\">";
+        } else if ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce) {
+            // Show nothing
         } else if ($currentgroup = get_current_group($course->id)) {
             $moddata[]="<a title=\"$strgroupmy\" href=\"group.php?id=$course->id\">$strgroupmy</a>";
             $modicon[]="<img src=\"$CFG->pixpath/i/group.gif\" height=16 width=16 alt=\"\">";
