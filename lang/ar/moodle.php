@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004041800)
+      // moodle.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['action'] = 'ÅÌÑÇÁ';
@@ -42,7 +42,7 @@ $string['adminhelpcourses'] = 'ÚÑİ ÇáãäÇåÌ ÇáÏÑÇÓíÉ æÇáÇÕäÇİ æÚíä ÇÔÎÇÕ áåã';
 $string['adminhelpedituser'] = 'ÇÓÊÚÑÖ ŞÇÆãÉ ÍÓÇÈÇÊ ÇáãÓÊÎÏãíä æÍÑÑ Ãí ãäåã';
 $string['adminhelplanguage'] = 'áãÑÇÌÚÉ æÊÍÑíÑ ÍÒãÉ ÇááÛÉ ÇáÍÇáíÉ';
 $string['adminhelplogs'] = 'ÇÓÊÚÑÇÖ ÓÌáÇÊ ÌãíÚ ÇáÃäÔØÉ ÈÇáãæŞÚ';
-$string['adminhelpmanageblocks'] = 'ÇÏÑ ÇáŞæÇáÈ ÇáãËÈÊå æÅÚÏÇÏÇÊåÇ';
+$string['adminhelpmanageblocks'] = 'ÇÏÑ ÇáßÊá ÇáãËÈÊå æÅÚÏÇÏÇÊåÇ';
 $string['adminhelpmanagedatabase'] = '(ÇáæÕæá ÇáãÈÇÔÑ Åáì ŞÇÚÏÉ ÇáÈíÇäÇÊ ßä ÍĞÑ!)';
 $string['adminhelpmanagefilters'] = 'ÇÎÊÑ ãäŞÍÇÊ ÇáäÕ æ ÇáÅÚÏÇÏÇÊ ÇáãÔÇÈåå';
 $string['adminhelpmanagemodules'] = 'ÃÏÑ ÇáæÍÏÇÊ ÇáãËÈÊÉ æÅÚÏÇÏÇÊåã';
@@ -101,9 +101,11 @@ $string['backupsavetohelp'] = 'ÇáãÓÇÑ ÇáßÇãá ááãÌáÏ ÇáĞí ÊÑíÏ Ãä ÊÍİÙ İí ãáİÇÊ Ç
 $string['backupuserfileshelp'] = 'ÇÎÊÑ áæ ßäÊ ÊÑÛÈ İí ÅÖÇİÉ ãáİÇÊ ÇáãÓÊÎÏã(ãËá: ÕæÑ ÇááãÍå ÇáÔÎÕíÉ) Öãä ÇáäÓÎ ÇáÇÍÊíÇØí ÇáÂáí';
 $string['backupusershelp'] = 'ÇÎÊÑ áæ ßäÊ ÊÑÛÈ İí ÅÖÇİÉ ÌãíÚ ÇáãÓÊÎÏãíä İí ÇáÎÇÏã Ãæ ÇáãÓÊÎÏãíä ÇáãØáæÈíä áßá ãäåÌ ÏÑÇÓí İŞØ';
 $string['backupversion'] = 'ÅÕÏÇÑ ÇáäÓÎÉ ÇáÅÍÊíÇØíÉ';
-$string['blocksetup'] = 'ÅÚÏÇÏ ÌÏÇæá ÇáŞÇáÈ';
+$string['blocks'] = 'ßÊá';
+$string['blocksetup'] = 'ÅÚÏÇÏ ÌÏÇæá ÇáßÊáÉ';
 $string['blocksuccess'] = '$a  Êã ÅÚÏÇÏ ÇáÌÏÇæá ÈÔßá ÕÍíÍ';
 $string['bycourseorder'] = 'ÍÓÈ ÊÑÊíÈ ÇáãäåÌ ÇáÏÑÇÓí';
+$string['byname'] = 'ÈæÇÓØÉ $a';
 $string['cancel'] = 'ÅáÛÇÁ';
 $string['categories'] = 'ÊÕäíİ ÇáãäÇåÌ ÇáÏÑÇÓíÉ ';
 $string['category'] = 'ÇáÕäİ';
@@ -212,6 +214,7 @@ $string['currentcourseadding'] = 'ÅÖÇİÉ ãÚáæãÇÊ ááãäåÌ ÇáÏÑÇÓí ÇáÍÇáí';
 $string['currentcoursedeleting'] = 'ÍĞİ ÇáãäåÌ ÇáÏÑÇÓí ÇáÍÇáí ÃæáÇğ';
 $string['currentlanguage'] = 'ÇááÛÉ ÇáÍÇáíÉ';
 $string['currentlocaltime'] = 'ÇáÊæŞíÊ ÇáãÍáí ÇáÍÇáí';
+$string['currentpicture'] = 'ÇáÕæÑÉ ÇáÍÇáíÉ';
 $string['currentrelease'] = 'ãÚáæãÇÊ ÇáÃÕÏÇÑ ÇáÍÇáí';
 $string['currentversion'] = 'ÇáÃÕÏÇÑ ÇáÍÇáí';
 $string['databasechecking'] = 'ÊÍÏíË ŞÇÚÏÉ ÈíÇäÇÊ Moodle ãä äÓÎÉ $a->oldversion Åáì $a->newversion...';
@@ -219,7 +222,7 @@ $string['databaseperformance'] = 'ÃÏÇÁ ŞÇÚÏÉ ÇáÈíÇäÇÊ';
 $string['databasesetup'] = 'ÊäÕíÈ ŞÇÚÏÉ ÇáÈíÇäÇÊ';
 $string['databasesuccess'] = 'Êã ÊÍÏíË ŞÇÚÏÉ ÇáÈíÇäÇÊ ÈäÌÇÍ';
 $string['databaseupgradebackups'] = 'ÇáäÓÎ ÇáÅÍÊíÇØí ááÅÕÏÑÇ ÇáÂä $a';
-$string['databaseupgradeblocks'] = 'ÅÕÏÇÑ ÇáŞæÇáÈ ÇáÇä åæ $a';
+$string['databaseupgradeblocks'] = 'ÅÕÏÇÑ ÇáßÊá ÇáÇä åæ $a';
 $string['databaseupgrades'] = 'ÊÍÏíË ŞÇÚÏÉ ÇáÈíÇäÇÊ';
 $string['datemostrecentfirst'] = 'ÇáÊÇÑíÎ - ÇáÇÍÏË ÃæáÇğ';
 $string['datemostrecentlast'] = 'ÇáÊÇÑíÎ - ÇáÇÍÏË ÃÎÑÇğ';
@@ -263,6 +266,7 @@ $string['downloadtext'] = 'ÊÍãíá İí ÕíÛÉ äÕ';
 $string['doyouagree'] = 'åá ŞãÊ ÈŞÑÇÁÉ åĞå ÇáÔÑæØ æÇÓÊíÚÇÈåÇ¿';
 $string['edit'] = 'ÍÑÑ $a';
 $string['editcoursesettings'] = 'ÍÑÑ ÅÚÏÇÏÇÊ ÇáãäåÌ ÇáÏÑÇÓí';
+$string['editfiles'] = 'ÍÑÑ ÇáãáİÇÊ';
 $string['editgroupprofile'] = 'ÊÍÑíÑ ÓãÇÊ ÇáãÌãæÚÉ';
 $string['editinga'] = 'ÊÍÑíÑ $a';
 $string['editmyprofile'] = 'ÍÑÑ ãáİ ÇáÈíÇäÇÊ';
@@ -315,8 +319,8 @@ $string['emailpasswordsent'] = 'ÔßÑğÇ áÊÃßíÏ ÊÛííÑ ßáãÉ ÇáÓøÑø
 <p>ßáãÉ ÇáÓÑ ÇáÌÏíÏ ÅäÔÆÊ ÂáíÇ¡ ÑÈãÇ ÊÑÛÈ İí
 <a href=$a->link>ÛíÑ ßáãÉ ÇáÓÑ ÇáÎÇÕÉ Èß</a>Åáí ÔÆ ÊÓÊØíÚ ÊĞßÑå';
 $string['enable'] = 'Êãßíä';
-$string['enrolledincourse'] = 'ãÓÌá İí ÇáãäåÌ ÇáÏÑÇÓí \"$a\"';
-$string['enrolledincoursenot'] = 'ÛíÑ ãÓÌá İí ÇáãäåÌ ÇáÏÑÇÓí \"$a\"';
+$string['enrolledincourse'] = 'ãÓÌá İí ÇáãäåÌ ÇáÏÑÇÓí ';
+$string['enrolledincoursenot'] = 'ÛíÑ ãÓÌá İí ÇáãäåÌ ÇáÏÑÇÓí ';
 $string['enrolmentconfirmation'] = 'ÇäÊ Úáì æÔß ÇáÊÓÌíá ßÚÖæ İí åĞ ÇáãäåÌ ÇáÏÑÇÓí
 <br />åá ÃäÊ ãÊÃßÏ ãä Ğáß¿';
 $string['enrolmentkey'] = 'ãİÊÇÍ ÇáÊÓÌíá';
@@ -387,6 +391,7 @@ $string['grades'] = 'ÏÑÌÇÊ';
 $string['group'] = 'ãÌãæÚÉ';
 $string['groupadd'] = 'ÃÖİ ãÌãæÚÉ ÌÏíÏÉ';
 $string['groupaddusers'] = 'ÃÖİ ÇáãÎÊÇÑ Åáì ÇáãÌãæÚÉ';
+$string['groupfor'] = 'ááãÌãæÚÉ';
 $string['groupinfo'] = 'ãÚáæãÇÊ Úä ÇáãÌãæÚÉ ÇáãÎÊÇÑÉ';
 $string['groupinfomembers'] = 'ãÚáæãÇÊ Úä ÇáÇÚÖÇÁ ÇáãÎÊÇÑíä';
 $string['groupinfopeople'] = 'ãÚáæãÇÊ Úä ÇáäÇÓ ÇáãÎÊÇÑíä';
@@ -423,6 +428,9 @@ $string['helpsummaries'] = 'Íæá åĞå ÇáãáÇÎÕÇÊ';
 $string['helptext'] = 'ßíİíÉ ßÊÇÈÉ äÕ';
 $string['helpwiki'] = 'ßíİ ÊßÊÈ äÕ ÈÅÓÊÎÏÇã æíßí';
 $string['helpwriting'] = 'ÃßÊÈ ÈÏŞÉ';
+$string['hiddensections'] = 'ÇáãæÇÖíÚ ÇáãÎİíå';
+$string['hiddensectionscollapsed'] = 'ÇáÃÌÒÇÁ ÇáãÍİíÉ  Êã ÅÙåÇÑåÇ İí åíÆÉ ãäØæíÉ';
+$string['hiddensectionsinvisible'] = 'ÇáÃÌÒÇÁ ÇáãÍİíÉ ÛíÑ ãÑÆíå ÊãÇãÇğ';
 $string['hide'] = 'ÅÎİÇÁ';
 $string['hidepicture'] = 'ÅÎİÇÁ ÇáÕæÑÉ';
 $string['hits'] = 'äÊÇÆÌ';
@@ -449,6 +457,7 @@ $string['included'] = 'õÖãä';
 $string['includelogentries'] = 'ÊÖãíä ãÏÇÎá ÇáÓÌáÇÊ';
 $string['includemodules'] = 'ÊÖãíä ÇáæÍÏÇÊ';
 $string['includeneededusers'] = 'ÊÖãíä ÇáãÓÊÎÏãíä ÇáãÍÊÇÌ áåã';
+$string['includenoneusers'] = 'ÇÖİ ÛíÑ ÇáãÓÊÎÏãíä';
 $string['includeuserfiles'] = 'ÊÖãíä ãáİÇÊ ÇáãÓÊÎÏã';
 $string['institution'] = 'ãÄÓÓÉ';
 $string['invalidemail'] = 'ÚäæÇä ÇáÈÑíÏ ÇáÅáßÊÑæäí ÛíÑ ÕÍíÍ';
@@ -490,7 +499,7 @@ $string['loginsteps'] = 'ãÑÍÈÇ Èß! íãßäß ÅäÔÇÁ ÇÔÊÑÇß ÌÏíÏ İí åĞÇ ÇáãæŞÚ ÎáÇá áÍ
    <LI>æÇáÂä Şã ÈÇÎÊíÇÑ ÇáãäåÌ ÇáÏÑÇÓí ÇáĞí ÊÑÛÈ ÇáãÔÇÑßÉ İíå.
    <LI>ãä ÇáÂä İÕÇÚÏÇ íãßäß ÇáÏÎæá Úä ØÑíŞ ÅÏÎÇá ÇÓã ÇáãÓÊÎÏã æßáãÉ ÇáãÑæÑ (İí ÇáäãæĞÌ ÇáãŞÇÈá ÈåĞå ÇáÕİÍÉ) ¡ æÊÓÊØíÚ ÇáÇÊÕÇá ÇáßÇãá ÈÇáãäåÌ ÇáÏÑÇÓí ¡ æÊÕá Åáì Ãí ãäåÌ ÏÑÇÓí ÊÑíÏ ÇáÊÓÌíá Èå.
    <LI>ÅĞÇ ØáÈ ãäß  \'\'ãİÊÇÍ ÇáÊÓÌíá\'\' - ÇÓÊÎÏã ÇáãİÊÇÍ ÇáĞí ÃÚØÇå áß ÇáãÏÑÓ. åĞÇ ÓíÌÚáß \'\'ÊÔÇÑß\'\' İí ÇáãäåÌ ÇáÏÑÇÓí.   
-   <LI> áÇ ÍÙ Ãä ßá ãäåÌ ÏÑÇÓí ŞÏ íßæä áå ÃíÖÇ &quot;ãİÊÇÍ ÊÓÌíá&quot; ÓÊÍÊÇÌ Åáíå áÇÍŞÇ.
+   <LI> áÇ ÍÙ Ãä ßá ãäåÌ ÏÑÇÓí ŞÏ íßæä áå ÃíÖÇ \"ãİÊÇÍ ÊÓÌíá\" ÓÊÍÊÇÌ Åáíå áÇÍŞÇ.
    </OL>';
 $string['loginstepsnone'] = 'ãÑÍÈÇ!<P>ááÇÊÕÇá ÇáßÇãá ÈÇáãäÇåÌ ÇáÏÑÇÓíÉ ÓÊÍÊÇÌ Åáì ÅäÔÇÁ ÇÔÊÑÇß ÌÏíÏ.<P>ßá ãÇ Úáíß åæ Úãá ÇÓã ãÓÊÎÏã æßáãÉ ãÑæÑ æÇÓÊÎÏÇãåãÇ İí ÇáäãæĞÌ ÇáãæÌæÏ ÈåĞå ÇáÕİÍÉ!<P>ÅĞÇ ßÇä ÇÓã ÇáãÓÊÎÏã ŞÏ Êã ÇÓÊÎÏÇãå ãä ŞÈá¡ ÌÑÈ ãÑÉ ÃÎÑì ÇÓãÇ ÂÎÑ.';
 $string['loginto'] = 'ÏÎæá Åáì $a';
@@ -500,7 +509,7 @@ $string['logs'] = 'ÊŞÇÑíÑ';
 $string['mainmenu'] = 'ÇáŞÇÆãÉ ÇáÑÆíÓíÉ';
 $string['makeafolder'] = 'ÅäÔÇÁ ãÌáÏ';
 $string['makeeditable'] = 'ÅĞÇ ÌÚáÊ \'$a\' ŞÇÈáÇ ááÊÚÏíá ãä ÎáÇá ÚãáíÉ ãÒæÏ ÇáÅäÊÑäÊ (ãËÇá apache) Ëã ÊÓÊØíÚ ÊÚÏíá åĞÇ Çáãáİ ãÈÇÔÑÉ ãä ÎáÇá åĞå ÇáÕİÍÉ';
-$string['manageblocks'] = 'ŞæÇáÈ';
+$string['manageblocks'] = 'ßÊá';
 $string['managedatabase'] = 'ÅÏÇÑÉ ŞÇÚÏÉ ÇáÈíÇäÇÊ';
 $string['managefilters'] = 'ãäŞÍÇÊ';
 $string['managemodules'] = 'æÍÏÇÊ';
@@ -764,6 +773,7 @@ $string['strftimedateshort'] = '%%d %%B';
 $string['strftimedatetime'] = '%%d %%B %%Y, %%I:%%M %%p';
 $string['strftimedaydate'] = '%%A, %%d %%B %%Y';
 $string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%I:%%M %%p';
+$string['strftimemonthyear'] = '%%B %%Y';
 $string['strftimerecent'] = '%%d %%b, %%H:%%M';
 $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%I:%%M %%p';
 $string['strftimetime'] = '%%I:%%M %%p';
@@ -787,7 +797,7 @@ $string['themes'] = 'ÇáÇÔßÇá';
 $string['themesaved'] = 'Êã ÍİÙ ÇáÔßá ÇáÌÏíÏ';
 $string['thischarset'] = 'windows-1256';
 $string['thisdirection'] = 'rtl';
-$string['thislanguage'] = '&#1593;&#1585;&#1576;&#1610;';
+$string['thislanguage'] = 'ÚÑÈí';
 $string['time'] = 'ÇáæŞÊ';
 $string['timezone'] = 'ÇáãäØŞÉ ÇáÒãäíÉ';
 $string['to'] = 'Åáì';
@@ -804,6 +814,8 @@ $string['turneditingoff'] = 'ÅíŞÇİ ÇáÊÍÑíÑ';
 $string['turneditingon'] = 'ÊÔÛíá ÇáÊÍÑíÑ';
 $string['undecided'] = 'ÛíÑ ãÍÏÏ';
 $string['unenrol'] = 'ÅáÛÇÁ ÇáÊÓÌíá';
+$string['unenrolallstudents'] = 'ÅáÛÇÁ ÊÓÌíá ÌãíÚ ÇáØáÇÈ';
+$string['unenrolallstudentssure'] = 'åá ÃäÊ ãÊÃßÏ ãä ÇáŞíÇã ÈÅáÛÇÁ ÊÓÌíá ÌãíÚ ÇáØáÇÈ ÊãÇãÇ ãä åĞÇ ÇáãäåÌ ÇáÏÑÇÓí¿';
 $string['unenrolme'] = 'ÅáÛÇÁ ÊÓÌíáí ãä $a';
 $string['unenrolsure'] = 'åá ÃäÊ ãÊÃßÏ Ãäß ÊÑíÏ ÅáÛÇÁ ÇáÊÓÌíá $a ãä åĞÇ ÇáãäåÌ ÇáÏÑÇÓí?';
 $string['unknowncategory'] = 'Õäİ ÛíÑ ãÚÑæİ';
@@ -829,6 +841,7 @@ $string['uploadnotallowed'] = 'ÇáÊÍãíá ÛíÑ ãÓãæÍ Èå';
 $string['uploadproblem'] = 'ÍÕá ÎØÇÁ ÛíÑ ãÚÑæİ ÃËäÇÁ ÊÍãíá Çáãáİ. $a(ÑÈãÇ ÍÌã Çáãáİ ßÈíÑÌÏÇõ?)';
 $string['uploadthisfile'] = 'ÊÍãíá åĞÇ Çáãáİ';
 $string['uploadusers'] = 'ÊÍãíá ãÓÊÎÏãæä';
+$string['usedinnplaces'] = 'ÇÓÊÎÏã İí $a ';
 $string['user'] = 'ãÓÊÎÏã';
 $string['userconfirmed'] = 'Êã ÊÃßíÏ $a';
 $string['userdata'] = 'ãÚáæãÇÊ ÇáãÓÊÎÏã';

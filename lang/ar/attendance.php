@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.2 development (2004012800)
+      // attendance.php - created with Moodle 1.4 development (2004062401)
 
 
 $string['absentlong'] = 'ÛÇÆÈ';
@@ -57,6 +57,7 @@ $string['takeroll'] = 'ÓÌá ÇáÍÖæÑ Ýí åÐÇ Çáíæã?';
 $string['tardiesperabsence'] = 'ßã ÊÃÎíÑ íãßä ÍÓÇÈå ßÛíÇÈ æÇÍÏ';
 $string['tardylong'] = 'ãÊÃÎÑ';
 $string['tardyshort'] = 'ã';
+$string['teacheredit'] = 'Êã ÊÓÌíá ÇáÍÖæÑ';
 $string['thursday'] = 'ÇáÎãíÓ';
 $string['tuesday'] = 'ÇáËáÇËÇÁ';
 $string['viewall'] = 'ãÚÇíäÉ ÌãíÚ ÞæÇÆã ÇáÍÖæÑ';

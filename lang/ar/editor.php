@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3 development (2004041800)
+      // editor.php - created with Moodle 1.4 development (2004062401)
 
 
 $string['about'] = 'Íæá åÐÇ ÇáãÍÑÑ';
@@ -27,6 +27,7 @@ $string['cut'] = 'ÞÕ ÇáãÎÊÇÑ';
 $string['delete'] = 'ÃÍÐÝ';
 $string['filebrowser'] = 'ãÓÊÚÑÖ ÇáãáÝ';
 $string['forecolor'] = 'áæä ÇáÎØ';
+$string['fullscreen'] = 'ãÍÑÑ ÈßÇãá ÇáÔÇÔÉ';
 $string['heading'] = 'ÚäæÇä';
 $string['height'] = 'Ùáá';
 $string['hilitecolor'] = 'áæä ÇáÎáÝíÉ';
@@ -47,6 +48,7 @@ $string['justifyleft'] = 'ÖÈØ ÇáíÓÇÑ';
 $string['justifyright'] = 'ÖÈØ Çáíãíä';
 $string['layout'] = 'ÊÎØíØ';
 $string['left'] = 'íÓÇÑ';
+$string['lefttoright'] = 'ÇÊÌÇå ÇáäÕ ãä ÇáíÓÇÑ Åáì Çáíãíä';
 $string['linkproperties'] = 'ÎÕÇÆÕ ÑÇÈØ';
 $string['linktarget'] = 'åÏÝ';
 $string['linktargetblank'] = 'äÇÝÐå ÌÏíÏÉ';
@@ -57,6 +59,7 @@ $string['linktargettop'] = 'äÝÓ ÇáäÇÝÐå';
 $string['linktitle'] = 'ÚäæÇä';
 $string['linkurl'] = 'ãæÌÉ ÑÇÈØ';
 $string['middle'] = 'æÓØ';
+$string['minimize'] = 'ÊÕÛíÑ ÇáãÍÑÑ';
 $string['move'] = 'ÍÑß';
 $string['normal'] = 'ÚÇÏí';
 $string['notimage'] = 'ÇáãáÝ ÇáãÎÊÇÑ áíÓ ÕæÑÉ. ÇáÑÌÇÁ ÅÎÊíÇÑ ÕæÑÉ';
@@ -76,8 +79,10 @@ $string['redo'] = 'ÅÚÇÏÉ ÇÎÑ Úãá';
 $string['removelink'] = 'ÇÓÊÈÚÇÏ ÇáÑÇÈØ';
 $string['rename'] = 'ÅÚÇÏÉ ÊÓãíÉ';
 $string['right'] = 'íãíä';
+$string['righttoleft'] = 'ÇÊÌÇå ÇáäÕ ãä Çáíãíä Åáì ÇáíÓÇÑ';
 $string['rows'] = 'ÕÝæÝ';
-$string['selection'] = 'ãÎÊÇÑ';
+$string['selectcolor'] = 'ÇÎÊÑ Çááæä';
+$string['selection'] = 'ÇÎÊíÇÑ';
 $string['showhelp'] = 'ÇáãÓÇÚÏÉ áÓÊÎÏÇã ÇáãÍÑÑ';
 $string['size'] = 'ÍÌã';
 $string['spacing'] = 'ÇáãÓÇÝÉ Èíä ÇáÇÓØÑ';
@@ -95,6 +100,7 @@ $string['unorderedlist'] = 'ÞÇÆãÉ äÞØíÉ';
 $string['upload'] = 'ÊÍãíá';
 $string['vertical'] = 'ÚãæÏíø/ ÑÃÓí';
 $string['width'] = 'ÚÑÖ';
+$string['wordclean'] = 'äÙÝ ãíßÑæ ÓæÝ æÑÑÏ ÊÔ Êí Åã Ãá';
 $string['zip'] = 'ÖÛØ';
 
 ?>
