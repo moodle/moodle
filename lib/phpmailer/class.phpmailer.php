@@ -750,7 +750,6 @@ class PHPMailer
               // fall through
            case "alt_attachment":
               $this->AltBody = $this->WrapText($this->AltBody, $this->WordWrap);
-              break;
            default:
               $this->Body = $this->WrapText($this->Body, $this->WordWrap);
               break;
