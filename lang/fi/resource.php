@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.0.6.4 beta (2002112001)
+      // resource.php - created with Moodle 1.0.8 dev (2002123000)
 
 
 $string['addresource'] = "Lisää aineisto";
@@ -24,5 +24,6 @@ $string['resourcetype3'] = "Tiedosto";
 $string['resourcetype4'] = "Teksti";
 $string['resourcetype5'] = "Web-linkki";
 $string['resourcetype6'] = "HTML";
+$string['resourcetype7'] = "Ohjelma";
 
 ?>

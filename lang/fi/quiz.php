@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.6.4 beta (2002112001)
+      // quiz.php - created with Moodle 1.0.8 dev (2002123000)
 
 
 $string['addselectedtoquiz'] = "Lisää valittu tenttiin";
@@ -56,6 +56,8 @@ $string['guestsno'] = "Pahus, vieraat eivät voi katsella tai täyttää kyselyitä."
 $string['imagedisplay'] = "Näytettävä kuva";
 $string['introduction'] = "Johdanto";
 $string['marks'] = "Pistettä";
+$string['missingname'] = "Puutuva kysymyksen nimi";
+$string['missingquestiontext'] = "Puutuva kysymyksen teksti";
 $string['modulename'] = "Tentti";
 $string['modulenameplural'] = "Tentit";
 $string['multichoice'] = "Monivalinta";
@@ -74,6 +76,7 @@ $string['quizclosed'] = "Tentti on suljettu \$a";
 $string['quiznotavailable'] = "Tentti on avoinna \$a lähtien";
 $string['quizopen'] = "Avaa tentti";
 $string['random'] = "Satunnaisesti";
+$string['readytosend'] = "olet lähettämässä tentin arvosteltavaksi. Oletko varma että haluat jatkaa?";
 $string['regrade'] = "Uudelleen arvio kaikki yritykset";
 $string['regradecomplete'] = "Kaikki yritykset on uudelleen arvioitu.";
 $string['regradecount'] = "\$a->changed / \$a->attempt yrityksen arviointi muuttui.";

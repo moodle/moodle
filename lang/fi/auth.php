@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.6.4 beta (2002112001)
+      // auth.php - created with Moodle 1.0.8 dev (2002123000)
 
 
 $string['auth_dbdescription'] = "Tämä moduli tarkistaa ulkoisen tietokannan taulusta onko käyttäjätunnuksen ja salasanan.";
+$string['auth_dbextrafields'] = "Nämä kentät ovat valinnaisia. Voit asettaa Moodlen hakemaan käyttäjätietoja ulkoisesta tietokannasta. Käyttäjä voi joka tapauksessa muuttaa omia henkilötietojaan jälkeenpäin.";
 $string['auth_dbfieldpass'] = "Salasana sarakeen nimi";
 $string['auth_dbfielduser'] = "Käyttätunnus sarakkeen nimi";
 $string['auth_dbhost'] = "Tietokanta palvelin";
@@ -31,6 +32,7 @@ $string['auth_ldapdescription'] = "Tämä tapa tarjoaa käyttäjätunnistuksen LDAP-p
                   Jos salasana ja tunnus täsmäävät, moodle luo uuden käyttäjän  tietokantaansa. Jos olet valinnut 'auth_ldap_update_userinfo' option niin myös käyttäjätiedot siirretään LDAP:sta moodleen.
 
 Seuraavilla kerroilla ainostaan tunnus ja salasana tarkistetaan.";
+$string['auth_ldapextrafields'] = "Nämä kentät ovat valinnaisia. Voit asettaa Moodlen hakemaan käyttäjätietoja LDAP-hakemistosta. Käyttäjä voi joka tapauksessa muuttaa omia henkilötietojaan jälkeenpäin.";
 $string['auth_ldaptitle'] = "Käytä LDAP palvelinta";
 $string['auth_nntpdescription'] = "Tämä tapa käyttää NNTP palvelinta käyttäjän tunnistukseen.";
 $string['auth_nntphost'] = "NNTP palvelimen osoite. Käytä IP-numeroa, älä domainnimeä.";
@@ -46,7 +48,11 @@ $string['auth_pop3title'] = "Käytä POP3 palvelinta";
 $string['auth_pop3type'] = "Palvelimen tyyppi. Jos käytätte salattua yhteyttä valitse pop3cert.";
 $string['authenticationoptions'] = "Käyttäjäntunnistus asetukset";
 $string['authinstructions'] = "Tähän voi kirjoittaa ohjeet opiskelijoille mitä tunnusta ja salasanaa heidän tulisi käyttää. Tämä teksti näkyy kirjaantumissivulla.";
+$string['changepassword'] = "Salasanan vaihto URL";
+$string['changepasswordhelp'] = "Tässä osoitteessa käyttäjät voivat vaihtaa unohtamansa salasanan.";
 $string['chooseauthmethod'] = "Valitse käyttäjäntunnistus tapa: ";
+$string['guestloginbutton'] = "Kirjaudu vieraana painike";
+$string['instructions'] = "Ohjeeet";
 $string['showguestlogin'] = "Voit näyttää tai piiloittaa vieraskäyttäjä painikkeen kirjaantumissivulla.";
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.6.4 beta (2002112001)
+      // assignment.php - created with Moodle 1.0.8 dev (2002123000)
 
 
 $string['allowresubmit'] = "Salli uudelleenlähetys";
@@ -10,6 +10,7 @@ $string['description'] = "Kuvaus";
 $string['duedate'] = "Palautus pvm.";
 $string['early'] = "\$a ennen";
 $string['failedupdatefeedback'] = "Palautteen tallentaminen epäonnistui käyttäjälle \$a";
+$string['feedback'] = "Palaute";
 $string['feedbackupdated'] = "Palaute päivitetty  \$a oppilaalle";
 $string['late'] = "\$a myöhässä";
 $string['maximumgrade'] = "Maksimi arvo";
@@ -19,6 +20,7 @@ $string['modulenameplural'] = "Tehtävät";
 $string['newsubmissions'] = "Tehtäviä palautettu";
 $string['notsubmittedyet'] = "Ei vielä palautettu";
 $string['overwritewarning'] = "Varoitus: uudelleen lähettäminen korvaa aiemman vastauksesi";
+$string['saveallfeedback'] = "Talenna palaute";
 $string['submissionfeedback'] = "Palaute tehtävästä";
 $string['submissions'] = "Lähetetyt";
 $string['submitassignment'] = "Palauta tehtäväsi käyttäen tätä lomaketta";
