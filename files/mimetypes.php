@@ -4,6 +4,7 @@ function mimeinfo($element, $filename) {
     $mimeinfo = array (
         "xxx"  => array ("type"=>"document/unknown", "icon"=>"unknown.gif"),
         "zip"  => array ("type"=>"application/zip", "icon"=>"zip.gif"),
+        "jpe" => array ("type"=>"image/jpeg", "icon"=>"image.gif"),
         "jpeg" => array ("type"=>"image/jpeg", "icon"=>"image.gif"),
         "jpg"  => array ("type"=>"image/jpeg", "icon"=>"image.gif"),
         "gif"  => array ("type"=>"image/gif", "icon"=>"image.gif"),
