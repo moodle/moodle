@@ -46,7 +46,11 @@
                 fwrite ($bf,full_tag("ANSWER5",4,false,$choice->answer5));
                 fwrite ($bf,full_tag("ANSWER6",4,false,$choice->answer6));
                 fwrite ($bf,full_tag("SHOWUNANSWERED",4,false,$choice->showunanswered));
+                fwrite ($bf,full_tag("TIMEOPEN",4,false,$choice->timeopen));
+                fwrite ($bf,full_tag("TIMECLOSE",4,false,$choice->timeclose));
                 fwrite ($bf,full_tag("PUBLISH",4,false,$choice->publish));
+                fwrite ($bf,full_tag("RELEASE",4,false,$choice->release));
+                fwrite ($bf,full_tag("ALLOWUPDATE",4,false,$choice->allowupdate));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$choice->timemodified));
                 //if we've selected to backup users info, then execute backup_choice_answers
                 if ($preferences->mods["choice"]->userinfo) {

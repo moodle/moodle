@@ -50,9 +50,30 @@
             $choice->answer5 = backup_todb($info['MOD']['#']['ANSWER5']['0']['#']);
             $choice->answer6 = backup_todb($info['MOD']['#']['ANSWER6']['0']['#']);
             $choice->showunanswered = backup_todb($info['MOD']['#']['SHOWUNANSWERED']['0']['#']);
+            $choice->timeopen = backup_todb($info['MOD']['#']['TIMEOPEN']['0']['#']);
+            $choice->timeclose = backup_todb($info['MOD']['#']['TIMECLOSE']['0']['#']);
             $choice->publish = backup_todb($info['MOD']['#']['PUBLISH']['0']['#']);
+            $choice->release = backup_todb($info['MOD']['#']['RELEASE']['0']['#']);
+            $choice->allowupdate = backup_todb($info['MOD']['#']['ALLOWUPDATE']['0']['#']);
             $choice->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
+            //To mantain compatibilty, in 1.4 the publish setting meaning has changed. We
+            //have to modify some things it if the release field isn't present in the backup file.
+            if (! isset($info['MOD']['#']['RELEASE']['0']['#'])) {  //It's a pre-14 backup filea
+                //Set the allowupdate field
+                if ($choice->publish == 0) { 
+                    $choice->allowupdate = 1;
+                }
+                //Set the release field as defined by the old publish field
+                if ($choice->publish > 0) {
+                    $choice->release = 1;
+                }
+                //Recode the publish field to its 1.4 meaning
+                if ($choice->publish > 0) {
+                    $choice->publish--;
+                }
+            }
+                
             //The structure is equal to the db, so insert the choice
             $newid = insert_record ("choice",$choice);
 
