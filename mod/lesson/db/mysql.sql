@@ -82,7 +82,7 @@ CREATE TABLE `prefix_lesson_attempts` (
   `answerid` int(10) unsigned NOT NULL default '0',
   `retry` int(3) unsigned NOT NULL default '0',
   `correct` int(10) unsigned NOT NULL default '0',
-  `useranswer' text NOT NULL default '',
+  `useranswer` text NOT NULL default '',
   `timeseen` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY (`userid`)

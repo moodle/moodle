@@ -175,7 +175,20 @@ function lesson_upgrade($oldversion) {
 		)");
 	}
 	// CDC-FLAG end	
+    if ($oldversion < 2004100400) {
+		//execute_sql(" ALTER TABLE `{$CFG->prefix}lesson_attempts` ADD `useranswer` text NOT NULL AFTER correct");
+        table_column('lesson_attempts', '', 'useranswer', 'text', '', '', '', 'NOT NULL', 'correct');
+	}
+	
+	if ($oldversion < 2004100700) {
+		//execute_sql(" ALTER TABLE `{$CFG->prefix}lesson` ADD `modattempts` tinyint(3) unsigned NOT NULL default '0' AFTER practice");
+        table_column('lesson', '', 'modattempts', 'INT', '4', 'unsigned', '0', 'NOT NULL', 'practice');
+	}
 
+	if ($oldversion < 2004102600) {
+		//execute_sql(" ALTER TABLE `{$CFG->prefix}lesson_default` ADD `modattempts` tinyint(3) unsigned NOT NULL default '0' AFTER practice");
+        table_column('lesson_default', '', 'modattempts', 'INT', '4', 'unsigned', '0', 'NOT NULL', 'practice');
+	}
     
     return true;
 }

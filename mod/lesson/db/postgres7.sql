@@ -3,6 +3,7 @@ CREATE TABLE prefix_lesson (
   course INT8  NOT NULL default '0',
   name varchar(255) NOT NULL default '',
   practice INT  NOT NULL DEFAULT '0',
+  modattempts INT4 NOT NULL DEFAULT '0',
   usepassword INT  NOT NULL DEFAULT '0',
   password VARCHAR(32) NOT NULL default '',
   grade INT NOT NULL default '0',
@@ -69,6 +70,7 @@ CREATE TABLE prefix_lesson_attempts (
   answerid INT8  NOT NULL default '0',
   retry INT  NOT NULL default '0',
   correct INT8  NOT NULL default '0',
+  useranswer text NOT NULL default '',
   timeseen INT8  NOT NULL default '0'
 ) ;
 CREATE INDEX prefix_lesson_attempts_userid_idx ON prefix_lesson_attempts (userid);
@@ -86,6 +88,7 @@ CREATE TABLE prefix_lesson_default
 		( id SERIAL8 PRIMARY KEY,
 		  course INT8  NOT NULL default '0',
 		  practice INT  NOT NULL default '0',
+		  modattempts INT4 NOT NULL default '0',
 		  password varchar(32) NOT NULL default '',
 		  usepassword INT  NOT NULL default '0',
 		  grade INT NOT NULL default '0',
