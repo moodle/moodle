@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 unstable development (2004091900)
+      // moodle.php - created with Moodle 1.5 unstable development (2004092000)
 
 
 $string['action'] = '操作';
@@ -401,11 +401,10 @@ $a->link
 ほとんどのメールプログラムでは、これはクリック可能な青いリンクとして表示されます。もしクリックできないようでしたらブラウザのアドレスボックスにコピー＆ペーストしてください。
 
 お分かりにならない場合は、サイト管理者 $a->admin にご連絡ください。';
-$string['emailpasswordconfirmationsubject'] = '$a: パスワード変更の確認';
-$string['emailpasswordconfirmsent'] = 'メールがあなたのアドレス <b>$a</b> 宛に送信されました。<p>送信されたメールにはパスワードの変更を確認・完了するための簡単な説明が書いてあります。問題がある場合はサイト管理者にご連絡ください。';
+$string['emailpasswordconfirmationsubject'] = '$a: パスワード確認の変更';
+$string['emailpasswordconfirmsent'] = 'メールがあなたのアドレス <b>$a</b> 宛に送信されました。<br />送信されたメールにはパスワードの変更を確認・完了するための簡単な説明が書いてあります。問題がある場合はサイト管理者にご連絡ください。';
 $string['emailpasswordsent'] = 'パスワードの変更確認ありがとうございます。
-<p>新しいパスワードが記載されたメールがあなたのメールアドレス <b>$a->email</b> に送信されました。<p>新しいパスワードは自動的に生成されたものです - 
-<a href=$a->link>パスワードの変更</a> で覚えやすいものに変更できます。';
+<p>新しいパスワードが記載されたメールがあなたのメールアドレス<br /><b>$a->email</b>に送信されました。<br />新しいパスワードは自動的に生成されたものです - <a href=$a->link>パスワードの変更</a> で覚えやすいものに変更することができます。';
 $string['enable'] = '有効にする';
 $string['encryptedcode'] = '暗号化コード';
 $string['enrolledincourse'] = 'コース「 $a 」登録済';
