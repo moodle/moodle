@@ -2,6 +2,7 @@
 
 $string['addresource'] = 'Ajouter une ressource';
 $string['chooseafile'] = 'Choisir ou déposer un fichier';
+$string['chooseparameter'] = 'Choisir un paramètre';
 $string['configdefaulturl'] = 'Ce champ permet de pré-remplir le champ de l\'URL qui apparaît lors de la création d\'une ressource de type URL.';
 $string['configfilterexternalpages'] = 'L\'activation de ce réglage permettra le filtrage des ressources externes (pages web, fichiers HTML déposés) par les filtres définis dans le site (comme les liens des glossaires). Lorsque ce réglage est actif, l\'affichage de vos pages sera ralenti de façon sensible. À utiliser avec précaution.';
 $string['configframesize'] = 'Quand un page web ou un fichier est affiché dans un cadre (frame), cette valeur indique (en pixels) la taille du cadre contenant la navigation (en haut de la fenêtre).';
