@@ -101,8 +101,8 @@
 
     //Execute backup's cron
     //Perhaps a long time and memory could help in large sites
-    //ini_set("max_execution_time","3000");
-    //ini_set("memory_limit","56M");
+    ini_set("max_execution_time","3000");
+    ini_set("memory_limit","56M");
     if (file_exists("$CFG->dirroot/backup/backup_scheduled.php") and
         file_exists("$CFG->dirroot/backup/backuplib.php") and
         file_exists("$CFG->dirroot/backup/lib.php")) {
