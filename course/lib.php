@@ -1824,7 +1824,11 @@ function print_groupmode_setting($form, $course=NULL) {
  * Print visibility setting form element on module setup forms in mod/.../mod.html
  */
 function print_visible_setting($form, $course=NULL) {
-
+    if (empty($course)) {
+        if (! $course = get_record('course', 'id', $form->course)) {
+            error("This course doesn't exist");
+        }
+    }
     if ($form->coursemodule) {
         $visible = get_field('course_modules', 'visible', 'id', $form->coursemodule);
     } else {

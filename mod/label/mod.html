@@ -1,4 +1,4 @@
-<?php 
+<?php
     if (!isset($form->content)) {
         $form->content = '';
     }
@@ -17,7 +17,7 @@
            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
         } else {
            emoticonhelpbutton("form", "description");
-        } 
+        }
       ?>
       <br />
     </font>
@@ -28,7 +28,7 @@
     ?>
     </td>
 </tr>
-
+<?php print_visible_setting($form); ?>
 </table>
 <!-- these hidden variables are always the same -->
 <input type="hidden" name="course"        value="<?php  p($form->course) ?>" />

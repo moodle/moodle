@@ -71,14 +71,14 @@
            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
         } else {
            emoticonhelpbutton("form", "text");
-        }   
+        }
         echo "<br />";
       ?>
     </td>
     <td>
-    <?php 
+    <?php
        print_textarea($usehtmleditor, 20, 60, 680, 400, "text", $form->text);
-    
+
        if ($usehtmleditor) {
            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
        } else {
@@ -89,7 +89,7 @@
            if (!$form->format) {
                $form->format = $defaultformat;
            }
-           choose_from_menu(format_text_menu(), "format", $form->format, ""); 
+           choose_from_menu(format_text_menu(), "format", $form->format, "");
            echo "</div>";
        }
     ?>
@@ -162,7 +162,7 @@
             <tr>
                 <td align="right"><b><?php print_string("choiceopen", "choice") ?>:</b></td>
                 <td>
-                
+
     <?php
         if (!$form->timeopen and $course->format == "weeks") {
             $form->timeopen  = $course->startdate + (($form->section - 1) * 608400);
@@ -170,7 +170,7 @@
         print_date_selector("openday", "openmonth", "openyear", $form->timeopen);
         print_time_selector("openhour", "openminute", $form->timeopen);
      ?>
-     
+
                     <input type="hidden" name="hopenday" value="0" />
                     <input type="hidden" name="hopenmonth" value="0" />
                     <input type="hidden" name="hopenyear" value="0" />
@@ -181,7 +181,7 @@
             <tr>
                 <td align="right"><b><?php print_string("choiceclose", "choice") ?>:</b></td>
                 <td>
-                
+
     <?php
         if (!$form->timeclose and $course->format == "weeks") {
             $form->timeclose  = $course->startdate + (($form->section) * 608400);
@@ -189,7 +189,7 @@
         print_date_selector("closeday", "closemonth", "closeyear", $form->timeclose);
         print_time_selector("closehour", "closeminute", $form->timeclose);
      ?>
-     
+
                     <input type="hidden" name="hcloseday" value="0" />
                     <input type="hidden" name="hclosemonth" value="0" />
                     <input type="hidden" name="hcloseyear" value="0" />
@@ -258,7 +258,7 @@
         <br />
     </td>
 </tr>
-<?php print_visible_setting($form); ?>
+<?php print_standard_coursemodule_settings($form); ?>
 </table>
 
 <center>

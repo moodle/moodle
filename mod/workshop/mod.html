@@ -329,7 +329,7 @@
 <tr>
     <td align="right"><b><?php  print_string("usepassword", "workshop"); ?>:</b></td>
     <td>
-    <?php 
+    <?php
         $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "usepassword", $form->usepassword, "");
         helpbutton("usepassword", get_string("usepassword", "workshop"), "workshop");
@@ -419,7 +419,7 @@
             helpbutton("releasegrades", get_string("releaseteachergrades", "workshop"), "workshop");
     ?></td>
 </tr>
-<?php print_visible_setting($form); ?>
+<?php print_standard_coursemodule_settings($form); ?>
 </table>
 <br />
 <center>

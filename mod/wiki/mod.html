@@ -197,13 +197,13 @@
             else {
                 $strchooseafile = get_string("chooseafile", "wiki");
                 echo "<input type=\"text\" name=\"initialcontent\" size=\"50\" value=\"$form->initialcontent\" alt=\"".get_string("initialcontent", "wiki")."\" />&nbsp;";
-                button_to_popup_window ("/files/index.php?choose=form.initialcontent&amp;id=$course->id", 
+                button_to_popup_window ("/files/index.php?choose=form.initialcontent&amp;id=$course->id",
                                         "wikifiles", $strchooseafile, 500, 750, $strchooseafile);
             }
         ?>
     </td>
 </tr>
-<?php print_visible_setting($form); ?>
+<?php print_standard_coursemodule_settings($form); ?>
 </table>
 <!-- These hidden variables are always the same -->
 <input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
