@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.1 Beta (2003082001)
+      // webquest.php - created with Moodle 1.2 development (2003111400)
 
-$string['modulenameplural'] = "Webquests";
-$string['modulename'] = "Webquest";
+
+$string['modulename'] = 'Webquest';
+$string['modulenameplural'] = 'Webquests';
 
 ?>
