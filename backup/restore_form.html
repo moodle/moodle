@@ -101,13 +101,14 @@
 <SCRIPT LANGUAGE="JavaScript">
 <!--
 function selectItemInMenuByName(formId, menuName, selectIndex ) {
-	myForm = document.getElementById(formId)
-        for (i=0,n=myForm.elements.length;i<n;i++) {
-            myLen = menuName.length;
-			myName = myForm.elements[i].name;
-			if (myName.substring(0,myLen) == menuName)
-                myForm.elements[i].options[selectIndex].selected = true;
-		}
+    myForm = document.getElementById(formId)
+    for (i=0,n=myForm.elements.length;i<n;i++) {
+        myLen = menuName.length;
+        myName = myForm.elements[i].name;
+        myType = myForm.elements[i].type;
+        if (myName.substring(0,myLen) == menuName && myType == "select-one")
+            myForm.elements[i].options[selectIndex].selected = true;
+        }
 }
 -->
 </script>
