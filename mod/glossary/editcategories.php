@@ -132,7 +132,8 @@
 
     } elseif ( $action == "add" ) {
         if ( $confirm ) {
-            $dupcategory = get_record("glossary_categories","lcase(name)",strtolower($name),"glossaryid",$glossary->id);
+            $lcase = db_lowercase();
+            $dupcategory = get_record("glossary_categories","$lcase(name)",strtolower($name),"glossaryid",$glossary->id);
             if ( $dupcategory ) {
                 echo "<p align=\"center\">" . get_string("add"). " " . get_string("category","glossary") . "<font size=\"3\">";
                     

@@ -106,7 +106,8 @@ if ( $confirm ) {
 
         $permissiongranted = 1;
         if ( !$glossary->allowduplicatedentries ) {
-            if ($dupentries = get_records("glossary_entries","UCASE(concept)", strtoupper($newentry->concept))) {
+            $ucase = db_uppercase();
+            if ($dupentries = get_records("glossary_entries","$ucase(concept)", strtoupper($newentry->concept))) {
                 foreach ($dupentries as $curentry) {
                     if ( $glossary->id == $curentry->glossaryid ) {
                        if ( $curentry->id != $e ) {
@@ -143,7 +144,8 @@ if ( $confirm ) {
 
         $permissiongranted = 1;
         if ( !$glossary->allowduplicatedentries ) {
-            if ($dupentries = get_record("glossary_entries","UCASE(concept)", strtoupper($newentry->concept), "glossaryid", $glossary->id)) {
+            $ucase = db_uppercase();
+            if ($dupentries = get_record("glossary_entries","$ucase(concept)", strtoupper($newentry->concept), "glossaryid", $glossary->id)) {
                 $permissiongranted = 0;
             }
         }

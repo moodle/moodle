@@ -57,6 +57,41 @@ function begin_sql() {
     }
     return true;
 }
+
+/**
+ * returns db specific uppercase function
+ */
+function db_uppercase() {
+    global $CFG;
+    switch (strtolower($CFG->dbtype)) {
+
+    case "postgres7":
+        return "upper";
+        break;
+    case "mysql":
+    default:
+        return "ucase";
+        break;
+    }
+}
+
+/**
+ * returns db specific lowercase function
+ */
+function db_lowercase() {
+    global $CFG;
+    switch (strtolower($CFG->dbtype)) {
+
+    case "postgres7":
+        return "lower";
+        break;
+    case "mysql":
+    default:
+        return "lcase";
+        break;
+    }
+}
+
 /**
 * on DBs that support it, commit the transaction 
 */

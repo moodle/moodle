@@ -213,7 +213,8 @@
                     if ( $newentry->casesensitive ) {
                         $dupentry = get_record("glossary_entries","concept",$newentry->concept,"glossaryid",$glossary->id);
                     } else {
-                        $dupentry = get_record("glossary_entries","ucase(concept)",strtoupper($newentry->concept),"glossaryid",$glossary->id);
+                        $ucase = db_uppercase();
+                        $dupentry = get_record("glossary_entries","$ucase(concept)",strtoupper($newentry->concept),"glossaryid",$glossary->id);
                     }
                     if ($dupentry) {
                         $permissiongranted = 0;

@@ -57,7 +57,8 @@
 
         } else {
             if ( ! $mainglossary->allowduplicatedentries ) {
-                $dupentry = get_record("glossary_entries","glossaryid", $mainglossary->id, "UCASE(concept)",strtoupper($entry->concept));
+                $ucase = db_uppercase();
+                $dupentry = get_record("glossary_entries","glossaryid", $mainglossary->id, "$ucase(concept)",strtoupper($entry->concept));
                 if ( $dupentry ) {
                     $PermissionGranted = 0;
                 }
