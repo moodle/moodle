@@ -42,7 +42,7 @@
             if (!$u = get_record("user", "id", $user) ) {
                 error("That's an invalid user!");
             }
-            $userinfo = "$u->firstname $u->lastname";
+            $userinfo = fullname($u, isteacher($course->id));
         }
         if ($date) {
             $dateinfo = userdate($date, get_string("strftimedaydate"));
