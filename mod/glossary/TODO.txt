@@ -7,7 +7,7 @@ Things that are in the inkpot yet:
         * New glossary o just append entries to the current one?
         * With or withot categories?
 - Add Alias to concepts in order to use dynalinks on them.
-- Allow to set default values for glossaries and entries settings
+- Allow to set default values for glossaries and entries settings (done)
 - Allow grading of entries
     * Evaluation
     * Self-evaluation?

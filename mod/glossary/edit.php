@@ -166,12 +166,6 @@ if ( $confirm ) {
         $newentry->usedynalink = $form->usedynalink;
         $newentry->casesensitive = $form->casesensitive;
         $newentry->fullmatch = $form->fullmatch;
-    } else {
-        $newentry->concept = "";
-        $newentry->definition = "";
-        $newentry->usedynalink = 1;
-        $newentry->casesensitive = 0;
-        $newentry->fullmatch = 1;
     }
 }
 /// Otherwise fill and print the form.

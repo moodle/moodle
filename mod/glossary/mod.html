@@ -2,20 +2,31 @@
 <!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
 <?PHP
 /// stablishing hard-coded default parameters... Will be replaced soon by global settings.
+global $CFG;
+
+if (!isset($form->studentcanpost)) {
+    $form->studentcanpost = $CFG->students_can_post_entries;
+}
+if (!isset($form->allowduplicatedentries)) {
+    $form->allowduplicatedentries = $CFG->allow_duplicated_entries;
+}
 if (!isset($form->allowcomments)) {
-    $form->allowcomments = 1;
+    $form->allowcomments = $CFG->allow_comments;
+}
+if (!isset($form->usedynalink)) {
+    $form->usedynalink = $CFG->automatically_link_glossaries;
+}
+if (!isset($form->defaultapproval)) {
+    $form->defaultapproval = $CFG->default_approval_status;
 }
 if (!isset($form->mainglossary)) {
     $form->mainglossary = 0;
 }
-if (!isset($form->allowduplicatedentries)) {
-    $form->allowduplicatedentries = 0;
-}
-if (!isset($form->defaultapproval)) {
-    $form->defaultapproval = 1;
-}
 if (!isset($form->displayformat)) {
     $form->displayformat = 0;
+}
+if ( !isset($form->globalglossary) ) {
+    $form->globalglossary = 0;
 }
 if (!isset($form->intro)) {
     $form->intro = "";
@@ -31,15 +42,6 @@ if (!isset($form->showalphabet)) {
 }
 if (!isset($form->showspecial)) {
     $form->showspecial = 1;
-}
-if (!isset($form->studentcanpost)) {
-    $form->studentcanpost = 0;
-}
-if (!isset($form->usedynalink)) {
-    $form->usedynalink = 1;
-}
-if ( !isset($form->globalglossary) ) {
-    $form->globalglossary = 0;
 }
 ?>
 <FORM name="form" method="post" action="<?=$ME ?>">

@@ -1,0 +1,188 @@
+<?php 
+    $yes = get_string("yes");
+    $no  = get_string("no");
+?>
+<form method="post" action="module.php" name="form">
+
+<table cellpadding=9 cellspacing=0 >
+<tr valign=top>
+    <td colspan = 3 align=center><strong>Glossary Level Default Settings</strong></td>
+</tr>
+<tr valign=top>
+    <td align=right><p>students_can_post_entries:</td>
+    <td>
+    <SELECT size=1 name=students_can_post_entries>
+<?php 
+    $yselected = "";
+    $nselected = "";
+    if ($CFG->students_can_post_entries) {
+        $yselected = " SELECTED ";
+    } else {
+        $nselected = " SELECTED ";
+    }
+?>
+    <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
+    <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
+    </SELECT>
+    </td>
+    <td>
+    <?php print_string("configstudents_can_post_entries", "glossary") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>allow_duplicated_entries:</td>
+    <td>
+    <SELECT size=1 name=allow_duplicated_entries>
+<?php 
+    $yselected = "";
+    $nselected = "";
+    if ($CFG->allow_duplicated_entries) {
+        $yselected = " SELECTED ";
+    } else {
+        $nselected = " SELECTED ";
+    }
+?>
+    <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
+    <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
+    </SELECT>
+    </td>
+    <td>
+    <?php print_string("configallow_duplicated_entries", "glossary") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>allow_comments:</td>
+    <td>
+    <SELECT size=1 name=allow_comments>
+<?php 
+    $yselected = "";
+    $nselected = "";
+    if ($CFG->allow_comments) {
+        $yselected = " SELECTED ";
+    } else {
+        $nselected = " SELECTED ";
+    }
+?>
+    <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
+    <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
+    </SELECT>
+    </td>
+    <td>
+    <?php print_string("configallow_comments", "glossary") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>automatically_link_glossaries:</td>
+    <td>
+    <SELECT size=1 name=automatically_link_glossaries>
+<?php 
+    $yselected = "";
+    $nselected = "";
+    if ($CFG->automatically_link_glossaries) {
+        $yselected = " SELECTED ";
+    } else {
+        $nselected = " SELECTED ";
+    }
+?>
+    <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
+    <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
+    </SELECT>
+    </td>
+    <td>
+    <?php print_string("configautomatically_link_glossaries", "glossary") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>default_approval_status:</td>
+    <td>
+    <SELECT size=1 name=default_approval_status>
+<?php 
+    $yselected = "";
+    $nselected = "";
+    if ($CFG->default_approval_status) {
+        $yselected = " SELECTED ";
+    } else {
+        $nselected = " SELECTED ";
+    }
+?>
+    <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
+    <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
+    </SELECT>
+    </td>
+    <td>
+    <?php print_string("configdefault_approval_status", "glossary") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td colspan = 3 align=center><strong>Entry Level Default Settings</strong></td>
+</tr>
+<tr valign=top>
+    <td align=right><p>automatically_link_entry:</td>
+    <td>
+    <SELECT size=1 name=automatically_link_entry>
+<?php 
+    $yselected = "";
+    $nselected = "";
+    if ($CFG->automatically_link_entry) {
+        $yselected = " SELECTED ";
+    } else {
+        $nselected = " SELECTED ";
+    }
+?>
+    <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
+    <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
+    </SELECT>
+    </td>
+    <td>
+    <?php print_string("configautomatically_link_entry", "glossary") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>case_sensitive:</td>
+    <td>
+    <SELECT size=1 name=case_sensitive>
+<?php 
+    $yselected = "";
+    $nselected = "";
+    if ($CFG->case_sensitive) {
+        $yselected = " SELECTED ";
+    } else {
+        $nselected = " SELECTED ";
+    }
+?>
+    <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
+    <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
+    </SELECT>
+    </td>
+    <td>
+    <?php print_string("configcase_sensitive", "glossary") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>match_whole_words:</td>
+    <td>
+    <SELECT size=1 name=match_whole_words>
+<?php 
+    $yselected = "";
+    $nselected = "";
+    if ($CFG->match_whole_words) {
+        $yselected = " SELECTED ";
+    } else {
+        $nselected = " SELECTED ";
+    }
+?>
+    <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
+    <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
+    </SELECT>
+    </td>
+    <td>
+    <?php print_string("configmatch_whole_words", "glossary") ?>
+    </td>
+</tr>
+<tr>
+    <td colspan=3 align=center>
+    <input type="submit" value="<?php print_string("savechanges") ?>"></td>
+</tr>
+</table>
+
+</form>

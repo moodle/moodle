@@ -1,3 +1,6 @@
+<?PHP
+    global $CFG;
+?>
 <center>
 <form name="form" method="post" <?=$onsubmit ?> action="edit.php" enctype="multipart/form-data">
 <table  class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
@@ -52,6 +55,8 @@ if (isset($errors)) {
         if ($newentry->usedynalink) {
             $selected = "checked";
         }
+    } elseif ( $CFG->automatically_link_entry ) {
+        $selected = "checked";
     }
 ?> 
     <input type="checkbox" name="usedynalink" value=1 <?php p($selected) ?> onclick="return lockoptions('form','usedynalink', items)"> <?php helpbutton("usedynalink", get_string("usedynalink", "glossary"), "glossary") ?>
@@ -61,19 +66,23 @@ if (isset($errors)) {
     <td align=right><p><b><?php echo get_string("casesensitive","glossary") ?>:</b></p></td>
     <td>
     <select size="1" name="casesensitive">
-     <option value="1" <?php
+     <option value=1 <?php
       if ( isset($newentry->casesensitive) ) {
           if ( $newentry->casesensitive ) {
              echo "selected";
           }
+      } elseif ( $CFG->case_sensitive ) {
+          echo "selected";
       }
       ?> 
       ><?php echo get_string("yes") ?></option>
-     <option value="0" <?php
+     <option value=0 <?php
       if ( isset($newentry->casesensitive) ) {
           if ( !$newentry->casesensitive ) {
              echo "selected";
           }
+      } elseif ( !$CFG->case_sensitive ) {
+          echo "selected";
       }
       ?>><?php echo get_string("no") ?>
      </option>
@@ -84,19 +93,23 @@ if (isset($errors)) {
     <td align=right><p><b><?php echo get_string("fullmatch","glossary") ?>:</b></p></td>
     <td>
     <select size="1" name="fullmatch">
-     <option value="1" <?php
+     <option value=1 <?php
       if ( isset($newentry->fullmatch) ) {
           if ( $newentry->fullmatch ) {
              echo "selected";
           }
+      } elseif ( $CFG->match_whole_words ) {
+          echo "selected";
       }
       ?> 
       ><?php echo get_string("yes") ?></option>
-     <option value="0" <?php
+     <option value=0 <?php
       if ( isset($newentry->fullmatch) ) {
           if ( !$newentry->fullmatch ) {
              echo "selected";
           }
+      } elseif ( !$CFG->match_whole_words ) {
+          echo "selected";
       }
       ?>><?php echo get_string("no") ?>
      </option>
