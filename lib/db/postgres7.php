@@ -481,6 +481,10 @@ function main_upgrade($oldversion=0) {
         table_column("course", "lang", "lang", "varchar", "10", "", "");
     }
 
+    if ($oldversion < 2004042701) {     /// Add hiddentopics field to control hidden topics behaviour
+        table_column("course", "", "hiddentopics", "integer", "1", "unsigned", "0", "not null", "visible");
+    }
+
     return $result;
 
 }
