@@ -13,6 +13,7 @@
     define('BLOCK_R_MAX_WIDTH', 210);
 
     require_once('config.php');
+    require_once($CFG->dirroot .'/course/lib.php');
     require_once($CFG->dirroot .'/lib/blocklib.php');
 
     if (empty($SITE)) {
@@ -71,8 +72,6 @@
 
 /// Print Section
     if ($SITE->numsections > 0) {
-
-        require_once($CFG->dirroot .'/course/lib.php');
 
         if (!$section = get_record('course_sections', 'course', $SITE->id, 'section', 1)) {
             delete_records('course_sections', 'course', $SITE->id, 'section', 1); // Just in case
@@ -147,8 +146,6 @@
 
         case FRONTPAGECOURSELIST:
         case FRONTPAGECATEGORYNAMES:
-
-            require_once($CFG->dirroot .'/course/lib.php');
 
             if (isset($USER->id) and !isset($USER->admin)) {
                 print_heading_block(get_string('mycourses'));
