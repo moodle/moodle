@@ -101,6 +101,11 @@ function glossary_upgrade($oldversion) {
       table_column("glossary","","editalways","integer","2", "unsigned", "0", "", "entbypage");
   }
 
+  //Activate editalways in old secondary glossaries (old behaviour)
+  if ( $oldversion < 2004080900) {
+      set_field('glossary','editalways','1','mainglossary','0');
+  }
+
   return true;
 }
 

@@ -100,6 +100,14 @@
                 $glossary->displayformat = 'dictionary';
             }
 
+            //If the backup file doesn't include the editalways field, activate it
+            //in secondary glossaries (old behaviour, pre 1.4)
+            if (! isset($info['MOD']['#']['EDITALWAYS']['0']['#'])) { //It's a pre-14 backup file
+                if ($glossary->mainglossary == '0') {
+                    $glossary->editalways = '1';
+                }
+            }
+
             //The structure is equal to the db, so insert the glossary
             $newid = insert_record ("glossary",$glossary);
 
