@@ -96,4 +96,11 @@ function put_records_csv($file, $records, $table = NULL) {
     return true;
 }
 
+if (!function_exists('file_get_contents')) {
+   function file_get_contents($file) {
+       $file = file($file);
+       return !$file ? false : implode('', $file);
+   }
+}
+
 ?>
