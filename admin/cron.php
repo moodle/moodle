@@ -11,9 +11,12 @@
 /// eg   wget -q -O /dev/null 'http://moodle.somewhere.edu/admin/cron.php'
 /// or   php /web/moodle/admin/cron.php 
 
-    $FULLME = "cron";
-
     $starttime = microtime();
+
+/// The following is a hack necessary to allow this script to work well 
+/// from the command line.
+
+    define('FULLME', 'cron');
     
 /// The current directory in PHP version 4.3.0 and above isn't necessarily the
 /// directory of the script when run from the command line. The require_once()
