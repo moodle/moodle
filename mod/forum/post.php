@@ -11,7 +11,40 @@
         if (!empty($CFG->loginhttps)) {
             $wwwroot = str_replace('http','https', $wwwroot);
         }
-        print_header();
+
+        if (isset($forum)) {      // User is starting a new discussion in a forum
+            if (! $forum = get_record('forum', 'id', $forum)) {
+                error('The forum number was incorrect');
+            }
+        } else if (isset($reply)) {      // User is writing a new reply
+            if (! $parent = forum_get_post_full($reply)) {
+                error('Parent post ID was incorrect');
+            }
+            if (! $discussion = get_record('forum_discussions', 'id', $parent->discussion)) {
+                error('This post is not part of a discussion!');
+            }
+            if (! $forum = get_record('forum', 'id', $discussion->forum)) {
+                error('The forum number was incorrect');
+            }
+        }
+        if (! $course = get_record('course', 'id', $forum->course)) {
+            error('The course number was incorrect');
+        }
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) { // For the logs
+            $cm->id = 0;
+        }
+
+        $strforums = get_string('modulenameplural', 'forum');
+        if ($course->category) {
+            print_header($course->shortname, $course->fullname,
+                 "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
+                  <a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> 
+                  <a href=\"view.php?f=$forum->id\">$forum->name</a>", '', '', true, "", navmenu($course, $cm));
+        } else {
+            print_header($course->shortname, $course->fullname,
+                 "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> 
+                  <a href=\"view.php?f=$forum->id\">$forum->name</a>", '', '', true, "", navmenu($course, $cm));
+        }
         notice_yesno(get_string('noguestpost', 'forum').'<br /><br />'.get_string('liketologin'),
                      $wwwroot, $_SERVER['HTTP_REFERER']);
         print_footer();
@@ -506,12 +539,10 @@
                  "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                   $navmiddle -> $navtail", $formstart, "", true, "", navmenu($course, $cm));
 
-        echo '<div id="forum-post" class="forum">';  // forum-post wrapper start
     } else {
         print_header("$course->shortname: $discussion->name: $toppost->subject", "$course->fullname",
                  "$navmiddle -> $navtail", "$formstart", "", true, "", navmenu($course, $cm));
 
-        echo '<div id="forum-post" class="forum">';  // forum-post wrapper start
     }
 
     if (!empty($parent)) {
@@ -524,20 +555,19 @@
             }
             forum_print_posts_threaded($parent->id, $course, 0, false, false, $user_read_array, $discussion->forum);
         }
-        echo "<center>";
-        echo "<h2>".get_string("yourreply", "forum").":</h2>";
+        print_heading(get_string("yourreply", "forum").':');
     } else {
-        echo "<center>";
         $forum->intro = trim($forum->intro);
         if (!empty($forum->intro)) {
             print_simple_box(format_text($forum->intro), 'center');
         }
         print_heading(get_string('yournewtopic', 'forum'));
     }
+    echo '<center>';
     if (!empty($post->error)) {
         notify($post->error);
     }
-    echo "</center>";
+    echo '</center>';
 
     print_simple_box_start("center");
     require("post.html");
@@ -546,8 +576,6 @@
     if ($usehtmleditor) {
         use_html_editor("message");
     }
-
-    echo '</div>';  // forum-post wrapper end
 
     print_footer($course);
 
