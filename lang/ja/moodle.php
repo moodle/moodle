@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 Beta 1 + (2003052300)
+      // moodle.php - created with Moodle 1.0.9 (2003052900)
 
 
 $string['action'] = "操作";
@@ -311,6 +311,7 @@ $string['lastaccess'] = "最終アクセス";
 $string['lastedited'] = "最終編集日時";
 $string['lastmodified'] = "最終更新日時";
 $string['lastname'] = "名字";
+$string['latestlanguagepack'] = "moodle.orgで最新の言語パックを確認する";
 $string['latestnews'] = "最新ニュース";
 $string['leavetokeep'] = "現在のパスワードを使う場合は空白にしてください";
 $string['license'] = "GPLライセンス";
