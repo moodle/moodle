@@ -147,6 +147,12 @@ magic_quotes_runtime = Off</p>
 <h3><a name="locale"></a>Waarom zie ik in mijn Moodlesite de tijd en datum verkeerd?</h3>
 <p class="answer">Elke taal vereist een specifieke taalcode (een  <strong>locale</strong> string genoemd) om data en tijd juist te kunnen tonen. De talenpakketjes bevatten stadaardcodes, maar soms werken die niet op Windowsservers.</p>
 <p class="answer">Je kunt de juiste locale codes voor Windows vinden op volgende twee pagina's: <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_language_strings.asp" target="_blank">Language codes</a> en <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_country_strings.asp" target="_blank">Country/region codes</a>.(bv &quot;esp_esp&quot; voor Spaans)</p>
+<p class="answer">Voor Nederlands zijn er enkele mogelijkheden die je kunt uitproberen, afhankelijk van het besturingssysteem van je Moodleserver:
+<ul>
+<li>Windows-server: nld
+<li>Unix / Linux-server: nl of NL_nl
+<li>FreeBSD-server: nl_NL.ISO8859-15 of nl_NL.ISO8859-1
+</ul>
 <p class="answer">Deze nieuwe locale codes kunnen dan op de Beheer -&gt; Configuratie -&gt; Variablen pagina, waar ze diegene van de gekozen taalpakket overschrijven.</p>
 <p class="answer">&nbsp;</p>
 
