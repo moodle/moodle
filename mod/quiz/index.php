@@ -42,18 +42,26 @@
     $strweek  = get_string("week");
     $strtopic  = get_string("topic");
     $strbestgrade  = get_string("bestgrade", "quiz");
+    $strquizcloses = get_string("quizcloses", "quiz");
+    $strattempts = get_string("attempts", "quiz");
 
+    if (isteacher($course->id)) {
+        $gradecol = $strattempts;
+    } else {
+        $gradecol = $strbestgrade;
+    }
+  
     if ($course->format == "weeks") {
-        $table->head  = array ($strweek, $strname, $strbestgrade);
-        $table->align = array ("CENTER", "LEFT", "RIGHT");
+        $table->head  = array ($strweek, $strname, $strquizcloses, $gradecol);
+        $table->align = array ("center", "left", "left", "left");
         $table->width = array (10, "*", 10);
     } else if ($course->format == "topics") {
-        $table->head  = array ($strtopic, $strname, $strbestgrade);
-        $table->align = array ("CENTER", "LEFT", "RIGHT");
+        $table->head  = array ($strtopic, $strname, $strquizcloses, $gradecol);
+        $table->align = array ("center", "left", "left", "left");
         $table->width = array (10, "*", 10);
     } else {
-        $table->head  = array ($strname, $strbestgrade);
-        $table->align = array ("LEFT", "RIGHT");
+        $table->head  = array ($strname, $strquizcloses, $gradecol);
+        $table->align = array ("left", "left", "left");
         $table->width = array ("*", 10);
     }
 
@@ -74,14 +82,29 @@
             $section = "";
         }
 
+        $closequiz = userdate($quiz->timeclose);
+
+        if (isteacher($course->id)) {
+            if ($allanswers = get_records("quiz_grades", "quiz", $quiz->id)) {
+                $answercount = count($allanswers);
+                $gradecol = "<a href=\"report.php?id=$quiz->coursemodule\">" .
+                            get_string("viewallanswers","quiz",$answercount)."</a>";
+            } else {
+                $answercount = 0;
+                $gradecol = "";
+            }
+        } else { 
+            $gradecol = "$bestgrade / $quiz->grade";
+        }
+
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($section, $link, "$bestgrade / $quiz->grade");
+            $table->data[] = array ($section, $link, $closequiz, $gradecol);
         } else {
-            $table->data[] = array ($link, "$bestgrade / $quiz->grade");
+            $table->data[] = array ($link, $closequiz, $gradecol);
         }
     }
 
-    echo "<BR>";
+    echo "<br />";
 
     print_table($table);
 
