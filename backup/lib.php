@@ -455,7 +455,7 @@
     function backup_required_functions() {
 
         if(!function_exists('utf8_encode')) {
-            error('You need to add utf8 support to your PHP installation');  
+            error('You need to add XML support to your PHP installation');  
         }
 
     }
