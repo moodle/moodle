@@ -614,7 +614,7 @@ function lesson_cluster_jump($lesson, $user, $pageid) {
 	while (true) {  // now load all the pages into the cluster that are not already inside of a branch table.
 		if ($lessonpages[$pageid]->qtype == LESSON_ENDOFCLUSTER) {
 			// store the endofcluster page's jump
-			$exitjump = get_field("lesson_answers", "jumpto", "pageid", $pages[$count][0], "lessonid", $lesson);
+			$exitjump = get_field("lesson_answers", "jumpto", "pageid", $pageid, "lessonid", $lesson);
 			if ($exitjump == LESSON_NEXTPAGE) {
 				$exitjump = $lessonpages[$pageid]->nextpageid;
 			}
