@@ -929,7 +929,7 @@ function print_course_admin_links($course, $width=180) {
             $admindata[]="<a href=\"user.php?id=$course->id&user=$USER->id\">".get_string("activityreport")."...</a>";
             $adminicon[]="<img src=\"$CFG->pixpath/i/report.gif\" height=16 width=16 alt=\"\">";
         }
-        if ($CFG->auth == "email" or $CFG->auth == "none" or $CFG->auth == "manual") {
+        if (is_internal_auth()) {
             $admindata[]="<a href=\"$CFG->wwwroot/login/change_password.php?id=$course->id\">".
                           get_string("changepassword")."...</a>";
             $adminicon[]="<img src=\"$CFG->pixpath/i/user.gif\" height=16 width=16 alt=\"\">";

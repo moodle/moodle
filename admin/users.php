@@ -25,7 +25,7 @@
     $table->data[] = array("<b><a href=\"auth.php\">".get_string("authentication")."</a></b>",
                            get_string("adminhelpauthentication"));
 
-    if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual"){
+    if (is_internal_auth()) {
         $table->data[] = array("<b><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".get_string("addnewuser")."</a></b>",
                                get_string("adminhelpaddnewuser"));
         $table->data[] = array("<b><a href=\"$CFG->wwwroot/$CFG->admin/uploaduser.php\">".get_string("uploadusers")."</a></b>",
