@@ -17,6 +17,8 @@
         error("No file parameters!");
     }
 
+    $pathinfo = urldecode($pathinfo);
+
     if (! $args = parse_slash_arguments($pathinfo)) {
         error("No valid arguments supplied");
     }
