@@ -37,7 +37,7 @@
         notify("None yet");
     }
 
-    echo "<H2 align=center>Students</H2>";
+    echo "<H2 align=center>".$course->student."s</H2>";
     if ($students = get_records_sql("SELECT u.* FROM user u, user_students s 
                                        WHERE s.course = '$course->id' AND s.user = u.id
                                        ORDER BY u.lastaccess DESC")) {
