@@ -78,7 +78,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     echo "<CENTER>";
     echo "<FORM ACTION=log.php METHOD=get>";
     if (isadmin()) {
-        choose_from_menu ($courses, "id", $course->id);
+        choose_from_menu ($courses, "id", $course->id, "");
     } else {
         echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
     }
