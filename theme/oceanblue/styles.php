@@ -303,6 +303,17 @@ form { margin-bottom: 0; }
 .generalboxcontent {
 }
 
+.noticebox {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.noticeboxcontent {
+    text-align: center;
+}
+
+
 .feedbacktext {
     color: <?PHP echo $THEME->cellheading2?>;
 }

@@ -1,10 +1,10 @@
-<?PHP // $Id$
+<?PHP /*  $Id$ */
 
 /// We use PHP so we can do value substitutions into the styles
 
-    header("Content-type: text/css");
-
     require_once("../../config.php"); 
+
+    header("Content-type: text/css");  // Correct MIME type
 
     if (isset($themename)) {
         $CFG->theme = $themename;
@@ -12,20 +12,20 @@
 
     $themeurl = "$CFG->wwwroot/theme/$CFG->theme";
 
-/// From here on it's nearly a normal stylesheet.
+/// From here on it's nearly a normal stylesheet. 
 /// First are some CSS definitions for normal tags, 
-/// then custom tags follow.  
+/// then custom tags follow.
 ///
 /// New classes always get added to the end of the file.
-///
-/// Note that a group of standard colours are all 
+/// 
+/// Note that a group of standard colours are all
 /// defined in config.php in this directory.  The
 /// reason for this is because Moodle uses the same
-/// colours to provide oldstyle formatting for 
+/// colours to provide oldstyle formatting for
 /// browsers without CSS.
-///
-/// You can hardcode colours in this file if you 
-/// don't care about this.
+/// 
+/// You can hardcode colours in this file if you
+/// don't care about this. 
 
 ?>
 
@@ -201,6 +201,17 @@ form {
 .generalboxcontent {
 }
 
+.noticebox {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.noticeboxcontent {
+    text-align: center;
+}
+
+
 .feedbacktext {
     color: <?PHP echo $THEME->cellheading2?>;
 }
@@ -252,4 +263,3 @@ a.dimmed:hover {
 .teacheronly {
     color: #990000;
 }
-

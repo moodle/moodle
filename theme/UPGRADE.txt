@@ -64,6 +64,11 @@ a.dimmed:hover {}
 .weeklydatetext {}
 
 
+/* Style for the notice boxes (surrounding a notice message)  */
+
+.noticebox {}
+.noticeboxcontent {}
+
 
 ALL pix files can now be changed from within a theme, 
 see cordoroyblue for an example:  config.php and the 
