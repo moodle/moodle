@@ -1428,6 +1428,7 @@ function print_user($user, $course) {
     static $datestring;
     static $countries;
     static $isteacher;
+    static $isadmin;
 
     if (empty($string)) {     // Cache all the strings for the rest of the page
 
@@ -1454,6 +1455,7 @@ function print_user($user, $course) {
         $countries = get_list_of_countries();
 
         $isteacher = isteacher($course->id);
+        $isadmin   = isadmin();
     }
 
     echo '<table width="80%" align="center" border="0" cellpadding="10" cellspacing="0" class="userinfobox">';
@@ -1496,7 +1498,7 @@ function print_user($user, $course) {
     if ($isteacher) {
         $timemidnight = usergetmidnight(time());
         echo "<a href=\"$CFG->wwwroot/course/user.php?id=$course->id&user=$user->id\">$string->activity</a><br>";
-        if (!iscreator($user->id)) {  // Includes admins
+        if (!iscreator($user->id) or ($isadmin and !isadmin($user->id))) {  // Includes admins
             if ($course->category and isteacheredit($course->id) and isstudent($course->id, $user->id)) {  // Includes admins
                 echo "<a href=\"$CFG->wwwroot/course/unenrol.php?id=$course->id&user=$user->id\">$string->unenrol</a><br />";
             }

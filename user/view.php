@@ -251,7 +251,7 @@
         echo "<input type=submit value=\"".get_string("activityreport")."\">";
         echo "</form></p></td>";
     }
-    if (isteacher($course->id) and ($USER->id != $user->id) and !iscreator($user->id)) {
+    if ((isadmin() and !isadmin($user->id)) or (isteacher($course->id) and ($USER->id != $user->id) and !iscreator($user->id))) {
         echo "<td nowrap><p><form action=\"../course/loginas.php\" method=get>";
         echo "<input type=hidden name=id value=\"$course->id\">";
         echo "<input type=hidden name=user value=\"$user->id\">";
