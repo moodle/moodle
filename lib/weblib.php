@@ -35,51 +35,6 @@
 define("FORMAT_MOODLE", "0");
 define("FORMAT_HTML", "1");
 
-$SMILEY_TEXT[]  = ":-)";
-$SMILEY_IMAGE[] = "<IMG ALT=\":-)\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/smiley.gif\">";
-$SMILEY_TEXT[]  = ":)";
-$SMILEY_IMAGE[] = "<IMG ALT=\":-)\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/smiley.gif\">";
-$SMILEY_TEXT[]  = ":-D";
-$SMILEY_IMAGE[] = "<IMG ALT=\":-D\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/biggrin.gif\">";
-$SMILEY_TEXT[]  = ";-)";
-$SMILEY_IMAGE[] = "<IMG ALT=\";-)\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/wink.gif\">";
-$SMILEY_TEXT[]  = ":-/";
-$SMILEY_IMAGE[] = "<IMG ALT=\":-/\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/mixed.gif\">";
-$SMILEY_TEXT[]  = "V-.";
-$SMILEY_IMAGE[] = "<IMG ALT=\"V-.\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/thoughtful.gif\">";
-$SMILEY_TEXT[]  = ":-P";
-$SMILEY_IMAGE[] = "<IMG ALT=\":-P\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/tongueout.gif\">";
-$SMILEY_TEXT[]  = "B-)";
-$SMILEY_IMAGE[] = "<IMG ALT=\"B-)\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/cool.gif\">";
-$SMILEY_TEXT[]  = "^-)";
-$SMILEY_IMAGE[] = "<IMG ALT=\"^-)\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/approve.gif\">";
-$SMILEY_TEXT[]  = "8-)";
-$SMILEY_IMAGE[] = "<IMG ALT=\"8-)\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/wideeyes.gif\">";
-$SMILEY_TEXT[]  = ":o)";
-$SMILEY_IMAGE[] = "<IMG ALT=\":o)\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/clown.gif\">";
-$SMILEY_TEXT[]  = ":-(";
-$SMILEY_IMAGE[] = "<IMG ALT=\":-(\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/sad.gif\">";
-$SMILEY_TEXT[]  = ":(";
-$SMILEY_IMAGE[] = "<IMG ALT=\":-(\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/sad.gif\">";
-$SMILEY_TEXT[]  = "8-.";
-$SMILEY_IMAGE[] = "<IMG ALT=\"8-.\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/shy.gif\">";
-$SMILEY_TEXT[]  = ":-I";
-$SMILEY_IMAGE[] = "<IMG ALT=\":-I\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/blush.gif\">";
-$SMILEY_TEXT[]  = ":-X";
-$SMILEY_IMAGE[] = "<IMG ALT=\":-X\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/kiss.gif\">";
-$SMILEY_TEXT[]  = "8-o";
-$SMILEY_IMAGE[] = "<IMG ALT=\"8-o\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/surprise.gif\">";
-$SMILEY_TEXT[]  = "P-|";
-$SMILEY_IMAGE[] = "<IMG ALT=\"P-|\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/blackeye.gif\">";
-$SMILEY_TEXT[]  = "8-[";
-$SMILEY_IMAGE[] = "<IMG ALT=\"8-[\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/angry.gif\">";
-$SMILEY_TEXT[]  = "xx-P";
-$SMILEY_IMAGE[] = "<IMG ALT=\"xx-P\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/dead.gif\">";
-$SMILEY_TEXT[]  = "|-.";
-$SMILEY_IMAGE[] = "<IMG ALT=\"|-.\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/sleepy.gif\">";
-$SMILEY_TEXT[]  = "}-]";
-$SMILEY_IMAGE[] = "<IMG ALT=\"}-]\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/evil.gif\">";
-
 $JAVASCRIPT_TAGS = array("javascript:", "onclick=", "ondblclick=", "onkeydown=", "onkeypress=", "onkeyup=", 
                          "onmouseover=", "onmouseout=", "onmousedown=", "onmouseup=",
                          "onblur=", "onfocus=", "onload=", "onselect=");
@@ -516,10 +471,38 @@ function clean_text($text, $format) {
 
 function replace_smilies($text) {
 /// Replaces all known smileys in the text with image equivalents
+    global $CFG;
 
-    global $CFG, $SMILEY_TEXT, $SMILEY_IMAGE;
+    $emoticons = array(
+        ':-)'  => 'smiley.gif',
+        ':)'   => 'smiley.gif',
+        ':-D'  => 'biggrin.gif',
+        ';-)'  => 'wink.gif',
+        ':-/'  => 'mixed.gif',
+        'V-.'  => 'thoughtful.gif',
+        ':-P'  => 'tongueout.gif',
+        'B-)'  => 'cool.gif',
+        '^-)'  => 'approve.gif',
+        '8-)'  => 'wideeyes.gif',
+        ':o)'  => 'clown.gif',
+        ':-('  => 'sad.gif',
+        ':('   => 'sad.gif',
+        '8-.'  => 'shy.gif',
+        ':-I'  => 'blush.gif',
+        ':-X'  => 'kiss.gif',
+        '8-o'  => 'surprise.gif',
+        'P-|'  => 'blackeye.gif',
+        '8-['  => 'angry.gif',
+        'xx-P' => 'dead.gif',
+        '|-.'  => 'sleepy.gif',
+        '}-]'  => 'evil.gif',
+        );
 
-    return str_replace($SMILEY_TEXT, $SMILEY_IMAGE, $text);
+    foreach ($emoticons as $emoticon => $image){
+        $smilies[$emoticon] = "<IMG ALT=\"$emoticon\" WIDTH=15 HEIGHT=15 SRC=\"{$CFG->wwwroot}/pix/s/{$image}\">";
+    }
+
+    return strtr($text, $smilies);
 }
 
 function text_to_html($text, $smiley=true, $para=true) {
