@@ -7,8 +7,9 @@
 <H2>Installing Moodle</H2>
 <P>This guide explains how to install Moodle for the first time.  It goes into some detail
    about some of the steps, in order to cover the wide variety of small differences between
-   web server setups.  Don't be put off by this - on most servers Moodle can be set up 
-   in a few minutes!</P>
+   web server setups, so this document may look long and complicated.  Don't be put off by this 
+   - I usually set Moodle up in a few minutes!</P>
+<P>Take your time and work through this document carefully - it will save you time later on.</P>
 <P>Sections in this document:</P>
 <OL>
   <LI><A HREF="#requirements">Requirements</A></LI>
@@ -41,7 +42,7 @@
       Access, ADO, Sybase, DB2 or ODBC).</li>
   </ul>
   <p>On a Windows platform, the quickest way to satisfy these requirements is 
-    to download <A HREF="http://www.phpgeek.com/">PHPTriad</A>, <A HREF="http://www.foxserv.net/">FoxServ</A>, 
+    to download <A HREF="http://www.foxserv.net/">FoxServ</A>, 
     or <A HREF="http://www.easyphp.org/">EasyPHP</A> which will install Apache, 
     PHP, and MySQL for you. Make sure you enable the GD module so Moodle can process 
     images - you may have to edit php.ini and remove the comment (;) from this 
@@ -95,10 +96,13 @@
 
   <p>Create a directory for this purpose somewhere.  For security, it's best that 
      this directory is NOT accessible via the web.  The easiest way to do this
-     is to simply locate it OUTSIDE the web directory, otherwise make sure it's well 
-     protected with .htaccess security.
+     is to simply locate it OUTSIDE the web directory, otherwise protect it 
+     by creating a file in the data directory called .htaccess, containing this line:
+  <blockquote>
+     <PRE>deny from all</PRE>
+  </blockquote>
   
-  <p>So that Moodle can save uploaded files in this directory, make sure that 
+  <p>To make sure that Moodle can save uploaded files in this directory, check that 
      the web server software (eg Apache) has permission to write 
     to this directory. On Unix machines, this means setting the owner of the directory 
     to be something like &quot;nobody&quot; or &quot;apache&quot;.</p>
@@ -279,7 +283,12 @@ php_value post_max_size 2M
     where this script is run regularly (eg every five minutes). This provides 
     a &quot;heartbeat&quot; so that the script can perform functions at periods 
     defined by each module.</p>
-  <p>Test that the script works by running it directly from your browser:</p>
+  <P>Note that the machine performing the cron <B>does not need to be the same 
+     machine that is running Moodle</B>.  For example, if you have a limited web hosting 
+     service that does not have cron, then you can might choose to run cron on another 
+     server or on your home computer.  All that matters is that the cron.php file is 
+     called every five minutes or so.</p>
+  <p>First, test that the script works by running it directly from your browser:</p>
   <blockquote> 
     <PRE>http://example.com/moodle/admin/cron.php</PRE>
   </blockquote>
@@ -315,7 +324,8 @@ php_value post_max_size 2M
     <PRE>*/5 * * * * wget -q -O /dev/null http://example.com/moodle/admin/cron.php</PRE>
   </blockquote>
   <p>On Windows systems: The simplest way is to use my package <A TITLE="Click to download this package (150k)" HREF="http://moodle.com/download/moodle-cron-for-windows.zip">moodle-cron-for-windows.zip</A> 
-    which makes this whole thing very easy.</p>
+    which makes this whole thing very easy.  You can also explore using the built-in 
+    Windows feature for "Scheduled Tasks".</p>
   </p>
 </blockquote>
 <H3><A NAME="course"></A>10. Create a new course</H3>
