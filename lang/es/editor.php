@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 development (2003120700)
+      // editor.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['about'] = 'Acerca de este editor';
@@ -21,10 +21,14 @@ $string['chooseicon'] = 'Seleccione un icono para insertar';
 $string['close'] = 'Cerrar';
 $string['cols'] = 'Cols';
 $string['copy'] = 'Copiar selección';
+$string['createfolder'] = 'Crear carpeta';
 $string['createlink'] = 'Insertar enlace';
 $string['cut'] = 'Cortar selección';
+$string['delete'] = 'Eliminar';
+$string['filebrowser'] = 'Navegador de archivos';
 $string['forecolor'] = 'Color de fuente';
 $string['heading'] = 'Encabezado';
+$string['height'] = 'Altura';
 $string['hilitecolor'] = 'Color de fondo';
 $string['horizontal'] = 'Horizontal';
 $string['horizontalrule'] = 'Linea horizontal';
@@ -33,6 +37,7 @@ $string['imageurl'] = 'URL de imagen';
 $string['indent'] = 'Aumentar sangría';
 $string['insertchar'] = 'Insertar caracteres especiales';
 $string['insertimage'] = 'Insertar imagen';
+$string['insertlink'] = 'Insertar vínculo';
 $string['insertsmile'] = 'Insertar emoticono';
 $string['inserttable'] = 'Insertar tabla';
 $string['italic'] = 'Itálica';
@@ -42,8 +47,19 @@ $string['justifyleft'] = 'Izquierda';
 $string['justifyright'] = 'Derecha';
 $string['layout'] = 'Diseño';
 $string['left'] = 'Izquierda';
+$string['linkproperties'] = 'Propiedades de vínculo';
+$string['linktarget'] = 'Destino';
+$string['linktargetblank'] = 'Nueva ventana';
+$string['linktargetnone'] = 'Ninguno';
+$string['linktargetother'] = 'Otro (fuera de orden)';
+$string['linktargetself'] = 'El mismo marco';
+$string['linktargettop'] = 'La misma ventana';
+$string['linktitle'] = 'Título';
+$string['linkurl'] = 'URL';
 $string['middle'] = 'Centrado';
+$string['move'] = 'Mover';
 $string['normal'] = 'Normal';
+$string['notimage'] = 'El archivo seleccionado no es una imagen. Por favor, seleccione una imagen!';
 $string['notset'] = 'Ninguno';
 $string['ok'] = 'OK';
 $string['orderedlist'] = 'Lista numerada';
@@ -55,10 +71,15 @@ $string['pixels'] = 'Pixeles';
 $string['popupeditor'] = 'Agrandar el editor';
 $string['preformatted'] = 'Preformatear';
 $string['preview'] = 'Visualizar';
+$string['properties'] = 'Propiedades';
 $string['redo'] = 'Rehacer la última acción';
+$string['removelink'] = 'Eliminar vínculo';
+$string['rename'] = 'Renombrar';
 $string['right'] = 'Derecha';
 $string['rows'] = 'Filas';
+$string['selection'] = 'Selección';
 $string['showhelp'] = 'Mostrar ayuda';
+$string['size'] = 'Tamaño';
 $string['spacing'] = 'Espaciar';
 $string['strikethrough'] = 'Tachado';
 $string['subscript'] = 'Subscript';
@@ -67,10 +88,13 @@ $string['textindicator'] = 'Estilo actual';
 $string['textmode'] = 'Usted esta en MODO TEXTO.  Use el botón [<>] para regresar al MODO EDITOR.';
 $string['texttop'] = 'Texto arriba';
 $string['top'] = 'Arriba';
+$string['type'] = 'Tipo';
 $string['underline'] = 'Subrayado';
 $string['undo'] = 'Deshacer la última acción';
 $string['unorderedlist'] = 'Lista con viñetas';
+$string['upload'] = 'Subir';
 $string['vertical'] = 'Vertical';
-$string['width'] = 'Ancho';
+$string['width'] = 'Anchura';
+$string['zip'] = 'Comprimir';
 
 ?>
