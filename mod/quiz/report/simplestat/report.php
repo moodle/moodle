@@ -55,7 +55,6 @@ class quiz_report extends quiz_default_report {
     /// Otherwise, display the table as HTML
 
         $count = count($questionorder);
-        $datacount = count($data);
         $total = array();
    
         echo "<table border=1 align=\"center\">";
@@ -67,12 +66,16 @@ class quiz_report extends quiz_default_report {
         }
         echo "</tr>";
 
+        $datacount = 0;
         foreach ($data as $userid => $datum) {
             echo "<tr>";
             echo "<td><b>$datum->name</b></td>";
-            foreach ($datum->grades as $key => $grade) {
-                echo "<td>$grade</td>";
-                $total[$key]+= $grade;
+            if ($datum->grades) {
+                $datacount++;
+                foreach ($datum->grades as $key => $grade) {
+                    echo "<td>$grade</td>";
+                    $total[$key]+= $grade;
+                }
             }
             echo "</tr>";
         }
