@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.3 Nearly Ready (2004052000)
+      // quiz.php - created with Moodle 1.4 development (2004060100)
 
 
 $string['acceptederror'] = 'Margen de error';
@@ -41,6 +41,7 @@ $string['categorymove'] = 'La categoría \'$a->name\' contiene $a->count pregunta
 $string['categorymoveto'] = 'Mover a esta categoría';
 $string['choice'] = 'Elección';
 $string['choices'] = 'Opciones disponibles';
+$string['confirmstartattempt'] = 'Este cuestionario ha de contestarse en un tiempo limitado. ¿Está seguro de que desea comenzar?';
 $string['correctanswer'] = 'Respuesta correcta';
 $string['correctanswers'] = 'Respuestas correctas';
 $string['corrresp'] = 'Respuesta Correcta';
@@ -97,6 +98,7 @@ $string['listitems'] = 'Lista de ítems del cuestionario';
 $string['marks'] = 'Puntos';
 $string['match'] = 'Emparejamiento';
 $string['matchanswer'] = 'Respuesta emparejada';
+$string['minutes'] = 'Minutos';
 $string['missinganswer'] = 'Muy pocos elementos :ANSWER :Lx, :Rx para la pregunta de la línea $a. Debe definir al menos dos respuestas posibles';
 $string['missingcorrectanswer'] = 'Debe especificar la respuesta correcta';
 $string['missingname'] = 'La pregunta no tiene nombre';
@@ -115,6 +117,7 @@ $string['noquestions'] = 'Aún no se han agregado preguntas';
 $string['noresponse'] = 'Sin respuesta';
 $string['noreview'] = 'No está autorizado para revisar este cuestionario';
 $string['noreviewuntil'] = 'No está autorizado para revistar este cuestionario hasta el $a';
+$string['noscript'] = 'Para continuar, JavaScript debe estar habilitado';
 $string['notenoughanswers'] = 'Este tipo de pregunta requiere al menos $a respuestas';
 $string['notenoughsubquestions'] = 'No se han definido suficientes subpreguntas.<br> ¿Quiere regresar y arreglar esta pregunta?';
 $string['numerical'] = 'Numérico';
@@ -134,6 +137,8 @@ $string['quizcloses'] = 'Cuestionario cerrado';
 $string['quiznotavailable'] = 'Este cuestionario no estará disponible hasta el $a';
 $string['quizopen'] = 'Abrir cuestionario';
 $string['quizopens'] = 'Cuestionario abierto';
+$string['quiztimelimit'] = 'Límite de tiempo: $a';
+$string['quiztimer'] = 'Contador';
 $string['random'] = 'Pregunta aleatoria';
 $string['randomcreate'] = 'Crear preguntas aleatorias';
 $string['randomsamatch'] = 'Emparejamiento aleatorio de respuestas cortas';
@@ -171,6 +176,10 @@ $string['shuffleanswers'] = 'Barajar respuestas';
 $string['shufflequestions'] = 'Barajar preguntas';
 $string['time'] = 'Tiempo';
 $string['timecompleted'] = 'Completado';
+$string['timeleft'] = 'Tiempo restante';
+$string['timelimit'] = 'Límite de tiempo';
+$string['timelimitexeeded'] = 'Lo sentimos. Se ha sobrepasado el límite de tiempo.';
+$string['timesup'] = '¡Se ha pasado el tiempo!';
 $string['timetaken'] = 'Tiempo empleado';
 $string['toomanyrandom'] = 'El número requerido de preguntas es mayor de las que contiene esta categoría.';
 $string['true'] = 'Verdadero';
