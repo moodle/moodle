@@ -796,7 +796,7 @@ function cleanAttributes2($htmlTag){
     $attStr = '';
     foreach ($attrArray as $arreach)
     {
-        $attStr .=  ' '.strtolower($arreach['name']).'="'.strtolower($arreach['value']).'" ';
+        $attStr .=  ' '.strtolower($arreach['name']).'="'.$arreach['value'].'" ';
     }
     $xhtml_slash = '';
     if (preg_match('%/\s*$%', $attrlist)){
