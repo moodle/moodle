@@ -36,7 +36,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
     }
 
     function custom_generator_tools($datasetdef) {
-        if (ereg('^(uniform|loguniform):([^-]*):([^-]*):([0-9]*)$',
+        if (ereg('^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$',
                 $datasetdef->options, $regs)) {
             for ($i = 0 ; $i<10 ; ++$i) {
                 $lengthoptions[$i] = get_string(($regs[1] == 'uniform'
@@ -101,7 +101,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
     }
 
     function generate_dataset_item($options) {
-        if (!ereg('^(uniform|loguniform):([^-]*):([^-]*):([0-9]*)$',
+        if (!ereg('^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$',
                 $options, $regs)) {
             // Unknown options...
             return false;
