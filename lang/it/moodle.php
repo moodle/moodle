@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004041800)
+      // moodle.php - created with Moodle 1.3 development (2004043001)
 
 
 $string['action'] = 'Azione';
@@ -101,6 +101,8 @@ $string['backupsavetohelp'] = 'Percorso completo della directory dove vuoi salva
 $string['backupuserfileshelp'] = 'Scegli quali file utente (es immagini profilo) devono essere incluse nelle copie di sicurezza automatiche';
 $string['backupusershelp'] = 'Scegli se includere tutti gli utenti del sito o solo gli utenti iscritti a ogni corso.';
 $string['backupversion'] = 'Versione copia di sicurezza';
+$string['blocks'] = 'Blocchi';
+$string['blocksetup'] = 'Impostazione tabelle blocchi';
 $string['blocksuccess'] = '$a tabelle sono state correttamente impostate';
 $string['bycourseorder'] = 'Ordina per corso';
 $string['cancel'] = 'Cancella';
@@ -449,6 +451,9 @@ $string['helpsummaries'] = 'Informazioni sui commenti';
 $string['helptext'] = 'Come scrivere del testo';
 $string['helpwiki'] = 'Come scrivere del testo Wiki';
 $string['helpwriting'] = 'Scrivi con attenzione';
+$string['hiddensections'] = 'Argomenti nascosto';
+$string['hiddensectionscollapsed'] = 'Le sezioni nascoste sono mostrate in modo compatto';
+$string['hiddensectionsinvisible'] = 'Le sezioni nascoste sono completamente invisibili';
 $string['hide'] = 'Nascondi';
 $string['hidepicture'] = 'Nascondi immagine';
 $string['hits'] = 'Accessi';
@@ -819,6 +824,7 @@ $string['strftimedateshort'] = '%%d %%B';
 $string['strftimedatetime'] = '%%d %%B %%Y, %%H:%%M';
 $string['strftimedaydate'] = '%%A, %%d %%B %%Y';
 $string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%H:%%M';
+$string['strftimemonthyear'] = '%%B %%Y';
 $string['strftimerecent'] = '%%d %%b, %%H:%%M';
 $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%H:%%M';
 $string['strftimetime'] = '%%I:%%M %%p';
@@ -858,9 +864,11 @@ $string['total'] = 'Totale';
 $string['turneditingoff'] = 'Termina modifica corso';
 $string['turneditingon'] = 'Attiva modifica corso';
 $string['undecided'] = 'Indeciso';
-$string['unenrol'] = 'Cancellare';
-$string['unenrolme'] = 'Cancellami da $a';
-$string['unenrolsure'] = 'Sei sicuro di volerti cancellare $a da questo corso?';
+$string['unenrol'] = 'Disiscrivi';
+$string['unenrolallstudents'] = 'Disiscrivi tutti gli studenti';
+$string['unenrolallstudentssure'] = 'Sei sicuro di voler disiscrivere completamente tutti gli studenti?';
+$string['unenrolme'] = 'Disiscrivimi da $a';
+$string['unenrolsure'] = 'Sei sicuro di volerti disiscrivere $a da questo corso?';
 $string['unknowncategory'] = 'Categoria sconosciuta';
 $string['unpacking'] = 'Decompressione $a';
 $string['unsafepassword'] = 'Password insicura - provane un\'altra';

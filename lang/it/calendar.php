@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004041800)
+      // calendar.php - created with Moodle 1.3 development (2004043001)
 
 
 $string['april'] = 'Aprile';
@@ -38,6 +38,7 @@ $string['expired'] = 'Terminato';
 $string['explain_lookahead'] = 'Questa preferenza imposta il numero (massimo) di giorni nel futuro per il quale un evento deve iniziare viene mostrato come un prossimo evento. Gli eventi che iniziano successivamente non saranno mostrati come prossimi. Prego nota che <strong>non c\'è garanzia</strong> che tutti gli eventi che iniziano in questo lasso di tempo vengano mostrati; se sono troppi (più della preferenza \"Massimo prossimi eventi\") gli eventi più lontani non saranno mostrati.';
 $string['explain_maxevents'] = 'Questa preferenza imposta il massimo numero di prossimi eventi che possono essere mostrati. Se usi, qui, un numero grande, è possibile che la visualizzazione dei prossimi eventi occupi molto spazio sul tuo schermo.';
 $string['explain_startwday'] = 'Questa preferenza imposta il modo in cui tutti i calendari mensili vengono visualizzati. Utilizzalo per farli visulizzare nel modo che preferisci.';
+$string['explain_timeformat'] = 'Questa preferenza imposta il modo in cui gli orari vengono visualizzati nel calendario. Poi scegliere se visualizzare il foramto a 12 o 24 ore. Se scegli \"Impostazione base\", allora il formato verrà scelto automaticamente in base alla lingua utilizzata dal tuo sito.';
 $string['february'] = 'Febbraio';
 $string['fri'] = 'Ven';
 $string['friday'] = 'Venerdì';
@@ -61,6 +62,7 @@ $string['oneevent'] = '1 evento';
 $string['pref_lookahead'] = 'Cerca prossimi eventi';
 $string['pref_maxevents'] = 'Massimo prossimi eventi';
 $string['pref_startwday'] = 'Primo giorno della settimana';
+$string['pref_timeformat'] = 'Formato orario';
 $string['preferences'] = 'Preferenze';
 $string['preferences_available'] = 'Le tue preferenze';
 $string['sat'] = 'Sab';
@@ -72,6 +74,8 @@ $string['sun'] = 'Dom';
 $string['sunday'] = 'Domenica';
 $string['thu'] = 'Gio';
 $string['thursday'] = 'Giovedi';
+$string['timeformat_12'] = '12 ore (am/pm)';
+$string['timeformat_24'] = '24 ore';
 $string['today'] = 'Oggi';
 $string['tomorrow'] = 'Domani';
 $string['tt_deleteevent'] = 'Cancella evento';
