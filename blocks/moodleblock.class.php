@@ -48,12 +48,6 @@ class MoodleBlock {
     var $title         = NULL;
 
     /**
-     * A course object that this block is associated with. Take care - it may be NULL.
-     * @var COURSE $course
-     */
-    var $course        = NULL;
-
-    /**
      * The type of content that this block creates. Currently support options - BLOCK_TYPE_LIST, BLOCK_TYPE_TEXT, BLOCK_TYPE_NUKE
      * @var int $content_type
      */
