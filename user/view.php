@@ -106,7 +106,11 @@
         print_row("ICQ:","<A HREF=\"http://wwp.icq.com/$user->icq\">$user->icq <IMG SRC=\"http://online.mirabilis.com/scripts/online.dll?icq=$user->icq&img=5\" WIDTH=18 HEIGHT=18 BORDER=0></A>");
     }
 
-    $datestring = userdate($user->lastaccess)."&nbsp (".format_time(time() - $user->lastaccess).")";
+    if ($user->lastaccess) {
+        $datestring = userdate($user->lastaccess)."&nbsp (".format_time(time() - $user->lastaccess).")";
+    } else {
+        $datestring = "-";
+    }
     print_row(get_string("lastaccess").":", $datestring);
 
     echo "</TABLE>";
