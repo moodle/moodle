@@ -172,9 +172,9 @@
                     }
                 }
                 if (get_user_preferences('message_beepnewmessage', 0)) {
-                    echo 'parent.messages.document.write("<embed src=\"bell.wav\" height=\"0\" width=\"0\" autostart=\"true\" hidden=\"true\" name=\"bell\" />");';
+                    $playbeep = true;
                 }
-                echo 'parent.messages.scroll(1,5000000);';
+                echo 'parent.messages.scroll(1,5000000);\\n';
             }
 
             // Update the info pane, but only if the data there is getting too old
@@ -197,6 +197,11 @@
             echo '-->'."\n";
             echo '</script>'."\n";
             echo '</head>'."\n";
+            if (!empty($playbeep)) {
+                echo '<body>'."\n";
+                echo '<embed src="bell.wav" autostart="true" hidden="true" name="bell" />';
+                echo '</body>'."\n";
+            }
             echo '</html>'."\n";
         break;
 
