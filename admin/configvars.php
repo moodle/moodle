@@ -279,6 +279,10 @@ class configvarrss extends configvar {
         choose_from_menu ($noyesoptions, 'showblocksonmodpages', $config->showblocksonmodpages, '', '', '', true) );
 
 
+/// tabselectedtofront
+    $interface['tabselectedtofront'] = new configvar (get_string('tabselectedtofront', 'admin'),
+        choose_from_menu ($noyesoptions, 'tabselectedtofront', $config->tabselectedtofront, '', '', '', true) );
+
 
 
 ////////////////////////////////////////////////////////////////////

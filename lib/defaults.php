@@ -74,6 +74,7 @@
        'smtppass'                 => '',
        'smtpuser'                 => '',
        'style'                    => 'default',
+       'tabselectedtofront'       =>  false,
        'teacherassignteachers'    =>  true,
        'template'                 => 'default',
        'textfilters'              => 'mod/glossary/dynalink.php',

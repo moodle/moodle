@@ -115,6 +115,7 @@ $string['sitemaintenancemode'] = 'Maintenance mode';
 $string['sitemaintenanceon'] = 'Your site is currently in maintenance mode (only admins can log in or use the site).';
 $string['sitemaintenanceoff'] = 'Maintenance mode has been disabled and the site is running normally again';
 $string['sitemaintenancewarning'] = 'Your site is currently in maintenance mode (only admins can log in).  To return this site to normal operation, <a href=\"maintenance.php\">disable maintenance mode</a>.';
+$string['tabselectedtofront'] = 'On tables with tabs, should the row with the currently selected tag be placed at the front';
 $string['timezonenotforced'] = 'Users can choose their own timezone';
 $string['timezoneisforcedto'] = 'Force all users to use';
 $string['timezones'] = 'Timezones';
