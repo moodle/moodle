@@ -1679,6 +1679,89 @@ function endecrypt ($pwd, $data, $case) {
 }
 
 
+/// CALENDAR MANAGEMENT  ////////////////////////////////////////////////////////////////
+
+
+function add_event($event) {
+/// call this function to add an event to the calendar table
+///  and to call any calendar plugins
+/// The function returns the id number of the resulting record
+/// The object event should include the following:
+///     $event->name         Name for the event
+///     $event->description  Description of the event (defaults to '')
+///     $event->courseid     The id of the course this event belongs to (0 = all courses)
+///     $event->groupid      The id of the group this event belongs to (0 = no group)
+///     $event->userid       The id of the user this event belongs to (0 = no user)
+///     $event->modulename   Name of the module that creates this event
+///     $event->instance     Instance of the module that owns this event
+///     $event->eventtype    The type info together with the module info could
+///                          be used by calendar plugins to decide how to display event
+///     $event->timestart    Timestamp for start of event
+///     $event->timeduration Duration (defaults to zero)
+
+    global $CFG;
+
+    $event->timemodified = time();
+    
+    if (!$event->id = insert_record("event", $event)) {
+        return false;
+    }
+    
+    if (!empty($CFG->calendar)) { // call the add_event function of the selected calendar
+        if (file_exists("$CFG->dirroot/calendar/$CFG->calendar/lib.php")) {
+            include_once("$CFG->dirroot/calendar/$CFG->calendar/lib.php");
+            $calendar_add_event = $CFG->calendar.'_add_event';
+            if (function_exists($calendar_add_event)) {
+                $calendar_add_event($event);
+            }
+        }
+    }
+    
+    return $event->id;
+}
+
+
+function update_event($event) {
+/// call this function to update an event in the calendar table
+/// the event will be identified by the id field of the $event object
+
+    global $CFG;
+
+    $event->timemodified = time();
+    
+    if (!empty($CFG->calendar)) { // call the update_event function of the selected calendar
+        if (file_exists("$CFG->dirroot/calendar/$CFG->calendar/lib.php")) {
+            include_once("$CFG->dirroot/calendar/$CFG->calendar/lib.php");
+            $calendar_update_event = $CFG->calendar.'_update_event';
+            if (function_exists($calendar_update_event)) {
+                $calendar_update_event($event);
+            }
+        }
+    }
+    return update_record("event", $event);
+}
+
+
+function delete_event($id) {
+/// call this function to delete the event with id $id from calendar table
+
+    global $CFG;
+
+    if (!empty($CFG->calendar)) { // call the delete_event function of the selected calendar
+        if (file_exists("$CFG->dirroot/calendar/$CFG->calendar/lib.php")) {
+            include_once("$CFG->dirroot/calendar/$CFG->calendar/lib.php");
+            $calendar_delete_event = $CFG->calendar.'_delete_event';
+            if (function_exists($calendar_delete_event)) {
+                $calendar_delete_event($id);
+            }
+        }
+    }
+    return delete_records("event", 'id', $id);
+}
+
+
+
+
 /// ENVIRONMENT CHECKING  ////////////////////////////////////////////////////////////
 
 function get_list_of_plugins($plugin="mod") {

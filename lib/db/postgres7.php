@@ -344,6 +344,27 @@ function main_upgrade($oldversion=0) {
         table_column("course_modules", "", "groupmode", "integer", "4", "unsigned", "0", "", "visible");
     }
 
+    if ($oldversion < 2004011700) {
+        modify_database("", "CREATE TABLE prefix_event (
+                                id SERIAL PRIMARY KEY,
+                                name varchar(255) NOT NULL default '',
+                                description text,
+                                courseid integer NOT NULL default '0',
+                                groupid integer NOT NULL default '0',
+                                userid integer NOT NULL default '0',
+                                modulename varchar(20) NOT NULL default '',
+                                instance integer NOT NULL default '0',
+                                eventtype varchar(20) NOT NULL default '',
+                                timestart integer NOT NULL default '0',
+                                timeduration integer NOT NULL default '0',
+                                timemodified integer NOT NULL default '0'
+                             ); ");
+
+        modify_database("", "CREATE INDEX prefix_event_courseid_idx ON prefix_event (courseid);");
+        modify_database("", "CREATE INDEX prefix_event_userid_idx ON prefix_event (userid);");
+    }
+
+
     return $result;
 }
 

@@ -133,6 +133,29 @@ CREATE TABLE `prefix_course_sections` (
 # --------------------------------------------------------
 
 #
+# Table structure for table `event`
+#
+
+CREATE TABLE `prefix_event` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL default '',
+  `description` text NOT NULL,
+  `courseid` int(10) unsigned NOT NULL default '0',
+  `groupid` int(10) unsigned NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
+  `modulename` varchar(20) NOT NULL default '',
+  `instance` int(10) unsigned NOT NULL default '0',
+  `eventtype` varchar(20) NOT NULL default '',
+  `timestart` int(10) unsigned NOT NULL default '0',
+  `timeduration` int(10) unsigned NOT NULL default '0',
+  `timemodified` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `id` (`id`),
+  KEY `courseid` (`courseid`),
+  KEY `userid` (`userid`)
+) TYPE=MyISAM COMMENT='For everything with a time associated to it';
+
+#
 # Table structure for table `group`
 #
 
@@ -146,6 +169,7 @@ CREATE TABLE `prefix_groups` (
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
+  UNIQUE KEY `id` (`id`),
   KEY `courseid` (`courseid`)
 ) TYPE=MyISAM COMMENT='Each record is a group in a course.';
 # --------------------------------------------------------
@@ -160,6 +184,7 @@ CREATE TABLE `prefix_groups_members` (
   `userid` int(10) unsigned NOT NULL default '0',
   `timeadded` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
+  UNIQUE KEY `id` (`id`),
   KEY `groupid` (`groupid`)
 ) TYPE=MyISAM COMMENT='Lists memberships of users to groups';
 # --------------------------------------------------------
