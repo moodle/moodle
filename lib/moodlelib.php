@@ -132,7 +132,7 @@ function print_continue($link) {
 
 function print_simple_box($message, $align="", $width="", $color="#FFFFFF", $padding=5, $border=1) {
     print_simple_box_start($align, $width, $color, $padding, $border);
-    echo "<P>$message</P>";
+    echo "<P>".stripslashes($message)."</P>";
     print_simple_box_end();
 }
 
