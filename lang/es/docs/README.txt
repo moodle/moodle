@@ -43,5 +43,5 @@ le sugiero que:
     |-------------------
     MENOS IMPORTANTES
 
- 3) Por favor, no traduzca credits.html - cambia demadiado a menudo.
+ 3) Por favor, no traduzca credits.html - cambia demasiado a menudo.
 

@@ -1,9 +1,13 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004062600)
+      // wiki.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['action'] = '-- Acción --';
 $string['administration'] = 'Administración';
+$string['allowremovepages'] = 'Permitir \'eliminar páginas\'';
+$string['allowrevertchanges'] = 'Permitir \'eliminar cambios masivos\'';
+$string['allowsetpage'] = 'Permitir \'ajustar flags de página\'';
+$string['allowstrippages'] = 'Permitir \'arrancar páginas\'';
 $string['attachments'] = 'Anexos a la página';
 $string['author'] = 'Autor';
 $string['authorfieldpattern'] = 'Patrón de campo de autor';
@@ -33,6 +37,7 @@ $string['deleteversions'] = 'Eliminar cuántas versiones últimas';
 $string['deleteversionserror'] = 'Por favor, introduzca un número de versión correcto.';
 $string['diff'] = 'Diferencias';
 $string['differences'] = 'Distingue entre la versión $a->new_ver y $a->old_ver de $a->pagename.';
+$string['disablecamel'] = 'Desactivar enlaces CamelCase';
 $string['disabledpage'] = 'Esta página ya no está disponible.';
 $string['doesnotexist'] = 'Esta página aún no existe: por favor, haga clic en el botón Editar si desea crearla.';
 $string['downloadaszip'] = 'Archivo zip descargable';
@@ -107,6 +112,7 @@ $string['nothingtostrip'] = 'No existen páginas con más de una versión.';
 $string['nowikicreated'] = 'No se han creado entradas para este wiki.';
 $string['of'] = 'de';
 $string['offline'] = 'FUERA DE LÍNEA';
+$string['optional'] = 'Opcional';
 $string['orphanedpage'] = 'Página huérfana';
 $string['orphanedpages'] = 'Páginas huérfanas';
 $string['otherwikis'] = 'Otros Wikis';
@@ -145,6 +151,11 @@ $string['strippagecheck'] = '¿Está seguro de que quiere arrancar versiones antig
 $string['strippages'] = 'Arrancar páginas';
 $string['studentadminoptions'] = 'Opciones de admin de estudiantes';
 $string['submit'] = 'Enviar';
+$string['tabattachments'] = 'Anexos';
+$string['tabedit'] = 'Edición';
+$string['tabinfo'] = 'Historia';
+$string['tablinks'] = 'Enlaces';
+$string['tabview'] = 'Ver';
 $string['thanksforcontribution'] = 'Gracias por su contribución';
 $string['thispageisntlinkedfromanywhereelse'] = 'Esta página no tiene ningún enlace.';
 $string['updatedpages'] = 'Páginas actualizadas';

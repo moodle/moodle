@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.4 alpha (2004081500)
+      // exercise.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['absent'] = 'Ausente';
@@ -101,6 +101,7 @@ $string['noteonstudentassessments'] = '{Calificación del estudiante / Nivel de c
 $string['notgraded'] = 'No calificado';
 $string['notitlegiven'] = 'No hay título';
 $string['numberofassessmentelements'] = 'Número de comentarios, elementos de evaluación, tipos de calificación, criterios o categorías en una rúbrica determinada';
+$string['numberofcriterionelements'] = 'El número de elementos del criterio debe ser mayor que uno.';
 $string['numberofentries'] = 'Número de ingresos';
 $string['numberofentriesinleaguetable'] = 'Número de entradas en la tabla de calificaciones';
 $string['numberofnegativeresponses'] = 'Número de respuestas negativas';
