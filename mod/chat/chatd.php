@@ -408,8 +408,15 @@ class ChatDaemon {
                     break;
                 }
 
+                // A slight hack to prevent malformed SQL inserts
+                $origmsg = $msg->message;
+                $msg->message = addslashes($msg->message);
+
                 // Commit to DB
                 insert_record('chat_messages', $msg);
+
+                // Undo the hack
+                $msg->message = $origmsg;
 
                 // OK, now push it out to all users
                 $this->message_broadcast($msg, $this->sets_info[$sessionid]['user']);
