@@ -33,18 +33,19 @@
         }
     }
 
+    if ($course->newsitems) {
+        $news = forum_get_course_forum($course->id, "news");
+    }
 
-    // Layout the whole page as three big columns.
+
+/// Layout the whole page as three big columns.
     echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 WIDTH=100%>";
+
+/// The left column ...
+
     echo "<TR VALIGN=top><TD VALIGN=top WIDTH=180>";
     
-    // Layout the left column
-
-
-    // Links to people
-
-    $blinker = " <BLINK>*</BLINK>";
-
+/// Links to people
     print_simple_box(get_string("people"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
     $moddata[]="<A TITLE=\"".get_string("listofallpeople")."\" HREF=\"../user/index.php?id=$course->id\">".get_string("participants")."</A>";
     $modicon[]="<IMG SRC=\"../user/users.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
@@ -52,14 +53,13 @@
     if ($USER->description) {
         $moddata[]= $editmyprofile;
     } else {
-        $moddata[]= $editmyprofile.$blinker;
+        $moddata[]= $editmyprofile." <BLINK>*</BLINK>";
     }
     $modicon[]="<IMG SRC=\"../user/user.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
     print_side_block("", $moddata, "", $modicon);
 
 
-    // Then all the links to module types
-
+/// Links to all activity modules by type
     $moddata = array();
     $modicon = array();
     if ($modnamesused) {
@@ -71,32 +71,69 @@
     print_simple_box(get_string("activities"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
     print_side_block("", $moddata, "", $modicon);
 
-    // Print a form to search forums
+/// Print a form to search forums
     print_simple_box(get_string("search","forum"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
     echo "<DIV ALIGN=CENTER>";
     forum_print_search_form($course);
     echo "</DIV>";
 
-    // Admin links and controls
+/// Admin links and controls
     if (isteacher($course->id)) {
         print_course_admin_links($course);
     }
 
-    // Start main column
+/// Start main column
     echo "</TD><TD WIDTH=\"*\">";
 
     print_simple_box(get_string("topicoutline"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
     
-    // Everything below uses "section" terminology - each "section" is a topic.
-
-    // Now all the sectionly modules
-    $timenow = time();
-    $section = 1;
-
     $streditsummary = get_string("editsummary");
     $stradd         = get_string("add");
 
+
     echo "<TABLE BORDER=0 CELLPADDING=8 CELLSPACING=0 WIDTH=100%>";
+
+/// Print Section 0 
+
+    $topic = 0;
+    $thistopic = $sections[$topic];
+
+    if ($thistopic->summary or $thistopic->sequence or isediting($course->id)) {
+        echo "<TR>";
+        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" VALIGN=top WIDTH=20>&nbsp;</TD>";
+        echo "<TD VALIGN=top BGCOLOR=\"$THEME->cellcontent\" WIDTH=\"100%\">";
+    
+        if (isediting($course->id)) {
+            $thistopic->summary .= "&nbsp;<A TITLE=\"$streditsummary\" ".
+                                     "HREF=\"editsection.php?id=$thistopic->id\"><IMG SRC=\"../pix/t/edit.gif\" ".
+                                     "BORDER=0 ALT=\"$streditsummary\"></A></P>";
+        }
+    
+        echo text_to_html($thistopic->summary);
+    
+        print_section($course->id, $thistopic, $mods, $modnamesused);
+    
+        if (isediting($course->id)) {
+            echo "<DIV ALIGN=right>";
+            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$topic&add=", 
+                        $modnames, "section$topic", "", "$stradd...", "mods", get_string("activities"));
+            echo "</DIV>";
+        }
+    
+        echo "</TD>";
+        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" VALIGN=top ALIGN=CENTER WIDTH=10>&nbsp;";
+        echo "</TD>";
+        echo "</TR>";
+        echo "<TR><TD COLSPAN=3><IMG SRC=\"../pix/spacer.gif\" WIDTH=1 HEIGHT=1></TD></TR>";
+    }
+
+
+/// Now all the normal modules by topic
+/// Everything below uses "section" terminology - each "section" is a topic.
+
+    $timenow = time();
+    $section = 1;
+
     while ($section <= $course->numsections) {
 
         if (isset($USER->topic)) {         // Just display a single topic
@@ -170,17 +207,15 @@
 
     echo "</TD><TD WIDTH=210>";
 
-    // Print all the news items.
+/// Print all the news items.
 
-    if ($course->newsitems) {
-        if ($news = forum_get_course_forum($course->id, "news")) {
-            print_simple_box(get_string("latestnews"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
-            print_simple_box_start("CENTER", "100%", "#FFFFFF", 3, 0);
-            echo "<FONT SIZE=1>";
-            forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "DESC", false);
-            echo "</FONT>";
-            print_simple_box_end();
-        }
+    if ($news) {
+        print_simple_box(get_string("latestnews"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+        print_simple_box_start("CENTER", "100%", "#FFFFFF", 3, 0);
+        echo "<FONT SIZE=1>";
+        forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "DESC", false);
+        echo "</FONT>";
+        print_simple_box_end();
         echo "<BR>";
     }
     

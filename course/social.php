@@ -18,32 +18,34 @@
       if ($USER->description) {
           $moddata[]= $editmyprofile;
       } else {
-          $moddata[]= $editmyprofile.$blinker;
+          $moddata[]= $editmyprofile." <BLINK>*</BLINK>";
       }
       $modicon[]="<IMG SRC=\"../user/user.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
       print_side_block("", $moddata, "", $modicon);
 
       
 
-      // Then, print all the available resources (Section 0)
+/// Then, print all the available resources (Section 0)
       print_simple_box(get_string("resources"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
-      print_section($site->id, $sections[0], $mods, $modnamesused, true);
+      print_section($course->id, $sections[0], $mods, $modnamesused, true);
 
-      if (isediting($site->id)) {
+      if (isediting($course->id)) {
           echo "<DIV ALIGN=right>";
           popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=0&add=",
                       $modnames, "section0", "", get_string("add")."...", "mods", get_string("activities"));
           echo "</DIV>";
       }      
 
-      // Print all the recent activity
+
+/// Print all the recent activity
       print_simple_box(get_string("recentactivity"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
       echo "<TABLE CELLPADDING=4 CELLSPACING=0><TR><TD>";
       print_recent_activity($course);
       echo "</TD></TR></TABLE>";
       echo "<BR>";
 
-      // Print a form to search forums
+
+/// Print a form to search forums
       print_simple_box(get_string("search","forum"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
       echo "<DIV ALIGN=CENTER>";
       forum_print_search_form($course);
