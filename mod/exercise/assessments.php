@@ -16,6 +16,7 @@
 	listungradedstudentassessments (for teachers)
 	listteachersubmissions
 	teacherassessment (for teachers)
+    teachertable
 	updateassessment
 	updatedualassessment
 	userconfirmdelete
@@ -568,6 +569,18 @@
 			error("Teacher assessment: User's submission record not found");
 			}
 		exercise_print_dual_assessment_form($exercise, $assessment, $submission, $_SERVER["HTTP_REFERER"]);
+		}
+
+
+	/****************** teacher table : show assessments by exercise and teacher ************/
+	elseif ($action == 'teachertable') {
+		
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+			}
+
+		exercise_print_teacher_table($course);
+        print_continue("index.php?id=$course->id");
 		}
 
 

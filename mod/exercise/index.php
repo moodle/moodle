@@ -89,18 +89,9 @@
                             $mean = exercise_get_mean_grade($submission);
                             $grade = $mean->grade;
                         }
-                        // now get the user's grading grade
-                        if (!$assessments = exercise_get_user_assessments($exercise, $USER)) {
-                            error("Index: assessment record not found");
-                        }
-                        foreach ($assessments as $assessment) {
-                            // just use the first one (should only be one)
-                            $gradinggrade = $assessment->gradinggrade;
-                            break;
-                        }
-                        $overallgrade = (($gradinggrade * $EXERCISE_FWEIGHTS[$exercise->gradingweight] * $exercise->grade / COMMENTSCALE ) + ($grade * $EXERCISE_FWEIGHTS[$exercise->teacherweight] * $exercise->grade / 100.0)) / ($EXERCISE_FWEIGHTS[$exercise->gradingweight] + $EXERCISE_FWEIGHTS[$exercise->teacherweight]); 
+                        $actualgrade = $grade * $exercise->grade / 100.0; 
     					$table->data[] = array ($exercise->section, $link, $title, 
-                            number_format($overallgrade, 1), $submitted, $due);
+                            number_format($actualgrade, 1), $submitted, $due);
 					} 
                 }
 				else {

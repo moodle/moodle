@@ -585,6 +585,7 @@ function exercise_get_participants($exerciseid) {
 function exercise_copy_assessment($assessment, $submission, $withfeedback = false) {
 function exercise_count_all_submissions_for_assessment($exercise, $user) {
 function exercise_count_assessments($submission) {
+function exercise_count_assessments_by_teacher($exercise, $teacher) {
 function exercise_count_student_submissions($exercise) {
 function exercise_count_teacher_assessments($exercise, $user) {
 function exercise_count_teacher_submissions($exercise) {
@@ -640,6 +641,7 @@ function exercise_print_league_table($exercise) {
 function exercise_print_submission_assessments($exercise, $submission, $type) {
 function exercise_print_submission_title($exercise, $user) {
 function exercise_print_tabbed_table($table) {
+function exercise_print_teacher_table($course) {
 function exercise_print_time_to_deadline($time) {
 function exercise_print_upload_form($exercise) {
 function exercise_print_user_assessments($exercise, $user) {
@@ -718,9 +720,18 @@ function exercise_count_assessments($submission) {
 	// Return the (cold) assessments for this submission, 
 	global $CFG;
 	
-	$timenow = time();
+	$timethen = time() - $CFG->maxeditingtime;
    return count_records_select("exercise_assessments", "submissionid = $submission->id AND
-	   timecreated < ($timenow - $CFG->maxeditingtime");
+	   timecreated < $timethen");
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+function exercise_count_assessments_by_teacher($exercise, $teacher) {
+	// Return the number of assessments done by a teacher 
+	
+   return count_records_select("exercise_assessments", "exerciseid = $exercise->id AND
+	   userid = $teacher->id");
 }
 
 
@@ -785,7 +796,7 @@ function exercise_count_unassessed_student_submissions($exercise) {
 	
     if (! $course = get_record("course", "id", $exercise->course)) {
         error("Course is misconfigured");
-        }
+    }
 	$timenow = time();
 	$n = 0;
 	if ($submissions = exercise_get_student_submissions($exercise)) {
@@ -799,17 +810,17 @@ function exercise_count_unassessed_student_submissions($exercise) {
 						if (isteacher($course->id, $assessment->userid)) {
 							$teacherassessed = true;
 							break; // no need to look further
-							}
 						}
 					}
+				}
 				if (!$teacherassessed) {
-					$n++;
-					}
+    				$n++;
 				}
 			}
 		}
-	return $n;
 	}
+	return $n;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -907,18 +918,18 @@ function exercise_count_user_assessments_done($exercise, $user) {
 		 foreach ($assessments as $assessment) {
 			if ($assessment->timecreated < $timenow) {
 				$n++;
-				}
 			}
 		}
-	return $n;
 	}
+	return $n;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 function exercise_count_user_submissions($exercise, $user) {
 	// returns the number of submissions make by this user
 	return count_records("exercise_submissions", "exerciseid", $exercise->id, "userid", $user->id);
-	}
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -930,14 +941,14 @@ function exercise_delete_submitted_files($exercise, $submission) {
 			foreach ($files as $file) {
 				if (unlink("$basedir/$file")) {
 					notify("Existing file '$file' has been deleted!");
-					}
+				}
 				else {
 					notify("Attempt to delete file $basedir/$file has failed!");
-					}
 				}
 			}
 		}
 	}
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -1119,18 +1130,17 @@ function exercise_get_student_submissions($exercise, $order = "") {
 	if ($order == "title") {
 		$order = "s.title";
 	} elseif ($order == "name") {
-		$order = "a.firstname, a.lastname";
+		$order = "n.firstname, n.lastname, s.timecreated DESC";
 	} else {
         $order = "s.timecreated";
     }
     
 	return get_records_sql("SELECT s.* FROM {$CFG->prefix}exercise_submissions s, 
-                            {$CFG->prefix}user_students u, {$CFG->prefix}user a 
+                           {$CFG->prefix}user_students u, {$CFG->prefix}user n  
                             WHERE u.course = $exercise->course
                               AND s.userid = u.userid
-							  AND a.id = u.userid
-                              AND s.exerciseid = $exercise->id
-							  AND s.timecreated > 0
+                              AND n.id = u.userid
+							  AND s.exerciseid = $exercise->id
 							ORDER BY $order");
 }
 
@@ -1327,6 +1337,10 @@ function exercise_list_submissions_for_admin($exercise, $order) {
 
 	exercise_print_assignment_info($exercise);
 
+	print_heading_with_help(get_string("administration"), "administration", "exercise");
+    echo"<p align=\"center\"><b><a href=\"assessments.php?action=teachertable&id=$cm->id\">".
+        get_string("teacherassessmenttable", "exercise", $course->teacher)."</a></b></p>\n";
+
 	?>
 	<form name="weightsform" method="post" action="submissions.php">
 	<INPUT TYPE="hidden" NAME="id" VALUE="<?PHP echo $cm->id ?>">
@@ -1339,7 +1353,6 @@ function exercise_list_submissions_for_admin($exercise, $order) {
 	$gradingweight = get_field("exercise","gradingweight", "id", $exercise->id);
 
 	// now show the weights used in the grades
-	print_heading_with_help(get_string("administration"), "administration", "exercise");
 	echo "<TABLE WIDTH=\"50%\" BORDER=\"1\">\n";
 	echo "<TR><td COLSPAN=\"2\" bgcolor=\"$THEME->cellheading2\"><CENTER><B>".
 		get_string("weightsusedforoverallgrade", "exercise")."</B></CENTER></TD></TR>\n";
@@ -1381,11 +1394,13 @@ function exercise_list_submissions_for_admin($exercise, $order) {
 	if ($users = get_course_students($course->id, "u.firstname, u.lastname")) {
 		$timenow = time();
 		unset($table);
-		$table->head = array(get_string("name"), get_string("title", "exercise"), get_string("action", "exercise"));
-		$table->align = array ("left", "left", "left");
-		$table->size = array ("*", "*", "*");
+		$table->head = array(get_string("name"), get_string("title", "exercise"), 
+                get_string("assessed", "exercise"), get_string("action", "exercise"));
+		$table->align = array ("left", "left", "left", "left");
+		$table->size = array ("*", "*", "*", "*");
 		$table->cellpadding = 2;
 		$table->cellspacing = 0;
+        $nassessments = 0;
 		foreach ($users as $user) {
 			if ($assessments = exercise_get_user_assessments($exercise, $user)) {
 				$title ='';
@@ -1396,48 +1411,51 @@ function exercise_list_submissions_for_admin($exercise, $order) {
 					$title .= $submission->title;
 					// test for allocated assesments which have not been done
 					if ($assessment->timecreated < $timenow) {
+                        // show only warm or cold assessments
 						$title .= " {".number_format($assessment->grade * $exercise->grade / 100.0, 0)."%";
-						}
-					else { // assessment record created but user has not yet assessed this submission
-						$title .= " {-";
-						}
-					if ($assessment->timegraded) {
-						$title .= "/".number_format($assessment->gradinggrade * $exercise->grade / COMMENTSCALE, 0)."%";
-						}
-					$title .= "} ";
-					if ($realassessments = exercise_count_user_assessments_done($exercise, $user)) {
-						$action = "<a href=\"assessments.php?action=adminlistbystudent&id=$cm->id&userid=$user->id\">".
-							get_string("view", "exercise")." ($realassessments)</a>";
-						}
-					else {
-						$action ="";
-						}
-					}
-				$table->data[] = array("$user->firstname $user->lastname", $title, $action);
+                        if ($assessment->timegraded) {
+                            $title .= "/".number_format($assessment->gradinggrade * $exercise->grade / 
+                                    COMMENTSCALE, 0)."%";
+                        }
+                        $title .= "} ";
+                        if ($realassessments = exercise_count_user_assessments_done($exercise, $user)) {
+                            $action = "<a href=\"assessments.php?action=adminlistbystudent&id=$cm->id&userid=$user->id\">".
+                                get_string("view", "exercise")."</a>";
+                        }
+                        else {
+                            $action ="";
+                        }
+                        $nassessments++;
+				        $table->data[] = array("$user->firstname $user->lastname", $title, 
+                                userdate($assessment->timecreated), $action);
+                    }
 				}
 			}
+        }
 		if (isset($table->data)) {
-			print_heading(get_string("studentassessments", "exercise", $course->student));
+			print_heading(get_string("studentassessments", "exercise", $course->student)." [$nassessments]");
 			print_table($table);
 			echo "<p align=\"center\">".get_string("noteonstudentassessments", "exercise")."</p>\n";
-			}
 		}
+	}
 
 	// now the sudent submissions
 	unset($table);
 	switch ($order) {
 		case "title" :
 			$table->head = array("<a href=\"submissions.php?action=adminlist&id=$cm->id&order=name\">".
-				 get_string("submittedby", "exercise")."</a>", get_string("title", "exercise"), get_string("action", "exercise"));
+				 get_string("submittedby", "exercise")."</a>", get_string("title", "exercise"), 
+                 get_string("submitted", "exercise"), get_string("action", "exercise"));
 			break;
 		case "name" :
 			$table->head = array (get_string("submittedby", "exercise"), 
 				"<a href=\"submissions.php?action=adminlist&id=$cm->id&order=title\">".
-				get_string("title", "exercise")."</a>", get_string("action", "exercise"));
+				get_string("title", "exercise")."</a>", get_string("submitted", "exercise"), 
+                get_string("action", "exercise"));
 			break;
 		}
-	$table->align = array ("left", "left", "left");
-	$table->size = array ("*", "*", "*");
+	$table->align = array ("left", "left", "left", "left");
+	$table->size = array ("*", "*", "*", "*");
 	$table->cellpadding = 2;
 	$table->cellspacing = 0;
 
@@ -1476,9 +1494,11 @@ function exercise_list_submissions_for_admin($exercise, $order) {
 				$title .= "*";
 				}
 			$table->data[] = array("$user->firstname $user->lastname", $title.
-				" ".exercise_print_submission_assessments($exercise, $submission), $action);
+				" ".exercise_print_submission_assessments($exercise, $submission), 
+                userdate($submission->timecreated), $action);
 			}
-		print_heading(get_string("studentsubmissions", "exercise", $course->student), "center");
+		print_heading(get_string("studentsubmissions", "exercise", $course->student)." [".
+                count($submissions)."]", "center");
 		print_table($table);
 		echo "<center><p>".get_string("resubmitnote", "exercise", $course->student)."</p>\n";
 		echo "<p>".get_string("allgradeshaveamaximumof", "exercise", $exercise->grade)."%</p></center>\n";
@@ -1667,9 +1687,10 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
 	}
 
 	$table->head = array (get_string("title", "exercise"), get_string("submittedby", "exercise"),
-		get_string("action", "exercise"), get_string("comment", "exercise"));
-	$table->align = array ("LEFT", "LEFT", "LEFT", "LEFT");
-	$table->size = array ("*", "*", "*", "*");
+		get_string("submitted", "exercise"), get_string("action", "exercise"), 
+        get_string("comment", "exercise"));
+	$table->align = array ("LEFT", "LEFT", "LEFT", "LEFT", "LEFT");
+	$table->size = array ("*", "*", "*", "*", "*");
 	$table->cellpadding = 2;
 	$table->cellspacing = 0;
 
@@ -1682,41 +1703,47 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
 				// see if student has already submitted
 				$submissionowner = get_record("user", "id", $submission->userid);
 				if (exercise_count_user_submissions($exercise, $submissionowner) == 1) {
-					// it's the student's first submission, get their assessment
-					if (!$assessments = exercise_get_user_assessments($exercise, $submissionowner)) {
-						error("List Unassessed Student submission: student's assessment record not found");
-					}
-					foreach ($assessments as $assessment) {
-						$studentassessment = $assessment;
-						break; // there should only be one!
-					}
-					// now see if the teacher has already assessed this submission
-					$teacherassessed = false;
-					$warm = false;
-					if ($assessments = get_records("exercise_assessments", "submissionid", $submission->id)) {
-						foreach ($assessments as $assessment) {
-							if (isteacher($course->id, $assessment->userid)) {
-								$teacherassessed = true;
-								if ($assessment->timecreated > $timenow -$CFG->maxeditingtime) {
-									$warm = true;
-								}
-								break;  // no need to look further
-							}
-						}
-					}
-					if ($teacherassessed and $warm) {
-						// last chance salon
-						$action = "<A HREF=\"assessments.php?action=teacherassessment&id=$cm->id&aid=$studentassessment->id&sid=$submission->id\">".
-							get_string("edit", "exercise")."</A>";
-						$table->data[] = array(exercise_print_submission_title($exercise, $submission), 
-							$submissionowner->firstname." ".$submissionowner->lastname, $action, $comment);
-					}
-					if(!$teacherassessed) {
-						$action = "<A HREF=\"assessments.php?action=teacherassessment&id=$cm->id&aid=$studentassessment->id&sid=$submission->id\">".
-							get_string("assess", "exercise")."</A>";
-						$table->data[] = array(exercise_print_submission_title($exercise, $submission), 
-							$submissionowner->firstname." ".$submissionowner->lastname, $action, $comment);
-					}
+					// it's the student's first submission 
+                    // see if there are no cold assessments for this submission
+                    if (!exercise_count_assessments($submission)) {
+                        // now see if the teacher has already assessed this submission
+                        $warm = false;
+                        if ($assessments = get_records("exercise_assessments", "submissionid", $submission->id)) {
+                            foreach ($assessments as $assessment) {
+                                if (isteacher($course->id, $assessment->userid)) {
+                                    if ($assessment->timecreated > $timenow -$CFG->maxeditingtime) {
+                                        $warm = true;
+                                    }
+                                    break;  // no need to look further
+                                }
+                            }
+                        }
+                        // get their assessment
+                        if ($assessments = exercise_get_user_assessments($exercise, $submissionowner)) {
+                            foreach ($assessments as $assessment) {
+                                $studentassessment = $assessment;
+                                break; // there should only be one!
+                            }
+                            if ($warm) {
+                                // last chance salon
+                                $action = "<A HREF=\"assessments.php?action=teacherassessment&id=$cm->id&aid=$studentassessment->id&sid=$submission->id\">".
+                                    get_string("edit", "exercise")."</A>";
+                                $table->data[] = array(exercise_print_submission_title($exercise, $submission), 
+                                        $submissionowner->firstname." ".$submissionowner->lastname, 
+                                        get_string("ago", "exercise", format_time($submission->timecreated - 
+                                                $timenow)), $action, $comment);
+                            } else {
+                                $action = "<A HREF=\"assessments.php?action=teacherassessment&id=$cm->id&aid=$studentassessment->id&sid=$submission->id\">".
+                                    get_string("assess", "exercise")."</A>";
+                                $table->data[] = array(exercise_print_submission_title($exercise, $submission), 
+                                        $submissionowner->firstname." ".$submissionowner->lastname, 
+                                        get_string("ago", "exercise", format_time($submission->timecreated - 
+                                                $timenow)), $action, $comment);
+                            }
+                        } else {
+                            // there's no student assessment, odd!!
+                        }
+                    }
 				}
 				// this is student's second... submission
 				else {
@@ -1743,7 +1770,8 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
 						$action = "<A HREF=\"assessments.php?action=assessresubmission&id=$cm->id&sid=$submission->id\">".
 							get_string("edit", "exercise")."</A>";
 						$table->data[] = array(exercise_print_submission_title($exercise, $submission), 
-							$submissionowner->firstname." ".$submissionowner->lastname, $action, $comment);
+							$submissionowner->firstname." ".$submissionowner->lastname, 
+                            format_time($submission->timecreated - $timenow), $action, $comment);
 					}
 					if (!$teacherassessed) { 
 						// no teacher's assessment
@@ -1778,7 +1806,9 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
 						$action = "<A HREF=\"assessments.php?action=assessresubmission&id=$cm->id&sid=$submission->id\">".
 							get_string("assess", "exercise")."</A>";
 						$table->data[] = array(exercise_print_submission_title($exercise, $submission), 
-							$submissionowner->firstname." ".$submissionowner->lastname, $action, $comment);
+							$submissionowner->firstname." ".$submissionowner->lastname, 
+                            get_string("ago", "exercise", format_time($submission->timecreated - $timenow)), 
+                            $action, $comment);
 					}
 				}
 			}
@@ -3682,6 +3712,58 @@ function exercise_print_time_to_deadline($time) {
         $timetext = get_string("beforedeadline", "exercise", format_time($time));
         return " ($timetext)";
     }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+function exercise_print_teacher_table($course) {
+// print how many assessments each teacher has done in each exercise
+
+    if (! $exercises = get_all_instances_in_course("exercise", $course)) {
+        notice("There are no exercises", "../../course/view.php?id=$course->id");
+        die;
+    }
+
+    $timenow = time();
+    
+    $table->head[] = '';
+    $table->align[] = 'left';
+    $table->size[] = '*';
+    $table->head[] = get_string("total");
+    $table->align[] = "center";
+    $table->size[] = "*";
+        foreach ($exercises as $exercise) {
+        $table->head[] = $exercise->name;
+	    $table->align[] = "center";
+	    $table->size[] = "*";
+        }
+ 	$table->cellpadding = 2;
+	$table->cellspacing = 0;
+
+    if (!$teachers = get_course_teachers($course->id, "u.firstname, u.lastname")) {
+        error("No teachers on this course!");
+    }
+    for ($j = 0; $j < count($exercises); $j++) {
+        $grand[$j] = 0;
+    }
+    $grandtotal = 0;
+    foreach ($teachers as $teacher) {
+        unset($n);
+        $total = 0;
+        $j = 0;
+        foreach ($exercises as $exercise) {
+            $i = exercise_count_assessments_by_teacher($exercise, $teacher);
+            $n[] = $i;
+            $total += $i;
+            $grand[$j] += $i;
+            $j++;
+        }
+        $grandtotal += $total;
+		$table->data[] = array_merge(array("$teacher->firstname $teacher->lastname"), array($total), $n);
+	}
+	$table->data[] = array_merge(array(get_string("total")), array($grandtotal), $grand);
+	print_heading(get_string("teacherassessmenttable", "exercise", $course->teacher));
+	print_table($table);
 }
 
 
