@@ -20,6 +20,16 @@ if(record_exists('block_instance', 'pagetype', 'course')) {
 // End of dirty compatibility hack -- remove this before 1.5 goes gold
 
 /**
+ * Factory function page_create_object(). Called with a numeric ID for a page, it autodetects
+ * the page type, constructs the correct object and returns it.
+ */
+
+function page_create_instance($instance) {
+    page_id_and_class($id, $class);
+    return page_create_object($id, $instance);
+}
+
+/**
  * Factory function page_create_object(). Called with a pagetype identifier and possibly with
  * its numeric ID. Returns a fully constructed page_base subclass you can work with.
  */
@@ -137,23 +147,7 @@ class page_base {
     }
 
     function construct() {
-        global $CFG, $ME;
-
-        $path = substr($ME, strlen($CFG->wwwroot) + 1);
-        $path = str_replace('.php', '', $path);
-        if (substr($path, -1) == '/') {
-            $path .= 'index';
-        }
-
-        if (empty($path)) {
-            $this->body_id    = 'index';
-            $this->body_class = 'course-view';
-        } else {
-            $this->body_id    = str_replace('/', '-', $path);
-            $classarray = explode('-', $this->body_id);
-            array_pop($classarray);
-            $this->body_class = implode('-', $classarray);
-        }
+        page_id_and_class($this->body_id, $this->body_class);
     }
 
     // USER-RELATED THINGS
@@ -176,16 +170,6 @@ class page_base {
     function print_header($title, $morebreadcrumbs) {
         trigger_error('Page class does not implement method <strong>print_header()</strong>', E_USER_WARNING);
         return;
-    }
-
-    // Returns $this->body_class
-    function body_class() {
-        return $this->body_class;
-    }
-
-    // Returns $this->body_id
-    function body_id() {
-        return $this->body_id;
     }
 
     // BLOCKS RELATED SECTION
@@ -268,6 +252,16 @@ class page_base {
     // "Sensible default" case here. Don't trigger any error.
     function get_format_name() {
         return NULL;
+    }
+
+    // Returns $this->body_class
+    function get_body_class() {
+        return $this->body_class;
+    }
+
+    // Returns $this->body_id
+    function get_body_id() {
+        return $this->body_id;
     }
 
     // Initialize the data members of the parent class
