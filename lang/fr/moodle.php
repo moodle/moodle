@@ -172,7 +172,7 @@ $string['configproxyhost'] = 'Si le serveur qui héberge le site Moodle a besoin 
 $string['configsecureforms'] = 'Moodle peut utiliser un niveau additionnel de sécurité pour la gestion des formulaires web. Si cette option est activée, la variable HTTP_REFERRER du navigateur est comparée à l\'adresse du formulaire. Cela peut poser des problèmes lors de l\'utilisation d\'un firewall (p. ex. Zonealarm) configuré pour ôter HTTP_REFERRER de leur traffic web. Le symptôme est alors le « gel » du formulaire. Si vos utilisateurs ont des problèmes de connexion, par exemple sur la page de connexion, désactiver cette option. Dans le doute, réglez cette option sur « Oui ».';
 $string['configsessioncookie'] = 'Ce réglage permet de changer le nom du cookie utilisé pour les sessions de Moodle. Il est optionnel et uniquement utile pour éviter que la confusion des cookies sur un site web où tounent plusieurs Moodle.';
 $string['configsessiontimeout'] = 'Les utilisateurs connectés seront automatiquement déconnectés (leur session sera terminée) après le laps de temps d\'inactivités spécifié dans ce champ.';
-$string['configslasharguments'] = 'Les fichiers (images, fichiers téléchargés, etc.) sont transmis via un script qui utilise les « slash arguments ». Cette méthode permet à ces fichiers d\'être plus facilement pris en compte par le système  de cache des navigateurs Web, proxy, etc. Cependant certains serveurs PHP n\'autorisent pas cette méthode. Par conséquent il est nécessaire d\'utiliser la première valeur de ce paramètre si des problèmes d\'affichage des fichiers ou images téléchargés sont rencontrés.';
+$string['configslasharguments'] = 'Les fichiers (images, fichiers téléchargés, etc.) sont transmis via un script qui utilise les « slash arguments ». Cette méthode permet à ces fichiers d\'être plus facilement pris en compte par le système de cache des navigateurs Web, proxy, etc. Cependant certains serveurs PHP n\'autorisent pas cette méthode. Par conséquent il est nécessaire d\'utiliser la première valeur de ce paramètre si des problèmes d\'affichage des fichiers ou images téléchargés sont rencontrés.';
 $string['configsmtphosts'] = 'Indiquer le nom complet d\'un ou plusieurs serveurs SMTP locaux que Moodle devra utiliser pour envoyer des courriels (par exemple, « mail.a.com » ou « mail.a.com;mail.b.com »). Si ce paramètre est laissé vide, Moodle utilisera la méthode par défaut de PHP pour envoyer des courriels.';
 $string['configsmtpuser'] = 'Si vous avez indiqué un nom de serveur SMTP ci-dessus et qu\'il requiert une authentification, entrez ici le nom d\'utilisateur et le mot de passe à utiliser.';
 $string['configteacherassignteachers'] = 'Les enseignants peuvent-ils choisir d\'autres enseignants pour les cours qu\'ils donnent ? Si « Non », seuls les responsables de cours et les administrateurs peuvent choisir les enseignants.';
@@ -476,7 +476,7 @@ $string['hour'] = 'heure';
 $string['hours'] = 'heures';
 $string['howtomakethemes'] = 'Comment créer de nouveaux thèmes';
 $string['htmleditor'] = 'Utiliser l\'éditeur HTML (ne fonctionne pas avec tous les navigateurs)';
-$string['htmleditoravailable'] = 'L\'éditeur HTML  est disponible';
+$string['htmleditoravailable'] = 'L\'éditeur HTML est disponible';
 $string['htmleditordisabled'] = 'Vous avez désactivé l\'utilisation de l\'éditeur HTML dans votre profil utilisateur';
 $string['htmleditordisabledadmin'] = 'L\'administrateur a désactivé l\'utilisation de l\'éditeur HTML sur ce site';
 $string['htmleditordisabledbrowser'] = 'L\'éditeur HTML n\'est pas disponible car vous n\'utilisez pas un navigateur compatible';
@@ -616,7 +616,7 @@ $string['newcourse'] = 'Nouveau cours';
 $string['newpassword'] = 'Nouveau mot de passe';
 $string['newpasswordtext'] = 'Bonjour $a->firstname,
 
-Le mot de passe de votre compte sur « $a->sitename  » a été remplacé par un nouveau mot de passe temporaire.
+Le mot de passe de votre compte sur « $a->sitename » a été remplacé par un nouveau mot de passe temporaire.
 
 Les informations pour vous connecter sont désormais :
 
@@ -935,7 +935,7 @@ $string['writinggroupsinfo'] = 'Écriture des groupes';
 $string['writingheader'] = 'Écriture de l\'entête';
 $string['writingloginfo'] = 'Écriture des journaux d\'événements';
 $string['writingmoduleinfo'] = 'Écriture des modules';
-$string['writingscalesinfo'] = 'Écriture des barèmes   ';
+$string['writingscalesinfo'] = 'Écriture des barèmes';
 $string['writinguserinfo'] = 'Écriture des utilisateurs';
 $string['wrongpassword'] = 'Mot de passe incorrect pour cet utilisateur';
 $string['yes'] = 'Oui';
