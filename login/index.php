@@ -65,19 +65,20 @@
 
             set_moodle_cookie($USER->username);
 
+            $wantsurl = $SESSION->wantsurl;
+
+            unset($SESSION->wantsurl);
             unset($SESSION->lang);
 
             if (user_not_fully_set_up($USER)) {
                 $site = get_site();
                 redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&course=$site->id");
 
-            } else if (empty($SESSION->wantsurl)) {
-                redirect("$CFG->wwwroot/");
+            } else if (strpos($wantsurl, $CFG->wwwroot) === 0) {   /// Matches site address
+                redirect($wantsurl);
 
             } else {
-                $wantsurl = $SESSION->wantsurl;
-                unset($SESSION->wantsurl);
-                redirect($wantsurl);
+                redirect("$CFG->wwwroot/");      /// Go to the standard home page
             }
     
             reset_login_count();
