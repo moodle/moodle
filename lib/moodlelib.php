@@ -752,7 +752,7 @@ function create_user_record($username, $password, $auth='') {
     $newuser->password = md5($password);
     $newuser->lang = $CFG->lang;
     $newuser->confirmed = 1;
-    $newuser->lastIP = $REMOTE_ADDR;
+    $newuser->lastIP = getremoteaddr();
     $newuser->timemodified = time();
 
     if (insert_record("user", $newuser)) {
@@ -846,7 +846,7 @@ function authenticate_user_login($username, $password) {
     } else {
         add_to_log(0, "login", "error", $_SERVER['HTTP_REFERER'], $username);
         $date = date('Y-m-d H:i:s');
-        error_log("$date\tfailed login\t".$_SERVER['REMOTE_ADDR']."\t".$_SERVER['HTTP_USER_AGENT']."\t$username");
+        error_log("$date\tfailed login\t".getremoteaddr()."\t".$_SERVER['HTTP_USER_AGENT']."\t$username");
         return false;
     }
 }
