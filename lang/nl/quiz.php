@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2004010900)
+      // quiz.php - created with Moodle 1.2 development (2004021700)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -22,6 +22,7 @@ $string['answertoolong'] = 'Antwoord is te lang na lijn $a (maximum 255 tekens)'
 $string['aon'] = 'AON opmaak';
 $string['attempt'] = 'Poging $a';
 $string['attemptfirst'] = 'Eerste poging';
+$string['attemptincomplete'] = 'De poging (door $a) is nog niet afgewerk.';
 $string['attemptlast'] = 'Laatste poging';
 $string['attemptquiznow'] = 'Probeer de test nu';
 $string['attempts'] = 'Pogingen';

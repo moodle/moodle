@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2004021500)
+      // moodle.php - created with Moodle 1.2 development (2004021700)
 
 
 $string['action'] = 'Actie';
@@ -54,6 +54,7 @@ $string['all'] = 'Alle';
 $string['allactivities'] = 'Alle activiteiten';
 $string['alldays'] = 'Alle dagen';
 $string['allfieldsrequired'] = 'Alle velden zijn verplicht';
+$string['allgroups'] = 'Alle groepen';
 $string['alllogs'] = 'Alle statistieken';
 $string['allow'] = 'Sta toe';
 $string['allowguests'] = 'In dit vak zijn gasten toegestaan';

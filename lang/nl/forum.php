@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 development (2004013000)
+      // forum.php - created with Moodle 1.2 development (2004021700)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
@@ -73,6 +73,7 @@ $string['nonews'] = 'Er zijn nog geen nieuws bijdragen';
 $string['noposts'] = 'Geen bijdragen';
 $string['nopostscontaining'] = 'Er zijn geen bijdragen met \'$a\' gevonden';
 $string['nosubscribers'] = 'Er is nog niemand lid van dit forum';
+$string['notingroup'] = 'Sorry, je moet bij een groep horen om dit forum te kunnen zien.';
 $string['nownotsubscribed'] = '$a->name zal via e-mail GEEN bijdragen aan \'$a->forum\' ontvangen.
 
 ';
