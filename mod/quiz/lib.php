@@ -1088,7 +1088,7 @@ function quiz_print_category_form($course, $current) {
     echo "<table width=\"100%\"><tr><td width=\"20\" nowrap=\"nowrap\">";
     echo "<b>$strcategory:</b>&nbsp;";
     echo "</td><td>";
-    popup_form ("edit.php?cat=", $catmenu, "catmenu", $current, "", "", "", false, "self");
+    popup_form ("edit.php?cat=", $catmenu, "catmenu", $current, "choose", "", "", false, "self");
     echo "</td><td align=\"right\">";
     echo "<form method=\"get\" action=\"category.php\">"; 
     echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
@@ -1306,7 +1306,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
     echo "<td valign=\"top\"><b>$strcreatenewquestion:</b></td>";
     echo '<td valign="top" align="right">';
     popup_form ("question.php?category=$category->id&qtype=", $QUIZ_QUESTION_TYPE, "addquestion", 
-                "", "", "", "", false, "self");
+                "", "choose", "", "", false, "self");
     echo '<td width="10" valign="top" align="right">';
     helpbutton("questiontypes", $strcreatenewquestion, "quiz");
     echo '</td></tr>';
