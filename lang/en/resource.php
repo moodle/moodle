@@ -5,6 +5,7 @@
 $string['addresource'] = 'Add resource';
 $string['chooseafile'] = 'Choose or upload a file';
 $string['configframesize'] = 'When a web page or an uploaded file is displayed within a frame, this value is the size (in pixels) of the top frame (which contains the navigation).';
+$string['configwebsearch'] = 'When adding a URL as a webpage or weblink, this location is offered as a site to help the user search for the URL they want.';
 $string['editingaresource'] = 'Editing a resource';
 $string['example'] = 'Example';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
