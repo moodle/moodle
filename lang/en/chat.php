@@ -10,6 +10,7 @@ $string['chatintro'] = "Introduction text";
 $string['chatname'] = "Name of this chat room";
 $string['chatreport'] = "Chat sessions";
 $string['currentchats'] = "Active chat sessions";
+$string['currentusers'] = "Current users";
 $string['enterchat'] = "Click here to enter the chat";
 $string['idle'] = "Idle";
 $string['messagebeepseveryone'] = "\$a beeps everyone!";

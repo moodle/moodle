@@ -46,6 +46,8 @@
     $strchats = get_string("modulenameplural", "chat");
     $strchat  = get_string("modulename", "chat");
     $strenterchat  = get_string("enterchat", "chat");
+    $stridle  = get_string("idle", "chat");
+    $strcurrentusers  = get_string("currentusers", "chat");
 
     print_header("$course->shortname: $chat->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strchats</A> -> $chat->name", 
@@ -86,6 +88,27 @@
     link_to_popup_window ("/mod/chat/gui_$chatversion/index.php?id=$chat->id", 
                           "chat$course->id$chat->id", "$strenterchat", 500, 700, $strchat);
     print_simple_box_end();
+
+    if ($chatusers = chat_get_users($chat->id)) {
+        $timenow = time();
+        print_spacer(20,20);
+        print_simple_box_start("center");
+        print_heading($strcurrentusers);
+        echo "<table width=\"100%\">";
+        foreach ($chatusers as $chatuser) {
+            $lastping = $timenow - $chatuser->lastmessageping;
+            echo "<tr><td width=35>";
+            print_user_picture($chatuser->id, 0, $chatuser->picture, false, false, false);
+            echo "</td><td valign=center>";
+            echo "<p><font size=1>";
+            echo "$chatuser->firstname $chatuser->lastname<br />";
+            echo "<font color=\"#888888\">$stridle: ".format_time($lastping, $str)."</font>";
+            echo "</font></p>";
+            echo "<td></tr>";
+        }
+        echo "</table>";
+        print_simple_box_end();
+    }
 
     print_spacer(50,50);
 
