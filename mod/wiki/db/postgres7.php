@@ -12,7 +12,12 @@ function wiki_upgrade($oldversion) {
        modify_database("", "ALTER TABLE ONLY prefix_wiki_pages 
                             ADD CONSTRAINT id PRIMARY KEY (pagename, \"version\");"); 
     }    
+    if ($oldversion < 2004073001) {
 
+       modify_database("", "ALTER TABLE prefix_wiki_pages DROP CONSTRAINT id;"); 
+       modify_database("", "ALTER TABLE ONLY prefix_wiki_pages 
+                            ADD CONSTRAINT id PRIMARY KEY (pagename, \"version\", wiki);"); 
+    }
     return true;
 }
 

@@ -55,6 +55,6 @@ CREATE TABLE prefix_wiki_pages (
 ) ;
 
 ALTER TABLE ONLY prefix_wiki_pages
-    ADD CONSTRAINT id PRIMARY KEY (pagename, "version");
+    ADD CONSTRAINT id PRIMARY KEY (pagename, version, wiki);
 
 CREATE INDEX prefix_wiki_pages_pagename_version_wiki_idx ON prefix_wiki_pages (pagename, version, wiki) ;
