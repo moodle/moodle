@@ -1,21 +1,32 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.0.8 beta test (2003010400)
+      // choice.php - created with Moodle 1.2 development (2003111400)
 
 
+$string['allowupdate'] = 'Válasz frissítésének engedélyezése';
 $string['answered'] = "Megválaszolva";
-$string['choice'] = "\$a egyszerû választás";
-$string['choicename'] = "Egyszerû választás neve";
-$string['choicetext'] = "Egyszerû választás szövege";
-$string['modulename'] = "Egyszerû választás";
-$string['modulenameplural'] = "Egyszerû választások";
-$string['notanswered'] = "Még nincs válasz";
-$string['publish'] = "A válaszok publikálása";
-$string['publishanonymous'] = "A válaszok anonim publikálása, a tanulók neve ne szerepeljen";
-$string['publishnames'] = "A teljes válaszok publikálása nevekkel együtt";
-$string['publishnot'] = "Tanulók részére nincs publikáció";
-$string['responses'] = "Válaszok";
-$string['responsesto'] = "\$a válaszai";
-$string['savemychoice'] = "Válasz mentése";
-$string['viewallresponses'] = "\$a válaszainak megtekintése";
+$string['choice'] = "\$a választás";
+$string['choiceclose'] = 'Meddig';
+$string['choicename'] = 'Választás neve';
+$string['choiceopen'] = 'Megnyitás';
+$string['choicetext'] = 'Választás szövege';
+$string['modulename'] = 'Választás';
+$string['modulenameplural'] = 'Választások';
+$string['mustchooseone'] = 'Mentés elõtt válasszon egy választ. Nem történt mentés.';
+$string['notanswered'] = 'Még nincs válasz';
+$string['notopenyet'] = 'Sajnos erre $a -ig nincs lehetõség';
+$string['publish'] = 'Eredmények közzététele';
+$string['publishafteranswer'] = 'Eredmény megmutatása a tanulónak, miután válaszolt';
+$string['publishafterclose'] = 'Eredmény megmutatása a tanulónak, miután a választás lezárult';
+$string['publishalways'] = 'Eredmények mindenkori megmutatása a tanulónak';
+$string['publishanonymous'] = 'Eredmények név nélküli közzététele';
+$string['publishnames'] = 'Eredmények teljes közzététele névvel és választásokkal együtt';
+$string['publishnot'] = 'Ne mutassa meg az eredményeket a tanulóknak';
+$string['privacy'] = 'Az eredmények bizalmasak';
+$string['responses'] = 'Viszontválaszok';
+$string['responsesto'] = 'Viszontválaszok $a részére';
+$string['timerestrict'] = 'Válaszadás korlátozása eddig az idõpontig';
+$string['savemychoice'] = 'Választásom mentése';
+$string['showunanswered'] = 'Válasz nélküli oszlop megmutatása';
+$string['viewallresponses'] = 'A(z) $a viszontválaszainak megtekintése';
 
 ?>
