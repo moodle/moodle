@@ -46,5 +46,8 @@ Now I show the specific detailed status of every item in the process:
 28. DONE: Add course->theme, groups->them and user->theme. If no present,
           default blank.
 29. TODO: Add support for block instances in modules. Bug 2517.
+30. DELAY:Add support for user->dstpreset. After talking with Jon, delayed
+          because there isn't possible to recode it to destination server. But
+          sometime we should think in a solution (STAMPS or CHECKSUMS of DSTs).
 Eloy (stronk7)
 23-01-2004
