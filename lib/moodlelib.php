@@ -3076,7 +3076,7 @@ function site_scale_used($scaleid,&$courses) {
     $return = 0;
 
     if (!is_array($courses) || count($courses) == 0) {
-        $courses = get_courses("all","c.sortorder ASC","c.id,c.shortname");
+        $courses = get_courses("all",false,"c.id,c.shortname");
     }
 
     if (!empty($scaleid)) {
