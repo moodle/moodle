@@ -109,6 +109,7 @@
         if (isset($groupid)) $ewbase .= '&groupid='.$groupid;
         $ewscript = $ewbase.'&wikipage=';
         define("EWIKI_SCRIPT", $ewscript);
+        define("EWIKI_SCRIPT_URL", $ewscript);
 
         /// # Settings for this specific Wiki
         define("EWIKI_PRINT_TITLE", $wiki->ewikiprinttitle);
