@@ -457,6 +457,8 @@ $string['force'] = '強制';
 $string['forcedmode'] = '強制モード';
 $string['forcelanguage'] = '言語の強制';
 $string['forceno'] = '強制しない';
+$string['forcepasswordchange'] = 'パスワードの変更を強制';
+$string['forcepasswordchangehelp'] = '次のログイン時にパスワード変更を促す';
 $string['forgotten'] = 'ユーザ名またはパスワードを忘れましたか?';
 $string['format'] = 'フォーマット';
 $string['formathtml'] = 'HTMLフォーマット';
@@ -483,6 +485,7 @@ $string['gd1'] = 'GD 1.xインストール済';
 $string['gd2'] = 'GD 2.xインストール済';
 $string['gdneed'] = 'このグラフを表示するためにはGDのインストールが必要です。';
 $string['gdnot'] = 'GD未インストール';
+$string['go'] = 'Go';
 $string['gpl'] = 'Copyright (C) 2001-2002 Martin Dougiamas (http://dougiamas.com)
 
 This program is free software; you can redistribute it and/or modify
@@ -574,6 +577,7 @@ $string['institution'] = '所属組織';
 $string['invalidemail'] = '不正なメールアドレスです。';
 $string['invalidlogin'] = '不正なログインです、再度ログインしてください。';
 $string['ip_address'] = 'IPアドレス';
+$string['jump'] = '移動';
 $string['jumpto'] = '移動 ...';
 $string['keep'] = '保存';
 $string['langltr'] = '言語の向き 左→右';
