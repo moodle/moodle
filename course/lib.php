@@ -359,7 +359,8 @@ function print_recent_activity($course) {
                        }
                     break;
                     case "delete mod":
-                       if ($changelist["$log->info"]["operation"] == "add") {
+                       if (!empty($changelist["$log->info"]["operation"]) and 
+                                  $changelist["$log->info"]["operation"] == "add") {
                            $changelist["$log->info"] = NULL;
                        } else {
                            $strdeleted = get_string("deletedactivity", "moodle", get_string("modulename", $info[0]));
