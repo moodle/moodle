@@ -262,6 +262,7 @@ CREATE TABLE `prefix_user_students` (
   `timestart` int(10) unsigned NOT NULL default '0',
   `timeend` int(10) unsigned NOT NULL default '0',
   `time` int(10) unsigned NOT NULL default '0',
+  `timeaccess` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),
   KEY `courseuserid` (course,userid)
@@ -280,6 +281,7 @@ CREATE TABLE `prefix_user_teachers` (
   `role` varchar(40) NOT NULL default '',
   `editall` int(1) unsigned NOT NULL default '1',
   `timemodified` int(10) unsigned NOT NULL default '0',
+  `timeaccess` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),
   KEY `courseuserid` (course,userid)

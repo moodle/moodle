@@ -29,7 +29,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     $users = array();
 
     if ($course->category) {
-        $courseusers = get_course_users($course->id, "u.lastaccess DESC");
+        $courseusers = get_course_users($course->id);
     } else {
         $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname");
     }

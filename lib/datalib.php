@@ -1110,11 +1110,9 @@ function get_recent_enrolments($courseid, $timestart) {
 /**
 * Returns list of all students in this course
 * 
-* if courseid = 0 then return ALL students in all courses
-*
 * @param	type description
 */
-function get_course_students($courseid, $sort="u.lastaccess", $dir="", $page=0, $recordsperpage=99999) {
+function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, $recordsperpage=99999) {
 
     global $CFG;
 
@@ -1130,7 +1128,7 @@ function get_course_students($courseid, $sort="u.lastaccess", $dir="", $page=0, 
     }
 
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
-                            u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture
+                            u.email, u.city, u.country, u.lastlogin, u.picture, s.timeaccess as lastaccess
                             FROM {$CFG->prefix}user u, 
                                  {$CFG->prefix}user_students s
                             WHERE s.course = '$courseid' AND s.userid = u.id AND u.deleted = '0'
@@ -1140,15 +1138,15 @@ function get_course_students($courseid, $sort="u.lastaccess", $dir="", $page=0, 
 /**
 * Returns list of all teachers in this course
 * 
-* if courseid = 0 then return ALL teachers in all courses
-*
 * @param	type description
 */
 function get_course_teachers($courseid, $sort="t.authority ASC") {
 
     global $CFG;
 
-    return get_records_sql("SELECT u.*,t.authority,t.role,t.editall
+    return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
+                                   u.email, u.city, u.country, u.lastlogin, u.picture, 
+                                   t.authority,t.role,t.editall,t.timeaccess as lastaccess
                             FROM {$CFG->prefix}user u, 
                                  {$CFG->prefix}user_teachers t
                             WHERE t.course = '$courseid' AND t.userid = u.id AND u.deleted = '0'
@@ -1162,7 +1160,7 @@ function get_course_teachers($courseid, $sort="t.authority ASC") {
 *
 * @param	type description
 */
-function get_course_users($courseid, $sort="u.lastaccess DESC") {
+function get_course_users($courseid, $sort="timeaccess DESC") {
 
     $site = get_site();
 
@@ -1884,7 +1882,7 @@ function instance_is_visible($moduletype, $module) {
 * @param	string	$url	the file and parameters used to see the results of the action
 * @param	string	$info	additional description information 
 */
-function add_to_log($course, $module, $action, $url="", $info="") {
+function add_to_log($courseid, $module, $action, $url="", $info="") {
 
     global $db, $CFG, $USER, $REMOTE_ADDR;
 
@@ -1907,7 +1905,7 @@ function add_to_log($course, $module, $action, $url="", $info="") {
                                         info)
                              VALUES ('$timenow',
                                         '$userid',
-                                        '$course',
+                                        '$courseid',
                                         '$REMOTE_ADDR',
                                         '$module',
                                         '$action',
@@ -1917,6 +1915,16 @@ function add_to_log($course, $module, $action, $url="", $info="") {
     if (!$result and ($CFG->debug > 7)) {
         echo "<P>Error: Could not insert a new entry to the Moodle log</P>";  // Don't throw an error
     }    
+
+    if (isstudent($courseid)) {
+        $db->Execute("UPDATE {$CFG->prefix}user_students SET timeaccess = '$timenow' ".
+                     "WHERE course = '$courseid' AND userid = '$userid'");
+    }
+
+    if (isteacher($courseid, false, false)) {
+        $db->Execute("UPDATE {$CFG->prefix}user_teachers SET timeaccess = '$timenow' ".
+                     "WHERE course = '$courseid' AND userid = '$userid'");
+    }
 }
 
 

@@ -19,7 +19,7 @@
 
 function main_upgrade($oldversion=0) {
 
-    global $CFG, $THEME;
+    global $CFG, $THEME, $db;
 
     $result = true;
 
@@ -257,6 +257,21 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2003092900) {
         table_column("course", "", "maxbytes", "integer", "10", "unsigned", "0", "", "marker");
     }
+
+    if ($oldversion < 2003102700) {
+        table_column("user_students", "", "timeaccess", "integer", "10", "unsigned", "0", "", "time");
+        table_column("user_teachers", "", "timeaccess", "integer", "10", "unsigned", "0", "", "timemodified");
+
+        $users = get_records_select("user", "id > 0", "", "id, lastaccess");
+
+        $db->debug = false;
+        foreach ($users as $user) {
+            execute_sql("UPDATE {$CFG->prefix}user_students SET timeaccess = '$user->lastaccess' WHERE userid = '$user->id'", false);
+            execute_sql("UPDATE {$CFG->prefix}user_teachers SET timeaccess = '$user->lastaccess' WHERE userid = '$user->id'", false);
+        }
+        $db->debug = true;
+    }
+
 
     return $result;
 }

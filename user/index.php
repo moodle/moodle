@@ -72,7 +72,11 @@
         }
     }
 
-    $dsort = "u.$sort";
+    if ($sort = lastaccess) {
+        $dsort = "s.timeaccess";
+    } else {
+        $dsort = "u.$sort";
+    }
 
     $totalcount = count_records("user_students", "course", $course->id);
 
