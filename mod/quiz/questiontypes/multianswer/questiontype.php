@@ -206,7 +206,6 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 
     function print_question_formulation_and_controls($question,
             $quiz, $readonly, $answers, $correctanswers, $nameprefix) {
-         global $THEME;
 
         // For this question type, we better print the image on top:
         quiz_print_possible_question_image($quiz->id, $question);
@@ -256,7 +255,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
             if ($quiz->feedback && isset($answers[$inputname])
                     && '' !== $answers[$inputname]->feedback) {
                 $title = str_replace("'", "\\'", $answers[$inputname]->feedback);
-                $popup = " onmouseover=\"return overlib('$title', CAPTION, '$strfeedback', FGCOLOR, '$THEME->cellcontent');\" ".
+                $popup = " onmouseover=\"return overlib('$title', CAPTION, '$strfeedback', FGCOLOR);\" ".
                          " onmouseout=\"return nd();\" ";
             } else {
                 $popup = '';

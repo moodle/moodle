@@ -235,17 +235,17 @@
         // show the final grades as stored in the tables...
         print_heading_with_help(get_string("displayoffinalgrades", "exercise"), "finalgrades", "exercise");
         echo "<center><table border=\"1\" width=\"90%\"><tr>\n";
-        echo "<td bgcolor=\"$THEME->cellheading2\"><b>".$course->student."</b></td>";
-        echo "<td bgcolor=\"$THEME->cellheading2\"><b>".get_string("submission", "exercise")."</b></td>";
-        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforassessment", "exercise")."</b></td>";
-        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforsubmission", "exercise")."</b></td>";
-        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("overallgrade", "exercise")."</b></td></tr>\n";
+        echo "<td><b>".$course->student."</b></td>";
+        echo "<td><b>".get_string("submission", "exercise")."</b></td>";
+        echo "<td align=\"center\"><b>".get_string("gradeforassessment", "exercise")."</b></td>";
+        echo "<td align=\"center\"><b>".get_string("gradeforsubmission", "exercise")."</b></td>";
+        echo "<td align=\"center\"><b>".get_string("overallgrade", "exercise")."</b></td></tr>\n";
         // now the weights
-        echo "<tr><td bgcolor=\"$THEME->cellheading2\"><b>".get_string("maximumgrade")."</b></td>";
-        echo "<td bgcolor=\"$THEME->cellheading2\"><b>&nbsp;</b></td>\n";
-        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$exercise->gradinggrade</b></td>\n";
-        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$exercise->grade</b></td>\n";
-        echo "<td bgcolor=\"$THEME->cellheading2\"><b>&nbsp;</b></td></tr>\n";
+        echo "<tr><td><b>".get_string("maximumgrade")."</b></td>";
+        echo "<td><b>&nbsp;</b></td>\n";
+        echo "<td align=\"center\"><b>$exercise->gradinggrade</b></td>\n";
+        echo "<td align=\"center\"><b>$exercise->grade</b></td>\n";
+        echo "<td><b>&nbsp;</b></td></tr>\n";
         foreach ($users as $user) {
             // check group membership, if necessary
             if ($groupid) {

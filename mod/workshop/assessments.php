@@ -488,7 +488,7 @@
                     echo "<td><textarea name=\"description[]\" rows=\"3\" cols=\"75\">".$elements[$i]->description."</textarea>\n";
                     echo "  </td></tr>\n";
                     echo "<tr valign=\"top\">\n";
-                    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                    echo "  <td colspan=\"2\" class=\"workshopassessmentheading\">&nbsp;</td>\n";
                     echo "</tr>\n";
                 }
                 break;
@@ -517,7 +517,7 @@
                     echo "      </td>\n";
                     echo "</tr>\n";
                     echo "<tr valign=\"top\">\n";
-                    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                    echo "  <td colspan=\"2\" class=\"workshopassessmentheading\">&nbsp;</td>\n";
                     echo "</tr>\n";
                 }
                 break;
@@ -538,7 +538,7 @@
                     echo "      </td>\n";
                     echo "</tr>\n";
                     echo "<tr valign=\"top\">\n";
-                    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                    echo "  <td colspan=\"2\" class=\"workshopassessmentheading\">&nbsp;</td>\n";
                     echo "</tr>\n";
                 }
                 echo "</center></table><br />\n";
@@ -575,7 +575,7 @@
                     choose_from_menu($numbers, "maxscore[$i]", $elements[$i]->maxscore, "");
                     echo "</td></tr>\n";
                     echo "<tr valign=\"top\">\n";
-                    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                    echo "  <td colspan=\"2\" class=\"workshopassessmentheading\">&nbsp;</td>\n";
                     echo "</tr>\n";
                 }
                 break;
@@ -611,7 +611,7 @@
                         echo "  </td></tr>\n";
                         }
                     echo "<tr valign=\"top\">\n";
-                    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                    echo "  <td colspan=\"2\" class=\"workshopassessmentheading\">&nbsp;</td>\n";
                     echo "</tr>\n";
                     }
                 break;

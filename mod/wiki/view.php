@@ -246,12 +246,12 @@
 
         echo '<form name="otherwikis" action="'.$CFG->wwwroot.'/mod/wiki/view.php">';
         echo '<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>';
-        echo '<td class="sideblockheading" bgcolor="'.$THEME->cellheading.'">&nbsp;'
+        echo '<td class="sideblockheading">&nbsp;'
             .$WIKI_TYPES[$wiki->wtype].' '
             .get_string('modulename', 'wiki')." ".get_string('for',"wiki")." "
             .wiki_get_owner($wiki_entry).':</td>';
 
-        echo '<td class="sideblockheading" bgcolor="'.$THEME->cellheading.'" align="right">'
+        echo '<td class="sideblockheading" align="right">'
             .get_string('otherwikis', 'wiki').':&nbsp;&nbsp;';
         $script = 'self.location=document.otherwikis.wikiselect.options[document.otherwikis.wikiselect.selectedIndex].value';
         choose_from_menu($wiki_list, "wikiselect", $selected, "choose", $script);
@@ -320,17 +320,17 @@
         foreach ($tabs as $tab) {
             $tabname = get_string("tab$tab", 'wiki');
             if ($ewiki_action != "$tab" && !in_array($page, $specialpages)) {
-                echo '<td class="generaltab" '.$tabstyle.' bgcolor="'.$THEME->cellheading.'">';
+                echo '<td class="generaltab" '.$tabstyle.'>';
                 echo '<a href="'.$ewbase.'&amp;page='.$tab.'/'.$ewiki_id.'">'.$tabname.'</a>';
                 echo '</td>';
             } else {
-                echo '<td class="generaltabselected" '.$tabstyle.' bgcolor="'.$THEME->cellcontent.'">'.$tabname.'</td>';
+                echo '<td class="generaltabselected" '.$tabstyle.'>'.$tabname.'</td>';
             }
         }
         echo '</tr>';
         echo '</table>';
     }
-    print_simple_box_start( "right", "100%", "$THEME->cellcontent", "20");
+    print_simple_box_start( 'right', '100%', '', '20');
 
     /// Don't filter any pages containing wiki actions (except view). A wiki page containing
     /// actions will have the form [action]/[pagename]. If the '/' isn't there, or the action

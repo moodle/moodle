@@ -84,15 +84,15 @@
         print_heading(get_string("displayoffinalgrades", "exercise"));
         if ($submissions = exercise_get_user_submissions($exercise, $USER)) { // any submissions from user?
             echo "<center><table border=\"1\" width=\"90%\"><tr>";
-            echo "<td bgcolor=\"$THEME->cellheading2\"><b>".get_string("submissions", "exercise")."</b></td>";
-            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforassessment", "exercise")."</b></td>";
-            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforsubmission", "exercise", $course->teacher)."</b></td>";
-            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("overallgrade", "exercise")."</b></td></tr>\n";
+            echo "<td><b>".get_string("submissions", "exercise")."</b></td>";
+            echo "<td align=\"center\"><b>".get_string("gradeforassessment", "exercise")."</b></td>";
+            echo "<td align=\"center\"><b>".get_string("gradeforsubmission", "exercise", $course->teacher)."</b></td>";
+            echo "<td align=\"center\"><b>".get_string("overallgrade", "exercise")."</b></td></tr>\n";
             // now the weights
-            echo "<tr><td bgcolor=\"$THEME->cellheading2\"><b>".get_string("maximumgrade")."</b></td>";
-            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$exercise->gradinggrade</b></td>\n";
-            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$exercise->grade</b></td>\n";
-            echo "<td bgcolor=\"$THEME->cellheading2\"><b>&nbsp;</b></td></tr>\n";
+            echo "<tr><td><b>".get_string("maximumgrade")."</b></td>";
+            echo "<td align=\"center\"><b>$exercise->gradinggrade</b></td>\n";
+            echo "<td align=\"center\"><b>$exercise->grade</b></td>\n";
+            echo "<td><b>&nbsp;</b></td></tr>\n";
             // first get user's own assessment reord, it should contain their grading grade
             if ($ownassessments = exercise_get_user_assessments($exercise, $USER)) {
                 foreach ($ownassessments as $ownassessment) {

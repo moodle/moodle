@@ -25,7 +25,7 @@
             error(get_string("filloutallfields"), $_SERVER["HTTP_REFERER"]);
         }
 
-        print_simple_box_start("center", "", "$THEME->cellheading");
+        print_simple_box_start('center');
         ?>
         <form name="form" method="post" action="<?php p($form->destination)?>">
         <table cellpadding="5" align="center">

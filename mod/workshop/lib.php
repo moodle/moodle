@@ -1147,7 +1147,7 @@ function workshop_print_recent_mod_activity($activity, $course, $detail=false) {
         $closeformat = "</b>";
     }
 
-    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"workshoppostpicture\" width=\"35\" valign=\"top\">";
+    echo "<tr><td class=\"workshoppostpicture\" width=\"35\" valign=\"top\">";
     print_user_picture($activity->user->userid, $course, $activity->user->picture);
     echo "</td><td>$openformat";
 

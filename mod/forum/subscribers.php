@@ -159,7 +159,7 @@
     $searchtext = (isset($frm->searchtext)) ? $frm->searchtext : "";
     $previoussearch = ($previoussearch) ? '1' : '0';
 
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start('center');
 
     include('subscriber.html');
 

@@ -294,7 +294,7 @@
                         $elements[$i]->description."</textarea>\n";
                     echo "  </td></tr>\n";
                     echo "<tr valign=\"top\">\n";
-                    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                    echo "  <td colspan=\"2\">&nbsp;</td>\n";
                     echo "</tr>\n";
                 }
                 break;
@@ -326,7 +326,7 @@
                     echo "      </td>\n";
                     echo "</tr>\n";
                     echo "<tr valign=\"top\">\n";
-                    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                    echo "  <td colspan=\"2\">&nbsp;</td>\n";
                     echo "</tr>\n";
                 }
                 break;
@@ -349,7 +349,7 @@
                     echo "      </td>\n";
                     echo "</tr>\n";
                     echo "<tr valign=\"top\">\n";
-                    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                    echo "  <td colspan=\"2\">&nbsp;</td>\n";
                     echo "</tr>\n";
                 }
                 echo "</center></table><br />\n";
@@ -388,7 +388,7 @@
                     echo "</td></tr>\n";
                     echo "<tr valign=\"top\">\n";
 
-                    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                    echo "  <td colspan=\"2\">&nbsp;</td>\n";
                     echo "</tr>\n";
                 }
                 break;
@@ -427,7 +427,7 @@
                         echo "  </td></tr>\n";
                     }
                     echo "<tr valign=\"top\">\n";
-                    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                    echo "  <td colspan=\"2\">&nbsp;</td>\n";
                     echo "</tr>\n";
                 }
                 break;

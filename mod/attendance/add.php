@@ -146,7 +146,7 @@ if (isset($_POST["course"]))  {
         $icon = "<img align=middle height=16 width=16 src=\"$CFG->modpixpath/$module->name/icon.gif\" alt=\"\" />&nbsp;";
 
         print_heading_with_help($pageheading, "mods", $module->name, $icon);
-        print_simple_box_start("center", "", "$THEME->cellheading");
+        print_simple_box_start('center');
 
  
 /// Print the main part of the page

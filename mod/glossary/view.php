@@ -4,7 +4,7 @@
     require_once("lib.php");
     require_once("$CFG->libdir/rsslib.php");
 
-    global $CFG, $THEME, $USER;
+    global $CFG, $USER;
     $debug = 0;
     $CFG->startpagetime = microtime();
 
@@ -334,7 +334,7 @@
                     $currentpivot = strtoupper($pivot);
 
                     echo '<div>';
-                    echo '<table width="95%" border="0" class="generaltabselected" bgcolor="' . $THEME->cellheading2 . '">';
+                    echo '<table width="95%" border="0" class="generaltabselected">';
 
                     echo '<tr>';
                     $pivottoshow = $currentpivot;

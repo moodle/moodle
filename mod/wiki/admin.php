@@ -269,12 +269,12 @@
 
         echo '<form name="otherwikis" action="'.$CFG->wwwroot.'/mod/wiki/admin.php">';
         echo '<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>';
-        echo '<td class="sideblockheading" bgcolor="'.$THEME->cellheading.'">&nbsp;'
+        echo '<td class="sideblockheading">&nbsp;'
             .$WIKI_TYPES[$wiki->wtype].' '
             .get_string('modulename', 'wiki').' for '
             .wiki_get_owner($wiki_entry).':</td>';
 
-        echo '<td class="sideblockheading" bgcolor="'.$THEME->cellheading.'" align="right">'
+        echo '<td class="sideblockheading" align="right">'
             .get_string('otherwikis', 'wiki').':&nbsp;&nbsp;';
         $script = 'self.location=document.otherwikis.wikiselect.options[document.otherwikis.wikiselect.selectedIndex].value';
 
@@ -332,7 +332,7 @@
     }
 
     // The wiki Contents
-    print_simple_box_start( "center", "100%", "$THEME->cellcontent", "20");
+    print_simple_box_start( 'center', '100%', '', '20');
     // Do the Action
     # "setpageflags", "removepages", "strippages", "checklinks", "revertpages"
     print_heading_with_help(get_string($action,"wiki"), $action, "wiki");

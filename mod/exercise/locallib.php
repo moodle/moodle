@@ -743,7 +743,7 @@ function exercise_list_all_ungraded_assessments($exercise) {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 function exercise_list_submissions_for_admin($exercise) {
     // list the teacher sublmissions first
-    global $CFG, $THEME, $USER;
+    global $CFG, $USER;
     
     if (! $course = get_record("course", "id", $exercise->course)) {
         error("Course is misconfigured");
@@ -1497,7 +1497,7 @@ function exercise_list_user_submissions($exercise, $user) {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 function exercise_print_assessment_form($exercise, $assessment = false, $allowchanges = false, $returnto = '') {
     // prints several variants of the assessment form
-    global $CFG, $THEME, $USER, $EXERCISE_SCALES, $EXERCISE_EWEIGHTS;
+    global $CFG, $USER, $EXERCISE_SCALES, $EXERCISE_EWEIGHTS;
     
     if (! $course = get_record("course", "id", $exercise->course)) {
         error("Course is misconfigured");
@@ -1540,7 +1540,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
                 print_heading(get_string("theexerciseandthesubmissionby", "exercise", 
                     fullname($submissionowner)));
                 echo "<center><table border=\"1\" width=\"30%\"><tr>
-                    <td align=\"center\" bgcolor=\"$THEME->cellcontent\">\n";
+                    <td align=\"center\">\n";
                 echo exercise_print_submission_title($exercise, $teachersubmission);
                 echo "</td></tr></table><br clear=\"all\" />\n";
                 }
@@ -1553,7 +1553,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
             }
             
         echo "<center><table border=\"1\" width=\"30%\"><tr>
-            <td align=\"center\" bgcolor=\"$THEME->cellcontent\">\n";
+            <td align=\"center\">\n";
         echo exercise_print_submission_title($exercise, $submission);
         echo "</td></tr></table><br clear=\"all\" />\n";
         
@@ -1593,7 +1593,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
     echo "<center><table cellpadding=\"2\" border=\"1\">\n";
     echo "<tr valign=\"top\">\n";
 
-    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\"><center><b>$formtitle</b></center></td>\n";
+    echo "  <td colspan=\"2\"><center><b>$formtitle</b></center></td>\n";
 
     echo "</tr>\n";
 
@@ -1649,7 +1649,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
                 echo "  </td>\n";
                 echo "</tr>\n";
                 echo "<tr valign=\"top\">\n";
-                echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                echo "  <td colspan=\"2\">&nbsp;</td>\n";
                 echo "</tr>\n";
                 }
             break;
@@ -1729,7 +1729,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
                 echo "  </td>\n";
                 echo "</tr>\n";
                 echo "<tr valign=\"top\">\n";
-                echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                echo "  <td colspan=\"2\">&nbsp;</td>\n";
                 echo "</tr>\n";
                 }
             break;
@@ -1812,7 +1812,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
                 echo "&nbsp;</td>\n";
                 echo "</tr>\n";
                 echo "<tr valign=\"top\">\n";
-                echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                echo "  <td colspan=\"2\">&nbsp;</td>\n";
                 echo "</tr>\n";
                 if (empty($grades[$i]->grade)) {
                     $error += $EXERCISE_EWEIGHTS[$elements[$i]->weight];
@@ -1821,7 +1821,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
             // print the number of negative elements
             // echo "<tr><td>".get_string("numberofnegativeitems", "exercise")."</td><td>$negativecount</td></tr>\n";
             // echo "<tr valign=\"top\">\n";
-            // echo "   <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+            // echo "   <td colspan=\"2\">&nbsp;</td>\n";
             echo "</table></center>\n";
             // now print the grade table
             echo "<p><center><b>".get_string("gradetable","exercise")."</b></center>\n";
@@ -1855,12 +1855,12 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
         case 3: // criteria grading
             echo "<tr valign=\"top\">\n";
 
-            echo "  <td bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+            echo "  <td>&nbsp;</td>\n";
 
-            echo "  <td bgcolor=\"$THEME->cellheading2\"><b>". get_string("criterion","exercise")."</b></td>\n";
+            echo "  <td><b>". get_string("criterion","exercise")."</b></td>\n";
 
-            echo "  <td bgcolor=\"$THEME->cellheading2\"><b>".get_string("select")."</b></td>\n";
-            echo "  <td bgcolor=\"$THEME->cellheading2\"><b>".get_string("suggestedgrade", "exercise")."</b></td>\n";
+            echo "  <td><b>".get_string("select")."</b></td>\n";
+            echo "  <td><b>".get_string("suggestedgrade", "exercise")."</b></td>\n";
             // find which criteria has been selected (saved in the zero element), if any
             if (isset($grades[0]->grade)) {
                 $selection = $grades[0]->grade;
@@ -1910,8 +1910,8 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
                     .number_format($EXERCISE_EWEIGHTS[$elements[$i]->weight], 2)."</font></td></tr>\n";
                 echo "<tr valign=\"top\">\n";
 
-                echo "  <td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("select")."</b></td>\n";
-                echo "  <td bgcolor=\"$THEME->cellheading2\"><b>". get_string("criterion","exercise")."</b></td></tr>\n";
+                echo "  <td align=\"center\"><b>".get_string("select")."</b></td>\n";
+                echo "  <td><b>". get_string("criterion","exercise")."</b></td></tr>\n";
 
                 if (isset($grades[$i])) {
                     $selection = $grades[$i]->grade;
@@ -1954,7 +1954,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
                     echo "  </td>\n";
                     echo "</tr>\n";
                     echo "<tr valign=\"top\">\n";
-                    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                    echo "  <td colspan=\"2\">&nbsp;</td>\n";
                     echo "</tr>\n";
                     }
                 }
@@ -1997,7 +1997,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
 
     echo "<tr valign=\"top\">\n";
 
-    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+    echo "  <td colspan=\"2\">&nbsp;</td>\n";
 
     echo "</tr>\n";
     
@@ -2130,7 +2130,7 @@ function exercise_print_difference($time) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 function exercise_print_feedback($course, $submission) {
-    global $CFG, $THEME, $RATING;
+    global $CFG, $RATING;
 
     if (! $teacher = get_record("user", "id", $submission->teacher)) {
         error("Weird exercise error");
@@ -2140,14 +2140,14 @@ function exercise_print_feedback($course, $submission) {
     echo "\n<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" valign=\"top\">";
 
     echo "\n<tr>";
-    echo "\n<td rowspan=\"3\" bgcolor=\"$THEME->body\" width=\"35\" valign=\"top\">";
+    echo "\n<td rowspan=\"3\" width=\"35\" valign=\"top\">";
     print_user_picture($teacher->id, $course->id, $teacher->picture);
     echo "</td>";
-    echo "<td nowrap=\"nowrap\" width=\"100%\" bgcolor=\"$THEME->cellheading\">".fullname($teacher);
+    echo "<td nowrap=\"nowrap\" width=\"100%\">".fullname($teacher);
     echo "&nbsp;&nbsp;<font size=\"2\"><i>".userdate($submission->timemarked)."</i>";
     echo "</tr>";
 
-    echo "\n<tr><td width=\"100%\" bgcolor=\"$THEME->cellcontent\">";
+    echo "\n<tr><td width=\"100%\">";
 
     echo "<p align=\"right\"><font size=-1><i>";
     if ($submission->grade) {
@@ -2261,7 +2261,7 @@ function exercise_print_tabbed_heading($tabs) {
 //      $tabs->width     is an percentage of the page (defualts to 80%)
 //      $tabs->cellpadding    padding on each cell (defaults to 5)
 
-    global $CFG, $THEME;
+    global $CFG;
     
     if (isset($tabs->names)) {
         foreach ($tabs->names as $key => $name) {
@@ -2311,9 +2311,9 @@ function exercise_print_tabbed_heading($tabs) {
                 $wrapping = "";
             }
             if ($key == $tabs->highlight) {
-                echo "<td valign=\"top\" class=\"generaltabselected\" $alignment $width $wrapping bgcolor=\"$THEME->cellheading2\">$tab</td>\n";
+                echo "<td valign=\"top\" class=\"generaltabselected\" $alignment $width $wrapping>$tab</td>\n";
             } else {
-                echo "<td valign=\"top\" class=\"generaltab\" $alignment $width $wrapping bgcolor=\"$THEME->cellheading\">$tab</td>\n";
+                echo "<td valign=\"top\" class=\"generaltab\" $alignment $width $wrapping>$tab</td>\n";
             }
         echo "<td  class=\"generaltablecell\">".
             "<img width=\"10\" src=\"$CFG->wwwroot/pix/spacer.gif\" alt=\"\" /></td>\n";
@@ -2325,7 +2325,7 @@ function exercise_print_tabbed_heading($tabs) {
     // bottom stripe
     $ncells = count($tabs->names)*2 +1;
     $height = 2;
-    echo "<tr><td colspan=\"$ncells\" bgcolor=\"$THEME->cellheading2\">".
+    echo "<tr><td colspan=\"$ncells\">".
         "<img height=\"$height\" src=\"$CFG->wwwroot/pix/spacer.gif\" alt=\"\" /></td></tr>\n";
     echo "</table>\n";
     // print_simple_box_end();
@@ -2339,7 +2339,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
     // prints an assessment form based on the student's assessment 
     // if the teacher is re-assessing a submission they would use exercise_print_assessment_form()
     // (for teachers only)
-    global $CFG, $THEME, $USER, $EXERCISE_SCALES, $EXERCISE_EWEIGHTS;
+    global $CFG, $USER, $EXERCISE_SCALES, $EXERCISE_EWEIGHTS;
     
     if (! $course = get_record("course", "id", $exercise->course)) {
         error("Course is misconfigured");
@@ -2355,7 +2355,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
     }
 
     echo "<center><table border=\"1\" width=\"30%\"><tr>
-        <td align=\"center\" bgcolor=\"$THEME->cellcontent\">\n";
+        <td align=\"center\">\n";
     if (!$teachersubmission = get_record("exercise_submissions", "id", $assessment->submissionid)) {
         error ("Print teacher assessment form: Submission record not found");
     }
@@ -2363,7 +2363,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
     echo "</td></tr></table><br clear=\"all\" />\n";
     
     echo "<center><table border=\"1\" width=\"30%\"><tr>
-        <td align=\"center\" bgcolor=\"$THEME->cellcontent\">\n";
+        <td align=\"center\">\n";
     echo exercise_print_submission_title($exercise, $submission);
     echo "</td></tr></table></center><br clear=\"all\" />\n";
 
@@ -2400,7 +2400,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
         
     echo "<center><table cellpadding=\"2\" border=\"1\">\n";
     echo "<tr valign=\"top\">\n";
-    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\"><center><b>".get_string("yourassessment", "exercise").
+    echo "  <td colspan=\"2\"><center><b>".get_string("yourassessment", "exercise").
         "</b></center></td>\n";
     echo "</tr>\n";
     
@@ -2445,7 +2445,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
                 echo "  </td>\n";
                 echo "</tr>\n";
                 echo "<tr valign=\"top\">\n";
-                echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                echo "  <td colspan=\"2\">&nbsp;</td>\n";
                 echo "</tr>\n";
             }
             break;
@@ -2524,7 +2524,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
                 echo "  </td>\n";
                 echo "</tr>\n";
                 echo "<tr valign=\"top\">\n";
-                echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                echo "  <td colspan=\"2\">&nbsp;</td>\n";
                 echo "</tr>\n";
             }
             break;
@@ -2605,7 +2605,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
                 echo "&nbsp;</td>\n";
                 echo "</tr>\n";
                 echo "<tr valign=\"top\">\n";
-                echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                echo "  <td colspan=\"2\">&nbsp;</td>\n";
                 echo "</tr>\n";
                 if (empty($grades[$i]->grade)) {
                         $error += $EXERCISE_EWEIGHTS[$elements[$i]->weight];
@@ -2614,7 +2614,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
             // print the number of negative elements
             // echo "<tr><td>".get_string("numberofnegativeitems", "exercise")."</td><td>$negativecount</td></tr>\n";
             // echo "<tr valign=\"top\">\n";
-            // echo "   <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+            // echo "   <td colspan=\"2\">&nbsp;</td>\n";
             echo "</table></center>\n";
             // now print the grade table
             echo "<p><center><b>".get_string("gradetable","exercise")."</b></center>\n";
@@ -2647,10 +2647,10 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
             
         case 3: // criteria grading
             echo "<tr valign=\"top\">\n";
-            echo "  <td bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
-            echo "  <td bgcolor=\"$THEME->cellheading2\"><b>". get_string("criterion","exercise")."</b></td>\n";
-            echo "  <td bgcolor=\"$THEME->cellheading2\"><b>".get_string("select")."</b></td>\n";
-            echo "  <td bgcolor=\"$THEME->cellheading2\"><b>".get_string("suggestedgrade", "exercise")."</b></td>\n";
+            echo "  <td>&nbsp;</td>\n";
+            echo "  <td><b>". get_string("criterion","exercise")."</b></td>\n";
+            echo "  <td><b>".get_string("select")."</b></td>\n";
+            echo "  <td><b>".get_string("suggestedgrade", "exercise")."</b></td>\n";
             // find which criteria has been selected (saved in the zero element), if any
             if (isset($grades[0]->grade)) {
                 $selection = $grades[0]->grade;
@@ -2697,8 +2697,8 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
                      "<p align=\"right\"><font size=\"1\">Weight: "
                     .number_format($EXERCISE_EWEIGHTS[$elements[$i]->weight], 2)."</font></td></tr>\n";
                 echo "<tr valign=\"top\">\n";
-                echo "  <td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("select")."</b></td>\n";
-                echo "  <td bgcolor=\"$THEME->cellheading2\"><b>". get_string("criterion","exercise")."</b></td></tr>\n";
+                echo "  <td align=\"center\"><b>".get_string("select")."</b></td>\n";
+                echo "  <td><b>". get_string("criterion","exercise")."</b></td></tr>\n";
                 if (isset($grades[$i])) {
                     $selection = $grades[$i]->grade;
                 } else {
@@ -2739,7 +2739,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
                     echo "  </td>\n";
                     echo "</tr>\n";
                     echo "<tr valign=\"top\">\n";
-                    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                    echo "  <td colspan=\"2\">&nbsp;</td>\n";
                     echo "</tr>\n";
                 }
             }
@@ -2778,7 +2778,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
     echo "&nbsp;</td>\n";
     echo "</tr>\n";
     echo "<tr valign=\"top\">\n";
-    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+    echo "  <td colspan=\"2\">&nbsp;</td>\n";
     echo "</tr>\n";
     
     // ...and close the table and show two buttons...to resubmit or not to resubmit

@@ -73,7 +73,7 @@
     //
     // Print validation result
     //
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start('center');
     echo "<table cellpadding=\"5\" align=\"center\">\n";
     echo "    <tr><td align=\"right\" nowrap=\"nowrap\"><b>$strname:</b></td><td>$form->name</td></tr>\n";
     echo "    <tr><td align=\"right\" nowrap=\"nowrap\"><b>".get_string("validation","scorm").":</b></td><td>".get_string($result,"scorm")."</td></tr>\n";

@@ -1848,7 +1848,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
     $showcommentlinks = false, $returnto = '') {
     // $allowchanges added 14/7/03. The form is inactive unless allowchanges = true
     // $returnto added 28/8/03. The page to go to after the assessment has been submitted
-    global $CFG, $THEME, $USER, $WORKSHOP_SCALES, $WORKSHOP_EWEIGHTS;
+    global $CFG, $USER, $WORKSHOP_SCALES, $WORKSHOP_EWEIGHTS;
     
     if (! $course = get_record("course", "id", $workshop->course)) {
         error("Course is misconfigured");
@@ -1901,7 +1901,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
             echo "<table cellpadding=\"2\" border=\"1\">\n";
             $firstcomment = TRUE;
             foreach ($comments as $comment) {
-                echo "<tr valign=\"top\"><td bgcolor=\"$THEME->cellheading2\"><p><b>".
+                echo "<tr valign=\"top\"><td class=\"workshopassessmentheading\"><p><b>".
                     get_string("commentby","workshop")." ";
                 if (isteacher($workshop->course, $comment->userid)) {
                     echo $course->teacher;
@@ -1963,7 +1963,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
     <table cellpadding="2" border="1">
     <?php
     echo "<tr valign=\"top\">\n";
-    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\"><center><b>";
+    echo "  <td colspan=\"2\" class=\"workshopassessmentheading\"><center><b>";
     if ($assessment and isteacher($course->id)) {
         $user = get_record('user', 'id', $assessment->userid);
         print_string("assessmentby", "workshop", fullname($user));
@@ -1980,7 +1980,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
             <b>".get_string("thegradeis", "workshop").": ".
             number_format($assessment->grade * $workshop->grade / 100, 2)." (".
             get_string("maximumgrade")." ".number_format($workshop->grade, 0).")</b>
-            </td></tr><tr><td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td></tr>\n";
+            </td></tr><tr><td colspan=\"2\" class=\"workshopassessmentheading\">&nbsp;</td></tr>\n";
     }
     
     // get the assignment elements...
@@ -2061,7 +2061,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 }
 
                 echo "<tr valign=\"top\">\n";
-                echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                echo "  <td colspan=\"2\" class=\"workshopassessmentheading\">&nbsp;</td>\n";
                 echo "</tr>\n";
                 }
             break;
@@ -2166,7 +2166,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 }
 
                 echo "<tr valign=\"top\">\n";
-                echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                echo "  <td colspan=\"2\" class=\"workshopassessmentheading\">&nbsp;</td>\n";
                 echo "</tr>\n";
                 }
             break;
@@ -2270,7 +2270,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                     echo "</td></tr>\n";
                 }
                 echo "<tr valign=\"top\">\n";
-                echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                echo "  <td colspan=\"2\" class=\"workshopassessmentheading\">&nbsp;</td>\n";
                 echo "</tr>\n";
                 if (empty($grades[$i]->grade)) {
                     $negativecount++;
@@ -2279,7 +2279,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
             // print the number of negative elements
             // echo "<tr><td>".get_string("numberofnegativeitems", "workshop")."</td><td>$negativecount</td></tr>\n";
             // echo "<tr valign=\"top\">\n";
-            // echo "   <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+            // echo "   <td colspan=\"2\" class=\"workshopassessmentheading\">&nbsp;</td>\n";
             echo "</table></center>\n";
             // now print the grade table
             echo "<p><center><b>".get_string("gradetable","workshop")."</b></center>\n";
@@ -2315,10 +2315,10 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
             
         case 3: // criteria grading
             echo "<tr valign=\"top\">\n";
-            echo "  <td bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
-            echo "  <td bgcolor=\"$THEME->cellheading2\"><b>". get_string("criterion","workshop")."</b></td>\n";
-            echo "  <td bgcolor=\"$THEME->cellheading2\"><b>".get_string("select", "workshop")."</b></td>\n";
-            echo "  <td bgcolor=\"$THEME->cellheading2\"><b>".get_string("suggestedgrade", "workshop")."</b></td>\n";
+            echo "  <td class=\"workshopassessmentheading\">&nbsp;</td>\n";
+            echo "  <td class=\"workshopassessmentheading\"><b>". get_string("criterion","workshop")."</b></td>\n";
+            echo "  <td class=\"workshopassessmentheading\"><b>".get_string("select", "workshop")."</b></td>\n";
+            echo "  <td class=\"workshopassessmentheading\"><b>".get_string("suggestedgrade", "workshop")."</b></td>\n";
             // find which criteria has been selected (saved in the zero element), if any
             if (isset($grades[0]->grade)) {
                 $selection = $grades[0]->grade;
@@ -2365,9 +2365,9 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                      "<p align=\"right\"><font size=\"1\">".get_string("weight", "workshop").": ".
                     number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</font></td></tr>\n";
                 echo "<tr valign=\"top\">\n";
-                echo "  <td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("select", "workshop").
+                echo "  <td class=\"workshopassessmentheading\" align=\"center\"><b>".get_string("select", "workshop").
                     "</b></td>\n";
-                echo "  <td bgcolor=\"$THEME->cellheading2\"><b>". get_string("criterion","workshop").
+                echo "  <td class=\"workshopassessmentheading\"><b>". get_string("criterion","workshop").
                     "</b></td></tr>\n";
                 if (isset($grades[$i])) {
                     $selection = $grades[$i]->grade;
@@ -2434,7 +2434,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                     }
 
                     echo "<tr valign=\"top\">\n";
-                    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+                    echo "  <td colspan=\"2\" class=\"workshopassessmentheading\">&nbsp;</td>\n";
                     echo "</tr>\n";
                 }
             }
@@ -2497,7 +2497,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
     // now show the grading grade if available...
     if ($assessment->timegraded) {
         echo "<tr valign=\"top\">\n";
-        echo "<td colspan=\"2\" bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".
+        echo "<td colspan=\"2\" class=\"workshopassessmentheading\" align=\"center\"><b>".
             get_string('gradeforstudentsassessment', 'workshop')."</b></td>\n";
         echo "</tr>\n";
         
@@ -2520,7 +2520,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
     }
     
     echo "<tr valign=\"top\">\n";
-    echo "  <td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
+    echo "  <td colspan=\"2\" class=\"workshopassessmentheading\">&nbsp;</td>\n";
     echo "</tr>\n";
             
     // ...and close the table, show submit button if needed...
@@ -2653,24 +2653,23 @@ function workshop_print_difference($time) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_print_feedback($course, $submission) {
-    global $CFG, $THEME, $RATING;
+    global $CFG, $RATING;
 
     if (! $teacher = get_record("user", "id", $submission->teacher)) {
         error("Weird workshop error");
     }
 
-    echo "\n<table border=\"0\" cellpadding=\"1\" cellspacing=\"1\" align=\"center\"><tr><td bgcolor=#888888>";
-    echo "\n<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\">";
+    echo "\n<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" class=\"feedbackbox\">";
 
     echo "\n<tr>";
-    echo "\n<td rowspan=\"3\" bgcolor=\"$THEME->body\" width=\"35\" valign=\"top\">";
+    echo "\n<td rowspan=\"3\" class=\"userpicture\" width=\"35\" valign=\"top\">";
     print_user_picture($teacher->id, $course->id, $teacher->picture);
     echo "</td>";
-    echo "<td nowrap=\"nowrap\" width=\"100%\" bgcolor=\"$THEME->cellheading\">".fullname($teacher);
+    echo "<td nowrap=\"nowrap\" width=\"100%\" class=\"feedbackby\">".fullname($teacher);
     echo "&nbsp;&nbsp;<font size=\"2\"><i>".userdate($submission->timemarked)."</i>";
     echo "</tr>";
 
-    echo "\n<tr><td width=\"100%\" bgcolor=\"$THEME->cellcontent\">";
+    echo "\n<tr><td width=\"100%\" class=\"feedback\">";
 
     echo "<p align=\"right\"><font size=\"-1\"><i>";
     if ($submission->grade) {
@@ -2681,7 +2680,6 @@ function workshop_print_feedback($course, $submission) {
     echo "</i></font></p>";
 
     echo format_text($submission->assessorcomment);
-    echo "</td></tr></table>";
     echo "</td></tr></table>";
 }
 

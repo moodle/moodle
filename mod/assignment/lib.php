@@ -533,19 +533,24 @@ function assignment_print_difference($time) {
 }
 
 function assignment_print_submission($assignment, $user, $submission, $teachers, $grades) {
-    global $THEME, $USER;
+    global $USER;
 
-    echo "\n<table border=\"1\" cellspacing=\"0\" cellpadding=\"10\" align=\"center\">";
+    if ($submission->timemodified > $submission->timemarked) {
+        $subtype = 'assignmentnew';
+    } else {
+        $subtype = 'assignmentold';
+    }
+    echo "\n<table border=\"1\" cellspacing=\"0\" cellpadding=\"10\" align=\"center\" class=\"assignmentsubmission $subtype\" >";
 
     echo "\n<tr>";
     if ($assignment->type == OFFLINE) {
-        echo "\n<td bgcolor=\"$THEME->body\" width=\"35\" valign=\"top\">";
+        echo "\n<td width=\"35\" valign=\"top\">";
     } else {
-        echo "\n<td rowspan=\"2\" bgcolor=\"$THEME->body\" width=\"35\" valign=\"top\">";
+        echo "\n<td rowspan=\"2\" width=\"35\" valign=\"top\">";
     }
     print_user_picture($user->id, $assignment->course, $user->picture);
     echo "</td>";
-    echo "<td nowrap=\"nowrap\" bgcolor=\"$THEME->cellheading\">".fullname($user, true);
+    echo "<td nowrap=\"nowrap\" class=\"assignmentheading\">".fullname($user, true);
     if ($assignment->type != OFFLINE and $submission->timemodified) {
         echo "&nbsp;&nbsp;".get_string("lastmodified").": ";
         echo userdate($submission->timemodified);
@@ -555,7 +560,7 @@ function assignment_print_submission($assignment, $user, $submission, $teachers,
     echo "</tr>";
 
     if ($assignment->type != OFFLINE) {
-        echo "\n<tr><td bgcolor=\"$THEME->cellcontent\">";
+        echo "\n<tr><td>";
         if ($submission->timemodified) {
             assignment_print_user_files($assignment, $user);
         } else {
@@ -571,11 +576,8 @@ function assignment_print_submission($assignment, $user, $submission, $teachers,
     }
     print_user_picture($submission->teacher, $assignment->course, $teachers[$submission->teacher]->picture);
     echo "</td>\n";
-    if ($submission->timemodified > $submission->timemarked) {
-        echo "<td bgcolor=\"$THEME->cellheading2\">";
-    } else {
-        echo "<td bgcolor=\"$THEME->cellheading\">";
-    }
+    echo '<td class="assignmentfeedback">';
+
     if (!$submission->grade and !$submission->timemarked) {
         $submission->grade = -1;   /// Hack to stop zero being selected on the menu below (so it shows 'no grade')
     }
@@ -593,24 +595,23 @@ function assignment_print_submission($assignment, $user, $submission, $teachers,
 }
 
 function assignment_print_feedback($course, $submission, $assignment) {
-    global $CFG, $THEME, $RATING;
+    global $CFG, $RATING;
 
     if (! $teacher = get_record("user", "id", $submission->teacher)) {
         error("Weird assignment error");
     }
 
-    echo "\n<table border=\"0\" cellpadding=\"1\" cellspacing=\"1\" align=\"center\"><tr><td bgcolor=\"#888888\">";
-    echo "\n<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" valign=\"top\">";
+    echo "\n<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" valign=\"top\" class=\"feedbackbox\">";
 
     echo "\n<tr>";
-    echo "\n<td rowspan=\"3\" bgcolor=\"$THEME->body\" width=\"35\" valign=\"top\">";
+    echo "\n<td rowspan=\"3\" width=\"35\" valign=\"top\">";
     print_user_picture($teacher->id, $course->id, $teacher->picture);
     echo "</td>";
-    echo "<td nowrap=\"nowrap\" width=\"100%\" bgcolor=\"$THEME->cellheading\">".fullname($teacher);
+    echo "<td nowrap=\"nowrap\" width=\"100%\" class=\"feedbackby\">".fullname($teacher);
     echo "&nbsp;&nbsp;<font size=\"2\"><i>".userdate($submission->timemarked)."</i>";
     echo "</tr>";
 
-    echo "\n<tr><td width=\"100%\" bgcolor=\"$THEME->cellcontent\">";
+    echo "\n<tr><td width=\"100%\" class=\"feedback\">";
 
     echo "<p align=\"right\"><font size=\"-1\"><i>";
     if ($assignment->grade) {
@@ -623,7 +624,6 @@ function assignment_print_feedback($course, $submission, $assignment) {
     echo "</i></font></p>";
 
     echo text_to_html($submission->comment);
-    echo "</td></tr></table>";
     echo "</td></tr></table>";
 }
 
@@ -747,11 +747,11 @@ function assignment_get_recent_mod_activity(&$activities, &$index, $sincetime, $
 }
 
 function assignment_print_recent_mod_activity($activity, $course, $detail=false)  {
-    global $CFG, $THEME;
+    global $CFG;
 
     echo '<table border="0" cellpadding="3" cellspacing="0">';
 
-    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
+    echo "<tr><td class=\"userpicture\" width=\"35\" valign=\"top\">";
     print_user_picture($activity->user->userid, $course, $activity->user->picture);
     echo "</td><td width=\"100%\"><font size=2>";
 

@@ -312,7 +312,6 @@ function survey_count_responses($surveyid, $groupid) {
 
 
 function survey_print_all_responses($cmid, $results, $courseid) {
-    global $THEME;
 
     $table->head  = array ("", get_string("name"),  get_string("time"));
     $table->align = array ("", "left", "left");
@@ -353,7 +352,7 @@ function survey_shorten_name ($name, $numwords) {
 
 
 function survey_print_multi($question) {
-    GLOBAL $db, $qnum, $checklist, $THEME;
+    GLOBAL $db, $qnum, $checklist;
 
 
     $stripreferthat = get_string("ipreferthat", "survey");
@@ -382,19 +381,19 @@ function survey_print_multi($question) {
     while (list ($key, $val) = each ($options)) {
         echo "<td width=\"10%\" align=\"center\"><font size=\"1\">$val</font></td>\n";
     }
-    echo "<td align=\"center\" bgcolor=\"$THEME->body\">&nbsp;</td></tr>\n";
+    echo "<td align=\"center\">&nbsp;</td></tr>\n";
 
     $subquestions = get_records_list("survey_questions", "id", $question->multi);
 
     foreach ($subquestions as $q) {
         $qnum++;
-        $bgcolor = survey_question_color($qnum);
+        $rowclass = survey_question_rowclass($qnum);
 
         if ($q->text) {
             $q->text = get_string($q->text, "survey");
         }
 
-        echo "<tr bgcolor=\"$bgcolor\">";
+        echo "<tr class=\"$rowclass\">";
         if ($oneanswer) {
             echo "<td width=\"10\" valign=\"top\"><b>$qnum</b></td>";
             echo "<td valign=\"top\">$q->text</td>";
@@ -411,15 +410,15 @@ function survey_print_multi($question) {
             for ($i=1;$i<=$numoptions;$i++) {
                 echo "<td width=\"10%\" align=\"center\"><input type=\"radio\" name=\"qP$q->id\" value=\"$i\" alt=\"$i\"/></td>";
             }
-            echo "<td bgcolor=\"$THEME->body\"><input type=\"radio\" name=\"qP$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
+            echo "<td><input type=\"radio\" name=\"qP$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
             echo "</tr>";
 
-            echo "<tr bgcolor=\"$bgcolor\">";
+            echo "<tr class=\"$rowclass\">";
             echo "<td width=\"10%\" nowrap=\"nowrap\"><font size=\"1\">$strifoundthat&nbsp;</font></td>";
             for ($i=1;$i<=$numoptions;$i++) {
                 echo "<td width=\"10%\" align=\"center\"><input type=\"radio\" name=\"q$q->id\" value=\"$i\" alt=\"$i\" /></td>";
             }
-            echo "<td width=\"5%\" bgcolor=\"$THEME->body\"><input type=\"radio\" name=\"q$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
+            echo "<td width=\"5%\"><input type=\"radio\" name=\"q$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
             $checklist["qP$q->id"] = $numoptions;
             $checklist["q$q->id"] = $numoptions;
         }
@@ -433,13 +432,13 @@ function survey_print_multi($question) {
 function survey_print_single($question) {
     GLOBAL $db, $qnum;
 
-    $bgcolor = survey_question_color(0);
+    $rowclass = survey_question_rowclass(0);
 
     $qnum++;
 
     echo "<br />\n";
     echo "<table align=\"center\" width=\"90%\" cellpadding=\"4\" cellspacing=\"0\">\n";
-    echo "<tr bgcolor=\"$bgcolor\">";
+    echo "<tr class=\"$rowclass\">";
     echo "<td valign=\"top\"><b>$qnum</b></td>";
     echo "<td width=\"50%\" valign=\"top\">$question->text</td>\n";
     echo "<td width=\"50%\" valign=\"top\"><font size=\"+1\">\n";
@@ -468,14 +467,12 @@ function survey_print_single($question) {
 
 }
 
-function survey_question_color($qnum) {
-    global $THEME;
+function survey_question_rowclass($qnum) {
 
     if ($qnum) {
-        return $qnum % 2 ? $THEME->cellcontent : $THEME->cellcontent2;
-        //return $qnum % 2 ? "#CCFFCC" : "#CCFFFF";
+        return $qnum % 2 ? 'r0' : 'r1';
     } else {
-        return $THEME->cellcontent;
+        return 'r0';
     }
 }
 
