@@ -7,7 +7,12 @@
     optional_variable($eid,0);
     optional_variable($displayformat,-1);
 
-    print_header();
+    if (!empty($courseid)) {
+        require_login($courseid);
+    }
+
+    print_header();    // Needs to be something here to allow linking back to the whole glossary
+
     if ( $eid ) {
         $entries = get_records_sql("select e.* from {$CFG->prefix}glossary_entries e, {$CFG->prefix}glossary g".
                                   " where (e.id = $eid)");
