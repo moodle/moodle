@@ -134,10 +134,15 @@ update -dP</strong> </pre>
       </ol>
     </ol>
   </blockquote>
-  <h2><a name="4" id="4"></a>4. Working with Branching</h2>
+  <h2><a name="4" id="4"></a>4. Working with Branches</h2>
   <blockquote>
     <p>This diagram shows how the main <strong>moodle</strong> module branches into different versions over time.</p>
     <p align="center"><img src="pix/cvstree.png" width="500" height="200"></p>
+    <p align="left">To see all the current tags and branches that are available, use this command on any old file (such as index.php in the top moodle directory):</p>
+    <blockquote>
+      <pre><strong>cvs status -v index.php</strong></pre>
+    </blockquote>
+	<br />	
     <h3><a name="4.1" id="4.1"></a>4.1 Trunk development</h3>
     <p>The Trunk of CVS is the main development version of Moodle. In CVS it is also known as the <span class="style4">HEAD</span>, or default branch.</p>
     <p>Moodle developers try to keep this stable as possible, but as it usually contains new code it probably has bugs and small instabilities.</p>
