@@ -468,8 +468,9 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
     }
 
     foreach ($options as $value => $label) {
-        if (substr($label,0,1) == "-") {
-            $output .= "   <option value=\"\"";
+        if (substr($label,0,2) == "--") {
+            $output .= "   <optgroup label=\"$label\"></optgroup>";   // Plain labels
+            continue;
         } else {
             $output .= "   <option value=\"$common$value\"";
             if ($value == $selected) {
