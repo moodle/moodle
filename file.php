@@ -89,7 +89,8 @@
             }
         }
     } else {
-        error("Sorry, but the file you are looking for was not found ($pathname)", "course/view.php?id=$courseid");
+        error("Sorry, but the file you are looking for was not found ($pathname)", 
+              "$CFG->wwwroot/course/view.php?id=$courseid");
     }
 
     exit;
