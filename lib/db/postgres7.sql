@@ -40,7 +40,7 @@ CREATE TABLE prefix_course (
    timemodified integer NOT NULL default '0'
 );
 
-CREATE INDEX prefix_course_category_sortorder_uk ON prefix_course (category,sortorder);
+CREATE UNIQUE INDEX prefix_course_category_sortorder_uk ON prefix_course (category,sortorder);
 CREATE INDEX prefix_course_idnumber_idx ON prefix_course (idnumber);
 CREATE INDEX prefix_course_shortname_idx ON prefix_course (shortname);
 
@@ -252,6 +252,7 @@ CREATE TABLE prefix_user (
    CONSTRAINT prefix_user_username_uk UNIQUE (username)
 );
 
+CREATE UNIQUE INDEX prefix_user_username_uk ON prefix_user (username);
 CREATE INDEX prefix_user_idnumber_idx ON prefix_user (idnumber);
 CREATE INDEX prefix_user_auth_idx ON prefix_user (auth);
 CREATE INDEX prefix_user_deleted_idx ON prefix_user (deleted);

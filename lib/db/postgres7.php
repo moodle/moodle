@@ -678,7 +678,8 @@ function main_upgrade($oldversion=0) {
         }
         flush();
         
-        modify_database('','DROP INDEX prefix_user_students_courseuserid_idx;');
+        execute_sql("DROP INDEX {$CFG->prefix}user_students_courseuserid_idx ", false);
+        execute_sql("DROP INDEX {$CFG->prefix}user_students_courseuserid_uk  ", false);
         modify_database('','CREATE UNIQUE INDEX prefix_user_students_courseuserid_uk ON prefix_user_students (course,userid);');        
 
         /// Delete duplicate teacher enrolments 
@@ -691,9 +692,22 @@ function main_upgrade($oldversion=0) {
             }
         }
         flush();
-        
-        modify_database('','DROP INDEX prefix_user_teachers_courseuserid_idx;');
+
+        execute_sql("DROP INDEX {$CFG->prefix}user_teachers_courseuserid_idx ", false);
+        execute_sql("DROP INDEX {$CFG->prefix}user_teachers_courseuserid_uk  ", false);
         modify_database('','CREATE UNIQUE INDEX prefix_user_teachers_courseuserid_uk ON prefix_user_teachers (course,userid);');        
+
+        // some postgres databases may have a non-unique index mislabeled unique.
+        fix_course_sortorder(0,0,1);
+        execute_sql("DROP INDEX {$CFG->prefix}course_category_sortorder_uk  ", false);
+        execute_sql("DROP INDEX {$CFG->prefix}course_category_idx  ", false);
+        modify_database('', "CREATE UNIQUE INDEX prefix_course_category_sortorder_uk ON prefix_course(category,sortorder);");
+        
+        // odd! username was missing its unique index!
+        // first silently drop it just in case...
+        execute_sql("DROP INDEX {$CFG->prefix}user_username_uk", false);
+        modify_database('', "CREATE UNIQUE INDEX prefix_user_username_uk ON prefix_user (username);");
+
     } 
     
     return $result;
