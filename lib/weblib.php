@@ -725,7 +725,7 @@ function print_footer ($course=NULL) {
             $homelink = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
         }
     } else {
-        $homelink = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot\">".get_string("home")."</a>";
+        $homelink = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/\">".get_string("home")."</a>";
         $course = get_site();
     }
 
@@ -1079,6 +1079,17 @@ function update_module_button($moduleid, $courseid, $string) {
     }
 }
 
+function update_category_button($categoryid) {
+// Prints the editing button on a module "view" page
+    global $CFG;
+
+    if (isadmin()) {
+        $string = get_string("editthiscategory");
+        return "<form target=_parent method=get action=\"$CFG->wwwroot/course/category.php\">".
+               "<input type=hidden name=id value=\"$categoryid\">".
+               "<input type=submit value=\"$string\"></form>";
+    }
+}
 
 function navmenu($course, $cm=NULL) {
 // Given a course and a (current) coursemodule
@@ -1184,7 +1195,7 @@ function error ($message, $link="") {
             $link = "$SESSION->fromurl";
             unset($SESSION->fromurl);
         } else {
-            $link = "$CFG->wwwroot";
+            $link = "$CFG->wwwroot/";
         }
     }
     print_continue($link);
@@ -1245,7 +1256,7 @@ function notice ($message, $link="") {
         if (!empty($_SERVER["HTTP_REFERER"])) {
             $link = $_SERVER["HTTP_REFERER"];
         } else {
-            $link = $CFG->wwwroot;
+            $link = "$CFG->wwwroot/";
         }
     }
 

@@ -44,6 +44,8 @@
 
             $form->timemodified = time();
 
+            fix_category_courses($form->category);
+
             if (!empty($course)) {
                 if (update_record("course", $form)) {
                     add_to_log($course->id, "course", "update", "edit.php?id=$id", "");

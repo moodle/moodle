@@ -34,7 +34,7 @@
 
         if ($user->id == $USER->id) {
             unset($USER->student["$id"]);
-            redirect("$CFG->wwwroot");
+            redirect("$CFG->wwwroot/");
         }
         
         redirect("$CFG->wwwroot/user/index.php?id=$course->id");

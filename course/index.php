@@ -4,53 +4,44 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    optional_variable($category, "");
+    optional_variable($category, "0");
 
     $strcourses = get_string("courses");
     $strcategories = get_string("categories");
     $strmycourses = get_string("mycourses");
     $strfulllistofcourses = get_string("fulllistofcourses");
 
-    if (!$categories = get_categories()) {
-        error("Could not find any course categories!");
-    }
+    if ($category = get_record("course_categories", "id", $category)) {
+        print_header($strcourses, $strcourses, "<a href=\"index.php\">$strcourses</a> -> $category->name",
+                     "", "", true, update_category_button($category->id));
 
-    if ($category == "all") {
-        $title = $strfulllistofcourses;
-        $navigation = "<A HREF=\"index.php\">$strcourses</A> -> $title";
-    } else if ($category == "my") {
-        $title = $strmycourses;
-        $navigation = "<A HREF=\"index.php\">$strcourses</A> -> $title";
-    } else if (isset($categories[$category])) {
-        $title = $categories[$category]->name;
-        $navigation = "<A HREF=\"index.php\">$strcourses</A> -> $title";
     } else {
-        $navigation = $strcourses;
+        print_header($strcourses, $strcourses, $strcourses);
+        $category->id = 0;
     }
 
-    print_header($strcourses, $strcourses, $navigation);
 
-    $showcategories = (count($categories) > 1);
-    if ($showcategories) {
-        echo "<TABLE WIDTH=\"100%\" CELLPADDING=\"8\" BORDER=\"0\">";
-        echo "<TR><TD WIDTH=\"200\" VALIGN=\"TOP\">";
-        print_course_categories($categories, $category, 200);
-        echo "</TD><TD WIDTH=\"*\" VALIGN=\"TOP\">";
+/// Print the category selector
+
+    $categories = get_categories();
+    $multicategories = count($categories) > 1;
+
+    if (count($categories) > 1) {
+        $parentlist = array();
+        $displaylist = array();
+        $displaylist["0"] = $strfulllistofcourses;
+        make_categories_list($displaylist, $parentlist, "");
+    
+        echo "<table align=center><tr><td>";
+        popup_form("index.php?category=", $displaylist, "switchcategory", "$category->id", "", "", "", false);
+        echo "</td></tr></table><br />";
+    }
+
+    if (empty($category->id)) {
+        print_courses(0, "80%");
     } else {
-        echo "<TABLE WIDTH=80% ALIGN=CENTER><TR><TD VALIGN=top>";
-        $category="all";
-        unset($title);
+        print_courses($category, "80%");
     }
-
-    if ($category) {
-        if (isset($title)) {
-            print_heading_block($title);
-        }
-        echo "<BR>";
-        print_all_courses($category);
-    }
-
-    echo "</TD></TR></TABLE>";
 
     print_footer();
 

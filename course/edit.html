@@ -52,7 +52,9 @@
 <tr valign=top>
 	<td><P><? print_string("category") ?>:</td>
 	<td><? 
-           choose_from_menu ($form->categories, "category", "$form->category", "");
+           $displaylist = array();
+           make_categories_list($displaylist);
+           choose_from_menu($displaylist, "category", "$form->category", "");
            helpbutton("coursecategory", get_string("category"));
         ?>
 	</td>

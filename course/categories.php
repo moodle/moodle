@@ -7,7 +7,7 @@
     require_login();
 
     if (!isadmin()) {
-        error("Only administrators can use this course!");
+        error("Only administrators can use this page!");
     }
 
     if (!$site = get_site()) {
@@ -24,80 +24,146 @@
     $stredit = get_string("edit");
     $strdelete = get_string("delete");
     $straction = get_string("action");
-    $stradd = get_string("add");
+    $straddnewcategory = get_string("addnewcategory");
 
 	print_header("$site->shortname: $strcategories", "$site->fullname", 
-                 "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> $strcategories");
+                 "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> $strcategories",
+                 "addform.addcategory");
 
-    print_heading($strcategories);
 
-/// If data submitted, then process and store.
-
-	if ($form = data_submitted()) {
-
-        $categories = array();
-
-        // Peel out all the data from variable names.
-        foreach ($form as $key => $val) {
-            if ($key == "new") {
-                if (!empty($val)) {
-                    if (get_records("course_categories", "name", $val)) {
-                        notify(get_string("categoryduplicate", "", $val));
-                    } else {
-                        $cat->name = $val;
-                        if (!insert_record("course_categories", $cat)) {
-                            error("Could not insert the new category '$val'");
-                        } else {
-                            notify(get_string("categoryadded", "", $val));
-                        }
-                    }
-                }
-            
+/// If data for a new category was submitted, then add it
+    if ($form = data_submitted()) {
+        if (!empty($form->addcategory)) {
+            unset($newcategory);
+            $newcategory->name = $form->addcategory;
+            $newcategory->sortorder = 999;
+            if (!insert_record("course_categories", $newcategory)) {
+                notify("Could not insert the new category '$newcategory->name'");
             } else {
-                $cat->id   = substr($key,1);
-                $cat->name = $val;
+                notify(get_string("categoryadded", "", $newcategory->name));
+            }
+        }
+    }
 
-                if ($existingcats = get_records("course_categories", "name", $val)) {
-                    foreach($existingcats as $existingcat) {
-                        if ($existingcat->id != $cat->id) {
-                            notify(get_string("categoryduplicate", "", $val));
-                            continue 2;
-                        }
+
+/// Delete a category if necessary
+
+    if (isset($delete)) {
+        if ($tempcat = get_record("course_categories", "id", $delete)) {
+            if (delete_records("course_categories", "id", $tempcat->id)) {
+                notify(get_string("categorydeleted", "", $tempcat->name));
+            }
+            if ($children = get_records("course_categories", "parent", $tempcat->id)) {
+                foreach ($children as $childcat) {
+                    if (! set_field("course_categories", "parent", $tempcat->parent, "id", $childcat->id)) {
+                        notify("Could not update a child category!");
                     }
-                }
-
-                if (!update_record("course_categories", $cat)) {
-                    error("Could not update the category '$val'");
                 }
             }
         }
-	}
+    }
 
 
-/// Get the existing categories
-    if (!$categories = get_categories()) {
+/// Create a default category if necessary
+    if (!$categories = get_categories()) {    /// No category yet!
         // Try and make one
-        $cat->name = get_string("miscellaneous");
-        if ($cat->id = insert_record("course_categories", $cat)) {
-            $categories[$cat->id] = $cat;
-        } else {
+        unset($tempcat);
+        $tempcat->name = get_string("miscellaneous");
+        if (!$tempcat->id = insert_record("course_categories", $tempcat)) {
             error("Serious error: Could not create a default category!");
         }
     }
 
-/// Delete category if the user wants to delete it
-    if (isset($delete)) {
-        if (delete_records("course_categories", "id", $delete)) {
-            notify(get_string("categorydeleted", "", $categories[$delete]->name));
-            unset($categories[$delete]);
-        } else {
-            error("An error occurred while trying to delete a category");
+
+/// Move a category to a new parent if required
+
+    if (isset($move) and isset($moveto)) {
+        if ($tempcat = get_record("course_categories", "id", $move)) {
+            if ($tempcat->parent != $moveto) {
+                if (! set_field("course_categories", "parent", $moveto, "id", $tempcat->id)) {
+                    notify("Could not update that category!");
+                }
+            }
         }
     }
 
-/// Find lowest ID category - this is the default category
+
+/// Hide or show a category 
+    if (isset($hide) or isset($show)) {
+        if (isset($hide)) {
+            $tempcat = get_record("course_categories", "id", $hide);
+            $visible = 0;
+        } else {
+            $tempcat = get_record("course_categories", "id", $show);
+            $visible = 1;
+        }
+        if ($tempcat) {
+            if (! set_field("course_categories", "visible", $visible, "id", $tempcat->id)) {
+                notify("Could not update that category!");
+            }
+            if (! set_field("course", "visible", $visible, "category", $tempcat->id)) {
+                notify("Could not hide/show any courses in this category !");
+            }
+        }
+    }
+
+
+/// Move a category up or down
+
+    if (isset($moveup) or isset($movedown)) {
+        
+        $swapcategory = NULL;
+        $movecategory = NULL;
+
+        if (isset($moveup)) {
+            if ($movecategory = get_record("course_categories", "id", $moveup)) {
+                $categories = get_categories("$movecategory->parent");
+
+                foreach ($categories as $category) {
+                    if ($category->id == $movecategory->id) {
+                        break;
+                    }
+                    $swapcategory = $category;
+                }
+            }
+        }
+        if (isset($movedown)) {
+            if ($movecategory = get_record("course_categories", "id", $movedown)) {
+                $categories = get_categories("$movecategory->parent");
+
+                $choosenext = false;
+                foreach ($categories as $category) {
+                    if ($choosenext) {
+                        $swapcategory = $category;
+                        break;
+                    }
+                    if ($category->id == $movecategory->id) {
+                        $choosenext = true;
+                    }
+                }
+            }
+        }
+        if ($swapcategory and $movecategory) {        // Renumber everything for robustness
+            $count=0;
+            foreach ($categories as $category) {
+                $count++;
+                if ($category->id == $swapcategory->id) {
+                    $category = $movecategory;
+                } else if ($category->id == $movecategory->id) {
+                    $category = $swapcategory;
+                }
+                if (! set_field("course_categories", "sortorder", $count, "id", $category->id)) {
+                    notify("Could not update that category!");
+                }
+            }
+        }
+    }
+
+/// Find the default category (the one with the lowest ID)
+    $categories = get_categories();
     $default = 99999;
     foreach ($categories as $category) {
+        fix_category_courses($category->id);
         if ($category->id < $default) {
             $default = $category->id;
         }
@@ -112,30 +178,141 @@
         }
     }
 
+/// Print form for creating new categories
 
-/// Print the table of all categories
-    $table->head  = array ($strcategory, $strcourses, $straction);
-    $table->align = array ("LEFT", "CENTER", "CENTER");
-    $table->size = array ("80", "50", "50");
-    $table->width = 100;
+    print_simple_box_start("center");
+    echo "<center>";
+    echo "<form name=\"addform\" action=\"categories.php\" method=\"post\">";
+    echo "<input type=\"text\" size=55 name=\"addcategory\">";
+    echo "<input type=\"submit\" value=\"$straddnewcategory\">";
+    echo "</form>";
+    echo "</center>";
+    print_simple_box_end();
 
-    echo "<FORM ACTION=categories.php METHOD=post>";
-    foreach ($categories as $category) {
-        $count = count_records("course", "category", $category->id);
-        if ($category->id == $default) { 
-            $delete = "";  // Can't delete default category
-        } else {
-            $delete = "<A HREF=\"categories.php?delete=$category->id\">$strdelete</A>";
-        }
-        $table->data[] = array ("<INPUT TYPE=text NAME=\"c$category->id\" VALUE=\"$category->name\" SIZE=30>",
-                                "<A HREF=\"index.php?category=$category->id\">$count</A>", $delete);
-    }
-    $table->data[] = array ("<INPUT TYPE=text NAME=\"new\" VALUE=\"\" SIZE=30>", "", "$stradd");
-    print_table($table);
-    echo "<CENTER><BR><INPUT TYPE=submit VALUE=\"".get_string("savechanges")."\"> ";
-    echo "</CENTER>";
-    echo "</FORM>";
+    echo "<br />";
+
+
+/// Print out the categories with all the knobs
+
+    $strcategories = get_string("categories");
+    $strmovecategoryto = get_string("movecategoryto");
+    $stredit = get_string("edit");
+
+    $displaylist = array();
+    $parentlist = array();
+
+    $displaylist[0] = get_string("top");
+    make_categories_list($displaylist, $parentlist, "");
+
+    echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=5 class=\"generalbox\"><tr>";
+    echo "<th>$strcategories</th>";
+    echo "<th>$stredit</th>";
+    echo "<th>$strmovecategoryto</th>";
+
+    print_category_edit(NULL, $displaylist, $parentlist);
+
+    echo "</table>";
+
 
     print_footer();
+
+
+
+function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $up=false, $down=false) {
+/// Recursive function to print all the categories ready for editing
+
+    global $THEME, $CFG;
+
+    static $str = '';
+    static $pixpath = '';
+    
+    if (empty($str)) {
+        $str->delete   = get_string("delete");
+        $str->moveup   = get_string("moveup");
+        $str->movedown = get_string("movedown");
+        $str->edit     = get_string("editthiscategory");
+        $str->hide     = get_string("hide");
+        $str->show     = get_string("show");
+    }
+    
+    if (empty($pixpath)) {
+        if (empty($THEME->custompix)) {
+            $pixpath = "$CFG->wwwroot/pix";
+        } else {
+            $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
+        }
+    }
+
+    if ($category) {
+        echo "<tr><td align=\"left\" nowrap=\"nowrap\" bgcolor=\"$THEME->cellcontent\">";
+        echo "<p>";
+        for ($i=0; $i<$depth;$i++) {
+            echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+        }
+        $linkcss = $category->visible ? "" : " class=\"dimmed\" ";
+        echo "<a $linkcss title=\"$str->edit\" href=\"category.php?id=$category->id\">$category->name</a>";
+        echo "</p>";
+        echo "</td>";
+
+        echo "<td nowrap=\"nowrap\">";    /// Print little icons
+
+        if (!empty($category->visible)) {
+            echo "<a title=\"$str->hide\" href=\"categories.php?hide=$category->id\"><img".
+                 " src=\"$pixpath/t/hide.gif\" height=11 width=11 border=0></a> ";
+        } else {
+            echo "<a title=\"$str->show\" href=\"categories.php?show=$category->id\"><img".
+                 " src=\"$pixpath/t/show.gif\" height=11 width=11 border=0></a> ";
+        }
+
+        echo "<a title=\"$str->delete\" href=\"categories.php?delete=$category->id\"><img".
+             " src=\"$pixpath/t/delete.gif\" height=11 width=11 border=0></a> ";
+
+        //echo "<a title=\"$str->update\" href=\"category.php?id=$category->id\"><img".
+        //     " src=\"$pixpath/t/edit.gif\" height=11 width=11 border=0></a> ";
+
+        if ($up) {
+            echo "<a title=\"$str->moveup\" href=\"categories.php?moveup=$category->id\"><img".
+                 " src=\"$pixpath/t/up.gif\" height=11 width=11 border=0></a> ";
+        }
+        if ($down) {
+            echo "<a title=\"$str->movedown\" href=\"categories.php?movedown=$category->id\"><img".
+                 " src=\"$pixpath/t/down.gif\" height=11 width=11 border=0></a> ";
+        }
+        echo "</td>";
+
+        echo "<td align=\"left\" width=\"0\">";
+        $tempdisplaylist = $displaylist;
+        unset($tempdisplaylist[$category->id]);
+        foreach ($parentslist as $key => $parents) {
+            if (in_array($category->id, $parents)) {
+                unset($tempdisplaylist[$key]);
+            }
+        }
+        popup_form ("categories.php?move=$category->id&moveto=", $tempdisplaylist, "moveform$category->id", "$category->parent", "", "", "", false);
+        echo "</td>";
+        echo "</tr>";
+    } else {
+        $category->id = "0";
+    }
+
+    if ($categories = get_categories($category->id)) {   // Print all the children recursively
+        $countcats = count($categories);
+        $count = 0;
+        $first = true;
+        $last = false;
+        foreach ($categories as $cat) {
+            $count++;
+            if ($count == $countcats) {
+                $last = true;
+            }
+            $up = $first ? false : true;
+            $down = $last ? false : true;
+            $first = false;
+
+            print_category_edit($cat, $displaylist, $parentslist, $depth+1, $up, $down);         
+        }
+    }
+}
+
 
 ?>

@@ -83,6 +83,9 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
         case "mysqlt":
 
             switch (strtolower($type)) {
+                case "text":
+                    $type = "TEXT";
+                    break;
                 case "integer":
                     $type = "INTEGER($size)";
                     break;
@@ -821,16 +824,24 @@ function get_site () {
 
 
 function get_courses($category=0, $sort="fullname ASC") {
-/// Returns list of courses
+/// Returns list of courses, for whole site, or category
 
-    if ($category > 0) {          // Return all courses in one category
-        $courses = get_records("course", "category", $category, $sort);
+    if ($category === 0) {         // Return all courses, except site
+        $courses = get_records_select("course", "category > 0", $sort);
 
-    } else if ($category < 0) {   // Return all courses, even the site
+    } else if ($category === -1) { // Return all courses, even the site
         $courses = get_records("course", "", "", $sort);
 
-    } else {                      // Return all courses, except site
-        $courses = get_records_select("course", "category > 0", $sort);
+    } else {                       // $category is an object
+        $courses = get_records("course", "category", $category->id);
+        if ($courses) {      // Reorder them
+            $courselist = explode(',', $category->courseorder);
+            $outcourses = array();
+            foreach ($courselist as $courseid) {
+                $outcourses[] = $courses[$courseid];
+            }
+            $courses = $outcourses;
+        }
     }
 
     if ($courses) {  /// Remove unavailable courses from the list
@@ -845,8 +856,37 @@ function get_courses($category=0, $sort="fullname ASC") {
     return $courses;
 }
 
-function get_categories() {
-    return get_records("course_categories", "", "", "name");
+function get_my_courses($userid, $sort="c.fullname ASC") {
+    global $CFG;
+
+    return get_records_sql("SELECT c.* 
+                              FROM {$CFG->prefix}course c, 
+                                   {$CFG->prefix}user_students s, 
+                                   {$CFG->prefix}user_teachers t 
+                             WHERE (s.userid = '$userid' AND s.course = c.id)
+                                OR (t.userid = '$userid' AND t.course = c.id)
+                             GROUP BY c.id 
+                             ORDER BY $sort");
+}
+
+
+function get_categories($parent="none", $sort="sortorder ASC") {
+    if ($parent == "none") {
+        $categories = get_records("course_categories", "", "", $sort);
+    } else {
+        $categories = get_records("course_categories", "parent", $parent, $sort);
+    }
+    if ($categories) {  /// Remove unavailable categories from the list
+        $admin = isadmin();
+        foreach ($categories as $key => $category) {
+            if (!$category->visible) {
+                if (!$admin) {
+                    unset($categories[$key]);
+                }
+            }
+        }
+    }
+    return $categories;
 }
 
 

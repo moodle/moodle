@@ -14,6 +14,9 @@ define('COURSE_LIVELOG_REFRESH', 60);        // Seconds
 
 define('COURSE_MAX_RECENT_PERIOD', 604800);   // A week, in seconds
 
+define("FRONTPAGENEWS",           0);
+define("FRONTPAGECOURSELIST",     1);
+define("FRONTPAGECATEGORYNAMES",  2);
 
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate="today") {
@@ -189,114 +192,16 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
 }
 
 
-function print_all_courses($category="all", $style="full", $maxcount=999, $width=180) {
-    global $CFG, $THEME, $USER;
-
-    if ($category == "all") {
-        $courses = get_courses();
-
-    } else if ($category == "my") {
-        if (isset($USER->id)) {
-            if ($courses = get_courses()) {
-                foreach ($courses as $key => $course) {
-                    if (!isteacher($course->id) and !isstudent($course->id)) {
-                        unset($courses[$key]);
-                    }
-                }
-            }
-        }
-
+function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
+    global $CFG;
+    if (empty($CFG->gdversion)) {
+        echo "(".get_string("gdneed").")";
     } else {
-        $courses = get_courses($category);
-    }
-
-    if ($style == "minimal") {
-        $count = 0;
-        if (empty($THEME->custompix)) {
-            $icon  = "<img src=\"$CFG->wwwroot/pix/i/course.gif\" height=16 width=16 alt=\"".get_string("course")."\">";
-        } else {
-            $icon  = "<img src=\"$CFG->wwwroot/theme/$CFG->theme/pix/i/course.gif\" height=16 width=16 alt=\"".get_string("course")."\">";
-        }
-        if ($courses) {
-            foreach ($courses as $course) {
-                $moddata[]="<a title=\"$course->shortname\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
-                $modicon[]=$icon;
-                if ($count++ >= $maxcount) {
-                    break;
-                }
-            }   
-            $fulllist = "<p><a href=\"$CFG->wwwroot/course/\">".get_string("fulllistofcourses")."</a>...";
-        } else {
-            $moddata = array();
-            $modicon = array();
-            $fulllist = get_string("nocoursesyet");
-        }
-        print_side_block(get_string("courses"), "", $moddata, $modicon, $fulllist, $width);
-
-    } else if ($courses) {
-        foreach ($courses as $course) {
-            print_course($course);
-            echo "<br />\n";
-        }
-
-    } else {
-        echo "<p>".get_string("nocoursesyet")."</p>";
+        echo "<IMG BORDER=0 SRC=\"$CFG->wwwroot/course/loggraph.php?id=$course->id&user=$userid&type=$type&date=$date\">";
     }
 }
 
 
-function print_course($course) {
-
-    global $CFG, $THEME;
-
-    if (! $site = get_site()) {
-        error("Could not find a site!");
-    }
-
-    if (empty($THEME->custompix)) {
-        $pixpath = "$CFG->wwwroot/pix";
-    } else {
-        $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
-    }
-
-    print_simple_box_start("CENTER", "100%");
-
-    echo "<TABLE WIDTH=100%>";
-    echo "<TR VALIGN=top>";
-    echo "<TD VALIGN=top WIDTH=50%>";
-    echo "<P><FONT SIZE=3><B><A TITLE=\"".get_string("entercourse")."\" 
-              HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A></B></FONT></P>";
-    if ($teachers = get_course_teachers($course->id)) {
-        echo "<P><FONT SIZE=1>\n";
-        foreach ($teachers as $teacher) {
-            if ($teacher->authority > 0) {
-                if (!$teacher->role) {
-                    $teacher->role = $course->teacher;
-                }
-                echo "$teacher->role: <A HREF=\"$CFG->wwwroot/user/view.php?id=$teacher->id&course=$site->id\">$teacher->firstname $teacher->lastname</A><BR>";
-            }
-        }
-        echo "</FONT></P>";
-    }
-    if ($course->guest) {
-        $strallowguests = get_string("allowguests");
-        echo "<A TITLE=\"$strallowguests\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-        echo "<IMG VSPACE=4 ALT=\"$strallowguests\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"$pixpath/i/user.gif\"></A>&nbsp;&nbsp;";
-    }
-    if ($course->password) {
-        $strrequireskey = get_string("requireskey");
-        echo "<A TITLE=\"$strrequireskey\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-        echo "<IMG VSPACE=4 ALT=\"$strrequireskey\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"$pixpath/i/key.gif\"></A>";
-    }
-
-
-    echo "</TD><TD VALIGN=top WIDTH=50%>";
-    echo "<P><FONT SIZE=2>".text_to_html($course->summary)."</FONT></P>";
-    echo "</TD></TR>";
-    echo "</TABLE>";
-
-    print_simple_box_end();
-}
 
 function print_recent_activity($course) {
     // $course is an object
@@ -593,7 +498,7 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
             }
             if ($mod->visible or $isteacher) {
                 $instancename = urldecode($modinfo[$modnumber]->name);
-                $link_css = $mod->visible ? "" : " class=\"dimmed\" ";
+                $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
                 if (!empty($modinfo[$modnumber]->extra)) {
                     $extra = urldecode($modinfo[$modnumber]->extra);
                 } else {
@@ -602,7 +507,7 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
 
                 $modicon[] = "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\"".
                              " height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
-                $moddata[] = "<a title=\"$mod->modfullname\" $link_css $extra".
+                $moddata[] = "<a title=\"$mod->modfullname\" $linkcss $extra".
                              "href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a>".
                              "<br />$editbuttons";
             }
@@ -670,10 +575,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 } else {
                     $extra = "";
                 }
-                $link_css = $mod->visible ? "" : " class=\"dimmed\" ";
+                $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
                 echo "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\"".
                      " height=16 width=16 alt=\"$mod->modfullname\">".
-                     " <font size=2><a title=\"$mod->modfullname\" $link_css $extra".
+                     " <font size=2><a title=\"$mod->modfullname\" $linkcss $extra".
                      " href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a></font>";
             }
             if (isediting($course->id)) {
@@ -893,9 +798,127 @@ function print_course_admin_links($course, $width=180) {
     print_side_block(get_string("administration"), "", $admindata, $adminicon, "", $width);
 }
 
-function print_course_categories($categories, $selected="none", $width=180) {
-    global $CFG, $THEME, $USER;
-    
+
+function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
+/// Given an empty array, this function recursively travels the 
+/// categories, building up a nice list for display.  It also makes
+/// an array that list all the parents for each category.
+
+    if ($category) {
+        if ($path) {
+            $path = "$path / $category->name";
+        } else {
+            $path = "$category->name";
+        }
+        $list[$category->id] = $path;
+    } else {
+        $category->id = 0;
+    }
+
+    if ($categories = get_categories("$category->id")) {   // Print all the children recursively
+        foreach ($categories as $cat) {
+            if (!empty($category->id)) {
+                $parents[$cat->id]   = $parents[$category->id];
+                $parents[$cat->id][] = $category->id;
+            }
+            make_categories_list($list, &$parents, $cat, $path);         
+        }
+    }
+}
+
+
+function fix_category_courses($categoryid) {
+/// Given a category, this function makes sure the courseorder 
+/// variable reflects the real world.
+
+    if (!$category = get_record("course_categories", "id", $categoryid)) {
+        return false;
+    }
+
+    $catcourseschanged = false;
+
+    if (trim($category->courseorder)) {
+        $catcourses = explode(',', $category->courseorder);
+    } else {
+        $catcourses = array();
+    }
+    $courses = get_records("course", "category", $category->id);
+
+    if ($catcourses) {
+        foreach ($catcourses as $key => $catcourse) {  // Look for missing courses
+            if (!isset($courses[$catcourse])) {
+                $catcourseschanged = true;
+                unset($catcourses[$key]);
+            }
+        }
+    }
+    if ($courses) {
+        foreach ($courses as $course) {
+            if (!in_array($course->id, $catcourses)) {
+                $catcourseschanged = true;
+                $catcourses[] = $course->id;
+            }
+        }
+    }
+    if ($catcourseschanged) {
+        $category->courseorder = implode(',', $catcourses);
+        return set_field("course_categories", "courseorder", $category->courseorder, "id", $category->id);
+    }
+    return true;
+}
+
+
+
+function print_whole_category_list($category=NULL, $displaylist=NULL, $parentslist=NULL, $depth=-1) {
+/// Recursive function to print out all the categories in a nice format 
+/// with or without courses included
+
+    if (!$displaylist) {
+        make_categories_list(&$displaylist, &$parentslist);
+    }
+
+    if ($category) {
+        if ($category->visible or isadmin()) {
+            print_category_box($category, $depth);
+        } else {
+            return;  // Don't bother printing children of invisible categories
+        }
+        
+    } else {
+        print_simple_box_start("center", "100%");
+        $category->id = "0";
+    }
+
+    if ($categories = get_categories($category->id)) {   // Print all the children recursively
+        $countcats = count($categories);
+        $count = 0;
+        $first = true;
+        $last = false;
+        foreach ($categories as $cat) {
+            $count++;
+            if ($count == $countcats) {
+                $last = true;
+            }
+            $up = $first ? false : true;
+            $down = $last ? false : true;
+            $first = false;
+
+            print_whole_category_list($cat, $displaylist, $parentslist, $depth + 1);         
+        }
+    }
+
+    if ($category->id == "0") {
+        print_simple_box_end();
+    }
+}
+
+
+
+function print_category_box($category, $depth) {
+/// Prints the category box in indented fashion
+
+    global $CFG;
+
     $strallowguests = get_string("allowguests");
     $strrequireskey = get_string("requireskey");
 
@@ -905,84 +928,189 @@ function print_course_categories($categories, $selected="none", $width=180) {
         $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
     }
 
-    if ($selected == "index") {  // Print comprehensive index of categories with courses
-        if ($courses = get_courses()) {
-            if (isset($USER->id) and !isadmin()) {
-                print_simple_box_start("CENTER", "100%", $THEME->cellheading);
-                print_heading("<a href=\"course/index.php?category=my\">".get_string("mycourses")."</a>", "left");
-                $some = false;
-                echo "<ul>";
-                foreach ($courses as $key => $course) {
-                    if (isteacher($course->id) or isstudent($course->id)) {
-                        echo "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
-                        echo "<br />";
-                        $some = true;
-                    }
-                }
-                if (!$some) {
-                    print_string("nocoursesyet");
-                }
-                echo "</ul>";
-                print_simple_box_end();
-                print_spacer(8,1);
-            }
-            foreach ($categories as $category) {
-                print_simple_box_start("CENTER", "100%");
-                print_heading("<a href=\"course/index.php?category=$category->id\">$category->name</a>", "left");
-                $some = false;
-                echo "<ul>";
-                foreach ($courses as $key => $course) {
-                    if ($course->category == $category->id) {
-                        echo "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
-                        echo "&nbsp;&nbsp;";
-                        unset($courses[$key]);
-                        if ($course->guest ) {
-                            echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                            echo "<img alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>";
-                        }
-                        if ($course->password) {
-                            echo "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                            echo "<img alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
-                        }
-                        echo "<br />";
-                        $some = true;
-                    }
-                }
-                if (!$some) {
-                    print_string("nocoursesyet");
-                }
-                echo "</ul>";
-                print_simple_box_end();
-                print_spacer(8,1);
-            }
-        }
+    $size = $depth * 40;
 
-    } else {                    // Print short list of categories only 
-        foreach ($categories as $cat) {
-            $caticon[]="<img src=\"$pixpath/i/course.gif\" height=16 width=16>";
-            if ($cat->id == $selected) {
-                $catdata[]="$cat->name";
-            } else {
-                $catdata[]="<a href=\"$CFG->wwwroot/course/index.php?category=$cat->id\">$cat->name</a>";
+    $catlinkcss = $category->visible ? "" : " class=\"dimmed\" ";
+
+    echo "<table class=\"categorybox\">";
+    echo "<tr>";
+    echo "<td width=\"$size\">";
+    echo print_spacer(1, $size);
+    echo "<td width=\"100%\">";
+    echo "<font size=+1><a $catlinkcss href=\"$CFG->wwwroot/course/index.php?category=$category->id\">$category->name</a></font>";
+    //echo "<font size=+1>$category->name</font>";
+    if ($CFG->frontpage == FRONTPAGECOURSELIST) {
+        if ($courses = get_courses($category)) {
+            echo "<ul>";
+            foreach ($courses as $course) {
+                $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
+                echo "<li><a $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
+                echo "&nbsp;&nbsp;";
+                unset($courses[$key]);
+                if ($course->guest ) {
+                    echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+                    echo "<img alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>";
+                }
+                if ($course->password) {
+                    echo "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+                    echo "<img alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
+                }
             }
+            echo "</ul>";
         }
-        $catdata[] = "<a href=\"$CFG->wwwroot/course/index.php?category=all\">".get_string("fulllistofcourses")."</a>";
-        $caticon[] = "";
-        if (isset($USER->id)) {
-            $catdata[] = "<a href=\"$CFG->wwwroot/course/index.php?category=my\">".get_string("mycourses")."</a>";
-            $caticon[] = "";
-        }
-        print_side_block(get_string("categories"), "", $catdata, $caticon, "", $width);
     }
+    echo "</td>";
+    echo "</tr>";
+    echo "</table>";
+
 }
 
-function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
-    global $CFG;
-    if (empty($CFG->gdversion)) {
-        echo "(".get_string("gdneed").")";
+function print_courses_sideblock($category=0, $width="100%") {
+    global $CFG, $THEME;
+
+    if (empty($THEME->custompix)) {
+        $icon  = "<img src=\"$CFG->wwwroot/pix/i/course.gif\"".
+                 " height=\"16\" width=\"16\" alt=\"".get_string("course")."\">";
     } else {
-        echo "<IMG BORDER=0 SRC=\"$CFG->wwwroot/course/loggraph.php?id=$course->id&user=$userid&type=$type&date=$date\">";
+        $icon  = "<img src=\"$CFG->wwwroot/theme/$CFG->theme/pix/i/course.gif\"".
+                 " height=\"16\" width=\"16\" alt=\"".get_string("course")."\">";
     }
+
+    $categories = get_categories(0);  // Parent = 0   ie top-level categories only
+    if (count($categories) > 1) {     // Just print top level category links
+        foreach ($categories as $category) {
+            $linkcss = $category->visible ? "" : " class=\"dimmed\" ";
+            $moddata[]="<a $linkcss href=\"$CFG->wwwroot/course/index.php?category=$category->id\">$category->name</a>";
+            $modicon[]=$icon;
+        }
+    } else {                          // Just print course names of single category
+        $courses = get_courses($category);
+        if ($courses) {
+            foreach ($courses as $course) {
+                $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
+                $moddata[]="<a $linkcss title=\"$course->shortname\" ".
+                           "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
+                $modicon[]=$icon;
+            }   
+            $fulllist = "<p><a href=\"$CFG->wwwroot/course/\">".get_string("fulllistofcourses")."</a>...";
+        } else {
+            $moddata = array();
+            $modicon = array();
+            $fulllist = get_string("nocoursesyet");
+        }
+    }
+
+    print_side_block(get_string("courses"), "", $moddata, $modicon, $fulllist, $width);
+}
+
+    
+function print_courses($category, $width="100%") {
+/// Category is 0 (for all courses) or an object
+
+    global $CFG, $THEME;
+
+    if (empty($category)) {
+        $categories = NULL;
+        $courses    = get_courses(0);
+    } else {
+        $categories = get_categories($category->id);  // sub categories
+        $courses    = get_courses($category);
+    }
+
+    if ($categories) {
+        print_simple_box_start("center");
+        print_heading(get_string("subcategories"));
+        foreach ($categories as $category) {
+            $linkcss = $category->visible ? "" : " class=\"dimmed\" ";
+            echo "<p align=\"center\"><a $linkcss".
+                 " href=\"$CFG->wwwroot/course/index.php?category=$category->id\">$category->name</a></p>";
+        }
+        print_simple_box_end();
+    }
+    
+    if ($courses) {
+        foreach ($courses as $course) {
+            print_course($course, $width);
+            echo "<br />\n";
+        }
+    } else {
+        print_heading(get_string("nocoursesyet"));
+    }
+
+}
+
+
+function print_course($course, $width="100%") {
+
+    global $CFG, $THEME;
+
+    if (! $site = get_site()) {
+        error("Could not find a site!");
+    }
+
+    if (empty($THEME->custompix)) {
+        $pixpath = "$CFG->wwwroot/pix";
+    } else {
+        $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
+    }
+
+    print_simple_box_start("center", "$width");
+
+    echo "<table width=\"100%\">";
+    echo "<tr valign=top>";
+    echo "<td valign=top width=50%>";
+    echo "<p><font size=3><b><a title=\"".get_string("entercourse")."\" 
+              href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a></b></font></p>";
+    if ($teachers = get_course_teachers($course->id)) {
+        echo "<p><font size=\"1\">\n";
+        foreach ($teachers as $teacher) {
+            if ($teacher->authority > 0) {
+                if (!$teacher->role) {
+                    $teacher->role = $course->teacher;
+                }
+                echo "$teacher->role: <a href=\"$CFG->wwwroot/user/view.php?id=$teacher->id&course=$site->id\">$teacher->firstname $teacher->lastname</a><br />";
+            }
+        }
+        echo "</font></p>";
+    }
+    if ($course->guest) {
+        $strallowguests = get_string("allowguests");
+        echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+        echo "<img vspace=4 alt=\"$strallowguests\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>&nbsp;&nbsp;";
+    }
+    if ($course->password) {
+        $strrequireskey = get_string("requireskey");
+        echo "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+        echo "<img vspace=4 alt=\"$strrequireskey\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
+    }
+
+
+    echo "</td><td valign=top width=50%>";
+    echo "<p><font size=2>".text_to_html($course->summary)."</font></p>";
+    echo "</td></tr>";
+    echo "</table>";
+
+    print_simple_box_end();
+}
+
+
+function print_my_moodle() {
+/// Prints custom user information on the home page.
+/// Over time this can include all sorts of information
+
+    global $USER, $CFG;
+
+    if (!isset($USER->id)) {
+        error("It shouldn't be possible to see My Moodle without being logged in.");
+    }
+
+    if ($courses = get_my_courses($USER->id)) {
+        foreach ($courses as $course) {
+            print_course($course, "100%");
+            echo "<br />\n";
+        }
+    }
+    echo "<p align=\"right\"><a href=\"$CFG->wwwroot/course/\">".get_string("fulllistofcourses")."</a>...</p>";
 }
 
 

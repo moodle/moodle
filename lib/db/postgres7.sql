@@ -31,6 +31,12 @@ CREATE TABLE prefix_course (
 CREATE TABLE prefix_course_categories (
    id SERIAL PRIMARY KEY,
    name varchar(255) NOT NULL default ''
+   description text NOT NULL default '',
+   parent integer NOT NULL default '0',
+   sortorder integer NOT NULL default '0',
+   courseorder text NOT NULL default '',
+   visible integer NOT NULL default '1',
+   timemodified` integer NOT NULL default '0'
 );
 
 CREATE TABLE prefix_course_display (

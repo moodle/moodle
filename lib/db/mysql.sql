@@ -60,6 +60,12 @@ CREATE TABLE `prefix_course` (
 CREATE TABLE `prefix_course_categories` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
+  `description` text NOT NULL,
+  `parent` int(10) unsigned NOT NULL default '0',
+  `sortorder` int(10) unsigned NOT NULL default '0',
+  `courseorder` text NOT NULL,
+  `visible` tinyint(1) NOT NULL default '1',
+  `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`)
 ) TYPE=MyISAM COMMENT='Course categories';

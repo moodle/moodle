@@ -184,6 +184,15 @@ function main_upgrade($oldversion=0) {
         execute_sql(" CREATE INDEX {$CFG->prefix}user_teachers_courseuserid_idx ON {$CFG->prefix}user_teachers (course,userid) ");
     }
 
+    if ($oldversion < 2003072802) {
+        table_column("course_categories", "", "description", "text", "", "", "");
+        table_column("course_categories", "", "parent", "integer", "10", "unsigned");
+        table_column("course_categories", "", "sortorder", "integer", "10", "unsigned");
+        table_column("course_categories", "", "courseorder", "text", "", "", "");
+        table_column("course_categories", "", "visible", "integer", "1", "unsigned", "1");
+        table_column("course_categories", "", "timemodified", "integer", "10", "unsigned");
+    }
+
     return $result;
 }
 ?>    
