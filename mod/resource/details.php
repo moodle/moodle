@@ -5,7 +5,7 @@
 
     require_login();
 
-    $usehtmleditor = can_use_richtext_editor();
+    $usehtmleditor = can_use_html_editor();
 
     if ($form = data_submitted($destination)) { 
 
@@ -36,12 +36,7 @@
 
         print_simple_box_start("center", "", "$THEME->cellheading");
 
-        if ($usehtmleditor and $form->type == HTML) {
-            $onsubmit = "onsubmit=\"copyrichtext(theform.alltext);\"";
-        } else {
-            $onsubmit = "";
-        }
-        echo "<form name=theform method=post $onsubmit action=\"$form->destination\">";
+        echo "<form name=theform method=post action=\"$form->destination\">";
         echo "<table cellpadding=5 align=center>";
         echo "<tr><td align=right nowrap><p><b>$strname:</b></p></td><td><p>$form->name</p></a></td></tr>";
 
@@ -428,7 +423,7 @@
         </form>
 <?php
         if ($usehtmleditor and $form->type == HTML) {
-            print_richedit_javascript("theform", "alltext", "yes");
+            use_html_editor();
         }
         print_simple_box_end();
         print_footer($course);
