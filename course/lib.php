@@ -152,18 +152,18 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
             $log->info = get_field($ld->mtable, $ld->field, "id", $log->info);
         }
 
-        echo "<TR>";
+        echo "<TR NOWRAP>";
         if (! $course->category) {
-            echo "<TD><FONT SIZE=2><A HREF=\"view.php?id=$log->course\">".$courses[$log->course]."</A></TD>";
+            echo "<TD NOWRAP><FONT SIZE=2><A HREF=\"view.php?id=$log->course\">".$courses[$log->course]."</A></TD>";
         }
-        echo "<TD ALIGN=right><FONT SIZE=2>".userdate($log->time, "%A")."</TD>";
-        echo "<TD><FONT SIZE=2>".userdate($log->time, "%e %B %Y, %I:%M %p")."</TD>";
-        echo "<TD><FONT SIZE=2>$log->ip</TD>";
-        echo "<TD><FONT SIZE=2><A HREF=\"../user/view.php?id=$log->user&course=$log->course\"><B>$log->firstname $log->lastname</B></TD>";
-        echo "<TD><FONT SIZE=2>";
+        echo "<TD NOWRAP ALIGN=right><FONT SIZE=2>".userdate($log->time, "%A")."</TD>";
+        echo "<TD NOWRAP><FONT SIZE=2>".userdate($log->time, "%e %B %Y, %I:%M %p")."</TD>";
+        echo "<TD NOWRAP><FONT SIZE=2>$log->ip</TD>";
+        echo "<TD NOWRAP><FONT SIZE=2><A HREF=\"../user/view.php?id=$log->user&course=$log->course\"><B>$log->firstname $log->lastname</B></TD>";
+        echo "<TD NOWRAP><FONT SIZE=2>";
         link_to_popup_window( make_log_url($log->module,$log->url), "fromloglive","$log->module $log->action", 400, 600);
         echo "</TD>";
-        echo "<TD><FONT SIZE=2>$log->info</TD>";
+        echo "<TD NOWRAP><FONT SIZE=2>$log->info</TD>";
         echo "</TR>";
     }
     echo "</TABLE>";
