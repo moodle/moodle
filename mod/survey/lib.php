@@ -103,6 +103,13 @@ function survey_add_analysis($survey, $user, $notes) {
     return $db->Execute("INSERT INTO survey_analysis SET notes='$notes', survey='$survey', user='$user'");
 }
 
+function survey_shorten_name ($name, $numwords) {
+    $words = explode(" ", $name);
+    for ($i=0; $i < $numwords; $i++) {
+        $output .= $words[$i]." ";
+    }
+    return $output;
+}
 
 function survey_user_summary($course, $user, $mod, $survey) {
     global $CFG;
@@ -129,6 +136,127 @@ function survey_user_complete($course, $user, $mod, $survey) {
         echo "<IMG SRC=\"$CFG->wwwroot/mod/survey/graph.php?id=$mod->id&sid=$user->id&type=student.png\">";
     } else {
         echo "Not done yet";
+    }
+}
+
+
+function survey_print_multi($question) {
+    GLOBAL $db, $qnum, $checklist, $THEME;
+
+
+    echo "<P>&nbsp</P>\n";
+	echo "<P><FONT SIZE=4><B>$question->text</B></FONT></P>";
+
+	echo "<TABLE ALIGN=CENTER WIDTH=90% CELLPADDING=4 CELLSPACING=1 BORDER=0>";
+
+    $options = explode( ",", $question->options);
+    $numoptions = count($options);
+
+    $oneanswer = ($question->type == 1 || $question->type == 2) ? true : false;
+	if ($question->type == 2) {
+		$P = "P";
+	} else {
+		$P = "";
+	}
+   
+    if ($oneanswer) { 
+        echo "<TR WIDTH=100% ><TD COLSPAN=2><P>$question->intro</P></TD>";
+    } else {
+        echo "<TR WIDTH=100% ><TD COLSPAN=3><P>$question->intro</P></TD>"; 
+    }
+
+    while (list ($key, $val) = each ($options)) {
+        echo "<TD width=10% ALIGN=CENTER><FONT SIZE=1><P>$val</P></FONT></TD>\n";
+    }
+    echo "<TD ALIGN=CENTER BGCOLOR=\"$THEME->body\">&nbsp</TD></TR>\n";
+
+    $subquestions = get_records_sql("SELECT * FROM survey_questions WHERE id in ($question->multi) ");
+
+    foreach ($subquestions as $q) {
+        $qnum++;
+        $bgcolor = survey_question_color($qnum);
+
+        echo "<TR BGCOLOR=$bgcolor>";
+        if ($oneanswer) {
+            echo "<TD WIDTH=10 VALIGN=top><P><B>$qnum</B></P></TD>";
+            echo "<TD VALIGN=top><P>$q->text</P></TD>";
+            for ($i=1;$i<=$numoptions;$i++) {
+                echo "<TD WIDTH=10% ALIGN=CENTER><INPUT TYPE=radio NAME=q$P$q->id VALUE=$i></TD>";
+            }
+            echo "<TD BGCOLOR=white><INPUT TYPE=radio NAME=q$P$q->id VALUE=0 checked></TD>";
+            $checklist["q$P$q->id"] = $numoptions;
+        
+        } else {
+            echo "<TD WIDTH=10 VALIGN=middle rowspan=2><P><B>$qnum</B></P></TD>";
+            echo "<TD WIDTH=10% NOWRAP><P><FONT SIZE=1>I prefer that&nbsp;</FONT></P></TD>";
+            echo "<TD WIDTH=40% VALIGN=middle rowspan=2><P>$q->text</P></TD>";
+            for ($i=1;$i<=$numoptions;$i++) {
+                echo "<TD WIDTH=10% ALIGN=CENTER><INPUT TYPE=radio NAME=qP$q->id VALUE=$i></TD>";
+            }
+            echo "<TD BGCOLOR=\"$THEME->body\"><INPUT TYPE=radio NAME=qP$q->id VALUE=0 checked></TD>";
+            echo "</TR>";
+
+            echo "<TR BGCOLOR=$bgcolor>";
+            echo "<TD WIDTH=10% NOWRAP><P><FONT SIZE=1>I found that&nbsp;</P></TD>";
+            for ($i=1;$i<=$numoptions;$i++) {
+                echo "<TD WIDTH=10% ALIGN=CENTER><INPUT TYPE=radio NAME=q$q->id VALUE=$i></TD>";
+            }
+            echo "<TD WIDTH=5% BGCOLOR=\"$THEME->body\"><INPUT TYPE=radio NAME=q$q->id VALUE=0 checked></TD>";
+            $checklist["qP$q->id"] = $numoptions;
+            $checklist["q$q->id"] = $numoptions;
+        }
+        echo "</TR>\n";
+    }
+    echo "</TABLE>";
+}
+
+
+
+function survey_print_single($question) {
+    GLOBAL $db, $qnum;
+
+    $bgcolor = survey_question_color(0);
+
+    $qnum++;
+
+    echo "<P>&nbsp</P>\n";
+    echo "<TABLE ALIGN=CENTER WIDTH=90% CELLPADDING=4 CELLSPACING=0>\n";
+    echo "<TR BGCOLOR=$bgcolor>";
+    echo "<TD VALIGN=top><B>$qnum</B></TD>";
+    echo "<TD WIDTH=50% VALIGN=top><P>$question->text</P></TD>\n";
+    echo "<TD WIDTH=50% VALIGN=top><P><FONT SIZE=+1>\n";
+
+
+    if ($question->type == 0) {           // Plain text field
+        echo "<TEXTAREA ROWS=3 COLS=30 WRAP=virtual NAME=\"$question->id\">$question->options</TEXTAREA>";
+
+    } else if ($question->type > 0) {     // Choose one of a number
+        echo "<SELECT NAME=$question->id>";
+        echo "<OPTION VALUE=0 SELECTED>Choose...</OPTION>";
+        $options = explode( ",", $question->options);
+        foreach ($options as $key => $val) {
+            $key++;
+            echo "<OPTION VALUE=\"$key\">$val</OPTION>";
+        }
+        echo "</SELECT>";
+
+    } else if ($question->type < 0) {     // Choose several of a number
+        $options = explode( ",", $question->options);
+        echo "<P>THIS TYPE OF QUESTION NOT SUPPORTED YET</P>";
+    }
+
+    echo "</FONT></TD></TR></TABLE>";
+
+}
+
+function survey_question_color($qnum) {
+    global $THEME;
+
+    if ($qnum) {
+        return $qnum % 2 ? $THEME->cellcontent : $THEME->cellcontent2;
+        //return $qnum % 2 ? "#CCFFCC" : "#CCFFFF";
+    } else {
+        return $THEME->cellcontent;
     }
 }
 

@@ -102,7 +102,7 @@
        $qqq = get_records_sql("SELECT * FROM survey_questions WHERE id in ($question->multi)");
 
        foreach ($questionorder as $i => $val) {
-           $names[$i] = shorten_name($qqq["$val"]->text, 4);
+           $names[$i] = survey_shorten_name($qqq["$val"]->text, 4);
            $buckets1[$i] = 0;
            $buckets2[$i] = 0;
            $count1[$i] = 0;
@@ -496,7 +496,7 @@
        $qqq = get_records_sql("SELECT * FROM survey_questions WHERE id in ($question->multi)");
 
        foreach ($questionorder as $i => $val) {
-           $names[$i] = shorten_name($qqq["$val"]->text, 4);
+           $names[$i] = survey_shorten_name($qqq["$val"]->text, 4);
            $buckets1[$i] = 0;
            $buckets2[$i] = 0;
            $count1[$i] = 0;
@@ -635,12 +635,5 @@
 
    exit;
 
-function shorten_name ($name, $numwords) {
-    $words = explode(" ", $name);
-    for ($i=0; $i < $numwords; $i++) {
-        $output .= $words[$i]." ";
-    }
-    return $output;
-}
          
 ?>
