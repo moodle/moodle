@@ -1,17 +1,17 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.8.1 (2003011200)
+      // assignment.php - created with Moodle 1.1 (2003082800)
 
 
 $string['allowresubmit'] = "Επιτρέπεται η επανυποβολή";
 $string['assignmentdetails'] = "Λεπτομέρειες εργασίας";
-$string['assignmentmail'] = "\$a->teacher έχει αναρτήσει κάποιο σχόλιο στην υποβολή που κάνατε 
-για την εργασία '\$a->assignment'
-
-Μπορείτε να το δείτε προσαρτημένο στη υποβολή σας:
-
+$string['assignmentmail'] = "\$a->teacher έχει αναρτήσει κάποιο σχόλιο στην υποβολή που κάνατε 
+για την εργασία '\$a->assignment'
+
+Μπορείτε να το δείτε προσαρτημένο στη υποβολή σας:
+
     \$a->url";
-$string['assignmentmailhtml'] = "\$a->teacher  έχει αναρτήσει κάποιο σχόλιο στην υποβολή που κάνατε 
-για την εργασία '<i>\$a->assignment</i>'<br /><br />
+$string['assignmentmailhtml'] = "\$a->teacher  έχει αναρτήσει κάποιο σχόλιο στην υποβολή που κάνατε 
+για την εργασία '<i>\$a->assignment</i>'<br /><br />
 Μπορείτε να το δείτε προσαρτημένο στη <a href=\\\"\$a->url\\\">υποβολή σας</a>.";
 $string['assignmentname'] = "Όνομα εργασίας";
 $string['assignmenttype'] = "Είδος εργασίας";
@@ -27,6 +27,7 @@ $string['maximumsize'] = "Μέγιστο μέγεθος";
 $string['modulename'] = "Εργασία";
 $string['modulenameplural'] = "Εργασίες";
 $string['newsubmissions'] = "Οι εργασίες υποβλήθηκαν";
+$string['notgradedyet'] = "Δεν βαθμολογήθηκαν ακόμα";
 $string['notsubmittedyet'] = "Δεν υποβλήθηκαν ακόμα";
 $string['overwritewarning'] = "Προειδοποίηση: η επαναφόρτωση ΘΑ ΑΝΤΙΚΑΤΑΣΤΗΣΕΙ την τρέχουσα υποβολή σας";
 $string['saveallfeedback'] = "Σώσε όλα τα μηνύματά μου";
@@ -42,7 +43,7 @@ $string['uploaderror'] = "Ένα λάθος συνέβη σώζοντας το αρχείο στον εξυπηρετητή";
 $string['uploadfailnoupdate'] = "Το αρχείο φορτώθηκε ΕΠΙΤΥΧΩΣ αλλά η υποβολή σας δεν ενημερώθηκε!";
 $string['uploadfiletoobig'] = "Συγνώμη, αλλά το αρχείο είναι πολύ μεγάλο (το όριο είναι \$a bytes)";
 $string['uploadnofilefound'] = "Δεν βρέθηκε κανένα αρχείο - είστε σίγουρος ότι διαλέξατε κάποιο για να φορτωθεί?";
-$string['uploadnotregistered'] = "'\$a' φορτώθηκε επιτυχως αλλά η υποβολή δεν καταχωρήθηκε.";
+$string['uploadnotregistered'] = "'\$a' φορτώθηκε ΕΠΙΤΥΧΩΣ αλλά η υποβολή δεν καταχωρήθηκε.";
 $string['uploadsuccess'] = "Το '\$a' φορτώθηκε  επιτυχώς";
 $string['viewfeedback'] = "Δείτε τους βαθμούς της εργασίας και τα μηνύματα";
 $string['viewsubmissions'] = "Δείτε \$a υποβληθείσες εργασίες";
