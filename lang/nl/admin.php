@@ -1,8 +1,10 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
+$string['blockmultiple'] = 'Meer';
 $string['cachetext'] = 'Hoelang mag tekst in cache blijven';
+$string['change'] = 'wijzig';
 $string['filteruploadedfiles'] = 'Gebruik de filters in geüploade bestanden';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
