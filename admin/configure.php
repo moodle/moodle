@@ -32,6 +32,8 @@
                            get_string("adminhelplanguage"));
     $table->data[] = array("<b><a href=\"modules.php\">".get_string("managemodules")."</a></b>",
                            get_string("adminhelpmanagemodules"));
+    $table->data[] = array("<b><a href=\"blocks.php\">".get_string("manageblocks")."</a></b>",
+                           get_string("adminhelpmanageblocks"));
     $table->data[] = array("<b><a href=\"filters.php\">".get_string("managefilters")."</a></b>",
                            get_string("adminhelpmanagefilters"));
     if (!isset($CFG->disablescheduledbackups)) {
