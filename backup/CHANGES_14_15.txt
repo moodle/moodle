@@ -19,8 +19,8 @@ Now I show the specific detailed status of every item in the process:
  9. DONE: exercise->usepassword and exercise->password
 10. DONE: exercise_assessments->generalcomment and teachercomment
 11. DONE: glossary->allowprintview
-12. TODO: quiz_responses->answer (analyse).
-13. TODO: quiz_calculated->correctaswerformat.
+12. DONE: quiz_responses->answer (analyse).
+13. DONE: quiz_calculated->correctaswerformat.
 14. DONE: quiz->questionsperpage.
 15. DONE: quiz_categories->parent and sortorder.
 16. DONE: Message subsystem (MIM). Available in SITE backups!
@@ -53,10 +53,11 @@ Now I show the specific detailed status of every item in the process:
           because there isn't possible to recode it to destination server. But
           sometime we should think in a solution (STAMPS or CHECKSUMS of DSTs).
 31. DONE: Change mail's priority (bug 2647) if something goes wrong in scheduled backups.
-32. TODO: quiz_questions->hidden and quiz_responses->originalquestion
-33. TODO: quiz_question_version
+32. DONE: quiz_questions->hidden and quiz_responses->originalquestion
+33. DONE: quiz_question_version
 34. DONE: Group images aren't included at all in backup/restore. Bug 2674.
 35. DONE: New glossary log action: "view_entry".
+36. PROG: Add support for quiz log action: "editquestions". Bug 2778 pending!
          
 Eloy (stronk7)
 23-01-2004
