@@ -158,6 +158,7 @@ $string['tabview']='Afficher';
 $string['thanksforcontribution'] = 'Merci pour votre contribution.';
 $string['thispageisntlinkedfromanywhereelse'] = 'Aucun lien n\'existe vers cette page.';
 $string['updatedpages'] = 'Pages modifiées';
+$string['updatedwikipages'] = 'Pages wiki modifiées';
 $string['uplerror'] = 'Désolé, votre fichier n\'a pas pu être déposé.';
 $string['uplinsect'] = 'Déposer dans';
 $string['uplnewnam'] = 'Enregistrer sous un nom différent';
