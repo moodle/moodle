@@ -366,7 +366,7 @@ class ChatDaemon {
                 // The refresh value is 2 seconds higher than the configuration variable because we are doing JS refreshes all the time.
                 // However, if the JS doesn't work for some reason, we still want to refresh once in a while.
                 $header .= "Refresh: ".(intval($CFG->chat_refresh_userlist) + 2)."; url=http://$CFG->chat_serverhost:$CFG->chat_serverport/?win=users&".
-                           "chat_sid=".$sessionid."&amp;groupid=".$this->sets_info[$sessionid]['groupid']."\n";
+                           "chat_sid=".$sessionid."&groupid=".$this->sets_info[$sessionid]['groupid']."\n";
                 $header .= "\n";
 
                 // That's enough headers for one lousy dummy response
