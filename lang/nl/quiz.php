@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 development (2004080300)
+      // quiz.php - created with Moodle 1.4 development (2004081200)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -87,7 +87,6 @@ $string['editingshortanswer'] = 'Een vraag met kort antwoord bewerken';
 $string['editingtruefalse'] = 'Een waar/onwaar vraag bewerken';
 $string['editquestions'] = 'Bewerk vragen';
 $string['errorsdetected'] = '$a fout(en) ontdekt';
-$string['existingcategory'] = 'a \".(1==$a ? \'letterlijk\' :(2==$a ? \'bestand\' :(3==$a ? \'link\' : $a))).\" van een bestaande set van \".(1==$a ? \'letterlijk\' :(2==$a ? \'files\' : (3==$a ? \'links\' : $a))).\" die ook door andere vragen in deze categorie gebruikt worden';
 $string['exportfilename'] = 'test';
 $string['exportname'] = 'Bestandsnaam';
 $string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
@@ -126,8 +125,6 @@ $string['indivresp'] = 'Reacties van ieder afzonderlijk op elk item';
 $string['introduction'] = 'Inleiding';
 $string['itemanal'] = 'Analyse van de reacties op de items';
 $string['itemdefinition'] = 'Definitie';
-$string['keptcategory'] = 'a \".(1==$a ? \'letterlijk\' :(2==$a ? \'bestand\' :(3==$a ? \'link\' : $a))).\" hebruikbare set van dezelfde categorie\".(1==$a ? \'letterlijk\' :(2==$a ? \'bestanden\' : (3==$a ? \'links\' : $a))).\" zoals hiervoor';
-$string['keptlocal'] = 'a \".(1==$a ? \'letterlijk\' :(2==$a ? \'bestand\' :(3==$a ? \'link\' : $a))).\" van dezelfde private vragenset van\".(1==$a ? \'letterlijk\' :(2==$a ? \'bestanden\' : (3==$a ? \'links\' : $a))).\" zoals hiervoor';
 $string['link'] = 'Link';
 $string['listitems'] = 'Lijst van items in de test';
 $string['literal'] = 'Letterlijk';
@@ -150,8 +147,6 @@ $string['multianswer'] = 'Ingebedde antwoorden (Cloze)';
 $string['multichoice'] = 'Meerkeuzevraag';
 $string['multiplier'] = 'Vermenigvuldigen';
 $string['name'] = 'Naam';
-$string['newcategory'] = 'a \".(1==$a ? \'letterlijk\' :(2==$a ? \'bestand\' :(3==$a ? \'link\' : $a))).\" van een nieuwe set van \".(1==$a ? \'letterlijk\' :(2==$a ? \'bestanden\' : (3==$a ? \'links\' : $a))).\" die ook door andere vragen in deze categorie mogen gebruikt worden';
-$string['newlocal'] = 'a \".(1==$a ? \'letterlijk\' :(2==$a ? \'bestand\' :(3==$a ? \'link\' : $a))).\" van een niewe set \".(1==$a ? \'letterlijk\' :(2==$a ? \'bestanden\' : (3==$a ? \'links\' : $a))).\" die alleen in deze vraag gebruikt zullen worden';
 $string['noanswers'] = 'Er zijn geen antwoorden geselecteerd!';
 $string['noattempts'] = 'Er zijn geen pogingen geweest om deze test te maken';
 $string['nodataset'] = 'niets - dit is geen jokerteken';
