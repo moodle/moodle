@@ -707,7 +707,7 @@ function workshop_list_ungraded_assessments($workshop, $stype) {
 function workshop_list_user_submissions($workshop, $user) {
 
 
-function workshop_print_assessment($workshop, $assessment, $allowchanges, $showcommentlinks)
+function workshop_print_assessment($workshop, $assessment, $allowchanges, $showcommentlinks, $returnto)
 function workshop_print_assessments_by_user_for_admin($workshop, $user) {
 function workshop_print_assessments_for_admin($workshop, $submission) {
 function workshop_print_assignment_info($cm, $workshop) {
@@ -2030,8 +2030,9 @@ function workshop_list_user_submissions($workshop, $user) {
 
 
 function workshop_print_assessment($workshop, $assessment = false, $allowchanges = false, 
-	$showcommentlinks = false) {
+	$showcommentlinks = false, $returnto = '') {
 	// $allowchanges added 14/7/03
+	// $returnto added 28/8/03
 	global $CFG, $THEME, $USER, $WORKSHOP_SCALES, $WORKSHOP_EWEIGHTS;
 	if (! $course = get_record("course", "id", $workshop->course)) {
 		error("Course is misconfigured");
@@ -2131,6 +2132,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
 	<INPUT TYPE="hidden" NAME="id" VALUE="<?PHP echo $cm->id ?>">
 	<input type="hidden" name="aid" value="<?PHP echo $assessment->id ?>">
 	<input type="hidden" name="action" value="updateassessment">
+	<input type="hidden" name="returnto" value="<?PHP echo $returnto ?>">
 	<CENTER>
 	<TABLE CELLPADDING=2 BORDER=1>
 	<?PHP

@@ -223,6 +223,7 @@
 			$assessment->grade = -1; // set impossible grade
 			$assessment->timecreated = $yearfromnow;
 			$assessment->timegraded = 0;
+			$assessment->timeagreed = 0;
 			if (!$assessment->id = insert_record("workshop_assessments", $assessment)) {
 				error("Could not insert workshop assessment!");
 				}
@@ -231,7 +232,7 @@
 		print_heading_with_help(get_string("assessthissubmission", "workshop"), "grading", "workshop");
 		
 		// show assessment and allow changes
-		workshop_print_assessment($workshop, $assessment, true, $allowcomments);
+		workshop_print_assessment($workshop, $assessment, true, $allowcomments, $_SERVER["HTTP_REFERER"]);
 		}
 
 
@@ -875,14 +876,19 @@
 			}
 			
 	    add_to_log($course->id, "workshop", "assess", "view.php?a=$workshop->id", "$workshop->id");
-
+		
+		// set up return address
+		if (!$returnto = $form->returnto) {
+			$returnto = "view.php?id=$cm->id";
+			}
+			
 		// show grade if grading strategy is not zero
 		if ($workshop->gradingstrategy) {
-			redirect("view.php?id=$cm->id", get_string("thegradeis", "workshop").": ".number_format($grade, 2)."% (".get_string("maximumgrade").
+			redirect($returnto, get_string("thegradeis", "workshop").": ".number_format($grade, 2)."% (".get_string("maximumgrade").
 				" ".number_format($workshop->grade)."%)");
 			}
 		else {
-			redirect("view.php?id=$cm->id");
+			redirect($returnto);
 			}
 		}
 
