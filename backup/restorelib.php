@@ -399,7 +399,7 @@
             $course->guest = addslashes($course_header->course_guest);
             $course->startdate = addslashes($course_header->course_startdate);
             $course->numsections = addslashes($course_header->course_numsections);
-            $course->showrecent = addslashes($course_header->course_showrecent);
+            //$course->showrecent = addslashes($course_header->course_showrecent);   INFO: This is out in 1.3
             $course->maxbytes = addslashes($course_header->course_maxbytes);
             $course->showreports = addslashes($course_header->course_showreports);
             $course->groupmode = addslashes($course_header->course_groupmode);
@@ -2055,9 +2055,9 @@
                         case "NUMSECTIONS":
                             $this->info->course_numsections = $this->getContents();
                             break;
-                        case "SHOWRECENT":
-                            $this->info->course_showrecent = $this->getContents();
-                            break;
+                        //case "SHOWRECENT":                                          INFO: This is out in 1.3
+                        //    $this->info->course_showrecent = $this->getContents();
+                        //    break;
                         case "MAXBYTES":
                             $this->info->course_maxbytes = $this->getContents();
                             break;
