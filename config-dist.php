@@ -62,6 +62,7 @@ $CFG->dirroot   = "/web/moodle";
 // Now you need a place where Moodle can save uploaded files.  This
 // directory should be writeable by the web server user (usually 'nobody'
 // or 'apache'), but it should not be accessible directly via the web.
+// On Windows systems you might specify something like "C:\moodledata"
 
 $CFG->dataroot  = "/home/moodledata";
 
