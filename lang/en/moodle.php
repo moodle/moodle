@@ -463,6 +463,7 @@ $string['frontpagecourselist'] = 'Show a list of courses';
 $string['frontpagedescription'] = 'Front Page Description';
 $string['frontpageformat'] = 'Front page format';
 $string['frontpagenews'] = 'Show news items';
+$string['frontpagetopiconly'] = 'Show arbitrary HTML or activities (topic section)';
 $string['fulllistofcourses'] = 'All courses';
 $string['fullname'] = 'Full name';
 $string['fullnamedisplay'] = '$a->firstname $a->lastname';
