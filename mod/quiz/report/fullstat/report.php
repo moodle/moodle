@@ -1,8 +1,8 @@
 <?PHP  // $Id: report.php,
 //  created from the above 2003/11/20 by Tom Robb tom@robb.net
-// Version 2.2  Modified 2003/11/25 pm
-//  $showtext added to toggle display of full text of M/C questions
-//  Discrimination Index figures added
+// Version 2.3  Modified 2003/11/27
+//  bug causing errors with null data in qr_answser_lookup() fixed
+//  
 
 /// This report shows the specific responses made by each student for each question.
 
@@ -916,20 +916,22 @@ function qr_answer_lookup($qid,$thisanswer){
     $qtally[$qid]['qtype'] = $thistype;
     switch ($thistype) {
         case 1:  //SHORTANSWER
-            $returndata['data'] = $thisanswer;
-            $qtally[$qid]['response'][$thisanswer]++;
-            //convert all to lowercase to allow for mismatching cases to be correct
-            if (strpos(strtolower($quests[$qid]['correct']),trim(strtolower($thisanswer))) >-1){
-                $qtally[$qid]['correct']++;
-                $returndata['score'] = 1;
+            if($returndata['data'] = $thisanswer) {;
+                $qtally[$qid]['response'][$thisanswer]++;
+                //convert all to lowercase to allow for mismatching cases to be correct
+                if (strpos(strtolower($quests[$qid]['correct']),trim(strtolower($thisanswer))) >-1){
+                    $qtally[$qid]['correct']++;
+                    $returndata['score'] = 1;
+                }
             }
             break;
         case 2:  //TRUEFALSE
-            $returndata['data'] = $quests[$qid]['choice'][$thisanswer]['answer'];
-            $qtally[$qid][$quests[$qid]['choice'][$thisanswer]['answer']]++;
-            if ($quests[$qid]['correct']==$quests[$qid]['choice'][$thisanswer]['answer']){
-                $returndata['score'] = 1;
-                $qtally[$qid]['correct']++;
+            if ($returndata['data'] = $quests[$qid]['choice'][$thisanswer]['answer']) {
+                $qtally[$qid][$quests[$qid]['choice'][$thisanswer]['answer']]++;
+                if ($quests[$qid]['correct']==$quests[$qid]['choice'][$thisanswer]['answer']){
+                    $returndata['score'] = 1;
+                    $qtally[$qid]['correct']++;
+                }
             }
             break;
         case 3:  //MULTICHOICE
@@ -948,12 +950,13 @@ function qr_answer_lookup($qid,$thisanswer){
             }
             break;
         case 8:  //NUMERICAL
-            $returndata['data'] = $thisanswer;
+            if ($returndata['data'] = $thisanswer) {
 //            $returndata['data'] = $thismin . "<" . $thisanswer . ">" . $thismax;
-            $qtally[$qid]['response'][$thisanswer]++;
-            if ($thisanswer >= $thismin[$qid] and $thisanswer <= $thismax[$qid]){
-                $qtally[$qid]['correct']++;
-                $returndata['score'] = 1;
+                $qtally[$qid]['response'][$thisanswer]++;
+                if ($thisanswer >= $thismin[$qid] and $thisanswer <= $thismax[$qid]){
+                    $qtally[$qid]['correct']++;
+                    $returndata['score'] = 1;
+                }
             }
             break;
     }
