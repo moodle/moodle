@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // survey.php - created with Moodle 1.3 development (2004032800)
 
 
 $string['actual'] = 'Toteutunut';
@@ -73,7 +73,7 @@ $string['colles10'] = 'kyselen muiden opiskelijoiden ajatuksia ja ideoita';
 $string['colles10short'] = 'kysyn lisätietoja';
 $string['colles11'] = 'muut opiskelijat kysyvät ajauksiani ja ideoitani';
 $string['colles11short'] = 'muut kysyvät minulta';
-$string['colles12'] = 'muut opiskejat vastaavat ideoihini';
+$string['colles12'] = 'muut opiskelijat vastaavat ideoihini';
 $string['colles12short'] = 'opiskelijat vastaavat minulle';
 $string['colles13'] = 'ohjaaja lisää omaan ajatteluani';
 $string['colles13short'] = 'ohjaaja lisää ajattelua';
@@ -86,14 +86,14 @@ $string['colles16short'] = 'ohjaaja tukee itsearviointia';
 $string['colles17'] = 'toisen opiskelijat rohkaisevat minua osallistumaan';
 $string['colles17short'] = 'opiskelija rohkaisevat minua';
 $string['colles18'] = 'toiset opiskelijat kehuvat osallistumiistani';
-$string['colles18short'] = 'opiskejat kehuvat minua';
+$string['colles18short'] = 'opiskelijat kehuvat minua';
 $string['colles19'] = 'toiset opiskelijat arvostavat osallistumiistani';
 $string['colles19short'] = 'opiskelijat arvostavat minua';
 $string['colles1short'] = 'keskity kiinnostaviin asioihin';
 $string['colles2'] = 'opin asioita, joista on ammatillista hyötyä';
 $string['colles20'] = 'toiset opiskelijat tukevat yritystäni oppia';
 $string['colles20short'] = 'opiskelijat tukevat';
-$string['colles21'] = 'saan hyvin selvää muiden opiskejoiden viesteistä';
+$string['colles21'] = 'saan hyvin selvää muiden opiskelijoiden viesteistä';
 $string['colles21short'] = 'ymmärrän muita opiskelijoita';
 $string['colles22'] = 'muut opiskelijat ymmärtävät viestini';
 $string['colles22short'] = 'opiskelijat ymmärtävät minua';

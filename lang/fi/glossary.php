@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // glossary.php - created with Moodle 1.3 development (2004032800)
 
 
 $string['addcomment'] = 'Lisää kommentti';
@@ -134,7 +134,7 @@ $string['ratingsuse'] = 'Käytä arvioita';
 $string['ratingtime'] = 'Rajoita tietueiden arvointi näiden päivämäärien välille:';
 $string['rejectedentries'] = 'Hylätyt tietueet';
 $string['rejectionrpt'] = 'Hylkäysraportti';
-$string['searchindefinition'] = 'Täystekstihaku';
+$string['searchindefinition'] = 'Vapaatekstihaku';
 $string['secondaryglossary'] = 'Toissijainen sanasto';
 $string['sendinratings'] = 'Lähetä viimeisimmät arvioni';
 $string['showall'] = 'Näytä linkki \'Kaikki\'';
