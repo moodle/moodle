@@ -86,11 +86,11 @@
         }
     }
 
-    if (!file_exists("./format/$course->format.php")) {   // Default format is weeks
+    if (!file_exists("$CFG->dirroot/course/format/$course->format.php")) {   // Default format is weeks
         $course->format = "weeks";
     }
 
-    require("./format/$course->format.php");  // Include the actual course format
+    require("$CFG->dirroot/course/format/$course->format.php");  // Include the actual course format
 
     print_footer();
 
