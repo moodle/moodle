@@ -17,7 +17,7 @@
 <LINK rel="stylesheet" href="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme?>/styles.css">
 </HEAD>
 <BODY BGCOLOR="<?=$THEME->body ?>">
-<? include("lang/$CFG->lang/$file"); ?>
+<? include("lang/$CFG->lang/page/$file"); ?>
 </BODY>
 </HTML>
 
