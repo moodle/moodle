@@ -849,6 +849,7 @@ $string['uploadthisfile'] = 'Envoyer ce fichier';
 $string['uploadusers'] = 'Importer des utilisateurs';
 $string['user'] = 'Utilisateur';
 $string['userconfirmed'] = 'L\'utilisateur $a a été confirmé';
+$string['userdata'] = 'Données de l\'utilisateur';
 $string['userdeleted'] = 'Le compte de cet utilisateur a été supprimé';
 $string['userdescription'] = 'Description';
 $string['userfiles'] = 'Fichiers utilisateur';
