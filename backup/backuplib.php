@@ -123,7 +123,7 @@
 
     function backup_get_needed_users ($courseid) {
         
-        global $CFG;
+        global $CFG, $THEME;
 
         $result = false;
 
