@@ -301,10 +301,11 @@ function get_record($table, $field1, $value1, $field2="", $value2="", $field3=""
 function get_record_sql($sql) {
 /// Get a single record as an object
 /// The sql statement is provided as a string.
+/// A LIMIT is added to keep limit the returned records to 1
 
     global $db;
 
-    $rs = $db->Execute("$sql");
+    $rs = $db->Execute("$sql LIMIT 1");
     if (empty($rs)) return false;
 
     if ( $rs->RecordCount() == 1 ) {
