@@ -1,0 +1,103 @@
+<p align=center><b>Importando archivos del "Course Test Manager"</b></p>
+
+<p>Course Test Manager (Administrador de Evaluaciones de Cursos) es un paquete 
+de software "End of Lifetime" de Tecnología de cursos (Course Technology). 
+Actualmente ya no es desarrollado por Course Technology, sino que ha 
+sido reemplazado por un nuevo administrador de cuestionarios llamado ExamView. 
+Sin embargo, nunca ha habido una migración que permita exportar este formato del 
+CTM a algún otro formato conocido de cuestionarios. Por esto se escribió este módulo.</p>
+
+<p> Para importar preguntas de CTM deberá tenerlo previamente instalado en una PC 
+con Windows, y tener acceso a los archivos de datos del MS Access en esa PC. Se 
+requieren dos archivos de datos para acceder a los datos del CTM:</p>
+<ul><li>System.mda --Este archivo se encuentra en el directorio superior de la 
+instalación de su CTM y es llamado en lenguaje Access la "Base de datos del sistema".</li>
+<li>ctm.mdb --Ésta es la base de datos que contiene las preguntas del banco de 
+cuestionarios. Hay una base de datos por cada curso instalado en el CTM, y está 
+ubicado en el correspondiente directorio de nivel inferior, por debajo del de 
+instalación del CTM.</li>
+</ul>
+
+</p>El proceso de importación es ligeramente diferente si Ud. trabaja en un Moodle 
+sobre Linux o sobre Windows. Sin importar cuál plataforma corre bajo el Moodle, 
+necesitará un sistema Windows (sea Windows 2000 o Windows XP) en la misma red en 
+la que está Moodle, para poder importar desde el Moodle directamente las bases de 
+datos del Access.</p>
+
+<p>El proceso es ligeramente más fácil si Moodle está <b>basado en Windows</b>. 
+Todo lo que necesita hacer para utilizar la importación CTM es:</p>
+
+<ol><li>Subir la base de datos system.mda a Moodle usando el administrador de archivos. 
+No importa a qué curso suba el sistem.mda, Moodle lo encontrará por Ud. </li>
+<li>Cree su cuestionario y vaya al proceso "importar preguntas de archivo". Suba 
+su base de datos ctm.mdb elegida como archivo a importar. Si hizo esto correctamente, 
+verá otra pantalla que le permitirá elegir la subcategoría de preguntas a importar 
+de la base de datos. La razón de este paso es que los bancos de evaluaciones CTM 
+contienen a menudo un gran número de preuntas categorizadas, basadas en los capítulos 
+del libro o secciones del curso.</li>
+</ol>
+
+<p>El proceso para Moodle <b>basado en Linux</b> incluye un componente de software 
+de terceros llamado <a href="http://odbcsock.sourceforge.net/" target="_new"><b>ODBC 
+Socket Server</b></a>. Para importar bases de datos CTM en Linux, primero debe bajar 
+e instalar este pequeño programa de red en la PC con Windows que hospeda las bases 
+de datos CTM. <b>No siga</b> las instrucciones mencionadas en la instalación del <br />
+ODBC Socket Server. ¡Son más complicadas de lo necesario para este trabajo! En vez 
+de eso, siga los pasos a continuación:</P>
+
+<ol><li>Vaya a la PC con Windows y descomprima el archivo de instalación que bajó de 
+<a href="http://odbcsock.sourceforge.net/" target="_new">este sitio</a> en la PC.</li>
+<li>Copie el archivo binario ODBCSocketServer.exe a una ubicación permanente, tal 
+como c:\windows\ o c:\WINNT\ (también podría ser su carpeta de archivos de programa). </li> 
+
+<li>Instale el ODBC Socket Server como un servicio en el sistema con este 
+comando:<br /><b>&lt;directorio completo a donde copió el archivo en el paso 
+anterior&gt;ODBCSocketServer.exe /Service</b><br /> Puede hacer esto escribiendo 
+este comando desde la caja de diálogo: Inicio-&gt;Ejecutar... , o desde la línea 
+de comandos.</li> 
+<li>Abra el administrador de Servicios en: Inicio-&gt;Configuración-&gt;Panel de 
+Control-&gt;Herramientas Administrativas-&gt;Servicios, o haciendo clic con el 
+botón derecho del mouse en <b>Mi PC</b>, eligiendo <b>Administrar</b>, luego 
+eligiendo <B>Servicios y Aplicaciones-&gt;Servicios</b> del Panel derecho. 
+También puede acceder al Administrador de Servicios escribiendo <b>services.msc</b> en 
+la caja de diálogo Inicio-&gt;Ejecutar...</li>
+
+<li>En el Administrador de Servicios haga clic con el botón derecho del mouse en 
+el ítem ODBC Socket Server y elija el ítem <b>Iniciar</b>. Su estado debe cambiar 
+a "Iniciado" cuando haga esto. Observe que podrá detenerlo y/o deshabilitarlo 
+completamente luego de que haya terminado el proceso de importación.</li>
+
+<li>Asegúrese de que los archivos system.mda y ctm.mdb estén en la PC, y que el 
+driver ODBC de MS Access esté presente; Está instalado normalmente en toda 
+instalación estándar de Windows. Puede asegurarse de que está instalado abriendo 
+el ítem "fuentes de datos" en "Herramientas Administrativas" en la lengüeta "Drivers". 
+Deberá determinar dónde está instalado el CTM y ubicar las bases de datos 
+system.mda y ctm.mdb (o las bases de datos que esté interesado en importar). 
+Recuerde tomar nota de la ubicación exacta y completa de las bases de datos, 
+así como de la dirección IP o nombre del Host del servidor Windows. Necesitará 
+esta información para el proceso de importación.</li>
+
+<li>Ahora ya puede importar los bancos de evaluaciones al Moodle. Cree su cuestionario 
+y vaya al proceso "Importar preguntas desde archivo". <B>AQUÍ ES DONDE LAS COSAS 
+SON DIFERENTES PARA LINUX - </B> ESPECIFIQUE UN ARCHIVO IMAGINARIO EN EL CAMPO 
+SUBIR PARA EMPEZAR EL PROCESO DE IMPORTACIÓN. ESTE ARCHIVO <b>NO SE PROCESARÁ</b>, 
+ES SÓLO UN NOMBRE PARA EL FORMULARIO DE IMPORTACIÓN. TENDRÁ UN LUGAR PARA ESPECIFICAR 
+LA INFORMACIÓN DEL SERVIDOR WINDOWS MÁS ADELANTE. A continuación, aparecerá una pantalla 
+en donde podrá escribir el nombre del Host para la PC con el Windows ODBC Socket 
+Server así como el directorio completo a las bases de datos del sistema y de los 
+bancos de evaluaciones. Escriba la información que obtuvo antes y haga clic en 
+"Connect to Server". Si todo estuvo configurado correctamente, obtendrá otro 
+formulario que le permitirá elegir la subcategoría de preguntas a importar de la 
+base de datos. La razón de este paso es que los bancos de evaluaciones a menudo 
+contienen una gran cantidad de preguntas sub-categorizadas, basadas en los capítulos 
+del libro o las secciones de un curso.
+SI LLEGA A ESTE PUNTO SIN MENSAJES DE ERROR, SIGNIFICA QUE HA CONFIGURADO EL SOCKET 
+SERVER CORRECTAMENTE, Y ¡ESTÁ LISTO PARA IMPORTAR LAS PREGUNTAS AL MOODLE!</li> </ol>
+
+<P>Si recibió mensajes de error durante este proceso, encontrará esta información 
+técnica muy útil: 
+El ODBC Socket server utiliza el puerto 9628 para abrir el socket, negociar y 
+ejecutar las consultas XML, y a partir de allí construir una tabla con los 
+resultados de la consulta. La clase de importación descompone el XML y lo usa tal 
+como uno usaría una consulta local para hacer una importación. 
+</p>
