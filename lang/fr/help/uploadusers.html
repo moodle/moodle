@@ -1,0 +1,27 @@
+<p align="center"><b>Importer des utilisateurs</b></p>
+
+<p>Notons avant tout qu'<b>il n'est habituellement pas n&eacute;cessaire d'importer des utilisateurs</b> pour les inscrire. Pour r&eacute;duire les interventions manuelles dans la gestion du site, il est pr&eacute;f&eacute;rable d'utiliser l'une des m&eacute;thodes d'authentification propos&eacute;es par Moodle. Par exemple, Moodle peut se connecter &agrave; une base de donn&eacute;es externe, ou bien les utilisateurs peuvent cr&eacute;er leurs propres comptes. Voyez la section Authentification dans la page d'administration de votre site.</p>
+<p>Si vous d&eacute;sirez toutefois importer manuellement des comptes utilisateurs &agrave; partir d'un fichier texte, ce fichier doit &ecirc;tre format&eacute; de la fa&ccedil;on suivante&nbsp;:</p>
+
+<ul>
+  <li>chaque ligne du fichier contient un enregistrement&nbsp;;</li>
+  <li>les donn&eacute;es de chaque enregistrement sont s&eacute;par&eacute;es par une virgule&nbsp;;</li>
+  <li>le premier enregistrement contient le nom des champs qui composent les enregistrements.
+    <blockquote>
+      <p><strong>Champs requis&nbsp;:</strong> ces champs doivent &ecirc;tre mentionn&eacute;s dans le premier enregistrement et d&eacute;finis pour tous les utilisateurs</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">username, password, firstname, lastname, email</font></p>
+      <p><strong>Champs par d&eacute;faut&nbsp;:</strong> ces champs sont optionnels - s'ils ne sont pas inclus, leurs valeurs seront les m&ecirc;mes que celles de l'administrateur principal du site</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">institution, department, city, country, lang, timezone</font> </p>
+      <p><strong>Champs optionnels&nbsp;:</strong> tous ces champs sont optionnels. Les noms de cours utilis&eacute;s (course1, course2, etc.) sont les &laquo; Noms abr&eacute;g&eacute;s&nbsp;&raquo; des cours. Si un ou des noms de cours sont mentionn&eacute;s, l'utilisateur sera inscrit comme &eacute;tudiant &agrave; ce ou ces cours.</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5</font></p>
+    </blockquote>
+    </li>
+  <li>les virgules faisant partie des donn&eacute;es doivent &ecirc;tre remplac&eacute;es par le code &amp;#44 - le script d'importation transformera automatiquement ce code en virgule&nbsp;;</li>
+  <li>Utilisez 1 pour oui/vrai et 0 pour non/faux dans les champs Oui/Non ou Vrai/Faux.</li>
+  <li>Remarque&nbsp;: si un utilisateur existe d&eacute;j&agrave; dans la base de donn&eacute;es de Moodle, le script inscrira l'utilisateur dans les cours indiqu&eacute;s, mais ne modifiera pas ses donn&eacute;es. Il retournera en outre le num&eacute;ro de cet utilisateur.</li>
+</ul>
+  
+<p>Voici un exemple d'un fichier valide&nbsp;:</p>
+<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1<br>
+lebidon, topsecret, Jules, Lebidon, jlebidon@undomaine.ch, fr, 3663737, 1, Astro101<br />
+marieuntel, ultrasecret, Marie, Untel, marieu@someplace.ca, fr_ca, 6736733, 0, Crypt202</font></p>
