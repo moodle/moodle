@@ -154,6 +154,7 @@ th {
 .categoryboxcontent,
 .courseboxcontent {
     border-color:#DDDDDD; /* borders */
+    background: #FFFFFF;
 }
 
 .weeklydatetext {
