@@ -17,6 +17,8 @@
                 if (isguest($user->id)) {
                     error("Can't change guest password!");
                 }
+
+                $user->emailstop = 0;    // Send mail even if sending mail was forbidden
     
 			    if (! reset_password_and_mail($user)) {
                     error("Could not reset password and mail the new one to you");
