@@ -455,19 +455,30 @@ function olson_parse_offset ($offset) {
 /***
  *** olson_parse_on_($on)
  ***
- *** see `man zic`. This function translated the following formats 
+ *** see `man zic`. This function translates the following formats 
  *** 5        the fifth of the month
  *** lastSun  the last Sunday in the month
  *** lastMon  the last Monday in the month
  *** Sun>=8   first Sunday on or after the eighth
  *** Sun<=25  last Sunday on or before the 25th
  ***
- *** to a moodle friendly format. Returns
- *** array(index =>$index, day =>$day)
+ *** to a moodle friendly format. Returns an array with:
  ***
+ *** startday: the day of the month that we start counting from.
+ ***           if negative, it means we start from that day and
+ ***           count backwards. since -1 would be meaningless,
+ ***           it means "end of month and backwards".
+ *** weekday:  the day of the week that we must find. we will
+ ***           scan days from the startday until we find the
+ ***           first such weekday. 0...6 = Sun...Sat.
+ ***           -1 means that any day of the week will do,
+ ***           effectively ending the search on startday.
+ *** skipweeks:after finding our end day as outlined above,
+ ***           skip this many weeks. this enables us to find
+ ***           "the second sunday >= 10". usually will be 0.
  */
 function olson_parse_on ($on) {
-    
+
     $rule = array();
     $days = array('sun' => 0, 'mon' => 1, 
                   'tue' => 2, 'wed' => 3, 
@@ -475,8 +486,9 @@ function olson_parse_on ($on) {
                   'sat' => 6);
 
     if(is_numeric($on)) {
-        $rule['index'] = $on;
-        $rule['day']   = -1;
+        $rule['startday']  = intval($on); // Start searching from that day
+        $rule['weekday']   = -1;          // ...and stop there, no matter what weekday
+        $rule['skipweeks'] = 0;           // Don't skip any weeks.
     }
     else {
         $on = strtolower($on);
@@ -486,18 +498,31 @@ function olson_parse_on ($on) {
                 trigger_error('Unknown last weekday: '.substr($on, 4));
             }
             else {
-                $rule['index'] = -1;
-                $rule['day']   = $days[substr($on, 4)];
+                $rule['startday']  = -1                     // Start from end of month
+                $rule['weekday']   = $days[substr($on, 4)]; // Find the first such weekday
+                $rule['skipweeks'] = 0;                     // Don't skip any weeks.
             }
         }
         else if(substr($on, 3, 2) == '>=') {
             // e.g. Sun>=8
             if(!isset($days[substr($on, 0, 3)])) {
-                trigger_error('Unknown last weekday: '.substr($on, 0, 3));
+                trigger_error('Unknown >= weekday: '.substr($on, 0, 3));
             }
             else {
-                $rule['index'] = substr($on, 5);
-                $rule['day']   = $days[substr($on, 0, 3)];
+                $rule['startday']  = intval(substr($on, 5));   // Start from that day of the month
+                $rule['weekday']   = $days[substr($on, 0, 3)]; // Find the first such weekday
+                $rule['skipweeks'] = 0;                        // Don't skip any weeks.
+            }
+        }
+        else if(substr($on, 3, 2) == '<=') {
+            // e.g. Sun<=25
+            if(!isset($days[substr($on, 0, 3)])) {
+                trigger_error('Unknown <= weekday: '.substr($on, 0, 3));
+            }
+            else {
+                $rule['startday']  = -intval(substr($on, 5));  // Start from that day of the month; COUNT BACKWARDS (minus sign)
+                $rule['weekday']   = $days[substr($on, 0, 3)]; // Find the first such weekday
+                $rule['skipweeks'] = 0;                        // Don't skip any weeks.
             }
         }
         else {
