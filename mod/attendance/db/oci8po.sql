@@ -13,7 +13,8 @@ CREATE TABLE prefix_attendance (
  notes varchar2(64) default '' not null,
  timemodified number(10) default '0' not null,
  dynsection number(1) default '0' not null,
- edited number(1) default '0' not null
+ edited number(1) default '0' not null,
+ autoattend number(1) default '0' not null
 );
 
 drop sequence p_attendance_seq;
@@ -29,10 +30,10 @@ create or replace trigger p_attendance_trig
 .
 /
 
-insert into prefix_attendance (name,course,day,hours,roll,notes,timemodified,dynsection,edited) values ('1',1,1,1,1,'1',1,1,1);
-insert into prefix_attendance (name,course,day,hours,roll,notes,timemodified,dynsection,edited) values ('2',2,2,2,2,'2',2,2,2);
-insert into prefix_attendance (name,course,day,hours,roll,notes,timemodified,dynsection,edited) values ('3',3,3,3,3,'3',3,3,3);
-insert into prefix_attendance (name,course,day,hours,roll,notes,timemodified,dynsection,edited) values ('4',4,4,4,4,'4',4,4,4);
+insert into prefix_attendance (name,course,day,hours,roll,notes,timemodified,dynsection,edited) values ('1',1,1,1,1,'1',1,1,1,1);
+insert into prefix_attendance (name,course,day,hours,roll,notes,timemodified,dynsection,edited) values ('2',2,2,2,2,'2',2,2,2,2);
+insert into prefix_attendance (name,course,day,hours,roll,notes,timemodified,dynsection,edited) values ('3',3,3,3,3,'3',3,3,3,3);
+insert into prefix_attendance (name,course,day,hours,roll,notes,timemodified,dynsection,edited) values ('4',4,4,4,4,'4',4,4,4,4);
 
 select * from prefix_attendance order by 1,2;
 
