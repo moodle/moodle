@@ -418,6 +418,7 @@ class quiz_file_format extends quiz_default_format {
 
                 $question->defaultgrade = 1;
                 $question->image = "";   // No images with this format
+                $question->multiplier = array(); // no numeric multipliers with GIFT
                 return $question;
                 break;
 
