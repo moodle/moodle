@@ -56,7 +56,9 @@ $string['configlongtimenosee'] = "Jos opiskelijat eiv‰t ole kirjaantuneet pitk‰‰
 $string['configmaxeditingtime'] = "M‰‰ritt‰‰ kauanko foorumi vieti‰ voidaan muokata.";
 $string['configproxyhost'] = "Jos <b>palvelimen</b> pit‰‰ k‰ytt‰‰ v‰lityspalvelinta, m‰‰rit‰ palvelin ja portti t‰ss‰.";
 $string['configslasharguments'] = "Tiedostot jotka v‰litet‰‰n php-v‰lityksess‰ selaimille voidaan jakaa k‰ytt‰en 'slash arguments'-metodia. T‰m‰ mahdolistaa tiedostojen tallentumisen v‰lityspalvelimille. Kaikki php-palvelimet eiv‰t tue t‰t‰ ominaisuutta. Asta silloin k‰yttˆˆn ensimm‰inen vaihtoehto.";
-$string['configsmtphosts'] = "Anna SMTP palvelimen nimi jota k‰ytet‰‰n postin l‰hett‰miseen. Voi m‰‰ritell‰ useita palvelimiamuodossa \"posti.domain.org;posti2.domain.org\"";
+$string['configsmtphosts'] = "Anna SMTP palvelimen nimi jota k‰ytet‰‰n postin l‰hett‰miseen.
+Voit m‰‰ritell‰ useita palvelimia muodossa 'posti.domain.org;
+posti2.domain.org'";
 $string['configunzip'] = "Anna unzip ohjelma sijainti. (vain UNIX)";
 $string['configvariables'] = "M‰‰rittele muuttujat";
 $string['configzip'] = "Anna zip ohjelma sijainti. (vain UNIX)";
