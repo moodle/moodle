@@ -128,7 +128,7 @@ class block_quiz_results extends block_base {
                     // Count this result only if the user is in a group
                     $groupid = $groupofuser[$grade->userid]->groupid;
                     if(!isset($groupgrades[$groupid])) {
-                        $groupgrades[$groupid] = array('sum' => floatval($grade->grade), 'number' => 1, 'group' => $groupofuser[$grade->userid]->name);
+                        $groupgrades[$groupid] = array('sum' => (float)$grade->grade, 'number' => 1, 'group' => $groupofuser[$grade->userid]->name);
                     }
                     else {
                         $groupgrades[$groupid]['sum'] += $grade->grade;
@@ -187,7 +187,7 @@ class block_quiz_results extends block_base {
                         break;
                         default:
                         case GRADE_FORMAT_PCT:
-                            $this->content->text .= round(floatval($averagegrade) / floatval($quiz->grade) * 100).'%';
+                            $this->content->text .= round((float)$averagegrade / (float)$quiz->grade * 100).'%';
                         break;
                     }
                     $this->content->text .= '</td></tr>';
@@ -212,7 +212,7 @@ class block_quiz_results extends block_base {
                         break;
                         default:
                         case GRADE_FORMAT_PCT:
-                            $this->content->text .= round(floatval($averagegrade) / floatval($quiz->grade) * 100).'%';
+                            $this->content->text .= round((float)$averagegrade / (float)$quiz->grade * 100).'%';
                         break;
                     }
                     $this->content->text .= '</td></tr>';
@@ -299,7 +299,7 @@ class block_quiz_results extends block_base {
                         break;
                         default:
                         case GRADE_FORMAT_PCT:
-                            $this->content->text .= round(floatval($grades[$gradeid]->grade) / floatval($quiz->grade) * 100).'%';
+                            $this->content->text .= round((float)$grades[$gradeid]->grade / (float)$quiz->grade * 100).'%';
                         break;
                     }
                     $this->content->text .= '</td></tr>';
@@ -324,7 +324,7 @@ class block_quiz_results extends block_base {
                         break;
                         default:
                         case GRADE_FORMAT_PCT:
-                            $this->content->text .= round(floatval($grades[$gradeid]->grade) / floatval($quiz->grade) * 100).'%';
+                            $this->content->text .= round((float)$grades[$gradeid]->grade / (float)$quiz->grade * 100).'%';
                         break;
                     }
                     $this->content->text .= '</td></tr>';

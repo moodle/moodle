@@ -694,10 +694,10 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
 
     $date += dst_offset_on($date);
     if (abs($timezone) > 13) {
-        $date += intval(date('O') * HOURSECS);
+        $date += intval((float)date('O') * HOURSECS);
     }
     else {
-        $date += intval($timezone * HOURSECS);
+        $date += intval((float)$timezone * HOURSECS);
     }
 
     if ($fixday) {
@@ -728,10 +728,10 @@ function usergetdate($time, $timezone=99) {
     $time += dst_offset_on($time);
 
     if (abs($timezone) > 13) {
-        $time += floatval(date('O')) * HOURSECS;
+        $time += intval((float)(date('O')) * HOURSECS;
     }
     else {
-        $time += floatval($timezone) * HOURSECS;
+        $time += intval((float)($timezone) * HOURSECS;
     }
 
     // This is independent of the server's TZ settings,
