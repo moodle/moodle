@@ -88,8 +88,8 @@ function save_user_image($userid, $filename) {
             $badpermissions = true;
         }
     }
-    if (!file_exists("$CFG->dataroot/users/$user->id")) {
-        if (! mkdir("$CFG->dataroot/users/$user->id", 0777)) {
+    if (!file_exists("$CFG->dataroot/users/$userid")) {
+        if (! mkdir("$CFG->dataroot/users/$userid", 0777)) {
             $badpermissions = true;
         }
     }
