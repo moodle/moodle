@@ -1,20 +1,7 @@
 <CENTER>
-
-<h2>Sorry, <? pv($user->firstname) ?>, but you can't log in until you have confirmed your registration</h2>
-
-<h2>Please check your email!</h2>
-
-<p class=normal>
-An email should have been sent to your address at <? pv($user->email) ?>
-
-</p>
-<p class=normal>
-It contains easy instructions to complete your registration.
-</p>
-
-<p>If you continue to have difficulty, contact the site administrator.
-
+<H2><? print_string("mustconfirm") ?></H2>
+<? print_string("emailconfirmsent", "", $user->email) ?>
 <HR>
-<CENTER>
-<P><A HREF="<?=$CFG->wwwroot ?>">Home</A></P>
+<P><A HREF="<?=$CFG->wwwroot ?>"><? print_string("home") ?></A></P>
+</CENTER>
 

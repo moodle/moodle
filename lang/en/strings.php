@@ -1,30 +1,93 @@
 <?php 
 // Strings for Moodle site 
 
+$string[address] = "Address";
 $string[admin] = "Admin";
-
 $string[adminpage] = "Admin page";
-
+$string[alllogs] = "All logs";
 $string[availablecourses] = "Available Courses";
-
+$string[city] = "City/town";
+$string[contributions] = "Contributions";
+$string[country] = "Country";
+$string[course] = "Course";
 $string[courses] = "Courses";
+$string[currentlocaltime] = "your current local time";
+$string[delete] = "Delete";
+$string[editmyprofile] = "Edit my profile";
+$string[email] = "Email";
+$string[emailformat] = "Email format";
+$string[emailconfirmsent] = "
+   <P>An email should have been sent to your address at <B>\$a</B>
+   <P>It contains easy instructions to complete your registration.
+   <P>If you continue to have difficulty, contact the site administrator.";
 
 $string[entercourse] = "Click to enter this course";
-
+$string[firsttime] = "Is this your first time here?";
+$string[forgotten] = "Forgotten your username or password?";
+$string[fullprofile] = "Full profile";
+$string[home] = "Home";
+$string[htmlformat] = "Pretty HTML format";
+$string[icqnumber] = "ICQ number";
+$string[idnumber] = "ID number";
+$string[invalidlogin] = "Invalid login, please try again";
+$string[lastaccess] = "Last access";
+$string[location] = "Location";
 $string[loggedinas] = "You are logged in as \$a.";
-
 $string[loggedinnot] = "You are not logged in.";
-
 $string[login] = "Login";
-
+$string[loginas] = "Login as";
+$string[loginguest] = "Login as a guest";
+$string[loginsite] = "Login to the site";
+$string[loginusing] = "Login using your username and password";
+$string[loginsteps] = "
+   Hi! For full access to courses you'll need to take a minute to create
+   a new account for yourself on this web site.
+   Each of the individual courses may also have a one-time
+   &quot;enrolment key&quot;, which you won't need until later. Here are
+   the steps:
+   <OL size=2>
+   <LI>Fill out the <A HREF=\$a>New Account</A> form with your details.
+   <LI>An email will be immediately sent to your email address.
+   <LI>Read your email, and click on the web link it contains.
+   <LI>Your account will be confirmed and you will be logged in.
+   <LI>Now, select the course you want to participate in.
+   <LI>If you are prompted for a &quot;enrolment key&quot; - use the one
+   that your teacher has given you. This will &quot;enrol&quot; you in the
+   course.
+   <LI>You can now access the full course. From now on you will only need
+   to enter your personal username and password (in the form on this page)
+   to log in and access any course you have enrolled in.
+   </OL>";
 $string[logout] = "Logout";
-
 $string[mainmenu] = "Main menu";
-
+$string[movedown] = "Move down";
+$string[moveup] = "Move up";
+$string[mustconfirm] = "You need to confirm your login";
+$string[newpicture] = "New picture";
+$string[notenrolled] = "\$a is not enrolled in this course.";
+$string[participants] = "Participants";
+$string[password] = "Password";
+$string[personalprofile] = "Personal profile";
+$string[phone] = "Phone";
+$string[returningtosite] = "Returning to this web site?";
+$string[selectacountry] = "Select a country";
+$string[senddetails] = "Send my details via email";
+$string[serverlocaltime] = "Server's local time";
 $string[sitelogs] = "Site logs";
-
 $string[sitenews] = "Site news";
-
 $string[sitesettings] = "Site settings";
+$string[someallowguest] = "Some courses may allow guest access";
+$string[startsignup] = "Start now by creating a new account!";
+$string[teacheronly] = "for the \$a only";
+$string[textformat] = "Plain text format";
+$string[timezone] = "Timezone";
+$string[todaylogs] = "Today's logs";
+$string[unenrol] = "Unenrol";
+$string[unenrolme] = "Unenrol me from \$a";
+$string[update] = "Update";
+$string[updatemyprofile] = "Update my profile";
+$string[userdescription] = "Description";
+$string[username] = "Username";
+$string[webpage] = "Web page";
 
 ?>

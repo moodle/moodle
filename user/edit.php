@@ -136,6 +136,7 @@
     }
 
     $teacher = strtolower($course->teacher);
+    $teacheronly = "(".get_string("teacheronly", "", $teacher).")";
 
     print_simple_box_start("center", "", "$THEME->cellheading");
     echo "<H2>User profile for $user->firstname $user->lastname</H2>";

@@ -1,83 +1,83 @@
 <FORM METHOD="post" ENCTYPE="multipart/form-data" action="edit.php">
 <table cellpadding=9 cellspacing=0 >
 <tr valign=top>
-	<td><P>New picture:</td>
+	<td><P><? echo get_string("newpicture") ?>:</td>
 	<td>
     <INPUT type="hidden" name="MAX_FILE_SIZE" value="4000000">
-    <input type="file" name="imagefile" size=40> ( .jpg or .png ) <? helpbutton("picture") ?>
+    <input type="file" name="imagefile" size=40> ( .jpg / .png ) <? helpbutton("picture") ?>
 	<? formerr($err["imagefile"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Description:</td>
+	<td><P><? echo get_string("userdescription") ?>:</td>
 	<td><TEXTAREA NAME=description COLS=50 ROWS=10 WRAP=virtual><?=$user->description ?></TEXTAREA> 
     <? helpbutton("text") ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Email address:</td>
+	<td><P><? echo get_string("email") ?>:</td>
 	<td><input type="text" name="email" size=30 value="<?=$user->email ?>">
 	<? formerr($err["email"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Email format:</td>
+	<td><P><? echo get_string("emailformat") ?>:</td>
 	<td><? 
-    $choices["0"] = "Plain text format";
-    $choices["1"] = "Pretty HTML format";
+    $choices["0"] = get_string("textformat");
+    $choices["1"] = get_string("htmlformat");
     choose_from_menu ($choices, "mailformat", $user->mailformat, "") ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Web address (URL):</td>
+	<td><P><? echo get_string("webpage") ?>:</td>
 	<td><input type="text" name="url" size=30 value="<?=$user->url ?>">
 	<? formerr($err["url"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>ICQ number:</td>
+	<td><P><? echo get_string("icqnumber") ?>:</td>
 	<td><input type="text" name="icq" size=25 value="<?=$user->icq ?>">
 	<? formerr($err["icq"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>ID Number:</td>
-	<td><input type="text" name="idnumber" size=25 value="<?=$user->idnumber ?>"> (for the <?=$teacher ?> only)
+	<td><P><? echo get_string("idnumber") ?>:</td>
+	<td><input type="text" name="idnumber" size=25 value="<?=$user->idnumber ?>"> <?=$teacheronly ?>
 	<? formerr($err["idnumber"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Phone number 1:</td>
-	<td><input type="text" name="phone1" size=25 value="<?=$user->phone1 ?>"> (for the <?=$teacher ?> only)
+	<td><P><? echo get_string("phone") ?> 1:</td>
+	<td><input type="text" name="phone1" size=25 value="<?=$user->phone1 ?>"> <?=$teacheronly ?>
 	<? formerr($err["phone1"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Phone number 2:</td>
-	<td><input type="text" name="phone2" size=25 value="<?=$user->phone2 ?>"> (for the <?=$teacher ?> only)
+	<td><P><? echo get_string("phone") ?> 2:</td>
+	<td><input type="text" name="phone2" size=25 value="<?=$user->phone2 ?>"> <?=$teacheronly ?>
 	<? formerr($err["phone2"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Street Address:</td>
-	<td><input type="text" name="address" size=25 value="<?=$user->address ?>"> (for the <?=$teacher ?> only)
+	<td><P><? echo get_string("address") ?>:</td>
+	<td><input type="text" name="address" size=25 value="<?=$user->address ?>"> <?=$teacheronly ?>
 	<? formerr($err["address"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>City/town:</td>
+	<td><P><? echo get_string("city") ?>:</td>
 	<td><input type="text" name="city" size=25 value="<?=$user->city ?>">
 	<? formerr($err["city"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Country:</td>
-	<td><? choose_from_menu ($COUNTRIES, "country", $user->country, "Select a country...", "", "") ?>
+	<td><P><? echo get_string("country") ?>:</td>
+	<td><? choose_from_menu ($COUNTRIES, "country", $user->country, get_string("selectacountry")."...", "", "") ?>
 	<? formerr($err["country"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Timezone:</td>
+	<td><P><? echo get_string("timezone") ?>:</td>
 	<td><?
        if (abs($user->timezone) > 12) {
            $user->timezone = 99;
@@ -88,22 +88,23 @@
            $zone = (float)$tz/2.0;
            $usertime = $timenow + ($tz * 1800);
            if ($tz == 0) {
-               $timezones["$zone"] = gmdate("D, h:i a", $usertime)." (GMT)";
+               $timezones["$zone"] = gmstrftime("%a, %I:%M %p", $usertime)." (GMT)";
            } else if ($tz < 0) {
-               $timezones["$zone"] = gmdate("D, h:i a", $usertime)." (GMT$zone)";
+               $timezones["$zone"] = gmstrftime("%a, %I:%M %p", $usertime)." (GMT$zone)";
            } else {
-               $timezones["$zone"] = gmdate("D, h:i a", $usertime)." (GMT+$zone)";
+               $timezones["$zone"] = gmstrftime("%a, %I:%M %p", $usertime)." (GMT+$zone)";
            }
        }
 
-       choose_from_menu ($timezones, "timezone", $user->timezone, "Use the server's local time", "", "99");
+       choose_from_menu ($timezones, "timezone", $user->timezone, get_string("serverlocaltime"), "", "99");
 
+       echo "(".get_string(currentlocaltime).")";
 	?>
-    (Your current local time)</td>
+    </td>
 </tr>
 <tr>
 	<td></td>
-	<td><input type="submit" value="Update my profile"></td>
+	<td><input type="submit" value="<? echo get_string("updatemyprofile") ?>"></td>
 </TABLE>
 <INPUT type="hidden" name="course" value="<?=$course->id ?>">
 <INPUT type="hidden" name="id" value="<?=$user->id ?>"> 

@@ -28,7 +28,7 @@
 
         if ($user) {
             if (! $user->confirmed ) {       // they never confirmed via email 
-                print_header("Need to confirm", "Not confirmed yet", "", ""); 
+                print_header(get_string("mustconfirm"), get_string("mustconfirm") ); 
                 include("index_confirm.html");
                 die;
             }
@@ -56,16 +56,10 @@
     
 		    reset_login_count();
 
-            if ($CFG->smsnotify) {
-                $time = date("H:i D j M", time());
-                $smstring = "$time - $USER->firstname $USER->lastname logged in to $CFG->sitename";
-                system("echo \"$smstring   \" | /opt/bin/sendsms &> /dev/null &");
-            }
-    
             die;
     
         } else {
-            $errormsg = "Invalid login, please try again";
+            $errormsg = get_string("invalidlogin");
         }
     }
     
@@ -82,7 +76,9 @@
         $focus = "form.username";
     }
     
-    print_header("Login to the site", "Login to the site", "Login", $focus); 
+    $loginsite = get_string("loginsite");
+
+    print_header($loginsite, $loginsite, get_string("login"), $focus); 
 
     include("index_form.html");
 

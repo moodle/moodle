@@ -17,10 +17,12 @@
     add_to_log($course->id, "user", "view all", "index.php?id=$course->id", "");
 
     if ($course->category) {
-        print_header("$course->shortname: Participants", "$course->fullname",
-                     "<A HREF=../course/view.php?id=$course->id>$course->shortname</A> -> Participants", "");
+        print_header("$course->shortname: ".get_string("participants"), "$course->fullname",
+                     "<A HREF=../course/view.php?id=$course->id>$course->shortname</A> -> ".
+                      get_string("participants"), "");
     } else {
-        print_header("$course->shortname: Participants", "$course->fullname", "Participants", "");
+        print_header("$course->shortname: ".get_string("participants"), "$course->fullname", 
+                      get_string("participants"), "");
     }
 
 
@@ -67,24 +69,25 @@ function print_user($user, $course, $teacherlinks) {
     echo "</TD><TD WIDTH=100% BGCOLOR=#FFFFFF VALIGN=top>";
     echo "<FONT SIZE=-1>";
     echo "<FONT SIZE=3><B>$user->firstname $user->lastname</B></FONT>";
-    echo "<P>Email: <A HREF=\"mailto:$user->email\">$user->email</A><BR>";
-    echo "Location: $user->city, ".$COUNTRIES["$user->country"]."<BR>";
-    echo "Last access: ".userdate($user->lastaccess);
+    echo "<P>";
+    echo get_string("email").": <A HREF=\"mailto:$user->email\">$user->email</A><BR>";
+    echo get_string("location").": $user->city, ".$COUNTRIES["$user->country"]."<BR>";
+    echo get_string("lastaccess").": ".userdate($user->lastaccess);
     echo "&nbsp (".format_time(time() - $user->lastaccess).")";
     echo "</TD><TD VALIGN=bottom BGCOLOR=#FFFFFF NOWRAP>";
 
     echo "<FONT SIZE=1>";
     if ($teacherlinks) {
         $timemidnight = usergetmidnight(time());
-        echo "<A HREF=\"../course/user.php?id=$course->id&user=$user->id\">Contributions</A><BR>";
-        echo "<A HREF=\"../course/log.php?id=$course->id&user=$user->id&date=$timemidnight\">Today's logs</A><BR>";
-        echo "<A HREF=\"../course/log.php?id=$course->id&user=$user->id\">All logs</A><BR>";
-        echo "<A HREF=\"../course/unenrol.php?id=$course->id&user=$user->id\">Unenrol</A><BR>";
+        echo "<A HREF=\"../course/user.php?id=$course->id&user=$user->id\">".get_string("contributions")."</A><BR>";
+        echo "<A HREF=\"../course/log.php?id=$course->id&user=$user->id&date=$timemidnight\">".get_string("todaylogs")."</A><BR>";
+        echo "<A HREF=\"../course/log.php?id=$course->id&user=$user->id\">".get_string("alllogs")."</A><BR>";
+        echo "<A HREF=\"../course/unenrol.php?id=$course->id&user=$user->id\">".get_string("unenrol")."</A><BR>";
         if (isstudent($course->id, $user->id)) {
-            echo "<A HREF=\"../course/loginas.php?id=$course->id&user=$user->id\">Login as</A><BR>";
+            echo "<A HREF=\"../course/loginas.php?id=$course->id&user=$user->id\">".get_string("loginas")."</A><BR>";
         }
     }
-    echo "<A HREF=\"view.php?id=$user->id&course=$course->id\">Full profile...</A>";
+    echo "<A HREF=\"view.php?id=$user->id&course=$course->id\">".get_string("fullprofile")."...</A>";
     echo "</FONT>";
 
     echo "</TD></TR></TABLE></TD></TR></TABLE>";

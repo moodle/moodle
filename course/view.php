@@ -31,7 +31,9 @@
         redirect("$CFG->wwwroot");
     }
 
-    print_header("Course: $course->fullname", "$course->fullname", "$course->shortname", "search.search", "", true,
+    $courseword = get_string("course");
+
+    print_header("$courseword: $course->fullname", "$course->fullname", "$course->shortname", "search.search", "", true,
                   update_course_icon($course->id));
 
     if (! $modtypes = get_records_sql_menu("SELECT name,fullname FROM modules ORDER BY fullname") ) {
@@ -72,15 +74,19 @@
 
 
 function make_editing_buttons($moduleid) {
+    $delete   = get_string("delete");
+    $moveup   = get_string("moveup");
+    $movedown = get_string("movedown");
+    $update   = get_string("update");
     return "&nbsp; &nbsp; 
           <A HREF=mod.php?delete=$moduleid><IMG 
-             SRC=../pix/t/delete.gif BORDER=0 ALT=Delete></A>
+             SRC=../pix/t/delete.gif BORDER=0 ALT=\"$delete\"></A>
           <A HREF=mod.php?id=$moduleid&move=-1><IMG 
-             SRC=../pix/t/up.gif BORDER=0 ALT=\"Move up\"></A>
+             SRC=../pix/t/up.gif BORDER=0 ALT=\"$moveup\"></A>
           <A HREF=mod.php?id=$moduleid&move=1><IMG 
-             SRC=../pix/t/down.gif BORDER=0 ALT=\"Move down\"></A>
+             SRC=../pix/t/down.gif BORDER=0 ALT=\"$movedown\"></A>
           <A HREF=mod.php?update=$moduleid><IMG 
-             SRC=../pix/t/edit.gif BORDER=0 ALT=Update></A>";
+             SRC=../pix/t/edit.gif BORDER=0 ALT=\"$update\"></A>";
 }
 
 function print_side_block($heading="", $list=NULL, $footer="", $icons=NULL) {

@@ -59,10 +59,17 @@ $CFG->dataroot  = "/home/moodledata";
 $CFG->theme     = "standard";
 
 
-// Choose a sitewide language - this will affect navigation, help etc
+// Choose a sitewide language - this will affect text, buttons etc
 // See lib/languages.php for a full list of standard language codes.
 
-$CFG->lang     = "en";
+$CFG->lang     = "en";    
+
+// Choose a sitewide locale - this will affect the display of dates
+// You need to have this locale data installed on your operating 
+// system.  If you don't know what to choose try using the same 
+// string as the language.
+
+$CFG->locale     = "en";
 
 
 // Give the full names of local SMTP servers that Moodle should use to
