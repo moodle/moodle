@@ -1,0 +1,1195 @@
+<?php // $Id$
+
+/////////////////////////////////////////////////////////////////////////////
+//                                                                         //
+// NOTICE OF COPYRIGHT                                                     //
+//                                                                         //
+// Moodle - Calendar extension                                             //
+//                                                                         //
+// Copyright (C) 2003-2004  Greek School Network            www.sch.gr     //
+//                                                                         //
+// Designed by:                                                            //
+//     Avgoustos Tsinakos (tsinakos@uom.gr)                                //
+//     Jon Papaioannou (pj@uom.gr)                                         //
+//                                                                         //
+// Programming and development:                                            //
+//     Jon Papaioannou (pj@uom.gr)                                         //
+//                                                                         //
+// For bugs, suggestions, etc contact:                                     //
+//     Jon Papaioannou (pj@uom.gr)                                         //
+//                                                                         //
+// The current module was developed at the University of Macedonia         //
+// (www.uom.gr) under the funding of the Greek School Network (www.sch.gr) //
+// The aim of this project is to provide additional and improved           //
+// functionality to the Asynchronous Distance Education service that the   //
+// Greek School Network deploys.                                           //
+//                                                                         //
+// This program is free software; you can redistribute it and/or modify    //
+// it under the terms of the GNU General Public License as published by    //
+// the Free Software Foundation; either version 2 of the License, or       //
+// (at your option) any later version.                                     //
+//                                                                         //
+// This program is distributed in the hope that it will be useful,         //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of          //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           //
+// GNU General Public License for more details:                            //
+//                                                                         //
+//          http://www.gnu.org/copyleft/gpl.html                           //
+//                                                                         //
+/////////////////////////////////////////////////////////////////////////////
+
+define ('SECS_IN_DAY', 86400);
+define ('CALENDAR_UPCOMING_DAYS', 14);
+define ('CALENDAR_UPCOMING_MAXEVENTS', 10);
+define ('CALENDAR_STARTING_WEEKDAY', 1);
+define ('CALENDAR_URL', $CFG->wwwroot.'/calendar/');
+
+function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_year = false) {
+    global $CFG, $USER;
+
+    $display = &New object;
+    $display->minwday = get_user_preferences('calendar_startwday', CALENDAR_STARTING_WEEKDAY);
+    $display->maxwday = $display->minwday + 6;
+
+    $content = '';
+
+    if(!empty($cal_month) && !empty($cal_year)) {
+        $thisdate = usergetdate(time()); // Date and time the user sees at his location
+        if($cal_month == $thisdate['mon'] && $cal_year == $thisdate['year']) {
+            // Navigated to this month
+            $date = $thisdate;
+            $display->thismonth = true;
+        }
+        else {
+            // Navigated to other month, let's do a nice trick and save us a lot of work...
+            if(!checkdate($cal_month, 1, $cal_year)) {
+                $date = array('mday' => 1, 'mon' => $thisdate['mon'], 'year' => $thisdate['year']);
+                $display->thismonth = true;
+            }
+            else {
+                $date = array('mday' => 1, 'mon' => $cal_month, 'year' => $cal_year);
+                $display->thismonth = false;
+            }
+        }
+    }
+    else {
+        $date = usergetdate(time()); // Date and time the user sees at his location
+        $display->thismonth = true;
+    }
+
+    // Fill in the variables we 're going to use, nice and tidy
+    list($d, $m, $y) = array($date['mday'], $date['mon'], $date['year']); // This is what we want to display
+    $display->maxdays = calendar_days_in_month($m, $y);
+
+    // We 'll keep these values as GMT here, and offset them when the time comes to query the db
+    $display->tstart = gmmktime(0, 0, 0, $m, 1, $y); // This is GMT
+    $display->tend = gmmktime(23, 59, 59, $m, $display->maxdays, $y); // GMT
+
+    $startwday = gmdate('w', $display->tstart); // $display->tstart is already GMT, so don't use date(): messes with server's TZ
+
+    // Align the starting weekday to fall in our display range
+    // This is simple, not foolproof.
+    if($startwday < $display->minwday) {
+        $startwday += 7;
+    }
+
+    // Get the events matching our criteria. Don't forget to offset the timestamps for the user's TZ!
+    $whereclause = calendar_sql_where(usertime($display->tstart), usertime($display->tend), $users, $groups, $courses);
+
+    if($whereclause === false) {
+        $events = array();
+    }
+    else {
+        $events = get_records_select('event', $whereclause);
+    }
+
+    // We want to have easy access by day, since the display is on a per-day basis.
+    // Arguments passed by reference.
+    calendar_events_by_day($events, $display->tstart, $eventsbyday, $durationbyday, $typesbyday);
+
+    $content .= '<table class="calendarmini"><tr>'; // Begin table. First row: day names
+
+    // Print out the names of the weekdays
+    $days = array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');
+    for($i = $display->minwday; $i <= $display->maxwday; ++$i) {
+        // This uses the % operator to get the correct weekday no matter what shift we have
+        // applied to the $display->minwday : $display->maxwday range from the default 0 : 6
+        $content .= '<td class="calendarheader">'.get_string($days[$i % 7], 'calendar')."</td>\n";
+    }
+
+    $content .= '</tr><tr>'; // End of day names; prepare for day numbers
+
+    // For the table display. $week is the row; $dayweek is the column.
+    $week = 1;
+    $dayweek = $startwday;
+
+    // Paddding (the first week may have blank days in the beginning)
+    for($i = $display->minwday; $i < $startwday; ++$i) {
+        $content .= '<td class="calendardaymini">&nbsp;</td>'."\n";
+    }
+
+    // Now display all the calendar
+    for($day = 1; $day <= $display->maxdays; ++$day, ++$dayweek) {
+        if($dayweek > $display->maxwday) {
+            // We need to change week (table row)
+            $content .= "</tr>\n<tr>";
+            $dayweek = $display->minwday;
+            ++$week;
+        }
+        // Reset vars
+        $class = '';
+        $cell = '';
+        if($dayweek % 7 == 0 || $dayweek % 7 == 6) {
+            // Weekend. This is true no matter what the exact range is.
+            $class = 'cal_day_mini calendarweekend';
+        }
+        else {
+            // Normal working day.
+            $class = 'cal_day_mini';
+        }
+
+        // Special visual fx if an event is defined
+        if(isset($eventsbyday[$day])) {
+            // OverLib popup
+            $popupcontent = '';
+            foreach($eventsbyday[$day] as $eventid) {
+                $popupcontent .= '<div><a href=\\\''.CALENDAR_URL.'view.php?view=event&amp;id='.$events[$eventid]->id.'\\\'>'.addslashes(htmlspecialchars($events[$eventid]->name)).'</a></div>';
+            }
+
+            $popupcaption = get_string('eventsfor', 'calendar', calendar_month_name(intval($date['mon'])).' '.$day);
+            $popup = 'onmouseover="return overlib(\''.$popupcontent.'\', CAPTION, \''.$popupcaption.'\');" onmouseout="return nd();"';
+
+            // Class and cell content
+            if(isset($typesbyday[$day]['startglobal'])) {
+                $class .= ' cal_event_global';
+            }
+            else if(isset($typesbyday[$day]['startcourse'])) {
+                $class .= ' cal_event_course';
+            }
+            else if(isset($typesbyday[$day]['startgroup'])) {
+                $class .= ' cal_event_group';
+            }
+            else if(isset($typesbyday[$day]['startuser'])) {
+                $class .= ' cal_event_user';
+            }
+            if(count($eventsbyday[$day]) == 1) {
+                $title = get_string('oneevent', 'calendar');
+            }
+            else {
+                $title = get_string('manyevents', 'calendar', count($eventsbyday[$day]));
+            }
+            $cell = '<strong><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=day&amp;', $day, $m, $y).'" '.$popup.'">'.$day.'</a></strong>';
+        }
+        else {
+            $cell = $day;
+        }
+
+        if(isset($typesbyday[$day]['durationglobal'])) {
+            $class .= ' cal_duration_global';
+        }
+        else if(isset($typesbyday[$day]['durationcourse'])) {
+            $class .= ' cal_duration_course';
+        }
+        else if(isset($typesbyday[$day]['durationgroup'])) {
+            $class .= ' cal_duration_group';
+        }
+        else if(isset($typesbyday[$day]['durationuser'])) {
+            $class .= ' cal_duration_user';
+        }
+
+        // Special visual fx for today
+        if($display->thismonth && $day == $d) {
+            $class .= ' cal_today';
+        }
+
+        // Just display it
+        $content .= '<td class="'.$class.'">'.$cell."</td>\n";
+    }
+
+    // Paddding (the last week may have blank days at the end)
+    for($i = $dayweek; $i <= $display->maxwday; ++$i) {
+        $content .= '<td class="calendardaymini">&nbsp;</td>';
+    }
+    $content .= '</tr>'; // Last row ends
+
+    $content .= '</table>'; // Tabular display of days ends
+
+    return $content;
+}
+
+function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents) {
+
+    global $CFG;
+
+    $display = &New object;
+    $display->range = $daysinfuture; // How many days in the future we 'll look
+    $display->maxevents = $maxevents;
+
+    $output = array();
+
+    // Prepare "course caching", since it may save us a lot of queries
+    $coursecache = array();
+
+    $processed = 0;
+    $now = time(); // We 'll need this later
+    $nowsecs = $now % SECS_IN_DAY; // this too
+    $nowdays = $now - $nowsecs; // and this
+    $date = usergetdate($now); // Nominal datetime
+
+    // Fill in the variables we 're going to use, nice and tidy
+    list($d, $m, $y) = array($date['mday'], $date['mon'], $date['year']);
+    $display->tstart = gmmktime(0, 0, 0, $m, $d, $y);
+
+    // This effectively adds as many days as needed, and the final SECS_IN_DAY - 1
+    // serves to cover the duration until the end of the final day. We could
+    // just do another gmmktime() and an addition, but this is "faster" :)
+    $display->tend = $display->tstart + (SECS_IN_DAY * $display->range) - 1;
+
+    // Get the events matching our criteria
+    $whereclause = calendar_sql_where($display->tstart, $display->tend, $users, $groups, $courses);
+    if($whereclause === false) {
+        $events = false;
+    }
+    else {
+        $whereclause .= ' ORDER BY timestart'; // We want them this way
+        $events = get_records_select('event', $whereclause);
+    }
+
+    if($events !== false) {
+        foreach($events as $event) {
+            if($processed >= $display->maxevents) break;
+
+            // Important note: these timestamps will receive an offset before being converted
+            // to human-readable form in the calendar_get_XXX_representation() functions.
+            $startdate = usergetdate($event->timestart);
+            $enddate = usergetdate($event->timestart + $event->timeduration);
+
+            // It is equally important that we offset them manually to get the correct dates
+            // for the link URL parameters before creating the links!
+            $tzfix = calendar_get_tz_offset();
+            $linkstartdate = usergetdate($event->timestart + $tzfix);
+            $linkenddate = usergetdate($event->timestart + $event->timeduration + $tzfix);
+
+            $starttimesecs = $event->timestart % SECS_IN_DAY; // Seconds after that day's midnight
+            $starttimedays = $event->timestart - $starttimesecs; // Timestamp of midnight of that day
+
+            if($event->timeduration) {
+                // To avoid doing the math if one IF is enough :)
+                $endtimesecs = ($event->timestart + $event->timeduration) % SECS_IN_DAY; // Seconds after that day's midnight
+                $endtimedays = ($event->timestart + $event->timeduration) - $endtimesecs; // Timestamp of midnight of that day
+            }
+            else {
+                $endtimesecs = $starttimesecs;
+                $endtimedays = $starttimedays;
+            }
+
+            // Keep in mind: $starttimeXXX, $endtimeXXX and $nowXXX are all in GMT-based
+            // OK, now to get a meaningful display...
+
+            // First of all we have to construct a human-readable date/time representation
+            if($endtimedays < $nowdays || $endtimedays == $nowdays && $endtimesecs <= $nowsecs) {
+                // It has expired, so we don't care about duration
+                $day = calendar_day_representation($event->timestart + $event->timeduration, $now);
+                $time = calendar_time_representation($event->timestart + $event->timeduration);
+
+                // This var always has the printable time representation
+                $eventtime = '<span class="calendarexpired">'.get_string('expired', 'calendar').' '.
+                    calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day&amp;', $linkenddate['mday'], $linkenddate['mon'], $linkenddate['year']).'</span> ('.$time.')';
+            }
+            else if($event->timeduration) {
+                // It has a duration
+                if($starttimedays == $endtimedays) {
+                    // But it's all on one day
+                    $day = calendar_day_representation($event->timestart, $now);
+                    $timestart = calendar_time_representation($event->timestart);
+                    $timeend = calendar_time_representation($event->timestart + $event->timeduration);
+
+                    // Set printable representation
+                    $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day&amp;', $linkenddate['mday'], $linkenddate['mon'], $linkenddate['year']).
+                        ' ('.$timestart.' - '.$timeend.')';
+                }
+                else {
+                    // It spans two or more days
+                    $daystart = calendar_day_representation($event->timestart, $now);
+                    $dayend = calendar_day_representation($event->timestart + $event->timeduration, $now);
+                    $timestart = calendar_time_representation($event->timestart);
+                    $timeend = calendar_time_representation($event->timestart + $event->timeduration);
+
+                    // Set printable representation
+                    $eventtime = calendar_get_link_tag($daystart, CALENDAR_URL.'view.php?view=day&amp;', $linkstartdate['mday'], $linkstartdate['mon'], $linkstartdate['year']).
+                        ' ('.$timestart.') - '.calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day&amp;', $linkenddate['mday'], $linkenddate['mon'], $linkenddate['year']).
+                        ' ('.$timeend.')';
+                }
+            }
+            else {
+                // It's an "instantaneous" event
+                $day = calendar_day_representation($event->timestart, $now);
+                $time = calendar_time_representation($event->timestart);
+
+                // Set printable representation
+                $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day&amp;', $linkstartdate['mday'], $linkstartdate['mon'], $linkstartdate['year']).' ('.$time.')';
+            }
+
+            $outkey = count($output);
+
+            // Now we know how to display the time, we have to see how to display the event
+            if(!empty($event->modulename)) {
+
+                // The module name is set. I will assume that it has to be displayed, and
+                // also that it is an automatically-generated event. And of course that the
+                // three fields for get_coursemodule_from_instance are set correctly.
+
+                $module = calendar_get_module_cached($coursecache, $event->modulename, $event->instance, $event->courseid);
+
+                if($module === false) {
+                    // This shouldn't have happened. What to do now?
+                    // Just ignore it
+                    continue;
+                }
+
+                $modulename = get_string('modulename', $event->modulename);
+                $eventtype = get_string($event->eventtype, $event->modulename);
+                $icon = $CFG->modpixpath.'/'.$event->modulename.'/icon.gif';
+                $output[$outkey]->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$module->name.'</a>';
+                $output[$outkey]->icon = '<img src="'.$icon.'" title="'.$modulename.'" style="vertical-align: middle;" />';
+                $output[$outkey]->name = $event->name;
+                $output[$outkey]->time = $eventtime;
+                $output[$outkey]->description = $event->description;
+            }
+            else if($event->courseid == 1) {
+                // Global event
+                global $site;
+                $output[$outkey]->referer = '<a href="'.$CFG->wwwroot.'">'.$site->shortname.'</a>';
+                $output[$outkey]->icon = '';
+                $output[$outkey]->name = $event->name;
+                $output[$outkey]->time = $eventtime;
+                $output[$outkey]->description = $event->description;
+            }
+            else if($event->courseid > 1) {
+                // Course event
+                calendar_get_course_cached($coursecache, $event->courseid);
+
+                $output[$outkey]->referer = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$coursecache[$event->courseid]->id.'">'.$coursecache[$event->courseid]->fullname.'</a>';
+                $output[$outkey]->icon = '';
+                $output[$outkey]->name = $event->name;
+                $output[$outkey]->time = $eventtime;
+                $output[$outkey]->description = $event->description;
+            }
+            else if($event->groupid) {
+                // Group event
+                $output[$outkey]->icon = '';
+                $output[$outkey]->name = $event->name;
+                $output[$outkey]->time = $eventtime;
+                $output[$outkey]->description = $event->description;
+        }
+            else if($event->userid) {
+                // User event
+                $output[$outkey]->icon = '';
+                $output[$outkey]->name = $event->name;
+                $output[$outkey]->time = $eventtime;
+                $output[$outkey]->description = $event->description;
+            }
+            ++$processed;
+        }
+    }
+    return $output;
+}
+
+function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withduration = true) {
+    $whereclause = '';
+    // Quick test
+    if(is_bool($users) && is_bool($groups) && is_bool($courses)) {
+        return false;
+    }
+
+    if(is_array($users) && !empty($users)) {
+        // Events from a number of users
+        if(!empty($whereclause)) $whereclause .= ' OR';
+        $whereclause .= ' userid IN ('.implode(',', $users).') AND courseid = 0 AND groupid = 0';
+    }
+    else if(is_numeric($users)) {
+        // Events from one user
+        if(!empty($whereclause)) $whereclause .= ' OR';
+        $whereclause .= ' userid = '.$users.' AND courseid = 0 AND groupid = 0';
+    }
+    else if($users === true) {
+        // Events from ALL users
+        if(!empty($whereclause)) $whereclause .= ' OR';
+        $whereclause .= ' userid != 0 AND courseid = 0 AND groupid = 0';
+    }
+    if(is_array($groups) && !empty($groups)) {
+        // Events from a number of groups
+        if(!empty($whereclause)) $whereclause .= ' OR';
+        $whereclause .= ' groupid IN ('.implode(',', $groups).')';
+    }
+    else if(is_numeric($groups)) {
+        // Events from one group
+        if(!empty($whereclause)) $whereclause .= ' OR ';
+        $whereclause .= ' groupid = '.$groups;
+    }
+    else if($groups === true) {
+        // Events from ALL groups
+        if(!empty($whereclause)) $whereclause .= ' OR ';
+        $whereclause .= ' groupid != 0';
+    }
+    if(is_array($courses) && !empty($courses)) {
+        // A number of courses
+        if(!empty($whereclause)) $whereclause .= ' OR';
+        $whereclause .= ' groupid = 0 AND courseid IN ('.implode(',', $courses).')';
+    }
+    else if(is_numeric($courses)) {
+        // One course
+        if(!empty($whereclause)) $whereclause .= ' OR';
+        $whereclause .= ' groupid = 0 AND courseid = '.$courses;
+    }
+    else if($courses === true) {
+        // Events from ALL courses
+        if(!empty($whereclause)) $whereclause .= ' OR';
+        $whereclause .= ' groupid = 0 AND courseid != 0';
+    }
+    if($withduration) {
+        $timeclause = 'timestart + timeduration >= '.$tstart.' AND timestart <= '.$tend;
+    }
+    else {
+        $timeclause = 'timestart >= '.$tstart.' AND timestart <= '.$tend;
+    }
+    if(!empty($whereclause)) {
+        // We have additional constraints
+        $whereclause = $timeclause.' AND ('.$whereclause.')';
+    }
+    else {
+        // Just basic time filtering
+        $whereclause = $timeclause;
+    }
+    return $whereclause;
+}
+
+function calendar_top_controls($type, $data) {
+    global $CFG;
+    $content = '';
+    if(!isset($data['d'])) {
+        $data['d'] = 1;
+    }
+    $time = calendar_mktime_check($data['m'], $data['d'], $data['y']);
+    $date = getdate($time);
+    $data['m'] = $date['mon'];
+    $data['y'] = $date['year'];
+    $monthname = calendar_month_name($date['month']);
+
+    switch($type) {
+        case 'frontpage':
+            list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
+            list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
+            $nextlink = calendar_get_link_tag('&gt;&gt;', 'index.php?id='.$data['id'].'&amp;', 0, $nextmonth, $nextyear);
+            $prevlink = calendar_get_link_tag('&lt;&lt;', 'index.php?id='.$data['id'].'&amp;', 0, $prevmonth, $prevyear);
+            $content .= '<table class="generaltable" style="width: 100%;"><tr>';
+            $content .= '<td style="text-align: left; width: 12%;">'.$prevlink."</td>\n";
+            $content .= '<td style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.$monthname.' '.$data['y']."</a></td>\n";
+            $content .= '<td style="text-align: right; width: 12%;">'.$nextlink."</td>\n";
+            $content .= '</tr></table>';
+        break;
+        case 'course':
+            list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
+            list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
+            $nextlink = calendar_get_link_tag('&gt;&gt;', 'view.php?id='.$data['id'].'&amp;', 0, $nextmonth, $nextyear);
+            $prevlink = calendar_get_link_tag('&lt;&lt;', 'view.php?id='.$data['id'].'&amp;', 0, $prevmonth, $prevyear);
+            $content .= '<table class="generaltable" style="width: 100%;"><tr>';
+            $content .= '<td style="text-align: left; width: 12%;">'.$prevlink."</td>\n";
+            $content .= '<td style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.$monthname.' '.$data['y']."</a></td>\n";
+            $content .= '<td style="text-align: right; width: 12%;">'.$nextlink."</td>\n";
+            $content .= '</tr></table>';
+        break;
+        case 'upcoming':
+            // A quick check reveals that this is not used at all
+            /*
+            list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
+            list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
+            $prevdate = getdate(calendar_mktime_check($prevmonth, 1, $prevyear));
+            $nextdate = getdate(calendar_mktime_check($nextmonth, 1, $nextyear));
+            $prevname = calendar_month_name($prevdate['month']);
+            $nextname = calendar_month_name($nextdate['month']);
+            $content .= "<tr>\n";
+            $content .= '<td style="text-align: center"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $prevmonth, $prevyear).'">'.$prevname.' '.$prevyear."</a></td>\n";
+            $content .= '<td style="text-align: center"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.$monthname.' '.$data['y']."</a></td>\n";
+            $content .= '<td style="text-align: center"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $nextmonth, $nextyear).'">'.$nextname.' '.$nextyear."</a></td>\n";
+            $content .= "</tr>\n";
+            */
+        break;
+        case 'display':
+            $content .= '<div style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.$monthname.' '.$data['y']."</a></div>\n";
+        break;
+        case 'month':
+            list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
+            list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
+            $prevdate = getdate(calendar_mktime_check($prevmonth, 1, $prevyear));
+            $nextdate = getdate(calendar_mktime_check($nextmonth, 1, $nextyear));
+            $prevname = calendar_month_name($prevdate['month']);
+            $nextname = calendar_month_name($nextdate['month']);
+            $content .= "<table style='width: 100%;'><tr>\n";
+            $content .= '<td style="text-align: left; width: 30%;"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $prevmonth, $prevyear).'">&lt;&lt; '.$prevname.' '.$prevyear."</a></td>\n";
+            $content .= '<td style="text-align: center"><strong>'.$monthname.' '.$data['y']."</strong></td>\n";
+            $content .= '<td style="text-align: right; width: 30%;"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $nextmonth, $nextyear).'">'.$nextname.' '.$nextyear." &gt;&gt;</a></td>\n";
+            $content .= "</tr></table>\n";
+        break;
+        case 'day':
+            $data['d'] = $date['mday']; // Just for convenience
+            $dayname = calendar_wday_name($date['weekday']);
+            $prevdate = getdate($time - SECS_IN_DAY);
+            $nextdate = getdate($time + SECS_IN_DAY);
+            $prevname = calendar_wday_name($prevdate['weekday']);
+            $nextname = calendar_wday_name($nextdate['weekday']);
+            $content .= "<table style='width: 100%;'><tr>\n";
+            $content .= '<td style="text-align: left; width: 20%;"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $prevdate['mday'], $prevdate['mon'], $prevdate['year']).'">&lt;&lt; '.$prevname.' '.$prevyear."</a></td>\n";
+            $content .= '<td style="text-align: center"><strong>'.$dayname.', '.$data['d'].' <a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.$monthname.' '.$data['y']."</a></strong></td>\n";
+            $content .= '<td style="text-align: right; width: 20%;"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $nextdate['mday'], $nextdate['mon'], $nextdate['year']).'">'.$nextname.' '.$nextyear." &gt;&gt;</a></td>\n";
+            $content .= "</tr></table>\n";
+        break;
+    }
+    return $content;
+}
+
+function calendar_filter_controls($type) {
+    global $CFG, $SESSION;
+
+    $content = '';
+    switch($type) {
+        // A quick check reveals this is not used at all
+        // case 'upcoming':
+        //     if(!isset($getvars)) {
+        //         global $day, $mon, $yr;
+        //         $getvars = 'from=upcoming&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr;
+        //     }
+
+        case 'event':
+            if(!isset($getvars)) {
+                global $day, $mon, $yr;
+                $getvars = 'from=event&amp;id='.$_GET['id'];
+            }
+
+        case 'day':
+            if(!isset($getvars)) {
+                global $day, $mon, $yr;
+                $getvars = 'from=day&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr;
+            }
+
+        case 'course':
+            if(!isset($getvars)) {
+                global $course;
+                $getvars = 'from=course&amp;id='.$course->id;
+            }
+
+            $content .= '<table class="cal_controls" style="width: 98%;">';
+
+            $content .= '<tr>';
+            if($SESSION->cal_show_global) {
+                $content .= '<td class="cal_event_global" style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showglobal&amp;'.$getvars.'" title="'.get_string('tt_hideglobal', 'calendar').'">'.get_string('globalevents', 'calendar').'</a></td>'."\n";
+            }
+            else {
+                $content .= '<td style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showglobal&amp;'.$getvars.'" title="'.get_string('tt_showglobal', 'calendar').'">'.get_string('globalevents', 'calendar').'</a></td>'."\n";
+            }
+            if($SESSION->cal_show_course) {
+                $content .= '<td class="cal_event_course" style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showcourses&amp;'.$getvars.'" title="'.get_string('tt_hidecourse', 'calendar').'">'.get_string('courseevents', 'calendar').'</a></td>'."\n";
+            }
+            else {
+                $content .= '<td style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showcourses&amp;'.$getvars.'" title="'.get_string('tt_showcourse', 'calendar').'">'.get_string('courseevents', 'calendar').'</a></td>'."\n";
+            }
+            $content .= "</tr>\n";
+            $content .= '<tr>';
+            if($SESSION->cal_show_groups) {
+                $content .= '<td class="cal_event_group" style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showgroups&amp;'.$getvars.'" title="'.get_string('tt_hidegroups', 'calendar').'">'.get_string('groupevents', 'calendar').'</a></td>'."\n";
+            }
+            else {
+                $content .= '<td style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showgroups&amp;'.$getvars.'" title="'.get_string('clickshowgroups', 'calendar').'">'.get_string('groupevents', 'calendar').'</a></td>'."\n";
+            }
+            if($SESSION->cal_show_user) {
+                $content .= '<td class="cal_event_user" style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showuser&amp;'.$getvars.'" title="'.get_string('tt_hideuser', 'calendar').'">'.get_string('userevents', 'calendar').'</a></td>'."\n";
+            }
+            else {
+                $content .= '<td style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showuser&amp;'.$getvars.'" title="'.get_string('clickshowuser', 'calendar').'">'.get_string('userevents', 'calendar').'</a></td>'."\n";
+            }
+            $content .= "</tr>\n</table>\n";
+        break;
+    }
+    return $content;
+}
+
+function calendar_day_representation($tstamp, $now = false, $usecommonwords = true) {
+
+    $days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
+    if($now === false) {
+        $now = time();
+    }
+
+    // To have it in one place, if a change is needed
+    $formal = get_string($days[userdate($tstamp, '%w')], 'calendar') . userdate($tstamp,' %d %b');
+
+    // Reverse TZ compensation: make GMT stamps correspond to user's TZ
+    $tzfix = calendar_get_tz_offset();
+    $tstamp += $tzfix;
+    $now += $tzfix;
+
+    $eventdays = intval($tstamp / SECS_IN_DAY);
+    $nowdays = intval($now / SECS_IN_DAY);
+
+    if($usecommonwords == false) {
+        // We don't want words, just a date
+        return $formal;
+    }
+    else if($eventdays == $nowdays) {
+        // Today
+        return get_string('today', 'calendar');
+    }
+    else if($eventdays == $nowdays - 1) {
+        // Yesterday
+        return get_string('yesterday', 'calendar');
+    }
+    else if($eventdays == $nowdays + 1) {
+        // Tomorrow
+        return get_string('tomorrow', 'calendar');
+    }
+    else {
+        return $formal;
+    }
+}
+
+function calendar_time_representation($time) {
+    return userdate($time, '%H:%M');
+}
+
+function calendar_get_link_href($linkbase, $d, $m, $y) {
+    if(empty($linkbase)) return '';
+    $paramstr = '';
+    if(!empty($d)) $paramstr .= '&amp;cal_d='.$d;
+    if(!empty($m)) $paramstr .= '&amp;cal_m='.$m;
+    if(!empty($y)) $paramstr .= '&amp;cal_y='.$y;
+    if(!empty($paramstr)) $paramstr = substr($paramstr, 5);
+    return $linkbase.$paramstr;
+}
+
+function calendar_get_link_tag($text, $linkbase, $d, $m, $y) {
+    $href = calendar_get_link_href($linkbase, $d, $m, $y);
+    if(empty($href)) return $text;
+    return '<a href="'.$href.'">'.$text.'</a>';
+}
+
+function calendar_gmmktime_check($m, $d, $y, $default = false) {
+    if($default === false) $default = time();
+    if(!checkdate($m, $d, $y)) {
+        return $default;
+    }
+    else {
+        return gmmktime(0, 0, 0, $m, $d, $y);
+    }
+}
+
+function calendar_mktime_check($m, $d, $y, $default = false) {
+    if($default === false) $default = time();
+    if(!checkdate($m, $d, $y)) {
+        return $default;
+    }
+    else {
+        return mktime(0, 0, 0, $m, $d, $y);
+    }
+}
+
+function calendar_month_name($month) {
+    if(is_int($month)) {
+        // 1 ... 12 integer converted to month name
+        $months = array('january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december');
+        return get_string($months[$month - 1], 'calendar');
+    }
+    else {
+        return get_string(strtolower($month), 'calendar');
+    }
+}
+
+function calendar_wday_name($englishname) {
+    return get_string(strtolower($englishname), 'calendar');
+}
+
+function calendar_days_in_month($month, $year) {
+   return date('t', mktime(0, 0, 0, $month, 1, $year));
+}
+
+function calendar_get_sideblock_upcoming($courses, $groups, $users, $daysinfuture, $maxevents) {
+    $events = calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents);
+
+    $content = '';
+    $lines = count($events);
+    if(!$lines) return $content;
+
+    for($i = 0; $i < $lines; ++$i) {
+        $content .= '<div class="cal_event">'.$events[$i]->icon.' ';
+        $content .= $events[$i]->name.':';
+        if(!empty($events[$i]->icon)) {
+            // That's an activity event, so let's provide the hyperlink
+            $content .= ' '.$events[$i]->referer;
+        }
+        $content .= '</div><div class="cal_event_date">'.$events[$i]->time.'</div>';
+        if($i < $lines - 1) $content .= '<hr />';
+    }
+
+    return $content;
+
+}
+
+function calendar_add_month($month, $year) {
+    if($month == 12) {
+        return array(1, $year + 1);
+    }
+    else {
+        return array($month + 1, $year);
+    }
+}
+
+function calendar_sub_month($month, $year) {
+    if($month == 1) {
+        return array(12, $year - 1);
+    }
+    else {
+        return array($month - 1, $year);
+    }
+}
+
+function calendar_events_by_day($events, $starttime, &$eventsbyday, &$durationbyday, &$typesbyday) {
+    $eventsbyday = array();
+    $typesbyday = array();
+    $durationbyday = array();
+
+    if($events === false) {
+        return;
+    }
+
+    // Reverse TZ compensation: make GMT stamps (from event table) correspond to user's TZ
+    $tzfix = calendar_get_tz_offset();
+
+    foreach($events as $event) {
+        $eventdaystart = 1 + floor(($event->timestart + $tzfix - $starttime) / SECS_IN_DAY);
+        $eventdayend = 1 + floor(($event->timestart + $event->timeduration + $tzfix - $starttime) / SECS_IN_DAY);
+
+        // Give the event to its day
+        $eventsbyday[$eventdaystart][] = $event->id;
+
+        // Mark the day as having such an event
+        if($event->courseid == 1 && $event->groupid == 0) {
+            $typesbyday[$eventdaystart]['startglobal'] = true;
+        }
+        else if($event->courseid > 1 && $event->groupid == 0) {
+            $typesbyday[$eventdaystart]['startcourse'] = true;
+        }
+        else if($event->groupid) {
+            $typesbyday[$eventdaystart]['startgroup'] = true;
+        }
+        else if($event->userid) {
+            $typesbyday[$eventdaystart]['startuser'] = true;
+        }
+
+        // Mark all days up to and including ending day as duration
+        if($eventdaystart < $eventdayend) {
+
+            // Normally this should be
+
+            // $bound = min($eventdayend, $display->maxdays);
+            // for($i = $eventdaystart + 1; $i <= $bound; ++$i) {
+
+            // So that we don't go on marking days after the end of
+            // the month if the event continues. However, this code
+            // has moved and now we don't have access to $display->maxdays.
+            // In order to save the overhead of recomputing it, we just
+            // use this "dumb" approach. Anyway, the function that called
+            // us already knows up to what day it should display.
+
+            for($i = $eventdaystart + 1; $i <= $eventdayend; ++$i) {
+                $durationbyday[$i][] = $event->id;
+                if($event->courseid == 1 && $event->groupid == 0) {
+                    $typesbyday[$i]['durationglobal'] = true;
+                }
+                else if($event->courseid > 1 && $event->groupid == 0) {
+                    $typesbyday[$i]['durationcourse'] = true;
+                }
+                else if($event->groupid) {
+                    $typesbyday[$i]['durationgroup'] = true;
+                }
+                else if($event->userid) {
+                    $typesbyday[$i]['durationuser'] = true;
+                }
+            }
+        }
+    }
+    return;
+}
+
+function calendar_get_module_cached(&$coursecache, $modulename, $instance, $courseid) {
+    $module = get_coursemodule_from_instance($modulename, $instance, $courseid);
+
+    if($module === false) return false;
+    if(!calendar_get_course_cached($coursecache, $courseid)) {
+        return false;
+    }
+    return $module;
+}
+
+function calendar_get_course_cached(&$coursecache, $courseid) {
+    if(!isset($coursecache[$courseid])) {
+        $coursecache[$courseid] = get_record('course', 'id', $courseid);
+    }
+    return $coursecache[$courseid];
+}
+
+function calendar_session_vars() {
+    global $SESSION, $USER;
+
+    if(!isset($SESSION->cal_course_referer)) {
+        $SESSION->cal_course_referer = 0;
+    }
+    if(!isset($SESSION->cal_show_global)) {
+        $SESSION->cal_show_global = true;
+    }
+    if(!isset($SESSION->cal_show_groups)) {
+        $SESSION->cal_show_groups = true;
+    }
+    if(!isset($SESSION->cal_show_course)) {
+        $SESSION->cal_show_course = true;
+    }
+    if(!isset($SESSION->cal_show_user)) {
+        $SESSION->cal_show_user = $USER->id;
+    }
+}
+
+function calendar_overlib_html() {
+    global $CFG;
+
+    $html = '';
+    $html .= '<div id="overDiv" style="position: absolute; visibility: hidden; z-index:1000;"></div>';
+    $html .= '<script type="text/javascript" src="'.CALENDAR_URL.'overlib.cfg.php"></script>';
+
+    return $html;
+}
+
+function calendar_print_side_blocks($forcecourse = NULL) {
+    // WARNING: Keep in mind that using $forcecourse will override the $SESSION
+    // filters, and thus not respect the user's filter settings. Use it sparingly.
+
+    global $USER, $CFG, $SESSION, $course;
+    optional_variable($_GET['cal_m']);
+    optional_variable($_GET['cal_y']);
+
+    calendar_session_vars();
+
+    if(is_int($forcecourse)) {
+        // Overrides the course to use
+        $courseshown = $forcecourse;
+        $defaultcourses = array($courseshown => 1);
+    }
+    else if($forcecourse === false) {
+        // Overrides: use no course at all
+        $courseshown = false;
+        $defaultcourses = NULL;
+    }
+    else {
+        // Normal behavior: use displayed course, or front page if no course
+        $courseshown = ($course === NULL) ? 1 : $course->id;
+        $defaultcourses = array($courseshown => 1);
+    }
+
+    // I 'm not really sure if this belongs here...
+    calendar_set_referring_course($courseshown);
+
+    if($courseshown !== false && is_int($SESSION->cal_show_course) && $SESSION->cal_show_course != $courseshown) {
+        // There is a filter in action that shows events from a course other than the current
+        // Obviously we have to cut it out
+        $SESSION->cal_show_course = true;
+    }
+   else if($courseshown !== false && is_array($SESSION->cal_show_course) && !in_array($courseshown, $SESSION->cal_show_course)) {
+        // Same as above, only there are many courses being shown. Unfortunately, not this one.
+        $SESSION->cal_show_course = true;
+    }
+
+    // Be VERY careful with the format for default courses arguments!
+    // Correct formatting is [courseid] => 1 to be concise with moodlelib.php functions.
+
+    calendar_set_filters($courses, $group, $user, $defaultcourses, $defaultcourses);
+
+    if(get_user_preferences('calendar_showmonth', true)) {
+        if($courseshown == 1) {
+            // For the front page
+            echo calendar_overlib_html();
+            print_side_block_start(get_string('calendar', 'calendar'));
+            echo calendar_top_controls('frontpage', array('m' => $_GET['cal_m'], 'y' => $_GET['cal_y']));
+            echo calendar_get_mini($courses, $group, $user, $_GET['cal_m'], $_GET['cal_y']);
+            // No filters for now
+            print_side_block_end();
+        }
+        else {
+            // For any other course
+            echo calendar_overlib_html();
+            print_side_block_start(get_string('calendar', 'calendar'));
+            echo calendar_top_controls('course', array('id' => $courseshown, 'm' => $_GET['cal_m'], 'y' => $_GET['cal_y']));
+            echo calendar_get_mini($courses, $group, $user, $_GET['cal_m'], $_GET['cal_y']);
+            echo calendar_filter_controls('course');
+            print_side_block_end();
+        }
+    }
+    if(get_user_preferences('calendar_showupcoming', true)) {
+        $block = calendar_get_sideblock_upcoming($courses, $group, $user, get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS), get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS));
+        if(!empty($block)) {
+            print_side_block_start(get_string('upcomingevents', 'calendar'));
+            echo $block;
+            print_side_block_end();
+        }
+    }
+}
+
+function calendar_set_referring_course($courseid) {
+    global $SESSION;
+    $SESSION->cal_course_referer = intval($courseid);
+}
+
+function calendar_set_filters(&$courses, &$group, &$user, $defaultcourses = NULL, $groupcourses = NULL) {
+    global $SESSION, $USER;
+
+    // WARNING: When calling this function, be VERY careful with the format for default courses arguments!
+    // Correct formatting is [courseid] => 1 to be concise with moodlelib.php functions.
+
+    $showcourse = (
+        (is_int($SESSION->cal_show_course) && $SESSION->cal_show_course) ||
+        (is_array($SESSION->cal_show_course) && count($SESSION->cal_show_course)) ||
+        ($SESSION->cal_show_course === true)
+    );
+    if($defaultcourses === NULL) {
+        $defaultcourses = array();
+    }
+    if($groupcourses === NULL) {
+        $groupcourses = array();
+    }
+
+    if(is_array($defaultcourses) && array_key_exists(1, $defaultcourses)) {
+        // This should never happen, so let's be sure just in case
+        $defaultcourses = array_diff_assoc($defaultcourses, array(1 => 1));
+    }
+
+    if($showcourse && $SESSION->cal_show_global) {
+        if(is_int($SESSION->cal_show_course)) {
+            $courses = array(1, $SESSION->cal_show_course);
+        }
+        else if(is_array($SESSION->cal_show_course)) {
+            $courses = array(1) + $SESSION->cal_show_course;
+
+        }
+        else {
+            $courses = array_keys($defaultcourses);
+            $courses[] = 1;
+        }
+    }
+    else if($showcourse) {
+        if(is_int($SESSION->cal_show_course)) {
+            $courses = array($SESSION->cal_show_course);
+        }
+        else if(is_array($SESSION->cal_show_course)) {
+            $courses = $SESSION->cal_show_course;
+        }
+        else {
+            $courses = array_keys($defaultcourses);
+            if(empty($courses)) $courses = false;
+        }
+    }
+    else if($SESSION->cal_show_global) {
+        $courses = array(1);
+    }
+    else {
+        $courses = false;
+    }
+
+    if($SESSION->cal_show_user) {
+        $user = $SESSION->cal_show_user;
+    }
+    else {
+        $user = false;
+    }
+    if($SESSION->cal_show_groups) {
+        if(is_int($groupcourses)) {
+            // One course, whatever group the user is in that course
+            if(mygroupid($groupcourses)) {
+                $group = mygroupid($groupcourses);
+            }
+            else {
+                $group = false;
+            }
+        }
+        else if(is_array($groupcourses)) {
+            // Many courses, we want all of them
+            if(empty($USER->groupmember)) {
+                $group = false;
+            }
+            else {
+                $grouparray = array();
+                foreach ($USER->groupmember as $courseid => $mgroupid) {
+                    if (in_array($courseid, $groupcourses)) {
+                        $grouparray[] = $mgroupid;
+                    }
+                }
+                if(!empty($grouparray)) {
+                    // We got some groups at the least
+                    $group = $grouparray;
+                }
+                else {
+                    // No groups in these courses
+                    $group = false;
+                }
+            }
+        }
+        else if(is_bool($groupcourses)) {
+            // Override
+            $group = $groupcourses;
+        }
+        else {
+            // Sanity
+            $group = false;
+        }
+    }
+    else {
+        $group = false;
+    }
+}
+
+function calendar_edit_event_allowed($event) {
+    global $USER;
+
+    if(isadmin($USER->id)) return true; // Admins are allowed anything
+
+    if($event->courseid > 1) {
+        // Course event, only editing teachers may... edit :P
+        if(isteacheredit($event->courseid)) {
+            return true;
+        }
+    }
+    else if($event->courseid == 0 && $event->groupid != 0) {
+        // Group event
+        $group = get_record('groups', 'id', $event->groupid);
+        if($group === false) return false;
+        if(isteacheredit($group->courseid)) {
+            return true;
+        }
+    }
+    else if($event->courseid == 0 && $event->groupid == 0 && $event->userid == $USER->id) {
+        // User event, owned by this user
+        return true;
+    }
+
+    return false;
+}
+
+function calendar_get_default_courses() {
+    global $USER;
+
+    $courses = array();
+    if(is_array($USER->student)) {
+        $courses = $USER->student + $courses;
+    }
+    if(is_array($USER->teacher)) {
+        $courses = $USER->teacher + $courses;
+    }
+    return $courses;
+}
+
+// NOTE: This function is obsolete. But let's not kill it just yet.
+/*
+function calendar_print_preferences_menu() {
+
+    // Guests have no preferences
+    if(isguest()) {
+        return;
+    }
+
+    print_side_block_start(get_string('preferences', 'calendar'), '', 'mycalendar');
+    echo '<div style="text-align: center;"><table style="margin: auto; text-align: center;"><tr>';
+    $prefs = array(
+        'startwday' => get_string('pref_startwday', 'calendar'),
+        'maxevents' => get_string('pref_maxevents', 'calendar'),
+        'lookahead' => get_string('pref_lookahead', 'calendar'),
+    );
+    foreach($prefs as $name => $description) {
+        echo '<td style="padding: 0px 20px;"><a href="preferences.php?edit='.$name.'"><img src="images/'.$name.'.gif" alt="'.$description.'" title="'.$description.'" /><div style="font-size: 0.6em;">'.$description.'</div></a></td>';
+    }
+    echo '</tr></table></div>';
+    print_side_block_end();
+}
+*/
+
+function calendar_get_tz_offset() {
+    global $USER, $CFG;
+    static $tzfix;
+
+    // Caching
+    if(isset($tzfix)) {
+        return $tzfix;
+    }
+
+    if(empty($USER)) {
+        // Don't forget that there are users which have NOT logged in, even as guests
+        $timezone = $CFG->timezone;
+    }
+    else {
+        // If, on the other hand, we do have a user...
+        $timezone = $USER->timezone;
+        if(abs($timezone > 13)) {
+            // But if the user has specified 'server default' time,
+            // don't get the server's; get the Moodle $CFG setting
+            // (Martin's help text on site cfg implies this)
+            $timezone = $CFG->timezone;
+        }
+    }
+
+    if(abs($timezone) <= 13) {
+        $tzfix = $timezone * 3600;
+    }
+    else {
+        $tzfix = date('Z', $starttime);
+    }
+
+    return $tzfix;
+}
+
+function calendar_preferences_array() {
+    return array(
+        'startwday' => get_string('pref_startwday', 'calendar'),
+        'maxevents' => get_string('pref_maxevents', 'calendar'),
+        'lookahead' => get_string('pref_lookahead', 'calendar'),
+    );
+}
+
+function calendar_get_preferences_menu() {
+
+    // Guests have no preferences
+    if(isguest()) {
+        return '';
+    }
+
+    $str = '<form style="display: inline;" name="cal_pref_form" method="get" action="preferences.php">';
+    $str .= '<select id="cal_pref" name="edit" onchange="self.location=\'preferences.php?edit=\'+document.cal_pref_form.cal_pref.options[document.cal_pref_form.cal_pref.options.selectedIndex].value; ">';
+    $str .= '<option value="" selected="selected">'.get_string('preferences', 'calendar').'...</option>';
+    $prefs = calendar_preferences_array();
+
+    foreach($prefs as $name => $description) {
+        $str .= '<option value="'.$name.'">'.$description.'</option>';
+    }
+    $str .= '</select>';
+    $str .= '<noscript id="cal_noscript" style="display: inline;"> <input type="submit" value=" &gt; " /></noscript>';
+    $str .= '<script type="text/javascript">document.getElementById("cal_noscript").style.display = "none";</script>';
+    $str .= '</form>';
+
+    return $str;
+}
+
+if(!function_exists('array_diff_assoc')) {
+    // PHP < 4.3.0
+    function array_diff_assoc($source, $diff) {
+        $res = $source;
+        foreach ($diff as $key=>$data) {
+            unset($res[$key]);
+        }
+        return $res;
+    }
+}
+
+?>

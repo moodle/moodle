@@ -1,0 +1,27 @@
+<p style="text-align: center;"><?php print_string('confirmeventdelete', 'calendar'); ?></p>
+<div style="text-align: center; width: 100%;">
+<table style="margin: auto;" >
+  <tr>
+    <td>
+    <form method="get" action="event.php" name="delete">
+      <input type="submit" value=" <?php print_string('ok') ?> ">
+      <input type="hidden" name="id" value="<?php echo $event->id?>" />
+      <input type="hidden" name="action" value="delete" />
+      <input type="hidden" name="m" value="<?php echo $m; ?>" />
+      <input type="hidden" name="d" value="<?php echo $d; ?>" />
+      <input type="hidden" name="y" value="<?php echo $y; ?>" />
+      <input type="hidden" name="confirm" value="1" />
+      </form>
+    </td>
+    <td>
+      <form method="get" action="view.php" name="cancel">
+      <input type="submit" value=" <?php print_string('cancel') ?> ">
+      <input type="hidden" name="view" value="day" />
+      <input type="hidden" name="cal_m" value="<?php echo $m; ?>" />
+      <input type="hidden" name="cal_d" value="<?php echo $d; ?>" />
+      <input type="hidden" name="cal_y" value="<?php echo $y; ?>" />
+      </form>
+    </td>
+  </tr>
+</table>
+</div>

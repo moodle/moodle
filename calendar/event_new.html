@@ -1,0 +1,43 @@
+<form method="post" action="event.php" name="new">
+<table class="formtable">
+  <tr>
+    <td style="vertical-align: top; text-align: right;"><?php print_string('eventname', 'calendar'); ?>:</td>
+    <td><input type="text" name="name" size="67" value="<?php p($form->name); ?>" /> <?php if (isset($err['name'])) formerr($err['name']); ?></td>
+  </tr>
+  <tr>
+    <td style="vertical-align: top; text-align: right;"><?php print_string('eventdescription', 'calendar'); ?>:</td>
+    <td>
+      <textarea name="description" rows="10" cols="50" wrap="virtual"><?php p($form->description); ?></textarea><br />
+      <?php if (isset($err['description'])) formerr($err['description']); ?>
+    </td>
+  </tr>
+  <tr>
+    <td style="vertical-align: top; text-align: right;"><?php print_string('eventdate', 'calendar'); ?>:</td>
+    <td><?php print_date_selector('startday', 'startmon', 'startyr', $form->timestart);?> <?php print_string('eventtime', 'calendar');?> <?php print_time_selector('starthr', 'startmin', $form->timestart) ?>  <?php if (isset($err['timestart'])) formerr($err['timestart']); ?></td>
+  </tr>
+  <tr>
+    <td style="vertical-align: top; text-align: right;"><?php print_string('eventduration', 'calendar'); ?>:</td>
+    <td>
+      <div><input type="radio" name="duration" value="0" id="duration_none" <?php if($form->duration == 0) echo 'checked="checked"'; ?>/><label for="duration_none"><?php print_string('durationnone', 'calendar'); ?></label></div>
+      <div><input type="radio" name="duration" value="1" id="duration_yes" <?php if($form->duration == 1) echo 'checked="checked"'; ?>/><label for="duration_yes"><?php print_string('durationuntil', 'calendar'); ?></label>
+        <?php print_date_selector('endday', 'endmon', 'endyr', $form->timestart + $form->timeduration);?> <?php print_string('eventtime', 'calendar');?> <?php print_time_selector('endhr', 'endmin', $form->timestart + $form->timeduration) ?>  <?php if (isset($err['timeduration'])) formerr($err['timeduration']); ?>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td><p><input type="submit" value="<?php print_string('ok') ?>"></p></td>
+  </tr>
+</table>
+<p>
+<input type="hidden" name="courseid" value="<?php echo $form->courseid?>" />
+<input type="hidden" name="groupid" value="<?php echo $form->groupid?>" />
+<input type="hidden" name="userid" value="<?php echo $form->userid?>" />
+<input type="hidden" name="modulename" value="<?php echo $form->modulename?>" />
+<input type="hidden" name="eventtype" value="<?php echo $form->eventtype?>" />
+<input type="hidden" name="instance" value="<?php echo $form->instance?>" />
+<!--<input type="hidden" name="format" value="<?php echo $form->format; ?>" />-->
+<input type="hidden" name="action" value="new" />
+<input type="hidden" name="type" value="defined" />
+</p>
+</form>

@@ -1,0 +1,47 @@
+<table class="formtable">
+  <form method="post" action="event.php" name="edit">
+  <p>
+  <input type="hidden" name="action" value="new" />
+  <input type="hidden" name="timestart" value="<?php echo $form->timestart; ?>" />
+  </p>
+  <tr>
+    <td style="vertical-align: top; text-align: right;"><?php print_string('eventkind', 'calendar'); ?>:</td>
+    <td>
+    <?php if(!empty($allowed->user)) { ?><p><input type='radio' name='type' value='user' id='type_user' checked='checked' /><label for='type_user'><?php print_string('typeuser', 'calendar') ?></label></p>
+    <?php } ?>
+    <?php if(!empty($allowed->groups)) { ?><p><input type='radio' name='type' value='group' id='type_group' /><label for='type_group'><?php print_string('typegroup', 'calendar') ?></label></p>
+      <div style="padding-left: 1.5em;">
+      <?php print_string('course'); echo ' / '; print_string('group'); ?>:
+      <select name='groupid'>
+        <option value=''></option>
+      <?php foreach($allowed->groups as $group) {?>
+        <option value='<?php echo $group->id?>' <?php if($group->id == $groupid) echo 'selected="selected"';?>><?php echo $group->fullname.' - '.$group->name?></option>
+      <?php }?>
+      </select>
+      </div>
+    <?php } ?>
+    <?php if(!empty($allowed->courses)) { ?><p><input type='radio' name='type' value='course' id='type_course' /><label for='type_course'><?php print_string('typecourse', 'calendar') ?></label></p>
+      <div style="padding-left: 1.5em;">
+      <?php print_string('course'); ?>:
+      <select name='courseid'>
+        <option value=''></option>
+      <?php foreach($allowed->courses as $course) {?>
+        <option value='<?php echo $course->id?>' <?php if($course->id == $courseid) echo 'selected="selected"';?>><?php echo $course->fullname?></option>
+      <?php }?>
+      </select>
+      </div>
+    <?php } ?>
+    <?php if(!empty($allowed->site)) { ?><p><input type='radio' name='type' value='site' id='type_site' /><label for='type_site'><?php print_string('typesite', 'calendar') ?></label></p>
+    <?php } ?>
+    </td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>
+      <p><input type="submit" value=" <?php print_string('ok') ?> ">
+      <input type="button" onclick="document.location.href='view.php?view=upcoming';" value=" <?php print_string('cancel') ?> ">
+      </p>
+    </td>
+  </tr>
+  </form>
+</table>

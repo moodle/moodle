@@ -1,0 +1,10 @@
+ol_delay = 1000;
+ol_css = CSSCLASS;
+ol_fgclass = 'cal_popup_fg';
+ol_bgclass = 'cal_popup_bg';
+ol_captionfontclass = 'cal_popup_caption';
+ol_closefontclass = 'cal_popup_close';
+ol_closeclick = true;
+ol_sticky = true;
+ol_close = 'X';
+ol_offsety = -20;
