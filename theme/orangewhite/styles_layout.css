@@ -631,6 +631,11 @@ TD.event_description {
 	padding:5px;
 }
 
+#calendar .today,
+.minicalendar .today {
+    border:1px solid !important;
+}
+
 .cal_popup_bg {
 	padding:0px;
 	margin:0px;
@@ -651,6 +656,23 @@ TD.event_description {
 
 .eventfullpicture {
     padding:8px;
+}
+
+table.calendar-controls {
+    width: 100%;
+    text-align:center;
+}
+
+table.calendar-controls .previous,
+table.calendar-controls .next
+{
+    width: 12%;
+}
+
+#calendar .maincalendar .calendar-controls .previous,
+#calendar .maincalendar .calendar-controls .next
+{
+    width: 30%;
 }
 
 
@@ -686,15 +708,17 @@ TD.event_description {
     float:right;
 }
 
-.sideblockheading a img.hide-show-image {
+.sideblockheading  .hide-show img.hide-show-image {
+    height:11px;
+    width:11px;
     padding-top:0.35em;
 }
 
-.sideblock .sideblockheading .hide-show img {
+.sideblock .sideblockheading .hide-show img.hide-show-image {
     background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
 }
 
-.sideblock.hidden .sideblockheading .hide-show img {
+.sideblock.hidden .sideblockheading .hide-show img.hide-show-image {
     background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 

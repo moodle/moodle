@@ -510,6 +510,11 @@ TD.event_description {
 	border-left-color:#C6BDA8;
 }
 
+#calendar .today,
+.minicalendar .today {
+    border-color:#C0CAD4 !important;
+}
+
 .cal_popup_fg {
 	background-color:#EEF0F2;
 }
