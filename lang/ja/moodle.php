@@ -53,6 +53,8 @@ $string['city'] = "都道府県";
 $string['closewindow'] = "ウィンドウを閉じる";
 $string['comparelanguage'] = "言語の比較及び編集";
 $string['complete'] = "完全な";
+$string['configcountry'] = "ここで国を設定した場合、新規アカウントのユーザに初期値として表示されます。ユーザに国を選ばせる場合は何も選択しないでください。
+";
 $string['configerrorlevel'] = "表示したいPHPの警告数を選択してください。通常はNormalが最適です。";
 $string['configgdversion'] = "サーバにGDがインストールされている場合、そのバージョンを選択してください。初期値として表示されているバージョンは自動的に検知されたものです。分からない場合はそのままにしてください。";
 $string['confightmleditor'] = "HTMLテキストエディタ使用を許可するか否か選択してください。「許可する」を選択した場合でも適切なブラウザ(IE5.5又はそれ以上)を使用していない場合、エディタは動作しません。";
