@@ -9,7 +9,9 @@
     if ($SESSION) {
         $info = $SESSION->info;
         $course_header = $SESSION->course_header;
-        $restore = $SESSION->restore;
+        if (isset($SESSION->restore)) {
+            $restore = $SESSION->restore;
+        }
     }
 
     //If restore session info exists, but we are posting parameters
@@ -29,7 +31,7 @@
     //If the restore object doesn't exist, we are going
     //to check every variable individually and create it
 
-    if (!$restore) {
+    if (!isset($restore)) {
         //Check that we have all we need
         //backup_unique_code
         require_variable($backup_unique_code);
