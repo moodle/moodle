@@ -179,7 +179,7 @@ if (isadmin()) {
 
 <?php 
     $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
-    if (!empty($CFG->gdversion) and $maxbytes) {  
+    if (!empty($CFG->gdversion) and $maxbytes and empty($CFG->disableuserimages)) {  
 ?>
 <tr valign=top>
     <td><p><?php print_string("newpicture") ?>:</td>
