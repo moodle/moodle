@@ -966,6 +966,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
                foreach ($questionanswers as $questionanswer) {
                    if ($questionanswer->fraction > $bestfraction) {
                        $bestanswer = $questionanswer;
+                       $bestfraction = $questionanswer->fraction;
                    }
                }
                if (empty($bestanswer)) {
