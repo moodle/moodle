@@ -28,8 +28,13 @@
 ?>
 
 
-body, td, th {
+body, td, th, li {
     font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+}
+
+th {
+    font-weight: bold; 
+    background-color: <?PHP echo $THEME->cellheading?>;
 }
 
 a:link {
@@ -45,11 +50,6 @@ a:visited {
 a:hover {
     text-decoration: underline; 
     color: red;
-}
-
-th {
-    font-weight: bold; 
-    background-color: <?PHP echo $THEME->cellheading?>;
 }
 
 form { 
