@@ -75,7 +75,7 @@
 /// Otherwise fill and print the form.
 
     if (empty($form)) {
-        if ($course) {
+        if (!empty($course)) {
             $form = $course;
         } else {
             $form->startdate = time() + 3600 * 24;
@@ -87,6 +87,7 @@
             $form->students = get_string("defaultcoursestudents");
             $form->summary = get_string("defaultcoursesummary");
             $form->format = "weeks";
+            $form->guest = 0;
             $form->numsections = 10;
             $form->newsitems = 5;
             $form->showrecent = 1;

@@ -747,10 +747,12 @@ function print_course_categories($categories, $selected="none", $width=180) {
             }
         }
         $catdata[] = "<A HREF=\"$CFG->wwwroot/course/index.php?category=all\">".get_string("fulllistofcourses")."</A>";
+        $caticon[] = "";
         if (isset($USER->id)) {
             $catdata[] = "<A HREF=\"$CFG->wwwroot/course/index.php?category=my\">".get_string("mycourses")."</A>";
+            $caticon[] = "";
         }
-        print_side_block(get_string("categories"), "", $catdata, $caticon, $showall.$mine, $width);
+        print_side_block(get_string("categories"), "", $catdata, $caticon, "", $width);
     }
 }
 
