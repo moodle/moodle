@@ -1,11 +1,12 @@
 <?PHP // $Id$
-// Logs the user out and sends them back where they came from
+// Logs the user out and sends them to the home page
 
     require("../config.php");
 
     $USER = NULL;
+    $SESSION = NULL;
     save_session("USER");
-    redirect($HTTP_REFERER);
-    exit;
+    save_session("SESSION");
+    redirect($CFG->wwwroot);
 
 ?>
