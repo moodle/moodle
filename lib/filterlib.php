@@ -41,6 +41,8 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
 
     global $CFG;
 
+    static $usedphrases;
+
 /// A list of open/close tags that we should not replace within
 /// No reason why you can't put full preg expressions in here too
 /// eg '<script(.+?)>' to match any type of script tag
@@ -131,7 +133,7 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
     
     /// If $CFG->filtermatchoneperpage, avoid previously (request) linked phrases
         if (!empty($CFG->filtermatchoneperpage)) {
-            if (!empty($_REQUEST['LINKEDPHRASES']) && in_array($linkobject->phrase,$_REQUEST['LINKEDPHRASES'])) {
+            if (!empty($usedphrases) && in_array($linkobject->phrase,$usedphrases)) {
                 continue;
             }
         }
@@ -169,7 +171,7 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
     /// If $CFG->filtermatchoneperpage, save linked phrases to request
         if (!empty($CFG->filtermatchoneperpage)) {
             if ($resulttext != $text) { //Texts are different so we have linked the phrase
-                $_REQUEST['LINKEDPHRASES'][] = $linkobject->phrase;
+                $usedphrases[] = $linkobject->phrase;
             }
         }
 
