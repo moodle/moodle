@@ -229,9 +229,9 @@
             echo "<td><a $linkcss href=\"view.php?id=$course->id\">$course->fullname</a></td>";
             if ($creatorediting) {
                 echo "<td>";
-                echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/$CFG->admin/teacher.php?id=$course->id\"><img".
-                     " src=\"$pixpath/t/user.gif\" height=11 width=11 border=0></a> ";
                 if ($adminediting) {
+                    echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/$CFG->admin/teacher.php?id=$course->id\"><img".
+                         " src=\"$pixpath/t/user.gif\" height=11 width=11 border=0></a> ";
                     echo "<a title=\"$strdelete\" href=\"delete.php?id=$course->id\"><img".
                          " src=\"$pixpath/t/delete.gif\" height=11 width=11 border=0></a> ";
                     if (!empty($course->visible)) {
@@ -255,12 +255,15 @@
                         echo "<a title=\"$strmovedown\" href=\"category.php?id=$category->id&movedown=$course->id\"><img".
                              " src=\"$pixpath/t/down.gif\" height=11 width=11 border=0></a> ";
                     }
-                }
     
-                echo "</td>";
-                echo "<td>";
-                popup_form ("category.php?id=$category->id&move=$course->id&moveto=", $displaylist, 
-                            "moveform$course->id", "$course->category", "", "", "", false);
+                    echo "</td>";
+                    echo "<td>";
+                    popup_form ("category.php?id=$category->id&move=$course->id&moveto=", $displaylist, 
+                                "moveform$course->id", "$course->category", "", "", "", false);
+                 } else if (isteacher($course->id)) {
+                    echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/$CFG->admin/teacher.php?id=$course->id\"><img".
+                         " src=\"$pixpath/t/user.gif\" height=11 width=11 border=0></a> ";
+                 }
                 echo "</td>";
             }
             echo "</tr>";
