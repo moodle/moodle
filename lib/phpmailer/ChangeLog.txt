@@ -1,0 +1,113 @@
+ChangeLog
+
+Version 1.50 (Thu, Nov 08 2001)
+* Fix extra lines when not using SMTP mailer
+* Set WordWrap variable to int with a zero default
+
+Version 1.47 (Tue, Oct 16 2001)
+* Fixed Received header code format
+* Fixed AltBody order error
+* Fixed alternate port warning
+
+Version 1.45 (Tue, Sep 25 2001)
+* Added enhanced SMTP debug support
+* Added support for multiple ports on SMTP
+* Added Received header for tracing
+* Fixed AddStringAttachment encoding
+* Fixed possible header name quote bug
+* Fixed wordwrap() trim bug
+* Couple other small bug fixes
+
+Version 1.41 (Wed, Aug 22 2001)
+* Fixed AltBody bug w/o attachments
+* Fixed rfc_date() for certain mail servers
+
+Version 1.40 (Sun, Aug 12 2001)
+* Added multipart/alternative support (AltBody)
+* Documentation update
+* Fixed bug in Mercury MTA
+
+Version 1.29 (Fri, Aug 03 2001)
+* Added AddStringAttachment() method
+* Added SMTP authentication support
+
+Version 1.28 (Mon, Jul 30 2001)
+* Fixed a typo in SMTP class
+* Fixed header issue with Imail (win32) SMTP server
+* Made fopen() calls for attachments use "rb" to fix win32 error
+
+Version 1.25 (Mon, Jul 02 2001)
+* Added RFC 822 date fix (Patrice)
+* Added improved error handling by adding a $ErrorInfo variable
+* Removed MailerDebug variable (obsolete with new error handler)
+
+Version 1.20 (Mon, Jun 25 2001)
+* Added quoted-printable encoding (Patrice)
+* Set Version as public and removed PrintVersion()
+* Changed phpdoc to only display public variables and methods
+
+Version 1.19 (Thu, Jun 21 2001)
+* Fixed MS Mail header bug
+* Added fix for Bcc problem with mail(). *Does not work on Win32*
+  (See PHP bug report: http://www.php.net/bugs.php?id=11616)
+* mail() no longer passes a fifth parameter when not needed
+
+Version 1.15 (Fri, Jun 15 2001)
+[Note: these changes contributed by Patrice Fournier]
+* Changed all remaining \n to \r\n
+* Bcc: header no longer writen to message except
+when sent directly to sendmail
+* Added a small message to non-MIME compliant mail reader
+* Added Sender variable to change the Sender email
+used in -f for sendmail/mail and in 'MAIL FROM' for smtp mode
+* Changed boundary setting to a place it will be set only once
+* Removed transfer encoding for whole message when using multipart
+* Message body now uses Encoding in multipart messages
+* Can set encoding and type to attachments 7bit, 8bit
+and binary attachment are sent as is, base64 are encoded
+* Can set Encoding to base64 to send 8 bits body
+through 7 bits servers
+
+Version 1.10 (Tue, Jun 12 2001)
+* Fixed win32 mail header bug (printed out headers in message body)
+
+Version 1.09 (Fri, Jun 08 2001)
+* Changed date header to work with Netscape mail programs
+* Altered phpdoc documentation
+
+Version 1.08 (Tue, Jun 05 2001)
+* Added enhanced error-checking
+* Added phpdoc documentation to source
+
+Version 1.06 (Fri, Jun 01 2001)
+* Added optional name for file attachments
+
+Version 1.05 (Tue, May 29 2001)
+* Code cleanup
+* Eliminated sendmail header warning message
+* Fixed possible SMTP error
+
+Version 1.03 (Thu, May 24 2001)
+* Fixed problem where qmail sends out duplicate messages
+
+Version 1.02 (Wed, May 23 2001)
+* Added multiple recipient and attachment Clear* methods
+* Added Sendmail public variable
+* Fixed problem with loading SMTP library multiple times
+
+Version 0.98 (Tue, May 22 2001)
+* Fixed problem with redundant mail hosts sending out multiple messages
+* Added additional error handler code
+* Added AddCustomHeader() function
+* Added support for Microsoft mail client headers (affects priority)
+* Fixed small bug with Mailer variable
+* Added PrintVersion() function
+
+Version 0.92 (Tue, May 15 2001)
+* Changed file names to class.phpmailer.php and class.smtp.php to match
+  current PHP class trend.
+* Fixed problem where body not being printed when a message is attached
+* Several small bug fixes
+
+Version 0.90 (Tue, April 17 2001)
+* Intial public release
