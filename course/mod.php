@@ -7,6 +7,8 @@
 
     require_login();
 
+    $sectionreturn = optional_param('sr', '', PARAM_INT);
+
     if (isset($SESSION->modform)) {   // Variables are stored in the session
         $mod = $SESSION->modform;
         unset($SESSION->modform);
@@ -20,7 +22,7 @@
             unset($SESSION->returnpage);
             redirect($return);
         } else {
-            redirect("view.php?id=$mod->course");
+            redirect("view.php?id=$mod->course#$sectionreturn");
         }
     }
 
@@ -181,7 +183,7 @@
             unset($SESSION->returnpage);
             redirect($return);
         } else {
-            redirect("view.php?id=$course->id");
+            redirect("view.php?id=$course->id#$sectionreturn");
         }
         exit;
     }
@@ -226,7 +228,7 @@
         if (SITEID == $section->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$section->course");
+            redirect("view.php?id=$section->course#$sectionreturn");
         }
 
     } else if (isset($_GET['indent']) and confirm_sesskey()) {
@@ -250,7 +252,7 @@
         if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$cm->course");
+            redirect("view.php?id=$cm->course#$sectionreturn");
         }
         exit;
 
@@ -271,7 +273,7 @@
         if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$cm->course");
+            redirect("view.php?id=$cm->course#$sectionreturn");
         }
         exit;
 
@@ -301,7 +303,7 @@
         if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$cm->course");
+            redirect("view.php?id=$cm->course#$sectionreturn");
         }
         exit;
 
@@ -322,7 +324,7 @@
         if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$cm->course");
+            redirect("view.php?id=$cm->course#$sectionreturn");
         }
         exit;
 
@@ -352,7 +354,7 @@
         $USER->activitycopycourse = $cm->course;
         $USER->activitycopyname = $instance->name;
 
-        redirect("view.php?id=$cm->course");
+        redirect("view.php?id=$cm->course#$sectionreturn");
 
     } else if (isset($_GET['cancelcopy']) and confirm_sesskey()) { // value = course module
 
@@ -362,7 +364,7 @@
         unset($USER->activitycopycourse);
         unset($USER->activitycopyname);
 
-        redirect("view.php?id=$courseid");
+        redirect("view.php?id=$courseid#$sectionreturn");
 
     } else if (isset($_GET['delete']) and confirm_sesskey()) {   // value = course module
 
