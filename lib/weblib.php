@@ -1005,6 +1005,9 @@ function navmenu($course, $cm=NULL) {
             if (strlen($mod->name) > 55) {
                 $mod->name = substr($mod->name, 0, 50)."...";
             }
+            if (!$mod->visible) {
+                $mod->name = "(".$mod->name.")";
+            }
             $menu[$url] = $mod->name; 
         }
     }
