@@ -17,6 +17,7 @@ $string['messagebeepseveryone'] = "\$a signalisiert jedem!";
 $string['messagebeepsyou'] = "\$a hat Ihnen signalisiert!";
 $string['messageenter'] = "\$a hat den Chat gerade betreten";
 $string['messageexit'] = "\$a hat den Chat verlassen";
+$string['messages'] = "Mitteilungen";
 $string['modulename'] = "Chat";
 $string['modulenameplural'] = "Chats";
 $string['neverdeletemessages'] = "Nie Mitteilungen Löschen";
