@@ -135,7 +135,7 @@
                 displaydir($wdir);
                     
             } else {
-                $upload_max_filesize = get_max_upload_file_size($CFG->maxbytes);
+                $upload_max_filesize = get_max_upload_file_size($CFG->maxbytes);  // Restricted by site setting
                 $filesize = display_size($upload_max_filesize);
 
                 $struploadafile = get_string("uploadafile");
@@ -618,11 +618,11 @@ function clearfilelist() {
 
 
 function printfilelist($filelist) {
-    global $basedir;
+    global $CFG, $basedir;
 
     foreach ($filelist as $file) {
         if (is_dir($basedir.$file)) {
-            echo "<IMG SRC=\"pix/folder.gif\" HEIGHT=16 WIDTH=16> $file<BR>";
+            echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=16 width=16> $file<br>";
             $subfilelist = array();
             $currdir = opendir($basedir.$file);
             while ($subfile = readdir($currdir)) { 
@@ -634,7 +634,7 @@ function printfilelist($filelist) {
 
         } else { 
             $icon = mimeinfo("icon", $file);
-            echo "<IMG SRC=\"pix/$icon\"  HEIGHT=16 WIDTH=16> $file<BR>";
+            echo "<img src=\"$CFG->pixpath/f/$icon\"  height=16 width=16> $file<br>";
         }
     }
 }
@@ -720,7 +720,7 @@ function displaydir ($wdir) {
             echo "<TR>";
 
             print_cell("center", "<INPUT TYPE=checkbox NAME=\"file$count\" VALUE=\"$fileurl\">");
-            print_cell("left", "<A HREF=\"index.php?id=$id&wdir=$fileurl\"><IMG SRC=\"pix/folder.gif\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"Folder\"></A> <A HREF=\"index.php?id=$id&wdir=$fileurl\">".htmlspecialchars($dir)."</A>");
+            print_cell("left", "<A HREF=\"index.php?id=$id&wdir=$fileurl\"><IMG SRC=\"$CFG->pixpath/f/folder.gif\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"Folder\"></A> <A HREF=\"index.php?id=$id&wdir=$fileurl\">".htmlspecialchars($dir)."</A>");
             print_cell("right", "-");
             print_cell("right", $filedate);
             print_cell("right", "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</A>");
@@ -753,7 +753,7 @@ function displaydir ($wdir) {
                 $ffurl = "/file.php?file=/$id$fileurl";
             }
             link_to_popup_window ($ffurl, "display", 
-                                  "<IMG SRC=\"pix/$icon\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"File\">", 
+                                  "<IMG SRC=\"$CFG->pixpath/f/$icon\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"File\">", 
                                   480, 640);
             echo "<font size=\"-1\" face=\"Arial, Helvetica\">";
             link_to_popup_window ($ffurl, "display", 
