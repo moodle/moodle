@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // quiz.php - created with Moodle 1.2 development (2004010900)
 
 
@@ -204,4 +204,5 @@ $string['timeleft'] = 'Time Remaining';
 $string['timesup'] = 'Time is up!';
 $string['timelimitexeeded'] = 'Sorry! Quiz time limit exeeded!';
 $string['confirmstartattempt'] = 'The Quiz has a time limit. Are you sure that you wish to start?';
+$string['overdue'] = 'Overdue';
 ?>
