@@ -252,8 +252,8 @@ function workshop_cron () {
 			// it's an assessment, tell the submission owner
 			$USER->lang = $submissionowner->lang;
 			$sendto = $submissionowner;
-			// "Your assignment \"$submission->title\" has been assessed."
-			$msg = get_string("mail1", "workshop", $submission->title)."\n".
+			// "Your assignment \"$submission->title\" has been assessed by"
+			$msg = get_string("mail1", "workshop", $submission->title)." $assessmentowner->firstname $assessmentowner->lastname.\n";
 			// "The comments and grade can be seen in the workshop assignment '$workshop->name'
 			$msg .= get_string("mail2", "workshop", $workshop->name)."\n\n";
 	
@@ -261,7 +261,7 @@ function workshop_cron () {
 			$posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
 			$posttext .= "---------------------------------------------------------------------\n";
 			$posttext .= $msg;
-			// "You can see it in your workshop assignment
+			// "You can see it in your workshop assignment"
 			$posttext .= get_string("mail3", "workshop").":\n";
 			$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
 			$posttext .= "---------------------------------------------------------------------\n";
@@ -272,8 +272,8 @@ function workshop_cron () {
 			  "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
 			  $posthtml .= "<HR><FONT FACE=sans-serif>";
 			  $posthtml .= "<P>$msg</P>";
-			  $posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">";
-			  $posthtml .= "in your workshop assignment</A>.</P></FONT><HR>";
+			  $posthtml .= "<P>".get_string("mail3", "workshop").
+				  " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A>.</P></FONT><HR>";
 			} else {
 			  $posthtml = "";
 			}
@@ -336,15 +336,17 @@ function workshop_cron () {
 			if ($comment->userid != $submission->userid) {
 				$USER->lang = $submissionowner->lang;
 				$sendto = $submissionowner;
-				$msg = "A comment has been added to the assignment \"$submission->title\".\n".
-					"The new comment can be seen in ".
-					"the workshop assignment '$workshop->name'\n\n";
+				// "A comment has been added to the assignment \"$submission->title\" by
+				$msg = get_string("mail4", "workshop", $submission->title)." $assessmentowner->firstname $assessmentowner->lastname.\n";
+				// "The new comment can be seen in the workshop assignment '$workshop->name'
+				$msg .= get_string("mail5", "workshop", $workshop->name)."\n\n";
 	
 				$postsubject = "$course->shortname: $strworkshops: $workshop->name";
 				$posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
 				$posttext .= "---------------------------------------------------------------------\n";
 				$posttext .= $msg;
-				$posttext .= "You can see it in your workshop assignment:\n";
+				// "You can see it in your workshop assignment"
+				$posttext .= get_string("mail3", "workshop").":\n";
 				$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
 				$posttext .= "---------------------------------------------------------------------\n";
 				if ($sendto->mailformat == 1) {  // HTML
@@ -354,8 +356,8 @@ function workshop_cron () {
 					"<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
 					$posthtml .= "<HR><FONT FACE=sans-serif>";
 					$posthtml .= "<P>$msg</P>";
-					$posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">";
-					$posthtml .= "in your workshop assignment</A>.</P></FONT><HR>";
+					$posthtml .= "<P>".get_string("mail3", "workshop").
+						" <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A>.</P></FONT><HR>";
 					} 
 				else {
 					$posthtml = "";
@@ -376,15 +378,17 @@ function workshop_cron () {
 			if ($comment->userid != $assessment->userid) {
 				$USER->lang = $assessmentowner->lang;
 				$sendto = $assessmentowner;
-				$msg = "A comment has been added to the assignment \"$submission->title\".\n".
-					"The new comment can be seen in ".
-					"the workshop assignment '$workshop->name'\n\n";
+				// "A comment has been added to the assignment \"$submission->title\" by
+				$msg = get_string("mail4", "workshop", $submission->title)." $submissionowner->firstname $submissionowner->lastname.\n";
+				// "The new comment can be seen in the workshop assignment '$workshop->name'
+				$msg .= get_string("mail5", "workshop", $workshop->name)."\n\n";
 	
 				$postsubject = "$course->shortname: $strworkshops: $workshop->name";
 				$posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
 				$posttext .= "---------------------------------------------------------------------\n";
 				$posttext .= $msg;
-				$posttext .= "You can see it in your workshop assignment:\n";
+				// "You can see it in your workshop assignment"
+				$posttext .= get_string("mail3", "workshop").":\n";
 				$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
 				$posttext .= "---------------------------------------------------------------------\n";
 				if ($sendto->mailformat == 1) {  // HTML
@@ -394,8 +398,8 @@ function workshop_cron () {
 					"<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
 					$posthtml .= "<HR><FONT FACE=sans-serif>";
 					$posthtml .= "<P>$msg</P>";
-					$posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">";
-					$posthtml .= "in your workshop assignment</A>.</P></FONT><HR>";
+					$posthtml .= "<P>".get_string("mail3", "workshop").
+						" <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A>.</P></FONT><HR>";
 					} 
 				else {
 					$posthtml = "";
@@ -463,26 +467,28 @@ function workshop_cron () {
 			// it's a grading tell the assessment owner
 			$USER->lang = $assessmentowner->lang;
 			$sendto = $assessmentowner;
-			$msg = "Your assessment of the assignment \"$submission->title\" has by graded.\n".
-					"The comments and grade given by the $course->teacher can be seen in ".
-					"the workshop assignment '$workshop->name'\n\n";
+			// Your assessment of the assignment \"$submission->title\" has by reviewed
+			$msg = get_string("mail6", "workshop", $submission->title).".\n";
+			// The comments given by the $course->teacher can be seen in the Workshop Assignment 
+			$msg .= get_string("mail7", "workshop", $course->teacher)." '$workshop->name'.\n\n";
 
 			$postsubject = "$course->shortname: $strworkshops: $workshop->name";
             $posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
             $posttext .= "---------------------------------------------------------------------\n";
             $posttext .= $msg;
-            $posttext .= "You can see it in your workshop assignment:\n";
-            $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
+			// "You can see it in your workshop assignment"
+			$posttext .= get_string("mail3", "workshop").":\n";
+			$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($sendto->mailformat == 1) {  // HTML
-                $posthtml = "<P><FONT FACE=sans-serif>".
-              "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
-              "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-              "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
-              $posthtml .= "<HR><FONT FACE=sans-serif>";
-              $posthtml .= "<P>$msg</P>";
-              $posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">";
-              $posthtml .= "in your workshop assignment</A>.</P></FONT><HR>";
+				$posthtml = "<P><FONT FACE=sans-serif>".
+					"<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
+					"<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
+					"<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
+				$posthtml .= "<HR><FONT FACE=sans-serif>";
+				$posthtml .= "<P>$msg</P>";
+				$posthtml .= "<P>".get_string("mail3", "workshop").
+					" <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A>.</P></FONT><HR>";
             } else {
               $posthtml = "";
             }
@@ -701,6 +707,7 @@ function workshop_list_user_submissions($workshop, $user) {
 function workshop_print_assessment($workshop, $assessment, $allowchanges, $showcommentlinks)
 function workshop_print_assessments_by_user_for_admin($workshop, $user) {
 function workshop_print_assessments_for_admin($workshop, $submission) {
+function workshop_print_assignment_info($workshop) {
 function workshop_print_difference($time) {
 function workshop_print_feedback($course, $submission) {
 function workshop_print_league_table($workshop) {
@@ -1587,25 +1594,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
         error("Course Module ID was incorrect");
     }
 
-	// print standard assignment "header"
-	$strdifference = format_time($workshop->deadline - time());
-	if (($workshop->deadline - time()) < 0) {
-		$strdifference = "<FONT COLOR=RED>$strdifference</FONT>";
-	}
-	$strduedate = userdate($workshop->deadline)." ($strdifference)";
-	print_simple_box_start("CENTER");
-	print_heading($workshop->name, "CENTER");
-	print_simple_box_start("CENTER");
-	echo "<B>".get_string("duedate", "assignment")."</B>: $strduedate<BR>";
-	echo "<B>".get_string("maximumgrade")."</B>: $workshop->grade<BR>";
-	echo "<B>".get_string("detailsofassessment", "workshop")."</B>: 
-		<A HREF=\"assessments.php?id=$cm->id&action=displaygradingform\">".
-		get_string("specimenassessmentform", "workshop")."</A><BR>";
-	print_simple_box_end();
-	echo "<BR>";
-	echo format_text($workshop->description, $workshop->format);
-	print_simple_box_end();
-	echo "<BR>";
+	workshop_print_assignment_info($workshop);
 
 	// list any teacher submissions
 	$table->head = array (get_string("title", "workshop"), get_string("submittedby", "workshop"), get_string("action", "workshop"));
@@ -1723,7 +1712,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
 					AND userid = $USER->id")) {
 				$curtime = time();
 				if (($curtime - $assessment->timecreated) > $CFG->maxeditingtime) {
-					$action .= " | <a href=\"assessments.php?action=assesssubmission&a=$workshop->id&aid=$assessment->id\">".
+					$action .= " | <a href=\"assessments.php?action=assesssubmission&a=$workshop->id&sid=$submission->id\">".
 						get_string("reassess", "workshop")."</a>";
 					}
 				else { // there's still time left to edit...
@@ -2600,6 +2589,23 @@ function workshop_print_assessments_for_admin($workshop, $submission) {
 				get_string("delete", "workshop")."</a></p><hr>\n";
 			}
 		}
+	}
+
+
+function workshop_print_assignment_info($workshop) {
+	print_simple_box_start("center");
+	print_heading($workshop->name);
+	print_simple_box_start("center");
+	echo "<b>".get_string("duedate", "assignment")."</b>: $strduedate<br />";
+	echo "<b>".get_string("maximumgrade")."</b>: $workshop->grade<br />";
+	echo "<b>".get_string("detailsofassessment", "workshop")."</b>: 
+		<a href=\"assessments.php?id=$cm->id&action=displaygradingform\">".
+		get_string("specimenassessmentform", "workshop")."</a><br />";
+	print_simple_box_end();
+	echo "<br />";
+	echo format_text($workshop->description, $workshop->format);
+	print_simple_box_end();
+	echo "<br />";
 	}
 
 
