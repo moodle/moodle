@@ -372,6 +372,8 @@ $string['emailenableclick'] = 'Click here to re-enable all email being sent to t
 $string['emailexists'] = 'This email address is already registered.';
 $string['emailformat'] = 'Email format';
 $string['emailmustbereal'] = 'Note: your email address must be a real one';
+$string['emailnotallowed'] = 'Email addresses in these domains are not allowed ($a)';
+$string['emailonlyallowed'] = 'This email is not one of those that are allowed ($a)';
 $string['emailpasswordconfirmation'] = 'Hi $a->firstname,
 
 Someone (probably you) has requested a new password for your

@@ -146,6 +146,12 @@ function validate_form($user, &$err) {
         $err->country = get_string("missingcountry");
     }
 
+    if (empty($err->email)) {
+        if ($error = email_is_not_allowed($user->email)) {
+            $err->email = $error;
+        }
+    }
+
     return;
 }
 

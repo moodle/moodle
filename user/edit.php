@@ -246,12 +246,18 @@ function find_form_errors(&$user, &$usernew, &$err) {
     if (empty($usernew->country))
         $err["country"] = get_string("missingcountry");
 
-    if (! validate_email($usernew->email))
+    if (! validate_email($usernew->email)) {
         $err["email"] = get_string("invalidemail");
 
-    else if ($otheruser = get_record("user", "email", $usernew->email)) {
+    } else if ($otheruser = get_record("user", "email", $usernew->email)) {
         if ($otheruser->id <> $user->id) {
             $err["email"] = get_string("emailexists");
+        }
+    }
+
+    if (empty($err["email"]) and !isadmin()) {
+        if ($error = email_is_not_allowed($usernew->email)) {
+            $err["email"] = $error;
         }
     }
 
