@@ -5,6 +5,8 @@
 $string['action'] = "Aktion";
 $string['activities'] = "Aktivitäten";
 $string['activity'] = "Aktivität";
+$string['activityiscurrentlyhidden'] = "Entschuldigung, diese Aktivität ist momentan versteckt";
+$string['activitymodule'] = "Aktive Module";
 $string['activityreport'] = "Übersicht der Aktivitäten";
 $string['add'] = "Hinzufügen";
 $string['addadmin'] = "Verwalter hinzufügen";
@@ -16,8 +18,9 @@ $string['addnewcourse'] = "Neuen Kurs anlegen";
 $string['addnewuser'] = "Neuen Benutzer anlegen";
 $string['address'] = "Addresse";
 $string['addteacher'] = "Lehrer anlegen";
-$string['admin'] = "Verwalter";
-$string['administration'] = "Verwaltung";
+$string['admin'] = "Admin";
+$string['administration'] = "Administration";
+$string['administrator'] = "Administrator";
 $string['again'] = "nochmal";
 $string['all'] = "Alle";
 $string['alldays'] = "Jeden Tag";
@@ -30,15 +33,24 @@ $string['allparticipants'] = "Alle Teilnehmer";
 $string['alphanumerical'] = "Kann nur Buchstaben und Zahlen haben";
 $string['alreadyconfirmed'] = "Die Registrierung wurde bereits bestätigt";
 $string['answer'] = "Antwort";
+$string['areyousuretorestorethis'] = "Sind Sie sicher dieses zurück zu setzen";
 $string['assessment'] = "Beurteilung";
 $string['assignadmins'] = "Verwalter zuweisen";
 $string['assigncreators'] = "Kursersteller zuweisen";
 $string['assignteachers'] = "Lehrer zuweisen";
 $string['authentication'] = "Bestätigung";
+$string['autosubscribe'] = "Automatische Forumsanmeldung";
+$string['autosubscribeno'] = "Nein: Melden Sie mich nicht automatisch beim Forum an";
+$string['autosubscribeyes'] = "Ja: Wenn ich Beiträge schreibe, melden Sie mich zum Forum an";
 $string['availablecourses'] = "Verfügbare Kurse";
 $string['backup'] = "Sicherung";
+$string['backupdate'] = "Sicherungsdatum";
 $string['backupdetails'] = "Sicherungsdetails";
+$string['backupdir'] = "Sicherungsdaten";
+$string['backupfilename'] = "Sicherung";
 $string['backupnameformat'] = "%%Y%%m%%d-%%H%%M";
+$string['backuporiginalname'] = "Sicherungsname";
+$string['backupversion'] = "Sicherungsversion";
 $string['cancel'] = "Abbrechen";
 $string['categories'] = "Kurs-Kategorie";
 $string['category'] = "Kategorie";
@@ -78,6 +90,11 @@ $string['configloglifetime'] = "Dies definiert die Länge der Zeit, über die Sie 
 $string['configlongtimenosee'] = "Wenn sich Studenten nach einer sehr langen Zeit nicht mehr angemeldet haben, werden Studenten automatisch nach diesem Termin aus dem Kurs ausgetragen.";
 $string['configmaxeditingtime'] = "Hier bestimmen Sie die Zeitspanne, in der die Leute die Foren-Beiträge, Jounal-Antworten, usw. erneut bearbeiten dürfen. Normalerweise sind 30 Minuten ein guter Wert. ";
 $string['configproxyhost'] = "Wenn dieser <B>Server</B> einen Proxy braucht (beispielsweise eine Firewall), um Internetzugriff zu bekommen, dann tragen Sie hier den Namen und den Port des Proxys ein. Anderenfalls lassen sie das Feld leer";
+$string['configsecureforms'] = "Moodle kann einen zusätzlichen Grad an Sicherheit verwenden, wenn es Daten von Web-Formularen erhält. Sofern dies eingeschaltet ist, dann wird die Variable HTTP_REFERER gegen
+die Adresse des aktuellen Formulars geprüft.
+In einigen wenigen Fällen kann das Probleme verursachen, wenn der Nutzer eine Firewall benutzt (z.B. Zonealarm), die so konfiguriert ist, das der HTTP_REFERER nicht mitgesendet wird.
+Das Ergebnis ist, dass Sie bei einem Formular nicht witerkommen.
+Sofern Nutzer Probleme mit der Zugangsseite haben (zum Beispiel) sollten Sie diese Einstellung deaktivieren, so ist Ihre Seite allerdings offener für Brute-Force-Attacken. Im Zweifelsfall, belasssen Sie es auf 'ja'.";
 $string['configsessiontimeout'] = "Wenn angemeldete Benutzer eine lange Zeit fern bleiben (ohne Seiten zu laden), dann werden diese automatisch abgemeldet (Ihre Session/Sitzung wird beendet). Diese Variable gibt an, wie lange diese Zeit sein soll.";
 $string['configslasharguments'] = "Dateien (Bilder, Dokumente, usw.) werden über ein Skript, das 'Slash-Argumente' benutz (hier die zweite Option). Diese Methode erlaubt es Dateien einfacher im Internet-Browsern, Proxy-Servern, usw., zwischengespeichert zu werden.
 Leider erlauben nicht alle PHP-Server diese Methode, so dass Sie, sofern Sie Probleme bei der Anzeige von Dateien oder Bildern (beispielsweise den Benutzer-Fotos) haben, diese Variable auf die erste Option stellen müssen. ";
@@ -87,6 +104,7 @@ $string['configunzip'] = "Geben Sie hier den Pfad zum Programm unzip an (Nur Uni
 $string['configvariables'] = "Variablen konfigurieren";
 $string['configzip'] = "Geben Sie hier den Pfad zum Programm zip an (Nur Unix). Dieser wird für die Erstellung ZIP-Archiven auf dem Server benötigt.";
 $string['confirmed'] = "Ihre Registrierung wurde bestätigt";
+$string['confirmednot'] = "Ihre Registrierung wurde noch nicht bestätigt!";
 $string['continue'] = "Weiter";
 $string['cookiesenabled'] = "Cookies müssen in Ihrem Browser eingeschaltet sein";
 $string['copyrightnotice'] = "Urheberrechtsvermerk";
@@ -95,6 +113,7 @@ $string['course'] = "Kurs";
 $string['coursebackup'] = "Kurssicherung";
 $string['coursefiles'] = "Kursdateien";
 $string['courseformats'] = "Kurs-Format";
+$string['courserestore'] = "Kurs-Rücksetzung";
 $string['courses'] = "Kurse";
 $string['courseupdates'] = "Kurse aktuell";
 $string['createaccount'] = "Meinen neuen Zugang einrichten";
@@ -164,8 +183,6 @@ In den meisten Email-Programmen erscheint dieser Link blau, so dass Sie diesen a
 Sofern dies nicht funktioniert, 
 kopieren Sie bitte diese Adresse in die obere Zeile des 
 Browsers-Fensters.
-
-
 Grüße von der '\$a->sitename'-Verwaltung, \$a->admin";
 $string['emailconfirmationsubject'] = "\$a: Zugangsinformation";
 $string['emailconfirmsent'] = "   <P>Eine Email sollte an Ihre Adresse <B>\$a</B>
@@ -209,6 +226,7 @@ $string['enteremailaddress'] = "Geben Sie hier Ihre Email-Adresse ein, um Ihr Ke
 $string['error'] = "Fehler";
 $string['errortoomanylogins'] = "Entschuldigung, aber Sie haben die Anzahl erlaubter Zugangs-Versucher erreicht. Starten Sie Ihren Browser neu.";
 $string['existingadmins'] = "Vorhandene Verwalter";
+$string['existingcourse'] = "Vorhandener Kurs";
 $string['existingcreators'] = "Vorhandener Kursersteller";
 $string['existingteachers'] = "Vorhandene Lehrer";
 $string['feedback'] = "Rückmeldung";
@@ -280,6 +298,7 @@ $string['include'] = "Einbeziehen";
 $string['includeallusers'] = "Alle Nutzer einbeziehem";
 $string['includecoursefiles'] = "Kurs-Dateien einbeziehen";
 $string['includecourseusers'] = "Kurz-Teilnehmer einbeziehen";
+$string['included'] = "Einbezogen";
 $string['includelogentries'] = "Statistik-Einträge einbeziehen";
 $string['includeneededusers'] = "Notwendige Nutzer einbeziehen";
 $string['includeuserfiles'] = "Nutzer-Dateien einbeziehen";
@@ -294,6 +313,7 @@ $string['lastaccess'] = "Letzter Zugriff";
 $string['lastedited'] = "Zuletzt bearbeitet";
 $string['lastmodified'] = "Zuletzt geändert";
 $string['lastname'] = "Nachname";
+$string['latestlanguagepack'] = "Prüfe auf aktuelle Sprachpakete auf moodle.org";
 $string['latestnews'] = "Neueste Nachrichten";
 $string['leavetokeep'] = "Kennwort-Feld leer lassen, um momentanes Kennwort zu behalten";
 $string['license'] = "GPL-Lizenz";
@@ -330,6 +350,7 @@ $string['mainmenu'] = "Hauptmenü";
 $string['makeafolder'] = "Verzeichnis erstellen";
 $string['makeeditable'] = "Sofern Sie '\$a' durch den Internet-Server bearbeitbar machen (beispielsweise Apache) können Sie diese Datei direkt auf dieser Seite bearbeiten";
 $string['managedatabase'] = "Datenbank verwalten";
+$string['managemodules'] = "Module verwalten";
 $string['markedthistopic'] = "Dieses Thema ist als aktuelles Thema gekennzeichnet";
 $string['markthistopic'] = "Dieses Thema als das gegenwärtige Thema kennzeichnen";
 $string['maximumchars'] = "Höchstens \$a Buchstaben";
@@ -357,10 +378,14 @@ $string['missingstrings'] = "Auf fehlende Textpassagen prüfen";
 $string['missingstudent'] = "Schüler fehlt";
 $string['missingsummary'] = "Zusammenfassung fehlt";
 $string['missingteacher'] = "Sie müssen etwas auswählen";
+$string['missingurl'] = "Fehlende URL";
 $string['missingusername'] = "Benutzername fehlt";
 $string['modified'] = "Geändert";
+$string['moduledeleteconfirm'] = "Sie sind dabei, das Modul '\$a' vollständig zu löschen. Dies löscht alles in der Datenbank, das mit der Modul-Aktivität verknüpft ist. Sind Sie SICHER, dass Sie fortfahren möchten?";
+$string['moduledeletefiles'] = "Alle mit dem Modul '\$a->module' verknüpften Daten wurden aus der Datenbank gelöscht. Um diese Löschung zu vervollständigen (und das Modul daran hindern, sich selbst erneut zu installieren), sollten Sie nun dieses Veruzeichnis auf dem Server entfernen: \$a->directory";
 $string['modulesetup'] = "Leg Modul-Tabellen an";
 $string['modulesuccess'] = "\$a Tabellen wurden korrekt angelegt";
+$string['moodleversion'] = "Moodle-Version";
 $string['mostrecently'] = "neueste";
 $string['movedown'] = "Nach unten verschieben";
 $string['movefilestohere'] = "Dateien hierhin verschieben";
@@ -377,6 +402,7 @@ $string['never'] = "Nie";
 $string['neverdeletelogs'] = "Niemals die Statistiken löschen";
 $string['new'] = "Neu";
 $string['newaccount'] = "Neuer Zugang";
+$string['newcourse'] = "Neuer Kurs";
 $string['newpassword'] = "Neues Kennwort";
 $string['newpasswordtext'] = "Hallo \$a->firstname,
 
@@ -404,6 +430,7 @@ $string['nocoursesyet'] = "Keine Kurse in dieser Rubrik";
 $string['noexistingadmins'] = "Kein Verwalter vorhanden, dies ist ein schwerwiegender Fehler und diese Nachricht sollten Sie niemals sehen.";
 $string['noexistingcreators'] = "Keine Ersteller angelegt";
 $string['noexistingteachers'] = "Keine Lehrer angelegt";
+$string['nofilesselected'] = "Keine Dateien wurden zur Wiederherstellung ausgewählt";
 $string['nofilesyet'] = "Bislang wurden keine Dateien für Ihren Kurs hochgeladen";
 $string['nograde'] = "Keine Note";
 $string['noimagesyet'] = "Bislang wurden keine Grafiken für Ihren Kurs hochgeladen";
@@ -418,6 +445,7 @@ $string['notavailable'] = "Nicht verfügbar";
 $string['noteachersyet'] = "Kein Lehrer bislang in diesem Kurs teil";
 $string['notenrolled'] = "\$a nimmt nicht an diesem Kurs teil.";
 $string['nothingnew'] = "Nichts Neues seit Ihrem letzten Besuch";
+$string['notincluded'] = "Nicht eingebunden";
 $string['nousersmatching'] = "Keine Nutzer bezüglich '\$a' wurden gefunden";
 $string['nousersyet'] = "Bislang keine Benutzer";
 $string['now'] = "jetzt";
@@ -457,15 +485,34 @@ $string['potentialteachers'] = "Potentielle Lehrer";
 $string['preferredlanguage'] = "Bevorzugte Sprache";
 $string['preview'] = "Vorschau";
 $string['previeworchoose'] = "Vorschau oder Aussehen auswählen";
+$string['publicdirectory'] = "Offentliches Verzeichnis";
+$string['publicdirectory0'] = "Bitte veröffentlichen Sie diese Seite nicht";
+$string['publicdirectory1'] = "Nur den Seitennamen veröffentlichen";
+$string['publicdirectory2'] = "Nur den Seitennamen mit einem Link veröffentlichen";
 $string['question'] = "Frage";
 $string['readme'] = "LIESMICH";
 $string['recentactivity'] = "Neueste Aktivtäten";
+$string['registration'] = "Moodle Anmeldung";
+$string['registrationemail'] = "Email Benachrichtigung";
+$string['registrationinfo'] = "<p>Diese Seite ermöglicht es Ihnen, Ihre Moodle Seite aud moodle.org zu registrieren.
+Die Registrierung ist kostenlos.
+Der Haupt-Vorteil besteht darin, dass Sie in einer kleinen Mailing Liste aufgenommen werden,
+um wichtige sicherheitsrelevante und Nachrichten über neu Versionen zu bekommen.
+<p>Standardmäßig werden Ihre Informationen nicht veröffentlicht oder an dritte Personen weiterverkauft. Der einzige Grund, diese Informationen zu sammeln, besteht aus Gründen des Supports dazu beizutragen, ein statistisches Bild von der Moodle-Gemeinschaft als Ganzheit aufzubauen.
+<p>Wenn Sie es auswählen, können Sie den Seitennamen, das Land und die URL zur öffenlichen Liste der Moodle Seiten hinzufügen.
+<p>Jede neue Registrierung wird manuell geprüft, bevor diese der Liste hinzugefügt wird, aber sofern Sie hinzugefügt wurden, können Sie Ihre Registrierung (und Ihren Eintrag in der öffentlichen Liste)jederzeit aktualisieren, indem Sie dieses Formular erneut absenden.";
+$string['registrationno'] = "Nein, ich möchte keine Email erhalten";
+$string['registrationsend'] = "Sende Registrierungsinformation an moodle.org";
+$string['registrationyes'] = "Ja, benachrichtigen Sie mich über wichtige Hinweise";
 $string['removeadmin'] = "Verwalter löschen";
 $string['removecreator'] = "Kursersteller löschen";
 $string['removeteacher'] = "Lehrer löschen";
 $string['rename'] = "Umbenennen";
 $string['requireskey'] = "Dieser Kurs setzt einen Zugangs-Schlüssel voraus";
 $string['resources'] = "Arbeitsmittel";
+$string['restore'] = "Wiederherstellung";
+$string['restorecancelled'] = "Wiederherstellung abgebrochen";
+$string['restoreto'] = "Wiederherstellen auf";
 $string['returningtosite'] = "Auf diese Internet-Seite zurückkehren?";
 $string['revert'] = "Zurückkehren";
 $string['role'] = "Abmelden";
@@ -506,6 +553,7 @@ $string['someallowguest'] = "Einige Kurse können auch Gast-Zugang erlauben";
 $string['someerrorswerefound'] = "Eine Information fehlte oder war falsch. Schauen Sie auf die Details weiter unten. ";
 $string['startdate'] = "Datum des Kursbeginns";
 $string['startsignup'] = "Jetzt einen neuen Zugang anlegen!";
+$string['state'] = "Bundesland/Provinz";
 $string['status'] = "Status";
 $string['strftimedate'] = "%%d %%B %%Y";
 $string['strftimedateshort'] = "%%d %%B";
@@ -596,6 +644,7 @@ $string['wordforteachers'] = "Ihre Bezeichnung für mehrere Lehrer";
 $string['wordforteacherseg'] = "z.B. Tutoren, Professoren, usw.";
 $string['wrongpassword'] = "Falsches Kennwort oder Benutzername";
 $string['yes'] = "Ja";
+$string['youaregoingtorestorefrom'] = "Sie stellen wieder her vom:";
 $string['yourlastlogin'] = "Ihre letzte Anmeldung war";
 $string['yourself'] = "selbst";
 $string['yourteacher'] = "Ihr \$a";

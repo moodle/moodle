@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
       // quiz.php - created with Moodle 1.0.8 dev (2002122301)
 
-$string['addquestions'] = "Fragen hinzufügen";
+
 $string['addingquestions'] = "Diese Spalte der Seite ist zum Verwalten von Quizfragen. Fragen werden in Kategorien gespeichert, um sie besser organisieren zu können, und können von jedem Quiz Ihres Kurses oder sogar von anderen Kursen (Wenn man 'veröffentlichen' ausgewählt hat) benutzt werden. <br /><br />Nachdem Sie eine Kategorie erzeugt haben, können Sie Fragen erzeugen oder bearbeiten. Sie können jede dieser Fragen auswählen und Ihrem Quiz in der anderen Spalte hinzufügen.";
+$string['addquestions'] = "Fragen hinzufügen";
 $string['addquestionstoquiz'] = "Frage zu aktuellem Quiz hinzufügen";
 $string['addselectedtoquiz'] = "Auswahl zum Quiz hinzufügen";
 $string['allowreview'] = "Bericht erlauben";
@@ -54,7 +55,6 @@ $string['editingtruefalse'] = "Ja/Nein-Frage bearbeiten";
 $string['false'] = "Falsch";
 $string['feedback'] = "Rückmeldung";
 $string['fileformat'] = "Dateiformat";
-$string['filename'] = "Dateiname";
 $string['filloutoneanswer'] = "Sie müssen mindestens eine mögliche Antwort geben. Leere Antworten werden ignoriert.";
 $string['filloutthreequestions'] = "Sie müssen mindestens 3 Fragen auswählen. Leere Fragen werden nicht verwendet";
 $string['fillouttwochoices'] = "Sie müssen mindestens zwei mögliche Antwort geben. Leere Antworten werden ignoriert.";
@@ -98,6 +98,7 @@ $string['questions'] = "Fragen";
 $string['quizavailable'] = "Dieses Quiz ist verfügbar bis: \$a";
 $string['quizclose'] = "Dieses Quiz schließen";
 $string['quizclosed'] = "Dieses Quiz schließt am \$a";
+$string['quizcloses'] = "Quiz endet";
 $string['quiznotavailable'] = "Dieses Quiz ist nicht verfügbar bis: \$a";
 $string['quizopen'] = "Ein Quiz beginnen";
 $string['random'] = "Zufällig setzen";
@@ -136,5 +137,5 @@ $string['type'] = "Typ";
 $string['viewallanswers'] = "Zeige \$a ausgefüllte Quiz";
 $string['webct'] = "WebCT Format";
 $string['yourfinalgradeis'] = "Ihre Gesamtnote für dieses Quiz ist \$a";
-?>
 
+?>

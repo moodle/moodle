@@ -9,6 +9,10 @@ $string['editingended'] = "Bearbeitungszeitraum ist abgelaufen";
 $string['editingends'] = "Bearbeitungszeitraum endet";
 $string['entries'] = "Einträge";
 $string['feedbackupdated'] = "Mitteilung für Eintrag \$a aktualisiert";
+$string['journalmail'] = "\$a->teacher hat einen Kommentar zu Ihrem eingereichten Journal '\$a->assignment' abgegeben. Sie können dieses angehängt an Ihr eingereichtes Journal sehen:
+
+\$a->url";
+$string['journalmailhtml'] = "\$a->teacher hat einen Kommentar zu Ihrem eingereichten Journal abgegeben</i>'<br /><br /> Sie können diesen angehängt an Ihr <a href=\\\"\$a->url\\\">eingereichtes Journal</a> sehen:";
 $string['journalname'] = "Name des Journals";
 $string['journalquestion'] = "Journal-Frage";
 $string['journalrating1'] = "nicht zufriedenstellend";
