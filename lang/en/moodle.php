@@ -719,6 +719,7 @@ $string['notifyloginfailuresmessagewithuser'] = ' with username ';
 $string['notifyloginfailuresmessageend'] = 'You can view these logs at $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
 $string['numattempts'] = '$a failed login attempt(s) ';
 $string['nothingnew'] = 'Nothing new since your last login';
+$string['noticenewerbackup'] = 'This backup file has been created with Moodle $a->backuprelease ($a->backupversion) and it\'s newer than your currently installed Moodle $a->serverrelease ($a->serverversion). This could cause some inconsistencies because backwards compatibility of backup files cannot be guarantied.';
 $string['notincluded'] = 'Not included';
 $string['notingroup'] = 'Sorry, but you need to be part of a group to see this activity.';
 $string['nousersmatching'] = 'No users matching \'$a\' were found';
