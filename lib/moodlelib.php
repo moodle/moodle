@@ -1208,6 +1208,10 @@ function authenticate_user_login($username, $password) {
         $auth = $user->auth;
     }
 
+    if (detect_munged_arguments($auth, 0)) {   // For safety on the next require
+        return false;
+    }
+
     if (!file_exists($CFG->dirroot .'/auth/'. $auth .'/lib.php')) {
         $auth = 'manual';    // Can't find auth module, default to internal
     }
