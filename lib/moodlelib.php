@@ -2600,5 +2600,46 @@ function make_unique_id_code($extra="") {
 }
 
 
+/**
+* Function to check the passed address is within the passed subnet
+*
+* The parameter is a comma separated string of subnet definitions.
+* Subnet strings can be in one of two formats:
+*   1: xxx.xxx.xxx.xxx/xx
+*   2: xxx.xxx
+* Return boolean
+* Code for type 1 modified from user posted comments by mediator at
+* http://au.php.net/manual/en/function.ip2long.php
+*
+* @param    addr    the address you are checking
+* @param    subnetstr    the string of subnet addresses
+*/
+
+function address_in_subnet($addr, $subnetstr) {
+
+    $subnets = explode(",", $subnetstr);
+    $found = false;
+    $addr = trim($addr);
+
+    foreach ($subnets as $subnet) {
+        $subnet = trim($subnet);
+        if (strpos($subnet, "/") !== false) { /// type 1
+
+            list($ip, $mask) = explode('/', $subnet);
+            $mask = 0xffffffff << (32 - $mask);
+            $found = ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
+
+        } else { /// type 2
+            $found = (strpos($addr, $subnet) === 0);
+        }
+
+        if ($found) {
+            continue;
+        }
+    }
+
+    return $found;
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
