@@ -62,9 +62,9 @@
 
         $text = text_to_html($entry->text)."<P ALIGN=right><A HREF=\"view.php?id=$journal->coursemodule\">";
         if ($journalopen) {
-            $text .= "Edit</A></P>";
+            $text .= "$stredit</A></P>";
         } else {
-            $text .= "View</A></P>";
+            $text .= "$strview</A></P>";
         }
         if ($course->format == "weeks" or $course->format == "topics") {
             $table->data[] = array ("$journal->section",

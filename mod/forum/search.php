@@ -18,15 +18,19 @@
 
     add_to_log($course->id, "forum", "search", "search.php?id=$course->id&search=$search", "$search"); 
 
+    $strforums = get_string("modulenameplural", "forum");
+    $strsearch = get_string("search", "forum");
+    $strsearchresults = get_string("searchresults", "forum");
+
     if ($search) {
-        print_header("$course->shortname: Search Results", "$course->fullname",
+        print_header("$course->shortname: $strsearchresults", "$course->fullname",
                  "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> -> 
-                  <A HREF=\"index.php?id=$course->id\">Forums</A> -> 
-                  <A HREF=\"search.php?id=$course->id\">Search</A> -> \"$search\"", "search.search");
+                  <A HREF=\"index.php?id=$course->id\">$strforums</A> -> 
+                  <A HREF=\"search.php?id=$course->id\">$strsearch</A> -> \"$search\"", "search.search");
     } else {
-        print_header("$course->shortname: Search", "$course->fullname",
+        print_header("$course->shortname: $strsearch", "$course->fullname",
                  "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> -> 
-                  <A HREF=\"index.php?id=$course->id\">Forums</A> -> Search", "search.search");
+                  <A HREF=\"index.php?id=$course->id\">$strforums</A> -> $strsearch", "search.search");
     }
 
     echo "<DIV ALIGN=CENTER>";
