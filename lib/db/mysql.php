@@ -830,6 +830,18 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2004082600) {
+        //update auth-fields for external users
+        include_once ($CFG->dirroot."/auth/".$CFG->auth."/lib.php");
+        if (function_exists('auth_get_userlist')) {
+            $externalusers = auth_get_userlist();
+            if (!empty($externalusers)){
+                $externalusers = '\''. implode('\',\'',$externalusers).'\'';
+                execute_sql("UPDATE {$CFG->prefix}user SET auth = '$CFG->auth' WHERE username  IN ($externalusers)");
+            }
+        }
+    }
+
     return $result;
 
 }
