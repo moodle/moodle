@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2003122600)
+      // quiz.php - created with Moodle 1.2 (2004032000)
 
 
 $string['acceptederror'] = 'Akseptert feilmargin';
@@ -37,6 +37,7 @@ $string['choice'] = 'Svar';
 $string['choices'] = 'Tilgjenglige svar';
 $string['correctanswer'] = 'Riktig svar';
 $string['correctanswers'] = 'Riktige svar';
+$string['corrresp'] = 'Riktig respons';
 $string['countdown'] = 'Nedtelling';
 $string['countdownfinished'] = 'Prøven avsluttes, du bør sende svarene dine straks.';
 $string['countdowntenminutes'] = 'Denne prøven avsluttes om ti minutter.';
@@ -61,14 +62,20 @@ $string['editingrandom'] = 'Rediger et tilfeldig spørsmål';
 $string['editingrandomsamatch'] = 'Redigerer et tilfeldig \'kort svar\'-spørsmål';
 $string['editingshortanswer'] = 'Redigerer et \'kort svar\'-spørsmål';
 $string['editingtruefalse'] = 'Redigerer et \'riktig/galt\'-spørsmål';
+$string['editquestions'] = 'Rediger spørsmål';
+$string['errorsdetected'] = '$a feil observert';
 $string['false'] = 'Feil';
 $string['feedback'] = 'Tilbakesvar';
 $string['fileformat'] = 'Filformat';
 $string['filloutoneanswer'] = 'Du må skrive minst et riktig svar. Svarfelter som er blanke vil ikke bli brukt.';
 $string['filloutthreequestions'] = 'Du må fylle ut minst 3 spørsmål. Ikke utfylte spørsmål blir ikke brukt.';
 $string['fillouttwochoices'] = 'Du må gi minst to valg. Felter som er blanke vil ikke bli brukt.';
-$string['fractionsaddwrong'] = 'Karakterene du har satt går ikke opp 100%% <BR>De går opp til $a%% <BR>Vil du gå tilbake og endre dette?';
-$string['fractionsnomax'] = 'Et av svarene burde være 100%%, slik at det er <BR>mulig å få høyeste karakter. <BR>Vil du gå tilbake og endre dette?';
+$string['fractionsaddwrong'] = 'Karakterene du har satt går ikke opp 100%%
+<BR>De går opp til $a%%
+<BR>Vil du gå tilbake og endre dette?';
+$string['fractionsnomax'] = 'Et av svarene burde være 100%%, slik at det er 
+<BR>mulig å få høyeste karakter.
+<BR>Vil du gå tilbake og endre dette?';
 $string['gradeaverage'] = 'Gjennomsnittelig karakter';
 $string['gradehighest'] = 'Høyeste karakter';
 $string['grademethod'] = 'Karaktermetode';
@@ -85,16 +92,18 @@ $string['missingquestiontext'] = 'Spørsmålet mangler';
 $string['missingword'] = 'Manglende ordformat';
 $string['modulename'] = 'Prøve';
 $string['modulenameplural'] = 'Prøver';
-$string['multianswer'] = 'Innbakt svar (Cloze)';
 $string['multichoice'] = 'Flere svaralternativer';
+$string['name'] = 'Navn';
 $string['noanswers'] = 'Ingen svar ble valgt!';
 $string['noattempts'] = 'Ingen forsøk gjort på denne prøven.';
 $string['nomoreattempts'] = 'Ingen flere forsøk tillatt';
 $string['noquestions'] = 'Ingen spørsmål er lagt til enda';
+$string['noresponse'] = 'Ingen respons';
 $string['noreview'] = 'Du har ikke tillatelse til å lese disse svarene';
 $string['noreviewuntil'] = 'Du får ikke se svarene før $a';
 $string['notenoughsubquestions'] = 'Det er ikke definert nok mange delspørsmål!<br>Vil du gå tilbake og endre dette?';
 $string['numerical'] = 'Numerisk';
+$string['percentcorrect'] = 'Prosent riktig';
 $string['publish'] = 'Publiser';
 $string['qti'] = 'IMS QTI-format';
 $string['question'] = 'Spørsmål';
@@ -117,6 +126,7 @@ $string['regradecomplete'] = 'Alle forsøk er regnet om';
 $string['regradecount'] = '$a->changed av $a->attempt karaketerer ble endret';
 $string['rename'] = 'Nytt navn';
 $string['report'] = 'Rapporter';
+$string['reportfullstat'] = 'Detaljert statistikk';
 $string['reportoverview'] = 'Oversikt';
 $string['reportregrade'] = 'Regn om karakterer';
 $string['reportsimplestat'] = 'Enkel statistikk';

@@ -1,26 +1,26 @@
 <?PHP // $Id$ 
-      // pix.php - created with Moodle 1.2 development (2003122600)
+      // pix.php - created with Moodle 1.2 (2004032000)
 
 
-$string['angry'] = 'sint';
-$string['approve'] = 'godkjenner';
-$string['biggrin'] = 'stort glis';
-$string['blackeye'] = 'sort øyelapp';
-$string['blush'] = 'rødmer';
-$string['clown'] = 'klovn';
-$string['cool'] = 'solbriller';
-$string['dead'] = 'død';
-$string['evil'] = 'ond';
-$string['kiss'] = 'kyss';
-$string['mixed'] = 'tja...';
-$string['sad'] = 'trist';
-$string['shy'] = 'sjenert';
-$string['sleepy'] = 'søvnig';
-$string['smiley'] = 'smil';
-$string['surprise'] = 'overrasket';
-$string['thoughtful'] = 'tankefull';
-$string['tongueout'] = 'ut med tunga';
-$string['wideeyes'] = 'store øyne';
-$string['wink'] = 'blunk';
+$string['angry'] = 'Sint';
+$string['approve'] = 'Godkjenn';
+$string['biggrin'] = 'Stort glis';
+$string['blackeye'] = 'Sort øyelapp';
+$string['blush'] = 'Rødme';
+$string['clown'] = 'Klovn';
+$string['cool'] = 'Kul';
+$string['dead'] = 'Død';
+$string['evil'] = 'Ond';
+$string['kiss'] = 'Kyss';
+$string['mixed'] = 'Usikker';
+$string['sad'] = 'Trist';
+$string['shy'] = 'Sjenert';
+$string['sleepy'] = 'Søvnig';
+$string['smiley'] = 'Smil';
+$string['surprise'] = 'Overrasket';
+$string['thoughtful'] = 'Tankefull';
+$string['tongueout'] = 'Rekk tunge';
+$string['wideeyes'] = 'Store øyne';
+$string['wink'] = 'Blunk';
 
 ?>

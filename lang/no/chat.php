@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.2 development (2003122600)
+      // chat.php - created with Moodle 1.2 (2004032000)
 
 
 $string['beep'] = 'tuut';
@@ -12,12 +12,14 @@ $string['configrefreshroom'] = 'Hvor ofte skal chatterommet i seg selv oppdatere
 $string['configrefreshuserlist'] = 'Hvor ofte skal listen over brukere oppdateres (i sekunder)?';
 $string['currentchats'] = 'Aktive praterunder';
 $string['currentusers'] = 'Nåværende brukere';
+$string['deletesession'] = 'Slett denne runden';
+$string['deletesessionsure'] = 'Er du sikker på at du vil slette denne praterunden?';
 $string['donotusechattime'] = 'Ikke publiser noen tidspunkter for chat';
 $string['enterchat'] = 'Klikk her for å starte chatten';
 $string['errornousers'] = 'Kunne ikke finne noen brukere!';
 $string['helpchatting'] = 'Hjelp til å chatte';
-$string['idle'] = 'uvirksom';
-$string['messagebeepseveryone'] = '$a tut på alle';
+$string['idle'] = 'Uvirksom';
+$string['messagebeepseveryone'] = '$a tut til alle';
 $string['messagebeepsyou'] = '$a har tutet på deg';
 $string['messageenter'] = '$a har akkurat ankommet';
 $string['messageexit'] = '$a har forlatt denne praten';
@@ -31,7 +33,7 @@ $string['repeatdaily'] = 'Til samme tid hver dag';
 $string['repeatnone'] = 'Ingen gjentakelser - publiser bare det spesifiserte tidspunktet';
 $string['repeattimes'] = 'Repeter praterunder';
 $string['repeatweekly'] = 'Til samme tid hver uke';
-$string['savemessages'] = 'Lagre forgangne praterunder';
+$string['savemessages'] = 'Lagre gamle praterunder';
 $string['seesession'] = 'Se denne runden';
 $string['sessions'] = 'Praterunder';
 $string['strftimemessage'] = '%%H:%%M';

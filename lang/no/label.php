@@ -1,8 +1,8 @@
 <?PHP // $Id$ 
-      // label.php - created with Moodle 1.2 development (2003122600)
+      // label.php - created with Moodle 1.2 (2004032000)
 
 
-$string['labeltext'] = 'Etikett-tekst';
+$string['labeltext'] = 'Tekst i etikett';
 $string['modulename'] = 'Etikett';
 $string['modulenameplural'] = 'Etiketter';
 
