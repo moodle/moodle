@@ -139,7 +139,7 @@ global $USER;
     
     $groupid = get_current_group($course->id);
     // add current group before list of students if it's the teacher
-    if (isteacher($course->id) and groupmode($course)) {
+    if (isteacher($course->id) and groupmode($course, $cm)) {
         // show teacher their current group
         if ($groupid) {
             if (!$group = get_record("groups", "id", $groupid)) {
@@ -157,7 +157,7 @@ global $USER;
             // ...exclude self and...
             if ($USER->id != $otheruser->id) {
                 // ...if teacher and groups then exclude students not in the current group
-                if (isteacher($course->id) and groupmode($course) and $groupid) {
+                if (isteacher($course->id) and groupmode($course, $cm) and $groupid) {
                     if (!ismember($groupid, $otheruser->id)) {
                         continue;
                     }
