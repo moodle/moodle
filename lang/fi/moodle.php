@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.6.3 dev (2002111200)
+      // moodle.php - created with Moodle 1.0.6.4 beta (2002112001)
 
 
 $string['action'] = "Toiminta";
@@ -30,6 +30,7 @@ $string['alreadyconfirmed'] = "Rekisteröinti on jo aiemmin vahvistettu.";
 $string['answer'] = "Vastaus";
 $string['assessment'] = "Arviointi";
 $string['assignteachers'] = "Liitä opettaja";
+$string['authentication'] = "Käyttäjäntunnistus";
 $string['availablecourses'] = "Kurssit";
 $string['cancel'] = "Peruuta";
 $string['categories'] = "Kurssi kategoria";
@@ -50,7 +51,6 @@ $string['city'] = "Kaupunki/Paikkakunta";
 $string['closewindow'] = "Sulje tämä ikkuna";
 $string['comparelanguage'] = "Vertaa ja muokkaa käännöstä";
 $string['complete'] = "Suorita loppuun";
-$string['configauth'] = "Valitse autentikointi moduli jota haluat käyttää. Oletus on email, joka tarjoaa parhaimman tietoturvan. None ei tarkista käyttäjien antamaa postiosoitetta. Ldap on vielä ilman configuroiti näkymää. Joten jos muutat jotain, olisi parasta että tiedät mitä teet.";
 $string['configerrorlevel'] = "PHP virheilmoitusten määrä. Normal on yleensä hyvä valinta.";
 $string['configgdversion'] = "GD-kirjaston versio. Näkyvissä oleva numero on tunnistettu automaattisesti. Älä muuta ellet tiedä mit teet.";
 $string['confightmleditor'] = "Valitse halueatko käyttää upotettua HTML-editoria. HTML-editori toimii vain IE5.5 ja uudemissa selaimissa. Käyttäjät voivat halutessaa olla käyttämättä tätä editoria.";
@@ -218,7 +218,7 @@ $string['htmleditoravailable'] = "Richtext HTML editori on käytettävissä";
 $string['htmleditordisabled'] = "Olet poistanut Richtext HTML editorin käytön käyttäjä profiilissasi.";
 $string['htmleditordisabledadmin'] = "Pääkäyttäjä on estänyt Richtext HTML editorin käytön";
 $string['htmleditordisabledbrowser'] = "Richtext HTML Editori ei ole saatvilla koska selaimesi ei ole IE 5.5 tai uudempi.";
-$string['htmlformat'] = "Runsas HTML muotoilu";
+$string['htmlformat'] = "Nätti HTML muoto";
 $string['icqnumber'] = "ICQ numero";
 $string['idnumber'] = "ID numero";
 $string['invalidemail'] = "Virhellinen sähköpostiosoite";
@@ -400,6 +400,7 @@ $string['serverlocaltime'] = "Palvelimen aika";
 $string['settings'] = "Asetukset";
 $string['shortname'] = "Lyhyt nimi";
 $string['shortsitename'] = "Lyhyt nimi sivustolle (yksi sana)";
+$string['show'] = "Näytä";
 $string['showallcourses'] = "Näytä kaikki kurssit";
 $string['showalltopics'] = "Näytä kaikki aiheet";
 $string['showallweeks'] = "Näytä kaikki viikot";
@@ -416,6 +417,7 @@ $string['sitesettings'] = "Sivuston asetukset";
 $string['size'] = "Koko";
 $string['socialheadline'] = "Keskustelu - viimeimmät aiheet";
 $string['someallowguest'] = "Jotkut kurssit saattavat sallia vieras käyttäjät.";
+$string['someerrorswerefound'] = "Joitai tietoja puuttui tai no olivat vääränlaisia. Katso tarkemmat tiedot alta.";
 $string['startdate'] = "Kurssin aloituspäivämäärä";
 $string['startsignup'] = "Aloita nyt luomalla uusi käyttäjätunnus!";
 $string['status'] = "Tilanne";

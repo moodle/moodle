@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.6.3 dev (2002111200)
+      // assignment.php - created with Moodle 1.0.6.4 beta (2002112001)
 
 
+$string['allowresubmit'] = "Salli uudelleenlähetys";
 $string['assignmentdetails'] = "Tehtävän tiedot";
 $string['assignmentname'] = "Tehtävän nimi";
 $string['assignmenttype'] = "Tehtävän tyyppi";
@@ -15,25 +16,25 @@ $string['maximumgrade'] = "Maksimi arvo";
 $string['maximumsize'] = "Maksimi koko";
 $string['modulename'] = "Tehtävä";
 $string['modulenameplural'] = "Tehtävät";
-$string['newsubmissions'] = "Tehtävää palautettu";
+$string['newsubmissions'] = "Tehtäviä palautettu";
 $string['notsubmittedyet'] = "Ei vielä palautettu";
 $string['overwritewarning'] = "Varoitus: uudelleen lähettäminen korvaa aiemman vastauksesi";
-$string['submissionfeedback'] = "Palaute vastauksestasi";
-$string['submissions'] = "Palautetut";
-$string['submitassignment'] = "";
-$string['submitted'] = "Palautettu";
-$string['typeoffline'] = "";
-$string['typeuploadsingle'] = "Lähetä yksi tiedosto, arvo 0 - 100 pistettä";
+$string['submissionfeedback'] = "Palaute tehtävästä";
+$string['submissions'] = "Lähetetyt";
+$string['submitassignment'] = "Palauta tehtäväsi käyttäen tätä lomaketta";
+$string['submitted'] = "Lähetetty";
+$string['typeoffline'] = "Offline aktiviteetti";
+$string['typeuploadsingle'] = "Lähetä yksi tiedosto";
 $string['uploadbadname'] = "Tiedostonimessä on tuntemattomia merkkejä. Tiedostoa ei voida lähettää.";
 $string['uploadedfiles'] = "lähetetyt tiedostot";
-$string['uploaderror'] = "Tiedoston tallentamissa palvelimelle tapahtui virhe.";
-$string['uploadfailnoupdate'] = "Tiedosto saapui palvelimelle mutta vastuksesi talletamisessa tapahtui virhe.";
+$string['uploaderror'] = "Tiedoston tallentamisessa palvelimelle tapahtui virhe.";
+$string['uploadfailnoupdate'] = "Tiedosto saapui palvelimelle, mutta vastuksesi talletamisessa tapahtui virhe.";
 $string['uploadfiletoobig'] = "Pahus, tiedosto jota yritit lähettää on liian suuri.  (Kokorajoitus on \$a tavua);";
 $string['uploadnofilefound'] = "Tiedostoa ei löydy, oletko varma että valitsit lähetettävän tiedoston.";
 $string['uploadnotregistered'] = "'\$a' vastaanotettiin, mutta lähetystäsi ei rekisteröity. ";
 $string['uploadsuccess'] = "'\$a' on vastaanotettu palvelimelle.";
 $string['viewfeedback'] = "Katso terhtävien arvosteluja ja palautteita.";
-$string['viewsubmissions'] = "Katso \$a palautettuja vastauksia";
+$string['viewsubmissions'] = "Katso \$a palautettuja tehtäviä";
 $string['yoursubmission'] = "Vastauksesi";
 
 ?>
