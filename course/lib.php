@@ -234,20 +234,16 @@ function print_recent_activity($course) {
     $heading = false;
     $content = false;
 
-    $logs = get_records_select("log", "time > '$timestart' AND course = '$course->id' AND 
-                                       module = 'course' AND action = 'enrol'", "time ASC");
+    $users = get_recent_enrolments($course->id, $timestart);
 
-    if ($logs) {
-        foreach ($logs as $key => $log) {
+    if ($users) {
+        foreach ($users as $user) {
             if (! $heading) {
                 print_headline(get_string("newusers").":");
                 $heading = true;
                 $content = true;
             }
-            $user = get_record("user", "id", $log->info);
-            if (isstudent($course->id, $user->id)) {
-                echo "<p><font size=1><a href=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</a></font></p>";
-            }
+            echo "<p><font size=1><a href=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</a></font></p>";
         }
     }
 
