@@ -969,7 +969,8 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
 ///
 
     global $CFG;
-
+    require_once($CFG->libdir.'/searchlib.php');
+  
     if (!isteacher($courseid)) {
         $notteacherforum = "AND f.type <> 'teacher'";
 
@@ -1008,39 +1009,30 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
     }
 
     $messagesearch = "";
-    $subjectsearch = "";
-
-
-    foreach ($searchterms as $searchterm) {
-        if (strlen($searchterm) < 2) {
-            continue;
+    $searchstring = "";
+    // Need to concat these back together for parser to work.
+    foreach($searchterms as $searchterm){
+        if ($searchstring != "") {
+            $searchstring .= " ";
         }
-        if ($messagesearch) {
-            $messagesearch .= " AND ";
-        }
-        if ($subjectsearch) {
-            $subjectsearch .= " AND ";
-        }
-
-        if (substr($searchterm,0,1) == "+") {
-            $searchterm = substr($searchterm,1);
-            $messagesearch .= " p.message $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
-            $subjectsearch .= " p.subject $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
-        } else if (substr($searchterm,0,1) == "-") {
-            $searchterm = substr($searchterm,1);
-            $messagesearch .= " p.message $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
-            $subjectsearch .= " p.subject $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
-        } else {
-            $messagesearch .= " p.message $LIKE '%$searchterm%' ";
-            $subjectsearch .= " p.subject $LIKE '%$searchterm%' ";
-        }
+        $searchstring .= $searchterm;
     }
 
+    // We need to allow quoted strings for the search. The quotes *should* be stripped
+    // by the parser, but this should be examined carefully for security implications.
+    $searchstring = str_replace("\\\"","\"",$searchstring);
+    $parser = new search_parser();
+    $lexer = new search_lexer(&$parser);
+    if ($lexer->parse($searchstring)) {
+        $parsearray = $parser->get_parsed_array();
+        $messagesearch = search_generate_SQL($parsearray,"p.message","p.subject","p.userid","u.id","u.firstname","u.lastname");
+    }
+   
     $selectsql = "{$CFG->prefix}forum_posts p,
                   {$CFG->prefix}forum_discussions d,
                   {$CFG->prefix}user u,
                   {$CFG->prefix}forum f $onlyvisibletable
-             WHERE ($messagesearch OR $subjectsearch)
+             WHERE ($messagesearch)
                AND p.userid = u.id
                AND p.discussion = d.id
                AND d.course = '$courseid'
