@@ -1387,7 +1387,7 @@ function get_list_of_plugins($plugin="mod") {
     $basedir = opendir("$CFG->dirroot/$plugin");
     while ($dir = readdir($basedir)) {
         $firstchar = substr($dir, 0, 1);
-        if ($firstchar == "." or $dir == "CVS" or $dir == "vti_cnf") {
+        if ($firstchar == "." or $dir == "CVS" or $dir == "_vti_cnf") {
             continue;
         }
         if (filetype("$CFG->dirroot/$plugin/$dir") != "dir") {
