@@ -53,6 +53,11 @@
             $form->timemodified = time();
 
             if (!empty($course)) {
+                // Test for and remove blocks which aren't appropriate anymore
+                $form->blockinfo = $course->blockinfo;
+                block_remove_inappropriate_from_course($form);
+
+                // Update with the new data
                 if (update_record("course", $form)) {
                     add_to_log($course->id, "course", "update", "edit.php?id=$id", "");
                     fix_course_sortorder();
