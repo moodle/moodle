@@ -221,13 +221,13 @@ body {
     background-color:#FFDA9D;
 }
 
-#left-column .sideblocklinks {
+#left-column .sideblocklist {
     background-color:#F9FAFA;
     border-color:#FFFFFF;
 }
 
-#left-column td.sideblocklinks:hover,
-#left-column td.sideblocklinks:active {
+#left-column td.sideblocklist:hover,
+#left-column td.sideblocklist:active {
     background-color:#FFB63B;
 }
 
@@ -599,7 +599,7 @@ TD.cal_event_description {
 
 .sideblock,
 .sideblockmain,
-.sideblocklinks {
+.sideblocklist {
     background-color:#F9FAFA;
 }
 

@@ -3506,8 +3506,8 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
             echo '<div class="footer">'. $footer .'</div>';
         }
     } else {
-        echo '<table class="sideblocklinks">';
         if ($list) {
+            echo '<table class="sideblocklist">';
             foreach ($list as $key => $string) {
                 echo '<tr>';
                 if ($icons) {
@@ -3516,18 +3516,12 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
                 echo '<td valign="top">'. $string .'</td>';
                 echo '</tr>';
             }
+            echo '</table>';
         }
         if ($footer) {
-            echo '<tr>';
-            echo '<td class="sideblocklinks" ';
-            if ($icons) {
-                echo ' colspan="2" ';
-            }
-            echo '>';
             echo '<div class="footer">'. $footer .'</div>';
-            echo '</td></tr>';
         }
-        echo '</table>';
+        
     }
 
     print_side_block_end($attributes);

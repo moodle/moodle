@@ -761,8 +761,8 @@ function calendar_get_sideblock_upcoming($events, $linkhref = NULL) {
                 $content .= $events[$i]->name;
             }
         }
-        $events[$i]->time = str_replace('->', '<br />->', $events[$i]->time);
-        $content .= '</div><div class="event_date" style="text-align:right;">'.$events[$i]->time.'</div>';
+        $events[$i]->time = str_replace('&raquo;', '<br />&raquo;', $events[$i]->time);
+        $content .= '<div class="date">'.$events[$i]->time.'</div></div>';
         if ($i < $lines - 1) $content .= '<hr />';
     }
 

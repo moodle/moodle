@@ -261,6 +261,12 @@ h4 {
 *** Blocks
 ***
 ******************************/
+
+.sideblock .footer {
+    font-size:0.75em;
+    text-align:center;
+}
+
 /* block_rss_client.php */
 .rssclientlink {
     font-size:x-small;
@@ -270,25 +276,30 @@ h4 {
     font-size:x-small;
 }
 
-.block_quiz_results h1 {
+.sideblock.block_quiz_results h1 {
     font-weight: bold;
     font-size: 1.2em;
 }
 
-.block_quiz_results table.grades caption {
+.sideblock.block_quiz_results table.grades caption {
     font-weight: bold;
 }
 
-.block_quiz_results table.grades .number, .block_quiz_results table.grades .grade {
+.sideblock.block_quiz_results table.grades .number, .block_quiz_results table.grades .grade {
     text-align: right;
 }
 
-.block_quiz_results {
+.sideblock.block_quiz_results {
     text-align: center;
 }
 
-.block_quiz_results table.grades {
+.sideblock.block_quiz_results table.grades {
     text-align: left;
+}
+
+.sideblock.block_calendar_upcoming .event .date {
+    font-size:0.8em;
+    text-align:right;
 }
 
 /*****************************

@@ -430,6 +430,14 @@ table.message_search_results td {
     display: none;
 }
 
+.sideblock .sideblocklist {
+    width: 100%;
+}
+
+.sideblock .footer {
+    margin-top:4px;
+}
+
 /* sideblock weblib.php */
 .block_course_summary .sideblockmain {
     padding:10px;
