@@ -1044,6 +1044,7 @@ function quiz_print_cat_question_list($categoryid) {
     $stredit = get_string("edit");
     $straddselectedtoquiz = get_string("addselectedtoquiz", "quiz");
     $strtype = get_string("type", "quiz");
+    $strcreatemultiple = get_string("createmultiple", "quiz");
 
     if (!$categoryid) {
         echo "<P align=center>";
@@ -1073,6 +1074,12 @@ function quiz_print_cat_question_list($categoryid) {
     echo "<INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
     echo "<INPUT TYPE=submit VALUE=\"$strimportquestions\">";
     helpbutton("import", $strimportquestions, "quiz");
+    echo "</FORM>";
+
+    echo "<FORM METHOD=GET ACTION=multiple.php>"; 
+    echo "<INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
+    echo "<INPUT TYPE=submit VALUE=\"$strcreatemultiple\">";
+    helpbutton("createmultiple", $strcreatemultiple, "quiz");
     echo "</FORM>";
 
     echo "</TR></TABLE>";

@@ -118,6 +118,8 @@ class quiz_file_format extends quiz_default_format {
 
         global $db, $CFG;
 
+        print_heading(count($questionids)." ".get_string("questions", "quiz"));
+
         $questionids = implode(',', $questionids);
 
         if (!$shortanswers = get_records_select("quiz_questions", 
@@ -135,8 +137,9 @@ class quiz_file_format extends quiz_default_format {
         $strmatch = "$category->name - ".get_string("match", "quiz");
 
         $shortanswerids = swapshuffle($shortanswerids);
-        $count = count($shortanswerids);
+        $count = $shortanswercount = count($shortanswerids);
         $i = 1;
+        $matchcount = 0;
 
         $question->category = $category->id;
         $question->qtype    = MATCH;
@@ -144,6 +147,7 @@ class quiz_file_format extends quiz_default_format {
         $question->image  = "";
 
         while ($count > 4) {
+             $matchcount++;
              $question->name         = "$strmatch $i";
              $question->subquestions = array();
              $question->subanswers   = array();
@@ -186,9 +190,9 @@ class quiz_file_format extends quiz_default_format {
 
              /// Delete the old short-answer questions
 
-             execute_sql("DELETE FROM {$CFG->prefix}quiz_questions WHERE id IN ($extractids)");
-             execute_sql("DELETE FROM {$CFG->prefix}quiz_shortanswer WHERE question IN ($extractids)");
-             execute_sql("DELETE FROM {$CFG->prefix}quiz_answers WHERE question IN ($extractids)");
+             execute_sql("DELETE FROM {$CFG->prefix}quiz_questions WHERE id IN ($extractids)", false);
+             execute_sql("DELETE FROM {$CFG->prefix}quiz_shortanswer WHERE question IN ($extractids)", false);
+             execute_sql("DELETE FROM {$CFG->prefix}quiz_answers WHERE question IN ($extractids)", false);
              
         }
 
@@ -199,7 +203,15 @@ class quiz_file_format extends quiz_default_format {
                 delete_records("quiz_answers", "question", $shortanswerid);
             }
         }
-        
+        $info = "$shortanswercount ".get_string("shortanswer", "quiz").
+                " => $matchcount ".get_string("match", "quiz");
+
+        print_heading($info);
+
+        $options['category'] = $category->id;
+        echo "<CENTER>";
+        print_single_button("multiple.php", $options, get_string("randomcreate", "quiz"));
+        echo "</CENTER>";
 
         return true;
     }

@@ -5,7 +5,7 @@
     require_once("lib.php");
     require_once("../../files/mimetypes.php");
 
-    optional_variable($id);
+    optional_variable($id);        // question id
 
     optional_variable($qtype);
     optional_variable($category);
