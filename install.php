@@ -3,8 +3,9 @@
 
 /// If config.php exists already then we are not needed.
 
-if (file_exists('./config.php')) { 
+if (file_exists('./config.php')) {
     header('Location: index.php');
+    die();
 } else {
     $configfile = './config.php';
 }
@@ -117,20 +118,20 @@ if (isset($_POST['stage'])) {
     } else {
         $nextstage = $_POST['stage'] - 1;
     }
-    
+
     if ($nextstage < 0) $nextstage = 0;
-    
+
 
     /// Store any posted data
     foreach ($_POST as $setting=>$value) {
         $INSTALL[$setting] = $value;
     }
-    
+
 } else {
 
     $goforward = true;
     $nextstage = 0;
-    
+
 }
 
 
@@ -142,13 +143,13 @@ if (isset($_POST['stage'])) {
 if ($INSTALL['stage'] == 2) {
 
     error_reporting(0);
-    
+
     /// check wwwroot
     if (($fh = @fopen($INSTALL['wwwroot'].'/install.php', 'r')) === false) {
         $errormsg = get_string('wwwrooterror', 'install');
     } else {
         fclose($fh);
-            
+
         /// check dirroot
         if (($fh = @fopen($INSTALL['dirroot'].'/install.php', 'r')) === false ) {
             $CFG->dirroot = dirname(__FILE__);
@@ -156,17 +157,17 @@ if ($INSTALL['stage'] == 2) {
             $errormsg = get_string('dirrooterror', 'install');
         } else {
             fclose($fh);
-            
+
             $CFG->dirroot = $INSTALL['dirroot'];
 
             /// check dataroot
             $CFG->dataroot = $INSTALL['dataroot'];
             if (make_upload_directory('sessions', false) === false ) {
                 $errormsg = get_string('datarooterror', 'install');
-            }            
+            }
         }
     }
-    
+
 
     if (!empty($errormsg)) $nextstage = 2;
 
@@ -185,7 +186,7 @@ if ($INSTALL['stage'] == 3) {
     if (empty($INSTALL['dbname'])) {
         $INSTALL['dbname'] = 'moodle';
     }
-    
+
     /// different format for postgres7 by socket
     if ($INSTALL['dbtype'] == 'postgres7' and ($INSTALL['dbhost'] == 'localhost' || $INSTALL['dbhost'] == '127.0.0.1')) {
         $INSTALL['dbhost'] = "user='{$INSTALL['dbuser']}' password='{$INSTALL['dbpass']}' dbname='{$INSTALL['dbname']}'";
@@ -200,11 +201,11 @@ if ($INSTALL['stage'] == 3) {
 
     $db = &ADONewConnection($INSTALL['dbtype']);
 
-    error_reporting(0);  // Hide errors 
-    
+    error_reporting(0);  // Hide errors
+
     if (! $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'])) {
         /// The following doesn't seem to work but we're working on it
-        /// If you come up with a solution for creating a database in MySQL 
+        /// If you come up with a solution for creating a database in MySQL
         /// feel free to put it in and let us know
         if ($dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'])) {
             switch ($INSTALL['dbtype']) {   /// Try to create a database
@@ -342,7 +343,7 @@ if (isset($_GET['help'])) {
 
     <tr>
         <td class="td_main" colspan="2">
-    
+
 <?php
 
 if (!empty($errormsg)) echo "<p class=\"errormsg\" align=\"center\">$errormsg</p>\n";
@@ -389,7 +390,7 @@ if ($nextstage == 5) {
 
 
 
-<?php 
+<?php
 
 //==========================================================================//
 
@@ -430,10 +431,10 @@ function form_table($nextstage = 0, $formaction = "install.php") {
             break;
         case 1: /// Compatibilty check
             $compatsuccess = true;
-            
+
             /// Check that PHP is of a sufficient version
             print_compatibility_row(check_php_version("4.1.0"), get_string('PHPversion', 'install'), get_string('PHPversionerror', 'install'), 'phpversionhelp');
-            /// Check safe mode 
+            /// Check safe mode
             print_compatibility_row(!ini_get_bool('safe_mode'), get_string('safemode', 'install'), get_string('safemodeerror', 'install'), 'safemodehelp');
             /// Check session auto start
             print_compatibility_row(!ini_get_bool('session.auto_start'), get_string('sessionautostart', 'install'), get_string('sessionautostarterror', 'install'), 'sessionautostarthelp');
@@ -532,18 +533,15 @@ function form_table($nextstage = 0, $formaction = "install.php") {
         default:
     }
 ?>
-
-    <tr>
-        <td align="left">
-            <?php echo ($nextstage > 0) ? "<input type=\"submit\" name=\"prev\" value=\"&laquo;  ".get_string('previous')."\" />\n" : "&nbsp;\n" ?>
-        </td>
-        <?php if ($nextstage == 1) echo "<td>&nbsp;</td>\n"; ?>
-        <td align="right">
-            <?php echo ($nextstage < 5) ? "<input type=\"submit\" name=\"next\" value=\"".get_string('next')."  &raquo;\" />\n" : "&nbsp;\n" ?>
-        </td>
-    </tr>
-    
     </table>
+
+    <div class="nav">
+        <div style="float: right;"><?php echo ($nextstage < 5) ? "<input type=\"submit\" name=\"next\" value=\"".get_string('next')."  &raquo;\" />\n" : "&nbsp;\n" ?></div>
+        <div style="float: left;"><?php echo ($nextstage > 0) ? "<input type=\"submit\" name=\"prev\" value=\"&laquo;  ".get_string('previous')."\" />\n" : "&nbsp;\n" ?></div>
+        <div style="clear: left; height: 2px;">&nbsp;</div>
+    </div>
+
+
     </form>
 
 <?php
@@ -583,7 +581,7 @@ function install_helpbutton($url, $title='') {
     echo "onClick=\"return window.open('$url', 'Help', 'menubar=0,location=0,scrollbars,resizable,width=500,height=400')\">";
     echo "</a>\n";
 }
-    
+
 
 
 //==========================================================================//
@@ -636,7 +634,7 @@ function css_styles() {
 <style type="text/css">
 
     body { background-color: #ffeece; }
-    p { 
+    p {
         font-family: helvetica, arial, sans-serif;
         font-size: 10pt;
     }
@@ -701,7 +699,10 @@ function css_styles() {
         font-weight: bold;
         color: #333333;
     }
-        
+    div.nav {
+        margin: 6px;
+    }
+
 </style>
 
 <?php
