@@ -1604,9 +1604,15 @@
                 //Get the new_id of the module (to recode the info field)
                 $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
                 if ($mod) {
-                    $log->url = "attempt.php?id=".$log->cmid;
-                    $log->info = $mod->new_id;
-                    $status = true;
+                    //Extract the attempt id from the url field
+                    $attid = substr(strrchr($log->url,"="),1);
+                    //Get the new_id of the attempt (to recode the url field)
+                    $att = backup_getid($restore->backup_unique_code,"quiz_attempts",$attid);
+                    if ($att) {
+                        $log->url = "review.php?q=".$mod->new_id."&attempt=".$att->new_id;
+                        $log->info = $mod->new_id;
+                        $status = true;
+                    }
                 }
             }
             break;
@@ -1615,9 +1621,15 @@
                 //Get the new_id of the module (to recode the info field)
                 $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
                 if ($mod) {
-                    $log->url = "attempt.php?id=".$log->cmid;
-                    $log->info = $mod->new_id;
-                    $status = true;
+                    //Extract the attempt id from the url field
+                    $attid = substr(strrchr($log->url,"="),1);
+                    //Get the new_id of the attempt (to recode the url field)
+                    $att = backup_getid($restore->backup_unique_code,"quiz_attempts",$attid);
+                    if ($att) {
+                        $log->url = "review.php?q=".$mod->new_id."&attempt=".$att->new_id;
+                        $log->info = $mod->new_id;
+                        $status = true;
+                    }
                 }
             }
             break;
@@ -1630,8 +1642,8 @@
                     $attid = substr(strrchr($log->url,"="),1);
                     //Get the new_id of the attempt (to recode the url field)
                     $att = backup_getid($restore->backup_unique_code,"quiz_attempts",$attid);
-                    if ($mod) { 
-                        $log->url = "review.php?id=".$log->cmid."&attempt=".$att->new_id;
+                    if ($att) { 
+                        $log->url = "review.php?q=".$mod->new_id."&attempt=".$att->new_id;
                         $log->info = $mod->new_id;
                         $status = true;
                     }
