@@ -2494,7 +2494,7 @@ $oldalternativeids);
     return $answers;       
 }
 
-function quiz_get_recent_quizzes($sincetime, $quiz="0") {
+function quiz_get_recent_quizzes($sincetime, $quiz="0", $user="") {
 // Returns all quizzes since a given time.  If quiz is specified then
 // this restricts the results
 
@@ -2505,22 +2505,27 @@ function quiz_get_recent_quizzes($sincetime, $quiz="0") {
     } else {
         $quizselect = "";
     }
+    if ($user) {
+        $userselect = " AND u.id = '$user'";
+    } else {
+        $userselect = "";
+    }
 
     return get_records_sql("SELECT qa.*, q.name, u.firstname, u.lastname, u.picture, q.course, q.sumgrades as maxgrade
                               FROM {$CFG->prefix}quiz_attempts qa,
                                    {$CFG->prefix}quiz q,
                                    {$CFG->prefix}user u
-                             WHERE qa.timefinish > '$sincetime' $quizselect
-                               AND qa.userid = u.id
-                               AND qa.quiz = q.id
+                             WHERE qa.timefinish > '$sincetime'
+                               AND qa.userid = u.id $userselect
+                               AND qa.quiz = q.id $quizselect
                              ORDER BY qa.timefinish ASC");
 }
 
-function quiz_print_recent_instance_activity($quiz, $timestart, $detail=false) {
+function quiz_print_recent_instance_activity($quiz, $timestart, $user="") {
 
     global $CFG, $THEME;
 
-    if (!$quizzes = quiz_get_recent_quizzes($timestart, $quiz->id)) {
+    if (!$quizzes = quiz_get_recent_quizzes($timestart, $quiz->id, $user)) {
         return false;
     }
 
