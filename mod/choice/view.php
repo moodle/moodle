@@ -86,7 +86,9 @@
 
     echo "</TR></TABLE>";
     echo "<INPUT type=hidden name=id value=\"$cm->id\">";
-    echo "<INPUT type=submit value=\"".get_string("savemychoice","choice")."\">";
+    if (!isguest()) {
+        echo "<INPUT type=submit value=\"".get_string("savemychoice","choice")."\">";
+    }
     echo "</P></FORM></CENTER>";
 
     print_footer($course);

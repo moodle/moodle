@@ -70,7 +70,7 @@
     print_simple_box_end();
     echo "<BR>";
 
-    if (!isteacher($course->id)) {
+    if (!isteacher($course->id) and !isguest()) {
         if ($submission = assignment_get_submission($assignment, $USER)) {
             print_simple_box_start("center");
             echo "<CENTER>";
