@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.2 Beta (2004022400)
+      // lesson.php - created with Moodle 1.2 Beta ++ (2004031100)
 
 
 $string['actionaftercorrectanswer'] = 'Actie na juist antwoord';
@@ -30,10 +30,10 @@ $string['maximumnumberofanswers'] = 'Maximum aantal antwoorden';
 $string['maximumnumberofattempts'] = 'Maximum aantal pogingen';
 $string['modulename'] = 'Les';
 $string['modulenameplural'] = 'Lessen';
-$string['morethanoneanswer'] = 'Meer dan één antwoord';
 $string['movepagehere'] = 'Verplaats de pagina naar hier';
 $string['moving'] = 'Pagina $a aan het verplaatsen';
 $string['movingtonextpage'] = 'Verplaatsen naar de volgende pagina';
+$string['multianswer'] = 'Meerdere antwoorden';
 $string['multipleanswer'] = 'Meerdere antwoorden';
 $string['nextpage'] = 'Volgende pagina';
 $string['noanswer'] = 'Er is niet geantwoord';
@@ -52,6 +52,7 @@ $string['pleasecheckoneanswer'] = 'Duid één antwoord aan';
 $string['pleasecheckoneormoreanswers'] = 'Duid één of meer antwoorden aan';
 $string['pleaseenteryouranswerinthebox'] = 'Geef je antwoord in het vak';
 $string['pleasematchtheabovepairs'] = 'Koppel bovenstaande paren';
+$string['questionoption'] = 'Vraagoptie';
 $string['questiontype'] = 'Vraagtype';
 $string['response'] = 'Respons';
 $string['sanitycheckfailed'] = 'Fouten gevonden: deze poging wordt verwijderd';

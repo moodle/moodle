@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 Beta (2004022400)
+      // workshop.php - created with Moodle 1.2 Beta ++ (2004031100)
 
 
 $string['absent'] = 'Afwezig';
@@ -220,6 +220,7 @@ $string['weightforbias'] = 'Beoordelingsgewicht voor vertekening';
 $string['weightforgradingofassessments'] = 'Beoordelingsgewicht van het beoordelen van de evaluaties';
 $string['weightforpeerassessments'] = 'Beoordelingsgewicht van evaluaties door klasgenoten';
 $string['weightforreliability'] = 'Beoordelingsgewicht voor betrouwbaarheid';
+$string['weightforteacherassessments'] = 'Beoordelingsgewicht voor de beoordelingen van de leraar';
 $string['weights'] = 'Beoordelingsgewichten';
 $string['weightsusedforfinalgrade'] = 'Beoordelingsgewichten gebruikt voor de eindbeoordeling';
 $string['weightsusedforsubmissions'] = 'Beoordelingsgewichten gebruik voor inzendingen';
