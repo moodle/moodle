@@ -121,10 +121,10 @@
             }
         }
         $submissions = assignment_get_all_submissions($assignment,$sort, $dir);
-        add_to_log($course->id, "assignment", "update grades", "submissions.php?id=$assignment->id", "$count users");
+        add_to_log($course->id, "assignment", "update grades", "submissions.php?id=$assignment->id", "$count users", $cm->id);
         notify(get_string("feedbackupdated", "assignment", $count));
     } else {
-        add_to_log($course->id, "assignment", "view submissions", "submissions.php?id=$assignment->id", "$assignment->id");
+        add_to_log($course->id, "assignment", "view submissions", "submissions.php?id=$assignment->id", "$assignment->id", $cm->id);
     }
 
     // Submission sorting

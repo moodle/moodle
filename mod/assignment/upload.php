@@ -17,9 +17,13 @@
         error("Course is misconfigured");
     }
 
+    if (! $cm = get_coursemodule_from_instance("assignment", $assignment->id, $course->id)) {
+        error("Course Module ID was incorrect");
+    }
+
     require_login($course->id);
 
-    add_to_log($course->id, "assignment", "upload", "view.php?a=$assignment->id", "$assignment->id");
+    add_to_log($course->id, "assignment", "upload", "view.php?a=$assignment->id", "$assignment->id", $cm->id);
 
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
