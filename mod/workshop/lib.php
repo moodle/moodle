@@ -271,10 +271,10 @@ function workshop_cron () {
 				$posthtml = "<P><FONT FACE=sans-serif>".
 			  "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
 			  "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-			  "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
+			  "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$workshop->id\">$workshop->name</A></FONT></P>";
 			  $posthtml .= "<HR><FONT FACE=sans-serif>";
 			  $posthtml .= "<P>$msg</P>";
-			  $posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">";
+			  $posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$workshop->id\">";
 			  $posthtml .= "in your workshop assignment</A>.</P></FONT><HR>";
 			} else {
 			  $posthtml = "";
@@ -347,16 +347,16 @@ function workshop_cron () {
 				$posttext .= "---------------------------------------------------------------------\n";
 				$posttext .= $msg;
 				$posttext .= "You can see it in your workshop assignment:\n";
-				$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
+				$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$workshop->id\n";
 				$posttext .= "---------------------------------------------------------------------\n";
 				if ($sendto->mailformat == 1) {  // HTML
 					$posthtml = "<P><FONT FACE=sans-serif>".
 					"<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
 					"<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-					"<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
+					"<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$workshop->id\">$workshop->name</A></FONT></P>";
 					$posthtml .= "<HR><FONT FACE=sans-serif>";
 					$posthtml .= "<P>$msg</P>";
-					$posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">";
+					$posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$workshop->id\">";
 					$posthtml .= "in your workshop assignment</A>.</P></FONT><HR>";
 					} 
 				else {
@@ -387,13 +387,13 @@ function workshop_cron () {
 				$posttext .= "---------------------------------------------------------------------\n";
 				$posttext .= $msg;
 				$posttext .= "You can see it in your workshop assignment:\n";
-				$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
+				$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$workshop->id\n";
 				$posttext .= "---------------------------------------------------------------------\n";
 				if ($sendto->mailformat == 1) {  // HTML
 					$posthtml = "<P><FONT FACE=sans-serif>".
 					"<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
 					"<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-					"<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
+					"<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$workshop->id\">$workshop->name</A></FONT></P>";
 					$posthtml .= "<HR><FONT FACE=sans-serif>";
 					$posthtml .= "<P>$msg</P>";
 					$posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">";
