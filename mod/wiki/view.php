@@ -70,7 +70,8 @@
 ///     or the default value in the 'lang' file if the specified value was empty.
         define("EWIKI_PAGE_INDEX",$wiki_entry->pagename);
 
-        $wikipage = ($wikipage === false) ?  EWIKI_PAGE_INDEX: $wikipage;
+        /// If the page has a ' in it, it may have slashes added to it. Remove them if it does.
+        $wikipage = ($wikipage === false) ?  stripslashes(EWIKI_PAGE_INDEX) : stripslashes($wikipage);
 
 ///     ### Prevent ewiki getting id as PageID...
         unset($_REQUEST["id"]);
@@ -315,18 +316,23 @@
                 echo '<td class="generaltabselected" '.$tabstyle.' bgcolor="'.$THEME->cellcontent.'">'.$tabname.'</td>';
             }
         }
-        echo "</tr>";
-        echo "</table>";
+        echo '</tr>';
+        echo '</table>';
     }
     print_simple_box_start( "right", "100%", "$THEME->cellcontent", "20");
-    if($ewiki_action=="edit") {
-      # When editing, the filters shall not interfere the wiki-source
-      print $content.$content2;
-    } else {
-      //print(format_text($content, $moodle_format));    /// DISABLED UNTIL IT CAN BE FIXED
-      print $content;
-      print $content2;
+
+    /// Don't filter any pages containing wiki actions (except view). A wiki page containing
+    /// actions will have the form [action]/[pagename]. If the '/' isn't there, or the action
+    /// is 'view', filter it. Also, if the page doesn't exist, it will default to 'edit'.
+    $actions = explode('/', $wikipage);
+    if ($ewiki_action == "edit" || ($actions !== false && count($actions) > 1 && $actions[0] != 'view') ||
+        (count($actions) == 1 && !record_exists('wiki_pages', 'pagename', $wikipage, 'wiki', $wiki_entry->id))) {
+        print $content;
     }
+    else {
+        print(format_text($content, $moodle_format));    /// DISABLED UNTIL IT CAN BE FIXED
+    }
+    print $content2;
     print_simple_box_end();
     echo "<br clear=all />";
 

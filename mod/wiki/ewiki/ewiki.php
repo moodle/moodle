@@ -594,6 +594,7 @@ function ewiki_page($id=false) {
          $pf($o, $id, $data, $action);
       }
    }
+
    (EWIKI_ESCAPE_AT) && ($o = str_replace("@", "&#x40;", $o));
 
    return($o);
