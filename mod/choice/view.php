@@ -123,8 +123,7 @@
                 $answer = $answers[$user->id];
                 $useranswer[(int)$answer->answer][] = $user;
             } else {
-                $answer = "";
-                $useranswer[(int)$answer->answer][] = $user;
+                $useranswer[0][] = $user;
             }
         }
         foreach ($choice->answer as $key => $answer) {  
@@ -146,8 +145,10 @@
             foreach ($useranswer as $key => $answer) {
                 if ($key) {
                     echo "<th width=\"$tablewidth%\">";
+                } else if ($choice->showunanswered) {
+                    echo "<th bgcolor=\"$THEME->body\" width=\"$tablewidth%\">";
                 } else {
-                    echo "<th bgcolor=\"$theme->body\" width=\"$tablewidth%\">";
+                    continue;
                 }
                 echo choice_get_answer($choice, $key);
                 echo "</th>";
@@ -157,8 +158,10 @@
             foreach ($useranswer as $key => $answer) {
                 if ($key) {
                     echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$theme->cellcontent\">";
-                } else {
+                } else if ($choice->showunanswered) {
                     echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$theme->body\">";
+                } else {
+                    continue;
                 }
     
                 echo "<table width=100%>";
@@ -185,8 +188,10 @@
             foreach ($useranswer as $key => $answer) {
                 if ($key) {
                     echo "<th width=\"$tablewidth%\">";
-                } else {
+                } else if ($choice->showunanswered) {
                     echo "<th bgcolor=\"$THEME->body\" width=\"$tablewidth%\">";
+                } else {
+                    continue;
                 }
                 echo choice_get_answer($choice, $key);
                 echo "</th>";
@@ -195,6 +200,9 @@
 
             $maxcolumn = 0;
             foreach ($useranswer as $key => $answer) {
+                if (!$key and !$choice->showunanswered) {
+                    continue;
+                }
                 $column[$key] = count($answer);
                 if ($column[$key] > $maxcolumn) {
                     $maxcolumn = $column[$key];
@@ -203,14 +211,21 @@
 
             echo "<tr>";
             foreach ($useranswer as $key => $answer) {
+                if (!$key and !$choice->showunanswered) {
+                    continue;
+                }
                 $height = $COLUMN_HEIGHT * ((float)$column[$key] / (float)$maxcolumn);
                 echo "<td valign=\"bottom\" align=\"center\">";
-                echo "<img src=\"column.png\" height=\"$height\" width=\"49\"></td>";
+                echo "<img src=\"column.png\" height=\"$height\" width=\"49\">";
+                echo "</td>";
             }
             echo "</tr>";
 
             echo "<tr>";
             foreach ($useranswer as $key => $answer) {
+                if (!$key and !$choice->showunanswered) {
+                    continue;
+                }
                 echo "<td align=\"center\">".$column[$key]."</td>";
             }
             echo "</tr></table>";

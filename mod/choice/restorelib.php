@@ -49,6 +49,7 @@
             $choice->answer4 = backup_todb($info['MOD']['#']['ANSWER4']['0']['#']);
             $choice->answer5 = backup_todb($info['MOD']['#']['ANSWER5']['0']['#']);
             $choice->answer6 = backup_todb($info['MOD']['#']['ANSWER6']['0']['#']);
+            $choice->showunanswered = backup_todb($info['MOD']['#']['SHOWUNANSWERED']['0']['#']);
             $choice->publish = backup_todb($info['MOD']['#']['PUBLISH']['0']['#']);
             $choice->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 

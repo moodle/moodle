@@ -45,6 +45,7 @@
                 fwrite ($bf,full_tag("ANSWER4",4,false,$choice->answer4));
                 fwrite ($bf,full_tag("ANSWER5",4,false,$choice->answer5));
                 fwrite ($bf,full_tag("ANSWER6",4,false,$choice->answer6));
+                fwrite ($bf,full_tag("SHOWUNANSWERED",4,false,$choice->showunanswered));
                 fwrite ($bf,full_tag("PUBLISH",4,false,$choice->publish));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$choice->timemodified));
                 //if we've selected to backup users info, then execute backup_choice_answers

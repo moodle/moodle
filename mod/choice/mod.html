@@ -6,7 +6,7 @@
         $form->text = "";
     }
     if (empty($form->format)) {
-        $form->format = "";
+        $form->format = 0;
     }
     if (empty($form->answer1)) {
         $form->answer1 = get_string("yes");
@@ -27,7 +27,10 @@
         $form->answer6 = "";
     }
     if (empty($form->publish)) {
-        $form->publish = "";
+        $form->publish = 0;
+    }
+    if (empty($form->showunanswered)) {
+        $form->showunanswered = 0;
     }
 
     if ($usehtmleditor = can_use_richtext_editor()) {
@@ -134,6 +137,17 @@
         <?php
         require("$CFG->dirroot/mod/choice/lib.php");
         choose_from_menu($CHOICE_PUBLISH, "publish", "$form->publish", "");
+        ?>
+        <br \>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><P><B><?php print_string("showunanswered","choice") ?>:</b></p></td>
+    <td>
+        <?php
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "showunanswered", "$form->showunanswered", "");
         ?>
         <br \>
     </td>

@@ -8,6 +8,9 @@ function choice_upgrade($oldversion) {
         execute_sql(" ALTER TABLE `choice` ADD `format` INTEGER DEFAULT '0' NOT NULL AFTER `text` ");
         execute_sql(" ALTER TABLE `choice` ADD `publish` INTEGER DEFAULT '0' NOT NULL AFTER `answer6` ");
     }
+    if ($oldversion < 2004010100) {
+        table_column("choice", "", "showunanswered", "integer", "4", "unsigned", "0", "", "publish");
+    }
 
     return true;
 }

@@ -26,6 +26,7 @@ CREATE TABLE prefix_choice (
   answer4 varchar(255) default NULL,
   answer5 varchar(255) default NULL,
   answer6 varchar(255) default NULL,
+  showunanswered integer NOT NULL default '0',
   publish integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );
