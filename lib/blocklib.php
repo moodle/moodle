@@ -708,7 +708,17 @@ function block_get_name_by_id ($blockid) {
 //will be converted to their blockids equivalent. If a course is specified
 //then the function will update the field too!
 
-function blocks_get_default_blocks ($courseid = NULL, $blocknames="participants,activity_modules,calendar_month,calendar_upcoming,search_forums,admin,course_list:news_items,recent_activity") {
+function blocks_get_default_blocks ($courseid = NULL, $blocknames="") {
+ 
+    global $CFG;
+
+    if (empty($blocknames)) {
+        if (!empty($CFG->defaultblocks)) {
+            $blocknames = $CFG->defaultblocks;
+        } else {
+            $blocknames = "participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity";
+        }
+    }
 
     //Calculate left and right blocks
     $blocksn = $blocknames;
