@@ -876,8 +876,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $strmovehere = get_string("movehere");
             $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
         }
-        $labelformatoptions->noclean = true;
     }
+    $labelformatoptions->noclean = true;
 
     $modinfo = unserialize($course->modinfo);
 
