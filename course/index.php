@@ -98,27 +98,32 @@
 /// Delete a category if necessary
 
     if (isset($delete)) {
-        if ($tempcat = get_record("course_categories", "id", $delete)) {
-            if (delete_records("course_categories", "id", $tempcat->id)) {
-                notify(get_string("categorydeleted", "", $tempcat->name));
-            }
+        if ($deletecat = get_record("course_categories", "id", $delete)) {
 
             /// Send the children categories to live with their grandparent
-            if ($childcats = get_records("course_categories", "parent", $tempcat->id)) {
+            if ($childcats = get_records("course_categories", "parent", $deletecat->id)) {
                 foreach ($childcats as $childcat) {
-                    if (! set_field("course_categories", "parent", $tempcat->parent, "id", $childcat->id)) {
-                        notify("Could not update a child category!");
+                    if (! set_field("course_categories", "parent", $deletecat->parent, "id", $childcat->id)) {
+                        error("Could not update a child category!", "index.php");
                     }
                 }
             }
 
-            ///  Send the children courses to live with their grandparent as well
-            if ($childcourses = get_records("course", "category", $tempcat->id)) {
-                foreach ($childcourses as $childcourse) {
-                    if (! set_field("course", "category", $tempcat->parent, "id", $childcourse->id)) {
-                        notify("Could not update a child course!");
+            ///  If the grandparent is a valid (non-zero) category, then 
+            ///  send the children courses to live with their grandparent as well
+            if ($deletecat->parent) {
+                if ($childcourses = get_records("course", "category", $deletecat->id)) {
+                    foreach ($childcourses as $childcourse) {
+                        if (! set_field("course", "category", $deletecat->parent, "id", $childcourse->id)) {
+                            error("Could not update a child course!", "index.php");
+                        }
                     }
                 }
+            }
+           
+            /// Finally delete the category itself
+            if (delete_records("course_categories", "id", $deletecat->id)) {
+                notify(get_string("categorydeleted", "", $deletecat->name));
             }
         }
     }
