@@ -390,6 +390,9 @@ function require_login($courseid=0, $autologinguest=true) {
 
     // Next, check if the user can be in a particular course
     if ($courseid) {
+        if ($courseid == SITEID) {   
+            return;   // Anyone can be in the site course
+        }
         if (!empty($USER->student[$courseid]) or !empty($USER->teacher[$courseid]) or !empty($USER->admin)) {
             if (isset($USER->realuser)) {   // Make sure the REAL person can also access this course
                 if (!isteacher($courseid, $USER->realuser)) {
