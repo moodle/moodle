@@ -492,7 +492,7 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
         }
     }
     if ($isediting) {
-        $editmenu = popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=0&add=", 
+        $editmenu = popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section->section&add=", 
                    $modnames, "section0", "", get_string("add")."...", "mods", get_string("activities"), true);
         $editmenu = "<DIV ALIGN=right>$editmenu</DIV>";
     } else {

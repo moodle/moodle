@@ -93,7 +93,7 @@
 
         if (isediting($course->id)) {
             echo "<DIV ALIGN=right>";
-            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$week&add=", 
+            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$week&add=", 
                         $modnames, "section$week", "", "$stradd...", "mods", $stractivities);
             echo "</DIV>";
         }
@@ -165,7 +165,7 @@
 
         if (isediting($course->id)) {
             echo "<DIV ALIGN=right>";
-            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$week&add=", 
+            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$week&add=", 
                         $modnames, "section$week", "", "$stradd...");
             echo "</DIV>";
         }
