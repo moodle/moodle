@@ -32,9 +32,9 @@
     $strsubmissions = get_string("submissions", "assignment");
     $strsaveallfeedback = get_string("saveallfeedback", "assignment");
 
-    print_header_simple($assignment->name, "",
+    print_header_simple(format_string($assignment->name), "",
                  "<a href=\"index.php?id=$course->id\">$strassignments</a> ->
-                  <a href=\"view.php?a=$assignment->id\">$assignment->name</a> -> $strsubmissions",
+                  <a href=\"view.php?a=$assignment->id\">".format_string($assignment->name,true)."</a> -> $strsubmissions",
                   "", "", true, update_module_button($cm->id, $course->id, $strassignment), navmenu($course, $cm));
 
 /// Check to see if groups are being used in this assignment

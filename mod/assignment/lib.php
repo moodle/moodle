@@ -255,11 +255,11 @@ function assignment_cron () {
 
             unset($assignmentinfo);
             $assignmentinfo->teacher = fullname($teacher);
-            $assignmentinfo->assignment = "$submission->name";
+            $assignmentinfo->assignment = format_string($submission->name,true);
             $assignmentinfo->url = "$CFG->wwwroot/mod/assignment/view.php?id=$mod->id";
 
-            $postsubject = "$course->shortname: $strassignments: $submission->name";
-            $posttext  = "$course->shortname -> $strassignments -> $submission->name\n";
+            $postsubject = "$course->shortname: $strassignments: ".format_string($submission->name,true);
+            $posttext  = "$course->shortname -> $strassignments -> ".format_string($submission->name,true)."\n";
             $posttext .= "---------------------------------------------------------------------\n";
             $posttext .= get_string("assignmentmail", "assignment", $assignmentinfo);
             $posttext .= "---------------------------------------------------------------------\n";
@@ -268,7 +268,7 @@ function assignment_cron () {
                 $posthtml = "<p><font face=\"sans-serif\">".
                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
                 "<a href=\"$CFG->wwwroot/mod/assignment/index.php?id=$course->id\">$strassignments</a> ->".
-                "<a href=\"$CFG->wwwroot/mod/assignment/view.php?id=$mod->id\">$submission->name</a></font></p>";
+                "<a href=\"$CFG->wwwroot/mod/assignment/view.php?id=$mod->id\">".format_string($submission->name,true)."</a></font></p>";
                 $posthtml .= "<hr /><font face=\"sans-serif\">";
                 $posthtml .= "<p>".get_string("assignmentmailhtml", "assignment", $assignmentinfo)."</p>";
                 $posthtml .= "</font><hr />";
@@ -859,11 +859,11 @@ function assignment_email_teachers($course, $cm, $assignment, $submission) {
         foreach ($teachers as $teacher) {
             unset($info);
             $info->username = fullname($user);
-            $info->assignment = $assignment->name;
+            $info->assignment = format_string($assignment->name,true);
             $info->url = "$CFG->wwwroot/mod/assignment/submissions.php?id=$assignment->id";
 
             $postsubject = "$strsubmitted: $info->username -> $assignment->name";
-            $posttext  = "$course->shortname -> $strassignments -> $assignment->name\n";
+            $posttext  = "$course->shortname -> $strassignments -> ".format_string($assignment->name,true)."\n";
             $posttext .= "---------------------------------------------------------------------\n";
             $posttext .= get_string("emailteachermail", "assignment", $info);
             $posttext .= "\n---------------------------------------------------------------------\n";
@@ -872,7 +872,7 @@ function assignment_email_teachers($course, $cm, $assignment, $submission) {
                 $posthtml = "<p><font face=\"sans-serif\">".
                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
                 "<a href=\"$CFG->wwwroot/mod/assignment/index.php?id=$course->id\">$strassignments</a> ->".
-                "<a href=\"$CFG->wwwroot/mod/assignment/view.php?id=$cm->id\">$assignment->name</a></font></p>";
+                "<a href=\"$CFG->wwwroot/mod/assignment/view.php?id=$cm->id\">".format_string($assignment->name,true)."</a></font></p>";
                 $posthtml .= "<hr /><font face=\"sans-serif\">";
                 $posthtml .= "<p>".get_string("emailteachermailhtml", "assignment", $info)."</p>";
                 $posthtml .= "</font><hr />";

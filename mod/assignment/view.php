@@ -38,8 +38,8 @@
     $strassignments = get_string("modulenameplural", "assignment");
     $strassignment  = get_string("modulename", "assignment");
 
-    print_header_simple($assignment->name, "",
-                 "<a href=\"index.php?id=$course->id\">$strassignments</a> -> $assignment->name",
+    print_header_simple(format_string($assignment->name), "",
+                 "<a href=\"index.php?id=$course->id\">$strassignments</a> -> ".format_string($assignment->name,true),
                   "", "", true, update_module_button($cm->id, $course->id, $strassignment), navmenu($course, $cm));
 
     if (isteacher($course->id)) {
@@ -65,7 +65,7 @@
     }
 
     print_simple_box_start('center', '70%', '', 5, 'generalbox', 'intro');
-    print_heading($assignment->name, "center");
+    print_heading(format_string($assignment->name), "center");
 
     $timedifference = $assignment->timedue - time();
     if ($timedifference < 31536000) {      // Don't bother showing dates over a year in the future

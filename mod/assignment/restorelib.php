@@ -63,7 +63,7 @@
             $newid = insert_record ("assignment",$assignment);
 
             //Do some output     
-            echo "<li>".get_string("modulename","assignment")." \"".$assignment->name."\"</li>";
+            echo "<li>".get_string("modulename","assignment")." \"".format_string(stripslashes($assignment->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {
