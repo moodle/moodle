@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['auth_common_settings'] = 'Spoleèné nastavení';
 $string['auth_data_mapping'] = 'Mapování dat';
 $string['auth_dbdescription'] = 'Tato metoda pou¾ívá tabulku v externí databázi ke kontrole, zda zadané u¾ivatelské jméno a heslo je platné.  Pøi vytváøení nového úètu mohou být informace z dal¹ích polí zkopírovány do databáze Moodle.';
-$string['auth_dbextrafields'] = 'Tato pole jsou volitelná. Mù¾ete si zvolit pøednastavení nìkterých informací o u¾ivateli na základì hodnot v <b>polích externí databáze</b>, která urèíte zde.<p>Necháte-li tato pole prázdná, budou pou¾ity implicitní hodnoty.<p>Tak jako tak si u¾ivatel po pøihlá¹ení mù¾e tato pole mìnit.';
+$string['auth_dbextrafields'] = 'Tato pole jsou volitelná. Mù¾ete si zvolit pøednastavení nìkterých informací o u¾ivateli na základì hodnot v <b>polích externí databáze</b>, která urèíte zde.<p>Necháte-li tato pole prázdná, budou pou¾ity implicitní hodnoty.<p>Tak jako tak si u¾ivatel po pøihlá¹ení mù¾e tato pole mìnit.</p>';
 $string['auth_dbfieldpass'] = 'Název pole, které obsahuje hesla';
 $string['auth_dbfielduser'] = 'Název pole, které obsahuje u¾ivatelské jména';
 $string['auth_dbhost'] = 'Poèítaè hostující databázi';
@@ -56,7 +56,7 @@ $string['auth_ldap_user_settings'] = 'Nastavení prohledávání u¾ivatelù';
 $string['auth_ldap_user_type'] = 'Vyberte, jak jsou u¾ivatelé ukládáni v LDAP. Toto nastavení zároveò urèuje, jak se bude chovat vypr¹ení hesla (login expiration), pøihlá¹ení z milosti (grace logins) a tvorba u¾ivatelù.';
 $string['auth_ldap_version'] = 'Verze protokolu LDAP, kterou pou¾ívá vá¹ server.';
 $string['auth_ldapdescription'] = 'Tato metoda poskytuje ovìøení u¾ivatele proti LDAP serveru.  Je-li zadané jméno a heslo platné, Moodle si vytvoøí nový záznam o u¾ivateli ve své vlastní databázi. Tento modul umí naèíst informace z LDAP serveru a pøednastavit po¾adované pole v Moodle. Pøi dal¹ím pøihla¹ování se ji¾ pouze ovìøuje u¾ivatelské jméno a heslo.';
-$string['auth_ldapextrafields'] = 'Tato pole jsou volitelná. Mù¾ete vybrat, která pole s informacemi z <b>LDAP serveru</b> budou pou¾ita jako pøednastavená v Moodle. <p>Necháte-li pole prázdná, nepøevezmou se ¾ádné údaje z LDAP a Moodle pou¾ije vlastní pøednastavené hodnoty. <p>V ka¾dém pøípadì si u¾ivatel mù¾e tyto hodnoty mìnit po pøihlá¹ení sám.';
+$string['auth_ldapextrafields'] = 'Tato pole jsou volitelná. Mù¾ete vybrat, která pole s informacemi z <b>LDAP serveru</b> budou pou¾ita jako pøednastavená v Moodle. <p>Necháte-li pole prázdná, nepøevezmou se ¾ádné údaje z LDAP a Moodle pou¾ije vlastní pøednastavené hodnoty. </p><p>V ka¾dém pøípadì si u¾ivatel mù¾e tyto hodnoty mìnit po pøihlá¹ení sám.</p>';
 $string['auth_ldaptitle'] = 'Pou¾ívat LDAP server';
 $string['auth_manualdescription'] = 'Tato metoda neumo¾òuje u¾ivatelùm zakládat si vlastní úèty. V¹echny úèty musí být ruènì vytvoøeny správcem Moodle (admin).';
 $string['auth_manualtitle'] = 'Pouze ruènì vytváøené úèty';
