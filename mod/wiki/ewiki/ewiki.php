@@ -802,6 +802,7 @@ function ewiki_script($asid="", $id=false, $params="", $bin=0, $html=1, $script=
       $script = &$ewiki_config[!$bin?"script":"script_binary"];
    }
 
+
    #-- separate $action and $id for old style requests
    if ($id === false) {
       if (strpos($asid, EWIKI_ACTION_SEP_CHAR) !== false) {
@@ -860,7 +861,11 @@ function ewiki_script($asid="", $id=false, $params="", $bin=0, $html=1, $script=
 
    #-- fin
    if ($html) {
+      //Don't replace & if it's part of encoded character (bug 2209)
       $url = preg_replace("/&(?![A-Za-z]{0,4}\w{2,3};|#[0-9]{2,5};)/","&amp;", $url);
+   } else {
+      //This is going to be used in some header or meta redirect, so It cannot use &amp; (bug 2620)
+      $url = preg_replace('/&amp;/', '&', $url); 
    }
    return($url);
 }
@@ -1447,6 +1452,7 @@ function ewiki_page_edit($id, $data, $action) {
 
                if (EWIKI_EDIT_REDIRECT) {
                   $url = ewiki_script("", $id, "thankyou=1", 0, 0, EWIKI_HTTP_HEADERS?ewiki_script_url():0);
+                 
                   if (EWIKI_HTTP_HEADERS && !headers_sent()) {
                      header("Status: 303 Redirect for GET");
                      header("Location: $url");
@@ -2259,6 +2265,7 @@ function ewiki_link_regex_callback($uu, $force_noimg=0) {
    if (strpos("://", $title) || strpos($title, ":") && !strpos($href, ":")) {
       $uu = $title; $title = $href; $href = $uu;
    }
+
    #-- new entitling scheme [ url "title" ]
    if ((($l=strpos($str, '"')) < ($r=strrpos($str, '"'))) && ($l!==false) ) {
       $title = substr($str, $l + 1, $r - $l - 1);
@@ -2291,7 +2298,6 @@ function ewiki_link_regex_callback($uu, $force_noimg=0) {
    if ($href == ".") {
       $href = $ewiki_id;
    }
-
 
    #-- for case-insensitivines
    $href_i = EWIKI_CASE_INSENSITIVE ? strtolower($href) : ($href);
