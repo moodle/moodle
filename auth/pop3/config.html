@@ -9,21 +9,21 @@
         $config->auth_pop3port = "110";
     }
 ?>
-<tr valign="top" BGCOLOR="<?=$THEME->cellheading2 ?>">
+<tr valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_pop3host:</TD>
 	<TD>
-        <INPUT name=auth_pop3host TYPE=text SIZE=30 VALUE="<?=$config->auth_pop3host?>">
-	<? if (isset($err["auth_pop3host"])) formerr($err["auth_pop3host"]); ?>
+        <INPUT name=auth_pop3host TYPE=text SIZE=30 VALUE="<?php echo $config->auth_pop3host?>">
+	<?php  if (isset($err["auth_pop3host"])) formerr($err["auth_pop3host"]); ?>
 	</TD>
     <TD>
-    <? print_string("auth_pop3host","auth") ?>
+    <?php  print_string("auth_pop3host","auth") ?>
     </TD>
 </TR>
 
-<TR VALIGN=TOP BGCOLOR="<?=$THEME->cellheading2 ?>">
+<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_pop3type:</TD>
 	<TD>
-    <? $pop3types = array("pop3","pop3cert");
+    <?php  $pop3types = array("pop3","pop3cert");
        foreach($pop3types as $pop3type) {
            $pop3options[$pop3type] = $pop3type;
        }
@@ -31,28 +31,28 @@
     ?>
     </TD>
 <TD>
-    <? print_string("auth_pop3type","auth") ?>
+    <?php  print_string("auth_pop3type","auth") ?>
     </TD>
 </TR>
 
-<TR VALIGN=TOP BGCOLOR="<?=$THEME->cellheading2 ?>">
+<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_pop3port:</TD>
 	<TD>
-    <INPUT name=auth_pop3port TYPE=text SIZE=6 VALUE="<?=$config->auth_pop3port?>">
-    <? if (isset($err["auth_pop3port"])) formerr($err["auth_pop3port"]); ?>
+    <INPUT name=auth_pop3port TYPE=text SIZE=6 VALUE="<?php echo $config->auth_pop3port?>">
+    <?php  if (isset($err["auth_pop3port"])) formerr($err["auth_pop3port"]); ?>
     </TD>
     <TD>
-    <? print_string("auth_pop3port","auth") ?>
+    <?php  print_string("auth_pop3port","auth") ?>
     </TD>
 </TR>
 
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><? print_string("instructions", "auth") ?>:</TD>
+	<TD ALIGN=RIGHT><P><?php  print_string("instructions", "auth") ?>:</TD>
 	<TD>
-    <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><? p($config->auth_instructions) ?></TEXTAREA> 
+    <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><?php  p($config->auth_instructions) ?></TEXTAREA> 
     </TD>
     <TD>
-    <? print_string("authinstructions","auth") ?>
-    <? helpbutton("text", get_string("helptext")) ?>
+    <?php  print_string("authinstructions","auth") ?>
+    <?php  helpbutton("text", get_string("helptext")) ?>
     </TD>
 </TR>

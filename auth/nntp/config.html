@@ -7,35 +7,35 @@
     }
 ?>
 
-<tr valign="top" BGCOLOR="<?=$THEME->cellheading2 ?>">
+<tr valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_nntphost:</TD>
 	<TD>
-        <INPUT name="auth_nntphost" TYPE="text" SIZE=30 VALUE="<?=$config->auth_nntphost?>">
-	<? if (isset($err["auth_nntphost"]))  formerr($err["auth_nntphost"]); ?>
+        <INPUT name="auth_nntphost" TYPE="text" SIZE=30 VALUE="<?php echo $config->auth_nntphost?>">
+	<?php  if (isset($err["auth_nntphost"]))  formerr($err["auth_nntphost"]); ?>
 	</TD>
     <TD>
-    <? print_string("auth_nntphost","auth") ?>
+    <?php  print_string("auth_nntphost","auth") ?>
     </TD>
 </TR>
 
-<TR VALIGN=TOP BGCOLOR="<?=$THEME->cellheading2 ?>">
+<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_nntpport:</TD>
 	<TD>
-    <INPUT name=auth_nntpport TYPE=text SIZE=6 VALUE="<?=$config->auth_nntpport?>">
-    <? if (isset($err["auth_nntpport"])) formerr($err["auth_nntpport"]); ?>
+    <INPUT name=auth_nntpport TYPE=text SIZE=6 VALUE="<?php echo $config->auth_nntpport?>">
+    <?php  if (isset($err["auth_nntpport"])) formerr($err["auth_nntpport"]); ?>
     </TD>
     <TD>
-    <? print_string("auth_nntpport","auth") ?>
+    <?php  print_string("auth_nntpport","auth") ?>
     </TD>
 </TR>
 
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><? print_string("instructions", "auth") ?>:</TD>
+	<TD ALIGN=RIGHT><P><?php  print_string("instructions", "auth") ?>:</TD>
 	<TD>
-    <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><? p($config->auth_instructions) ?></TEXTAREA> 
+    <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><?php  p($config->auth_instructions) ?></TEXTAREA> 
     </TD>
     <TD>
-    <? print_string("authinstructions","auth") ?>
-    <? helpbutton("text", get_string("helptext")) ?>
+    <?php  print_string("authinstructions","auth") ?>
+    <?php  helpbutton("text", get_string("helptext")) ?>
     </TD>
 </TR>
