@@ -700,9 +700,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
         $gmdateformat = substr($format, 1);
     }
     else {
-        print_object('Format was "'.$format.'"');
         $gmdateformat = str_replace($flags_strftime, $flags_gmdate, $format);
-        print_object('Format became "'.$gmdateformat.'"');
     }
 
     if(!empty($gmdateformat)) {
@@ -739,9 +737,8 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
         }
     }
 
-    if(!empty($gmdatestring) && substr($format, 0, 1) != '#' && $gmdatestring !== str_replace('  ', ' ', $datestring)) {
-        print_object('Mismatch: "'.$datestring.'" vs "'.$gmdatestring.'"');
-        die();
+    if(!empty($gmdatestring)) {
+        return $gmdatestring;
     }
 
     return $datestring;
