@@ -223,7 +223,7 @@
         if (! record_exists_sql("SELECT * FROM user_admins")) {   // No admin user yet
             redirect("$CFG->wwwroot/admin/user.php");
         }
-        error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/");
+        error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
     }
 
 
