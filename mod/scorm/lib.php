@@ -145,6 +145,8 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
 /// $return->time = the time they did it
 /// $return->info = a short text description
 
+    $return = NULL;
+
     return $return;
 }
 
