@@ -952,6 +952,10 @@ HTMLArea.prototype._wordClean = function() {
             replace(/<\/?pre[^>]*>/gi,' ').
             replace(/<(\/?)(h[1-6]+)[^>]*>/gi,'<$1$2>');
 
+        // Lorenzo Nicola's addition
+        // to get rid off silly word generated tags.
+        D = D.replace(/<!--\[[^\]]*\]-->/gi,' ');
+
         //remove empty tags
         //D = D.replace(/<strong><\/strong>/gi,'').
         //replace(/<i><\/i>/gi,'').
