@@ -9,7 +9,7 @@ ze te importeren uit externe bestanden.</p>
    
 <p>Hier is een voorbeeld van de in te geven tekst die gebruikt wordt om zo een vraag te maken:
 
-<form>
+<form action="">
 <center>
 <textarea rows="15" cols="60" wrap="virtual">
 Dit is een vraag die bestaat uit wat tekst met het antwoord op deze plaats ingebed {1:MULTICHOICE:Fout antwoord#Feedback voor dit fout antwoord~Nog een fout antwoord#Feedback voor het andere fout antwoord~=Juist antwoord#Feedback voor het juiste antwoord~%50%Antwoord dat de helft van de punten oplevert#Feedback voor het half juiste antwoord} en onmiddellijk daarna krijg je deze Kort Antwoordvraag {1:SHORTANSWER:Fout antwoord#Feedback voor dit fout antwoord~=Juist antwoord#Feedback voor het juiste antwoord~%50%Antwoord op de helft van de punten#Feedback voor het halfjuiste antwoord} en uiteindelijk krijgen we een kommagetal {2:NUMERICAL:=23.8:0.1#Feedback voor het juiste antwoord~23.8~%50%N/A#Feedback voor een antwoord op de helft van de punten voor een antwoord dat in de buurt komt van het juiste antwoord}.
@@ -26,14 +26,14 @@ Veel succes!
 <p>Dit voorbeeld ziet er voor leerlingen als volgt uit:</p>
 
 
-<form>
+<form action="">
 <table align="center" width="90%" class="generalbox" border="0" cellpadding="5" cellspacing="0"><tr><td bgcolor="#FFFFFF" class="generalboxcontent"><table width="100%" cellspacing="10"><tr><td nowrap="nowrap" width=100 valign=top><p align="center"><b>3</b></p><p align=center><font size=1>8 Punten</font></p><img height="1" width="100" src="pix/spacer.gif" alt ><br />
-</td><td valign="top"><p>Dit is een vraag die bestaat uit wat tekst met het antwoord op deze plaats ingebed  <select   name="q4ma1" ><option></option><option value="4" >Fout antwoord</option><option value="5" >Nog een fout antwoord</option><option value="6" >Juist antwoord</option><option value="7" >Antwoord dat de helft van de punten oplevert</option></select>  en onmiddellijk daarna krijg je deze Kort Antwoordvraag  <input   name="q4ma2"  value="" type="TEXT" size="8"/>  en uiteindelijk krijgen we een kommagetal  <input   name="q4ma3"  value="" type="TEXT" size="8"/> .<br />
+</td><td valign="top"><p>Dit is een vraag die bestaat uit wat tekst met het antwoord op deze plaats ingebed  <select   name="q4ma1" ><option value="4" >Fout antwoord</option><option value="5" >Nog een fout antwoord</option><option value="6" >Juist antwoord</option><option value="7" >Antwoord dat de helft van de punten oplevert</option></select>  en onmiddellijk daarna krijg je deze Kort Antwoordvraag  <input   name="q4ma2"  value="" type="text" size="8"/>  en uiteindelijk krijgen we een kommagetal  <input   name="q4ma3"  value="" type="TEXT" size="8" /> .<br />
 <br />
 Merk op dat addressen zoals <a href="http://www.moodle.org" target="newpage">www.moodle.org</a> en smileys 
-<img alt="" border="0" src="pix/s/smiley.gif" width="15" height="15" /> normaal werken:<br />
-a) Hoe goed is dit?  <select   name="q4ma4" ><option></option><option value="13" >Ja</option><option value="14" >Nee</option></select> <br />
-b) Welk cijfer zou je er voor geven?  <input   name="q4ma5"  value="" type="TEXT" size="8"/> <br />
+<img alt="glimlach" border="0" src="pix/s/smiley.gif" width="15" height="15" /> normaal werken:<br />
+a) Hoe goed is dit?  <select   name="q4ma4" ><option value="13" >Ja</option><option value="14" >Nee</option></select> <br />
+b) Welk cijfer zou je er voor geven?  <input   name="q4ma5"  value="" type="tekst" size="8"/> <br />
 <br />
 Veel succes!!</p></td></tr></table></td></tr></table>
 </form>
