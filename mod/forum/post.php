@@ -14,7 +14,7 @@
         $post = (object)$HTTP_POST_VARS;
 
         $post->subject = strip_tags($post->subject);  // Strip all tags
-        $post->message = cleantext($post->message);   // Clean up any bad tags
+        $post->message = clean_text($post->message, $post->format);   // Clean up any bad tags
 
         $post->attachment = $HTTP_POST_FILES["attachment"];
 
@@ -261,6 +261,10 @@
     }
 
     $strforums = get_string("modulenameplural", "forum");
+
+    if ($usehtmleditor = can_use_richtext_editor()) {
+        $onsubmit = "onsubmit=\"copyrichtext(theform.message);\"";
+    }
 
     $navmiddle = "<A HREF=\"../forum/index.php?id=$course->id\">$strforums</A> -> <A HREF=\"view.php?f=$forum->id\">$forum->name</A>";
 

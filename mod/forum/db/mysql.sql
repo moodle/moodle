@@ -47,6 +47,7 @@ CREATE TABLE forum_posts (
   mailed tinyint(1) unsigned NOT NULL default '0',
   subject varchar(255) NOT NULL default '',
   message text NOT NULL,
+  format tinyint(2) NOT NULL default '0',
   attachment VARCHAR(100) NOT NULL default '',
   totalscore tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (id)

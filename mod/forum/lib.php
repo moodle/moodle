@@ -24,6 +24,7 @@ $FORUM_OPEN_MODES   = array ("2" => get_string("openmode2", "forum"),
                              "1" => get_string("openmode1", "forum"),
                              "0" => get_string("openmode0", "forum") );
 
+
 $FORUM_SHORT_POST = 300;  // Less than this is "short"
 
 $FORUM_LONG_POST  = 600;  // More than this is "long"
@@ -123,7 +124,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
         $output .= "</DIV>";
     }
 
-    $output .= text_to_html($post->message);
+    $output .= format_text($post->message, $post->format);
 
     $output .= "<P ALIGN=right><FONT SIZE=-1>";
 
@@ -202,14 +203,14 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     if ($link && (strlen($post->message) > $FORUM_LONG_POST)) {
         // Print shortened version
-        echo text_to_html(forum_shorten_post($post->message));
+        echo format_text(forum_shorten_post($post->message), $post->format);
         $numwords = count_words($post->message);
         echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">";
         echo get_string("readtherest", "forum");
         echo "</A> (".get_string("numwords", "", $numwords).")...";
     } else {
         // Print whole message
-        echo text_to_html($post->message);
+        echo format_text($post->message, $post->format);
     }
 
     echo "<P ALIGN=right><FONT SIZE=-1>";

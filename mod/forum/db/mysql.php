@@ -46,6 +46,9 @@ function forum_upgrade($oldversion) {
       execute_sql(" UPDATE `forum` SET `open` = 2 WHERE `open` = 1 ");
       execute_sql(" UPDATE `forum` SET `open` = 1 WHERE `open` = 0 ");
   }
+  if ($oldversion < 2002101001) {
+      execute_sql(" ALTER TABLE `forum_posts` ADD `format` TINYINT(2) UNSIGNED DEFAULT '0' NOT NULL AFTER `message` ");
+  }
 
   return true;
 

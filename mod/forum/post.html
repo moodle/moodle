@@ -1,4 +1,4 @@
-<form name="form" method="post" action="post.php" enctype="multipart/form-data">
+<form name="theform" method="post" action="post.php" <?=$onsubmit ?> enctype="multipart/form-data">
 <table cellpadding=5>
 <tr valign=top>
     <td align=right><P><B><? print_string("subject", "forum"); ?>:</B></P></TD>
@@ -12,13 +12,32 @@
 <tr valign=top>
     <td align=right><P><B><? print_string("message", "forum"); ?>:</B><BR><BR><? helpbutton("text", get_string("helptext")) ?></P></TD>
     <td>
-        <textarea name=message rows=15 cols=50 wrap="virtual"><? p($post->message) ?></textarea>
+    <? if ($usehtmleditor) { ?>
+        <object id="richedit" style="BACKGROUND-COLOR: buttonface" data="../../lib/rte/richedit.html"
+            width="595" height="400" type="text/x-scriptlet" VIEWASTEXT>
+        </object>
+        <TEXTAREA style="display:none" NAME="message" ROWS=1 COLS=50><? p($post->message) ?></TEXTAREA>
+     <? } else { ?>
+        <TEXTAREA name=message rows=15 cols=50 wrap="virtual"><? p($post->message) ?></TEXTAREA>
+     <? } ?>
+
     </td>
     <td rowspan=2>
     <FONT SIZE=1>
     <? print_string("postingtip", "forum"); ?>
     <DIV ALIGN=RIGHT><? helpbutton("questions", get_string("helpquestions"), "moodle", false) ?></DIV>
     </FONT>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><P><B><? print_string("formattexttype"); ?>:</B></P></TD>
+    <td>
+    <?PHP
+        $POST_FORMATS = format_text_menu();
+        choose_from_menu($POST_FORMATS, "format", $post->format, ""); ?>
+    </td>
+    <td>
+    &nbsp;
     </td>
 </tr>
 <tr valign=top>
@@ -42,3 +61,11 @@
 <tr valign=top>
 </table>
 </FORM>
+
+<? if ($usehtmleditor) { ?>
+    <SCRIPT language="JavaScript" event="onload" for="window">
+        document.richedit.options = "history=no;source=no";
+        document.richedit.docHtml = theform.message.innerText;
+    </SCRIPT>
+<? } ?>
+
