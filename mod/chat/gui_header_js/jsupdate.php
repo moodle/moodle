@@ -63,7 +63,7 @@ header("Refresh: 4; URL=jsupdate.php?chat_sid=".$chat_sid."&chat_lasttime=".$cha
     // -->
     </script>
    </head>
-   <body bgcolor="<?php echo $THEME->body ?>">
+   <body>
    <?php if ($beep) { ?>
            <embed src="../beep.wav" autostart="true" hidden="true" />
    <?php } ?>
