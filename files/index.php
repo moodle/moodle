@@ -335,7 +335,7 @@
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
                 echo " <INPUT TYPE=hidden NAME=file VALUE=\"$file\">";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=edit>";
-                print_textarea($usehtmleditor, 25, 80, 680, 400, "text", $contents);
+                print_textarea($usehtmleditor, 25, 80, 680, 400, "text", addslashes($contents));
                 echo "</TD></TR><TR><TD>";
                 echo " <INPUT TYPE=submit VALUE=\"".get_string("savechanges")."\">";
                 echo "</FORM>";
