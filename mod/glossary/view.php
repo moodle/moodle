@@ -127,9 +127,7 @@
 
     if ( $glossary->intro ) {
         print_simple_box_start('center','70%');
-        echo '<p align="center">';
-        echo $glossary->intro;
-        echo '</p>';
+        echo format_text($glossary->intro);
         print_simple_box_end();
     }
 
