@@ -84,8 +84,10 @@ class block_rss_client extends block_base {
         // Daryl Hawes note: if count of rssidarray is greater than 1 
         // we should possibly display a drop down menu of selected feed titles
         // so user can select a single feed to view (similar to RSSFeed)
-        foreach ($rssidarray as $rssid) {
-            $output .=  $this->get_rss_by_id($rssid, $display_description, $shownumentries);
+        if (!empty($rssidarray)) {
+            foreach ($rssidarray as $rssid) {
+                $output .=  $this->get_rss_by_id($rssid, $display_description, $shownumentries);
+            }
         }
         
         $this->content->text = $output;
