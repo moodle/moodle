@@ -559,7 +559,7 @@ function forum_cron () {
                 } else {
                     mtrace("success.");
                     $usermailcount++;
-                    
+
                     /// Mark post as read if forum_usermarksread is set off
                         if ($CFG->forum_trackreadposts && !$CFG->forum_usermarksread) {
                             foreach ($markread as $postinfo) {
@@ -711,7 +711,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
 
     if ($posts = forum_get_user_posts($forum->id, $user->id)) {
         foreach ($posts as $post) {
-        
+
     /// Add the forum id to the post object - used by read tracking.
             $post->forum = $forum->id;
 
@@ -983,7 +983,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
 
     global $CFG;
     require_once($CFG->libdir.'/searchlib.php');
-  
+
     if (!isteacher($courseid)) {
         $notteacherforum = "AND f.type <> 'teacher'";
 
@@ -1040,7 +1040,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
         $parsearray = $parser->get_parsed_array();
         $messagesearch = search_generate_SQL($parsearray,"p.message","p.subject","p.userid","u.id","u.firstname","u.lastname");
     }
-   
+
     $selectsql = "{$CFG->prefix}forum_posts p,
                   {$CFG->prefix}forum_discussions d,
                   {$CFG->prefix}user u,
@@ -1239,7 +1239,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
     }
 
     return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
-                                   u.firstname, u.lastname, u.email, u.picture, 
+                                   u.firstname, u.lastname, u.email, u.picture,
                                    um.firstname AS umfirstname, um.lastname AS umlastname
                               FROM {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}forum_posts p,
@@ -1249,7 +1249,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                                AND p.discussion = d.id
                                AND p.parent = 0
                                AND p.userid = u.id $groupselect $userselect
-                               AND (d.usermodified = um.id OR d.usermodified = 0) 
+                               AND (d.usermodified = um.id OR d.usermodified = 0)
                           ORDER BY $forumsort");
 }
 
@@ -1547,7 +1547,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
     echo "<font size=\"3\"><b>$post->subject</b></font><br />";
     echo "<font size=\"2\">";
-    
+
     $fullname = fullname($post, $isteacher);
     $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&amp;course=$courseid\">$fullname</a>";
     $by->date = userdate($post->modified);
@@ -1748,7 +1748,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
         echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">";
         echo $post->replies."</a>";
         echo "</td>\n";
-    
+
         if ($CFG->forum_trackreadposts) {
             echo '<td class="forumpostheaderreplies" align="center" nowrap="nowrap">';
             echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion#unread\">";
@@ -2135,11 +2135,11 @@ function forum_print_attachments($post, $return=NULL) {
     return $imagereturn;
 }
 /**
- * If successful, this function returns the name of the file 
+ * If successful, this function returns the name of the file
  * @param $post is a full post record, including course and forum
  * @param $newfile is a full upload array from $_FILES
  * @param $message is a string to hold the messages.
- */ 
+ */
 
 function forum_add_attachment($post, $inputname,&$message) {
 
@@ -2166,7 +2166,7 @@ function forum_add_attachment($post, $inputname,&$message) {
 function forum_add_new_post($post,&$message) {
 
     global $USER, $CFG;
-    
+
     $post->created = $post->modified = time();
     $post->mailed = "0";
     $post->userid = $USER->id;
@@ -2196,7 +2196,8 @@ function forum_update_post($post,&$message) {
     global $USER, $CFG;
 
     $post->modified = time();
-    $post->userid = $USER->id;
+    // the following causes bug 2392
+    //$post->userid = $USER->id;
 
     if (!$post->parent) {   // Post is a discussion starter - update discussion title too
         set_field("forum_discussions", "name", $post->subject, "id", $post->discussion);
@@ -2656,7 +2657,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
             $olddiscussionlink = true;
             break;
         }
-        
+
         if (!empty($replies[$discussion->discussion])) {
             $discussion->replies = $replies[$discussion->discussion]->replies;
             $discussion->lastpostid = $replies[$discussion->discussion]->lastpostid;
@@ -3192,7 +3193,7 @@ function forum_tp_mark_post_read($userid, &$post, $forumid) {
 }
 
 function forum_tp_is_post_read($userid, &$post) {
-    return (forum_tp_is_post_old($post) || 
+    return (forum_tp_is_post_old($post) ||
             (get_record('forum_read', 'userid', $userid, 'postid', $post->id) !== false));
 }
 
