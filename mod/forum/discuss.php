@@ -90,7 +90,7 @@
     }
 
     echo "<table width=\"100%\"><tr><td width=\"33%\">&nbsp;</td><td width=\"33%\">";
-    forum_print_mode_form($discussion->id, $mode);
+    forum_print_mode_form($discussion->id, $displaymode);
     echo "</td><td width=\"33%\">";
     if (isteacher($course->id)) {    // Popup menu to allow discussions to be moved to other forums
         if ($forums = get_all_instances_in_course("forum", $course)) {
