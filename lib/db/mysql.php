@@ -513,13 +513,46 @@ function main_upgrade($oldversion=0) {
         table_column("user_students", "", "timeaccess", "integer", "10", "unsigned", "0", "", "time");
         table_column("user_teachers", "", "timeaccess", "integer", "10", "unsigned", "0", "", "timemodified");
 
-        $users = get_records_select("user", "id > 0", "", "id, lastaccess");
-
         $db->debug = false;
-        foreach ($users as $user) {
-            execute_sql("UPDATE {$CFG->prefix}user_students SET timeaccess = '$user->lastaccess' WHERE userid = '$user->id'", false);
-            execute_sql("UPDATE {$CFG->prefix}user_teachers SET timeaccess = '$user->lastaccess' WHERE userid = '$user->id'", false);
+        $CFG->debug = 0;
+        notify("Calculating access times.  Please wait - this may take a long time on big sites...", "green");
+        flush();
+
+        if ($courses = get_records_select("course", "category > 0")) {
+            foreach ($courses as $course) {
+                notify("Processing $course->fullname ...", "green");
+                flush();
+                if ($users = get_records_select("user_teachers", "course = '$course->id'", 
+                                                "id", "id, userid, timeaccess")) {
+                    foreach ($users as $user) {
+                        $loginfo = get_record_sql("SELECT id, time FROM {$CFG->prefix}log                                                                                  WHERE course = '$course->id' and userid = '$user->userid'                                                               ORDER by time DESC");
+                        if (empty($loginfo->time)) {
+                            $loginfo->time = 0;
+                        }
+                        execute_sql("UPDATE {$CFG->prefix}user_teachers                                                                                      SET timeaccess = '$loginfo->time' 
+                                     WHERE userid = '$user->userid' AND course = '$course->id'", false);
+                        
+                    }
+                }
+
+                if ($users = get_records_select("user_students", "course = '$course->id'", 
+                                                "id", "id, userid, timeaccess")) {
+                    foreach ($users as $user) {
+                        $loginfo = get_record_sql("SELECT id, time FROM {$CFG->prefix}log 
+                                                   WHERE course = '$course->id' and userid = '$user->userid' 
+                                                   ORDER by time DESC");
+                        if (empty($loginfo->time)) {
+                            $loginfo->time = 0;
+                        }
+                        execute_sql("UPDATE {$CFG->prefix}user_students 
+                                     SET timeaccess = '$loginfo->time' 
+                                     WHERE userid = '$user->userid' AND course = '$course->id'", false);
+                        
+                    }
+                }
+            }
         }
+        notify("All courses complete.", "green");
         $db->debug = true;
     }
 
