@@ -749,28 +749,29 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
                                                                                                                 
     global $db, $CFG;
 
-    // Get empty record from table
-    $infosql = "SELECT * FROM $CFG->prefix$table WHERE $primarykey ='-1'";
-
-    // Execute the query and get the empty recordset
-    $rs = $db->Execute($infosql);
-                                                                                                                
-    // Convert data to array to hold the record data to insert
-    $record = (array)$dataobject;
-                                                                                                                
-    //Get insertsql from adodb
-    $insertSQL = $db->GetInsertSQL($rs, $record, true);
-                                                                                                                
-    if (! $rs = $db->Execute($insertSQL)) {
+/// Execute a dummy query to get an empty recordset
+    if (!$rs = $db->Execute("SELECT * FROM $CFG->prefix$table WHERE $primarykey ='-1'")) {
         return false;
     }
                                                                                                                 
-    if (!$returnid) {   // Return ID is not needed so just finish here.
+/// Get the correct SQL from adoDB
+    if (!$insertSQL = $db->GetInsertSQL($rs, (array)$dataobject, true)) {
+        return false;
+    }
+                                                                                                                
+/// Run the SQL statement
+    if (!$rs = $db->Execute($insertSQL)) {
+        return false;
+    }
+                                                                                                                
+/// If a return ID is not needed then just return true now
+    if (!$returnid) { 
         return true;
     }
 
+/// Find the return ID of the newly inserted record
     switch ($CFG->dbtype) {
-        case "postgres7":
+        case "postgres7":             // Just loves to be special
             $oid = $db->Insert_ID();
             if ($rs = $db->Execute("SELECT $primarykey FROM $CFG->prefix$table WHERE oid = $oid")) {
                 if ($rs->RecordCount() == 1) {
@@ -780,7 +781,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
             return false;
 
         default: 
-            return $db->Insert_ID();   // Should work on most databases, but not all!
+            return $db->Insert_ID();  // Should work on most databases, but not all!
     }
 }
 
@@ -1111,7 +1112,7 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
     }
 
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
-                            u.email, u.city, u.country, u.lastlogin, u.picture, u.lang, u.timezone, s.timeaccess as lastaccess
+                            u.email, u.city, u.country, u.lastlogin, u.picture, u.department, uuuuuu.lang, u.timezone, s.timeaccess as lastaccess
                             FROM {$CFG->prefix}user u, 
                                  {$CFG->prefix}user_students s $groupmembers
                             WHERE $select
