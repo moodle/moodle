@@ -1,4 +1,4 @@
-<?PHP  // $Id: lib.php,v 1.1 23 Aug 2003
+<?php  // $Id: lib.php,v 1.1 23 Aug 2003
 
 // workshop constants and standard Moodle functions plus the workshop functions 
 // called by the standard functions
@@ -202,14 +202,14 @@ function workshop_cron () {
             $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($sendto->mailformat == 1) {  // HTML
-                $posthtml = "<P><FONT FACE=sans-serif>".
-                    "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
-                    "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-                    "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
-                $posthtml .= "<HR><FONT FACE=sans-serif>";
-                $posthtml .= "<P>$msg</P>";
-                $posthtml .= "<P>".get_string("mail3", "workshop").
-                    " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>.</P></FONT><HR>";
+                $posthtml = "<p><font FACE=sans-serif>".
+                    "<a HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
+                    "<a HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
+                    "<a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
+                $posthtml .= "<hr><font FACE=sans-serif>";
+                $posthtml .= "<p>$msg</p>";
+                $posthtml .= "<p>".get_string("mail3", "workshop").
+                    " <a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>.</p></font><hr>";
             } else {
                 $posthtml = "";
             }
@@ -291,14 +291,14 @@ function workshop_cron () {
             $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($sendto->mailformat == 1) {  // HTML
-                $posthtml = "<P><FONT FACE=sans-serif>".
-                  "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
-                  "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-                  "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
-                $posthtml .= "<HR><FONT FACE=sans-serif>";
-                $posthtml .= "<P>$msg</P>";
-                $posthtml .= "<P>".get_string("mail3", "workshop").
-                  " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>.</P></FONT><HR>";
+                $posthtml = "<p><font FACE=sans-serif>".
+                  "<a HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
+                  "<a HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
+                  "<a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
+                $posthtml .= "<hr><font FACE=sans-serif>";
+                $posthtml .= "<p>$msg</p>";
+                $posthtml .= "<p>".get_string("mail3", "workshop").
+                  " <a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>.</p></font><hr>";
             } 
             else {
               $posthtml = "";
@@ -391,15 +391,15 @@ function workshop_cron () {
                 $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
                 $posttext .= "---------------------------------------------------------------------\n";
                 if ($sendto->mailformat == 1) {  // HTML
-                    $posthtml = "<P><FONT FACE=sans-serif>".
-                    "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
-                    "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-                    "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
-                    $posthtml .= "<HR><FONT FACE=sans-serif>";
-                    $posthtml .= "<P>$msg</P>";
-                    $posthtml .= "<P>".get_string("mail3", "workshop").
-                        " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>
-                        .</P></FONT><HR>";
+                    $posthtml = "<p><font FACE=sans-serif>".
+                    "<a HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
+                    "<a HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
+                    "<a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
+                    $posthtml .= "<hr><font FACE=sans-serif>";
+                    $posthtml .= "<p>$msg</p>";
+                    $posthtml .= "<p>".get_string("mail3", "workshop").
+                        " <a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>
+                        .</p></font><hr>";
                     } 
                 else {
                     $posthtml = "";
@@ -438,14 +438,14 @@ function workshop_cron () {
                 $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
                 $posttext .= "---------------------------------------------------------------------\n";
                 if ($sendto->mailformat == 1) {  // HTML
-                    $posthtml = "<P><FONT FACE=sans-serif>".
-                    "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
-                    "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-                    "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
-                    $posthtml .= "<HR><FONT FACE=sans-serif>";
-                    $posthtml .= "<P>$msg</P>";
-                    $posthtml .= "<P>".get_string("mail3", "workshop").
-                        " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>.</P></FONT><HR>";
+                    $posthtml = "<p><font FACE=sans-serif>".
+                    "<a HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
+                    "<a HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
+                    "<a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
+                    $posthtml .= "<hr><font FACE=sans-serif>";
+                    $posthtml .= "<p>$msg</p>";
+                    $posthtml .= "<p>".get_string("mail3", "workshop").
+                        " <a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>.</p></font><hr>";
                     } 
                 else {
                     $posthtml = "";
@@ -534,14 +534,14 @@ function workshop_cron () {
             $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($sendto->mailformat == 1) {  // HTML
-                $posthtml = "<P><FONT FACE=sans-serif>".
-                    "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
-                    "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-                    "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
-                $posthtml .= "<HR><FONT FACE=sans-serif>";
-                $posthtml .= "<P>$msg</P>";
-                $posthtml .= "<P>".get_string("mail3", "workshop").
-                    " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>.</P></FONT><HR>";
+                $posthtml = "<p><font FACE=sans-serif>".
+                    "<a HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
+                    "<a HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
+                    "<a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
+                $posthtml .= "<hr><font FACE=sans-serif>";
+                $posthtml .= "<p>$msg</p>";
+                $posthtml .= "<p>".get_string("mail3", "workshop").
+                    " <a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>.</p></font><hr>";
             } else {
               $posthtml = "";
             }

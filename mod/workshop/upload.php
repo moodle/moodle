@@ -1,4 +1,4 @@
-<?PHP  // $Id: upload.php, v1.0 30th April 2003
+<?php  // $Id: upload.php, v1.0 30th April 2003
 
     require("../../config.php");
     require("lib.php");
@@ -25,8 +25,8 @@
     $strupload      = get_string("upload");
 
     print_header_simple("$workshop->name : $strupload", "",
-                 "<A HREF=index.php?id=$course->id>$strworkshops</A> -> 
-                  <A HREF=\"view.php?a=$workshop->id\">$workshop->name</A> -> $strupload", 
+                 "<a HREF=index.php?id=$course->id>$strworkshops</a> -> 
+                  <a HREF=\"view.php?a=$workshop->id\">$workshop->name</a> -> $strupload", 
                   "", "", true);
  /****
     if ($submissions = workshop_get_submissions($workshop, $USER)) {

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     require_once("../config.php");
     require_once("../auth/$CFG->auth/lib.php");
@@ -11,9 +11,9 @@
 
             if ($user->confirmed) {
                 print_header(get_string("alreadyconfirmed"), get_string("alreadyconfirmed"), "", "");
-                echo "<CENTER><H3>".get_string("thanks").", ". $user->firstname ." ". $user->lastname . "</H3>\n";
-                echo "<H4>".get_string("alreadyconfirmed")."</H4>\n";
-                echo "<H3> -> <A HREF=\"$CFG->wwwroot/course/\">".get_string("courses")."</A></H3>\n";
+                echo "<center><h3>".get_string("thanks").", ". $user->firstname ." ". $user->lastname . "</h3>\n";
+                echo "<h4>".get_string("alreadyconfirmed")."</h4>\n";
+                echo "<h3> -> <a href=\"$CFG->wwwroot/course/\">".get_string("courses")."</a></h3></center>\n";
                 print_footer();
                 exit;
             }
@@ -50,9 +50,9 @@
                 }
  
                 print_header(get_string("confirmed"), get_string("confirmed"), "", "");
-                echo "<CENTER><H3>".get_string("thanks").", ". $USER->firstname ." ". $USER->lastname . "</H3>\n";
-                echo "<H4>".get_string("confirmed")."</H4>\n";
-                echo "<H3> -> <A HREF=\"$CFG->wwwroot/course/\">".get_string("courses")."</A></H3>\n";
+                echo "<center><h3>".get_string("thanks").", ". $USER->firstname ." ". $USER->lastname . "</h3>\n";
+                echo "<h4>".get_string("confirmed")."</h4>\n";
+                echo "<h3> -> <a href=\"$CFG->wwwroot/course/\">".get_string("courses")."</a></h3></center>\n";
                 print_footer();
                 exit;
 

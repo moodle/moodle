@@ -52,7 +52,7 @@
     }
 
     print_header(strip_tags($site->fullname), "$site->fullname", "home", "",
-                 "<meta name=\"description\" content=\"".s(strip_tags($site->summary))."\">",
+                 "<meta name=\"description\" content=\"".s(strip_tags($site->summary))."\" />",
                  true, "", "$loginstring$langmenu");
 
     $editing = isediting($site->id);

@@ -20,7 +20,7 @@
     $strupdatesevery = get_string("updatesevery", "moodle", COURSE_LIVELOG_REFRESH);
 
     print_header("$strlivelogs ($strupdatesevery)", "$strlivelogs", "", "", 
-                 "<meta HTTP-equiv='Refresh' content='".COURSE_LIVELOG_REFRESH."; url=loglive.php?id=$id'>");
+                 '<meta http-equiv="Refresh" content="'.COURSE_LIVELOG_REFRESH.'; url=loglive.php?id=$id" />');
 
     $user=0;
     $date=time() - 3600;

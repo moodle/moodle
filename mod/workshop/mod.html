@@ -66,7 +66,7 @@
 <form name="form" method="post" action="mod.php">
 <table cellpadding=5>
 <tr valign=top>
-    <td align=right><P><B><?php  print_string("title", "workshop") ?>:</B></P></TD>
+    <td align=right><p><b><?php  print_string("title", "workshop") ?>:</b></p></td>
     <td>
         <input type="text" name="name" size=60 value="<?php  p($form->name) ?>" />
     </td>
@@ -110,7 +110,7 @@
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><?php  print_string("gradeforassessments", "workshop") ?>:</B></P></TD>
+    <td align=right><p><b><?php  print_string("gradeforassessments", "workshop") ?>:</b></p></td>
     <td>
         <?php
         for ($i=100; $i>=0; $i--) {
@@ -123,7 +123,7 @@
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><?php  print_string("gradeforsubmission", "workshop") ?>:</B></P></TD>
+    <td align=right><p><b><?php  print_string("gradeforsubmission", "workshop") ?>:</b></p></td>
     <td>
         <?php
         choose_from_menu($grades, "grade", "$form->grade", "");
@@ -133,9 +133,9 @@
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><?php  print_string("gradingstrategy", "workshop") ?>:</B></P></TD>
+    <td align=right><p><b><?php  print_string("gradingstrategy", "workshop") ?>:</b></p></td>
     <td>
-    <?PHP
+    <?php
 	   choose_from_menu($WORKSHOP_TYPE, "gradingstrategy", $form->gradingstrategy, "");
        helpbutton("gradingstrategy", get_string("gradingstrategy", "workshop"), "workshop");
     ?>
@@ -143,7 +143,7 @@
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><?php  print_string("numberofassessmentelements", "workshop") ?>:</B></P></TD>
+    <td align=right><p><b><?php  print_string("numberofassessmentelements", "workshop") ?>:</b></p></td>
     <td valign="middle">
         <?php
         for ($i=20; $i>=0; $i--) {
@@ -156,9 +156,9 @@
 </tr>
 
 <tr>
-    <td align=right><P><B><?php  print_string("allowresubmit", "workshop") ?>:</B></P></TD>
+    <td align=right><p><b><?php  print_string("allowresubmit", "workshop") ?>:</b></p></td>
     <td>
-    <?PHP 
+    <?php 
         $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "resubmit", $form->resubmit, "");
         helpbutton("resubmit", get_string("allowresubmit", "workshop"), "workshop");
@@ -167,9 +167,9 @@
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><?php  print_string("numberofassessmentsofteachersexamples", "workshop") ?>:</B></P></TD>
+    <td align=right><p><b><?php  print_string("numberofassessmentsofteachersexamples", "workshop") ?>:</b></p></td>
     <td>
-		<?PHP
+		<?php
         unset($numbers);
 		for ($i=20; $i>=0; $i--) {
 			$numbers[$i] = $i;
@@ -181,7 +181,7 @@
 </tr>
 
 <tr>
-    <td align=right><P><B><?php print_string("comparisonofassessments", "workshop") ?>:</B></P></TD>
+    <td align=right><p><b><?php print_string("comparisonofassessments", "workshop") ?>:</b></p></td>
     <td>
         <?php
 		// set up comparison names
@@ -195,9 +195,9 @@
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><?php  print_string("numberofassessmentsofstudentsubmissions", "workshop") ?>:</B></P></TD>
+    <td align=right><p><b><?php  print_string("numberofassessmentsofstudentsubmissions", "workshop") ?>:</b></p></td>
     <td>
-		<?PHP
+		<?php
         unset($numbers);
 		for ($i=20; $i>=0; $i--) {
 			$numbers[$i] = $i;
@@ -209,9 +209,9 @@
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><?php  print_string("weightforteacherassessments", "workshop") ?>:</B></P></TD>
+    <td align=right><p><b><?php  print_string("weightforteacherassessments", "workshop") ?>:</b></p></td>
     <td>
-		<?PHP
+		<?php
         unset($numbers);
 		for ($i=10; $i>=0; $i--) {
 			$numbers[$i] = $i;
@@ -237,9 +237,9 @@
 </tr>
 
 <tr>
-    <td align=right><P><B><?php  print_string("selfassessment", "workshop") ?>:</B></P></TD>
+    <td align=right><p><b><?php  print_string("selfassessment", "workshop") ?>:</b></p></td>
     <td>
-    <?PHP 
+    <?php 
         $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "includeself", $form->includeself, "");
         helpbutton("selfassessment", get_string("selfassessment", "workshop"), "workshop");
@@ -248,9 +248,9 @@
 </tr>
 
 <tr>
-    <td align=right><P><B><?php  print_string("assessmentsmustbeagreed", "workshop") ?>:</B></P></TD>
+    <td align=right><p><b><?php  print_string("assessmentsmustbeagreed", "workshop") ?>:</b></p></td>
     <td>
-    <?PHP 
+    <?php 
         choose_from_menu($options, "agreeassessments", $form->agreeassessments, "");
         helpbutton("agreeassessments", get_string("assessmentsmustbeagreed", "workshop"), "workshop");
     ?>
@@ -258,9 +258,9 @@
 </tr>
 
 <tr>
-    <td align=right><P><B><?php  print_string("hidegradesbeforeagreement", "workshop") ?>:</B></P></TD>
+    <td align=right><p><b><?php  print_string("hidegradesbeforeagreement", "workshop") ?>:</b></p></td>
     <td>
-    <?PHP 
+    <?php 
         choose_from_menu($options, "hidegrades", $form->hidegrades, "");
         helpbutton("showinggrades", get_string("hidegradesbeforeagreement", "workshop"), "workshop");
     ?>
@@ -294,7 +294,7 @@
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><?php  print_string("maximumsize", "workshop") ?>:</B></P></TD>
+    <td align=right><p><b><?php  print_string("maximumsize", "workshop") ?>:</b></p></td>
     <td>
         <?php
         $sizelist = array("10Kb", "50Kb", "100Kb", "500Kb", "1Mb", "2Mb", "5Mb", "10Mb", "20Mb", "50Mb");
@@ -320,7 +320,7 @@
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><?php  print_string("deadline", "workshop") ?>:</B></td>
+    <td align=right><p><b><?php  print_string("deadline", "workshop") ?>:</b></td>
     <td><?php
            print_date_selector("deadlineday", "deadlinemonth", "deadlineyear", $form->deadline);
            echo "&nbsp;-&nbsp;";
@@ -329,8 +329,8 @@
 </tr>
 
 </table>
-<BR>
-<CENTER>
+<br>
+<center>
 <input type="hidden" name=course     value="<?php  p($form->course) ?>" />
 <input type="hidden" name=coursemodule  value="<?php  p($form->coursemodule) ?>" />
 <input type="hidden" name=section       value="<?php  p($form->section) ?>" />
@@ -341,7 +341,7 @@
 <input type="submit" value="<?php  print_string("savechanges") ?>" />
 <input type="submit" name=cancel value="<?php  print_string("cancel") ?>" />
 <p>
-<p><?PHP notify(get_string("noteonassessmentelements", "workshop")); ?>
+<p><?php notify(get_string("noteonassessmentelements", "workshop")); ?>
 
-</CENTER>
-</FORM>
+</center>
+</form>

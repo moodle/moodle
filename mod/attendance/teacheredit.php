@@ -74,8 +74,8 @@
 
     if ($course->category) {
         print_header("$course->shortname: $streditinga", "$course->fullname",
-                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
-                      <A HREF=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</A> -> 
+                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> 
+                      <a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> -> 
                       $streditinga", $focuscursor, "", false);
     } else {
         print_header("$course->shortname: $streditinga", "$course->fullname",
@@ -109,10 +109,10 @@ if (empty($form->id)) {
  	$form->notes = "";
 }
     ?>
-<FORM name="form" method="post" action="<?php echo "$CFG->wwwroot/course/mod.php"; ?>">
-<CENTER>
-<INPUT type="submit" value="<?php  print_string("savechanges") ?>" />
-<INPUT type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
+<form name="form" method="post" action="<?php echo "$CFG->wwwroot/course/mod.php"; ?>">
+<center>
+<input type="submit" value="<?php  print_string("savechanges") ?>" />
+<input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
 
 <?php  // if we're modifying an existing instance of attendance instead 
     //   of creating a new one
@@ -204,21 +204,21 @@ if ($form->hours >1) {
 } // if ($form->id)
 ?>
 <!-- These hidden variables are always the same -->
-<INPUT type="hidden" name=course        value="<?php p($form->course) ?>" />
-<INPUT type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>" />
-<INPUT type="hidden" name=section       value="<?php p($form->section) ?>" />
-<INPUT type="hidden" name=module        value="<?php p($form->module) ?>" />
-<INPUT type="hidden" name=modulename    value="<?php p($form->modulename) ?>" />
-<INPUT type="hidden" name=instance      value="<?php p($form->instance) ?>" />
-<INPUT type="hidden" name=mode          value="<?php p($form->mode) ?>" />
-<BR />
+<input type="hidden" name=course        value="<?php p($form->course) ?>" />
+<input type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>" />
+<input type="hidden" name=section       value="<?php p($form->section) ?>" />
+<input type="hidden" name=module        value="<?php p($form->module) ?>" />
+<input type="hidden" name=modulename    value="<?php p($form->modulename) ?>" />
+<input type="hidden" name=instance      value="<?php p($form->instance) ?>" />
+<input type="hidden" name=mode          value="<?php p($form->mode) ?>" />
+<br />
 <?php
   echo "<a href=\"../mod/attendance/add.php?id=".$form->course . "&section=".$form->section ."\">Add multiple rolls</a><br /><br />";
 ?>
-<INPUT type="submit" value="<?php print_string("savechanges") ?>" />
-<INPUT type="submit" name="cancel" value="<?php print_string("cancel") ?>" />
-</CENTER>
-</FORM>
+<input type="submit" value="<?php print_string("savechanges") ?>" />
+<input type="submit" name="cancel" value="<?php print_string("cancel") ?>" />
+</center>
+</form>
 
 
 

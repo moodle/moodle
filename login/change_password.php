@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     require_once("../config.php");
 
@@ -48,9 +48,9 @@
                 add_to_log($course->id, "user", "change password", "view.php?id=$user->id&course=$course->id", "$user->id");
                 $fullname = fullname($USER, true);
                 print_header($strpasswordchanged, $strpasswordchanged,
-                             "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
-                              <A HREF=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</A> ->
-                              <A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$fullname</A> -> $strpasswordchanged", $focus);
+                             "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
+                              <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</a> ->
+                              <a href=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$fullname</a> -> $strpasswordchanged", $focus);
                 notice($strpasswordchanged, "$CFG->wwwroot/user/view.php?id=$USER->id&course=$id");
             } else {
                 add_to_log(SITEID, "user", "change password", "view.php?id=$user->id&course=".SITEID, "$course->id");
@@ -83,9 +83,9 @@
     if (!empty($course->id)) {
         $fullname = fullname($USER, true);
         print_header($strchangepassword, $strchangepassword,
-                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
-                      <A HREF=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</A> ->
-                      <A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$fullname</A> -> $strchangepassword", $focus);
+                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
+                      <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</a> ->
+                      <a href=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$fullname</a> -> $strchangepassword", $focus);
     } else {
         print_header($strchangepassword, $strchangepassword, $strchangepassword, $focus);
     }

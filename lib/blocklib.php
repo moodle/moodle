@@ -649,7 +649,7 @@ function upgrade_blocks_plugins($continueto) {
                 $db->debug = false;
                 if ($block->id = insert_record('blocks', $block)) {
                     notify(get_string('blocksuccess', '', $blocktitle), 'green');
-                    echo "<hr>";
+                    echo "<hr />";
                 } else {
                     error("$block->name block could not be added to the block list!");
                 }

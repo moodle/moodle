@@ -24,11 +24,11 @@
  To read the license please visit http://www.gnu.org/copyleft/gpl.html
 */
 ?>
-<HTML<?php echo $direction?>>
-<HEAD>
+<html<?php echo $direction?>>
+<head>
 <?php echo $meta ?>
-<TITLE><?php echo $title ?></TITLE>
-<META NAME="keywords" CONTENT="Moodle, <?php echo $title ?> " />
+<title><?php echo $title ?></title>
+<meta name="keywords" content="Moodle, <?php echo $title ?> " />
 <meta name="ROBOTS" content="INDEX,FOLLOW" />
 <meta name="resource-type" content="document" />
 <meta http-equiv="expires" content="0" />
@@ -39,13 +39,13 @@
 <meta name="generator" content="Moodle - http://moodle.com" />
 <meta name="rating" content="General" />
 
-<LINK REL="stylesheet" HREF="<?php echo $styles ?>" />
-<LINK REL="SHORTCUT ICON" HREF="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme ?>/images/favicon.ico" />
+<link rel="stylesheet" href="<?php echo $styles ?>" />
+<link rel="SHORTCUT ICON" href="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme ?>/images/favicon.ico" />
 </script>
 <?php  include("$CFG->javascript"); ?>
-</HEAD>
+</head>
 
-<BODY <?php  echo " $bodytags"; if ($focus) { echo "onLoad=setfocus()"; } echo " bgcolor=\"$THEME->body\" topmargin=\"$THEME->topmargin\" leftmargin=\"$THEME->leftmargin\" marginheight=\"$THEME->marginheight\" marginwidth=\"$THEME->marginwidth\" />"; ?>
+<body <?php  echo " $bodytags"; if ($focus) { echo "onLoad=setfocus()"; } echo " bgcolor=\"$THEME->body\" topmargin=\"$THEME->topmargin\" leftmargin=\"$THEME->leftmargin\" marginheight=\"$THEME->marginheight\" marginwidth=\"$THEME->marginwidth\" />"; ?>
 
 
 <?php  if ($home) {  // This is what gets printed on the home page only  ?>
@@ -58,19 +58,19 @@
 </tr>
 <tr>
 <td width="6" bgcolor="<?php  echo $THEME->body?>"><img src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme ?>/images/side_left.gif" width="2" height="100%" /></td>
-<td align="left" valign="top"><A TARGET="<?php  echo $CFG->framename?>" HREF="<?php  echo $CFG->wwwroot?>"><img src="<?php  echo "$CFG->wwwroot/theme/$CFG->theme/$THEME->frontlogo" ?>" border="0" /></A></td>
+<td align="left" valign="top"><a target="<?php  echo $CFG->framename?>" href="<?php  echo $CFG->wwwroot?>"><img src="<?php  echo "$CFG->wwwroot/theme/$CFG->theme/$THEME->frontlogo" ?>" border="0" /></a></td>
 <td width="6" bgcolor="<?php  echo $THEME->body?>"><img src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme ?>/images/left_sidebar.jpg" width="6" height="100%" /></td>
 </tr>
 </table><table border="0" cellspacing="0" cellpadding="0" width="<?php  echo $THEME->themewidth?>">
 <tr>
 <td width="1" bgcolor="<?php  echo $THEME->themeborders?>"><img src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme ?>/images/side_left.gif" width="2" height="100%" /></td>
 <td align="center" valign="middle" width="100%">
-<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=0 BORDER=0>
-<TR>
-<TD ALIGN=LEFT VALIGN=middle>&nbsp;<FONT SIZE=4><B><?php echo $heading?></B></FONT></TD>
-<TD ALIGN=RIGHT VALIGN=middle><?php echo $menu ?>&nbsp;</TD>
-</TR>
-</TABLE>
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+<td align="left" valign="middle">&nbsp;<font size="4"><b><?php echo $heading?></b></font></td>
+<td align="right" valign="middle"><?php echo $menu ?>&nbsp;</td>
+</tr>
+</table>
 
 </td>
 <td width="1" bgcolor="<?php  echo $THEME->themeborders?>"><img src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme ?>/images/side_right.gif" width="2" height="100%" /></td>
@@ -99,26 +99,26 @@
 </tr>
 <tr>
 <td width="6" bgcolor="<?php  echo $THEME->body?>"><img src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme ?>/images/side_left.gif" width="2" height="100%" /></td>
-<td align="left" valign="top"><A TARGET="<?php echo $CFG->framename?>" HREF="<?php  echo $CFG->wwwroot ?>"><img src="<?php  echo "$CFG->wwwroot/theme/$CFG->theme/$THEME->smalllogo" ?>" border="0" /></A></td>
+<td align="left" valign="top"><a target="<?php echo $CFG->framename?>" href="<?php  echo $CFG->wwwroot ?>"><img src="<?php  echo "$CFG->wwwroot/theme/$CFG->theme/$THEME->smalllogo" ?>" border="0" /></a></td>
 <td width="6" background="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme ?>/images/left_sidebar.jpg"><img src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme ?>/images/left_sidebar.jpg" width="6" height="100%" /></td>
 </tr>
 </table><table border="0" cellspacing="0" cellpadding="0" width="<?php  echo $THEME->themewidth?>">
 <tr>
 <td width="1" bgcolor="<?php  echo $THEME->themeborders?>"><img src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme ?>/images/side_left.gif" width="2" height="100%" /></td>
 <td align="center" valign="middle">
-<table WIDTH=100% CELLPADDING=0 CELLSPACING=0 BORDER=0>
-<TR>
-<TD ALIGN=LEFT VALIGN=middle>&nbsp;<FONT SIZE=4><B><?php echo $heading?></B></FONT></TD>
-<TD ALIGN=RIGHT VALIGN=middle><?php echo $menu ?>&nbsp;</TD>
-</TR>
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+<td align="left" valign="middle">&nbsp;<font size="4"><b><?php echo $heading?></b></font></td>
+<td align="right" valign="middle"><?php echo $menu ?>&nbsp;</td>
+</tr>
 </table>
 
    <?php  if ($navigation) { // This is the navigation table with breadcrumbs  ?>
-    <table BORDER=0 CELLPADDING=0 CELLSPACING=0 WIDTH=100%>
-    <TR>
-    <TD BGCOLOR="<?php echo $THEME->cellheading?>" CLASS="navbar" VALIGN=middle>&nbsp;<FONT SIZE=2><B><?php  print_navigation("$navigation"); ?></B></FONT></TD>
-    <TD BGCOLOR="<?php echo $THEME->cellheading?>" CLASS="navbar" ALIGN=RIGHT WIDTH=20 VALIGN=TOP><?php echo $button ?></TD>
-    </TR>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+    <td bgcolor="<?php echo $THEME->cellheading?>" class="navbar" valign="middle">&nbsp;<font size="2"><b><?php  print_navigation("$navigation"); ?></b></font></td>
+    <td bgcolor="<?php echo $THEME->cellheading?>" class="navbar" align="right" width="20" valign="top"><?php echo $button ?></td>
+    </tr>
     </table>
    <?php  } ?>
 
@@ -140,7 +140,7 @@
 
 
 <?php  } else {  // This is what gets printed on any other page (no heading, not home page) ?>
-<BLOCKQUOTE>
+<blockquote>
 
 <?php  } ?>
 

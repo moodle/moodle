@@ -1,4 +1,4 @@
-<?PHP  // $Id: view.php, v1.1 23 Aug 2003
+<?php  // $Id: view.php, v1.1 23 Aug 2003
 
 /*************************************************
     ACTIONS handled are:
@@ -43,7 +43,7 @@
 
     // ...display header...
     print_header_simple("$workshop->name", "",
-                 "<A HREF=index.php?id=$course->id>$strworkshops</A> -> $workshop->name", 
+                 "<a HREF=index.php?id=$course->id>$strworkshops</a> -> $workshop->name", 
                   "", "", true, update_module_button($cm->id, $course->id, $strworkshop), navmenu($course, $cm));
 
     // ...and if necessary set default action 
@@ -145,11 +145,11 @@
             echo "<td align=\"center\"><b>".get_string("studentassessments", "workshop", 
                         $course->student)."</b></td>";
             echo "<td align=\"center\"><b>".get_string("gradeforsubmission", "workshop")."</b></td>";
-            echo "<td align=\"center\"><b>".get_string("overallgrade", "workshop")."</b></td></TR>\n";
+            echo "<td align=\"center\"><b>".get_string("overallgrade", "workshop")."</b></td></tr>\n";
             $gradinggrade = workshop_gradinggrade($workshop, $USER);
             foreach ($submissions as $submission) {
                 $grade = workshop_submission_grade($workshop, $submission);
-                echo "<TR><td>".workshop_print_submission_title($workshop, $submission)."</td>\n";
+                echo "<tr><td>".workshop_print_submission_title($workshop, $submission)."</td>\n";
                 echo "<td align=\"center\">".workshop_print_user_assessments($workshop, $USER)."</td>";
                 echo "<td align=\"center\">$gradinggrade</td>";
                 echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, 
@@ -157,10 +157,10 @@
                 echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, 
                             $submission, "student")."</td>";
                 echo "<td align=\"center\">$grade</td>";
-                echo "<td align=\"center\">".number_format($gradinggrade + $grade, 1)."</td></TR>\n";
+                echo "<td align=\"center\">".number_format($gradinggrade + $grade, 1)."</td></tr>\n";
             }
         }
-        echo "</TABLE><BR CLEAR=ALL>\n";
+        echo "</table><br CLEAR=ALL>\n";
 		workshop_print_key($workshop);
         if ($workshop->showleaguetable) {
 			workshop_print_league_table($workshop);
@@ -275,7 +275,7 @@
                     }
 				}
 				// allow user to list their submissions and assessments in a general way????
-				// print_heading("<A HREF=\"submissions.php?action=listallsubmissions&id=$cm->id\">".
+				// print_heading("<a HREF=\"submissions.php?action=listallsubmissions&id=$cm->id\">".
 				// 	get_string("listofallsubmissions", "workshop"));
 			}
 		}
@@ -291,7 +291,7 @@
 			
 		$strdifference = format_time($workshop->deadline - time());
 		if (($workshop->deadline - time()) < 0) {
-			$strdifference = "<FONT COLOR=RED>$strdifference</FONT>";
+			$strdifference = "<font COLOR=RED>$strdifference</font>";
 		}
 		$strduedate = userdate($workshop->deadline)." ($strdifference)";
 	
@@ -300,7 +300,7 @@
 		// list previous submissions from teacher 
 		workshop_list_user_submissions($workshop, $USER);
 	
-		echo "<HR SIZE=1 NOSHADE>";
+		echo "<hr SIZE=1 NOSHADE>";
 	
 		// print upload form
 		print_heading(get_string("submitassignment", "assignment").":");
@@ -413,11 +413,11 @@
                           workshop_count_student_submissions_for_assessment($workshop, $USER))."</a></b> \n";
                     helpbutton("gradingsubmissions", 
                             get_string("studentsubmissionsforassessment", "workshop"), "workshop");
-                    print_heading("<A HREF=\"submissions.php?id=$cm->id&action=displayfinalgrades\">".
-                          get_string("displayoffinalgrades", "workshop")."</A>");
+                    print_heading("<a HREF=\"submissions.php?id=$cm->id&action=displayfinalgrades\">".
+                          get_string("displayoffinalgrades", "workshop")."</a>");
         }
-        print_heading("<A HREF=\"submissions.php?id=$cm->id&action=adminlist\">".
-            get_string("administration")."</A>");
+        print_heading("<a HREF=\"submissions.php?id=$cm->id&action=adminlist\">".
+            get_string("administration")."</a>");
     }
     
     

@@ -39,7 +39,7 @@
     $strteacheredit = get_string("teacheredit", "attendance");
 
     print_header_simple($attendance->name, "",
-                 "<A HREF=index.php?id=$course->id>$strattendances</A> -> $attendance->name", 
+                 "<a href=index.php?id=$course->id>$strattendances</a> -> $attendance->name", 
                   "", "", true, update_module_button($cm->id, $course->id, $strattendance), 
                   navmenu($course, $cm));
 

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     require_once("../config.php");
     optional_variable($loginguest, false); // determines whether visitors are logged in as guest automatically
@@ -133,7 +133,7 @@
 
     $loginsite = get_string("loginsite");
 
-    print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=right>$langmenu</div>"); 
+    print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>"); 
     include("index_form.html");
     print_footer();
 

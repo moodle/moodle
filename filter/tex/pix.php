@@ -92,8 +92,8 @@
         header("Content-type: $filetype");
         readfile("$pathname");
     } else {
-        echo "The shell command<br>$cmd<br>returned status = $status<br>\n";
-        echo "Image not found!<br>";
+        echo "The shell command<br />$cmd<br />returned status = $status<br />\n";
+        echo "Image not found!<br />";
         echo "Please try the <a href=\"$CFG->wwwroot/$CFG->texfilterdir/texdebug.php\">debugging script</a>";
     }
 

@@ -1,4 +1,4 @@
-<?PHP  // $Id: lib.php,v 1.1 22 Aug 2003
+<?php  // $Id: lib.php,v 1.1 22 Aug 2003
 
 /*************************************************
     ACTIONS handled are:
@@ -42,8 +42,8 @@
 
     // ... print the header and...
     print_header_simple("$workshop->name", "",
-                 "<A HREF=index.php?id=$course->id>$strworkshops</A> -> 
-                  <A HREF=\"view.php?id=$cm->id\">$workshop->name</A> -> $strsubmissions", 
+                 "<a HREF=index.php?id=$course->id>$strworkshops</a> -> 
+                  <a HREF=\"view.php?id=$cm->id\">$workshop->name</a> -> $strsubmissions", 
                   "", "", true);
 
     //...get the action or set up an suitable default
@@ -68,15 +68,15 @@
         ?>
         <form name="amendtitleform" action="submissions.php" method="post">
         <input type="hidden" name="action" value="adminupdatetitle" />
-        <input type="hidden" name="id" value="<?PHP echo $cm->id ?>" />
-        <input type="hidden" name="sid" value="<?PHP echo $_REQUEST['sid'] ?>" />
+        <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
+        <input type="hidden" name="sid" value="<?php echo $_REQUEST['sid'] ?>" />
         <center>
         <table celpadding="5" border="1">
-        <?PHP
+        <?php
 
         // now get the comment
         echo "<tr valign=\"top\">\n";
-        echo "  <td align=\"right\"><P><B>". get_string("title", "workshop").":</b></p></td>\n";
+        echo "  <td align=\"right\"><p><b>". get_string("title", "workshop").":</b></p></td>\n";
         echo "  <td>\n";
         echo "      <input type=\"text\" name=\"title\" size=\"60\" maxlength=\"100\" value=\"$submission->title\" />\n";
         echo "  </td></tr></table>\n";
@@ -202,7 +202,7 @@
 		echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforsubmission", 
                 "workshop")."</b></td>";
 		echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("overallgrade", "workshop").
-                "</b></td></TR>\n";
+                "</b></td></tr>\n";
 
         foreach ($users as $user) {
             // skip if student not in group

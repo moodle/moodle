@@ -69,8 +69,8 @@
 
     $themes = get_list_of_plugins("theme");
 
-    echo "<TABLE ALIGN=CENTER cellpadding=7 cellspacing=5>";
-    echo "<TR><TH class=\"generaltableheader\">$strtheme<TH class=\"generaltableheader\">&nbsp;</TR>";
+    echo "<table align=\"center\" cellpadding=\"7\" cellspacing=\"5\">";
+    echo "<tr><th class=\"generaltableheader\">$strtheme<th class=\"generaltableheader\">&nbsp;</tr>";
     foreach ($themes as $theme) {
 
         if (!file_exists("$CFG->dirroot/theme/$theme/config.php")) {   // bad folder
@@ -78,21 +78,21 @@
         }
         include ("$CFG->dirroot/theme/$theme/config.php");
 
-        echo "<TR>";
+        echo "<tr>";
         if ($CFG->theme == $theme) {
-            echo "<TD ALIGN=CENTER BGCOLOR=\"$THEME->body\">$theme</TD>";
-            echo "<TD ALIGN=CENTER><A HREF=\"index.php?choose=$theme\">$strsavechanges</A></TD>";
+            echo "<td align=\"center\" bgcolor=\"$THEME->body\">$theme</td>";
+            echo "<td align=\"center\"><a href=\"index.php?choose=$theme\">$strsavechanges</a></td>";
         } else {
-            echo "<TD ALIGN=CENTER BGCOLOR=\"$THEME->body\">";
-            echo "<A TITLE=\"$strpreview\" HREF=\"index.php?preview=$theme\">$theme</A>";
-            echo "</TD>";
-            echo "<TD>&nbsp;</TD>";
+            echo "<td align=\"center\" bgcolor=\"$THEME->body\">";
+            echo "<a title=\"$strpreview\" href=\"index.php?preview=$theme\">$theme</a>";
+            echo "</td>";
+            echo "<td>&nbsp;</td>";
         }
         echo "</tr>";
     }
     echo "</table>";
 
-    echo "<br><div align=center>";
+    echo "<br /><div align=\"center\">";
     $options["frame"] = "developer.html";
     $options["sub"] = "themes";
     print_single_button("$CFG->wwwroot/doc/index.php", $options, get_string("howtomakethemes"));

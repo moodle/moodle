@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -39,7 +39,7 @@
     $strassignment  = get_string("modulename", "assignment");
 
     print_header_simple($assignment->name, "",
-                 "<A HREF=index.php?id=$course->id>$strassignments</A> -> $assignment->name", 
+                 "<a href=index.php?id=$course->id>$strassignments</a> -> $assignment->name", 
                   "", "", true, update_module_button($cm->id, $course->id, $strassignment), navmenu($course, $cm));
 
     if (isteacher($course->id)) {

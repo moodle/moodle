@@ -444,8 +444,8 @@ if ($onepage) {$page++; echo "<br /> <br />\n"; }
   if (!$onepage) { attendance_print_pagenav(); }
 
 
-  echo "<center><TABLE BORDER=0 ALIGN=CENTER><TR>";
-  echo "<TD>";
+  echo "<center><table border=0 align=CENTER><tr>";
+  echo "<td>";
   if (($numhours-4) > 255) {
     echo "<form><input type=\"button\" value=\"".get_string("downloadexcelfull", "attendance").
     "\" onclick=\"alert('Sorry, you have more than 251 days on this report.  This will not fit into an Excel Spreadsheet. ".
@@ -456,19 +456,19 @@ if ($onepage) {$page++; echo "<br /> <br />\n"; }
     $options["dlsub"] = "all";  
     print_single_button("viewweek.php", $options, get_string("downloadexcelfull", "attendance"));
   }
-  echo "</td><TD>";
+  echo "</td><td>";
   $options["id"] = "$id";
   $options["download"] = "xls";
   $options["dlsub"] = "totals";  
   print_single_button("viewweek.php", $options, get_string("downloadexceltotals", "attendance"));
-  echo "</td><TD>";
+  echo "</td><td>";
   $options["download"] = "txt";
   $options["dlsub"] = "all";  
   print_single_button("viewweek.php", $options, get_string("downloadtextfull", "attendance"));
-  echo "</td><TD>";
+  echo "</td><td>";
   $options["dlsub"] = "totals";  
   print_single_button("viewweek.php", $options, get_string("downloadtexttotals", "attendance"));
-  echo "</td></TABLE></center>";
+  echo "</td></table></center>";
 
 
 
@@ -521,7 +521,7 @@ function attendance_print_header()  {
     $strattendance  = get_string("modulename", "attendance");
     $strweekattendance  = get_string("weekmodulename", "attendance");
     print_header_simple("$strallattendance", "",
-                 "<A HREF=index.php?id=$course->id>$strattendances</A> -> $strweekattendance", 
+                 "<a href=index.php?id=$course->id>$strattendances</a> -> $strweekattendance", 
                   "", "", true, "&nbsp;", 
                   navmenu($course, $cm));
 }

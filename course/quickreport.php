@@ -251,7 +251,7 @@ $modname_value = array_flip($modnames);
     //get the names of each module instance and put in header
     foreach($mod_info as $thiscat=>$thismod){
         $modname = ucwords($modnames[$thismod[module]]);
-        print ("<td> $modname <br /><font size=-1>$thismod[name]</font></td>");
+        print ("<td> $modname <br /><font size=\"-1\">$thismod[name]</font></td>");
     }
     echo "</tr>\n";
     foreach ($user_contribs as $userid=>$thisuser){

@@ -173,7 +173,7 @@
             }
             $emailswitch = "&nbsp<a title=\"$switchclick\" ".
                            "href=\"view.php?id=$user->id&course=$course->id&$switchparam=$user->id\">".
-                           "<img border=\"0\" width=11 height=11 src=\"$CFG->pixpath/t/$switchpix\" /></a>";
+                           "<img border=\"0\" width=\"11\" height=\"11\" src=\"$CFG->pixpath/t/$switchpix\" /></a>";
         } else {
             $emailswitch = '';
         }

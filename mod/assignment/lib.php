@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 require_once("$CFG->dirroot/files/mimetypes.php");
 
@@ -534,7 +534,7 @@ function assignment_get_submission($assignment, $user) {
 function assignment_print_difference($time) {
     if ($time < 0) {
         $timetext = get_string("late", "assignment", format_time($time));
-        return " (<FONT COLOR=RED>$timetext</FONT>)";
+        return " (<font COLOR=RED>$timetext</font>)";
     } else {
         $timetext = get_string("early", "assignment", format_time($time));
         return " ($timetext)";
@@ -544,45 +544,45 @@ function assignment_print_difference($time) {
 function assignment_print_submission($assignment, $user, $submission, $teachers, $grades) {
     global $THEME, $USER;
 
-    echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10 align=center>";
+    echo "\n<table BORDER=1 CELLSPACING=0 valign=top cellpadding=10 align=center>";
 
-    echo "\n<TR>";
+    echo "\n<tr>";
     if ($assignment->type == OFFLINE) {
-        echo "\n<TD BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
+        echo "\n<td BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
     } else {
-        echo "\n<TD ROWSPAN=2 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
+        echo "\n<td ROWSPAN=2 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
     }
     print_user_picture($user->id, $assignment->course, $user->picture);
-    echo "</TD>";
-    echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\">".fullname($user, true);
+    echo "</td>";
+    echo "<td NOWRAP BGCOLOR=\"$THEME->cellheading\">".fullname($user, true);
     if ($assignment->type != OFFLINE and $submission->timemodified) {
-        echo "&nbsp;&nbsp;<FONT SIZE=1>".get_string("lastmodified").": ";
+        echo "&nbsp;&nbsp;<font SIZE=1>".get_string("lastmodified").": ";
         echo userdate($submission->timemodified);
         echo assignment_print_difference($assignment->timedue - $submission->timemodified);
-        echo "</FONT>";
+        echo "</font>";
     }
-    echo "</TR>";
+    echo "</tr>";
 
     if ($assignment->type != OFFLINE) {
-        echo "\n<TR><TD BGCOLOR=\"$THEME->cellcontent\">";
+        echo "\n<tr><td BGCOLOR=\"$THEME->cellcontent\">";
         if ($submission->timemodified) {
             assignment_print_user_files($assignment, $user);
         } else {
             print_string("notsubmittedyet", "assignment");
         }
-        echo "</TD></TR>";
+        echo "</td></tr>";
     }
 
-    echo "\n<TR>";
-    echo "<TD WIDTH=35 VALIGN=TOP>";
+    echo "\n<tr>";
+    echo "<td width=35 valign=TOP>";
     if (!$submission->teacher) {
         $submission->teacher = $USER->id;
     }
     print_user_picture($submission->teacher, $assignment->course, $teachers[$submission->teacher]->picture);
     if ($submission->timemodified > $submission->timemarked) {
-        echo "<TD BGCOLOR=\"$THEME->cellheading2\">";
+        echo "<td bgcolor=\"$THEME->cellheading2\">";
     } else {
-        echo "<TD BGCOLOR=\"$THEME->cellheading\">";
+        echo "<td bgcolor=\"$THEME->cellheading\">";
     }
     if (!$submission->grade and !$submission->timemarked) {
         $submission->grade = -1;   /// Hack to stop zero being selected on the menu below (so it shows 'no grade')
@@ -590,14 +590,14 @@ function assignment_print_submission($assignment, $user, $submission, $teachers,
     echo get_string("feedback", "assignment").":";
     choose_from_menu($grades, "g$submission->id", $submission->grade, get_string("nograde"));
     if ($submission->timemarked) {
-        echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($submission->timemarked)."</FONT>";
+        echo "&nbsp;&nbsp;<font size=1>".userdate($submission->timemarked)."</font>";
     }
-    echo "<BR><TEXTAREA NAME=\"c$submission->id\" ROWS=6 COLS=60 WRAP=virtual>";
+    echo "<br><textarea name=\"c$submission->id\" rows=6 cols=60 wrap=virtual>";
     p($submission->comment);
-    echo "</TEXTAREA><BR>";
-    echo "</TD></TR>";
+    echo "</textarea><br>";
+    echo "</td></tr>";
    
-    echo "</TABLE><BR CLEAR=ALL>\n";
+    echo "</table><br clear=ALL>\n";
 }
 
 function assignment_print_feedback($course, $submission, $assignment) {
@@ -607,20 +607,20 @@ function assignment_print_feedback($course, $submission, $assignment) {
         error("Weird assignment error");
     }
 
-    echo "\n<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1 ALIGN=CENTER><TR><TD BGCOLOR=#888888>";
-    echo "\n<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 VALIGN=TOP>";
+    echo "\n<table border=0 cellpadding=1 cellspacing=1 align=CENTER><tr><td bgcolor=#888888>";
+    echo "\n<table border=0 cellpadding=3 cellspacing=0 valign=TOP>";
 
-    echo "\n<TR>";
-    echo "\n<TD ROWSPAN=3 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
+    echo "\n<tr>";
+    echo "\n<td rowspan=3 bgcolor=\"$THEME->body\" width=35 valign=TOP>";
     print_user_picture($teacher->id, $course->id, $teacher->picture);
-    echo "</TD>";
-    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">".fullname($teacher);
-    echo "&nbsp;&nbsp;<FONT SIZE=2><I>".userdate($submission->timemarked)."</I>";
-    echo "</TR>";
+    echo "</td>";
+    echo "<td NOWRAP width=100% bgcolor=\"$THEME->cellheading\">".fullname($teacher);
+    echo "&nbsp;&nbsp;<font size=2><i>".userdate($submission->timemarked)."</i>";
+    echo "</tr>";
 
-    echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
+    echo "\n<tr><td width=100% bgcolor=\"$THEME->cellcontent\">";
 
-    echo "<P ALIGN=RIGHT><FONT SIZE=-1><I>";
+    echo "<p align=RIGHT><font size=-1><i>";
     if ($assignment->grade) {
         if ($submission->grade or $submission->timemarked) {
             echo get_string("grade").": $submission->grade";
@@ -628,11 +628,11 @@ function assignment_print_feedback($course, $submission, $assignment) {
             echo get_string("nograde");
         }
     }
-    echo "</I></FONT></P>";
+    echo "</i></font></p>";
 
     echo text_to_html($submission->comment);
-    echo "</TD></TR></TABLE>";
-    echo "</TD></TR></TABLE>";
+    echo "</td></tr></table>";
+    echo "</td></tr></table>";
 }
 
 
@@ -680,14 +680,14 @@ function assignment_delete_user_files($assignment, $user, $exception) {
 function assignment_print_upload_form($assignment) {
 // Arguments are objects
 
-    echo "<DIV ALIGN=CENTER>";
-    echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"POST\" ACTION=\"upload.php?id=$assignment->id\">";
-    echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$assignment->maxbytes\" />";
-    echo " <INPUT TYPE=hidden NAME=id VALUE=\"$assignment->id\" />";
-    echo " <INPUT NAME=\"newfile\" TYPE=\"file\" size=\"50\" />";
-    echo " <INPUT TYPE=submit NAME=save VALUE=\"".get_string("uploadthisfile")."\" />";
-    echo "</FORM>";
-    echo "</DIV>";
+    echo "<div align=CENTER>";
+    echo "<form enctype=\"multipart/form-data\" method=\"POST\" action=\"upload.php?id=$assignment->id\">";
+    echo " <input type=hidden name=MAX_FILE_SIZE value=\"$assignment->maxbytes\" />";
+    echo " <input type=hidden name=id value=\"$assignment->id\" />";
+    echo " <input name=\"newfile\" type=\"file\" size=\"50\" />";
+    echo " <input type=submit name=save value=\"".get_string("uploadthisfile")."\" />";
+    echo "</form>";
+    echo "</div>";
 }
 
 function assignment_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $assignment="0", $user="", $groupid="")  {
@@ -780,7 +780,7 @@ function assignment_print_recent_mod_activity($activity, $course, $detail=false)
         if ($activity->content->type == UPLOADSINGLE) {
             $file = assignment_get_user_file($assignment, $user);
             echo "<img src=\"$CFG->pixpath/f/$file->icon\" height=16 width=16 border=0 alt=\"file\">";
-            echo "&nbsp;<a target=\"uploadedfile\" HREF=\"$CFG->wwwroot/$file->url\">$file->name</A>";
+            echo "&nbsp;<a target=\"uploadedfile\" href=\"$CFG->wwwroot/$file->url\">$file->name</a>";
         }
         echo "<br />";
     }

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 	require_once("../config.php");
 
@@ -73,7 +73,7 @@
 	}
 
 	print_header(get_string("senddetails"), get_string("senddetails"), 
-                 "<A HREF=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</A> -> ".get_string("senddetails"), 
+                 "<a href=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</a> -> ".get_string("senddetails"), 
                  "form.email");
 	include("forgot_password_form.html");
     print_footer();

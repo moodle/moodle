@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -32,8 +32,8 @@
     $strupload      = get_string("upload");
 
     print_header_simple("$assignment->name : $strupload", "",
-                 "<A HREF=index.php?id=$course->id>$strassignments</A> -> 
-                  <A HREF=\"view.php?a=$assignment->id\">$assignment->name</A> -> $strupload", 
+                 "<a href=index.php?id=$course->id>$strassignments</a> -> 
+                  <a href=\"view.php?a=$assignment->id\">$assignment->name</a> -> $strupload", 
                   "", "", true);
 
     if ($submission = get_record("assignment_submissions", "assignment", $assignment->id, "userid", $USER->id)) {

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     require("../../config.php");
     require("lib.php");
@@ -66,15 +66,15 @@
                     $submitted = userdate($submission->timecreated);
                 } 
                 else {
-                    $submitted = "<FONT COLOR=red>".userdate($submission->timecreated)."</FONT>";
+                    $submitted = "<font COLOR=red>".userdate($submission->timecreated)."</font>";
                 }
                 $due = userdate($workshop->deadline);
                 if (!$workshop->visible) {
                     //Show dimmed if the mod is hidden
-                    $link = "<A class=\"dimmed\" HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A><br />";
+                    $link = "<a class=\"dimmed\" HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</a><br />";
                 } else {
                     //Show normal if the mod is visible
-                    $link = "<A HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A><br />";
+                    $link = "<a HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</a><br />";
                 }
                 if (isstudent($course->id)) {
                     $link .= " ($submission->title)"; // show students the title of their submission(s)
@@ -100,10 +100,10 @@
             $due = userdate($workshop->deadline);
             if (!$workshop->visible) {
                 //Show dimmed if the mod is hidden
-                $link = "<A class=\"dimmed\" HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A>";
+                $link = "<a class=\"dimmed\" HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</a>";
             } else {
                 //Show normal if the mod is visible
-                $link = "<A HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A>";
+                $link = "<a HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</a>";
             }
             if ($course->format == "weeks" or $course->format == "topics") {
                     $table->data[] = array ($workshop->section, $link, $info, $submitted, $due);

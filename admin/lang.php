@@ -62,7 +62,7 @@
         echo "</td></tr></table>";
         print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>");
         print_heading("<a href=\"lang.php?mode=compare\">$strcomparelanguage</a>");
-        echo "<center><hr noshade size=\"1\">";
+        echo "<center><hr noshade=\"noshade\" size=\"1\" />";
         $options["lang"] = $currentlang;
         print_single_button("http://moodle.org/download/lang/", $options, get_string("latestlanguagepack"));
         echo "</center>";
