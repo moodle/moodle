@@ -42,6 +42,11 @@
 
 
 /* general styles */
+th.header {
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
+}
 
 form {
     margin-bottom:0px;
@@ -82,6 +87,9 @@ a img {
 #nav-bar {
     padding:3px 0.5em;
     height:1.3em;
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
 }
 
 #breadcrumb {
@@ -233,6 +241,9 @@ table.formtable tbody th
 
 /* course, entry-page, login */
 .headingblock {
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
     border-width:1px;
     border-style:solid;
     padding:5px;
@@ -454,6 +465,9 @@ dialouge, exercise, forum, lesson, quiz */
 table.generaltable td.header,
 table.generaltable th.header,
 .generaltableheader {
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
 }
 
 
@@ -595,7 +609,6 @@ body#mod-quiz-report .tabs {
 .tabrow td {
     height:34px;
     padding:0 0 0 14px;
-    background:url(pix/tab/left.gif) top left no-repeat;
 }
 .tabrow th {
     display:none;
@@ -605,36 +618,28 @@ body#mod-quiz-report .tabs {
     height:34px;
     line-height:38px;
     padding:0 14px 0 0;
-    background:url(pix/tab/right.gif) top right no-repeat;
     text-align:center;
     white-space:nowrap;
     text-decoration:none;
 }
 .tabrow td:hover {
-    background-image:url(pix/tab/left_hover.gif);
 }
 .tabrow td:hover .tablink {
     line-height:32px;
-    background-image:url(pix/tab/right_hover.gif);
 }
 
 .tabrow .last span {
     display:block;
     padding:0px 1px 0px 0px;
-    background:url(pix/tab/right_end.gif) top right no-repeat;
 }
 .tabrow .selected {
-    background:url(pix/tab/left_active.gif) top left no-repeat;
 }
 .tabrow .selected .tablink {
-    background:url(pix/tab/right_active.gif) top right no-repeat;
     line-height:38px;
 }
 .tabrow td.selected:hover {
-    background-image:url(pix/tab/left_active_hover.gif);
 }
 .tabrow td.selected:hover .tablink {
-    background-image:url(pix/tab/right_active_hover.gif);
 }
 
 /******************************************************************/
@@ -744,6 +749,9 @@ table.minicalendar th {
 #calendar .maincalendar .heading,
 #calendar .sidecalendar .heading
 {
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
     padding: 5px;
 }
 
@@ -894,6 +902,7 @@ table.minicalendar th {
 }
 
 .cal_popup_caption {
+    background-image:url(gradient.jpg);
     border-width:0px 0px 1px 0px;
     border-style:solid;
     padding-bottom:2px;
@@ -952,6 +961,9 @@ table.calendar-controls .next
 }
 
 .sideblock .header {
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
     padding:4px;
 }
 
@@ -991,11 +1003,9 @@ table.calendar-controls .next
 }
 
 .sideblock .header .hide-show img.hide-show-image {
-    background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
 }
 
 .sideblock.hidden .header .hide-show img.hide-show-image {
-    background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
 .sideblock.hidden .content {
@@ -1115,4 +1125,3 @@ body#course-enrol .coursebox {
 .headingblock .link {
     text-align:right;
 }
-
