@@ -1,0 +1,319 @@
+<html>
+<head>
+<title>Moodle Docs: 良くある質問 (FAQ)</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>良くある質問 (FAQ)</h1>
+<p class="normaltext">
+このページにはMoodleのインストールにおいて最も尋ねられる質問を記します。
+<a href="./?file=install.html">インストールマニュアル</a>に従ってインストールを
+行って尚且つ問題が発生した場合、このページは恐らく最良の手助けになることでしょう。</p>
+
+<p class="normaltext">
+答えが見つからない場合は、moodle.orgの<a href="http://moodle.org/mod/forum/index.php?id=5" target="_top">Using 
+Moodle</a>コースを参照してください。あなたの問題が既に議論されている可能性がありますので、少数のキーワードを
+使ってフォーラム内を検索してください。
+答えが見つからない場合は、適切なフォーラムに問題を投稿してください - 通常は誰かが助けてくれます。</p>
+
+
+<p class="normaltext">
+様々な方法を試してみても問題が解決しない場合で、ファイアーウォールの背後でMoodleを動かしている場合は、必須の機能または
+必要なコミュニケーションをブロックしないように、ファイアーウォールを再設定されることをお勧めします。
+ファイアーウォールがMoodleに影響を及ぼすことはほとんどありませんが、ファイアーウォールの設定ミスにより
+Moodleの機能に影響を及ぼすことがあります。
+
+
+<p class="normaltext">該当する答えを閲覧する時は下記のリンクをお使いください:</p>
+
+<p class="questionlink"><a href="#filenotfound">アップロードしたファイルへアクセスまたは閲覧する時に、いつも「File not Found」というメッセージが表示されます。</a></p>
+
+<p class="questionlink"><a href="#php">PHP - どのバージョンがインストールされていますか?</a></p>
+
+<p class="questionlink"><a href="#blankpages">なぜ、全てのページが真っ白ですか?</a></p>
+
+<p class="questionlink"><a href="#errorgetstring">次のような致命的エラーが表示されます : call to undefined function: get_string()</a></p>
+
+<p class="questionlink"><a href="#headerssent">なぜ、「headers already sent」というエラーが表示され続けるのですか?</a></p>
+
+<p class="questionlink"><a href="#failedopen">次のエラーが表示され続けます: Failed opening required '/web/moodle/lib/setup.php'</a></p>
+
+<p class="questionlink"><a href="#quotes">アポストロフィー(')またはクオート(&quot;)を追加したテキストは、エラーを生じるかスラッシュが追加されます。</a></p>
+
+<p class="questionlink"><a href="#sessiontmp">session_startに関するエラーメッセージが表示され続けます。</a></p>
+
+<p class="questionlink"><a href="#fixdirroot">管理ページにアクセスした時に、dirrootを空白にするように警告されます!</a></p>
+
+<p class="questionlink"><a href="#loginsetting">ログインしてもログインリンクが変わりません。ログインして自由にサイトを閲覧できます。</a></p>
+
+<p class="questionlink"><a href="#resource1">リソースを追加する時にエラーメッセージが表示されます。</a></p>
+
+<p class="questionlink"><a href="#noadmin">初期設定プロセスにおいて、管理者アカウントの作成を聞かれません!</a></p>
+
+<p class="questionlink"><a href="#nologin">全くログインできません - ログイン画面より先に進みません。</a></p>
+
+<p class="questionlink"><a href="#backup">Moodleサイト全体のバックアップ方法は?</a></p>
+
+<p class="questionlink"><a href="#locale">なぜ、Moodleサイトが正確に時間と日付を表示しないのですか?</a></p>
+
+<p class="questionlink"><a href="#cron">内容を記載したメールがフォーラムより送信されません。</a></p>
+
+<p class="questionlink">&nbsp;</p>
+
+
+<h3><a name="filenotfound"></a>アップロードしたファイルへアクセスまたは閲覧する時に、いつも「File not Found」というメッセージが表示されます。</h3>
+
+<p class="answer">例えば: Not Found: The requested URL /moodle/file.php/2/myfile.jpg was not found on this server. と表示される場合。</p>
+
+<p class="answer">スクリプト以下のURLが、直接スクリプトへ渡されるようにウェブサーバを設定する必要があります。
+Apache 1では通常この設定がなされていますが、Apache 2では設定されていません。
+この設定を行うには、httpd.confまたローカルディレクトリの.htaccessファイルに下記の行を追加してください
+(詳細は<a href="./?file=install.html#webserver">インストールマニュアル</a>をご覧ください): </p>
+
+<p class="answercode"><b>AcceptPathInfo</b> on</p>
+
+<p class="answer">注意: この設定はApache versions 2.xのみに有効です。</p>
+
+<p class="answer">Apache 2を使用せずに、この問題が発生する場合は別の方法を使用するためにMoodleを設定変更することができます。
+この方法を使用する上でのデメリットは、パフォーマンスが若干落ちること及びHTMLリソースにおいて相対リンクを使用できないことです。</p>
+
+<p class="answer">この代替的な方法を使用する場合は: 管理者でログインして、「詳細設定」ページで「<b>slasharguments</b>」を
+変更してください。これで、アップロードしたファイルへアクセスできるようになります。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="php"></a>PHP - どのバージョンがインストールされていますか?</h3>
+
+<p class="answer">ウェブサイトに、下記の内容を含むinfo.phpというファイルを作成した後にブラウザでアクセスしてください:</p>
+
+<p class="answercode">&lt;?PHP phpinfo() ?&gt;</p>
+
+<p class="answer">何も起きない場合は、PHPがインストールされていません。PHPのダウンロード情報に関してインストールマニュアルをご覧ください。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="blankpages"></a>なぜ、全てのページが真っ白ですか?</h3> 
+
+<p class="answer">config.phpにあるdirroot変数の内容を確認してください。dirrootには絶対パスを使用する必要があります。例:</p>
+
+<p class="answercode"> $CFG->dirroot = "d:\inetpub\sites\www.yoursite.com\web\moodle";</p>
+
+<p>&nbsp; </p>
+
+<p class="answer">Redhat Linuxの場合はこちらをご覧ください: <a href="http://moodle.org/doc/?file=installamp.html">Redhat Linux</a></p>
+
+<p>&nbsp; </p>
+
+<h3><a name="errorgetstring"></a>次のような致命的エラーが表示されます : call to undefined function: get_string()</h3>
+
+<p class="answer">下記のようなエラーが表示される場合は:</p>
+
+<p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program files\easyphp\www\moodle\config.php on line 94 <br />
+  Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php on line 11</p>
+
+<p class="answer">config.php(94行目より前)で、セミコロンまたは閉じクオートが抜けている可能性があります。</p>
+
+<p class="answer">その他の原因として、config.phpをWordのようなプログラムで開いて編集した後に、テキストファイルとして保存せずに、
+HTMLページとして保存している可能性が考えられます。</p>
+
+<p>&nbsp;</p>
+
+<h3><a name="headerssent"></a>なぜ、「headers already sent」というエラーが表示され続けるのですか?</h3>
+
+<p class="answer">下記のようなエラーが表示される場合は:</p>
+
+<p class="answercode">Warning: Cannot add header information - headers already sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php on line 1322 </p>
+
+<p class="answercode"> Warning: Cannot add header information - headers already sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php on line 1323 </p>
+
+<p class="answercode"> Warning: Cannot add header information - headers already sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/login/index.php on line 54 </p>
+
+<p class="answer">config.phpの最後の?>の後に空白行またはスペースがあります。いくつかのテキストエディタ(例えばWindowsのワードパッド)は、空白行やスペースを追加することがありますので、
+空白行やスペースを完全に取り去るために他のテキストエディタをお使いください。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="failedopen"></a>次のエラーが表示され続けます: Failed opening required '/web/moodle/lib/setup.php'</h3>
+
+<p class="answer">config.phpのdirroot変数には、<strong>サーバのハードディスクのルートからの絶対パス</strong>を設定してください。</p>
+
+<p class="answer">時々、ホームディレクトリからのパスや、ウェブサーバディレクトリのルートへの相対パスを書き込む人がいます。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="quotes" id="quotes"></a>アポストロフィー(')またはクオート(&quot;)を追加したテキストは、エラーを生じるかスラッシュが追加されます。</h3>
+
+<p class="answer">アポストロフィーによって生じる問題は、「magic quotes」の設定ミスが原因しています。 Moodleでは次の設定を必要とします(通常デフォルトです):</p>
+
+<p class="answercode">magic_quotes_gpc = On<br />
+
+  magic_quotes_runtime = Off</p>
+
+<p class="answer">詳細に関しては、インストールマニュアルの<a href="./?file=install.html#webserver">ウェブサーバ設定の確認</a>をご覧ください。</p>
+
+<p class="answer">&nbsp;</p>
+
+
+<h3><a name="sessiontmp"></a>session_startに関するエラーメッセージが表示され続けます。</h3>
+
+<p class="answer">下記のようなエラーが表示される場合は:</p>
+
+<p class="answercode">Warning: session_start() [function.session-start]: open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) failed: No such file or directory (2) in G:\web\moodle\lib\setup.php on line 123</p>
+
+<p class="answercode">Warning: session_start() [function.session-start]: open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) failed: No such file or directory (2) in G:\web\moodle\lib\setup.php on line 123</p>
+
+<p class="answercode">Warning: session_start() [function.session-start]: Cannot send session cache limiter - headers already sent (output started at G:\web\moodle\lib\setup.php:1) in G:\web\moodle\lib\setup.php on line 123</p>
+
+<p class="answer">... これらのエラーはPHPが「セッション」をハードディスク(tmpディレクトリ)に保存できないことに関係しています。
+これは、/tmpディレクトリが存在しないことが原因となっています。通常、WindowsにMoodleをインストールする場合に生じることがあります。</p>
+
+<p class="answer">解決方法は、実在するディレクトリを指し示すようにPHPの設定を変えることです。php.iniファイルを変更することで設定を変更できます:</p>
+
+<p class="answercode">session.save_path = C:\temp</p>
+
+<p class="answer">または、moodleディレクトリにある.htaccessファイルに下記の行を追加します:</p>
+
+<p class="answercode">php_value session.save_path "/home/moodle/sessions"</p>
+
+<p class="answercode">&nbsp;</p>
+
+<h3><a name="fixdirroot"></a>管理ページにアクセスした時に、dirrootを空白にするように警告されます!</h3>
+
+<p class="answer">Moodle 1.0.9で下記のようなエラーが表示される場合は:</p>
+
+<table class=generalbox cellspacing=0 cellpadding=5 align=center border=0>
+
+<tbody>
+
+<tr>
+
+<td bgcolor=#ffbbbb>Please fix your settings in config.php: 
+
+<p>You have: 
+
+<p>$CFG-&gt;dirroot = "/home/users/fred/public_html/moodle"; 
+
+<p>but it should be: 
+
+<p>$CFG-&gt;dirroot = "";</p></td></tr></tbody></table>
+
+<p class="answer">いくつかのサーバで発生する小さなバグだと思われます。実際のパスでは無く、エラーチェックメカニズムにエラーの原因があります。これを修正するには、admin/index.phpで下記の行(66行目)を見つけて: </p>
+
+<p class="answercode">if ($dirroot != $CFG->dirroot) {</p>
+
+<p class="answer">次のように変更してください:</p>
+
+<p class="answercode">if (!empty($dirroot) and $dirroot != $CFG->dirroot) {</p>
+
+<p class="answercode">&nbsp;</p>
+
+<h3><a name="loginsetting"></a>ログインしてもログインリンクが変わりません。ログインして自由にサイトを閲覧できます。</h3>
+
+<p class="answer">$CFG->wwwrootのURL設定が、サイトにアクセスするURLと同じであるかを確認してください。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="resource1"></a>リソースを追加する時にエラーメッセージが表示されます。</h3>
+
+<p class="answer">あなたはApacheを使用していると考えられます。その場合、config.phpの$CFG->wwwroot設定が実際のURLと異なっている可能性があります。
+また、管理画面にある詳細設定の"<b>secureforms</b>"を「No」にすることを試してみてください。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="noadmin"></a>初期設定プロセスにおいて、管理者アカウントの作成を聞かれません!</h3>
+
+<p class="answer">これは、Moodleバージョン1.0.9までの既知のバグです。現在は、メインコード及びバージョン1.1において修正されています。</p>
+
+<p class="answer">これは全ての人に影響する訳ではなく、Moodleをインストールする際に他のプログラムによって書き出された「user」「admin」「teacher」
+という名称のクッキーがブラウザ内にある場合に生じます。</p>
+
+<p class="answer">対処方法として、インストールの前にブラウザよりこれらのクッキーを削除する、別のブラウザを使う、moodle/admin/user.phpファイルの先頭近くに次の行を挿入する方法があります:</p>
+
+<p class="answercode">unset($user);<br />unset($admin);<br />unset($teacher);</p>
+
+<p class="answer">これらの修正を行った後は、データベースのテーブルをドロップして、Moodleを再度インストールされることをお勧めします。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="nologin"></a>全くログインできません - ログイン画面より先に進みません。</h3>
+
+<p class="answer">多くは、あなたのコンピュータ(Moodleサーバでは無く)がリファラ情報を取り除くファイアーウォールを使用している場合に起こります。
+Norton firewall製品をMoodleが動作するように設定変更する場合の説明は<a href="http://service1.symantec.com/SUPPORT/nip.nsf/46f26a2d6dafb0a788256bc7005c3fa3/b9b47ad7eddd343b88256c6b006a85a8?OpenDocument&src=bar_sch_nam">こちら</a>をご覧ください。</p>
+
+<p class="answer">サーバの管理者は、管理画面の詳細設定にある「<b>secureforms</b>」を「No」にすることで、全てのユーザのためにこの問題を解消することができます。</p>
+
+<p class="answer">別の可能性として、サーバにおいてセッションに関する設定が正しく行われていないことが挙げられます。http://yourserver/moodle/lib/session-test.php を実行することで、セッションの設定をテストすることができます。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="backup"></a>Moodleサイト全体のバックアップ方法は?</h3>
+
+<p class="answer">バックアップ対象には2つ主要なのものがあります:データベースのバックアップとアップロードしたファイルのバックアップです。
+必要であれば、いつでも最新のファイルをダウンロードできますのでMoodleのスクリプト自体は重要ではありません。</p>
+
+<p class="answer">バックアップには数多くの方法があります。Unixでデータベースをバックアップする小さなスクリプト例を記します。
+これはcronを使用した毎日のバックアップに向いています。</p>
+
+<p class="answercode">cd /my/backup/directory</p>
+
+<p class="answercode">mv moodle-database.sql.gz moodle-database-old.sql.gz</p>
+
+<p class="answercode">mysqldump -h example.com -u myusername --password=mypassword -C -Q -e -a mydatabasename > moodle-database.sql</p>
+
+<p class="answercode">gzip moodle-database.sql</p>
+
+<p class="answer">ファイルに関しては、更新したファイルのみを別のホストにバックアップすることができるrsyncコマンドを定期的に使うことができます:</p>
+
+<p class="answercode">rsync -auvtz --delete -e ssh mysshusername@example.com:/my/server/directory 
+
+  /my/backup/directory/</p>
+
+<p class="answercode">&nbsp;</p>
+
+
+<h3><a name="locale"></a>なぜ、Moodleサイトが正確に時間と日付を表示しないのですか?</h3>
+
+<p class="answer">各言語は、日付を正確に表示するために、特定の言語コード(<strong>ロケール</strong>コードと呼ばれます)を必要とします。
+言語パックは、標準的なロケールを含んでいますが、Windowsサーバでは正常に動作しない場合があります。</p>
+
+<p class="answer">次の2つのページでWindows用の正しいロケールに関する情報を得ることができます:
+<a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_language_strings.asp" target="_blank">言語コード</a>
+及び <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_country_strings.asp" target="_blank">国/地域コード</a>。
+(例 スペイン語は「esp_esp」)</p>
+
+<p class="answer">新しいロケールコードは、管理 -&gt; 設定 -&gt; 詳細設定にて登録することができます。このロケールコードは、現在選択されている言語のロケールコードに優先します。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="cron"></a>内容を記載したメールがフォーラムより送信されません。</h3>
+
+<p class="answer">Moodleのフォーラム、日誌、課題より自動的にメールを送信させるには、cronを正しく設定する<strong>必要</strong>があります。
+同じプロセスで、登録未承認ユーザの削除や古い学生の登録抹消等の、多くのクリーンアップタスクを実行します。</p>
+
+<p class="answer">基本的に、スクリプトhttp://yoursite/admin/cron.phpを定期的に呼ぶ設定をする必要があります。<a href="./?file=install.html#cron">
+インストールマニュアルのcronの設定セクション</a>をご覧ください。</p>
+
+<p class="answer">ヒント: Moodleの詳細設定ページで、デフォルト設定の使用を試してください。また、smtphostを空白のままにしてください。
+この設定はほとんどのユーザの条件を満たしています。</p>
+<p class="answer">&nbsp;</p>
+<p class="answer">&nbsp;</p>
+
+<hr>
+
+<p align="center" class="normaltext"><a href='ma&#105&#108t&#111:ma%72%74in@%6d%6fo%64%6c%65.o%72g' title='mar&#116&#105n@&#109oo&#100&#108&#101&#46&#111&#114g'>新しいFAQの提案</a> (答えもお願いします!)</p>
+
+<hr>
+
+<p align="right"><strong><em>このFAQの整備にご協力頂いたJohn Eyre氏に感謝します。</em></strong></p>
+
+<p align="CENTER"><font size="1"><a href="." target="_top">Moodle文書</a></font></p>
+
+<p align="CENTER"><font size="1">Version: $Id: faq.html,v 1.6 2003/03/30 13:54:28 
+
+  moodler Exp $</font></p>
+
+</body>
+
+</html>

@@ -1,0 +1,161 @@
+<p align="center"><b>リッチテキストHTMLエディタに関して</b></p>
+
+<p>利用可能な機能: <b>
+<?php  if (!$CFG->htmleditor) {
+       print_string("htmleditordisabledadmin");
+   } else if (!$USER->htmleditor) {
+       print_string("htmleditordisabled");
+   } else if (!can_use_richtext_editor()) {
+       print_string("htmleditordisabledbrowser");
+   } else {
+       print_string("htmleditoravailable");
+   }
+?>
+</b></p>
+
+<p>リッチテキストHTMLエディタはブラウザ上でワードプロセッサの機能を実現します。ここでは直感的にテキストを編集することが可能で、通常のHTMLコードが自動生成されます。
+
+<p>このエディタは、テキストの整形に加えて数多くの便利な機能を提供します。
+
+<p><b>他のアプリケーションからテキストをコピーする</b></p>
+<UL>
+<p>リッチテキストをMicrosoft Word等の他のWindowsアプリケーションからコピー&ペーストすることが
+できます。コピー元のフォーマットはそのまま保持されます。ブラウザのメニューより通常のコピー及び
+貼り付けを使用してください。(Control-C and Control-Vを使うこともできます)
+</UL>
+
+<p><b>イメージを挿入する<img border="0" hspace="10" src="lib/editor/images/ed_image.gif"></b></p>
+<UL>
+<p>ウェブ上に公開されていて、URLでアクセス可能なイメージを"Insert Image"ボタンを使って挿入することができます。</UL>
+
+<p><b>テーブルを挿入する<img border="0" hspace="10" src="lib/editor/images/insert_table.gif"></b></p>
+<UL>
+<p>テキストにレイアウトを追加する場合は、ツールバーの"Insert Tables"ボタンを使用できます。
+</UL>
+
+<p><b>リンクを挿入する<img border="0" hspace="10" src="lib/editor/images/ed_link.gif"></b></p>
+<UL>
+<p>新しいリンクを作成する場合は、まずリンクを張りたいテキストを入力してください。そしてそのテキストを選択してツールバーのリンクボタンをクリックしてください。リンクしたいURLを入力して完了です!
+</UL>
+
+
+<p><b>スマイリー(感情表現アイコン)を挿入する<img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></b></p>
+<UL>
+<p>テキストにこれらの小さなアイコンを挿入する場合は、ツールバーのスマイリーアイコンをクリック
+してください。(代わりに該当するコードをテキストに入れることもできます。このコードはスマイリーに
+変換されます)
+
+    <table border="1">
+      <tr valign="top">
+        <td>
+        <table border="0" align="center" cellpadding="10">
+          <tr>
+            <td><img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></td>
+            <td>笑顔</td>
+            <td><FONT FACE=Courier>:-)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15"></td>
+            <td>満面の笑顔</td>
+            <td><FONT FACE=Courier>:-D</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15"></td>
+            <td>ウインク</td>
+            <td><FONT FACE=Courier>;-)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15"></td>
+            <td>複雑な</td>
+            <td><FONT FACE=Courier>:-/</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15"></td>
+              <td>思慮深い</td>
+              <td><FONT FACE=Courier>V-.</FONT></td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15"></td>
+            <td>ベー</td>
+            <td><FONT FACE=Courier>:-P</td>
+         </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15"></td>
+            <td>クール</td>
+            <td><FONT FACE=Courier>B-)</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15"></td>
+              <td>賛成</td>
+              <td><FONT FACE=Courier>^-)</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15"></td>
+              <td>大きな目</td>
+              <td><FONT FACE=Courier>8-)</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15"></td>
+              <td>驚き</td>
+              <td><FONT FACE=Courier>8-o</td>
+            </tr>
+        </table>
+        </td>
+        <td>
+        <table border="0" align="center" cellpadding="10">
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15"></td>
+              <td>悲しい</td>
+              <td><FONT FACE=Courier>:-(</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15"></td>
+              <td>恥ずかしい</td>
+              <td><FONT FACE=Courier>8-.</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15"></td>
+            <td>赤面</td>
+            <td><FONT FACE=Courier>:-I</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15"></td>
+              <td>キス</td>
+              <td><FONT FACE=Courier>:-X</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15"></td>
+            <td>ピエロ</td>
+            <td><FONT FACE=Courier>:o)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15"></td>
+            <td>眼帯</td>
+            <td><FONT FACE=Courier>P-|</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15"></td>
+              <td>怒り</td>
+              <td><FONT FACE=Courier>8-[</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15"></td>
+              <td>ヘトヘト</td>
+              <td><FONT FACE=Courier>xx-P</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15"></td>
+              <td>眠たい</td>
+              <td><FONT FACE=Courier>|-.</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15"></td>
+            <td>意地悪</td>
+            <td><FONT FACE=Courier>}-]</td>
+          </tr>
+        </table>
+    </table>
+
+</UL>
+
+
