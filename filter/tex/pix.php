@@ -48,7 +48,7 @@
             $texexp = '\Large ' . $texexp;
             switch (PHP_OS) {
                 case "Linux":
-                    system("QUERY_STRING=;export QUERY_STRING;$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -d ". escapeshellarg($texexp) . "  >$pathname");
+                    system("$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -e $pathname ". escapeshellarg($texexp) );
                 break;
                 case "WINNT":
                 case "WIN32":
@@ -57,7 +57,7 @@
                     system("$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname \"$texexp\"");
                 break;
                 case "Darwin":
-                    system("QUERY_STRING=;export QUERY_STRING;$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -d ". escapeshellarg($texexp) . "  >$pathname");
+                    system("$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp) );
                 break;
             }
         }
