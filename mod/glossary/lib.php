@@ -1359,7 +1359,8 @@ function glossary_print_author_menu($cm, $glossary,$mode, $hook, $sortkey = '', 
 }
 
 function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
-global $CFG, $THEME;
+     global $CFG;
+
      echo '<table border="0" width="100%">';
      echo '<tr>';
 
@@ -1562,32 +1563,31 @@ function glossary_sort_entries ( $entry0, $entry1 ) {
 }
 
 function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
-    global $THEME, $CFG, $USER;
+    global $CFG, $USER;
 
-    $colour = $THEME->cellheading2;
-
-    $user = get_record("user", "id", $comment->userid);
-    $strby = get_string("writtenby","glossary");
+    $user = get_record('user', 'id', $comment->userid);
+    $strby = get_string('writtenby','glossary');
     $fullname = fullname($user, isteacher($course->id));
 
-    echo '<table align="center" border="0" width="70%" cellpadding="3" cellspacing="0" class="forumpost">';
-    echo "<tr>";
-    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
+    echo '<center>';
+    echo '<table class="glossarycomment" cellspacing="0">';
+    echo '<tr valign="top">';
+    echo '<tr><td class="left picture">';
     print_user_picture($user->id, $course->id, $user->picture);
-    echo "</td>";
-    echo "<td bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\" width=\"100%\">";
-    echo "<p>";
-    echo "<font size=\"2\"><a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a></font><br />";
-    echo "<font size=\"1\">".get_string("lastedited").": ".userdate($comment->timemodified)."</font>";
-    echo "</p></td></tr>";
+    echo '</td>';
+    echo '<td class="entryheader">';
+    echo "<span class=\"author\"><a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a></span><br />";
+    echo '<span class="time">'.get_string('lastedited').': '.userdate($comment->timemodified).'</span>';
+    echo '</td></tr>';
 
-    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostside\" width=\"10\">";
-    echo "&nbsp;";
-    echo "</td><td bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">\n";
+    echo '<tr valign="top"><td class="left side">';
+    echo '&nbsp;';
+    echo '</td><td class="entry">';
 
     echo format_text($comment->comment, $comment->format);
 
-    echo "<div align=\"right\"><p align=\"right\">";
+    echo '<div class="icons commands">';
+
     $ineditperiod = ((time() - $comment->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
     if ( ($glossary->allowcomments &&  $ineditperiod && $USER->id == $comment->userid)  || isteacher($course->id) ) {
         echo "<a href=\"comment.php?id=$cm->id&amp;eid=$entry->id&amp;cid=$comment->id&amp;action=edit\"><img  
@@ -1597,10 +1597,9 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
         echo "<a href=\"comment.php?id=$cm->id&amp;eid=$entry->id&amp;cid=$comment->id&amp;action=delete\"><img  
                alt=\"" . get_string("delete") . "\" src=\"$CFG->pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" /></a>";
     }
-    
-    echo "</p>";
-    echo "</div>";
-    echo "</td></tr>\n</table>\n\n";
+   
+    echo '</div></td></tr>';
+    echo '</table></center>';
 
 }
 
