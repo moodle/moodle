@@ -90,6 +90,17 @@
         print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&amp;id=$course->id&amp;perpage=$perpage&amp;");
         echo "</center>";
 
+        //added to implement highlighting of search terms found only in HTML markup
+        //fiedorow - 9/2/2005
+        $searchterms = explode(" ", $strippedsearch);    // Search for words independently
+        foreach ($searchterms as $key => $searchterm) {
+            if (preg_match('/^\-/',$searchterm)) {
+                unset($searchterms[$key]);
+            } else {
+            	$searchterms[$key] = preg_replace('/^\+/','',$searchterm);
+            }
+        }
+
         foreach ($posts as $post) {
 
             if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
@@ -115,8 +126,27 @@
             /// Add the forum id to the post object - used by read tracking.
                 $post->forum = $forum->id;
 
+            //Indicate search terms only found in HTML markup
+            //Use highlight() with nonsense tags to spot search terms in the
+            //actual text content first.
+            //fiedorow - 9/2/2005
+            $missing_terms = "";
+            $message = highlight($strippedsearch,format_text($post->message, $post->format, NULL, $courseid),0,"<fgw9sdpq4>","</fgw9sdpq4>");
+            foreach ($searchterms as $searchterm) {
+               if (preg_match("/$searchterm/i",$message) && !preg_match('/<fgw9sdpq4>'.$searchterm.'<\/fgw9sdpq4>/i',$message)) {
+                  $missing_terms .= " $searchterm";}
+            }
+            $message = preg_replace('/<fgw9sdpq4>/','<span class="highlight">',$message);
+            $message = preg_replace('/<\/fgw9sdpq4>/','</span class="highlight">',$message);
+            if ($missing_terms) {
+              $missing_terms_message = get_string('missingsearchterms','forum');
+              $message = "<div><p><span class=\"highlight2\">$missing_terms_message $missing_terms</span class=\"higlight2\"></p></div>" . $message;
+            }
+            $post->message = $message;
+
             $fulllink = "<a href=\"discuss.php?d=$post->discussion#$post->id\">".get_string("postincontext", "forum")."</a>";
-            forum_print_post($post, $course->id, false, false, false, false, $fulllink, $strippedsearch);
+            //search terms already highlighted - fiedorow - 9/2/2005
+            forum_print_post($post, $course->id, false, false, false, false, $fulllink);
 
             echo "<br />";
         }
