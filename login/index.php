@@ -104,9 +104,9 @@
     }
     
     if (!empty($frm->username)) {
-        $focus = "form.password";
+        $focus = "login.password";
     } else {
-        $focus = "form.username";
+        $focus = "login.username";
     }
 
     if ($CFG->auth == "email" or $CFG->auth == "none" or chop($CFG->auth_instructions) <> "" ) {
