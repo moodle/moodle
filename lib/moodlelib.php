@@ -795,7 +795,7 @@ function get_user_timezone($tz = 99) {
 // Makes sure that $USER->sesskey exists, if $USER itself exists. It sets a new sesskey
 // if one does not already exist, but does not overwrite existing sesskeys. Returns the
 // sesskey string if $USER exists, or boolean false if not.
-function set_user_sesskey() {
+function sesskey() {
     global $USER;
 
     if(!isset($USER)) {
@@ -879,7 +879,7 @@ function require_login($courseid=0, $autologinguest=true) {
     }
 
     // Make sure the USER has a sesskey set up.  Used for checking script parameters.
-    set_user_sesskey();
+    sesskey();
 
     // Check that the user has agreed to a site policy if there is one
     if (!empty($CFG->sitepolicy)) {

@@ -67,7 +67,7 @@
         $USER->admin = true;
         $USER->teacher["$site->id"] = true;
         $USER->newadminuser = true;
-        set_user_sesskey(); // for added security, used to check script parameters
+        sesskey(); // for added security, used to check script parameters
 
         redirect("$CFG->wwwroot/user/edit.php?id=$user->id&amp;course=$site->id");
         exit;

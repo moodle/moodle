@@ -165,7 +165,14 @@
     if(blocks_have_content($pageblocks[BLOCK_POS_CENTERUP]) || $editing) {
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_CENTERUP]);
     }
-    echo '<div style="padding: 10px; background: gold; text-align: center;">Content Here</div>';
+
+
+    echo '<div style="padding: 10px; background: gold; text-align: center;">';
+    $time = mktime(0, 0, 0, 1, 1, 2005, 0);
+    print_object(oldgetdate($time));
+    print_object(usergetdate($time));
+    echo 'Content Here</div>';
+
     echo '<p style="text-align: center; padding: 10px; background: black; color: white;">Center-down position:</p>';
     if(blocks_have_content($pageblocks[BLOCK_POS_CENTERDOWN]) || $editing) {
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_CENTERDOWN]);
@@ -185,4 +192,28 @@
 
     echo '</tr></table>';
     print_footer();
+
+function oldgetdate($date) {
+    $timezone = get_user_timezone(99);
+
+    if (abs($timezone) > 13) {
+        return getdate($date);
+    }
+    //There is no gmgetdate so I have to fake it...
+    $date = $date + (int)($timezone * HOURSECS);
+
+    $getdate['seconds'] = gmstrftime("%S", $date); 	 
+    $getdate['minutes'] = gmstrftime("%M", $date);
+    $getdate['hours']   = gmstrftime("%H", $date);
+    $getdate['mday']    = gmstrftime("%d", $date);
+    $getdate['wday']    = gmstrftime("%u", $date);
+    $getdate['mon']     = gmstrftime("%m", $date);
+    $getdate['year']    = gmstrftime("%Y", $date);
+    $getdate['yday']    = gmstrftime("%j", $date);
+    $getdate['weekday'] = gmstrftime("%A", $date);
+    $getdate['month']   = gmstrftime("%B", $date);
+    
+    return $getdate;
+}
+
 ?>
