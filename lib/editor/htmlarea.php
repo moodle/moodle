@@ -1319,6 +1319,15 @@ HTMLArea.prototype._insertTable = function() {
 			tbody.appendChild(tr);
 			for (var j = 0; j < param["f_cols"]; ++j) {
 				var td = doc.createElement("td");
+				/// Moodle hack
+				if(param["f_unit"] == "px") {
+					tdwidth = Math.round(table.width / param["f_cols"]);
+				} else {
+					tdwidth = Math.round(100 / param["f_cols"]);
+				}	
+				td.setAttribute("width",tdwidth + param["f_unit"]);
+				td.setAttribute("valign","top");
+				/// Moodle hack -ends
 				tr.appendChild(td);
 				// Mozilla likes to see something inside the cell.
 				(HTMLArea.is_gecko) && td.appendChild(doc.createElement("br"));
@@ -1377,7 +1386,88 @@ HTMLArea.prototype._insertChar = function() {
 /************************************************************************
 * Moodle hack's ends
 ************************************************************************/
+/// Called when the user Pastes from Ctrl-V; 
+HTMLArea.prototype._pasteSpecial = function() { 
+   var editor = this; // for nested functions 
+   editor.unPasteSpecial = function () {editor._unPasteSpecial()}; 
+   HTMLArea._addEvent(editor._doc, "keyup",editor.unPasteSpecial); 
+}; 
 
+/// Called on Ctrl-V keyup; 
+
+HTMLArea.prototype._unPasteSpecial = function() { 
+   var editor = this; 
+   HTMLArea._removeEvent(editor._doc, "keyup",editor.unPasteSpecial); 
+   editor._wordClean(); 
+}; 
+
+// Word Clean Function; 
+
+HTMLArea.prototype._wordClean = function() {
+	var D = this.getInnerHTML();
+	if (D.indexOf('class=Mso') >= 0 || D.indexOf('mso') >= 0) {
+
+		// make one line
+		D = D.replace(/\r\n/g, ' ').
+			replace(/\n/g, ' ').
+			replace(/\r/g, ' ').
+			replace(/\&nbsp\;/g,' ');
+
+		// keep tags, strip attributes
+		D = D.replace(/ class=[^\s|>]*/gi,'').
+			//replace(/<p [^>]*TEXT-ALIGN: justify[^>]*>/gi,'<p align="justify">').
+			replace(/ style=\"[^>]*\"/gi,'').
+			replace(/ align=[^\s|>]*/gi,'');
+
+		//clean up tags
+		D = D.replace(/<b [^>]*>/gi,'<b>').
+			replace(/<i [^>]*>/gi,'<i>').
+			replace(/<li [^>]*>/gi,'<li>').
+			replace(/<ul [^>]*>/gi,'<ul>');
+
+		// replace outdated tags
+		D = D.replace(/<b>/gi,'<strong>').
+			replace(/<\/b>/gi,'</strong>');
+
+		// mozilla doesn't like <em> tags
+		D = D.replace(/<em>/gi,'<i>').
+			replace(/<\/em>/gi,'</i>');
+
+		// kill unwanted tags
+		D = D.replace(/<\?xml:[^>]*>/g, '').       // Word xml
+			replace(/<\/?st1:[^>]*>/g,'').     // Word SmartTags
+			replace(/<\/?[a-z]\:[^>]*>/g,'').  // All other funny Word non-HTML stuff
+			replace(/<\/?font[^>]*>/gi,'').    // Disable if you want to keep font formatting
+			replace(/<\/?span[^>]*>/gi,' ').
+			replace(/<\/?div[^>]*>/gi,' ').
+			replace(/<\/?pre[^>]*>/gi,' ').
+			//replace(/<\/?h[1-6][^>]*>/gi,' ').
+			/// Try to remove <!--[endif]--> and stuff
+      		replace(/<!--[^>]*>/gi,''); /// MOODLE HACK - not so sure does this work right?
+
+		//remove empty tags
+		//D = D.replace(/<strong><\/strong>/gi,'').
+		//replace(/<i><\/i>/gi,'').
+		//replace(/<P[^>]*><\/P>/gi,'');
+
+		// nuke double tags
+		oldlen = D.length + 1;
+		while(oldlen > D.length) {
+			oldlen = D.length;
+			// join us now and free the tags, we'll be free hackers, we'll be free... ;-)
+			D = D.replace(/<([a-z][a-z]*)> *<\/\1>/gi,' ').
+				replace(/<([a-z][a-z]*)> *<([a-z][^>]*)> *<\/\1>/gi,'<$2>');
+		}
+		D = D.replace(/<([a-z][a-z]*)><\1>/gi,'<$1>').
+			replace(/<\/([a-z][a-z]*)><\/\1>/gi,'<\/$1>');
+
+		// nuke double spaces
+		D = D.replace(/  */gi,' ');
+
+		this.setHTML(D);
+		this.updateToolbar();
+	}
+};
 /***************************************************
  *  Category: EVENT HANDLERS
  ***************************************************/
@@ -1453,6 +1543,9 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
 	    case "insertchar": this._insertChar(); break;
 	    case "about"    : this._popupDialog("about.html", null, this); break;
 	    case "showhelp" : window.open(this.config.editorURL + "reference.html", "ha_help"); break;
+	    /// Moodle hack
+	    case "pastespecial" : this._pasteSpecial(); break;
+	    /// Moodle hack
 	    default: this._doc.execCommand(cmdID, UI, param);
 	}
 	this.updateToolbar();
@@ -1493,6 +1586,7 @@ HTMLArea.prototype._editorEvent = function(ev) {
 		    case 'e': cmd = "justifycenter"; break;
 		    case 'r': cmd = "justifyright"; break;
 		    case 'j': cmd = "justifyfull"; break;
+		    case 'v': this.execCommand("pasteSpecial"); break;
 		    case 'z': cmd = "undo"; break;
 		    case 'y': cmd = "redo"; break;
 
