@@ -18,6 +18,24 @@
 /// If data submitted, then process and store.
 
     if ($config = data_submitted()) {
+        //We need to do some weekdays conversions prior to continue
+        $i = 0;
+        $temp = "";
+        $a_config = (array)$config;
+        while ($i<7) {
+            $tocheck = "dayofweek_".$i;
+            if (isset($a_config[$tocheck])) {
+                $temp .= "1";
+            } else {
+                $temp .= "0"; 
+            }
+            unset($a_config[$tocheck]);
+            $i++;
+        }
+        $a_config['backup_sche_weekdays'] = $temp;
+        $config = (object)$a_config;
+        //weekdays conversions done. Continue
+
         print_header();
         foreach ($config as $name => $value) {
             backup_set_config($name, $value);
