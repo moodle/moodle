@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004060100)
+      // moodle.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['action'] = 'Azione';
@@ -172,6 +172,7 @@ $string['configloglifetime'] = 'Questo specifica per quanto tempo vuoi mantenere
 $string['configlongtimenosee'] = 'Se gli studenti non hanno avuto accesso per un periodo molto prolungato, allora essi saranno automaticamente cancellati dal corso. Questo parametro specifica quale deve essere il tempo limite.';
 $string['configmaxbytes'] = 'Questo specifica la dimensione massima dei file che sono inviati per tutto il sito. Questa impostazione è limitata dall\'impostazione PHP di upload_max_filesize e dall\'impostazione Apache di LimitRequestBody. In alternativa, la dimensione massima può essere scelta a livello dei corsi o dei moduli. ';
 $string['configmaxeditingtime'] = 'Questo parametro specifica il tempo complessivo che gli utenti hanno a disposizione per modificare i loro messaggi sui forums, sul diario, per il feedback, ecc. Normalmente, 30 è un buon valore.';
+$string['confignoreplyaddress'] = 'Le mail a volte sono spedite a nome di un utente (es i messaggi dei forum). L\'indirizzo mail che specifichi qui sarà utilizzato come indirizzo \"Da\" nei casi in cui il ricevente non è in grado di replicare direttamente all\'utente (es quando un utente decide di mantenere il suo indirizzo privato).';
 $string['configopentogoogle'] = 'Se abilitate questa impostazione, Google potrà entrare nel vostro sito come Ospite. Inoltre, chi arriverà al vostro sito tramite Google verrà automaticamente autenticato come Ospite. Nota che questa impostazione fornisce un accesso trasparente solo ai corsi che già permettono l\'accesso agli ospiti.';
 $string['configproxyhost'] = 'Se questo <B>server</B> necessita di un proxy (ad esempio un firewall) per accedere a Internet, allora indicare qui il nome del server (hostname) e il numero della porta di accesso. In caso contrario, lascia vuoto questo campo.';
 $string['configsecureforms'] = 'Moodle può utilizzare un ulteriore livello di sicurezza quando accetta dati da web form. Se questo é abilitato, la variabile del browser HTTP_REFERER é confrontata con l\'indirizzo del form attuale. In alcuni rari casi questo può causare problemi se l\'utente sta utilizzando un firewall (es. Zonealarm) configurato per controllare HTTP_REFERER nel suo traffico web. Uno dei sintomi é rimanere \'incollato\' a un form. Se gli utenti hanno avuto problemi con la pagina di login (per esempio) potresti voler disabilitare questo impostazione, questo può esporre il tuo sito ad attacchi di password per forza bruta. Se sei in dubbio, lascialo a \'Si\'.';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004060100)
+      // forum.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['addanewdiscussion'] = 'Aggiungi un nuovo argomento di discussione';
@@ -16,6 +16,7 @@ $string['configenablerssfeeds'] = 'Questa opzione abilita di utilizzare gli RSS 
 $string['configlongpost'] = 'Ogni messaggio oltre questa lunghezza (escludendo l\'HTML) é considerato lungo.';
 $string['configmanydiscussions'] = 'Numero massimo di discussioni mostrate in una pagina del forum';
 $string['configmaxbytes'] = 'Dimensione massima del allegato per tutti gli allegati dei forum del sito (modificabile da limiti del corso e altre impostazioni locali)';
+$string['configreplytouser'] = 'Quando un messaggio del forum viene inviato via mail, deve contenere l\'indirizzo mail dell\'utente in modo che il ricevente possa replicare anche senza usare il forum? Se è impostato \"Si\" gli utenti possono scegliere nel loro profilo di mantenere il proprio indirizzo mail segreto.';
 $string['configshortpost'] = 'Ogni messaggio sotto questa lunghezza (escludendo l\'HTML) é considerato corto.';
 $string['couldnotadd'] = 'Non è possibile aggiungere il tuo messaggio a causa di un errore sconosciuto.';
 $string['couldnotdeleteratings'] = 'Spiacenti,questo non può essere cancellato in quanto gli utenti lo hanno già valutato.';
@@ -78,6 +79,7 @@ $string['nomorepostscontaining'] = 'Non sono stati trovati altri messaggi conten
 $string['nonews'] = 'Nessuna News é stata ancora spedita';
 $string['noposts'] = 'Nessun messaggio';
 $string['nopostscontaining'] = 'Nessun messaggio contenente \'$a\' è stato trovato';
+$string['noreply'] = ' ';
 $string['nosubscribers'] = 'Non ci sono ancora iscritti per questo forum';
 $string['notingroup'] = 'Spiacente, ma devi appartenere ad un gruppo per poter vedere questo forum.';
 $string['nownotsubscribed'] = '$a->name NON riceverà copie di \'$a->forum\' via email.';

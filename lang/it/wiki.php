@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004060100)
+      // wiki.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['action'] = '-- Azione --';
@@ -31,8 +31,10 @@ $string['deletepage'] = 'Cancella pagina';
 $string['deleteversions'] = 'Cancella quante ultime versioni';
 $string['deleteversionserror'] = 'Prego inserire un valore corretto di versioni';
 $string['diff'] = 'Differenze';
+$string['differences'] = 'Differenze tra la versione $a->new_ver e la $a->old_ver di $a->pagename.';
 $string['disabledpage'] = 'Questa pagina non è attualmente disponibile';
 $string['doesnotexist'] = 'Questa pagina no esiste ancora, clicca sul pulsante di modifica se vuoi crearla.';
+$string['downloadaszip'] = 'Archivio compresso scaricabile';
 $string['downloadtimes'] = 'Scaricato $a volte';
 $string['dwnlnofiles'] = 'Nessun file ancora inviato.';
 $string['dwnlsection'] = 'Sezione download';
@@ -49,7 +51,10 @@ $string['errorsize'] = 'Dimensione della pagina maggiore di 64k';
 $string['errversionsave'] = 'Spiacente, mentre modificavi questa pagina qulacuno ha salvato una versione modificata. Per piacere torna alla schermata precedente e copia le tue modifiche negli appunti del tuo computer per inserirli nuovamente dopo aver ricaricato la pagina di modifica.';
 $string['ewikiacceptbinary'] = 'Permetti file binari';
 $string['ewikiprinttitle'] = 'Stampa il titolo su ogni pagina-Wiki';
-$string['export'] = 'Esporta.';
+$string['export'] = 'Esporta';
+$string['exportformats'] = 'Formati di esportazione';
+$string['exportsuccessful'] = 'Esportazione completata correttamente.';
+$string['exportto'] = 'Esporta a';
 $string['fetchback'] = 'Restituzione';
 $string['file'] = 'File';
 $string['filedownload'] = 'Scarica file';
@@ -69,8 +74,10 @@ $string['groups'] = 'Gruppi';
 $string['hits'] = '$a richieste';
 $string['howtooperate'] = 'Come utilizzare';
 $string['howtowiki'] = 'Come Wiki';
+$string['html'] = 'Formato HTML';
 $string['htmlmode'] = 'Modo HTML';
 $string['htmlonly'] = 'Solo HTML';
+$string['index'] = 'Indice';
 $string['infoaboutpage'] = 'Informazioni sulla pagina';
 $string['initialcontent'] = 'Scegli la pagina iniziale';
 $string['invalidroot'] = 'Non sei autorizzato ad accedere alla pagina pricipale attuale così nessuna mappa del sito può essere creata.';
@@ -82,6 +89,7 @@ $string['linkschecked'] = 'Collegamenti controllati';
 $string['listall'] = 'Mostra tutti';
 $string['listcandidates'] = 'Mostra candidati';
 $string['meta'] = 'Meta data';
+$string['moduledirectory'] = 'Cartella modulo';
 $string['modulename'] = 'Wiki';
 $string['modulenameplural'] = 'Wiki';
 $string['mostoftenchangedpages'] = 'Pagine modificate maggiormente';
@@ -101,6 +109,7 @@ $string['offline'] = 'OFFLINE';
 $string['orphanedpage'] = 'Pagina orfana';
 $string['orphanedpages'] = 'Pagine orfane';
 $string['otherwikis'] = 'Altri Wiki';
+$string['ownerunknown'] = 'sconosciuto';
 $string['pageactions'] = 'Azioni pagina';
 $string['pageindex'] = 'Indice pagina';
 $string['pageinfo'] = 'Informazioni sulla pagina';
@@ -110,6 +119,7 @@ $string['pageslinkingto'] = 'Collegamenti di pagina a questa pagina';
 $string['pagesremoved'] = 'Pagine rimosse.';
 $string['pagesreverted'] = 'Cambiamenti ripristinati';
 $string['pagesstripped'] = 'Pagine ripulite';
+$string['plaintext'] = 'Testo semplice';
 $string['preview'] = 'Anteprima';
 $string['readonly'] = 'Pagina di sola lettura';
 $string['refs'] = 'Riferimenti';
@@ -150,12 +160,15 @@ $string['viewpage'] = 'Mostra pagina';
 $string['viewsmfor'] = 'Mostra mappa del sito per';
 $string['wantedpages'] = 'Pagine cercate';
 $string['wikidefaultpagename'] = 'Indice Wiki';
-$string['wikidump'] = 'Qui potete adeguare il vostro WikiDump alle vostre necessità. Quando siete pronti, cliccate sul pulsante \"Esporta\".';
+$string['wikiexport'] = 'Esporta pagine';
+$string['wikiexportcomment'] = 'Qui si può impostare le tue preferenze sull\'esportazione';
 $string['wikilinks'] = 'Collegamenti Wiki';
 $string['wikiname'] = 'Nome pagina';
 $string['wikistartederror'] = 'Esitono wiki - non è possibile canbiare.';
 $string['wikitype'] = 'Tipo';
 $string['wikiusage'] = 'Utilizzo Wiki';
+$string['withbinaries'] = 'Includi contenuti binari';
+$string['withvirtualpages'] = 'Includi collegamenti Wiki';
 $string['wrongversionrange'] = '$a non è un intervallo corretto!';
 
 ?>
