@@ -730,7 +730,7 @@ function main_upgrade($oldversion=0) {
         rebuild_course_cache();
     }
 
-    if ($oldversion < 2004042700) {
+    if ($oldversion < 2004042700) {     /// Increase size of lang fields
         table_column("user",   "lang", "lang", "varchar", "10", "", "en");
         table_column("groups", "lang", "lang", "varchar", "10", "", "");
         table_column("course", "lang", "lang", "varchar", "10", "", "");
@@ -738,6 +738,10 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2004042701) {     /// Add hiddentopics field to control hidden topics behaviour
         table_column("course", "", "hiddentopics", "integer", "1", "unsigned", "0", "not null", "visible");
+    }
+
+    if ($oldversion < 2004042702) {     /// add a format field for the description
+        table_column("event", "", "format", "integer", "4", "unsigned", "0", "not null", "description");
     }
 
     return $result;

@@ -87,6 +87,7 @@ CREATE TABLE prefix_event (
    id SERIAL PRIMARY KEY,
    name varchar(255) NOT NULL default '',
    description text,
+   format integer NOT NULL default '0',
    courseid integer NOT NULL default '0',
    groupid integer NOT NULL default '0',
    userid integer NOT NULL default '0',

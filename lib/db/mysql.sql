@@ -143,6 +143,7 @@ CREATE TABLE `prefix_event` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
   `description` text NOT NULL,
+  `format` int(4) unsigned NOT NULL default '0',
   `courseid` int(10) unsigned NOT NULL default '0',
   `groupid` int(10) unsigned NOT NULL default '0',
   `userid` int(10) unsigned NOT NULL default '0',
