@@ -776,8 +776,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     static $strmovehere;
     static $strmovefull;
 
+
     if (!isset($isteacher)) {
-        $groupbuttons = $course->groupmode and !$course->groupmodeforce;
+        $groupbuttons = ($course->groupmode and !$course->groupmodeforce);
         $isteacher = isteacher($course->id);
         $isediting = isediting($course->id);
         $ismoving = ismoving($course->id);
