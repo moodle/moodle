@@ -40,8 +40,27 @@
 
     require_course_login($course, false, $cm);
 
-    if (isguest()) {
-        error("Guests are not allowed to subscribe to forums.", $_SERVER["HTTP_REFERER"]);
+    if (isguest()) {   // Guests can't subscribe
+        $wwwroot = $CFG->wwwroot.'/login/index.php';
+        if (!empty($CFG->loginhttps)) {
+            $wwwroot = str_replace('http','https', $wwwroot);
+        }
+
+        $strforums = get_string('modulenameplural', 'forum');
+        if ($course->category) {
+            print_header($course->shortname, $course->fullname,
+                 "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
+                  <a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> 
+                  <a href=\"view.php?f=$forum->id\">$forum->name</a>", '', '', true, "", navmenu($course, $cm));
+        } else {
+            print_header($course->shortname, $course->fullname,
+                 "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> 
+                  <a href=\"view.php?f=$forum->id\">$forum->name</a>", '', '', true, "", navmenu($course, $cm));
+        }
+        notice_yesno(get_string('noguestsubscribe', 'forum').'<br /><br />'.get_string('liketologin'),
+                     $wwwroot, $_SERVER['HTTP_REFERER']);
+        print_footer();
+        exit;
     }
 
     if ($forum->type == "teacher") {

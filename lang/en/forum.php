@@ -85,6 +85,7 @@ $string['nameteacher'] = 'Teacher forum';
 $string['newforumposts'] = 'New forum posts';
 $string['nodiscussions'] = 'There are no discussion topics yet in this forum';
 $string['noguestpost'] = 'Sorry, guests are not allowed to post.';
+$string['noguestsubscribe'] = 'Sorry, guests are not allowed to subscribe to receive forum postings by email.';
 $string['nomorepostscontaining'] = 'No more posts containing \'$a\' were found';
 $string['nonews'] = 'No news has been posted yet';
 $string['noposts'] = 'No posts';
