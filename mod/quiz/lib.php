@@ -221,7 +221,7 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
     if ($grade = get_record('quiz_grades', 'userid', $user->id, 'quiz', $quiz->id)) {
 
         if (floatval($grade->grade)) {
-            $result->info = get_string('grade').': '.$grade->grade;
+            $result->info = get_string('grade').':&nbsp;'.format_float($grade->grade, $quiz->decimalpoints);
         }
         $result->time = $grade->timemodified;
         return $result;
