@@ -325,7 +325,9 @@ function forum_count_unrated_posts($discussionid, $userid) {
 
         if ($rated = get_record_sql("SELECT count(*) as num 
                                      FROM forum_posts p, forum_ratings r
-                                     WHERE p.id = r.post AND r.user = '$userid'")) {
+                                     WHERE p.discussion = '$discussionid'
+                                       AND p.id = r.post 
+                                       AND r.user = '$userid'")) {
             $difference = $posts->num - $rated->num;
             if ($difference > 0) {
                 return $difference;
