@@ -40,5 +40,6 @@ Now I show the specific detailed status of every item in the process:
           to decide what to do (ignore, process).
 24. DONE: Take out THEME from backup directory.
 25. TODO: Add support for forum_read table in backup and restore.
+26. TODO: chat_users->course and chat_users->lang.
 Eloy (stronk7)
 23-01-2004
