@@ -14,23 +14,26 @@
             error("You can't modify this course!");
         }
 
-        $modcode = "../mod/$mod->modulename/mod.php";
-        if (file_exists($modcode)) {
-            include($modcode);
+        $modlib = "../mod/$mod->modulename/lib.php";
+        if (file_exists($modlib)) {
+            include($modlib);
         } else {
-            error("This module is missing important code! (mod.php)");
+            error("This module is missing important code! ($modlib)");
         }
+        $addinstancefunction    = $mod->modulename."_add_instance";
+        $updateinstancefunction = $mod->modulename."_update_instance";
+        $deleteinstancefunction = $mod->modulename."_delete_instance";
 
         switch ($mod->mode) {
             case "update":
-                if (! update_instance($mod)) {
+                if (! $updateinstancefunction($mod)) {
                     error("Could not update the $mod->modulename");
                 }
                 add_to_log($mod->course, "course", "update mod", "../mod/$mod->modulename/view.php?id=$mod->coursemodule", "$mod->modulename $mod->instance"); 
                 break;
 
             case "add":
-                if (! $mod->instance = add_instance($mod)) {
+                if (! $mod->instance = $addinstancefunction($mod)) {
                     error("Could not add a new instance of $mod->modulename");
                 }
                 // course_modules and course_sections each contain a reference 
@@ -48,7 +51,7 @@
                 add_to_log($mod->course, "course", "add mod", "../mod/$mod->modulename/view.php?id=$mod->coursemodule", "$mod->modulename $mod->instance"); 
                 break;
             case "delete":
-                if (! delete_instance($mod->instance)) {
+                if (! $deleteinstancefunction($mod->instance)) {
                     notify("Could not delete the $mod->modulename (instance)");
                 }
                 if (! delete_course_module($mod->coursemodule)) {
