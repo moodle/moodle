@@ -52,8 +52,10 @@
                 $modname = $urlparts[0];
                 $modparts = split('.php\?id=', $urlparts[1]);
                 if (count($modparts) == 2) {
-                    $modpage = $modparts[0];
-                    $modid = $modparts[1];
+                    if (record_exists('course_modules', 'id', $modparts[1], 'course', $course->id)) {
+                        $modpage = $modparts[0];
+                        $modid = $modparts[1];
+                    }
                 }
             }
         }
