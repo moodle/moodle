@@ -1796,11 +1796,12 @@ function print_footer($course=NULL, $usercourse=NULL) {
     }
 
 /// Set up some other navigation links (passed from print_header by ugly hack)
-    $menu       = isset($THEME->menu) ? $THEME->menu : '';
+    $menu       = isset($THEME->menu) ? str_replace('navmenu', 'navmenufooter', $THEME->menu) : '';
     $title      = isset($THEME->title) ? $THEME->title : '';
     $button     = isset($THEME->button) ? $THEME->button : '';
     $heading    = isset($THEME->heading) ? $THEME->heading : '';
     $navigation = isset($THEME->navigation) ? $THEME->navigation : '';
+
 
 /// Set the user link if necessary
     if (!$usercourse and is_object($course)) {
