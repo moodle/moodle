@@ -573,11 +573,16 @@ function displaydir ($wdir) {
 
             print_cell("center", "<INPUT TYPE=checkbox NAME=\"file$count\" VALUE=\"$fileurl\">");
             echo "<TD ALIGN=left NOWRAP>";
-            link_to_popup_window ("/file.php/$id$fileurl", "display", 
+            if ($CFG->slasharguments) {
+                $ffurl = "/file.php/$id$fileurl";
+            } else {
+                $ffurl = "/file.php?file=/$id$fileurl";
+            }
+            link_to_popup_window ($ffurl, "display", 
                                   "<IMG SRC=\"pix/$icon\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"File\">", 
                                   480, 640);
             echo "<FONT SIZE=\"-1\" FACE=\"Arial, Helvetica\">";
-            link_to_popup_window ("/file.php/$id$fileurl", "display", 
+            link_to_popup_window ($ffurl, "display", 
                                   htmlspecialchars($file),
                                   480, 640);
             echo "</FONT></TD>";

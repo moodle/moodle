@@ -7,8 +7,12 @@
 
     $lifetime = 86400;
 
+    if (isset($file)) {     // workaround for situations where / syntax doesn't work
+        $PATH_INFO = $file;
+    }
+
     if (!$PATH_INFO) {
-        error("This script DEPENDS on $PATH_INFO being available.  Read the README.");
+        error("This script DEPENDS on PATH_INFO being available.  Read the README.");
     }
 
     $args = get_slash_arguments();

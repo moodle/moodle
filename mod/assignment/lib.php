@@ -318,8 +318,14 @@ function assignment_print_user_files($assignment, $user) {
         if ($files = get_directory_list($basedir)) {
             foreach ($files as $file) {
                 $icon = mimeinfo("icon", $file);
+                if ($CFG->slasharguments) {
+                    $ffurl = "file.php/$filearea/$file";
+                } else {
+                    $ffurl = "file.php?file=/$filearea/$file";
+                }
+
                 echo "<IMG SRC=\"$CFG->wwwroot/files/pix/$icon\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"File\">";
-                echo "&nbsp;<A TARGET=\"uploadedfile\" HREF=\"$CFG->wwwroot/file.php/$filearea/$file\">$file</A>";
+                echo "&nbsp;<A TARGET=\"uploadedfile\" HREF=\"$CFG->wwwroot/$ffurl\">$file</A>";
                 echo "<BR>";
             }
         }

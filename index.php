@@ -27,7 +27,7 @@
                  true, $headerbutton);
 
 
-    $side = 190;
+    $side = 180;
 
 
 ?>

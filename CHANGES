@@ -1,3 +1,138 @@
+2002-08-22 Thursday 16:31  martin
+
+	* lib/weblib.php: 
+	
+	New space-removal works better if done before adding link tags :-)
+
+2002-08-22 Thursday 16:01  martin
+
+	* mod/forum/lib.php: 
+	
+	If a post is updated that is also a discussion definition, then the
+	discussion name is updated with the post subject.
+
+2002-08-22 Thursday 15:53  martin
+
+	* lib/weblib.php: 
+	
+	Experimental filters to remove returns from before and after tags,
+	which should mean neater formatting of lists and so on.  Needs
+	testing.
+
+2002-08-22 Thursday 14:41  martin
+
+	* admin/: index.php, user.php: 
+	
+	Tweaks to creation of user account while searching for the login
+	problem some people are having ...
+
+2002-08-22 Thursday 14:40  martin
+
+	* lib/db/mysql.sql: 
+	
+	Added recent upgrades (course->guest, and user->maildisplay)
+
+2002-08-22 Thursday 10:24  martin
+
+	* doc/install.html, lang/en/moodle.php, login/index_form.html: 
+	
+	Notes about the necessity of cookies being allowed
+
+2002-08-22 Thursday 10:23  martin
+
+	* course/teacher.php: 
+	
+	Handy link to course page, after assigning teachers
+
+2002-08-22 Thursday 09:24  martin
+
+	* index.php: 
+	
+	Whoops!  comment out of place
+
+2002-08-21 Wednesday 22:08  martin
+
+	* index.php, lib/moodlelib.php: 
+	
+	Just some comments about not removing the Moodle logo from the
+	front page.
+
+2002-08-21 Wednesday 21:55  martin
+
+	* lib/moodlelib.php: 
+	
+	Fixed dates when no-one is logged in (uses server time now, not
+	GMT)
+
+2002-08-21 Wednesday 21:29  martin
+
+	* version.php, lang/en/moodle.php, user/edit.html, user/lib.php,
+	user/view.php: 
+	
+	Users can now choose to hide their email address.  In this initial
+	version there are three options:
+	
+	0) Hide the email address from everyone (except the teacher of
+	their course) 1) Allow everyone to see the email address, all the
+	time.  2) Allow only participants in the same course to see the
+	email address
+	
+	Note, new field maildisplay in 'user'
+
+2002-08-21 Wednesday 20:54  martin
+
+	* version.php, course/edit.html, lang/en/moodle.php,
+	lang/en/help/enrolmentkey.html, lang/en/help/guestaccess.html,
+	lib/moodlelib.php: 
+	
+	Fixed up guest access PROPERLY - it's now more obvious and simple
+	for teachers to set it how they want.  Guest access now has THREE
+	states (off, on, on with key).
+
+2002-08-21 Wednesday 19:11  martin
+
+	* lang/en/help/: enrolmentkey.html, guestaccess.html: 
+	
+	Improved explanations
+
+2002-08-21 Wednesday 18:56  martin
+
+	* lang/en/help/: enrolmentkey.html, guestaccess.html: 
+	
+	Clarified the documentation here
+
+2002-08-21 Wednesday 10:05  martin
+
+	* doc/install.html: 
+	
+	Anchor name fix
+
+2002-08-21 Wednesday 09:57  martin
+
+	* doc/install.html: 
+	
+	Improvements to install documentation
+
+2002-08-20 Tuesday 17:39  martin
+
+	* admin/cron.php: 
+	
+	Bugfix for unenrolling old users
+
+2002-08-20 Tuesday 10:15  martin
+
+	* doc/developer.html: 
+	
+	Slight formatting fix on list
+
+2002-08-19 Monday 22:53  martin
+
+	* CHANGES: 
+	
+	
+	
+	Moodle 1.0 is released!  :-)
+
 2002-08-19 Monday 21:25  martin
 
 	* doc/: contents.html, developer.html, licence.html: 

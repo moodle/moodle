@@ -100,6 +100,16 @@ $CFG->zip   = "/usr/bin/zip";
 $CFG->unzip = "/usr/bin/unzip";
 
 
+// Files (images, uploads etc) are provided via a script which 
+// is called like this example: file.php/1/myfiles/mymusic.mp3
+// Using this form of argument allows files to be more easily 
+// cached in web browsers, proxy servers etc, but they don't 
+// work in all PHP servers.  If you have trouble viewing 
+// uploaded files or images, then set the following to false
+
+$CFG->slasharguments = true;
+
+
 // You should not need to change anything else. To continue setting up 
 // Moodle, use your web browser to go to the moodle/admin web page.
 ///////////////////////////////////////////////////////////////////////////
