@@ -1082,7 +1082,7 @@
                                 $eve->groupid = $group->new_id;
                             } else {
                                 //Assign it to group 0
-                                $eve->groupid = 0
+                                $eve->groupid = 0;
                             }
 
                             //The structure is equal to the db, so insert the event
