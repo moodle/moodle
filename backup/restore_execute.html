@@ -156,6 +156,16 @@
         }       
     }
 
+    //Now create course modules as needed
+    if ($status) {
+        echo "<li>Creating Course Modules";
+        $status = restore_create_modules($restore,$xml_file);
+        //If all is ok (and we have a counter)
+        if ($status and ($status !== true)) {   
+            //Inform about modules restores
+        }
+    }
+
     
 
 
