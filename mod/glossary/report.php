@@ -34,10 +34,10 @@
     $strname = get_string("name");
     $strtime = get_string("time");
 
-    print_header("$strratings: $entry->subject");
+    print_header("$strratings: $entry->concept");
 
     if (!$ratings = glossary_get_ratings($entry->id, $sort)) {
-        error("No ratings for this entry: \"$entry->subject\"");
+        error("No ratings for this entry: \"$entry->concept\"");
 
     } else {
         echo "<table border=0 cellpadding=3 cellspacing=3 class=generalbox width=100%>";
