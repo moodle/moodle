@@ -369,9 +369,9 @@ Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître co
 
 Si vous avez besoin d\'aide, veuillez contacter l\'administrateur du site, $a->admin';
 $string['emailconfirmationsubject'] = '$a : confirmation de l\'ouverture du compte';
-$string['emailconfirmsent'] = '<p>Un message vous a été envoyé à l\'adresse de courriel <strong>$a</strong>.</p>
-<p>Il contient les instructions pour terminer votre enregistrement.</p>
-<p>Si vous rencontrez des difficultés, contactez l\'administrateur du site.</p>';
+$string['emailconfirmsent'] = 'Un message vous a été envoyé à l\'adresse de courriel <strong>$a</strong>.<br />
+Il contient les instructions pour terminer votre enregistrement.<br />
+Si vous rencontrez des difficultés, veuillez contacter l\'administrateur du site.';
 $string['emaildigest'] = 'Forme du courriel quotidien';
 $string['emaildigestcomplete'] = 'Complet (courriel quotidien avec l\'intégralité des messages)';
 $string['emaildigestoff'] = 'Pas de courriel quotidien (un courriel par message)';
@@ -401,7 +401,7 @@ Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître co
 
 Si vous avez besoin d\'aide, veuillez contacter l\'administrateur du site, $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a : confirmation du changement de mot de passe';
-$string['emailpasswordconfirmsent'] = '<p>Un message a été envoyé à votre adresse de courriel<strong>$a</strong>.<br />
+$string['emailpasswordconfirmsent'] = 'Un message a été envoyé à votre adresse de courriel<strong>$a</strong>.<br />
 Ce message décrit la marche à suivre pour confirmer et terminer le changement de mot de passe.<br />
 En cas de difficulté, veuillez contacter l\'administrateur du site.';
 $string['emailpasswordsent'] = 'Merci pour votre confirmation de changement de mot de passe.<br />
@@ -792,9 +792,9 @@ $string['passwordconfirmchange'] = 'Confirmer le changement de mot de passe';
 $string['passwordrecovery'] = 'Oui, j\'ai besoin d\'aide pour me connecter';
 $string['passwordsdiffer'] = 'Les mots de passe ne correspondent pas';
 $string['passwordsent'] = 'Le mot de passe a été envoyé';
-$string['passwordsenttext'] = '<p>Un message vous a été envoyé à cette adresse : $a->email.</p>
-<p><strong>Merci de lire ce message afin de connaître votre nouveau mot de passe</strong></p>
-<p>Ce nouveau mot de passe a été généré automatiquement. Vous voudrez sans doute<br /> le <a href=\"$a->link\">modifier</a> afin qu\'il vous soit plus facile de vous en souvenir.</p>';
+$string['passwordsenttext'] = 'Un message vous a été envoyé à cette adresse : $a->email.<br />
+<strong>Merci de lire ce message afin de connaître votre nouveau mot de passe</strong><br />
+Ce nouveau mot de passe a été généré automatiquement. Vous voudrez sans doute<br /> le <a href=\"$a->link\">modifier</a> afin qu\'il vous soit plus facile de vous en souvenir.';
 $string['pathnotexists'] = 'Ce chemin n\'existe pas sur votre serveur !';
 $string['pathslasherror'] = 'Le chemin ne doit pas se terminer par une barre oblique !';
 $string['paymentinstant'] = 'Le bouton ci-dessous vous permet de payer et de vous inscrire en quelques minutes !';
@@ -879,7 +879,7 @@ $string['sections'] = 'Sections';
 $string['select'] = 'Choisir';
 $string['selectacountry'] = 'Choisir un pays';
 $string['selectednowmove'] = '$a fichiers sélectionné pour déplacement. Allez maintenant vers la destination désirée et cliquez sur «&nbsp;Déplacer les fichiers ici »';
-$string['senddetails'] = 'Envoyer mes informations par courriel';
+$string['senddetails'] = 'Envoyer un nouveau mot de passe par courriel';
 $string['separateandconnected'] = 'Appropriation du savoir liée ou détachée';
 $string['serverlocaltime'] = 'Heure locale du serveur';
 $string['settings'] = 'Paramètres';
