@@ -5,25 +5,25 @@ $string[modulename] = "Aineisto";
 $string[modulenameplural] = "Aineistot";
 #------------------------------------------------------------
 
-$string[addreading] = "Lis‰‰ aineisto";
-$string[editingareading] = "Aineiston muokkaus";
+$string[addresource] = "Lis‰‰ aineisto";
+$string[editingaresource] = "Aineiston muokkaus";
 $string[example] = "Esimerkki";
 $string[examplereference] = "Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.";
 $string[exampleurl] = "http://www.example.com/somedirectory/somefile.html";
 $string[filename] = "Tiedoston nimi";
 $string[fulltext] = "Teksti";
 $string[htmlfragment] = "HTML";
-$string[neverread] = "Lukematta";
+$string[neverseen] = "Lukematta";
 $string[note] = "Huomaa";
 $string[notefile] = "Lis‰t‰ksesi tiedostoja kurssille (jotta ne n‰kysiv‰t t‰ss‰ listassa) k‰yt‰ 
 <A HREF=\$a >Tiedostot-</A>tyˆkalua.";
 $string[notypechosen] = "Sinun pit‰‰ valita luettavan aineiston tyyppi tyyppi.  Kayt‰ selaimen \"back\"-nappia.";
-$string[readingtype] = "Tyyppi";
-$string[readingtype1] = "Viittaus";
-$string[readingtype2] = "Web-sivu";
-$string[readingtype3] = "Tiedosto";
-$string[readingtype4] = "Teksti";
-$string[readingtype5] = "Web-linkki";
-$string[readingtype6] = "HTML";
+$string[resourcetype] = "Tyyppi";
+$string[resourcetype1] = "Viittaus";
+$string[resourcetype2] = "Web-sivu";
+$string[resourcetype3] = "Tiedosto";
+$string[resourcetype4] = "Teksti";
+$string[resourcetype5] = "Web-linkki";
+$string[resourcetype6] = "HTML";
 
 ?>
