@@ -82,7 +82,109 @@ define('DAYMINS', 1440);
  */
 define('HOURMINS', 60);
 
+/**
+ * Parameter constant - if set then the parameter is cleaned of scripts etc
+ */
+define('PARAM_CLEAN',   0x01);
+
+/**
+ * Parameter constant - if set then the parameter is cast to an integer
+ */
+define('PARAM_INT',     0x02);
+
+/**
+ * Parameter constant - alias for PARAM_INT
+ */
+define('PARAM_INTEGER', 0x02);
+
+
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
+
+/**
+ * Returns a particular value for the named variable, taken from 
+ * POST or GET.  If the parameter doesn't exist then an error is 
+ * thrown because we require this variable.
+ *
+ * This function should be used to initialise all required values 
+ * in a script that are based on parameters.  Usually it will be 
+ * used like this:
+ *    $id = required_param('id');
+ *
+ * @param string $varname the name of the parameter variable we want
+ * @param integer $options a bit field that specifies any cleaning needed
+ * @return mixed
+ */
+function required_param($varname, $options=PARAM_CLEAN) {
+/// This function will replace require_variable over time
+/// It returns a value for a given variable name.
+
+    if (isset($_POST[$varname])) {       // POST has precedence
+        $param = $_POST[$varname];
+    } else if (isset($_GET[$varname])) {
+        $param = $_GET[$varname];
+    } else {
+        error('A required parameter ($'.$varname.') was missing');
+    }
+
+    return clean_param($param, $options);
+}
+
+/**
+ * Returns a particular value for the named variable, taken from 
+ * POST or GET, otherwise returning a given default.
+ *
+ * This function should be used to initialise all optional values 
+ * in a script that are based on parameters.  Usually it will be 
+ * used like this:
+ *    $name = optional_param('name', 'Fred');
+ *
+ * @param string $varname the name of the parameter variable we want
+ * @param mixed  $default the default value to return if nothing is found
+ * @param integer $options a bit field that specifies any cleaning needed
+ * @return mixed
+ */
+function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
+/// This function will replace both of the above two functions over time.
+/// It returns a value for a given variable name.
+
+    if (isset($_POST[$varname])) {       // POST has precedence
+        $param = $_POST[$varname];
+    } else if (isset($_GET[$varname])) {
+        $param = $_GET[$varname];
+    } else {
+        return $default;
+    }
+
+    return clean_param($param, $options);
+}
+
+/**
+ * Used by {@link optional_param()} and {@link required_param()} to 
+ * clean the variables and/or cast to specific types, based on 
+ * an options field.
+ *
+ * @param mixed $param the variable we are cleaning
+ * @param integer $options a bit field that specifies the cleaning needed
+ * @return mixed
+ */
+function clean_param($param, $options) {
+/// Given a parameter and a bitfield of options, this function
+/// will clean it up and give it the required type, etc.
+
+    if ($param == (int)$param) {         // It's just an integer
+        return (int)$param;
+    }
+
+    if ($options & PARAM_CLEAN) {
+        $param = clean_text($param);     // Sweep for scripts, etc
+    }
+
+    if ($options & PARAM_INT) {
+        $param = (int)$param;            // Convert to integer
+    }
+
+    return $param;
+}
 
 /**
  * Ensure that a variable is set or display error
@@ -117,31 +219,6 @@ function optional_variable(&$var, $default=0) {
     }
 }
 
-/**
- * Returns a particular value for the named variable, taken from 
- * POST or GET, otherwise returning a given default.
- *
- * This function should be used to initialise all values in a script
- * that are based on parameters.  Usually it will be used like this:
- *
- *    $id = (int)parameter('id');
- *
- * @param string $varname the name of the parameter variable we want
- * @param mixed  $default the default value to return if nothing is found
- * @return mixed
- */
-function parameter($varname, $default=NULL) {
-
-    if (isset($_POST[$varname])) {       // POST has precedence
-        return $_POST[$varname];
-    }
-
-    if (isset($_GET[$varname])) {
-        return $_GET[$varname];
-    }
-    
-    return $default;
-}
 
 /**
  * Set a key in global configuration
