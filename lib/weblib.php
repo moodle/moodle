@@ -1789,14 +1789,22 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
     $logslink = NULL;
     $flag = false;
 
+    $sectionrecs = get_records("course_sections","course","$course->id","section","section,visible");
+
     foreach ($modinfo as $mod) {
         if ($mod->mod == "label") {
             continue;
         }
+
         if ($mod->section > 0 and $section <> $mod->section) {
-            $menu[] = "-------------- $strsection $mod->section --------------";
+            //Only add if visible or collapsed or teacher or course format = weeks
+            if ($sectionrecs[$mod->section]->visible or $course->hiddentopics == 0 or $isteacher or $course->format == 'weeks') {
+                $menu[] = "-------------- $strsection $mod->section --------------";
+            }
         }
+
         $section = $mod->section;
+
         //Only add visible or teacher mods to jumpmenu
         if ($mod->visible or $isteacher) {
             $url = "$mod->mod/view.php?id=$mod->cm";
