@@ -969,7 +969,12 @@ function main_upgrade($oldversion=0) {
         modify_database('','ALTER TABLE `prefix_user` ADD INDEX prefix_user_email_idx (email);');
     }
 
-    
+    if ($oldversion < 2004112200) { // new 'enrol' field for enrolment tables
+        table_column('user_students', '', 'enrol', 'varchar', '20', '', '', 'not null');
+        table_column('user_teachers', '', 'enrol', 'varchar', '20', '', '', 'not null');
+        execute_sql("ALTER TABLE `{$CFG->prefix}user_students` ADD INDEX enrol (enrol);");
+        execute_sql("ALTER TABLE `{$CFG->prefix}user_teachers` ADD INDEX enrol (enrol);");
+    }
     
     return $result;
 

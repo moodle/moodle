@@ -428,10 +428,12 @@ CREATE TABLE `prefix_user_students` (
   `timeend` int(10) unsigned NOT NULL default '0',
   `time` int(10) unsigned NOT NULL default '0',
   `timeaccess` int(10) unsigned NOT NULL default '0',
+  `enrol` varchar(20) NOT NULL default '',  
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),
   KEY `courseuserid` (course,userid),
   KEY `userid` (userid),
+  KEY `enrol` (enrol),
   KEY `timeaccess` (timeaccess)
 ) TYPE=MyISAM;
 # --------------------------------------------------------

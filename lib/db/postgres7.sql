@@ -293,11 +293,13 @@ CREATE TABLE prefix_user_students (
    timestart integer NOT NULL default '0',
    timeend integer NOT NULL default '0',
    time integer NOT NULL default '0',
-   timeaccess integer NOT NULL default '0'
+   timeaccess integer NOT NULL default '0',
+   enrol varchar (20) NOT NULL default ''
 );
 
 CREATE INDEX prefix_user_students_courseuserid_idx ON prefix_user_students (course,userid);
 CREATE INDEX prefix_user_students_userid_idx ON prefix_user_students (userid);
+CREATE INDEX prefix_user_students_enrol_idx ON prefix_user_students (enrol);
 
 CREATE TABLE prefix_user_teachers (
    id SERIAL PRIMARY KEY,
@@ -309,11 +311,13 @@ CREATE TABLE prefix_user_teachers (
    timestart integer NOT NULL default '0',
    timeend integer NOT NULL default '0',
    timemodified integer NOT NULL default '0',
-   timeaccess integer NOT NULL default '0'
+   timeaccess integer NOT NULL default '0',
+   enrol varchar (20) NOT NULL default ''
 );
 
 CREATE INDEX prefix_user_teachers_courseuserid_idx ON prefix_user_teachers (course,userid);
 CREATE INDEX prefix_user_teachers_userid_idx ON prefix_user_teachers (userid);
+CREATE INDEX prefix_user_teachers_enrol_idx ON prefix_user_teachers (enrol);
 
 CREATE TABLE prefix_user_coursecreators (
    id SERIAL8 PRIMARY KEY,

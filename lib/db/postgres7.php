@@ -709,7 +709,13 @@ function main_upgrade($oldversion=0) {
 
         modify_database('','CREATE INDEX prefix_user_email_idx ON prefix_user (email);');
      }
- 
+
+    if ($oldversion < 2004112200) { // new 'enrol' field for enrolment tables
+        table_column('user_students', '', 'enrol', 'varchar', '20', '', '', 'not null');
+        table_column('user_teachers', '', 'enrol', 'varchar', '20', '', '', 'not null');
+        modify_database("","CREATE INDEX {$CFG->prefix}user_students_enrol_idx ON {$CFG->prefix}user_students (enrol);");
+        modify_database("","CREATE INDEX {$CFG->prefix}user_teachers_enrolidx ON {$CFG->prefix}user_teachers (enrol);");
+    } 
     return $result;
 }
 
