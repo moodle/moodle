@@ -411,7 +411,9 @@ function quiz_print_quiz_questions($quiz, $results=NULL) {
         return false;
     }
 
-    echo "<FORM METHOD=POST ACTION=attempt.php>";
+    $strconfirmattempt = addslashes(get_string("readytosend", "quiz"));
+
+    echo "<FORM METHOD=POST ACTION=attempt.php onsubmit=\"return confirm('$strconfirmattempt');\">";
     echo "<INPUT TYPE=hidden NAME=q VALUE=\"$quiz->id\">";
 
     foreach ($questions as $key => $questionid) {
