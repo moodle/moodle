@@ -3224,7 +3224,9 @@ function print_scale_menu_helpbutton($courseid, $scale) {
 }
 
 /**
- * Print an error page displaying an error message.
+ * Print an error page displaying an error message.  
+ * Old method, don't call directly in new code - use print_error instead.
+ * 
  *
  * @uses $SESSION
  * @uses $CFG
@@ -3239,7 +3241,7 @@ function error ($message, $link='') {
 
     $message = clean_text($message);   // In case nasties are in here
 
-    print_simple_box($message, 'center', '', '#FFBBBB');
+    print_simple_box($message, 'center', '', '#FFBBBB', 5, 'errorbox');
 
     if (!$link) {
         if ( !empty($SESSION->fromurl) ) {
@@ -3253,6 +3255,21 @@ function error ($message, $link='') {
     print_footer();
     die;
 }
+
+/**
+ * Print an error page displaying an error message.  New method - use this for new code.
+ *
+ * @uses $SESSION
+ * @uses $CFG
+ * @param string $string The name of the string from error.php to print
+ * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
+ */
+function print_error ($string, $link='') {
+
+    $string = get_string($string, 'error');
+    error($string, $link);
+}
+
 
 /**
  * Print a help button.
