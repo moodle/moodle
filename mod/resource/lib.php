@@ -335,7 +335,7 @@ function resource_get_coursemodule_info($coursemodule) {
 
    if ($resource = get_record("resource", "id", $coursemodule->instance)) {
        if (!empty($resource->popup)) {
-           $info->extra =  urlencode("target=\"resource$resource->id\" onClick=\"return ".
+           $info->extra =  urlencode("target=\"resource$resource->id\" onclick=\"return ".
                             "openpopup('/mod/resource/view.php?inpopup=true&amp;id=".
                             $coursemodule->id.
                             "','resource$resource->id','$resource->popup');\"");
