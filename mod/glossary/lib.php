@@ -468,51 +468,45 @@ function  glossary_print_entry_concept($entry) {
 }
 
 function glossary_print_entry_definition($entry) {
+
     $definition = $entry->definition;
 
-    //getting ride of A tags
-    $links = array();
-    preg_match_all('/<img (.+?)>/is',$definition,$list_of_links);
+    $tags = array();
 
-    foreach (array_unique($list_of_links[0]) as $key=>$value) {
-        $links['<@'.$key.'@>'] = $value;
-    }
-    if ( $links ) {
-        $definition = str_replace($links,array_keys($links),$definition);
-    }
-
-    //getting ride of IMG tags
-    $images = array();
-    preg_match_all('/<A (.+?)>/is',$definition,$list_of_images);
-
-    foreach (array_unique($list_of_images[0]) as $key=>$value) {
-        $images['<@'.$key.'@>'] = $value;
-    }
-    if ( $images ) {
-        $definition = str_replace($images,array_keys($images),$definition);
-    }
-        
-    $definition = str_ireplace($entry->concept,"<nolink>$entry->concept</nolink>",$definition);
-
-    //restoring A tags
-    if ( $links ) {
-        $definition = str_replace(array_keys($links),$links,$definition);
-    }
-
-    //restoring IMG tags
-    if ( $images ) {
-        $definition = str_replace(array_keys($images),$images,$definition);
-    }
-
-/*    if ( $aliases = get_records("glossary_alias","entryid",$entry->id) ) {
+    //Calculate all the strings to be no-linked
+    //First, the concept
+    $term = preg_quote(trim($entry->concept));
+    $pat = '/('.$term.')/is';
+    $doNolinks[] = $pat;
+    //Now the aliases
+    if ( $aliases = get_records("glossary_alias","entryid",$entry->id) ) {
         foreach ($aliases as $alias) {
-        echo "<small><font color=red>$alias->alias: ";
-            $definition = str_ireplace($alias->alias,"<nolink>$alias->alias</nolink>",$definition);
-            echo "<b>" . format_text($definition,2) . "</b>";
-        echo "</font></small><br>";
+            $term = preg_quote(trim($alias->alias));
+            $pat = '/('.$term.')/is';
+            $doNolinks[] = $pat;
         }
     }
-*/
+
+    //Extract all tags from definition
+    preg_match_all('/(<.*?>)/is',$definition,$list_of_tags);
+
+    //Save them into tags array to use them later
+    foreach (array_unique($list_of_tags[0]) as $key=>$value) {
+        $tags['<@'.$key.'@>'] = $value;
+    }
+
+    //Take off every tag from definition
+    if ( $tags ) {
+        $definition = str_replace($tags,array_keys($tags),$definition);
+    }
+    
+    //Put doNolinks (concept + aliases) enclosed by <nolink> tag
+    $definition= preg_replace($doNolinks,'<nolink>$1</nolink>',$definition);
+        
+    //Restore tags
+    if ( $tags ) {
+        $definition = str_replace(array_keys($tags),$tags,$definition);
+    }
 
     $text = format_text($definition, $entry->format);
     if (!empty($entry->highlight)) {
