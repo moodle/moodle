@@ -2,7 +2,6 @@
 <FORM name="form" method="post" action="editsection.php">
 <P><B><? print_string("summaryof", "", "$sectionname $form->section") ?></B></P>
 <TEXTAREA NAME=summary COLS=60 ROWS=4 WRAP=virtual><?=$form->summary ?></TEXTAREA>
-<BR><FONT SIZE=1>(<? print_string("maximumchars", "", "255") ?>)</FONT>
 <P>
 <INPUT type="hidden" name=id value="<?=$form->id ?>">
 <INPUT type="submit" value="<? print_string("savechanges") ?>">
