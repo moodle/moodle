@@ -113,8 +113,7 @@
 
             if($form = data_submitted()) {
 
-                $form->name = strip_tags($form->name,'<lang>');  // Strip all tags
-                //$form->description = clean_text($form->description , $form->format);   // Clean up any bad tags
+                $form->name = strip_tags($form->name,'<lang>');  // Strip all tags, but <lang>
 
                 $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
                 if($form->duration == 1) {
@@ -135,6 +134,7 @@
                     update_record('event', $form);
 
                     /// Log the event update.
+                    $form->name = stripslashes($form->name);  //To avoid double-slashes
                     add_to_log($form->courseid, 'calendar', 'edit', 'event.php?action=edit&amp;id='.$form->id, $form->name);
 
                     // OK, now redirect to day view
@@ -153,8 +153,7 @@
             $form = data_submitted();
             if(!empty($form) && $form->type == 'defined') {
 
-                $form->name = strip_tags($form->name);  // Strip all tags
-                //$form->description = clean_text($form->description , $form->format);   // Clean up any bad tags
+                $form->name = strip_tags($form->name, '<lang>');  // Strip all tags but <lang>
 
                 $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
                 if($form->duration == 1) {
@@ -180,6 +179,7 @@
                     $eventid = insert_record('event', $form, true);
 
                     /// Log the event entry.
+                    $form->name = stripslashes($form->name);  //To avoid double-slashes
                     add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, $form->name);
 
                     if ($form->repeat) {
@@ -190,6 +190,7 @@
                             /// Get the event id for the log record.
                             $eventid = insert_record('event', $form, true);
                             /// Log the event entry.
+                            $form->name = stripslashes($form->name);  //To avoid double-slashes
                             add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, $form->name);
                         }
                     }
