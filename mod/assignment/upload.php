@@ -37,8 +37,8 @@
     $dir = assignment_file_area_name($assignment,$USER);
     require_once($CFG->dirroot.'/lib/uploadlib.php');
     $um = new upload_manager('newfile',true,false,$course,false,$assignment->maxbytes);
-    $newfile_name = $um->get_new_filename();
     if ($um->process_file_uploads($dir)) {
+        $newfile_name = $um->get_new_filename();
         if ($submission) {
             $submission->timemodified = time();
             $submission->numfiles     = 1;
