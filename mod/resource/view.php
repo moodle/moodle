@@ -111,7 +111,9 @@
 
             $embedded = false;
 
-            if (mimeinfo("icon", $fullurl) == "image.gif") {  //  It's an image
+            $inlinetypes = array('image/gif','image/jpg','image/png');
+
+            if (in_array(mimeinfo("type", $fullurl), $inlinetypes)) {  // It's an image
                 $embedded = true;
                 $resourceimage = true;
             } else {
