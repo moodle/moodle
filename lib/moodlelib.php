@@ -584,6 +584,7 @@ function helpbutton ($page, $title="", $module="moodle", $image=true, $text="") 
     // $text = if defined then this text is used in the page, and 
     //         the $page variable is ignored.
     global $CFG;
+
     if ($module == "") {
         $module = "moodle";
     }
@@ -1022,7 +1023,6 @@ function print_object($object) {
         echo "$key -> $item <BR>";
     }
 }
-
 
 
 /// USER DATABASE ////////////////////////////////////////////////

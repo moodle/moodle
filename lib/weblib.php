@@ -180,12 +180,14 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here", $hei
 // Relies on the Javascript function openpopup in javascript.php
 // $url must be relative to home page  eg /mod/survey/stuff.php
 
+    global $CFG;
+
 	echo "\n<SCRIPT language=\"Javascript\">";
     echo "\n<!--";
 	echo "\ndocument.write('<A TITLE=\"$title\" HREF=javascript:openpopup(\"$url\",\"$name\",\"$height\",\"$width\") >$linkname</A>');";
     echo "\n//-->";
    	echo "\n</SCRIPT>";
-   	echo "\n<NOSCRIPT>\n<A TARGET=\"$name\" TITLE=\"$title\" HREF=\"$url\">$linkname</A>\n</NOSCRIPT>\n";
+   	echo "\n<NOSCRIPT>\n<A TARGET=\"$name\" TITLE=\"$title\" HREF=\"$CFG->wwwroot/$url\">$linkname</A>\n</NOSCRIPT>\n";
 
 }
 

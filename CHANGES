@@ -1,3 +1,708 @@
+2002-10-13 Sunday 15:17  moodler
+
+	* mod/quiz/: attempt.php, lib.php, version.php, view.php,
+	db/mysql.sql: 
+	
+	
+	Just to show that something is happening!
+	
+	At this stage this module:
+	
+	  - prints quizzes,
+	  - accepts answers (for multiple attempts) and grades them,
+	  - stores the grades.
+	
+	Really, it's usable as long as you don't mind using the database
+	manually. :)
+	
+	Next up is quiz reports, then I'll tackle quiz creation.
+
+2002-10-12 Saturday 23:01  moodler
+
+	* mod/: forum/post.html, journal/edit.html, journal/lib.php,
+	reading/details.php: 
+	
+	Tweaks to use new javascript-printing function etc
+
+2002-10-12 Saturday 23:00  moodler
+
+	* lib/moodlelib.php: 
+	
+	New function to print richtext javascript
+
+2002-10-12 Saturday 22:33  moodler
+
+	* lang/de/: README, assignment.php, choice.php, forum.php,
+	journal.php, moodle.php, quiz.php, reading.php, survey.php,
+	docs/module_files.txt, help/coursecategory.html,
+	help/courseformats.html, help/coursefullname.html,
+	help/coursenewsitems.html, help/coursenumsections.html,
+	help/courseshortname.html, help/coursestartdate.html,
+	help/enrolmentkey.html, help/guestaccess.html, help/html.html,
+	help/langedit.html, help/picture.html, help/questions.html,
+	help/surveys.html, help/teachers.html, help/text.html,
+	help/choice/options.html, help/forum/allowdiscussions.html,
+	help/forum/attachment.html, help/forum/forumtype.html,
+	help/forum/ratings.html, help/forum/subscription.html,
+	help/reading/readingtype.html, help/reading/summary.html: 
+	
+	First version of German (Deutsch) translation, by
+	Holger.Schadeck@webdesign-forum.de
+	
+	Great!
+
+2002-10-12 Saturday 15:23  moodler
+
+	* lib/moodlelib.php, mod/forum/post.html, mod/journal/edit.html,
+	mod/reading/details.php: 
+	
+	Moved the object code out into a function print_textarea
+
+2002-10-12 Saturday 14:27  moodler
+
+	* lang/en/moodle.php: 
+	
+	new string
+
+2002-10-12 Saturday 14:20  moodler
+
+	* mod/journal/: edit.html, edit.php, lib.php, version.php,
+	view.php, db/mysql.php, db/mysql.sql: 
+	
+	Added richtext to Journal entries.
+
+2002-10-12 Saturday 13:47  moodler
+
+	* RELEASE.html: 
+	
+	Some notes about the other new stuff.
+
+2002-10-12 Saturday 13:42  moodler
+
+	* mod/: reading/details.php, forum/post.html: 
+	
+	Added help buttons about the richtext editor (when active)
+
+2002-10-12 Saturday 13:39  moodler
+
+	* lang/en/help/richtext.html: 
+	
+	Help file for the new richtext HTML editor
+
+2002-10-12 Saturday 13:09  moodler
+
+	* lib/weblib.php: 
+	
+	Smilies are now replaced even in HTML text, and small fixes
+
+2002-10-12 Saturday 12:19  moodler
+
+	* lib/rte/images/em.icon.smile.gif: 
+	
+	Keep this one here  :-)   for the interface
+
+2002-10-12 Saturday 12:13  moodler
+
+	* pix/s/SMILEYS: 
+	
+	A bit of info
+
+2002-10-12 Saturday 12:12  moodler
+
+	* pix/s/cross.gif: 
+	
+	No longer needed ... replaced by "angry.gif" ...
+
+2002-10-12 Saturday 12:09  moodler
+
+	* lib/javascript.php: 
+	
+	Added a function useful for debugging Javascript problems
+
+2002-10-12 Saturday 12:06  moodler
+
+	* lang/en/help/text.html: 
+	
+	Swapped clown icon for surprise in the layout ... looks better that
+	way
+
+2002-10-12 Saturday 12:04  moodler
+
+	* lib/rte/dlg_ins_smile.html: 
+	
+	Swapped clown for surprise - looks better that way
+
+2002-10-12 Saturday 12:03  moodler
+
+	* lib/rte/images/: em.icon.angry.gif, em.icon.angry.png,
+	em.icon.approve.gif, em.icon.approve.png, em.icon.bigsmile.gif,
+	em.icon.bigsmile.png, em.icon.blackeye.gif, em.icon.blackeye.png,
+	em.icon.blush.gif, em.icon.blush.png, em.icon.clown.gif,
+	em.icon.clown.png, em.icon.cool.gif, em.icon.cool.png,
+	em.icon.dead.gif, em.icon.dead.png, em.icon.dissapprove.gif,
+	em.icon.dissapprove.png, em.icon.eightball.gif,
+	em.icon.eightball.png, em.icon.evil.gif, em.icon.evil.png,
+	em.icon.kiss.gif, em.icon.kiss.png, em.icon.question.gif,
+	em.icon.question.png, em.icon.sad.gif, em.icon.sad.png,
+	em.icon.shocked.gif, em.icon.shocked.png, em.icon.shy.gif,
+	em.icon.shy.png, em.icon.sleepy.gif, em.icon.sleepy.png,
+	em.icon.smile.gif, em.icon.smile.png, em.icon.tongue.gif,
+	em.icon.tongue.png, em.icon.wink.gif, em.icon.wink.png: 
+	
+	Deleted these icons because I'm not using them.  The editor now
+	uses the standard Moodle icons instead.
+
+2002-10-12 Saturday 11:55  moodler
+
+	* lib/rte/dlg_ins_smile.html: 
+	
+	This page now uses the Moodle standard icons for consistency
+
+2002-10-12 Saturday 11:54  moodler
+
+	* lib/rte/rte_editmode.js: 
+	
+	Removed references to btnPost because I don't use it
+
+2002-10-12 Saturday 11:53  moodler
+
+	* lib/weblib.php: 
+	
+	Modified text_to_html to use the new smilies, which for efficiency
+	are now defined in a global array, and use str_replace instead of
+	ereg ...
+
+2002-10-12 Saturday 11:51  moodler
+
+	* lang/en/help/text.html: 
+	
+	Modified this help file to describe the new smilies
+
+2002-10-12 Saturday 11:50  moodler
+
+	* pix/s/: angry.gif, approve.gif, biggrin.gif, blackeye.gif,
+	blush.gif, clown.gif, cool.gif, dead.gif, evil.gif, kiss.gif,
+	mixed.gif, sad.gif, shy.gif, sleepy.gif, smiley.gif, surprise.gif,
+	thoughtful.gif, tongueout.gif, wideeyes.gif, wink.gif: 
+	
+	Modified all smilies and added some new ones.
+
+2002-10-11 Friday 16:47  moodler
+
+	* mod/reading/details.php: 
+	
+	Works better on roundtrips now (use p() to stripslashes)
+
+2002-10-11 Friday 13:20  moodler
+
+	* mod/forum/lib.php: 
+	
+	Better placing of standard links etc when there are lots of images
+	and other funny formatting in HTML posts
+
+2002-10-11 Friday 10:32  moodler
+
+	* lang/en/moodle.php: 
+	
+	New strings to do with language direction
+
+2002-10-11 Friday 10:31  moodler
+
+	* admin/config.html, lib/defaults.php, lib/moodlelib.php,
+	theme/standard/header.html, theme/standardblue/header.html,
+	theme/standardgreen/header.html, theme/standardlogo/header.html,
+	theme/standardred/header.html: 
+	
+	Changes to support choice of language direction (so that languages
+	like Arabic, Hebrew etc will work)
+
+2002-10-11 Friday 09:58  moodler
+
+	* lang/en/assignment.php, mod/assignment/view.php: 
+	
+	Added a new string to make it very clear how to upload assignments
+
+2002-10-10 Thursday 17:27  moodler
+
+	* mod/forum/: post.html, post.php: 
+	
+	Better default options, and hiding of moodle-text help when
+	htmlediting is operational
+
+2002-10-10 Thursday 15:29  moodler
+
+	* doc/credits.html: 
+	
+	Added another translator for Finnish
+
+2002-10-10 Thursday 15:29  moodler
+
+	* user/edit.html: 
+	
+	Added option to choose HTML editor
+
+2002-10-10 Thursday 15:27  moodler
+
+	* mod/: forum/lib.php, forum/post.html, forum/post.php,
+	forum/version.php, forum/db/mysql.php, forum/db/mysql.sql,
+	reading/details.php, reading/lib.php: 
+	
+	Initial attempt at adding html text editor features to these forms.
+
+2002-10-10 Thursday 15:27  moodler
+
+	* version.php: 
+	
+	Updated the version (database table addition user->htmleditor)
+
+2002-10-10 Thursday 15:26  moodler
+
+	* admin/config.html, admin/index.php, lib/defaults.php,
+	lib/javascript.php, lib/moodlelib.php, lib/weblib.php,
+	lib/db/mysql.php, lib/db/mysql.sql: 
+	
+	Additions to cope with richtext editor being used in some forms.
+
+2002-10-10 Thursday 15:24  moodler
+
+	* lang/en/: moodle.php, quiz.php: 
+	
+	Added new strings
+
+2002-10-10 Thursday 15:21  moodler
+
+	* lib/rte/: README_MOODLE, _header_css.txt, _header_html.txt,
+	_header_js.txt, about_logo.swf, about_logo.swi, changelog,
+	colorchooser.html, credits.html, custom.css, debug_embedded.asp,
+	dialog.css, dlg_about.html, dlg_ins_char.html, dlg_ins_image.html,
+	dlg_ins_smile.html, dlg_ins_table.html, example.html, license.html,
+	license.txt, popup_editor.html, readme.txt, richedit.css,
+	richedit.html, rte.js, rte_codesweep.js, rte_debug.js,
+	rte_dunno.css, rte_editmode.js, rte_history.js, rte_interface.js,
+	rte_lang.js, rte_xhtml.js, syntax.css, tableEditor.js,
+	images/CloseWindow.gif, images/Editor_r11_c2.gif,
+	images/Editor_r11_c5.gif, images/Editor_r4_c1.gif,
+	images/Editor_r4_c4.gif, images/Editor_r4_c7.gif,
+	images/Editor_r5_c2.gif, images/Editor_r5_c5.gif,
+	images/Editor_r7_c2.gif, images/Editor_r7_c5.gif,
+	images/Editor_r9_c2.gif, images/Editor_r9_c5.gif,
+	images/add_col.gif, images/add_col_f2.gif, images/add_row.gif,
+	images/add_row_f2.gif, images/bg.gif, images/em.icon.angry.gif,
+	images/em.icon.angry.png, images/em.icon.approve.gif,
+	images/em.icon.approve.png, images/em.icon.bigsmile.gif,
+	images/em.icon.bigsmile.png, images/em.icon.blackeye.gif,
+	images/em.icon.blackeye.png, images/em.icon.blush.gif,
+	images/em.icon.blush.png, images/em.icon.clown.gif,
+	images/em.icon.clown.png, images/em.icon.cool.gif,
+	images/em.icon.cool.png, images/em.icon.dead.gif,
+	images/em.icon.dead.png, images/em.icon.dissapprove.gif,
+	images/em.icon.dissapprove.png, images/em.icon.eightball.gif,
+	images/em.icon.eightball.png, images/em.icon.evil.gif,
+	images/em.icon.evil.png, images/em.icon.kiss.gif,
+	images/em.icon.kiss.png, images/em.icon.question.gif,
+	images/em.icon.question.png, images/em.icon.sad.gif,
+	images/em.icon.sad.png, images/em.icon.shocked.gif,
+	images/em.icon.shocked.png, images/em.icon.shy.gif,
+	images/em.icon.shy.png, images/em.icon.sleepy.gif,
+	images/em.icon.sleepy.png, images/em.icon.smile.gif,
+	images/em.icon.smile.png, images/em.icon.tongue.gif,
+	images/em.icon.tongue.png, images/em.icon.wink.gif,
+	images/em.icon.wink.png, images/hdr_tables.gif,
+	images/icon_about.gif, images/icon_block.gif, images/icon_bold.gif,
+	images/icon_bullist.gif, images/icon_center.gif,
+	images/icon_color_fill.gif, images/icon_color_text.gif,
+	images/icon_copy.gif, images/icon_cut.gif,
+	images/icon_edt_table.gif, images/icon_indent.gif,
+	images/icon_ins_char.gif, images/icon_ins_image.gif,
+	images/icon_ins_link.gif, images/icon_ins_sub.gif,
+	images/icon_ins_sup.gif, images/icon_ins_table.gif,
+	images/icon_italic.gif, images/icon_left.gif,
+	images/icon_numlist.gif, images/icon_outdent.gif,
+	images/icon_paste.gif, images/icon_post.gif, images/icon_redo.gif,
+	images/icon_rem_formatting.gif, images/icon_rem_link.gif,
+	images/icon_right.gif, images/icon_rule.gif,
+	images/icon_select_all.gif, images/icon_spell.gif,
+	images/icon_strikethrough.gif, images/icon_underline.gif,
+	images/icon_undo.gif, images/incr_colspan.gif,
+	images/incr_colspan_f2.gif, images/incr_rowspan.gif,
+	images/incr_rowspan_f2.gif, images/minimize.gif,
+	images/plt_ftr.gif, images/plt_hdr.gif, images/rmv_col.gif,
+	images/rmv_col_f2.gif, images/rmv_colspan.gif,
+	images/rmv_colspan_f2.gif, images/rmv_row.gif,
+	images/rmv_row_f2.gif, images/rmv_rowspan.gif,
+	images/rmv_rowspan_f2.gif, images/spacer.gif, images/toolbar.gif,
+	images/lang/de.icon_post.gif, images/lang/no.icon_post.gif: 
+	
+	Adding a beta version of Rich Text Editor, for embedding into
+	Moodle forms (forums, readings, journals etc).	Works only on IE
+	5.5 and later.
+	
+	Slightly customised for a slimmer toolbar.
+
+2002-10-09 Wednesday 22:20  moodler
+
+	* lib/ipatlas/plot.inc: 
+	
+	Arg .. so much for quick hacks ... this code is so messy it's a
+	hassle to hack ... going back to the way it was originally, with
+	just a more informative error message instead.
+
+2002-10-09 Wednesday 22:08  moodler
+
+	* lib/ipatlas/plot.inc: 
+	
+	Changes to avoid cryptic errors
+
+2002-10-08 Tuesday 23:51  paca70
+
+	* lang/fi/: assignment.php, moodle.php: 
+	
+	More corrections, documentation is coming.
+
+2002-10-08 Tuesday 10:09  moodler
+
+	* lang/it/: LEGGIMI, assignment.php, choice.php, forum.php,
+	journal.php, moodle.php, reading.php, survey.php: 
+	
+	Latest changes for Italian version, by Davide Suraci
+
+2002-10-08 Tuesday 01:17  paca70
+
+	* auth/ldap/README-LDAP: 
+	
+	Initial version
+
+2002-10-07 Monday 02:41  paca70
+
+	* lang/fi/moodle.php: 
+	
+	Some corrections
+
+2002-10-07 Monday 02:24  paca70
+
+	* lang/fi/quiz.php: 
+	
+	Initial version
+
+2002-10-07 Monday 01:31  moodler
+
+	* mod/quiz/: category.php, edit.php, question.php: 
+	
+	Empty file
+
+2002-10-07 Monday 01:20  moodler
+
+	* lang/en/quiz.php: 
+	
+	New words
+
+2002-10-07 Monday 01:20  moodler
+
+	* lib/moodlelib.php: 
+	
+	New function print_file_picture for printing a picture from the
+	files area, or optionally from a URL
+
+2002-10-07 Monday 01:06  moodler
+
+	* mod/quiz/: attempt.php, lib.php, version.php, db/mysql.php,
+	db/mysql.sql: 
+	
+	Further work done.  It currently can print the quiz form (including
+	images!) but can't mark them yet.  I've been constructing quizzes
+	manually in the database and it's helping to refine the database
+	structure.  Don't count on anything stable in the quiz module for a
+	few days yet ...
+
+2002-10-06 Sunday 11:24  moodler
+
+	* mod/quiz/attempt.php: 
+	
+	A start on the page that actually prints the questions and stores
+	the answers
+
+2002-10-06 Sunday 11:23  moodler
+
+	* mod/quiz/view.php: 
+	
+	More or less working now
+
+2002-10-06 Sunday 11:23  moodler
+
+	* mod/quiz/lib.php: 
+	
+	Added some more functions
+
+2002-10-06 Sunday 11:05  moodler
+
+	* course/: social.php, topics.php, weeks.php: 
+	
+	Changed includes of module libraries to use full pathnames
+	constructed from $CFG->dirroot, rather than relative.  This is
+	because the relative path could sometime be a different case to the
+	full path (on Windows) causing include_once not to work.
+
+2002-10-06 Sunday 01:21  moodler
+
+	* admin/index.php: 
+	
+	Moved module upgrading functions out into database-specific files
+
+2002-10-06 Sunday 01:20  moodler
+
+	* mod/: quiz/version.php, assignment/version.php,
+	assignment/db/mysql.php, choice/version.php, choice/db/mysql.php,
+	forum/version.php, forum/db/mysql.php, journal/version.php,
+	journal/db/mysql.php, quiz/db/mysql.php, reading/version.php,
+	reading/db/mysql.php, survey/version.php, survey/db/mysql.php: 
+	
+	Moved upgrade functions into db/mysql.sql
+
+2002-10-06 Sunday 01:09  moodler
+
+	* version.php, admin/index.php, lib/db/mysql.php,
+	lib/db/postgres7.php: 
+	
+	Moved upgrade_moodle functions out to database-specific files,
+	because the SQL is not compatible (nor is it possible to make it
+	so).
+
+2002-10-06 Sunday 00:49  moodler
+
+	* lib/moodlelib.php: 
+	
+	create_new_user() can now import other fields from an external
+	source if the function for it has been defined.  (Petri's code with
+	additions by me)
+
+2002-10-04 Friday 21:07  paca70
+
+	* lang/fi/moodle.php: 
+	
+	More corrections
+
+2002-10-04 Friday 10:59  moodler
+
+	* lang/en/quiz.php, mod/quiz/icon.gif, mod/quiz/index.php,
+	mod/quiz/lib.php, mod/quiz/mod.html, mod/quiz/version.php,
+	mod/quiz/view.php, mod/quiz/db/mysql.sql: 
+	
+	Skeleton version of the quiz module.  It won't break an
+	installation, but it doesn't do anything yet.
+
+2002-10-04 Friday 10:55  moodler
+
+	* mod/assignment/mod.html: 
+	
+	Use main version of "maximum grade" string
+
+2002-10-04 Friday 10:54  moodler
+
+	* doc/credits.html: 
+	
+	Make names into a list
+
+2002-10-04 Friday 01:10  paca70
+
+	* lang/fi/moodle.php: 
+	
+	and some more....
+
+2002-10-04 Friday 01:04  paca70
+
+	* lang/fi/moodle.php: 
+	
+	Some fixs more.
+
+2002-10-04 Friday 00:54  paca70
+
+	* lang/fi/: assignment.php, forum.php, journal.php, moodle.php,
+	survey.php: 
+	
+	Translated new strings and fixed some old ones.
+
+2002-10-03 Thursday 23:55  paca70
+
+	* auth/ldap/lib.php: 
+	
+	Corrected some comments.
+
+2002-10-03 Thursday 21:45  paca70
+
+	* auth/ldap/lib.php: 
+	
+	
+	Initial version of ldap authentication module. It have no
+	config-interface yet. (But it's coming) It contains also
+	experimental auth_get_userinfo() function, what is not used by
+	moodle yet.  If you like to try it, create following $CFG variables
+	to /config.php or directly to config-table and activate ldap
+	authentication from admin-configuration page.
+	
+	$CFG->ldap_bind_dn		"If your like to use bind-user to
+	search users, specify it here. Someting like
+	'cn=ldapuser,ou=public,o=org'" $CFG->ldap_bind_pw	 "Password
+	for bind-user." $CFG->ldap_contexts		      "List of
+	contexts where users are located.				
+	Separate different contexts with ';'. Something like
+	'ou=users,o=org; ou=other,o=org'"  $CFG->ldap_host_url		
+	"Specify LDAP host in URL-form like 'ldap://ldap.myorg.com/' or
+	'ldaps//ldap.myorg.com/' "; $CFG->ldap_search_sub	"Put value
+	<> 0 if  you like to search users from subcontexts.";
+	$CFG->ldap_user_attribute      "What attribute is used to
+	name/search users. Usually 'cn'. ";
+	
+	More configuration optios are coming. This version is tested
+	against Novell E-Directory without SSL and it works fine.
+
+2002-10-03 Thursday 19:17  moodler
+
+	* mod/forum/db/mysql.sql: 
+	
+	Fixed definition of forum->open
+
+2002-10-03 Thursday 19:15  moodler
+
+	* lang/en/forum.php, lang/en/moodle.php,
+	lang/en/help/forum/allowdiscussions.html, mod/forum/lib.php,
+	mod/forum/mod.html, mod/forum/version.php, mod/forum/db/mysql.sql: 
+	
+	Fixes bug 112
+	
+	Changes to expand "open" option in forums.  Now have a choice
+	between three options:	new discussions and new replies, new
+	replies only and no new discussions or new replies.
+	
+	Three new options in lang/forum.php and I changed
+	"allowdiscussions".
+
+2002-10-03 Thursday 19:11  moodler
+
+	* lib/moodlelib.php: 
+	
+	User's name in footer is now a link
+
+2002-10-03 Thursday 12:04  moodler
+
+	* lang/en/moodle.php, lib/moodlelib.php, user/index.php,
+	user/lib.php: 
+	
+	format_time() now supports language strings for
+	day(s)/hour(s)/min(s)/sec(s) String lookups are cached in
+	user/index.php for efficiency
+
+2002-10-03 Thursday 11:55  moodler
+
+	* RELEASE.html: 
+	
+	Just making this more relevant for the CVS update junkies  :-)
+
+2002-10-03 Thursday 11:35  moodler
+
+	* UPGRADING.txt: 
+	
+	Expanded the description and included sample commands
+
+2002-10-03 Thursday 10:57  moodler
+
+	* course/topics.php: 
+	
+	"Activities" wasn't being taken from language files
+
+2002-10-03 Thursday 03:37  paca70
+
+	* lang/fi/moodle.php: 
+	
+	Minor update to test that update rights are working.
+
+2002-10-03 Thursday 00:23  moodler
+
+	* lang/it/: assignment.php, choice.php, forum.php, journal.php,
+	moodle.php, reading.php, survey.php: 
+	
+	Fixes for accented characters
+
+2002-10-02 Wednesday 23:55  moodler
+
+	* lang/it/moodle.php: 
+	
+	Updated a word
+
+2002-10-02 Wednesday 22:43  moodler
+
+	* version.php: 
+	
+	New version number for development
+
+2002-10-02 Wednesday 22:20  moodler
+
+	* lang/: fi/moodle.php, pt_br/moodle.php: 
+	
+	Added 'thischarset' = "iso-8859-1", for completeness
+
+2002-10-02 Wednesday 21:50  moodler
+
+	* lang/it/: LEGGIMI, assignment.php, choice.php, forum.php,
+	journal.php, moodle.php, reading.php, survey.php,
+	docs/module_files.txt, help/coursecategory.html,
+	help/courseformats.html, help/coursefullname.html,
+	help/coursenewsitems.html, help/coursenumsections.html,
+	help/courseshortname.html, help/coursestartdate.html,
+	help/enrolmentkey.html, help/guestaccess.html, help/html.html,
+	help/picture.html, help/questions.html, help/surveys.html,
+	help/teachers.html, help/text.html, help/choice/options.html,
+	help/forum/allowdiscussions.html, help/forum/attachment.html,
+	help/forum/forumtype.html, help/forum/ratings.html,
+	help/forum/subscription.html, help/reading/readingtype.html,
+	help/reading/summary.html: 
+	
+	Checked in initial Italian version by Davide Suraci, with help from
+	others
+
+2002-10-02 Wednesday 18:59  moodler
+
+	* doc/credits.html: 
+	
+	Added Sebastien Nameche
+
+2002-10-02 Wednesday 18:35  moodler
+
+	* admin/config.html: 
+	
+	Locale box is a bit bigger, since locale strings can be bigger	:-)
+
+2002-10-02 Wednesday 18:34  moodler
+
+	* lang/: en/moodle.php, fr/moodle.php: 
+	
+	Removed configcharset, but kept thischarset
+
+2002-10-02 Wednesday 18:33  moodler
+
+	* lib/moodlelib.php: 
+	
+	Added new header to all pages to set the current charset, to help
+	browsers
+
+2002-10-02 Wednesday 17:37  moodler
+
+	* lang/fr/: TERMS, assignment.php, choice.php, forum.php,
+	journal.php, moodle.php, reading.php, survey.php: 
+	
+	Updates to the French translation, by M. Sebastien Namèche
+
+2002-10-02 Wednesday 16:23  moodler
+
+	* README.txt: 
+	
+	A change to test the ACLs
+
+2002-10-02 Wednesday 15:59  moodler
+
+	* CHANGES: 
+	
+	Changes
+
 2002-10-02 Wednesday 15:08  moodler
 
 	* login/index_form.html: 

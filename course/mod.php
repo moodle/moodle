@@ -6,7 +6,14 @@
     require("lib.php");
 
     if (isset($course) && isset($HTTP_POST_VARS)) {    // add or update form submitted
-        $mod = (object)$HTTP_POST_VARS;
+
+        if (isset($SESSION->modform)) {   // Variables are stored in the session
+            $mod = $SESSION->modform;
+            unset($SESSION->modform);
+            save_session("SESSION");
+        } else {
+            $mod = (object)$HTTP_POST_VARS;
+        }
 
         require_login($mod->course);
 
