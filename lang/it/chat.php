@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.4 development (2004080300)
+      // chat.php - created with Moodle 1.4 beta (2004082300)
 
 
 $string['beep'] = 'campanella';
@@ -35,6 +35,7 @@ $string['modulename'] = 'Chat';
 $string['modulenameplural'] = 'Chat';
 $string['neverdeletemessages'] = 'Non cancellare i messaggi';
 $string['nextsession'] = 'Prossima seesione programmata';
+$string['noguests'] = 'La chat non è disponibile agli ospiti';
 $string['nomessages'] = 'Nessun messaggio ancora';
 $string['repeatdaily'] = 'Alla stessa ora tutti i giorni';
 $string['repeatnone'] = 'Nessuna ripetizione - pubblica solo l\'orario specificato';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 development (2004080300)
+      // resource.php - created with Moodle 1.4 beta (2004082300)
 
 
 $string['addresource'] = 'Aggiungi risorsa';
@@ -23,13 +23,6 @@ $string['directoryinfo'] = 'Tutti i file nella cartella scelta verranno mostrati
 $string['editingaresource'] = 'Edita una risorsa';
 $string['encryptedcode'] = 'Codice criptato';
 $string['example'] = 'Esempio';
-$string['examplereference'] = 'Tobin, K. & Tippins, D (1993)
-
-Constructivism as a Referent for Teaching and Learning. In: K. Tobin
-
-(Ed) The Practice of Constructivism in Science Education, pp 3-21,
-
-Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.esempio.com/unadirectory/unfile.html';
 $string['fetchclienterror'] = 'E\' stato rilevato un errore con il tuo browser mentre provavo a recuperare la pagina web (potrebbe essere sbagliato l\'URL).';
 $string['fetcherror'] = 'E\' stato rilevato un errore mentre provavo a recuperare la pagina web.';
@@ -69,11 +62,19 @@ $string['parameters'] = 'Paremetri';
 $string['popupresource'] = 'Questa risorsa deve apparire in una finestra di popup';
 $string['popupresourcelink'] = 'Se non lo fa, cliccare qui: $a';
 $string['resourcetype'] = 'Tipo di risorsa';
+$string['resourcetype1'] = 'Riferimento';
+$string['resourcetype2'] = 'Pagina web';
+$string['resourcetype3'] = 'File presente sul server';
+$string['resourcetype4'] = 'Testo semplice';
+$string['resourcetype5'] = 'Collegamento web';
+$string['resourcetype6'] = 'Testo HTML';
+$string['resourcetype7'] = 'Collegamento ad applicazione web';
+$string['resourcetype8'] = 'Testo simile a Wiki';
+$string['resourcetype9'] = 'Cartella';
 $string['resourcetypedirectory'] = 'Mostra una cartella';
 $string['resourcetypefile'] = 'Collegamento a un file o a un sito';
 $string['resourcetypehtml'] = 'Componi una pagina web';
 $string['resourcetypelabel'] = 'Inserisci una etichetta';
-$string['resourcetypereference'] = 'Insrisci un riferimento';
 $string['resourcetypetext'] = 'Componi una pagina di testo';
 $string['searchweb'] = 'Cerca una pagina web';
 $string['variablename'] = 'Nome variabile';

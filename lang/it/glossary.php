@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 development (2004080300)
+      // glossary.php - created with Moodle 1.4 beta (2004082300)
 
 
 $string['addcomment'] = 'Aggiungi commento';
@@ -71,6 +71,7 @@ $string['displayformatfullwithoutauthor'] = 'Completo senza autore';
 $string['displayformats'] = 'Formati di visualizzazione';
 $string['displayformatssetup'] = 'Impostazione del formato di visualizzazione';
 $string['duplicateentry'] = 'Termine duplicato';
+$string['editalways'] = 'Modifica sempre';
 $string['editcategories'] = 'Modifica categorie';
 $string['editentry'] = 'Modifica termine';
 $string['editingcomment'] = 'Modifica commento';
