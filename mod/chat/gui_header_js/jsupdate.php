@@ -53,7 +53,6 @@
 <html>
     <head>
         <meta http-equiv="content-type" content="text/html; charset=<?php echo get_string('thischarset'); ?>" />
-        <base target="_blank" />
         <script type="text/javascript">
         <!--
         if (parent.msg.document.getElementById("msgStarted") == null) {
@@ -61,6 +60,7 @@
             parent.msg.document.open("text/html","replace");
             parent.msg.document.write("<html><head>");
             parent.msg.document.write("<meta http-equiv=\"content-type\" content=\"text/html; charset=<?php echo get_string('thischarset'); ?>\" />");
+            parent.msg.document.write("<base target=\"_blank\" />");
             parent.msg.document.write("<?php echo $stylesheetshtml ?>");
             parent.msg.document.write("</head><body><div style=\"display: none\" id=\"msgStarted\">&nbsp;</div>");
         }
