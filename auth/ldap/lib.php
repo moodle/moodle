@@ -1094,7 +1094,7 @@ function auth_ldap_connect($binddn='',$bindpwd=''){
     foreach ($urls as $server){
         $connresult = ldap_connect($server);
         //ldap_connect returns ALWAYS true
-
+ 
         if (!empty($CFG->ldap_version)) {
             ldap_set_option($connresult, LDAP_OPT_PROTOCOL_VERSION, $CFG->ldap_version);
         }
@@ -1105,8 +1105,12 @@ function auth_ldap_connect($binddn='',$bindpwd=''){
         } else {
             //bind anonymously
             $bindresult=@ldap_bind($connresult);
-        }    
-
+        }
+       
+        if (isset($CFG->ldap_opt_deref)) {
+            ldap_set_option($connresult, LDAP_OPT_DEREF, $CFG->ldap_opt_deref);
+        }
+        
         if ($bindresult) {
             return $connresult;
         }
@@ -1219,9 +1223,7 @@ function auth_ldap_get_userlist($filter="*") {
 
         if ($CFG->ldap_search_sub) {
             //use ldap_search to find first user from subtree
-            $ldap_result = ldap_search($ldapconnection, $context,
-                                       $filter,
-                                       array($CFG->ldap_user_attribute));
+            $ldap_result = ldap_search($ldapconnection, $context,$filter,array($CFG->ldap_user_attribute));
         } else {
             //search only in this context
             $ldap_result = ldap_list($ldapconnection, $context,
