@@ -13,8 +13,8 @@
     <?
        $student = strtolower($course->student);
        require("$CFG->dirroot/mod/forum/lib.php");
-       asort($FORUM_TYPE);
-       choose_from_menu($FORUM_TYPE, "type", $form->type);
+       asort($FORUM_TYPES);
+       choose_from_menu($FORUM_TYPES, "type", $form->type);
     ?>
 
     </td>

@@ -126,7 +126,7 @@
     }
 
     echo "<DIV ALIGN=CENTER>";
-    print_forum_search_form($course, $search);
+    forum_print_search_form($course, $search);
     echo "</DIV>";
 
     print_footer($course);

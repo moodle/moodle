@@ -49,7 +49,7 @@
       // Print a form to search forums
       print_simple_box("Search Discussions", $align="CENTER", $width="100%", $color="$THEME->cellheading");
       echo "<DIV ALIGN=CENTER>";
-      print_forum_search_form($course);
+      forum_print_search_form($course);
       echo "</DIV>";
 
       // Print Admin links for teachers and admin.

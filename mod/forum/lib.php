@@ -4,15 +4,15 @@
 
 $FORUM_DEFAULT_DISPLAY_MODE = 3; 
 
-$FORUM_DISCUSS_MODES = array ( "1"  => "Display replies flat, with oldest first",
-                               "-1" => "Display replies flat, wth newest first",
-                               "2"  => "Display replies in threaded form",
-                               "3"  => "Display replies in nested form");
+$FORUM_LAYOUT_MODES = array ( "1"  => "Display replies flat, with oldest first",
+                              "-1" => "Display replies flat, wth newest first",
+                              "2"  => "Display replies in threaded form",
+                              "3"  => "Display replies in nested form");
 
 // These are course content forums that can be added to the course manually
-$FORUM_TYPE   = array ("general"    => "General forum",
-                       "eachuser"   => "Each person posts one discussion",
-                       "single"     => "A single simple discussion");
+$FORUM_TYPES   = array ("general"    => "General forum",
+                        "eachuser"   => "Each person posts one discussion",
+                        "single"     => "A single simple discussion");
 
 $FORUM_POST_RATINGS = array ("3" => "Shows a more connected approach", 
                              "2" => "Shows a more separate approach", 
@@ -202,9 +202,9 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo "<DIV ALIGN=right><P ALIGN=right>";
     if ($rate && $USER->id) {
         if ($USER->id == $post->userid) {
-            print_forum_ratings($post->id);
+            forum_print_ratings($post->id);
         } else {
-            print_forum_rating($post->id, $USER->id);
+            forum_print_rating($post->id, $USER->id);
         }
     }
     
@@ -242,7 +242,7 @@ function forum_shorten_post($message) {
 }
 
 
-function print_forum_ratings($post) {
+function forum_print_ratings($post) {
 
     global $CFG, $PHPSESSID;
 
@@ -267,7 +267,7 @@ function print_forum_ratings($post) {
     }
 }
 
-function print_forum_rating($post, $user) {
+function forum_print_rating($post, $user) {
     global $FORUM_POST_RATINGS;
 
     if ($rs = get_record_sql("SELECT rating from forum_ratings WHERE user='$user' AND post='$post'")) {
@@ -284,15 +284,15 @@ function print_forum_rating($post, $user) {
     }
 }
 
-function print_forum_mode_form($discussion, $mode) {
-    GLOBAL $FORUM_DISCUSS_MODES;
+function forum_print_mode_form($discussion, $mode) {
+    GLOBAL $FORUM_LAYOUT_MODES;
 
     echo "<CENTER><P>";
-    popup_form("discuss.php?d=$discussion&mode=", $FORUM_DISCUSS_MODES, "mode", $mode, "");
+    popup_form("discuss.php?d=$discussion&mode=", $FORUM_LAYOUT_MODES, "mode", $mode, "");
     echo "</P></CENTER>\n";
 }
 
-function print_forum_search_form($course, $search="") {
+function forum_print_search_form($course, $search="") {
     global $CFG;
 
     echo "<TABLE BORDER=0 CELLPADDING=10 CELLSPACING=0><TR><TD ALIGN=CENTER>";
@@ -744,7 +744,7 @@ function forum_print_discussion($course, $discussion, $post, $mode) {
 
     forum_print_post($post, $course->id, $ownpost, $reply=true, $link=false, $rate=false);
 
-    print_forum_mode_form($discussion->id, $mode);
+    forum_print_mode_form($discussion->id, $mode);
 
     if ($discussion->assessed && $USER->id) {
         echo "<FORM NAME=form METHOD=POST ACTION=rate.php>";
