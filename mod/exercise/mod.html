@@ -1,0 +1,157 @@
+<?php
+	require("$CFG->dirroot/mod/exercise/lib.php");  // for parameter arrays
+	// set the defaults...
+    if ($usehtmleditor = can_use_richtext_editor()) {
+        $defaultformat = FORMAT_HTML;
+        $onsubmit = "onsubmit=\"copyrichtext(document.form.description);\"";
+    } else {
+        $defaultformat = FORMAT_MOODLE;
+        $onsubmit = "";
+    }
+	// ...and fill the form if needed
+    if (empty($form->name)) {
+        $form->name = "";
+    }
+	if (empty($form->gradingstrategy)) {
+		$form->gradingstrategy = 1;
+	}
+    if (empty($form->usemaximum)) {
+        $form->usemaximum = 0;
+    }
+    if (!isset($form->grade)) {
+        $form->grade = 100;
+    }
+    if (!isset($form->nelements)) {
+        $form->nelements = 1;
+    }
+    if (empty($form->maxbytes)) {
+        $form->maxbytes = "";
+    }
+    if (empty($form->deadline)) {
+        $form->deadline = "";
+    }
+?>
+
+<form name="form" method="post" <?php echo $onsubmit ?> action="mod.php">
+<table cellpadding=5>
+<tr valign=top>
+    <td align=right width=\"50%\"><P><B><?php  print_string("title", "exercise") ?>:</B></P></TD>
+    <td width=\"50%\">
+        <input type="text" name="name" size=60 value="<?php  p($form->name) ?>">
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("description", "exercise") ?>:</B></P></TD>
+    <td>
+    <?php  
+	echo get_string("descriptionofexercise", "exercise", $course->students);
+    ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("maximumgrade") ?>:</B></P></TD>
+    <td>
+        <?php
+        for ($i=100; $i>=0; $i--) {
+            $grades[$i] = $i;
+        }
+        choose_from_menu($grades, "grade", "$form->grade", "");
+       helpbutton("grade", get_string("maximumgrade", "exercise"), "exercise");
+        ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("gradingstrategy", "exercise") ?>:</B></P></TD>
+    <td>
+    <?php
+       choose_from_menu($EXERCISE_TYPE, "gradingstrategy", $form->gradingstrategy, "");
+       helpbutton("gradingstrategy", get_string("gradingstrategy", "exercise"), "exercise");
+    ?>
+    </td>
+</tr>
+
+<tr>
+    <td align=right><P><B><?php print_string("handlingofmultiplesubmissions", "exercise") ?>:</B></P></TD>
+    <td>
+    <?php
+        $options[0] = get_string("usemean", "exercise"); $options[1] = get_string("usemaximum", "exercise");
+        choose_from_menu($options, "usemaximum", $form->usemaximum, "");
+        helpbutton("usemax", get_string("handlingofmultiplesubmissions", "exercise"), "exercise");
+    ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("numberofassessmentelements", "exercise") ?>:</B></P></TD>
+    <td valign="middle">
+        <?php
+        for ($i=20; $i>=0; $i--) {
+            $numbers[$i] = $i;
+        }
+        choose_from_menu($numbers, "nelements", "$form->nelements", "");
+       helpbutton("nelements", get_string("numberofassessmentelements", "exercise"), "exercise");
+        ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("maximumsize", "exercise") ?>:</B></P></TD>
+    <td>
+        <?php
+        $sizelist = array("10Kb", "50Kb", "100Kb", "500Kb", "1Mb", "2Mb", "5Mb", "10Mb", "20Mb", "50Mb");
+        $maxsize = get_max_upload_file_size();
+        $sizeinlist = false;
+        foreach ($sizelist as $size) {
+            $sizebytes = get_real_size($size);
+            if ($sizebytes < $maxsize) {
+                $filesize[$sizebytes] = $size;
+            }
+            if ($form->maxbytes == $sizebytes) {
+                $sizeinlist = true;
+            }
+        }
+        $filesize[$maxsize] = display_size($maxsize);
+        if (!$sizeinlist) {
+            $form->maxbytes = get_real_size("500K");
+        }
+        ksort($filesize, SORT_NUMERIC);
+        choose_from_menu($filesize, "maxbytes", "$form->maxbytes", "");
+        ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("deadline", "exercise") ?>:</B></td>
+    <td><?php
+           print_date_selector("deadlineday", "deadlinemonth", "deadlineyear", $form->deadline);
+           echo "&nbsp;-&nbsp;";
+           print_time_selector("deadlinehour", "deadlineminute", $form->deadline);
+    ?></td>
+</tr>
+
+</table>
+<BR>
+<CENTER>
+<input type="hidden" name=course     value="<?php  p($form->course) ?>">
+<input type="hidden" name=coursemodule  value="<?php  p($form->coursemodule) ?>">
+<input type="hidden" name=section       value="<?php  p($form->section) ?>">
+<input type="hidden" name=module     value="<?php  p($form->module) ?>">
+<input type="hidden" name=modulename value="<?php  p($form->modulename) ?>">
+<input type="hidden" name=instance   value="<?php  p($form->instance) ?>">
+<input type="hidden" name=mode       value="<?php  p($form->mode) ?>">
+<input type="submit" value="<?php  print_string("savechanges") ?>">
+<input type="submit" name=cancel value="<?php  print_string("cancel") ?>">
+<p>
+<p><?PHP notify(get_string("noteonassessmentelements", "exercise")); ?>
+
+</CENTER>
+</FORM>
+
+<?php  
+   if ($usehtmleditor) { 
+       print_richedit_javascript("form", "description", "no");
+   }
+?>
+
