@@ -25,15 +25,7 @@
     }
 
 
-    if (isset($_POST["course"])) {    // add or update form submitted
-
-        //It caller is correct, $SESSION->sesskey must exist and coincide
-        if (empty($SESSION->sesskey) or !confirm_sesskey($SESSION->sesskey)) {
-            error(get_string('confirmsesskeybad', 'error'));
-        }
-
-        //Unset this, check done
-        unset($SESSION->sesskey);
+    if (isset($_POST["course"]) and confirm_sesskey()) {    // add or update form submitted
 
         if (!$course = get_record("course", "id", $mod->course)) {
             error("This course doesn't exist");
@@ -421,7 +413,7 @@
         $form->modulename   = $module->name;
         $form->fullmodulename  = $fullmodulename;
         $form->instancename = $instance->name;
-        $SESSION->sesskey = !empty($USER->id) ? $USER->sesskey : '';
+        $form->sesskey      = !empty($USER->id) ? $USER->sesskey : '';
 
         $strdeletecheck = get_string("deletecheck", "", "$form->fullmodulename");
         $strdeletecheckfull = get_string("deletecheckfull", "", "$form->fullmodulename '$form->instancename'");
@@ -475,7 +467,7 @@
         $form->modulename   = $module->name;
         $form->instance     = $cm->instance;
         $form->mode         = "update";
-        $SESSION->sesskey = !empty($USER->id) ? $USER->sesskey : '';
+        $form->sesskey      = !empty($USER->id) ? $USER->sesskey : '';
 
         $sectionname    = get_string("name$course->format");
         $fullmodulename = strtolower(get_string("modulename", $module->name));
@@ -527,7 +519,7 @@
         $form->modulename   = $module->name;
         $form->instance     = $cm->instance;
         $form->mode         = "add";
-        $SESSION->sesskey = !empty($USER->id) ? $USER->sesskey : '';
+        $form->sesskey      = !empty($USER->id) ? $USER->sesskey : '';
 
         $sectionname    = get_string("name$course->format");
         $fullmodulename = strtolower(get_string("modulename", $module->name));
@@ -566,7 +558,7 @@
         $form->instance   = "";
         $form->coursemodule = "";
         $form->mode       = "add";
-        $SESSION->sesskey = !empty($USER->id) ? $USER->sesskey : '';
+        $form->sesskey    = !empty($USER->id) ? $USER->sesskey : '';
         if (isset($_GET['type'])) {
             $form->type = $_GET['type'];
         }

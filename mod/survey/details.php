@@ -58,8 +58,9 @@
         <input type="hidden" name="template"   value="<?php p($form->template) ?>" />
 
         <input type="hidden" name="course"     value="<?php p($form->course) ?>" />
+        <input type="hidden" name="sesskey"    value="<?php p($form->sesskey) ?>" />
         <input type="hidden" name="coursemodule"     value="<?php p($form->coursemodule) ?>" />
-        <input type="hidden" name="section"       value="<?php p($form->section) ?>" />
+        <input type="hidden" name="section"    value="<?php p($form->section) ?>" />
         <input type="hidden" name="module"     value="<?php p($form->module) ?>" />
         <input type="hidden" name="modulename" value="<?php p($form->modulename) ?>" />
         <input type="hidden" name="instance"   value="<?php p($form->instance) ?>" />
