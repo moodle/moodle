@@ -47,7 +47,7 @@
         }
 
         print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
-$advancedfilter = 1;
+        $advancedfilter = 1;
         print_recent_selector_form($course, $advancedfilter, $user, $date, $modname, $modid, $modaction, $selectedgroup, $sortby);
 
     } else {
@@ -70,7 +70,7 @@ $advancedfilter = 1;
 
     }
 
-   $tmpmodid = $modid;
+    $tmpmodid = $modid;
 
     switch ($tmpmodid) {
       case "activity/Assignments" : $filter = "assignment"; break;
@@ -79,12 +79,6 @@ $advancedfilter = 1;
       case "activity/Quizzes" : $filter = "quiz"; break;
       case "activity/Workshops" : $filter = "workshop"; break;
       default   : $filter = "";
-    }
-
-    if (!empty($filter)) {
-        $activityfilter = "AND m.name = '$filter'";
-    } else {
-        $activityfilter = "";
     }
 
     $activities = array();
@@ -104,10 +98,15 @@ $advancedfilter = 1;
 
     } else { // you chose a group of activities
 
-        $sections = get_records_sql("SELECT cs.id, cs.section, cs.sequence, cs.summary
+        if (isteacher($user)) {
+            $hiddenfilter = "";
+        } else {
+            $hiddenfilter = " AND cs.visible = '1' ";
+        }
+
+        $sections = get_records_sql("SELECT cs.id, cs.section, cs.sequence, cs.summary, cs.visible
                                        FROM {$CFG->prefix}course_sections cs
-                                       WHERE course = '$course->id'
-                                        AND cs.visible = '1'
+                                       WHERE course = '$course->id' $hiddenfilter
                                       ORDER by section");
     }
 
@@ -118,15 +117,28 @@ $advancedfilter = 1;
         echo "<hr>";
         $i = 0;
 
+        if (!empty($filter)) {
+            $activityfilter = "AND m.name = '$filter'";
+        } else {
+            $activityfilter = "";
+        }
+
+        if (isteacher($user)) {
+            $hiddenfilter = "";
+        } else {
+            $hiddenfilter = " AND cm.visible = '1' ";
+        }
+
         foreach ($sections as $section) {
 
-            if ($i < $course->numsections) {
+            if ($i <= $course->numsections) {
                 $activity->type = "section";
                 if ($i) {
                     $activity->name = $sectiontitle . " $i";
                 } else {
                     $activity->name = '';
                 }
+                $activity->visible = $section->visible;
                 $activities[$index] = $activity;
             }
             $index++;
@@ -142,10 +154,10 @@ $advancedfilter = 1;
                 $mod = $mods[$sectionmod];
                 $instance = get_record("$mod->modname", "id", "$mod->instance");
 
-                $coursemod = get_record_sql("SELECT m.id, m.name, cm.groupmode
+                $coursemod = get_record_sql("SELECT m.id, m.name, cm.groupmode, cm.visible
                                                FROM {$CFG->prefix}course_modules cm,
                                                     {$CFG->prefix}modules m
-                                              WHERE course = '$course->id'
+                                              WHERE course = '$course->id' $hiddenfilter
                                                 AND m.id = cm.module $activityfilter
                                                 AND cm.id = '$sectionmod'");
 
@@ -172,12 +184,12 @@ $advancedfilter = 1;
                     if (function_exists($get_recent_mod_activity)) {
                         $activity->type = "activity";
                         $activity->name = $instance->name;
+                        $activity->visible = $coursemod->visible;
                         $activity->content->fullname = $mod->modfullname;
                         $activity->content->modname = $mod->modname;
                         $activity->content->modid =$mod->id;
                         $activities[$index] = $activity;
                         $index++;
-
                         $get_recent_mod_activity($activities, $index, $date, $course->id, $sectionmod, $user, $groupid);
                     }
                 }
@@ -204,7 +216,25 @@ $advancedfilter = 1;
         $inbox = false;
 
         $section = 0;
-        foreach ($activities as $activity) {
+
+        if (isteacher($user)) {
+            $teacher = true;
+        } else {
+            $teacher = false;
+        }
+        $activity_count = count($activities);
+
+        foreach ($activities as $key => $activity) {
+
+            // peak at next activity.  If it's another section, don't print this one!
+            // this means there are no activities in the current section
+            if (($activity->type == "section") && 
+                (($activity_count == ($key + 1)) || 
+                ($activities[$key+1]->type == "section"))) {
+
+                continue;
+
+            }
 
             if (($activity->type == "section") && ($sortby == "default")) {
                 if ($inbox) {
@@ -218,11 +248,16 @@ $advancedfilter = 1;
             } else if ($activity->type == "activity") {
 
                if ($sortby == "default") {
+                   if ($teacher && $activity->visible == 0) {
+                       $linkformat = 'class="dimmed"';
+                   } else {
+                       $linkformat = '';
+                   }
                    $image = "<img src=\"$CFG->modpixpath/" . $activity->content->modname . "/icon.gif\"" .
                             "height=16 width=16 alt=\"" . $activity->content->modfullname . "\">";
                    echo "<ul><h4>$image " . $activity->content->modfullname . 
                         "<a href=\"$CFG->wwwroot/mod/" . $activity->content->modname . "/view.php?" . 
-                        "id=" . $activity->content->modid . "\">" .
+                        "id=" . $activity->content->modid . "\" $linkformat>" .
                         $activity->name . "</a></h4></ul>";
                }
 
