@@ -7,17 +7,23 @@
     }
 
     function glossary_dynamic_link($courseid, $text) {
-    global $CFG;
+        global $CFG;
+
+        if (empty($courseid)) {
+            if ($site = get_site()) {
+                $courseid = $site->id;
+            }
+        }
 
         $GLOSSARY_CONCEPT_IS_ENTRY = 0;
         $GLOSSARY_CONCEPT_IS_CATEGORY = 1;
         switch ($CFG->dbtype) {
-        case 'postgres7':
-     		$as = 'as';
-        break;
-        case 'mysql':
-     		$as = '';
-        break;
+            case 'postgres7':
+                $as = 'as';
+                break;
+            case 'mysql':
+                $as = '';
+                break;
         }    
 
         $glossarieslist = get_records_select("glossary", "usedynalink != 0 and (course = $courseid or globalglossary != 0)","globalglossary, id");
