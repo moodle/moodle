@@ -82,9 +82,9 @@
     function forum_rss_newstuff($forum, $time) {
     // If there is new stuff in the forum since $time then this returns
     // true.  Otherwise it returns false.
-        if ($forum->rsstype == 1) {  
+        if ($forum->rsstype == 1) {
             $items = forum_rss_feed_discussions($forum, $time);
-        } else {             
+        } else {
             $items = forum_rss_feed_posts($forum, $time);
         }
         return (!empty($items));
@@ -102,14 +102,14 @@
         if (empty($CFG->enablerssfeeds)) {
             //Some debug...
             if ($CFG->debug > 7) {
-                echo "DISABLED (admin variables)"; 
-            }           
+                echo "DISABLED (admin variables)";
+            }
         //Check CFG->forum_enablerssfeeds
         } else if (empty($CFG->forum_enablerssfeeds)) {
-            //Some debug... 
+            //Some debug...
             if ($CFG->debug > 7) {
                 echo "DISABLED (module configuration)";
-            }           
+            }
         //It's working so we start...
         } else {
             //Check the forum has rss activated
@@ -119,7 +119,7 @@
                     $items = forum_rss_feed_discussions($forum);
                 } else {                //Post RSS
                     $items = forum_rss_feed_posts($forum);
-     
+
                 }
                 //Now, if items, we begin building the structure
                 if (!empty($items)) {
@@ -140,7 +140,7 @@
                         $status = $header.$articles.$footer;
                     } else {
                         $status = false;
-                    } 
+                    }
                 } else {
                     $status = false;
                 }
@@ -163,9 +163,9 @@
             $newsince = "";
         }
 
-        if ($recs = get_records_sql ("SELECT d.id discussionid, 
-                                             d.name discussionname, 
-                                             u.id userid, 
+        if ($recs = get_records_sql ("SELECT d.id discussionid,
+                                             d.name discussionname,
+                                             u.id userid,
                                              u.firstname userfirstname,
                                              u.lastname userlastname,
                                              p.message postmessage,
@@ -208,7 +208,7 @@
         }
         return $items;
     }
-    
+
     //This function returns "items" record array to be used to build the rss feed
     //for a Type=posts forum
     function forum_rss_feed_posts($forum, $newsince=0) {
@@ -257,7 +257,7 @@
                 $user->lastname = $rec->userlastname;
                 $item->author = fullname($user);
                 $item->pubdate = $rec->postcreated;
-                $item->link = $CFG->wwwroot."/mod/forum/discuss.php?d=".$rec->discussionid."&amp;parent=".$rec->postid;
+                $item->link = $CFG->wwwroot."/mod/forum/discuss.php?d=".$rec->discussionid."&parent=".$rec->postid;
                 $item->description = format_text($rec->postmessage,$rec->postformat,NULL,$forum->course);
                 $items[] = $item;
                 $articlesleft--;

@@ -259,7 +259,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
                         $CFG->prefix.'user_teachers ut '.
                    'WHERE us.course='.$course->id.' AND gm.groupid='.$selectedgroup.
                    ' AND (gm.userid=us.userid OR gm.userid=ut.userid) AND gm.userid=u.id';
-            $courseusers = get_records_sql($sql); 
+            $courseusers = get_records_sql($sql);
         } else {
             $courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname');
         }
@@ -410,7 +410,7 @@ function make_log_url($module, $url) {
     }
 }
 
-function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100, 
+function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100,
                    $url="", $modname="", $modid=0, $modaction="", $groupid=0) {
 
     // It is assumed that $date is the GMT time of midnight for that day,
@@ -435,7 +435,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     $joins = array();
 
     if ($course->category) {
-        $joins[] = "l.course='$course->id'"; 
+        $joins[] = "l.course='$course->id'";
     } else {
         $courses[0] = '';
         if ($ccc = get_courses("all", "c.id ASC", "c.id,c.shortname")) {
@@ -511,7 +511,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     print_string("displayingrecords", "", $totalcount);
     echo "</p>";
 
-    print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&");
+    print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
 
     echo '<table border="0" align="center" cellpadding="3" cellspacing="3">';
     foreach ($logs as $log) {
@@ -548,7 +548,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     }
     echo '</table>';
 
-    print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&");
+    print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
 }
 
 

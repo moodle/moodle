@@ -93,7 +93,7 @@ function forum_add_instance($forum) {
             error("Could not add the discussion for this forum");
         }
     }
-    
+
     if ($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) { // all users should be subscribed initially
         $users = get_course_users($forum->course);
         foreach ($users as $user) {
@@ -246,7 +246,7 @@ function forum_cron () {
                        "List-id: <moodlecourse{$post->course}@$hostname>",
                        "Message-Id: <moodlepost{$post->id}@$hostname>",
                        "In-Reply-To: <moodlepost{$post->parent}@$hostname>",
-                       "References: <moodlepost{$post->parent}@$hostname>"  
+                       "References: <moodlepost{$post->parent}@$hostname>"
             );
 
 
@@ -318,15 +318,15 @@ function forum_cron () {
                     $posttext = forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto);
                     $posthtml = forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto);
 
-                    if (!$mailresult = email_to_user($userto, $userfrom, $postsubject, $posttext, 
+                    if (!$mailresult = email_to_user($userto, $userfrom, $postsubject, $posttext,
                                                      $posthtml, '', '', $CFG->forum_replytouser)) {
                         mtrace("Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id".
                              " ($userto->email) .. not trying again.");
-                        add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#$post->id", 
+                        add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#$post->id",
                                    substr($post->subject,0,30), $cm->id, $userto->id);
                         $errorcount++;
                     } else if ($mailresult === 'emailstop') {
-                        add_to_log($course->id, 'forum', 'mail blocked', "discuss.php?d=$discussion->id#$post->id", 
+                        add_to_log($course->id, 'forum', 'mail blocked', "discuss.php?d=$discussion->id#$post->id",
                                    substr($post->subject,0,30), $cm->id, $userto->id);
                     } else {
                         $mailcount++;
@@ -353,7 +353,7 @@ function forum_cron () {
 
     /// Now see if there are any digest mails waiting to be sent, and if we should send them
 
-    if (!isset($CFG->digestmailtimelast)) {    // To catch the first time 
+    if (!isset($CFG->digestmailtimelast)) {    // To catch the first time
         set_config('digestmailtimelast', 0);
     }
 
@@ -506,7 +506,7 @@ function forum_cron () {
                 }
                 $posthtml .= '</body>';
 
-                if (!$mailresult =  email_to_user($userto, $site->shortname, $postsubject, $posttext, $posthtml, 
+                if (!$mailresult =  email_to_user($userto, $site->shortname, $postsubject, $posttext, $posthtml,
                                                   '', '', $CFG->forum_replytouser)) {
                     mtrace("ERROR!");
                     echo "Error: mod/forum/cron.php: Could not send out digest mail to user $userto->id ($userto->email)... not trying again.\n";
@@ -1156,7 +1156,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
         $userselect = "";
     }
 
-    
+
     if ($visiblegroups == -1) {
         $groupselect = "";
     } else  {
@@ -1271,7 +1271,7 @@ function forum_get_course_forum($courseid, $type) {
             if ($courseid == SITEID) {
                 $forum->name  = get_string("sitenews");
                 $forum->forcesubscribe = 0;
-            }    
+            }
             break;
         case "social":
             $forum->name  = addslashes(get_string("namesocial", "forum"));
@@ -1586,7 +1586,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 function forum_print_discussion_header(&$post, $forum, $datestring="") {
 /// This function prints the overview of a discussion in the forum listing.
 /// It needs some discussion information and some post information, these
-/// happen to be combined for efficiency in the $post parameter by the function 
+/// happen to be combined for efficiency in the $post parameter by the function
 /// that calls this one
 ///   forum_print_latest_discussions()
 
@@ -2364,7 +2364,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
             $groupmode = SEPARATEGROUPS;
         }
     }
-    
+
 
     if (forum_user_can_post_discussion($forum, $currentgroup)) {
         echo "<p align=\"center\">";
@@ -2721,7 +2721,7 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
                               WHERE p.modified > '$sincetime' $forumselect
                                 AND p.userid = u.id $userselect
                                 AND d.course = '$courseid'
-                                AND p.discussion = d.id 
+                                AND p.discussion = d.id
                                 AND cm.instance = f.id
                                 AND cm.course = d.course
                                 AND cm.course = f.course

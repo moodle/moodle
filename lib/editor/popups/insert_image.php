@@ -7,7 +7,7 @@
     if (!$course = get_record("course", "id", $id)) {
         $course->fullname = "";   // Just to keep display happy, though browsing may fail
     }
-    
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -17,6 +17,7 @@
 <title><?php print_string("insertimage","editor");?></title>
 <script language="javascript" type="text/javascript" src="popup.js"></script>
 <script language="javascript" type="text/javascript">
+<!--
 var preview_window = null;
 
 function Init() {
@@ -32,7 +33,7 @@ function Init() {
       document.getElementById("f_horiz").value = param["f_horiz"] != -1 ? param["f_horiz"] : 0;
       document.getElementById("f_width").value = param["f_width"];
       document.getElementById("f_height").value = param["f_height"];
-      window.ipreview.location.replace('preview.php?id='+ <?php print($course->id);?> +'&amp;imageurl='+ param.f_url);
+      window.ipreview.location.replace('preview.php?id='+ <?php print($course->id);?> +'&imageurl='+ param.f_url);
   }
   document.getElementById("f_url").focus();
 };
@@ -125,7 +126,7 @@ function checkvalue(elm,formname) {
         alert("Nothing to do!");
         el.focus();
         return false;
-    } 
+    }
 }
 
 function submit_form(dothis) {
@@ -138,12 +139,12 @@ function submit_form(dothis) {
     if(dothis == "zip") {
         window.ibrowser.document.dirform.action.value = "zip";
     }
-        
+
     window.ibrowser.document.dirform.submit();
     return false;
 }
-                  
 
+//-->
 </script>
 <style type="text/css">
 html, body {
@@ -180,13 +181,13 @@ form { margin-bottom: 0px; margin-top: 0px; }
       <tr>
         <td width="15%" align="right"><?php print_string("imageurl","editor");?>:</td>
         <td width="60%"><input name="f_url" type="text" id="f_url" style="width: 100%;" /></td>
-        <td width="23%" align="center"> 
+        <td width="23%" align="center">
           <button name="btnOK" type="button" id="btnOK" onclick="return onOK();"><?php print_string("ok","editor") ?></button></td>
       </tr>
       <tr>
         <td align="right"><?php print_string("alternatetext","editor");?>:</td>
         <td><input name="f_alt" type="text" id="f_alt" style="width: 100%;" /></td>
-        <td align="center"> 
+        <td align="center">
           <button name="btnCancel" type="button" id="btnCancel" onclick="return onCancel();"><?php print_string("cancel","editor") ?></button></td>
       </tr>
     </table>
@@ -258,7 +259,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
   </table></form>
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
-      <td width="55%" valign="top"><?php 
+      <td width="55%" valign="top"><?php
       if(isteacher($id)) {
           print_string("filebrowser","editor");
       } else {
@@ -274,7 +275,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
     </tr>
   </table>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-      <tr> 
+      <tr>
         <td width="55%"><div class="space"></div>
         <?php if(isteacher($id)) { ?>
         <table border="0" cellpadding="2" cellspacing="0">
@@ -293,7 +294,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
           <input name="btnRename" type="submit" id="btnRename" value="<?php print_string("rename","editor");?>" /></form></td>
           <tr></table>
           <br />
-          <?php 
+          <?php
           } else {
               print "";
           } ?>
@@ -302,14 +303,14 @@ form { margin-bottom: 0px; margin-top: 0px; }
           <legend><?php print_string("properties","editor");?></legend>
           <div class="space"></div>
           <div class="space"></div>
-          &nbsp;&nbsp;<?php print_string("size","editor");?>: 
+          &nbsp;&nbsp;<?php print_string("size","editor");?>:
           <input type="text" id="isize" name="isize" size="10" style="background: transparent; border: none;" />
 	  <?php print_string("type","editor");?>: <input type="text" id="itype" name="itype" size="10" style="background: transparent; border: none;" />
 	  <div class="space"></div>
 	  <div class="space"></div>
 	  </fieldset></td>
     </tr>
-    <tr> 
+    <tr>
       <td height="22"><?php
       if(isteacher($id)) { ?>
           <form name="cfolder" id="cfolder" action="../coursefiles.php" method="post" target="ibrowser">
@@ -328,7 +329,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
           <input type="file" name="userfile" id="userfile" size="35" />
           <input name="save" type="submit" id="save" onclick="return checkvalue('userfile','uploader');" value="<?php print_string("upload","editor");?>" />
           </form>
-          <?php 
+          <?php
           } else {
               print "";
           } ?>

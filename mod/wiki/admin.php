@@ -2,13 +2,13 @@
 /// Extended by Michael Schneider
 /// This page prints a particular instance of wiki
 
-    
+
     require_once("../../config.php");
     require_once("lib.php");
-    
+
 
     require_login($course->id);
-    
+
 
     optional_variable($id);    // Course Module ID, or
     optional_variable($page, false);    // Pagename
@@ -16,7 +16,7 @@
     optional_variable($action,"");    // Admin Action
     optional_variable($userid, 0);     // User wiki.
     optional_variable($groupid, 0);    // Group wiki.
-        
+
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
@@ -41,7 +41,7 @@
             error("Course Module ID was incorrect");
         }
     }
-    
+
     /// Build the ewsiki script constant
     $ewbase = 'view.php?id='.$id;
     if (isset($userid) && $userid!=0) $ewbase .= '&amp;userid='.$userid;
@@ -50,10 +50,10 @@
     define("EWIKI_SCRIPT", $ewscript);
     if($wiki->ewikiacceptbinary) {
       define("EWIKI_UPLOAD_MAXSIZE", get_max_upload_file_size());
-      define("EWIKI_SCRIPT_BINARY", $ewbase."&amp;binary=");
+      define("EWIKI_SCRIPT_BINARY", $ewbase."&binary=");
     }
-    
-    
+
+
     /// Add the course module 'groupmode' to the wiki object, for easy access.
     $wiki->groupmode = $cm->groupmode;
 
@@ -61,13 +61,13 @@
     if(!$action) {
       error(get_string("noadministrationaction","wiki"));
     }
-    
+
     /// Correct Action ?
     if(!in_array($action, array("setpageflags", "removepages", "strippages", "checklinks", "revertpages"))) {
       error("Unknown action '$action'","wiki");
     }
-    
-    
+
+
     /// May the User administrate it ?
     if (($wiki_entry = wiki_get_entry($wiki, $course, $userid, $groupid)) === false || wiki_can_edit_entry($wiki_entry, $wiki, $USER, $course) === false) {
       error(get_string("notadministratewiki","wiki"));
@@ -78,13 +78,13 @@
       if(!($wiki->wtype=="student" || isteacher($course->id))) {
         add_to_log($course->id, "wiki", "hack", "", $wiki->name.": Tried to trick admin.php with action=$action.");
         error("Hack attack detected !");
-      }          
+      }
     }
-            
+
     # Database and Binary Handler
     include_once($CFG->dirroot."/mod/wiki/ewikimoodlelib.php");
     include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/moodle_binary_store.php");
-    
+
     /// The wiki_entry->pagename is set to the specified value of the wiki,
     /// or the default value in the 'lang' file if the specified value was empty.
     define("EWIKI_PAGE_INDEX",$wiki_entry->pagename);
@@ -96,32 +96,32 @@
 
     /// Validate Form
     if ($form = data_submitted()) {
-      switch($action) {          
+      switch($action) {
         case "revertpages":
               if(!$form->deleteversions || 0 > $form->deleteversions || $form->deleteversions > 1000) {
                 $focus="form.deleteversions";
                 $err->deleteversions=get_string("deleteversionserror","wiki");
-              } 
+              }
               if(!$form->changesfield || 0 > $form->changesfield || $form->changesfield > 100000) {
                 $focus="form.changesfield";
                 $err->changesfield=get_string("changesfielderror","wiki");
-              } 
+              }
               if($form->authorfieldpattern=="") {
                 $focus="form.authorfieldpattern";
                 $err->authorfieldpattern=get_string("authorfieldpatternerror","wiki");
-              } 
+              }
           break;
           default: break;
        }
-    }    
-    
+    }
+
     print_header_simple("$wiki_entry->pagename", "",
                 "<A HREF=\"index.php?id=$course->id\">$strwikis</A> -> <A HREF=\"view.php?id=$id\">$wiki->name</a> ->".
                 get_string("administration","wiki"),
                 $focus, "", true, update_module_button($cm->id, $course->id, $strwiki),
                 navmenu($course, $cm));
 
-    
+
     ////////////////////////////////////////////////////////////
     /// Check if the Form has been submitted and display confirmation
     ////////////////////////////////////////////////////////////
@@ -131,9 +131,9 @@
       /// Get additional info
       $addloginfo="";
       switch($action) {
-        case "removepages": 
+        case "removepages":
           $addloginfo=@join(", ", $form->pagestodelete);
-        break; 
+        break;
         case "strippages":
           $addloginfo=@join(", ", $form->pagestostrip);
         break;
@@ -148,20 +148,20 @@
         break;
       }
       add_to_log($course->id, "wiki", $action, "admin.php?action=$action&amp;userid=$userid&amp;groupid=$groupid&amp;id=$id", $wiki->name.($addloginfo?": ".$addloginfo:""));
-      $link="admin.php?action=$action".($userid?"&amp;userid=".$userid:"").($groupid?"&amp;groupid=".$groupid:"")."&amp;id=$id&amp;page=$page";            
+      $link="admin.php?action=$action".($userid?"&amp;userid=".$userid:"").($groupid?"&amp;groupid=".$groupid:"")."&amp;id=$id&amp;page=$page";
       switch($action) {
-        case "removepages": 
-            if($form->proceed) {            
+        case "removepages":
+            if($form->proceed) {
               if(!$confirm && $form->pagestodelete) {
                 notice_yesno(get_string("removepagecheck", "wiki")."<br />".join(", ", $form->pagestodelete),
-                  $link."&amp;confirm=".urlencode(join(" ",$form->pagestodelete)), $link);       
+                  $link."&amp;confirm=".urlencode(join(" ",$form->pagestodelete)), $link);
                 print_footer($course);
                 exit;
               }
             }
           break;
         case "strippages":
-            if($form->proceed) {                            
+            if($form->proceed) {
               if(!$confirm && $form->pagestostrip) {
                 $err=array();
                 $strippages=wiki_admin_strip_versions($form->pagestostrip,$form->version, $err);
@@ -171,29 +171,29 @@
                 }
                 if(count($err)==0) {
                   notice_yesno(get_string("strippagecheck", "wiki")."<br />".join(", ", $form->pagestostrip),
-                      $link.$confirm, $link);       
+                      $link.$confirm, $link);
                   print_footer($course);
                   exit;
                 }
               }
             }
-            break;            
+            break;
         case "checklinks":
-            if($form->proceed) {              
+            if($form->proceed) {
               if(!$confirm && $form->pagetocheck) {
                 $confirm="&amp;confirm=".$form->pagetocheck;
                 notice_yesno(get_string("checklinkscheck", "wiki").$form->pagetocheck,
-                    $link.$confirm, $link);       
+                    $link.$confirm, $link);
                 print_footer($course);
                 exit;
               }
             }
-            break;            
+            break;
         case "setpageflags":
             // pageflagstatus is used in setpageflags.html
             $pageflagstatus=wiki_admin_setpageflags($form->flags);
-            break;            
-        case "revertpages":              
+            break;
+        case "revertpages":
               if(!$err) {
                 if(!$confirm) {
                   $confirm="&confirm[changesfield]=".urlencode($form->changesfield).
@@ -203,20 +203,20 @@
                   $revertedpages=wiki_admin_revert("", $form->authorfieldpattern, $form->changesfield, $form->howtooperate, $form->deleteversions);
                   if($revertedpages) {
                     notice_yesno(get_string("revertpagescheck", "wiki")."<br />".$revertedpages,
-                      $link.$confirm, $link);       
+                      $link.$confirm, $link);
                     print_footer($course);
-                    exit;                
+                    exit;
                   } else {
                     $err->remark=get_string("nochangestorevert","wiki");
                   }
                 }
               }
-            break;            
+            break;
         default: error("No such Wiki-Admin action: $action");
           break;
       }
-    } 
-    
+    }
+
     /// Actions which need a confirmation. If confirmed, do the action
     $redirect="view.php?".($groupid?"&amp;groupid=".$groupid:"").($userid?"&amp;userid=".$userid:"")."&amp;id=$id&amp;page=$page";
     if($confirm && !$err) {
@@ -240,11 +240,11 @@
            } else {
              error($ret);
            }
-           exit;        
+           exit;
         case "checklinks":
            $ret=wiki_admin_checklinks($confirm);
            redirect($redirect, get_string("linkschecked","wiki")."<br />".$ret, 5);
-           exit;        
+           exit;
         case "revertpages":
            $revertedpages=wiki_admin_revert(1, $confirm["authorfieldpattern"], $confirm["changesfield"], $confirm["howtooperate"], $confirm["deleteversions"]);
            redirect($redirect, get_string("pagesreverted","wiki"), 1);
@@ -253,9 +253,9 @@
            # No confirmation needed
            break;
         default: error("No such action '$action' with confirmation");
-      }    
+      }
     }
-      
+
 
     /// The top row contains links to other wikis, if applicable.
     if ($wiki_list = wiki_get_other_wikis($wiki, $USER, $course, $wiki_entry->id)) {
@@ -275,7 +275,7 @@
         echo '<td class="sideblockheading" bgcolor="'.$THEME->cellheading.'" align="right">'
             .get_string('otherwikis', 'wiki').':&nbsp;&nbsp;';
         $script = 'self.location=document.otherwikis.wikiselect.options[document.otherwikis.wikiselect.selectedIndex].value';
-        
+
         /// Add Admin-Action
         reset($wiki_list);
         $wiki_admin_list=array();
@@ -283,7 +283,7 @@
           $wiki_admin_list[$key."&amp;action=$action"]=$val;
         }
         choose_from_menu($wiki_admin_list, "wikiselect", $selected, "choose", $script);
-        echo '</td>';        
+        echo '</td>';
         echo '</tr></table>';
         echo '</form>';
 
@@ -293,52 +293,52 @@
 
     if ($wiki_entry) {
 
-    
+
         /// Page Actions
         echo '<table border="0" width="100%">';
         echo '<tr>';
 #        echo '<tr><td align="center">';
 #        $specialpages=array("SearchPages", "PageIndex","NewestPages","MostVisitedPages","MostOftenChangedPages","UpdatedPages","FileDownload","FileUpload","OrphanedPages","WantedPages");
 #        wiki_print_page_actions($cm->id, $specialpages, $ewiki_id, $ewiki_action, $wiki->ewikiacceptbinary, $canedit);
-#        echo '</td>';    
+#        echo '</td>';
 
         /// Searchform
-        echo '<td align="center">';    
+        echo '<td align="center">';
         wiki_print_search_form($cm->id, $q, $userid, $groupid, false);
         echo '</td>';
-    
+
         /// Internal Wikilinks
-        
+
         /// TODO: DOES NOT WORK !!!!
         echo '<td align="center">';
         wiki_print_wikilinks_block($cm->id,  $wiki->ewikiacceptbinary);
         echo '</td>';
-    
-        /// Administrative Links       
-        echo '<td align="center">';          
+
+        /// Administrative Links
+        echo '<td align="center">';
         wiki_print_administration_actions($wiki, $cm->id, $userid, $groupid, $page, $wiki->htmlmode!=2, $course);
         echo '</td>';
-        
+
 #        if($wiki->htmlmode!=2) {
-#          echo '<td align="center">';          
+#          echo '<td align="center">';
 #          helpbutton('formattingrules', get_string('formattingrules', 'wiki'), 'wiki');
 #          echo get_string("formattingrules","wiki");
 #          echo '</td>';
 #        }
-        
+
         echo '</tr></table>';
     }
 
     // The wiki Contents
     print_simple_box_start( "center", "100%", "$THEME->cellcontent", "20");
-    // Do the Action  
+    // Do the Action
     # "setpageflags", "removepages", "strippages", "checklinks", "revertpages"
     print_heading_with_help(get_string($action,"wiki"), $action, "wiki");
-    include $action.".html";    
+    include $action.".html";
     print_simple_box_end();
 
 /// Finish the page
     print_footer($course);
     exit;
-    
+
 ?> 

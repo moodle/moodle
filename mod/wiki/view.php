@@ -81,8 +81,8 @@
         global $ewiki_title;
 
 ///     #-- predefine some of the configuration constants
-        
-        
+
+
         /// EWIKI_NAME is defined in ewikimoodlelibs, so that also admin.php can use this
         #define("EWIKI_NAME", $wiki_entry->pagename);
 
@@ -90,7 +90,7 @@
         if($ewiki_title=="SearchPages") {
             $qArgument="&amp;q=".urlencode($q);
         }
- 
+
         /// Build the ewsiki script constant
         /// ewbase will also be needed by EWIKI_SCRIPT_BINARY
         $ewbase = $ME.'?id='.$moodleID;
@@ -136,7 +136,7 @@
         # Binary Handling
         if($wiki->ewikiacceptbinary) {
             define("EWIKI_UPLOAD_MAXSIZE", get_max_upload_file_size());
-            define("EWIKI_SCRIPT_BINARY", $ewbase."&amp;binary=");
+            define("EWIKI_SCRIPT_BINARY", $ewbase."&binary=");
             define("EWIKI_ALLOW_BINARY",1);
             define("EWIKI_IMAGE_CACHING",1);
             #define("EWIKI_AUTOVIEW",1);
@@ -153,7 +153,7 @@
         # The mighty Wiki itself
         include_once($CFG->dirroot."/mod/wiki/ewiki/ewiki.php");
 
-        if($canceledit) {          
+        if($canceledit) {
           if ($delim = strpos($page, EWIKI_ACTION_SEP_CHAR)) {
             @$page = substr($page, $delim + 1);
           } else {
@@ -184,7 +184,7 @@
             $moodle_format=FORMAT_HTML;
         }
         if($wiki->htmlmode == 2) {
-            # HTML Only 
+            # HTML Only
             $moodle_format=FORMAT_HTML;
             $ewiki_use_editor=1;
             $ewiki_config["htmlentities"]=array(); // HTML is allowed
@@ -215,7 +215,7 @@
     if(!isset($ewiki_title)) {
           $ewiki_title="";
     }
-        
+
 /// Moodle Log
     add_to_log($course->id, "wiki", $ewiki_action, "view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$page", $wiki->name." ".$ewiki_title);
 
@@ -253,7 +253,7 @@
             .get_string('otherwikis', 'wiki').':&nbsp;&nbsp;';
         $script = 'self.location=document.otherwikis.wikiselect.options[document.otherwikis.wikiselect.selectedIndex].value';
         choose_from_menu($wiki_list, "wikiselect", $selected, "choose", $script);
-        echo '</td>';        
+        echo '</td>';
         echo '</tr></table>';
         echo '</form>';
 
@@ -266,29 +266,29 @@
     /// Page Actions
         echo '<table border="0" width="100%">';
         echo '<tr>';
-        
+
         /// Searchform
-        echo '<td align="center">';    
+        echo '<td align="center">';
         wiki_print_search_form($cm->id, $q, $userid, $groupid, false);
         echo '</td>';
-    
+
         /// Internal Wikilinks
         echo '<td align="center">';
         wiki_print_wikilinks_block($cm->id,  $wiki->ewikiacceptbinary);
         echo '</td>';
-    
+
         /// Administrative Links
         if($canedit) {
-          echo '<td align="center">';          
+          echo '<td align="center">';
           wiki_print_administration_actions($wiki, $cm->id, $userid, $groupid, $ewiki_title, $wiki->htmlmode!=2, $course);
           echo '</td>';
         }
-        
+
         /// Formatting Rules
-        echo '<td align="right">';          
+        echo '<td align="right">';
         helpbutton('howtowiki', get_string('howtowiki', 'wiki'), 'wiki');
         echo '</td>';
-        
+
         echo '</tr></table>';
     }
 
@@ -299,7 +299,7 @@
           print "<br />";
       }
     }
-    
+
     // The wiki Contents
 
     if (!empty($canedit)) {   /// Print tabs with commands for this page
@@ -313,7 +313,7 @@
         }
         foreach ($tabs as $tab) {
             $tabname = get_string("tab$tab", 'wiki');
-            if ($ewiki_action != "$tab" && !in_array($page, $specialpages)) {          
+            if ($ewiki_action != "$tab" && !in_array($page, $specialpages)) {
                 echo '<td class="generaltab" '.$tabstyle.' bgcolor="'.$THEME->cellheading.'">';
                 echo '<a href="'.$ewbase.'&amp;page='.$tab.'/'.$ewiki_id.'">'.$tabname.'</a>';
                 echo '</td>';

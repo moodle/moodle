@@ -29,7 +29,7 @@ if (isset($_GET['chat_enter'])) {
     $message->message = "enter";
     $message->system = 1;
     $message->timestamp = time();
- 
+
     if (!insert_record("chat_messages", $message)) {
         error("Could not insert a chat message!");
     }
@@ -42,7 +42,7 @@ if (isset($_GET['beep'])) {
     $message->message = "beep $beep";
     $message->system = 0;
     $message->timestamp = time();
- 
+
     if (!insert_record("chat_messages", $message)) {
         error("Could not insert a chat message!");
     }
@@ -66,7 +66,7 @@ header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
 header("Cache-Control: no-cache, must-revalidate");
 header("Pragma: no-cache");
 header("Content-Type: text/html");
-header("Refresh: $CFG->chat_refresh_userlist; url=users.php?chat_sid=$chat_sid&amp;groupid=$groupid");
+header("Refresh: $CFG->chat_refresh_userlist; url=users.php?chat_sid=$chat_sid&groupid=$groupid");
 
 print_header();
 

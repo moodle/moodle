@@ -95,7 +95,7 @@
         }
 
         redirect("$CFG->wwwroot/user/edit.php?id=$user->id&amp;course=$site->id");
-        
+
     } else {                        // List all users for editing
 
         $stredituser = get_string("edituser");
@@ -108,12 +108,12 @@
         $strshowallusers = get_string("showallusers");
 
         if ($firstinitial or $lastinitial or $search or $page) {
-            print_header("$site->shortname: $stredituser", $site->fullname, 
+            print_header("$site->shortname: $stredituser", $site->fullname,
                          "<a href=\"index.php\">$stradministration</a> -> ".
                          "<a href=\"users.php\">$strusers</a> -> ".
                          "<a href=\"user.php\">$stredituser</a>");
         } else {
-            print_header("$site->shortname: $stredituser", $site->fullname, 
+            print_header("$site->shortname: $stredituser", $site->fullname,
                          "<a href=\"index.php\">$stradministration</a> -> ".
                          "<a href=\"users.php\">$strusers</a> -> $stredituser");
         }
@@ -254,7 +254,7 @@
         echo "</center>";
 
         print_paging_bar($usercount, $page, $perpage,
-                "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=$search&");
+                "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=$search&amp;");
 
         flush();
 
@@ -330,7 +330,7 @@
             if ($search) {
                 echo "<input type=\"button\" onclick=\"document.location='user.php';\" value=\"$strshowallusers\">";
             }
-            echo "</form>";    
+            echo "</form>";
             echo "</td></tr></table>";
             print_heading("<a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a>");
 
@@ -339,7 +339,7 @@
 
             print_paging_bar($usercount, $page, $perpage,
                              "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage".
-                             "&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=$search&");
+                             "&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=$search&amp;");
 
         }
 

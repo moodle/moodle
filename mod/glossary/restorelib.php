@@ -225,7 +225,7 @@
 
         global $CFG;
 
-        $status = true;    
+        $status = true;
 
         //Get the comments array
         $comments = $info['#']['COMMENTS']['0']['#']['COMMENT'];
@@ -264,7 +264,7 @@
                 }
                 backup_flush(300);
             }
-            if ($newid) { 
+            if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"glossary_comments",$oldid,$newid);
             } else {
@@ -329,7 +329,7 @@
 
         global $CFG;
 
-        $status = true;    
+        $status = true;
 
         //Get the comments array
         $aliases = $info['#']['ALIASES']['0']['#']['ALIAS'];
@@ -417,7 +417,7 @@
 
         global $CFG;
 
-        $status = true;     
+        $status = true;
 
         //Get the entryids array
         $entryids = $info['#']['ENTRIES']['0']['#']['ENTRY'];
@@ -432,7 +432,7 @@
             //Now, build the GLOSSARY_ENTRIES_CATEGORIES record structure
             $entry_category->categoryid = $new_category_id;
             $entry_category->entryid = backup_todb($ent_info['#']['ENTRYID']['0']['#']);
-            
+
             //We have to recode the entryid field
             $entry = backup_getid($restore->backup_unique_code,"glossary_entries",$entry_category->entryid);
             if ($entry) {
@@ -515,9 +515,9 @@
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function glossary_restore_logs($restore,$log) {
-                    
+
         $status = false;
-                    
+
         //Depending of the action, we recode different things
         switch ($log->action) {
         case "add":
@@ -606,7 +606,7 @@
                 //Get the new_id of the glossary_entry (to recode the info and url field)
                 $ent = backup_getid($restore->backup_unique_code,"glossary_entries",$log->info);
                 if ($ent) {
-                    $log->url = "view.php?id=".$log->cmid."&amp;mode=entry&amp;hook=".$ent->new_id;
+                    $log->url = "view.php?id=".$log->cmid."&mode=entry&hook=".$ent->new_id;
                     $log->info = $ent->new_id;
                     $status = true;
                 }
@@ -617,7 +617,7 @@
                 //Get the new_id of the glossary_entry (to recode the info and url field)
                 $ent = backup_getid($restore->backup_unique_code,"glossary_entries",$log->info);
                 if ($ent) {
-                    $log->url = "view.php?id=".$log->cmid."&amp;mode=entry&amp;hook=".$ent->new_id;
+                    $log->url = "view.php?id=".$log->cmid."&mode=entry&hook=".$ent->new_id;
                     $log->info = $ent->new_id;
                     $status = true;
                 }
@@ -628,7 +628,7 @@
                 //Get the new_id of the glossary_entry (to recode the info and url field)
                 $ent = backup_getid($restore->backup_unique_code,"glossary_entries",$log->info);
                 if ($ent) {
-                    $log->url = "showentry.php?id=".$log->cmid."&amp;eid=".$ent->new_id;
+                    $log->url = "showentry.php?id=".$log->cmid."&eid=".$ent->new_id;
                     $log->info = $ent->new_id;
                     $status = true;
                 }
@@ -643,7 +643,7 @@
                 //Get the new_id of the glossary_comment (to recode the info field)
                 $com = backup_getid($restore->backup_unique_code,"glossary_comments",$log->info);
                 if ($ent and $com) {
-                    $log->url = "comments.php?id=".$log->cmid."&amp;eid=".$ent->new_id;
+                    $log->url = "comments.php?id=".$log->cmid."&eid=".$ent->new_id;
                     $log->info = $com->new_id;
                     $status = true;
                 }
@@ -658,7 +658,7 @@
                 //Get the new_id of the glossary_comment (to recode the info field)
                 $com = backup_getid($restore->backup_unique_code,"glossary_comments",$log->info);
                 if ($ent and $com) {
-                    $log->url = "comments.php?id=".$log->cmid."&amp;eid=".$ent->new_id;
+                    $log->url = "comments.php?id=".$log->cmid."&eid=".$ent->new_id;
                     $log->info = $com->new_id;
                     $status = true;
                 }
@@ -673,7 +673,7 @@
                 //Get the new_id of the glossary_comment (to recode the info field)
                 $com = backup_getid($restore->backup_unique_code,"glossary_comments",$log->info);
                 if ($ent and $com) {
-                    $log->url = "comments.php?id=".$log->cmid."&amp;eid=".$ent->new_id;
+                    $log->url = "comments.php?id=".$log->cmid."&eid=".$ent->new_id;
                     $log->info = $com->new_id;
                     $status = true;
                 }

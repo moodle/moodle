@@ -7,7 +7,7 @@ include("../filter.inc.php");
 if ($arsc_my = arsc_getdatafromsid($arsc_sid))
 {
  include("../shared/language/".$arsc_my["language"].".inc.php");
- 
+
  $arsc_user = $arsc_my["user"];
  $arsc_room = $arsc_my["room"];
  if ($arsc_lastid == "")
@@ -16,7 +16,7 @@ if ($arsc_my = arsc_getdatafromsid($arsc_sid))
   $arsc_b = mysql_fetch_array($arsc_result);
   $arsc_lastid = $arsc_b["timeid"];
  }
- 
+
  if ($arsc_my["level"] < 0)
  {
   switch($arsc_my["level"])
@@ -44,9 +44,9 @@ if ($arsc_my = arsc_getdatafromsid($arsc_sid))
   header("Cache-Control: no-cache, must-revalidate");
   header("Pragma: no-cache");
   header("Content-Type: text/html");
-  header("Refresh: 4; url=chatmsg.php?arsc_sid=".$arsc_sid."&arsc_lastid=".$arsc_lastid."&amp;dummy=".time()."#end");
+  header("Refresh: 4; url=chatmsg.php?arsc_sid=".$arsc_sid."&arsc_lastid=".$arsc_lastid."&dummy=".time()."#end");
   echo $arsc_parameters["htmlhead"];
-  
+
   set_magic_quotes_runtime(0);
   $arsc_sendtime = date("H:i:s");
   $arsc_timeid = arsc_microtime();

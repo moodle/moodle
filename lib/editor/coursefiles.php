@@ -61,7 +61,7 @@
                         var value = params[field];
                         switch(field) {
                             case "url"   :   upper.document.getElementById('f_url').value = value;
-                                     upper.ipreview.location.replace('popups/preview.php?id='+ <?php print($course->id);?> +'&amp;imageurl='+ value);
+                                     upper.ipreview.location.replace('popups/preview.php?id='+ <?php print($course->id);?> +'&imageurl='+ value);
                                 break;
                             case "isize" :   upper.document.getElementById('isize').value = value; break;
                             case "itype" :   upper.document.getElementById('itype').value = value; break;
@@ -194,7 +194,7 @@
         case "upload":
             html_header($course, $wdir);
             require_once($CFG->dirroot.'/lib/uploadlib.php');
-                
+
             if (!empty($save)) {
                 $um = new upload_manager('userfile',false,false,$course,false,0);
                 $dir = "$basedir$wdir";

@@ -970,7 +970,7 @@ while(true) {
                     continue;
                 }
 
-                if(!ereg('win=(chat|users|message|beep).*&chat_sid=([a-zA-Z0-9]*)&amp;groupid=([0-9]*) HTTP', $data, $info)) {
+                if(!ereg('win=(chat|users|message|beep).*&chat_sid=([a-zA-Z0-9]*)&groupid=([0-9]*) HTTP', $data, $info)) {
                     // Malformed data
                     $DAEMON->trace('UFO with '.$handle.': Request with malformed data; connection closed', E_USER_WARNING);
                     $DAEMON->dismiss_ufo($handle, true, 'Request with malformed data; connection closed');

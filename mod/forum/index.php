@@ -57,8 +57,8 @@
     }
 
 
-    // Parse and organise all the forums.  Most forums are course modules but 
-    // some special ones are not.  These get placed in the general forums 
+    // Parse and organise all the forums.  Most forums are course modules but
+    // some special ones are not.  These get placed in the general forums
     // category with the forums in section 0.
 
     $generalforums = array();            // For now
@@ -91,7 +91,7 @@
                         unset($learningforums[$forum->keyreference]);
                     }
                     break;
-                case "teacher": 
+                case "teacher":
                     if (isteacher($course->id)) {
                         $forum->visible = true;
                         $generalforums[] = $forum;
@@ -103,7 +103,7 @@
                         if (isset($forum->keyreference)) {
                             unset($learningforums[$forum->keyreference]);
                         }
-                    } 
+                    }
                     break;
             }
         }
@@ -118,13 +118,13 @@
             } else {
                 $groupmode = NOGROUPS;
             }
-                
+
             if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id)) {
                 $count = count_records_select("forum_discussions", "forum = '$forum->id' AND (groupid = '$currentgroup' OR groupid = '-1')");
             } else {
                 $count = count_records("forum_discussions", "forum", "$forum->id");
             }
-           
+
             $forum->intro = forum_shorten_post($forum->intro);
             replace_smilies($forum->intro);
             $forum->intro = "<span style=\"font-size:x-small;\">$forum->intro</span>";;
@@ -175,7 +175,7 @@
                 $generaltable->data[] = array ($forumlink, "$forum->intro", "$count");
             }
         }
-    } 
+    }
 
 
     // Start of the table for Learning Forums
@@ -199,24 +199,24 @@
         // Add extra field for section number, at the front
         array_unshift($learningtable->head, "");
         array_unshift($learningtable->align, "center");
-    
+
 
         if ($learningforums) {
             $currentsection = "";
 
             foreach ($learningforums as $key => $forum) {
                 $groupmode = groupmode($course, $forum);  /// Can do this because forum->groupmode is defined
-                
+
                 if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id)) {
                     $count = count_records("forum_discussions", "forum", "$forum->id", "groupid", $currentgroup);
                 } else {
                     $count = count_records("forum_discussions", "forum", "$forum->id");
                 }
-    
+
                 $forum->intro = forum_shorten_post($forum->intro);
                 replace_smilies($forum->intro);
                 $forum->intro = "<span style=\"font-size:x-small;\">$forum->intro</span>";
-    
+
                 if ($forum->section != $currentsection) {
                     $printsection = $forum->section;
                     if ($currentsection) {
@@ -232,7 +232,7 @@
                 } else {
                     $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">$forum->name</a>";
                 }
-    
+
                 if ($can_subscribe) {
                     if (forum_is_forcesubscribed($forum->id)) {
                         $sublink = get_string("yes");
@@ -286,7 +286,7 @@
                     "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> $strforums",
                     "", "", true, $searchform, navmenu($course));
     } else {
-        print_header("$course->shortname: $strforums", "$course->fullname", "$strforums", 
+        print_header("$course->shortname: $strforums", "$course->fullname", "$strforums",
                     "", "", true, $searchform, navmenu($course));
     }
 

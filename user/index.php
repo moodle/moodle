@@ -153,7 +153,7 @@
         echo "<center><p align=\"center\">";
         echo get_string("firstname")." : ";
         if ($firstinitial) {
-            echo " <a href=\"index.php?id=$course->id&amp;sort=firstname&amp;dir=ASC&".
+            echo " <a href=\"index.php?id=$course->id&amp;sort=firstname&amp;dir=ASC&amp;".
                    "perpage=$perpage&amp;lastinitial=$lastinitial\">$strall</a> ";
         } else {
             echo " <b>$strall</b> ";
@@ -162,7 +162,7 @@
             if ($letter == $firstinitial) {
                 echo " <b>$letter</b> ";
             } else {
-                echo " <a href=\"index.php?id=$course->id&amp;sort=firstname&amp;dir=ASC&".
+                echo " <a href=\"index.php?id=$course->id&amp;sort=firstname&amp;dir=ASC&amp;".
                        "perpage=$perpage&amp;lastinitial=$lastinitial&amp;firstinitial=$letter\">$letter</a> ";
             }
         }
@@ -172,7 +172,7 @@
 
         echo get_string("lastname")." : ";
         if ($lastinitial) {
-            echo " <a href=\"index.php?id=$course->id&amp;sort=lastname&amp;dir=ASC&".
+            echo " <a href=\"index.php?id=$course->id&amp;sort=lastname&amp;dir=ASC&amp;".
                    "perpage=$perpage&amp;firstinitial=$firstinitial\">$strall</a> ";
         } else {
             echo " <b>$strall</b> ";
@@ -181,7 +181,7 @@
             if ($letter == $lastinitial) {
                 echo " <b>$letter</b> ";
             } else {
-                echo " <a href=\"index.php?id=$course->id&amp;sort=lastname&amp;dir=ASC&".
+                echo " <a href=\"index.php?id=$course->id&amp;sort=lastname&amp;dir=ASC&amp;".
                        "perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$letter\">$letter</a> ";
             }
         }
@@ -189,7 +189,7 @@
         echo "</center>";
 
         print_paging_bar($matchcount, $page, $perpage,
-                         "index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&");
+                         "index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial");
 
     }
 
@@ -204,7 +204,7 @@
     } else if ($matchcount > 0) {
         print_user_table($students, $isteacher);
         print_paging_bar($matchcount, $page, $perpage,
-                         "index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&");
+                         "index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial");
 
         if ($perpage < $totalcount) {
             echo "<center><p>";

@@ -4,10 +4,10 @@
 
     //This is the "graphical" structure of the forum mod:
     //
-    //                           forum                                      
+    //                           forum
     //                        (CL,pk->id)
     //                            |
-    //             -----------------------------------        
+    //             -----------------------------------
     //             |                                 |
     //        subscriptions                    forum_discussions
     //    (UL,pk->id, fk->forum)             (UL,pk->id, fk->forum)
@@ -15,7 +15,7 @@
     //                                               |
     //                                               |
     //                                           forum_posts
-    //                             (UL,pk->id,fk->discussion,nt->parent,files) 
+    //                             (UL,pk->id,fk->discussion,nt->parent,files)
     //                                               |
     //                                               |
     //                                               |
@@ -71,7 +71,7 @@
                     $forum->scale = -($scale->new_id);
                 }
             }
-            
+
             $forumtobeinserted = true;
             //If the forum is a teacher forum, then we have to look if it exists in destination course
             if ($forum->type == "teacher") {
@@ -311,7 +311,7 @@
             if ($user) {
                 $post->userid = $user->new_id;
             }
-     
+
             //The structure is equal to the db, so insert the forum_posts
             $newid = insert_record ("forum_posts",$post);
 
@@ -391,7 +391,7 @@
 
         //First, locate course's moddata directory
         $moddata_path = $CFG->dataroot."/".$restore->course_id."/".$CFG->moddata;
-  
+
         //Check it exists and create it
         $status = check_dir_exists($moddata_path,true);
 
@@ -486,9 +486,9 @@
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function forum_restore_logs($restore,$log) {
-                    
+
         $status = false;
-                    
+
         //Depending of the action, we recode different things
         switch ($log->action) {
         case "add":
@@ -633,7 +633,7 @@
                         $status = true;
                     }
                 }
-            }   
+            }
             break;
         case "delete post":
             if ($log->cmid) {
@@ -663,7 +663,7 @@
     }
 
     //Return a content decoded to support interactivities linking. Every module
-    //should have its own. They are called automatically from 
+    //should have its own. They are called automatically from
     //forum_decode_content_links_caller() function in each module
     //in the restore process
     function forum_decode_content_links ($content,$restore) {
@@ -791,10 +791,10 @@
                 //If it is a link to this course, update the link to its new location
                 if($rec->new_id && $rec2->new_id) {
                     //Now replace it
-                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/discuss.php?d='.$rec->new_id.'&amp;parent='.$rec2->new_id,$result);
+                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/discuss.php?d='.$rec->new_id.'&parent='.$rec2->new_id,$result);
                 } else {
                     //It's a foreign link so leave it as original
-                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/forum/discuss.php?d='.$old_id.'&amp;parent='.$old_id2,$result);
+                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/forum/discuss.php?d='.$old_id.'&parent='.$old_id2,$result);
                 }
             }
         }
@@ -841,9 +841,9 @@
         $status = true;
 
         echo "<ul>";
-  
+
         //FORUM: Decode every POST (message) in the coure
-        
+
         //Check we are restoring forums
         if ($restore->mods['forum']->restore == 1) {
             echo "<li>".get_string("from")." ".get_string("modulenameplural","forum");
@@ -857,7 +857,7 @@
                 $i = 0;   //Counter to send some output to the browser to avoid timeouts
                 foreach ($posts as $post) {
                     //Increment counter
-                    $i++; 
+                    $i++;
                     $content = $post->message;
                     $result = forum_decode_content_links($content,$restore);
                     if ($result != $content) {

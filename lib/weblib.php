@@ -480,7 +480,7 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
     }
 
     $startoutput = '<form action="" method="get" target="'.$CFG->framename.'" name="'.$formname.'">';
-    $output = "<select name=\"popup\" onchange=\"$targetwindow.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value\">\n";
+    $output = "<select name=\"popup\" onchange=\"$targetwindow.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value;\">\n";
 
     if ($nothing != "") {
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
@@ -1143,10 +1143,13 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     }
 
     if ($usexml) {       // Added by Gustav Delius / Mad Alex for MathML output
+                         // Modified by Julian Sedding
         $currentlanguage = current_language();
-
-        @header("Content-type: application/xhtml+xml");
-        echo "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n";
+        $mathplayer = preg_match("/MathPlayer/i", $_SERVER['HTTP_USER_AGENT']);
+        if(!$mathplayer) {
+            header('Content-Type: application/xhtml+xml');
+        }
+        echo "<?xml version=\"1.0\" ?>\n";
         if (!empty($CFG->xml_stylesheets)) {
             $stylesheets = explode(";", $CFG->xml_stylesheets);
             foreach ($stylesheets as $stylesheet) {
@@ -1158,7 +1161,17 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
             echo " plus $CFG->xml_doctype_extra";
         }
         echo "//" . strtoupper($currentlanguage) . "\" \"$CFG->xml_dtd\">\n";
-        $direction = " xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"$currentlanguage\" $direction";
+        $direction = " xmlns=\"http://www.w3.org/1999/xhtml\"
+                       xmlns:math=\"http://www.w3.org/1998/Math/MathML\"
+                       xml:lang=\"en\"
+                       xmlns:xlink=\"http://www.w3.org/1999/xlink\"
+                       $direction";
+        if($mathplayer) {
+            $meta .= '<object id="mathplayer" classid="clsid:32F66A20-7614-11D4-BD11-00104BD3F987">' . "\n";
+            $meta .= "<!--comment required to prevent this becoming an empty tag-->\n";
+            $meta .= "</object>\n";
+            $meta .= '<?import namespace="math" implementation="#mathplayer" ?>' . "\n";
+        }
     }
 
     $title = str_replace('"', '&quot;', $title);
@@ -2331,21 +2344,28 @@ function notice_yesno ($message, $linkyes, $linkno) {
 function redirect($url, $message="", $delay="0") {
 // Redirects the user to another page, after printing a notice
 
+    // '&' needs to be encoded into '&amp;' for XHTML compliance,
+    // however, this is not true for javascript. Therefore we
+    // first decode all entities in $url (since we cannot rely on)
+    // the correct input) and then encode for where it's needed
+    // echo "<script type='text/javascript'>alert('Redirect $url');</script>";
+    $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
+    $encodedurl = htmlentities($url);
     if (empty($message)) {
-        echo "<meta http-equiv=\"refresh\" content=\"$delay; url=$url\" />";
-        echo "<script type=\"text/javascript\">location.replace('$url');</script>";   // To cope with Mozilla bug
+        echo "<meta http-equiv=\"refresh\" content=\"$delay; url=$encodedurl\" />";
+        echo "<script type=\"text/javascript\">\n<!--\nlocation.replace('$url');\n//-->\n</script>";   // To cope with Mozilla bug
     } else {
         if (empty($delay)) {
             $delay = 3;  // There's no point having a message with no delay
         }
-        print_header("", "", "", "", "<meta http-equiv=\"refresh\" content=\"$delay; url=$url\" />");
+        print_header("", "", "", "", "<meta http-equiv=\"refresh\" content=\"$delay; url=$encodedurl\" />");
         echo "<center>";
         echo "<p>$message</p>";
-        echo "<p>( <a href=\"$url\">".get_string("continue")."</a> )</p>";
+        echo "<p>( <a href=\"$encodedurl\">".get_string("continue")."</a> )</p>";
         echo "</center>";
         flush();
         sleep($delay);
-        echo "<script type=\"text/javascript\">location.replace('$url');</script>";   // To cope with Mozilla bug
+        echo "<script type=\"text/javascript\">\n<!--\nlocation.replace('$url');\n//-->\n</script>";   // To cope with Mozilla bug
     }
     die;
 }

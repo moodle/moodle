@@ -45,8 +45,8 @@
             $post->id = $post->edit;
             $message = '';
             if (forum_update_post($post,$message)) {
-                
-                add_to_log($post->course, "forum", "update post", 
+
+                add_to_log($post->course, "forum", "update post",
                           "discuss.php?d=$post->discussion&amp;parent=$post->id", "$post->id", $cm->id);
 
                 $timemessage = 2;
@@ -54,14 +54,14 @@
                     $timemessage = 4;
                 }
                 $message .= '<br />'.get_string("postupdated", "forum");
-                
+
                 if ($subscribemessage = forum_post_subscription($post)) {
                     $timemessage = 4;
                 }
                 redirect(forum_go_back_to("discuss.php?d=$post->discussion#$post->id"), $message.$subscribemessage, $timemessage);
 
             } else {
-                error(get_string("couldnotupdate", "forum"), $errordestination); 
+                error(get_string("couldnotupdate", "forum"), $errordestination);
             }
             exit;
 
@@ -69,7 +69,7 @@
             $message = '';
             if ($post->id = forum_add_new_post($post,$message)) {
 
-                add_to_log($post->course, "forum", "add post", 
+                add_to_log($post->course, "forum", "add post",
                           "discuss.php?d=$post->discussion&amp;parent=$post->id", "$post->id", $cm->id);
 
                 $timemessage = 2;
@@ -85,7 +85,7 @@
                 redirect(forum_go_back_to("discuss.php?d=$post->discussion#$post->id"), $message.$subscribemessage, $timemessage);
 
             } else {
-                error(get_string("couldnotadd", "forum"), $errordestination); 
+                error(get_string("couldnotadd", "forum"), $errordestination);
             }
             exit;
 
@@ -96,7 +96,7 @@
             $message = '';
             if ($discussion->id = forum_add_discussion($discussion,$message)) {
 
-                add_to_log($post->course, "forum", "add discussion", 
+                add_to_log($post->course, "forum", "add discussion",
                            "discuss.php?d=$discussion->id", "$discussion->id", $cm->id);
 
                 $timemessage = 2;
@@ -104,7 +104,7 @@
                     $timemessage = 4;
                 }
                 $message .= '<br />'.get_string("postadded", "forum", format_time($CFG->maxeditingtime));
-                
+
                 if ($subscribemessage = forum_post_subscription($discussion)) {
                     $timemessage = 4;
                 }
@@ -112,7 +112,7 @@
                 redirect(forum_go_back_to("view.php?f=$post->forum"), $message.$subscribemessage, $timemessage);
 
             } else {
-                error(get_string("couldnotadd", "forum"), $errordestination); 
+                error(get_string("couldnotadd", "forum"), $errordestination);
             }
             exit;
         }
@@ -299,7 +299,7 @@
         if (isset($confirm)) {    // User has confirmed the delete
 
             if ($post->totalscore) {
-                notice(get_string("couldnotdeleteratings", "forum"), 
+                notice(get_string("couldnotdeleteratings", "forum"),
                         forum_go_back_to("discuss.php?d=$post->discussion"));
 
             } else if (record_exists("forum_posts", "parent", $delete)) {
@@ -312,23 +312,23 @@
                 }
                 if (! $post->parent) {  // post is a discussion topic as well, so delete discussion
                     if ($forum->type == "single") {
-                        notice("Sorry, but you are not allowed to delete that discussion!", 
+                        notice("Sorry, but you are not allowed to delete that discussion!",
                                 forum_go_back_to("discuss.php?d=$post->discussion"));
                     }
                     forum_delete_discussion($discussion);
 
-                    add_to_log($discussion->course, "forum", "delete discussion", 
+                    add_to_log($discussion->course, "forum", "delete discussion",
                                "view.php?id=$cm->id", "$forum->id", $cm->id);
 
-                    redirect("view.php?f=$discussion->forum", 
+                    redirect("view.php?f=$discussion->forum",
                              get_string("deleteddiscussion", "forum"), 1);
 
                 } else if (forum_delete_post($post)) {
 
-                    add_to_log($discussion->course, "forum", "delete post", 
+                    add_to_log($discussion->course, "forum", "delete post",
                                "discuss.php?d=$post->discussion", "$post->id", $cm->id);
 
-                    redirect(forum_go_back_to("discuss.php?d=$post->discussion"), 
+                    redirect(forum_go_back_to("discuss.php?d=$post->discussion"),
                              get_string("deletedpost", "forum"), 1);
                 } else {
                     error("An error occurred while deleting record $post->id");
@@ -341,10 +341,10 @@
             forum_set_return();
 
             print_header();
-            notice_yesno(get_string("deletesure", "forum"), 
+            notice_yesno(get_string("deletesure", "forum"),
                          "post.php?delete=$delete&amp;confirm=$delete",
                          $_SERVER["HTTP_REFERER"]);
-                         
+
             echo "<center><hr />";
             forum_print_post($post, $forum->course, $ownpost=false, $reply=false, $link=false);
             echo "</center>";
@@ -354,7 +354,7 @@
 
 
     } else if (isset($prune)) {  // Teacher is pruning
-        
+
         if (! $post = forum_get_post_full($prune)) {
             error("Post ID was incorrect");
         }
@@ -372,7 +372,7 @@
         }
 
         if (isset($_REQUEST['name'])) {    // User has confirmed the prune
-            
+
             $newdiscussion->course = $discussion->course;
             $newdiscussion->forum = $discussion->forum;
             $newdiscussion->name = $name;
@@ -381,11 +381,11 @@
             $newdiscussion->groupid = $discussion->groupid;
             $newdiscussion->assessed = $discussion->assessed;
             $newdiscussion->usermodified = $post->userid;
-            
+
             if (!$newid = insert_record('forum_discussions', $newdiscussion)) {
                 error('Could not create new discussion');
             }
-            
+
             $newpost->id = $post->id;
             $newpost->parent = 0;
             $newpost->subject = $name;
@@ -395,22 +395,22 @@
             }
 
             forum_change_discussionid($post->id, $newid);
-            
+
             // set timemodified to time of last post in each discussion
             $lastpost = get_record_sql("SELECT MAX(modified) AS time
-                                              FROM {$CFG->prefix}forum_posts 
+                                              FROM {$CFG->prefix}forum_posts
                                               WHERE discussion = '$discussion->id'");
             set_field('forum_discussions', 'timemodified', $lastpost->time, 'id', $discussion->id);
             $lastpost = get_record_sql("SELECT MAX(modified) AS time
-                                              FROM {$CFG->prefix}forum_posts 
+                                              FROM {$CFG->prefix}forum_posts
                                               WHERE discussion = '$newid'");
-            set_field('forum_discussions', 'timemodified', $lastpost->time, 'id', $newid);            
+            set_field('forum_discussions', 'timemodified', $lastpost->time, 'id', $newid);
 
 
             if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) { // For the logs
                 $cm->id = 0;
             }
-            add_to_log($discussion->course, "forum", "prune post", 
+            add_to_log($discussion->course, "forum", "prune post",
                            "discuss.php?d=$newid", "$post->id", $cm->id);
 
             redirect(forum_go_back_to("discuss.php?d=$newid"), get_string("prunedpost", "forum"), 1);
@@ -420,16 +420,16 @@
             $course = get_record('course', 'id', $forum->course);
             $strforums = get_string("modulenameplural", "forum");
             print_header_simple("$discussion->name: $post->subject", "",
-                         "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> 
-                          <a href=\"view.php?f=$forum->id\">$forum->name</a> -> 
+                         "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> ->
+                          <a href=\"view.php?f=$forum->id\">$forum->name</a> ->
                           <a href=\"discuss.php?d=$discussion->id\">$post->subject</a> -> ".
                           get_string("prune", "forum"), '', "", true, "", navmenu($course, $cm));
-            
+
             print_heading(get_string('pruneheading', 'forum'));
             echo '<center>';
-            
+
             include('prune.html');
-                         
+
             forum_print_post($post, $forum->course, $ownpost=false, $reply=false, $link=false);
             echo '</center>';
         }
@@ -443,7 +443,7 @@
     }
 
 
-    // To get here they need to edit a post, and the $post 
+    // To get here they need to edit a post, and the $post
     // variable will be loaded with all the particulars,
     // so bring up the form.
 

@@ -102,14 +102,14 @@
         if (empty($CFG->enablerssfeeds)) {
             //Some debug...
             if ($CFG->debug > 7) {
-                echo "DISABLED (admin variables)"; 
-            }           
+                echo "DISABLED (admin variables)";
+            }
         //Check CFG->glossary_enablerssfeeds
         } else if (empty($CFG->glossary_enablerssfeeds)) {
-            //Some debug... 
+            //Some debug...
             if ($CFG->debug > 7) {
                 echo "DISABLED (module configuration)";
-            }           
+            }
         //It's working so we start...
         } else {
             //Check the glossary has rss activated
@@ -119,7 +119,7 @@
                     $items = glossary_rss_feed_withauthor($glossary);
                 } else {                //Without author RSS
                     $items = glossary_rss_feed_withoutauthor($glossary);
-     
+
                 }
                 //Now, if items, we begin building the structure
                 if (!empty($items)) {
@@ -140,7 +140,7 @@
                         $status = $header.$articles.$footer;
                     } else {
                         $status = false;
-                    } 
+                    }
                 } else {
                     $status = false;
                 }
@@ -159,16 +159,16 @@
 
         if ($newsince) {
             $newsince = " AND e.timecreated > '$newsince'";
-        } else {        
+        } else {
             $newsince = "";
-        }       
+        }
 
-        if ($recs = get_records_sql ("SELECT e.id entryid, 
-                                             e.concept entryconcept, 
-                                             e.definition entrydefinition, 
-                                             e.format entryformat, 
-                                             e.timecreated entrytimecreated, 
-                                             u.id userid, 
+        if ($recs = get_records_sql ("SELECT e.id entryid,
+                                             e.concept entryconcept,
+                                             e.definition entrydefinition,
+                                             e.format entryformat,
+                                             e.timecreated entrytimecreated,
+                                             u.id userid,
                                              u.firstname userfirstname,
                                              u.lastname userlastname
                                       FROM {$CFG->prefix}glossary_entries e,
@@ -194,7 +194,7 @@
                 $user->lastname = $rec->userlastname;
                 $item->author = fullname($user);
                 $item->pubdate = $rec->entrytimecreated;
-                $item->link = $CFG->wwwroot."/mod/glossary/showentry.php?courseid=".$glossary->course."&amp;eid=".$rec->entryid;
+                $item->link = $CFG->wwwroot."/mod/glossary/showentry.php?courseid=".$glossary->course."&eid=".$rec->entryid;
                 $item->description = format_text($rec->entrydefinition,$rec->entryformat,NULL,$glossary->course);
                 $items[] = $item;
                 $articlesleft--;
@@ -252,7 +252,7 @@
                 $user->lastname = $rec->userlastname;
                 //$item->author = fullname($user);
                 $item->pubdate = $rec->entrytimecreated;
-                $item->link = $CFG->wwwroot."/mod/glossary/showentry.php?courseid=".$glossary->course."&amp;eid=".$rec->entryid;
+                $item->link = $CFG->wwwroot."/mod/glossary/showentry.php?courseid=".$glossary->course."&eid=".$rec->entryid;
                 $item->description = format_text($rec->entrydefinition,$rec->entryformat,NULL,$glossary->course);
                 $items[] = $item;
                 $articlesleft--;
@@ -263,5 +263,5 @@
         }
         return $items;
     }
-    
+
 ?>

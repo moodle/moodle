@@ -27,7 +27,7 @@
         require_login($course->id);
     }
 
-    if (!empty($move)) { 
+    if (!empty($move)) {
         if (!isteacher($course->id)) {
             error("Only teachers can do that!");
         }
@@ -104,10 +104,10 @@
     if ($course->category) {
         print_header("$course->shortname: $discussion->name", "$course->fullname",
                  "<a href=../../course/view.php?id=$course->id>$course->shortname</a> ->
-                  $navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm), false);
+                  $navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
     } else {
         print_header("$course->shortname: $discussion->name", "$course->fullname",
-                 "$navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm), false);
+                 "$navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
     }
 
 
@@ -177,7 +177,7 @@
             }
             if (!empty($forummenu)) {
                 echo "<div align=\"right\">";
-                echo popup_form("$CFG->wwwroot/mod/forum/", $forummenu, "forummenu", "", 
+                echo popup_form("$CFG->wwwroot/mod/forum/", $forummenu, "forummenu", "",
                                  get_string("movethisdiscussionto", "forum"), "", "", true);
                 echo "</div>";
             }

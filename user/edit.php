@@ -6,7 +6,7 @@
     require_variable($id);       // user id
     require_variable($course);   // course id
 
-    
+
 
     if (! $user = get_record("user", "id", $id)) {
         error("User ID was incorrect");
@@ -17,7 +17,7 @@
     }
 
     if ($user->confirmed and user_not_fully_set_up($user)) {
-        // Special case which can only occur when a new account 
+        // Special case which can only occur when a new account
         // has just been created by EXTERNAL authentication
         // This is the only page in Moodle that has the exception
         // so that users can set up their accounts
@@ -91,7 +91,7 @@
 
         } else {
             $timenow = time();
-            
+
             if (!$usernew->picture = save_profile_image($user->id,$um,'users')) {
                 if (!empty($usernew->deletepicture)) {
                     set_field('user', 'picture', 0, 'id', $user->id);  /// Delete picture
@@ -100,9 +100,9 @@
                     $usernew->picture = $user->picture;
                 }
             }
-            
+
             $usernew->timemodified = time();
-            
+
             if (isadmin()) {
                 if (!empty($usernew->newpassword)) {
                     $usernew->password = md5($usernew->newpassword);
@@ -147,7 +147,7 @@
                         unset($USER->newadminuser);
                         redirect("$CFG->wwwroot/", get_string("changessaved"));
                     }
-                    redirect("$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id", get_string("changessaved"));
+                    redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id", get_string("changessaved"));
                 } else {
                     redirect("$CFG->wwwroot/$CFG->admin/user.php", get_string("changessaved"));
                 }
@@ -156,7 +156,7 @@
             }
         }
     }
-    
+
 /// Otherwise fill and print the form.
 
     $streditmyprofile = get_string("editmyprofile");
@@ -171,16 +171,16 @@
         }
         if ($course->category) {
             print_header("$course->shortname: $streditmyprofile", "$course->fullname: $streditmyprofile",
-                        "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
+                        "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>
                         -> <a href=\"index.php?id=$course->id\">$strparticipants</a>
-                        -> <a href=\"view.php?id=$user->id&amp;course=$course->id\">$userfullname</a> 
+                        -> <a href=\"view.php?id=$user->id&amp;course=$course->id\">$userfullname</a>
                         -> $streditmyprofile", "");
         } else {
             if (isset($USER->newadminuser)) {
                 print_header();
             } else {
                 print_header("$course->shortname: $streditmyprofile", "$course->fullname",
-                             "<a href=\"view.php?id=$user->id&amp;course=$course->id\">$userfullname</a> 
+                             "<a href=\"view.php?id=$user->id&amp;course=$course->id\">$userfullname</a>
                               -> $streditmyprofile", "");
             }
         }
@@ -280,7 +280,7 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
             $err["email"] = get_string("emailexists");
         }
     }
-    
+
     if (empty($err["email"]) and !isadmin()) {
         if ($error = email_is_not_allowed($usernew->email)) {
             $err["email"] = $error;

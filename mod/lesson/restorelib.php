@@ -2,10 +2,10 @@
     //This php script contains all the stuff to backup/restore
     //lesson mods
 
-    //This is the "graphical" structure of the lesson mod: 
+    //This is the "graphical" structure of the lesson mod:
     //
     //                                          lesson ----------------------------|
-    //                                       (CL,pk->id)                           | 
+    //                                       (CL,pk->id)                           |
     //                                             |                               |
     //                                             |                         lesson_grades
     //                                             |                  (UL, pk->id,fk->lessonid)
@@ -42,7 +42,7 @@
         $data = backup_getid($restore->backup_unique_code,$mod->modtype,$mod->id);
 
         if ($data) {
-            //Now get completed xmlized object   
+            //Now get completed xmlized object
             $info = $data->info;
             //traverse_xmlize($info);                                                              //Debug
             //print_object ($GLOBALS['traverse_array']);                                           //Debug
@@ -66,7 +66,7 @@
             //The structure is equal to the db, so insert the lesson
             $newid = insert_record("lesson", $lesson);
 
-            //Do some output     
+            //Do some output
             echo "<ul><li>".get_string("modulename","lesson")." \"".$lesson->name."\"<br>";
             backup_flush(300);
 
@@ -84,9 +84,9 @@
                 $status = false;
             }
 
-            //Finalize ul        
+            //Finalize ul
             echo "</ul>";
-        
+
         } else {
             $status = false;
         }
@@ -114,7 +114,7 @@
 
             //We'll need this later!!
             $oldid = backup_todb($page_info['#']['PAGEID']['0']['#']);
-           
+
             //Now, build the lesson_pages record structure
             $page->lessonid = $lessonid;
             $page->prevpageid = $prevpageid;
@@ -129,8 +129,8 @@
             $newid = insert_record ("lesson_pages",$page);
 
             // save the new pageids (needed to fix the absolute jumps in the answers)
-            $newpageid[backup_todb($page_info['#']['PAGEID']['0']['#'])] = $newid; 
-            
+            $newpageid[backup_todb($page_info['#']['PAGEID']['0']['#'])] = $newid;
+
             // fix the forwards link of the previous page
             if ($prevpageid) {
                 if (!set_field("lesson_pages", "nextpageid", $newid, "id", $prevpageid)) {
@@ -138,7 +138,7 @@
                 }
             }
             $prevpageid = $newid;
-            
+
             //Do some output
             if (($i+1) % 10 == 0) {
                 echo ".";
@@ -157,14 +157,14 @@
                 $status = false;
             }
         }
-        
+
         // we've restored all the pages and answers, we now need to fix the jumps in the
         // answer records if they are absolute
         if ($answers = get_records("lesson_answers", "lessonid", $lessonid)) {
             foreach ($answers as $answer) {
                 if ($answer->jumpto > 0) {
                     // change the absolute page id
-                    if (!set_field("lesson_answers", "jumpto", $newpageid[$answer->jumpto], "id", 
+                    if (!set_field("lesson_answers", "jumpto", $newpageid[$answer->jumpto], "id",
                                 $answer->id)) {
                         error("Lesson restorelib: unable to reset jump");
                     }
@@ -301,7 +301,7 @@
                 //traverse_xmlize($grade_info);                         //Debug
                 //print_object ($GLOBALS['traverse_array']);            //Debug
                 //$GLOBALS['traverse_array']="";                        //Debug
-        
+
                 //We'll need this later!!
                 $olduserid = backup_todb($grade_info['#']['USERID']['0']['#']);
 
@@ -342,9 +342,9 @@
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function lesson_restore_logs($restore,$log) {
-                
+
         $status = false;
-            
+
         //Depending of the action, we recode different things
         switch ($log->action) {
         case "add":
@@ -400,7 +400,7 @@
                 //Get the new_id of the page (to recode the url field)
                 $pag = backup_getid($restore->backup_unique_code,"lesson_pages",$log->info);
                 if ($pag) {
-                    $log->url = "view.php?id=".$log->cmid."&amp;action=navigation&amp;pageid=".$pag->new_id;
+                    $log->url = "view.php?id=".$log->cmid."&action=navigation&pageid=".$pag->new_id;
                     $log->info = $pag->new_id;
                     $status = true;
                 }

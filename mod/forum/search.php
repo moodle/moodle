@@ -28,7 +28,7 @@
         require_login($course->id);
     }
 
-    add_to_log($course->id, "forum", "search", "search.php?id=$course->id&amp;search=".urlencode($search), $search); 
+    add_to_log($course->id, "forum", "search", "search.php?id=$course->id&amp;search=".urlencode($search), $search);
 
     $strforums = get_string("modulenameplural", "forum");
     $strsearch = get_string("search", "forum");
@@ -40,7 +40,7 @@
     if (!$search) {
         print_header_simple("$strsearch", "",
                  "<a href=\"index.php?id=$course->id\">$strforums</a> -> $strsearch", "search.search",
-                  "", "", "&nbsp;", navmenu($course));
+                  "", "", "&nbsp;", navmenu($course), true);
 
         print_simple_box_start("center");
         echo "<center>";
@@ -59,9 +59,9 @@
 
 
             print_header_simple("$strsearchresults", "",
-                     "<a href=\"index.php?id=$course->id\">$strforums</a> -> 
-                      <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search", 
-                      "", "", "&nbsp;", navmenu($course));
+                     "<a href=\"index.php?id=$course->id\">$strforums</a> ->
+                      <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search",
+                      "", "", "&nbsp;", navmenu($course), true);
             print_heading(get_string("nopostscontaining", "forum", $search));
 
             print_simple_box_start("center");
@@ -78,14 +78,14 @@
         }
 
         print_header_simple("$strsearchresults", "",
-                 "<a href=\"index.php?id=$course->id\">$strforums</a> -> 
-                  <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search", 
-                  "", "",  $searchform, navmenu($course));
+                 "<a href=\"index.php?id=$course->id\">$strforums</a> ->
+                  <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search",
+                  "", "",  $searchform, navmenu($course), true);
 
         print_heading("$strsearchresults: $totalcount");
 
         echo "<center>";
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&amp;id=$course->id&amp;perpage=$perpage&");
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&amp;id=$course->id&amp;perpage=$perpage&amp;");
         echo "</center>";
 
         foreach ($posts as $post) {
@@ -117,7 +117,7 @@
         }
 
         echo "<center>";
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode($search)."&amp;id=$course->id&amp;perpage=$perpage&");
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode($search)."&amp;id=$course->id&amp;perpage=$perpage&amp;");
         echo "</center>";
     }
 

@@ -628,7 +628,7 @@ function isstudent($courseid, $userid=0) {
             return (record_exists('user_students', 'userid', $userid)
                      or record_exists('user_teachers', 'userid', $userid));
         }
-    }  
+    }
 
     if (!$userid) {
         return !empty($USER->student[$courseid]);
@@ -860,7 +860,7 @@ function authenticate_user_login($username, $password) {
     } else {
         $auth = $user->auth;
     }
-    
+
     if (!file_exists("$CFG->dirroot/auth/$auth/lib.php")) {
         $auth = "manual";    // Can't find auth module, default to internal
     }
@@ -923,7 +923,7 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0) {
         $student->timeend = $timeend;
         $student->time = time();
         return update_record("user_students", $student);
-        
+
     } else {
         $student->userid = $userid;
         $student->course = $courseid;
@@ -1006,7 +1006,7 @@ function add_teacher($userid, $courseid, $editall=1, $role="", $timestart=0, $ti
         $teacher->authority = 1;
     }
     delete_records("user_students", "userid", $userid, "course", $courseid); // Unenrol as student
-    
+
     /// Add forum subscriptions for new users
     require_once('../mod/forum/lib.php');
     forum_add_user($userid, $courseid);
@@ -1070,14 +1070,14 @@ function add_admin($userid) {
     if (!record_exists("user_admins", "userid", $userid)) {
         if (record_exists("user", "id", $userid)) {
             $admin->userid = $userid;
-            
+
             // any admin is also a teacher on the site course
             if (!record_exists('user_teachers', 'course', SITEID, 'userid', $userid)) {
                 if (!add_teacher($userid, SITEID)) {
                     return false;
                 }
             }
-            
+
             return insert_record("user_admins", $admin);
         }
         return false;
@@ -1233,8 +1233,8 @@ function remove_course_contents($courseid, $showfeedback=true) {
 function remove_course_userdata($courseid, $showfeedback=true,
                                 $removestudents=true, $removeteachers=false, $removegroups=true,
                                 $removeevents=true, $removelogs=false) {
-/// This function will empty a course of USER data as much as 
-/// possible.   It will retain the activities and the structure 
+/// This function will empty a course of USER data as much as
+/// possible.   It will retain the activities and the structure
 /// of the course.
 
     global $CFG, $THEME, $USER, $SESSION;
@@ -1616,7 +1616,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
             $mail->AddCustomHeader($from->customheaders);
         }
     }
- 
+
     if ($messagehtml) {
         $mail->IsHTML(true);
         $mail->Encoding = "quoted-printable";           // Encoding to use
@@ -1717,7 +1717,7 @@ function send_password_change_confirmation_email($user) {
 
 
 function email_is_not_allowed($email) {
-/// Check that an email is allowed.  It returns an error message if there 
+/// Check that an email is allowed.  It returns an error message if there
 /// was a problem.
 
     global $CFG;
@@ -2748,22 +2748,22 @@ function notify_login_failures() {
             $recip = get_admins();
             break;
     }
-    
+
     if (empty($CFG->lastnotifyfailure)) {
         $CFG->lastnotifyfailure=0;
     }
-    
-    // we need to deal with the threshold stuff first. 
+
+    // we need to deal with the threshold stuff first.
     if (empty($CFG->notifyloginthreshold)) {
         $CFG->notifyloginthreshold = 10; // default to something sensible.
     }
 
-    $notifyipsrs = $db->Execute("SELECT ip FROM {$CFG->prefix}log WHERE time > {$CFG->lastnotifyfailure} 
+    $notifyipsrs = $db->Execute("SELECT ip FROM {$CFG->prefix}log WHERE time > {$CFG->lastnotifyfailure}
                           AND module='login' AND action='error' GROUP BY ip HAVING count(*) > $CFG->notifyloginthreshold");
 
-    $notifyusersrs = $db->Execute("SELECT info FROM {$CFG->prefix}log WHERE time > {$CFG->lastnotifyfailure} 
+    $notifyusersrs = $db->Execute("SELECT info FROM {$CFG->prefix}log WHERE time > {$CFG->lastnotifyfailure}
                           AND module='login' AND action='error' GROUP BY info HAVING count(*) > $CFG->notifyloginthreshold");
-    
+
     if ($notifyipsrs) {
         $ipstr = '';
         while ($row = $notifyipsrs->FetchRow()) {
@@ -2784,11 +2784,11 @@ function notify_login_failures() {
         $logs = get_logs("time > {$CFG->lastnotifyfailure} AND module='login' AND action='error' "
                  .((strlen($ipstr) > 0 && strlen($userstr) > 0) ? " AND ( ip IN ($ipstr) OR info IN ($userstr) ) "
                  : ((strlen($ipstr) != 0) ? " AND ip IN ($ipstr) " : " AND info IN ($userstr) ")),"l.time DESC","","",$count);
-        
+
         // if we haven't run in the last hour and we have something useful to report and we are actually supposed to be reporting to somebody
-        if (is_array($recip) and count($recip) > 0 and ((time() - (60 * 60)) > $CFG->lastnotifyfailure) 
+        if (is_array($recip) and count($recip) > 0 and ((time() - (60 * 60)) > $CFG->lastnotifyfailure)
             and is_array($logs) and count($logs) > 0) {
-       
+
             $message = '';
             $site = get_site();
             $subject = get_string('notifyloginfailuressubject','',$site->fullname);
@@ -3112,7 +3112,7 @@ function address_in_subnet($addr, $subnetstr) {
 }
 
 function mtrace($string, $eol="\n") {
-// For outputting debugging info 
+// For outputting debugging info
 
     if (defined('STDOUT')) {
         fwrite(STDOUT, $string.$eol);
@@ -3130,6 +3130,16 @@ function getremoteaddr() {
     else if(getenv("REMOTE_ADDR")) $ip = getenv("REMOTE_ADDR");
     else $ip = false; //just in case
     return $ip;
+}
+
+if(!function_exists('html_entity_decode')) {
+// html_entity_decode is only supported by php 4.3.0 and higher
+// so if it is not predefined, define it here
+    function html_entity_decode($string) {
+        $trans_tbl = get_html_translation_table(HTML_ENTITIES);
+        $trans_tbl = array_flip($trans_tbl);
+        return strtr($string, $trans_tbl);
+    }
 }
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:

@@ -28,7 +28,7 @@
         require_login();
     }
 
-    add_to_log($course->id, "user", "view", "view.php?id=$user->id&amp;course=$course->id", "$user->id");
+    add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
 
     if ($student = get_record("user_students", "userid", $user->id, "course", $course->id)) {
         $user->lastaccess = $student->timeaccess;
