@@ -159,7 +159,7 @@ function survey_upgrade($oldversion) {
     }
 
     if ($oldversion < 2004021601) {
-        execute_sql("INSERT INTO `{$CFG->prefix}survey` (`id`, `course`, `template`, `days`, `timecreated`, `timemodified`, `name`, `intro`, `questions`) VALUES (5, 0, 0, 0, 985017600, 985017600, 'ciqname', 'ciqintro', '69,70,71,72,73')");
+        execute_sql("INSERT INTO `{$CFG->prefix}survey` (`course`, `template`, `days`, `timecreated`, `timemodified`, `name`, `intro`, `questions`) VALUES (0, 0, 0, 985017600, 985017600, 'ciqname', 'ciqintro', '69,70,71,72,73')");
         execute_sql("INSERT INTO `{$CFG->prefix}survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (69, 'ciq1', 'ciq1short', '', '', 0, '')");
         execute_sql("INSERT INTO `{$CFG->prefix}survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (70, 'ciq2', 'ciq2short', '', '', 0, '')");
         execute_sql("INSERT INTO `{$CFG->prefix}survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (71, 'ciq3', 'ciq3short', '', '', 0, '')");
