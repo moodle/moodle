@@ -309,6 +309,10 @@ function require_login($courseid=0) {
         if (! $course = get_record("course", "id", $courseid)) {
             error("That course doesn't exist");
         }
+        if (!$course->visible) {
+            print_header();
+            notice(get_string("studentnotallowed", "", "$USER->firstname $USER->lastname"), $CFG->wwwroot);
+        }
         if ($USER->username == "guest") {
             switch ($course->guest) {
                 case 0: // Guests not allowed
