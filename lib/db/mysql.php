@@ -212,6 +212,10 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2002112000) {
+        set_config("guestloginbutton", 1);
+    }
+
 
     return true;
 }
