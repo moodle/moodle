@@ -586,6 +586,29 @@ global $CFG;
     return $return;
 }
 
+function workshop_is_recent_activity($course, $isteacher, $timestart) {//jlw1 added for adding mark to courses with activity in My Moodle
+    global $CFG;
+
+	// have a look for agreed assessments for this user (agree) 
+    $agreecontent = false;
+	if (!$isteacher) { // teachers only need to see submissions
+		if ($logs = workshop_get_agree_logs($course, $timestart)) {
+			// got some, see if any belong to a visible module
+			foreach ($logs as $log) {
+				// Create a temp valid module structure (only need courseid, moduleid)
+				$tempmod->course = $course->id;
+				$tempmod->id = $log->workshopid;
+				//Obtain the visible property from the instance
+				if (instance_is_visible("workshop",$tempmod)) {
+					$agreecontent = true;
+					break;
+				}
+			}
+		}
+	}
+	return false;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 function workshop_print_recent_activity($course, $isteacher, $timestart) {
@@ -2788,17 +2811,17 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
 	// FORM is needed for Mozilla browsers, else radio bttons are not checked
 		?>
 	<form name="assessmentform" method="post" action="assessments.php">
-	<INPUT TYPE="hidden" NAME="id" VALUE="<?PHP echo $cm->id ?>">
-	<input type="hidden" name="aid" value="<?PHP echo $assessment->id ?>">
+	<input type="hidden" name="id" value="<?php echo $cm->id ?>">
+	<input type="hidden" name="aid" value="<?php echo $assessment->id ?>">
 	<input type="hidden" name="action" value="updateassessment">
-	<input type="hidden" name="returnto" value="<?PHP echo $returnto ?>">
-	<CENTER>
-	<TABLE CELLPADDING=2 BORDER=1>
-	<?PHP
-	echo "<TR valign=top>\n";
-	echo "	<TD colspan=2 BGCOLOR=\"$THEME->cellheading2\"><CENTER><B>".get_string("assessment", "workshop").
-		"</B></CENTER></TD>\n";
-	echo "</TR>\n";
+	<input type="hidden" name="returnto" value="<?php echo $returnto ?>">
+	<center>
+	<table cellpadding=2 border=1>
+	<?php
+	echo "<tr valign=top>\n";
+	echo "	<td colspan=2 bgcolor=\"$THEME->cellheading2\"><center><b>".get_string("assessment", "workshop").
+		"</b></center></td>\n";
+	echo "</tr>\n";
 
 	// get the assignment elements...
 	if (!$elementsraw = get_records("workshop_elements", "workshopid", $workshop->id, "elementno ASC")) {
@@ -3671,6 +3694,107 @@ function workshop_test_user_assessments($workshop, $user) {
 		}
 	return $result;
 	}
+	
+function workshop_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, 
+                                           $workshop="0", $user="", $groupid="") {
+    // Returns all workshop posts since a given time.  If workshop is specified then
+    // this restricts the results
+
+    global $CFG;
+
+    if ($workshop) {
+        $workshopselect = " AND cm.id = '$workshop'";
+    } else {
+        $workshopselect = "";
+    }
+
+    if ($user) {
+        $userselect = " AND u.id = '$user'";
+    } else {
+        $userselect = "";
+    }
+
+    $posts = get_records_sql("SELECT s.*, u.firstname, u.lastname,
+            u.picture, cm.instance, w.name, cm.section
+            FROM {$CFG->prefix}workshop_submissions s,
+            {$CFG->prefix}user u,
+            {$CFG->prefix}course_modules cm,
+            {$CFG->prefix}workshop w
+            WHERE s.timecreated  > '$sincetime' $workshopselect
+            AND s.userid = u.id $userselect
+            AND w.course = '$courseid' $groupselect
+            AND cm.instance = w.id
+            AND cm.course = w.course
+            AND s.workshopid = w.id
+            ORDER BY s.id");
+
+
+    if (empty($posts)) {
+        return;
+    }
+
+    foreach ($posts as $post) {
+
+        if (empty($groupid) || ismember($groupid, $post->userid)) {
+            $tmpactivity->type = "workshop";
+            $tmpactivity->defaultindex = $index;
+            $tmpactivity->instance = $post->instance;
+            $tmpactivity->name = $post->name;
+            $tmpactivity->section = $post->section;
+
+            $tmpactivity->content->id = $post->id;
+            $tmpactivity->content->title = $post->title;
+
+            $tmpactivity->user->userid = $post->userid;
+            $tmpactivity->user->fullname = fullname($post);
+            $tmpactivity->user->picture = $post->picture;
+
+            $tmpactivity->timestamp = $post->timecreated;
+            $activities[] = $tmpactivity;
+
+            $index++;
+        }
+    }
+
+    return;
+}
+
+function workshop_print_recent_mod_activity($activity, $course, $detail=false) {
+
+    global $CFG;
+
+    echo '<table border="0" cellpadding="3" cellspacing="0">';
+
+    if ($activity->content->parent) {
+        $openformat = "<font size=\"2\"><i>";
+        $closeformat = "</i></font>";
+    } else {
+        $openformat = "<b>";
+        $closeformat = "</b>";
+    }
+
+    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"workshoppostpicture\" width=\"35\" valign=\"top\">";
+    print_user_picture($activity->user->userid, $course, $activity->user->picture);
+    echo "</td><td>$openformat";
+
+    if ($detail) {
+        echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
+            "height=16 width=16 alt=\"$activity->name\">  ";
+    }
+    echo "<a href=\"$CFG->wwwroot/mod/workshop/view.php?" 
+        . "#" . $activity->content->id . "\">".$activity->content->title;
+
+    echo "</a>$closeformat";
+
+    echo "<br><font size=\"2\">";
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id=" . $activity->user->userid . "&course=" . "$course\">"
+        . $activity->user->fullname . "</a>";
+    echo " - " . userdate($activity->timestamp) . "</font></td></tr>";
+    echo "</table>";
+
+    return;
+
+}
 
 
 
