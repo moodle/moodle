@@ -12,7 +12,7 @@
     require_login();
 
     if (!isadmin()) {
-        error("You must be an administrator to edit users this way.");
+        error("You must be an administrator to use this page.");
     }
 
     if (!$id) {
@@ -34,75 +34,117 @@
     }
 
 
-/// If data submitted, then process and store.
+	print_header("Add teachers to $course->shortname", "Add teachers to a course", "<A HREF=\"$CFG->wwwroot/admin\">Admin</A> -> Add teachers to $course->shortname", "");
 
-	if (match_referer() && isset($HTTP_POST_VARS)) {
 
-        $usernew = (object)$HTTP_POST_VARS;
+/// Get all existing teachers for this course.
+    $teachers = get_records_sql("SELECT u.*,t.authority,t.id as teachid FROM user u, user_teachers t 
+                                 WHERE t.course = '$course->id' 
+                                   AND t.user = u.id 
+                                   ORDER BY t.authority ASC");
 
-        if (find_form_errors($user, $usernew, $err) ) {
-            $user = $usernew;
+/// Add a teacher if one is specified
 
-        } else {
+    if ($add) {
+        if (! $user = get_record("user", "id", $add)) {
+            error("That teacher (id = $add) doesn't exist", "teacher.php?id=$course->id");
+        }
 
-            $usernew->timemodified = time();
-
-            if (update_record("user", $usernew)) {
-		        redirect("index.php", "Changes saved");
-            } else {
-                error("Could not update the user record ($user->id)");
+        foreach ($teachers as $tt) {
+            if ($tt->id == $user->id) {
+                error("That user is already a teacher for this course.", "teacher.php?id=$course->id");
             }
-	    }
+        }
+
+        $teacher->user   = $user->id;
+        $teacher->course = $course->id;
+        if ($teachers) {
+            $teacher->authority = 2;
+        } else {
+            $teacher->authority = 1;   // First teacher is the main teacher
+        }
+        $teacher->id = insert_record("user_teachers", $teacher);
+        if (! $teacher->id) {
+            error("Could not add that teacher to this course!");
+        }
+        $user->authority = $teacher->authority;
+        $teachers[] = $user;
     }
+
+/// Remove a teacher if one is specified.
+
+    if ($remove) {
+        if (! $user = get_record("user", "id", $remove)) {
+            error("That teacher (id = $remove) doesn't exist", "teacher.php?id=$course->id");
+        }
+        foreach ($teachers as $tt) {
+            if ($tt->id == $user->id) {
+                delete_records("user_teachers", "id", "$tt->teachid");
+            }
+        }
+        $teachers = get_records_sql("SELECT u.*,t.authority,t.id as teachid FROM user u, user_teachers t 
+                                 WHERE t.course = '$course->id' 
+                                   AND t.user = u.id 
+                                   ORDER BY t.authority ASC");
+    }
+
+
+/// Show existing teachers for this course
+
+    if ($teachers) {
+        print_simple_box_start("center", "", "$THEME->cellheading");
+        print_heading("Existing teachers");
+        foreach ($teachers as $teacher) {
+            echo "<LI>$teacher->firstname $teacher->lastname, $teacher->email &nbsp;&nbsp; <A HREF=\"teacher.php?id=$course->id&remove=$teacher->id\">remove</A>";
+        }
+        print_simple_box_end();
+    }
+
+/// Print list of potential teachers
+
+    echo "<BR>";
+    print_simple_box_start("center", "", "$THEME->cellcontent");
+    print_heading("Potential teachers");
+
+    if ($search) {
+        $users = get_records_sql("SELECT * from user WHERE confirmed = 1 
+                                  AND (firstname LIKE '%$search%' OR 
+                                       lastname LIKE '%$search%' OR 
+                                       email LIKE '%$search%')");
+    } else {
+        $users = get_records("user", "confirmed", "1");
+    }
+
     
-/// Otherwise fill and print the form.
+    foreach ($users as $user) {  // Remove users who are already teachers
+        foreach ($teachers as $teacher) {
+            if ($teacher->id == $user->id) {
+                continue 2;
+            }
+        }
+        $potential[] = $user;
+    }
 
-    XXXXXXX
+    if (! $potential) { 
+        echo "No potential teachers";
 
-	print_header("Edit user profile", "Edit user profile", "<A HREF=\"$CFG->wwwroot/admin\">Admin</A> -> Edit user", "");
+    } else {
+        if (count($potential) <= 20) {
+            foreach ($potential as $user) {
+                echo "<LI>$user->firstname $user->lastname, $user->email &nbsp;&nbsp; <A HREF=\"teacher.php?id=$course->id&add=$user->id\">add</A>";
+            }
+        } else {
+            echo "There are too many users to show.<BR>Enter a search word here.";
+            echo "<FORM ACTION=teacher.php METHOD=GET>";
+            echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
+            echo "<INPUT TYPE=text NAME=search SIZE=20>";
+            echo "<INPUT TYPE=submit VALUE=Search>";
+            echo "</FORM>";
+        }
+    }
 
-    print_simple_box_start("center", "", "$THEME->cellheading");
-    echo "<H2>User profile for $usernew->firstname $usernew->lastname</H2>";
-	include("user.html");
     print_simple_box_end();
 
     print_footer();
-
-
-
-
-/// FUNCTIONS ////////////////////
-
-function find_form_errors(&$user, &$usernew, &$err) {
-
-    if (empty($usernew->email))
-        $err["email"] = "Missing email address";
-
-    else if (! validate_email($usernew->email))
-        $err["email"] = "Invalid email address, check carefully";
-
-    else if ($otheruser = get_record("user", "email", $usernew->email)) {
-        if ($otheruser->id <> $user->id) {
-            $err["email"] = "Email address already in use by someone else.";
-        }
-    }
-    $user->email = $usernew->email;
-
-    if (empty($user->password) && empty($usernew->password)) {
-        $err["password"] = "Must have a password";
-    }
-
-    if (empty($usernew->username))
-        $err["username"] = "Must have a username";
-
-    if (empty($usernew->firstname))
-        $err["firstname"] = "Must enter your first name";
-
-    if (empty($usernew->lastname))
-        $err["lastname"] = "Must enter your last name";
-
-    return count($err);
-}
-
 
 ?>
