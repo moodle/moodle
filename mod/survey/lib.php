@@ -14,6 +14,14 @@ $SURVEY_QTYPE = array (
          "3" => "Actual and Preferred",
         );
 
+
+define("SURVEY_COLLES_ACTUAL",           "1");
+define("SURVEY_COLLES_PREFERRED",        "2");
+define("SURVEY_COLLES_PREFERRED_ACTUAL", "3");
+define("SURVEY_ATTLS",                   "4");
+define("SURVEY_CIQ",                     "5");
+
+
 // STANDARD FUNCTIONS ////////////////////////////////////////////////////////
 
 function survey_add_instance($survey) {
@@ -94,7 +102,31 @@ function survey_user_complete($course, $user, $mod, $survey) {
     global $CFG;
 
     if (survey_already_done($survey->id, $user->id)) {
-        survey_print_graph("id=$mod->id&sid=$user->id&type=student.png");
+        if ($survey->template == SURVEY_CIQ) { // print out answers for critical incidents
+            $table = NULL;
+            $table->align = array("left", "left");
+
+            $questions = get_records_list("survey_questions", "id", $survey->questions);
+            $questionorder = explode(",", $survey->questions);
+            
+            foreach ($questionorder as $key=>$val) {
+                $question = $questions[$val];
+                $questiontext = get_string($question->shorttext, "survey");
+                
+                if ($answer = survey_get_user_answer($survey->id, $question->id, $user->id)) {
+                    $answertext = "$answer->answer1";
+                } else {
+                    $answertext = "No answer";
+                }
+                $table->data[] = array("<b>$questiontext</b>", $answertext);
+            }
+            print_table($table);
+            
+        } else {
+        
+            survey_print_graph("id=$mod->id&sid=$user->id&type=student.png");
+        }
+        
     } else {
         print_string("notdone", "survey");
     }
