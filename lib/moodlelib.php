@@ -2134,6 +2134,7 @@ function check_php_version($version="4.1.0") {
     $minversion = intval(str_replace(".", "", $version));
     $curversion = intval(str_replace(".", "", phpversion()));
     return ($curversion >= $minversion);
+//  return version_compare(phpversion(), $version, ">=");
 }
 
 function check_browser_version($brand="MSIE", $version=5.5) {
@@ -2169,7 +2170,7 @@ function can_use_richtext_editor() {
 
 function check_gd_version() {
     ob_start();
-    phpinfo();
+    phpinfo(8);
     $phpinfo = ob_get_contents();
     ob_end_clean();
 
