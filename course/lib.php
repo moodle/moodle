@@ -176,29 +176,20 @@ function print_recent_activity($course) {
     foreach ($logs as $log) {
         if ($log->module == "course" and $log->action == "enrol") {
             if (! $heading) {
-                print_headline("New users");
+                print_headline("New users:");
                 $heading = true;
                 $content = true;
             }
             $user = get_record("user", "id", $log->info);
-            echo "<LI><FONT SIZE=1><A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A></FONT></LI>";
+            echo "<P><FONT SIZE=1><A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A></FONT></P>";
         }
     }
 
     // Next, have there been any changes to the course structure?
 
-    if ($heading) {
-        echo "<BR>";
-        $heading = false;
-    }
     foreach ($logs as $log) {
         if ($log->module == "course") {
             if ($log->action == "add mod" or $log->action == "update mod" or $log->action == "delete mod") {
-                if (! $heading) {
-                    print_headline("Changes");
-                    $heading = true;
-                    $content = true;
-                }
                 $info = split(" ", $log->info);
                 $modname = get_field($info[0], "name", "id", $info[1]);
             
@@ -206,19 +197,38 @@ function print_recent_activity($course) {
                     $info[0] = "discussion";  // nasty hack, really.
                 }
 
-                echo "<LI><FONT SIZE=1>";
                 switch ($log->action) {
                     case "add mod":
-                       echo "Added a ".$info[0].": <A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>";
+                       $changelist["$log->info"] = array ("operation" => "add", "text" => "Added a ".$info[0].":<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
                     break;
                     case "update mod":
-                       echo "Updated the ".$info[0].": <A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>";
+                       if (! $changelist["$log->info"]) {
+                           $changelist["$log->info"] = array ("operation" => "update", "text" => "Updated the ".$info[0].":<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
+                       }
                     break;
                     case "delete mod":
-                       echo "Deleted a ".$info[0];
+                       if ($changelist["$log->info"]["operation"] == "add") {
+                           $changelist["$log->info"] = NULL;
+                       } else {
+                           $changelist["$log->info"] = array ("operation" => "delete", "text" => "Deleted a ".$info[0]);
+                       }
                     break;
                 }
-                echo "</FONT></LI>";
+            }
+        }
+    }
+
+    if ($changelist) {
+        foreach ($changelist as $changeinfo => $change) {
+            if ($change) {
+                $changes[$changeinfo] = $change;
+            }
+        }
+        if (count($changes) > 0) {
+            print_headline("Course changes:");
+            $content = true;
+            foreach ($changes as $changeinfo => $change) {
+                echo "<P><FONT SIZE=1>".$change["text"]."</FONT></P>";
             }
         }
     }
@@ -226,11 +236,7 @@ function print_recent_activity($course) {
 
     // Now all we need to know are the new posts.
 
-    if ($heading) {
-        echo "<BR>";
-        $heading = false;
-        $content = true;
-    }
+    $heading = false;
     foreach ($logs as $log) {
         
         if ($log->module == "discuss") {
@@ -251,15 +257,18 @@ function print_recent_activity($course) {
 
             if ($post) {
                 if (! $heading) {
-                    print_headline("Discussion Posts");
+                    print_headline("Discussion Posts:");
                     $heading = true;
                     $content = true;
                 }
+                echo "<P><FONT SIZE=1>$post->firstname $post->lastname:<BR>";
+                echo "\"<A HREF=\"$CFG->wwwroot/mod/discuss/$log->url\">";
                 if ($log->action == "add") {
-                    echo "<LI><FONT SIZE=1>\"<A HREF=\"$CFG->wwwroot/mod/discuss/$log->url\"><B>$post->subject</B></A>\" by $post->firstname $post->lastname</FONT></LI>";
+                    echo "<B>$post->subject</B>";
                 } else {
-                    echo "<LI><FONT SIZE=1>\"<A HREF=\"$CFG->wwwroot/mod/discuss/$log->url\">$post->subject</A>\" by $post->firstname $post->lastname</FONT></LI>";
+                    echo "$post->subject";
                 }
+                echo "</A>\"</FONT></P>";
             }
 
         }
