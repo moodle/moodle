@@ -883,7 +883,13 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
         $mail->CharSet = get_string("thischarset");
     }
 
-    if ($CFG->smtphosts) {
+    if ($CFG->smtphosts == "qmail") {
+        $mail->IsQmail();                              // use Qmail system
+
+    } else if (empty($CFG->smtphosts)) {
+        $mail->IsMail();                               // use PHP mail() = sendmail
+
+    } else {
         $mail->IsSMTP();                               // use SMTP directly
         if ($CFG->debug > 7) {
             echo "<pre>\n";
@@ -896,8 +902,6 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
             $mail->Username = $CFG->smtpuser;
             $mail->Password = $CFG->smtppass;
         }
-    } else {
-        $mail->IsMail();                               // use PHP mail() = sendmail
     }
 
     $adminuser = get_admin();
