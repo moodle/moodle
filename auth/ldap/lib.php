@@ -16,6 +16,11 @@ be configured by modifying source code.
 If you plan to use user creation feature, look function auth_user_create
 and modify it for your needs.
 You have to change all hardcoded attribute values to fit your LDAP-server.
+User-creation makes posible that your current 
+users can authenticate with existings usernames/password and new users can 
+create own accounts to LDAP-directory. I'm using this feature and new users
+are created to LDAP different context, without rights to other system. When
+user-creation feature is set like that, there's no known security issues.
 I write ldap-module on Novell E-directory / Linux & Solaris , 
 so all default values are for it.
 
