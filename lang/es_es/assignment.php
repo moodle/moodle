@@ -1,15 +1,15 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // assignment.php - created with Moodle 1.0.9 (2003052900)
 
 
 $string['allowresubmit'] = "Permitir reenvío";
 $string['assignmentdetails'] = "Detalles de la tarea";
-$string['assignmentmail'] = "\$a->teacher ha corregido y comentado la tarea que has enviado para la '\$a->assignment'
-
-Puedes ver la corrección y los comentarios, junto a la tarea que has enviado, en:
-
+$string['assignmentmail'] = "\$a->teacher ha corregido y comentado la tarea que has enviado para la '\$a->assignment'
+
+Puedes ver la corrección y los comentarios, junto a la tarea que has enviado, en:
+
     \$a->url";
-$string['assignmentmailhtml'] = "\$a->teacher ha corregido y comentado la tarea que has enviado para la '<i>\$a->tarea</i>'<br /><br />
+$string['assignmentmailhtml'] = "\$a->teacher ha corregido y comentado la tarea que has enviado para la '<i>\$a->assignment</i>'<br /><br />
 Puede ver la corrección y los comentarios, junto a la <a href=\\\"\$a->url\\\">tarea enviada</a>.";
 $string['assignmentname'] = "Título de la tarea";
 $string['assignmenttype'] = "Tipo de tarea";
