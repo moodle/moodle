@@ -70,7 +70,7 @@ function forum_upgrade($oldversion) {
       execute_sql(" CREATE INDEX {$CFG->prefix}forum_discussions_userid_idx ON {$CFG->prefix}forum_discussions (userid) ");
   }
 
-  if ($oldversion < 2004111200) {
+  if ($oldversion < 2004081801) {
       modify_database('','CREATE INDEX prefix_forum_course_idx ON prefix_forum (course);');
       modify_database('','CREATE INDEX prefix_forum_queue_userid_idx ON prefix_forum_queue (userid);');
       modify_database('','CREATE INDEX prefix_forum_queue_discussion_idx ON prefix_forum_queue (discussionid);');

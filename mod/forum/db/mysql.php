@@ -139,7 +139,7 @@ function forum_upgrade($oldversion) {
       execute_sql(" ALTER TABLE `{$CFG->prefix}forum_discussions` ADD INDEX {$CFG->prefix}forum_discussions_userid_idx (userid) ");
   }
 
-  if ($oldversion < 2004111200) {
+  if ($oldversion < 2004081801) {
       modify_database('','ALTER TABLE prefix_forum ADD INDEX course (course);');
       modify_database('','ALTER TABLE prefix_forum_ratings ADD INDEX userid (userid);');
       modify_database('','ALTER TABLE prefix_forum_ratings ADD INDEX post (post);');
