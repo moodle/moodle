@@ -66,12 +66,14 @@ class page_quiz extends page_generic_activity {
             $buttons = '<table><tr><td><form target="'.$CFG->framename.'" method="get" action="edit.php">'.
                '<input type="hidden" name="quizid" value="'.$this->activityrecord->id.'" />'.
                '<input type="submit" value="'.get_string('editquestions', 'quiz').'" /></form></td><td>'.
-               update_module_button($this->modulerecord->id, $this->courserecord->id, get_string('modulename', 'quiz')).
-               '</td>'.
-               '<td><form target="'.$CFG->framename.'" method="get" action="view.php">'.
-               '<input type="hidden" name="id" value="'.$this->modulerecord->id.'" />'.
-               '<input type="hidden" name="edit" value="'.($this->user_is_editing()?'off':'on').'" />'.
-               '<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></form></td></tr></table>';
+               update_module_button($this->modulerecord->id, $this->courserecord->id, get_string('modulename', 'quiz')).'</td>';
+            if(!empty($CFG->showblocksonmodpages)) {
+               $buttons .= '<td><form target="'.$CFG->framename.'" method="get" action="view.php">'.
+                    '<input type="hidden" name="id" value="'.$this->modulerecord->id.'" />'.
+                    '<input type="hidden" name="edit" value="'.($this->user_is_editing()?'off':'on').'" />'.
+                    '<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></form></td>';
+            }
+            $buttons .= '</tr></table>';
         }
         else {
             $buttons = '&nbsp;';
