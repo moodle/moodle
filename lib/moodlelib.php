@@ -311,11 +311,28 @@ function error ($message, $link="") {
     die;
 }
 
-function helpbutton ($info, $type="file") {
+function helpbutton ($page, $title="", $module="moodle", $image=true, $text="") {
+    // $page = the keyword that defines a help page
+    // $title = the title of links, rollover tips, alt tags etc
+    // $module = which module is the page defined in
+    // $image = use a help image for the link?  (otherwise uses text)
+    // $text = if defined then this text is used in the page, and 
+    //         the $page variable is ignored.
     global $CFG;
-    $url = "/help.php?$type=help.$info.php";
-    $image = "<IMG BORDER=0 ALT=help SRC=\"$CFG->wwwroot/pix/help.gif\">";
-    link_to_popup_window ($url, "popup", $image, $height=400, $width=500);
+    if ($module == "") {
+        $module = "moodle";
+    }
+    if ($image) {
+        $linkobject = "<IMG BORDER=0 ALT=\"$title\" SRC=\"$CFG->wwwroot/pix/help.gif\">";
+    } else {
+        $linkobject = $title;
+    }
+    if ($text) {
+        $url = "/help.php?module=$module&text=$text";
+    } else {
+        $url = "/help.php?module=$module&file=help.$page.php";
+    }
+    link_to_popup_window ($url, "popup", $linkobject, 400, 500, $title);
 }
 
 function notice ($message, $link="") {
@@ -370,7 +387,6 @@ function notify ($message) {
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
 function require_variable($var) {
-
     if (! isset($var)) {
         error("A required parameter was missing");
     }
@@ -1323,6 +1339,5 @@ function format_time($totalsecs) {
     if ($secs)  return "$osecs";
     return "now";
 }
-
 
 ?>

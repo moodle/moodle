@@ -123,7 +123,7 @@ function frmchecked(&$var, $true_value = "checked", $false_value = "") {
 }
 
 
-function link_to_popup_window ($url, $name="popup", $linkname="click here", $height=400, $width=500) {
+function link_to_popup_window ($url, $name="popup", $linkname="click here", $height=400, $width=500, $title="Popup window") {
 // This will create a HTML link that will work on both 
 // Javascript and non-javascript browsers.
 // Relies on the Javascript function openpopup in javascript.php
@@ -131,10 +131,10 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here", $hei
 
 	echo "\n<SCRIPT language=\"Javascript\">";
     echo "\n<!--";
-	echo "\ndocument.write('<A TITLE=\"Popup\" HREF=javascript:openpopup(\"$url\",\"$name\",\"$height\",\"$width\") >$linkname</A>');";
+	echo "\ndocument.write('<A TITLE=\"$title\" HREF=javascript:openpopup(\"$url\",\"$name\",\"$height\",\"$width\") >$linkname</A>');";
     echo "\n//-->";
    	echo "\n</SCRIPT>";
-   	echo "\n<NOSCRIPT>\n<A TARGET=\"$name\" TITLE=\"Popup\" HREF=\"$url\">$linkname</A>\n</NOSCRIPT>\n";
+   	echo "\n<NOSCRIPT>\n<A TARGET=\"$name\" TITLE=\"$title\" HREF=\"$url\">$linkname</A>\n</NOSCRIPT>\n";
 
 }
 
