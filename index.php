@@ -46,7 +46,7 @@
          }   
 
          if ($sections[0]->sequence) {
-             print_section($site->id, $sections[0], $mods, $modnamesused, true, $side);
+             print_section($site, $sections[0], $mods, $modnamesused, true, $side);
          }
 
          if (isediting($site->id)) {
