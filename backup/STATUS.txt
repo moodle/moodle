@@ -116,8 +116,8 @@ Backup Details:
    - Download backup files......................................DONE
    - Delete backup files........................................DONE
    - Program scheduled backups..................................IN PROGRESS
-      - Build a configuration inteface..........................IN PROGRESS
-      - Create the script.......................................NOT EXISTS
+      - Build a configuration inteface..........................DONE
+      - Create the script.......................................IN PROGRESS
       - Integrate it in cron....................................NOT EXISTS
 
 Restore Details:
