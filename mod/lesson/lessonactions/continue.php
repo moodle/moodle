@@ -96,11 +96,13 @@
 	$answerid = 0;
 	$noanswer = false;
 	$correctanswer = false;
+	$isessayquestion = false; // use this to turn off review button on essay questions
 	$newpageid = 0; // stay on the page
 	switch ($page->qtype) {
 	    /// CDC-FLAG ///
 	     case LESSON_ESSAY :
-	        if (!$useranswer = $_POST['answer']) {
+	        $isessayquestion = true;
+			if (!$useranswer = $_POST['answer']) {
 	            $noanswer = true;
 	            break;
 	        }
@@ -236,10 +238,10 @@
 	        if ($page->qoption) {
 	            // MULTIANSWER allowed, user's answer is an array
 	            if (isset($_POST['answer'])) {
-	$useranswers = $_POST['answer'];
-	foreach ($useranswers as $key => $useranswer) {
-	$useranswers[$key] = clean_param($useranswer, PARAM_INT);
-	}
+					$useranswers = $_POST['answer'];
+					foreach ($useranswers as $key => $useranswer) {
+						$useranswers[$key] = clean_param($useranswer, PARAM_INT);
+					}
 	            } else {
 	                $noanswer = true;
 	                break;
@@ -676,7 +678,7 @@
 	        //$title = get_field("lesson_pages", "title", "id", $pageid);
 	        //print_heading($title);
 	        echo "<table width=\"80%\" border=\"0\" align=\"center\"><tr><td>\n";
-	        if ($lesson->review && !$correctanswer) {
+	        if ($lesson->review && !$correctanswer && !$isessayquestion) {
 	            $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
 	            $qattempts = count_records("lesson_attempts", "userid", $USER->id, "retry", $nretakes, "pageid", $pageid);
 	            echo "<br><br>";
@@ -774,7 +776,7 @@
 	        get_string("continuetoanswer", "lesson")."</p>\n";
 	}
 
-	if ($lesson->review && !$correctanswer && !$noanswer) {
+	if ($lesson->review && !$correctanswer && !$noanswer && !$isessayquestion) {
 	    echo "<p align=\"center\"><input type=\"submit\" onClick='pageform.pageid.value=$pageid;' name=\"review\" value=\"".
 	        get_string("reviewquestionback", "lesson")."\"></p>\n";
 	    echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
