@@ -79,6 +79,7 @@ function print_user($user, $course, $teacherlinks) {
         echo "<A HREF=\"../course/user.php?id=$course->id&user=$user->id\">Contributions</A><BR>";
         echo "<A HREF=\"../course/log.php?id=$course->id&user=$user->id&date=$timemidnight\">Today's logs</A><BR>";
         echo "<A HREF=\"../course/log.php?id=$course->id&user=$user->id\">All logs</A><BR>";
+        echo "<A HREF=\"../course/unenrol.php?id=$course->id&user=$user->id\">Unenrol</A><BR>";
         if (isstudent($course->id, $user->id)) {
             echo "<A HREF=\"../course/loginas.php?id=$course->id&user=$user->id\">Login as</A><BR>";
         }
