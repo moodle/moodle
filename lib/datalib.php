@@ -311,22 +311,33 @@ function get_record_sql($sql) {
        $limit = " LIMIT 1";    // Workaround - limit to one record
     }
 
-    $rs = $db->Execute("$sql$limit");
-
-    if (empty($rs)) {
-        return false;    // Nothing found
+    if (!$rs = $db->Execute("$sql$limit")) {
+        if ($CFG->debug > 7) {    // Debugging mode - print checks
+            $db->debug=true;
+            $db->Execute("$sql$limit");
+            $db->debug=false;
+        }
+        return false;
     }
 
-    if ( $rs->RecordCount() == 1 ) { // Found one record
+    if (!$recordcount = $rs->RecordCount()) {
+        return false;                 // Found no records
+    }
+
+    if ($recordcount == 1) {          // Found one record
         return (object)$rs->fields;
 
-    } else {                         // Error: found more than one record
+    } else {                          // Error: found more than one record
+        notify("Error:  Turn off debugging to hide this error.");
+        notify("$sql$limit");
         if ($records = $rs->GetAssoc(true)) {
+            notify("Found more than one record in get_record_sql !");
             print_object($records);
-            notice("Found more than one record in get_record_sql() !");
         } else {
-            notice("Very strange error in get_record_sql() !");
+            notify("Very strange error in get_record_sql !");
+            print_object($rs);
         }
+        print_continue("$CFG->wwwroot/admin/config.php");
     }
 }
 
