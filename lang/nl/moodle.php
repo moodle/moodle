@@ -815,6 +815,7 @@ $string['sitefiles'] = 'Site bestanden';
 $string['sitelogs'] = 'Site statistieken';
 $string['sitenews'] = 'Site nieuws';
 $string['sites'] = 'Sites';
+$string['sitesection'] = 'Voeg een onderwerpsectie toe';
 $string['sitesettings'] = 'Site instellingen';
 $string['size'] = 'Grootte';
 $string['sizeb'] = 'bytes';
