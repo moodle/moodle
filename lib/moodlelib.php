@@ -3119,7 +3119,7 @@ function get_list_of_languages() {
             return false;
         }
         foreach ($langdirs as $lang) {
-            include($CFG->dirroot .'/lang/'. $lang .'/moodle.php');
+            @include($CFG->dirroot .'/lang/'. $lang .'/moodle.php');
             $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
             unset($string);
         }
