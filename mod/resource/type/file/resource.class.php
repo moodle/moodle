@@ -178,7 +178,7 @@ function update_instance($resource) {
 * @param    THEME   global object
 */
 function display() {
-    global $CFG, $THEME;
+    global $CFG, $THEME, $course;
 
 /// Set up generic stuff first, including checking for access
     parent::display();
