@@ -202,13 +202,10 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
 
     $events = calendar_get_upcoming($courses, $groups, $users, 1, 100, $starttime);
 
-    // New event button
-    if (empty($USER->id) || isguest()) {
-        $text = get_string('dayview', 'calendar').': '.calendar_course_filter_selector($getvars);
-    } else {
-        $text = '<div style="float: left;">'.get_string('dayview', 'calendar').': '.
-                calendar_course_filter_selector($getvars).'</div><div style="float: right;">';
-        $text.= '<form style="display: inline;" action="'.CALENDAR_URL.'event.php" method="get">';
+    $text = '';
+    if (!isguest() && !empty($USER->id)) {
+        $text.= '<div class="buttons">';
+        $text.= '<form action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<input type="hidden" name="action" value="new" />';
         $text.= '<input type="hidden" name="cal_d" value="'.$d.'" />';
         $text.= '<input type="hidden" name="cal_m" value="'.$m.'" />';
@@ -217,7 +214,9 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
         $text.= '</form></div>';
     }
 
-    echo '<div style="float: left;" class="heading">'.$text.'</div>';
+    $text .= get_string('dayview', 'calendar').': '.calendar_course_filter_selector($getvars);
+
+    echo '<div class="heading">'.$text.'</div>';
 
     echo '<div class="controls">'.calendar_top_controls('day', array('d' => $d, 'm' => $m, 'y' => $y)).'</div>';
 
@@ -226,6 +225,8 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
         echo '<p style="text-align: center;">'.get_string('daywithnoevents', 'calendar').'</p>';
 
     } else {
+
+        echo '<div class="eventlist">';
 
         $underway = array();
 
@@ -258,6 +259,9 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
                 calendar_print_event($event);
             }
         }
+
+        echo '</div>';
+
     }
 }
 
@@ -322,13 +326,9 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     // Extract information: events vs. time
     calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday);
 
-    // New event button
-    if(empty($USER->id) || isguest()) {
-        $text = get_string('detailedmonthview', 'calendar').': '.calendar_course_filter_selector($getvars);
-    }
-    else {
-        $text = '<div style="float: left;">'.get_string('detailedmonthview', 'calendar').': '.calendar_course_filter_selector($getvars).'</div><div style="float: right;">';
-        $text.= '<form style="display: inline;" action="'.CALENDAR_URL.'event.php" method="get">';
+    $text = '';
+    if(!isguest() && !empty($USER->id)) {
+        $text.= '<div class="buttons"><form action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<input type="hidden" name="action" value="new" />';
         $text.= '<input type="hidden" name="cal_m" value="'.$m.'" />';
         $text.= '<input type="hidden" name="cal_y" value="'.$y.'" />';
@@ -336,7 +336,9 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         $text.= '</form></div>';
     }
 
-    echo '<div style="float: left;" class="heading">'.$text.'</div>';
+    $text .= get_string('detailedmonthview', 'calendar').': '.calendar_course_filter_selector($getvars);
+
+    echo '<div class="heading">'.$text.'</div>';
 
     echo '<div class="controls">';
     echo calendar_top_controls('month', array('m' => $m, 'y' => $y));
@@ -596,7 +598,7 @@ function calendar_print_event($event) {
                   title="'.get_string('tt_deleteevent', 'calendar').'" /></a>';
         echo '</div>';
     }
-    echo "</td></tr>\n</table>\n";
+    echo '</td></tr></table>';
 
 }
 

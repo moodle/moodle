@@ -593,7 +593,7 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
         $getvars .= '&amp;'.$vars;
     }
 
-    $content = '<table class="cal_controls" style="width: 98%;">';
+    $content = '<table>';
 
     $content .= '<tr>';
     if($SESSION->cal_show_global) {
