@@ -16,6 +16,9 @@ if (empty($form->autoattend)) {
 if (empty($form->grade)) {
     $form->grade = 0;
 }
+if (empty($form->maxgrade)) {
+    $form->maxgrade = 0;
+}
 
 // error_reporting(E_ALL);
  // if we're adding a new instance
@@ -29,7 +32,7 @@ if (empty($form->id)) {
    $form->notes = "";
 }
     ?>
-<form name="form" method="post" action="<?php echo $ME ?>">
+<form name="form" method="post" action="mod.php">
 <center>
 <table cellpadding="5">
 
