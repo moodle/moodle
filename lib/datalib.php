@@ -1106,7 +1106,8 @@ function get_recent_enrolments($courseid, $timestart) {
 }
 
 /**
-* Returns list of all students in this course
+* Returns array of userinfo of all students in this course
+* or on this site if courseid is id of site
 * 
 * @param    type description
 */
@@ -1114,6 +1115,16 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
                              $firstinitial="", $lastinitial="", $group=NULL, $search="") {
 
     global $CFG;
+
+    $site = get_site();
+    if ($courseid == $site->id) { 
+        $sort = str_replace('s.timeaccess', '', $sort); // site users can't be sorted by timeaccess
+        $sort = str_replace('u.', '', $sort); // the get_user function doesn't use the u. prefix to fields
+        if ($sort) {
+            $sort = "$sort $dir";
+        }
+        return get_users(true, $search, true, '', $sort, $firstinitial, $lastinitial, $page, $recordsperpage);
+    }
 
     switch ($CFG->dbtype) {
         case "mysql":
@@ -1169,13 +1180,17 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
 }
 
 /**
-* Counts the students in a given course, or a subset of them
+* Counts the students in a given course (or site), or a subset of them
 * 
 * @param    type description
 */
 function count_course_students($course, $search="", $firstinitial="", $lastinitial="", $group=NULL) {
 
     global $CFG;
+
+    if (!$course->category) {
+        return get_users(false, $search, true, '', '', $firstinitial, $lastinitial);
+    }
 
     switch ($CFG->dbtype) {
         case "mysql":
@@ -1217,7 +1232,8 @@ function count_course_students($course, $search="", $firstinitial="", $lastiniti
 
 
 /**
-* Returns list of all teachers in this course
+* Returns list of all teachers in this course 
+* (also works for site)
 * 
 * @param    type description
 */
@@ -1246,7 +1262,7 @@ function get_course_users($courseid, $sort="timeaccess DESC") {
     $site = get_site();
 
     if ($courseid == $site->id) {
-        return get_site_users();
+        return get_users(true, '', true, '', $sort);
     }
 
     /// Using this method because the single SQL just would not always work!

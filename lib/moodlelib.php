@@ -560,7 +560,19 @@ function iscreator ($userid=0) {
 
 function isstudent($courseid, $userid=0) {
 /// Is the user a student in this course?
+/// If course is site, is the user a confirmed user on the site?
     global $USER;
+
+    $site = get_site();
+    if ($courseid == $site->id) {
+        if (!$userid) {
+            $userid = $USER->id;
+        }
+        if (isguest($userid)) {
+            return false;
+        }
+        return record_exists('user', 'id', $userid, 'confirmed', 1, 'deleted', 0);
+    }
 
     if (!$userid) {
         return !empty($USER->student[$courseid]);
