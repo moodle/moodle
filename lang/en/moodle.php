@@ -51,7 +51,6 @@ $string['autosubscribeyes'] = "Yes: when I post, subscribe me to that forum";
 $string['availability'] = "Availability";
 $string['availablecourses'] = "Available Courses";
 $string['backup'] = "Backup";
-$string['backupdir'] = "backupdata";
 $string['backupdate'] = "Backup Date";
 $string['backupdetails'] = "Backup Details";
 $string['backupfilename'] = "backup";
