@@ -81,7 +81,7 @@ function clean_param($param, $options) {
 /// Given a parameter and a bitfield of options, this function
 /// will clean it up and give it the required type, etc.
 
-    if ($param == (int)$param) {         // It's just an integer
+    if ((string)$param == (string)(int)$param) {  // It's just an integer
         return $param;
     }
 
