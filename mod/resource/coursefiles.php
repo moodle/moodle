@@ -140,8 +140,8 @@
                 echo "<table><tr><td colspan=\"2\">";
                 echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"".$ME."\">";
                 upload_print_form_fragment(1,array('userfile'),null,false,null,$course->maxbytes,0,false);
-                echo " <input type=\"hidden\" name=\"id\" value=$id />";
-                echo " <input type=\"hidden\" name=\"wdir\" value=$wdir />";
+                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
+                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"upload\" />";
                 echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 echo " </td><tr><td width=\"10\">";
@@ -149,8 +149,8 @@
                 echo "</form>";
                 echo "</td><td width=\"100%\">";
                 echo "<form action=\"".$ME."\" method=\"get\">";
-                echo " <input type=\"hidden\" name=\"id\" value=$id />";
-                echo " <input type=\"hidden\" name=\"wdir\" value=$wdir />";
+                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
+                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"$strcancel\" />";
                 echo "</form>";
@@ -239,8 +239,8 @@
                 echo "<p>$strrenamefileto:";
                 echo "<table><tr><td>";
                 echo "<form action=\"".$ME."\" method=\"post\" name=\"form\">";
-                echo " <input type=\"hidden\" name=\"id\" value=$id />";
-                echo " <input type=\"hidden\" name=\"wdir\" value=$wdir />";
+                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
+                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"rename\" />";
                 echo " <input type=\"hidden\" name=\"oldname\" value=\"$file\" />";
                 echo " <input type=\"text\" name=\"name\" size=\"35\" value=\"$file\" />";
@@ -249,8 +249,8 @@
                 echo "</form>";
                 echo "</td><td>";
                 echo "<form action=\"".$ME."\" method=\"get\">";
-                echo " <input type=\"hidden\" name=\"id\" value=$id />";
-                echo " <input type=\"hidden\" name=\"wdir\" value=$wdir />";
+                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
+                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"$strcancel\" />";
                 echo "</form>";
@@ -278,8 +278,8 @@
                 echo "<p>$strcreatefolder:";
                 echo "<table><tr><td>";
                 echo "<form action=\"".$ME."\" method=\"post\" name=\"form\">";
-                echo " <input type=\"hidden\" name=\"id\" value=$id />";
-                echo " <input type=\"hidden\" name=\"wdir\" value=$wdir />";
+                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
+                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"mkdir\" />";
                 echo " <input type=\"text\" name=\"name\" size=\"35\" />";
                 echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
@@ -287,8 +287,8 @@
                 echo "</form>";
                 echo "</td><td>";
                 echo "<form action=\"".$ME."\" method=\"get\">";
-                echo " <input type=\"hidden\" name=\"id\" value=$id />";
-                echo " <input type=\"hidden\" name=\"wdir\" value=$wdir />";
+                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
+                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"$strcancel\" />";
                 echo "</form>";
@@ -327,7 +327,7 @@
 
                 echo "<table><tr><td colspan=\"2\">";
                 echo "<form action=\"".$ME."\" method=\"post\" name=\"form\" $onsubmit>";
-                echo " <input type=\"hidden\" name=\"id\" value=$id />";
+                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"file\" value=\"$file\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"edit\" />";
@@ -338,8 +338,8 @@
                 echo "</form>";
                 echo "</td><td>";
                 echo "<form action=\"".$ME."\" method=\"get\">";
-                echo " <input type=\"hidden\" name=\"id\" value=$id />";
-                echo " <input type=\"hidden\" name=\"wdir\" value=$wdir />";
+                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
+                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"".get_string("cancel")."\" />";
                 echo "</form>";
@@ -383,7 +383,7 @@
                     echo "<p align=\"center\">".get_string("whattocallzip");
                     echo "<table><tr><td>";
                     echo "<form action=\"".$ME."\" method=\"post\" name=\"form\">";
-                    echo " <input type=\"hidden\" name=\"id\" value=$id />";
+                    echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                     echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                     echo " <input type=\"hidden\" name=\"action\" value=\"zip\" />";
                     echo " <input type=\"text\" name=\"name\" size=\"35\" value=\"new.zip\" />";
@@ -391,8 +391,8 @@
                     echo "</form>";
                     echo "</td><td>";
                     echo "<form action=\"".$ME."\" method=\"get\">";
-                    echo " <input type=\"hidden\" name=\"id\" value=$id />";
-                    echo " <input type=\"hidden\" name=\"wdir\" value=$wdir />";
+                    echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
+                    echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                     echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                     echo " <input type=\"submit\" value=\"".get_string("cancel")."\" />";
                     echo "</form>";
@@ -420,8 +420,8 @@
                 }
 
                 echo "<center><form action=\"".$ME."\" method=\"get\">";
-                echo " <input type=\"hidden\" name=\"id\" value=$id />";
-                echo " <input type=\"hidden\" name=\"wdir\" value=$wdir />";
+                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
+                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"$strok\" />";
                 echo "</form>";
@@ -467,8 +467,8 @@
                     echo "</table>";
                 }
                 echo "<br /><center><form action=\"".$ME."\" method=\"get\">";
-                echo " <input type=\"hidden\" name=\"id\" value=$id />";
-                echo " <input type=\"hidden\" name=\"wdir\" value=$wdir />";
+                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
+                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"$strok\" />";
                 echo "</form>";
@@ -744,7 +744,7 @@ function displaydir ($wdir) {
     echo "<td align=\"center\">";
     if (!empty($USER->fileop) and ($USER->fileop == "move") and ($USER->filesource <> $wdir)) {
         echo "<form action=\"".$ME."\" method=\"get\">";
-        echo " <input type=\"hidden\" name=\"id\" value=$id />";
+        echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
         echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
         echo " <input type=\"hidden\" name=\"action\" value=\"paste\" />";
         echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
@@ -753,7 +753,7 @@ function displaydir ($wdir) {
     }
     echo "<td align=\"right\">";
         echo "<form action=\"".$ME."\" method=\"get\">";
-        echo " <input type=\"hidden\" name=\"id\" value=$id />";
+        echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
         echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
         echo " <input type=\"hidden\" name=\"action\" value=\"mkdir\" />";
         echo " <input type=\"submit\" value=\"$strmakeafolder\" />";
@@ -761,7 +761,7 @@ function displaydir ($wdir) {
     echo "</td>";
     echo "<td align=\"right\">";
         echo "<form action=\"".$ME."\" method=\"get\">";
-        echo " <input type=\"hidden\" name=\"id\" value=$id />";
+        echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
         echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
         echo " <input type=\"hidden\" name=\"action\" value=\"upload\" />";
         echo " <input type=\"submit\" value=\"$struploadafile\" />";
