@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.5 unstable development (2004091100)
+      // attendance.php - created with Moodle 1.5 unstable development (2004092000)
 
 
 $string['absentlong'] = '欠席';
@@ -29,14 +29,14 @@ $string['dynsectionshort'] = '自動設置';
 $string['endbeforestart'] = '設置終了日が設置開始日の前にあります';
 $string['endmulti'] = '出席簿設置終了日';
 $string['friday'] = '金';
-$string['gradeshort'] = '評価済み';
-$string['gradevalue'] = '出席を評価する';
-$string['gradevaluemulti'] = '出席を評価する';
+$string['gradeshort'] = '評定済み';
+$string['gradevalue'] = '出席を評定する';
+$string['gradevaluemulti'] = '出席を評定する';
 $string['hoursinclass'] = '授業時間';
 $string['hoursineachclass'] = '授業時間';
 $string['hoursinfullreport'] = 'レポート1ページに表示する最大出席時間数';
-$string['maxgradeshort'] = '最大評価';
-$string['maxgradevalue'] = '出席の最大評価';
+$string['maxgradeshort'] = '最大評定';
+$string['maxgradevalue'] = '皆勤の最大評点';
 $string['modulename'] = '出席';
 $string['modulenameplural'] = '出席簿';
 $string['monday'] = '月';
