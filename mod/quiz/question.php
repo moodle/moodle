@@ -93,8 +93,16 @@
     if (isset($_REQUEST['delete'])) {
         if (isset($confirm) and confirm_sesskey()) {
             if ($confirm == md5($delete)) {
-                if (!delete_records("quiz_questions", "id", $question->id)) {
-                    error("An error occurred trying to delete question (id $question->id)");
+                if (record_exists('quiz_responses', 'question', $question->id) or 
+                    record_exists('quiz_responses', 'originalquestion', $question->id) or
+                    record_exists('quiz_question_grades', 'question', $question->id)) {
+                    if (!set_field('quiz_questions', 'hidden', 1, 'id', $delete)) {
+                        error('Was not able to hide question');
+                    }
+                } else {
+                    if (!delete_records("quiz_questions", "id", $question->id)) {
+                        error("An error occurred trying to delete question (id $question->id)");
+                    }
                 }
                 redirect("edit.php");
             } else {
@@ -102,35 +110,17 @@
             }
             
         } else {
-            // determine if the question is being used in any quiz
-            $beingused = quizzes_question_used( $delete, $category->publish, $course->id );
-            if ($beingused) {
-                $beingused = implode(", ", $beingused);
-                $beingused = get_string("questioninuse", "quiz", "<i>$question->name</i>")."<p>".$beingused;
-                notice($beingused, "edit.php");
-
-            } else { // the question is not used in any of the existing quizzes
-
-                // we also have to check if the question is being used in the quiz
-                // which is currently being set up
-                if (isset($SESSION->modform)) {
-                    if ($qus = explode(",", $SESSION->modform->questions)) {
-                        foreach ($qus as $key => $qu) {
-                            if ($qu == $delete) {
-                                unset($qus[$key]);
-                                unset($SESSION->modform->grades[$qu]);
-                            }
-                        }
-                    }
-                    $SESSION->modform->questions = implode(",", $qus);
-                }
-         
-                notice_yesno(get_string("deletequestioncheck", "quiz", $question->name), 
-                            "question.php?sesskey=$USER->sesskey&amp;id=$question->id&amp;delete=$delete&amp;confirm=".md5($delete), "edit.php");
+            if ($quiznames = quizzes_question_used($id)) {
+                $a->questionname = $question->name;
+                $a->quiznames = implode(', ', $quiznames);
+                notify(get_string('questioninuse', 'quiz', $a));
             }
-            print_footer($course);
-            exit;
+     
+            notice_yesno(get_string("deletequestioncheck", "quiz", $question->name), 
+                        "question.php?sesskey=$USER->sesskey&amp;id=$question->id&amp;delete=$delete&amp;confirm=".md5($delete), "edit.php");
         }
+        print_footer($course);
+        exit;
     }
 
     if ($form = data_submitted() and confirm_sesskey()) {

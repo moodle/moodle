@@ -1339,6 +1339,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
     $strdelete = get_string("delete");
     $stredit = get_string("edit");
     $straction = get_string("action");
+    $strrestore = get_string('restore');
 
     $straddselectedtoquiz = get_string("addselectedtoquiz", "quiz");
     $straddtoquiz = get_string("addtoquiz", "quiz");
@@ -1415,7 +1416,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
     echo "<table border=\"0\" cellpadding=\"5\" cellspacing=\"2\" width=\"100%\">";
     echo "<tr>";
     if ($canedit) {
-        echo "<th width=\"105\" nowrap=\"nowrap\">$straction</th>";
+        echo "<th width=\"100\" nowrap=\"nowrap\">$straction</th>";
     }
     echo "<th width=\"100%\" align=\"left\" nowrap=\"nowrap\">$strquestionname</th><th width=\"*\" nowrap=\"nowrap\">$strtype</th>";
     echo "</tr>\n";
@@ -1436,25 +1437,22 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
                      src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
                 // hide-feature
                 if($question->hidden) {
-                    $strhideshow = get_string("show");
-                    $imghideshow = "show.gif";
-                    $hideshow = 0;
+                    echo "<a title=\"$strrestore\" href=\"question.php?id=$question->id&amp;hide=0&amp;sesskey=$USER->sesskey\"><img
+                         src=\"../../pix/t/restore.gif\" border=\"0\" alt=\"$strrestore\" /></a>";
                 } else {
-                    $strhideshow = get_string("hide");
-                    $imghideshow = "hide.gif";
-                    $hideshow = 1;
+                    echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&amp;delete=$question->id\"><img
+                         src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>";
                 }
-                echo "<a title=\"$strhideshow\" href=\"question.php?id=$question->id&amp;hide=$hideshow&amp;sesskey=$USER->sesskey\"><img
-                     src=\"../../pix/t/$imghideshow\" border=\"0\" alt=\"$strhideshow\" /></a>";
-                echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&amp;delete=$question->id\">\n<img
-                     src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>";
                 if ($quizselected) {
                     echo "&nbsp;<input title=\"$strselect\" type=\"checkbox\" name=\"q$question->id\" value=\"1\" />";
                 }
             echo "</td>\n";
         }
-
-        echo "<td>".$question->name."</td>\n";
+        if ($question->hidden) {
+            echo '<td class="dimmed_text">'.$question->name."</td>\n";
+        } else {
+            echo "<td>".$question->name."</td>\n";
+        }
         echo "<td align=\"center\">\n";
         quiz_print_question_icon($question, $canedit);
         echo "</td>\n";
@@ -1985,30 +1983,18 @@ function quiz_categorylist($categoryid) {
     return $categorylist;
 }
 
-// function to determine where question is in use
-function quizzes_question_used( $id, $published=false, $courseid=0 ) {
-  // $id = question id
-  // $published = is category published
-  // $courseid = course id, required only if $published=true
-  // returns array of names of quizzes it appears in
-  if ($published) {
-    $quizzes = get_records("quiz");
-  }
-  else {
-    $quizzes = get_records("quiz","course",$courseid);
-  }
-  $beingused = array();
-  if ($quizzes) {
-    foreach ($quizzes as $quiz) {
-      $questions = explode(',', $quiz->questions);
-      foreach ($questions as $question) {
-        if ($question==$id) {
-          $beingused[] = $quiz->name;
+function quizzes_question_used($id) {
+// $id = question id
+// returns array of names of quizzes a question appears in
+  
+    $quizlist = array();
+    if ($grades = get_records('quiz_question_grades', 'question', $id)) {
+        foreach($grades as $grade) {
+            $quizlist[$grade->quiz] = get_field('quiz', 'name', 'id', $grade->quiz);
         }
-      }
     }
-  }
-  return $beingused;
+    
+    return $quizlist;
 }
 
 function quiz_parse_fieldname($name, $nameprefix='question') {
