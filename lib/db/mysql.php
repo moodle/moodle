@@ -1142,6 +1142,10 @@ function main_upgrade($oldversion=0) {
         table_column('course_meta','id','id','integer','10','','0','not null');
     }
 
+    if ($oldversion < 2005020100) {
+        fix_course_sortorder(0, 1, 1);
+    }   
+
     return $result;
 }
 
