@@ -387,6 +387,23 @@
     <?php print_string("configsecureforms") ?>
     </td>
 </tr>
+
+<tr valign=top>
+    <td align=right><p>loginhttps:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0] = get_string("no");
+       $options[1] = get_string("yes");
+
+       choose_from_menu ($options, "loginhttps", $config->loginhttps, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configloginhttps") ?>
+    </td>
+</tr>
+
 <tr valign=top>
     <td align=right><p>teacherassignteachers:</td>
     <td>
@@ -415,6 +432,21 @@
     </td>
     <td>
     <?php print_string("configallusersaresitestudents") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>showsiteparticipantslist:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0]  = get_string("siteteachers");
+       $options[1]  = get_string("allteachers");
+       $options[2]  = get_string("studentsandteachers");
+       choose_from_menu ($options, "showsiteparticipantslist", $config->showsiteparticipantslist, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configshowsiteparticipantslist") ?>
     </td>
 </tr>
 <tr valign=top>

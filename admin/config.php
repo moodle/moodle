@@ -86,6 +86,20 @@
 	include("config.html");
     print_simple_box_end();
 
+    /// Lock some options
+
+    $httpsurl = str_replace('http://', 'https://', $CFG->wwwroot);
+    if ($httpsurl != $CFG->wwwroot) {
+        if ((($fh = @fopen($httpsurl, 'r')) == false) and ($config->loginhttps == 0)) {
+            echo '<script>'."\n";
+            echo '<!--'."\n";
+            echo "eval('document.form.loginhttps.disabled=true');\n";
+            echo '-->'."\n";
+            echo '</script>'."\n";
+        }
+    }
+
+
     if ($site) {
         print_footer();
     }
