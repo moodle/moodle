@@ -1855,13 +1855,15 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
                 $selectmod = $mod;
                 $backmod = $previousmod;
                 $flag = true; // set flag so we know to use next mod for "next"
-            }
-            $mod->name = strip_tags(urldecode($mod->name));
-            if (strlen($mod->name) > 55) {
-                $mod->name = substr($mod->name, 0, 50)."...";
-            }
-            if (!$mod->visible) {
-                $mod->name = "(".$mod->name.")";
+                $mod->name = get_string('jumpto');
+            } else {
+                $mod->name = strip_tags(urldecode($mod->name));
+                if (strlen($mod->name) > 55) {
+                    $mod->name = substr($mod->name, 0, 50)."...";
+                }
+                if (!$mod->visible) {
+                    $mod->name = "(".$mod->name.")";
+                }
             }
             $menu[$url] = $mod->name;
             $previousmod = $mod;
@@ -1884,7 +1886,7 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
                    "<input type=\"submit\" value=\"&gt;\"></form>";
     }
     return "<table><tr>$logslink<td>$backmod</td><td>" .
-            popup_form("$CFG->wwwroot/mod/", $menu, "navmenu", $selected, get_string("jumpto"),
+            popup_form("$CFG->wwwroot/mod/", $menu, "navmenu", $selected, '',
                        "", "", true, $targetwindow).
             "</td><td>$nextmod</td></tr></table>";
 }
