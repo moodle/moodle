@@ -56,10 +56,14 @@
                  "$site->fullname", 
                  "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strassignstudents", "");
 
+/// Don't allow restricted teachers to even see this page (because it contains
+/// a lot of email addresses and access to all student on the server
+
+    check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
+
 /// Add a student if one is specified
 
     if (!empty($add)) {
-        check_for_restricted_user($USER->username, "$CFG->wwwroot/course/student.php?id=$course->id");
         if ($course->enrolperiod) {
             $timestart = time();
             $timeend   = $timestart + $course->enrolperiod;
@@ -74,7 +78,6 @@
 /// Remove a student if one is specified.
 
     if (!empty($remove)) {
-        check_for_restricted_user($USER->username, "$CFG->wwwroot/course/student.php?id=$course->id");
         if (! unenrol_student($remove, $course->id)) {
             error("Could not remove that student from this course!");
         }
@@ -83,7 +86,6 @@
 /// Remove all students from specified course
 
     if (!empty($removeall)) {
-        check_for_restricted_user($USER->username, "$CFG->wwwroot/course/student.php?id=$course->id");
         $students = get_course_students($course->id, "u.lastname ASC, u.firstname ASC");
         foreach ($students as $student) {
             if (! unenrol_student($student->id, $course->id)) {
