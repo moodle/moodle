@@ -4,11 +4,14 @@
 	require("../user/lib.php");
     require("../lib/countries.php");
 
+    $recordsperpage = 100;
+
     optional_variable($newuser, "");
     optional_variable($delete, "");
     optional_variable($confirm, "");
     optional_variable($sort, "name");
     optional_variable($dir, "ASC");
+    optional_variable($page, 0);
 
     if (! record_exists_sql("SELECT * FROM user_admins")) {   // No admin user yet
         $user->firstname = "Admin";
@@ -144,8 +147,8 @@
             $sort = "firstname";
         }
 
-        if ($users = get_records_sql("SELECT * from user WHERE username <> 'guest' 
-                                      AND deleted <> '1' ORDER BY $sort $dir")) {
+        if ($users = get_records_sql("SELECT id, username, email, firstname, lastname, city, country, lastaccess  from user WHERE username <> 'guest' 
+                                      AND deleted <> '1' ORDER BY $sort $dir LIMIT $page,$recordsperpage")) {
 
             foreach ($users as $key => $user) {
                 $users[$key]->country = $COUNTRIES[$user->country];
