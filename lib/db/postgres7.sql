@@ -106,10 +106,10 @@ CREATE TABLE prefix_dst_preset (
    deactivate_day integer NOT NULL default '1',
    deactivate_month integer NOT NULL default '2',
    deactivate_time char(5) NOT NULL default '03:00',
-   last_change int(10) NOT NULL default '0',
-   next_change int(10) NOT NULL default '0',
+   last_change integer NOT NULL default '0',
+   next_change integer NOT NULL default '0',
    current_offset integer NOT NULL default '0'
-) TYPE=MyISAM;
+);
 
 CREATE TABLE prefix_event (
    id SERIAL PRIMARY KEY,
