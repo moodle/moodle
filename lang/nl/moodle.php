@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003101200)
+      // moodle.php - created with Moodle 1.2 development (2003101700)
 
 
 $string['action'] = "Actie";
@@ -132,6 +132,7 @@ $string['configmaxbytes'] = "Dit bepaalt de maximumgrootte van geüploade bestand
 $string['configmaxeditingtime'] = "Dit bepaalt hoe lang mensen de tijd hebben om hun forumbijdrage, logboek, feedback en dergelijke te wijzigen. Meestal is 30 minuten een goede tijd.";
 $string['configproxyhost'] = "Als deze <B>server</B> een proxy computer (zoals bijvoorbeeld een firewall) nodig heeft om op het Internet te komen vul hier dan de hostname en de poort van de proxy in. Laat het leeg als dit niet het geval is.";
 $string['configsecureforms'] = "Moodle kan een extra beveiliging toepassen wanneer het gegevens aanneemt van webformulieren. Als je dit inschakelt, dan wordt de HTTP_REFERER variabele vergeleken met het huidige formulieradres. In zeldzame gevallen kan dit problemen veroorzaken als de gebruiker een firewall gebruikt (zoals Zonealarm) die geconfigureerd is om HTTP_REFERER uit het webverkeer te filteren. Het symptoom is: vastgeraken op een formulier. Als je gebruikers problemen hebben met de login-pagina (bijvoorbeeld) dan zou je kunnen overwegen om deze instelling uit te zetten, Hoewel dit je site meer blootstelt aan brute kracht-aanvallen op je wachtwoord. Bij twijfel laat je deze instelling op 'ja' staan.";
+$string['configsessioncookie'] = "Met deze instelling kun je de naam van de cookie die gebruikt wordt voor Moodlesessies, aanpassen. Deze instelling is optioneel en enkel nuttig om te verhinderen dat cookies in conflict gaan wanneer meer dan één copie van Moodle binnen dezelfde website draait.";
 $string['configsessiontimeout'] = "Als mensen die ingelogd zijn op deze site voor een lange tijd niets doen (ze laden geen nieuwe pagina's) worden ze automatisch uitgelogd (hun sessie is beëindigd). Deze variabele geeft aan hoe lang deze tijd moet zijn. ";
 $string['configslasharguments'] = "Bestanden (afbeeldingen, uploads en dergelijke) worden via een script aangeleverd dat gebruik maakt van 'slash arguments' (hier de tweede optie). Deze methode zorgt ervoor dat bestanden makkelijker in web browsers, proxy servers en dergelijke kunnen worden gecached. Helaas staan sommige PHP servers deze methode niet toe. Dus kies de eerste optie als je problemen hebt met het bekijken van geuploade bestanden of afbeeldingen (bijvoorbeeld afbeeldingen van gebruikers).";
 $string['configsmtphosts'] = "Geef de volledige naam van één of meerdere lokale SMTP servers die Moodle moet gebruiken om mail te versturen (bijvoorbeeld: 'mail.a.com' of 'mail.a.com;mail.b.com'). Als je dit leeg laat gebruikt Moodle de standaard PHP methode voor het versturen van mail.";
