@@ -28,37 +28,37 @@
 ?>
 
 
-a:link    {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
-           text-decoration: none; 
-           color: blue;}
-a:visited {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
-           text-decoration: none; 
-           color: blue;}
-a:hover   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
-           text-decoration: underline; 
-           color: red;}
+body, td, th {
+    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+}
 
-body {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+a:link {
+    text-decoration: none; 
+    color: blue;
+}
 
-p    {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+a:visited {
+    text-decoration: none; 
+    color: blue;
+}
 
-h1   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+a:hover {
+    text-decoration: underline; 
+    color: red;
+}
 
-h2   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+th {
+    font-weight: bold; 
+    background-color: <?PHP echo $THEME->cellheading?>;
+}
 
-h3   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+form { 
+    margin-bottom: 0;
+}
 
-h4   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
 
-th   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
-      font-weight: bold; 
-      background-color: <?PHP echo $THEME->cellheading?>;}
 
-td   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
 
-li   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
-
-form { margin-bottom: 0; }
 
 .highlight {
     background-color: <?PHP echo $THEME->highlight?>;
