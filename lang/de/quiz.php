@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2003111400)
+      // quiz.php - created with Moodle 1.2 development (2003120700)
 
 
 $string['acceptederror'] = 'Akzeptierter Fehler';
@@ -64,6 +64,7 @@ $string['editingrandom'] = 'Eine zufällige Frage bearbeiten';
 $string['editingrandomsamatch'] = 'Eine zufällige Kurzantwort-Zuordnung bearbeiten ';
 $string['editingshortanswer'] = 'Kurzantwort der Frage bearbeiten';
 $string['editingtruefalse'] = 'Ja/Nein-Frage bearbeiten';
+$string['editquestions'] = 'Fragen bearbeiten';
 $string['false'] = 'Falsch';
 $string['feedback'] = 'Rückmeldung';
 $string['fileformat'] = 'Dateiformat';
@@ -136,6 +137,7 @@ $string['rename'] = 'Umbenennen';
 $string['report'] = 'Berichte';
 $string['reportfullstat'] = 'ausführliche Statistik';
 $string['reportmulti_percent'] = 'mehrere Prozentsätze';
+$string['reportmulti_q_x_student'] = 'mehrere Teilnehmer/innen Auswahl';
 $string['reportmulti_resp'] = 'individuelle Rückantwort';
 $string['reportoverview'] = 'Übersicht';
 $string['reportregrade'] = 'Versuche zurücksetzen';

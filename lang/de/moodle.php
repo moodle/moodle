@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003111400)
+      // moodle.php - created with Moodle 1.2 development (2003120700)
 
 
 $string['action'] = 'Aktion';
@@ -31,6 +31,7 @@ $string['adminhelpassigncreators'] = 'Ersteller können neue Kurse anlegen und do
 $string['adminhelpassignstudents'] = 'Wählen Sie einen Kurs und fügen Sie Kursteilnehmer über das Administrationsmenü hinzu';
 $string['adminhelpassignteachers'] = 'Wählen Sie einen Kurs und verwenden Sie das Icon, um Lehrer hinzuzufügen';
 $string['adminhelpauthentication'] = 'Sie können interne Nutzerzugänge oder externe Datenbanken verwenden';
+$string['adminhelpbackup'] = 'Backup-Funktionen einrichten';
 $string['adminhelpconfiguration'] = 'Generelle Variablen für die gesamte Seite festlegen';
 $string['adminhelpconfigvariables'] = 'Variablen konfigurieren für die generelle Seitenbedienung';
 $string['adminhelpcourses'] = 'Kurse und Kategorien definieren und ihnen Personen zuordnen';
@@ -112,6 +113,7 @@ $string['configcountry'] = 'Wenn Sie hier ein Land einstellen, wird dieses Land 
 $string['configdebug'] = 'Wenn Sie dies einschalten, werden die Fehlermeldungen von PHP erweitert, so dass mehr Warnungen ausgegeben werden. Dies ist nur nützlich für Entwickler.';
 $string['configerrorlevel'] = 'Wählen Sie die Menge der PHP Warnungen, die Sie angezeigt bekommen möchten. Normal ist gebräuchlicherweise die beste Wahl.';
 $string['configframename'] = 'Sofern Sie Moodle innerhalb eines Frames einbinden, tragen Sie hier den Namen des Frames ein. Anderenfalls sollte dieser Wert auf \'_top\' stehen.';
+$string['configfullnamedisplay'] = 'Hier können Sie festlegen, wie die Namen angezeigt werden. In den meisten Fällen wird die Grundeinstellung \"Eingegebener Name und Vorname\" geeignet sein. Sie könnne jedoch auch die Vornamen ausblenden.';
 $string['configgdversion'] = 'Zeigt Ihnen die installierte Version von GD an. Die angezeigte Version wurde automatisch ermittelt. Ändern Sie diese nicht, es sei denn Sie wissen wirklich, was Sie tun. ';
 $string['confightmleditor'] = 'Wählen Sie aus, ob Sie die Verwendung der HTML Text-Eingabe zulassen möchten. Selbst, wenn Sie es zulassen, erscheint diese Text-Eingabe nur, wenn der Benutzer einen geeigneten Browser (wie z.B. den IE 5.5 oder höher) benutzt.
 Die Benutzer können ebenso auswählen, diesen nicht zu benutzen.';
@@ -192,6 +194,7 @@ $string['currentlocaltime'] = 'Die lokale Zeit';
 $string['currentrelease'] = 'Letze Veröffentlichungsinformation';
 $string['currentversion'] = 'Letzte Version';
 $string['databasechecking'] = 'Moodle Datenbank von Version $a->oldversion auf $a->newversion aktualisieren...';
+$string['databaseperformance'] = 'Datenbankperformance';
 $string['databasesetup'] = 'Datenbank einspielen';
 $string['databasesuccess'] = 'Datenbank wurde erfolgreich aktualisiert';
 $string['databaseupgradebackups'] = 'Backupversion ist jetzt $a';
@@ -337,7 +340,8 @@ $string['frontpagedescription'] = 'Beschreibung auf Eingangsseite';
 $string['frontpageformat'] = 'Format der Eingangsseite';
 $string['frontpagenews'] = 'News anzeigen';
 $string['fulllistofcourses'] = 'Alle Kurse';
-$string['fullname'] = 'Bezeichnung';
+$string['fullname'] = 'Vollständiger Name';
+$string['fullnamedisplay'] = '$a->Vorname $a-> Nachname';
 $string['fullprofile'] = 'Ganzes Profil';
 $string['fullsitename'] = 'Name der gesamten Seite';
 $string['gd1'] = 'GD 1.x ist installiert';

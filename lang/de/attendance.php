@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.2 development (2003111400)
+      // attendance.php - created with Moodle 1.2 development (2003120700)
 
 
 $string['absentlong'] = 'Abwesenheit';
@@ -10,6 +10,7 @@ $string['allmodulename'] = 'alle Anwesenheitsgründe';
 $string['auto'] = 'selbst';
 $string['autoattend'] = 'Die Anwesenheit automatisch ermitteln, auf der Grundlage der Einträge über die Aktivitäten des Teilnehmers.';
 $string['autoattendmulti'] = 'Die Abwesenheit automatisch ermitteln für alle Listen, auf der Grundlage der Einträge über die Aktivitäten des User.';
+$string['autoattendshort'] = 'Automatisch von den Log-Dateien';
 $string['choosedays'] = 'Tage der Woche, an denen die Anwesenheit ermittelt wird';
 $string['dayofroll'] = 'Datum, für welches diese Gründe gelten';
 $string['defaultautoattend'] = 'Standardmäßig wird die Anwesenheit aus den Einträgen über die Aktivität des Teilnehmers ermittelt.';
@@ -25,15 +26,18 @@ $string['downloadtextfull'] = 'als Text-Datei herunterladen';
 $string['downloadtexttotals'] = 'Zusammenfassung als Text herunterladen';
 $string['dynamicsection'] = 'Die Anwesenheit für diese Woche wird festgelegt durch dieses Datum';
 $string['dynamicsectionmulti'] = 'Liste automatisch in jedem Wochenabschnitt einsetzen.';
+$string['dynsectionshort'] = 'Dynamisch zum Abschnitt hinzugefügt';
 $string['endbeforestart'] = 'Das Enddatum liegt vor dem Startdatum';
 $string['endmulti'] = 'Datum, an dem das letzte Mal die Anwesenheit ermittelt wird';
 $string['for'] = 'für';
 $string['friday'] = 'Fr';
+$string['gradeshort'] = 'Bewertet';
 $string['gradevalue'] = 'Bewertungsliste einrichten';
 $string['gradevaluemulti'] = 'Bewerungslisten einrichten';
 $string['hoursinclass'] = 'Anzahl der Stunden im Zeitraum';
 $string['hoursineachclass'] = 'Anzahl der Stunden in jedem Zeitraum';
 $string['hoursinfullreport'] = 'Die maximale Anzahl der Anwesenheitsstunden, die auf einer Seite der Auswertung angezeigt werden soll.';
+$string['maxgradeshort'] = 'Maximale Bewertung';
 $string['maxgradevalue'] = 'höchste Bewertung für volle Anwesenheit';
 $string['modulename'] = 'Anwesenheit';
 $string['modulenameplural'] = 'Anwesenheitsliste';

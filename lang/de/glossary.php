@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 development (2003111400)
+      // glossary.php - created with Moodle 1.2 development (2003120700)
 
 
 $string['addcomment'] = 'Kommentar einfügen';
@@ -38,6 +38,7 @@ $string['cnffullmatch'] = 'Legt fest, ob ein Eintrag, wenn er verlinkt ist die a
 $string['cnflinkentry'] = 'Legt fest, ob ein Eintrag automatisch verlinkt wird';
 $string['cnflinkglossaries'] = 'Legt fest, ob das Wörterbuch automatisch verlinkt wird';
 $string['cnfrelatedview'] = 'Wählen Sie die Anzeige für die automatische Verlinkung und die Anzeige ';
+$string['cnfshowgroup'] = 'Legen Sie fest, ob zwischen einzelnen Abschnitten (z.B. Buchstaben) eine visuielle Trennung erfolgen soll.';
 $string['cnfsortkey'] = 'Sortierschlüssel (Grundeinstellung)';
 $string['cnfsortorder'] = 'Sortierfolge (Grundeinstellung)';
 $string['cnfstudentcanpost'] = 'Legt fest, ob Teilnehmer/innen Beiträge einstellen können (Grundeinstellung)';

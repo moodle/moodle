@@ -1,16 +1,32 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2003111400)
+      // resource.php - created with Moodle 1.2 development (2003120700)
 
 
 $string['addresource'] = 'Material hinzufügen';
-$string['chooseafile'] = 'Wählen Sie ein Datei aus, oder laden Sie eine auf den Server';
+$string['chooseafile'] = 'Wählen Sie ein Datei aus oder laden Sie eine auf den Server';
+$string['configdefaulturl'] = 'Wenn Sie eine neue URL basierte Ressource anlegen wird dieser Wert als Voreinstellung bereits angezeigt.';
+$string['configfilterexternalpages'] = 'Diese Option wendet den eingestellten Filter (Wörterbuch, Autolinks, etc.) auch für alle externen Quellen (Webseiten und hochgeladene HTML-Seiten) an. Wenn Sie diese Option aktivieren, werden Ihre Kursseiten wesentlich langsamer laufen. Nutzen Sie diese Option daher nur wenn Sie sie wirklich benötigen.';
 $string['configframesize'] = 'Wenn eine Webseite oder eine hochgeladene Datei in einem Frame angezeigt wird, so gibt dieser Wert die Größe des Top-Frames, der die Navigation beinhaltet, in Pixeln an.';
+$string['configpopup'] = 'Soll eine neue Ressource in einem Popup-Fenster angezeigt werden, falls dies möglich ist (Grundeinstellung)?';
+$string['configpopupdirectories'] = 'Sollen von Popup-Fenstern Verzeichnislinks angezeigt werden? (Voreinstellung)';
+$string['configpopupheight'] = 'Welche Höhe sollen Popup-Fenster haben (Voreinstellung)?';
+$string['configpopuplocation'] = 'Sollen Popup-Fenster das Adressmenu zeigen (Voreinstellung)?';
+$string['configpopupmenubar'] = 'Sollen Popup-Fenster das Menu zeigen (Voreinstellung)?';
+$string['configpopupresizable'] = 'Soll  die Größe von Popup-Fenstern veränderbar sein (Voreinstellung)?';
+$string['configpopupscrollbars'] = 'Sollen Popup-Fenster scrollbar sein (Voreinstellung)?';
+$string['configpopupstatus'] = 'Sollen Popup-Fednster eine Statusanzeige haben (Voreinstellung)?';
+$string['configpopuptoolbar'] = 'Sollen Popup-Fenster die Toolbar anzeigen (Voreinstellung)?';
+$string['configpopupwidth'] = 'Welche Breite sollen Popup-Fenster haben (Voreinstellung)?';
 $string['configwebsearch'] = 'Wenn eine URL als Webseite oder Link eingefügt wird,    
 soll diese Seite dem Benutzer bei der Suche nach einer URL unterstützen.';
 $string['editingaresource'] = 'Material bearbeiten';
 $string['example'] = 'Beispiel';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.beispiel.de/Beispielverzeichnis/Beisieldatei,html';
+$string['fetchclienterror'] = 'Ein Fehler ist beim Aufruf der Seite aufgetreten (evtl. eine falsche Web-Adresse).';
+$string['fetcherror'] = 'Ein Fehler ist beim Aufruf der Seite aufgetreten.
+';
+$string['fetchservererror'] = 'Ein Fehler (evtl. ein Programmfehler) ist beim Remoteserver aufgeteten . </p>';
 $string['filename'] = 'Dateiname';
 $string['fulltext'] = 'Voller Text';
 $string['htmlfragment'] = 'HTML-Teil';

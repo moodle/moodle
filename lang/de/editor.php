@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 development (2003111400)
+      // editor.php - created with Moodle 1.2 development (2003120700)
 
 
 $string['about'] = 'Über diesen Editor';
@@ -70,7 +70,7 @@ $string['top'] = 'Anfang';
 $string['underline'] = 'Unterstrichen';
 $string['undo'] = 'letzte Anweisung wiederholen';
 $string['unorderedlist'] = 'Aufzählungszeichen';
-$string['vertical'] = 'vertical';
+$string['vertical'] = 'vertikal';
 $string['width'] = 'weit';
 
 ?>
