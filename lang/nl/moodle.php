@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004043001)
+      // moodle.php - created with Moodle 1.3 development (2004050300)
 
 
 $string['action'] = 'Actie';
@@ -94,6 +94,8 @@ $string['backupfilename'] = 'backup';
 $string['backupfinished'] = 'De backup is succesvol afgerond';
 $string['backupincludemoduleshelp'] = 'Selecteer als je vakmodules met of zonder gebruikersgegevens in de backup wil';
 $string['backupkeephelp'] = 'Hoeveel recente backups wil je houden voor elk vak? (oudere zullen automatisch verwijderd worden)';
+$string['backuplogdetailed'] = 'Gedetailleerde log van de bewerking';
+$string['backuploglaststatus'] = 'Laatste log van de bewerking';
 $string['backuplogshelp'] = 'Selecteer als je de logbestanden van het vak mee in de backup wil';
 $string['backupnameformat'] = '%%d%%m%%Y-%%H%%M';
 $string['backuporiginalname'] = 'Naam backup';
@@ -137,6 +139,7 @@ $string['configcachetext'] = 'Deze instelling kan de snelheid vergroten voor gro
 $string['configcountry'] = 'Als je hier een land invult zal dit land als standaard worden geselecteerd bij nieuwe gebruikersaccounts. Laat dit veld gewoon leeg om gebruikers te dwingen een land te kiezen.';
 $string['configdebug'] = 'Als je dit aan zet zullen er meer PHP-fouten op het scherm worden weergegeven. Dit is alleen maar handig voor ontwikkelaars van de applicatie.';
 $string['configdeleteunconfirmed'] = 'Als je met e-mail authenticatie werkt dan is dit de periode waarbinnen gebruikers moeten reageren op de bevestigingsmail voor de nieuwe account. Na deze periode zullen oude, niet-bevestigde accounts verwijderd worden.';
+$string['configenablerssfeeds'] = 'Met deze instelling maak je RSS feeds mogelijk voor heel de site. Om ze echt te kunnen gebruiken, moet je de RSS feeds nog inschakelen voor elke module afzonderlijk - ga naar \'Beheer van de modules\' onder Beheer, Configuratie.';
 $string['configerrorlevel'] = 'Kies hoeveel PHP waarschuwingen je wilt dat Moodle laat zien. \'Normaal\' is meestal de beste keuze.
 ';
 $string['configfilteruploadedfiles'] = 'Door deze optie in te schakelen gaat Moodle alle geüploade HTML en tekstbestanden door de gekozen filters halen voor ze getoond worden';
@@ -798,6 +801,7 @@ $string['strftimedateshort'] = '%%d %%B';
 $string['strftimedatetime'] = '%%d %%B %%Y, %%H:%%M';
 $string['strftimedaydate'] = '%%A, %%d %%B %%Y';
 $string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%H:%%M';
+$string['strftimedayshort'] = '%%A %%B %%d';
 $string['strftimemonthyear'] = '%%B %%Y';
 $string['strftimerecent'] = '%%d %%b, %%H:%%M';
 $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%H:%%M';
