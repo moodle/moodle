@@ -44,7 +44,7 @@ function page_create_object($type, $id = NULL) {
 }
 
 /**
- * Function page_map_type() is the way for your code to define its own page subclasses and let Moodle recognize them.
+ * Function page_map_class() is the way for your code to define its own page subclasses and let Moodle recognize them.
  * Use it to associate the textual identifier of your Page with the actual class name that has to be instantiated.
  */
 
