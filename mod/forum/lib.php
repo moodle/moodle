@@ -189,7 +189,7 @@ function forum_cron () {
 
 
                     $by->name = "$userfrom->firstname $userfrom->lastname";
-                    $by->date = userdate($post->created, "", $userto->timezone);
+                    $by->date = userdate($post->modified, "", $userto->timezone);
                     $strbynameondate = get_string("bynameondate", "forum", $by);
 
                     $strforums = get_string("forums", "forum");
@@ -752,7 +752,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output .= "<FONT SIZE=3><B>$post->subject</B></FONT><BR>";
     $output .= "<FONT SIZE=2>";
     $by->name = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A>";
-    $by->date = userdate($post->created, "", $touser->timezone);
+    $by->date = userdate($post->modified, "", $touser->timezone);
     $output .= get_string("bynameondate", "forum", $by);
     $output .= "</FONT></P></TD></TR>";
     $output .= "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" WIDTH=10>";
@@ -828,7 +828,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo "<FONT SIZE=3><B>$post->subject</B></FONT><BR>";
     echo "<FONT SIZE=2>";
     $by->name = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$post->firstname $post->lastname</A>";
-    $by->date = userdate($post->created);
+    $by->date = userdate($post->modified);
     print_string("bynameondate", "forum", $by);
     echo "</FONT></P></TD></TR>";
     echo "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" CLASS=\"forumpostside\" WIDTH=10>";
@@ -930,7 +930,7 @@ function forum_print_post_header(&$post, $courseid, $ownpost=false, $reply=false
     echo "<FONT SIZE=3><B>$post->subject</B></FONT><BR>";
     echo "<FONT SIZE=2>";
     $by->name = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$post->firstname $post->lastname</A>";
-    $by->date = userdate($post->created);
+    $by->date = userdate($post->modified);
     print_string("bynameondate", "forum", $by);
     echo "</FONT></P></TD>";
 
@@ -1620,7 +1620,7 @@ function forum_print_posts_threaded($parent, $course, $depth, $assessed, $reply)
                 echo "<BR>";
             } else {
                 $by->name = "$post->firstname $post->lastname";
-                $by->date = userdate($post->created);
+                $by->date = userdate($post->modified);
                 echo "<LI><P><FONT SIZE=-1><B><A HREF=\"discuss.php?d=$post->discussion&parent=$post->id\">$post->subject</A></B> ";
                 print_string("bynameondate", "forum", $by);
                 echo "</FONT></P></LI>";
