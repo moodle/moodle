@@ -1,18 +1,18 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 development (2004062600)
+      // glossary.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['addcomment'] = 'Adicionar comentário';
 $string['addentry'] = 'Adicionar nova entrada';
 $string['addingcomment'] = 'Escrever um comentário';
-$string['aliases'] = 'Palavra(s) clave';
+$string['aliases'] = 'Palavra(s) chave';
 $string['allcategories'] = 'Todas as categorias';
 $string['allentries'] = 'TODAS';
 $string['allowcomments'] = 'Permitir comentários nas entradas';
 $string['allowduplicatedentries'] = 'Aceitam-se entradas repetidas';
 $string['allowratings'] = 'Permitir classificar respostas?';
 $string['answer'] = 'Resposta';
-$string['approve'] = 'Aaprovar';
+$string['approve'] = 'Aprovar';
 $string['areyousuredelete'] = 'Tem a certeza que deseja apagar esta entrada?';
 $string['areyousuredeletecomment'] = 'Tem a certeza que deseja apagar este comentário?';
 $string['areyousureexport'] = 'Tem a certeza que quer exportar esta entrada?';
@@ -61,13 +61,8 @@ $string['deletingnoneemptycategory'] = 'Apagar esta categoria não faz com que as
 $string['descending'] = '(descendente)';
 $string['destination'] = 'Destino';
 $string['displayformat'] = 'Formato de visualização';
-$string['displayformat2'] = 'Completo com autor';
-$string['displayformat3'] = 'Enciclopedia';
-$string['displayformat4'] = 'FAQ';
-$string['displayformat5'] = 'Completo sem autor';
-$string['displayformat6'] = 'Listagem de entradas';
 $string['displayformatcontinuous'] = 'Contínuo, sem autor';
-$string['displayformatdefault'] = 'Simples, no estilo dicionário';
+$string['displayformatdictionary'] = 'Simples, estilo de dicionário';
 $string['displayformats'] = 'Formatos de apresentação';
 $string['displayformatssetup'] = 'Configuração de formatos de apresentação';
 $string['duplicateentry'] = 'Entrada duplicada';
@@ -98,8 +93,9 @@ $string['exportglossary'] = 'Exportar glossário';
 $string['exporttomainglossary'] = 'Exportar para o glossário principal.';
 $string['filetoimport'] = 'Ficheiro a importar';
 $string['fillfields'] = 'Conceito e definição são campos obrigatórios.';
-$string['filtername'] = 'Glossário com apontadores atuomáticos';
+$string['filtername'] = 'Glossário com apontadores automáticos';
 $string['fullmatch'] = 'Compare unicamente palavras completas';
+$string['globalglossary'] = 'Glossário global';
 $string['glossaryleveldefaultsettings'] = 'Valores por omissão para nivel de glossário';
 $string['glossarytype'] = 'Tipo de glossário';
 $string['glosssaryexported'] = 'Glossário exportado.';
@@ -142,13 +138,13 @@ $string['rsssubscriberss'] = 'Mostrar a listagem RSS para \'$a\' conceitos';
 $string['searchindefinition'] = 'Pesquisa no texto completo';
 $string['secondaryglossary'] = 'Glossário secundário';
 $string['sendinratings'] = 'Enviar as minhas últimas classificações';
-$string['showall'] = 'Mostrar o apontador par \'TODOS\'';
+$string['showall'] = 'Mostrar o apontador para  \'TODOS\'';
 $string['showalphabet'] = 'Mostrar alfabeto';
 $string['showspecial'] = 'Mostrar apontador para \'Especial\'';
 $string['sortby'] = 'Ordenar por';
 $string['sortbycreation'] = 'Por data de criação';
 $string['sortbylastupdate'] = 'Por data de actualização';
-$string['sortchronogically'] = 'Classificar por ordem cronológica';
+$string['sortchronogically'] = 'Ordenar por ordem cronológica';
 $string['special'] = 'Especial';
 $string['standardview'] = 'Ver por alfabeto';
 $string['studentcanpost'] = 'Os alunos podem adicionar termos';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 development (2004060100)
+      // resource.php - created with Moodle 1.4 + (2004083100)
 
 
 $string['addresource'] = 'Adicionar documento';
@@ -22,7 +22,6 @@ $string['directlink'] = 'Apontador direito para este ficheiro';
 $string['directoryinfo'] = 'Serão apresentados todos os ficheiros no directório seleccionado.';
 $string['editingaresource'] = 'Editar documento';
 $string['example'] = 'Exemplo';
-$string['examplereference'] = 'Tobin, K. e Tippins, D (1993) Construtivismo como um Referência para Ensinar e Aprender. Em: K. Tobin (Ed) A Prática de Construtivismo na Educação e na Ciência, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.exemple.com/directorio/ficheiro.html';
 $string['fetchclienterror'] = 'Foi detectado um erro no seu navegador web enquanto tentava aceder à página (provavelmente o URL está errado).';
 $string['fetcherror'] = 'Foi detectado um erro no acesso para a página web.';
@@ -32,8 +31,8 @@ $string['filtername'] = 'Auto-apontar para recursos';
 $string['fulltext'] = 'Texto completo';
 $string['htmlfragment'] = 'Fragmento de HTML';
 $string['maindirectory'] = 'Directório de ficheiros principais';
-$string['modulename'] = 'Documento';
-$string['modulenameplural'] = 'Documentos';
+$string['modulename'] = 'Recurso';
+$string['modulenameplural'] = 'Recursos';
 $string['neverseen'] = 'Nunca visto';
 $string['newdirectories'] = 'Mostrar os links de directorias';
 $string['newfullscreen'] = 'Preencher toda a janela';
