@@ -50,7 +50,7 @@ you must point PHPMailer to the correct translation.  To do this, call
 the PHPMailer SetLanguage method like so:
 
 // To load the Portuguese version
-$mail->SetLanguage("br", "/optional/path/to/language/directory");
+$mail->SetLanguage("br", "/optional/path/to/language/directory/");
 
 That's it.  You should now be ready to use PHPMailer!
 
@@ -64,9 +64,9 @@ $mail = new PHPMailer();
 
 $mail->IsSMTP();                                      // set mailer to use SMTP
 $mail->Host = "smtp1.example.com;smtp2.example.com";  // specify main and backup server
-$mail->SMTPAuth = true     // turn on SMTP authentication
-$mail->Username = "jswan"  // SMTP username
-$mail->Password = "secret" // SMTP password
+$mail->SMTPAuth = true;     // turn on SMTP authentication
+$mail->Username = "jswan";  // SMTP username
+$mail->Password = "secret"; // SMTP password
 
 $mail->From = "from@example.com";
 $mail->FromName = "Mailer";
