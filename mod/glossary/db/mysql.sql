@@ -1,31 +1,27 @@
 # This file contains a complete database schema for all the 
-
 # tables used by this module, written in SQL
 
-
 # It may also contain INSERT statements for particular data 
-
 # that may be used, especially new entries in the table log_display
-
-
 
 #
 # Table structure for table `glossary`
 #
 
 CREATE TABLE prefix_glossary (
-  id int(10) unsigned NOT NULL auto_increment,
-  course int(10) unsigned NOT NULL default '0',
-  name varchar(255) NOT NULL default '',
-  studentcanpost tinyint(2) unsigned NOT NULL default '0',
-
-  allowduplicatedentries tinyint(2) unsigned NOT NULL default '0',
-  displayformat tinyint(2) unsigned NOT NULL default '0',
-  mainglossary tinyint(2) unsigned NOT NULL default '0',
-  
-  timecreated int(10) unsigned NOT NULL default '0',
-  timemodified int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (id)
+     id int(10) unsigned NOT NULL auto_increment,
+     course int(10) unsigned NOT NULL default '0',
+     name varchar(255) NOT NULL default '',
+     studentcanpost tinyint(2) unsigned NOT NULL default '0',
+     allowduplicatedentries tinyint(2) unsigned NOT NULL default '0',
+     displayformat tinyint(2) unsigned NOT NULL default '0',
+     mainglossary tinyint(2) unsigned NOT NULL default '0',
+     showspecial tinyint(2) unsigned NOT NULL default '1',
+     showalphabet tinyint(2) unsigned NOT NULL default '1',
+     showall tinyint(2) unsigned NOT NULL default '1',
+     timecreated int(10) unsigned NOT NULL default '0',
+     timemodified int(10) unsigned NOT NULL default '0',
+     PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='all glossaries';
 
 #
@@ -33,19 +29,17 @@ CREATE TABLE prefix_glossary (
 #
 
 CREATE TABLE prefix_glossary_entries (
-  id int(10) unsigned NOT NULL auto_increment,
-  glossaryid int(10) unsigned NOT NULL default '0',
-  userid int(10) unsigned NOT NULL default '0',
-
-  concept varchar(255) NOT NULL default '',
-  definition text NOT NULL,
-  format tinyint(2) unsigned NOT NULL default '0',
-  timecreated int(10) unsigned NOT NULL default '0',
-  timemodified int(10) unsigned NOT NULL default '0',
-
-  teacherentry tinyint(2) unsigned NOT NULL default '0',
-
-  PRIMARY KEY  (id)
+     id int(10) unsigned NOT NULL auto_increment,
+     glossaryid int(10) unsigned NOT NULL default '0',
+     userid int(10) unsigned NOT NULL default '0',
+     concept varchar(255) NOT NULL default '',
+     definition text NOT NULL,
+     format tinyint(2) unsigned NOT NULL default '0',
+     attachment VARCHAR(100) NOT NULL default '',
+     timecreated int(10) unsigned NOT NULL default '0',
+     timemodified int(10) unsigned NOT NULL default '0',
+     teacherentry tinyint(2) unsigned NOT NULL default '0',
+     PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='all glossary entries';
 
 #
@@ -54,9 +48,8 @@ CREATE TABLE prefix_glossary_entries (
 
 INSERT INTO prefix_log_display VALUES ('glossary', 'add', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'update', 'glossary', 'name');
-
 INSERT INTO prefix_log_display VALUES ('glossary', 'view', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'view all', 'glossary', 'name');
-
 INSERT INTO prefix_log_display VALUES ('glossary', 'add entry', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'update entry', 'glossary', 'name');
+

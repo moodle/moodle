@@ -10,7 +10,7 @@
     //                        |
     //                        |
     //                  glossary_entries 
-    //               (UL,pk->id, fk->glossaryid)     
+    //               (UL,pk->id, fk->glossaryid, files)
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -41,6 +41,9 @@
                 fwrite ($bf,full_tag("ALLOWDUPLICATEDENTRIES",4,false,$glossary->allowduplicatedentries));
                 fwrite ($bf,full_tag("DISPLAYFORMAT",4,false,$glossary->displayformat));	
                 fwrite ($bf,full_tag("MAINGLOSSARY",4,false,$glossary->mainglossary));
+                fwrite ($bf,full_tag("SHOWSPECIAL",4,false,$glossary->showspecial));
+                fwrite ($bf,full_tag("SHOWALPHABET",4,false,$glossary->showalphabet));
+                fwrite ($bf,full_tag("SHOWALL",4,false,$glossary->showall));
                 fwrite ($bf,full_tag("TIMECREATED",4,false,$glossary->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$glossary->timemodified));
 
@@ -83,6 +86,7 @@
                    fwrite ($bf,full_tag("CONCEPT",6,false,$glo_ent->concept));
                    fwrite ($bf,full_tag("DEFINITION",6,false,$glo_ent->definition));
                    fwrite ($bf,full_tag("FORMAT",6,false,$glo_ent->format));
+                   fwrite ($bf,full_tag("ATTACHMENT",6,false,$glo_ent->attachment));
                    fwrite ($bf,full_tag("TEACHERENTRY",6,false,$glo_ent->teacherentry));
 
                    $status =fwrite ($bf,end_tag("ENTRY",5,true));
@@ -96,6 +100,30 @@
         return $status;
     }
    
+
+    //Backup glossary files because we've selected to backup user info
+    //and files are user info's level
+    function backup_glossary_files($bf,$preferences) {
+
+        global $CFG;
+
+        $status = true;
+
+        //First we check to moddata exists and create it as necessary
+        //in temp/backup/$backup_code  dir
+        $status = check_and_create_moddata_dir($preferences->backup_unique_code);
+        //Now copy the forum dir
+        if ($status) {
+            //Only if it exists !! Thanks to Daniel Miksik.
+            if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/glossary")) {
+                $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/glossary",
+                                           $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/glossary");
+            }
+        }
+
+        return $status;
+
+    }
 
    ////Return an array of info (name,value)
    function glossary_check_backup_mods($course,$user_data=false,$backup_unique_code) {

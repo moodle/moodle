@@ -3,9 +3,7 @@
 /// Library of functions and constants for module glossary
 /// (replace glossary with the name of your module and delete this line)
 
-
-$glossary_CONSTANT = 7;     /// for example
-
+require_once("$CFG->dirroot/files/mimetypes.php");
 
 function glossary_add_instance($glossary) {
 /// Given an object containing all the necessary data,
@@ -88,14 +86,12 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
         return false;
     }
 
-	echo "<h1>ANTES</h1>";
     foreach ($logs as $log) {
         //Create a temp valid module structure (course,id)
         $tempmod->course = $log->course;
         $tempmod->id = $log->info;
         //Obtain the visible property from the instance
         $modvisible = instance_is_visible($log->module,$tempmod);
-	echo "<h1>ADENTRO => ANTES</h1>";
 
         //Only if the mod is visible
         if ($modvisible) {
@@ -103,10 +99,7 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
             $entries[$log->info]->time = $log->time;
             $entries[$log->info]->url  = $log->url;
         }
-	echo "<h1>ADENTRO => DESPUES</h1>";
     }
-
-	echo "<h1>DESPUES</h1>";
 
     $content = false;
     if ($entries) {
@@ -169,108 +162,44 @@ function glossary_get_entries($glossaryid, $entrylist) {
 }
 
 function glossary_print_entry($course, $cm, $glossary, $entry) {
-     switch ( $glossary->displayformat ) {
-     	case 0:
-            echo "<table width=70% border=0><tr><td>";
-            glossary_print_entry_with_user($course, $cm, $glossary, $entry);
-            echo "</td></tr></table>";
-            break;
-     	case 1:
-            echo "<table width=70% border=0><tr><td>";
-            glossary_print_entry_without_user($course, $cm, $glossary, $entry);
-            echo "</td></tr></table>";
-            break;
-        case 2:
-//            echo "<table width=70% border=0><tr><td>";
-            glossary_print_short_entries($course, $cm, $glossary, $entry);
-//            echo "</td></tr></table>";
-            break;
-     }
-}
-function glossary_print_entry_with_user($course, $cm, $glossary, $entry) {
-    global $THEME, $USER;
+    global $THEME, $USET, $CFG;
+    
+    $PermissionGranted = 0;
+    $formatfile = "$CFG->dirroot/mod/glossary/formats/$glossary->displayformat.php";
+    $functionname = "glossary_print_entry_by_format";
 
-//    if ($entry->timemarked < $entry->modified) {
-        $colour = $THEME->cellheading2;
-//    } else {
-//        $colour = $THEME->cellheading;
-//    }
-
-    $user = get_record("user", "id", $entry->userid);
-    $strby = get_string("writtenby","glossary");
-
-    echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10>";
-
-    echo "\n<TR>";
-    echo "\n<TD ROWSPAN=2 BGCOLOR=\"$THEME->cellheading\" WIDTH=35 VALIGN=TOP>";
-    if ($entry) {
-    	print_user_picture($user->id, $course->id, $user->picture);
-    }
-    echo "</TD>";
-    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$colour\">";
-    if ($entry) {
-    	echo "<b>$entry->concept</b><br><FONT SIZE=2>$strby $user->firstname $user->lastname</font>";
-        echo "&nbsp;&nbsp;<FONT SIZE=1>(".get_string("lastedited").": ".userdate($entry->timemodified).")</FONT></small>";
-    }
-    echo "</TR>";
-
-    echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
-    if ($entry) {
-	  echo format_text($entry->definition, $entry->format);
-
-	  glossary_print_entry_icons($course, $cm, $glossary, $entry);
-
+    if ( $glossary->displayformat > 0 ) {
+        if ( file_exists($formatfile) ) {
+           include_once($formatfile);
+           if (function_exists($functionname) ) {
+              $PermissionGranted = 1;
+           }
+        }
     } else {
-	  echo "<center>";
-        print_string("noentry", "glossary");
-	  echo "</center>";
+       $PermissionGranted = 1;
     }
-    echo "</TD></TR>";
-
-    echo "</TABLE>\n";
-}
-
-function glossary_print_entry_without_user($course, $cm, $glossary, $entry) {
-    global $THEME, $USER;
-
-//    if ($entry->timemarked < $entry->modified) {
-        $colour = $THEME->cellheading2;
-//    } else {
-//        $colour = $THEME->cellheading;
-//    }
-
-    echo "\n<TABLE BORDER=1 CELLSPACING=0 width=100% valign=top cellpadding=10>";
-
-    echo "\n<TR>";
-    echo "<TD WIDTH=100% BGCOLOR=\"$colour\"><b>$entry->concept</b><br>";
-    if ($entry) {
-        echo "&nbsp;&nbsp;<FONT SIZE=1>".get_string("lastedited").": ".userdate($entry->timemodified)."</FONT>";
-    }
-    echo "</TR>";
-
-    echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
-    if ($entry) {
-	  echo format_text($entry->definition, $entry->format);
-
-	  glossary_print_entry_icons($course, $cm, $glossary, $entry);
-
+    if ( $glossary->displayformat > 0 and $PermissionGranted ) {
+        glossary_print_entry_by_format($course, $cm, $glossary, $entry);
     } else {
-	  echo "<center>";
-        print_string("noentry", "glossary");
-	  echo "</center>";
+        glossary_print_entry_by_default($course, $cm, $glossary, $entry);
     }
-    echo "</TD></TR>";
 
-    echo "</TABLE>\n";
 }
 
-function glossary_print_short_entries($course, $cm, $glossary, $entry) {
+function glossary_print_entry_by_default($course, $cm, $glossary, $entry) {
     global $THEME, $USER;
 
     $colour = $THEME->cellheading2;
 
     echo "\n<TR>";
-    echo "<TD WIDTH=100% BGCOLOR=\"#FFFFFF\"><b>$entry->concept</b>: ";
+    echo "<TD WIDTH=100% BGCOLOR=\"#FFFFFF\">";
+    if ($entry->attachment) {
+          $entry->course = $course->id;
+          echo "<table border=0 align=right><tr><td>";
+          echo glossary_print_attachments($entry,"html");
+          echo "</td></tr></table>";
+    }
+    echo "<b>$entry->concept</b>: ";
     echo format_text($entry->definition, $entry->format);
     glossary_print_entry_icons($course, $cm, $glossary, $entry);
     echo "</td>";
@@ -285,11 +214,6 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry) {
 		if (isteacher($course->id) and !$glossary->mainglossary) {
 			$mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
 			if ( $mainglossary ) {
-/*				link_to_popup_window ("$CFG->wwwroot/mod/glossary/exportentry.php?id=$cm->id&entry=$entry->id",
-								"popup",
-								"<img  alt=\"" . get_string("exporttomainglossary","glossary") . "\"src=\"export.gif\" height=11 width=11 border=0>",
-                               			400, 500, get_string("exporttomainglossary","glossary"), "none");
-*/
 
 				echo "<a href=\"exportentry.php?id=$cm->id&entry=$entry->id\"><img  alt=\"" . get_string("exporttomainglossary","glossary") . "\"src=\"export.gif\" height=11 width=11 border=0></a> ";
 
@@ -390,6 +314,181 @@ function glossary_get_participants($glossaryid) {
 
     //Return students array (it contains an array of unique users)
     return ($students);
+}
+
+
+function glossary_file_area_name($entry) {
+//  Creates a directory file name, suitable for make_upload_directory()
+    global $CFG;
+
+    return "$entry->course/$CFG->moddata/glossary/$entry->glossaryid/$entry->id";
+}
+
+function glossary_file_area($entry) {
+    return make_upload_directory( glossary_file_area_name($entry) );
+}
+
+function glossary_delete_old_attachments($entry, $exception="") {
+// Deletes all the user files in the attachments area for a entry
+// EXCEPT for any file named $exception
+
+    if ($basedir = glossary_file_area($entry)) {
+        if ($files = get_directory_list($basedir)) {
+            foreach ($files as $file) {
+                if ($file != $exception) {
+                    unlink("$basedir/$file");
+//                    notify("Existing file '$file' has been deleted!");
+                }
+            }
+        }
+        if (!$exception) {  // Delete directory as well, if empty
+            rmdir("$basedir");
+        }
+    }
+}
+
+function glossary_copy_attachments($entry, $newentry) {
+/// Given a entry object that is being copied to glossaryid,
+/// this function checks that entry
+/// for attachments, and if any are found, these are
+/// copied to the new glossary directory.
+
+    global $CFG;
+
+    $return = true;
+
+    if ($entries = get_records_select("glossary_entries", "id = '$entry->id' AND attachment <> ''")) {
+        foreach ($entries as $curentry) {
+            $oldentry->id = $entry->id;
+            $oldentry->course = $entry->course;
+            $oldentry->glossaryid = $curentry->glossaryid;
+            $oldentrydir = "$CFG->dataroot/".glossary_file_area_name($oldentry);
+            if (is_dir($oldentrydir)) {
+
+                $newentrydir = glossary_file_area($newentry);
+                if (! copy("$oldentrydir/$newentry->attachment", "$newentrydir/$newentry->attachment")) {
+                    $return = false;
+                }
+            }
+        }
+     }
+    return $return;
+}
+
+function glossary_move_attachments($entry, $glossaryid) {
+/// Given a entry object that is being moved to glossaryid,
+/// this function checks that entry
+/// for attachments, and if any are found, these are
+/// moved to the new glossary directory.
+
+    global $CFG;
+
+    $return = true;
+
+    if ($entries = get_records_select("glossary_entries", "glossaryid = '$entry->id' AND attachment <> ''")) {
+        foreach ($entries as $entry) {
+            $oldentry->course = $entry->course;
+            $oldentry->glossaryid = $entry->glossaryid;
+            $oldentrydir = "$CFG->dataroot/".glossary_file_area_name($oldentry);
+            if (is_dir($oldentrydir)) {
+                $newentry = $oldentry;
+                $newentry->glossaryid = $glossaryid;
+                $newentrydir = "$CFG->dataroot/".glossary_file_area_name($newentry);
+                if (! @rename($oldentrydir, $newentrydir)) {
+                    $return = false;
+                }
+            }
+        }
+    }
+    return $return;
+}
+
+function glossary_add_attachment($entry, $newfile) {
+// $entry is a full entry record, including course and glossary
+// $newfile is a full upload array from $_FILES
+// If successful, this function returns the name of the file
+
+    global $CFG;
+
+    if (empty($newfile['name'])) {
+        return "";
+    }
+
+    $newfile_name = clean_filename($newfile['name']);
+
+    if (valid_uploaded_file($newfile)) {
+        if (! $newfile_name) {
+            notify("This file had a wierd filename and couldn't be uploaded");
+
+        } else if (! $dir = glossary_file_area($entry)) {
+            notify("Attachment could not be stored");
+            $newfile_name = "";
+
+        } else {
+            if (move_uploaded_file($newfile['tmp_name'], "$dir/$newfile_name")) {
+                chmod("$dir/$newfile_name", $CFG->directorypermissions);
+                glossary_delete_old_attachments($entry, $newfile_name);
+            } else {
+                notify("An error happened while saving the file on the server");
+                $newfile_name = "";
+            }
+        }
+    } else {
+        $newfile_name = "";
+    }
+
+    return $newfile_name;
+}
+
+function glossary_print_attachments($entry, $return=NULL) {
+// if return=html, then return a html string.
+// if return=text, then return a text-only string.
+// otherwise, print HTML for non-images, and return image HTML
+
+    global $CFG;
+
+    $filearea = glossary_file_area_name($entry);
+
+    $imagereturn = "";
+    $output = "";
+
+    if ($basedir = glossary_file_area($entry)) {
+        if ($files = get_directory_list($basedir)) {
+            $strattachment = get_string("attachment", "glossary");
+            $strpopupwindow = get_string("popupwindow");
+            foreach ($files as $file) {
+                $icon = mimeinfo("icon", $file);
+                if ($CFG->slasharguments) {
+                    $ffurl = "file.php/$filearea/$file";
+                } else {
+                    $ffurl = "file.php?file=/$filearea/$file";
+                }
+                $image = "<img border=0 src=\"$CFG->wwwroot/files/pix/$icon\" height=16 width=16 alt=\"$strpopupwindow\">";
+
+                if ($return == "html") {
+                    $output .= "<a target=_image href=\"$CFG->wwwroot/$ffurl\">$image</a> ";
+                    $output .= "<a target=_image href=\"$CFG->wwwroot/$ffurl\">$file</a><br />";
+                } else if ($return == "text") {
+                    $output .= "$strattachment $file:\n$CFG->wwwroot/$ffurl\n";
+
+                } else {
+                    if ($icon == "image.gif") {    // Image attachments don't get printed as links
+                        $imagereturn .= "<br /><img src=\"$CFG->wwwroot/$ffurl\">";
+                    } else {
+                        link_to_popup_window("/$ffurl", "attachment", $image, 500, 500, $strattachment);
+                        echo "<a target=_image href=\"$CFG->wwwroot/$ffurl\">$file</a>";
+                        echo "<br />";
+                    }
+                }
+            }
+        }
+    }
+
+    if ($return) {
+        return $output;
+    }
+
+    return $imagereturn;
 }
 
 ?>

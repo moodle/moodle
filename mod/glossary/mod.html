@@ -12,21 +12,21 @@
 </TR>
 <!-- More rows go in here... -->
 <TR valign=top>
-    <TD align=right><P><B><? echo get_string("canstudentpost", "glossary") ?>:</B></P></TD>
+    <TD align=right><P><B><? echo get_string("studentcanpost", "glossary") ?>:</B></P></TD>
     <TD>
   <select size="1" name="studentcanpost">
   <option value="1" <? 
    if ( $form->studentcanpost ) {
       echo "selected";
    }
-   ?>><? echo get_string("studentcanpost", "glossary") ?></option>
+   ?>><? echo get_string("yes") ?></option>
   <option value="0" <? 
    if ( !$form->studentcanpost ) {
       echo "selected";
    }
-   ?>><? echo get_string("studentcantpost", "glossary") ?>
+   ?>><? echo get_string("no") ?>
   </option>
-  </select> <? helpbutton("studentcanpost", get_string("canstudentpost", "glossary"), "glossary") ?>
+  </select> <? helpbutton("studentcanpost", get_string("studentcanpost", "glossary"), "glossary") ?>
     </TD>
 </TR>
 <TR valign=top>
@@ -38,40 +38,14 @@
       echo "selected";
    }
    ?> 
-   ><? echo get_string("yesallowduplicates", "glossary") ?></option>
+   ><? echo get_string("yes") ?></option>
   <option value="0" <? 
    if ( !$form->allowduplicatedentries ) {
       echo "selected";
    }
-   ?>><? echo get_string("dontallowduplicates", "glossary") ?>
+   ?>><? echo get_string("no") ?>
   </option>
   </select> <? helpbutton("allowduplicatedentries", get_string("allowduplicatedentries", "glossary"), "glossary") ?>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><? echo get_string("displayformat", "glossary") ?>:</B></P></TD>
-    <TD>
-  <select size="1" name="displayformat">
-
-  <option value="0" <? 
-   if ( $form->displayformat == 0) {
-      echo "selected";
-   }
-  ?>><? echo get_string("displayformatwuser", "glossary") ?></option>
-
-  <option value="1" <? 
-   if ( $form->displayformat == 1) {
-      echo "selected";
-   }
-  ?>><? echo get_string("displayformatwouser", "glossary") ?></option>
-
-  <option value="2" <? 
-   if ( $form->displayformat == 2) {
-      echo "selected";
-   }
-  ?>><? echo get_string("displayformatsimple", "glossary") ?></option>
-
-  </select> <? helpbutton("displayformat", get_string("displayformat", "glossary"), "glossary") ?>
     </TD>
 </TR>
 <?
@@ -79,19 +53,19 @@ $mainglossary = get_record("glossary","mainglossary",1,"course",$form->course);
 if (!$mainglossary or $mainglossary->id == $form->instance ) {
 ?>
 <TR valign=top>
-    <TD align=right><P><B><? echo get_string("isthisthemainglossary", "glossary") ?>:</B></P></TD>
+    <TD align=right><P><B><? echo get_string("glossarytype", "glossary") ?>:</B></P></TD>
     <TD>
   <select size="1" name="mainglossary">
   <option value="1" <? 
    if ( $form->mainglossary ) {
       echo "selected";
    }
-   ?>><? echo get_string("itisthemainglossary", "glossary") ?></option>
+   ?>><? echo get_string("mainglossary", "glossary") ?></option>
   <option value="0" <? 
    if ( !$form->mainglossary ) {
       echo "selected";
    }
-   ?>><? echo get_string("itisntthemainglossary", "glossary") ?>
+   ?>><? echo get_string("secundaryglossary", "glossary") ?>
   </option>
   </select> <? helpbutton("mainglossary", get_string("mainglossary", "glossary"), "glossary") ?>
     </TD>
@@ -101,6 +75,103 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
 	echo "<INPUT type=\"hidden\" name=mainglossary value=\"0\">";
 }
 ?>
+<TR valign=top>
+    <TD align=right><P><B><? echo get_string("displayformat", "glossary") ?>:</B></P></TD>
+    <TD>
+  <select size="1" name="displayformat">
+  <option value="0" <? 
+   if ( $form->displayformat == 0) {
+      echo "selected";
+   }
+  ?>><? echo get_string("displayformatdefault", "glossary") ?></option>
+
+<?
+    global $CFG;
+
+    $basedir = opendir("$CFG->dirroot/mod/glossary/formats");
+    while ($dir = readdir($basedir)) {
+        $firstchar = substr($dir, 0, 1);
+        if ($firstchar == "." or $dir == "CVS" or $dir == "_vti_cnf") {
+            continue;
+        }
+        if (filetype("$CFG->dirroot/mod/glossary/formats/$dir") == "dir") {
+            continue;
+        }
+	  if ( $pos = strpos($dir, ".") ) {
+		$dir = substr($dir, 0, $pos );
+
+	  	echo "<option value=\"$dir\" ";
+	  	if ( $form->displayformat == $dir) {
+      		echo "selected ";
+	  	}
+  	  	echo ">";
+
+	  	echo get_string("displayformat$dir", "glossary")."</option>";	
+	  }
+    }
+	
+?>
+
+    </select> <? helpbutton("displayformat", get_string("displayformat", "glossary"), "glossary") ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? echo get_string("showspecial", "glossary") ?>:</B></P></TD>
+    <TD>
+  <select size="1" name="showspecial">
+  <option value="1" <? 
+   if ( $form->showspecial ) {
+      echo "selected";
+   }
+   ?> 
+   ><? echo get_string("yes") ?></option>
+  <option value="0" <? 
+   if ( !$form->showspecial ) {
+      echo "selected";
+   }
+   ?>><? echo get_string("no") ?>
+  </option>
+  </select> <? helpbutton("shows", get_string("showspecial", "glossary"), "glossary") ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? echo get_string("showalphabet", "glossary") ?>:</B></P></TD>
+    <TD>
+  <select size="1" name="showalphabet">
+  <option value="1" <? 
+   if ( $form->showalphabet ) {
+      echo "selected";
+   }
+   ?> 
+   ><? echo get_string("yes") ?></option>
+  <option value="0" <? 
+   if ( !$form->showalphabet ) {
+      echo "selected";
+   }
+   ?>><? echo get_string("no") ?>
+  </option>
+  </select> <? helpbutton("shows", get_string("showalphabet", "glossary"), "glossary") ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? echo get_string("showall", "glossary") ?>:</B></P></TD>
+    <TD>
+  <select size="1" name="showall">
+  <option value="1" <? 
+   if ( $form->showall ) {
+      echo "selected";
+   }
+   ?> 
+   ><? echo get_string("yes") ?></option>
+  <option value="0" <? 
+   if ( !$form->showall ) {
+      echo "selected";
+   }
+   ?>><? echo get_string("no") ?>
+  </option>
+  </select> <? helpbutton("shows", get_string("showall", "glossary"), "glossary") ?>
+    </TD>
+</TR>
 </TABLE>
 <!-- These hidden variables are always the same -->
 <INPUT type="hidden" name=course        value="<? p($form->course) ?>">

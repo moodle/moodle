@@ -1,4 +1,4 @@
-<FORM name="theform" method="post" <?=$onsubmit ?> action="edit.php">
+<FORM name="theform" method="post" <?=$onsubmit ?> action="edit.php" enctype="multipart/form-data">
 <table>
 <tr>
     <td align=right>
@@ -45,6 +45,21 @@
    }
 ?>
 </p>
+
+<table border=0>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("attachment", "glossary") ?>:<br \>(<?php print_string("optional") ?>)&nbsp;</b></p></td>
+    <td>
+    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo get_max_upload_file_size() ?>">
+    <input type="file" name="attachment" size=40> 
+    <?php 
+       helpbutton("attachment", get_string("attachment", "glossary"), "glossary"); 
+       print_string("maxsize", "", display_size(get_max_upload_file_size())); 
+    ?>
+    </td>
+
+</tr>
+</table>
 
 <p align=center>
 <input type="hidden" name=id value="<?=$cm->id ?>">

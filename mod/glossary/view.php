@@ -89,25 +89,27 @@
 	</form>
 	<?
 
-      echo "<p><a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$id&l=SPECIAL\">$strspecial</a> | ";
-
-      $middle = (int) ( (ord("Z") - ord("A")) / 2) ;
-      for ($i = ord("A"); $i <= ord("Z"); $i++) {
-         echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$id&l=" . chr($i) . "\">" . chr($i) . "</a>";
-         if ( $i - ord("A") - 1 != $middle ) {
-            echo " | ";
-         } else {
-            echo "<br>";
-         }
-
-         if ($i == ord("N") ) {
-            echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$id&l=Ñ\">Ñ</a> | ";
-         }
-
+      if ( $glossary->showspecial ) {
+          echo "<p><a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$id&l=SPECIAL\">$strspecial</a> | ";
       }
 
-      echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$id&l=ALL\">$strallentries</a></p>";
-
+      if ( $glossary->showalphabet ) {
+           $alphabet = explode("|", get_string("alphabet","glossary"));
+           $letters_by_line = 14;
+           for ($i = 0; $i < count($alphabet); $i++) {
+               echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$id&l=$alphabet[$i]\">$alphabet[$i]</a>";
+               if ((int) ($i % $letters_by_line) != 0 or $i == 0) {
+                    echo " | ";
+               } else {
+                    echo "<br>";
+               }
+           }
+      }
+      
+      if ( $glossary->showall ) {
+          echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$id&l=ALL\">$strallentries</a></p>";
+      }
+      
       if (isteacher($course->id) or $glossary->studentcanpost) {
          $options = array ("id" => "$cm->id");
          echo "<CENTER>";
@@ -151,7 +153,7 @@
                     if ( $CurrentLetter != $FirstLetter ) {
                          $CurrentLetter = $FirstLetter;
 
-	                    if ( $glossary->displayformat == 2 ) {
+	                    if ( $glossary->displayformat == 0 ) {
 	                        if ( $DumpedDefinitions != 1) {
 	                            echo "</table></center><p>";
 	                        }
@@ -159,7 +161,7 @@
 	                    }
 	                    echo $CurrentLetter;
 
-	                    if ( $glossary->displayformat == 2 ) {
+	                    if ( $glossary->displayformat == 0 ) {
 	                        echo "\n</b></center></td></tr></TABLE></center>";
 	                        if ( $DumpedDefinitions != 1) {
 	                    		echo "\n<center><TABLE BORDER=1 CELLSPACING=0 width=70% valign=top cellpadding=10>";
@@ -181,7 +183,7 @@
                  $definition = $entry->definition;
 
                  if ( $DumpedDefinitions == 1 ) {
-	                 if ( $glossary->displayformat == 2 ) {
+	                 if ( $glossary->displayformat == 0 ) {
 	                    echo "\n<center><TABLE BORDER=1 CELLSPACING=0 width=70% valign=top cellpadding=10>";
 	                 }
                  }
@@ -191,7 +193,7 @@
                  }
 	             glossary_print_entry($course, $cm, $glossary, $entry);
 
-				 if ( $glossary->displayformat != 2 ) {
+				 if ( $glossary->displayformat != 0 ) {
                  	echo "<p>";
                  }
             }
@@ -208,7 +210,7 @@
 		}
 		print_simple_box_end();
 	} else {
-	    if ( $glossary->displayformat == 2 ) {
+	    if ( $glossary->displayformat == 0 ) {
 	        echo "\n</TABLE></center>";
 	    }
 	}

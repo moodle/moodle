@@ -20,8 +20,9 @@ Quick install instructions
 
 1)  Copy the files inside lang/en (glossary.php and help/*.*) to your lang/en folder. Please, forgive my english... I tried to do my best... I'll appreciate if you send me correct translations of these files (I've also included the spanish translation as well).
 2)  Create a folder inside your moodle/mod folder and copy all other files inside it.
-3)  Visit your admin page to install the module
-4)  Enjoy it.
+3) If you are using a them that uses its own set of icons (like cordoroyblue), you will need to copy the icon.gif and export.gif into your folder of custom icons.
+4)  Visit your admin page to install the module
+5)  Enjoy it.
 
 
 Please, send me your comments and suggestions. It will help me improve this module.

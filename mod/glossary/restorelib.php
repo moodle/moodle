@@ -10,7 +10,7 @@
     //                        |
     //                        |
     //                  glossary_entries
-    //               (UL,pk->id, fk->glossaryid)
+    //               (UL,pk->id, fk->glossaryid,files)
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -45,6 +45,9 @@
             $glossary->allowduplicatedentries = backup_todb($info['MOD']['#']['ALLOWDUPLICATEDENTRIES']['0']['#']);
             $glossary->displayformat = backup_todb($info['MOD']['#']['DISPLAYFORMAT']['0']['#']);
             $glossary->mainglossary = backup_todb($info['MOD']['#']['MAINGLOSSARY']['0']['#']);
+            $glossary->showspecial = backup_todb($info['MOD']['#']['SHOWSPECIAL']['0']['#']);
+            $glossary->showalphabet = backup_todb($info['MOD']['#']['SHOWALPHABET']['0']['#']);
+            $glossary->showall = backup_todb($info['MOD']['#']['SHOWALL']['0']['#']);
             $glossary->timecreated = backup_todb($info['MOD']['#']['TIMECREATED']['0']['#']);
             $glossary->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
@@ -102,6 +105,7 @@
             $entry->userid = backup_todb($sub_info['#']['USERID']['0']['#']);
             $entry->concept = backup_todb($sub_info['#']['CONCEPT']['0']['#']);
             $entry->definition = backup_todb($sub_info['#']['DEFINITION']['0']['#']);
+            $entry->attachment = backup_todb($sub_info['#']['ATTACHMENT']['0']['#']);
             $entry->timemodified = backup_todb($sub_info['#']['TIMEMODIFIED']['0']['#']);
             $entry->teacherentry = backup_todb($sub_info['#']['TEACHERENTRY']['0']['#']);
 
@@ -132,6 +136,60 @@
       	          $status = false;
 	          }
 			}
+        }
+
+        return $status;
+    }
+
+    //This function copies the glossary related info from backup temp dir to course moddata folder,
+    //creating it if needed and recoding everything (glossary id and entry id)
+    function glossary_restore_files ($oldgloid, $newgloid, $oldentryid, $newentryid, $restore) {
+
+        global $CFG;
+
+        $status = true;
+        $todo = false;
+        $moddata_path = "";
+        $forum_path = "";
+        $temp_path = "";
+
+        //First, we check to "course_id" exists and create is as necessary
+        //in CFG->dataroot
+        $dest_dir = $CFG->dataroot."/".$restore->course_id;
+        $status = check_dir_exists($dest_dir,true);
+
+        //First, locate course's moddata directory
+        $moddata_path = $CFG->dataroot."/".$restore->course_id."/".$CFG->moddata;
+
+        //Check it exists and create it
+        $status = check_dir_exists($moddata_path,true);
+
+        //Now, locate glossary directory
+        if ($status) {
+            $glossary_path = $moddata_path."/glossary";
+            //Check it exists and create it
+            $status = check_dir_exists($glossary_path,true);
+        }
+
+        //Now locate the temp dir we are restoring from
+        if ($status) {
+            $temp_path = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code.
+                         "/moddata/glossary/".$oldgloid."/".$oldentryid;
+            //Check it exists
+            if (is_dir($temp_path)) {
+                $todo = true;
+            }
+        }
+
+        //If todo, we create the neccesary dirs in course moddata/glossary
+        if ($status and $todo) {
+            //First this glossary id
+            $this_glossary_path = $glossary_path."/".$newgloid;
+            $status = check_dir_exists($this_glossary_path,true);
+            //Now this entry id
+            $entry_glossary_path = $this_glossary_path."/".$newentryid;
+            //And now, copy temp_path to entry_glossary_path
+            $status = backup_copy_file($temp_path, $entry_glossary_path);
         }
 
         return $status;

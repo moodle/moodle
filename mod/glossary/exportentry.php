@@ -1,10 +1,11 @@
 <?
 	require_once("../../config.php");
+	require_once("lib.php");
 
     	require_variable($id);    // course module ID
     	require_variable($entry);    // Entry ID
     	optional_variable($confirm);     // confirmation
-    	global $THEME;
+    	global $THEME, $USER, $CFG;
 
 	$PermissionGranted = 1;
 
@@ -70,23 +71,31 @@
 		  	   	$newentry->timecreated = $entry->timecreated;
 	   		   	$newentry->timemodified = $entry->timemodified;
 			   	$newentry->teacherentry = $entry->teacherentry;
+			   	$newentry->attachment = $entry->attachment;
 
 		   		if (! $newentry->id = insert_record("glossary_entries", $newentry) ) {
 					error("Could not export the entry to the main glossary");
 				} else {
+                         print_simple_box_start("center", "60%", "$THEME->cellheading");
+                         echo "<p align=center><font size=3>$entryexported</font></p></font>";
+                         if ($newentry->attachment) {
+                              $entry->course = $cm->course;
+               	          $newentry->course = $cm->course;
+                              if ( !glossary_copy_attachments($entry, $newentry) ) {
+                                   echo "<p align=\"center\">However, the attachment couldn't be exported.";
+                              }
+                         }
+                         
+                         add_to_log($course->id, "glossary", "add entry",
+                         "view.php?id=$cm->id&eid=".$entry->id, "$newentry->id");
 
-                    add_to_log($course->id, "glossary", "add entry",
-                    "view.php?id=$cm->id&eid=".$entry->id, "$newentry->id");
+                         print_continue("view.php?id=$cm->id&eid=".$entry->id);
+                         print_simple_box_end();
 
-                    print_simple_box_start("center", "60%", "$THEME->cellheading");
-                    echo "<p align=center><font size=3>$entryexported</font></p></font>";
-                    print_continue("view.php?id=$cm->id&eid=".$entry->id);
-                    print_simple_box_end();
+     					print_footer();
 
-					print_footer();
-
-	                redirect("view.php?id=$cm->id&eid=".$entry->id);
-	                die;
+     	                redirect("view.php?id=$cm->id&eid=".$entry->id);
+     	                die;
 				}
 			} else {
 			    print_simple_box_start("center", "60%", "#FFBBBB");
