@@ -2651,7 +2651,7 @@ function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply) 
     if ($posts = forum_get_child_posts($parent)) {
         foreach ($posts as $post) {
 
-            echo '<div style="margin-left:20px">';
+            echo '<div class="forumpostindent">';
             if ($depth > 0) {
                 $ownpost = ($USER->id == $post->userid);
                 if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings)) {
@@ -2690,7 +2690,7 @@ function forum_print_posts_nested($parent, $course, $ratings, $reply) {
                 $ownpost = ($USER->id == $post->userid);
             }
 
-            echo '<div style="margin-left:20px">';
+            echo '<div class="forumpostindent">';
             if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings)) {
                 $ratingsmenuused = true;
             }
