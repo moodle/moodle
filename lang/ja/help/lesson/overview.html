@@ -1,4 +1,4 @@
-<p align="center"><b>概要</b></p>
+<p align="center"><b>レッスンの概要</b></p>
 
 <ol>
 <li>レッスンはいくつかの<b>ページ</b>と任意の<b>分岐表</b>により構成されます。</li>
@@ -11,25 +11,12 @@
 <li>また、レッスンには<b>ナビゲーションオーダー</b>があります。これは学生に表示されるページの順番です。これは個々の問題で指定されるジャンプにより決定され、論理的順序と大幅に異なるように設定することができます。(しかし、もしジャンプが変更されない場合、これら2つのデフォルト値は密接に関係します。) 教師は、ナビゲーションオーダーをチェックすることができます。</li>
 <li>学生に提示される時、答えは通常混ぜられています。つまり、教師が考える最初の答えは、必ずしも学生に最初に表示されるリストの最初に来る必要はないということです。(さらに、毎回同じセットの答えが表示される場合でも、表示順は異なることがあります。) 例外的にマッチングタイプの問題では、教師が入力したのと同じ順番で答えが表示されます。</li>
 <li>答えの数はページ毎に変えることができます。例えば、1つの正答と3つの間違った選択肢の問題ページを作ることも、○/×問題のみのページを作ることもできます。</li>
-<li>It is possible to set up a page without any answers. The students are shown
-    a <b>Continue</b> link instead of the set of shuffled answers.
-<li>For the purposes of grading the lessons, <b>correct</b> answers are ones which 
-    jump to a page which is further <i>down</i> the logical order than the current page. 
-    <b>Wrong</b> answers are ones which either jump to the same page or to a page
-    further <i>up</i> the logical order than the current page. Thus, if the jumps are
-    <i>not</i> changed, the first answer is a correct answer and the other answers are 
-    wrong answers.
-<li>Questions can have more than one correct answer. For example, if two of the answers
-    jump to the next page then either answer is taken as a correct answer. (Although
-    the same destination page is shown to the students, the responses shown on the way 
-    to that page may well be different for the two answers.)
-<li>In the teacher's view of the lesson the correct answers have underlined Answer 
-    Labels.
-<li><b>Branch tables</b> are simply pages which have a set of links to other 
-    pages in the lesson. Typically a lesson may start with a branch table which
-    acts as a <b>Table of Contents</b>.
-<li>Each link in a branch table has two components, a description and the title
-    of the page to jump to.
+<li>答え無しのページを作成することもできます。学生には、混ぜた答えの代わりに<b>続ける</b>リンクが表示されます。</li>
+<li>レッスンを評価するため、<b>正しい</b>答えを選択した場合、論理的順番において現在のページよりも更に<i>下がります</i>。<b>間違った</b>答えを選択した場合、同じページに留まるか、論理的順番において現在のページよりも更に<i>上がります</i>。つまり、ジャンプ<i>しない</i>場合、最初の答えは正しく、他の答えは間違っていることを意味します。</li>
+<li>問題は、1つ以上の正しい答えを持つことができます。例えば、2つの答えが次のページにジャンプする場合、両者は正しい答えと見なされます。(同じページにジャンプする場合でも、2つの答えのレスポンスをそれぞれ異なるものにすることができます。)</li>
+<li>教師には、レッスンの正しい答えに下線が引かれた状態で表示されます。</li>
+<li><b>分岐表</b>は、レッスン内のページへのリンク群を記載したシンプルなページです。一般的に、レッスンは<b>目次</b>として使用する分岐表から開始することができます。</li>
+<li>分岐表のそれぞれのリンクには2つの構成要素があります。ジャンプ先のタイトルおよび説明です。</li>
 <li>A branch table effectively divides the lesson into a number of 
     <b>branches</b> (or sections). Each branch can contain a number of pages 
     (probably all related to the same topic). The end of a branch is usually 
