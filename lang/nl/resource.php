@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2004010800)
+      // resource.php - created with Moodle 1.2 development (2004011700)
 
 
 $string['addresource'] = 'Voeg bron toe';
@@ -18,6 +18,7 @@ $string['configpopupstatus'] = 'Wil je dat popup-vensters standaard een statusba
 $string['configpopuptoolbar'] = 'Wil je dat popup-vensters standaard een knoppenbalk hebben?';
 $string['configpopupwidth'] = 'Hoe breed zou een popup-venster standaard moeten zijn?';
 $string['configwebsearch'] = 'Wanneer je een URL als webpagina of link toevoegd, wordt deze plaats aangeboden als een site om de gebruiker te helpen de URL te zoeken.';
+$string['directlink'] = 'Rechtstreekse link naar dit bestand';
 $string['editingaresource'] = 'Bewerk een bron';
 $string['example'] = 'Voorbeeld';
 $string['examplereference'] = 'Koers, Diane (1999) <I>Visuele leermethode Office 2000</I>, A.W. Bruna multimedia, ISBN 9022943046.';
