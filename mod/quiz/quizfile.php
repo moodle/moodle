@@ -41,6 +41,9 @@
     if (! ($filename = $regs[5])) {
         error("No valid file name supplied");
     }
+    if (detect_munged_arguments($relativefilepath)) {
+        error("Errors in the supplied file path");
+    }
 
     //////////////////////////////////////////
     // Info from $pathinfo is now extracted!
