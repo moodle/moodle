@@ -1,7 +1,7 @@
 <?PHP  // $Id$
-       // Authentication by looking up an IMAP server
+       // Authentication by looking up an IMAP, POP or NNTP server
 
-// This code is completely untested so far - I'm just jotting down ideas ...
+// This code is completely untested so far  -  IT NEEDS TESTERS!
 // Looks like it should work though ...
 
 $CFG->auth_imaphost   = "127.0.0.1";  // Should be IP number

@@ -1,7 +1,7 @@
 <?PHP  // $Id$
        // Authentication by looking up an external database table
 
-// This code is completely untested so far - I'm just jotting down ideas ...
+// This code is completely untested so far - IT NEEDS TESTERS!
 // Looks like it should work though ...
 
 $CFG->auth_dbhost   = "localhost";
