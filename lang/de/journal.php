@@ -1,6 +1,4 @@
-<?PHP // $Id$ 
-      // journal.php - created with Moodle 1.0.8 dev (2002122301)
-
+<?php
 
 $string['alwaysopen'] = "Immer offen";
 $string['blankentry'] = "Leerer Eintrag";
@@ -21,9 +19,10 @@ $string['noratinggiven'] = "Keine Beurteilung abgegeben";
 $string['notopenuntil'] = "Diese Journal wird geschlossen sein bis";
 $string['notstarted'] = "Sie haben dieses Journal noch nicht begonnen";
 $string['overallrating'] = "Allgemeine Beurteilung";
-$string['rate'] = "Beutreilung";
+$string['rate'] = "Beurteilung";
 $string['saveallfeedback'] = "Alle meine Mitteilungen speichern";
 $string['startoredit'] = "Journal-Eintrag beginnen oder bearbeiten";
 $string['viewallentries'] = "Zeige \$a Journal-Einträge";
+
 
 ?>
