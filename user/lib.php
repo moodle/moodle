@@ -98,11 +98,11 @@ function print_user_small($user, $course, $string) {
     echo "</A>";
     echo "</TD><TD BGCOLOR=#FFFFFF>";
     echo "<FONT SIZE=2><B>&nbsp;<A HREF=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A></B></FONT>";
-    echo "</TD><TD BGCOLOR=#FFFFFF NOWRAP>";
+    echo "</TD><TD BGCOLOR=#FFFFFF NOWRAP ALIGN=right>";
     echo "<FONT SIZE=1>";
     echo "<I>$user->city, ".$COUNTRIES["$user->country"]."</I>&nbsp;";
     echo "</FONT>";
-    echo "</TD><TD BGCOLOR=#FFFFFF NOWRAP>";
+    echo "</TD><TD BGCOLOR=#FFFFFF NOWRAP ALIGN=right>";
     echo "<FONT SIZE=1>";
     if ($user->lastaccess) {
         echo userdate($user->lastaccess);
