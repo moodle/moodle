@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 development (2003113000)
+      // glossary.php - created with Moodle 1.2 alpha (2004022200)
 
 
 $string['addcomment'] = 'Voeg commentaar toe';
@@ -95,6 +95,7 @@ $string['exportglossary'] = 'Exporteer de woordenlijst';
 $string['exporttomainglossary'] = 'Exporteer naar hoofdwoordenlijst';
 $string['filetoimport'] = 'Te importeren bestand';
 $string['fillfields'] = 'Concept en definitie zijn verplichte velden.';
+$string['filtername'] = 'Automatisch links maken van de woordenlijst';
 $string['fullmatch'] = 'Alleen volledige woorden gebruiken<br><small>(wanneer automatisch gelinkt)</small>';
 $string['glossarytype'] = 'Type woordenlijst';
 $string['glosssaryexported'] = 'De woordenlijst is geëxporteerd';
