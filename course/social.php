@@ -68,8 +68,6 @@
           echo "<IMG ALT=\"\" HEIGHT=7 SRC=\"../pix/spacer.gif\"><BR>";
     
           forum_print_latest_discussions($social->id, 10, "plain", "DESC", false);
-          $SESSION->fromdiscussion = "$CFG->wwwroot/course/view.php?id=$course->id";
-          save_session("SESSION");
 
       } else {
           notify("Could not find or create a social forum here");

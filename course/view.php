@@ -42,8 +42,10 @@
     } else if ($help == "off") {
         $USER->help = false;
     }
-
     save_session("USER");
+
+    $SESSION->fromdiscussion = "$CFG->wwwroot/course/view.php?id=$course->id";
+    save_session("SESSION");
 
     $courseword = get_string("course");
 
