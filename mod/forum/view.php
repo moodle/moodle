@@ -6,6 +6,7 @@
     optional_variable($id);      // Course Module ID
     optional_variable($f);       // Forum ID
     optional_variable($mode);    // Display mode (for single forum)
+    optional_variable($search, "");    // search string
 
 
     $strforums = get_string("modulenameplural", "forum");

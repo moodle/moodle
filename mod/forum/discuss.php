@@ -52,7 +52,7 @@
         error("Discussion no longer exists", "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
     }
 
-    if (!$navtail) {
+    if (empty($navtail)) {
         $navtail = "<A HREF=\"discuss.php?d=$discussion->id\">$discussion->name</A> -> $post->subject";
     }
 

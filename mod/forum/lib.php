@@ -1333,7 +1333,11 @@ function forum_print_user_discussions($courseid, $userid) {
             }
             $inforum = get_string("inforum", "forum", "<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$discussion->forumid\">$discussion->forumname</A>");
             $discussion->subject .= " ($inforum)";
-            $ownpost = ($discussion->userid == $USER->id);
+            if (!empty($USER->id)) {
+                $ownpost = ($discussion->userid == $USER->id);
+            } else {
+                $ownpost = false;
+            }
             forum_print_post($discussion, $courseid, $ownpost, $reply=0, $link=1, $assessed=false);
             echo "<BR>\n";
         }
@@ -1505,7 +1509,11 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
 
     global $USER;
 
-    $ownpost = ($USER->id == $post->userid);
+    if (!empty($USER->id)) {
+        $ownpost = ($USER->id == $post->userid);
+    } else {
+        $ownpost = false;
+    }
     $reply   = forum_user_can_post($forum);
 
     forum_print_post($post, $course->id, $ownpost, $reply, $link=false, $rate=false);
@@ -1513,7 +1521,7 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
     forum_print_mode_form($discussion->id, $mode);
 
     $ratingform = false;
-    if ($forum->assessed && $USER->id) {
+    if ($forum->assessed and !empty($USER->id)) {
         $unrated = forum_count_unrated_posts($discussion->id, $USER->id);
         if ($unrated > 0) {
             $ratingform = true;
@@ -1609,7 +1617,11 @@ function forum_print_posts_nested($parent, $course, $assessed, $reply) {
     if ($posts = forum_get_child_posts($parent)) {
         foreach ($posts as $post) {
 
-            $ownpost = ($USER->id == $post->userid);
+            if (empty($USER->id)) {
+                $ownpost = false;
+            } else {
+                $ownpost = ($USER->id == $post->userid);
+            }
 
             echo "<UL>";
             forum_print_post($post, $course, $ownpost, $reply, $link, $assessed);

@@ -863,6 +863,8 @@ function add_to_log($course, $module, $action, $url="", $info="") {
         return;
     }
 
+    $userid = empty($USER->id) ? "" : $USER->id;
+
     $timenow = time();
     $info = addslashes($info);
 
@@ -875,7 +877,7 @@ function add_to_log($course, $module, $action, $url="", $info="") {
                                         url,
                                         info)
                              VALUES ('$timenow',
-                                        '$USER->id',
+                                        '$userid',
                                         '$course',
                                         '$REMOTE_ADDR',
                                         '$module',

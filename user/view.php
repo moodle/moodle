@@ -61,7 +61,12 @@
     echo "<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0><TR><TD NOWRAP>";
     echo "<H3>$fullname</H3>";
     echo "</TD><TD align=right>";
-    if (($id == $USER->id and !isguest()) or isadmin()) {
+    if (empty($USER->id)) {
+       $currentuser = false;
+    } else {
+       $currentuser = ($user->id == $USER->id);
+    }
+    if (($currentuser and !isguest()) or isadmin()) {
         echo "<P><FORM ACTION=edit.php METHOD=GET>";
         echo "<INPUT type=hidden name=id value=\"$id\">";
         echo "<INPUT type=hidden name=course value=\"$course->id\">";
@@ -128,7 +133,7 @@
 
 //  Print other functions
     echo "<CENTER><TABLE ALIGN=CENTER><TR>";
-    if ($user->id == $USER->id and !isguest()) {
+    if ($currentuser and !isguest()) {
         if ($CFG->auth == "email" or $CFG->auth == "none") {
             echo "<TD NOWRAP><P><FORM ACTION=\"$CFG->wwwroot/login/change_password.php\" METHOD=GET>";
             echo "<INPUT type=hidden name=id value=\"$course->id\">";
