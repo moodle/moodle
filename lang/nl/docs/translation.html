@@ -23,14 +23,14 @@ Deze bestanden bevatten korte uitdrukkingen, "<span style="font-style: italic;">
 </p>
 
 
-<p style="margin-left: 40px;">Er kunnen ook nog mappen met .html webpagina's zijn:
+<p style="margin-left: 40px;">Er kunnen ook nog mappen met HTML-webpagina's zijn:
 </p>
 
 
 <ul style="margin-left: 40px;">
 
 
-<li><strong>help</strong>: waarin de contextgevoelige helpbestanden staan die verschijnen in een popupvenster als je op de help icoontjes klikt. Je vindt die overal in Moolde.
+<li><strong>help</strong>: waarin de contextgevoelige helpbestanden staan die verschijnen in een popup-venster als je op de help icoontjes klikt. Je vindt die overal in Moolde.
 </li><li><strong>docs</strong>: waarin de basisdocumentatie staat (zoals dit document)<br>
 </li>
 </ul>
@@ -50,12 +50,12 @@ Deze bestanden bevatten korte uitdrukkingen, "<span style="font-style: italic;">
 
 
 
-<p style="margin-left: 40px;">Al wat je moet doen is een nieuwe map maken in de lang-map door gebruik te maken van de tweelettercode voor jouw taal. Je kunt deze standaardcodes vinden in lib/languages.php. Als je een variatie maakt op een bestaande taal, gebruik dan de bestaande taalcode, gevolgd door een underscore en een betekenisvolle extentie van twee letters (bv  <span style="font-style: italic;">pt </span>voor Portugees en <span style="font-style: italic;">pt_br</span> voor de  Brasiliaanse variant van het Portugese taalpakket).&nbsp; Als je een Unicodeversie maakt, voeg dan <span style="font-weight: bold;">_utf8</span> aan het einde toe (bv <span style="font-style: italic;">sr_utf8</span>).<br>
+<p style="margin-left: 40px;">Al wat je moet doen is een nieuwe map maken in de lang-map door gebruik te maken van de tweelettercode voor jouw taal. Je kunt deze standaardcodes vinden in lib/languages.php. Als je een variatie maakt op een bestaande taal, gebruik dan de bestaande taalcode, gevolgd door een underscore en een betekenisvolle extentie van twee letters (bv  <span style="font-style: italic;">pt </span>voor Portugees en <span style="font-style: italic;">pt_br</span> voor de  Braziliaanse variant van het Portugese taalpakket).&nbsp; Als je een Unicodeversie maakt, voeg dan <span style="font-weight: bold;">_utf8</span> aan het einde toe (bv <span style="font-style: italic;">sr_utf8</span>).<br>
 </p>
 
 
 
-<p style="margin-left: 40px;">Kopieeer vervolgens moodle.php van een andere taal in je nieuwe map.&nbsp; Die van de  "en" map is gewoonlijk de beste keuze, maar het heeft eigenlijk weinig belang vermits je het toch gaat herschrijven.<br>
+<p style="margin-left: 40px;">Kopieer vervolgens moodle.php van een andere taal in je nieuwe map.&nbsp; Die van de  "en" map is gewoonlijk de beste keuze, maar het heeft eigenlijk weinig belang vermits je het toch gaat herschrijven.<br>
 </p>
 
 
@@ -66,7 +66,7 @@ Deze bestanden bevatten korte uitdrukkingen, "<span style="font-style: italic;">
 
 
 <p style="margin-left: 40px;">Voor een nieuw taalpakket is het allereerste wat je moet wijzigen de string "thischarset" in moodle.php.
-Dit moet een geldige web tekenset bevatten voor jouw taal. Nadat je deze string gewijzigd hebt, bewaar je moodle.php en  <span style="font-weight: bold;">herlaad de pagina</span>. Daarna kun je verder doen met de rest van de strings. </p>
+Dit moet een geldige webtekenset bevatten voor jouw taal. Nadat je deze string gewijzigd hebt, bewaar je moodle.php en  <span style="font-weight: bold;">je herlaad de pagina</span>. Daarna kun je voortwerken met de rest van de strings. </p>
 
 
 
@@ -79,14 +79,14 @@ Dit moet een geldige web tekenset bevatten voor jouw taal. Nadat je deze string 
 
 
 
-<h3 style="margin-left: 40px;">Kleine aanpassingen doen<br>
+<h3 style="margin-left: 40px;">Kleine aanpassingen maken<br>
 </h3>
 
 
 
-<p style="margin-left: 80px;">Als je slechts een klein aantal aanpassingen wil maken om je interface beter te laten aansluiten bij je site, <span style="font-weight: bold;">begin dan niet met één van de standaardtaalpakketten aan te passen</span>.&nbsp; Als je dat doet zullen je wijzigingen overschreven worden als je je Moodle upgrade.<br>
+<p style="margin-left: 80px;">Als je slechts een klein aantal aanpassingen wil maken om je interface beter te laten aansluiten bij je site, <span style="font-weight: bold;">begin dan niet met één van de standaardtaalpakketten aan te passen</span>.&nbsp; Als je dat doet zullen je wijzigingen overschreven worden als je je Moodle upgradet.<br>
 </p>
-<p style="margin-left: 80px;">Gebruik in de plaats daarvan bovenstaande instructies om een splinternieuw taalpakket aan te maken en zet de parent language (in moodle.php) op een taal die het dichst aanleunt bij de jouwe.&nbsp; Bijvoorbeeld, een goede naam voor een lokale Nederlandse versie zou "<span style="font-style: italic;">nl_lokaal</span>" zijn, en als parent language zou je dan "<span style="font-style: italic;">nl</span>" kunnen zetten.</p>
+<p style="margin-left: 80px;">Gebruik in de plaats daarvan bovenstaande instructies om een splinternieuw taalpakket aan te maken en zet de parent language (in moodle.php) op een taal die het dichtst aanleunt bij de jouwe.&nbsp; Bijvoorbeeld, een goede naam voor een lokale Nederlandse versie zou "<span style="font-style: italic;">nl_lokaal</span>" zijn, en als parent language zou je dan "<span style="font-style: italic;">nl</span>" kunnen zetten.</p>
 <p style="margin-left: 80px;">Merk op dat je dan deze nieuwe vertaling als standaardtaal voor je site moet zetten en dat je dan best de beschikbare talen op <span style="font-weight: bold;">Beheer &gt;&gt; Configuratie &gt;&gt; Configureer variablen</span> kunt beperken, zodat al je bezoekers je site in het nieuwe taalpakket kunnen zien..<br>
 <br>
 </p>
@@ -94,7 +94,7 @@ Dit moet een geldige web tekenset bevatten voor jouw taal. Nadat je deze string 
 
 
 
-<h3 style="margin-left: 40px;">Vertalen van de Moodle interface taalbestanden (de "string" bestanden)<br>
+<h3 style="margin-left: 40px;">Vertalen van de Moodle-interface taalbestanden (de "string"-bestanden)<br>
 </h3>
 
 
@@ -108,9 +108,9 @@ Dit moet een geldige web tekenset bevatten voor jouw taal. Nadat je deze string 
     <li>Meld je aan als beheerder op je Moodleserver. </li>
     <li>Ga naar <span style="font-weight: bold;">Beheer &gt;&gt; Configuratie &gt;&gt; Taal</span>, de beheerpagina voor de taal. </li>
     <li>Op deze pagina kan je je taal kiezen met het rolmenu, kies dan "Vergelijk en bewerk huidige taal".</li>
-    <li>Je zult bewerkbare formulieren zien voor elk bestand. Indien niet moet je er voor zorgen dat deze bestanden beschrijfbaar zijn - je zult de rechten op die bestanden moeten aanpassen.</li>
+    <li>Je zult bewerkbare formulieren zien voor elk bestand. Indien niet moet je ervoor zorgen dat deze bestanden beschrijfbaar zijn - je zult de rechten op die bestanden moeten aanpassen.</li>
     <li>De formulieren bestaan uit drie kolommen, de eerste is de naam van elke string, de tweede is die string in het Engels en de laatste is de vertaling in de huidige taal. </li>
-    <li>Bewerk de ontbrekende strings in elk bestand (in een andere kleur aangeduid) en denk er aan op de "Bewaar wijzigingen"-knop te drukken aan het einde van elk formulier.</li>
+    <li>Bewerk de ontbrekende strings in elk bestand (in een andere kleur aangeduid) en denk eraan op de knop "Bewaar wijzigingen" te drukken aan het einde van elk formulier.</li>
     <li>Het is geen probleem om strings leeg te laten - Moodle zal dan voor die string de parent language gebruiken. Je kunt de parent language definiëren in moodle.php, indien niet wordt Engels als standaard gebruikt. </li>
     <li>Een snelle manier om alle ontbrekende strings te zien is de knop "Controleer op ontbrekende strings" gebruiken.<br>
       <br>
@@ -127,20 +127,20 @@ Dit moet een geldige web tekenset bevatten voor jouw taal. Nadat je deze string 
 </ol>
 
 
-<h3 style="margin-left: 40px;">Vertalen van de help en documentatiebestanden</h3>
+<h3 style="margin-left: 40px;">Vertalen van de help- en documentatiebestanden</h3>
 
 
 
-<p style="margin-left: 80px;">Er is in Moodle nog geen ingebouwde editor om de helpbestanden te vertalen, maar het is echt niet zo moeilijk. Het is belangrijk om <span style="font-weight: bold;">en</span> als referentietaal te gebruiken. Kopieer een helpbestand van het en taalpakket en zet het op dezelfde plaats in je eigen taalpakket. Gebruik dan een editor voor platte tekst om het bestand te vertalen. Let er op dat je de code in het bestand niet wijzigd (gewoonlijk is er geen code, alleen HTML-opmaak). (GEBRUIK GEEN TEKSTVERWERKER om de helpbestanden te schrijven omdat deze programma's te veel rommel aan de bestanden toevoegen).</p>
+<p style="margin-left: 80px;">Er is in Moodle nog geen ingebouwde editor om de helpbestanden te vertalen, maar het is echt niet zo moeilijk. Het is belangrijk om <span style="font-weight: bold;">en</span> als referentietaal te gebruiken. Kopieer een helpbestand van het en-taalpakket en zet het op dezelfde plaats in je eigen taalpakket. Gebruik dan een editor voor platte tekst om het bestand te vertalen. Let erop dat je de code in het bestand niet wijzigt (gewoonlijk is er geen code, alleen HTML-opmaak). (GEBRUIK GEEN TEKSTVERWERKER om de helpbestanden te schrijven omdat deze programma's te veel rommel aan de bestanden toevoegen).</p>
 
  
-<p style="margin-left: 80px;">Door te klikken op "Controleer op ontbrekenden strings" zul je ook zien welke helpbestanden ontbreken. Als er bestanden ontbreken zal Moolde automatisch de bestanden uit de parent language gebruiken. Het is dus niet nodig om <strong>onvertaalde</strong> helpbestanden in je taalpakket te laten staan..</p>
+<p style="margin-left: 80px;">Door te klikken op "Controleer op ontbrekenden strings" zul je ook zien welke helpbestanden ontbreken. Als er bestanden ontbreken zal Moodle automatisch de bestanden uit de parent language gebruiken. Het is dus niet nodig om <strong>onvertaalde</strong> helpbestanden in je taalpakket te laten staan..</p>
 
 
 <p>&nbsp;</p>
 
 
-<h2>Je taalpakkket insturen naar het Moodle project </h2>
+<h2>Je taalpakkket insturen naar het Moodleproject </h2>
 
 
 <p style="margin-left: 40px;">Door je vertaling te delen op Moodle help je andere gebruikers die jouw taal spreken.&nbsp;&nbsp;Je vertaling zal dan met de volgende versies van Moodle meegegeven worden.<br>
