@@ -1410,9 +1410,9 @@ function quiz_get_user_attempts_string($quiz, $attempts, $bestgrade) {
 /// Returns a simple little comma-separated list of all attempts,
 /// with each grade linked to the feedback report and with the best grade highlighted
 
-    $bestgrade = format_float($bestgrade);
+    $bestgrade = format_float($bestgrade,$quiz->decimalpoints);
     foreach ($attempts as $attempt) {
-        $attemptgrade = format_float(($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade);
+        $attemptgrade = format_float(($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade, $quiz->decimalpoints);
         if ($attemptgrade == $bestgrade) {
             $userattempts[] = "<span class=\"highlight\"><a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">$attemptgrade</a></span>";
         } else {
@@ -1422,13 +1422,13 @@ function quiz_get_user_attempts_string($quiz, $attempts, $bestgrade) {
     return implode(",", $userattempts);
 }
 
-function quiz_get_best_grade($quizid, $userid) {
+function quiz_get_best_grade($quiz, $userid) {
 /// Get the best current grade for a particular user in a quiz
-    if (!$grade = get_record('quiz_grades', 'quiz', $quizid, 'userid', $userid)) {
+if (!$grade = get_record('quiz_grades', 'quiz', $quiz->id, 'userid', $userid)) {
         return NULL;
     }
 
-    return (round($grade->grade));
+    return (format_float($grade->grade,$quiz->decimalpoints));
 }
 
 function quiz_save_best_grade($quiz, $userid) {
@@ -1444,7 +1444,7 @@ function quiz_save_best_grade($quiz, $userid) {
     $bestgrade = (($bestgrade / $quiz->sumgrades) * $quiz->grade);
 
     if ($grade = get_record('quiz_grades', 'quiz', $quiz->id, 'userid', $userid)) {
-        $grade->grade = round($bestgrade, 2);
+        $grade->grade = round($bestgrade, $quiz->decimalpoints);
         $grade->timemodified = time();
         if (!update_record('quiz_grades', $grade)) {
             notify('Could not update best grade');
@@ -1453,7 +1453,7 @@ function quiz_save_best_grade($quiz, $userid) {
     } else {
         $grade->quiz = $quiz->id;
         $grade->userid = $userid;
-        $grade->grade = round($bestgrade, 2);
+        $grade->grade = round($bestgrade, $quiz->decimalpoints);
         $grade->timemodified = time();
         if (!insert_record('quiz_grades', $grade)) {
             notify('Could not insert new best grade');

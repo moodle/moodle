@@ -103,7 +103,7 @@ class quiz_report extends quiz_default_report {
             $table->data[] = array ($picture, 
                                     "<a href=\"$CFG->wwwroot/user/view.php?id=$grade->userid&amp;course=$course->id\">".
                                     fullname($grade).'</a>', 
-                                    "$userattempts", format_float($grade->grade));
+                                    "$userattempts", format_float($grade->grade,$quiz->decimalpoints));
         }
 
         //Embed script for warning
@@ -135,10 +135,10 @@ class quiz_report extends quiz_default_report {
     /// with each grade linked to the feedback report and with the best grade highlighted
     /// Each also has information about date and lapsed time
     
-        $bestgrade = format_float($bestgrade);
+        $bestgrade = format_float($bestgrade,$quiz->decimalpoints);
     
         foreach ($attempts as $attempt) {
-            $attemptgrade = format_float(($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade);
+            $attemptgrade = format_float(($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade,$quiz->decimalpoints);
             $attemptdate = userdate($attempt->timestart, $timeformat);
             if ($attempt->timefinish) {
                 $attemptlapse = format_time($attempt->timefinish - $attempt->timestart);

@@ -82,7 +82,7 @@
             $link = "<a href=\"view.php?id=$quiz->coursemodule\">$quiz->name</a>";
         }
 
-        $bestgrade = quiz_get_best_grade($quiz->id, $USER->id);
+        $bestgrade = quiz_get_best_grade($quiz, $USER->id);
 
         $printsection = "";
         if ($quiz->section !== $currentsection) {

@@ -132,7 +132,7 @@
     $strmarks          = get_string('marks', 'quiz');
     $strbestgrade     = $QUIZ_GRADE_METHOD[$quiz->grademethod];
 
-    $mygrade = quiz_get_best_grade($quiz->id, $USER->id);
+    $mygrade = quiz_get_best_grade($quiz, $USER->id);
 
     if ($numattempts) { 
         if ($quiz->grade and $quiz->sumgrades) {
@@ -157,7 +157,7 @@
                 $timetaken = "-";
             }
             if ($quiz->grade and $quiz->sumgrades) {
-                $attemptgrade = format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade);
+                $attemptgrade = format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade,$quiz->decimalpoints);
                 if ($attemptgrade == $mygrade) {
                     $attemptgrade = "<span class=\"highlight\">$attemptgrade</span>";
                 }
