@@ -161,7 +161,7 @@ function resource_get_coursemodule_info($coursemodule) {
    return false;
 }
  
-function resource_fetch_remote_file ($url, $headers = "" ) {
+function resource_fetch_remote_file ($cm, $url, $headers = "" ) {
 	// Snoopy is an HTTP client in PHP
 	$client = new Snoopy();
 	$client->agent = MAGPIE_USER_AGENT;

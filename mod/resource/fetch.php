@@ -19,7 +19,7 @@
         error("Resource ID was incorrect");
     }
 
-    $content = resource_fetch_remote_file($url);
+    $content = resource_fetch_remote_file($cm, $url);
     
     echo format_text($content->results,FORMAT_HTML);
 ?>

@@ -2,7 +2,8 @@
 
     require_once("../../config.php");
     require_once("lib.php");
-
+    require_once("../../lib/snoopy/Snoopy.class.inc");
+ 
     require_variable($id);    // Course Module ID
     optional_variable($frameset, "");
 
@@ -55,8 +56,13 @@
             break;
 
         case WEBLINK:
+            if ( $CFG->filterexternalpages ) {
+                $url = "fetch.php?id=$cm->id&url=$resource->reference";
+            } else {
+                $url = "$resource->reference";
+            }
             add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
-            redirect($resource->reference, "", 0);
+            redirect($url, "", 0);
             break;
 
         case WEBPAGE:
@@ -68,25 +74,41 @@
                 echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
 
             } else {
+                if ( $CFG->filterexternalpages ) {
+                    $url = "fetch.php?id=$cm->id&url=$resource->reference";
+                } else {
+                    $url = "$resource->reference";
+                }
                 add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
                 echo "<head><title>$course->shortname: $resource->name</title></head>\n";
                 echo "<frameset rows=\"$CFG->resource_framesize,*\" border=\"2\">";
                 echo "<frame src=\"view.php?id=$cm->id&frameset=top\">";
-                echo "<frame src=\"$resource->reference\">";
+                echo "<frame src=\"$url\">";
                 echo "</frameset>";
             }
             break;
 
         case UPLOADEDFILE:
             require_once("../../files/mimetypes.php");
+            $inpopup = !empty($_GET["inpopup"]);
 
+            if ( $CFG->filterexternalpages ) {
+                if ($inpopup) {
+                    $fetchingprefix = "$CFG->wwwroot/mod/resouce/fetch.php?id=$cm->id&url=";
+                } else {
+                    $fetchingprefix = "fetch.php?id=$cm->id&url=";
+                }
+                // until we found a way to show uploaded files properly throught the 
+                // fetch_remote_file function
+                $fetchingprefix = "";
+            } else {
+                $fetchingprefix = "";
+            }
             if ($CFG->slasharguments) {
                 $fullurl = "$CFG->wwwroot/file.php/$course->id/$resource->reference";
             } else {
                 $fullurl = "$CFG->wwwroot/file.php?file=/$course->id/$resource->reference";
             }
-
-            $inpopup = !empty($_GET["inpopup"]);
 
             $embedded = false;
 
@@ -97,13 +119,24 @@
                 $resourceimage = false;
             } // Later, look for more things to embed
 
+            if (mimeinfo("icon", $fullurl) == "html.gif" or 
+                mimeinfo("icon", $fullurl) == "html.gif") {  //  It's a web page
+                $resourcehtml = true;
+            } else {
+                $resourcehtml = false;
+            } 
+
             if ($inpopup) {
                 add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
                 if ($embedded) {
                     print_header($pagetitle);
                     echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
                 } else {
-                    redirect($fullurl);
+                    if ( $resourcehtml ) {
+                        redirect("$fetchingprefix$fullurl");
+                    } else {
+                        redirect($fullurl);
+                    }
                     break;
                 }
 
@@ -128,6 +161,13 @@
                     echo "<br />";
                     echo "<center><img class=\"resourceimage\" src=\"$fullurl\"></center>";
                     echo "<br />";
+                } elseif ( $resourcehtml and $CFG->filterexternalpages ) {
+                    echo "<br />";
+                    
+                    $content = resource_fetch_remote_file("$fetchingprefix$fullurl");
+                    echo $content->results;
+                    
+                    echo "<br />";
                 }
                 if (!$inpopup) {
                     print_footer($course);
@@ -137,7 +177,18 @@
                 echo "<head><title>$course->shortname: $resource->name</title></head>\n";
                 echo "<frameset rows=\"$CFG->resource_framesize,*\" border=\"2\">";
                 echo "<frame src=\"view.php?id=$cm->id&frameset=top\">";
-                echo "<frame src=\"$fullurl\">";
+
+                if ($CFG->slasharguments) {
+                    $fullurl = "$CFG->wwwroot/file.php/$course->id/$resource->reference";
+                } else {
+                    $fullurl = "$CFG->wwwroot/file.php?file=/$course->id/$resource->reference";
+                }
+
+                if ( $resourcehtml  and $CFG->filterexternalpages ) {
+                    echo "<frame src=\"fetch.php?id=$cm->id&url=$fetchingprefix$fullurl\">";
+                } else {
+                    echo "<frame src=\"$fullurl\">";
+                }
                 echo "</frameset>";
             }
             break;
