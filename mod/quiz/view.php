@@ -4,9 +4,11 @@
 
     require_once("../../config.php");
     require_once("locallib.php");
+    require_once($CFG->dirroot.'/lib/blocklib.php');
 
     optional_variable($id);    // Course Module ID, or
     optional_variable($q);     // quiz ID
+    $edit = optional_param('edit', '');
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -44,18 +46,45 @@
 
     $timenow = time();
 
+// Initialize $PAGE, compute blocks
+
+    $PAGE = page_create_object(PAGE_QUIZ_VIEW, $quiz->id);
+
+    if (!empty($blockaction)) {
+        $pageblocks = blocks_get_by_page($PAGE);
+        blocks_execute_url_action($PAGE, $pageblocks);
+    }
+
+    $pageblocks = blocks_get_by_page($PAGE);
+    $missingblocks = blocks_get_missing($PAGE, $pageblocks);
+
+    $blocks_preferred_width = blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]);
+    $blocks_preferred_width = max($blocks_preferred_width, 180);
+    $blocks_preferred_width = min($blocks_preferred_width, 210);
 
 // Print the page header
+
+    if (!empty($edit) && $PAGE->user_allowed_editing()) {
+        if ($edit == 'on') {
+            $USER->editing = true;
+        } else if ($edit == 'off') {
+            $USER->editing = false;
+        }
+    }
 
     $strquizzes = get_string("modulenameplural", "quiz");
     $strquiz  = get_string("modulename", "quiz");
     $stredit = get_string('editquestions', 'quiz');
-    if (isteacheredit($course->id)) {
+    if ($PAGE->user_allowed_editing()) {
         $buttons = "<table><tr><td><form target=\"$CFG->framename\" method=\"get\" action=\"edit.php\">".
                "<input type=\"hidden\" name=\"quizid\" value=\"$quiz->id\" />".
                "<input type=\"submit\" value=\"$stredit\" /></form></td><td>".
                update_module_button($cm->id, $course->id, $strquiz).
-               '</td></tr></table>';
+               '</td>'.
+               '<td><form target="'.$CFG->framename.'" method="get" action="view.php">'.
+               '<input type="hidden" name="id" value="'.$cm->id.'" />'.
+               '<input type="hidden" name="edit" value="'.($PAGE->user_is_editing()?'off':'on').'" />'.
+               '<input type="submit" value="add/edit blocks" /></form></td></tr></table>';
     } else {
         $buttons = '';
     }
@@ -63,6 +92,20 @@
     print_header_simple("$quiz->name", "",
                  "<a href=\"index.php?id=$course->id\">$strquizzes</a> -> $quiz->name", 
                  "", "", true, $buttons, navmenu($course, $cm));
+
+    echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id=\"layout-table\">';
+    echo '<tr valign="top">';
+
+    if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $PAGE->user_is_editing()) {
+        echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="left-column">';
+        blocks_print_group($PAGE, $pageblocks[BLOCK_POS_LEFT]);
+        if (isediting($course->id) && !empty($missingblocks)) {
+            blocks_print_adminblock($PAGE, $missingblocks);
+        }
+        echo '</td>';
+    }
+
+    echo '<td valign="top" width="*" id="middle-column">';
 
     if (isteacher($course->id)) {
         $attemptcount = count_records_select("quiz_attempts", "quiz = '$quiz->id' AND timefinish > 0");
@@ -192,6 +235,8 @@
     }
 
 // Finish the page
+    echo '</td></tr></table>';
+
     print_footer($course);
     
     function quiz_review_allowed($quiz) {
