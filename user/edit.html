@@ -127,7 +127,7 @@ if (isadmin()) {
     $choices["0"] = get_string("textformat");
     $choices["1"] = get_string("htmlformat");
     choose_from_menu ($choices, "mailformat", $user->mailformat, "") ?>
-     </td>
+    </td>
 </tr>
 <tr>
     <th><?php print_string('emaildigest') ?>:</th>
@@ -137,7 +137,7 @@ if (isadmin()) {
     $choices['1'] = get_string('emaildigestcomplete');
     $choices['2'] = get_string('emaildigestsubjects');
     choose_from_menu ($choices, 'maildigest', $user->maildigest, "") ?>
-     </td>
+    </td>
 </tr>
 <tr>
     <th><?php print_string("autosubscribe") ?>:</th>
@@ -146,7 +146,7 @@ if (isadmin()) {
     $choices["1"] = get_string("autosubscribeyes");
     $choices["0"] = get_string("autosubscribeno");
     choose_from_menu ($choices, "autosubscribe", $user->autosubscribe, "") ?>
-     </td>
+    </td>
 </tr>
 <?php if ($CFG->htmleditor) { ?>
 <tr>
@@ -156,7 +156,7 @@ if (isadmin()) {
     $choices["0"] = get_string("texteditor");
     $choices["1"] = get_string("htmleditor");
     choose_from_menu ($choices, "htmleditor", $user->htmleditor, "") ?>
-     </td>
+    </td>
 </tr>
 <?php } ?>
 <tr>
@@ -178,7 +178,7 @@ if (isadmin()) {
     choose_from_menu(get_list_of_countries(), "country", $user->country, get_string("selectacountry")."...", "", "");
     ?>
     <?php if (isset($err["country"])) formerr($err["country"]); ?>
-     </td>
+    </td>
 </tr>
 <tr>
     <th><?php print_string("preferredlanguage") ?>:</th>
@@ -228,6 +228,27 @@ if (isadmin()) {
        choose_from_menu ($timezones, "timezone", $user->timezone, get_string("serverlocaltime"), "", "99");
 
        echo "(".get_string("currentlocaltime").")";
+    ?>
+    </td>
+</tr>
+<tr>
+    <th><?php print_string('pref_dstpreset', 'calendar')?>:</th>
+    <td>
+    <?php
+        if(empty($CFG->calendar_dstforusers)) {
+            $presets = get_records('dst_preset');
+            $presetarray = array('0' => get_string('notusingdst', 'calendar'));
+            if(!empty($presets)) {
+                foreach($presets as $preset) {
+                    $presetarray[$preset->id] = $preset->name;
+                }
+            }
+            choose_from_menu ($presetarray, 'dstpreset', $user->dstpreset, '');
+        }
+        else {
+            $preset = get_record('dst_preset', 'id', $CFG->calendar_dstforusers);
+            echo '<strong>'.$preset->name.'</strong> ('.get_string('dstpresetforced', 'admin').')';
+        }
     ?>
     </td>
 </tr>
