@@ -97,11 +97,11 @@ CREATE TABLE log (
 # Table structure for table `log_display`
 #
 
-CREATE TABLE log_display (
-  module varchar(20) NOT NULL default '',
-  action varchar(20) NOT NULL default '',
-  table varchar(20) NOT NULL default '',
-  field varchar(40) NOT NULL default ''
+CREATE TABLE `log_display` (
+  `module` varchar(20) NOT NULL default '',
+  `action` varchar(20) NOT NULL default '',
+  `table` varchar(20) NOT NULL default '',
+  `field` varchar(40) NOT NULL default ''
 ) TYPE=MyISAM COMMENT='For a particular module/action, specifies a table field.';
 # --------------------------------------------------------
 
