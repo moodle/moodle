@@ -503,3 +503,8 @@ body#doc-contents ul {
 body#course-view .unread {
     margin-left: 3em;
 } 
+
+body#admin-index .c0 {
+    vertical-align: top;
+    background: #FAFAFA;
+} 
