@@ -35,13 +35,29 @@
         print_footer($course);
     }
     
-    function html_header($formfield=""){
-        global $course;
+    function html_header($course, $wdir, $formfield=""){
 
         $strfiles = get_string("files");
     
-        print_header("$course->shortname: $strfiles", "$course->fullname", 
-                    "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> -> $strfiles", $formfield);
+        if ($wdir == "/") {
+            print_header("$course->shortname: $strfiles", "$course->fullname", 
+                         "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> 
+                          -> $strfiles", $formfield);
+        } else {
+            $dirs = explode("/", $wdir);
+            $numdirs = count($dirs);
+            $link = "";
+            $navigation = "";
+            for ($i=1; $i<$numdirs; $i++) {
+               $navigation .= " -> ";
+               $link .= "/".urlencode($dirs[$i]);
+               $navigation .= "<A HREF=\"index.php?id=$course->id&wdir=$link\">".$dirs[$i]."</A>";
+            }
+
+            print_header("$course->shortname: $strfiles", "$course->fullname", 
+                         "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> -> 
+                          <A HREF=\"index.php?id=$course->id&wdir=/\">$strfiles</A> $navigation", $formfield);
+        }
         echo "<table border=0 align=center cellspacing=3 cellpadding=3 width=640>";
         echo "<tr>";
         echo "<td colspan=\"2\">";
@@ -80,7 +96,7 @@
     switch ($action) {
 
         case "upload":
-            html_header();
+            html_header($course, $wdir);
             if ($save) {
                 if (!is_uploaded_file($userfile['tmp_name']) and $userfile['size'] > 0) {
                     echo "<P>Error: That was not a valid file.";
@@ -129,7 +145,7 @@
 
         case "delete":
             if ($confirm) {
-                html_header();
+                html_header($course, $wdir);
                 foreach ($USER->filelist as $file) {
                     $fullfile = $basedir.$file;
                     if (! fulldelete($fullfile)) {
@@ -141,7 +157,7 @@
                 html_footer();
 
             } else {
-                html_header();
+                html_header($course, $wdir);
                 if (setfilelist($HTTP_POST_VARS)) {
                     echo "<P ALIGN=CENTER>You are about to delete:</P>";
                     print_simple_box_start("center");
@@ -159,7 +175,7 @@
             break;
 
         case "move":
-            html_header();
+            html_header($course, $wdir);
             if ($count = setfilelist($HTTP_POST_VARS)) {
                 $USER->fileop     = $action;
                 $USER->filesource = $wdir;
@@ -171,7 +187,7 @@
             break;
 
         case "paste":
-            html_header();
+            html_header($course, $wdir);
             if ($USER->fileop == "move") {
                 foreach ($USER->filelist as $file) {
                     $shortfile = basename($file);
@@ -189,7 +205,7 @@
 
         case "rename":
             if ($name) {
-                html_header();
+                html_header($course, $wdir);
                 $name = clean_filename($name);
                 if (file_exists($basedir.$wdir."/".$name)) {
                     echo "Error: $name already exists!";
@@ -199,7 +215,7 @@
                 displaydir($wdir);
                     
             } else {
-                html_header("form.name");
+                html_header($course, $wdir, "form.name");
                 echo "<P>Rename <B>$file</B> to:";
                 echo "<TABLE><TR><TD>";
                 echo "<FORM ACTION=index.php METHOD=post NAME=form>";
@@ -224,7 +240,7 @@
 
         case "mkdir":
             if ($name) {
-                html_header();
+                html_header($course, $wdir);
                 $name = clean_filename($name);
                 if (file_exists($basedir.$wdir."/".$name)) {
                     echo "Error: $name already exists!";
@@ -234,7 +250,7 @@
                 displaydir($wdir);
                     
             } else {
-                html_header("form.name");
+                html_header($course, $wdir, "form.name");
                 echo "<P>Create folder in $wdir:";
                 echo "<TABLE><TR><TD>";
                 echo "<FORM ACTION=index.php METHOD=post NAME=form>";
@@ -257,7 +273,7 @@
             break;
 
         case "edit":
-            html_header();
+            html_header($course, $wdir);
             if (isset($text)) {
                 $fileptr = fopen($basedir.$file,"w");
                 fputs($fileptr, stripslashes($text));
@@ -280,14 +296,14 @@
                 echo htmlspecialchars($contents);
                 echo "</TEXTAREA>";
                 echo "</TD></TR><TR><TD>";
-                echo " <INPUT TYPE=submit VALUE=\"Save changes\">";
+                echo " <INPUT TYPE=submit VALUE=\"".get_string("savechanges")."\">";
                 echo "</FORM>";
                 echo "</TD><TD>";
                 echo "<FORM ACTION=index.php METHOD=get>";
                 echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
-                echo " <INPUT TYPE=submit VALUE=\"Cancel\">";
+                echo " <INPUT TYPE=submit VALUE=\"".get_string("cancel")."\">";
                 echo "</FORM>";
                 echo "</TD></TR></TABLE>";
             }
@@ -296,7 +312,7 @@
 
         case "zip":
             if ($name) {
-                html_header();
+                html_header($course, $wdir);
                 $name = clean_filename($name);
                 $files = "";
                 foreach ($USER->filelist as $file) {
@@ -309,7 +325,7 @@
                 displaydir($wdir);
                     
             } else {
-                html_header("form.name");
+                html_header($course, $wdir, "form.name");
                 if (setfilelist($HTTP_POST_VARS)) {
                     echo "<P ALIGN=CENTER>You are about create a zip file containing:</P>";
                     print_simple_box_start("center");
@@ -342,7 +358,7 @@
             break;
 
         case "unzip":
-            html_header();
+            html_header($course, $wdir);
             if ($file) {
                 echo "<P ALIGN=CENTER>Unzipping $file:</P>";
                 print_simple_box_start("center");
@@ -369,7 +385,7 @@
             clearfilelist();
 
         default:
-            html_header();
+            html_header($course, $wdir);
             displaydir($wdir);
             html_footer();
             break;
@@ -506,29 +522,36 @@ function displaydir ($wdir) {
     }
     closedir($directory);
 
+    $strname = get_string("name");
+    $strsize = get_string("size");
+    $strmodified = get_string("modified");
+    $straction = get_string("action");
+    $strmakeafolder = get_string("makeafolder");
+    $struploadafile = get_string("uploadafile");
+    $strwithchosenfiles = get_string("withchosenfiles");
+    $strmovetoanotherfolder = get_string("movetoanotherfolder");
+    $strmovefilestohere = get_string("movefilestohere");
+    $strdeletecompletely = get_string("deletecompletely");
+    $strcreateziparchive = get_string("createziparchive");
+    $strrename = get_string("rename");
+    $stredit   = get_string("edit");
+    $strunzip  = get_string("unzip");
+
 
     echo "<FORM ACTION=\"index.php\" METHOD=post NAME=dirform>";
     echo "<HR WIDTH=640 ALIGN=CENTER NOSHADE SIZE=1>";
     echo "<TABLE BORDER=0 cellspacing=2 cellpadding=2 width=640>";    
-    echo "<TR><TD>&nbsp;</TD><TD COLSPAN=5><P><B>Current folder: $wdir</B></P>";
     echo "<TR>";
     echo "<TH WIDTH=5></TH>";
-    echo "<TH ALIGN=left>Name</TH>";
-    echo "<TH ALIGN=right>Size</TH>";
-    echo "<TH ALIGN=right>Modified</TH>";
-    echo "<TH ALIGN=right>Action</TH>";
+    echo "<TH ALIGN=left>$strname</TH>";
+    echo "<TH ALIGN=right>$strsize</TH>";
+    echo "<TH ALIGN=right>$strmodified</TH>";
+    echo "<TH ALIGN=right>$straction</TH>";
     echo "</TR>\n";
 
     if ($wdir == "/") {
         $wdir = "";
-    } else {
-        $updir = dirname($wdir);
-        echo "<TR>";
-        print_cell("center", "");
-        print_cell("left", "<A HREF=\"index.php?id=$id&wdir=$updir\"><IMG SRC=\"pix/parent.gif\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"Parent folder\"></A> <A HREF=\"index.php?id=$id&wdir=$updir\">Up to $updir</A>");
-        echo "</TR>\n";
     }
-
 
     $count = 0;
 
@@ -549,7 +572,7 @@ function displaydir ($wdir) {
             print_cell("left", "<A HREF=\"index.php?id=$id&wdir=$fileurl\"><IMG SRC=\"pix/folder.gif\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"Folder\"></A> <A HREF=\"index.php?id=$id&wdir=$fileurl\">".htmlspecialchars($dir)."</A>");
             print_cell("right", "-");
             print_cell("right", $filedate);
-            print_cell("right", "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$filesafe&action=rename\">rename</A>");
+            print_cell("right", "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</A>");
     
             echo "</TR>";
         }
@@ -590,13 +613,13 @@ function displaydir ($wdir) {
             print_cell("right", display_size($filename));
             print_cell("right", $filedate);
             if ($icon == "text.gif" || $icon == "html.gif") {
-                $edittext = "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=edit\">edit</A>";
+                $edittext = "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=edit\">$stredit</A>";
             } else if ($icon == "zip.gif") {
-                $edittext = "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">unzip</A>";
+                $edittext = "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">$strunzip</A>";
             } else {
                 $edittext = "";
             }
-            print_cell("right", "$edittext <A HREF=\"index.php?id=$id&wdir=$wdir&file=$filesafe&action=rename\">rename</A>");
+            print_cell("right", "$edittext <A HREF=\"index.php?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</A>");
     
             echo "</TR>";
         }
@@ -613,13 +636,12 @@ function displaydir ($wdir) {
     echo "<INPUT TYPE=hidden NAME=id VALUE=\"$id\">";
     echo "<INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\"> ";
     $options = array (
-                   "move" => "Move to another folder",
-                   "delete" => "Delete completely",
-                   "zip" => "Create zip archive"
+                   "move" => "$strmovetoanotherfolder",
+                   "delete" => "$strdeletecompletely",
+                   "zip" => "$strcreateziparchive"
                );
     if ($count) {
-        choose_from_menu ($options, "action", "", $nothing="With chosen files...", "javascript:document.dirform.submit()");
-        //echo "<INPUT TYPE=submit VALUE=Go>";
+        choose_from_menu ($options, "action", "", "$strwithchosenfiles...", "javascript:document.dirform.submit()");
     }
 
     echo "</FORM>";
@@ -629,7 +651,7 @@ function displaydir ($wdir) {
         echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
         echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
         echo " <INPUT TYPE=hidden NAME=action VALUE=paste>";
-        echo " <INPUT TYPE=submit VALUE=\"Move files to here\">";
+        echo " <INPUT TYPE=submit VALUE=\"$strmovefilestohere\">";
         echo "</FORM>";
     }
     echo "<TD ALIGN=right>";
@@ -637,7 +659,7 @@ function displaydir ($wdir) {
         echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
         echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
         echo " <INPUT TYPE=hidden NAME=action VALUE=mkdir>";
-        echo " <INPUT TYPE=submit VALUE=\"Make a folder\">";
+        echo " <INPUT TYPE=submit VALUE=\"$strmakeafolder\">";
         echo "</FORM>";
     echo "</TD>";
     echo "<TD ALIGN=right>";
@@ -645,7 +667,7 @@ function displaydir ($wdir) {
         echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
         echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
         echo " <INPUT TYPE=hidden NAME=action VALUE=upload>";
-        echo " <INPUT TYPE=submit VALUE=\"Upload a file\">";
+        echo " <INPUT TYPE=submit VALUE=\"$struploadafile\">";
         echo "</FORM>";
     echo "</TD></TR>";
     echo "</TABLE>";
