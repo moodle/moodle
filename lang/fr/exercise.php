@@ -124,7 +124,7 @@ $string['pleaseviewtheexercise'] = 'Veuillez consulter l\'exercice ci-dessous en
 	Cette évaluation faite, vous recevrez d\'autres instructions pour remettre votre travail.';
 $string['poor'] = 'Faible';
 $string['present'] = 'Présent';
-$string['reasonforadjustment'] = 'Justification de l\'ajustement';
+$string['reasonforadjustment'] = 'Commentaire général/Justification de l\'ajustement';
 $string['reassess'] = 'Ré-évaluer';
 $string['regradestudentassessments'] = 'Ré-évaluer les évaluations des étudiants';
 $string['resubmissionfor'] = 'Nouvelle remise pour $a';
