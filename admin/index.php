@@ -39,6 +39,7 @@
         print_header($strdatabasesetup, $strdatabasesetup, $strdatabasesetup);
         if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql")) {
             $db->debug = true;
+            set_time_limit(0);  // To allow slow databases to complete the long SQL
             if (modify_database("$CFG->libdir/db/$CFG->dbtype.sql")) {
                 $db->debug = false;
                 notify($strdatabasesuccess);
@@ -180,6 +181,7 @@
             }
             $updated_modules = true;
             $db->debug = true;
+            set_time_limit(0);  // To allow slow databases to complete the long SQL
             if (modify_database("$fullmod/db/$CFG->dbtype.sql")) {
                 $db->debug = false;
                 if ($module->id = insert_record("modules", $module)) {
