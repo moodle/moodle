@@ -435,10 +435,10 @@ function forum_delete_discussion($discussion) {
 
 
 function forum_print_user_discussions($courseid, $userid) {
-    global $USER;
+    global $CFG, $USER;
 
     $discussions = get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture, 
-                                           u.id as userid, f.type as forumtype
+                                           u.id as userid, f.type as forumtype, f.name as forumname, f.id as forumid
                                     FROM forum_discussions d, forum_posts p, user u, forum f
                                     WHERE d.course = '$courseid' AND p.discussion = d.id AND 
                                           p.parent = 0 AND p.user = u.id AND u.id = '$userid' AND
@@ -459,6 +459,7 @@ function forum_print_user_discussions($courseid, $userid) {
             } else {
                 $discussion->replies = 0;
             }
+            $discussion->subject .= " (in <A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$discussion->forumid\">$discussion->forumname</A>)";
             $ownpost = ($discussion->userid == $USER->id);
             forum_print_post($discussion, $course->id, $ownpost, $reply=0, $link=1, $assessed=false);
             echo "<BR>\n";
