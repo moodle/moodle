@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 development (2004042600)
+      // forum.php - created with Moodle 1.3 development (2004050500)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -12,6 +12,7 @@ $string['anyfile'] = '全てのファイル';
 $string['attachment'] = '添付ファイル';
 $string['bynameondate'] = '$a->date - $a->name の投稿';
 $string['configdisplaymode'] = '表示モードが設定されていない場合のデフォルト表示モードです。';
+$string['configenablerssfeeds'] = 'ここでは全フォーラムのRSS使用設定を行います。ここの設定をしても、各フォーラムでRSSフィードの設定を手動で行う必要があります。';
 $string['configlongpost'] = 'この文字長以上の長さ(HTMLは含まない)は長いと考えられます。';
 $string['configmanydiscussions'] = 'フォーラムページに表示されるディスカッションの最大数';
 $string['configmaxbytes'] = '全てのフォーラム添付ファイルに関するデフォルトの最大サイズ(コース制限及び他のローカル設定に従います)';
@@ -110,6 +111,10 @@ $string['repliesmany'] = '$a 件の返信があります';
 $string['repliesone'] = '$a 件の返信があります';
 $string['reply'] = '返信';
 $string['replyforum'] = 'フォーラムに返信';
+$string['rssarticles'] = 'RSSの最近の記事数';
+$string['rsssubscriberssdiscussions'] = '\'$a\'  件のディスカッションに関してRSSフィードを表示';
+$string['rsssubscriberssposts'] = '\'$a\'  件の投稿に関してRSSフィードを表示';
+$string['rsstype'] = 'フォーラムのRSSフィード';
 $string['search'] = '検索';
 $string['searchforums'] = 'フォーラムを検索';
 $string['searcholderposts'] = '過去の投稿を検索 ...';

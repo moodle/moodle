@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2004021700)
+      // resource.php - created with Moodle 1.3 development (2004050500)
 
 
 $string['addresource'] = '¥ê¥½¡¼¥¹¤òÄÉ²Ã¤¹¤ë';
@@ -19,6 +19,7 @@ $string['configpopuptoolbar'] = '¥Ý¥Ã¥×¥¢¥Ã¥×¥¦¥¤¥ó¥É¥¦¤Ë¥Ç¥Õ¥©¥ë¥È¤Ç¥Ä¡¼¥ë¥Ð¡¼¤
 $string['configpopupwidth'] = '¿·¤·¤¤¥Ý¥Ã¥×¥¢¥Ã¥×¥¦¥¤¥ó¥É¥¦¤Î¥Ç¥Õ¥©¥ë¥È¤ÎÉý¤Ï?';
 $string['configwebsearch'] = 'URL¤ò¥¦¥§¥Ö¥Ú¡¼¥¸¤Þ¤¿¤Ï¥ê¥ó¥¯¤È¤·¤ÆÄÉ²Ã¤¹¤ë»þ¡¢¤³¤Î¥í¥±¡¼¥·¥ç¥ó¤Ï¡¢¥æ¡¼¥¶¤¬URL¤ò¸¡º÷¤¹¤ë°Ù¤Î¥Ø¥ë¥×¤È¤·¤ÆÄó¶¡¤µ¤ì¤Þ¤¹¡£';
 $string['directlink'] = '¤³¤Î¥Õ¥¡¥¤¥ë¤ò¥À¥¤¥ì¥¯¥È¥ê¥ó¥¯¤¹¤ë';
+$string['directoryinfo'] = 'ÁªÂò¤·¤¿¥Ç¥£¥ì¥¯¥È¥ê¤ÎÁ´¥Õ¥¡¥¤¥ë¤¬É½¼¨¤µ¤ì¤Þ¤¹¡£';
 $string['editingaresource'] = '¥ê¥½¡¼¥¹¤òÊÔ½¸¤¹¤ë';
 $string['example'] = 'Îã';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
@@ -29,6 +30,7 @@ $string['fetchservererror'] = '¥¦¥§¥Ö¥Ú¡¼¥¸¤ò¸¡º÷¤·¤Æ¤¤¤ë»þ¡¢¥ê¥â¡¼¥È¥µ¡¼¥Ð¤Ë¥¨¥
 $string['filename'] = '¥Õ¥¡¥¤¥ëÌ¾';
 $string['fulltext'] = '¥Õ¥ë¥Æ¥­¥¹¥È';
 $string['htmlfragment'] = 'HTML¥Õ¥é¥°¥á¥ó¥È';
+$string['maindirectory'] = '¥á¥¤¥ó¥Õ¥¡¥¤¥ë¥Ç¥£¥ì¥¯¥È¥ê';
 $string['modulename'] = '¥ê¥½¡¼¥¹';
 $string['modulenameplural'] = '¥ê¥½¡¼¥¹';
 $string['neverseen'] = 'Ì¤³ÎÇ§';
@@ -58,5 +60,6 @@ $string['resourcetype5'] = '¥ê¥ó¥¯';
 $string['resourcetype6'] = 'HTML¥Æ¥­¥¹¥È';
 $string['resourcetype7'] = '¥×¥í¥°¥é¥à';
 $string['resourcetype8'] = 'Wiki¥Æ¥­¥¹¥È';
+$string['resourcetype9'] = '¥Ç¥£¥ì¥¯¥È¥ê';
 
 ?>

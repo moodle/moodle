@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004042600)
+      // moodle.php - created with Moodle 1.3 development (2004050500)
 
 
 $string['action'] = 'Áàºî';
@@ -94,6 +94,8 @@ $string['backupfilename'] = 'backup';
 $string['backupfinished'] = '¥Ð¥Ã¥¯¥¢¥Ã¥×¤¬´°Î»¤·¤Þ¤·¤¿';
 $string['backupincludemoduleshelp'] = '¼«Æ°¥Ð¥Ã¥¯¥¢¥Ã¥×¤Ë¥³¡¼¥¹¥â¥¸¥å¡¼¥ë¤ò´Þ¤à¤«ÈÝ¤«¡¢¥æ¡¼¥¶¥Ç¡¼¥¿¤ò´Þ¤à¤«ÈÝ¤«¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤';
 $string['backupkeephelp'] = '¥³¡¼¥¹¤ÎºÇ¶á¤Î¥Ð¥Ã¥¯¥¢¥Ã¥×¤ò¤¤¤¯¤ÄÊÝÂ¸¤·¤Þ¤¹¤«?(¸Å¤¤¤â¤Î¤«¤é¼«Æ°Åª¤Ëºï½ü¤µ¤ì¤Þ¤¹)';
+$string['backuplogdetailed'] = '¾ÜºÙ¥í¥°';
+$string['backuploglaststatus'] = 'ºÇ¿·¥í¥°';
 $string['backuplogshelp'] = 'Yes¤Ë¤·¤¿¾ì¹ç¡¢¥³¡¼¥¹¥í¥°¤¬¼«Æ°¥Ð¥Ã¥¯¥¢¥Ã¥×¤Ë´Þ¤Þ¤ì¤Þ¤¹';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backuporiginalname'] = '¥Ð¥Ã¥¯¥¢¥Ã¥×Ì¾';
@@ -101,6 +103,9 @@ $string['backupsavetohelp'] = '¥Ð¥Ã¥¯¥¢¥Ã¥×¥Õ¥¡¥¤¥ëÊÝÂ¸Àè¥Ç¥£¥ì¥¯¥È¥ê¤ò¥Õ¥ë¥Ñ¥¹¤
 $string['backupuserfileshelp'] = '¼«Æ°¥Ð¥Ã¥¯¥¢¥Ã¥×¤Ë¥æ¡¼¥¶¥Õ¥¡¥¤¥ë(Îã ¥×¥í¥Õ¥£¡¼¥ë¼Ì¿¿)¤ò´Þ¤á¤ë¤«ÈÝ¤«ÁªÂò¤·¤Æ¤¯¤À¤µ¤¤';
 $string['backupusershelp'] = '¥µ¡¼¥ÐÆâ¤ÎÁ´¥æ¡¼¥¶¤ò´Þ¤á¤ë¤«¡¢ÁªÂò¤·¤¿¥æ¡¼¥¶¤Î¤ß¤ò´Þ¤á¤ë¤«ÁªÂò¤·¤Æ¤¯¤À¤µ¤¤';
 $string['backupversion'] = '¥Ð¥Ã¥¯¥¢¥Ã¥×¥Ð¡¼¥¸¥ç¥ó';
+$string['blockdeleteconfirm'] = '\'$a\' ¥Ö¥í¥Ã¥¯¤ò´°Á´¤Ëºï½ü¤·¤è¤¦¤È¤·¤Æ¤¤¤Þ¤¹¡£ºï½ü¤¹¤ë¤³¤È¤Ç¥Ç¡¼¥¿¥Ù¡¼¥¹Æâ¤Î´ØÏ¢¤¹¤ë¥Ç¡¼¥¿Á´¤Æ¤¬´°Á´¤Ëºï½ü¤µ¤ì¤Þ¤¹¡£ËÜÅö¤Ëºï½ü¤·¤Æ¤âµ¹¤·¤¤¤Ç¤¹¤«?';
+$string['blockdeletefiles'] = '\'$a->block\' ¤Ë´ØÏ¢¤¹¤ëÁ´¤Æ¤Î¥Ç¡¼¥¿¤¬¥Ç¡¼¥¿¥Ù¡¼¥¹¤è¤êºï½ü¤µ¤ì¤Þ¤·¤¿¡£ºï½ü¤ò´°Î»¤¹¤ë¤¿¤á(¥Ö¥í¥Ã¥¯¤¬ºÆ¥¤¥ó¥¹¥È¡¼¥ë¤µ¤ì¤ë¤³¤È¤òËÉ¤°¤¿¤á)¤Ë¡¢¼¡¤Î¥Ç¥£¥ì¥¯¥È¥ê¤ò¥µ¡¼¥Ð¤è¤êºï½ü¤·¤Æ¤¯¤À¤µ¤¤: $a->directory';
+$string['blocks'] = '¥Ö¥í¥Ã¥¯';
 $string['blocksetup'] = '¥Ö¥í¥Ã¥¯¥Æ¡¼¥Ö¥ë¤ÎÀßÄê';
 $string['blocksuccess'] = '$a ¤Î¥Æ¡¼¥Ö¥ë¤¬Àµ¾ï¤ËÀßÄê¤µ¤ì¤Þ¤·¤¿';
 $string['bycourseorder'] = '¥³¡¼¥¹½ç';
@@ -137,6 +142,7 @@ $string['configcountry'] = '¤³¤³¤Ç¹ñ¤òÀßÄê¤·¤¿¾ì¹ç¡¢¿·µ¬¥¢¥«¥¦¥ó¥È¤Î¥æ¡¼¥¶¤Ë½é´ü
 ';
 $string['configdebug'] = '¤³¤ÎÀßÄê¤ò Yes ¤Ë¤·¤¿¾ì¹ç¡¢PHP¤Î¥¨¥é¡¼¥ì¥Ý¡¼¥È¤¬Áý²Ã¤·¤Æ¡¢¤è¤êÂ¿¤¯¤Î·Ù¹ð¤¬É½¼¨¤µ¤ì¤ë¤è¤¦¤Ë¤Ê¤ê¤Þ¤¹¡£³«È¯¼Ô¸þ¤±¤ÎÀßÄê¤Ç¤¹¡£';
 $string['configdeleteunconfirmed'] = '¥á¡¼¥ë¤Ë¤è¤ë¾µÇ§¤òÍøÍÑ¤·¤Æ¤¤¤ë¾ì¹ç¡¢¤³¤ÎÃÍ¤Ï¥æ¡¼¥¶¤«¤é¤ÎÊÖÅú¤ò¼õ¤±ÉÕ¤±¤ë´ü´Ö¤ò»Ø¤·¤Þ¤¹¡£¤³¤Î´ü´Ö¤Î½ªÎ»¸å¡¢¸Å¤¤Ì¤¾µÇ§¤Î¥¢¥«¥¦¥ó¥È¤Ïºï½ü¤µ¤ì¤Þ¤¹¡£';
+$string['configenablerssfeeds'] = '¤³¤³¤Ç¤ÏRSS¥Õ¥£¡¼¥É¤ÎÀßÄê¤ò¹Ô¤¤¤Þ¤¹¡£RSS¥Õ¥£¡¼¥É¤ò»ÈÍÑ¤¹¤ë¤¿¤á¤Ë¤Ï¡¢´ÉÍý²èÌÌ¤Î¥â¥¸¥å¡¼¥ë´ÉÍý¤Ë¤ÆRSS¥â¥¸¥å¡¼¥ë¤ò»ÈÍÑ²Ä¤Ë¤¹¤ëÉ¬Í×¤¬¤¢¤ê¤Þ¤¹¡£';
 $string['configerrorlevel'] = 'É½¼¨¤·¤¿¤¤PHP¤Î·Ù¹ð¿ô¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£ÄÌ¾ï¤ÏNormal¤¬ºÇÅ¬¤Ç¤¹¡£';
 $string['configfilteruploadedfiles'] = '¤³¤ÎÀßÄê¤ò¹Ô¤Ã¤¿¾ì¹ç¡¢Moodle¤ÏÁ´¤Æ¤Î¥¢¥Ã¥×¥í¡¼¥É¤µ¤ì¤¿HTMLµÚ¤Ó¥Æ¥­¥¹¥È¥Õ¥¡¥¤¥ë¤òÉ½¼¨¤¹¤ëÁ°¤Ë¥Õ¥£¥ë¥¿¤Ë¤«¤±¤Þ¤¹¡£';
 $string['configforcelogin'] = 'ÄÌ¾ï¡¢¥µ¥¤¥È¤È¥³¡¼¥¹°ìÍ÷(¥³¡¼¥¹¤Ç¤ÏÌµ¤¤)¤Î¥Õ¥í¥ó¥È¥Ú¡¼¥¸¤Ï¥µ¥¤¥È¤Ë¥í¥°¥¤¥ó¤»¤º¤Ë±ÜÍ÷¤¹¤ë¤³¤È¤¬½ÐÍè¤Þ¤¹¡£Á´¤Æ¤ÎÆ°ºî¤ò¹Ô¤¦Á°¤Ë¥í¥°¥¤¥ó¤ò¶¯À©¤·¤¿¤¤¾ì¹ç¤Ï¡¢¤³¤ÎÀßÄê¤ò¹Ô¤Ã¤Æ¤¯¤À¤µ¤¤¡£';
@@ -222,6 +228,7 @@ $string['currentcourseadding'] = '¸½ºß¤Î¥³¡¼¥¹¡¢¤³¤³¤Ë¥Ç¡¼¥¿¤òÄÉ²Ã¤¹¤ë';
 $string['currentcoursedeleting'] = '¸½ºß¤Î¥³¡¼¥¹¡¢ºÇ½é¤Ëºï½ü¤¹¤ë';
 $string['currentlanguage'] = '¸½ºß¤Î¸À¸ì';
 $string['currentlocaltime'] = '¥í¡¼¥«¥ë¥¿¥¤¥à  ÆüËÜ:GMT+9';
+$string['currentpicture'] = '¸½ºß¤Î¼Ì¿¿';
 $string['currentrelease'] = '¸½ºß¤Î¥ê¥ê¡¼¥¹¾ðÊó';
 $string['currentversion'] = '¸½ºß¤Î¥Ð¡¼¥¸¥ç¥ó';
 $string['databasechecking'] = '¥Ð¡¼¥¸¥ç¥ó $a->¸Å¤¤¥Ð¡¼¥¸¥ç¥ó¤«¤é $a->¿·¥Ð¡¼¥¸¥ç¥ó...';
@@ -235,6 +242,7 @@ $string['datemostrecentfirst'] = 'ÆüÉÕ - ¿·¤·¤¤¤â¤Î¤òºÇ½é¤Ë';
 $string['datemostrecentlast'] = 'ÆüÉÕ - ¿·¤·¤¤¤â¤Î¤òºÇ¸å¤Ë';
 $string['day'] = 'Æü';
 $string['days'] = 'Æü';
+$string['decodinginternallinks'] = 'ÆâÉô¥ê¥ó¥¯¤Î¥Ç¥³¡¼¥É';
 $string['defaultcoursefullname'] = '¥³¡¼¥¹Ì¾¾Î 101';
 $string['defaultcourseshortname'] = 'CF101';
 $string['defaultcoursestudent'] = '³ØÀ¸';
@@ -442,6 +450,9 @@ $string['helpsummaries'] = '³µÍ×¤Ë´Ø¤·¤Æ';
 $string['helptext'] = '¥Æ¥­¥¹¥È¤Î½ñ¤­Êý';
 $string['helpwiki'] = 'Wiki¥Æ¥­¥¹¥È¤Î½ñ¤­Êý';
 $string['helpwriting'] = '¿µ½Å¤Ë½ñ¤¯';
+$string['hiddensections'] = 'ÈóÉ½¼¨¥È¥Ô¥Ã¥¯';
+$string['hiddensectionscollapsed'] = 'ÈóÉ½¼¨¥»¥¯¥·¥ç¥ó¤ÏÀÞ¤ê¤¿¤¿¤ß¥Õ¥©¡¼¥à¤ÇÉ½¼¨¤¹¤ë';
+$string['hiddensectionsinvisible'] = 'ÈóÉ½¼¨¥»¥¯¥·¥ç¥ó¤ò´°Á´¤Ë¸«¤¨¤Ê¤¯¤¹¤ë';
 $string['hide'] = 'ÈóÉ½¼¨';
 $string['hidepicture'] = '¼Ì¿¿¤ò±£¤¹';
 $string['hits'] = '¥¢¥¯¥»¥¹';
@@ -785,6 +796,8 @@ $string['strftimedateshort'] = '%%m/%%d';
 $string['strftimedatetime'] = '%%YÇ¯ %%m·î %%dÆü, %%p%%I:%%M';
 $string['strftimedaydate'] = '%%YÇ¯ %%m·î %%dÆü(%%A)';
 $string['strftimedaydatetime'] = '%%YÇ¯ %%m·î %%dÆü(%%A) %%p%%I:%%M';
+$string['strftimedayshort'] = '%%YÇ¯ %%m·î %%dÆü';
+$string['strftimemonthyear'] = '%%YÇ¯ %%m·î';
 $string['strftimerecent'] = '%%m·î %%dÆü, %%H:%%M';
 $string['strftimerecentfull'] = '%%YÇ¯ %%m·î %%dÆü(%%a) %%p%%I:%%M';
 $string['strftimetime'] = '%%p%%I:%%M';

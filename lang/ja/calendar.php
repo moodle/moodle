@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004041800)
+      // calendar.php - created with Moodle 1.3 development (2004050500)
 
 
 $string['april'] = '4月';
@@ -16,11 +16,14 @@ $string['december'] = '12月';
 $string['default'] = 'デフォルト';
 $string['deleteevent'] = 'イベントの削除';
 $string['detailedmonthview'] = '月表示詳細';
+$string['durationminutes'] = '期間(分)';
 $string['durationnone'] = '期間無し';
 $string['durationuntil'] = '終了日:';
 $string['editevent'] = 'イベントの編集';
 $string['errorbeforecoursestart'] = 'コースの開始日以前にはイベントを登録出来ません';
 $string['errorinvaliddate'] = '日付に間違いがあります';
+$string['errorinvalidminutes'] = '期間(分)を1から999の間で指定してください。';
+$string['errorinvalidrepeats'] = 'イベントを1から999の間で指定してください。';
 $string['errornodescription'] = '説明を入力してください';
 $string['errornoeventname'] = '名称を入力してください';
 $string['eventdate'] = '日付';
@@ -30,6 +33,7 @@ $string['eventendtime'] = '終了日時';
 $string['eventinstanttime'] = '時間';
 $string['eventkind'] = 'イベントの種類';
 $string['eventname'] = '名称';
+$string['eventrepeat'] = '繰り返し';
 $string['eventsfor'] = '$a イベント';
 $string['eventstarttime'] = '開始日時';
 $string['eventtime'] = '時間';
@@ -38,6 +42,7 @@ $string['expired'] = '期間終了';
 $string['explain_lookahead'] = 'ここではイベントが直近のイベントとして表示される為の最大日数を設定します。この範囲より後に開催されるイベントは、直近イベントとして表示されません。全てのイベントがこのスケジュール通りに開始されることは<strong>保証されません</strong>; もし数多く(「直近イベントの最大表示数」以上)のイベントが登録されている場合は、時間が遅いイベントが表示されません。';
 $string['explain_maxevents'] = 'ここでは直近イベントの最大表示数を設定します。ここで大きな数を設定した場合は、直近のイベントを大量に表示する為の画面スペースが必要になります。';
 $string['explain_startwday'] = 'ここでは全ての月間カレンダーの表示方法を設定します。あなたが慣れ親しんだ表示になるように設定してください。';
+$string['explain_timeformat'] = '時間の表示は12時間表示または24時間表示を選択することが出来ます。デフォルトを選択した場合は、使用言語に合わせてフォーマットが自動的に選択されます。';
 $string['february'] = '2月';
 $string['fri'] = '金';
 $string['friday'] = '金曜日';
@@ -61,8 +66,11 @@ $string['oneevent'] = '1 イベント';
 $string['pref_lookahead'] = '直近イベントの日数範囲';
 $string['pref_maxevents'] = '直近イベントの最大表示数';
 $string['pref_startwday'] = '週の初め';
+$string['pref_timeformat'] = '時間フォーマット';
 $string['preferences'] = '設定';
 $string['preferences_available'] = '個人設定';
+$string['repeatnone'] = '繰り返し無し';
+$string['repeatweeksr'] = 'イベント';
 $string['sat'] = '土';
 $string['saturday'] = '土曜日';
 $string['september'] = '9月';
@@ -72,6 +80,8 @@ $string['sun'] = '日';
 $string['sunday'] = '日曜日';
 $string['thu'] = '木';
 $string['thursday'] = '木曜日';
+$string['timeformat_12'] = '12時間(午前/午後)';
+$string['timeformat_24'] = '24時間';
 $string['today'] = '今日';
 $string['tomorrow'] = '明日';
 $string['tt_deleteevent'] = 'イベントの削除';
