@@ -112,6 +112,17 @@ Based on:   lang.php in 1.4.3+ release
     if (!empty($currentfile)) {
 
         if (!file_exists("$langdir/$currentfile")) {
+            //check if directory exist
+            $pathparts = explode('/',$currentfile);
+            $checkpath = $langdir;
+            for ($a=0; $a < count($pathparts)-1 ; $a++) {
+                $checkpath .= "/".$pathparts[$a];
+                if(!file_exists($checkpath)){
+                     if(!mkdir($checkpath)){
+                         echo ("Cannot create directory: $checkpath");
+                     }    
+                }    
+            }
             //
             // file doesn't exist - let's check webserver's permission to create it
             //
