@@ -1,41 +1,33 @@
-<P ALIGN=CENTER><B>Formatting text</B></P>
+<P ALIGN=CENTER><B>รูปแบบตัวหนังสือ</B></P>
 
-<P>When writing text in Moodle there are currently two formats you can choose
-   to produce your text, depending on your expertise and the type of browser
-   you are using.
-
-<P><B>Usually you can just leave this setting alone and things should
-   work as you expect</B>.
+<P>ขณะนี้มีรูปแบบการเขียนอยู่สองประเภท คือ 
 
 <P><B>1. Moodle auto-format</B></P>
 
 <UL>
-<P>This format is best for when you are using normal web forms for entry
-   (instead of the Richtext HTML editor).  Just type text normally, as if you
-   were sending an email.
-
-<P>When you save your text, Moodle will do a number of things to automatically
-   format your text for you.  
-<P>For example, URLs such as 
-   <A HREF="http://yahoo.com/">http://yahoo.com</A> or even 
-   <A HREF="http://www.yahoo.com/">www.yahoo.com</A> will be turned into links.
-<P>Your line breaks will be retained, and blank lines will start new paragraphs.
-<P>Smiley characters such as :-) will automatically become their graphical equivalents.
-<P>You can even embed HTML code if you want to and it will be retained.
-<P ALIGN=RIGHT><? helpbutton("text", get_string("helptext")) ?> More info about Moodle auto-formatting.</P>
+<P>รูปแบบนี้ จะแสดงผลได้ดีในรูปแบบเว็บปกติ  เพียงแต่เขียนข้อความเหมือน
+คุณเขียนในอีเมล์ทั่วไป  เมื่อกดปุ่มบันทึกข้อความ โปรแกรมจะทำหน้าที่จัดรูปแบบ
+อัตโนมัติให้คุณเอง
+<P>ตัวอย่าง การพิพม์ชื่อเว็บไซต์
+   <A HREF="http://yahoo.com/">http://yahoo.com</A>  หรือ แม้แต่ 
+   <A HREF="http://www.yahoo.com/">www.yahoo.com</A>  จะกลายเป็นลิงค์ ทันที 
+<P> จุดสิ้นสุดของบรรทัดก็จะคงเดิม  บรรทัดที่ว่างไว้ก็จะทำการตั้งต้นเป็นย่อหน้าใหม่ 
+<P> โค้ดสไมลี่  เช่น   :-)  ก็จะแสดงผลเป็นรูปคนยิ้ม ให้อัตโนมัติ
+<P>คุณสามารถที่จะเพิ่มโค้ด  HTML  ลงไปได้เช่นกัน
+<P ALIGN=RIGHT><? helpbutton("text", get_string("helptext")) ?> รายละเอียดเพิ่มเติมเกี่ยวกับ Moodle auto-formatting.</P>
 </UL>
 
-<P><B>2. HTML format</B></P>
+<P><B>2. รูปแบบ HTML</B></P>
 
 <UL>
-<P>This format assumes the text is pure HTML.  If you are using the 
-   HTML editor to edit text then this is the default format - all 
-   the commands in the toolbar are producing HTML for you.
+<P>รุปแบบนี้ เป็นการใช้โค้ด  HTML ล้วนๆ ถ้าหากคุณใช้  
+   HTML editor เพื่อแก้ไขข้อความ เมื่อใช้คำสั่งทำตัวหนังสือประเภทต่างๆ บน
+toolbar จะมีการเปลี่ยนเป็น แท็ก html ให้คุณ  
 
-<P>Even if you are not using the Richtext HTML editor, you can use HTML code 
-   in your text and it should come out exactly as you intended.
+<P>ถึงแม้ว่าคุณจะไม่ใช้ Richtext HTML editor คุณก็ยังสามารถใช้ โค้ด HTML 
+ในข้อความที่คุณต้องการพิมพ์ และการแสดงผลก็ยังคงถูกต้องเหมือนที่ต้องการ
 
-<P>Unlike the Moodle auto-format, no automatic formatting is performed.
-<P ALIGN=RIGHT><? helpbutton("html", get_string("helphtml")) ?> More info about HTML</P>
-<P ALIGN=RIGHT><? helpbutton("richtext", get_string("helprichtext")) ?> More info about the Richtext HTML editor</P>
+<P>วิธีนี้ต่างจากวิธีแรกคือ จะไม่มีการจัดรูปแบบอัตโนมัติให้ 
+<P ALIGN=RIGHT><? helpbutton("html", get_string("helphtml")) ?> รายละเอียดเพิ่มเติมเกี่ยวกับ  HTML</P>
+<P ALIGN=RIGHT><? helpbutton("richtext", get_string("helprichtext")) ?> รายละเอียดเพิ่มเติมเกี่ยวกับ Richtext HTML editor</P>
 </UL>

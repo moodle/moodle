@@ -1,69 +1,64 @@
-<P ALIGN=CENTER><B>Activity Modules</B></P>
+<P ALIGN=CENTER><B>การจัดกิจกรรม</B></P>
 
-<P>Moodle contains a wide range of activity modules that can be used to 
-   build up any type of course.</P>
+<P>Moodle ประกอบไปด้วยกิจกรรมต่างๆ ที่สามารถใช้ในคอร์สได้ดังต่อไปนี้c</P>
 
-<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/forum/icon.gif">&nbsp;<B>Forums</B></P>
+<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/forum/icon.gif">&nbsp;<B>กระดานเสวนา</B></P>
 <UL>
-<P>This activity can be the most important - it is here that most discussion takes place. 
-   Forums can be structured in different ways, and can include peer rating of each posting.
-   The postings can be viewed in a variety for formats, and can include attachments.  
-   By subscribing to a forum, participants will receive copies of each new posting 
-   in their email.  A teacher can impose subscription on everyone if they want to.
+<P>เท่าที่ผ่านมา.. ส่วน กระดานเสวนา นี้เห็นจะเป็นส่วนที่สำคัญที่สุดเพราะการสนทนาแลกเปลี่ยน
+จะเกิดขึ้นในส่วนนี้ เมื่อท่านเพิ่มส่วน กระดานเสวนา เข้าใน คอร์ส ท่านจะต้องเลือกชนิดของ 
+กระดานเสวนา ว่าจะให้ กระดานเสวนา นี้เป็น กระดานเสวนา แบบไหน จะเป็นแบบหัวข้อเดียว
+ (single-topic discussion) แบบเปิด (free-for-all general forum) หรือ แบบหนึ่งหัวข้อสนทนาต่อหนึ่งผู้ใช้ 
+(one-discussion-thread-per-user) </UL>
+
+<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/journal/icon.gif">&nbsp;<B>วารสาร</B></P>
+<UL>
+<P>ส่วนวารสาร นี้เป็น รายการหนึ่งในวารสารรวมของ คอร์ส โดยในแต่ละรายการ 
+ท่านสามารถตั้งคำถามเปิดประเด็นนำให้กับนักเรียนและกำหนดช่วงเวลาเปิดให้เขียนบันทึก
+ (ทำได้เฉพาะ คอร์ส ในรูปแบบรายสัปดาห์เท่านั้น) ท่านใช้โอกาสนี้ส่งเสริมให้นักเรียน
+ใช้ความคิดในการกรั่นกรองและวิเคราะห์ในการเขียน Journal ท่านสามารถให้คะแนนและเขียน
+คำแนะนำสำหรับนักเรียนแต่ละคนในสัปดาห์หรือในหัวข้อนั้นๆ หลังจากนั้นระบบจะทำการ
+อีเมล์แจ้งผลให้นักเรียนทราบโดยอัตโนมัติ</P>
 </UL>
 
-<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/journal/icon.gif">&nbsp;<B>Journals</B></P>
+<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/resource/icon.gif">&nbsp;<B>แหล่งข้อมูล</B></P>
 <UL>
-<P>This module is a very important reflective activity.  The teacher 
-   asks the student to reflect on a particular topic, and the student can 
-   edit and refine their answer over time.  This answer is private and
-   can only be seen by the teacher, who can offer feedback and a grade 
-   on each journal entry.  It's usually a good idea to have about one 
-   Journal activity per week.</P>
+<P>แหล่งข้อมูล- คือส่วนเนื้อหาของ คอร์ส ของท่าน ซึ่งจะเป็น ไฟล์ ชนิดใดก็ได้ที่ท่าน 
+อัพโหลด หรือ ลิงค์ ไป ท่านสามารถสร้างรายการอย่างง่ายๆได้ด้วยการพิมพ์ลงแบบฟอร์มโดยตรง </P>
 </UL>
 
-<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/resource/icon.gif">&nbsp;<B>Resources</B></P>
+<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/assignment/icon.gif">&nbsp;<B>การบ้าน</B></P>
 <UL>
-<P>Resources are content: information the teacher wants to bring into the 
-   course.  These can be prepared files uploaded to the course 
-   server; pages edited directly in Moodle; or external web pages
-   made to appear part of this course.</P>
+<P>การบ้าน - เป็นส่วนที่ท่านให้การบ้านแก่นักเรียน กำหนดวันส่งและเกรดสูงสุดที่สามารถได้รับ 
+นักเรียนส่งงานโดย อัพโหลดไฟล์ การบ้านสู่เซิร์ฟเวอร์ระบบจะทำการบันทึกวันที่นักเรียน 
+อัพโหลดไฟล์ ไว้เป็นหลักฐาน หลังจากนั้นระบบจะแสดงผลทั้งหมดในหน้าเดียวกันให้ท่านได้ตรวจงาน 
+ให้คะแนนการบ้านที่นักเรียน อัพโหลด มา และบันทึกคำติชมที่ท่านอาจจะมีต่อการบ้านชิ้นนั้นๆ 
+ครึ่งชั่วโมงหลังจากท่านตรวจงานชิ้นหนึ่งเสร็จโปรแกรม โปรแกรม จะ อีเมล์ นักเรียนเจ้าของงาน
+ชิ้นนั้นๆเพื่อแจ้งให้ทราบว่างานที่ส่งได้รับการตรวจแล้ว พร้อมที่จะให้นักเรียน log in กลับมาดูผลได้</P>
 </UL>
 
-<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/assignment/icon.gif">&nbsp;<B>Assignments</B></P>
+<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/quiz/icon.gif">&nbsp;<B>แบบทดสอบ</B></P>
 <UL>
-<P>Assignments allow the teacher to specify a task that requires students 
-   to prepare digital content (any format) and submit it by uploading it 
-   to the server.  Typical assignments include essays, projects, reports 
-   and so on.  This module includes grading facilities.</P>
+<P>ส่วนนี้เป็นส่วนที่ท่านสามารถทำแบบทดสอบแบบต่างๆ เช่น แบบปรนัย ถูกผิด หรือแบบอัตนัย 
+แบบทดสอบที่ท่านทำขึ้นนี้จะถูกเก็บไว้ในฐานข้อมูลและสามารถนำมาใช้ใหม่ได้ต่อไป 
+ไม่ว่าจะเป็นสำหรับ คอร์ส เดิม หรือใช้ใน คอร์ส อื่นๆก็ได้ ท่านสามารถตั้งให้นักเรียนสามารถแก้ไข
+คำตอบได้หลายครั้ง โดยการแก้ไขของนักเรียนแต่ละครั้งจะโดนบันทึกไว้ จากนั้นท่านสามารถเลือก
+ที่จะให้คำแนะนำหรือให้คำตอบที่ถูกแก่นักเรียน ส่วน แบบทดสอบ นี้สามารถให้คะแนนได้ด้วย.</P>
 </UL>
 
-<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/quiz/icon.gif">&nbsp;<B>Quizzes</B></P>
+<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/choice/icon.gif">&nbsp;<B>ตัวเลือก</B></P>
 <UL>
-<P>This module allows the teacher to design and set quiz tests, consisting of 
-   multiple choice, true-false, and short answer questions.  These 
-   questions are kept in a categorised database, and can be re-used
-   within courses and even between courses.  Quizzes can allow 
-   multiple attempts.  Each attempt is automatically marked, and the 
-   teacher can choose whether to give feedback or to show correct answers.
-   This module includes grading facilities.</P>
+<P>เป็นส่วนที่ให้ท่านตั้งคำถามแบบปรนัยให้นักเรียนตอบ โดยเมื่อนักเรียนทำการเลือกคำตอบเสร็จแล้ว 
+โปรแกรมจะมีหน้ารายงานผลให้ท่านดูได้ ท่านสามารถใช้ส่วน ตัวเลือก นี้ในการทำโพลสำรวจหยั่งเสียง
+ในหัวข้อต่างๆ ทำโพล หรือใช้ในการออกเสียงเลือกตั้ง ฯลฯ 
+
 </UL>
 
-<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/choice/icon.gif">&nbsp;<B>Choices</B></P>
+<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/survey/icon.gif">&nbsp;<B>แบบสำรวจ</B></P>
 <UL>
-<P>A choice activity is very simple - the teacher asks a question and specifies a 
-   choice of multiple responses.  It can be useful as a quick poll to 
-   stimulate thinking about a topic; to allow the class to vote on 
-   a direction for the course; or to gather research consent.
-</UL>
-
-<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/survey/icon.gif">&nbsp;<B>Surveys</B></P>
-<UL>
-<P>The Survey module provides a number of verified survey instruments that
-   have been found useful in assessing and stimulating learning in 
-   online environments.  Teachers can use these to gather data from their
-   students that will help them learn about their class and reflect 
-   on their own teaching.</P>
+<P>ส่วนแบบสำรวจนี้ประกอบด้วยแบบสำรวจสำหรับวัดระดับความรู้และความเข้าใจของนักเรียน 
+โดยในเวอร์ชั่นนี้ของ โปรแกรม มีแบบสำรวจสองแบบให้เลือกใช้อคือแบบ COLLES และ ATTLS 
+ท่านสามารถใช้แบบสำรวจนี้ในตอนต้น คอร์ส เพื่อวัดพื้นฐานนักเรียนและอีกครั้งตอนปลาย คอร์ส 
+เพื่อวัดความผลการเรียนการสอน</P>
 </UL>
 
 
