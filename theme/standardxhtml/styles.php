@@ -58,6 +58,12 @@ form {
 }
 
 
+.activitydate, .activityhead
+{
+    font-size: x-small;
+    text-align: center;
+}
+
 
 .highlight {
     background-color: <?PHP echo $THEME->highlight?>;
@@ -141,6 +147,36 @@ form {
 .forumpostmessage {
     -moz-border-radius-bottomright: 20px;
 }
+
+
+.forumaddnew, .forumaddnewminimal,
+.forumnodiscuss, .forumnodiscussminimal,
+.forumolddiscussminimal
+{
+    text-align: center;
+}
+
+.forumaddnewminimal, .forumnodiscussminimal,
+.forumheadminimal, .foruminfominimal,
+.forumolddiscussminimal
+{
+    font-size: x-small;
+}
+
+.forumnodiscuss,.forumnodiscussminimal
+{
+    font-weight: bold;
+}
+
+.forumolddiscuss {
+    text-align: right;
+}
+
+.forumheadminimal
+{
+    color: #555555;
+}
+    
 
 
 .weeklyoutline {
