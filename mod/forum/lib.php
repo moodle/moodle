@@ -1005,7 +1005,7 @@ function forum_get_course_forum($courseid, $type) {
         case "teacher":
             $forum->name  = addslashes(get_string("nameteacher", "forum"));
             $forum->intro = addslashes(get_string("introteacher", "forum"));
-            $forum->open = 0;   // 0 - no, 1 - posts only, 2 - discuss and post
+            $forum->open = 2;   // 0 - no, 1 - posts only, 2 - discuss and post
             $forum->assessed = 0;
             $forum->forcesubscribe = 0;
             break;
@@ -1307,11 +1307,11 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 }
 
 
-function forum_print_discussion_header(&$post, $courseid, $datestring="") {
+function forum_print_discussion_header(&$post, $forum, $datestring="") {
     global $THEME, $USER, $CFG;
 
     if (!empty($CFG->filterall)) {
-        $post->subject = filter_text("<nolink>$post->subject</nolink>", $courseid);
+        $post->subject = filter_text("<nolink>$post->subject</nolink>", $forum->course);
     }
 
     echo "<tr class=\"forumpostheader\">";
@@ -1323,19 +1323,20 @@ function forum_print_discussion_header(&$post, $courseid, $datestring="") {
 
     // Picture
     echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderpicture\" width=35>";
-    print_user_picture($post->userid, $courseid, $post->picture);
+    print_user_picture($post->userid, $forum->course, $post->picture);
     echo "</td>\n";
 
     // User name
-    $fullname = fullname($post, isteacher($courseid));
+    $fullname = fullname($post, isteacher($forum->course));
     echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheadername\" align=left nowrap>";
-    echo "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$fullname</a>";
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$forum->course\">$fullname</a>";
     echo "</td>\n";
 
-    // Replies
-    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderreplies\" align=center nowrap>";
-    echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">$post->replies</a>";
-    echo "</td>\n";
+    if ($forum->open or $forum->type == "teacher") {   // Show the column with replies
+        echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderreplies\" align=center nowrap>";
+        echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">$post->replies</a>";
+        echo "</td>\n";
+    }
 
     echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderdate\" align=right nowrap>";
     if (!empty($post->timemodified)) {
@@ -2117,7 +2118,9 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         echo "<tr class=\"forumpostheader\">";
         echo "<th>".get_string("discussion", "forum")."</th>";
         echo "<th colspan=2>".get_string("startedby", "forum")."</th>";
-        echo "<th>".get_string("replies", "forum")."</th>";
+        if ($forum->open or $forum->type == "teacher") {
+            echo "<th>".get_string("replies", "forum")."</th>";
+        }
         echo "<th>".get_string("lastpost", "forum")."</th>";
         echo "</tr>";
     }
@@ -2155,7 +2158,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
                 echo "</p>\n";
             break;
             case "header":
-                forum_print_discussion_header($discussion, $forum->course, $strdatestring);
+                forum_print_discussion_header($discussion, $forum, $strdatestring);
             break;
             default:
                 if ($canreply or $discussion->replies) {
