@@ -72,7 +72,9 @@
     print_header("$site->shortname: $strconfiguration: $strbackup", $site->fullname,
                   "<a href=\"index.php\">$stradmin</a> -> ".
                   "<a href=\"configure.php\">$strconfiguration</a> -> ".
-                  "<a href=\"backup.php\">$strbackup</a>");
+                  $strbackup);
+
+    echo "<p align=right><a href=\"../backup/log.php\">".get_string("logs")."</a></p>";
 
     print_heading($strbackup);
 
