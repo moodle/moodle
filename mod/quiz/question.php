@@ -74,6 +74,7 @@
             }
             
         } else {
+            // determine if the question is being used in any quiz
             if ($category->publish) {
                 $quizzes = get_records("quiz");
             } else {
@@ -94,7 +95,23 @@
                 $beingused = implode(", ", $beingused);
                 $beingused = get_string("questioninuse", "quiz", "<I>$question->name</I>")."<P>".$beingused;
                 notice($beingused, "edit.php");
-            } else {
+
+            } else { // the question is not used in any of the existing quizzes
+
+                // we also have to check if the question is being used in the quiz
+                // which is currently being set up
+                if (isset($SESSION->modform)) {
+                    if ($qus = explode(",", $SESSION->modform->questions)) {
+                        foreach ($qus as $key => $qu) {
+                            if ($qu == $delete) {
+                                unset($qus[$key]);
+                                unset($SESSION->modform->grades[$qu]);
+                            }
+                        }
+                    }
+                    $SESSION->modform->questions = implode(",", $qus);
+                }
+         
                 notice_yesno(get_string("deletequestioncheck", "quiz", $question->name), 
                             "question.php?id=$question->id&delete=$delete&confirm=".md5($delete), "edit.php");
             }
