@@ -357,7 +357,7 @@ function chat_get_latest_message($chatid, $groupid=0) {
 //////////////////////////////////////////////////////////////////////
 // login if not already logged in
 
-function chat_login_user($chatid, $version, $groupid, $course, $sendentermsg=false) {
+function chat_login_user($chatid, $version, $groupid, $course) {
     global $USER;
     if ($chatuser = get_record_select('chat_users', "chatid='$chatid' AND userid='$USER->id' AND groupid='$groupid'")) {
         $chatuser->version  = $version;
@@ -387,7 +387,9 @@ function chat_login_user($chatid, $version, $groupid, $course, $sendentermsg=fal
             return false;
         }
 
-        if ($sendentermsg) {
+        if ($version == 'sockets') {
+            // do not send 'enter' message, chatd will do it
+        } else {
             $message->chatid    = $chatuser->chatid;
             $message->userid    = $chatuser->userid;
             $message->groupid   = $groupid;
@@ -409,7 +411,14 @@ function chat_delete_old_users() {
 
     global $CFG;
 
-    $timeold = time() - $CFG->chat_old_ping;
+    if ($CFG->chat_method == 'sockets') {
+        // delete very outdated users not deleted by chatd,
+        // let normal deleting to chatd, because it needs to output the message
+        $timeold = time() - ($CFG->chat_old_ping * 3);
+    } else {
+        $timeold = time() - $CFG->chat_old_ping;
+    }
+
     $query = "lastping < '$timeold'";
 
     if ($oldusers = get_records_select('chat_users', $query) ) {

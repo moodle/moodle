@@ -46,7 +46,7 @@
 
     $strchat = get_string('modulename', 'chat'); // must be before current_language() in chat_login_user() to force course language!!!
 
-    if (!$chat_sid = chat_login_user($chat->id, 'header_js', $groupid, $course, true)) {
+    if (!$chat_sid = chat_login_user($chat->id, 'header_js', $groupid, $course)) {
         error('Could not log in to chat room!!');
     }
 

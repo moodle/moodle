@@ -44,8 +44,6 @@
         $groupname = '';
     }
 
-    chat_delete_old_users();
-
     $strchat = get_string('modulename', 'chat'); // must be before current_language() in chat_login_user() to force course language!!!
 
     if (!$chat_sid = chat_login_user($chat->id, 'sockets', $groupid, $course)) {
