@@ -1,0 +1,740 @@
+<head>
+    
+<title>Moodle Docs: Old Release notes</title>
+	
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+    
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    
+<style type="text/css">
+       dt {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
+       dd {margin-bottom:1em;} 
+    </style>
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Old Release notes</h1>
+
+<h3> Nieuw in Moodle 1.3.4  (11 Augustus, 2004)</h3>
+<ul>
+  <dl>
+    <dt>Updates</dt>
+    <dd> 
+      <ul>
+        <li>Er is wat compatibiliteit toegevoegd voor het behandelen van woordenlijsten en bronnen van Moodle 1.4.</li>
+        <li>Gebruikers met beperkte rechten kunnen hun inschrijvingen niet meer wijzigen</li>
+      </ul>
+    </dd>
+    <dt>Herstelde fouten</dt>
+    <dd> 
+      <ul>
+        <li>Een mogelijk beveiligingsprobleem in verband met argumenten in forum/post.php is opgelost</li>
+        <li>Een mogelijk beveiligingsprobleem in verband met in Moodle-teksten is opgelost</li>
+        <li>Een zeldzame fout in verband met aantal pogingen in testen is hersteld</li>
+        <li>Een fout met regular expression logica in korte antwoorden is hersteld</li>
+        <li>Een typfout in de PostgreSQL installatie is hersteld</li>
+        <li>Een aantal links in de documentatie zijn hersteld</li>
+      </ul>
+    </dd>
+  </dl>
+</ul>
+
+<br />
+ <h3> Nieuw in Moodle 1.3.3  (16 Juli, 2004)</h3>
+ <ul>
+   <dl>
+     <dt>Updates</dt>
+     <dd>
+       <ul>
+         <li>De ADOdb library is geupgraded naar een versie die compatibel is met PHP 5.0</li>
+         <li>Verbeteringen aan de detectie en conversie van URLs in backups</li>
+       </ul>
+     </dd>
+     <dt>Herstelde fouten</dt>
+     <dd> 
+       <ul>
+         <li>Een mogelijke kwetsbaarheid door het bestand help.php is hersteld</li>
+         <li>Een mogelijke kwetsbaarheid door de taalinstelling is hersteld</li>
+         <li>Herstellingen voor het bewerken van taalstrings met dubbele aanhalingstekens</li>
+         <li>Verschillende kleine problemen hersteld in de woordenlijst</li>
+         <li>Wat kleinigheden hersteld in de scormmodule</li>
+       </ul>
+     </dd>
+   </dl>
+ </ul>
+ 
+ <br />
+ 
+ 
+
+<h3> Nieuw in Moodle 1.3.2  (9 Juli, 2004)</h3>
+<ul>
+  <dl>
+    <dt>Updates</dt>
+    <dd> 
+      <ul>
+        <li>De SCORM module is maakt nu deel uit van de standaardinstallatie </li>
+        <li>Enkele nieuwe talen (Maleisisch, Ests) </li>
+        <li>Veel bestaande vertalingen zijn nu bijgewerkt tot versie 1.3.x</li>
+      </ul>
+    </dd>
+    <dt>Herstelde fouten</dt>
+    <dd> 
+      <ul>
+        <li>Een mogelijke kwetsbaarheid van de startpagina bij Moodle op servers met een oude versie van PHP is hersteld. Als je een versie ouder dan 4.3 gebruikt is het misschien een goed idee om naar deze versie van Moodle te upgraden</li>
+        <li>Belangrijke herstellingen aan de logica achter de forums wanneer je ze gebruikt als groepsactiviteit</li>
+        <li>De profielen van de leraars die het vak beheren zijn nu zihtbaar, zelfs al zijn ze ingedeeld bij een andere gescheiden groep van de klas.</li>
+        <li>De onderwerpregels in multibyte talen in recente activiteit wordt niet meer afgebroken</li>
+        <li>Enkele problemen met export/import in de woordenlijst zijn hersteld</li>
+        <li>De Backupfunctie behandelt nu z'n tijdelijke bestanden beter</li>
+        <li>En nog heel wat andere kleine herstellingen hier en daar</li>
+      </ul>
+    </dd>
+  </dl>
+</ul>
+
+<br />
+
+
+<h3> Nieuw in Moodle 1.3.1  (4 Juni, 2004)</h3>
+<ul>
+  <dl>
+    <dt>Verschillende fouten hersteld</dt>
+    <dd> 
+      <ul>
+        <li>Sommige HTML code maakte de HTML-editor in IE6 onstabiel en dat is nu opgelost</li>
+        <li>Er zijn wat fouten hersteld in verschillende auto-link tekst filters</li>
+        <li>De navigatiebalk ziet er beter uit (door het &raquo; teken te gebruiken)</li>
+        <li>Flash bestanden hebben nu hun eigen icoontje</li>
+        <li>Het toevoegen van links door leraars met de HTML-editor is nu hersteld</li>
+        <li>De sectieblokken houden nu hun focus</li>
+        <li>De sitebestanden eisen nu aanmelding indien gevraagd</li>
+        <li>Het upgraden van blokken zonder de databank werkt nu</li>
+        <li>Updates van de vertalingen</li>
+      </ul>
+     </dd>
+   </dl>
+</ul>
+
+<br />
+
+<h3> Nieuw in Moodle 1.3  (25 mei, 2004)</h3>
+<ul>
+  <dl>
+    <dt>Belangrijkste nieuwe mogelijkheden</dt>
+    <dd> 
+      <ul>
+        <li>Nieuwe <strong>kalender</strong> mogelijkheid (dank aan Jon Papaioannou en de <a target="_blank" href="http://www.sch.gr/">Greek School Network</a>!)</li>
+        <li>Nieuwe <strong>Blokken </strong>mogelijkheid, waarmee je blokken kunt toevoegen en verplaatsen rond een vakpagina (dank aan Jon Papaioannou, Eloy Lafuente en anderen!)</li>
+        <li>Nieuw <strong>RSS Systeem</strong> waarmee je Forums en Woordenlijsten (en later andere modules) kunt publiceren via RSS-feeds (Dank aan Eloy!)</li>
+        <li>De <strong>Mediaplugin</strong> filter ondersteunt nu auto-embedding van Quicktime, Flash, and Windows Media files</li>
+        <li>Een nieuwe <strong>Activiteitnaam</strong> filter die nu automatisch hyperlinks toevoegt aan andere activiteiten in hetzelfde vak wanneer hun naam gebruikt wordt</li>
+      </ul>
+    </dd>
+    <dt>Andere nieuwe mogelijkheden</dt>
+    <dd> 
+      <ul>
+        <li>Nieuw type bron &quot;Map&quot; toont een hele map met geüploade bestanden (inclusief submappen)</li>
+        <li>Bij bronnen die bestanden zijn (geüpload of websites) wordt nu een relevant icoon getoond op de vakpagina</li>
+        <li>De meeste interne HTML links binnen forums en bronnen worden nu behouden tijdens backup en restore</li>
+        <li>Het is nu mogelijk om gewone http arguments door te geven aan bestanden in de bestandenlijst. Hiermee kun je meer comlexiteit bereiken met Flash- en HTML-bronnen</li>
+        <li>$CFG-&gt;forceloginforprofiles kan ingesteld worden om gasten (en Google) te verhinderen om gebruikersprofielen op site-niveau te bekijken.</li>
+        <li>Wanneer toegang door Google is ingeschakeld, dan werkt de Google vertalingsfunctie nu ook</li>
+        <li>Sessies worden nu bewaard in de Moodle data map - hierdoor werkt Moodle beter op serverclusters en worden sommige sessie-time out problemen opgelost als Moodle op een gedeelde web host staat.</li>
+        <li>Gebruikers foto's kunnen nu gemakkelijk verwijderd worden van de profiel bewerken pagina.\</li>
+        <li>Chatten wordt nu gelogd.</li>
+        <li>Verborgen secties kunnen nu volledig verborgen worden voor de leerlingen (vakinstelling)</li>                      <li>Verbeteringen aan teksten in grafieken voor sommige niet-Engelse talen die unicode lettertypes gebruiken.</li>
+        <li>Verbeterde interface voor het beheer van schalen, ook in meertalige sites</li>
+        <li>Alle leerlingen kunnen nu uit een vak gehaald worden met één knop (op de leerlingen pagina)</li>
+        <li>Leden van forums kunnen nu manueel ingeschreven of uitgeschreven worden in groepen</li>
+        <li>Beter afhandelen van sommige Europese tekens in bestandsnamen en gebruikersnamen</li>
+        <li>Feedbackopmerken voor een verborgen opdracht worden niet meer gemaild tot de opdracht zichtbaar gemaakt wordt.</li>
+        <li>Betere ondersteuning voor het importeren van Blackboard testen</li>
+        <li>Het cron script kan nu lopen door gebruik te maken van een PHP binary vanuit elke map</li>
+        <li>De HTML-editor is verder verbeterd en meer aangepast</li>
+        <li>Het standaard recente activiteiten scherm wordt nu berekend vanuit de laatste toegang tot het vak in (of twee dagen, afhankelijk van wat het meest recente is)T. Vroeger werd het berekend van de laatste aanmelding op de site.</li>
+        <li>Bevestigingsmails zijn nu in HTML en in tekst, om het afbreken van de bevestigingslink te verhinderen.</li>
+        <li><b>Nieuwe vertalingen</b>: Farsi, Latvian, Noors voor basisscholen, Unicode versie van Traditioneel Chinees.</li>
+      </ul>
+    </dd>
+    <dt>Herstelde fouten</dt>
+    <dd> 
+      <ul>
+        <li>Honderden kleine foutjes hersteld over heel Moodle, meestal om het uiterlijk en de stabiliteit te verbeteren.</li>
+        <li>Zoals gewoonlijk, als je fouten vind in Moodle, meld ze alstublieft in onze  <a href="http://moodle.org/bugs/">Bug Tracker</a>!</li>
+      </ul>
+      <p>&nbsp;</p>
+    </dd>
+    <dt><font size="+1">Tenslotte, vergeet niet te kijken naar sommige van de <a href="http://moodle.org/download/modules/" target="_blank">vele optionele modules onder ontwikkeling</a>, waaronder de SCORM module, de Wiki module, de Hot Potatoes module en vele andere nieuwigheden.</font></dt>
+  </dl>
+</ul>
+
+<p>&nbsp;</p>
+<p><br />
+
+
+</p>
+<h3> Nieuw in Moodle 1.2.1 (25th Maart, 2004)</h3>
+<ul>
+  <dl>
+    <dt>Verschillende kleine foutjes hersteld</dt>
+    <dd> 
+      <ul>
+        <li>Enkele foutjes hersteld die er voor zorgden dat de resulaten en grafieken van een onderzoek in sommige omstandigheden niet werken getoond</li>
+        <li>Verbeterde beveiliging in het cron script</li>
+        <li>Verbeterde WebCT test import die beter met afbeeldingen, kort antwoord en escapekarakters omgaat.</li>
+        <li>Opmaak hersteld in het dialoogvenster van de editor voor het invoegen van links</li>
+        <li>De woordenlijstmodule verhinderen links te maken naar namen van activiteiten die al links zijn</li>
+        <li>Tijdzoneberekeningen hersteld</li>
+        <li>Karakters zoals :( die in Javascript code gebruikt worden binnen gefilterde HTML worden niet meer in een smiley geconverteerd</li>
+        <li>Een verbeterde afhandeling van scores voor forums als secureforms ingeschakeld is.</li>
+        <li>Bij het maken van meerkeuzevragen wordt nu standaard één enkel juist antwoordformaat voorgesteld</li>
+        <li>Gasten kunnen de e-mailadressen van gebruikers die "toon mijn e-mailadres alleen aan leden van het vak" ingesteld hebben niet meer zien</li>
+        <li>De Primaire beheerder is nu de record in user_admins met het laagste nummer in plaats van de beheerder met de kleinste userid.</li>
+        <li>De flash MP3 plugin is gewijzigd om de helderheid van de Afspelen knop te verbeteren op donkere schermen</li>
+        <li>Veel verbeteringen en oppoetsen in heel wat talenpakketten</li>
+      </ul>
+    </dd>
+  </dl>
+</ul>
+
+<br />
+
+<h3> Nieuw in Moodle 1.2 (20 Maart 2004)</h3>
+<ul>
+ <dl>
+   <dt>Belangrijke nieuwe features </dt>
+   <dd>
+<ul>
+<li>Nieuwe ondersteuning voor <strong>groepen</strong> en cohorten in vakken (met veel opties).</li>
+<li><strong>Tekst filters</strong> laten het arbitrair verwerken van alle tekst in Moodle toe, inclusief <strong>automatisch linken</strong>, <strong>wiskundig ondersteuning</strong>, <strong>meertalige inhoud</strong> en oneindig meer mogelijkheden.</li>
+<li>Een fantastische nieuwe <strong>Woordenlijst module</strong> (dankzij Williams Castillo!) met veel verschillende manieren om leeractiviteiten te construeren rondom het verzamelen van definities. </li>
+<li>Een geweldige nieuwe <strong>Les module</strong> (dankzij Ray Kingdon!) creëert gemakkelijk actieve inhoud met routes en multipe-choice vragen.</li>
+<li>Een nieuwe <strong>Label module</strong> maakt HTML in de vakpagina mogelijk. </li>
+<li>Een verbeterde <strong>WYSIWYG editor</strong>, sneller en beter bruikbaar op verschillende platforms dan de oude. </li>
+<li><strong>Automatische backups</strong> kunnen door de beheerder gepland worden voor alle vakken tegelijk.</li>
+</ul></dd>
+<dt>Vakken</dt>
+<dd>
+<ul>
+<li>Activiteiten kunnen ingesprongen worden in het vakoverzicht, wat zorgt voor meer structuur. </li>
+<li>Een nieuw rapport voor Recente Activiteiten maakt het makkelijker om te zien wat er recent is gebeurd. </li>
+<li>Een nieuwe statistiekenknop bij elke activiteitenlink verwijst naar de statistieken pagina om de statistieken per activiteit te tonen. </li>
+<li>Terugzettenknop nu altijd functioneel.</li>
+<li>Verbeterde "index" uiterlijk voor alle modules. </li>
+<li>Verbeteringen aan weergave van deelnemers, inclusief verdeling in pagina's en zoeken op initialen. </li>
+<li>Excel downloads zijn meer congruent met verschillende operating systems.</li>
+<li>Betere fout berichtgeving bij het toevoegen of het bijwerken van activiteiten. </li>
+<li>Zoekveld  auto-focused niet meer (het veroorzaakte vervelende auto-scrolling in lange vakken).</li>
+<li> Een link in de vakpagina voor leerlingen om hun lidmaatschap zelf op te zeggen.  </li>
+<li>Een link in de vakpagina voor leerlingen om hun wachtwoord te wijzigen.  </li>
+<li>Leerlingen kan het bekijken van hun eigen activiteitenrapporten  toegestaan worden (vakinstelling). </li>
+<li>Docenten kunnen door vakbestanden bladeren op zoek naar afbeeldingen wanneer ze gebruik maken van de nieuwe editor. </li>
+<li>Nieuwe afbeelding van een lege cel als bestemming bij het verplaatsen van activiteiten. </li>
+<li>Binnenkomsten worden nu geregistreerd per vak, zodat de deelnemers lijsten meer betekenis hebben. </li>
+<li>De activiteitennavigatiebalk heeft nu knoppen voor vorige en volgende activiteit. </li>
+<li>De data van bestanden waren niet juist op sommige systemen, dit is nu opgelost. </li>
+<li>Oude chatgebruikers worden niet langer weergegeven in de recente activiteiten. </li>
+</ul></dd>
+<dt>Site beheer</dt>
+<dd>
+<ul>
+<li>Een belangrijke veiligheidsaanpassing welke voorkomt dat docenten inloggen als beheerders die leerling zijn in hun vak. </li>
+<li>Nieuwe instelling  "verplichtlogin" kan mensen dwingen in te loggen voor ze maar iets van de site kunnen zien. </li>
+<li>Nieuwe instelling "toegangvoorgoogle" laat Google en mensen die doorverwezen zijn door Google toe binnen te gaan als gast.</li>
+<li>Nieuwe instelling "tijdzone" laat het instellen van een standaard tijdzone voor de hele site toe.  </li>
+<li>Nieuwe instelling "verwijderonbevestigd" specificeert de tijd dat we wachten op de bevestiging van emailaccounts.  </li>
+<li>Nieuwe instelling "stauitschrijventoe" stelt leerlingen in staat of juist niet om het lidmaatschap voor vakken op te zeggen.  </li>
+<li>Nieuwe instelling "volledigenaamweergave" laat het overschrijven van de opmaak van de volledige naam van gebruikers toe zodat leerlingen alleen "voornaam achternaam", "achternaam voornaam" of "voornaam" kunnen zien.</li>
+<li>De docent of beheerder kan het emailadres van individuele gebruikers uitschakelen (bruikbaar bij het behandelen van mail accounts die afstuiten). </li>
+<li>Upload grootte kan nu worden beheerd door heel Moodle door gebruik van "maxbytes". Er is een site limiet (begrensd door de huidige PHP limieten), welke op zichzelf de bovenste grens is voor vakken limieten, welke de bovenste grens is voor activiteiten limieten.  </li>
+<li>Moodle cookies kunnen aangepast worden (helpt als meerdere Moodles op een site worden gebruikt). </li>
+<li>Ingevoegd script voor de analyse van de database functionering (admin/dbperformance.php).</li>
+<li>Ingevoegd standalone script om een server te checken op Moodle congruentie(lib/compatible.php)</li> 
+<li>Als een bestand genaamd cronextra.php bestaat in de dataroot zal de cron deze ook uitvoeren. Dit staat sites toe "speciale" onderhouds voorzieningen te hebben.  </li>
+<li>De opmaak van vakken zijn nu meer als plug-ins in verschillende mappen.</li>
+<li>Gebruikers kunnen nu geüpload worden vanuit tekstbestanden. </li> 
+<li>Als $CFG->disableuserimages is gedefenieerd (in config.php) dan kunnen gebruikers afbeeldingen niet verander worden. </li>
+<li>Als $CFG->admineditalways is gedefinieerd kan de beheerder een bijdrage ten alle tijde bewerken.  </li>
+<li>Als $CFG->filterall is gedefinieerd dan zullen zelfs kleine dingen als forum onderwerpen en activiteitennamen gefilterd worden. </li>
+<li>Ondersteuning voor beperkte demo gebruikers (bijvoorbeeld de  teacher demo op Moodle.org) - gebruikersnamen kunnen toegevoegd worden aan een lijst met namen in config.php. bijv.$CFG->restrictusers = 'teacher,fred'; </li>
+</ul>
+</dd>
+<dt>Thema's </dt>
+<dd><ul>
+<li>Aanpassingen voor Internet Explorer maken het gebruik van het style sheet stabieler.  </li>
+<li>Allerlei aanpassingen en verbeteringen aan thema's. Aangepaste thema's vereisen upgrading! </li>
+</ul>
+</dd>
+<dt>Vertalingen </dt>
+<dd> 
+<ul>
+<li>Nieuwe talen: Galego en Litouws. </li>
+<li>Verbeterde taal bewerkings interface. Het laat toe de huidige taal te kiezen en laat het afzonderlijk bewerken van elk bestand toe. </li>
+<li>De lijst met landennamen kan nu vertaald worden, zoals ook de editor knoppen, de namen van smilies en de bestand groottes (Mb, Gb etc) </li>
+<li>Taal pakketten kunnen nu de taalrichting definiëren (van rechts naar links of van links naar rechts).  </li>
+<li>Taalpakketten kunnen nu de volgorde definiëren in welke de namen van personen weergegeven zouden moeten worden. </li>
+<li>Taalbestanden zijn nu geschreven gebruik makend van enigszins meer efficiënte PHP code.  </li>
+<li>Eindelijk af van de onzinnige linefeeds in de strings met meerdere regels.  </li>
+<li>Vakken kunnen een taal voor alle gebruikers afdwingen. </li>
+</ul>
+</dd>
+<dt>
+Backup / Terugzetten </dt>
+<dd>
+<ul>
+<li>Automatische backups kunnen door de beheerder gepland worden voor alle vakken tegelijk.</li>
+<li>Statistieken kunnen volledig worden teruggezet. </li>
+<li>Alle benodigde gebruikers worden nu in de vak backups ingevoegd  (zelfs als ze niet meer ingeschreven zijn) </li>
+<li>Allerlei aanpassingen en verbeteringen.</li>
+</ul>
+</dd>
+<dt>Tekst Filters en Formatting </dt><DD>
+<ul>
+<li>Waarschuwing: de nieuwe tekst filter kan de belasting op je server verhogen, vooral wanneer complexe filters worden gebruikt. Gebruik ze voorzichtig.  </li>
+<li>De nieuwe  woordenlijst filter kan links creëren naar woordenlijst items van overeenkomstige worden door de gehele Moodle. </li>
+<li>De nieuwe TeX filter kan TeX code die waar ook in Moodle gevonden word omzetten in werkelijke wiskundige notaties (GIF formaat afbeelding). Er is ook een algebra filter met een makkelijker input formaat (meer als rekenmachines). </li>
+<li>De nieuwe censuur filter kan ingeschakeld worden om vieze woorden uit te filteren. </li>
+<li>De nieuwe multilang filter staat toe om tekst in meerdere talen in te voeren en alleen de beste wordt getoond aan elke gebruiker (afhankelijk van hun taal instelling). </li>
+<li>De <nolink> tag kan gebruikt worden om autolinken te voorkomen in een tekstpassage.  </li>
+<li>Meerdere tags zijn nu toegestaan, inclusief <acronym> en alle  <math> tags. </li>
+<li>Sommige gebieden waar tekst niet juist gefilterd werd (veiligheids risoco) zijn nu aangepast. </li>
+</ul>
+</dd>
+<dt>Developer API</dt><dd> 
+<ul>
+<li>Een nieuwe Coding guide is beschikbaar.  </li>
+<li>Een nieuwe Philosophy guide is beschikbaar ;-)</li> 
+<li>Verbeteringen aan het template voor nieuwe modules.</li>  
+<li>Modules zouden nu de minimale versie van Moodle moeten specificeren waarmee zij congruent zijn. </li>
+<li>Scripts kunnen naar print_header() specificeren of de pagina pure XML is.  </li>
+<li>Elke module kan gebruikers voorkeuren opslaan en terughalen die tussen logins blijven bestaan.  </li>
+</ul>
+</dd>
+<dt>Chats </dt><dd>
+<ul>
+<li>Chat sessies kunnen nu verwijderd worden.  </li>
+<li>Geplande chattijden laten de tijdszone zien ter verduidelijking. </li>
+</ul>
+</dd>
+<dt>Forums </dt><dd>
+<ul>
+<li>Voorkeuren voor de forum weergave worden onthouden tussen logins. </li>
+<li>"Toon discussiestart" link in alle bijdragen voor snellere navigatie door forums. </li>
+<li>Anchor tags kunnen naar indivuele bijdragen refereren in alle weergaven.</li>
+<li>Verbeteringen aan de cron taak wanneer deze handmatig wordt uitgevoerd, zowel als logging en mail fouten. </li>
+<li>Alleen print de resultaten knop als er resultaten behaald kunnen worden. </li>
+<li>Grote verbeteringen aan de email tekst versies van HTML forum bijdragen.  </li>
+<li>Als er geantwoord wordt, wordt een beeld van andere antwoorden getoond.  </li>
+<li>Als de HTML-editor wordt gebruikt voor bijdragen, worden geen andere opmaak opties getoond.  </li>
+</ul>
+</dd>
+<dt>Logboeken</dt><dd> 
+<ul>
+<li>Logboek vragen kunnen nu gebruik maken van de HTMLeditor. </li>
+<li>Een aantal aanpassingen in de rapport pagina als logboek bijdragen gewaardeerd worden.  </li>
+</ul>
+</dd>
+<dt>Testen</dt><dd> 
+<ul>
+<li>Vragen en categoriën kunnen nu bewerkt worden zonder een test te openenen. </li>
+<li>Alle vragen kunnen nu elk van de mogelijke Moodle opmaken  gebruiken. </li>
+<li>Nieuw importeer opmaak: GIFT opmaak (dit is de nieuwe standaard opmaak) </li>
+<li>Nieuw importeer opmaak: Course Test Manager </li>
+<li>Nieuw importeer opmaak: WebCT opmaak  </li>
+<li>Nieuw importeer opmaak: Aiken opmaak </li>
+<li>Korte antwoord vragen kunnen nu wildcards gebruiken voor overeenkomsten bijvoorbeeld wild*rds.</li>
+<li>Afbeelding werken nu in vragen uit extern gepubliceerde categorieën.</li>
+<li>Het overzichtsrapport is verbeterd door meer informatie te laten zien en het verwijderen van pogingen toe te staan. </li>
+<li>Een nieuwe gedetailleerd testrapport voor statistische analyses.  </li>
+<li>Alle vraagtypes kunnen nu maximaal 10 antwoorden hebben. </li>
+<li>Menu's in test bewerken hebben geen submit knoppen meer nodig  (gewoon selecteren vanuit het menu) </li>
+<li>Opgeloste bug die zich voordeed bij het herberekenen van sommige testen die willekeurige vragen bevatten.</li>
+<li>Opgeloste bug die zich voordeed in backups van testen die willekeurige vragen bevatten.  </li>
+<li>Vele andere kleine bugs opgelost. </li>
+</ul>
+</dd>
+<dt>Bronnen </dt><dd>
+<ul>
+<li>Docenten kunnen veel directer door bestanden bladeren als ze een geüpload bestand creëren. </li>
+<li>Nieuwe instellingen die een standaard URL toelaten, een standaard zoekpagina en standaard popup instellingen. </li>
+<li>Geüploade bestanden kunnen ook in popups verschijnen. </li>
+<li>Veel betere weergave van popups wanneer de navigatiebar gebruikt wordt om daar te komen.</li>
+<li> MP3 bestanden worden nu gestreamd gebruik makend van een ingebouwde Flash MP3 speler.</li>
+<li>Video bestanden (Media player, Quicktime) zijn ingebed gebruik makend van lokale plugins. </li>
+</ul>
+</dd>
+<dt>Workshops </dt><dd>
+<ul>
+<li>Veranderingen in het omgaan met leerlingevaluaties.  </li>
+<li>Nieuwe evaluatie fase. </li>
+<li>Nieuwe opties voor de overzichtstabel voor ingezonden werk. </li>
+</ul>
+</dd>
+<dt>Allerlei </dt><dd>
+<ul>
+<li>Moodle negeert alle folders die Frontpage mogelijk heeft toegevoegd.  (_vti_cnf). </li>
+<li>Verbeterde HTML -> XHTML op veel plaatsen. </li>
+<li>Veel verbeterigen voor non-MySQL databases </li>
+<li>Een aantal hard gecodeerde tekst strings in Moodle zijn vertaalbaar gemaakt.  </li>
+<li>Data in het gebruikersprofiel wordt nu correct opgeschoond. </li>
+<li>Verbeteringen wanneer Moodle is ingebed in een frame (bijvoorbeeld  in Postnuke) </li>
+<li>Bug aanpassingen in de Wiki modus. </li>
+<li>Beheerder kan niet langer externe accounts bewerken. </li>
+<li>Qmail gebruikers kunnen "qmail" in het smtphosts veld gebruiken voor betere resultaten.  </li>
+<li>Meerdere methodes voor doorverwijzen, om om sommige browser bugs heen te werken. </li>
+<li>Kleine verbeteringen aan de weergave van cijfers in de cijferlijsten.</li>
+<li>Meer studenten profiel velden kunnen bewerkt worden zoals afdeling en instituut en deze kunnen ook bijgeschreven worden in cijfer lijsten in tekst of Excel. </li>
+<li>Als een leerling wordt toegevoegd als docent, worden ze automatisch als leerling uitgeschreven. </li>
+<li>Upgraded ADOdb (database layer) </li>
+</ul>
+<hr>
+<h3> New in Moodle 1.1.1 (10 September, 2003):</h3>
+<ul>
+  <dl>
+    <dt>&nbsp; </dt>
+    <dt>General Fixes</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Translation improvements in many languages</li>
+        <li>Frame fix when switching languages in documentation</li>
+        <li>All short PHP tags removed ... short_tags is no longer a requirement</li>
+        <li>Forum search results link using anchor tag for better context</li>
+        <li>Removed target from &quot;delete&quot; link on user editing page</li>
+        <li>'Search' on social format moved closer to the top to prevent browser 
+          self-scrolling </li>
+        <li>Page redirection is faster and no longer causes intermediate page 
+          to be stored in IE history</li>
+        <li>Course listings improved when courses are displayed, including more 
+          information</li>
+        <li>Category listings show courses in full when there are under ten courses</li>
+        <li>Invisible courses are always shown last in My Courses</li>
+        <li>Course creators can now see all hidden categories and courses</li>
+        <li>Styles added for category and course names</li>
+        <li>Removed tags from question text on quiz 'simplestat' report</li>
+        <li>Added percentages to downloaded data from 'simplestat' report</li>
+        <li>Allow external deep linking using guest account ?username=guest</li>
+        <li>Any admin can now add/remove course creators</li>
+        <li>Primary admin can now update own username/password even with external authentication</li>
+        <li>Quizzes can now be specified as having "no grade" and no grades will be shown</li>
+        <li>When editing a language, missing strings files are created if possible</li>
+        <li>Fixed bug in weekly journal date calculations</li>
+        <li>Fixed bug in config.php that made error_reporting not work</li>
+        <li>Fixed bug when editing user name with quotes in it</li>
+        <li>Fixed bug in email obfuscation for email addresses with numbers in 
+          them </li>
+        <li>Fixed missing PostgreSQL schema for chat module</li>
+        <li>Fixed several typos in PostgreSQL upgrading code</li>
+        <li>Fixed some uninitialised variables</li>
+        <li>Several bugs fixed in Workshop module</li>
+      </ul>
+    </dd>
+  </dl>
+</ul>
+<hr>
+
+
+
+<h3> New in Moodle 1.1 (28 August, 2003):</h3>
+<ul>
+  <dl>
+    <dt>&nbsp; </dt>
+    <dt>Major Changes</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>A completely new <strong>backup</strong> system for backup and restore 
+          of courses (Thanks, Eloy!)</li>
+        <li>A new <strong>workshop</strong> module for peer grading (Thanks, Ray!)</li>
+        <li>A new <strong>chat</strong> module for synchronous discussions</li>
+        <li>All-new <strong>course manager</strong> to handle very large numbers 
+          of courses (tested with 3700)</li>
+        <li>Custom-defined <strong>grading scales</strong> that can be used throughout 
+          a course</li>
+        <li>Performance improvements in many areas</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>General</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Clean up of the whole admin menu organisation to make it clearer</li>
+        <li>Categories can be nested and sorted alphabetically or manually</li>
+        <li>Courses and whole categories can be hidden from students</li>
+        <li>Course descriptions and names can be searched for keywords</li>
+        <li>Large categories are now completely paged</li>
+        <li>Improved web caching for stylesheets and images</li>
+        <li>&quot;My courses&quot; display on the home page when logged in.</li>
+        <li>Inclusion of non-linked page to display ALL user pictures at once 
+          (see /userpix)</li>
+        <li>The &quot;secureforms&quot; feature now defaults to OFF.</li>
+        <li>Moodle now doesn't care if &quot;magic quotes&quot; is on or off.</li>
+        <li>Images in /pix were rearranged and tidied up</li>
+        <li>HTML email is better formatted for wider compatibility</li>
+        <li>Mail bounces are now sent to the admin user</li>
+        <li>Better cron tasks (less CPU used) and duplicate enrolments are now 
+          cleaned</li>
+        <li>Improved display of logs with infinite paging and increased flexibility</li>
+        <li>User log graphs now work at site-level (showing ALL logs on the site)</li>
+        <li>People with manual accounts can now recover their password</li>
+        <li>Improved system for defining/printing help files for major activity 
+          modules</li>
+        <li>Activity modules can now have settings</li>
+        <li>Email addresses are all completely obfuscated (to fool web spiders)</li>
+        <li>There is now an index to the help files</li>
+        <li>Library (Mark Kimes' add-on) is now supported if it is installed (see Moodle contrib for Library source)</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt></dt>
+    <dt>Courses</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Teachers can now have their course editing privileges removed</li>
+        <li>Teachers can now manually enrol students if they want to</li>
+        <li>Teacher management is now all combined in one interface</li>
+        <li>Activities can be moved any distance with two clicks</li>
+        <li>Topics/weeks can now be moved up and down</li>
+        <li>Pop-up menu to quickly switch between topics/weeks when collapsed</li>
+        <li>When self-enrolling, students are notified and given a chance to cancel</li>
+        <li>Teachers and students see list of &quot;My Courses&quot; on course 
+          home pages.</li>
+        <li>Grades can be hidden from students if not needed</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt></dt>
+    <dt>Languages</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li><strong>Hungarian</strong> and <strong>Greek</strong> have been added, 
+          and there are lots of other updates. As usual, the language packs within 
+          this release may not be fully completed yet. You can always download 
+          the newest language packs from <a href="http://moodle.org/download/lang/">http://moodle.org/download/lang/</a>.</li>
+        <li>Updates and fixes to most languages</li>
+        <li>Languages now have a parent language (for displaying missing strings)</li>
+        <li>Some fixes for locales and time display in several languages</li>
+        <li>es_mx is being phased out in favour of &quot;es&quot; (International 
+          Spanish) </li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt></dt>
+    <dt>Forum</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Much improved searching, with multiple keywords, paging etc</li>
+        <li>Forum grading can be either off, used by everyone, or used only by teachers</li>
+        <li>Forum grading can use custom scales or numbers</li>
+        <li>A date range can be set to restrict the posts that can be graded.</li>
+        <li>Admin now has access to some settings via Admin -&gt; Modules -&gt; Forums </li>
+        <li>After editing a post, user is returned to post in context</li>
+        <li>Attached images are displayed inline</li>
+        <li>Email copies in plain text format now print URLs nicely</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>Quiz</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>New question type: Embedded Answers (Cloze) - allows text passages 
+          with embedded answers</li>
+        <li>New question type: Numerical - allows a range of numerical answers 
+          to be entered</li>
+        <li>New question type: Description - not a real question, it allows text/graphics 
+          to be inserted anywhere</li>
+        <li>Expanded quiz reporting with modular report plugins</li>
+        <li>New feature for repeat attempts, where each attempt builds on the 
+          last </li>
+        <li>If the quiz is closing within the next 24 hours, a small countdown 
+          clock is shown in the title bar and alerts warn at ten minutes and zero 
+          minutes.</li>
+        <li>Some refactoring to the quiz code to make it easier to extend with 
+          new question types</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt></dt>
+    <dt>Resources</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Web links can now be in very customisable pop-up windows.</li>
+        <li>Admin now has access to some settings via Admin -&gt; Modules -&gt; 
+          Resources</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>Some of the more annoying bugs recently fixed</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Moving posts now also moves attachments</li>
+        <li>No more warnings when looking for uploaded files in an empty course</li>
+        <li>Students no longer always get plain-format mail on force-subscribed 
+          forums</li>
+        <li>Cookies can no longer interfere with the admin setup during installation</li>
+        <li>Effectively no limit to the number of activities per section</li>
+        <li>Several fixes when dealing with zip files, especially on Windows</li>
+        <li>Admins can now edit accounts created from external databases</li>
+        <li>Session no longer conflicts with other software</li>
+        <li>Excel files now work on non-Intel machines</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>&nbsp; </dt>
+  </dl>
+  <dd>&nbsp;</dd>
+</ul>
+<hr>
+
+<h3> New in Moodle 1.0.9 (29th May, 2003) :</h3>
+<ul>
+  <dl>
+    <dt> General</dt>
+    <dd> 
+      <li>Various optimisations and significant performance enhancements</li>
+      <li>Several obscure security fixes</li>
+      <li>Moodle is now well-behaved when enclosed within a frame</li>
+      <li>Richtext editor can now be used in more text-editing fields</li>
+      <li>New format "Plain text format", useful when posting code or HTML.</li>
+      <li>New format "Wiki format", allows Wiki-style tagging in most places</li>
+      <li>New popup allows emoticons/smilies to be inserted by clicking on images</li>
+      <li>Ability to specify permissions of new folders and files created on the server</li>
+      <li>Some fixes for servers running in Safe Mode (some file problems remain)</li>
+      <li>Various fixes for cleaning some external text of quotes, etc</li>
+      <li>Various fixes for PostgreSQL 7.3 compatibility</li>
+      <li>Started migration of HTML code towards XHTML Transitional</li>
+      <li>Countless other little fixes all over the place</li>
+    </dd>
+    <dt> Languages</dt>
+    <dd> 
+      <li><b>10</b> new language packs!   Argentinian Spanish, Czech, Portuguese, Slovakian, Romanian, Danish, Russian, Polish, Chinese Traditional and French Canadian.</li>
+      <li>Fixes and upgrades to almost all language packs</li>
+      <li>Language can be specified for the current session (see menu on home page and login page) and can be changed on any page by something to the url, eg:  http://moodle.org/?lang=ru </li>
+      <li>Language menu can be restricted to a subset of languages and even removed.
+      <li>Truetype fonts are now part of the language packs</li>
+      <li>ALL dates/times can now be reformatted as part of the language pack</li>
+      <li>A small but annoying bug was fixed with the web-based language editor on Windows servers that caused language files to grow</li>
+    </dd>
+    <dt> Developers</dt>
+    <dd> 
+      <li>Global debug variable gives more feedback about uninitialised variables and the like</li>
+      <li>Various fixes to tidy up and further standardise some of the PHP code</li>
+      <li>Various fixes for robustness (ensuring variables are always initialised)</li>
+    </dd>
+    <dt> Admin</dt>
+    <dd> 
+      <li><font color=red>Some changed options and code in config-dist.php (if upgrading, compare with your current config.php or rebuild your config.php from scratch)</font></li>
+      <li><font color=red>Many changes to themes - authors of custom themes should read <a href="http://moodle.org/theme/UPGRADE.txt">theme/UPGRADE.txt</a> </font></li>
+      <li>New moodle.org registration function for security notifications etc</li>
+      <li>Admin directory can be moved from /admin to something else (see config-dist.php)</li>
+      <li>User listing is now paged, and can now be searched for strings</li>
+      <li>Module management: activity modules can now be individually disabled or deleted completely</li>
+      <li>Improvements to the language editing page</li>
+      <li>Better checking of PHP environment during installation, with warnings</li>
+      <li>Cleaner installation procedure.</li>
+    </dd>
+    <dt> User management</dt>
+    <dd> 
+      <li>New role: Course creator - just like teacher but can also create new courses</li>
+      <li>New authentication plug-in named "manual", prevents users from creating their own accounts</li>
+      <li>"Forgot Password" routine now uses an email confirmation before resetting password</li>
+    </dd>
+    <dt> Courses</dt>
+    <dd> 
+      <li>Activities on the course page now have a little button to hide/show that activity to students</li>
+      <li>Whole topics/weeks can also now be hidden or shown</li>
+      <li>The list of participants now has some paging, to cope with very large classes</li>
+      <li>Zip/Unzip is now supported by an internal zip library, removing 
+       the dependence on external programs to do this.  This also means that 
+       zip/unzip now works on Windows.</li>
+    </dd>
+    <dt> Assignments</dt>
+    <dd> 
+      <li>Assignment submissions can be sorted</li>
+      <li>Assignment notification mail isn't sent to unenrolled students</li>
+    </dd>
+    <dt> Forums</dt>
+    <dd> 
+      <li>Display of forum discussions list is greatly improved</li>
+      <li>Whole discussions can be moved to any other forum with a single click</li>
+      <li>Date/time of posts is now "last modified", not "created"</li>
+      <li>Blank subject-lines or messages are now prevented</li>
+      <li>More intelligent parsing and display of text in posts</li>
+      <li>Force Subscribe now works on the "Site News" forum (mails all active students/teachers)</li>
+      <li>Better handling of mailouts to prevent the possibility of double copies
+        that sometimes happened with very large classes</li>
+    </dd>
+    <dt> Workshop Assignment module (not included: available soon as a separate download)</dt>
+    <dd> 
+      <li>A very interesting new module contributed by Ray Kingdon,</li>
+      <li>A flexible tool that implements a variety of peer-grading and 
+        example-setting schemes that involve a whole group in examining 
+        and grading pieces of work.</li>
+    </dd>
+    <dt> Quizzes</dt>
+    <dd> 
+      <li>New question type, Random Question (selects from all questions in the same category)</li>
+      <li>New question type, Matching Question (student must match answers to questions)</li>
+      <li>New question type, Random Matching Short-Answers (randomly creates Matching Questions 
+        from the available Short Answer questions in the same category)</li>
+      <li>Quiz question import from text files (modular design allows expansion to new formats - a beta Blackboard module is included)</li>
+      <li>'Create multiple questions' wizard to quickly create a random quiz</li>
+      <li>Quiz questions may be randomly shuffled</li>
+      <li>Quiz answers (multiple choice, etc) may be randomly shuffled</li>
+      <li>Fixed off-by-one error when "Save Grades" button wasn't used.</li>
+      <li>Regrading works properly if the quiz has been changed</li>
+      <li>Editing a question after it's already been used in a quiz no longer affects quiz results</li>
+      <li>Multiple choice answers are labelled a,b,c not 1,2,3</li>
+    </dd>
+    <dt> Resources</dt>
+    <dd> 
+      <li>Better performance when editing large text or HTML resources</li>
+      <li>Plain images are now display centered within a proper web page (not raw).</li>
+      <li>Wiki format added as a new option for Resource pages</li>
+    </dd>
+    <dt> Custom Themes</dt>
+    <dd> 
+      <li>A number of new styles have been added to all built-in themes.  Some of these are ESSENTIAL
+        to viewing some of the new features.  PLEASE SEE 
+        <a href="http://moodle.org/theme/UPGRADE.txt">theme/UPGRADE.txt</a> 
+        TO SEE THE CHANGES YOU WILL HAVE TO MAKE TO OLDER THEMES.</li>
+      <li>Custom themes now have the capability to re-define all the little button graphics.  
+        There is a new entry in theme/x/config.php ($THEME->custompix) and a new  
+        optional subdirectory "pix".  See the theme cordoroyblue for an example.</li>
+    </dd>
+  </dl>
+</ul>
+<hr>
+
+
+<p>Older releases can be seen in the <a href="http://moodle.org/mod/forum/view.php?f=1">Moodle.org announcement forum</a>.
+
+
+<p>&nbsp;</p>
+<p align="CENTER"><font size="1"><a href="../doc/" target="_top">Moodle Documentation</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
