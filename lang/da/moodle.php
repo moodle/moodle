@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003121500)
+      // moodle.php - created with Moodle 1.2 development (2004010800)
 
 
 $string['action'] = 'Hændelse';
@@ -44,6 +44,7 @@ $string['adminhelpmanagemodules'] = 'Administrer installerede moduler og deres i
 $string['adminhelpsitefiles'] = 'Publicering af filer generalt eller uploadning af externe backups';
 $string['adminhelpsitesettings'] = 'Definer hvordan forsiden på sitet skal se ud';
 $string['adminhelpthemes'] = 'Vælg hvordan sitet skal se ud (farver, fonte mm)';
+$string['adminhelpuploadusers'] = 'Importer nye brugere fra en tekstfil';
 $string['adminhelpusers'] = 'Definer dine brugere og sæt authorisations systemet op';
 $string['administration'] = 'Administration';
 $string['administrator'] = 'Administrator';
@@ -83,6 +84,7 @@ $string['backupdetails'] = 'Backup dataljer';
 $string['backupfilename'] = 'backup';
 $string['backupfinished'] = 'Backup gennemført OK';
 $string['backupincludemoduleshelp'] = 'Vælg hvis du ønsker at inkludere kursusmoduler, med eller uden brugerdata, i backup\'en';
+$string['backupkeephelp'] = 'Hvor mange nye backups vil du beholde? (ældre backups bliver slettet automatisk)';
 $string['backuplogshelp'] = 'Vælg hvis du ønsker at inkludere kursuslog-filer i backup\'en';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backuporiginalname'] = 'Backup navn';
@@ -297,6 +299,8 @@ $string['emailpasswordsent'] = 'Du har accepteret at få et nyt kodeord.
 <p>Der er sendt en ny email til dig der indeholder det nye kodeord. 
 Email\'en er sendt til <b>$a->email</b> 
 <p>Det nye kodeord er genereret automatisk. Hvis du ønsker selv at skifte det til noget du lettere kan huske kan du gøre det her: <a href=$a->link>Skift Kodeord</a>';
+$string['enrolledincourse'] = 'Tilmeldt kursus \"$a\"';
+$string['enrolledincoursenot'] = 'Ikke tilmeldt kursus \"$a\"';
 $string['enrolmentconfirmation'] = 'Du er ved at tilmelde dig dette kursus<br />
 Er du sikker på at du vil gennemføre dette?';
 $string['enrolmentkey'] = 'Kursus nøgle';
@@ -329,6 +333,7 @@ $string['firstname'] = 'Fornavn(e)';
 $string['firsttime'] = 'Er det dit første besøg?';
 $string['followingoptional'] = 'Følgende er frivilligt at udfylde';
 $string['followingrequired'] = 'Følgende SKAL udfyldes';
+$string['force'] = 'Gennemtving';
 $string['forgotten'] = 'Har du glemt dit username og password?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'HTML format';
@@ -369,6 +374,24 @@ GNU General Public License for more details:
 http://www.gnu.org/copyleft/gpl.html';
 $string['grade'] = 'Point';
 $string['grades'] = 'Point';
+$string['group'] = 'Gruppe';
+$string['groupadd'] = 'Ny gruppe';
+$string['groupaddusers'] = 'Tilføj til gruppe';
+$string['groupinfo'] = 'GruppeInfo';
+$string['groupinfomembers'] = 'DeltagerInfo';
+$string['groupinfopeople'] = 'PersonInfo';
+$string['groupmembersselected'] = 'Gruppedeltagere';
+$string['groupmode'] = 'Gruppeindeling';
+$string['groupmodeforce'] = 'Gennemtving gruppeindeling';
+$string['groupmy'] = 'Min gruppe';
+$string['groupnonmembers'] = 'Personer udenfor grupper';
+$string['grouprandomassign'] = 'Tilfældig gruppering';
+$string['groupremove'] = 'Nedlæg gruppe';
+$string['groupremovemembers'] = 'Frameld deltagere';
+$string['groups'] = 'Grupper';
+$string['groupsnone'] = 'Ingen grupper';
+$string['groupsseparate'] = 'Seperate grupper';
+$string['groupsvisible'] = 'Synlige grupper';
 $string['guestskey'] = 'Tillad at gæster får nøglen';
 $string['guestsno'] = 'Tillad ikke gæster';
 $string['guestsnotallowed'] = 'Beklager, \'$a\' tillader ikke gæsteadgang.';
@@ -416,6 +439,7 @@ $string['includeuserfiles'] = 'Indkluder brugerfiler';
 $string['invalidemail'] = 'Invalid email addresse';
 $string['invalidlogin'] = 'Invalid login, prøv igen';
 $string['jumpto'] = 'Gå til...';
+$string['keep'] = 'Behold';
 $string['langltr'] = 'Sprog fra ventre mod højre';
 $string['langrtl'] = 'Sprog fra højre mod venstre';
 $string['language'] = 'Sprog';
@@ -783,6 +807,7 @@ $string['uploadedfileto'] = 'Uploaded $a->fil til $a->bibliotek';
 $string['uploadnofilefound'] = 'Ingen fil fundet- er du sikker på at du har uploaded én? (måske var den for stor i forhold til en begrænsning?)';
 $string['uploadproblem'] = 'En ukendt fejl opstod mens filen \'$a\' blev uploaded (måske var den for stor?)';
 $string['uploadthisfile'] = 'Upload denne fil';
+$string['uploadusers'] = 'Upload brugere';
 $string['user'] = 'Bruger';
 $string['userdeleted'] = 'Denne bruger konto er slettet';
 $string['userdescription'] = 'Beskrivelse';
@@ -791,6 +816,7 @@ $string['username'] = 'Username';
 $string['usernameexists'] = 'Dette username eksisterer allerede, venligst vælg et andet';
 $string['userprofilefor'] = 'Bruger profil for $a';
 $string['users'] = 'Brugere';
+$string['usersnew'] = 'Nye brugere';
 $string['userzones'] = 'Brugerzoner';
 $string['usingexistingcourse'] = 'Benytter eksisterende kursus';
 $string['version'] = 'Version';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2003121500)
+      // resource.php - created with Moodle 1.2 development (2004010800)
 
 
 $string['addresource'] = 'Tilføj materiale';
@@ -46,6 +46,8 @@ $string['newwindowopen'] = 'Vis denne resource i et nyt popupvindue';
 $string['note'] = 'Note';
 $string['notefile'] = 'For at uploade filer til kurset(så de vises i denne liste) brug<A HREF=$a >File Manager</A>.';
 $string['notypechosen'] = 'Du skal vælge en type. Brug tilbage knappen og prøv igen';
+$string['popupresource'] = 'Dette materiale skal  vises i et popupvindue.';
+$string['popupresourcelink'] = 'Hvis det ikke gjorde, tryk her: $a';
 $string['resourcetype'] = 'Materiale type';
 $string['resourcetype1'] = 'Reference';
 $string['resourcetype2'] = 'Web Sted';
