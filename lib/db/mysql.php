@@ -1081,6 +1081,11 @@ function main_upgrade($oldversion=0) {
         modify_database('', "INSERT INTO prefix_log_display VALUES ('message', 'read', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
     }
 
+    if ($oldversion < 2004122801) {
+        table_column('message', '', 'format', 'integer', '4', 'unsigned', '0', 'not null', 'message');
+        table_column('message_read', '', 'format', 'integer', '4', 'unsigned', '0', 'not null', 'message');
+    }
+
     return $result;
 
 }

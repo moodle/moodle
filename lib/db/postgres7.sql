@@ -187,6 +187,7 @@ CREATE TABLE prefix_message (
    useridfrom integer NOT NULL default '0',
    useridto integer NOT NULL default '0',
    message text,
+   format integer NOT NULL default '0',
    timecreated integer NOT NULL default '0',
    messagetype varchar(50) NOT NULL default ''
 );
@@ -199,6 +200,7 @@ CREATE TABLE prefix_message_read (
    useridfrom integer NOT NULL default '0',
    useridto integer NOT NULL default '0',
    message text,
+   format integer NOT NULL default '0',
    timecreated integer NOT NULL default '0',
    timeread integer NOT NULL default '0',
    messagetype varchar(50) NOT NULL default '',
