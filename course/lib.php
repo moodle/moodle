@@ -1149,7 +1149,7 @@ function print_category_info($category, $depth) {
     echo "\n\n".'<table border="0" cellpadding="3" cellspacing="0" width="100%">';
 
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
-        $courses = get_courses($category->id);
+        $courses = get_courses($category->id, NULL, 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary');
 
         echo "<tr>";
 
@@ -1224,14 +1224,14 @@ function print_courses($category, $width="100%") {
         $categories = get_categories(0);  // Parent = 0   ie top-level categories only
         if (count($categories) == 1) {
             $category   = array_shift($categories);
-            $courses    = get_courses($category->id);
+            $courses    = get_courses($category->id, NULL, 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary');
         } else {
-            $courses    = get_courses("all");
+            $courses    = get_courses("all", NULL, 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary');
         }
         unset($categories);
     } else {
         $categories = get_categories($category->id);  // sub categories
-        $courses    = get_courses($category->id);
+        $courses    = get_courses($category->id, NULL, 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary');
     }
 
     if ($courses) {
