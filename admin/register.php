@@ -57,6 +57,13 @@
     echo "</td></tr>\n";
 
     echo "<tr valign=top>";
+    echo "<td align=right><p>".get_string("currentversion").":</td>";
+    echo "<td><p>$CFG->release ($CFG->version)</td>";
+    echo "<input type=\"hidden\" name=\"version\" value=\"$CFG->version\">";
+    echo "<input type=\"hidden\" name=\"release\" value=\"$CFG->release\">";
+    echo "</td></tr>\n";
+
+    echo "<tr valign=top>";
     echo "<td align=right><p>".get_string("fullsitename").":</td>";
     echo "<td><p><input size=50 type=\"text\" name=\"sitename\" value=\"$site->fullname\"></td>";
     echo "</tr>\n";
