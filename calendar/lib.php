@@ -38,16 +38,26 @@
 //                                                                         //
 /////////////////////////////////////////////////////////////////////////////
 
-$firstday = get_string('firstdayofweek');
-if(!is_numeric($firstday)) {
-    define ('CALENDAR_STARTING_WEEKDAY', 1);
+// These are read by the administration component to provide default values
+define('CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD', 21);
+define('CALENDAR_DEFAULT_UPCOMING_MAXEVENTS', 10);
+define('CALENDAR_DEFAULT_STARTING_WEEKDAY',   1);
+// This is a packed bitfield: day X is "weekend" if $field & (1 << X) is true
+// Default value = 65 = 64 + 1 = 2^6 + 2^0 = Saturday & Sunday
+define('CALENDAR_DEFAULT_WEEKEND',            65);
+
+// Fetch the correct values from admin settings/lang pack
+// If no such settings found, use the above defaults
+$firstday = isset($CFG->calendar_startwday) ? $CFG->calendar_startwday : get_string('firstdayofweek');
+if(!is_numeric($firstday)) {    
+    define ('CALENDAR_STARTING_WEEKDAY', CALENDAR_DEFAULT_STARTING_WEEKDAY);
 }
 else {
     define ('CALENDAR_STARTING_WEEKDAY', intval($firstday) % 7);
 }
-
-define ('CALENDAR_UPCOMING_DAYS', 21);
-define ('CALENDAR_UPCOMING_MAXEVENTS', 10);
+define ('CALENDAR_UPCOMING_DAYS', isset($CFG->calendar_lookahead) ? intval($CFG->calendar_lookahead) : CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD);
+define ('CALENDAR_UPCOMING_MAXEVENTS', isset($CFG->calendar_maxevents) ? intval($CFG->calendar_maxevents) : CALENDAR_DEFAULT_UPCOMING_MAXEVENTS);
+define ('CALENDAR_WEEKEND', isset($CFG->calendar_weekend) ? intval($CFG->calendar_weekend) : CALENDAR_DEFAULT_WEEKEND);
 define ('CALENDAR_URL', $CFG->wwwroot.'/calendar/');
 define ('CALENDAR_TF_24', '%H:%M');
 define ('CALENDAR_TF_12', '%I:%M %p');
@@ -165,7 +175,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
         // Reset vars
         $cell = '';
-        if($dayweek % 7 == 0 || $dayweek % 7 == 6) {
+        if(CALENDAR_WEEKEND & (1 << ($dayweek % 7))) {
             // Weekend. This is true no matter what the exact range is.
             $class = 'cal_weekend';
         }

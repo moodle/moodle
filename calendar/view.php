@@ -368,7 +368,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         $cell = '';
         $dayhref = calendar_get_link_href(CALENDAR_URL.'view.php?view=day&amp;', $day, $m, $y);
 
-        if($dayweek % 7 == 0 || $dayweek % 7 == 6) {
+        if(CALENDAR_WEEKEND & (1 << ($dayweek % 7))) {
             // Weekend. This is true no matter what the exact range is.
             $class = 'cal_weekend';
         }

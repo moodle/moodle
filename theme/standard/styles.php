@@ -695,7 +695,7 @@ A IMG {
 }
 
 table.formtable td, table.formtable th {
-    padding: 8px;
+    padding: 6px;
 }
 
 table.formtable tbody tr {

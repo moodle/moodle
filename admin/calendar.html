@@ -3,7 +3,7 @@
 <p><input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>"></p>
 
 <div style="text-align: center;">
-<table style="margin: auto; border: none; width: 90%;" class="formtable">
+<table style="margin: auto;" class="formtable">
   <tbody>
     <tr>
       <th>adminseesall:</th>
@@ -14,6 +14,40 @@
         </select>
       </td>
       <td><?php print_string('helpadminseesall', 'admin'); ?></td>
+    </tr>
+    <tr>
+      <th>startwday:</th>
+      <td>
+        <?php choose_from_menu($weekdays, 'startwday', empty($CFG->calendar_startwday) ? 0 : $CFG->calendar_startwday, ''); ?>
+      </td>
+      <td><?php print_string('helpstartofweek', 'admin'); ?></td>
+    </tr>
+    <tr>
+      <th>weekenddays:</th>
+      <td>
+        <nobr><input type="checkbox" name="weekend[]" value="1" id="weekend1" <?php if(CALENDAR_WEEKEND &  2) echo 'checked="checked"'; ?> /> <label for="weekend1"><?php print_string('monday', 'calendar'); ?></label></nobr>
+        <nobr><input type="checkbox" name="weekend[]" value="2" id="weekend2" <?php if(CALENDAR_WEEKEND &  4) echo 'checked="checked"'; ?> /> <label for="weekend2"><?php print_string('tuesday', 'calendar'); ?></label></nobr>
+        <nobr><input type="checkbox" name="weekend[]" value="3" id="weekend3" <?php if(CALENDAR_WEEKEND &  8) echo 'checked="checked"'; ?> /> <label for="weekend3"><?php print_string('wednesday', 'calendar'); ?></label></nobr>
+        <nobr><input type="checkbox" name="weekend[]" value="4" id="weekend4" <?php if(CALENDAR_WEEKEND & 16) echo 'checked="checked"'; ?> /> <label for="weekend4"><?php print_string('thursday', 'calendar'); ?></label></nobr>
+        <nobr><input type="checkbox" name="weekend[]" value="5" id="weekend5" <?php if(CALENDAR_WEEKEND & 32) echo 'checked="checked"'; ?> /> <label for="weekend5"><?php print_string('friday', 'calendar'); ?></label></nobr>
+        <nobr><input type="checkbox" name="weekend[]" value="6" id="weekend6" <?php if(CALENDAR_WEEKEND & 64) echo 'checked="checked"'; ?> /> <label for="weekend6"><?php print_string('saturday', 'calendar'); ?></label></nobr>
+        <nobr><input type="checkbox" name="weekend[]" value="0" id="weekend0" <?php if(CALENDAR_WEEKEND &  1) echo 'checked="checked"'; ?> /> <label for="weekend0"><?php print_string('sunday', 'calendar'); ?></label></nobr>
+      </td>
+      <td><?php print_string('helpweekenddays', 'admin'); ?></td>
+    </tr>
+    <tr>
+      <th>upcoming_lookahead:</th>
+      <td>
+        <input type="text" name="lookahead" size="3" value="<?php echo CALENDAR_UPCOMING_DAYS; ?>" />
+      </td>
+      <td><?php print_string('helpupcominglookahead', 'admin'); ?></td>
+    </tr>
+    <tr>
+      <th>upcoming_maxevents:</th>
+      <td>
+        <input type="text" name="maxevents" size="3" value="<?php echo CALENDAR_UPCOMING_MAXEVENTS; ?>" />
+      </td>
+      <td><?php print_string('helpupcomingmaxevents', 'admin'); ?></td>
     </tr>
     <tr>
       <th>dstforusers:</th>
