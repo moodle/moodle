@@ -292,9 +292,9 @@
         $st = start_tag($tag,$level,$endline);
         $co="";
         if ($to_utf) {
-            $co = utf8_encode(htmlspecialchars($content));
+            $co = preg_replace("/\r\n|\r/", "\n", utf8_encode(htmlspecialchars($content)));
         } else {
-            $co = htmlspecialchars($content);
+            $co = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
         }
         $et = end_tag($tag,0,true);
         return $st.$co.$et;
