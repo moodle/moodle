@@ -217,7 +217,7 @@
     }
 
 /// Moodle Log
-    add_to_log($course->id, "wiki", $ewiki_action, "view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$page", $wiki->name." ".$ewiki_title);
+    add_to_log($course->id, "wiki", $ewiki_action, addslashes("view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$page", $wiki->name." ".$ewiki_title));
 
 
 /// Print the page header
@@ -331,7 +331,7 @@
     /// is 'view', filter it. Also, if the page doesn't exist, it will default to 'edit'.
     $actions = explode('/', $page);
     if ($ewiki_action == "edit" || ($actions !== false && count($actions) > 1 && $actions[0] != 'view') ||
-        (count($actions) == 1 && !record_exists('wiki_pages', 'pagename', $page, 'wiki', $wiki_entry->id))) {
+        (count($actions) == 1 && !record_exists('wiki_pages', 'pagename', addslashes($page), 'wiki', $wiki_entry->id))) {
         print $content;
     }
     else {
