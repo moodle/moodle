@@ -14,6 +14,7 @@
        "smtppass"         => "",
        "gdversion"        =>  1,
        "longtimenosee"    =>  100,
+       "loglifetime"      =>  0,
        "zip"              => "",
        "unzip"            => "",
        "slasharguments"   =>  1,
