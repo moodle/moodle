@@ -96,7 +96,7 @@
     $strtimetaken     = get_string("timetaken", "quiz");
     $strtimecompleted = get_string("timecompleted", "quiz");
     $strgrade         = get_string("grade");
-    $strbestgrade     = get_string("bestgrade", "quiz");
+    $strbestgrade     = $QUIZ_GRADE_METHOD[$quiz->grademethod];
 
     $mygrade = quiz_get_best_grade($quiz->id, $USER->id);
 
