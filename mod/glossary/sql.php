@@ -109,7 +109,7 @@
             $where = '';
         }
 
-        $sqlselect  = "SELECT ge.id, $usernamefield $as pivot, u.id uid, ge.*";
+        $sqlselect  = "SELECT ge.id, $usernamefield $as pivot, u.id as uid, ge.*";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}user u";
         $sqlwhere   = "WHERE ge.userid = u.id  AND
                              (ge.approved != 0 $userid)
