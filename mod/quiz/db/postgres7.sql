@@ -104,7 +104,7 @@ CREATE INDEX question_prefix_quiz_match_idx ON prefix_quiz_match (question);
 # Table structure for table `quiz_match_sub`
 #
 
-CREATE TABLE `prefix_quiz_match_sub` (
+CREATE TABLE prefix_quiz_match_sub (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   questiontext text NOT NULL default '',
@@ -149,7 +149,7 @@ CREATE TABLE prefix_quiz_questions (
   name varchar(255) NOT NULL default '',
   questiontext text NOT NULL default '',
   image varchar(255) NOT NULL default '',
-  defaultgrade integer NOT NULL default '1'
+  defaultgrade integer NOT NULL default '1',
   qtype integer NOT NULL default '0'
 );
 # --------------------------------------------------------
@@ -161,7 +161,7 @@ CREATE TABLE prefix_quiz_questions (
 CREATE TABLE prefix_quiz_randomsamatch (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
-  choose integer NOT NULL default '4',
+  choose integer NOT NULL default '4'
 );
 
 #
