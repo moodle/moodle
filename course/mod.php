@@ -470,14 +470,20 @@
     $streditinga = get_string("editinga", "moodle", $fullmodulename);
     $strmodulenameplural = get_string("modulenameplural", $module->name);
 
+    if ($module->name == "label") {
+        $focuscursor = "";
+    } else {
+        $focuscursor = "form.name";
+    }
+
     if ($course->category) {
         print_header("$course->shortname: $streditinga", "$course->fullname",
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
                       <A HREF=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</A> -> 
-                      $streditinga", "form.name", "", false);
+                      $streditinga", $focuscursor, "", false);
     } else {
         print_header("$course->shortname: $streditinga", "$course->fullname",
-                     "$streditinga", "form.name", "", false);
+                     "$streditinga", $focuscursor, "", false);
     }
 
     unset($SESSION->modform); // Clear any old ones that may be hanging around.
