@@ -252,7 +252,7 @@
             echo "</font>";
             echo "</td>";
             echo "</tr>";
-            echo "<tr><td colspan=\"3\"><img src=\"../pix/spacer.gif\" width=\"1\" height=\"1\" alt=\"\"></td></tr>";
+            echo "<tr><td colspan=\"3\"><img src=\"../pix/spacer.gif\" width=\"1\" height=\"1\" alt=\"\" /></td></tr>";
         }
 
         $section++;
