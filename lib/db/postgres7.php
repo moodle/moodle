@@ -199,15 +199,6 @@ function main_upgrade($oldversion=0) {
         table_column("course", "", "sortorder", "integer", "10", "unsigned", "0", "", "category");
     }
 
-    if ($oldversion < 2003080700) {
-        notify("Cleaning up categories and course ordering...");
-        if ($categories = get_categories()) {
-            foreach ($categories as $category) {
-                fix_course_sortorder($category->id);
-            }
-        }
-    }
-
     if ($oldversion < 2003081502) {
         execute_sql(" CREATE TABLE {$CFG->prefix}scale (
                          id SERIAL PRIMARY KEY,
@@ -233,6 +224,16 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2003081900) {
         table_column("course_categories", "courseorder", "coursecount", "integer", "10", "unsigned", "0");
     }
+
+    if ($oldversion < 2003080700) {
+        notify("Cleaning up categories and course ordering...");
+        if ($categories = get_categories()) {
+            foreach ($categories as $category) {
+                fix_course_sortorder($category->id);
+            }
+        }
+    }
+
 
     if ($oldversion < 2003082001) {
         table_column("course", "", "showgrades", "integer", "2", "unsigned", "1", "", "format");
