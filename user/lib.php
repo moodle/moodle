@@ -68,8 +68,8 @@ function print_user($user, $course, $string) {
     if (isteacher($course->id)) {
         $timemidnight = usergetmidnight(time());
         echo "<A HREF=\"../course/user.php?id=$course->id&user=$user->id\">$string->activity</A><BR>";
-        echo "<A HREF=\"../course/unenrol.php?id=$course->id&user=$user->id\">$string->unenrol</A><BR>";
         if (isstudent($course->id, $user->id)) {
+            echo "<A HREF=\"../course/unenrol.php?id=$course->id&user=$user->id\">$string->unenrol</A><BR>";
             echo "<A HREF=\"../course/loginas.php?id=$course->id&user=$user->id\">$string->loginas</A><BR>";
         }
     } 
