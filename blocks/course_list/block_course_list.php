@@ -22,14 +22,9 @@ class block_course_list extends block_list {
         $this->content->icons = array();
         $this->content->footer = '';
 
-        if (empty($THEME->custompix)) {
-            $icon  = "<img src=\"$CFG->wwwroot/pix/i/course.gif\"".
-                     " height=\"16\" width=\"16\" alt=\"".get_string("course")."\" />";
-        } else {
-            $icon  = "<img src=\"$CFG->wwwroot/theme/$CFG->theme/pix/i/course.gif\"".
-                     " height=\"16\" width=\"16\" alt=\"".get_string("course")."\" />";
-        }
-        
+        $icon  = "<img src=\"$CFG->pixpath/i/course.gif\"".
+                 " height=\"16\" width=\"16\" alt=\"".get_string("course")."\" />";
+       
         $adminseesall = true;
         if (isset($CFG->block_course_list_adminview)) {
            if ( $CFG->block_course_list_adminview == 'own'){
