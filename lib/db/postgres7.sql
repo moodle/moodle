@@ -57,8 +57,8 @@ CREATE TABLE prefix_log (
    userid integer NOT NULL default '0',
    ip varchar(15) NOT NULL default '',
    course integer NOT NULL default '0',
-   module varchar(10) NOT NULL default '',
-   action varchar(15) NOT NULL default '',
+   module varchar(20) NOT NULL default '',
+   action varchar(20) NOT NULL default '',
    url varchar(100) NOT NULL default '',
    info varchar(255) NOT NULL default ''
 );
