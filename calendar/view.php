@@ -66,19 +66,15 @@
         $mon = intval($now['mon']);
         $yr = intval($now['year']);
     }
-    $time = mktime(0, 0, 0, $mon, $day, $yr);
+    $time = make_timestamp($yr, $mon, $day);
 
     switch($view) {
         case 'day':
-            $text = strftime(get_string('strftimedate'), $time);
-            if($text[0] == '0') {
-                $text = substr($text, 1);
-            }
-            $nav .= ' -> '.$text;
+            $nav .= ' -> '.userdate($time, get_string('strftimedate'));
             $pagetitle = get_string('dayview', 'calendar');
         break;
         case 'month':
-            $nav .= ' -> '.strftime(get_string('strftimemonthyear'), $time);
+            $nav .= ' -> '.userdate($time, get_string('strftimemonthyear'));
             $pagetitle = get_string('detailedmonthview', 'calendar');
         break;
         case 'upcoming':

@@ -536,8 +536,15 @@ function calendar_top_controls($type, $data) {
     if(!isset($data['d'])) {
         $data['d'] = 1;
     }
-    $time = calendar_mktime_check($data['m'], $data['d'], $data['y']);
-    $date = getdate($time);
+
+    if(!checkdate($data['m'], $data['d'], $data['y'])) {
+        $time = time();
+    }
+    else {
+        $time = make_timestamp($data['y'], $data['m'], $data['d']);
+    }
+    $date = usergetdate($time);
+    
     $data['m'] = $date['mon'];
     $data['y'] = $date['year'];
 
@@ -549,7 +556,7 @@ function calendar_top_controls($type, $data) {
             $prevlink = calendar_get_link_tag('&lt;&lt;', 'index.php?', 0, $prevmonth, $prevyear);
             $content .= '<table class="calendar-controls"><tr>';
             $content .= '<td class="previous">'.$prevlink."</td>\n";
-            $content .= '<td class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.strftime(get_string('strftimemonthyear'), $time)."</a></td>\n";
+            $content .= '<td class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></td>';
             $content .= '<td class="next">'.$nextlink."</td>\n";
             $content .= '</tr></table>';
         break;
@@ -560,32 +567,32 @@ function calendar_top_controls($type, $data) {
             $prevlink = calendar_get_link_tag('&lt;&lt;', 'view.php?id='.$data['id'].'&amp;', 0, $prevmonth, $prevyear);
             $content .= '<table class="calendar-controls"><tr>';
             $content .= '<td class="previous">'.$prevlink."</td>\n";
-            $content .= '<td class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;course='.$data['id'].'&amp;', 1, $data['m'], $data['y']).'">'.strftime(get_string('strftimemonthyear'), $time)."</a></td>\n";
+            $content .= '<td class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;course='.$data['id'].'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></td>';
             $content .= '<td class="next">'.$nextlink."</td>\n";
             $content .= '</tr></table>';
         break;
         case 'upcoming':
-            $content .= '<div style="text-align: center;"><a href="'.CALENDAR_URL.'view.php?view=upcoming">'.strftime(get_string('strftimemonthyear'), $time)."</a></div>\n";
+            $content .= '<div style="text-align: center;"><a href="'.CALENDAR_URL.'view.php?view=upcoming">'.userdate($time, get_string('strftimemonthyear'))."</a></div>\n";
         break;
         case 'display':
-            $content .= '<div style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.strftime(get_string('strftimemonthyear'), $time)."</a></div>\n";
+            $content .= '<div style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear'))."</a></div>\n";
         break;
         case 'month':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
-            $prevdate = calendar_mktime_check($prevmonth, 1, $prevyear);
-            $nextdate = calendar_mktime_check($nextmonth, 1, $nextyear);
+            $prevdate = make_timestamp($prevyear, $prevmonth, 1);
+            $nextdate = make_timestamp($nextyear, $nextmonth, 1);
             $content .= '<table class="calendar-controls"><tr>';
-            $content .= '<td class="previous"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $prevmonth, $prevyear).'">&lt;&lt; '.strftime(get_string('strftimemonthyear'), $prevdate)."</a></td>\n";
-            $content .= '<td class="current">'.strftime(get_string('strftimemonthyear'), $time)."</td>\n";
-            $content .= '<td class="next"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $nextmonth, $nextyear).'">'.strftime(get_string('strftimemonthyear'), $nextdate)." &gt;&gt;</a></td>\n";
+            $content .= '<td class="previous"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $prevmonth, $prevyear).'">&lt;&lt; '.userdate($prevdate, get_string('strftimemonthyear')).'</a></td>';
+            $content .= '<td class="current">'.userdate($time, get_string('strftimemonthyear'))."</td>\n";
+            $content .= '<td class="next"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $nextmonth, $nextyear).'">'.userdate($nextdate, get_string('strftimemonthyear'))." &gt;&gt;</a></td>\n";
             $content .= "</tr></table>\n";
         break;
         case 'day':
             $data['d'] = $date['mday']; // Just for convenience
             $dayname = calendar_wday_name($date['weekday']);
-            $prevdate = getdate(make_timestamp($data['y'], $data['m'], $data['d'] - 1));
-            $nextdate = getdate(make_timestamp($data['y'], $data['m'], $data['d'] + 1));
+            $prevdate = usergetdate(make_timestamp($data['y'], $data['m'], $data['d'] - 1));
+            $nextdate = usergetdate(make_timestamp($data['y'], $data['m'], $data['d'] + 1));
             $prevname = calendar_wday_name($prevdate['weekday']);
             $nextname = calendar_wday_name($nextdate['weekday']);
             $content .= '<table class="calendar-controls"><tr>';
@@ -595,9 +602,9 @@ function calendar_top_controls($type, $data) {
             $text = get_string('strftimedaydate');
             // Regexp hackery to make a link out of the month/year part
             $text = ereg_replace('(%B.+%Y|%Y.+%B|%Y.+%m[^ ]+)', '<a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $data['m'], $data['y']).'">\\1</a>', $text);
+            $text = ereg_replace('(F.+Y|Y.+F|Y.+m[^ ]+)', '<a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $data['m'], $data['y']).'">\\1</a>', $text);
             // Replace with actual values and lose any day leading zero
-            $text = strftime($text, $time);
-            $text = str_replace(' 0', ' ', $text);
+            $text = usergetdate($text, $time);
             // Print the actual thing
             $content .= '<td class="current">'.$text.'</td>';
 
@@ -753,26 +760,6 @@ function calendar_get_link_tag($text, $linkbase, $d, $m, $y) {
     $href = calendar_get_link_href($linkbase, $d, $m, $y);
     if(empty($href)) return $text;
     return '<a href="'.$href.'">'.$text.'</a>';
-}
-
-function calendar_gmmktime_check($m, $d, $y, $default = false) {
-    if($default === false) $default = time();
-    if(!checkdate($m, $d, $y)) {
-        return $default;
-    }
-    else {
-        return gmmktime(0, 0, 0, $m, $d, $y, 0);
-    }
-}
-
-function calendar_mktime_check($m, $d, $y, $default = false) {
-    if($default === false) $default = time();
-    if(!checkdate($m, $d, $y)) {
-        return $default;
-    }
-    else {
-        return mktime(0, 0, 0, $m, $d, $y, 0);
-    }
 }
 
 function calendar_wday_name($englishname) {
