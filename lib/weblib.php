@@ -542,6 +542,8 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     if ($navigation == "home") {
         $home = true;
         $navigation = "";
+    } else {
+        $home = false;
     }
 
     if ($button == "") {
@@ -602,10 +604,12 @@ function print_footer ($course=NULL) {
     }
 
 /// User links
-    if ($USER->realuser) {
+    if (isset($USER->realuser)) {
         if ($realuser = get_record("user", "id", $USER->realuser)) {
             $realuserinfo = " [<A HREF=\"$CFG->wwwroot/course/loginas.php?id=$course->id&return=$realuser->id\">$realuser->firstname $realuser->lastname</A>] ";
         }
+    } else {
+        $realuserinfo = "";
     }
 
     if ($USER->id) {
@@ -665,12 +669,12 @@ function print_simple_box_start($align="", $width="", $color="#FFFFFF", $padding
     global $THEME;
 
     if ($align) {
-        $tablealign = "ALIGN=\"$align\"";
+        $align = "ALIGN=\"$align\"";
     }
     if ($width) {
-        $tablewidth = "WIDTH=\"$width\"";
+        $width = "WIDTH=\"$width\"";
     }
-    echo "<table $tablealign $tablewidth class=\"$class\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\"><tr><td bgcolor=\"$color\" class=\"$class"."content\">";
+    echo "<table $align $width class=\"$class\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\"><tr><td bgcolor=\"$color\" class=\"$class"."content\">";
 }
 
 function print_simple_box_end() {
@@ -793,15 +797,15 @@ function print_table($table) {
         }
     }
 
-    if (!$table->width) {
+    if (empty($table->width)) {
         $table->width = "80%";
     }
 
-    if (!$table->cellpadding) {
+    if (empty($table->cellpadding)) {
         $table->cellpadding = "5";
     }
 
-    if (!$table->cellspacing) {
+    if (empty($table->cellspacing)) {
         $table->cellspacing = "1";
     }
 
@@ -812,6 +816,12 @@ function print_table($table) {
     if ($table->head) {
         echo "<TR>";
         foreach ($table->head as $key => $heading) {
+            if (!isset($size[$key])) {
+                $size[$key] = "";
+            } 
+            if (!isset($align[$key])) {
+                $align[$key] = "";
+            } 
             echo "<TH VALIGN=top ".$align[$key].$size[$key]." NOWRAP class=\"generaltableheader\">$heading</TH>";
         }
         echo "</TR>\n";
@@ -820,6 +830,12 @@ function print_table($table) {
     foreach ($table->data as $row) {
         echo "<TR VALIGN=TOP>";
         foreach ($row as $key => $item) {
+            if (!isset($size[$key])) {
+                $size[$key] = "";
+            } 
+            if (!isset($align[$key])) {
+                $align[$key] = "";
+            } 
             echo "<TD ".$align[$key].$size[$key]." class=\"generaltablecell\">$item</TD>";
         }
         echo "</TR>\n";

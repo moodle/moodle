@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////
 
 /// If there are any errors in the standard libraries we want to know!
-    error_reporting(15);   // use 0=none 7=normal 15=all 
+    error_reporting(E_ALL);   // use 0=none 7=normal 15=all 
 
 /// Connect to the database using adodb
 
@@ -32,7 +32,7 @@
 
 
 /// Set error reporting back to normal
-    error_reporting(7);   
+    error_reporting(15);   
 
 
 /// Load up any configuration from the config table
@@ -113,10 +113,12 @@
     if (! isset($_SESSION["USER"]))    { $_SESSION["USER"]    = new object; }
     extract($_SESSION);  // Makes $SESSION and $USER available for read-only access
 
-    if (!$FULLME) {
+    if (isset($FULLME)) {
+        $ME = $FULLME;
+    } else {
         $FULLME = qualified_me();
+        $ME = strip_querystring($FULLME);
     }
-    $ME = strip_querystring($FULLME);
 
 
 /// Set language/locale of printed times.  If user has chosen a language that 

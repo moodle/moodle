@@ -211,8 +211,6 @@ function get_records_select($table, $select="", $sort="", $fields="*") {
 
     if ($select) {
         $select = "WHERE $select";
-    } else {
-        $select = "";
     }
 
     if ($sort) {
