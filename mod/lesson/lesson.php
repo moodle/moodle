@@ -44,7 +44,7 @@
     
     $navigation = "";
     if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
     }
 
     $strlessons = get_string("modulenameplural", "lesson");
@@ -53,18 +53,18 @@
     
     // ... print the header and...
     print_header("$course->shortname: $lesson->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strlessons</A> -> 
-                  <A HREF=\"view.php?id=$cm->id\">$lesson->name</A>", 
+                 "$navigation <a href=index.php?id=$course->id>$strlessons</a> -> 
+                  <a href=\"view.php?id=$cm->id\">$lesson->name</a>", 
                   "", "<style type=\"text/css\">@import url($CFG->wwwroot/mod/lesson/styles.php);</style>", true);
 
     //...get the action 
     $action = required_param('action');
 
 	// include the appropriate action (check to make sure the file is there first)
-	if (file_exists('lessonactions/'.$action.'.php')) {
-		include('lessonactions/'.$action.'.php');    
+	if (file_exists($CFG->dirroot.'/mod/lesson/action/'.$action.'.php')) {
+		include($CFG->dirroot.'/mod/lesson/action/'.$action.'.php');    
 	} else {
-		error("Fatal Error: Unknown Action: ".$action."\n");
+		error("Fatal Error: Unknown action\n");
 	}
 	
     print_footer($course);
