@@ -21,7 +21,7 @@ $QUIZ_QUESTION_TYPE = array ( MULTICHOICE => get_string("multichoice", "quiz"),
                               TRUEFALSE   => get_string("truefalse", "quiz"),
                               SHORTANSWER => get_string("shortanswer", "quiz") );
 
-
+define("QUIZ_PICTURE_DEFAULT_HEIGHT", "200");
 
 /// FUNCTIONS ///////////////////////////////////////////////////////////////////
 
@@ -374,7 +374,7 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
            }
            echo text_to_html($question->questiontext);
            if ($question->image) {
-               print_file_picture($question->image, $courseid, 200);
+               print_file_picture($question->image, $courseid, QUIZ_PICTURE_DEFAULT_HEIGHT);
            }
            if ($response) {
                $value = "VALUE=\"$response[0]\"";
@@ -409,7 +409,7 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
            }
            echo text_to_html($question->questiontext);
            if ($question->image) {
-               print_file_picture($question->image, $courseid, 200);
+               print_file_picture($question->image, $courseid, QUIZ_PICTURE_DEFAULT_HEIGHT);
            }
 
            $truechecked = "";
@@ -454,7 +454,7 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
            }
            echo text_to_html($question->questiontext);
            if ($question->image) {
-               print_file_picture($question->image, $courseid, 200);
+               print_file_picture($question->image, $courseid, QUIZ_PICTURE_DEFAULT_HEIGHT);
            }
            echo "<TABLE ALIGN=right>";
            echo "<TR><TD valign=top>$stranswer:&nbsp;&nbsp;</TD><TD>";
@@ -765,7 +765,7 @@ function quiz_print_cat_question_list($categoryid) {
     echo "<B>$strquestion:</B>&nbsp;";
     choose_from_menu($QUIZ_QUESTION_TYPE, "qtype", "", "");
     echo "<INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
-    echo "<INPUT TYPE=submit NAME=new VALUE=\"$strcreatenewquestion\">";
+    echo "<INPUT TYPE=submit VALUE=\"$strcreatenewquestion\">";
     helpbutton("questiontypes", $strcreatenewquestion, "quiz");
     echo "</FORM>";
     echo "</CENTER>";
