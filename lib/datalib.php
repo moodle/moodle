@@ -2452,15 +2452,17 @@ function get_course_mods($courseid) {
  * @return array
  * @todo Finish documenting this function
  */
-function get_coursemodule_from_instance($modulename, $instance, $courseid) {
+function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
 
     global $CFG;
+    
+    $courseselect = ($courseid) ? "cm.course = '$courseid' AND " : '';
 
     return get_record_sql("SELECT cm.*, m.name
                            FROM {$CFG->prefix}course_modules cm,
                                 {$CFG->prefix}modules md,
                                 {$CFG->prefix}$modulename m
-                           WHERE cm.course = '$courseid' AND
+                           WHERE $courseselect
                                  cm.deleted = '0' AND
                                  cm.instance = m.id AND
                                  md.name = '$modulename' AND

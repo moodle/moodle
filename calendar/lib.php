@@ -338,11 +338,9 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
                 // The module name is set. I will assume that it has to be displayed, and
                 // also that it is an automatically-generated event. And of course that the
-                // three fields for get_coursemodule_from_instance are set correctly.
+                // fields for get_coursemodule_from_instance are set correctly.
 
-                calendar_get_course_cached($coursecache, $event->courseid);
-
-                $module = calendar_get_module_cached($coursecache, $event->modulename, $event->instance, $event->courseid);
+                $module = calendar_get_module_cached($coursecache, $event->modulename, $event->instance);
 
                 if ($module === false) {
                     // This shouldn't have happened. What to do now?
@@ -357,7 +355,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 $output[$outkey]->icon = '<img height="16" width="16" src="'.$icon.'" alt="" title="'.$modulename.'" style="vertical-align: middle;" />';
                 $output[$outkey]->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$event->name.'</a>';
                 $output[$outkey]->time = $eventtime;
-                $output[$outkey]->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$event->courseid.'">'.$coursecache[$event->courseid]->fullname.'</a>';
+                $output[$outkey]->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$module->course.'">'.$coursecache[$module->course]->fullname.'</a>';
                 $output[$outkey]->cmid = $module->id;
 
 
@@ -862,11 +860,11 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
     return;
 }
 
-function calendar_get_module_cached(&$coursecache, $modulename, $instance, $courseid) {
-    $module = get_coursemodule_from_instance($modulename, $instance, $courseid);
+function calendar_get_module_cached(&$coursecache, $modulename, $instance) {
+    $module = get_coursemodule_from_instance($modulename, $instance);
 
     if($module === false) return false;
-    if(!calendar_get_course_cached($coursecache, $courseid)) {
+    if(!calendar_get_course_cached($coursecache, $module->course)) {
         return false;
     }
     return $module;
