@@ -1088,6 +1088,116 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
 }
 
+function remove_course_userdata($courseid, $showfeedback=true,
+                                $removestudents=true, $removeteachers=false, $removegroups=true,
+                                $removeevents=true, $removelogs=false) {
+/// This function will empty a course of USER data as much as 
+/// possible.   It will retain the activities and the structure 
+/// of the course.
+
+    global $CFG, $THEME, $USER, $SESSION;
+
+    $result = true;
+
+    if (! $course = get_record("course", "id", $courseid)) {
+        error("Course ID was incorrect (can't find it)");
+    }
+
+    $strdeleted = get_string("deleted");
+
+    // Look in every instance of every module for data to delete
+
+    if ($allmods = get_records("modules") ) {
+        foreach ($allmods as $mod) {
+            $modname = $mod->name;
+            $modfile = "$CFG->dirroot/mod/$modname/lib.php";
+            $moddeleteuserdata = $modname."_delete_userdata";   // Function to delete user data
+            $count=0;
+            if (file_exists($modfile)) {
+                @include_once($modfile);
+                if (function_exists($moddeleteuserdata)) {
+                    $moddeleteuserdata($course, $showfeedback);
+                }
+            }
+        }
+    } else {
+        error("No modules are installed!");
+    }
+
+    // Delete other stuff
+
+    if ($removestudents) {
+        /// Delete student enrolments
+        if (delete_records("user_students", "course", $course->id)) {
+            if ($showfeedback) {
+                notify("$strdeleted user_students");
+            }
+        } else {
+            $result = false;
+        }
+        /// Delete group members (but keep the groups)
+        if ($groups = get_records("groups", "courseid", $course->id)) {
+            foreach ($groups as $group) {
+                if (delete_records("groups_members", "groupid", $group->id)) {
+                    if ($showfeedback) {
+                        notify("$strdeleted groups_members");
+                    }
+                } else {
+                    $result = false;
+                }
+            }
+        }
+    }
+
+    if ($removeteachers) {
+        if (delete_records("user_teachers", "course", $course->id)) {
+            if ($showfeedback) {
+                notify("$strdeleted user_teachers");
+            }
+        } else {
+            $result = false;
+        }
+    }
+
+    if ($removegroups) {
+        if ($groups = get_records("groups", "courseid", $course->id)) {
+            foreach ($groups as $group) {
+                if (delete_records("groups", "id", $group->id)) {
+                    if ($showfeedback) {
+                        notify("$strdeleted groups");
+                    }
+                } else {
+                    $result = false;
+                }
+            }
+        }
+    }
+
+    if ($removeevents) {
+        if (delete_records("event", "courseid", $course->id)) {
+            if ($showfeedback) {
+                notify("$strdeleted event");
+            }
+        } else {
+            $result = false;
+        }
+    }
+
+    if ($removelogs) {
+        if (delete_records("log", "course", $course->id)) {
+            if ($showfeedback) {
+                notify("$strdeleted log");
+            }
+        } else {
+            $result = false;
+        }
+    }
+
+    return $result;
+
+}
+
+
 
 /// GROUPS /////////////////////////////////////////////////////////
 
