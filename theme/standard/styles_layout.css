@@ -205,17 +205,18 @@ table.formtable tbody th
     text-align:right;
 }
 
-#nav-bar {
+.navbar {
     padding:3px 0.5em;
     height:1.3em;
 }
 
-#breadcrumb {
+.navbar .breadcrumb {
     float:left;
     margin:0.2em 0em;
 }
 
-#navbutton {
+.navbar .navbutton,
+.navbar .menu {
     float:right;
 }
 
