@@ -90,6 +90,7 @@ $string['quizopen'] = "Open the quiz";
 $string['quiznotavailable'] = "The quiz will not be available until: \$a";
 $string['random'] = "Random set";
 $string['randommatch'] = "Random Match";
+$string['randommatchcreate'] = "Create Random Match questions";
 $string['randommatchintro'] = "For each of the following questions, select the matching answer from the menu.";
 $string['randommatchnumber'] = "Number of questions to select";
 $string['readytosend'] = "You are about to send your whole quiz to be graded.  Are you sure you want to continue?";
