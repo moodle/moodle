@@ -66,6 +66,7 @@ $string['markunread'] = 'Marqué comme non lu';
 $string['maxattachmentsize'] = 'Taille maximale de l\'annexe';
 $string['maxtimehaspassed'] = 'Désolé. Le délai maximum pour modifier ce message ($a) est dépassé';
 $string['message'] = 'Message';
+$string['missingsearchterms'] = 'Le terme recherché suivant n\'apparaît que dans le code HTML markup de ce message&nbsp;:';
 $string['modeflatnewestfirst'] = 'Réponses en ligne, la plus récente en premier';
 $string['modeflatoldestfirst'] = 'Réponses en ligne, la plus ancienne en premier';
 $string['modenested'] = 'Réponses emboîtées';
