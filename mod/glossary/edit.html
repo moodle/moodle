@@ -1,14 +1,14 @@
 <center>
-<form name="form" method="post" <?=$onsubmit ?> action="edit.php" enctype="multipart/form-data">
+<form name="form" method="post" <?php p($onsubmit) ?> action="edit.php" enctype="multipart/form-data">
 <table class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
-<?PHP
+<?php
 if (isset($errors)) {
 ?>
     <tr valign=top>
-        <td colspan=2 align=center><strong><font color=red><?PHP p($errors) ?></font></strong>
+        <td colspan=2 align=center><strong><font color=red><?php p($errors) ?></font></strong>
         </td>
     </tr>
-<?PHP
+<?php
 }
 ?>
 <tr valign=top>
@@ -58,7 +58,7 @@ if (isset($errors)) {
         </tr>
         <tr>
           <td colspan="2">
-<?PHP 
+<?php 
     if ( !$glossary->usedynalink ) {
       echo '<input type="hidden" name=usedynalink value="0">';
       echo '<input type="hidden" name=casesensitive value="0">';
@@ -166,9 +166,9 @@ if (isset($errors)) {
   <input type="hidden" name=hcasesensitive value="0">
   <input type="hidden" name=hfullmatch value="1">
 
-  <input type="hidden" name=id value="<?=$cm->id ?>">
-  <input type="hidden" name=mode value="<?=$mode ?>">
-  <input type="hidden" name=hook value="<?=$hook ?>">
+  <input type="hidden" name=id value="<?php p($cm->id) ?>">
+  <input type="hidden" name=mode value="<?php p($mode) ?>">
+  <input type="hidden" name=hook value="<?php p($hook) ?>">
   <input type="hidden" name=confirm value="1">
 
   <input type="submit" value="<?php print_string("savechanges") ?>">
@@ -182,7 +182,7 @@ if (isset($errors)) {
 
 </form>
 
-<?PHP 
+<?php 
    if ($usehtmleditor) { 
        print_richedit_javascript("form", "text", "yes");
    }

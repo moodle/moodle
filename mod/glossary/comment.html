@@ -41,9 +41,9 @@
 		    echo "<input type=\"hidden\" name=cid value=\"$comment->id\">";
    	    }
 	?>
-	<input type="hidden" name=id value="<?=$cm->id ?>">
-	<input type="hidden" name=eid value="<?=$entry->id ?>">
-	<input type="hidden" name=action value="<?=$action ?>">
+	<input type="hidden" name=id value="<?php p($cm->id) ?>">
+	<input type="hidden" name=eid value="<?php p($entry->id) ?>">
+	<input type="hidden" name=action value="<?php p($action) ?>">
 	<input type="hidden" name=confirm value="1">
 
 	<input type="submit" value="<?php print_string("savechanges") ?>">
