@@ -173,13 +173,20 @@
     }
 
     print_heading(get_string("attempt", "quiz", $numattempts));
-
     print_simple_box(text_to_html($quiz->intro), "CENTER");
+
+
+/// Add the javascript timer in the title bar if the closing time appears close
+
+    $secondsleft = $quiz->timeclose - time();
+    if ($secondsleft > 0 and $secondsleft < 24*3600) {  // less than a day remaining
+        include("jsclock.php");
+    }
 
 
 /// Print all the questions
 
-    echo "<BR>";
+    echo "<br />";
 
     if (! quiz_print_quiz_questions($quiz)) {
         print_continue("view.php?id=$cm->id");
