@@ -102,7 +102,7 @@
 
         if ($entry->comment || $entry->rating) {
             print_heading("Feedback");
-            print_feedback($course, $entry);
+            journal_print_feedback($course, $entry);
         }
 
 
