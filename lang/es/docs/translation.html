@@ -79,7 +79,7 @@ final
 <p style="margin-left: 40px;">Despu&eacute;s, crea en tu nueva carpeta el archivo &quot;moodle.php&quot;
   introduciendo las siguientes líneas:<br /><br />
 <code>
-&lt?PHP <br />
+&lt;?PHP <br />
 $string['thischarset'] = 'iso-8859-1';<br />
 $string['thisdirection'] = 'ltr';<br />
 $string['thislanguage'] = 'new language pack';<br />
@@ -198,8 +198,8 @@ de cada formulario.</li>
       /&gt; &lt;hr
       /&gt;</span>.
     Debes a&ntilde;adir un espacio extra antes del car&aacute;cter "/".</li>
-  <li>Cada &lt;img debe tener un alt (puede estar vac&iacute;o) como <span style="color:rgb(255, 0, 0);" >&lt;img
-      alt src="picture.gif"></span></li>
+    <li>Cada &lt;img debe tener un alt="" (puede estar vac&iacute;o) y debe ser cerrado como otros elementos vacíos con un espacio y /&gt;, como en <span style="color:rgb(255, 0, 0);" >&lt;img
+      alt="" src="picture.gif" /></span></li>
   <li><span style="color:rgb(255, 0, 0);" >&lt;?=</span> y <span style="color:rgb(255, 0, 0);" >&lt;?</span> tienen
     que ser <span style="color:rgb(255, 0, 0);" >&lt;?php</span></li>
   <li>No deber&iacute;a haber ninguna etiqueta font. <span style="color:rgb(255, 0, 0);" > &lt;p&gt;&lt;em&gt; &lt;h1&gt; &lt;h2&gt;</span> etc
@@ -215,11 +215,7 @@ de cada formulario.</li>
   el fichero help.php. Dicho gui&oacute;n se encargar&aacute; de construir las p&aacute;ginas de ayuda
   correctamente. &iexcl;Esto significa que no hay demasiado espacio para la creatividad!
   Se fiel al ejemplo en ingl&eacute;s.</p>
-<p style="margin-left: 80px;">Los ficheros en la carpeta de documentaci&oacute;n deben
-  ser compatibles XHTML, incluyendo el doc
-  type,
-  header
-  etc.</p>
+<p style="margin-left: 80px;">Los ficheros en la carpeta de documentaci&oacute;n deben ser compatibles XHTML, incluyendo el doc type, header etc.</p>
 
 
  
@@ -256,14 +252,12 @@ de cada formulario.</li>
 <li>No hay archivos vacíos?</li>
 <li>No hay archivos o cadenas sin traducir?</li>
 <li>Los ficheros de ayuda no han sido editados con un procesador de textos?</li>
-<li>El aarchivo README contiene el idioma, el nombre y la dirección de correo del traductor?</li>
+<li>El archivo README contiene el idioma, el nombre y la dirección de correo del traductor?</li>
 <li>El nombre de la carpeta es el apropiado para Moodle(compruébalo en moodle\lib\languages.php)?</li>
 <li>Funciona el paquete del idioma sin errores en un servidor de pruebas?</li>
 <li>Si la cadena "thislanguage" contiene letras no latinas, han sido escritas utilizando la notación NCR?</li>
 <li>Son todos los archivos de ayuda y la cadenas válidos según la especificación XHTML?</li>
-</ul></p>
-
-
+</ul>
 
 <h2>Mantenimiento de un paquete de idioma est&aacute;ndar<br />
 </h2>
