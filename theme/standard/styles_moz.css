@@ -101,7 +101,7 @@ table.minicalendar {
     -moz-border-radius:10px;
 }
 
-table.minicalendar tbody td {
+table.minicalendar td {
     -moz-border-radius:4px;
 }
 

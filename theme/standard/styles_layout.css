@@ -373,25 +373,25 @@ table.message_search_results td {
     width: 98%;
 }
 
-#calendar .maincalendar table.calendarmonth thead th {
+#calendar .maincalendar table.calendarmonth th {
     padding:10px;
     border-bottom:2px solid;
 }
 
-#calendar .maincalendar table.calendarmonth tbody td {
+#calendar .maincalendar table.calendarmonth td {
     height: 5em;
     padding-left: 4px;
     padding-top: 4px;
 }
 
-#calendar .maincalendar table.calendarmonth tbody td,
-table.minicalendar tbody td,
-table.minicalendar thead th {
+#calendar .maincalendar table.calendarmonth td,
+table.minicalendar td,
+table.minicalendar th {
     width:14%;
     vertical-align:top;
 }
 
-#calendar .maincalendar table.calendarmonth tbody td table td {
+#calendar .maincalendar table.calendarmonth td table td {
     height: auto;
 }
 
@@ -455,7 +455,7 @@ table.minicalendar {
     border-spacing:1px !important;
 }
 
-table.minicalendar thead th {
+table.minicalendar th {
     padding: 0px 2px;
 }
 

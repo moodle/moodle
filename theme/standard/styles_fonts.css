@@ -266,7 +266,7 @@ h4 {
     font-weight:bold;
 }
 
-#calendar .maincalendar table.calendarmonth tbody td {
+#calendar .maincalendar table.calendarmonth td {
     font-size:0.8em;
     line-height:1.2em;
 }
@@ -295,7 +295,7 @@ table.minicalendar {
     font-size:0.85em;
 }
 
-table.minicalendar tbody td {
+table.minicalendar td {
     text-align: center;
 }
 
