@@ -79,38 +79,36 @@ if ($attendances) {
 
 
 if ($download == "xls") {
-    require_once("../../lib/psxlsgen.php");
+    require_once("write_excel/Worksheet.php");
+    require_once("write_excel/Workbook.php");
+  // HTTP headers
+  attendance_HeaderingExcel($course->shortname."_Attendance_Week.xls");
+  // Creating a workbook
+  $workbook = new Workbook("-");
+  // Creating the first worksheet
+  $myxls =& $workbook->add_worksheet('Grades');
 
-// add up the total columns that are required for the whole report
-    $myxls = new PhpSimpleXlsGen();
-if ($dlsub== "all") {
-    $myxls->totalcol=4+$numatt; // first,last,id ---...---> total
-} else {
-    $myxls->totalcol=4; // first,last,id ---...---> total
-}
     // print the date headings at the top of the table
     // for each day of attendance
-    $myxls->ChangePos(2,0);
-    $myxls->InsertText(get_string("lastname"));
-    $myxls->InsertText(get_string("firstname"));
-    $myxls->InsertText(get_string("idnumber"));
+    $myxls->write_string(3,0,get_string("lastname"));
+    $myxls->write_string(3,1,get_string("firstname"));
+    $myxls->write_string(3,2,get_string("idnumber"));
     $pos=3;
 if ($dlsub== "all") {
     for($k=0;$k<$numatt;$k++)  {
     // put notes for the date in the date heading
-	    $myxls->ChangePos(0,$pos);
-	    $myxls->InsertText(userdate($atts[$k]->attendance->day,"%m/%0d"));
-	    $myxls->ChangePos(1,$pos);
-	    $myxls->InsertText($atts[$k]->attendance->notes);
-			$myxls->ChangePos(2,$pos);
+	    $myxls->write_string(1,$pos,userdate($atts[$k]->attendance->day,"%m/%0d"));
+	    $myxls->set_column($pos,$pos,5);
+	    $myxls->write_string(2,$pos,$atts[$k]->attendance->notes);
 			for ($i=1;$i<=$atts[$k]->attendance->hours;$i++) {
-				$myxls->InsertText($i);
+				$myxls->write_number(3,$pos,$i);
+  	    $myxls->set_column($pos,$pos,1);
 				$pos++;
 			}
     }
 }  // if dlsub==all
-		$myxls->ChangePos(2,$pos);
-		$myxls->InsertText(get_string("total"));
+		$myxls->write_string(3,$pos,get_string("total"));
+		$myxls->set_column($pos,$pos,5);
 		
 /// generate the attendance rolls for the body of the spreadsheet
   if (isstudent($course->id)) { 
@@ -122,13 +120,13 @@ if ($dlsub== "all") {
   $A = get_string("absentshort","attendance");
   $T = get_string("tardyshort","attendance");
   $P = get_string("presentshort","attendance");  
-  $row=3;
+  $row=4;
   foreach ($students as $student) {
-    $myxls->ChangePos($row,0);
-    $myxls->InsertText($student->lastname);
-    $myxls->InsertText($student->firstname);
+    $myxls->write_string($row,0,$student->lastname);
+    $myxls->write_string($row,1,$student->firstname);
     $studentid=(($student->idnumber != "") ? $student->idnumber : " ");
-    $myxls->InsertText($studentid);
+    $myxls->write_string($row,2,$studentid);
+    $pos=3;
     if ($dlsub== "all") {
 	    for($k=0;$k<$numatt;$k++)  { // for each day of attendance for the student
 	  	  for($j=1;$j<=$atts[$k]->attendance->hours;$j++) {
@@ -136,7 +134,8 @@ if ($dlsub== "all") {
 	  	    if ($atts[$k]->sroll[$student->id][$j]->status == 1) {$status=$T;}
 		      elseif ($atts[$k]->sroll[$student->id][$j]->status == 2) {$status=$A;}
 	 	      else {$status=$P;}
-	        $myxls->InsertText($status);
+	        $myxls->write_string($row,$pos,$status);
+	        $pos++;
 		    } /// for loop
 	    }
     }
@@ -149,10 +148,10 @@ if ($dlsub== "all") {
 		  } /// for loop
 	  } // outer for for each day of attendance
     $tot=tally_overall_absences_decimal($abs,$tar);
-    $myxls->InsertNumber($tot);
+    $myxls->write_number($row,$pos,$tot);
 		$row++;
   }
-  $myxls->SendFileName($course->shortname."_Attendance_Week");
+  $workbook->close();
 
   exit;
 }
@@ -520,6 +519,14 @@ function attendance_print_header()  {
                  "$navigation <A HREF=index.php?id=$course->id>$strattendances</A> -> $strweekattendance", 
                   "", "", true, "&nbsp;", 
                   navmenu($course, $cm));
+}
+
+function attendance_HeaderingExcel($filename) {
+  header("Content-type: application/vnd.ms-excel");
+  header("Content-Disposition: attachment; filename=$filename" );
+  header("Expires: 0");
+  header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
+  header("Pragma: public");
 }
 
 ?>
