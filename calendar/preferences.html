@@ -1,0 +1,78 @@
+<form method="post" action="preferences.php" name="form">
+
+<table cellpadding="9" cellspacing="0">
+<tr valign="top">
+	<td nowrap="nowrap" align="right"><p><?php print_string('pref_timeformat', 'calendar')?>:</td>
+	<td>
+    <?php 
+        $options = NULL;
+        $options['0']  = get_string('default', 'calendar');
+        $options[CALENDAR_TF_12] = get_string('timeformat_12', 'calendar');
+        $options[CALENDAR_TF_24] = get_string('timeformat_24', 'calendar');
+        choose_from_menu ($options, "timeformat", $prefs->timeformat, "", "", ""); 
+    ?>
+    </td>
+    <td>
+    <?php print_string('explain_timeformat', 'calendar'); ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td nowrap="nowrap" align="right"><p><?php print_string('pref_startwday', 'calendar')?>:</td>
+	<td>
+    <?php 
+        $options = NULL;
+        $options[0] = get_string('sunday', 'calendar');
+        $options[1] = get_string('monday', 'calendar');
+        $options[2] = get_string('tuesday', 'calendar');
+        $options[3] = get_string('wednesday', 'calendar');
+        $options[4] = get_string('thursday', 'calendar');
+        $options[5] = get_string('friday', 'calendar');
+        $options[6] = get_string('saturday', 'calendar');
+        choose_from_menu($options, 'startwday', $prefs->startwday, '', '', '');
+    ?>
+    </td>
+    <td>
+    <?php print_string('explain_startwday', 'calendar'); ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td nowrap="nowrap" align="right"><p><?php print_string('pref_maxevents', 'calendar')?>:</td>
+	<td>
+    <?php 
+        $options = NULL;
+        for ($i=1; $i<=20; $i++) {
+            $options[$i] = $i;
+        }
+        choose_from_menu ($options, "maxevents", $prefs->maxevents, "", "", ""); 
+    ?>
+    </td>
+    <td>
+    <?php print_string('explain_maxevents', 'calendar'); ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td nowrap="nowrap" align="right"><p><?php print_string('pref_lookahead', 'calendar')?>:</td>
+	<td>
+    <?php 
+        $options = NULL;
+        for ($i=1; $i<=200; $i++) {
+            $options[$i] = $i;
+        }
+        choose_from_menu ($options, "lookahead", $prefs->lookahead, "", "", ""); 
+    ?>
+    </td>
+    <td>
+    <?php print_string('explain_lookahead', 'calendar'); ?>
+    </td>
+</tr>
+
+<tr>
+    <td colspan="3" align="center">
+	<input type="submit" value="<?php print_string("savechanges") ?>"></td>
+</tr>
+</table>
+
+</form>

@@ -43,9 +43,8 @@
     require_once('../config.php');
     require_once('lib.php');
     require_once('../course/lib.php');
-    require_once('../mod/forum/lib.php');
 
-    require_variable($_GET['view']);
+    optional_variable($_GET['view'], "upcoming");
     optional_variable($_GET['cal_d']);
     optional_variable($_GET['cal_m']);
     optional_variable($_GET['cal_y']);
@@ -106,12 +105,13 @@
         $nav = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$SESSION->cal_course_referer.'">'.$shortname.'</a> -> '.$nav;
     }
 
+    $strcalendar = get_string('calendar', 'calendar');
+
+    $prefsbutton = calendar_preferences_button();
+
     // Print title and header
-    if(!empty($pagetitle)) {
-        $pagetitle = ': '.$pagetitle;
-    }
-    print_header(get_string('calendar', 'calendar').$pagetitle, $site->fullname, $nav,
-                 '', '', true, '', '<p class="logininfo">'.user_login_string($site).'</p>');
+    print_header("$site->shortname: $strcalendar: $pagetitle", $strcalendar, $nav,
+                 '', '', true, $prefsbutton, '<p class="logininfo">'.user_login_string($site).'</p>');
 
     echo calendar_overlib_html();
 
@@ -122,18 +122,6 @@
     // START: Main column
 
     echo '<td width="100%" valign="top">';
-
-    if ($prefmenu) {
-        $text = '<div style="float: left;">'.get_string('calendarheading', 'calendar', strip_tags($site->shortname)).'</div><div style="float: right;">';
-        $text.= calendar_get_preferences_menu();
-        $text.= '</div>';
-
-    } else {
-        $text = get_string('calendarheading', 'calendar', strip_tags($site->shortname));
-    }
-
-    print_heading_block($text);
-    print_spacer(8, 1);
 
     $defaultcourses = calendar_get_default_courses();
     $courses = array();

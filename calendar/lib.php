@@ -1187,27 +1187,17 @@ function calendar_preferences_array() {
     );
 }
 
-function calendar_get_preferences_menu() {
+function calendar_preferences_button() {
+    global $CFG, $USER;
 
     // Guests have no preferences
-    if(isguest()) {
+    if (empty($USER->id) or isguest()) {
         return '';
     }
 
-    $str = '<form style="display: inline;" name="cal_pref_form" method="get" action="preferences.php">';
-    $str .= '<select id="cal_pref" name="edit" onchange="self.location=\'preferences.php?edit=\'+document.cal_pref_form.cal_pref.options[document.cal_pref_form.cal_pref.options.selectedIndex].value; ">';
-    $str .= '<option value="" selected="selected">'.get_string('preferences', 'calendar').'...</option>';
-    $prefs = calendar_preferences_array();
-
-    foreach($prefs as $name => $description) {
-        $str .= '<option value="'.$name.'">'.$description.'</option>';
-    }
-    $str .= '</select>';
-    $str .= '<noscript id="cal_noscript" style="display: inline;"> <input type="submit" value=" &gt; " /></noscript>';
-    $str .= '<script type="text/javascript">document.getElementById("cal_noscript").style.display = "none";</script>';
-    $str .= '</form>';
-
-    return $str;
+    return "<form target=\"$CFG->framename\" method=\"get\" ".
+           " action=\"$CFG->wwwroot/calendar/preferences.php\">".
+           "<input type=\"submit\" value=\"".get_string("preferences", "calendar")." ...\" /></form>";
 }
 
 if(!function_exists('array_diff_assoc')) {
