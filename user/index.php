@@ -130,6 +130,12 @@
                     "<FONT SIZE=2>$lastaccess</FONT>");
             }
             print_table($table);
+
+        }
+        if ($CFG->longtimenosee < 500) {
+            echo "<CENTER><P><FONT SIZE=1>(";
+            print_string("unusedaccounts","",$CFG->longtimenosee);
+            echo ")</FONT></P></CENTER>";
         }
     } 
 

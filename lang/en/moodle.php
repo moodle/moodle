@@ -470,6 +470,7 @@ $string['unenrol'] = "Unenrol";
 $string['unenrolme'] = "Unenrol me from \$a";
 $string['unenrolsure'] = "Are you sure you want to unenrol \$a from this course?";
 $string['unsafepassword'] = "Unsafe password - try something else";
+$string['unusedaccounts'] = "Accounts unused for more than \$a days are automatically unenrolled";
 $string['unzip'] = "Unzip";
 $string['update'] = "Update";
 $string['updated'] = "Updated \$a";
