@@ -818,23 +818,35 @@ function get_teacher($courseid) {
     }
 }
 
-function get_course_students($courseid, $sort="u.lastaccess DESC") {
+function get_course_students($courseid=0, $sort="u.lastaccess DESC") {
 /// Returns list of all students in this course
+/// if courseid = 0 then return ALL students in all courses
 
     global $CFG;
 
+    $selectcourse = "";
+    if (!empty($courseid)) {
+        $selectcourse = "s.course = '$courseid' AND ";
+    }
+
     return get_records_sql("SELECT u.* FROM {$CFG->prefix}user u, {$CFG->prefix}user_students s
-                            WHERE s.course = '$courseid' AND s.userid = u.id AND u.deleted = '0'
+                            WHERE $selectcourse s.userid = u.id AND u.deleted = '0'
                             ORDER BY $sort");
 }
 
-function get_course_teachers($courseid, $sort="t.authority ASC") {
+function get_course_teachers($courseid=0, $sort="t.authority ASC") {
 /// Returns list of all teachers in this course
+/// if courseid = 0 then return ALL teachers in all courses
 
     global $CFG;
 
+    $selectcourse = "";
+    if (!empty($courseid)) {
+        $selectcourse = "t.course = '$courseid' AND ";
+    }
+
     return get_records_sql("SELECT u.*,t.authority,t.role FROM {$CFG->prefix}user u, {$CFG->prefix}user_teachers t
-                            WHERE t.course = '$courseid' AND t.userid = u.id AND u.deleted = '0'
+                            WHERE $selectcourse t.userid = u.id AND u.deleted = '0'
                             ORDER BY $sort");
 }
 
@@ -857,7 +869,6 @@ function get_course_users($courseid, $sort="u.lastaccess DESC") {
 ///                                  (t.course = '$courseid' AND t.userid = u.id)
 ///                            ORDER BY $sort");
 }
-
 
 function get_users_search($search, $sort="u.firstname ASC") {
     global $CFG;

@@ -619,9 +619,11 @@ function forum_subscribed_users($course, $forum) {
 /// Returns list of user objects that are subscribed to this forum
     global $CFG;
 
-    if ($course->category) {   // normal course
-        if ($forum->forcesubscribe) {
+    if ($forum->forcesubscribe) {
+        if ($course->category) {
             return get_course_users($course->id);
+        } else {
+            return get_course_users(0);   // ALL SITE USERS
         }
     }
     return get_records_sql("SELECT u.* 
@@ -650,15 +652,16 @@ function forum_get_course_forum($courseid, $type) {
         switch ($forum->type) {
             case "news":
                 $forum->name  = get_string("namenews", "forum");
-                if ($site = get_site()) {
-                    if ($courseid == $site->id) {
-                        $forum->name  = get_string("sitenews");
-                    }
-                }
+                $forum->forcesubscribe = 1;
                 $forum->intro = get_string("intronews", "forum");
                 $forum->open = 1;   // 0 - no, 1 - posts only, 2 - discuss and post
                 $forum->assessed = 0;
-                $forum->forcesubscribe = 1;
+                if ($site = get_site()) {
+                    if ($courseid == $site->id) {
+                        $forum->name  = get_string("sitenews");
+                        $forum->forcesubscribe = 0;
+                    }
+                }
                 break;
             case "social":
                 $forum->name  = get_string("namesocial", "forum");
