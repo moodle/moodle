@@ -879,6 +879,7 @@ function unenrol_student($userid, $courseid=0) {
 
 function add_teacher($userid, $courseid, $editall=1, $role="", $timestart=0, $timeend=0) {
 /// Add a teacher to a given course
+    global $CFG;
 
     if ($teacher = get_record('user_teachers', 'userid', $userid, 'course', $courseid)) {
         $newteacher = NULL;
@@ -918,11 +919,8 @@ function add_teacher($userid, $courseid, $editall=1, $role="", $timestart=0, $ti
     delete_records("user_students", "userid", $userid, "course", $courseid); // Unenrol as student
     
     /// Add forum subscriptions for new users
-    if ($forums = get_records('forum', 'course', $courseid, 'forcesubscribe', 2)) {
-        foreach ($forums as $forum) {
-            forum_subscribe($userid, $forum->id);
-        }
-    }
+    require_once('../mod/forum/lib.php');
+    forum_add_user($userid, $courseid);
 
     return insert_record("user_teachers", $teacher);
 

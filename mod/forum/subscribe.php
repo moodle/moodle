@@ -7,10 +7,10 @@
 
     require_variable($id);      // The forum to subscribe or unsubscribe to
     optional_variable($force);  // Force everyone to be subscribed to this forum?
-    optional_variable($user);  // Force everyone to be subscribed to this forum?
+    optional_variable($user);  
 
     if (isguest()) {
-        error("Guests are not allowed to subscribe to posts.", $_SERVER["HTTP_REFERER"]);
+        error("Guests are not allowed to subscribe to forums.", $_SERVER["HTTP_REFERER"]);
     }
 
     if (! $forum = get_record("forum", "id", $id)) {

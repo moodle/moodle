@@ -59,7 +59,7 @@
     <td align=right><p><b><?php print_string("subscription", "forum") ?>:</b></p></td>
     <td>
     <?php 
-       if ($forum->forcesubscribe) {
+       if (forum_is_forcesubscribed($forum->id)) {
            print_string("everyoneissubscribed", "forum");
        } else {
            unset($options);

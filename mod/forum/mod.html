@@ -106,9 +106,10 @@
         <?php
             unset($options);
             $options[0] = get_string("no");
-            $options[1] = get_string("yes");
+            $options[1] = get_string('yesforever', 'forum');
+            $options[FORUM_INITIALSUBSCRIBE] = get_string('yesinitially', 'forum');
             choose_from_menu($options, "forcesubscribe", $form->forcesubscribe, "");
-            helpbutton("subscription", get_string("forcesubscribeq", "forum"), "forum");
+            helpbutton("subscription2", get_string("forcesubscribeq", "forum"), "forum");
         ?>
     </td>
 </tr>

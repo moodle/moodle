@@ -1214,14 +1214,10 @@ function forum_subscribed_users($course, $forum, $groupid=0) {
     }
 
     if (forum_is_forcesubscribed($forum->id)) {
-        if ($course->category) {
-            if ($forum->type == "teacher") {
-                return get_course_teachers($course->id);  // Only teachers can be subscribed to teacher forums
-            } else {
-                return get_course_users($course->id);     // Otherwise get everyone in the course
-            }
+        if ($forum->type == "teacher") {
+            return get_course_teachers($course->id);  // Only teachers can be subscribed to teacher forums
         } else {
-            return get_site_users();
+            return get_course_users($course->id);     // Otherwise get everyone in the course
         }
     }
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest, u.emailstop,
@@ -2845,6 +2841,11 @@ function forum_update_subscriptions_button($courseid, $forumid) {
 function forum_add_user($userid, $courseid) {
 /// Add subscriptions for new users
     if ($forums = get_records_select('forum', "course = '$courseid' AND forcesubscribe = '2'")) {
+        foreach ($forums as $forum) {
+            forum_subscribe($userid, $forum->id);
+        }
+    }
+    if ($forums = get_records_select('forum', "course = '".SITEID."' AND forcesubscribe = '2'")) {
         foreach ($forums as $forum) {
             forum_subscribe($userid, $forum->id);
         }
