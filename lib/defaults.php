@@ -4,23 +4,24 @@
 // It defines default values for any important configuration variables
 
    $defaults = array (
-       "theme"          => "standard",
-       "lang"           => "en",
-       "langdir"        => "LTR",
-       "locale"         => "en",
-       "auth"           => "email",
-       "smtphosts"      => "",
-       "smtpuser"       => "",
-       "smtppass"       => "",
-       "gdversion"      =>  1,
-       "longtimenosee"  =>  100,
-       "zip"            => "/usr/bin/zip",
-       "unzip"          => "/usr/bin/unzip",
-       "slasharguments" =>  1,
-       "htmleditor"     =>  true,
-       "proxyhost"      => "",
-       "proxyport"      => "",
-       "maxeditingtime" =>  1800
+       "theme"            => "standard",
+       "lang"             => "en",
+       "langdir"          => "LTR",
+       "locale"           => "en",
+       "auth"             => "email",
+       "smtphosts"        => "",
+       "smtpuser"         => "",
+       "smtppass"         => "",
+       "gdversion"        =>  1,
+       "longtimenosee"    =>  100,
+       "zip"              => "/usr/bin/zip",
+       "unzip"            => "/usr/bin/unzip",
+       "slasharguments"   =>  1,
+       "htmleditor"       =>  true,
+       "proxyhost"        => "",
+       "proxyport"        => "",
+       "maxeditingtime"   =>  1800
+       "guestloginbutton" =>  1
     );
 
 ?>
