@@ -56,7 +56,7 @@ function print_footer ($course=NULL) {
                 $dversion = "unknown!";
             }
             $homelink  = "<P ALIGN=center><A TITLE=\"Version $dversion: Click to visit moodle.com\" HREF=\"http://moodle.com/\">";
-            $homelink .= "<BR><IMG WIDTH=129 HEIGHT=17 SRC=\"pix/madewithmoodle.gif\" BORDER=0></A></P>";
+            $homelink .= "<BR><IMG WIDTH=130 HEIGHT=19 SRC=\"pix/madewithmoodle.gif\" BORDER=0></A></P>";
         } else {
             $homelink = "<A TARGET=_top HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A>";
         }
