@@ -446,6 +446,9 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
                 $fullname = fullname($post, $isteacher);
                 echo "<p $teacheronly><font size=1>$date - $fullname<br>";
                 echo "\"<a href=\"$CFG->wwwroot/mod/forum/$log->url\">";
+                if (!empty($CFG->filterall)) {
+                    $post->subject = filter_text($post->subject, $course->id);
+                }
                 if ($log->action == "add discussion") {
                     echo "<b>$post->subject</b>";
                 } else {
@@ -1276,6 +1279,10 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 function forum_print_discussion_header(&$post, $courseid, $datestring="") {
     global $THEME, $USER, $CFG;
 
+    if (!empty($CFG->filterall)) {
+        $post->subject = filter_text($post->subject, $courseid);
+    }
+
     echo "<tr class=\"forumpostheader\">";
 
     // Topic
@@ -2089,6 +2096,9 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         }
         switch ($forum_style) {
             case "minimal":
+                if (!empty($CFG->filterall)) {
+                    $discussion->subject = filter_text($discussion->subject, $forum->course);
+                }
                 echo "<p><span class=\"smallinfohead\">".userdate($discussion->modified, $strftimerecent)." - $discussion->firstname</span><br />";
                 echo "<span class=\"smallinfo\">$discussion->subject ";
                 echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->discussion\">";
