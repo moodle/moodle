@@ -17,9 +17,13 @@ define("SHORTANSWER", "1");
 define("TRUEFALSE",   "2");
 define("MULTICHOICE", "3");
 define("RANDOM",      "4");
+define("MATCH",       "5");
+define("RANDOMMATCH", "6");
+
 $QUIZ_QUESTION_TYPE = array ( MULTICHOICE => get_string("multichoice", "quiz"),
                               TRUEFALSE   => get_string("truefalse", "quiz"),
-                              SHORTANSWER => get_string("shortanswer", "quiz") );
+                              SHORTANSWER => get_string("shortanswer", "quiz"),
+                              RANDOMMATCH => get_string("randommatch", "quiz") );
 
 $QUIZ_FILE_FORMAT = array ( "custom"   => get_string("custom", "quiz"),
                             "webct"    => get_string("webct", "quiz"),
@@ -245,8 +249,9 @@ function quiz_get_grade_records($quiz) {
 function quiz_get_answers($question) {
 // Given a question, returns the correct answers and grades
     global $CFG;
+
     switch ($question->qtype) {
-        case SHORTANSWER;       // Could be multiple answers
+        case SHORTANSWER:       // Could be multiple answers
             return get_records_sql("SELECT a.*, sa.usecase, g.grade
                                       FROM {$CFG->prefix}quiz_shortanswer sa,  
                                            {$CFG->prefix}quiz_answers a,  
@@ -256,7 +261,7 @@ function quiz_get_answers($question) {
                                        AND sa.question = g.question");
             break;
 
-        case TRUEFALSE;         // Should be always two answers
+        case TRUEFALSE:         // Should be always two answers
             return get_records_sql("SELECT a.*, g.grade
                                       FROM {$CFG->prefix}quiz_answers a, 
                                            {$CFG->prefix}quiz_question_grades g
@@ -264,7 +269,7 @@ function quiz_get_answers($question) {
                                        AND a.question = g.question");
             break;
 
-        case MULTICHOICE;       // Should be multiple answers
+        case MULTICHOICE:       // Should be multiple answers
             return get_records_sql("SELECT a.*, mc.single, g.grade
                                       FROM {$CFG->prefix}quiz_multichoice mc, 
                                            {$CFG->prefix}quiz_answers a, 
@@ -274,9 +279,20 @@ function quiz_get_answers($question) {
                                        AND mc.question = g.question");
             break;
 
-       case RANDOM:
+        case RANDOM:
            return false;  // Not done yet
            break;
+
+        case RANDOMMATCH:       // Could be any of many answers, return them all
+            return get_records_sql("SELECT a.*, g.grade
+                                      FROM {$CFG->prefix}quiz_questions q,  
+                                           {$CFG->prefix}quiz_answers a,  
+                                           {$CFG->prefix}quiz_question_grades g
+                                     WHERE q.category = '$question->category' 
+                                       AND q.qtype = ".SHORTANSWER."
+                                       AND q.id = a.question
+                                       AND g.question = '$question->id'");
+            break;
 
         default:
             return false;
@@ -290,7 +306,7 @@ function quiz_get_attempt_responses($attempt) {
 // for regrading using quiz_grade_attempt_results()
     global $CFG;
    
-    if (!$responses = get_records_sql("SELECT q.id, q.qtype, r.answer 
+    if (!$responses = get_records_sql("SELECT q.id, q.qtype, q.category, r.answer 
                                         FROM {$CFG->prefix}quiz_responses r, 
                                              {$CFG->prefix}quiz_questions q
                                        WHERE r.attempt = '$attempt->id' 
@@ -342,6 +358,9 @@ function quiz_print_question_icon($question) {
             break;
         case RANDOM:
             echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/rs.gif\">";
+            break;
+        case RANDOMMATCH:
+            echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/rm.gif\">";
             break;
     }
     echo "</A>\n";
@@ -502,6 +521,93 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
 
        case RANDOM:
            echo "<P>Random questions not supported yet</P>";
+           break;
+
+       case RANDOMMATCH: 
+           if (!$options = get_record("quiz_randommatch", "question", $question->id)) {
+               notify("Error: Missing question options!");
+           }
+           echo text_to_html($question->questiontext);
+           if ($question->image) {
+               print_file_picture($question->image, $courseid, QUIZ_PICTURE_DEFAULT_HEIGHT);
+           }
+
+           /// First, get all the questions available
+
+           $allquestions = get_records_select("quiz_questions", 
+                                              "category = $question->category AND qtype = ".SHORTANSWER);
+           if (count($allquestions) < $options->choose) {
+               notify("Error: could not find enough Short Answer questions in the database!");
+               notify("Found ".count($allquestions).", need $options->choose.");
+               break;
+           }
+
+           if (empty($response)) {  // Randomly pick the questions
+               if (!$randomquestions = draw_rand_array($allquestions, $options->choose)) {
+                   notify("Error choosing $options->choose random questions");
+                   break;
+               }
+           } else {                 // Use existing questions
+               $randomquestions = array();
+               foreach ($response as $key => $rrr) {
+                   $rrr = explode("-", $rrr);
+                   $randomquestions[$key] = $allquestions[$key];
+                   $responseanswer[$key] = $rrr[1];
+               }
+           }
+    
+           /// For each selected, find the best matching answers
+
+           foreach ($randomquestions as $randomquestion) {
+               $shortanswerquestion = get_record("quiz_shortanswer", "question", $randomquestion->id);
+               $questionanswers = get_records_list("quiz_answers", "id", $shortanswerquestion->answers);
+               $bestfraction = 0;
+               $bestanswer = NULL;
+               foreach ($questionanswers as $questionanswer) {
+                   if ($questionanswer->fraction > $bestfraction) {
+                       $bestanswer = $questionanswer;
+                   }
+               }
+               if (empty($bestanswer)) {
+                   notify("Error: Could not find the best answer for question: ".$randomquestions->name);
+                   break;
+               }
+               $randomanswers[$bestanswer->id] = trim($bestanswer->answer);
+           }
+
+           if (!$randomanswers = draw_rand_array($randomanswers, $options->choose)) {  // Mix them up
+               notify("Error randomising answers!");
+               break;
+           }
+
+           echo "<table border=0 cellpadding=10>";
+           foreach ($randomquestions as $key => $randomquestion) {
+               echo "<tr><td align=left valign=top>";
+               echo $randomquestion->questiontext;
+               echo "</td>";
+               echo "<td align=right valign=top>";
+               if (empty($response)) {
+                   choose_from_menu($randomanswers, "q$question->id"."r$randomquestion->id");
+               } else {
+                   if (!empty($correct[$key])) {
+                       if ($randomanswers[$responseanswer[$key]] == $correct[$key]) {
+                           echo "<span=highlight>";
+                           choose_from_menu($randomanswers, "q$question->id"."r$randomquestion->id", $responseanswer[$key]);
+                           echo "</span><br \>";
+                       } else {
+                           choose_from_menu($randomanswers, "q$question->id"."r$randomquestion->id", $responseanswer[$key]);
+                           quiz_print_correctanswer($correct[$key]);
+                       }
+                   } else {
+                       choose_from_menu($randomanswers, "q$question->id"."r$randomquestion->id", $responseanswer[$key]);
+                   }
+                   if (!empty($feedback[$key])) {
+                       quiz_print_comment($feedback[$key]);
+                   }
+               }
+               echo "</td></tr>";
+           }
+           echo "</table>";
            break;
 
 
@@ -693,6 +799,9 @@ function quiz_print_question_list($questionlist, $grades) {
     echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2 WIDTH=\"100%\">";
     echo "<TR><TH WIDTH=\"*\" COLSPAN=3 NOWRAP>$strorder</TH><TH align=left WIDTH=\"100%\" NOWRAP>$strquestionname</TH><TH width=\"*\" NOWRAP>$strtype</TH><TH WIDTH=\"*\" NOWRAP>$strgrade</TH><TH WIDTH=\"*\" NOWRAP>$stredit</TH></TR>";
     foreach ($order as $qnum) {
+        if (empty($questions[$qnum])) {
+            continue;
+        }
         $count++;
         echo "<TR BGCOLOR=\"$THEME->cellcontent\">";
         echo "<TD>$count</TD>";
@@ -1087,24 +1196,47 @@ function quiz_grade_attempt_results($quiz, $questions) {
                     if (!empty($question->answer)) {
                         foreach ($question->answer as $questionanswer) {
                             if ($questionanswer == $answer->id) {
+                                $response[$answer->id] = true;
                                 if ($answer->single) {
                                     $grade = (float)$answer->fraction * $answer->grade;
-                                    $response[$answer->id] = true;
                                     continue;
                                 } else {
                                     $grade += (float)$answer->fraction * $answer->grade;
-                                    $response[$answer->id] = true;
                                 }
                             }
                         }
                     }
                 }
                 break;
-            case RANDOM:
-                          // Not done yet
+
+            case RANDOMMATCH:
+                $bestanswer = array();
+                foreach ($answers as $answer) {  // Loop through them all looking for correct answers
+                    if (empty($bestanswer[$answer->question])) {
+                        $bestanswer[$answer->question] = 0;
+                        $correct[$answer->question] = "";
+                    }
+                    if ($answer->fraction > $bestanswer[$answer->question]) {
+                        $bestanswer[$answer->question] = $answer->fraction;
+                        $correct[$answer->question] = $answer->answer;
+                    }
+                }
+                $answerfraction = 1.0 / (float) count($question->answer);
+                foreach ($question->answer as $questionanswer) {  // For each random answered question
+                    $rqarr = explode('-', $questionanswer);   // Extract question/answer.
+                    $rquestion = $rqarr[0];
+                    $ranswer = $rqarr[1];
+                    $response[$rquestion] = $questionanswer;
+                    if (isset($answers[$ranswer])) {         // If the answer exists in the list
+                        $answer = $answers[$ranswer];         
+                        $feedback[$rquestion] = $answer->feedback;
+                        if ($answer->question == $rquestion) {    // Check that this answer matches the question
+                            $grade += (float)$answer->fraction * $answer->grade * $answerfraction;
+                        }
+                    }
+                }
                 break;
 
-            
         }
         if ($grade < 0.0) {   // No negative grades
             $grade = 0.0;
@@ -1272,6 +1404,24 @@ function quiz_save_question_options($question) {
                 }
             }
         break;
+
+        case RANDOMMATCH:
+            $options->question = $question->id;
+            $options->choose = $question->choose;
+            if ($existing = get_record("quiz_randommatch", "question", $options->question)) {
+                $options->id = $existing->id;
+                if (!update_record("quiz_randommatch", $options)) {
+                    $result->error = "Could not update quiz randommatch options!";
+                    return $result;
+                }
+            } else {
+                if (!insert_record("quiz_randommatch", $options)) {
+                    $result->error = "Could not insert quiz randommatch options!";
+                    return $result;
+                }
+            }
+        break;
+
         default:
             $result->error = "Unsupported question type ($question->qtype)!";
             return $result;
@@ -1279,6 +1429,8 @@ function quiz_save_question_options($question) {
     }
     return true;
 }
+
+
 
 
 ?>

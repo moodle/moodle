@@ -84,7 +84,7 @@
         foreach ($rawquestions as $key => $value) {    // Parse input for question ids
             if (substr($key, 0, 1) == "q") {
                 $key = substr($key,1);
-                if ($questions) {
+                if (!empty($questions)) {
                     foreach ($questions as $question) {
                         if ($question == $key) {
                             continue 2;

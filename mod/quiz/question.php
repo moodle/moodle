@@ -185,6 +185,14 @@
         $question->image = "";
     }
 
+    // Set up some Richtext editing if necessary
+    if ($usehtmleditor = can_use_richtext_editor()) {
+        $defaultformat = FORMAT_HTML;
+        $onsubmit = "onsubmit=\"copyrichtext(theform.questiontext);\"";
+    } else {
+        $defaultformat = FORMAT_MOODLE;
+        $onsubmit = "";
+    }
 
     switch ($qtype) {
         case SHORTANSWER:
@@ -263,6 +271,17 @@
         case RANDOM:
             print_heading_with_help(get_string("editingrandom", "quiz"), "random", "quiz");
             print_continue("edit.php");
+        break;
+
+        case RANDOMMATCH:
+            if (!empty($question->id)) {
+                $options = get_record("quiz_randommatch", "question", $question->id);
+            } else {
+                $options->choose = "";
+            }
+            $numberavailable = count_records("quiz_questions", "category", $category->id, "qtype", SHORTANSWER);
+            print_heading_with_help(get_string("editingrandommatch", "quiz"), "randommatch", "quiz");
+            require("randommatch.html");
         break;
 
         default:

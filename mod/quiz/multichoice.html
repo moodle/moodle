@@ -1,4 +1,4 @@
-<FORM name="theform" method="post" action="question.php">
+<FORM name="theform" method="post" <?=$onsubmit ?> action="question.php">
 <CENTER>
 <TABLE cellpadding=5>
 <TR valign=top>
@@ -21,9 +21,13 @@
                formerr($err["questiontext"]); 
                echo "<BR \>";
            }
+           print_textarea($usehtmleditor, 15, 60, 595, 300, "questiontext", $question->questiontext);
+           if ($usehtmleditor) {
+               helpbutton("richtext", get_string("helprichtext"), "moodle");
+           } else {
+               helpbutton("text", get_string("helptext"), "moodle");
+           }
         ?>
-        <textarea name="questiontext" rows=5 cols=50 wrap="virtual"><? p($question->questiontext)?></textarea>
-        <? helpbutton("text", get_string("helptext")); ?>
     </TD>
 </TR>
 <TR valign=top>
@@ -185,3 +189,8 @@
 
 </CENTER>
 </FORM>
+<? 
+   if ($usehtmleditor) { 
+       print_richedit_javascript("theform", "questiontext", "no");
+   }
+?>

@@ -123,6 +123,17 @@ CREATE TABLE `prefix_quiz_question_grades` (
 # --------------------------------------------------------
 
 #
+# Table structure for table `quiz_randommatch`
+#
+
+CREATE TABLE `prefix_quiz_randommatch` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `question` int(10) unsigned NOT NULL default '0',
+  `choose` INT UNSIGNED DEFAULT '4' NOT NULL,
+  PRIMARY KEY ( `id` )
+) TYPE=MyISAM COMMENT='Info about a random matching question';
+
+#
 # Table structure for table `quiz_questions`
 #
 

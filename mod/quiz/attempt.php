@@ -89,19 +89,27 @@
             error("No questions found!");
         }
 
-        foreach ($rawanswers as $key => $value) {    // Parse input for question -> answers
+        foreach ($rawanswers as $key => $value) {       // Parse input for question -> answers
             if (substr($key, 0, 1) == "q") {
                 $key = substr($key,1);
-                if (!isset($questions[$key])) {
-                    if (substr_count($key, "a")) {   // checkbox style multiple answers
-                        $check = explode("a", $key);
-                        $key   = $check[0];
-                        $value = $check[1];
-                    } else {
-                        error("Answer received for non-existent question ($key)!");
-                    }
+                if (isset($questions[$key])) {          // It's a real question number, not a coded one
+                    $questions[$key]->answer[] = trim($value);
+
+                } else if (substr_count($key, "a")) {   // Checkbox style multiple answers
+                    $check = explode("a", $key);
+                    $key   = $check[0];                 // The main question number
+                    $value = $check[1];                 // The actual answer
+                    $questions[$key]->answer[] = trim($value);  
+
+                } else if (substr_count($key, "r")) {   // Random-style questions
+                    $check = explode("r", $key);
+                    $key   = $check[0];                 // The main question
+                    $rand  = $check[1];                 // The random sub-question
+                    $questions[$key]->answer[] = "$rand-$value";
+
+                } else {
+                    error("Answer received for non-existent question ($key)!");
                 }
-                $questions[$key]->answer[] = trim($value);  // Store answers in array (whitespace trimmed)
             }
         }
 

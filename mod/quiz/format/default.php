@@ -61,21 +61,6 @@ class quiz_default_format {
     }
 
 
-    function swapshuffle($array) {
-    /// Given a simple array, shuffles it up just like shuffle()
-    /// Unlike PHP's shuffle() ihis function works on any machine.
-
-        srand ((double) microtime() * 10000000);
-        $last = count($array) - 1;
-        for ($i=0;$i<=$last;$i++) {
-            $from = rand(0,$last);
-            $curr = $array[$i];
-            $array[$i] = $array[$from];
-            $array[$from] = $curr;
-        }  
-        return $array;
-    }
-
 }
 
 ?>

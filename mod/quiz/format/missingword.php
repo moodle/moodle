@@ -57,38 +57,51 @@ class quiz_file_format extends quiz_default_format {
         /// Parse the answers
         $answers = explode("~", $answertext);
 
-        if (! count($answers)) {
-            if ($this->displayerrors) {
-                echo "<P>No answers found in $answertext";
-            }
-            return false;
+        $countanswers = count($answers);
+
+        switch ($countanswers) {
+            case 0:  // invalid question
+                if ($this->displayerrors) {
+                    echo "<P>No answers found in $answertext";
+                }
+                return false;
+
+            case 1:
+                $question->qtype = SHORTANSWER;
+
+                $answer = trim($answers[0]);
+                if ($answer[0] == "=") {
+                    $answer = substr($answer, 1);
+                }
+                $question->answer[]   = addslashes($answer);
+                $question->fraction[] = 1;
+                $question->feedback[] = "";
+    
+                $question->usecase = 0;  // Ignore case
+                $question->image = "";   // No images with this format
+                return $question;
+
+            default:
+                $question->qtype = MULTICHOICE;
+
+                $answers = swapshuffle($answers);
+                foreach ($answers as $key => $answer) {
+                    $answer = trim($answer);
+                    if ($answer[0] == "=") {
+                        $question->fraction[$key] = 1;
+                        $answer = substr($answer, 1);
+                    } else {
+                        $question->fraction[$key] = 0;
+                    }
+                    $question->answer[$key]   = addslashes($answer);
+                    $question->feedback[$key] = "";
+                }
+    
+                $question->single = 1;   // Only one answer is allowed
+                $question->image = "";   // No images with this format
+                return $question;
         }
-
-        if (count($answers) == 1) {
-            return false;
-        }
-
-        $answers = $this->swapshuffle($answers);
-
-        foreach ($answers as $key => $answer) {
-            $answer = trim($answer);
-            if ($answer[0] == "=") {
-                $question->fraction[$key] = 1;
-                $answer = substr($answer, 1);
-            } else {
-                $question->fraction[$key] = 0;
-            }
-            $question->answer[$key]   = addslashes($answer);
-            $question->feedback[$key] = "";
-        }
-
-        $question->qtype = MULTICHOICE;
-        $question->single = 1;   // Only one answer is allowed
-        $question->image = "";   // No images with this format
-
-        return $question;
     }
-
 }
 
 ?>
