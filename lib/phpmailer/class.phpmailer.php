@@ -80,6 +80,12 @@ class PHPMailer
     var $Subject           = "";
 
     /**
+     * Sets the Precedence level of this email.  "bulk" will prevent some bounces
+     * @var string
+     */
+    var $Precedence        = "";
+
+    /**
      * Sets the Body of the message.  This can be either an HTML or text body.
      * If HTML then run IsHTML(true).
      * @var string
@@ -809,6 +815,10 @@ class PHPMailer
         $result .= $this->HeaderLine("X-Priority", $this->Priority);
         $result .= $this->HeaderLine("X-Mailer", "PHPMailer [version " . $this->Version . "]");
         
+        if ($this->Precedence != "") {
+            $result .= $this->HeaderLine("Precedence", $this->Precedence);
+        }
+
         if($this->ConfirmReadingTo != "")
         {
             $result .= $this->HeaderLine("Disposition-Notification-To", 
