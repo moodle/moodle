@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.2 development (2004021700)
+      // chat.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['beep'] = '呼叫';
@@ -16,7 +16,7 @@ $string['deletesession'] = '删除该session';
 $string['deletesessionsure'] = '确定删除该session吗?';
 $string['donotusechattime'] = '不显示聊天时间';
 $string['enterchat'] = '点此进入聊天室';
-$string['errornousers'] = '没用用户';
+$string['errornousers'] = '没有用户';
 $string['helpchatting'] = '聊天辅助';
 $string['idle'] = '空闲';
 $string['messagebeepseveryone'] = '$a 呼叫所有人';

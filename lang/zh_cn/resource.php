@@ -1,9 +1,13 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2003120700)
+      // resource.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['addresource'] = '添加资源';
 $string['chooseafile'] = '选择或上传一个文件';
+$string['configdefaulturl'] = '当添加一个基于URL的资源时，该值用于预填URL表格.';
+$string['configfilterexternalpages'] = '使用该值将使所有外部资源(网页,上传的HTML文件) 按当前设定过滤(如词汇自动链接).使用此项将拖慢访问速度 - 当您确实需要时再谨慎的使用它.';
+$string['configframesize'] = '当页面或上传的文件显示在框架中时,该象素值设定顶层框架的大小';
+$string['configpopup'] = '所添加的新资源显示在弹出窗口, 设其为默认值吗?';
 $string['configpopupdirectories'] = '弹出窗口是否显示缺省目录链接？';
 $string['configpopupheight'] = '新窗口缺省高度？';
 $string['configpopuplocation'] = '弹出窗口是否显示地址栏？';
@@ -13,10 +17,15 @@ $string['configpopupscrollbars'] = '弹出窗口是否可滚动？';
 $string['configpopupstatus'] = '弹出窗口是否显示状态栏？';
 $string['configpopuptoolbar'] = '弹出窗口是否显示工具栏？';
 $string['configpopupwidth'] = '新窗口缺省宽度？';
+$string['configwebsearch'] = '当添加一个URL作为网页或链接时,该站将帮助用户寻找其想要的URL.';
+$string['directlink'] = 'Direct link to this file';
 $string['editingaresource'] = '编辑资源';
 $string['example'] = '例';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.example.com/somedirectory/somefile.html';
+$string['fetchclienterror'] = 'An error was found with your web client while trying to retrieve the web page (possibly a wrong URL).';
+$string['fetcherror'] = 'An error was found while trying to retrieve the web page.';
+$string['fetchservererror'] = 'An error was found with the remote server while trying to retrieve the web page (possibly a program error).</p>';
 $string['filename'] = '文件名';
 $string['fulltext'] = '全文';
 $string['htmlfragment'] = 'HTML片段';
@@ -39,6 +48,8 @@ $string['note'] = '注意';
 $string['notefile'] = '要上载更多文件到课程中（这样它们就会出现于该列表），请用 
 <A HREF=$a >文件管理器</A>.';
 $string['notypechosen'] = '你必需选择一个类型。用浏览器的后退按钮退回并重试。';
+$string['popupresource'] = '该资源将出现在一个弹出窗口中.';
+$string['popupresourcelink'] = '若不行, 点击这里: $a';
 $string['resourcetype'] = '资源类型';
 $string['resourcetype1'] = '参考书目';
 $string['resourcetype2'] = '网页';
@@ -48,15 +59,5 @@ $string['resourcetype5'] = '网页链接';
 $string['resourcetype6'] = 'HTML文本';
 $string['resourcetype7'] = '程序';
 $string['resourcetype8'] = 'Wiki文本';
-//  new
-$string['configdefaulturl'] = "This value is used to prefill the URL form when creating a new URL-based resource.";
-$string['configfilterexternalpages'] = "Enabling this setting will cause all external resources (web pages, uploaded HTML files) to be processed by the currently defined site filters (such as glossary autolinks, for example).  Turning this option on may cause your course pages to slow down significantly - use with caution and only if you really need it.";
-$string['configframesize'] = "When a web page or an uploaded file is displayed within a frame, this value is the size (in pixels) of the top frame (which contains the navigation).";
-$string['configpopup'] = "When adding a new resource which is able to be shown in a popup window, should this option be enabled by default?";
-$string['configwebsearch'] = "When adding a URL as a webpage or weblink, this location is offered as a site to help the user search for the URL they want.";
-$string['directlink'] = "Direct link to this file";$string['fetchclienterror'] = "An error was found with your web client while trying to retrieve the web page (possibly a wrong URL).";
-$string['fetcherror'] = "An error was found while trying to retrieve the web page.";
-$string['fetchservererror'] = "An error was found with the remote server while trying to retrieve the web page (possibly a program error).</p>";
-$string['popupresource'] = "This resource should appear in a popup window.";
-$string['popupresourcelink'] = "If it didn't, click here: \$a";
+
 ?>
