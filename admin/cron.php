@@ -99,6 +99,20 @@
         include("$CFG->dataroot/cronextra.php");
     }
 
+    //Execute backup's cron
+    //Perhaps a long time and memory could help in large sites
+    //ini_set("max_execution_time","3000");
+    //ini_set("memory_limit","56M");
+    if (file_exists("../backup/backup_scheduled.php") &&
+        file_exists("../backup/backuplib.php") &&
+        file_exists("../backup/lib.php")) {
+        echo "Running backup tasks\n";
+        include_once("../backup/backup_scheduled.php");
+        include_once("../backup/backuplib.php");
+        include_once("../backup/lib.php");
+        schedule_backup_cron();
+    }
+
     echo "Cron script completed correctly\n";
 
     $difftime = microtime_diff($starttime, microtime());
