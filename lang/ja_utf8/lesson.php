@@ -34,6 +34,7 @@ $string['correctanswerscore'] = '正答のスコア';
 $string['correctresponse'] = '正答のレスポンス';
 $string['customscoring'] = 'カスタムスコア';
 $string['deadline'] = '利用終了';
+$string['deleteattempts'] = 'このレッスンの学生の挑戦を削除(ユーザID)';
 $string['deleting'] = '削除中';
 $string['deletingpage'] = 'ページの削除: $a';
 $string['description'] = '説明';
