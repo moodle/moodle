@@ -71,6 +71,11 @@
        $graph->parameter['legend_border'] = 'black';
        $graph->parameter['legend_offset'] = 4;
 
+       $graph->y_tick_labels[0] = "No answer";
+       foreach ($options as $key => $option) {
+         $graph->y_tick_labels[$key+1] = $option;
+       }
+
        if (($maxbuckets1 > 0.0) && ($maxbuckets2 > 0.0)) {
            $graph->y_order = array('answers1', 'answers2');
        } else if ($maxbuckets1 > 0.0) {
@@ -183,6 +188,11 @@
        $graph->parameter['legend']        = 'outside-top';
        $graph->parameter['legend_border'] = 'black';
        $graph->parameter['legend_offset'] = 4;
+
+       $graph->y_tick_labels[0] = "No answer";
+       foreach ($options as $key => $option) {
+         $graph->y_tick_labels[$key+1] = $option;
+       }
 
        if (($maxbuckets1 > 0.0) && ($maxbuckets2 > 0.0)) {
               $graph->y_order = array('stdev1', 'answers1', 'stdev2', 'answers2');
@@ -305,6 +315,11 @@
        $graph->parameter['legend']        = 'outside-top';
        $graph->parameter['legend_border'] = 'black';
        $graph->parameter['legend_offset'] = 4;
+
+       $graph->y_tick_labels[0] = "No answer";
+       foreach ($options as $key => $option) {
+         $graph->y_tick_labels[$key+1] = $option;
+       }
 
        if (($maxbuckets1 > 0.0) && ($maxbuckets2 > 0.0)) {
               $graph->y_order = array('stdev1', 'answers1', 'stdev2', 'answers2');
@@ -444,6 +459,11 @@
                                             'shadow_offset' => 0.1, 'legend' => 'none');
        $graph->offset_relation['stdev1'] = 'answers1';
        $graph->offset_relation['stdev2'] = 'answers2';
+
+       $graph->y_tick_labels[0] = "No answer";
+       foreach ($options as $key => $option) {
+         $graph->y_tick_labels[$key+1] = $option;
+       }
 
        $graph->parameter['bar_size']    = 0.15;
 
@@ -588,6 +608,11 @@
        $graph->parameter['legend']        = 'outside-top';
        $graph->parameter['legend_border'] = 'black';
        $graph->parameter['legend_offset'] = 4;
+
+       $graph->y_tick_labels[0] = "No answer";
+       foreach ($options as $key => $option) {
+         $graph->y_tick_labels[$key+1] = $option;
+       }
 
        if (($maxbuckets1 > 0.0) && ($maxbuckets2 > 0.0)) {
               $graph->y_order = array('stdev1', 'stdev2', 'answers1', 'answers2', 'studanswers1', 'studanswers2');
