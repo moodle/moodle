@@ -94,6 +94,16 @@
         return $info;
     }
 
+    //This function read the xml file and store its data from the scales in
+    //backup_ids->info db (and scale's id in $info)
+    function restore_read_xml_scales ($restore,$xml_file) {
+
+        //We call the main read_xml function, with todo = SCALES
+        $info = restore_read_xml ($xml_file,"SCALES",$restore);
+
+        return $info;
+    }
+
     //This function read the xml file and store its data from the modules in
     //backup_ids->info
     function restore_read_xml_modules ($restore,$xml_file) {
@@ -621,6 +631,95 @@
         return $status;
     }
 
+    //This function creates all the scales
+    function restore_create_scales($restore,$xml_file) {
+
+        global $CFG, $db;
+
+        $status = true;
+        //Check it exists
+        if (!file_exists($xml_file)) {
+            $status = false;
+        }
+        //Get info from xml
+        if ($status) {
+            //scales will contain the old_id of every scale
+            //in backup_ids->info will be the real info (serialized)
+            $scales = restore_read_xml_scales($restore,$xml_file);
+        }
+        //Now, if we have anything in scales, we have to restore that
+        //scales
+        if ($scales) {
+            if ($scales !== true) {
+                //Iterate over each scale
+                foreach ($scales as $scale) {
+                    //Get record from backup_ids
+                    $data = backup_getid($restore->backup_unique_code,"scale",$scale->id);
+                    //Init variables
+                    $create_scale = false;
+
+                    if ($data) {
+                        //Now get completed xmlized object
+                        $info = $data->info;
+                        //traverse_xmlize($info);                                                                     //Debug
+                        //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                        //$GLOBALS['traverse_array']="";                                                              //Debug
+
+                        //Now build the SCALE record structure
+                        $sca->id = backup_todb($info['SCALE']['#']['ID']['0']['#']);
+                        $sca->courseid = backup_todb($info['SCALE']['#']['COURSEID']['0']['#']);
+                        $sca->userid = backup_todb($info['SCALE']['#']['USERID']['0']['#']);
+                        $sca->name = backup_todb($info['SCALE']['#']['NAME']['0']['#']);
+                        $sca->scale = backup_todb($info['SCALE']['#']['SCALETEXT']['0']['#']);
+                        $sca->description = backup_todb($info['SCALE']['#']['DESCRIPTION']['0']['#']);
+                        $sca->timemodified = backup_todb($info['SCALE']['#']['TIMEMODIFIED']['0']['#']);
+
+                        //Now search if that scale exists (by scale field)
+                        $sca_db = get_record("scale","scale",$sca->scale);
+                        //If it doesn't exist, create
+                        if (!$sca_db) {
+                            $create_scale = true;
+                        } else {
+                            //Exists. If the courseid in db is <> 0 and <> current course,
+                            //we must create the scale too
+                            if ($sca_db->courseid != 0 and $sca_db->courseid != $restore->course_id) {
+                                $create_scale = true;
+                            }
+                        }
+                        //If we must create the scale
+                        if ($create_scale) {
+                            //Me must recode the courseid if it's <> 0 (common scale)
+                            if ($sca->courseid != 0) {
+                                $sca->courseid = $restore->course_id;
+                            }
+                            //We must recode the userid
+                            $user = backup_getid($restore->backup_unique_code,"user",$sca->userid);
+                            if ($user) {
+                                $sca->userid = $user->new_id;
+                            } else {
+                                //Assign it to admin
+                                $sca->userid = 1;
+                            }
+                            //The structure is equal to the db, so insert the scale
+                            $newid = insert_record ("scale",$sca);
+                        } else {
+                            //get current scale id
+                            $newid = $sca_db->id;
+                        }
+                        if ($newid) {
+                            //We have the newid, update backup_ids
+                            backup_putid($restore->backup_unique_code,"scale",
+                                         $scale->id, $newid);
+                        }
+                    }
+                }
+            }
+        } else {
+            $status = false;
+        }  
+        return $status;
+    }
+
     //This function restores the userfiles from the temp (user_files) directory to the
     //dataroot/users directory
     function restore_user_files($restore) {
@@ -914,6 +1013,29 @@
 
             //If we are under a QUESTION_CATEGORY tag under a QUESTION_CATEGORIES zone, accumule it
             if (($this->tree[4] == "QUESTION_CATEGORY") and ($this->tree[3] == "QUESTION_CATEGORIES")) {
+                $this->temp .= "<".$tagName.">";
+            }
+        }
+
+        //This is the startTag handler we use where we are reading the scales zone (todo="SCALES")
+        function startElementScales($parser, $tagName, $attrs) {
+            //Refresh properties          
+            $this->level++;
+            $this->tree[$this->level] = $tagName;
+
+            //if ($tagName == "SCALE" && $this->tree[3] == "SCALES") {                                 //Debug
+            //    echo "<P>SCALE: ".strftime ("%X",time()),"-";                                        //Debug
+            //}                                                                                        //Debug
+
+            //Output something to avoid browser timeouts...
+            backup_flush();
+
+            //Check if we are into SCALES zone
+            //if ($this->tree[3] == "SCALES")                                                           //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+
+            //If we are under a SCALE tag under a SCALES zone, accumule it
+            if (($this->tree[4] == "SCALE") and ($this->tree[3] == "SCALES")) {
                 $this->temp .= "<".$tagName.">";
             }
         }
@@ -1415,7 +1537,7 @@
             $this->content = "";
         }
 
-        //This is the endTag handler we use where we are reading the modules zone (todo="QUESTIONS")  
+        //This is the endTag handler we use where we are reading the questions zone (todo="QUESTIONS")  
         function endElementQuestions($parser, $tagName) {
             //Check if we are into QUESTION_CATEGORIES zone
             if ($this->tree[3] == "QUESTION_CATEGORIES") {
@@ -1429,7 +1551,7 @@
                 if (($this->level == 4) and ($tagName == "QUESTION_CATEGORY")) {
                     //Prepend XML standard header to info gathered
                     $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
-                    //Call to xmlize for this portion of xml data (one MOD)
+                    //Call to xmlize for this portion of xml data (one QUESTION_CATEGORY)
                     //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                                //Debug
                     $data = xmlize($xml_data,0);
                     //echo strftime ("%X",time())."<p>";                                                          //Debug
@@ -1437,7 +1559,7 @@
                     //print_object ($GLOBALS['traverse_array']);                                                  //Debug
                     //$GLOBALS['traverse_array']="";                                                              //Debug
                     //Now, save data to db. We'll use it later
-                    //Get id and modtype from data
+                    //Get id from data
                     $category_id = $data["QUESTION_CATEGORY"]["#"]["ID"]["0"]["#"];
                     //Save to db
                     $status = backup_putid($this->preferences->backup_unique_code,"quiz_categories",$category_id,
@@ -1453,6 +1575,53 @@
             //Stop parsing if todo = QUESTION_CATEGORIES and tagName = QUESTION_CATEGORY (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "QUESTION_CATEGORIES" and $this->level == 3) {
+                $this->finished = true;
+            }
+
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+        }
+
+        //This is the endTag handler we use where we are reading the scales zone (todo="SCALES")
+        function endElementScales($parser, $tagName) {
+            //Check if we are into SCALES zone
+            if ($this->tree[3] == "SCALES") {
+                //if (trim($this->content))                                                                     //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //Acumulate data to info (content + close tag)
+                //Reconvert: strip htmlchars again and trim to generate xml data
+                $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";
+                //If we've finished a scale, xmlize it an save to db
+                if (($this->level == 4) and ($tagName == "SCALE")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one SCALE)
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                                //Debug
+                    $data = xmlize($xml_data,0);
+                    //echo strftime ("%X",time())."<p>";                                                          //Debug
+                    //traverse_xmlize($data);                                                                     //Debug
+                    //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                    //$GLOBALS['traverse_array']="";                                                              //Debug
+                    //Now, save data to db. We'll use it later
+                    //Get id and from data
+                    $scale_id = $data["SCALE"]["#"]["ID"]["0"]["#"];
+                    //Save to db
+                    $status = backup_putid($this->preferences->backup_unique_code,"scale",$scale_id,
+                                     null,$data);
+                    //Create returning info
+                    $ret_info->id = $scale_id;
+                    $this->info[] = $ret_info;
+                    //Reset temp
+                    unset($this->temp);
+                }
+            }
+
+            //Stop parsing if todo = SCALES and tagName = SCALE (en of the tag, of course)
+            //Speed up a lot (avoid parse all)
+            if ($tagName == "SCALES" and $this->level == 3) {
                 $this->finished = true;
             }
 
@@ -1559,6 +1728,9 @@
         } else if ($todo == "QUESTIONS") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementQuestions", "endElementQuestions");
+        } else if ($todo == "SCALES") {
+            //Define handlers to that zone
+            xml_set_element_handler($xml_parser, "startElementScales", "endElementScales");
         } else if ($todo == "MODULES") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementModules", "endElementModules");

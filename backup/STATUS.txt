@@ -3,7 +3,7 @@ STATUS $Id$
 
 This documment shows the current status of the backup/restore option.
 
-Backup:  WORKING. COMPLETED except workshops and scales.
+Backup:  WORKING. COMPLETED except workshops.
 
 Restore: WORKING. COMPLETED except workshops, logs and scales.
                   
@@ -48,7 +48,7 @@ Backup Details:
                  - Course.......................................DONE
                  - All..........................................DONE 
            - Logs...............................................DONE
-           - Scales.............................................IN PROGRESS
+           - Scales.............................................DONE
            - Categories and Questions.(STEP 1)..................DONE
               + categories......................................DONE
               + questions structure.............................DONE
@@ -155,6 +155,7 @@ Restore Details:
            - Categories and Questions.(STEP 1)..................DONE
               + categories......................................DONE
               + questions structure.............................DONE
+           - Scales.............................................DONE
            - Mods Info Prepare..................................DONE
               x read modules zone...............................DONE
               x separate every mod..............................DONE
@@ -200,7 +201,6 @@ Restore Details:
    - User files from temp.......................................DONE
    - Course files from temp.....................................DONE
    - Log entries................................................NO EXISTS
-   - Scales.....................................................IN PROGRESS
    - Readjust instance in course_modules........................DONE
    - Readjust modinfo in course (serialize).....................DONE
    - Delete old entries at restore end.  .......................DONE

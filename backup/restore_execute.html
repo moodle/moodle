@@ -216,6 +216,12 @@
         }       
     }
 
+    //Now create scales as needed
+    if ($status) {
+        echo "<li>".get_string("creatingscales");
+        $status = restore_create_scales($restore,$xml_file);
+    }
+
     //Now create course modules as needed
     if ($status) {
         echo "<li>".get_string("creatingcoursemodules");

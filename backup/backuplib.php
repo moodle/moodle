@@ -757,6 +757,48 @@
         return $status;
     }
 
+
+    //Backup scales info (common and course scales)
+    function backup_scales_info($bf,$preferences) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Counter, points to current record
+        $counter = 0;
+
+        //Get scales (common and course scales)
+        $scales = get_records_sql("SELECT id, courseid, userid, name, scale, description, timemodified
+                                   FROM {$CFG->prefix}scale
+                                   WHERE courseid = '0' or courseid = $preferences->backup_course");
+      
+        //Pring scales header
+        if ($scales) {
+            //Pring scales header
+            fwrite ($bf,start_tag("SCALES",2,true));
+            //Iterate
+            foreach ($scales as $scale) {
+                //Begin scale tag
+                fwrite ($bf,start_tag("SCALE",3,true));
+                //Output scale tag
+                fwrite ($bf,full_tag("ID",4,false,$scale->id));
+                fwrite ($bf,full_tag("COURSEID",4,false,$scale->courseid));
+                fwrite ($bf,full_tag("USERID",4,false,$scale->userid));
+                fwrite ($bf,full_tag("NAME",4,false,$scale->name));
+                fwrite ($bf,full_tag("SCALETEXT",4,false,$scale->scale));
+                fwrite ($bf,full_tag("DESCRIPTION",4,false,$scale->description));
+                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$scale->timemodified));
+                //End scale tag
+                fwrite ($bf,end_tag("SCALE",3,true));
+            }
+            //End scales tag
+            $status = fwrite ($bf,end_tag("SCALES",2,true));
+        }
+        return $status;
+    }
+
+
     //Start the modules tag
     function backup_modules_start ($bf,$preferences) {
       
