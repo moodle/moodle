@@ -4,18 +4,10 @@ class CourseBlock_course_list extends MoodleBlock {
     function init() {
         $this->title = get_string('courses');
         $this->content_type = BLOCK_TYPE_LIST;
-        $this->version = 2004081200;
+        $this->version = 2004111600;
     }
     
     function has_config() {
-        return true;
-    }
-
-    function print_config() {
-        global $CFG, $USER, $THEME;
-        print_simple_box_start('center', '', $THEME->cellheading);
-        include($CFG->dirroot.'/blocks/'.$this->name().'/config.html');
-        print_simple_box_end();
         return true;
     }
 

@@ -4,24 +4,10 @@ class CourseBlock_online_users extends MoodleBlock {
     function init() {
         $this->title = get_string('blockname','block_online_users');
         $this->content_type = BLOCK_TYPE_TEXT;
-        $this->version = 2004052700;
+        $this->version = 2004111600;
     }
 
     function has_config() {return true;}
-
-    function print_config() {
-        global $CFG, $USER, $THEME;
-        print_simple_box_start('center', '', $THEME->cellheading);
-        include($CFG->dirroot.'/blocks/'.$this->name().'/config.html');
-        print_simple_box_end();
-        return true;
-    }
-    function handle_config($config) {
-        foreach ($config as $name => $value) {
-            set_config($name, $value);
-        }
-        return true;
-    }
 
     function get_content() {
         global $USER, $CFG;
