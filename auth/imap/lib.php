@@ -4,10 +4,10 @@
 // This code is completely untested so far  -  IT NEEDS TESTERS!
 // Looks like it should work though ...
 
-$CFG->auth_imaphost   = "127.0.0.1";  // Should be IP number
+$CFG->auth_imaphost   = "202.0.185.16";  // Should be IP number
 $CFG->auth_imaptype   = "imap";   // imap, imapssl, imapcert
 $CFG->auth_imapport   = "143";        // 143, 993
-$CFG->auth_imapinfo   = "Just use the same username and password as your school email account";
+$CFG->auth_instructions = "Use the same username and password as your school email account";   // Instructions
 
 
 function auth_user_login ($username, $password) {
@@ -18,15 +18,15 @@ function auth_user_login ($username, $password) {
 
     switch ($CFG->auth_imaptype) {
         case "imapssl":
-            $host = "\{$CFG->auth_imaphost:$CFG->auth_imapport/imap/ssl}INBOX";
+            $host = "{".$CFG->auth_imaphost.":$CFG->auth_imapport/imap/ssl}INBOX";
         break;
 
         case "imapcert":
-            $host = "\{$CFG->auth_imaphost:$CFG->auth_imapport/imap/ssl/novalidate-cert}INBOX";
+            $host = "{".$CFG->auth_imaphost.":$CFG->auth_imapport/imap/ssl/novalidate-cert}INBOX";
         break;
 
         default:
-            $host = "\{$CFG->auth_imaphost:$CFG->auth_imapport}INBOX";
+            $host = "{".$CFG->auth_imaphost.":$CFG->auth_imapport}";
     }
 
     if ($connection = imap_open($host, $username, $password, OP_HALFOPEN)) {

@@ -7,6 +7,7 @@
 $CFG->auth_pop3host   = "127.0.0.1";  // Should be IP number
 $CFG->auth_pop3type   = "pop3";       // pop3, pop3cert
 $CFG->auth_pop3port   = "110";        // 110 is most common
+$CFG->auth_instructions = "Use the same username and password as your school email account";   // Instructions
 
 
 function auth_user_login ($username, $password) {
@@ -17,10 +18,10 @@ function auth_user_login ($username, $password) {
 
     switch ($CFG->auth_pop3type) {
         case "pop3":
-            $host = "{$CFG->auth_pop3host:$CFG->auth_pop3port/pop3}INBOX";
+            $host = "{".$CFG->auth_pop3host.":$CFG->auth_pop3port/pop3}INBOX";
         break;
         case "pop3cert":
-            $host = "{$CFG->auth_pop3host:$CFG->auth_pop3port/pop3/ssl/novalidate-cert}INBOX";
+            $host = "{".$CFG->auth_pop3host.":$CFG->auth_pop3port/pop3/ssl/novalidate-cert}INBOX";
         break;
     }
 

@@ -6,6 +6,7 @@
 
 $CFG->auth_nntphost   = "127.0.0.1";  // Should be IP number
 $CFG->auth_nntpport   = "119";        // 119 is most common
+$CFG->auth_instructions = "Use the same username and password as your school news account";   // Instructions
 
 
 function auth_user_login ($username, $password) {
@@ -14,7 +15,7 @@ function auth_user_login ($username, $password) {
 
     global $CFG;
 
-    $host = "{$CFG->auth_nntphost:$CFG->auth_nntpport/nntp}";
+    $host = "{".$CFG->auth_nntphost.":$CFG->auth_nntpport/nntp}";
 
     if ($connection = imap_open($host, $username, $password, OP_HALFOPEN)) {
         imap_close($connection);

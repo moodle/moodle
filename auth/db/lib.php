@@ -12,6 +12,7 @@ $CFG->auth_dbpass   = "pass";      // Password matching the above username
 $CFG->auth_dbtable  = "users";     // Name of the table in the database
 $CFG->auth_dbfielduser = "user";   // Name of the field containing usernames
 $CFG->auth_dbfieldpass = "pass";   // Name of the field containing passwords
+$CFG->auth_instructions = "Use the same username and password as your school account";   // Instructions
 
 function auth_user_login ($username, $password) {
 // Returns true if the username and password work
