@@ -16,8 +16,8 @@ Now I show the specific detailed status of every item in the process:
  6. DONE: user->policyagreed (analyse and proceed).
  7. DONE: groups->password
  8. DONE: assignment->emailteachers
- 9. TODO: exercise->usepassword and exercise->password
-10. TODO: exercise_assessments->generalcomment and teachercomment
+ 9. DONE: exercise->usepassword and exercise->password
+10. DONE: exercise_assessments->generalcomment and teachercomment
 11. TODO: glossary->allowprintview
 12. TODO: quiz_responses->answer (analyse).
 13. TODO: quiz_calculated->correctaswerformat.
