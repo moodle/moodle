@@ -191,6 +191,8 @@ function resource_get_coursemodule_info($coursemodule) {
            if ($icon != 'unknown.gif') {
 		       $info->icon ="f/$icon";
            }
+       } else if ($resource->type == DIRECTORY) {
+		   $info->icon ="f/folder.gif";
        }
    }
 
