@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.6.4 (2002112400)
+      // moodle.php - created with Moodle 1.0.7 (2002121000)
 
 
 $string['action'] = "操作";
@@ -30,10 +30,10 @@ $string['alreadyconfirmed'] = "登録作業は既に完了しています";
 $string['answer'] = "回答";
 $string['assessment'] = "評価";
 $string['assignteachers'] = "教師の割当て";
-$string['authentication'] = "認証";
+$string['authentication'] = "認証オプション";
 $string['availablecourses'] = "コース一覧";
 $string['cancel'] = "キャンセル";
-$string['categories'] = "コースカテゴリー";
+$string['categories'] = "コースカテゴリーの追加";
 $string['category'] = "カテゴリー";
 $string['categoryadded'] = "カテゴリー '\$a' が追加されました";
 $string['categorydeleted'] = "カテゴリー '\$a' が削除されました";
@@ -207,7 +207,7 @@ $string['helppicture'] = "写真のアップロード方法";
 $string['helpquestions'] = "質問方法";
 $string['helprichtext'] = "リッチテキストHTMLエディタに関して";
 $string['helptext'] = "テキストの書き方";
-$string['hide'] = "隠す";
+$string['hide'] = "非表示";
 $string['hits'] = "アクセス";
 $string['hitsoncourse'] = "\$a->username による \$a->coursename　へのアクセス";
 $string['hitsoncoursetoday'] = "\$a->username による今日の \$a->coursename へのアクセス";
@@ -238,6 +238,7 @@ $string['leavetokeep'] = "現在のパスワードを使う場合は空白にしてください";
 $string['license'] = "GPLライセンス";
 $string['listofallpeople'] = "全員を表示する";
 $string['livelogs'] = "リアルタイムログの表示";
+$string['locale'] = "";
 $string['location'] = "現在地";
 $string['loggedinas'] = "ログイン名 \$a ";
 $string['loggedinnot'] = "ログインしていません";
@@ -401,7 +402,7 @@ $string['serverlocaltime'] = "サーバのシステム時間";
 $string['settings'] = "セッティング";
 $string['shortname'] = "省略名";
 $string['shortsitename'] = "短いサイト名(例 単語)";
-$string['show'] = "見せる";
+$string['show'] = "表示";
 $string['showallcourses'] = "全てのコースを表示";
 $string['showalltopics'] = "全てのトピックを表示";
 $string['showallweeks'] = "全ての週を表示";
