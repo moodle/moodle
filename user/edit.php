@@ -39,8 +39,16 @@
         require_login($course->id);
     }
 
-    if (($USER->id <> $user->id) && !isadmin()) {
-        error("You can only edit your own information");
+    if ($USER->id <> $user->id) {    // Current user editing someone else's profile
+        if (isadmin()) {             // Current user is an admin
+            if ($mainadmin = get_admin()) {        
+                if ($user->id == $mainadmin->id) {  // Can't edit primary admin
+                    print_error('adminprimarynoedit');
+                }
+            }
+        } else {
+            print_error('onlyeditown');
+        }
     }
 
     if (isguest()) {
@@ -50,6 +58,7 @@
     if (isguest($user->id)) {
         error("Sorry, the guest user cannot be edited.");
     }
+
 
     // load the relevant auth libraries
     if ($user->auth) { 
