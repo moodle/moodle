@@ -16,9 +16,18 @@
 /// courseid and the text to be filtered (in HTML form).
 
 function mediaplugin_filter($courseid, $text) {
-    global $CFG;
+    global $CFG, $THEME;
 
     if (empty($CFG->filter_mediaplugin_ignore_mp3)) {
+        static $c;
+
+        if (empty($c)) {
+            if (!empty($THEME->filter_mediaplugin_colors)) {
+                $c = $THEME->filter_mediaplugin_colors;   // You can set this up in your theme/xxx/config.php
+            } else {
+                $c = 'bgColour=000000&amp;btnColour=ffffff&amp;btnBorderColour=cccccc&amp;iconColour=000000&amp;iconOverColour=00cc00&amp;trackColour=cccccc&amp;handleColour=ffffff&amp;loaderColour=ffffff';
+            }
+        }
         $search = '/<a(.*?)href=\"([^<]+)\.mp3\"([^>]*)>(.*?)<\/a>/i';
 
         $replace  = '\\0&nbsp;<object class="mediaplugin mp3" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
@@ -27,13 +36,11 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= " <param name=\"movie\" value=\"$CFG->wwwroot/filter/mediaplugin/mp3player.swf?src=\\2.mp3\" />";
         $replace .= ' <param name="quality" value="high" />';
         $replace .= ' <param name="bgcolor" value="#333333" />';
-        $replace .= ' <param name="flashvars" value="bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&i
-        conColour=000000&iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&" />';
+        $replace .= ' <param name="flashvars" value="'.$c.'&amp;" />';
         $replace .= " <embed src=\"$CFG->wwwroot/filter/mediaplugin/mp3player.swf?src=\\2.mp3\" ";
         $replace .= "  quality=\"high\" bgcolor=\"#333333\" width=\"90\" height=\"15\" name=\"mp3player\" ";
         $replace .= ' type="application/x-shockwave-flash" ';
-        $replace .= ' flashvars="bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&ic
-        onOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&" ';
+        $replace .= ' flashvars="'.$c.'&amp;" ';
         $replace .= ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
         $replace .= '</embed>';
         $replace .= '</object>&nbsp;';
