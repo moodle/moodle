@@ -1663,6 +1663,10 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
         $pageclass .= ' course-'.SITEID;
     }
 
+    if (!empty($USER->editing)) {
+        $pageclass .= ' editing';
+    }
+
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
 
     include ($CFG->themedir. $CFG->theme .'/header.html');
