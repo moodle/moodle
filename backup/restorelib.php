@@ -288,9 +288,11 @@
     }
 
     //This function creates all the course_sections and course_modules from xml
+    //when restoring in a new course or simply checks sections and create records
+    //in backup_ids when restoring in a existing course
     function restore_create_sections($restore,$xml_file) {
 
-        global $CFG;   
+        global $CFG,$db;
 
         $status = true;
         //Check it exists
@@ -314,8 +316,24 @@
                 $section->summary = $sect->summary;
                 $section->visible = $sect->visible;
                 $section->sequence = "";
-                //Save it to db
-                $newid = insert_record("course_sections",$section);
+                //Now calculate the section's newid
+                $newid = 0;
+                if ($restore->restoreto == 1) {
+                //Save it to db (only if restoring to new course)
+                    $newid = insert_record("course_sections",$section);
+                } else {
+                    //Get section id when restoring in existing course
+                    $rec = get_record("course_sections","course",$restore->course_id,
+                                                        "section",$section->section);
+                    //If that section doesn't exist, get section 0 (every mod will be
+                    //asigned there
+                    if(!$rec) {
+                        $rec = get_record("course_sections","course",$restore->course_id,
+                                                            "section","0");
+                    }
+                    $newid = $rec->id;
+                    $sequence = $rec->sequence;
+                }
                 if ($newid) {
                     //save old and new section id
                     backup_putid ($restore->backup_unique_code,"course_sections",$key,$newid);
@@ -375,7 +393,6 @@
         } else {
             $status = false;
         }
-
         return $status;
     }
     
@@ -870,6 +887,7 @@
                             $this->info->sections[$this->info->tempsection->id]->number = $this->info->tempsection->number;
                             $this->info->sections[$this->info->tempsection->id]->summary = $this->info->tempsection->summary;
                             $this->info->sections[$this->info->tempsection->id]->visible = $this->info->tempsection->visible;
+                            $this->info->sections[$this->info->tempsection->id]->mods = $this->info->tempsection->mods;
                             unset($this->info->tempsection);
                     }
                 }

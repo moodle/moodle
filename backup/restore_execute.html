@@ -63,10 +63,18 @@
     }
 
     //Now create the course_sections and their associated course_modules
-    if (($restore->restoreto ==1) and ($status)) {
-        echo "<li>Creating sections";
-        $status = restore_create_sections($restore,$xml_file);
+    if ($status) {
+        if ($restore->restoreto == 1) {
+            echo "<li>Creating sections";
+            $status = restore_create_sections($restore,$xml_file);
+        } else if ($restore->restoreto == 0) {
+            echo "<li>Checking sections";
+            $status = restore_create_sections($restore,$xml_file);
+        } else {
+            $status = false;
+        }
     }
+
 
     //Now create users as needed 
     if ($status and ($restore->users == 0 or $restore->users == 1)) {
