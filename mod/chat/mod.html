@@ -28,16 +28,13 @@
 </tr>
 <tr valign="top">
     <td align="right"><b><?php print_string("chatintro", "chat")?>:</b><br />
-    <font size="1">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
         echo "<br />";
         helpbutton("questions", get_string("helpquestions"), "moodle", true, true);
         echo "<br />";
         emoticonhelpbutton("form", "intro");
-        echo " <br />";
       ?>
-    </font>
     </td>
     <td>
         <?php print_textarea($usehtmleditor, 20, 50, 680, 400, "intro", $form->intro); ?>
