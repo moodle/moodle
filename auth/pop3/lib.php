@@ -12,16 +12,21 @@ function auth_user_login ($username, $password) {
     foreach ($hosts as $host) {                 // Try each host in turn
 
         $host = trim($host);
+	 
+        // remove any trailing slash
+        if (substr($host, -1) == '/') {
+            $host = substr($host, 0, strlen($host) - 1);
+        }
 
         switch ($CFG->auth_pop3type) {
             case "pop3":
-                $host = '{'.$host.":$CFG->auth_pop3port/pop3}INBOX";
+                $host = '{'.$host.":$CFG->auth_pop3port/pop3}$CFG->auth_pop3mailbox";
             break;
             case "pop3notls":
-                $host = '{'.$host.":$CFG->auth_pop3port/pop3/notls}INBOX";
+                $host = '{'.$host.":$CFG->auth_pop3port/pop3/notls}$CFG->auth_pop3mailbox";
             break;
             case "pop3cert":
-                $host = '{'.$host.":$CFG->auth_pop3port/pop3/ssl/novalidate-cert}INBOX";
+                $host = '{'.$host.":$CFG->auth_pop3port/pop3/ssl/novalidate-cert}$CFG->auth_pop3mailbox";
             break;
         }
 

@@ -1,4 +1,4 @@
-<?PHP
+<?PHP  // $Id$
     if (!isset($config->auth_pop3host)) {
         $config->auth_pop3host = "127.0.0.1";
     }
@@ -7,6 +7,9 @@
     }
     if (!isset($config->auth_pop3port)) {
         $config->auth_pop3port = "110";
+    }
+    if (!isset($config->auth_pop3mailbox)) {
+        $config->auth_pop3mailbox = "INBOX";
     }
 ?>
 <tr valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
@@ -44,6 +47,17 @@
     </TD>
     <TD>
     <?php  print_string("auth_pop3port","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
+	<TD ALIGN=RIGHT><P>auth_pop3mailbox:</TD>
+	<TD>
+    <INPUT name=auth_pop3mailbox TYPE=text SIZE=6 VALUE="<?php echo $config->auth_pop3mailbox?>">
+    <?php  if (isset($err["auth_pop3mailbox"])) formerr($err["auth_pop3mailbox"]); ?>
+    </TD>
+    <TD>
+    <?php  print_string("auth_pop3mailbox","auth") ?>
     </TD>
 </TR>
 
