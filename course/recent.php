@@ -171,7 +171,6 @@
             default: $sectiontitle = get_string("section"); break;
         }
 
-        echo "<hr>";
         foreach ($activities as $activity) {
              
             if ($sortby == "default") {
