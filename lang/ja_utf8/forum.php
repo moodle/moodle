@@ -96,6 +96,7 @@ $string['nownotsubscribed'] = '$a->name 宛に「 $a->forum 」の投稿記事�
 $string['nowsubscribed'] = '$a->name 宛に「 $a->forum 」の投稿記事がメール送信されます。';
 $string['numposts'] = '$a 投稿';
 $string['olderdiscussions'] = '過去のディスカッション';
+$string['oldertopics'] = '過去のトピック';
 $string['openmode0'] = '新しいトピック不可、返信不可';
 $string['openmode1'] = '新しいトピック不可、返信可';
 $string['openmode2'] = '新しいトピック可、返信可';

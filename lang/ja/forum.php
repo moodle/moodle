@@ -96,6 +96,7 @@ $string['nownotsubscribed'] = '$a->name ░╕д╦б╓ $a->forum б╫д╬┼ъ╣╞╡н╗Ўд╧есб╝еы┴ў┐
 $string['nowsubscribed'] = '$a->name ░╕д╦б╓ $a->forum б╫д╬┼ъ╣╞╡н╗Ўдмесб╝еы┴ў┐од╡дьд▐д╣бг';
 $string['numposts'] = '$a ┼ъ╣╞';
 $string['olderdiscussions'] = '▓с╡юд╬е╟еге╣еле├е╖ечеє';
+$string['oldertopics'] = '▓с╡юд╬е╚е╘е├еп';
 $string['openmode0'] = '┐╖д╖дде╚е╘е├еп╔╘▓─бв╩╓┐о╔╘▓─';
 $string['openmode1'] = '┐╖д╖дде╚е╘е├еп╔╘▓─бв╩╓┐о▓─';
 $string['openmode2'] = '┐╖д╖дде╚е╘е├еп▓─бв╩╓┐о▓─';
