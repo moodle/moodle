@@ -499,6 +499,9 @@ function writequestion( $question ) {
     case DESCRIPTION:
         $expout .= "// DESCRIPTION type is not supported\n";
         break;
+    case MULTIANSWER:
+        $expout .= "// CLOZE type is not supported\n";
+        break;
     default:
         error( "No handler for qtype $question->qtype for GIFT export" );
     }
