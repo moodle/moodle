@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.2 development (2004021700)
+      // attendance.php - created with Moodle 1.3 development (2004032800)
 
 
 $string['absentlong'] = '欠席';
@@ -23,6 +23,7 @@ $string['presentshort'] = '出';
 $string['saturday'] = '土';
 $string['startafterend'] = '開始日がコース終了日以降に設定されています';
 $string['sunday'] = '日';
+$string['tardiesperabsence'] = '何回の遅刻を1回の欠席とするか';
 $string['tardylong'] = '遅刻';
 $string['tardyshort'] = '遅';
 $string['thursday'] = '木';

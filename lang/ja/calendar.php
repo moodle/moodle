@@ -13,6 +13,7 @@ $string['courseevents'] = 'コースイベント';
 $string['dayview'] = '日表示';
 $string['daywithnoevents'] = 'イベントがありません。';
 $string['december'] = '12月';
+$string['default'] = 'デフォルト';
 $string['deleteevent'] = 'イベントの削除';
 $string['detailedmonthview'] = '月表示詳細';
 $string['durationnone'] = '期間無し';
