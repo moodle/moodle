@@ -341,7 +341,13 @@ class page_course extends page_base {
             $title = str_replace($search, $replace, $title);
         }
 
-        $breadcrumbs = array($this->courserecord->shortname => $CFG->wwwroot.'/course/view.php?id='.$this->courserecord->id);
+        if($this->courserecord->id == SITEID) {
+            $breadcrumbs = array();
+        }
+        else {
+            $breadcrumbs = array($this->courserecord->shortname => $CFG->wwwroot.'/course/view.php?id='.$this->courserecord->id);
+        }
+
         if(!empty($morebreadcrumbs)) {
             $breadcrumbs = array_merge($breadcrumbs, $morebreadcrumbs);
         }
