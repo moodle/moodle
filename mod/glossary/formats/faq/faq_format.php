@@ -36,8 +36,10 @@ function glossary_show_entry_faq($course, $cm, $glossary, $entry, $mode="", $hoo
 
         $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
         echo '</td></tr></table>';
+        echo "</div>\n"; // end container div
 
     } else {
+        echo "<div id=\"glossary-edit\" class=\"glossary\">\n"; // glossary-edit container div
         echo '<center>';
         print_string("noentry", "glossary");
         echo '</center>';

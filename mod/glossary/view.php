@@ -6,8 +6,8 @@
 
     global $CFG, $THEME, $USER;
     $debug = 0;
-    $CFG->startpagetime = microtime();            
-    
+    $CFG->startpagetime = microtime();
+
     optional_variable($id);           // Course Module ID
     optional_variable($g);            // Glossary ID
 
@@ -27,20 +27,20 @@
     if (!empty($id)) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
-        }     
+        }
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
-        }     
+        }
         if (! $glossary = get_record("glossary", "id", $cm->instance)) {
             error("Course module is incorrect");
-        } 
+        }
     } else if (!empty($g)) {
         if (! $glossary = get_record("glossary", "id", $g)) {
             error("Course module is incorrect");
-        } 
+        }
         if (! $course = get_record("course", "id", $glossary->course)) {
             error("Could not determine which course this belonged to!");
-        }     
+        }
         if (!$cm = get_coursemodule_from_instance("glossary", $glossary->id, $course->id)) {
             error("Could not determine which course module this belonged to!");
         }
@@ -52,14 +52,14 @@
     if ($CFG->forcelogin) {
         require_login();
     }
-    
+
 /// redirecting if adding a new entry
     if ($tab == GLOSSARY_ADDENTRY_VIEW ) {
         redirect("edit.php?id=$cm->id&amp;mode=$mode");
     }
 
 /// setting the defaut number of entries per page if not set
-    
+
     if ( !$entriesbypage = $glossary->entbypage ) {
         $entriesbypage = $CFG->glossary_entbypage;
     }
@@ -77,7 +77,7 @@
             $mode      = $dp->defaultmode;
             $hook      = $dp->defaulthook;
             $sortkey   = $dp->sortkey;
-            $sortorder = $dp->sortorder;            
+            $sortorder = $dp->sortorder;
         }
     } else {
         $printpivot = 1;
@@ -89,7 +89,7 @@
 
     if ( $displayformat == -1 ) {
          $displayformat = $glossary->displayformat;
-    } 
+    }
 
     if ( $show ) {
         $mode = 'term';
@@ -105,7 +105,7 @@
     if (!$cm->visible and !isteacher($course->id)) {
         print_header();
         notice(get_string("activityiscurrentlyhidden"));
-    } 
+    }
     add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id&amp;tab=$tab", $glossary->id, $cm->id);
 
 /// stablishing flag variables
@@ -115,9 +115,9 @@
         }
     }
     if ( $sortkey = strtoupper($sortkey) ) {
-        if ($sortkey != 'CREATION' and 
-            $sortkey != 'UPDATE' and 
-            $sortkey != 'FIRSTNAME' and 
+        if ($sortkey != 'CREATION' and
+            $sortkey != 'UPDATE' and
+            $sortkey != 'FIRSTNAME' and
             $sortkey != 'LASTNAME'
             ) {
             $sortkey = '';
@@ -132,18 +132,18 @@
         foreach ($searchterms as $key => $searchterm) {
             if (strlen($searchterm) < 2) {
                 unset($searchterms[$key]);
-            } 
-        } 
+            }
+        }
         $hook = trim(implode(' ', $searchterms));
     break;
-    
+
     case 'entry':  /// Looking for a certain entry id
         $tab = GLOSSARY_STANDARD_VIEW;
         if ( $dp = get_record("glossary_formats","name", $glossary->displayformat) ) {
             $displayformat = $dp->popupformatname;
         }
     break;
-    
+
     case 'cat':    /// Looking for a certain cat
         $tab = GLOSSARY_CATEGORY_VIEW;
         if ( $hook > 0 ) {
@@ -166,20 +166,20 @@
         $tab = GLOSSARY_DATE_VIEW;
         if ( !$sortkey ) {
             $sortkey = 'UPDATE';
-        } 
+        }
         if ( !$sortorder ) {
             $sortorder = 'desc';
         }
     break;
-    
+
     case 'author':  /// Looking for entries, browsed by author
         $tab = GLOSSARY_AUTHOR_VIEW;
         if ( !$hook ) {
             $hook = 'ALL';
-        } 
+        }
         if ( !$sortkey ) {
             $sortkey = 'FIRSTNAME';
-        } 
+        }
         if ( !$sortorder ) {
             $sortorder = 'asc';
         }
@@ -189,18 +189,18 @@
     default:
         $tab = GLOSSARY_STANDARD_VIEW;
         if ( !$hook ) {
-            $hook = 'ALL';  
-        } 
+            $hook = 'ALL';
+        }
     break;
-    }  
+    }
 
     switch ( $tab ) {
-    case GLOSSARY_IMPORT_VIEW: 
-    case GLOSSARY_EXPORT_VIEW: 
+    case GLOSSARY_IMPORT_VIEW:
+    case GLOSSARY_EXPORT_VIEW:
     case GLOSSARY_APPROVAL_VIEW:
         $isuserframe = 0;
     break;
-    
+
     default:
         $isuserframe = 1;
     break;
@@ -215,11 +215,13 @@
     $strsearchconcept = get_string("searchconcept", "glossary");
     $strsearchindefinition = get_string("searchindefinition", "glossary");
     $strsearch = get_string("search");
-    
+
     print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
         "$navigation <a href=\"index.php?id=$course->id\">$strglossaries</a> -> $glossary->name",
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
+
+    echo '<div id="glossary-view" class="glossary">';  // glossary-view wrapper start
 
     //If rss are activated at site and glossary level and this glossary has rss defined, show link
         if (isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
@@ -234,7 +236,7 @@
             rss_print_link($course->id, $userid, "glossary", $glossary->id, $tooltiptext);
             echo '</td></tr></table>';
         }
-    
+
     echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
     if ( $isuserframe and $mode != 'search') {
     /// the "Print" icon
@@ -260,7 +262,7 @@
 
     echo '<table align="center" width="70%" border="0">';
     echo '<tr><td align="center" class="glossarysearchbox">';
-    
+
     echo '<input type="submit" value="'.$strsearch.'" name="searchbutton" /> ';
     if ($mode == 'search') {
         echo '<input type="text" name="hook" size="20" value="'.$hook.'" alt="'.$strsearch.'" /> ';
@@ -276,15 +278,15 @@
     echo '<input type="hidden" name="mode" value="search" />';
     echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
     echo $strsearchindefinition;
-    print_simple_box_end();    
-    
+    print_simple_box_end();
+
     echo '</form>';
     echo '<br />';
 
     include("tabs.html");
 
     include_once("sql.php");
-    
+
 /// printing the entries
     $entriesshown = 0;
     $currentpivot = '';
@@ -322,10 +324,10 @@
             $pivot = $entry->pivot;
             if ( !$fullpivot ) {
                 $pivot = $pivot[0];
-            }            
-            
+            }
+
             /// if there's a group break
-            if ( $currentpivot != strtoupper($pivot) ) {  
+            if ( $currentpivot != strtoupper($pivot) ) {
 
                 // print the group break if apply
                 if ( $printpivot )  {
@@ -339,7 +341,7 @@
                     if ( isset($entry->uid) ) {
                     // printing the user icon if defined (only when browsing authors)
                         echo '<td align="left">';
-                        
+
                         $user = get_record("user","id",$entry->uid);
                         print_user_picture($user->id, $course->id, $user->picture);
                         $pivottoshow = fullname($user, isteacher($course->id));;
@@ -352,17 +354,17 @@
 
                 }
             }
-            
+
             $concept = $entry->concept;
             $definition = $entry->definition;
 
             /// highlight the term if necessary
             if ($mode == 'search') {
                 $entry->highlight = $hook;
-            } 
+            }
 
             /// and finally print the entry.
-            
+
             if ( glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook,1,$displayformat,$ratings) ) {
                 $ratingsmenuused = true;
             }
@@ -405,6 +407,9 @@
     }
 
 /// Finish the page
+
+    echo '</div>';  // glossary-view wrapper end
+
     print_footer($course);
 
 ?>

@@ -29,6 +29,8 @@
 
     print_header_simple("$strglossarys", "", "$strglossarys", "", "", true, "", navmenu($course));
 
+    echo '<div id="glossary-index" class="glossary">';  // glossary-index wrapper start
+
 /// Get all the appropriate data
 
     if (! $glossarys = get_all_instances_in_course("glossary", $course)) {
@@ -57,7 +59,7 @@
 
     $can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin());
 
-    if ($show_rss = (($can_subscribe || $course->id == SITEID) && 
+    if ($show_rss = (($can_subscribe || $course->id == SITEID) &&
                      isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
                      $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds)) {
         $table->head[] = $strrss;
@@ -121,6 +123,8 @@
     print_table($table);
 
 /// Finish the page
+
+    echo '</div>';  // glossary-index wrapper end
 
     print_footer($course);
 

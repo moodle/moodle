@@ -7,7 +7,7 @@
 
     require_variable($id);           // Course Module ID
 
-    optional_variable($step,0);   
+    optional_variable($step,0);
     optional_variable($dest,"current");   // current | new
     optional_variable($file);             // file to import
     optional_variable($catsincl,0);       // Import Categories too?
@@ -17,20 +17,20 @@
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
-    } 
-    
+    }
+
     if (! $course = get_record("course", "id", $cm->course)) {
         error("Course is misconfigured");
-    } 
-    
+    }
+
     if (! $glossary = get_record("glossary", "id", $cm->instance)) {
         error("Course module is incorrect");
-    } 
-    
-    require_login($course->id);    
+    }
+
+    require_login($course->id);
     if (!isteacher($course->id)) {
         error("You must be a teacher to use this page.");
-    } 
+    }
 
     if ($dest != 'new' and $dest != 'current') {
         $dest = 'current';
@@ -43,12 +43,14 @@
     $strsearchconcept = get_string("searchconcept", "glossary");
     $strsearchindefinition = get_string("searchindefinition", "glossary");
     $strsearch = get_string("search");
-    
+
     print_header_simple(strip_tags("$glossary->name"), "",
         "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> $glossary->name",
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
-    
+
+    echo '<div id="glossary-import" class="glossary">';  // glossary-import wrapper start
+
     echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
     echo '</b></font></p>';
 
@@ -67,13 +69,14 @@
     include("tabs.html");
 
     if ( !$step ) {
-        include("import.html");        
+        include("import.html");
 
         echo '</center>';
         glossary_print_tabbed_table_end();
         print_footer($course);
+        echo '</div>';  // glossary-import wrapper end
         exit;
-    } 
+    }
 
     $form = data_submitted();
     $file = $_FILES["file"];
@@ -98,7 +101,7 @@
         if ($dest == 'new') {
             // If the user chose to create a new glossary
             $xmlglossary = $xml['GLOSSARY']['#']['INFO'][0]['#'];
-    
+
             if ( $xmlglossary['NAME'][0]['#'] ) {
                 unset($glossary);
                 $glossary->name = addslashes(utf8_decode($xmlglossary['NAME'][0]['#']));
@@ -154,6 +157,7 @@
                     echo '</center>';
                     glossary_print_tabbed_table_end();
                     print_footer($course);
+                    echo '</div>'; // glossary-import wrapper end
                     exit;
                 } else {
                     //The instance has been created, so lets do course_modules
@@ -205,6 +209,7 @@
                 echo '</center>';
                 glossary_print_tabbed_table_end();
                 print_footer($course);
+                echo '</div>'; // glossary-import wrapper end
                 exit;
             }
         }
@@ -225,7 +230,7 @@
             $permissiongranted = 1;
             if ( $newentry->concept and $newentry->definition ) {
                 if ( !$glossary->allowduplicatedentries ) {
-                    // checking if the entry is valid (checking if it is duplicated when should not be) 
+                    // checking if the entry is valid (checking if it is duplicated when should not be)
                     if ( $newentry->casesensitive ) {
                         $dupentry = get_record("glossary_entries","concept",$newentry->concept,"glossaryid",$glossary->id);
                     } else {
@@ -251,7 +256,7 @@
                 $newentry->format           = $xmlentry['#']['FORMAT'][0]['#'];
                 $newentry->timecreated      = time();
                 $newentry->timemodified     = time();
-                
+
                 // Setting the default values if no values were passed
                 if ( isset($xmlentry['#']['USEDYNALINK'][0]['#']) ) {
                     $newentry->usedynalink      = $xmlentry['#']['USEDYNALINK'][0]['#'];
@@ -287,7 +292,7 @@
                         for($k = 0; $k < sizeof($xmlcats); $k++) {
                             $xmlcat = $xmlcats[$k];
                             unset($newcat);
-        
+
                             $newcat->name = addslashes(utf8_decode($xmlcat['#']['NAME'][0]['#']));
                             $newcat->usedynalink = $xmlcat['#']['USEDYNALINK'][0]['#'];
                             if ( !$category = get_record("glossary_categories","glossaryid",$glossary->id,"name",$newcat->name) ) {
@@ -368,7 +373,7 @@
         }
         echo '</table><hr width="75%">';
 
-        // rejected entries 
+        // rejected entries
         if ($rejections) {
             echo '<center><table border="0" width="70%">';
             echo '<tr><td align="center" colspan="2" width="100%"><strong>' . get_string("rejectionrpt","glossary") . '</strong></tr>';
@@ -382,6 +387,9 @@
     glossary_print_tabbed_table_end();
 
 /// Finish the page
+
+    echo '</div>'; // glossary-import wrapper end
+
     print_footer($course);
 
 ?>

@@ -3,7 +3,7 @@
     require_once("../../config.php");
     require_once("lib.php");
     global $CFG, $USER;
-    
+
     require_variable($id);           // Course Module ID
 
     optional_variable($l,"");
@@ -11,20 +11,20 @@
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
-    } 
-    
+    }
+
     if (! $course = get_record("course", "id", $cm->course)) {
         error("Course is misconfigured");
-    } 
-    
+    }
+
     if (! $glossary = get_record("glossary", "id", $cm->instance)) {
         error("Course module is incorrect");
-    } 
-    
-    require_login($course->id);    
+    }
+
+    require_login($course->id);
     if (!isteacher($course->id)) {
         error("You must be a teacher to use this page.");
-    } 
+    }
 
     $strglossaries = get_string("modulenameplural", "glossary");
     $strglossary = get_string("modulename", "glossary");
@@ -34,7 +34,7 @@
     $strsearchconcept = get_string("searchconcept", "glossary");
     $strsearchindefinition = get_string("searchindefinition", "glossary");
     $strsearch = get_string("search");
-    
+
     $navigation = "";
     if ($course->category) {
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
@@ -46,6 +46,8 @@
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
     
+    echo '<div id="glossary-export" class="glossary">';  // glossary-export wrapper start
+
     echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
     echo '</b></font></p>';
 
@@ -76,7 +78,7 @@
         $ffurl = "../../file.php?file=$ffurl";
     }
     echo '<p align="center"><a href="' . $ffurl . '" target="_blank">' . get_string("exportedfile","glossary") .  '</a></p>';
-    
+
     echo '</center>';
     glossary_print_tabbed_table_end();
     print_footer();

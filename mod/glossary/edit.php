@@ -85,9 +85,13 @@ if ( $confirm ) {
               <a href=\"view.php?id=$cm->id\">$glossary->name</a> -> $stredit", "form.text",
               "", true, "", navmenu($course, $cm));
 
+        echo '<div id="glossary-edit" class="glossary">';  // glossary-edit wrapper start
+
         print_heading($glossary->name);
 
         include("edit.html");
+
+        echo '</div>';  // glossary-edit wrapper end
 
         print_footer($course);
         die;
@@ -96,9 +100,9 @@ if ( $confirm ) {
                         "<A HREF=\"index.php?id=$course->id\">$strglossaries</A> ->
               <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "form.text",
                         "", true, "", navmenu($course, $cm));
-    
+
     print_heading($glossary->name);
-    
+
     if ($e) {
         //We are updating an entry, so we compare current session user with
         //existing entry user to avoid some potential problems if secureforms=off
@@ -107,11 +111,11 @@ if ( $confirm ) {
         $ineditperiod = ((time() - $old->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
         if ( (!$ineditperiod  || $USER->id != $old->userid) and !isteacher($course->id) and $e) {
             if ( $USER->id != $old->userid ) {
-                error("You can't edit other people's entries!"); 
+                error("You can't edit other people's entries!");
             } elseif (!$ineditperiod) {
-                error("You can't edit this. Time expired!"); 
-            }           
-            die;        
+                error("You can't edit this. Time expired!");
+            }
+            die;
         }
 
         $newentry->id = $e;
@@ -148,7 +152,7 @@ if ( $confirm ) {
             error("Could not update this glossary entry because this concept already exist.");
         }
     } else {
-    
+
         $newentry->userid = $USER->id;
         $newentry->timecreated = $timenow;
         $newentry->sourceglossaryid = 0;
@@ -287,6 +291,8 @@ print_header_simple(strip_tags("$glossary->name"), "",
               <a href=\"view.php?id=$cm->id\">$glossary->name</a> -> $stredit", "",
               "", true, "", navmenu($course, $cm));
 
+echo '<div id="glossary-edit" class="glossary">';  // glossary-edit wrapper start
+
 $ineditperiod = ((time() - $newentry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
 if ( (!$ineditperiod  || $USER->id != $newentry->userid) and !isteacher($course->id) and $e) {
     if ( $USER->id != $newentry->userid ) {
@@ -325,6 +331,8 @@ glossary_print_tabbed_table_end();
     if ($usehtmleditor) {
        use_html_editor("text");
     }
+
+echo '</div>';  // glossary-edit wrapper end
 
 print_footer($course);
 
