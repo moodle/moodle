@@ -71,7 +71,7 @@ function backup_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2003112700 and $result) {
-        $result = execute_sql("CREATE TABLE `prefix_backup_config` (
+        $result = execute_sql("CREATE TABLE `{$CFG->prefix}backup_config` (
                       `id` int(10) unsigned NOT NULL auto_increment,
                       `name` varchar(255) NOT NULL default '',
                       `value` varchar(255) NOT NULL default '',
