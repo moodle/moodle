@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004070800)
+      // wiki.php - created with Moodle 1.4 development (2004072500)
 
 
 $string['action'] = '-- アクション --';
@@ -28,6 +28,7 @@ $string['created'] = '作成日時';
 $string['deletemewikiword'] = '削除';
 $string['deletemewikiwordfound'] = '$a 件見つかりました。';
 $string['deletepage'] = 'ページの削除';
+$string['deleteversionserror'] = '正しいバージョンのカウントを入力してください。';
 $string['diff'] = 'Diff';
 $string['disabledpage'] = 'このページは現在利用できません。';
 $string['downloadaszip'] = 'zip書庫をダウンロードする';
@@ -38,6 +39,7 @@ $string['editform2'] = '慎重に書き込んでください。全ての編集は記録されます。';
 $string['editthispage'] = '編集';
 $string['emptypage'] = '空のページ';
 $string['errorsize'] = 'ページサイズが64Kを超えています';
+$string['errversionsave'] = '申し訳ございません、このページを編集している間に他の人が更新したバージョンを保存しました。前のページに戻って、内容をクリップボードにコピーしてください。ページのリロード後、コピーした内容をページに挿入してください。';
 $string['ewikiacceptbinary'] = 'バイナリファイルを許可する';
 $string['ewikiprinttitle'] = 'wiki名を全てのページに表示する。';
 $string['export'] = 'エクスポート';
@@ -81,6 +83,8 @@ $string['nochangestorevert'] = '前の状態に戻す変更はありません。';
 $string['nohtml'] = 'HTML無し';
 $string['nolinksfound'] = 'ページにリンクは見つかりませんでした。';
 $string['notadministratewiki'] = 'このwikiの管理を許可されていません!';
+$string['nothingtostrip'] = '1つのバージョン以外にページがありません。';
+$string['nowikicreated'] = 'このwikiにはエントリーがありません。';
 $string['offline'] = 'オフライン';
 $string['orphanedpage'] = '迷子ページ';
 $string['orphanedpages'] = '迷子ページ';
@@ -110,17 +114,21 @@ $string['setpageflags'] = 'ページフラグの設定';
 $string['sitemap'] = 'サイトマップ';
 $string['smfor'] = 'サイトマップ:';
 $string['status'] = 'ステータス';
+$string['strippages'] = 'ページのストリップ';
 $string['studentadminoptions'] = '学生の管理権限';
 $string['submit'] = '実行';
 $string['thanksforcontribution'] = 'ご協力ありがとうございます。';
 $string['thispageisntlinkedfromanywhereelse'] = 'このページはどこからもリンクされていません。';
 $string['updatedpages'] = '更新ページ';
+$string['uplerror'] = '申し訳ございません、ファイルのアップロード中にエラーが発生しました。';
 $string['uplnewnam'] = '別名で保存する';
 $string['upload0'] = '任意のバイナリファイルをwikiにアップロードする場合は、このフォームを使用してください。';
 $string['uploadpicturebutton'] = 'アップロード';
 $string['version'] = 'バージョン';
 $string['versionrangetoobig'] = '全てのバージョンのページを削除することは出来ません!最新のバージョンを残してください。';
 $string['versions'] = 'バージョン';
+$string['versionstodelete'] = '削除するバージョン';
+$string['viewpage'] = 'ページの表示';
 $string['wantedpages'] = '執筆が望まれているページ';
 $string['wikidefaultpagename'] = 'Wikiインデックス';
 $string['wikiexport'] = 'ページのエクスポート';
