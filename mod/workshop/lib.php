@@ -59,6 +59,7 @@ workshop_cron ()
 workshop_delete_instance($id) 
 workshop_grades($workshopid) 
 workshop_print_recent_activity(&$logs, $isteacher=false) 
+workshop_refresh_events($workshop) 
 workshop_update_instance($workshop) 
 workshop_user_complete($course, $user, $mod, $workshop) 
 workshop_user_outline($course, $user, $mod, $workshop) 
@@ -77,7 +78,24 @@ function workshop_add_instance($workshop) {
 			$workshop->deadlinemonth, $workshop->deadlineday, $workshop->deadlinehour, 
 			$workshop->deadlineminute);
 
-    return insert_record("workshop", $workshop);
+    if ($returnid = insert_record("workshop", $workshop)) {
+
+        $event = NULL;
+        $event->name        = $workshop->name;
+        $event->description = $workshop->description;
+        $event->courseid    = $workshop->course;
+        $event->groupid     = 0;
+        $event->userid      = 0;
+        $event->modulename  = 'workshop';
+        $event->instance    = $returnid;
+        $event->eventtype   = 'deadline';
+        $event->timestart   = $workshop->deadline;
+        $event->timeduration = 0;
+
+        add_event($event);
+    }
+
+    return $returnid;
 }
 
 
@@ -561,6 +579,10 @@ function workshop_delete_instance($id) {
         $result = false;
     }
 
+    if (! delete_records('event', 'modulename', 'workshop', 'instance', $workshop->id)) {
+        $result = false;    
+    }   
+
     return $result;
 }
 
@@ -806,6 +828,50 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
 }
 
 
+///////////////////////////////////////////////////////////////////////////////
+function workshop_refresh_events($courseid = 0) {
+// This standard function will check all instances of this module
+// and make sure there are up-to-date events created for each of them.
+// If courseid = 0, then every workshop event in the site is checked, else
+// only workshop events belonging to the course specified are checked.
+// This function is used, in its new format, by restore_refresh_events()
+
+    if ($courseid == 0) {
+        if (! $workshops = get_records("workshop")) {
+            return true;        
+        }   
+    } else {
+        if (! $workshops = get_records("workshop", "course", $courseid)) {
+            return true;
+        }
+    }
+    $moduleid = get_field('modules', 'id', 'name', 'workshop');
+    
+    foreach ($workshops as $workshop) {
+        $event = NULL;
+        $event->name        = addslashes($workshop->name);
+        $event->description = addslashes($workshop->description);
+        $event->timestart   = $workshop->deadline;
+
+        if ($event->id = get_field('event', 'id', 'modulename', 'workshop', 'instance', $workshop->id)) {
+            update_event($event);
+    
+        } else {
+            $event->courseid    = $workshop->course;
+            $event->groupid     = 0;
+            $event->userid      = 0;
+            $event->modulename  = 'workshop';
+            $event->instance    = $workshop->id; 
+            $event->eventtype   = 'deadline';
+            $event->timeduration = 0;
+            $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $workshop->id); 
+            add_event($event);
+        }
+
+    }
+    return true;
+}   
+
 
 ///////////////////////////////////////////////////////////////////////////////
 function workshop_update_instance($workshop) {
@@ -821,7 +887,21 @@ function workshop_update_instance($workshop) {
 
     $workshop->id = $workshop->instance;
 
-    return update_record("workshop", $workshop);
+    if ($returnid = update_record("workshop", $workshop)) {
+
+        $event = NULL;
+
+        if ($event->id = get_field('event', 'id', 'modulename', 'workshop', 'instance', $workshop->id)) {
+
+            $event->name        = $workshop->name;
+            $event->description = $workshop->description;
+            $event->timestart   = $workshop->deadline;
+
+            update_event($event);
+        }
+    }
+
+    return $returnid;
 }
 
 

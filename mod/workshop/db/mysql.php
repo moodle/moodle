@@ -75,6 +75,12 @@ function workshop_upgrade($oldversion) {
                 NOT NULL default '0' AFTER `resubmission`");
         execute_sql("ALTER TABLE `{$CFG->prefix}workshop_grades` ADD INDEX (`assessmentid`)");
     }
+
+    if ($oldversion < 2004052100) {
+        include_once("$CFG->dirroot/mod/workshop/lib.php");
+        workshop_refresh_events();
+    }
+
     
     return true;
 }

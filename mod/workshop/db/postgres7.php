@@ -18,12 +18,17 @@ function workshop_upgrade($oldversion) {
             assessmentid int8  NOT NULL default '0',
             userid int8 NOT NULL default '0',
             timecreated int8  NOT NULL default '0',
-	    mailed int2  NOT NULL default '0',
+	        mailed int2  NOT NULL default '0',
             comments text NOT NULL
         )
         ");
     }
     return true;
+
+    if ($oldversion < 2004052100) {
+        include_once("$CFG->dirroot/mod/workshop/lib.php");
+        workshop_refresh_events();
+    }
 }
 
 
