@@ -1056,6 +1056,7 @@
                         $eve->eventtype = backup_todb($info['EVENT']['#']['EVENTTYPE']['0']['#']);
                         $eve->timestart = backup_todb($info['EVENT']['#']['TIMESTART']['0']['#']);
                         $eve->timeduration = backup_todb($info['EVENT']['#']['TIMEDURATION']['0']['#']);
+                        $eve->visible = backup_todb($info['EVENT']['#']['VISIBLE']['0']['#']);
                         $eve->timemodified = backup_todb($info['EVENT']['#']['TIMEMODIFIED']['0']['#']);
 
                         //Now search if that event exists (by description and timestart field) in
@@ -1107,8 +1108,7 @@
 
     //This function decode things to make restore multi-site fully functional
     //It does this conversions:
-    //    - $@WWWROOT@$ -------------------------------> $CFG->wwwroot
-    //    - $@COURSEID@$ ------------------------------> $courseid
+    //    - $@FILEPHP@$ -------------------------------> $CFG->wwwroot/file.php/courseid
     //
     //Note: Inter-activities linking is being implemented as a final
     //step in the restore execution, because we need to have it 
@@ -1118,11 +1118,9 @@
         global $CFG,$restore;    
 
         //Now decode wwwroot and file.php calls
-        $search = array ("$@WWWROOT@$",
-                         "$@COURSEID@$");
+        $search = array ("$@FILEPHP@$");
         
-        $replace = array ($CFG->wwwroot,
-                         $restore->course_id);
+        $replace = array ($CFG->wwwroot."/file.php/".$restore->course_id);
     
         $result = str_replace($search,$replace,$content);
 

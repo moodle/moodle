@@ -560,7 +560,7 @@
             fwrite ($bf,full_tag("GUEST",3,false,$course->guest));
             fwrite ($bf,full_tag("STARTDATE",3,false,$course->startdate));
             fwrite ($bf,full_tag("NUMSECTIONS",3,false,$course->numsections));
-            fwrite ($bf,full_tag("SHOWRECENT",3,false,$course->showrecent));
+            //fwrite ($bf,full_tag("SHOWRECENT",3,false,$course->showrecent));    INFO: This is out in 1.3
             fwrite ($bf,full_tag("MAXBYTES",3,false,$course->maxbytes));
             fwrite ($bf,full_tag("SHOWREPORTS",3,false,$course->showreports));
             fwrite ($bf,full_tag("GROUPMODE",3,false,$course->groupmode));
@@ -996,6 +996,7 @@
                 fwrite ($bf,full_tag("EVENTTYPE",4,false,$event->eventtype));
                 fwrite ($bf,full_tag("TIMESTART",4,false,$event->timestart));
                 fwrite ($bf,full_tag("TIMEDURATION",4,false,$event->timeduration));
+                fwrite ($bf,full_tag("VISIBLE",4,false,$event->visible));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$event->timemodified));
                 //End event tag
                 fwrite ($bf,end_tag("EVENT",3,true));
@@ -1114,20 +1115,24 @@
 
     //This function encode things to make backup multi-site fully functional
     //It does this conversions:
-    //    - $CFG->wwwroot -----------------------------> $@WWWROOT@$
-    //    - /file.php/$courseid -----------------------> /file.php/$@COURSEID@$
+    //    - $CFG->wwwroot/file.php/courseid ----------------------> $@FILEPHP@$
     //    - Links to forums everywhere (DB) are encoded.
     //
     function backup_encode_absolute_links($content) {
 
         global $CFG,$preferences;
 
-        //Now we encode calls to file.php or wwwroot
-        $search = array ($CFG->wwwroot,
-                         "/file.php/".$preferences->backup_course);
+        //Check if preferences is ok. If it isn't set, we are 
+        //in a scheduled_backup to we are able to get a copy
+        //from CFG->backup_preferences
+        if (!isset($preferences)) {
+            $preferences = $CFG->backup_preferences;
+        }
 
-        $replace = array ("$@WWWROOT@$",
-                          "/file.php/$@COURSEID@$");
+        //First, we check for every call to file.php inside the course
+        $search = array($CFG->wwwroot."/file.php/".$preferences->backup_course);
+
+        $replace = array("$@FILEPHP@$");
 
         $result = str_replace($search,$replace,$content);
 

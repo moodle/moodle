@@ -462,6 +462,13 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
     $preferences->backup_version = $CFG->backup_version;
     $preferences->backup_release = $CFG->backup_release;
 
+    //Some parts of the backup doesn't know about $preferences, so we
+    //put a copy of it inside that CFG (always global) to be able to
+    //use it. Then, when needed I search for preferences inside CFG
+    //Used to avoid some problems in full_tag() when preferences isn't
+    //set globally (i.e. in scheduled backups)
+    $CFG->backup_preferences = $preferences;
+
     //Check for temp and backup and backup_unique_code directory
     //Create them as needed
     schedule_backup_log($starttime,$preferences->backup_course,"    checking temp structures");
@@ -611,6 +618,9 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
         schedule_backup_log($starttime,$preferences->backup_course,"    cleaning temp data");
         $status = clean_temp_data ($preferences);
     }
+
+    //Unset CFG->backup_preferences only needed in scheduled backups
+    unset ($CFG->backup_preferences);
 
     return $status;
 }
