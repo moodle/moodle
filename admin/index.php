@@ -72,6 +72,18 @@
               "./");
     }
 
+/// Set some necessary variables during set-up to avoid PHP warnings later on this page
+    if (!isset($CFG->framename)) {
+        $CFG->framename = "_top";
+    }
+    if (!isset($CFG->release)) {
+        $CFG->release = "";
+    }
+    if (!isset($CFG->version)) {
+        $CFG->version = "";
+    }
+
+
 
 /// Check if the main tables have been installed yet or not.
 
@@ -92,7 +104,7 @@
     }
 
     if (! $maintables) {
-        if (!$agreelicence) {
+        if (empty($agreelicence)) {
             $strlicense = get_string("license");
             print_header($strlicense, $strlicense, $strlicense, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("<A HREF=\"http://moodle.org\">Moodle</A> - Modular Object-Oriented Dynamic Learning Environment");
@@ -100,9 +112,9 @@
             print_simple_box_start("center");
             echo text_to_html(get_string("gpl"));
             print_simple_box_end();
-            echo "<BR>";
+            echo "<br />";
             notice_yesno(get_string("doyouagree"), "index.php?agreelicence=true", 
-                                                   "http://www.gnu.org/copyleft/gpl.html");
+                                                   "http://moodle.org/doc/?frame=licence.html");
             exit;
         }
 

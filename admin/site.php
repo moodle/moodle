@@ -52,6 +52,11 @@
         $form = $site;
         $firsttime = false;
     } else {
+        $form->fullname = "";
+        $form->shortname = "";
+        $form->summary = "";
+        $form->newsitems = 0;
+        $form->id = "";
         $form->category = 0;
         $form->format = "social";
         $form->newsitems = 0;
