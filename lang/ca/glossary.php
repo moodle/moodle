@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020800)
 
 
 $string['addcomment'] = 'Afegeix un comentari';
@@ -10,6 +10,7 @@ $string['allcategories'] = 'Totes les categories';
 $string['allentries'] = 'TOTES';
 $string['allowcomments'] = 'Permeteu comentaris en les entrades?';
 $string['allowduplicatedentries'] = 'Permeteu entrades duplicades?';
+$string['allowprintview'] = 'Permet visualització per a imprimir';
 $string['allowratings'] = 'Permeteu valorar les entrades?';
 $string['answer'] = 'Resposta';
 $string['approve'] = 'D\'acord';
@@ -130,6 +131,7 @@ $string['notcategorised'] = 'No categoritzat';
 $string['numberofentries'] = 'Nombre d\'entrades';
 $string['onebyline'] = '(una per línia)';
 $string['printerfriendly'] = 'Versió per imprimir';
+$string['printviewnotallowed'] = 'No es permet la visualització per a imprimir';
 $string['question'] = 'Qüestió';
 $string['rate'] = 'Valoració';
 $string['rating'] = 'S\'està valorant';
