@@ -995,7 +995,7 @@ function print_category_info($category, $depth) {
                 echo "</td>\n<td align=\"right\" valign=\"top\" nowrap class=\"coursename\">";
                 if ($course->guest ) {
                     echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                    echo "<img hspace=1 alt=\"\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/user.gif\"></a>";
+                    echo "<img hspace=1 alt=\"\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/guest.gif\"></a>";
                 } else {
                     echo "<img alt=\"\" height=16 width=18 border=0 src=\"$CFG->pixpath/spacer.gif\">";
                 }
@@ -1154,7 +1154,7 @@ function print_course($course, $width="100%") {
     if ($course->guest) {
         $strallowguests = get_string("allowguests");
         echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-        echo "<img vspace=4 alt=\"$strallowguests\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/user.gif\"></a>&nbsp;&nbsp;";
+        echo "<img vspace=4 alt=\"$strallowguests\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/guest.gif\"></a>&nbsp;&nbsp;";
     }
     if ($course->password) {
         $strrequireskey = get_string("requireskey");
