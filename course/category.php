@@ -195,7 +195,20 @@
 
     } // End of editing stuff
 
+/// Print out all the sub-categories
+
+    if ($subcategories = get_records("course_categories", "parent", $category->id)) {
+        echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=4 class=\"generalbox\">";
+        echo "<tr><th>".get_string("subcategories")."</th></tr>";
+        echo "<tr><td nowrap>";
+        foreach ($subcategories as $subcategory) {
+            echo "<a href=\"category.php?id=$subcategory->id\">$subcategory->name</a><br />";
+        }
+        echo "</td></tr></table>";
+        echo "<br />";
+    }
     
+
 /// Print out all the courses
 
     if (!$courses = get_courses($category->id)) {
