@@ -24,9 +24,86 @@
 
 <h1>Notes de mise &agrave; jour actuelles</h1>
 
-<h3>Moodle 1.4.3 (17 décembre 2004)</h3>
+<h3>Moodle 1.4.4 (7 mars 2005)</h3>
+  	 
+     <p>(Cette version comporte d'importantes corrections concernant la sécurité. Pour cette raison, nous recommandons vivement aux responsables de sites utilisant une version antérieure, quelle qu'elle soit, d'effectuer au plus vite la mise à jour vers cette version.)</p>
+  	 
+  	 
+  	   <dl>
+  	     <dt>Quelques importantes corrections concernant la sécurité</dt>
+  	     <dd>
+  	       <ul>
+  	         <li>Ajout de robustes fonctions de validation d'URL</li>
+  	         <li>Mesures préventives contre la modification malicieuse de la configuration</li>
+  	         <li>Validation plus stricte des données saisies dans les tests, l'éditeur WYSIWYG et l'édition des cours</li>
+  	         <li>Meilleur contrôle des réglages de langue des utilisateurs</li>
+  	         <li>Nettoyage plus sûr des textes saisis en HTML</li>
+  	       </ul>
+  	     </dd>
+  	 
+  	     <dt>Quelques nouveautés</dt>
+  	     <dd>
+  	       <ul>
+  	         <li>Nouveau filtre MP3 avec un lecteur mp3 en Flash</li>
+  	         <li>Meilleur affichage des options dans le module Sondage</li>
+  	         <li>Améliorations de l'interface de l'éditeur de tables dans l'éditeur WYSIWYG</li>
+  	         <li>Les réglages $CFG du fichier config.php ont maintenant priorité sur ceux de la base de données</li>
+  	         <li>Activation de la récupération de place (garbage collection) pour les systèmes Debian, avec la possibilité de la désactiver. Ceci permet de corriger des problèmes de session figée</li>
+  	       </ul>
+  	     </dd>
+  	 
+  	    <dt>Améliorations de performance</dt>
+  	     <dd>
+  	       <ul>
+  	         <li>Sérieuses optimisations de performance dans le code des forums</li>
+  	         <li>Diverses optimisations, grâce à la suppression de requêtes et de tris de base de données</li>
+  	         <li>Améliorations majeures du traitement des verrous de session. Le téléchargement de gros fichiers ou la consultation en direct des historiques ne ralentit plus la navigation dans d'autres fenêtres</li>
+  	       </ul>
+  	     </dd>
+  	 
+  	     <dt>Corrections d'autres bogues</dt>
+  	     <dd>
+  	       <ul>
+  	         <li>Installeur&nbsp;: nombreuses corrections et mises à jour tirées du tronc (y compris le bogue 2625)</li>
+  	         <li>Installeur&nbsp;: une vérification est effectuée sur allow_url_fopen() avant d'essayer de valider l'URL de l'installation</li>  	 
+  	         <li>Correction de certains problèmes dans la recherche des forums</li>
+  	         <li>Correction d'un bogue de tri sur les forums (bogue 2613)</li>  	 
+  	         <li>Correction de problèmes dans la recherche des utilisateurs avec des espaces finaux</li>
+  	         <li>Correction de quelques chemins vers /admin codés en dur</li>
+  	         <li>Correction de quelques bogues en relation avec les groupes (bogues 2133, 2550, 2363)</li>
+  	         <li>Moodle n'envoie plus des résumés en HTML aux personnes désirant des courriels en texte pur</li>  	 
+  	         <li>Correction d'une erreur de la barre de navigation dans le module SCORM</li>  	 
+  	         <li>Chat&nbsp;: la taille maximale de lecture de l'interface de connexion (socket) a été augmentée, afin d'éviter les pages vides et les répétitions de messages</li>
+  	         <li>Fichiers&nbsp;: ajout d'une icône pour le dossier parent (bogue 2491)</li>  	 
+  	         <li>Support de Postgres&nbsp;: correction de la cohérence dans la table mdl_log</li>  	 
+  	         <li>Plugins d'authentification&nbsp;: meilleur nettoyage et troncage des données</li>
+  	         <li>Plugins d'authentification&nbsp;: correction d'un problème d'authentification externe &mdash; un utilisateur connecté comme anonyme ne pouvait se connecter par une authenfication externe lors de la toute première connexion avec un compte</li>
+  	         <li>Authentification LDAP&nbsp;: correction d'une régression depuis 1.4.2, où un point-virgule final dans certains champs empêchait l'authentification</li>
+  	         <li>Authentification par base de données&nbsp;: cette authentification n'allait pas chercher correctement les champs de données de l'utilisateur (bogue 2319)</li>  	 
+  	         <li>Plugin d'inscription PayPal&nbsp;: le texte envoyé à PayPal peut maintenant être nettoyé pour éviter certaines marques diacritiques (espagnoles pour l'instant) qui empêchent le déroulement des inscriptions. Actuellement, seules les marques diacritiques françaises et allemandes sont supportées par PayPal. Cette fonctionnalité peut être facilement étendue à d'autres caractères</li>  	 
+  	         <li>Sauvegarde/restauration&nbsp;: si l'utilisateur n'est pas un administrateur et si le cours restauré ne comporte pas d'enseignant, l'utilisateur effectuant la restauration y est automatiquement ajouté comme enseignant (bogue 2381)</li>
+  	         <li>Sauvegarde/restauration&nbsp;: erreurs corrigées avec les cours dont le nom comporte des apostrophes</li>
+  	         <li>Sauvegarde/restauration&nbsp;: les membres des groupes ne sont maintenant inclus (lors de la sauvegarde et de la restauration) que si l'incorporation des utilisateurs a été choisie (bogue 2486)</li>
+  	         <li>Sauvegarde/restauration&nbsp;: nettoyage général du code</li>  	 
+  	         <li>Glossaire&nbsp;: la note 0 est maintenant supportée (bogue 2582), et PHP5 est mieux supporté (bogue 2581)</li>
+  	         <li>Glossaire &amp; Blackboard&nbsp;: corrections dans l'importation (bogue 2310)</li>
+  	         <li>Calendrier&nbsp;: traitement plus robuste de données erronées</li>
+  	         <li>Calendrier&nbsp;: corrections dans le code HTML (bogue 2350)</li>  	 
+  	         <li>L'ordre de tri des cours était défectueux dans la version 1.4.3. Cela perturbait parfois la création des cours. Tous les problèmes connus avec l'ordre de tri sont maintenant corrigés. Quelques corrections ont été également effectuées dans les appels de la fonction get_categories(), qui apparaissaient parfois dans la liste «&nbsp;Mes cours&nbsp;»</li>  	 
+  	         <li>Wiki&nbsp;: plusieurs corrections</li>
+  	         <li>La lecture des historiques en direct possède maintenant un pied de page adéquat</li>  	 
+  	         <li>Divers nettoyages et rangements du code en général</li>
+  	       </ul>
+  	     </dd>
+  	 
+  	 </dl>
+  	 
+  	 
+  	 <p>&nbsp;</p>
+  	 
+  	 <h3>Moodle 1.4.3 (17 décembre 2004)</h3>
 
-<p>(Cette version comporte d'importantes corrections concernant la sécurité. Pour cette raison, nous recommandons vivement que les sites utilisant une version antérieure (quelle qu'elle soit) effectue la mise à jour vers cette version au plus vite.)</p>
+<p>(Cette version comporte d'importantes corrections concernant la sécurité. Pour cette raison, nous recommandons vivement que les responsables de sites utilisant une version antérieure, quelle qu'elle soit, effectuent au plus vite la mise à jour vers cette version.)</p>
 
   <dl>
     <dt>Quelques importantes corrections concernant la sécurité</dt>
