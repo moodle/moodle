@@ -31,9 +31,9 @@ function attendance_upgrade($oldversion) {
 
 
     if ($oldversion < 2004111200) {
-        execute_sql('DROP INDEX prefix_attendance_course_idx;',false);
-        execute_sql('DROP INDEX prefix_attendance_roll_dayid_idx;',false); 
-        execute_sql('DROP INDEX prefix_attendance_roll_userid_idx;',false);
+        execute_sql("DROP INDEX {$CFG->prefix}attendance_course_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}attendance_roll_dayid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}attendance_roll_userid_idx;",false);
 
         modify_database('','CREATE INDEX prefix_attendance_course_idx ON prefix_attendance (course);');
         modify_database('','CREATE INDEX prefix_attendance_roll_dayid_idx ON prefix_attendance_roll (dayid);');

@@ -41,9 +41,9 @@ function attendance_upgrade($oldversion) {
     }
 
     if ($oldversion < 2004111200) {
-        execute_sql('ALTER TABLE prefix_attendance DROP INDEX course;',false);
-        execute_sql('ALTER TABLE prefix_attendance_roll DROP INDEX dayid;',false);
-        execute_sql('ALTER TABLE prefix_attendance_roll DROP INDEX userid;',false);
+        execute_sql("ALTER TABLE {$CFG->prefix}attendance DROP INDEX course;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}attendance_roll DROP INDEX dayid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}attendance_roll DROP INDEX userid;",false);
 
         modify_database('','ALTER TABLE prefix_attendance ADD INDEX course (course);');
         modify_database('','ALTER TABLE prefix_attendance_roll ADD INDEX dayid (dayid);');
