@@ -662,7 +662,12 @@ function main_upgrade($oldversion=0) {
             set_field('modules', 'version', 2004080932, 'name', 'glossary');
         }
     }
- 
+
+    if ($oldversion < 2004083130) { // update log display to use correct postgres friendly sql
+        execute_sql("UPDATE {$CFG->prefix}log_display SET field='firstname||\' \'||lastname' WHERE module='user' AND action='view' AND mtable='user'");
+        execute_sql("UPDATE {$CFG->prefix}log_display SET field='firstname||\' \'||lastname' WHERE module='course' AND action='user report' AND mtable='user'");
+    }
+    
     return $result;
 }
 
