@@ -40,7 +40,7 @@
     if (!$search) {
         print_header_simple("$strsearch", "",
                  "<a href=\"index.php?id=$course->id\">$strforums</a> -> $strsearch", "search.search",
-                  "", "", "&nbsp;", navmenu($course), true);
+                  "", "", "&nbsp;", navmenu($course));
 
         echo '<div id="forum-search" class="forum">';  // forum-search wrapper start
 
@@ -63,7 +63,7 @@
             print_header_simple("$strsearchresults", "",
                      "<a href=\"index.php?id=$course->id\">$strforums</a> ->
                       <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search",
-                      "", "", "&nbsp;", navmenu($course), true);
+                      "", "", "&nbsp;", navmenu($course));
 
             echo '<div id="forum-search" class="forum">';  // forum-search wrapper start
 
@@ -88,7 +88,7 @@
         print_header_simple("$strsearchresults", "",
                  "<a href=\"index.php?id=$course->id\">$strforums</a> ->
                   <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search",
-                  "", "",  $searchform, navmenu($course), true);
+                  "", "",  $searchform, navmenu($course));
 
         echo '<div id="forum-search" class="forum">';  // forum-search wrapper start
 
