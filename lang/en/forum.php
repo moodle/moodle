@@ -99,6 +99,7 @@ $string['repliesmany'] = "\$a replies so far";
 $string['repliesone'] = "\$a reply so far";
 $string['reply'] = "Reply";
 $string['search'] = "Search";
+$string['searchresults'] = "Search results";
 $string['searchforums'] = "Search forums";
 $string['sendinratings'] = "Send in my latest ratings";
 $string['showsubscribers'] = "Show subscribers";
