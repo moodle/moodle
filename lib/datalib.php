@@ -1456,9 +1456,11 @@ function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='')
     global $CFG;
 
     if (!empty($exceptions)) {
-        $except = ' AND u.id NOT IN ('. $exceptions .') ';
-    } else {
-        $except = '';
+        $exceptions = ' AND u.id NOT IN ('. $exceptions .') ';
+    }
+
+    if (!empty($sort)) {
+        $sort = ' ORDER by '.$sort;
     }
 
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest,
@@ -1467,8 +1469,7 @@ function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='')
                             FROM {$CFG->prefix}user u,
                                  {$CFG->prefix}user_teachers t
                             WHERE t.course = '$courseid' AND t.userid = u.id
-                              AND u.deleted = '0' AND u.confirmed = '1' $except
-                            ORDER BY $sort");
+                              AND u.deleted = '0' AND u.confirmed = '1' $exceptions $sort");
 }
 
 /**
