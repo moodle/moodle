@@ -92,6 +92,8 @@ function scorm_print_recent_activity(&$logs, $isteacher=false) {
 
     global $CFG, $COURSE_TEACHER_COLOR;
 
+    $content = NULL;
+
     return $content;  // True if anything was printed, otherwise false
 }
 
