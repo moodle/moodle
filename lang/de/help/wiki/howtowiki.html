@@ -1,0 +1,170 @@
+<html>
+<head>
+<title>Wikis verwenden</title>
+</head>
+<body>
+<h2>Wie Sie ein Wiki verwenden</h2>
+<p>Moodle's Wiki basiert auf <a href=
+"http://erfurtwiki.sourceforge.net/?id=ErfurtWiki" target=
+"_blank">ErfurtWiki</a>, ein Programm zur Nutzung des <a href=
+"http://c2.com/cgi/wiki?WikiWikiWeb" target=
+"_blank">WikiWikiWeb</a> Hypertextsystems. Es erlaubt die
+gemeinsame Bearbeitung und Erstellung von Webseiten.</p>
+<ul>
+<p>Lernen Sie wie <a href="#createpages">Seiten erstellt
+werden:</a></p)
+<li>klicken Sie auf <img src="pix/t/edit.gif"> "Diese Seite
+bearbeiten" im Drop-down Menu, um einen Seiteninhalt zu
+bearbeiten</li>
+<li>formatieren Sie Ihre Seiten mit <a href=
+"#wikimarkup">Wiki-Formatierungen</a> oder mit HTML (wenn diese
+Option f&uuml;r Ihr Wiki aktiv ist)</li>
+<li>'Seiten suchen' oder gehen Sie zur Liste der
+neuesten Seiten</li>
+<li>es gibt auch &Uuml;bersichten mit den 
+meistbesuchten Seiten, meist
+ge&auml;nderten Seiten und zuletzt
+aktualisierten Seiten.</li>
+</ul>
+<p><a name="createpages" id="createpages"></a><b>Seiten
+erstellen</b>:<br>
+Neue Seiten werden erstellt, indem der Seitenname der neuen Seite
+auf einer bestehenden Seite eingef&uuml;gt wird. Eine Wiki-Seite
+wird in Form eines <a href="#camelcase">Kamelh&ouml;ckers
+(CamelCase)</a> oder durch eine Einklammerung in eckige Klammern
+beschrieben ( [] ).</p>
+<p>Zum Beispiel:</p>
+<ul>
+<li>MeineWikiSeite (KamelH&ouml;cker)</li>
+<li>[Meine Wiki Seite] (in eckigen Klammern geschrieben)</li>
+</ul>
+<p>Text, der in dieser Wiki-Schreibweise geschrieben wurde weist
+nach dem Speichern ein '?' am Ende des Wortes auf. Klicken Sie
+auf das '?', und Sie gelangen in den Bearbeitungsmodus f&uuml;r
+diese Seite. Geben Sie Ihren Text ein, speichern Sie ab und schon
+haben Sie eine neue Wikiseite erstellt.</p>
+<p><a name="wikimarkup" id=
+"wikimarkup"></a><b>Wiki-Formatierung</b>:<br>
+Jede Wikiseite kann leicht gestaltet werden mit der
+Wiki-Formatierung</p>
+<h4>Abs&auml;tze</h4>
+<ul type="circle">
+<li>einzelne Abs&auml;tze in separaten Zeilen</li>
+<li>schreiben Sie drei Prozent-Zeichen %%% um einen Zeilenumbruch
+zu erzwingen</li>
+<li>um den Text einzur&uuml;cken f&uuml;gt man einige Leerzeichen
+(oder Tabulatoren) an den Anfang der Zeile ein</li>
+</ul>
+<h4>!! &Uuml;berschriften</h4>
+<ul type="circle">
+<li>Mit einem Ausrufezeichen ! am Beginn einer Zeile erzeugt man
+eine kleine &Uuml;berschrift</li>
+<li>mit zwei !! eine mittelgro&szlig;e</li>
+<li>und mit drei !!! wird aus dem dahinterstehenden Text eine
+richtig gro&szlig;e &Uuml;berschrift</li>
+</ul>
+<h4>Textgestaltung</h4>
+<ul type="circle">
+<li>Wenn man <em>Text betonen</em> m&ouml;chte, schlie&szlig;t
+man ihn in zwei einfache Anf&uuml;hrungszeichen ein ''
+(kursiv)</li>
+<li><strong>Text wird fett</strong> mit zwei Unterstrichen __
+(oder wenn er in zwei Sternchen ** eingeschlossen wird)</li>
+<li>um <big>gro&szlig;en Text</big> zu bekommen verwendet man
+zwei Rautenzeichen ##</li>
+<li><small>kleiner Text</small> wird einfach in zwei Mikrozeichen
+&micro;&micro; eingeschlossen</li>
+<li>eine <tt>Schreibmaschinen-&auml;hliche Schrift</tt>
+erh&auml;lt Text, der von zwei Gleicheitszeichen ==
+eingeschlossen wird</li>
+</ul>
+<h4>Listen/Aufz&auml;hlung</h4>
+<ul type="circle">
+<li>beginnt eine Zeile mit einem Sternchen * wird eine Liste
+begonnen</li>
+<li>ein Rautenzeichen # startet eine nummerierte Liste
+<ol>
+<li>untergeordnete Listen erzeugen</li>
+<li>Unterlisten sollten aber mit dem selben Mix von * und #
+beginnen</li>
+</ol>
+</li>
+</ul>
+<h4>Hyperlinks (Verweise)</h4>
+<ul type="circle">
+<li>Gibt man einfach ein WikiWort im Text ein, wird ein neuer
+Verweis erzeugt</li>
+<li>Oder man umschlie&szlig;t W&ouml;rter mit eckigen Klammern um
+einen Verweis innerhalb des WikiWikiWeb zu erzeugen, der kein
+echtes WikiWord ist</li>
+<li>Jede g&uuml;ltige Internetadresse (beginnend mit http://) wie
+z.B. <a href="http://www.moodle.de/">http://www.moodle.de/</a>
+wird automatisch anklickbar angezeigt (ebenso
+EMail-Adressen)</li>
+<li>Schlie&szlig;t man eine WWW-Adresse in eckige Klammern ein,
+um ihr dann links von einem | Zeichen einen Titel zu geben</li>
+<li style="list-style: none">
+<ul>
+<li>[Beispiel | http://moodle.de]</li>
+<li>[WikiWord "titel"] oder ["titel f&uuml;r" WikiLink]</li>
+</ul>
+</li>
+<li>Wenn ein WikiWort oder eine http://www-Adresse (oder
+[irgendetwas] innerhalb von eckigen Klammern) kein
+Verweis/HyperLink werden soll, dann schreibe einfach ein
+Ausrufezeichen oder ein Tilde-Zeiden (Schl&auml;ngelchen) direkt
+davor
+<ul>
+<li>z.B. !KeinHyperLink, [DiesIstAuchKeinLink]</li>
+<li>oder http://www.nolink.org/</li>
+</ul>
+</li>
+</ul>
+<h4>Tabellen erstellen mit |</h4>
+<table cellpadding="2" border="1" cellspacing="0">
+<tr>
+<td>Schlie&szlig;en Sie den Texte</td>
+<td>einfach mit senkrechten</td>
+<td>Linien ein</td>
+</tr>
+<tr>
+<td>um eine einfache</td>
+<td>Tabellenstruktur zu erstellen.</td>
+</tr>
+<tr>
+<td>Die meisten Browser</td>
+<td>lassen fehlende Zellen</td>
+<td>einfach aus.</td>
+</tr>
+</table>
+<p>Legen Sie vor und hinter einer Tabelle immer einen Leerzeile
+an, um sie deutlich vom restlichen Text abzuheben.</p>
+<h4>Bilder</h4>
+<ul type="circle">
+<li>Um eine Graphik in eine Seite einzuf&uuml;gen, schreibt man
+einfach ihre absolute www-Adresse in eckige Klammern, wie
+[http://www.example.com/pics/image.png]</li>
+<li>oder verwendet stattdessen einfach BildHochladen</li>
+<li>um ein Bild auszurichten (zu bestimmen wie der Text
+herumflie&szlig;t) f&uuml;gt man in den eckigen Klammern zwei
+Leerzeichen vor und/oder nach der http://-Adresse ein</li>
+</ul>
+<h4>Weitere Informationen</h4>
+Weitere Informationen zur Formatierung von Wikis finden Sie unter
+<a href="http://erfurtwiki.sourceforge.net" target="_new">Erfurt
+Wiki Homepage</a>.
+<p><a name="camelcase" id="camelcase"></a><b>KamelH&ouml;cker /
+Camel Case</b>:<br>
+KamelH&ouml;cker (CamelCase) ist eine Beschreibung wie
+Wikiw&ouml;rter aussehen. Mehrere W&ouml;rter -
+zusammengeschrieben ohne Leerzeichen - , wobei das zweite Wort
+mit einem Gro&szlig;buchstaben beginnt. Die Gro&szlig;- und
+Kleinbuchstaben in dem Wort sehen aus wie die beiden H&ouml;cker
+eines Kamels.</p>
+<p>Dieses Prinzip der Schaffung neuer Verlinkung zu Seiten wird
+auch BumpyText genannt.</p>
+<p>Sprachpuristen m&ouml;gen diese Schreibweise nicht besonders.
+Sie können nat&uuml;rlich auch die alternative Schreibweise mit eckigen
+Klammern verwenden.</p>
+</body>
+</html>
