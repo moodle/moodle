@@ -1,0 +1,124 @@
+<p align="center"><b>Analyse des &eacute;valuations</b></p>
+
+<p>Cette analyse observe les &eacute;valuations faites sur les
+exemples, comme sur celles effectu&eacute;es durant la phase
+d'&eacute;valuation par les pair. Elle tente de
+s&eacute;lectionner les meilleures parmi les &eacute;valuations
+d'&eacute;tudiants et d'enseignants. Ces
+&laquo;&nbsp;bonnes&nbsp;&raquo; &eacute;valuations sont alors
+utilis&eacute;es dans le calcul de la note finale.</p>
+
+<p>L'analyse est meilleure si les &eacute;valuations de
+l'enseignant sont disponibles. Ces &eacute;valuations peuvent
+servir de r&eacute;f&eacute;rences par rapport auxquelles celles
+des &eacute;tudiants peuvent &ecirc;tre jug&eacute;es.
+L'enseignant <b>n'a pas besoin</b> d'&eacute;valuer chaque
+exemple et chaque travail, mais pour que l'analyse soit
+significative, il est mieux d'avoir de la part de l'enseignant
+plus d'&eacute;valuations celles faites par la moyenne des
+&eacute;tudiants. Plus il y a d'&eacute;valuations faites par
+l'enseignant et plus les r&eacute;sultats de l'analyse seront
+fiables.</p>
+
+<p>L'analyse se fait habituellement &agrave; plusieurs reprises,
+en changeant &agrave; chaque fois une ou plusieurs options.
+L'analyse est contr&ocirc;l&eacute;e par trois options
+apparaissant au sommet de la page.</p>
+
+<ol> <li>L'option &laquo;&nbsp;Pond&eacute;ration des
+&eacute;valuations de l'enseignant&nbsp;&raquo; permet de fixer
+le poids des &eacute;valuations faites par l'enseignant en
+comparaison avec celles des &eacute;tudiants, lors de la phase
+d'analyse d'erreurs. Si l'enseignant d&eacute;sire que sa propre
+strat&eacute;gie d'&eacute;valuation domine celles des
+&eacute;tudiants, alors il devrait &ecirc;tre parmi tous ceux qui
+ont donn&eacute; des notes celui ayant l'erreur moyenne la plus
+faible dans la &laquo;&nbsp;Table d'erreurs&nbsp;&raquo;. Si
+l'enseignant n'est pas en t&ecirc;te de liste, le poids de ses
+&eacute;valuations est augment&eacute; jusqu'&agrave; ce qu'il
+ait la plus petite erreur moyenne. En cons&eacute;quence, les
+&eacute;valuations de l'enseignant sont dominantes et celles des
+&eacute;tudiants qui &eacute;valuent comme lui se retrouvent
+aussi dans la partie sup&eacute;rieure de la liste de la Table
+d'erreurs. Les &eacute;tudiants situ&eacute;s au bas de la liste
+sont ceux qui &eacute;valuent d'une fa&ccedil;on
+diff&eacute;rente de celle de l'enseignant (ou de celle des
+&eacute;tudiants du haut de la liste).<br /><br /> Plus
+l'enseignant a effectu&eacute; d'&eacute;valuations, et moins
+l'on aura besoin d'utiliser cette option pour forcer l'enseignant
+&agrave; appara&icirc;tre au haut de la liste. Il est &agrave;
+noter que cette option <b>n'applique pas</b> un coefficient aux
+&eacute;valuations de l'enseignant lors du calcul des notes
+finales. Dans ce calcul, les &eacute;valuations de l'enseignant
+ont le m&ecirc;me poids que celles des &eacute;tudiants. Ainsi
+par exemple, si un travail d'&eacute;tudiant est not&eacute; 41%
+par l'enseignant et 45% et 55% par ses pairs, la note finale de
+ce travail sera de (41% + 45% + 55%) / 3, c'est-&agrave;-dire
+47%.</li>
+
+<li>The Weight for Grading of Assessments is used in the
+calculation of the Final Grade. A simple formula is used to
+calculate a student's "Grading Performance". It is the proportion
+of "good"assessments that student have done compared to the
+maximum number of assessments open to them. So, if for example,
+the assignment asks the students to do 3 assessments of the
+example submission and 5 peer assessments and the student does 7
+assessments and 1 of those is dropped from the analysis (see
+below), then their grading performance is (7 - 1)/8, that is 75%.
+The final grade for the assignment a weighted combination of this
+grading performanace and the grade given to their submission (or
+best grade if they made more than one submission). The grade for
+the submission is always given a weight of 1. So setting this
+option to say, 0.5, means that the two grades are added together
+in the proportion 0.5:1 or 33% of the grading performance and 66%
+of the grade of the submission.</li>
+
+<li>The Percentage of Assessments to Drop determines the number
+of the assessments which are to be excluded when calculating the
+final grades. This number can be set in one of two ways.
+
+<ul> <li>Given the way the Grading Performance is calculated each
+student could, if they assessed all the work allocated to them,
+achieve full marks (for this element) if no assessments are
+dropped. If the teacher wishes to have a more reason average
+grade then setting this option to 30% would result in the average
+Grading Performance of about 70% (again if all students graded
+all the assessments open to them).</li>
+
+<li>Alternatively the number of assessments to drop might be set
+such that the remaining "good" assessments result in the Average
+Errors being constrained to some reasonable value. These are the
+percentages given in the fourth column of the Error Table. For
+example, it may be thought that all the student assessments
+should (on average) lie within the 20% range. Then the analysis
+is repeated a number of times adjusting the number of assessments
+to drop until the figures in this column all lie within a
+particular limit. </ul> </ol>
+
+<p>In addition to the Error Table the analysis lists the grades
+of all assessments and the final grades given to the students.
+This table should be inspected to see if the results are
+reasonable. In particular if many assessments are dropped then
+some submissions may left unassessed and the student's final
+grade will be far too small. The analysis does given the number
+of submissions at the top of page and again just before the
+Grades Table. These two numbers should be same. If there are one
+or more unassessed submissions and the teacher does not want to
+decrease the number of dropped assessments then those submissions
+should be assessed by the teacher and the analysis repeated. It
+is important that all submissions are assessed at least once in
+the final stage of the analysis that is when the final grades are
+calculated.</p>
+
+<p>There is a balance between the number of assessments dropped
+and the overall final grade. The more assessments dropped the
+lower the final grades are likely to be. However, if poor
+assessments are <b>not</b> dropped then students may complain
+about the quality of the assessments which determine the grade
+for their work. Provided there are enough assessments by the
+teacher to dominate the analysis without too much forcing, then
+it would seem reasonable to drop somewhere between 15% and 30% of
+the assessments.</p>
+
+<p>Note that this analysis does take a long time as it involves
+an iterative process. Lengthy delays are to be expected.</p>
