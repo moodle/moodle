@@ -1,27 +1,26 @@
-<P align="center"><b>Directory Paths</b></P>
+<p align="center"><b>Directory paths</b></p>
 
-<P>Directory Paths full syntax depends of your Operating System:</P>
+<p>The full syntax of a directory path depends on your operating system:</p>
 
-<UL>
+<blockquote>
 
-<LI>In <b>Windows Systems</b> they are in the form:
-<UL> 
-<LI>c:\program files\data\moodle
-<LI>c:\documents and settings\moodle\temp\saved
-</UL>
+<p>In <b>Windows Systems</b> use something like:
+<ul> 
+<li>c:\program files\data\moodle
+<li>c:\documents and settings\moodle\temp\saved
+</ul>
+</p>
 
-<BR />
+<p>In <b>Unix Systems</b> use something like:
+<ul>
+<li>/usr/data/moodle
+<li>/home/moodle/tmp/saved
+</ul>
+</p>
 
-<LI>In <b>Unix Systems</b> they are in the form: 
-<UL>
-<LI>/usr/data/moodle
-<LI>/home/moodle/tmp/saved
-</UL>
+</blockquote>
 
-</UL>
+<p>Note that it's usually a good idea to make sure the directory already exists.  
+   Sometimes Moodle can create the directory when required but this is not always possible.</p>
 
-<P>Note that some paths (in config.php, Scheduled Backups... will require 
-that you specify an existing directory to work.</P>
-
-<P>Finally, make sure the upper/lower case is correct and do not include 
-a trailing slash.</P>
+<p>Finally, make sure the case is correct (upper vs lower) and never include a trailing slash.</p>
