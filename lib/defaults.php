@@ -12,6 +12,7 @@
        "country"                  => "",
        "debug"                    =>  7,
        "deleteunconfirmed"        => 168,
+       "digestmailtime"           => 17,
        "displayloginfailures"     => '',
        "enablerssfeeds"           => 0,
        "enrol"                    => 'internal',

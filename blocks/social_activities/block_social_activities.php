@@ -15,8 +15,11 @@ class CourseBlock_social_activities extends MoodleBlock {
     function get_content() {
         global $USER, $CFG;
 
-        if($this->content !== NULL) {
+        if ($this->content !== NULL) {
             return $this->content;
+        }
+        if (empty($this->course)) {
+            return '';
         }
 
         $this->content = New object;

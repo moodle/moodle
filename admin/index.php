@@ -193,6 +193,25 @@
     }
 
 
+/// Insert default values for any important configuration variables
+
+    include_once("$CFG->dirroot/lib/defaults.php");
+
+    foreach ($defaults as $name => $value) {
+        if (!isset($CFG->$name)) {
+            $CFG->$name = $value;
+            set_config($name, $value);
+            $configchange = true;
+        }
+    }
+
+/// If any new configurations were found then send to the config page to check
+
+    if (!empty($configchange)) {
+        redirect("config.php");
+    }
+
+
 /// Upgrade backup/restore system if necessary
     require_once("$CFG->dirroot/backup/lib.php");
     upgrade_backup_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
@@ -311,25 +330,6 @@
         die;
     }
 
-
-/// Insert default values for any important configuration variables
-
-    include_once("$CFG->dirroot/lib/defaults.php");
-
-    foreach ($defaults as $name => $value) {
-        if (!isset($CFG->$name)) {
-            $CFG->$name = $value;
-            set_config($name, $value);
-            $configchange = true;
-        }
-    }
-
-
-/// If any new configurations were found then send to the config page to check
-
-    if (!empty($configchange)) {
-        redirect("config.php");
-    }
 
 /// Set up the overall site name etc.
     if (! $site = get_site()) {

@@ -65,6 +65,7 @@
         $form->shortname = "";
         $form->summary = "";
         $form->newsitems = 3;
+        $form->numsections = 0;
         $form->id = "";
         $form->category = 0;
         $form->format = "social";

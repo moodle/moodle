@@ -438,6 +438,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     if ($course->category) {
         $joins[] = "l.course='$course->id'"; 
     } else {
+        $courses[0] = '';
         if ($ccc = get_courses("all", "c.id ASC", "c.id,c.shortname")) {
             foreach ($ccc as $cc) {
                 $courses[$cc->id] = "$cc->shortname";
@@ -500,6 +501,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     }
 
     $count=0;
+    $ldcache = array();
     $tt = getdate(time());
     $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
 
@@ -512,31 +514,37 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
     print_paging_bar($totalcount, $page, $perpage, "$url&perpage=$perpage&");
 
-    echo "<table border=0 align=center cellpadding=3 cellspacing=3>";
+    echo '<table border=0 align=center cellpadding=3 cellspacing=3>';
     foreach ($logs as $log) {
 
-        if ($ld = get_record("log_display", "module", "$log->module", "action", "$log->action")) {
-            $log->info = get_field($ld->mtable, $ld->field, "id", $log->info);
+        if (isset($ldcache[$log->module][$log->action])) {
+            $ld = $ldcache[$log->module][$log->action];
+        } else {
+            $ld = get_record('log_display', 'module', $log->module, "action", $log->action);
+            $ldcache[$log->module][$log->action] = $ld;
+        }
+        if ($ld) {
+            $log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
         }
 
-        echo "<tr nowrap>";
+        echo '<tr nowrap="nowrap">';
         if (! $course->category) {
-            echo "<td nowrap><font size=2><a href=\"view.php?id=$log->course\">".$courses[$log->course]."</a></td>";
+            echo '<td nowrap="nowrap"><font size=2><a href="view.php?id='.$log->course.'">'.$courses[$log->course].'</a></td>';
         }
-        echo "<td nowrap align=right><font size=2>".userdate($log->time, "%a")."</td>";
-        echo "<td nowrap><font size=2>".userdate($log->time, $strftimedatetime)."</td>";
-        echo "<td nowrap><font size=2>";
-        link_to_popup_window("/lib/ipatlas/plot.php?address=$log->ip&user=$log->userid", "ipatlas","$log->ip", 400, 700);
-        echo "</td>";
+        echo '<td nowrap align=right><font size=2>'.userdate($log->time, '%a').'</td>';
+        echo '<td nowrap><font size=2>'.userdate($log->time, $strftimedatetime).'</td>';
+        echo '<td nowrap><font size=2>';
+        link_to_popup_window("/lib/ipatlas/plot.php?address=$log->ip&user=$log->userid", 'ipatlas',$log->ip, 400, 700);
+        echo '</td>';
         $fullname = fullname($log, $isteacher);
-        echo "<td nowrap><font size=2><a href=\"../user/view.php?id=$log->userid&course=$log->course\"><b>$fullname</b></td>";
-        echo "<td nowrap><font size=2>";
-        link_to_popup_window( make_log_url($log->module,$log->url), "fromloglive","$log->module $log->action", 400, 600);
-        echo "</td>";
-        echo "<td nowrap><font size=2>$log->info</td>";
-        echo "</tr>";
+        echo '<td nowrap><font size=2><a href="../user/view.php?id='."$log->userid&course=$log->course".'"><b>'.$fullname.'</b></td>';
+        echo '<td nowrap><font size=2>';
+        link_to_popup_window( make_log_url($log->module,$log->url), 'fromloglive',"$log->module $log->action", 400, 600);
+        echo '</td>';
+        echo '<td nowrap><font size=2>'.$log->info.'</td>';
+        echo '</tr>';
     }
-    echo "</table>";
+    echo '</table>';
 
     print_paging_bar($totalcount, $page, $perpage, "$url&perpage=$perpage&");
 }

@@ -628,7 +628,11 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
             $getvars = '&amp;from='.$type;
         break;
         case 'course':
-            $getvars = '&amp;from=course&amp;id='.$_GET['id'];
+            if (isset($_GET['id'])) {
+                $getvars = '&amp;from=course&amp;id='.$_GET['id'];
+            } else {
+                $getvars = '&amp;from=course';
+            }
             if (isset($course->groupmode) and !$course->groupmode and $course->groupmodeforce) {
                 $groupevents = false;
             }
