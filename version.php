@@ -7,6 +7,6 @@
 
 $version = 2004083000;   // The current version is a date (YYYYMMDDXX)
 
-$release = "1.5 development";   // User-friendly version number
+$release = "1.5 unstable development";   // User-friendly version number
 
 ?>
