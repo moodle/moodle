@@ -78,27 +78,27 @@ form { padding: 0px; margin: 0px; }
 
 <body onload="Init()">
 
-<div class="title"><?php print(get_string("inserttable","editor"));?></div>
+<div class="title"><?php print_string("inserttable","editor") ?></div>
 
 <form action="" method="get">
 <table border="0" style="padding: 0px; margin: 0px">
   <tbody>
 
   <tr>
-    <td style="width: 4em; text-align: right"><?php print(get_string("rows","editor"));?>:</td>
+    <td style="width: 4em; text-align: right"><?php print_string("rows","editor") ?>:</td>
     <td><input type="text" name="f_rows" id="f_rows" size="5" title="Number of rows" value="2" /></td>
     <td></td>
     <td></td>
     <td></td>
   </tr>
   <tr>
-    <td style="width: 4em; text-align: right"><?php print(get_string("cols","editor"));?>:</td>
+    <td style="width: 4em; text-align: right"><?php print_string("cols","editor") ?>:</td>
     <td><input type="text" name="f_cols" id="f_cols" size="5" title="Number of columns" value="4" /></td>
-    <td style="width: 4em; text-align: right"><?php print(get_string("width","editor"));?>:</td>
+    <td style="width: 4em; text-align: right"><?php print_string("width","editor") ?>:</td>
     <td><input type="text" name="f_width" id="f_width" size="5" title="Width of the table" value="100" /></td>
     <td><select size="1" name="f_unit" id="f_unit" title="Width unit">
-      <option value="%" selected="1"  ><?php print(get_string("percent","editor"));?></option>
-      <option value="px"              ><?php print(get_string("pixels","editor"));?></option>
+      <option value="%" selected="1"  ><?php print_string("percent","editor") ?></option>
+      <option value="px"              ><?php print_string("pixels","editor") ?></option>
       <option value="em"              >Em</option>
     </select></td>
   </tr>
@@ -109,28 +109,28 @@ form { padding: 0px; margin: 0px; }
 <p />
 
 <fieldset style="float: left; margin-left: 5px;">
-<legend><?php print(get_string("layout","editor"));?></legend>
+<legend><?php print_string("layout","editor") ?></legend>
 
 <div class="space"></div>
 
-<div class="fl"><?php print(get_string("alignment","editor"));?>:</div>
+<div class="fl"><?php print_string("alignment","editor") ?>:</div>
 <select size="1" name="f_align" id="f_align"
   title="Positioning of this image">
-  <option value="" selected="1"                ><?php print(get_string("notset","editor"));?></option>
-  <option value="left"                         ><?php print(get_string("left","editor"));?></option>
-  <option value="right"                        ><?php print(get_string("right","editor"));?></option>
-  <option value="texttop"                      ><?php print(get_string("texttop","editor"));?></option>
-  <option value="absmiddle"                    ><?php print(get_string("absmiddle","editor"));?></option>
-  <option value="baseline"                     ><?php print(get_string("baseline","editor"));?></option>
-  <option value="absbottom"                    ><?php print(get_string("absbottom","editor"));?></option>
-  <option value="bottom"                       ><?php print(get_string("bottom","editor"));?></option>
-  <option value="middle"                       ><?php print(get_string("middle","editor"));?></option>
-  <option value="top"                          ><?php print(get_string("top","editor"));?></option>
+  <option value="" selected="1"                ><?php print_string("notset","editor") ?></option>
+  <option value="left"                         ><?php print_string("left","editor") ?></option>
+  <option value="right"                        ><?php print_string("right","editor") ?></option>
+  <option value="texttop"                      ><?php print_string("texttop","editor") ?></option>
+  <option value="absmiddle"                    ><?php print_string("absmiddle","editor") ?></option>
+  <option value="baseline"                     ><?php print_string("baseline","editor") ?></option>
+  <option value="absbottom"                    ><?php print_string("absbottom","editor") ?></option>
+  <option value="bottom"                       ><?php print_string("bottom","editor") ?></option>
+  <option value="middle"                       ><?php print_string("middle","editor") ?></option>
+  <option value="top"                          ><?php print_string("top","editor") ?></option>
 </select>
 
 <p />
 
-<div class="fl"><?php print(get_string("borderthickness","editor"));?>:</div>
+<div class="fl"><?php print_string("borderthickness","editor") ?>:</div>
 <input type="text" name="f_border" id="f_border" size="5" value="1"
 title="Leave empty for no border" />
 <!--
@@ -144,17 +144,17 @@ title="Leave empty for no border" />
 </fieldset>
 
 <fieldset style="float:right; margin-right: 5px;">
-<legend><?php print(get_string("spacing","editor"));?></legend>
+<legend><?php print_string("spacing","editor") ?></legend>
 
 <div class="space"></div>
 
-<div class="fr"><?php print(get_string("cellspacing","editor"));?>:</div>
+<div class="fr"><?php print_string("cellspacing","editor") ?>:</div>
 <input type="text" name="f_spacing" id="f_spacing" size="5" value="1"
 title="Space between adjacent cells" />
 
 <p />
 
-<div class="fr"><?php print(get_string("cellpadding","editor"));?>:</div>
+<div class="fr"><?php print_string("cellpadding","editor") ?>:</div>
 <input type="text" name="f_padding" id="f_padding" size="5" value="1"
 title="Space between content and border in cell" />
 
@@ -164,8 +164,8 @@ title="Space between content and border in cell" />
 
 <div style="margin-top: 85px; text-align: right;">
 <hr />
-<button type="button" name="ok" onclick="return onOK();"><?php print(get_string("ok","editor"));?></button>
-<button type="button" name="cancel" onclick="return onCancel();"><?php print(get_string("cancel","editor"));?></button>
+<button type="button" name="ok" onclick="return onOK();"><?php print_string("ok","editor") ?></button>
+<button type="button" name="cancel" onclick="return onCancel();"><?php print_string("cancel","editor") ?></button>
 </div>
 
 </form>

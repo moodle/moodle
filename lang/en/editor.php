@@ -65,6 +65,6 @@ $string['chooseicon'] = "Choose an icon to insert";
 $string['choosechar'] = "Choose Character";
 $string['insertsmile'] = "Insert smile";
 $string['insertchar'] = "Insert Special Character";
-$string['Path'] = "Path";
-$string['TEXT_MODE'] = "You are in TEXT MODE.  Use the [<>] button to switch back to WYSIWIG."
+$string['path'] = "Path";
+$string['textmode'] = "You are in TEXT MODE.  Use the [<>] button to switch back to WYSIWIG."
 ?>

@@ -2,8 +2,8 @@
       // htmlarea.php - created with Moodle 1.2 development (2003100900)
 
 
-$string['Path'] = "Polku";
-$string['TEXT_MODE'] = "Olet tekstitilassa.  Käytä [<>] painiketta palataksesi takaisin WYSIWIG -tilaan.";
+$string['path'] = "Polku";
+$string['textmode'] = "Olet tekstitilassa.  Käytä [<>] painiketta palataksesi takaisin WYSIWIG -tilaan.";
 $string['about'] = "Tietoja editorista";
 $string['absbottom'] = "Absbottom";
 $string['absmiddle'] = "Absmiddle";
