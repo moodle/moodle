@@ -36,10 +36,21 @@ function olson_todst ($filename) {
 
     foreach ($zones as $zname=>$zbyyear) { // loop over zones
         // loop over years
-        $lastyear = '1970';
+        $lastyear = NULL;
         $lastzone = NULL;
         $lastrule = NULL;
         $lastzonerule = NULL;
+
+        // find the last pre 1970 zone entry
+        for ($y = 1970 ; $y >0 ; $y--) {
+            if (array_key_exists((string)$y, $zbyyear )) { // we have a zone entry for the year
+                $lastyear = $y;
+                $zentry = $zbyyear[$y];
+                $lastzone = $zentry;
+                print "$zname pre1970 is $y\n"; 
+                break; // Perl's last -- get outta here
+            }
+        }
 
         for ($y = 1970 ; $y < $maxyear ; $y++) {
             /// force it to string to avoid PHP
@@ -211,7 +222,7 @@ function olson_simple_rule_parser ($filename) {
             $moodle_rule['deactivate_index'] = $on['index'];
             $moodle_rule['deactivate_day']   = $on['day'];
                 
-            $moodle_rules[] = $moodle_rule;
+            $moodle_rules[$moodle_rule['family']][$moodle_rule['year']] = $moodle_rule;
             //print_object($moodle_rule);
         }
 
@@ -256,7 +267,7 @@ function olson_simple_zone_parser ($filename) {
          ***
          *** We are transforming "until" fields into "from" fields
          *** which make more sense from the Moodle perspective, so
-         *** each initial Zone entry is "from" 1970, and for the 
+         *** each initial Zone entry is "from" the year 0, and for the 
          *** continuation lines, we shift the "until" from the previous field
          *** into this line's "from".
          ***
@@ -277,7 +288,7 @@ function olson_simple_zone_parser ($filename) {
             if (!empty($line[5])) { 
                 $zone['until'] = $line[5];
             }
-            $zone['from'] = '1970';
+            $zone['from'] = '0';
             
             $zones[$zone['name']] = array();
 
