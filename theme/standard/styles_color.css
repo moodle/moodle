@@ -57,12 +57,20 @@ body {
 }
 
 th.header,
-td.header {
-    background-color:#DDDDDD;
+td.header,
+div.header {
+    background-color:#EEEEEE;
 }
+
+.navbar {
+    background-color:#EEEEEE;
+    border-color:#DDDDDD;
+}
+
 table.formtable tbody th {
     background: none;
 }
+
 .highlight {
     background-color:#AAFFAA;
 }
