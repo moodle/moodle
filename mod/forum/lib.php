@@ -14,9 +14,9 @@ $FORUM_TYPE   = array ("general"    => "General forum",
                        "eachuser"   => "Each $student posts one discussion",
                        "single"     => "A single simple discussion");
 
-$FORUM_POST_RATINGS = array ("3" => "Outstanding", 
-                             "2" => "Satisfactory", 
-                             "1" => "Not satisfactory");
+$FORUM_POST_RATINGS = array ("3" => "Shows a more connected approach", 
+                             "2" => "Shows a more separate approach", 
+                             "1" => "I can't decide between these two");
 
 $FORUM_LONG_POST = 600;
 
