@@ -1,4 +1,3 @@
-<<<<<<< moodle.php
 <?php // $Id$ 
       // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
