@@ -47,75 +47,75 @@
         <head>
         <title>coursefiles</title>
         <script language="javscript" type="text/javascript">
-	    <!--
-	    function set_value(params) {
-    	    /// function's argument is an array containing necessary values
-    	    /// to export parent window (url,isize,itype,iwidth,iheight)
-    	    /// set values when user click's an image name.
-    	    var upper = window.parent;
-    	    var insimg = upper.document.getElementById('f_url');
-    	    try {
-        	    if(insimg != null) {
-    	            for(field in params) {
-        	            var value = params[field];
-        	            switch(field) {
-            	            case "url"   :   upper.document.getElementById('f_url').value = value; 
-            	                     upper.ipreview.location.replace('popups/preview.php?id='+ <?php print($course->id);?> +'&imageurl='+ value);
-            	                break;
-            	            case "isize" :   upper.document.getElementById('isize').value = value; break;
-            	            case "itype" :
-            	                if(params[field].indexOf("image/gif") == -1 && params[field].indexOf("image/jpeg") == -1 && params[field].indexOf("image/png") == -1) {
-        		                alert("<?php print_string("notimage","editor");?>");
-        		                return false;
-    		                } else {
-        		                upper.document.getElementById('itype').value = value;
-    		                }
-        		                break;
-        		            case "iwidth":    upper.document.getElementById('f_width').value = value; break;
-        		            case "iheight":   upper.document.getElementById('f_height').value = value; break;
-    		            }
-    		        }
-		        } else {
-    		        for(field in params) {
-        		        var value = params[field];
-        		        switch(field) {
-            		        case "url" : upper.document.getElementById('f_href').value = value; break;
-            		        case "imodified" : upper.document.getElementById('imodified').value = value; break; 
-            		        case "isize" : upper.document.getElementById('isize').value = value; break;
-            		        case "itype" : upper.document.getElementById('itype').value = value; break;
-        		        }
-    		        }
-		        }
-		    } catch(e) {
-    		    alert("Something odd just occurred!!!");
-		    }
-    	    return false;
-	    }
-	    
-	    function set_dir(strdir) {
-    	    // this function will be rewritten in near future - Janne -
-    	    if(window.parent.document.uploader != null) {
-        	    window.parent.document.uploader.wdir.value = strdir;
-    	    }
-    	    if(window.parent.document.cfolder != null) {
-        	    window.parent.document.cfolder.wdir.value = strdir;
-        	    window.parent.document.cfolder.name.value = "";
-    	    }
-    	    if(window.parent.document.irename != null) {
-        	    window.parent.document.irename.wdir.value = strdir;
-    	    }
-	    }
-	    
-	    function set_rename(strfile) {
-    	    if(window.parent.document.irename != null) {
-        	    window.parent.document.irename.file.value = strfile;
-    	    }
-    	    return true;
-	    }
-	    
-	    function reset_value() {
-    	    var upper = window.parent.document;
-    	    for(var i = 0; i < upper.forms.length; i++) {
+        <!--
+        function set_value(params) {
+            /// function's argument is an array containing necessary values
+            /// to export parent window (url,isize,itype,iwidth,iheight)
+            /// set values when user click's an image name.
+            var upper = window.parent;
+            var insimg = upper.document.getElementById('f_url');
+            try {
+                if(insimg != null) {
+                    for(field in params) {
+                        var value = params[field];
+                        switch(field) {
+                            case "url"   :   upper.document.getElementById('f_url').value = value; 
+                                     upper.ipreview.location.replace('popups/preview.php?id='+ <?php print($course->id);?> +'&imageurl='+ value);
+                                break;
+                            case "isize" :   upper.document.getElementById('isize').value = value; break;
+                            case "itype" :
+                                if(params[field].indexOf("image/gif") == -1 && params[field].indexOf("image/jpeg") == -1 && params[field].indexOf("image/png") == -1) {
+                                alert("<?php print_string("notimage","editor");?>");
+                                return false;
+                            } else {
+                                upper.document.getElementById('itype').value = value;
+                            }
+                                break;
+                            case "iwidth":    upper.document.getElementById('f_width').value = value; break;
+                            case "iheight":   upper.document.getElementById('f_height').value = value; break;
+                        }
+                    }
+                } else {
+                    for(field in params) {
+                        var value = params[field];
+                        switch(field) {
+                            case "url" : upper.document.getElementById('f_href').value = value; break;
+                            case "imodified" : upper.document.getElementById('imodified').value = value; break; 
+                            case "isize" : upper.document.getElementById('isize').value = value; break;
+                            case "itype" : upper.document.getElementById('itype').value = value; break;
+                        }
+                    }
+                }
+            } catch(e) {
+                alert("Something odd just occurred!!!");
+            }
+            return false;
+        }
+        
+        function set_dir(strdir) {
+            // this function will be rewritten in near future - Janne -
+            if(window.parent.document.uploader != null) {
+                window.parent.document.uploader.wdir.value = strdir;
+            }
+            if(window.parent.document.cfolder != null) {
+                window.parent.document.cfolder.wdir.value = strdir;
+                window.parent.document.cfolder.name.value = "";
+            }
+            if(window.parent.document.irename != null) {
+                window.parent.document.irename.wdir.value = strdir;
+            }
+        }
+        
+        function set_rename(strfile) {
+            if(window.parent.document.irename != null) {
+                window.parent.document.irename.file.value = strfile;
+            }
+            return true;
+        }
+        
+        function reset_value() {
+            var upper = window.parent.document;
+            for(var i = 0; i < upper.forms.length; i++) {
                 var f = upper.forms[i];
                 for(var j = 0; j < f.elements.length; j++) {
                     var e = f.elements[j];
@@ -129,44 +129,44 @@
             }
             
             var ren = upper.getElementById('irename');
-    	    if(ren != null) {
-    	        upper.irename.file.value = "";
-	        }
-	        var prev = window.parent.ipreview;
-	        if(prev != null) {
-    	        prev.location.replace('about:blank');
-	        }
-	        var uploader = window.parent.document.forms['uploader'];
-	        if(uploader != null) {
-    	        uploader.reset();
-	        }
-	        set_dir('<?php print($_REQUEST['wdir']);?>');
+            if(ren != null) {
+                upper.irename.file.value = "";
+            }
+            var prev = window.parent.ipreview;
+            if(prev != null) {
+                prev.location.replace('about:blank');
+            }
+            var uploader = window.parent.document.forms['uploader'];
+            if(uploader != null) {
+                uploader.reset();
+            }
+            set_dir('<?php print($_REQUEST['wdir']);?>');
             return true;
-	    }                
+        }                
         -->
-	    </script>
-	    <style type="text/css">
-	    <!--
-	    body {
-    	    background-color: white;
-    	    margin-top: 2px;
-    	    margin-left: 4px;
-    	    margin-right: 4px;
-	    }
-	    body,p,table,td,input,select,a {
-    	    font-family: Tahoma, sans-serif;
-    	    font-size: 11px;
-	    }
-	    select { 
-    	position: absolute;
-    	top: -20px;
-    	left: 0px;
-	    }
-	    -->
-	    </style>
+        </script>
+        <style type="text/css">
+        <!--
+        body {
+            background-color: white;
+            margin-top: 2px;
+            margin-left: 4px;
+            margin-right: 4px;
+        }
+        body,p,table,td,input,select,a {
+            font-family: Tahoma, sans-serif;
+            font-size: 11px;
+        }
+        select { 
+        position: absolute;
+        top: -20px;
+        left: 0px;
+        }
+        -->
+        </style>
         </head>
         <body onload="reset_value();">
-	    
+        
         <?php
     }
 
@@ -776,13 +776,6 @@ function displaydir ($wdir) {
 
     echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=post NAME=dirform>";
     echo "<TABLE BORDER=\"0\" cellspacing=\"2\" cellpadding=\"2\" width=\"100%\">";    
-    //echo "<TR>";
-    //echo "<TH WIDTH=5></TH>";
-    //echo "<TH ALIGN=left>$strname</TH>";
-    //echo "<TH ALIGN=center>$strsize</TH>";
-    //echo "<TH ALIGN=center>$strmodified</TH>";
-    //echo "<TH ALIGN=center>$straction</TH>";
-    //echo "</TR>\n";
 
     if ($wdir == "/") {
         $wdir = "";
@@ -818,7 +811,6 @@ function displaydir ($wdir) {
             print_cell("left", "<a href=\"".basename($_server['php_self'])."?id=$id&wdir=$fileurl\" onclick=\"return reset_value();\"><img src=\"$CFG->pixpath/f/folder.gif\" height=16 width=16 border=0 alt=\"folder\"></a> <a href=\"".basename($_server['php_self'])."?id=$id&wdir=$fileurl&usecheckboxes=$usecheckboxes\" onclick=\"return reset_value();\">".htmlspecialchars($dir)."</a>");
             print_cell("right", "&nbsp;");
             print_cell("right", $filedate);
-            //print_cell("right", "<A HREF=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</A>");
     
             echo "</TR>";
         }
@@ -862,10 +854,6 @@ function displaydir ($wdir) {
             link_to_popup_window ($ffurl, "display", 
                                   "<img src=\"$CFG->pixpath/f/$icon\" height=16 width=16 border=0 align=\"absmiddle\" alt=\"$strfile\">", 
                                   480, 640);
-            /*echo "<font size=\"-1\" face=\"Arial, Helvetica\">";
-            link_to_popup_window ($ffurl, "display", 
-                                  htmlspecialchars($file),
-                                  480, 640);*/
             $file_size = filesize($filename);
             ?>
             <script language="javascript" type="text/javascript">
@@ -884,17 +872,10 @@ function displaydir ($wdir) {
             echo "<a onclick=\"return set_value(a".$count.")\" href=\"#\">$file</a>";
             echo "<!-- </font> --></td>";
 
-            
-            //print_cell("right", display_size($file_size));
-            /*if ($icon == "text.gif" || $icon == "html.gif") {
-                $edittext = "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$fileurl&action=edit\">$stredit</a>";
-            } else */
             if ($icon == "zip.gif") {
                 $edittext = "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">$strunzip</a>&nbsp;";
                 $edittext .= "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$fileurl&action=listzip\">$strlist</a> ";
-            } /*else if ($icon == "image.gif") {
-                $edittext = "<b><a onclick=\"return set_value('$CFG->wwwroot$ffurl','".display_size($file_size)."','$imgtype','$imgwidth','$imgheight')\" href=\"#\">$strchoose</a></b>";
-            } */else {
+            } else {
                 $edittext = "&nbsp;";
             }
             print_cell("right", "$edittext ");
@@ -933,23 +914,10 @@ function displaydir ($wdir) {
         echo "</FORM>";
     }
     echo "<TD ALIGN=right>";
-       /* echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=get>";
-        echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-        echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
-        echo " <INPUT TYPE=hidden NAME=action VALUE=mkdir>";
-        echo " <INPUT TYPE=submit VALUE=\"$strmakeafolder\">";
-        echo "</FORM>"; */
     echo "</TD>";
     echo "<TD ALIGN=right>";
-      /*  echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=get>";
-        echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-        echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
-        echo " <INPUT TYPE=hidden NAME=action VALUE=upload>";
-        echo " <INPUT TYPE=submit VALUE=\"$struploadafile\">";
-        echo "</FORM>"; */
     echo "</TD></TR>";
     echo "</TABLE>";
 
 }
-
 ?>
