@@ -6,10 +6,10 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($id);    // Course Module ID, or
+    require_variable($id);    // Course Module ID
 
     if (! $cm = get_record("course_modules", "id", $id)) {
-            error("Course Module ID was incorrect");
+        error("Course Module ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
@@ -22,7 +22,7 @@
 
     require_login($course->id);
 
-    add_to_log($course->id, "lesson", "view", "view.php?id=$cm->id", "$lesson->id");
+    add_to_log($course->id, "lesson", "view", "view.php?id=$cm->id", "$lesson->id", $cm->id);
 
 /// Print the page header
 
