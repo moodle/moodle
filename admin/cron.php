@@ -39,9 +39,27 @@
 
 //  Any system-wide Moodle cron jobs should be run here
 
-    // Clean up users who never confirmed.
+    // Unsubscribe users who haven't logged in for $CFG->longtimenosee
 
+    if ($CFG->longtimenosee) {
+        $cutofftime = time() - ($CFG->longtimenosee * 3600 * 24);
+        if ($users = get_records_sql("SELECT * FROM user WHERE lastaccess > 0 AND lastaccess < '$cutofftime'")) {
+            foreach ($users as $user) {
+                delete_records("user_students", "user", $user->id);
+                echo "Deleted student enrolment for $user->firsname $user->lastname ($user->id)\n";
+            }
+        }
+    }
 
+    // Delete users who haven't confirmed within seven days
+
+    $cutofftime = time() - (7 * 24 * 3600);
+    if ($users = get_records_sql("SELECT * FROM user WHERE confirmed = 0 AND firstaccess > 0 AND firstaccess < '$cutofftime'")) {
+        foreach ($users as $user) {
+            delete_records("user", "id", $user->id);
+            echo "Deleted unconfirmed user for $user->firsname $user->lastname ($user->id)\n";
+        }
+    }
 
     echo "Cron script completed correctly\n";
 
