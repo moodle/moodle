@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004072901)
+      // wiki.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
 
 
 $string['action'] = '-- ¥¢¥¯¥·¥ç¥ó --';
 $string['administration'] = '´ÉÍý';
+$string['allowremovepages'] = '¡Ö¥Ú¡¼¥¸¤Îºï½ü¡×¤òµö²Ä¤¹¤ë';
 $string['attachments'] = 'ÅºÉÕ¥Õ¥¡¥¤¥ë';
 $string['author'] = 'Ãø¼Ô';
 $string['authorfieldpattern'] = 'Ãø¼Ô¥Õ¥£¡¼¥ë¥É¥Ñ¥¿¡¼¥ó';
@@ -119,6 +120,11 @@ $string['strippagecheck'] = 'ËÜÅö¤Ë¡¢¤³¤ì¤é¤Î¥Ú¡¼¥¸¤«¤é¸Å¤¤¥Ð¡¼¥¸¥ç¥ó¤ò¥¹¥È¥ê¥Ã¥
 $string['strippages'] = '¥Ú¡¼¥¸¤Î¥¹¥È¥ê¥Ã¥×';
 $string['studentadminoptions'] = '³ØÀ¸¤Î´ÉÍý¸¢¸Â';
 $string['submit'] = '¼Â¹Ô';
+$string['tabattachments'] = 'ÅºÉÕ¥Õ¥¡¥¤¥ë';
+$string['tabedit'] = 'ÊÔ½¸';
+$string['tabinfo'] = '¾ðÊó';
+$string['tablinks'] = '¥ê¥ó¥¯';
+$string['tabview'] = 'É½¼¨';
 $string['thanksforcontribution'] = '¤´¶¨ÎÏ¤¢¤ê¤¬¤È¤¦¤´¤¶¤¤¤Þ¤¹¡£';
 $string['thispageisntlinkedfromanywhereelse'] = '¤³¤Î¥Ú¡¼¥¸¤Ï¤É¤³¤«¤é¤â¥ê¥ó¥¯¤µ¤ì¤Æ¤¤¤Þ¤»¤ó¡£';
 $string['updatedpages'] = '¹¹¿·¥Ú¡¼¥¸';
