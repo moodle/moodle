@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 beta (2004082300)
+      // quiz.php - created with Moodle 1.5 development (2004082600)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -89,6 +89,9 @@ $string['editingshortanswer'] = 'Een vraag met kort antwoord bewerken';
 $string['editingtruefalse'] = 'Een waar/onwaar vraag bewerken';
 $string['editquestions'] = 'Bewerk vragen';
 $string['errorsdetected'] = '$a fout(en) ontdekt';
+$string['existingcategory1'] = 'een tekenreeks van een bestaande set tekenreeksen die ook door andere vragen in deze categorie gebruikt worden';
+$string['existingcategory2'] = 'een bestand van een bestaande set bestanden die ook door andere vragen in deze categorie gebruikt worden';
+$string['existingcategory3'] = 'een link van een bestaande set links die ook door andere vragen in deze categorie gebruikt worden';
 $string['exportfilename'] = 'test';
 $string['exportname'] = 'Bestandsnaam';
 $string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
@@ -100,7 +103,7 @@ $string['fileformat'] = 'Bestandsformaat';
 $string['filloutoneanswer'] = 'Je moet minstens één mogelijk antwoord invullen. Lege antwoorden zullen niet worden gebruikt.';
 $string['filloutthreequestions'] = 'Je moet minstens drie vragen invullen. Leeg gelaten vragen zullen niet worden gebruikt.';
 $string['fillouttwochoices'] = 'Je moet minstens twee keuzemogelijkheden invullen. Lege keuzemogelijkheden zullen niet worden gebruikt.';
-$string['forceregeneration'] = 'maak opnieuw';
+$string['forceregeneration'] = 'maak nieuwe waarden';
 $string['fractionsaddwrong'] = 'De positieve cijfers die je hebt gekozen tellen niet op tot 100%%
 <BR>In plaats daarvan tellen ze op tot $a%%
 <BR>Wil je terug gaan en deze vraag verbeteren?';
@@ -119,7 +122,7 @@ $string['gradeaverage'] = 'Gemiddelde cijfer';
 $string['gradehighest'] = 'Hoogste cijfer';
 $string['grademethod'] = 'Beoordelingsmethode';
 $string['guestsno'] = 'Sorry, gasten kunnen testen niet bekijken noch een poging wagen';
-$string['illegalformulasyntax'] = 'Syntax van de formule fout, beginnend met \'$a\'';
+$string['illegalformulasyntax'] = 'De syntax van de formule is fout, beginnend met \'$a\'';
 $string['imagedisplay'] = 'Weer te geven afbeelding';
 $string['imagemissing'] = 'Afbeelding niet beschikbaar op lijn $a. De bestandsnaam zal genegeerd worden';
 $string['importquestions'] = 'Importeer vragen uit een bestand';
@@ -129,8 +132,8 @@ $string['itemanal'] = 'Analyse van de reacties op de items';
 $string['itemdefinition'] = 'Definitie';
 $string['link'] = 'Link';
 $string['listitems'] = 'Lijst van items in de test';
-$string['literal'] = 'Letterlijk';
-$string['loguniform'] = 'cijfers, van een loguniform distrubutie';
+$string['literal'] = 'Tekenreeks';
+$string['loguniform'] = 'cijfers, loguniforme distrubutie';
 $string['marks'] = 'Punten';
 $string['match'] = 'Koppelen';
 $string['matchanswer'] = 'Koppel antwoord';
@@ -147,13 +150,20 @@ $string['modulename'] = 'Test';
 $string['modulenameplural'] = 'Testen';
 $string['multianswer'] = 'Ingebedde antwoorden (Cloze)';
 $string['multichoice'] = 'Meerkeuzevraag';
-$string['multiplier'] = 'Vermenigvuldigen';
+$string['multiplier'] = 'Factor';
 $string['name'] = 'Naam';
+$string['newcategory1'] = 'een tekenreeks uit een nieuwe set tekenreeksen die ook door andere vragen in deze categorie gebruikt mogen worden';
+$string['newcategory2'] = 'een bestand uit een nieuwe set bestanden die ook door andere vragen in deze categorie gebruikt mogen worden';
+$string['newcategory3'] = 'een link uit een nieuwe set links die ook door andere vragen in deze categorie gebruikt mogen worden';
+$string['newlocal1'] = 'een tekenreeks uit een nieuwe set tekenreeksen die alleen door deze vraag gebruikt mogen worden';
+$string['newlocal2'] = 'een bestand uit een nieuwe set bestanden die alleen door deze vraag gebruikt mogen worden';
+$string['newlocal3'] = 'een link uit een nieuwe set links die alleen door deze vraag gebruikt mogen worden';
 $string['noanswers'] = 'Er zijn geen antwoorden geselecteerd!';
 $string['noattempts'] = 'Er zijn geen pogingen geweest om deze test te maken';
 $string['nodataset'] = 'niets - dit is geen jokerteken';
 $string['nominal'] = 'Nominaal';
 $string['nomoreattempts'] = 'Een nieuwe poging is niet meer toegestaan';
+$string['nopossibledatasets'] = 'Geen datasets beschikbaar';
 $string['noquestions'] = 'Er zijn nog geen vragen toegevoegd';
 $string['noresponse'] = 'Geen reactie';
 $string['noreview'] = 'Je mag deze test niet opniew bekijken';
@@ -211,7 +221,7 @@ $string['reportsimplestat'] = 'Eenvoudige statistieken';
 $string['requirepassword'] = 'Wachtwoord nodig';
 $string['requirepasswordmessage'] = 'Je hebt het wachtwoord voor deze test nodig om de test te kunnen maken';
 $string['requiresubnet'] = 'Netwerkadres is nodig';
-$string['reuseifpossible'] = 'herbruik wat daarnet verwijderd is';
+$string['reuseifpossible'] = 'gebruik verwijderde waarden opnieuw';
 $string['review'] = 'Lees na';
 $string['save'] = 'Bewaar';
 $string['savegrades'] = 'Bewaar cijfers';
@@ -243,7 +253,7 @@ $string['toomanyrandom'] = 'Er zijn meer willekeurige vragen vereist, dan er in 
 $string['true'] = 'Waar';
 $string['truefalse'] = 'Waar/Onwaar';
 $string['type'] = 'Soort';
-$string['uniform'] = 'decimalen, van een uniforme distributie';
+$string['uniform'] = 'decimalen, uniforme distributie';
 $string['unit'] = 'Eenheid';
 $string['unknowntype'] = 'Vraagtype op lijn $a niet ondersteund. De vraag zal genegeerd worden';
 $string['unsupportedformulafunction'] = 'De functie $a is niet ondersteund';

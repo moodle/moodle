@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 development (2004082300)
+      // moodle.php - created with Moodle 1.5 development (2004082600)
 
 
 $string['action'] = 'Actie';
@@ -13,7 +13,7 @@ $string['activityreport'] = 'Activiteitenrapport';
 $string['activityselect'] = 'Selecteer deze activiteit om ergens anders naar toe te verplaatsen';
 $string['activitysince'] = 'Activiteit sinds $a';
 $string['add'] = 'Voeg toe';
-$string['addactivity'] = 'Voeg een activiteit toe';
+$string['addactivity'] = 'Activiteit toevoegen';
 $string['addadmin'] = 'Voeg beheerder toe';
 $string['addcreator'] = 'Voeg een vak-aanmaker toe';
 $string['added'] = '$a toegevoegd';
@@ -26,7 +26,7 @@ $string['addingdatatoexisting'] = 'Gegevens toevoegen aan bestaande';
 $string['addnewcategory'] = 'Voeg een nieuwe categorie toe';
 $string['addnewcourse'] = 'Voeg een nieuw vak toe';
 $string['addnewuser'] = 'Voeg een nieuwe gebruiker toe';
-$string['addresource'] = 'Voeg een bron toe';
+$string['addresource'] = 'Bron toevoegen';
 $string['address'] = 'Adres';
 $string['addstudent'] = 'Voeg een leerling toe';
 $string['addteacher'] = 'Voeg een docent toe';
@@ -513,6 +513,7 @@ $string['hiddensectionscollapsed'] = 'Verborgen secties worden samengeklapt geto
 $string['hiddensectionsinvisible'] = 'Verborgen secties worden helemaal niet getoond';
 $string['hide'] = 'Verberg';
 $string['hidepicture'] = 'Verberg afbeelding';
+$string['hidesettings'] = 'Verberg instellingen';
 $string['hits'] = 'Hits';
 $string['hitsoncourse'] = 'Hits voor $a->coursename door $a->username';
 $string['hitsoncoursetoday'] = 'Hits van vandaag voor $a->coursename door $a->username';
@@ -742,7 +743,6 @@ $string['order'] = 'Volgorde';
 $string['other'] = 'Andere';
 $string['outline'] = 'Overzicht';
 $string['page'] = 'Pagina';
-$string['parentlanguage'] = 'en';
 $string['participants'] = 'Deelnemers';
 $string['password'] = 'Wachtwoord';
 $string['passwordchanged'] = 'Het wachtwoord is veranderd';
@@ -857,6 +857,7 @@ $string['showonlytopic'] = 'Laat alleen onderwerp $a zien';
 $string['showonlyweek'] = 'Laat alleen week $a zien';
 $string['showrecent'] = 'Laat recente activiteiten zien';
 $string['showreports'] = 'Toon activiteitenrapporten ';
+$string['showsettings'] = 'Toon instellingen';
 $string['showtheselogs'] = 'Laat deze statistieken zien';
 $string['since'] = 'Sinds';
 $string['sincelast'] = 'sinds laatste aanmelding';

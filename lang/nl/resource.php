@@ -1,8 +1,8 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 alpha (2004081500)
+      // resource.php - created with Moodle 1.5 development (2004082600)
 
 
-$string['addresource'] = 'Voeg bron toe';
+$string['addresource'] = 'Bron toevoegen';
 $string['chooseafile'] = 'Kies of upload een bestand';
 $string['configdefaulturl'] = 'Deze waarde wordt gebruikt om een deel van de URL in te vullen wanneer er een nieuwe URL-gebaseerde bron gemaakt wordt.';
 $string['configfilterexternalpages'] = 'Door deze instelling in te schakelen zullen alle externe bronnen (web paginas, geüploade HTML-pagina\'s) verwerkt worden door de site-filters (zoals de autolinks van de woordenlijst bijvoorbeeld). Door deze optie in te schakelen kan je site behoorlijk vertragen - gebruik dit voorzichtig en alleen als je het echt nodig hebt';
@@ -20,6 +20,7 @@ $string['configpopupwidth'] = 'Hoe breed zou een popup-venster standaard moeten 
 $string['configwebsearch'] = 'Wanneer je een URL als webpagina of link toevoegt, wordt deze plaats aangeboden als een site om de gebruiker te helpen de URL te zoeken.';
 $string['directlink'] = 'Rechtstreekse link naar dit bestand';
 $string['directoryinfo'] = 'Alle bestanden in de gekozen map zullen getoond worden.';
+$string['display'] = 'Weergave op scherm';
 $string['editingaresource'] = 'Bewerk een bron';
 $string['encryptedcode'] = 'Geëncrypteerde code';
 $string['example'] = 'Voorbeeld';
@@ -67,11 +68,11 @@ $string['resourcetype6'] = 'HTML-tekst';
 $string['resourcetype7'] = 'Programma';
 $string['resourcetype8'] = 'Wiki-achtige tekst';
 $string['resourcetype9'] = 'Map';
-$string['resourcetypedirectory'] = 'Toon een map';
-$string['resourcetypefile'] = 'Link aan een bestand of website';
-$string['resourcetypehtml'] = 'Maak een webpagina';
-$string['resourcetypelabel'] = 'Voeg een label toe';
-$string['resourcetypetext'] = 'Maak een tekstpagina';
+$string['resourcetypedirectory'] = 'Map tonen';
+$string['resourcetypefile'] = 'Bestand/website linken';
+$string['resourcetypehtml'] = 'Webpagina maken';
+$string['resourcetypelabel'] = 'Label toevoegen';
+$string['resourcetypetext'] = 'Tekstpagina maken';
 $string['searchweb'] = 'Zoek webpagina\'s';
 $string['variablename'] = 'Variable naam';
 
