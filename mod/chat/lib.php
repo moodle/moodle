@@ -362,8 +362,9 @@ function chat_format_message($userid, $chatid, $timestamp, $message, $system=fal
 
     $strtime = userdate($timestamp, get_string("strftimemessage", "chat"));
 
-    if ($system) {                     /// It's a system message
-        $message = get_string("message$message", "chat", "$user->firstname $user->lastname");
+    if ($system) {                                    /// It's a system message
+        $message = get_string("message$message", "chat", 
+                              "$user->firstname $user->lastname");
         $message = addslashes($message);
         $output  = "<table><tr><td valign=top>$picture</td><td>";
         $output .= "<font size=2 color=\"#AAAAAA\">$strtime $message</font>";
@@ -371,22 +372,32 @@ function chat_format_message($userid, $chatid, $timestamp, $message, $system=fal
         return $output;
     }
 
-    if (substr($message, 0, 1) == "/") {  /// It's a user command
-
-        if (substr($message, 0, 4) == "/me ") {
-            $output = $chat_parameters["template_me"];
-            $output = str_replace("{user}", $userid, $output);
-            $output = str_replace("{message}", $message, $output);
-            $output = str_replace("{sendtime}", substr($timestamp, 0, 5), $output);
-            $output = str_replace("/me ", "", $output);
-        }
-    }
-
     convert_urls_into_links($message);
     replace_smilies($message);
 
+    if (substr($message, 0, 1) == ":") {              /// It's an MOO emote
+        $outinfo = $strtime;
+        $outmain = "$user->firstname ".substr($message, 1);
+
+    } else if (substr($message, 0, 1) == "/") {     /// It's a user command
+
+        if (substr($message, 0, 4) == "/me ") {
+            $outinfo = $strtime;
+            $outmain = "$user->firstname ".substr($message, 4);
+        } else {
+            $outinfo = $strtime;
+            $outmain = $message;
+        }
+
+    } else {                                          /// It's a normal message
+        $outinfo = "$strtime $user->firstname";
+        $outmain = $message;
+    }
+
+    /// Format the message as a small table
+
     $output  = "<table><tr><td valign=top>$picture</td><td>";
-    $output .= "<font size=2><font color=\"#888888\">$strtime $user->firstname</font>: $message</font>";
+    $output .= "<font size=2><font color=\"#888888\">$outinfo</font>: $outmain</font>";
     $output .= "</td></tr></table>";
 
     return addslashes($output);
