@@ -27,9 +27,13 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= " <param name=\"movie\" value=\"$CFG->wwwroot/filter/mediaplugin/mp3player.swf?src=\\2.mp3\" />";
         $replace .= ' <param name="quality" value="high" />';
         $replace .= ' <param name="bgcolor" value="#333333" />';
+        $replace .= ' <param name="flashvars" value="bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&i
+        conColour=000000&iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&" />';
         $replace .= " <embed src=\"$CFG->wwwroot/filter/mediaplugin/mp3player.swf?src=\\2.mp3\" ";
         $replace .= "  quality=\"high\" bgcolor=\"#333333\" width=\"90\" height=\"15\" name=\"mp3player\" ";
         $replace .= ' type="application/x-shockwave-flash" ';
+        $replace .= ' flashvars="bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&ic
+        onOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&" ';
         $replace .= ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
         $replace .= '</embed>';
         $replace .= '</object>&nbsp;';
