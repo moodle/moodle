@@ -1,19 +1,28 @@
-<?PHP // $Id$
+<?php // $Id$
       // Names of the documentation files
+      // Files with a definition "-" are treated as spacers
 
-$string['intro.html'] = "Introduksjon";
-$string['background.html'] = "Bakgrunn";
-$string['features.html'] = "Egenskaper";
-$string['release.html'] = "Om denne versjonen";
-$string['install.html'] = "Installasjon";
-$string['faq.html'] = "FAQ om installasjon";
-$string['upgrade.html'] = "Oppgraderer";
-$string['teacher.html'] = "Lærerens håndbok";
-$string['developer.html'] = "Administrators håndbok";
-$string['cvs.html'] = "Å bruke CVS";
-$string['future.html'] = "Framtiden";
-$string['credits.html'] = "Credits";
-$string['licence.html'] = "Lisens";
+$string['-about'] = 'Om Moodle';
+$string['intro.html'] = 'Introduksjon';
+$string['background.html'] = 'Bakgrunn';
+$string['philosophy.html'] = 'Moodle-filosofi';
+$string['licence.html'] = 'Rettigheter';
+$string['features.html'] = 'Funksjoner';
+$string['release.html'] = 'Om siste versjon';
+$string['future.html'] = 'Moodle i framtiden';
+$string['credits.html'] = 'Credits';
+$string['-installation'] = 'Administrasjon';
+$string['install.html'] = 'Installasjon';
+$string['faq.html'] = 'OSS om installasjon';
+$string['installamp.html'] = 'Om Apache, MySQL og PHP';
+$string['upgrade.html'] = 'Oppgradering';
+$string['-usage'] = 'Å bruke Moodle';
+$string['teacher.html'] = 'Enkel lærerhåndbok';
+$string['other.html'] = 'Andre dokumenter';
+$string['-development'] = 'Utvikling';
+$string['developer.html'] = 'Enkel håndbok for systemutviklere';
+$string['coding.html'] = 'Håndbok til programmering';
+$string['cvs.html'] = 'Å bruke CVS';
 
 
 ?>

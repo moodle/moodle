@@ -1,29 +1,32 @@
-<?PHP // $Id$
-
-#------------------------------------------------------------
-$string['modulename'] = "Journal	";
-$string['modulenameplural'] = "Journaler";
-#------------------------------------------------------------
+<?PHP // $Id$ 
+      // journal.php - created with Moodle 1.1.1 (2003091111)
 
 
-$string['alwaysopen'] = "Alltid åpen";
-$string['blankentry'] = "Blankt innlegg";
-$string['daysavailable'] = "Dager tilgjengelig";
-$string['editingends'] = "Redigeringsperiode slutter";
-$string['editingended'] = "Redigeringsperiode avsluttet";
-$string['journalname'] = "Journalnavn";
-$string['journalquestion'] = "Journalspørsmål";
-$string['journalrating1'] = "Ikke tilfredsstillende";
-$string['journalrating2'] = "Tilfredsstillende";
-$string['journalrating3'] = "Glimrende";
-$string['newjournalentries'] = "Nye journalinnlegg";
-$string['noentry'] = "Ingen innlegg";
-$string['notopenuntil'] = "Denne journalen åpnes ikke før";
-$string['notstarted'] = "Du har ikke startet denne journal enda";
-$string['noratinggiven'] = "Ingen vurdering gitt";
-$string['overallrating'] = "Samlet vurdering";
-$string['rate'] = "Vurder";
-$string['startoredit'] = "Start eller rediger min journal";
-$string['viewallentries'] = "Vis \$a journalinnlegg";
+$string['alwaysopen'] = 'Alltid åpen';
+$string['blankentry'] = 'Blankt innlegg';
+$string['daysavailable'] = 'Dager tilgjengelig for innskriving';
+$string['editingended'] = 'Innskrivingsperiode avsluttet';
+$string['editingends'] = 'Innskrivingsperiode slutter';
+$string['entries'] = 'Innlegg';
+$string['feedbackupdated'] = 'Tilbakemeldinger oppdatert for \$a innlegg';
+$string['journalmail'] = '\$a->teacher har gitt tilbakemelding til ditt journalinnlegg i '\$a->journal'. Du kan lese den nedenfor innlegget: \$a->url';
+$string['journalmailhtml'] = '\$a->teacher har gitt tilbakemelding til ditt journalinnlegg i '<i>\$a->journal</i>'<br /><br / >Du kan lese det nedenfor <a href=\\\"\$a->url\\\">innlegget ditt</a>.';
+$string['journalname'] = 'Journalnavn';
+$string['journalquestion'] = 'Journalspørsmål/tema';
+$string['journalrating1'] = 'Ikke tilfredsstillende';
+$string['journalrating2'] = 'Tilfredsstillende';
+$string['journalrating3'] = 'Glimrende';
+$string['modulename'] = 'Journal';
+$string['modulenameplural'] = 'Journaler';
+$string['newjournalentries'] = 'Nye journalinnlegg';
+$string['noentry'] = 'Ingen innlegg';
+$string['noratinggiven'] = 'Ingen vurdering gitt';
+$string['notopenuntil'] = 'Denne journalen åpnes ikke før';
+$string['notstarted'] = 'Du har ikke skrevet i denne journalen enda';
+$string['overallrating'] = 'Samlet vurdering';
+$string['rate'] = 'Vurder';
+$string['saveallfeedback'] = 'Lagre all min tilbakemelding';
+$string['startoredit'] = 'Skriv i journalen';
+$string['viewallentries'] = 'Vis \$a journalinnlegg';
 
 ?>
