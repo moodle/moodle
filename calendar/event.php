@@ -176,10 +176,14 @@
 
     // Let's see if we are supposed to provide a referring course link
     // but NOT for the front page
-    if($SESSION->cal_course_referer > 1 &&
-      ($shortname = get_field('course', 'shortname', 'id', $SESSION->cal_course_referer)) !== false) {
-        // If we know about the referring course, show a return link
-        $nav = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$SESSION->cal_course_referer.'">'.$shortname.'</a> -> '.$nav;
+
+    if (!empty($SESSION->cal_course_referer)) {
+        if ($course = get_record('course', 'id', $SESSION->cal_course_referer)) {
+            $shortname = $course->shortname;
+            $nav = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$SESSION->cal_course_referer.'">'.$shortname.'</a> -> '.$nav;
+        }
+    } else {
+        $nav = '';
     }
 
     print_header(get_string('calendar', 'calendar').': '.$title, $site->fullname, $nav.' -> '.$title,
