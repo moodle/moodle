@@ -97,6 +97,7 @@ $string['backup'] = 'Sauvegarde';
 $string['backupcoursefileshelp'] = 'Une fois cette option activée, les fichiers des cours seront inclus dans les sauvegardes automatiques';
 $string['backupdate'] = 'Date de la sauvegarde';
 $string['backupdetails'] = 'Détails de la sauvegarde';
+$string['backupfailed'] = 'Certains de vos cours n\'ont pas été sauvegardés !';
 $string['backupfilename'] = 'backup';
 $string['backupfinished'] = 'La sauvegarde s\'est déroulée sans erreur';
 $string['backupincludemoduleshelp'] = 'Choisissez si vous désirez inclure dans les sauvegardes automatiques les modules de cours, avec ou sans les données des utilisateurs';
@@ -108,6 +109,7 @@ $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'Attention ! Vous avez choisi de ne sauvegarder aucun utilisateur. En conséquence, les sauvegardes de tous les modules ont été placées en mode «&nbsp;sans les données des utilisateurs ». Veuillez noter que les modules Exercice et Atelier ne sont pas compatibles avec ce type de sauvegarde. Ils ont donc été totalement exclus de la sauvegarde.';
 $string['backuporiginalname'] = 'Nom de la sauvegarde';
 $string['backupsavetohelp'] = 'Chemin d\'accès complet du dossier où vous voulez enregistrer les sauvegardes<br />(laissez vide pour enregistrer dans le dossier par défaut)';
+$string['backuptakealook'] = 'Veuillez consulter les historiques des sauvegardes&nbsp;: $a';
 $string['backupuserfileshelp'] = 'Choisissez si vous désirez inclure les fichiers des utilisateurs (par exemple l\'image du profil) dans les sauvegardes automatiques';
 $string['backupusershelp'] = 'Choisissez si vous désirez inclure tous les utilisateurs du serveur ou seulement ceux nécessaires à chaque cours';
 $string['backupversion'] = 'Version de la sauvegarde';
@@ -398,12 +400,12 @@ Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître co
 
 Si vous avez besoin d\'aide, veuillez contacter l\'administrateur du site, $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a : confirmation du changement de mot de passe';
-$string['emailpasswordconfirmsent'] = '<p>Un message a été envoyé à votre adresse de courriel<strong>$a</strong>.</p>
-<p>Ce message décrit la marche à suivre pour confirmer et terminer le changement de mot de passe.</p>
-<p>En cas de difficulté, veuillez contacter l\'administrateur du site.</p>';
-$string['emailpasswordsent'] = '<p>Merci pour votre confirmation.</p>
-<p>Un message avec votre nouveau mot de passe a été envoyé à votre adresse <strong>$a->email</strong>.</p>
-<p>Le nouveau mot de passe a été généré automatiquement. Vous pouvez <a href=\"$a->link\">le modifier</a> pour le rendre plus facile à retenir.</p>';
+$string['emailpasswordconfirmsent'] = '<p>Un message a été envoyé à votre adresse de courriel<strong>$a</strong>.<br />
+Ce message décrit la marche à suivre pour confirmer et terminer le changement de mot de passe.<br />
+En cas de difficulté, veuillez contacter l\'administrateur du site.';
+$string['emailpasswordsent'] = 'Merci pour votre confirmation de changement de mot de passe.<br />
+Un message avec votre nouveau mot de passe a été envoyé à votre adresse <strong>$a->email</strong>.<br />
+Le nouveau mot de passe a été généré automatiquement. Vous pouvez <a href=\"$a->link\">le modifier</a> pour le rendre plus facile mémoriser.';
 $string['enable'] = 'Activer';
 $string['encryptedcode'] = 'Code chiffré';
 $string['enrolledincourse'] = 'Inscrit au cours « $a »';
@@ -607,7 +609,7 @@ $string['loginsite'] = 'Se connecter sur le site';
 $string['loginsteps'] = '<p>Bonjour. Pour un accès complet aux cours, prenez une minute pour vous créer un compte personnel sur ce site.<br />
 Chaque cours peut également nécessiter une clef d\'inscription à usage unique dont vous n\'avez pas besoin pour l\'instant.</p>
 <p>Voici les étapes à suivre :</p>
-   <ol size=\"2\">
+   <ol>
    <li>Remplir le formulaire <a href=\"$a\">nouveau compte</a>.</li>
    <li>Un message vous sera immédiatement adressé par courriel.</li>
    <li>Récupérer ce message et cliquer sur le lien Web qu\'il contient.</li>
@@ -973,6 +975,7 @@ $string['unenrolallstudents'] = 'Désinscrire tous les étudiants';
 $string['unenrolallstudentssure'] = 'Voulez-vous vraiment désinscrire tous les étudiants de ce cours ?';
 $string['unenrolme'] = 'Me désinscrire de $a';
 $string['unenrolsure'] = 'Voulez-vous vraiment désinscrire $a de ce cours ?';
+$string['unfinished'] = 'Pas terminé';
 $string['unknowncategory'] = 'Discipline inconnue';
 $string['unlimited'] = 'Illimité';
 $string['unpacking'] = 'Décompactage de $a';

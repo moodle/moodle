@@ -48,6 +48,7 @@ $string['memorylimithelp'] = '<p>La limite de mémoire de PHP sur votre serveur e
 <li>si vous avez accès à votre fichier «&nbsp;php.ini&nbsp;», vous pouvez attribuer au paramètre <b>memory_limit</b> une valeur comme 16M. Si vous n\'y avez pas accès, demandez à l\'administrateur de le faire pour vous ;</li>
 <li>sur certains serveur, vous pouvez créer dans le dossier principal de Moodle un fichier «&nbsp;.htaccess&nbsp;» contenant cette ligne : <p><blockquote>php_value memory_limit 16M</blockquote></p> <p>Cependant, sur certains serveur, cela empêchera le fonctionnement correcte de <b>tous</b> les fichiers PHP (vous verrez s\'afficher des erreurs lors de la consultation de pages). Dans ce cas, vous devrez supprimer le fichier «&nbsp;.htaccess&nbsp;».</li>
 </ol>';
+$string['mysqlextensionisnotpresentinphp'] = 'La configuration de l\'extension MySQL de PHP n\'a pas été effectuée correctement. De ce fait, PHP ne peut communiquer avec MySQL. Veuillez contrôler votre fichier «&nbsp;php.ini&nbsp;» ou recompiler PHP.';
 $string['pass'] = 'Réussi';
 $string['phpversion'] = 'Version de PHP';
 $string['phpversionerror'] = 'La version du programme PHP doit être au moins 4.1.0';
