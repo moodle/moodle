@@ -899,6 +899,19 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename="") {
 /// approriately as well as the current path
 
     global $CFG;
+    
+    if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {   // May not need to send stylesheet
+        // Following lines from Wolfram Kriesing and John Dell
+        $months = array_flip(array('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'));
+        preg_match('~[^,]*,\s(\d+)\s(\w+)\s(\d+)\s(\d+):(\d+):(\d+).*~',
+                   $_SERVER['HTTP_IF_MODIFIED_SINCE'], $splitDate);
+        $timestamp = gmmktime($splitDate[4], $splitDate[5], $splitDate[6], $months[$splitDate[2]]+1, 
+                              $splitDate[1], $splitDate[3]);
+        if ($lastmodified <= $timestamp) {
+            header('HTTP/1.x 304 Not Modified');
+            exit;
+        }
+    }
 
     header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
     header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
