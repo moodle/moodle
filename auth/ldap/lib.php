@@ -67,8 +67,8 @@ function auth_get_userinfo($username){
   if (! isset($CFG->ldap_objectclass)) {
 	$CFG->ldap_objectclass="objectClass=*";
   }
-
-  $user_info_result = ldap_read($ldap_connection,$user_dn,$objectclass, $search_attribs);	
+  
+  $user_info_result = ldap_read($ldap_connection,$user_dn,$CFG->ldap_objectclass, $search_attribs);	
   if ($user_info_result) {		
     $user_entry = ldap_get_entries($ldap_connection, $user_info_result);
       foreach ($moodleattributes as $key=>$value){
@@ -79,13 +79,7 @@ function auth_get_userinfo($username){
   }
   @ldap_close($ldap_connection);
 
-  //Hardcoded defaults	
-  if(! isset($result['description'])) {
-	$result['description'] = "Description";
-  }
-  $result['country']='FI';
-	
-  return $result;
+   return $result;
 }
 
 function auth_get_userlist() {
