@@ -462,6 +462,19 @@ function main_upgrade($oldversion=0) {
 
     }
 
+    if ($oldversion < 2003081501) {
+        execute_sql(" CREATE TABLE `{$CFG->prefix}scale` (
+                         `id` int(10) unsigned NOT NULL auto_increment,
+                         `courseid` int(10) unsigned NOT NULL default '0',
+                         `userid` int(10) unsigned NOT NULL default '0',
+                         `name` varchar(255) NOT NULL default '',
+                         `scale` text NOT NULL,
+                         `description` text NOT NULL,
+                         `timemodified` int(10) unsigned NOT NULL default '0',
+                         PRIMARY KEY  (id)
+                       ) TYPE=MyISAM COMMENT='Defines grading scales'");
+    }
+
     return $result;
 
 }
