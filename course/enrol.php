@@ -19,6 +19,7 @@
         error("Could not find a site!");
     }
 
+    check_for_restricted_user($USER->username);
 
 /// Check the submitted enrollment key if there is one
 
