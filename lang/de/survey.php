@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // survey.php - created with Moodle 1.0.8 dev (2002122301)
 
 
@@ -6,7 +6,7 @@ $string['actual'] = "Momentan";
 $string['actualclass'] = "Momentane Klasse";
 $string['actualstudent'] = "Momentan \$a ";
 $string['allquestions'] = "Alle Fragen geordnet, alle Kursteilnehmer";
-$string['allscales'] = "Ale Ränge, alle Kursteilnehmer";
+$string['allscales'] = "Alle Ränge, alle Kursteilnehmer";
 $string['alreadysubmitted'] = "Sie haben diese Umfrage bereits eingereicht ";
 $string['analysisof'] = "Analyse von \$a";
 $string['answers'] = "Antworten";
@@ -20,8 +20,8 @@ $string['attls12short'] = "Kriterien verwenden, um zu beurteilen ";
 $string['attls13'] = "Ich bin geneigter, die Meinung eines anderen zu verstehen, als zu versuchen, sie zu beurteilen. ";
 $string['attls13short'] = "Versuchen zu verstehen";
 $string['attls14'] = "Ich versuche, auf Schwächen in der Denkweise anderer hinzuweisen, wenn ich denke, ihnen zu helfen, ihre Argumente zu klären. ";
-$string['attls14short'] = "aus Schwächen hinweisen";
-$string['attls15'] = "1.Ich versuche, mich in andere Leute herein zu versetzen, wenn ich kontroverse Angelegenheiten diskutiere, um zu sehen, warum sie so denken. ";
+$string['attls14short'] = "auf Schwächen hinweisen";
+$string['attls15'] = "1.Ich versuche, mich in andere Leute hinein zu versetzen, wenn ich kontroverse Angelegenheiten diskutiere, um zu sehen, warum sie so denken. ";
 $string['attls15short'] = "in andere hinein versetzen";
 $string['attls16'] = "Man kann meine Art der Analyse 'auf einen Versuch ankommen lassen' nennen, weil ich gewissenhaft darauf achte, alle Punkte zu berücksichtigen ";
 $string['attls16short'] = "auf einen Versuch ankommen lassen";
@@ -36,7 +36,7 @@ $string['attls2'] = "Ich spiele gerne des Teufels Anwalt, argumentiere das Gegen
 $string['attls20'] = "Ich verbringe Zeit, zu begreifen, was 'nicht in Ordnung' mit Dingen ist. Zum Beispiel suche ich etwas in einer literarischen Interpretation, nicht ausreichend diskutiert worden ist.. ";
 $string['attls20short'] = "was ist falsch?";
 $string['attls2short'] = "des Teufels Anwalt spielen";
-$string['attls3'] = "Ich möchte verstehen, woher andere Leute 'kommen von', welche Erfahrungen dazu geführt haben, dass in dieser Art fühlen, wie sie es tun. ";
+$string['attls3'] = "Ich möchte verstehen, woher andere Leute kommen, welche Erfahrungen dazu geführt haben, dass Sie so fühlen, wie sie es tun. ";
 $string['attls3short'] = "woher die Leute kommen";
 $string['attls4'] = "Der wichtigste Teil meiner Erziehung war es, Leute verstehen zu lernen, die gegenüber mir sehr anders sind. ";
 $string['attls4short'] = "Andersartige Leute verstehen";
@@ -56,7 +56,7 @@ $string['attlsm2'] = "Gemeinsames Lernen ";
 $string['attlsm3'] = "Getrenntes Lernen";
 $string['attlsmintro'] = "In der Diskussion...";
 $string['attlsname'] = "ATTLS (20 Punkte Version)";
-$string['ciq1'] = "Zu welchem Zeitpunkt waren Sie am meisten angagiert in der Klasse als Lernender?";
+$string['ciq1'] = "Zu welchem Zeitpunkt waren Sie am meisten engagiert in der Klasse als Lernender?";
 $string['ciq2'] = "Zu welchem Zeitpunkt waren Sie am meisten distanziert in der Klasse als Lernender?";
 $string['ciq3'] = "Welche Aktion von allen im Forum fanden Sie am meisten bestätigend oder hilfreich?";
 $string['ciq4'] = "Welche Aktion von allen im Forum fanden Sie am meisten verwirrend oder irritierend?";
@@ -113,9 +113,9 @@ $string['colles8'] = "Ich denke kritisch über Ideen in den Materialien nach. ";
 $string['colles8short'] = "Ich bin gegenüber dem Material kritisch ";
 $string['colles9'] = "Ich erkläre anderen Studenten meine Ideen. ";
 $string['colles9short'] = "Ich erkläre meine Ideen ";
-$string['collesaintro'] = "Der Zweck dieser Studie ist, uns zu helfen, zu verstehen, wie gut die Online-Lieferung dieser Einheit Ihnen ermöglichte zu lernen. Jede der 24 Erklärungen unten fragt nach Ihrer Erfahrung in dieser Einheit. Es gibt keine 'richtigen' oder 'falschen' Antworten; wir sind nur nach Ihrer Meinung interessiert. Bitte seien Sie versichert, dass Ihre Antworten mit einem hohen Grad an Vertraulichkeit behandelt werden und Ihre Beurteilung nicht beeinflussen. Ihre sorgfältig berücksichtigten Antworten helfen uns, die Art zu verbessern, wie diese Einheit zukünftig online gezeigt wird. Vielen Dank. ";
+$string['collesaintro'] = "Zweck dieser Studie ist, die Lernqualität dieser Online-Einheit zu beurteilen. Jede der 24 Fragen unten fragt nach Ihrer Erfahrung in dieser Einheit. Es gibt keine 'richtigen' oder 'falschen' Antworten; wir sind nur an Ihrer Meinung interessiert. Bitte seien Sie versichert, dass Ihre Antworten vertraulich behandelt werden und Ihre Beurteilung nicht beeinflussen. Ihre Antworten helfen uns, die zukünftige Qualität der Online-Einheiten zu verbessern. Vielen Dank. ";
 $string['collesaname'] = "PÄSSE (tatsächlich)";
-$string['collesapintro'] = "Der Zweck dieses Fragebogens ist, uns zu helfen, zu verstehen, wie gut die Online-Lieferung dieser Einheit Ihnen ermöglichte zu lernen. Jede der 24 Erklärungen unten bittet Sie darum, Ihre <b>bevorzugte</b> (ideale) und <b>tatsächliche</b> Erfahrung in dieser Einheit zu vergleichen. Es gibt keine 'richtigen' oder 'falschen' Antworten; wir sind nur nach Ihrer Meinung interessiert. Bitte seien Sie versichert, dass Ihre Antworten mit einem hohen Grad an Vertraulichkeit behandelt werden und Ihre Beurteilung nicht beeinflussen. Ihre sorgfältig berücksichtigten Antworten helfen uns, die Art zu verbessern, wie diese Einheit online zukünftig gezeigt wird. Vielen Dank. ";
+$string['collesapintro'] = "Zweck dieser Studie ist, die Lernqualität dieser Online-Einheit zu beurteilen. Jede der 24 Fragen unten fragt nach Ihrer Erfahrung in dieser Einheit. Es gibt keine 'richtigen' oder 'falschen' Antworten; wir sind nur an Ihrer Meinung interessiert. Bitte seien Sie versichert, dass Ihre Antworten vertraulich behandelt werden und Ihre Beurteilung nicht beeinflussen. Ihre Antworten helfen uns, die zukünftige Qualität der Online-Einheiten zu verbessern. Vielen Dank. ";
 $string['collesapname'] = "PÄSSE (bevorzugt und tatsächlich) ";
 $string['collesm1'] = "Relevanz ";
 $string['collesm1short'] = "Relevanz ";
@@ -130,7 +130,7 @@ $string['collesm5short'] = "Gleichschichtige Unterstützung ";
 $string['collesm6'] = "Interpretation";
 $string['collesm6short'] = "Interpretation";
 $string['collesmintro'] = "In dieser Online-Einheit ... ";
-$string['collespintro'] = "Der Zweck dieser Studie ist, uns zu helfen, zu verstehen, was Sie an einer Online-Lernerfahrung schätzen. Jede der 24 Erklärungen unten fragt nach Ihrer <b>bevorzugten</b> (idealen) Erfahrungen in dieser Einheit. Es gibt keine 'richtigen' oder 'falschen' Antworten; wir sind nur nach Ihrer Meinung interessiert. Bitte seien Sie versichert, dass Ihre Antworten mit einem hohen Grad Vertraulichkeit behandelt werden und Ihre Beurteilung nicht beeinflussen. Ihre sorgfältig berücksichtigten Antworten helfen uns, die Art zu verbessern, wie diese Einheit online zukünftig gezeigt wird. Vielen Dank. ";
+$string['collespintro'] = "Zweck dieser Studie ist, die Lernqualität dieser Online-Einheit zu beurteilen. Jede der 24 Fragen unten fragt nach Ihrer Erfahrung in dieser Einheit. Es gibt keine 'richtigen' oder 'falschen' Antworten; wir sind nur an Ihrer Meinung interessiert. Bitte seien Sie versichert, dass Ihre Antworten vertraulich behandelt werden und Ihre Beurteilung nicht beeinflussen. Ihre Antworten helfen uns, die zukünftige Qualität der Online-Einheiten zu verbessern. Vielen Dank. ";
 $string['collespname'] = "PÄSSE (bevorzugt) ";
 $string['done'] = "Erledigt";
 $string['download'] = "Herunterladen";
