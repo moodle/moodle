@@ -58,6 +58,11 @@
                         $generalforums[] = $forum;
                     }
                     break;
+                default:
+                    if (!$course->category) {
+                        $generalforums[] = $forum;
+                    }
+                    break;
             }
         }
     }
@@ -91,38 +96,44 @@
         unset($table->data);
     } 
 
-    // Add extra field for section number, at the front
-    array_unshift($table->head, "");
-    array_unshift($table->align, "CENTER");
-
-    if ($learningforums = get_all_instances_in_course("forum", $course->id)) {
-        foreach ($learningforums as $forum) {
-            $count = count_records("forum_discussions", "forum", "$forum->id");
-
-            $forum->intro = forum_shorten_post($forum->intro);
-
-            if ($can_subscribe) {
-                if (forum_is_forcesubscribed($forum->id)) {
-                    $sublink = get_string("yes");
-                } else {
-                    if (forum_is_subscribed($USER->id, $forum->id)) {
-                        $subscribed = get_string("yes");
-                        $subtitle = get_string("unsubscribe", "forum");
-                    } else {
-                        $subscribed = get_string("no");
-                        $subtitle = get_string("subscribe", "forum");
-                    }
-                    $sublink = "<A TITLE=\"$subtitle\" HREF=\"subscribe.php?id=$forum->id\">$subscribed</A>";
+    if ($course->category) {    // Only real courses have learning forums
+        // Add extra field for section number, at the front
+        array_unshift($table->head, "");
+        array_unshift($table->align, "CENTER");
+    
+        if ($learningforums = get_all_instances_in_course("forum", $course->id)) {
+            foreach ($learningforums as $forum) {
+                $count = count_records("forum_discussions", "forum", "$forum->id");
+    
+                $forum->intro = forum_shorten_post($forum->intro);
+    
+                if (!$forum->section) {     // some forums are in the "0" section
+                    $forum->section = "";
                 }
-                $table->data[] = array ("$forum->section", "<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
-                                        "$forum->intro", "$count", "$sublink");
-            } else {
-                $table->data[] = array ("$forum->section", "<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
-                                        "$forum->intro", "$count");
+    
+                if ($can_subscribe) {
+                    if (forum_is_forcesubscribed($forum->id)) {
+                        $sublink = get_string("yes");
+                    } else {
+                        if (forum_is_subscribed($USER->id, $forum->id)) {
+                            $subscribed = get_string("yes");
+                            $subtitle = get_string("unsubscribe", "forum");
+                        } else {
+                            $subscribed = get_string("no");
+                            $subtitle = get_string("subscribe", "forum");
+                        }
+                        $sublink = "<A TITLE=\"$subtitle\" HREF=\"subscribe.php?id=$forum->id\">$subscribed</A>";
+                    }
+                    $table->data[] = array ("$forum->section", "<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
+                                            "$forum->intro", "$count", "$sublink");
+                } else {
+                    $table->data[] = array ("$forum->section", "<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
+                                            "$forum->intro", "$count");
+                }
             }
+            print_heading(get_string("learningforums", "forum"));
+            print_table($table);
         }
-        print_heading(get_string("learningforums", "forum"));
-        print_table($table);
     }
 
     echo "<DIV ALIGN=CENTER>";

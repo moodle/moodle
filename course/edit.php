@@ -60,7 +60,7 @@
                     $section->id = insert_record("course_sections", $section);
 
                     add_to_log($newid, "course", "new", "view.php?id=$newid", "");
-		            redirect("$CFG->wwwroot/admin/teacher.php?id=$newid", get_string("changessaved"));
+		            redirect("teacher.php?id=$newid", get_string("changessaved"));
                 } else {
                     error("Serious Error! Could not create the new course!");
                 }

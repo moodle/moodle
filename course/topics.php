@@ -151,24 +151,7 @@
 
         echo text_to_html($thissection->summary);
 
-        echo "<P>";
-        if ($thissection->sequence) {
-
-            $thissectionmods = explode(",", $thissection->sequence);
-
-            foreach ($thissectionmods as $modnumber) {
-                $mod = $mods[$modnumber];
-                $instancename = get_field("$mod->modname", "name", "id", "$mod->instance");
-                echo "<IMG SRC=\"../mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
-                echo " <A TITLE=\"$mod->modfullname\"";
-                echo "   HREF=\"../mod/$mod->modname/view.php?id=$mod->id\">$instancename</A>";
-                if (isediting($course->id)) {
-                    echo make_editing_buttons($mod->id);
-                }
-                echo "<BR>\n";
-            }
-        }
-        echo "</UL></P>\n";
+        print_section($course->id, $thissection, $mods, $modnamesused);
 
         if (isediting($course->id)) {
             echo "<DIV ALIGN=right>";

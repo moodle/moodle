@@ -18,10 +18,12 @@
     if (! $survey = get_record("survey", "id", $cm->instance)) {
         error("Survey ID was incorrect");
     }
-
+ 
+    if ($course->category) {
+        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+    }
     print_header("$course->shortname: $survey->name", "$course->fullname",
-                 "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> ->
-                  <A HREF=index.php?id=$course->id>Surveys</A> -> $survey->name", "", "", true,
+                 "$navigation <A HREF=index.php?id=$course->id>Surveys</A> -> $survey->name", "", "", true,
                   update_module_icon($cm->id, $course->id));
 
     if (isteacher($course->id)) {

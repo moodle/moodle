@@ -25,9 +25,11 @@
         error("Course module is incorrect");
     }
 
+    if ($course->category) {
+        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+    }
     print_header("$course->shortname: $journal->name", "$course->fullname",
-                 "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> 
-                  <A HREF=index.php?id=$course->id>Journals</A> -> $journal->name", "", "", true,
+                 "$navigation <A HREF=index.php?id=$course->id>Journals</A> -> $journal->name", "", "", true,
                   update_module_icon($cm->id, $course->id));
 
     if (isteacher($course->id)) {

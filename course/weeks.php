@@ -4,11 +4,11 @@
 
     include("../mod/forum/lib.php");
 
-    if (! $sections = get_all_sections($course->id, $course->numsections) ) {
+    if (! $sections = get_all_sections($course->id)) {
         $section->course = $course->id;   // Create a default section.
         $section->section = 0;
         $section->id = insert_record("course_sections", $section);
-        if (! $sections = get_all_sections($course->id, $course->numsections) ) {
+        if (! $sections = get_all_sections($course->id) ) {
             error("Error finding or creating section structures for this course");
         }
     }
@@ -141,24 +141,7 @@
 
         echo text_to_html($thisweek->summary);
 
-        echo "<P>";
-        if ($thisweek->sequence) {
-
-            $thisweekmods = explode(",", $thisweek->sequence);
-
-            foreach ($thisweekmods as $modnumber) {
-                $mod = $mods[$modnumber];
-                $instancename = get_field("$mod->modname", "name", "id", "$mod->instance");
-                echo "<IMG SRC=\"../mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
-                echo " <A TITLE=\"$mod->modfullname\"";
-                echo "   HREF=\"../mod/$mod->modname/view.php?id=$mod->id\">$instancename</A>";
-                if (isediting($course->id)) {
-                    echo make_editing_buttons($mod->id);
-                }
-                echo "<BR>\n";
-            }
-        }
-        echo "</UL></P>\n";
+        print_section($course->id, $thisweek, $mods, $modnamesused);
 
         if (isediting($course->id)) {
             echo "<DIV ALIGN=right>";

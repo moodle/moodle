@@ -26,39 +26,51 @@
 <TABLE WIDTH="100%" BORDER="0" CELLSPACING="5" CELLPADDING="5">
   <TR>
     <TD VALIGN="TOP" NOWRAP>
-      <? $readings = reading_list_all_readings();
-      
-         if ($site->newsitems > 0 or $readings or isediting($site->id)) {
-      
-             print_simple_box(get_string("mainmenu"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+      <? 
 
+         $sections = get_all_sections($site->id);
+      
+         if ($site->newsitems > 0 or $sections[0]->sequence or isediting($site->id)) {
+      
              if ($site->newsitems > 0 ) {
-                 echo "<LI><A TITLE=\"".
-                      get_string("availablecourses").
-                      "\" HREF=\"course/\"><B>".
-                      get_string("courses").
-                      "</B></A><BR></LI>";
+                 print_simple_box(get_string("courses"), "CENTER", "100%", "$THEME->cellheading");
+
+                 print_all_courses($cat=1, "minimal", 10);
              } 
 
-             if ($readings) {
-                 foreach ($readings as $reading) {
-	             echo "<LI>$reading";
-                 }
+             if ($sections[0]->sequence or isediting($site->id)) {
+                 get_all_mods($site->id, $mods, $modnames, $modnamesplural, $modnamesused);
+                 print_simple_box(get_string("mainmenu"), "CENTER", "100%", "$THEME->cellheading");
+             }   
+
+             if ($sections[0]->sequence) {
+                 print_section($site->id, $sections[0], $mods, $modnamesused, true);
              }
+
              if (isediting($site->id)) {
-                 echo "<P align=right><A HREF=\"$CFG->wwwroot/course/mod.php?id=$site->id&section=0&add=reading\">".
-                      get_string("addreading", "reading")."</A>...</P>";
-             } else {
-                 echo "<BR><BR>";
+                 echo "<DIV ALIGN=right>";
+                 popup_form("$CFG->wwwroot/course/mod.php?id=$site->id&section=0&add=", 
+                             $modnames, "section0", "", "Add...");
+                 echo "</DIV>";
              }
          }
      
-
          if (isadmin()) {
-             print_simple_box(get_string("admin"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
-             echo "<LI><A HREF=\"$CFG->wwwroot/admin/\">".get_string("adminpage")."...</A></LI>";
-             echo "<LI><A HREF=\"$CFG->wwwroot/course/log.php?id=$site->id\">".get_string("sitelogs")."...</A></LI>";
-             echo "<LI><A HREF=\"$CFG->wwwroot/admin/site.php\">".get_string("sitesettings")."...</A></LI>";
+             print_simple_box(get_string("administration"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+             $icon = "<IMG SRC=\"pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+             $moddata[]="<A HREF=\"course/log.php?id=$site->id\">".get_string("sitelogs")."</A>";
+             $modicon[]=$icon;
+             $moddata[]="<A HREF=\"admin/site.php\">".get_string("sitesettings")."</A>";
+             $modicon[]=$icon;
+             $moddata[]="<A HREF=\"course/edit.php\">".get_string("addnewcourse")."</A>";
+             $modicon[]=$icon;
+             $moddata[]="<A HREF=\"course/teacher.php\">".get_string("assignteachers")."</A>";
+             $modicon[]=$icon;
+             $moddata[]="<A HREF=\"course/delete.php\">".get_string("deletecourse")."</A>";
+             $modicon[]=$icon;
+             $moddata[]="<A HREF=\"admin/user.php\">".get_string("edituser")."</A>";
+             $modicon[]=$icon;
+             print_side_block("", $moddata, "", $modicon);
          }
       ?>
 

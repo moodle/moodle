@@ -12,7 +12,9 @@
         error("Course id is incorrect.");
     }
 
-    require_login($course->id);
+    if ($course->category) {
+        require_login($course->id);
+    }
 
     add_to_log($course->id, "forum", "search", "search.php?id=$course->id&search=$search", "$search"); 
 

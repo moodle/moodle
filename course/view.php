@@ -48,7 +48,7 @@
     print_header("$courseword: $course->fullname", "$course->fullname", "$course->shortname", "search.search", "", true,
                   update_course_icon($course->id));
 
-    get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
+    get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused, $modsectioncounts);
 
     switch ($course->format) {
         case "weeks":

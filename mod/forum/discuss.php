@@ -11,7 +11,7 @@
     optional_variable($mode);   // If set, changes the layout of the thread
 
     if (! $discussion = get_record("forum_discussions", "id", $d)) {
-        error("Discussion ID was incorrect");
+        error("Discussion ID was incorrect or no longer exists");
     }
 
     if (! $course = get_record("course", "id", $discussion->course)) {

@@ -12,8 +12,11 @@
     require_login($course->id);
     add_to_log($course->id, "journal", "view all", "index.php?id=$course->id", "");
 
-    print_header("$course->shortname: Journals", "$course->fullname",
-                 "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> Journals", "");
+    if ($course->category) {
+        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+    }
+
+    print_header("$course->shortname: Journals", "$course->fullname", "$navigation Journals", "");
 
 
     if (! $journals = get_all_instances_in_course("journal", $course->id, "cw.section ASC")) {

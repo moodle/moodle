@@ -13,8 +13,10 @@
 
     add_to_log($course->id, "survey", "view all", "index.php?id=$course->id", "");
 
-    print_header("$course->shortname: Surveys", "$course->fullname",
-                 "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> Surveys", "");
+    if ($course->category) {
+        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+    }
+    print_header("$course->shortname: Surveys", "$course->fullname", "$navigation Surveys", "");
 
 
     if (! $surveys = get_all_instances_in_course("survey", $course->id, "cw.section ASC")) {

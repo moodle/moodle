@@ -174,12 +174,28 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
 }
 
 
-function print_all_courses($cat=1) {
+function print_all_courses($cat=1, $style="full", $maxcount=999) {
+    global $CFG;
 
     if ($courses = get_records("course", "category", $cat, "fullname ASC")) {
-        foreach ($courses as $course) {
-            print_course($course);
-            echo "<BR>\n";
+        if ($style == "minimal") {
+            $count = 0;
+            $icon  = "<IMG SRC=\"pix/i/course.gif\" HEIGHT=16 WIDTH=16 ALT=\"Course\">";
+            foreach ($courses as $course) {
+                $moddata[]="<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A>";
+                $modicon[]=$icon;
+                if ($count++ >= $maxcount) {
+                    break;
+                }
+            }   
+            $fulllist = "<P><A HREF=\"$CFG->wwwroot/course/\">".get_string("fulllistofcourses")."</A>...";
+            print_side_block("", $moddata, "$fulllist", $modicon);
+
+        } else {
+            foreach ($courses as $course) {
+                print_course($course);
+                echo "<BR>\n";
+            }
         }
 
     } else {
@@ -398,6 +414,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
 
     $mods          = NULL;    // course modules indexed by id
     $modnames      = NULL;    // all course module names
+    $modnamesplural= NULL;    // all course module names (plural form)
     $modnamesused  = NULL;    // course module names used
 
     if ($allmods = get_records_sql("SELECT * FROM modules") ) {
@@ -414,7 +431,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
                                      FROM modules m, course_modules cm
                                      WHERE cm.course = '$courseid' 
                                        AND cm.deleted = '0'
-                                       AND cm.module = m.id") ) {
+                                       AND cm.module = m.id ") ) {
         foreach($rawmods as $mod) {    // Index the mods
             $mods[$mod->id] = $mod;
             $mods[$mod->id]->modfullname = $modnames[$mod->modname];
@@ -431,6 +448,31 @@ function get_all_sections($courseid) {
                             WHERE course = '$courseid' 
                             ORDER BY section");
 }
+
+function print_section($courseid, $section, $mods, $modnamesused, $absolute=false) {
+    global $CFG;
+
+
+    echo "<P>";
+    if ($section->sequence) {
+
+        $sectionmods = explode(",", $section->sequence);
+
+        foreach ($sectionmods as $modnumber) {
+            $mod = $mods[$modnumber];
+            $instancename = get_field("$mod->modname", "name", "id", "$mod->instance");
+            echo "<IMG SRC=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
+            echo " <A TITLE=\"$mod->modfullname\"";
+            echo "   HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</A>";
+            if (isediting($courseid)) {
+                echo make_editing_buttons($mod->id, $absolute);
+            }
+            echo "<BR>\n";
+        }
+    }
+    echo "</P>\n";
+}
+
 
 function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
     global $CFG;
@@ -654,20 +696,28 @@ function move_module($id, $move) {
     }
 }
 
-function make_editing_buttons($moduleid) {
+function make_editing_buttons($moduleid, $absolute=false) {
+    global $CFG;
+
     $delete   = get_string("delete");
     $moveup   = get_string("moveup");
     $movedown = get_string("movedown");
     $update   = get_string("update");
+
+    if ($absolute) {
+        $path = "$CFG->wwwroot/course/";
+    } else {
+        $path = "";
+    }
     return "&nbsp; &nbsp; 
-          <A HREF=mod.php?delete=$moduleid><IMG 
-             SRC=../pix/t/delete.gif BORDER=0 ALT=\"$delete\"></A>
-          <A HREF=mod.php?id=$moduleid&move=-1><IMG 
-             SRC=../pix/t/up.gif BORDER=0 ALT=\"$moveup\"></A>
-          <A HREF=mod.php?id=$moduleid&move=1><IMG 
-             SRC=../pix/t/down.gif BORDER=0 ALT=\"$movedown\"></A>
-          <A HREF=mod.php?update=$moduleid><IMG 
-             SRC=../pix/t/edit.gif BORDER=0 ALT=\"$update\"></A>";
+          <A HREF=\"".$path."mod.php?delete=$moduleid\"><IMG 
+             SRC=".$path."../pix/t/delete.gif BORDER=0 ALT=\"$delete\"></A>
+          <A HREF=\"".$path."mod.php?id=$moduleid&move=-1\"><IMG 
+             SRC=".$path."../pix/t/up.gif BORDER=0 ALT=\"$moveup\"></A>
+          <A HREF=\"".$path."mod.php?id=$moduleid&move=1\"><IMG 
+             SRC=".$path."../pix/t/down.gif BORDER=0 ALT=\"$movedown\"></A>
+          <A HREF=\"".$path."mod.php?update=$moduleid\"><IMG 
+             SRC=".$path."../pix/t/edit.gif BORDER=0 ALT=\"$update\"></A>";
 }
 
 function print_side_block($heading="", $list=NULL, $footer="", $icons=NULL) {

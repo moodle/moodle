@@ -3,6 +3,7 @@
 	require("../config.php");
 
     $course = get_site();
+    $course->format = "social";   // override
 
 /// If data submitted, then process and store.
 
@@ -49,7 +50,7 @@
         $form = $course;
     } else {
         $form->category = 0;
-        $form->newsitems = 1;
+        $form->format = "social";
     }
 
     print_header("Admin: Setting up site", "Administration: Setting up site",

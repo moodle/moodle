@@ -12,8 +12,12 @@
 
     add_to_log($course->id, "choice", "view all", "index?id=$course->id", "");
 
+    if ($course->category) {
+        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+    }
+
     print_header("$course->shortname: Choices", "$course->fullname",
-                 "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> Choices", "");
+                 "$navigation Choices", "");
 
 
     if (! $choices = get_all_instances_in_course("choice", $course->id, "cw.section ASC")) {

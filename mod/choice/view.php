@@ -46,9 +46,11 @@
 
     add_to_log($course->id, "choice", "view", "view.php?id=$cm->id", "$choice->id");
 
+    if ($course->category) {
+        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+    }
     print_header("$course->shortname: $choice->name", "$course->fullname",
-                 "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> 
-                  <A HREF=index.php?id=$course->id>Choices</A> -> $choice->name", "", "", true,
+                 "$navigation <A HREF=index.php?id=$course->id>Choices</A> -> $choice->name", "", "", true,
                   update_module_icon($cm->id, $course->id));
 
     if (isteacher($course->id)) {

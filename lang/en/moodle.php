@@ -1,21 +1,17 @@
 <?PHP // $Id$ 
 
-#------------------------------------------------------------
-$string[modulename] = "Site";
-$string[modulenameplural] = "Sites";
-#------------------------------------------------------------
-
-
 $string[activity] = "Activity";
 $string[activityreport] = "Activity report";
+$string[addnewcourse] = "Add a new course";
 $string[address] = "Address";
 $string[admin] = "Admin";
-$string[adminpage] = "Admin page";
+$string[administration] = "Administration";
 $string[again] = "again";
 $string[alllogs] = "All logs";
 $string[allfieldsrequired] = "All fields are required";
 $string[alphanumerical] = "Can only contain alphabetical letters or numbers";
 $string[alreadyconfirmed] = "Registration has already been confirmed";
+$string[assignteachers] = "Assign teachers";
 $string[availablecourses] = "Available Courses";
 $string[category] = "Category";
 $string[changepassword] = "Change password";
@@ -31,8 +27,10 @@ $string[createaccount] = "Create my new account";
 $string[createuserandpass] = "Create a new username and password to log in with";
 $string[currentlocaltime] = "your current local time";
 $string[delete] = "Delete";
+$string[deletecourse] = "Delete a course";
 $string[editcoursesettings] = "Edit course settings";
 $string[editmyprofile] = "Edit my profile";
+$string[edituser] = "Edit user accounts";
 $string[email] = "Email address";
 $string[emailformat] = "Email format";
 $string[emailconfirm] = "Confirm your account";
@@ -68,6 +66,7 @@ $string[firstname] = "First name";
 $string[firsttime] = "Is this your first time here?";
 $string[forgotten] = "Forgotten your username or password?";
 $string[format] = "Format";
+$string[fulllistofcourses] = "Full list of courses";
 $string[fullprofile] = "Full profile";
 $string[fullname] = "Full name";
 $string[guestsno] = "No, do not allow guests in";

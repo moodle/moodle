@@ -22,7 +22,7 @@
 
     } else if ($f) {
         if (! $forum = get_record("forum", "id", $f)) {
-            error("Forum ID was incorrect");
+            error("Forum ID was incorrect or no longer exists");
         }
         if (! $course = get_record("course", "id", $forum->course)) {
             error("Forum is misconfigured - don't know what course it's from");
