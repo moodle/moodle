@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.7 (2002121000)
+      // survey.php - created with Moodle 1.0.8 dev (2002121200)
 
 
 $string['actual'] = "Êµ¼ÊµÄ";
@@ -51,10 +51,12 @@ $string['attls9'] = "ÎÒ·¢ÏÖ×Ô¼º³£³£ºÍÎÒ¶ÁµÄÊé×÷ÕßÕùÂÛ£¬ÊÔÍ¼´ÓÂß¼­ÉÏÍÆ¶ÏËûÃÇÎªÊ²Ã
 $string['attls9short'] = "Óë×÷ÕßÕùÂÛ";
 $string['attlsintro'] = "¸ÃÎÊ¾íµÄÄ¿µÄÊÇÎªÁËÁË½âÄã¶ÔË¼¿¼ºÍÑ§Ï°µÄÌ¬¶È¡£
 
+
+
 ÕâÀïÃ»ÓÐ¡®ÕýÈ·¡¯»ò¡®´íÎó¡¯µÄ´ð°¸£»ÎÒÃÇÖ»¶ÔÄãµÄ¹Ûµã¸ÐÐËÈ¤¡£ÇëÏàÐÅÎÒÃÇ¶ÔÄãµÄ»Ø´ð±£³Ö¸ß¶È»úÃÜ£¬Ò²²»±Øµ£ÐÄÓ°Ïì¶ÔÄãµÄÆÀ·Ö¡£";
 $string['attlsm1'] = "¶ÔÓÚË¼¿¼ºÍÑ§Ï°µÄÌ¬¶È";
-$string['attlsm2'] = "Connected Learning";
-$string['attlsm3'] = "Separate Learning";
+$string['attlsm2'] = "Çé¾°ÐÍÑ§Ï°";
+$string['attlsm3'] = "¶ÀÁ¢ÐÍÑ§Ï°";
 $string['attlsmintro'] = "ÔÚÌÖÂÛÖÐ¡­¡­";
 $string['attlsname'] = "Ñ§Ï°ÓëË¼¿¼Ì¬¶ÈÎÊ¾íµ÷²é£¨20Ïî£©";
 $string['clicktocontinue'] = "µã»÷ÕâÀï¼ÌÐø";
@@ -109,21 +111,37 @@ $string['colles9'] = "ÎÒÏòÆäËûÍ¬Ñ§½âÊÍ×Ô¼ºµÄ¹Ûµã¡£";
 $string['colles9short'] = "½âÊÍ×Ô¼ºµÄ¹Ûµã";
 $string['collesaintro'] = "¸ÃÎÊ¾íµ÷²éµÄÄ¿µÄÊÇÎªÁËÁË½âÕâ¸öÔÚÏßµ¥Ôª¶Ô´Ù½øÄãµÄÑ§Ï°ÓÐ¶à´óµÄ×÷ÓÃ¡£
 
+
+
 ÒÔÏÂ24¸öÎÊÌâÎÊµÄÊÇÄãÔÚ´Ëµ¥ÔªÖÐµÄÌå»á¡£
+
+
 
 ÕâÀïÎÞËùÎ½¡°ÕýÈ·¡±»ò¡°´íÎó¡±´ð°¸£»ÎÒÃÇÖ»¶ÔÄãµÄ¹Ûµã¸ÐÐËÈ¤¡£ÇëÏàÐÅÎÒÃÇ¶ÔÄãµÄ»Ø´ð±£³Ö¸ß¶È»úÃÜ£¬Ò²²»±Øµ£ÐÄ»áÓ°Ïì¶ÔÄãµÄÆÀ·Ö¡£
 
+
+
 ÄãÉîË¼ÊìÂÇµÄ»Ø´ð½«ÓÐÖúÓÚÎÒÃÇ¶Ô¸Ãµ¥Ôª×÷½øÒ»²½µÄ¸ÄÉÆ¡£
+
+
 
 ·Ç³£¸ÐÐ»£¡";
 $string['collesaname'] = "½¨¹¹Ö÷ÒåÍøÉÏÑ§Ï°»·¾³ÎÊ¾íµ÷²é£¨Êµ¼ÊµÄ£©";
 $string['collesapintro'] = "¸ÃÎÊ¾íµ÷²éµÄÄ¿µÄÊÇÎªÁËÁË½âÕâ¸öÔÚÏßµ¥Ôª¶Ô´Ù½øÄãµÄÑ§Ï°ÓÐ¶à´óµÄ×÷ÓÃ¡£ 
 
+
+
 ÒÔÏÂÓÐ24¸öÎÊÌâ£¬Ã¿¸öÎÊÌâÒªÇóÄã±È½ÏÔÚ´Ëµ¥ÔªÖÐ£¬ÄãËù<B>Ï£ÍûµÄ</B>£¨ÀíÏëµÄ£©ºÍ<B>Êµ¼ÊµÄ</B>Ìå»á¡£
+
+
 
 ÕâÀïÎÞËùÎ½¡°ÕýÈ·¡±»ò¡°´íÎó¡±´ð°¸£»ÎÒÃÇÖ»¶ÔÄãµÄ¹Ûµã¸ÐÐËÈ¤¡£ÇëÏàÐÅÎÒÃÇ¶ÔÄãµÄ»Ø´ð±£³Ö¸ß¶È»úÃÜ£¬Ò²²»±Øµ£ÐÄ»áÓ°Ïì¶ÔÄãµÄÆÀ·Ö¡£
 
+
+
 ÄãÉîË¼ÊìÂÇµÄ»Ø´ð½«ÓÐÖúÓÚÎÒÃÇ¶Ô¸Ãµ¥Ôª×÷½øÒ»²½µÄ¸ÄÉÆ¡£
+
+
 
 ·Ç³£¸ÐÐ»£¡";
 $string['collesapname'] = "½¨¹¹Ö÷ÒåÍøÉÏÑ§Ï°»·¾³ÎÊ¾íµ÷²é£¨Ï£ÍûµÄºÍÊµ¼ÊµÄ£©";
@@ -142,11 +160,19 @@ $string['collesm6short'] = "½âÊÍÇåÎú¶È";
 $string['collesmintro'] = "ÔÚ´ËÔÚÏßµ¥ÔªÖÐ¡­¡­";
 $string['collespintro'] = "¸ÃÎÊ¾íµ÷²éµÄÄ¿µÄÊÇÎªÁËÁË½âÄã¶ÔÍøÉÏÑ§Ï°µÄ¿´·¨ÈçºÎ¡£
 
+
+
 ÒÔÏÂÓÐ24¸öÎÊÌâ£¬Ã¿¸öÎÊÌâÒªÇóÄã»Ø´ðÔÚ´Ëµ¥ÔªÖÐ£¬ÄãËù<B>Ï£ÍûµÄ</B>£¨ÀíÏëµÄ£©¡£
+
+
 
 ÕâÀïÎÞËùÎ½¡°ÕýÈ·¡±»ò¡°´íÎó¡±´ð°¸£»ÎÒÃÇÖ»¶ÔÄãµÄ¹Ûµã¸ÐÐËÈ¤¡£ÇëÏàÐÅÎÒÃÇ¶ÔÄãµÄ»Ø´ð±£³Ö¸ß¶È»úÃÜ£¬Ò²²»±Øµ£ÐÄ»áÓ°Ïì¶ÔÄãµÄÆÀ·Ö¡£
 
+
+
 ÄãÉîË¼ÊìÂÇµÄ»Ø´ð½«ÓÐÖúÓÚÎÒÃÇ¶Ô¸Ãµ¥Ôª×÷½øÒ»²½µÄ¸ÄÉÆ¡£
+
+
 
 ·Ç³£¸ÐÐ»£¡";
 $string['collespname'] = "½¨¹¹Ö÷ÒåÍøÉÏÑ§Ï°»·¾³ÎÊ¾íµ÷²é£¨Ï£ÍûµÄ£©";
