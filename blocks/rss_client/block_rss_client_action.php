@@ -168,8 +168,8 @@
             $rsserror = ob_get_contents();
             ob_end_clean();
             
-            print '<table align=\"center\" width=\"50%\" cellspacing=\"1\">'."\n";
-            print '<tr><td colspan=\"2\"><strong>'. $rss->channel['title'] .'</strong></td></tr>'."\n";
+            print '<table align="center" width="50%" cellspacing="1">'."\n";
+            print '<tr><td colspan="2"><strong>'. $rss->channel['title'] .'</strong></td></tr>'."\n";
             for($y=0; $y < count($rss->items); $y++) {
 //                $rss->items[$y]['title'] = blog_unhtmlentities($rss->items[$y]['title']);
                 if ($rss->items[$y]['link'] == '') {
@@ -180,13 +180,13 @@
                     $rss->items[$y]['title'] = '&gt;&gt;';
                 }
                 
-                print '<tr><td valign=\"middle\">'."\n";
+                print '<tr><td valign="middle">'."\n";
                 print '<a href="'. $rss->items[$y]['link'] .'" target=_new><strong>'. $rss->items[$y]['title'];
                 print '</strong></a>'."\n";
                 print '</td>'."\n";
                 if (file_exists($CFG->dirroot .'/blog/lib.php')) {
-                    print '<td align=\"right\">'."\n";
-                    print '<img src="'. $CFG->pixpath .'/blog/blog.gif" alt="'. get_string('blog_blog_this', 'blog').'" title="'. get_string('blog_blog_this', 'blog') .'" border=\"0\" align=\"middle\" />'."\n";
+                    print '<td align="right">'."\n";
+                    print '<img src="'. $CFG->pixpath .'/blog/blog.gif" alt="'. get_string('blog_blog_this', 'blog').'" title="'. get_string('blog_blog_this', 'blog') .'" border="0" align="middle" />'."\n";
                     print '<a href="'. $CFG->wwwroot .'/blog/blogthis.php?blogid='. $blogid .'&act=use&item='. $y .'&rssid='. $rssid .'"><small><strong>'. get_string('blog_blog_this', 'blog') .'</strong></small></a>'."\n";
                 } else {
                     print '<td>&nbsp;';
