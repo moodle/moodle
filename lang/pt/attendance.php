@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.2 development (2003122600)
+      // attendance.php - created with Moodle 1.4 development (2004060100)
 
 
 $string['absentlong'] = 'Faltou';
@@ -58,6 +58,7 @@ $string['takeroll'] = 'Começe um ciclo neste dia?';
 $string['tardiesperabsence'] = 'Quantos atrasos contarão como uma falta?';
 $string['tardylong'] = 'Atrasado';
 $string['tardyshort'] = 'A';
+$string['teacheredit'] = 'Marcar presenças';
 $string['thursday'] = 'Qui';
 $string['tuesday'] = 'Ter';
 $string['viewall'] = 'Ver todos os ciclos de frequência';

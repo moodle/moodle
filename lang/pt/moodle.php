@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2.1 (2004032500)
+      // moodle.php - created with Moodle 1.4 development (2004060100)
 
 
 $string['action'] = 'Acção';
@@ -94,17 +94,23 @@ $string['backupfilename'] = 'backup';
 $string['backupfinished'] = 'Cópia de segurança concluída com sucesso';
 $string['backupincludemoduleshelp'] = 'Escolha se quer incluir módulos de uma disciplina, com ou sem dados de utilizadores, nas cópias de segurança automatizadas.';
 $string['backupkeephelp'] = 'Quantas cópias de segurança recentes quer manter para cada disciplina? (as mais antigas serão apagadas automaticamente)';
+$string['backuplogdetailed'] = 'Estatísticas detalhadas de execução';
+$string['backuploglaststatus'] = 'Últimas estatísticas de execução';
 $string['backuplogshelp'] = 'Se for activada, as estatísticas de acesso às disciplinas serão incluidas nas cópias de segurança automatizadas';
 $string['backupnameformat'] = '%%d%%m%%Y-%%H%%M';
+$string['backupnoneusersinfo'] = 'Atenção: como não seleccionou nenhum utilizador para  incluir na cópia de segurança, foi utilizada a opção de criar cópia de segurança sem incluir dados de utilizadores. Por favor repare que os módulos de \"exercício\" e \"workshop\" não são compatíveis com esse tipo de cópia de segurança, assim que foram completamente ignorados na cópia de segurança.';
 $string['backuporiginalname'] = 'Nome da cópia de segurança';
 $string['backupsavetohelp'] = 'Nome e caminho completo do directório onde quer guardar os ficheiros de cópia de segurança<br>(deixe em branco se quiser que fiquem no próprio directório da disciplina)';
 $string['backupuserfileshelp'] = 'Escolha se os ficheiros de alunos (por exemplo fotografias) deverão ser incluidos nas cópias de segurança automatizadas';
 $string['backupusershelp'] = 'Escolha se quer que sejam incluidos todos os utilizadores no servidor, ou apenas os que forem necessários para cada disciplina';
 $string['backupversion'] = 'Versão da cópia de segurança';
+$string['blockdeleteconfirm'] = 'Está a ponto de apagar completamente o bloco \'$a\'. Isso faz com que todos os dados relacionados com esse bloco sejam eliminados da base de dados. Tem a certeza que quer continuar?';
+$string['blockdeletefiles'] = 'Todos os dados associados ao bloco \'$a->block\' foram eliminados da base de dados. Para completar o processo de limpeza (e evitar que que o bloco se re-instale), devera agora apagar o seguinte directório no seu servidor: $a->directory ';
 $string['blocks'] = 'Blocos';
 $string['blocksetup'] = 'A configurar tabelas de blocos';
 $string['blocksuccess'] = '$a tabelas foram configuradas correctamente';
 $string['bycourseorder'] = 'Por ordem de disciplina';
+$string['byname'] = 'por $a';
 $string['cancel'] = 'Cancelar';
 $string['categories'] = 'Grupos de disciplinas';
 $string['category'] = 'Categoria';
@@ -137,10 +143,15 @@ $string['configcachetext'] = 'Para sítios com muito conteúdo ou que usarem filtr
 $string['configcountry'] = 'Se escolher um país aqui, este aparecerá por omissão no formulário para novos utilizadores. Se quiser forçar os novos utilizadores a indicar o seu país, não seleccione nenhum país.';
 $string['configdebug'] = 'Se seleccionar esta opção, o PHP mostrará mais mensagens de erro. Isto só é útil para quem estiver a desenvolver o Moodle.';
 $string['configdeleteunconfirmed'] = 'Este é o período em que a resposta dos utilizadores será aceite, se estiver a usar autenticação por email. Após este período, contas não confirmadas serão apagadas.';
+$string['configdigestmailtime'] = 'Aqueles que preferirem, podem receber uma única mensagem diária com o sumário do correio do dia. Esta configuração controla a hora do dia em que esses sumários serão enviados (serão enviados pelo próximo proceso \"cron\" que for executado após essa hora).';
+$string['configenablerssfeeds'] = 'Esta selecção permite activar listagens RSS do sítio. Para que alguma mudança real aconteça, terá que activar o RSS também nos módulos individuais - entre na secção de configuração de módulos no menu de configuração do administrador.';
+$string['configenablerssfeedsdisabled'] = 'Não está disponível porque listagens RSS estão desactivadas no seu sítio. Para as activar, entre na secção de configuração de variáveis no menu de configuração do administrador.';
 $string['configerrorlevel'] = 'Escolha o nível de avisos de PHP que quer receber. A opção \'normal\' é geralmente a melhor escolha.';
+$string['configextendedusernamechars'] = 'Active esta opção para permitir que os alunos usem quaisquer caracteres nos seus nomes de utilizador (repare que isso é independente dos seus nomes verdadeiros). A opção por omissão é \"falsa\", o qual restringe os nomes de utilizadores a caracteres alfanuméricos.';
 $string['configfilteruploadedfiles'] = 'Activando esta configuração, Moodle processará todos os ficheiros de texto e HTML enviados, aplicando os filtros, antes de serem apresentados.';
 $string['configforcelogin'] = 'Normalmente a página do sítio e as listagens de disciplinas (mas não as disciplinas) podem ser lidas por pessoas que não tenham acesso ao sítio. Se quer forçar as pessoas a aceder antes de fazerem SEJA O QUE FOR no sítio, deve activar esta configuração.
 ';
+$string['configforceloginforprofiles'] = 'Active esta opção para forçar as pessoas a entrar como um utilizador real, e não como convidados, para poderem ver a página de perfil de outros utilizadores. Por omissão estará desactivada (\"falso\") para que os alunos possam obter informações sobre os docentes antes de se registrarem numa disciplina, mas isso também faz com que os motores de pesquisa possam ver a informação. ';
 $string['configframename'] = 'Se está a inserir o Moodle num \'frame\', então coloque aqui o nome do frame. Caso contrário este valor deverá ser \'_top\'';
 $string['configfullnamedisplay'] = 'Define como os nomes aparecem quando são exibidos por completo. Para a maioria dos sítios monolinguísticos a configuração mais eficiente é a predefinida \"Nome + Apelido\", mas pode escolher entre não mostrar os apelidos, ou deixar a escolha ao pacote linguístico em vigor (alguns pacotes linguísticos têm convenções diferentes).
 ';
@@ -221,6 +232,7 @@ $string['currentcourseadding'] = 'Adicionando dados à disciplina seleccionada';
 $string['currentcoursedeleting'] = 'Eliminando a disciplina actual';
 $string['currentlanguage'] = 'Língua usada actualmente';
 $string['currentlocaltime'] = 'a sua hora local';
+$string['currentpicture'] = 'Fotografia actual';
 $string['currentrelease'] = 'Informação da release actual';
 $string['currentversion'] = 'Versão actual';
 $string['databasechecking'] = 'Actualizando a base de dados do Moodle da versão $a->oldversion para $a->newversion...';
@@ -234,6 +246,7 @@ $string['datemostrecentfirst'] = 'Data - mais recente(s) primeiro';
 $string['datemostrecentlast'] = 'Data - mais recente(s) no fim';
 $string['day'] = 'dia';
 $string['days'] = 'dias';
+$string['decodinginternallinks'] = 'A descodificar apontadores internos';
 $string['defaultcoursefullname'] = 'Nome completo da disciplina';
 $string['defaultcourseshortname'] = 'DISC101';
 $string['defaultcoursestudent'] = 'Aluno';
@@ -270,8 +283,12 @@ $string['down'] = 'Para baixo';
 $string['downloadexcel'] = 'Exportar em formato Excel';
 $string['downloadtext'] = 'Exportar em formato Texto';
 $string['doyouagree'] = 'Leu e compreendeu estas condições?';
+$string['duplicate'] = 'Duplicado';
+$string['duplicatinga'] = 'A duplicar: $a';
+$string['duplicatingain'] = 'A duplicar $a-what em $a->in';
 $string['edit'] = 'Editar $a';
 $string['editcoursesettings'] = 'Editar configuração da disciplina';
+$string['editfiles'] = 'Editar ficheiros';
 $string['editgroupprofile'] = 'Editar perfil do grupo';
 $string['editinga'] = 'Editando um $a';
 $string['editmyprofile'] = 'Editar perfil';
@@ -300,6 +317,10 @@ Administrador do servidor \'$a->sitename\'
 $string['emailconfirmationsubject'] = '$a: Confirmação da conta';
 $string['emailconfirmsent'] = '<p>Acaba de ser enviada uma mensagem para o seu endereço <b>$a</b>, com instruções fáceis para completar a sua inscrição.</p>
 <p>Se tiver alguma dificuldade em completar o registo, contacte o administrador do servidor.</p>';
+$string['emaildigest'] = 'Tipo de sumários de correio';
+$string['emaildigestcomplete'] = 'Completo (correio diário com mensagens completas)';
+$string['emaildigestoff'] = 'Sem sumários (cada mensagem que chega envia-se separada)';
+$string['emaildigestsubjects'] = 'Temas (sumário diário unicamente com temas)';
 $string['emaildisable'] = 'Este endereço de correio electrónico está desactivado';
 $string['emaildisplay'] = 'Visualizar correio';
 $string['emaildisplaycourse'] = 'Permitir ver o meu endereço de e-mail só a quem estiver inscrito na disciplina';
@@ -330,8 +351,8 @@ $string['emailpasswordsent'] = '<p>Obrigado por confirmar a alteração da sua pal
 <p>A sua nova palavra chave foi enviada por correio para <b>$a->email</b>.</p>
 <p>A nova palavra chave foi gerada automaticamente - poderá querer <a href=$a->link>alterar a sua palavra chave</a> para algo que se recorde depois com mais facilidade (mas primeiro procure a nova palavra chave na mensagem que acabou de ser enviada).</p>';
 $string['enable'] = 'Activar';
-$string['enrolledincourse'] = 'Inscrito(a) na disciplina \"$a\"';
-$string['enrolledincoursenot'] = 'Não inscrito(a) na disciplina \"$a\"';
+$string['enrolledincourse'] = 'Inscrito(a) na disciplina ';
+$string['enrolledincoursenot'] = 'Não inscrito(a) na disciplina ';
 $string['enrolmentconfirmation'] = 'Está prestes a inscrever-se como membro desta disciplina.<br />Tem a certeza que deseja continuar?';
 $string['enrolmentkey'] = 'Chave de inscrição';
 $string['enrolmentkeyfrom'] = 'Esta disciplina requer uma \'chave de inscrição\'.<br>Chave essa que deverá ser pedida a $a<br>
@@ -414,6 +435,7 @@ $string['grades'] = 'Notas';
 $string['group'] = 'Grupo';
 $string['groupadd'] = 'Adicione novo grupo';
 $string['groupaddusers'] = 'Adicione seleccionados ao grupo';
+$string['groupfor'] = 'para o grupo';
 $string['groupinfo'] = 'Informação sobre grupo seleccionado';
 $string['groupinfomembers'] = 'Informação sobre utilizadores seleccionados';
 $string['groupinfopeople'] = 'Informação sobre pessoas seleccionadas';
@@ -450,6 +472,9 @@ $string['helpsummaries'] = 'Acerca destes sumários';
 $string['helptext'] = 'Como escrever texto';
 $string['helpwiki'] = 'Como escrever texto Wiki';
 $string['helpwriting'] = 'Escreva com cuidado';
+$string['hiddensections'] = 'Secções ocultas';
+$string['hiddensectionscollapsed'] = 'Secções ocultas são apresentadas em forma contraida';
+$string['hiddensectionsinvisible'] = 'Secções ocultas são completamente invissíveis';
 $string['hide'] = 'Ocultar';
 $string['hidepicture'] = 'Esconder fotografia';
 $string['hits'] = 'Número de acessos';
@@ -474,8 +499,9 @@ $string['includecoursefiles'] = 'Incluir ficheiros da disciplina';
 $string['includecourseusers'] = 'Incluir utilizadores da disciplina';
 $string['included'] = 'Incluídos';
 $string['includelogentries'] = 'Incluir entradas de registo';
-$string['includemodules'] = 'Incluir&nbsp;Módulos';
+$string['includemodules'] = 'Incluir Módulos';
 $string['includeneededusers'] = 'Incluir utilizadores necessários';
+$string['includenoneusers'] = 'Não inclui nenhuns utilizadores';
 $string['includeuserfiles'] = 'Incluir ficheiros de utilizador';
 $string['institution'] = 'Instituição';
 $string['invalidemail'] = 'Endereço de correio não válido';
@@ -509,14 +535,14 @@ $string['loginguest'] = 'Entrar como visitante';
 $string['loginsite'] = 'Entrar no sítio';
 $string['loginsteps'] = 'Viva!<br>
 <p>Para ter acesso completo às disciplinas precisa dedicar um minuto a criar uma nova conta de utilizador.</p>
-<p>Cada disciplina pode também ter uma &quot;chave de inscrição&quot;, fornecida pelo docente.</p>
+<p>Cada disciplina pode também ter uma \"chave de inscrição\", fornecida pelo docente.</p>
 <p>Siga as instruções:</p>
 <ol size=\"2\">
 <li>Preencha o <a href=$a>formulário</a> de nova conta com os seus dados.</li>
 <li>Será enviada imediatamente uma mensagem para o seu endereço de correio.</li>
 <li>Leia essa mensagem e visite o apontador fornecido para confirmar o registo e poder entrar no sítio.</li>
 <li>A seguir poderá seleccionar a disciplina na qual se quer inscrever.</li>
-<li>Se precisar de uma &quot;chave de inscrição&quot;, terá que usara a chave indicada pelo seu docente.</li>
+<li>Se precisar de uma \"chave de inscrição\", terá que usara a chave indicada pelo seu docente.</li>
 <li>A seguir já terá acesso completo à disciplina. A partir de agora só precisará de entrar com o seu nome de utilizador e palavra chave (no formulário
 de acesso desta página).</li>
 </ol>';
@@ -737,6 +763,8 @@ $string['restoreto'] = 'Restaurar para';
 $string['returningtosite'] = 'Acesso para utilizadores já inscritos!';
 $string['revert'] = 'Reverter';
 $string['role'] = 'Papel';
+$string['rssarticles'] = 'Número de artígos RSS recentes';
+$string['rsstype'] = 'Listagem RSS para esta actividade';
 $string['savechanges'] = 'Gravar alterações';
 $string['saveto'] = 'Gravar para';
 $string['scale'] = 'Escala';
@@ -805,6 +833,8 @@ $string['strftimedateshort'] = '%%d %%B';
 $string['strftimedatetime'] = '%%d %%B %%Y, %%H:%%M';
 $string['strftimedaydate'] = '%%A, %%d %%B %%Y';
 $string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%H:%%M';
+$string['strftimedayshort'] = '%%A, %%d %%B';
+$string['strftimemonthyear'] = '%%B %%Y';
 $string['strftimerecent'] = '%%d %%b, %%H:%%M';
 $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%H:%%M';
 $string['strftimetime'] = '%%I:%%M %%p';
@@ -872,6 +902,7 @@ $string['uploadnotallowed'] = 'Não se permite envio de ficheiros';
 $string['uploadproblem'] = 'Ocorreu m problema desconhecido no envío do ficheiro \'$a\' (talvez fosse demasiado grande?)';
 $string['uploadthisfile'] = 'Enviar este ficheiro';
 $string['uploadusers'] = 'Enviar ficheiro de utilizadores';
+$string['usedinnplaces'] = 'Utilizado em $a lugares';
 $string['user'] = 'Utilizador';
 $string['userconfirmed'] = '$a confirmado';
 $string['userdata'] = 'Dados de utilizador';
