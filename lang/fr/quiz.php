@@ -26,6 +26,7 @@ $string['attempts'] = 'Tentatives';
 $string['attemptsallowed'] = 'Nombre de tentatives autorisées';
 $string['attemptsexist'] = 'Quelqu\'un a déjà effectué ce test';
 $string['attemptsunlimited'] = 'Nombre illimité de tentatives';
+$string['back'] = 'Retour à la question précédente';
 $string['backtoquiz'] = 'Retour à l\'édition du test';
 $string['bestgrade'] = 'Meilleure note';
 $string['blackboard'] = 'Format Blackboard';
