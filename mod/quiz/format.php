@@ -192,6 +192,9 @@ class quiz_default_format {
         $questions = get_questions_category( $this->category );
 
         notify("Exporting ".count($questions)." questions.");
+        if (!count($questions)) {
+            return true;
+        }
         $count = 0;
 
         // results are first written into string (and then to a file)
