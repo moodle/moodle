@@ -1024,19 +1024,19 @@ function require_login($courseid=0, $autologinguest=true) {
         //as a guest, and course setting allow unlimited guest access
         //Code cribbed from course/loginas.php
         if (strstr($FULLME,"username=guest") && ($course->guest==1)) {
-          $realuser = $USER->id;
-          $realname = fullname($USER, true);
-          $USER = guest_user();
-          $USER->loggedin = true;
-          $USER->site = $CFG->wwwroot;
-          $USER->realuser = $realuser;
-          if (isset($SESSION->currentgroup[$course->id])) {    // Remember current setting for later
-            $SESSION->oldcurrentgroup = $SESSION->currentgroup[$course->id];
-            unset($SESSION->currentgroup[$course->id]);
-          }
-          $guest_name = fullname($USER, true);
-          add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&$USER->id$", "$realname -> $guest_name");
-          return;
+            $realuser = $USER->id;
+            $realname = fullname($USER, true);
+            $USER = guest_user();
+            $USER->loggedin = true;
+            $USER->site = $CFG->wwwroot;
+            $USER->realuser = $realuser;
+            if (isset($SESSION->currentgroup[$course->id])) {    // Remember current setting for later
+                $SESSION->oldcurrentgroup = $SESSION->currentgroup[$course->id];
+                unset($SESSION->currentgroup[$course->id]);
+            }
+            $guest_name = fullname($USER, true);
+            add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&$USER->id$", "$realname -> $guest_name");
+            return;
         }
 
         // Currently not enrolled in the course, so see if they want to enrol
@@ -1053,16 +1053,15 @@ function require_login($courseid=0, $autologinguest=true) {
  *
  * @uses $CFG
  * @param int $courseid The course in question
- * @param boolean $autologinguest ?
- * @todo Finish documenting this function
+ * @param boolean $autologinguest Allow autologin guests if that is wanted
  */
 function require_course_login($course, $autologinguest=true) {
     global $CFG;
     if ($CFG->forcelogin) {
-      require_login();
+        require_login();
     }
     if ($course->category) {
-      require_login($course->id, $autologinguest);
+        require_login($course->id, $autologinguest);
     }
 }
 
