@@ -104,7 +104,7 @@
 
         while (!feof ($fp)) {
             foreach ($optionalDefaults as $key => $value) {
-                $user->$key = $adminuser->$key;
+                $user->$key = addslashes($adminuser->$key);
             }
            //Note: commas within a field should be encoded as &#44
             $line = split("\,", fgets($fp,1024));
