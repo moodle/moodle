@@ -1864,45 +1864,60 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
     }
 
 
-/// Print out the entire style sheet
-
-    if (!empty($THEME->modsheets)) {     // Search for styles.php within activity modules
-        if ($mods = get_list_of_plugins('mod')) {
-            foreach ($mods as $mod) {
-                if (file_exists($CFG->dirroot.'/mod/'.$mod.'/styles.php')) {
-                    echo "/***** mod/$mod/styles.php start *****/\n\n";
-                    @include_once($CFG->dirroot.'/mod/'.$mod.'/styles.php');
-                    echo "\n\n/***** mod/$mod/styles.php end *****/\n\n";
-                }
-            }
-        }
-    }
-
-    if (!empty($THEME->blocksheets)) {     // Search for styles.php within block modules
-        if ($mods = get_list_of_plugins('blocks')) {
-            foreach ($mods as $mod) {
-                if (file_exists($CFG->dirroot.'/blocks/'.$mod.'/styles.php')) {
-                    echo "/***** blocks/$mod/styles.php start *****/\n\n";
-                    @include_once($CFG->dirroot.'/blocks/'.$mod.'/styles.php');
-                    echo "\n\n/***** blocks/$mod/styles.php end *****/\n\n";
-                }
-            }
-        }
-    }
-
-    if (!empty($THEME->langsheets)) {     // Search for styles.php within the current language
-        $lang = current_language();
-        if (file_exists($CFG->dirroot.'/lang/'.$lang.'/styles.php')) {
-            echo "/***** lang/$lang/styles.php start *****/\n\n";
-            @include_once($CFG->dirroot.'/lang/'.$lang.'/styles.php');
-            echo "\n\n/***** lang/$lang/styles.php end *****/\n\n";
-        }
-    }
+/// Get a list of all the files we want to include
+    $files = array();
 
     foreach ($THEME->sheets as $sheet) {
-        echo "/***** $sheet.css start *****/\n\n";
-        @include_once($CFG->themedir.$themename.'/'.$sheet.'.css');
-        echo "\n\n/***** $sheet.css end *****/\n\n";
+        $files[] = array($CFG->themedir, $themename.'/'.$sheet.'.css');
+    }
+
+    if ($themename == 'standard') {          // Add any standard styles included in any modules
+        if (!empty($THEME->modsheets)) {     // Search for styles.php within activity modules
+            if ($mods = get_list_of_plugins('mod')) {
+                foreach ($mods as $mod) {
+                    if (file_exists($CFG->dirroot.'/mod/'.$mod.'/styles.php')) {
+                        $files[] = array($CFG->dirroot, '/mod/'.$mod.'/styles.php');
+                    }
+                }
+            }
+        }
+    
+        if (!empty($THEME->blocksheets)) {     // Search for styles.php within block modules
+            if ($mods = get_list_of_plugins('blocks')) {
+                foreach ($mods as $mod) {
+                    if (file_exists($CFG->dirroot.'/blocks/'.$mod.'/styles.php')) {
+                        $files[] = array($CFG->dirroot, '/blocks/'.$mod.'/styles.php');
+                    }
+                }
+            }
+        }
+    
+        if (!empty($THEME->langsheets)) {     // Search for styles.php within the current language
+            $lang = current_language();
+            if (file_exists($CFG->dirroot.'/lang/'.$lang.'/styles.php')) {
+                $files[] = array($CFG->dirroot, '/lang/'.$lang.'/styles.php');
+            }
+        }
+    }
+
+
+    if ($files) {
+    /// Produce a list of all the files first
+        echo '/**************************************'."\n";
+        echo ' * THEME NAME: '.$themename."\n *\n";
+        echo ' * Files included in this sheet:'."\n *\n";
+        foreach ($files as $file) {
+            echo ' *   '.$file[1]."\n";
+        }
+        echo ' **************************************/'."\n\n";
+
+
+    /// Actually output all the files in order.
+        foreach ($files as $file) {
+            echo '/***** '.$file[1].' start *****/'."\n\n";
+            @include_once($file[0].$file[1]);
+            echo '/***** '.$file[1].' end *****/'."\n\n";
+        }
     }
 
     return $CFG->themewww.$themename;   // Only to help old themes (1.4 and earlier)
@@ -2161,14 +2176,14 @@ function print_simple_box_end() {
  * @todo Finish documenting this function
  */
 function print_single_button($link, $options, $label='OK', $method='get', $target='_self') {
-    echo '<span class="singlebutton">';
+    echo '<div class="singlebutton">';
     echo '<form action="'. $link .'" method="'. $method .'" target="'.$target.'">';
     if ($options) {
         foreach ($options as $name => $value) {
             echo '<input type="hidden" name="'. $name .'" value="'. $value .'" />';
         }
     }
-    echo '<input type="submit" value="'. $label .'" /></form></span>';
+    echo '<input type="submit" value="'. $label .'" /></form></div>';
 }
 
 /**
