@@ -2,7 +2,7 @@
       // auth.php - created with Moodle 1.0.8 dev (2002122301)
 
 
-$string['auth_dbdescription'] = "This method uses an external database table to check whether a given username and password is valid.  If the account is a new one, then information from other fields may also be copied across into Moodle.";
+$string['auth_dbdescription'] = "Diese Methode benutzt eine externe Datenbank-Tabelle, um die Gültigkeit eines angegebenen Benutzernamens und Kennwort zu überprüfen, Wenn der Zugang eine neuer ist, werden die Informationen der anderen Felder ebenso in ;oodle rüberkopiert.";
 $string['auth_dbextrafields'] = "Diese Felder sind optional. Sie können auswählen, einige Moodle Nutzer-Felder mit Informationen des <b>externen Datenbank-Feldes</b> vorauszufüllen, das Sie hier angeben.
 <p>Wenn Sie dieses leer lassen, dann werden Standardwerte benutzt.<P>Im anderen Fall wird der Nutzer befähigt, alle diese Felder nach der Anmeldung zu bearbeiten.";
 $string['auth_dbfieldpass'] = "Name des Feldes, das das Kennwort enthält";
@@ -11,17 +11,17 @@ $string['auth_dbhost'] = "Der Computer, der die Datenbank bereitstellt";
 $string['auth_dbname'] = "Name der Datenbank selbst";
 $string['auth_dbpass'] = "Das Passwort, das zum Nutzernamen gehört";
 $string['auth_dbpasstype'] = "Spezifizieren Sie das Format, das das Kennwortfeld benutzt. MD5-Verschlüsselung ist nützlich dafür, mit anderen üblichen Netzanwendungen Verbindung aufzunehmen wie z.B. PostNuke";
-$string['auth_dbtable'] = "Name of the table in the database";
+$string['auth_dbtable'] = "Name der Datenbank-Tabelle";
 $string['auth_dbtitle'] = "Eine externe Datenbank benutzen";
 $string['auth_dbtype'] = "Der Datenbank-Typ (Siehe <A HREF=../lib/adodb/readme.htm#drivers>ADOdb Anleitung</A> für Einzelheiten)";
 $string['auth_dbuser'] = "Nutzername mit Schreibzugriff auf die Datenbank";
-$string['auth_emaildescription'] = "Email confirmation is the default authentication method.  When the user signs up, choosing their own new username and password, a confirmation email is sent to the user's email address.  This email contains a secure link to a page where the user can confirm their account. Future logins just check the username and password against the stored values in the Moodle database.";
-$string['auth_emailtitle'] = "Email-based authentication";
-$string['auth_imapdescription'] = "This method uses an IMAP server to check whether a given username and password is valid.";
-$string['auth_imaphost'] = "The IMAP server address. Use the IP number, not DNS name.";
-$string['auth_imapport'] = "IMAP server port number. Usually this is 143 or 993.";
-$string['auth_imaptitle'] = "Use an IMAP server";
-$string['auth_imaptype'] = "The IMAP server type.  IMAP servers can have different types of authentication and negotiation.";
+$string['auth_emaildescription'] = "Email-Bestätigung ist die Standard-Authentifizierungsmethode. Wenn sich der Nutzer anmeldet, sein eigenen Nutzernamen und Kennwort auswählt, wird eine Bestätigungsemail an die Email-Adresse des Nutzers gesendet. Diese Email enthält einen sicheren Verweis auf eine Seite, wo der Nutzer seinen Zugang bestätigen kann. Spätere Anmeldungen prüfen nur den Nutzernamen und Kennwort anhand der in der Moodle-Datenbank gespeicherten Daten.";
+$string['auth_emailtitle'] = "Email-basierende Authentifizierung";
+$string['auth_imapdescription'] = "Diese Methode benutzt einen IMAP-Server, um zu prüfen, ob ein angegebener Benutzername und Kennwort gültig ist.";
+$string['auth_imaphost'] = "Die IMAP Server-Adresse. Benutzen Sie die IP, nicht den DNS-Namen";
+$string['auth_imapport'] = "IMAP Serverport-Nummer. Normaölerweise ist das 143 oder 993.";
+$string['auth_imaptitle'] = "Einen IMAP-Server verwenden";
+$string['auth_imaptype'] = "Der Imap Servertyp. IMAP Server können verschieden Typen der Authentifizierung und Überprüfung haben.";
 $string['auth_ldap_bind_dn'] = "If you want to use bind-user to search users, specify it here. Someting like 'cn=ldapuser,ou=public,o=org'";
 $string['auth_ldap_bind_pw'] = "Password for bind-user.";
 $string['auth_ldap_contexts'] = "List of contexts where users are located. Separate different contexts with ';'. For example: 'ou=users,o=org; ou=others,o=org'";

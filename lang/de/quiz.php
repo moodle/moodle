@@ -2,6 +2,7 @@
       // quiz.php - created with Moodle 1.0.8 dev (2002122301)
 
 
+$string['acceptederror'] = "Akzeptierter Fehler";
 $string['addingquestions'] = "Diese Spalte der Seite ist zum Verwalten von Quizfragen. Fragen werden in Kategorien gespeichert, um sie besser organisieren zu können, und können von jedem Quiz Ihres Kurses oder sogar von anderen Kursen (Wenn man 'veröffentlichen' ausgewählt hat) benutzt werden. <br /><br />Nachdem Sie eine Kategorie erzeugt haben, können Sie Fragen erzeugen oder bearbeiten. Sie können jede dieser Fragen auswählen und Ihrem Quiz in der anderen Spalte hinzufügen.";
 $string['addquestions'] = "Fragen hinzufügen";
 $string['addquestionstoquiz'] = "Frage zu aktuellem Quiz hinzufügen";
@@ -13,6 +14,7 @@ $string['answer'] = "Antwort";
 $string['answerhowmany'] = "Eine oder mehrere Antworten?";
 $string['answersingleno'] = "Mehrere Antworten erlaubt";
 $string['answersingleyes'] = "Nur eine Antwort";
+$string['answerswithacceptederrormarginmustbenumeric'] = "Antworten mit akzeptiertem Fehler";
 $string['attempt'] = "Versuch \$a";
 $string['attemptfirst'] = "Erster Versuch";
 $string['attemptlast'] = "Letzter Versuch";
@@ -48,6 +50,7 @@ $string['editcategories'] = "Kategorien bearbeiten";
 $string['editingdescription'] = "Eine Beschreibung bearbeiten";
 $string['editingmatch'] = "Eine Zuordnungsfrage bearbeiten";
 $string['editingmultichoice'] = "Eine Frage mit Mehrfachauswahl bearbeiten";
+$string['editingnumerical'] = "Eine numerische Frage bearbeiten";
 $string['editingquestion'] = "Eine Frage bearbeiten";
 $string['editingquiz'] = "Ein Quiz bearbeiten";
 $string['editingrandom'] = "Eine zufällige Frage bearbeiten";
@@ -77,6 +80,7 @@ $string['introduction'] = "Einleitung";
 $string['marks'] = "Punkte";
 $string['match'] = "Zuordnung";
 $string['matchanswer'] = "zugeordnete Antwort";
+$string['missingcorrectanswer'] = "Die korrekte Antwort muss angegeben werden";
 $string['missingname'] = "Der Name der Frage fehlt";
 $string['missingquestiontext'] = "Der Text der Frage fehlt";
 $string['missingword'] = "Das Wortformat fehlt";
@@ -91,6 +95,7 @@ $string['noreview'] = "Sie dürfen dieses Quiz nicht überprüfen";
 $string['noreviewuntil'] = "Sie dürfen dieses Quiz bis \$a nicht überprüfen";
 $string['notenoughsubquestions'] = "Nicht genügend Unter-Fragen wurden definiert'<br>
 Möchten Sie zurück gehen und diese Frage korrigieren?";
+$string['numerical'] = "Numerisch";
 $string['publish'] = "Veröffentlichen";
 $string['qti'] = "IMS QTI Format";
 $string['question'] = "Frage";
