@@ -759,7 +759,7 @@ function insert_record($table, $dataobject, $returnid=true) {
     $record = (array)$dataobject;
                                                                                                                 
     //Get insertsql from adodb
-    $insertSQL = $db->GetInsertSQL($rs, $record);
+    $insertSQL = $db->GetInsertSQL($rs, $record, true);
                                                                                                                 
     if (! $rs = $db->Execute($insertSQL)) {
         return false;
