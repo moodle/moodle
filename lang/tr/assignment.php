@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // assignment.php - created with Moodle 1.4.4 (2004083140)
 
 
 $string['allowresubmit'] = 'Tekrar göndermeye izin ver';
@@ -8,7 +8,7 @@ $string['assignmentmail'] = '$a->teacher, \'$a->assignment\' isimli ödeviniz içi
 
 $a->url';
 $string['assignmentmailhtml'] = '$a->teacher, \'<i>$a->assignment</i>\' isimli ödeviniz için geribildirim verdi.
-<br /><br />
+<br/><br/>
 <a href=\"$a->url\">Ayrýntýlar</a>.';
 $string['assignmentname'] = 'Ödev adý';
 $string['assignmenttype'] = 'Ödev türü';

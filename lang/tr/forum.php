@@ -1,24 +1,25 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // forum.php - created with Moodle 1.4.4 (2004083140)
 
 
 $string['addanewdiscussion'] = 'Yeni tartýþma konusu ekle';
 $string['addanewtopic'] = 'Yeni konu ekle';
 $string['allowchoice'] = 'Herkesin seçmesine izin ver';
 $string['allowdiscussions'] = 'Bir $a bu foruma yazabilir mi?';
-$string['allowratings'] = 'Mesajlarýn oranlanmasýna izin ver?';
-$string['allowsdiscussions'] = 'Bu forum her kiþinin bir tartýþma konusu baþlatmasýna izin verir.';
+$string['allowratings'] = 'Mesajlarýn puanlanmasýna izin ver?';
+$string['allowsdiscussions'] = 'Bu forum her bir kiþinin bir tartýþma konusu baþlatmasýna izin verir.';
 $string['anyfile'] = 'Herhangi bir dosya';
 $string['attachment'] = 'Ek';
 $string['bynameondate'] = 'yazan $a->name - $a->date';
 $string['couldnotadd'] = 'Bilinmeyen bir nedenle mesajýnýz eklenemedi';
-$string['couldnotdeleteratings'] = 'Bir kullanýcý bunu oranladýðý için silinemez';
+$string['couldnotdeleteratings'] = 'Bir kullanýcý bunu puanladýðý için silinemez';
 $string['couldnotdeletereplies'] = 'Bir kullanýcý bunu yanýtladýðý için silinemez';
 $string['couldnotupdate'] = 'Bilinmeyen bir nedenle mesajýnýz güncellenemedi';
 $string['delete'] = 'Sil';
 $string['deleteddiscussion'] = 'Bu tartýþma konusu silindi';
 $string['deletedpost'] = 'Bu mesaj silindi';
 $string['deletesure'] = 'Bu mesajý silmek istediðinizden emin misiniz?';
+$string['digestmailheader'] = 'Bu sizin $a->sitename forumlarýndan gelen yeni mesajlarýn günlük özetidir. Forum email seçeneklerini deðiþtirmek için, bu adrese gidin: $a->userprefs.';
 $string['digestmailprefs'] = 'kullanýcý profiliniz';
 $string['digestmailsubject'] = '$a: forum özeti';
 $string['digestsentusers'] = 'Email özetleri baþarýyla $a kullanýcýsýna gönderildi.';
@@ -27,13 +28,13 @@ $string['discussionmoved'] = 'Bu tartýþma \'$a\'a taþýndý.';
 $string['discussionname'] = 'Tartýþma adý';
 $string['discussions'] = 'Tartýþmalar';
 $string['discussionsstartedby'] = '$a tarafýndan baþlatýlan tartýþmalar';
-$string['discussionsstartedbyrecent'] = '$a tarafýndan yeni baþlatýlan tartýþmalar';
+$string['discussionsstartedbyrecent'] = '$a tarafýndan yakýnda baþlatýlan tartýþmalar';
 $string['discussthistopic'] = 'Bu konuyu tartýþ';
 $string['eachuserforum'] = 'Bu tartýþmaya herkes tek mesaj gönderebilir';
 $string['edit'] = 'Düzelt';
 $string['editing'] = 'Düzenleme';
 $string['emptymessage'] = 'Mesajýnýzda bir sorun var.  Muhtemelen metin yazmadýnýz yada ekiniz çok büyük.  Deðiþiklikleriniz KAYDEDÝLMEDÝ.';
-$string['everyonecanchoose'] = 'Bu foruma herkes abone olmalý';
+$string['everyonecanchoose'] = 'Bu foruma herkes abone olabilir';
 $string['everyoneissubscribed'] = 'Bu foruma herkes abone oldu';
 $string['existingsubscribers'] = 'Kayýtlý aboneler';
 $string['forcesubscribe'] = 'Herkesi abone olmaya zorunlu tut';
@@ -47,10 +48,10 @@ $string['generalforum'] = 'Genel amaçlý standard forum';
 $string['generalforums'] = 'Genel forumlar';
 $string['inforum'] = '$a\'de';
 $string['intronews'] = 'Genel haberler ve duyurular';
-$string['introsocial'] = 'Ýstediðiniz herhangi bir konuda konuþabileceðiniz açýk forum';
-$string['introteacher'] = 'Sadece eðitmenler için not ve tartýþma forumu';
+$string['introsocial'] = 'Ýstediðiniz herhangi bir konuda tartýþabileceðiniz açýk forum';
+$string['introteacher'] = 'Eðitmenler için sadece not ve tartýþma forumu';
 $string['lastpost'] = 'Son mesaj';
-$string['learningforums'] = 'Öðretim forumlarý';
+$string['learningforums'] = 'Öðrenme forumlarý';
 $string['markread'] = 'Okundu olarak iþaretle';
 $string['markunread'] = 'Okunmadý olarak iþaretle';
 $string['maxattachmentsize'] = 'En fazla dosya boyutu';
@@ -70,7 +71,7 @@ $string['nameteacher'] = 'Eðitmen forumu';
 $string['newforumposts'] = 'Yeni forum mesajý';
 $string['nodiscussions'] = 'Bu forumda henüz bir tartýþma konusu yoktur';
 $string['noguestpost'] = 'Ziyaretçiler mesaj gönderemezler';
-$string['nomorepostscontaining'] = '\'$a\' içeren baþka mesaj yok';
+$string['nomorepostscontaining'] = '\'$a\' içeren baþka mesaj bulunamadý';
 $string['nonews'] = 'Henüz haber gönderilmemiþ';
 $string['noposts'] = 'Mesaj yok';
 $string['nopostscontaining'] = 'Ýçinde \'$a\' olan bir mesaj bulunamadý';
@@ -83,11 +84,10 @@ $string['olderdiscussions'] = 'Eski tartýþmalar';
 $string['openmode0'] = 'Tartýþma ve yanýt yok';
 $string['openmode1'] = 'Tartýþma yok, yanýt verilebilir';
 $string['openmode2'] = 'Tartýþma açýlabilir ve yanýt verilebilir';
-$string['parent'] = 'Üstünü göster';
-$string['parentofthispost'] = 'Bu mesajýn üstü';
-$string['postadded'] = '<p>Mesajýnýz eklendi.</p>
-<p>$a mesajýnýzý deðiþtirebilirsiniz.</p>';
-$string['postincontext'] = 'Mesajý dizin içinde görün';
+$string['parent'] = 'Bir üst forumu göster';
+$string['parentofthispost'] = 'Bu mesajýn bir üstü';
+$string['postadded'] = 'Mesajýnýz baþarýyla eklendi.<P>Herhangi bir deðiþiklik yapmak için $a süreniz var.';
+$string['postincontext'] = 'Mesajý konu içinde görün';
 $string['postmailinfo'] = 'Bu metin $a websitesinde gönderilmiþ mesajýn bir kopyasýdýr.
 Websitesi aracýlýðýyla yanýtlamak için bu baðlantýyý týklayýnýz:';
 $string['postrating1'] = 'Çoðunlukla AYRI bilgiler gösteriliyor';

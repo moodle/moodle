@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // resource.php - created with Moodle 1.4.3 + (2004083132)
 
 
 $string['addresource'] = 'Kaynak ekle';
@@ -35,7 +35,7 @@ $string['newwindow'] = 'Yeni pencere';
 $string['newwindowopen'] = 'Bu kaynaðý yeni bir pencerede aç';
 $string['note'] = 'Not';
 $string['notefile'] = 'Bu listede görülecek daha çok dosya yüklemek için 
-<a href=\"$a\">Dosya Yöneticisini</a> kullanýnýz.';
+<A HREF=\"$a\">Dosya Yöneticisini</A> kullanýnýz.';
 $string['notypechosen'] = 'Bir tür seçmelisiniz. Geri düðmesini kullanarak tekrar deneyiniz.';
 $string['pagedisplay'] = 'Bu kaynaðý þu anki pencerede göster';
 $string['pagewindow'] = 'Ayný pencere';

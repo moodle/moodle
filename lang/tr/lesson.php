@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // lesson.php - created with Moodle 1.4.4 (2004083140)
 
 
 $string['accesscontrol'] = 'Eriþim Kontrolü';
@@ -87,8 +87,8 @@ $string['hightime'] = 'Kesin Süre';
 $string['importquestions'] = 'Soru Yükle';
 $string['jump'] = 'Geç';
 $string['jumptsto'] = 'þuraya git';
-$string['leftduringtimed'] = 'Zamanlý bir dersin süresini aþtýnýz.<br />Dersi tekrar baþlatmak için Devam Et butonuna týklayýn.';
-$string['leftduringtimednoretake'] = 'Zamanlý bir dersin süresini aþtýnýz.<br /> Dersi tekrar alamaz veya derse devam edemezsiniz.';
+$string['leftduringtimed'] = 'Zamanlý bir dersin süresini aþtýnýz.<br/>Dersi tekrar baþlatmak için Devam Et butonuna týklayýn.';
+$string['leftduringtimednoretake'] = 'Zamanlý bir dersin süresini aþtýnýz.<br/> Dersi tekrar alamaz veya derse devam edemezsiniz.';
 $string['lesson'] = '$a Dersi';
 $string['lessonclosed'] = 'Bu ders $a tarihinde kapandý.';
 $string['lessondefault'] = 'Bu dersin ayarlarýný varsayýlan olarak kullan';
@@ -208,7 +208,7 @@ $string['wronganswerscore'] = 'Yanlýþ cevap sayýsý';
 $string['wrongresponse'] = 'Yanlýþ cevap';
 $string['youhavereceived'] = 'Bu sýnav sorusu için $a->outof üzerinden $a-score aldýnýz.';
 $string['youhaveseen'] = 'Zaten bu dersin birden fazla sayfasini gördünüz.
-<br /> Kaldýðýnýz sayfadan devam etmek istermisiniz.';
+<br/> Kaldýðýnýz sayfadan devam etmek istermisiniz.';
 $string['youmadehighscore'] = 'Yüksek notlar lsitesinde $a. oldunuz.';
 $string['youranswer'] = 'Cevabýnýz';
 $string['yourcurrentgradeis'] = 'Þu anki notunuz $a dýr';
