@@ -49,57 +49,36 @@
     $strsearch = get_string("search");
     
     print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
-        "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> <A HREF=view.php?id=$cm->id>$glossary->name</a> -> " . get_string("comments","glossary"),
+        "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> <A HREF=view.php?id=$cm->id>$glossary->name</a> -> $entry->concept",
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
     
-    print_heading($glossary->name);
+/// original glossary entry
 
-/// Info boxes
-
-    if ( $glossary->intro ) {
-	    print_simple_box_start("center","70%");
-        echo '<p>';
-        echo $glossary->intro;
-        echo '</p>';
-        print_simple_box_end();
-    }
-
-    echo "<p align=center>";
-    echo "<table class=\"generalbox\" width=\"70%\" align=\"center\" border=\"0\" cellpadding=\"5\" cellspacing=\"0\">";
-	echo "<tr bgcolor=$THEME->cellheading2><td align=center>";
-	    echo "<table border=0 width=100%><tr><td width=33%></td><td width=33% align=center>";
-	    echo get_string("commentson","glossary") . ' <b>' . glossary_print_entry_concept($entry) . '</b></td>';
-	    echo "<td width=33% align=right>";	
-        if ( $glossary->allowcomments ) {	
-            echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id\"><img  alt=\"" . get_string("addcomment","glossary") . "\" src=\"comment.gif\" height=11 width=11 border=0></a> ";
-        }
-	    echo "</td></tr></table>";
-			
-	echo "</td></tr>";
-    echo "<tr><TD WIDTH=100% BGCOLOR=\"#FFFFFF\">";
-    if ($entry->attachment) {
-          $entry->course = $course->id;
-          echo "<table border=0 align=right><tr><td>";
-          echo glossary_print_attachments($entry,"html");
-          echo "</td></tr></table>";
-    }
-    echo "<b>$entry->concept</b>: ";
-    glossary_print_entry_definition($entry);
-    echo "</td>";
-    echo "</TR></table>";
+    echo "<center>";
+    glossary_print_entry($course, $cm, $glossary, $entry, "", "", false);
+    echo "</center>";
 
 /// comments
-    $comments = get_records("glossary_comments","entryid",$entry->id,"timemodified ASC");
-    if ( !$comments ) {
-        echo "<p align=center><strong>" .  get_string("nocomments","glossary") . "</string>";
-    } else {
+
+    $strheading = get_string('commentson','glossary')." <b>\"$entry->concept\"</b>";
+    if ($glossary->allowcomments) {	
+        $strheading .= "&nbsp;&nbsp;<a href=\"comment.php?id=$cm->id&eid=$entry->id\"><img title=\"" . get_string("addcomment","glossary") . "\" src=\"comment.gif\" height=11 width=11 border=0></a> ";
+    }
+
+    print_heading($strheading);
+
+    if ($comments = get_records("glossary_comments","entryid",$entry->id,"timemodified ASC")) {
         foreach ($comments as $comment) {
-		    echo "<p align=center>";
 		    glossary_print_comment($course, $cm, $glossary, $entry, $comment);
+            echo '<br />';
         }
+    } else {
+        print_heading(get_string("nocomments","glossary"));
     }
 
 /// Finish the page
+
     print_footer($course);
+
 ?>

@@ -1418,35 +1418,33 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
 
     $user = get_record("user", "id", $comment->userid);
     $strby = get_string("writtenby","glossary");
-
-    echo '<table border="0" width="70%" cellpadding="3" cellspacing="0" class="forumpost">';
-    echo "<tr>";
-
     $fullname = fullname($user, isteacher($course->id));
 
+    echo '<table align="center" border="0" width="70%" cellpadding="3" cellspacing="0" class="forumpost">';
+    echo "<tr>";
+    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
+    print_user_picture($user->id, $course->id, $user->picture);
+    echo "</td>";
     echo "<td bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\" width=\"100%\">";
     echo "<p>";
-    print_user_picture($user->id, $course->id, $user->picture);
-    echo "<font size=3>&nbsp;<b>$fullname</b></font><br \>";
-    echo "<FONT SIZE=1>&nbsp;&nbsp;&nbsp;(".get_string("lastedited").": ".userdate($comment->timemodified).")</FONT></small>";
-    echo "<font size=2>";
+    echo "<font size=2><a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$fullname</a></font><br \>";
+    echo "<font size=1>".get_string("lastedited").": ".userdate($comment->timemodified)."</font>";
+    echo "</p></td></tr>";
 
-
-    echo "</font></p></td></tr>";
-    echo "<tr><td bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">\n";
+    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostside\" width=\"10\">";
+    echo "&nbsp;";
+    echo "</td><td bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">\n";
 
     echo format_text($comment->comment, $comment->format);
 
-    echo "<p align=right><font size=-1>";
-
-    echo "</p>";
-
     echo "<div align=right><p align=right>";
     if ( (time() - $comment->timemodified <  $CFG->maxeditingtime and $USER->id == $comment->userid)  or isteacher($course->id) ) {
-        echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=edit\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a> ";
+        echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=edit\"><img  
+               alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a> ";
     }
     if ( $USER->id == $comment->userid or isteacher($course->id) ) {
-        echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=delete\"><img  alt=\"" . get_string("delete") . "\" src=\"../../pix/t/delete.gif\" height=11 width=11 border=0></a>";
+        echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=delete\"><img  
+               alt=\"" . get_string("delete") . "\" src=\"../../pix/t/delete.gif\" height=11 width=11 border=0></a>";
     }
     
     echo "</p>";
