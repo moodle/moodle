@@ -652,32 +652,37 @@
 		/// CDC-FLAG ///
 
 		/// CDC-FLAG /// 6/14/04 -- This is the code updates the lesson time for a timed test
+		// get time information for this user
+		if (!isteacher($course->id)) {
+			if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
+				error('Error: could not find records');
+			} else {
+				$timer = array_pop($timer); // this will get the latest start time record
+			}
+		}
 		$outoftime = false;
 		if($lesson->timed) {
 			if(isteacher($course->id)) {
 				echo "<p align=\"center\">".get_string("teachertimerwarning", "lesson")."</p>";
 			} else {
-				if (!$timer = get_record("lesson_timer", "lessonid", $lesson->id, "userid", $USER->id)) {
-					error("Error: could not find record");
-				}
 				if ((($timer->starttime + $lesson->maxtime * 60) - time()) > 0) {
 					// code for the clock
-						print_simple_box_start("right", "150px", "#ffffff", 0);
-                        echo "<table border=\"0\" valign=\"top\" align=\"center\" class=\"generaltable\" width=\"100%\" cellspacing=\"0\">".
-							"<tr><th valign=\"top\" class=\"generaltableheader\">".get_string("timeremaining", "lesson").
-							"</th></tr><tr><td align=\"center\" class=\"generaltablecell\">";
-                        echo "<script language=\"javascript\">\n";
-                            echo "var starttime = ". $timer->starttime . ";\n";
-                            echo "var servertime = ". time() . ";\n";
-                            echo "var testlength = ". $lesson->maxtime * 60 .";\n";
-                            echo "document.write('<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"timer.js\"><\/SCRIPT>');\n";
-                            echo "window.onload = function () { show_clock(); }\n";
-                        echo "</script>\n";
-                        echo "</td></tr></table>";
-						print_simple_box_end();
-						echo "<br /><br /><br /><br />";
+					print_simple_box_start("right", "150px", "#ffffff", 0);
+					echo "<table border=\"0\" valign=\"top\" align=\"center\" class=\"generaltable\" width=\"100%\" cellspacing=\"0\">".
+						"<tr><th valign=\"top\" class=\"generaltableheader\">".get_string("timeremaining", "lesson").
+						"</th></tr><tr><td align=\"center\" class=\"generaltablecell\">";
+					echo "<script language=\"javascript\">\n";
+						echo "var starttime = ". $timer->starttime . ";\n";
+						echo "var servertime = ". time() . ";\n";
+						echo "var testlength = ". $lesson->maxtime * 60 .";\n";
+						echo "document.write('<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"timer.js\"><\/SCRIPT>');\n";
+						echo "window.onload = function () { show_clock(); }\n";
+					echo "</script>\n";
+					echo "</td></tr></table>";
+					print_simple_box_end();
+					echo "<br /><br /><br /><br />";
 				} else {
-						redirect("view.php?id=$cm->id&action=navigation&pageid=".LESSON_EOL."&outoftime=normal", get_string("outoftime", "lesson"));
+					redirect("view.php?id=$cm->id&action=navigation&pageid=".LESSON_EOL."&outoftime=normal", get_string("outoftime", "lesson"));
 				}
 				if ((($timer->starttime + $lesson->maxtime * 60) - time()) < 60 && !((($timer->starttime + $lesson->maxtime * 60) - time()) < 0)) {
 					echo "<p align=\"center\">".get_string("studentoneminwarning", "lesson")."</p>";
@@ -685,13 +690,13 @@
 					echo "<p align=\"center\">".get_string("studentoutoftime", "lesson")."</p>";
 					$outoftime = true;
 				}
-				$newtime = new stdClass;
-				$newtime->id = $timer->id;
-				$newtime->lessontime = time();
-				
-				if (!update_record("lesson_timer", $newtime)) {
-					error("Error: could not update lesson_timer table");
-				}
+			}
+		}
+		// update the clock
+		if (!isteacher($course->id)) {
+			$timer->lessontime = time();
+			if (!update_record("lesson_timer", $timer)) {
+				error("Error: could not update lesson_timer table");
 			}
 		}
 		/// CDC-FLAG ///			
