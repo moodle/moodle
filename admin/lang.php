@@ -35,11 +35,17 @@
             break;
     }
 
+    if ($USER->lang) {
+        $currentlang = $USER->lang;
+    } else {
+        $currentlang = $CFG->lang;
+    }
+
     print_header("$site->fullname: $title", "$site->fullname",
                  "<A HREF=\"index.php\">$stradministration</A> -> $navigation");
 
     if (!$mode) {
-        print_heading("$strcurrentlanguage: $USER->lang - ".get_string("thislanguage"));
+        print_heading("$strcurrentlanguage: $currentlang - ".get_string("thislanguage"));
         print_heading("<A HREF=\"lang.php?mode=missing\">$strmissingstrings</A>");
         print_heading("<A HREF=\"lang.php?mode=compare\">$strcomparelanguage</A>");
         print_footer();
@@ -48,7 +54,7 @@
 
     // Get a list of all the root files in the English directory
 
-    $langdir = "$CFG->dirroot/lang/$USER->lang";
+    $langdir = "$CFG->dirroot/lang/$currentlang";
     $enlangdir = "$CFG->dirroot/lang/en";
 
     if (! $stringfiles = get_directory_list($enlangdir, "", false)) {
