@@ -8,24 +8,12 @@
 // The script can either be invoked via the web server or via a standalone
 // version of PHP compiled for CGI.
 //
-// The script does not require a valid Moodle login, but has it's own unique
-// password, set in ../config.php.  This is passed to this script as a parameter.
-// 
-// eg   wget -q -O /dev/null 'http://moodle.dougiamas.net/admin/cron.php?p=password'
-// or   php /web/moodle/admin/cron.php password
+// eg   wget -q -O /dev/null 'http://moodle.dougiamas.net/admin/cron.php'
+// or   php /web/moodle/admin/cron.php 
 
     require("../config.php");
 
     echo "<PRE>\n";
-
-    if (!isset($p)) {
-        $p = $GLOBALS[argv][1];
-    }
-
-    if ($p <> $CFG->cronpassword) {
-        echo "Error: bad password.\n";
-        die;
-    }
 
     $timenow  = time();
 
