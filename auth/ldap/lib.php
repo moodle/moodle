@@ -12,6 +12,10 @@ function auth_user_login ($username, $password) {
 /// and false if they don't
 
     global $CFG;
+
+    if (!$username or !$password) {    // Don't allow blank usernames or passwords
+        return false;
+    }
  
     $ldap_connection = auth_ldap_connect();
 
@@ -21,20 +25,21 @@ function auth_user_login ($username, $password) {
       
         //if ldap_user_dn is empty, user does not exist
         if(!$ldap_user_dn){
+            ldap_close($ldap_connection);
             return false;
         }
 
         // Try to bind with current username and password
         $ldap_login = @ldap_bind($ldap_connection, $ldap_user_dn, $password);
+        ldap_close($ldap_connection);
         if ($ldap_login) {
-            ldap_close($ldap_connection);
             return true;
         }
     } else {
         @ldap_close($ldap_connection);
         error("LDAP-module cannot connect to server: $CFG->ldap_host_url");
-        return false ;
     }
+    return false;
 }
 
 
