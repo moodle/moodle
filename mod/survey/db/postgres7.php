@@ -24,6 +24,14 @@ function survey_upgrade($oldversion) {
         modify_database("", "INSERT INTO prefix_log_display VALUES ('survey', 'update', 'survey', 'name');");
     }
 
+    if ($oldversion < 2004060401) { 
+        modify_database('','CREATE INDEX prefix_survey_course_idx ON prefix_survey (course);');
+        modify_database('','CREATE INDEX prefix_survey_analysis_survey_idx ON prefix_survey_analysis (survey);');
+        modify_database('','CREATE INDEX prefix_survey_analysis_userid_idx ON prefix_survey_analysis (userid);');
+        modify_database('','CREATE INDEX prefix_survey_answers_userid_idx ON prefix_survey_answers (userid);');
+        modify_database('','CREATE INDEX prefix_survey_answers_survey_idx ON prefix_survey_answers (survey);');
+        modify_database('','CREATE INDEX prefix_survey_answers_question_idx ON prefix_survey_answers (question);');
+    }
     return true;
 }
 

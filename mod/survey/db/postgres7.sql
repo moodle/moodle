@@ -26,6 +26,8 @@ CREATE TABLE prefix_survey (
   questions varchar(255) default NULL
 );
 
+CREATE INDEX prefix_survey_course_idx ON prefix_survey (course);
+
 #
 # Dumping data for table survey
 #
@@ -49,6 +51,9 @@ CREATE TABLE prefix_survey_analysis (
   notes text NOT NULL default ''
 );
 
+CREATE INDEX prefix_survey_analysis_survey_idx ON prefix_survey_analysis (survey);
+CREATE INDEX prefix_survey_analysis_userid_idx ON prefix_survey_analysis (userid);
+
 #
 # Dumping data for table survey_analysis
 #
@@ -68,6 +73,10 @@ CREATE TABLE prefix_survey_answers (
   answer1 text default NULL,
   answer2 text default NULL
 );
+
+CREATE INDEX prefix_survey_answers_userid_idx ON prefix_survey_answers (userid);
+CREATE INDEX prefix_survey_answers_survey_idx ON prefix_survey_answers (survey);
+CREATE INDEX prefix_survey_answers_question_idx ON prefix_survey_answers (question);
 
 #
 # Dumping data for table survey_answers

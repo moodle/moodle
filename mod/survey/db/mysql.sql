@@ -24,7 +24,8 @@ CREATE TABLE prefix_survey (
   name varchar(255) NOT NULL default '',
   intro text,
   questions varchar(255) default NULL,
-  PRIMARY KEY  (id)
+  PRIMARY KEY  (id), 
+  KEY `course` (`course`)
 ) TYPE=MyISAM COMMENT='all surveys';
 
 #
@@ -49,7 +50,9 @@ CREATE TABLE prefix_survey_analysis (
   userid int(10) unsigned NOT NULL default '0',
   notes text NOT NULL,
   PRIMARY KEY  (id),
-  UNIQUE KEY id (id)
+  UNIQUE KEY id (id),
+  KEY survey (survey),
+  KEY userid (userid)
 ) TYPE=MyISAM;
 
 #
@@ -71,7 +74,10 @@ CREATE TABLE prefix_survey_answers (
   answer1 text default NULL,
   answer2 text default NULL,
   PRIMARY KEY  (id),
-  UNIQUE KEY id (id)
+  UNIQUE KEY id (id),
+  KEY userid (userid),
+  KEY survey (survey),
+  KEY question (question)
 ) TYPE=MyISAM;
 
 #
