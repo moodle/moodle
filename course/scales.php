@@ -432,7 +432,7 @@
                 $data[] = $line;
             }
             $line = array();
-            $line[] = "<a target=\"scale\" title=\"$scale->name\" href=\"$CFG->wwwroot/course/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=details\" "."onClick=\"return openpopup('/course/scales.php?id=$course->id\&amp;scaleid=$scale->id&amp;action=details', 'scale', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">".$scale->name."</a><br /><font size=\"-1\">".str_replace(",",", ",$scale->scale)."</font>";
+            $line[] = "<a target=\"scale\" title=\"$scale->name\" href=\"$CFG->wwwroot/course/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=details\" "."onclick=\"return openpopup('/course/scales.php?id=$course->id\&amp;scaleid=$scale->id&amp;action=details', 'scale', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">".$scale->name."</a><br /><font size=\"-1\">".str_replace(",",", ",$scale->scale)."</font>";
             if (!empty($scale->courseid)) {
                 $scales_uses = course_scale_used($course->id,$scale->id);
             } else {
