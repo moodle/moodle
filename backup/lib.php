@@ -173,6 +173,20 @@
 
         return $info; 
     }
-
-
+   
+    //Delete old data in backup tables (if exists)
+    //Two days seems to be apropiate
+    function backup_delete_old_data() {
+        //Change this if you want !!
+        $days = 2;
+        //End change this
+        $seconds = days * 24 * 60 * 60;
+        $delete_from = time()-$seconds;
+        //Now delete from tables
+        $status = execute_sql("DELETE FROM {$CFG->prefix}backup_ids b
+                               WHERE b.backup_code < '$delete_from'",false);
+        $status = execute_sql("DELETE FROM {$CFG->prefix}backup_files b
+                               WHERE b.backup_code < '$delete_from'",false);
+        return($status);
+    }
 ?>
