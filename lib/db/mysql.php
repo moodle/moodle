@@ -859,6 +859,9 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2004091900) { // modify idnumber to hold longer values
         table_column('user', 'idnumber', 'idnumber', 'varchar', '64', '', '', '', '');
+        execute_sql("ALTER TABLE {$CFG->prefix}user DROP INDEX user_idnumber",false); // added in case of conflicts with upgrade from 14stable
+        execute_sql("ALTER TABLE {$CFG->prefix}user DROP INDEX user_auth",false); // added in case of conflicts with upgrade from 14stable
+
         execute_sql("ALTER TABLE {$CFG->prefix}user ADD INDEX idnumber (idnumber)");
         execute_sql("ALTER TABLE {$CFG->prefix}user ADD INDEX auth (auth)");
     }
@@ -879,6 +882,64 @@ function main_upgrade($oldversion=0) {
         execute_sql("UPDATE {$CFG->prefix}course SET lang = 'mi_nt' WHERE lang = 'ma_nt'");
     }
 
+    if ($oldversion < 2004111700) { // add indexes. - drop them first silently to avoid conflicts when upgrading.
+        execute_sql(" ALTER TABLE `{$CFG->prefix}course` DROP INDEX idnumber;",false);
+        execute_sql(" ALTER TABLE `{$CFG->prefix}course` DROP INDEX shortname;",false);
+        execute_sql(" ALTER TABLE `{$CFG->prefix}user_students` DROP INDEX userid;",false);
+        execute_sql(" ALTER TABLE `{$CFG->prefix}user_teachers` DROP INDEX userid;",false);
+
+        execute_sql(" ALTER TABLE `{$CFG->prefix}course` ADD INDEX idnumber (idnumber);");
+        execute_sql(" ALTER TABLE `{$CFG->prefix}course` ADD INDEX shortname (shortname);");
+        execute_sql(" ALTER TABLE `{$CFG->prefix}user_students` ADD INDEX userid (userid);");
+        execute_sql(" ALTER TABLE `{$CFG->prefix}user_teachers` ADD INDEX userid (userid);");
+    }
+
+    if ($oldversion < 2004111700) {// add an index to event for timestart and timeduration. - drop them first silently to avoid conflicts when upgrading.
+        execute_sql('ALTER TABLE prefix_event DROP INDEX timestart;',false);
+        execute_sql('ALTER TABLE prefix_event DROP INDEX timeduration;',false); 
+
+        modify_database('','ALTER TABLE prefix_event ADD INDEX timestart (timestart);');
+        modify_database('','ALTER TABLE prefix_event ADD INDEX timeduration (timeduration);');
+    }
+
+    if ($oldversion < 2004111700) { //add indexes on modules and course_modules. - drop them first silently to avoid conflicts when upgrading.
+        execute_sql('ALTER TABLE prefix_course_modules drop key visible;',false);
+        execute_sql('ALTER TABLE prefix_course_modules drop key course;',false);
+        execute_sql('ALTER TABLE prefix_course_modules drop key module;',false);
+        execute_sql('ALTER TABLE prefix_course_modules drop key instance;',false);
+        execute_sql('ALTER TABLE prefix_course_modules drop key deleted;',false);
+        execute_sql('ALTER TABLE prefix_modules drop key name;',false);
+
+        modify_database('','ALTER TABLE prefix_course_modules add key visible(visible);');
+        modify_database('','ALTER TABLE prefix_course_modules add key course(course);');
+        modify_database('','ALTER TABLE prefix_course_modules add key module(module);');
+        modify_database('','ALTER TABLE prefix_course_modules add key instance (instance);');
+        modify_database('','ALTER TABLE prefix_course_modules add key deleted (deleted);');
+        modify_database('','ALTER TABLE prefix_modules add key name(name);');
+    }
+
+    if ($oldversion < 2004111700) { // add an index on the groups_members table. - drop them first silently to avoid conflicts when upgrading.
+        execute_sql('ALTER TABLE prefix_groups_members DROP INDEX userid;',false);
+
+        modify_database('','ALTER TABLE prefix_groups_members ADD INDEX userid (userid);');
+    }
+
+    if ($oldversion < 2004111700) { // add an index on user students timeaccess (used for sorting)- drop them first silently to avoid conflicts when upgrading
+        execute_sql('ALTER TABLE prefix_user_students DROP INDEX timeaccess;',false);
+
+        modify_database('','ALTER TABLE prefix_user_students ADD INDEX timeaccess (timeaccess);');
+    }
+
+    if ($oldversion < 2004111700) {  // add indexes on faux-foreign keys. - drop them first silently to avoid conflicts when upgrading.
+        execute_sql('ALTER TABLE prefix_scale DROP INDEX courseid;',false);
+        execute_sql('ALTER TABLE prefix_user_admins DROP INDEX userid;',false);
+        execute_sql('ALTER TABLE prefix_user_coursecreators DROP INDEX userid;',false);
+
+        modify_database('','ALTER TABLE prefix_scale ADD INDEX courseid (courseid);');
+        modify_database('','ALTER TABLE prefix_user_admins ADD INDEX userid (userid);');
+        modify_database('','ALTER TABLE prefix_user_coursecreators ADD INDEX userid (userid);');
+    }
+    
     return $result;
 
 }

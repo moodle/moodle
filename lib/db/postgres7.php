@@ -594,6 +594,8 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2004091900) {  //Modify idnumber to hold longer keys 
         set_field('user', 'auth', 'manual', 'username', 'guest');
         table_column('user', 'idnumber', 'idnumber', 'varchar', '64', '', '', '', '');
+        execute_sql("DROP INDEX {$CFG->prefix}user_idnumber_idx ;",false);// added in case of conflicts with upgrade from 14stable
+        execute_sql("DROP INDEX {$CFG->prefix}user_auth_idx ;",false);// added in case of conflicts with upgrade from 14stable
         execute_sql("CREATE INDEX {$CFG->prefix}user_idnumber_idx ON {$CFG->prefix}user (idnumber)"); 
         execute_sql("CREATE INDEX {$CFG->prefix}user_auth_idx ON {$CFG->prefix}user (auth)"); 
     }
@@ -617,9 +619,69 @@ function main_upgrade($oldversion=0) {
         execute_sql("UPDATE {$CFG->prefix}user SET lang = 'mi_nt' WHERE lang = 'ma_nt'");
         execute_sql("UPDATE {$CFG->prefix}course SET lang = 'mi_nt' WHERE lang = 'ma_nt'");
     }
-    
-    return $result;
 
+    if ($oldversion < 2004111700) { // add indexes- drop them first silently to avoid conflicts when upgrading.
+        execute_sql("DROP INDEX {$CFG->prefix}course_idnumber_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}course_shortname_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}user_students_userid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}user_teachers_userid_idx;",false);
+
+        modify_database("","CREATE INDEX {$CFG->prefix}course_idnumber_idx ON {$CFG->prefix}course (idnumber);" );
+        modify_database("","CREATE INDEX {$CFG->prefix}course_shortname_idx ON {$CFG->prefix}course (shortname);" );
+        modify_database("","CREATE INDEX {$CFG->prefix}user_students_userid_idx ON {$CFG->prefix}user_students (userid);");
+        modify_database("","CREATE INDEX {$CFG->prefix}user_teachers_userid_idx ON {$CFG->prefix}user_teachers (userid);");
+    }
+ 
+    if ($oldversion < 2004111700) { // add an index to event for timestart and timeduration- drop them first silently to avoid conflicts when upgrading.
+        execute_sql('DROP INDEX prefix_event_timestart_idx;',false);
+        execute_sql('DROP INDEX prefix_event_timeduration_idx;',false);
+
+        modify_database('','CREATE INDEX prefix_event_timestart_idx ON prefix_event (timestart);');
+        modify_database('','CREATE INDEX prefix_event_timeduration_idx ON prefix_event (timeduration);');
+    }
+
+    if ($oldversion < 2004117000) { // add an index on the groups_members table- drop them first silently to avoid conflicts when upgrading.
+        execute_sql('CREATE INDEX prefix_groups_members_userid_idx;',false);
+
+        modify_database('','CREATE INDEX prefix_groups_members_userid_idx ON prefix_groups_members (userid);');
+    }
+    
+    if ($oldversion < 2004111700) { //add indexes on modules and course_modules- drop them first silently to avoid conflicts when upgrading.
+        execute_sql('DROP INDEX prefix_course_modules_visible_idx;',false);
+        execute_sql('DROP INDEX prefix_course_modules_course_idx;',false); 
+        execute_sql('DROP INDEX prefix_course_modules_module_idx;',false); 
+        execute_sql('DROP INDEX prefix_course_modules_instance_idx;',false);
+        execute_sql('DROP INDEX prefix_course_modules_deleted_idx;',false);
+        execute_sql('DROP INDEX prefix_modules_name_idx;',false);
+
+        modify_database('','CREATE INDEX prefix_course_modules_visible_idx ON prefix_course_modules (visible);');
+        modify_database('','CREATE INDEX prefix_course_modules_course_idx ON prefix_course_modules (course);');
+        modify_database('','CREATE INDEX prefix_course_modules_module_idx ON prefix_course_modules (module);');
+        modify_database('','CREATE INDEX prefix_course_modules_instance_idx ON prefix_course_modules (instance);');
+        modify_database('','CREATE INDEX prefix_course_modules_deleted_idx ON prefix_course_modules (deleted);');
+        modify_database('','CREATE INDEX prefix_modules_name_idx ON prefix_modules (name);');
+    }
+    
+    if ($oldversion < 2004111700) { // add an index on user students timeaccess (used for sorting)- drop them first silently to avoid conflicts when upgrading
+        execute_sql('DROP INDEX prefix_user_students_timeaccess_idx;',false);
+
+        modify_database('','CREATE INDEX prefix_user_students_timeaccess_idx ON prefix_user_students (timeaccess);');
+    }
+    
+    if ($oldversion < 2004111700) { //add indexes on faux foreign keys  - drop them first silently to avoid conflicts when upgrading.
+        execute_sql('DROP INDEX prefix_course_sections_coursesection_idx;',false);
+        execute_sql('DROP INDEX prefix_scale_courseid_idx;',false); 
+        execute_sql('DROP INDEX prefix_user_admins_userid_idx;',false);
+        execute_sql('DROP INDEX prefix_user_coursecreators_userid_idx;',false); 
+
+        modify_database('','CREATE INDEX prefix_course_sections_coursesection_idx ON prefix_course_sections (course,section);');
+        modify_database('','CREATE INDEX prefix_scale_courseid_idx ON prefix_scale (courseid);');
+        modify_database('','CREATE INDEX prefix_user_admins_userid_idx ON prefix_user_admins (userid);');
+        modify_database('','CREATE INDEX prefix_user_coursecreators_userid_idx ON prefix_user_coursecreators (userid);');
+    }
+   
+
+    return $result;
 }
 
 ?>
