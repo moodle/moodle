@@ -1929,6 +1929,21 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5) {
     choose_from_menu($minutes, $minute, $currentdate['minutes'], "");
 }
 
+function print_timer_selector($timelimit = 0) {
+/// Prints time limit value selector
+/// to add or edit quiz's time limit
+
+    global $CFG;
+
+    // Max timelimit is sessiontimeout - 10 minutes.
+    $maxvalue = ($CFG->sessiontimeout / 60) - 10;
+
+    for ($i=0; $i<=$maxvalue; $i++) {
+        $minutes[$i] = sprintf("%02d",$i);
+    }
+    choose_from_menu($minutes, "timelimit", $timelimit,"");
+}
+
 function print_grade_menu($courseid, $name, $current, $includenograde=true) {
 /// Prints a grade menu (as part of an existing form) with help
 /// Showing all possible numerical grades and scales
