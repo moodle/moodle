@@ -305,6 +305,7 @@ function forum_print_search_form($course, $search="") {
 
 
 function forum_count_discussion_replies($forum="0") {
+// Returns an array of counts of replies to each discussion (optionally in one forum)
     if ($forum) {
         $forumselect = " AND d.forum = '$forum'";
     }
@@ -312,6 +313,31 @@ function forum_count_discussion_replies($forum="0") {
                             FROM forum_posts p, forum_discussions d
                             WHERE p.parent > 0 AND p.discussion = d.id 
                             GROUP BY p.discussion");
+}
+
+function forum_count_unrated_posts($discussionid, $userid) {
+// How many unrated posts are in the given discussion for a given user?
+    if ($posts = get_record_sql("SELECT count(*) as num
+                                 FROM forum_posts
+                                 WHERE parent > 0 AND 
+                                       discussion = '$discussionid' AND 
+                                       user <> '$userid' ")) {
+
+        if ($rated = get_record_sql("SELECT count(*) as num 
+                                     FROM forum_posts p, forum_ratings r
+                                     WHERE p.id = r.post AND r.user = '$userid'")) {
+            $difference = $posts->num - $rated->num;
+            if ($difference > 0) {
+                return $difference;
+            } else {
+                return 0;    // Just in case there was a counting error
+            }
+        } else {
+            return $posts->num;
+        }
+    } else {
+        return 0;
+    }
 }
 
 
@@ -872,7 +898,15 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
 
     forum_print_mode_form($discussion->id, $mode);
 
+    $ratingform = false;
     if ($forum->assessed && $USER->id) {
+        $unrated = forum_count_unrated_posts($discussion->id, $USER->id);
+        if ($unrated > 0) {
+            $ratingform = true;
+        }
+    }
+
+    if ($ratingform) {
         echo "<FORM NAME=form METHOD=POST ACTION=rate.php>";
         echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
     }
@@ -882,20 +916,20 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
         case -1 :  // Flat descending
         default:   
             echo "<UL>";
-            forum_print_posts_flat($post->discussion, $course->id, $mode, $forum->assessed);
+            forum_print_posts_flat($post->discussion, $course->id, $mode, $ratingform);
             echo "</UL>";
             break;
 
         case 2 :   // Threaded 
-            forum_print_posts_threaded($post->id, $course->id, 0, $forum->assessed);
+            forum_print_posts_threaded($post->id, $course->id, 0, $ratingform);
             break;
 
         case 3 :   // Nested
-            forum_print_posts_nested($post->id, $course->id, $forum->assessed);
+            forum_print_posts_nested($post->id, $course->id, $ratingform);
             break;
     }
 
-    if ($forum->assessed && $USER->id) {
+    if ($ratingform) {
         echo "<CENTER><P ALIGN=center><INPUT TYPE=submit VALUE=\"".get_string("sendinratings", "forum")."\"></P></CENTER>";
         echo "</FORM>";
     }
