@@ -100,6 +100,7 @@ $string['correctanswerjump'] = "Correct Answer Jump";
 $string['correctanswerscore'] = "Correct Answer Score";
 $string['correctresponse'] = "Correct Response";
 $string['customscoring'] = "Custom Scoring";
+$string['deleteattempts'] = "Delete student attempts for this lesson (user id)";
 $string['displayhighscores'] = "Display High Scores";
 $string['displayinleftmenu'] = "Display in left menu?";
 $string['displayleftmenu'] = "Display Left Menu";
