@@ -72,6 +72,7 @@
                     if (isteacher($course->id)) {
                         $phase = '';
                         switch ($exercise->phase) {
+                            case 0:
                             case 1: $phase = get_string("phase1short", "exercise");
                                     break;
                             case 2: $phase = get_string("phase2short", "exercise");
