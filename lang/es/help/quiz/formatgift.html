@@ -1,0 +1,229 @@
+<p align=center><b>Importando archivos de formato "GIFT"</b></p>
+
+<p>GIFT es el formato disponible más completo para importar preguntas de
+   cuestionario a partir de un archivo de texto. Soporta opciones múltiples,
+   verdadero-falso, respuesta corta, juego de coincidencias y preguntas
+   numéricas, así como la inserción de _____ para el formato de completar. 
+	 Varios tipos de pregunta pueden mezclarse en un simple archivo
+   de texto, dado que este formato soporta líneas de comentario, nombres de
+   preguntas, respuesta automática al alumno y calificaciones por porcentajes de peso.</p>
+
+        <h3>TIPOS DE PREGUNTA</h3>
+
+        <p><u>Opción múltiple:</u><br />
+         En las preguntas de opción múltiple, las respuestas erróneas llevan una 
+				 tilde (~) como prefijo; las correctas, un signo de igual(=).</p>
+        <pre>     ¿Cuántos lados tiene un cuadrado?{~dos ~tres =cuatro}</pre>
+        <p>El formato <b>Completar</b> inserta automáticamente una línea en blanco 
+				para completar (como ésta:_____) en medio de la frase. Para usar el 
+				formato de Completar coloque la respuesta en el lugar en donde quiere que 
+				aparezca la línea de completar.</p>
+        <pre>     El cuadrado tiene {~tres =cuatro ~cinco} lados.</pre>
+        <p>Si la respuesta está antes del punto se insertará una línea para completar 
+				en el formato "Completar". En este formato se puede escribir todo tipo de preguntas.</p>
+        <p>Siempre debe haber una línea en blanco (un doble retorno de carro) separando 
+				las preguntas. Por una cuestión de claridad, las preguntas se pueden escribir 
+				en líneas separadas e incluso sangradas. Por ejemplo:</p>
+	<pre>     Colón descubrió América el 12 de {
+         ~Agosto
+         ~Septiembre
+         =Octubre
+         } de 1492.
+     
+     De qué país provienen originalmente los caracteres japoneses? {
+         ~India
+         =China
+         ~Corea
+         ~Egipto}</pre>
+
+        <p><u>Respuesta Corta:</u><br /> Las respuestas del tipo "Respuesta Corta" 
+				se prefijan siempre con un signo igual (=), indicando que son todas respuestas 
+				correctas. No debe haber respuestas con tilde.</p>
+        <pre>     ¿Quién es el mejor amigo del hombre?{=perro =can}
+
+     Dos mas dos es igual a {=cuatro =4}.</pre>
+        <p>Si hubiera sólo <u>una</u> Respuesta Corta correcta, Debería estar escrita 
+				sin el prefijo igual, de tal manera que no se pueda confundir con el tipo 
+				Verdadero-Falso.
+        <p><u>Verdadero-Falso:</u><br />
+            En este tipo de pregunta la respuesta indica si la frase es correcta 
+						o incorrecta. La respuesta debe ser descrita como {TRUE} o {FALSE}, o 
+						más brevemente {T} o {F}.</p>
+        <pre>     Colón descubrió África.{F}
+
+     El Sol nace por el Este.{T}</pre>
+
+        <p><u>Juego de Coincidencias:</u><br />
+        Las parejas coincidentes comienzan con un signo igual(=) y se separan con 
+				este símbolo: ->. Debe haber al menos tres parejas coincidentes.</p>
+
+	<pre>     Preguntas por Coincidencias. {
+         =subpregunta1 -> subrespuesta1
+         =subpregunta2 -> subrespuesta2
+         =subpregunta3 -> subrespuesta3
+         }
+     
+     Marque las capitales con sus correspondientes países. {
+         =Canadá -> Ottawa
+         =Italia  -> Roma
+         =Japón  -> Tokio
+         =India  -> Nueva Delhi
+         }</pre>
+<p>Las preguntas por coincidencias no aceptan respuestas automáticas al alumno 
+o pesos de respuestas por porcentajes.</p>
+         <p><u>Numéricas:</u><br 
+/>
+La sección de respuestas para las preguntas numéricas debe comenzar con el signo #. 
+	Las respuestas numéricas pueden incluir un margen de error, el cual estará 
+	escrito a continuación de la respuesta correcta, separada con dos puntos(:). Así, por 
+	ejemplo, si la respuesta correcta está entre 1,5 y 2,5, debería escribirse como sigue:
+ 	<u>{#2:0.5}</u>. Esto indica que 2, con un margen de error de 0,5 es una respuesta
+	 correcta.
+	(es decir, el margen va de 1,5 a 2,5). Si no se especifica ningún margen de 
+	error, se asume que es igual a cero.</p>
+        <pre>     ¿Cuándo se descubrió America? {#1492}
+
+     ¿Qué valor tiene Pi(con tres decimales de precisión)? 
+	{#3.1415:0.0005}.</pre>
+         <p>Opcionalmente, las respuestas numéricas pueden ser escritas como un 
+				 intervalo con el siguiente formato {<i>Valor mínimo</i>..<i>Valor máximo</i>}.</p>
+        <pre>     ¿Cuál es el valor de Pi(con tres decimales)? 
+	{#3.141..3.142}.</pre>
+        <p>La interfase del navegador del Moodle no acepta respuestas numéricas múltiples, 
+	pero sí el código interno del Moodle y el GIFT. Esto puede ser usado para especificar 
+	múltiples intervalos numéricos, y puede ser particularmente útil cuando se combina con 
+	calificaciones ponderadas porcentuales. Si se utilizan varias respuestas, deben estar 
+	separadas por un signo igual como las preguntas de respuesta corta.</p>
+        <pre>     ¿Cuándo se descubrió América? {#
+         =1492:0
+         =%50%1492:2}</pre>
+        <p>Observe que, dado que el GUI del navegador del Moodle no acepta 
+				múltiples respuestas para las preguntas numéricas, no hay manera de verlas 
+				o editarlas con el Moodle. La única manera de modificar una respuesta 
+				numérica desde el principio es borrar la pregunta y volver a importarla 
+				(o usar algo como el phpMyAdmin).</p>
+        <h3>OPCIONES</h3>
+        <p>Además de este tipo de preguntas básicas, este filtro ofrece las 
+				siguientes opciones: Líneas de comentario, nombre de pregunta, respuesta 
+				automática al alumno y peso de la pregunta porcentual.</p>
+        <p><u>Línea de Comentario:</u><br />
+        Los comentarios que no serán importados al Moodle pueden ser incluídos 
+				en el archivo de texto. Estas líneas pueden ser aprovechadas para proveer 
+				de encabezados o información adicional sobre las preguntas. Todas las 
+				líneas que comienzan con una doble barra inclinada("//", no cuentan los 
+				Tabs ni espacios) serán ignoradas por el filtro.
+	<pre>     // Sub-encabezado: Preguntas numéricas... 
+     ¿Cuánto es dos más dos?{#4}</pre>
+        <p><u>Nombre de la Pregunta:</u><br /> Un nombre de pregunta puede ser 
+				especificado poniéndolo en primer lugar y encerrándolo entre dobles signos 
+				de dos puntos <b>::</b> .
+     ::Orígenes del Kanji::De qué país provienen originalmente
+     los caracteres japoneses?{=China}
+
+     ::Día de Acción de Gracias::El día feriado en Estados Unidos en que 
+     se festeja el día de Acción de Gracias, es el {~segundo ~tercero =cuarto} 
+		 jueves de noviembre.</pre>
+     <p>Si no se especifica un nombre de pregunta, por defecto la pregunta entera 
+		 será tomada como nombre.</p>
+<p><u> Respuesta automática al alumno:</u><br /> Estas respuestas pueden ser incluídas 
+para cada respuesta del alumno, continuando esta respuesta con un signo #, también 
+conocida como un "Hash mark"), y la respuesta deseada.</p>
+<pre>     Cuál es la respuesta a estas opciones múltiples?{
+     ~Respuesta equivocada#Respuesta-comentario sobre la mala respuesta
+     ~Otra respuesta equivocada#Respuesta-comentario acerca de la mala respuesta
+     =Respuesta correcta#Muy bien!}
+     
+     ¿Quién descubrió América?{
+     =Colón#excelente respuesta!
+     =Cristóbal Colón#¡Excelente respuesta!}
+     
+     Napoleón descubrió América.{FALSE#¡No, bestia!.}</pre>
+
+<p>En las preguntas de opciones múltiples, la respuesta automática que se muestra 
+es sólo la que corresponde a la opción que marcó el alumno. En las preguntas 
+de respuesta corta la respuesta automática se muestra sólo cuando el alumno 
+ingresó la correspondiente respuesta correcta. En la preguntas tipo Verdadero-Falso, 
+la respuesta automática importada se guardará para mostrarla sólo cuando responda 
+incorrectamente. Así, en el último ejemplo de arriba, el estudiante vería la 
+respuesta automática sólo si seleccionó Verdadero.</p>
+
+<p><u>Pesos Porcentuales de Respuesta:</u><br />
+Los Pesos porcentuales de respuesta están disponibles tanto para las opciones 
+múltiples como para las preguntas de respuesta corta. Estos pesos pueden ser 
+incluídos a continuación de la tilde(en el caso de Opción Múltiple) o del signo 
+igual (para Respuesta Corta) con el porcentaje deseado de ponderación encerrado 
+entre signos de porcentaje (ej., %50%). Esta opción se puede combinar con 
+comentarios y respuestas automáticas.</p>
+<pre>     Pregunta Difícil.{~Respuesta equivocada ~%50%Respuesta 'a medias' =respuesta 
+correcta completa}
+          
+     ::El pueblo de Jesús::Jesús era del pueblo de{
+     ~Jerusalén#Esta era una ciudad importante, pero no es la respuesta correcta.
+     ~%25%Belén#Nació allí, pero no creció en ese pueblo.
+     ~%50%Galilea#Sea más específico.
+     =Nazaret#¡Correcto! ¡Eso es!}.
+     
+     ::El pueblo de Jesús:: Jesús era del pueblo de {
+     =Nazaret#¡Correcto! ¡Eso es!
+     =%75%Nazeret#Correcto, pero mal escrito.
+     =%25%Belén#Nació allí, pero no era de ese pueblo.}</pre>
+<p>Observe que los últimos dos ejemplos son esencialmente la misma pregunta, 
+la primera como una opción múltiple, la otra como una respuesta corta.</p>
+
+<p><font size="-1"> Observe que es posible asignar porcentajes de peso para las 
+respuestas correctas que no están disponibles mediante la interfase del navegador.  
+Tales 'pesos' o ponderaciones de cada respuesta se calcularán correctamente (de 
+acuerdo al valor asignado cuando se importaron), y parecerán normales a los 
+estudiantes que hagan el examen. Pero tales 'ponderaciones' no se mostrarán 
+correctamente a los profesores cuando se las esté editando mediante la interfase 
+del editor de preguntas del Moodle. El menú desplegable solamente permite ciertos 
+valores prefijados y, si la ponderación de la pregunta no coincide exactamente 
+con alguno de esos valores predeterminados, entonces éstos no se mostrarán 
+correctamente. Si se edita la pregunta en cuestión  mediante la interfase del 
+navegador, el valor del peso de la respuesta se cambiará al mostrado.</font></p>
+
+<p><u>Respuestas Múltiples:</u><br />
+La opción de Respuestas Múltiples se utiliza cuando en las preguntas de opción 
+múltiple se desea seleccionar dos o más respuestas para obtener el máximo puntaje 
+para esa pregunta. La opción de respuestas múltiples estará habilitada asignando 
+pesos parciales a múltiples respuestas, mientras que no se otorga a ninguna 
+respuesta el carácter de 'correcto'.</p>
+<pre>     ¿Qué valores puede asumir la raíz cuadrada de 4?{
+          ~cero
+          ~%50%2
+          ~%50%-2
+          ~séis }</pre>
+ <p>Observe que no hay ningún signo igual (=) en ninguna respuesta, y que éstas 
+ deben sumar en total no más de 100%; de lo contrario, Moodle devolverá un error. 
+ Para evitar que los estudiantes hagan trampa y obtengan el 100% haciendo clic 
+ en todas las respuestas, es preferible incluir pesos de respuesta negativos para 
+ las respuestas erróneas.</p>
+<pre>     Qué valores puede asumir la raíz cuadrada de 4?{
+          ~%-50%cero
+          ~%50%2
+          ~%50%-2
+          ~%-50%séis }</pre>
+
+        <p><u>Otras opciones:</u><br />
+        Otras opciones se encuentran disponibles editando directamente el filtro de 
+				importación en <b>gift/format.php</b>. 
+</p>
+<p>Las preguntas de respuesta corta pueden hacerse sensibles a las mayúsculas/minúsculas 
+cambiando de &quot;0&quot; a &quot;1&quot; en la siguiente línea:<br />
+        <tt>$question-&gt;usecase = 0;  // Ignora mayúsculas/minúsculas</tt></p>
+<p></p>
+<h3>SOLUCIÓN a PROBLEMAS</h3>
+<p>La codificación del texto del archivo debe ser la misma que la de la instalación 
+del Moodle. </p>
+<p>Un archivo de preguntas de ejemplo(en inglés) puede ser encontrado aquí: 
+<a href="../../../../mod/quiz/format/gift/examples.txt">gift/examples.txt</a>.</p> <p></p>
+<h3>CRÉDITOS</h3>
+ <p>Este filtro fue escrito gracias a la colaboración de muchos miembros de la 
+ comunidad Moodle, y estuvo originalmente basado en el formato de 'palabra perdida', 
+ sobre el cual se incluyó código de Martin Dougiamas, Thomas Robb y otros. Paul 
+ Tsuchido Shew escribió este filtro en diciembre del 2003 incorporando sugerencias 
+ de la comunidad para obtener un formato más robusto de preguntas. El nombre fue 
+ concebido como un acrónimo de &quot;General Import Format Technology&quot; 
+ ("Tecnología de Formato General de Importación") o algo por el estilo, pero era 
+ demasiado largo para un simple filtro como éste; por eso quedó simplemente: GIFT.</p>
+        <p><font size="-1">Documentación GIFT, por Paul Tsuchido Shew, 13 Ene 2004.</font></p>
