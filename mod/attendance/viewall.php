@@ -80,8 +80,8 @@ if ($attendances) {
 //
 
 if ($download == "xls") {
-    require_once("write_excel/Worksheet.php");
-    require_once("write_excel/Workbook.php");
+    require_once("$CFG->libdir/excel/Worksheet.php");
+    require_once("$CFG->libdir/excel/Workbook.php");
   // HTTP headers
   attendance_HeaderingExcel($course->shortname."_Attendance.xls");
   // Creating a workbook
