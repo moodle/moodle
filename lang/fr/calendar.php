@@ -51,11 +51,11 @@ $string['today'] = 'Aujourd\'hui';
 $string['tomorrow'] = 'Demain';
 $string['tt_deleteevent'] = 'Supprimer l\'événement';
 $string['tt_editevent'] = 'Modifier l\'événement';
-$string['tt_hidecourse'] = 'Événements du cours affichés (cliquer pour cacher)';
+$string['tt_hidecourse'] = 'Événements de cours affichés (cliquer pour cacher)';
 $string['tt_hideglobal'] = 'Événements globaux affichés (cliquer pour cacher)';
 $string['tt_hidegroups'] = 'Événements de groupe affichés (cliquer pour cacher)';
 $string['tt_hideuser'] = 'Événements de l\'utilisateur affichés (cliquer pour cacher)';
-$string['tt_showcourse'] = 'Événements du cours cachés (cliquer pour afficher)';
+$string['tt_showcourse'] = 'Événements de cours cachés (cliquer pour afficher)';
 $string['tt_showglobal'] = 'Événements globaux cachés (cliquer pour afficher)';
 $string['tt_showgroups'] = 'Événements de groupe cachés (cliquer pour afficher)';
 $string['tt_showuser'] = 'Événements de l\'utilisateur cachés (cliquer pour afficher)';
@@ -92,6 +92,6 @@ $string['august'] = 'Août';
 $string['september'] = 'Septembre';
 $string['october'] = 'Octobre';
 $string['november'] = 'Novembre';
-$string['december'] = 'Decembre';
+$string['december'] = 'Décembre';
 
 ?>
