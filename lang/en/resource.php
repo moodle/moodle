@@ -6,6 +6,7 @@ $string['modulenameplural'] = "Resources";
 #------------------------------------------------------------
 
 $string['addresource'] = "Add resource";
+$string['chooseafile'] = "Choose or upload a file";
 $string['configframesize'] = "When a web page or an uploaded file is displayed within a frame, this value is the size (in pixels) of the top frame (which contains the navigation).";
 $string['editingaresource'] = "Editing a resource";
 $string['example'] = "Example";
