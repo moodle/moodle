@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.5 dev (2002092300)
+      // assignment.php - created with Moodle 1.0.8 dev (2002121200)
 
 
 $string['allowresubmit'] = "Allow resubmitting";
@@ -10,6 +10,7 @@ $string['description'] = "Description";
 $string['duedate'] = "Due date";
 $string['early'] = "\$a early";
 $string['failedupdatefeedback'] = "Failed to update submission feedback for user \$a";
+$string['feedback'] = "Feedback";
 $string['feedbackupdated'] = "Submissions feedback updated for \$a people";
 $string['late'] = "\$a late";
 $string['maximumgrade'] = "Maximum grade";
@@ -19,6 +20,7 @@ $string['modulenameplural'] = "Assignments";
 $string['newsubmissions'] = "Assignments submitted";
 $string['notsubmittedyet'] = "Not submitted yet";
 $string['overwritewarning'] = "Warning: uploading again will REPLACE your current submission";
+$string['saveallfeedback'] = "Save all my feedback";
 $string['submissionfeedback'] = "Submission feedback";
 $string['submissions'] = "Submissions";
 $string['submitassignment'] = "Submit your assignment using this form";
