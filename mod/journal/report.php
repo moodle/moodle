@@ -43,6 +43,37 @@
                   <a href=\"index.php?id=$course->id\">$strjournals</a> ->
                   <a href=\"view.php?id=$cm->id\">$journal->name</a> -> $strentries", "", "", true);
 
+
+/// Check to see if groups are being used in this journal
+/// and if so, set $currentgroup to reflect the current group
+
+    $groupmode = groupmode($course, $cm);   // Groups are being used
+    $currentgroup = get_and_set_current_group($course, $groupmode, $_GET['group']);
+
+    if (!isteacheredit($course->id) and $groupmode and !$currentgroup) {
+        print_heading("Sorry, but you can't see this group");
+        print_footer();
+        exit;
+    }
+
+    if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
+        if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+            echo '<table align="center"><tr><td>';
+            if ($groupmode == VISIBLEGROUPS) {
+                print_string('groupsvisible');
+            } else {
+                print_string('groupsseparate');
+            }
+            echo ':';
+            echo '</td><td nowrap="nowrap" align="left" width="50%">';
+            popup_form("report.php?id=$cm->id&sort=$sort&dir=$dir&group=", 
+                       $groups, 'selectgroup', $currentgroup, "", "", "", false, "self");
+            echo '</tr></table>';
+        }
+    }
+
+
+/// Process incoming data if there is any
     if ($data = data_submitted()) {
        
         $feedback = array();
@@ -88,7 +119,13 @@
 
 /// Print out the journal entries
 
-    if (! $users = get_course_users($course->id)) {
+    if ($currentgroup) {
+        $users = get_course_students($course->id, "", "", 0, 99999, "", "", $currentgroup);
+    } else {
+        $users = get_course_students($course->id);
+    }
+
+    if (!$users) {
         print_heading(get_string("nousersyet"));
 
     } else {
@@ -96,10 +133,19 @@
         $grades = make_grades_menu($journal->assessed);
         $teachers = get_course_teachers($course->id);
 
-        echo "<form action=report.php method=post>\n";
+        $allowedtograde = ($groupmode != VISIBLEGROUPS or isteacheredit($course->id) or ismember($currentgroup));
+
+        if ($allowedtograde) {
+            echo '<form action="report.php" method="post">';
+        }
 
         if ($usersdone = journal_get_users_done($journal)) {
             foreach ($usersdone as $user) {
+                if ($currentgroup) {
+                    if (!ismember($currentgroup, $user->id)) {    /// Yes, it's inefficient, but this module will die
+                        continue;
+                    }
+                }
                 journal_print_user_entry($course, $user, $entrybyuser[$user->id], $teachers, $grades);
                 unset($users[$user->id]);
             }
@@ -109,12 +155,13 @@
             journal_print_user_entry($course, $user, NULL, $teachers, $grades);
         }
 
-        $strsaveallfeedback = get_string("saveallfeedback", "journal");
-        echo "<center>";
-        echo "<input type=hidden name=id value=\"$cm->id\">";
-        echo "<input type=submit value=\"$strsaveallfeedback\">";
-        echo "</center>";
-        echo "</form>";
+        if ($allowedtograde) {
+            echo "<center>";
+            echo "<input type=hidden name=id value=\"$cm->id\">";
+            echo "<input type=submit value=\"".get_string("saveallfeedback", "journal")."\">";
+            echo "</center>";
+            echo "</form>";
+        }
     }
     
     print_footer($course);
