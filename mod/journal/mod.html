@@ -9,7 +9,11 @@
         $form->assessed = "0";
     }
     if (!isset($form->days)) {
-        $form->days = "14";
+        if ($course->format == "weeks") {
+            $form->days = "7";
+        } else {
+            $form->days = "0";
+        }
     }
 ?>
 
