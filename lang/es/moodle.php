@@ -333,6 +333,7 @@ $string['files'] = 'Archivos';
 $string['filesfolders'] = 'Archivos/directorios';
 $string['filloutallfields'] = 'Por favor llene todos los campos de este formulario';
 $string['findmorecourses'] = 'Encontrar más cursos...';
+$string['firstdayofweek'] = '1'; //0-Sunday, 1-Monday,....6-Saturday
 $string['firstname'] = 'Nombre';
 $string['firsttime'] = 'Registrarse como alumno';
 $string['followingoptional'] = 'Los siguientes datos son opcionales';

@@ -350,6 +350,7 @@ $string['files'] = 'Files';
 $string['filesfolders'] = 'Files/folders';
 $string['filloutallfields'] = 'Please fill out all fields in this form';
 $string['findmorecourses'] = 'Find more courses...';
+$string['firstdayofweek'] = '0'; //0-Sunday, 1-Monday,....6-Saturday
 $string['firstname'] = 'Given name';
 $string['firsttime'] = 'Is this your first time here?';
 $string['followingoptional'] = 'The following items are optional';
