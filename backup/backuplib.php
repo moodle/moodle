@@ -549,6 +549,7 @@
         if ($users) {
             //Begin Users tag
             fwrite ($bf,start_tag("USERS",2,true));
+            $counter = 0;
             //With every user
             foreach ($users as $user) {
                 //Get user data from table
@@ -654,6 +655,15 @@
                 }
                 //End User tag
                 fwrite ($bf,end_tag("USER",3,true));
+                //Do some output
+                $counter++;
+                if ($counter % 10 == 0) {
+                    echo ".";   
+                    if ($counter % 200 == 0) {
+                        echo "<br>";
+                    }
+                    backup_flush(300);
+                }
             }
             //End Users tag
             fwrite ($bf,end_tag("USERS",2,true));
@@ -678,6 +688,7 @@
         if ($logs) {
             //Pring logs header
             fwrite ($bf,start_tag("LOGS",2,true));
+            $counter = 0;
             //Iterate 
             foreach ($logs as $log) {
                 //See if it is a valid module to backup
@@ -699,6 +710,15 @@
 
                     //End log tag
                      fwrite ($bf,end_tag("LOG",3,true));
+                }
+                //Do some output
+                $counter++;
+                if ($counter % 10 == 0) {
+                    echo ".";
+                    if ($counter % 200 == 0) {
+                        echo "<br>";
+                    }
+                    backup_flush(300);
                 }
             }
             //End logs tag

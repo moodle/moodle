@@ -124,6 +124,7 @@
         if ($questions) {
             //Write start tag
             $status =fwrite ($bf,start_tag("QUESTIONS",4,true));
+            $counter = 0;
             //Iterate over each question
             foreach ($questions as $question) {
                 //Start question
@@ -153,6 +154,15 @@
                 }
                 //End question
                 $status =fwrite ($bf,end_tag("QUESTION",5,true));
+                //Do some output
+                $counter++;
+                if ($counter % 10 == 0) {
+                    echo ".";            
+                    if ($counter % 200 == 0) {
+                        echo "<br>";
+                    }
+                    backup_flush(300);
+                }
             }
             //Write end tag
             $status =fwrite ($bf,end_tag("QUESTIONS",4,true));
