@@ -44,6 +44,9 @@
     if (!isset($backup_config->backup_sche_minute)) {
         $backup_config->backup_sche_minute = 00;
     }
+    if (!isset($backup_config->backup_sche_destination)) {
+        $backup_config->backup_sche_destination = "";
+    }
 
     //print_object($backup_config);                       //Debug
 
@@ -158,6 +161,11 @@
 <tr valign=top>
     <td colspan = 3 align=center>
         <?php print_string("executeat") ?>: <?php print_time_selector("backup_sche_hour","backup_sche_minute",make_timestamp(2000,1,1,$backup_config->backup_sche_hour,$backup_config->backup_sche_minute)) ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td colspan = 3 align=center>
+        <?php print_string("saveto") ?>: <input name="backup_sche_destination" type="text" size=\"40\" value="<?php p($backup_config->backup_sche_destination) ?>">
     </td>
 </tr>
 <tr>
