@@ -63,7 +63,7 @@ $string['assignadmins'] = "Asignar administrador";
 $string['assigncreators'] = "Asignar creadores";
 $string['assignstudents'] = "Asignar estudiantes";
 $string['assignstudentsnote'] = "Nota. Es posible que no sea necesario utilizar esta página dado que los estudiantes se pueden inscribir por sí mismos.";
-$string['assignstudentspass'] = "Todo lo que necesita es notificar a sus estudiantes sobre la clave de acceso para este curso, que en este caso es: \$a";
+$string['assignstudentspass'] = "Todo lo que necesita es notificar a sus estudiantes sobre la contraseña de acceso para este curso, que en este caso es: \$a";
 $string['assignteachers'] = "Asignar profesores";
 $string['authentication'] = "Autenticación";
 $string['autosubscribe'] = "Auto-suscripción al foro";
@@ -76,7 +76,7 @@ $string['backupdate'] = "Fecha de la copia de seguridad";
 $string['backupdetails'] = "Detalles de la copia de seguridad";
 $string['backupfilename'] = "copia de seguridad";
 $string['backupfinished'] = "copia de seguridad completada con éxito";
-$string['backupnameformat'] = " %%Y%%m%%d-%%H%%M ";
+$string['backupnameformat'] = "%%Y%%m%%d-%%H%%M";
 $string['backuporiginalname'] = "Nombre de la copia de seguridad";
 $string['backupversion'] = "Versión de la copia de seguridad";
 $string['cancel'] = "Cancelar";
@@ -124,7 +124,7 @@ $string['configintroadmin'] = "En esta página puede configurar su cuenta de admi
 $string['configintrosite'] = "Esta página permite configurar la página principal y el nombre de su sitio. Podrá regresar más tarde para cambiar lo que desee.";
 $string['configlang'] = "Seleccione un idioma para el sitio. Cada usuario podrá personalizar su propio idioma.";
 $string['configlangdir'] = "Para español, seleccione normal.";
-$string['configlanglist'] = "Deje este espacio en blanco para permitir que los usuarios seleccionen el idioma que deseen. Sin embargo, Ud. puede reducir el número de opciones colocando las claves de los mismos separadas por comas: en,es,fr,it";
+$string['configlanglist'] = "Deje este espacio en blanco para permitir que los usuarios seleccionen el idioma que deseen. Sin embargo, Ud. puede reducir el número de opciones colocando las contraseñas de los mismos separadas por comas: en,es,fr,it";
 $string['configlangmenu'] = "Seleccione si desea o no colocar el menú de idioma en las páginas principal, de acceso, etc. Esto no afecta la posibilidad que tienen los suarios de elegir su idioma preferido en sus datos personales.";
 $string['configlocale'] = "Seleccione una identidad de idioma --esto afectará el formato de las fechas.";
 $string['configloglifetime'] = "Especifica el tiempo que desea mantener los registros en la base de datos. Todo registro con más días de los indicados aquí se borrará automáticamente. Lo mejor es mantener este número tan alto como se pueda. Sin embargo, si el sitio está muy cargado y se experimentan deficiencias de rendimiento es posible mejorar el mismo disminuyendo este número.";
@@ -305,11 +305,11 @@ $string['emailpasswordsent'] = "Gracias por confirmar el cambio.
 
 <p>Le recomendamos cambiarla inmediatamente por una propia en <a href=\$a->link>";
 $string['enrolmentconfirmation'] = "Está a punto de inscribirse como alumno de este curso <br />¿Está seguro que desea hacer eso?";
-$string['enrolmentkey'] = "clave de acceso";
-$string['enrolmentkeyfrom'] = "Este curso requiere el uso de una 'clave de acceso'<BR>
+$string['enrolmentkey'] = "contraseña de acceso";
+$string['enrolmentkeyfrom'] = "Este curso requiere el uso de una 'contraseña de acceso'<BR>
 
 que podrá obtener con \$a";
-$string['enrolmentkeyhint'] = "Esta 'clave de acceso' es incorrecta, por favor trate nuevamente<BR>
+$string['enrolmentkeyhint'] = "Esta 'contraseña de acceso' es incorrecta, por favor trate nuevamente<BR>
 
 (Una pista: comienza con '\$a')";
 $string['entercourse'] = "Clic aquí para entrar al curso";
@@ -373,10 +373,10 @@ de The Free Software Foundation; incluso la versión 2 o alguna posterior.
 Para más detalles vea: http://www.gnu.org/copyleft/gpl.html";
 $string['grade'] = "Calificación";
 $string['grades'] = "Calificaciones";
-$string['guestskey'] = "Permitir acceso a estudiantes con clave";
+$string['guestskey'] = "Permitir acceso a invitados con contraseña";
 $string['guestsno'] = "No admitir invitados";
 $string['guestsnotallowed'] = "Lo sentimos, '\$a' no permite acceso a invitados.";
-$string['guestsyes'] = "Permitir acceso a estudiantes sin clave";
+$string['guestsyes'] = "Permitir acceso a invitados sin contraseña";
 $string['guestuser'] = "Invitado";
 $string['guestuserinfo'] = "Este usuario sólo puede leer en ciertos cursos.";
 $string['help'] = "Ayuda";
@@ -451,13 +451,13 @@ crear una cuenta.
 
    <OL size=2>
 
-   <LI>Llene la <A HREF=\$a>Forma de registro</A>.
+   <LI>Llene la <A HREF=\$a>Formulario de registro</A>.
 
    <LI>El sistema le enviará un correo para verificar que su dirección esté correcta.
 
    <LI>Lea el correo y confirme su matrícula.
 
-   <LI>Si algún curso en particular le solicita una &quot;clave de acceso&quot; utilice la que le brindaron cuando se matriculó.
+   <LI>Si algún curso en particular le solicita una &quot;contraseña de acceso&quot; utilice la que le brindaron cuando se matriculó.
 
    <LI>A partir de ese momento no necesitará utilizar más que su nombre y contraseña.
 
@@ -675,7 +675,7 @@ $string['removeteacher'] = "Quitar profesor";
 $string['rename'] = "Renombrar";
 $string['renamefileto'] = " Renombrar <b>\$a</b> a ";
 $string['required'] = "Requerido";
-$string['requireskey'] = "Este curso requiere una clave de acceso";
+$string['requireskey'] = "Este curso requiere una contraseña de acceso";
 $string['resortcoursesbyname'] = "Reorganizar los cursos por nombre";
 $string['resources'] = "Recursos";
 $string['restore'] = "Restaurar";
