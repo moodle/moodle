@@ -30,8 +30,13 @@ function set_parameters() {
     if (! empty($this->course->lang)) {
         $CFG->courselang = $this->course->lang;
     }
+
+    if (empty($USER->id)) {   // No need to set up parameters
+        $this->parameters = array();
+        return;
+    }
+
     $site = get_site();
-    
 
     $this->parameters = array(
 
