@@ -22,19 +22,26 @@
     $db = &ADONewConnection($CFG->dbtype);         
 
     error_reporting(0);  // Hide errors 
-    // Try a persistent connection first, but if it fails, fall back to ordinary connection
-    if (! $db->PConnect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname)) {
-        if (! $db->Connect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname)) {
-            echo "<font color=red>";
-            echo "<p>Error: Moodle could not connect to the database.</p>";
-            echo "<p>It's possible the database itself is not working at the moment, but the admin should 
-                     also check that the database details have been correctly specified in config.php</p>";
-            echo "<p>Database host: $CFG->dbhost<br />";
-            echo "Database name: $CFG->dbname<br />";
-            echo "Database user: $CFG->dbuser<br />";
-            echo "</font>";
-            die;
+
+    if (!isset($CFG->dbpersist) or !empty($CFG->dbpersist)) {    // Use persistent connection (default)
+        $dbconnected = $db->PConnect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname);
+    } else {                                                     // Use single connection
+        $dbconnected = $db->Connect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname);
+    }
+    if (! $dbconnected) {
+        echo "<font color=\"#990000\">";
+        echo "<p>Error: Moodle could not connect to the database.</p>";
+        echo "<p>It's possible the database itself is just not working at the moment.</p>";
+        echo "<p>The admin should 
+                 also check that the database details have been correctly specified in config.php</p>";
+        echo "<p>Database host: $CFG->dbhost<br />";
+        echo "Database name: $CFG->dbname<br />";
+        echo "Database user: $CFG->dbuser<br />";
+        if (!isset($CFG->dbpersist)) {
+            echo "<p>The admin should also try setting this in config.php:  $"."CFG->dbpersist = false; </p>";
         }
+        echo "</font>";
+        die;
     }
 
     error_reporting(E_ALL);       // Show errors from now on.
