@@ -478,6 +478,23 @@ function glossary_get_entries($glossaryid, $entrylist, $pivot = "") {
                             WHERE glossaryid = '$glossaryid'
                             AND id IN ($entrylist)");
 }
+
+function glossary_get_entries_search($concept, $courseid) {
+    global $CFG;
+
+    $conceptupper = strtoupper(trim($concept));
+
+    return get_records_sql("SELECT e.*, g.name as glossaryname
+                              FROM {$CFG->prefix}glossary_entries e, 
+                                   {$CFG->prefix}glossary g
+                             WHERE e.glossaryid = g.id 
+                               AND (    (e.casesensitive != 0 and UPPER(concept) = '$conceptupper')
+                                     OR (e.casesensitive = 0 and concept = '$concept'))
+                               AND (g.course = '$courseid' OR g.globalglossary = 1)
+                               AND e.usedynalink != 0 
+                               AND g.usedynalink != 0");
+}
+
 function glossary_get_entries_sorted($glossary, $where="", $orderby="", $pivot = "") {
 global $CFG;
     if ($where) {
@@ -585,6 +602,9 @@ function glossary_print_entry_definition($entry) {
     $text = format_text($definition, $entry->format,$options);
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
+    }
+    if (isset($entry->footer)) {   // Unparsed footer info
+        $text .= $entry->footer;
     }
     echo $text;
 }
