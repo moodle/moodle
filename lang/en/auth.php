@@ -3,15 +3,15 @@
 
 
 $string['auth_castitle'] = 'Use a CAS server (SSO)';
-$string['auth_cas_hostname'] = 'Hostname of the CAS sever <br>ex: host.domaine.fr';
-$string['auth_cas_baseuri'] = 'URI of the server (nothing if no baseUri)<br>ex: if the CAS server respond to host.domaine.fr/CAS/ then<br>cas_baseuri = CAS/';
+$string['auth_cas_hostname'] = 'Hostname of the CAS server <br />eg: host.domaine.fr';
+$string['auth_cas_baseuri'] = 'URI of the server (nothing if no baseUri)<br />For example, if the CAS server responds to host.domaine.fr/CAS/ then<br />cas_baseuri = CAS/';
 $string['auth_cas_port'] = 'Port of the CAS server';
 $string['auth_cas_version'] = 'Version of CAS';
 $string['auth_cas_language'] = 'Selected language';
-$string['auth_casdescription'] = 'This method is usind a CAS server(Central Authentication Service) to connect to Moodle with SSO (Single Sign On). You can altho use a simple LDAP authenticatio. If the given username and password are valid, Moodle creates a new user entry in its database if you want to. This module can read user attributes from LDAP and prefill wanted fields in Moodle.  For following logins only the username and password are checked.';
-$string['auth_cas_use_cas'] = 'Check here if you want to use the CAS authentication.';
-$string['auth_cas_text'] = 'Securised connection';
-$string['auth_cas_create_user'] = 'Check here if you want to insert authentified users in Moodle database. If not, they won\'t be connected to Moodle if they are not in the Moodle database. You can use this function when extraction form LDAP is to complex and need an external script to do.';
+$string['auth_casdescription'] = 'This method uses a CAS server (Central Authentication Service) to authenticate users in a Single Sign On environment (SSO). You can also use a simple LDAP authentication. If the given username and password are valid according to CAS, Moodle creates a new user entry in its database, taking user attributes from LDAP if required. On following logins only the username and password are checked.';
+$string['auth_cas_use_cas'] = 'Turn this on if you want to use CAS authentication.';
+$string['auth_cas_text'] = 'Secure connection';
+$string['auth_cas_create_user'] = 'Turn this on if you want to insert CAS-authenticated users in Moodle database. If notthen only users who already exist in the Moodle database can log in.';
 $string['auth_common_settings'] = 'Common settings';
 $string['auth_data_mapping'] = 'Data mapping';
 $string['auth_dbdescription'] = 'This method uses an external database table to check whether a given username and password is valid.  If the account is a new one, then information from other fields may also be copied across into Moodle.';
