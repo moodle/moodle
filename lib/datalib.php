@@ -373,7 +373,7 @@ function get_records($table, $field="", $value="", $sort="", $fields="*", $limit
         $select = "";
     }
 
-    if ($limitfrom) {
+    if ($limitfrom !== "") {
         switch ($CFG->dbtype) {
             case "mysql":
                  $limit = "LIMIT $limitfrom,$limitnum";
