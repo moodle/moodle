@@ -19,7 +19,7 @@
         error("This page is for teachers only");
     }
 
-    unset($SESSION->fromdiscuss);
+    unset($SESSION->fromdiscussion);
 
     add_to_log($course->id, "forum", "view subscribers", "subscribers.php?id=$forum->id", "");
 
@@ -45,7 +45,7 @@
         echo "<TABLE ALIGN=CENTER>";
         $count = 0;
         foreach ($users as $user) {
-            if (is_subscribed($user->id, $forum->id)) {
+            if (forum_is_subscribed($user->id, $forum->id)) {
                 echo "<TR><TD>";
                 print_user_picture($user->id, $course->id, $user->picture);
                 echo "</TD><TD>";

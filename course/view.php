@@ -54,10 +54,6 @@
 
     get_all_mods($course->id, $mods, $modtype);
 
-    if (isset($modtype["forum"]) and isset($modtype["discuss"])) {  // Only need to display one
-        unset($modtype["discuss"]);
-    }
-
     switch ($course->format) {
         case "weeks":
             include("weeks.php");

@@ -5,7 +5,8 @@
     require("../../config.php");
     require("lib.php");
 
-    require_variable($id);  // The forum to subscribe or unsubscribe to
+    require_variable($id);      // The forum to subscribe or unsubscribe to
+    optional_variable($force);  // Force everyone to be subscribed to this forum?
 
     if (isguest()) {
         error("Guests are not allowed to subscribe to posts.", $HTTP_REFERER);
@@ -31,10 +32,23 @@
         }
     }
 
-
     $returnto = go_back_to("index.php?id=$course->id");
 
-    if ( is_subscribed($USER->id, $forum->id) ) {
+    if ($force and isteacher($course->id)) {
+        if (forum_is_forcesubscribed($forum->id)) {
+            forum_forcesubscribe($forum->id, 0);
+            redirect($returnto, "Everyone can choose their own subscription to this forum", 1);
+        } else {
+            forum_forcesubscribe($forum->id, 1);
+            redirect($returnto, "Everyone is now subscribed to this forum", 1);
+        }
+    }
+
+    if (forum_is_forcesubscribed($forum->id)) {
+        redirect($returnto, "Everyone is subscribed to this forum", 1);
+    }
+
+    if ( forum_is_subscribed($USER->id, $forum->id) ) {
         if (forum_unsubscribe($USER->id, $forum->id) ) {
             add_to_log($course->id, "forum", "unsubscribe", "index.php?id=$course->id", "$forum->id");
             redirect($returnto, "You are now NOT subscribed to receive '$forum->name' by email.", 1);

@@ -4,8 +4,8 @@
 
     require("../config.php");
     require("../lib/countries.php");
+    require("../mod/forum/lib.php");
     require("lib.php");
-    require("../mod/discuss/lib.php");
 
     require_variable($id);
     require_variable($course);

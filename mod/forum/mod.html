@@ -40,6 +40,13 @@
         <input type=radio name=assessed value=0 <? if ($form->assessed == 0) echo "CHECKED"; ?> >No
     </td>
 </tr>
+<tr>
+    <td align=right><P><B>Force everyone to be subscribed to this forum?:</B></P></TD>
+    <td>
+        <input type=radio name=forcesubscribe value=1 <? if ($form->forcesubscribe == 1) echo "CHECKED"; ?> >Yes
+        <input type=radio name=forcesubscribe value=0 <? if ($form->forcesubscribe == 0) echo "CHECKED"; ?> >No
+    </td>
+</tr>
 </table>
 <CENTER>
 <input type="hidden" name=course     value="<? p($form->course) ?>">

@@ -17,7 +17,7 @@
 // If there's something it cannot do itself, it 
 // will tell you what you need to do.
 
-$version = 2002072801;
+$version = 2002073100;
 
 function upgrade_moodle($oldversion=0) {
 
@@ -29,13 +29,14 @@ function upgrade_moodle($oldversion=0) {
             `value` varchar(255) NOT NULL default '',
             PRIMARY KEY  (`id`),
             UNIQUE KEY `name` (`name`)
-          ) TYPE=MyISAM COMMENT='Moodle configuration variables';");
+          ) COMMENT='Moodle configuration variables';");
         notify("Created a new table 'config' to hold configuration data");
     }
 
-    if ($oldversion < 2002072801) {
-
+    if ($oldversion < 2002073100) {
+        execute_sql("DELETE FROM `modules` WHERE `name` = 'chat' ");
     }
+
     return true;
 }
 

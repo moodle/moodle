@@ -12,9 +12,12 @@
         print_header("Setting up database", "Setting up database", "Setting up databases for the first time", "");
 
         if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql")) {
+            $db->debug = true;
             if (modify_database("$CFG->libdir/db/$CFG->dbtype.sql")) {
+                $db->debug = false;
                 notify("Main databases set up successfully");
             } else {
+                $db->debug = false;
                 error("Error: Main databases NOT set up successfully");
             }
         } else {
@@ -32,7 +35,9 @@
     if ($dversion = get_field("config", "value", "name", "version")) { 
         if ($version > $dversion) {  // upgrade
             notify("Upgrading databases from version $dversion to $version...");
+            $db->debug=true;
             if (upgrade_moodle($dversion)) {
+                $db->debug=false;
                 if (set_field("config", "value", "$version", "name", "version")) {
                     notify("Databases were successfully upgraded");
                     print_heading("<A HREF=\"index.php\">Continue</A>");
@@ -41,6 +46,7 @@
                     notify("Upgrade failed!  (Could not update version in config table)");
                 }
             } else {
+                $db->debug=false;
                 notify("Upgrade failed!  See /version.php");
             }
         } else if ($version < $dversion) {
@@ -55,13 +61,16 @@
             print_heading("<A HREF=\"index.php\">Continue</A>");
             die;
         } else {
+            $db->debug=true;
             if (upgrade_moodle(0)) {
                 print_heading("<A HREF=\"index.php\">Continue</A>");
             } else {
                 error("A problem occurred inserting current version into databases");
             }
+            $db->debug=false;
         }
     }
+
 
     // Find and check all modules and load them up.
     $dir = opendir("$CFG->dirroot/mod");
@@ -77,7 +86,7 @@
 
         unset($module);
 
-        include_once("$CFG->dirroot/mod/$mod/module.php");  # defines $module
+        include_once("$CFG->dirroot/mod/$mod/version.php");  # defines $module with version etc
 
         if (!isset($module)) {
             continue;
@@ -92,7 +101,9 @@
                 notify("$module->name module needs upgrading");
                 $upgrade_function = $module->name."_upgrade";
                 if (function_exists($upgrade_function)) {
+                    $db->debug=true;
                     if ($upgrade_function($currmodule->version, $module)) {
+                        $db->debug=false;
                         // OK so far, now update the modules record
                         $module->id = $currmodule->id;
                         if (! update_record("modules", $module)) {
@@ -100,6 +111,7 @@
                         }
                         notify("$module->name module was successfully upgraded");
                     } else {
+                        $db->debug=false;
                         notify("Upgrading $module->name from $currmodule->version to $module->version FAILED!");
                     }
                 }

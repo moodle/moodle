@@ -458,10 +458,10 @@ function execute_sql($command) {
     $result = $db->Execute("$command");
 
     if ($result) {
-        echo "<P><FONT COLOR=green>SUCCESS: $command</FONT></P>";
+        echo "<P><FONT COLOR=green>SUCCESS</FONT></P>";
         return true;
     } else {
-        echo "<P><FONT COLOR=red>ERROR: $command </FONT></P>";
+        echo "<P><FONT COLOR=red>ERROR</FONT></P>";
         return false;
     }
 }
@@ -1351,7 +1351,7 @@ function add_to_log($course, $module, $action, $url="", $info="") {
 // any particular student has been doing.
 //
 // course = the course id
-// module = discuss, journal, reading, course, user etc
+// module = forum, journal, reading, course, user etc
 // action = view, edit, post (often but not always the same as the file.php)
 // url    = the file and parameters used to see the results of the action
 // info   = additional description information 

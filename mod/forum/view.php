@@ -5,6 +5,7 @@
 
     optional_variable($id);      // Course Module ID
     optional_variable($f);       // Forum ID
+    optional_variable($mode);    // Display mode (for single forum)
 
 
     if ($id) {
@@ -50,29 +51,62 @@
         }
     }
 
-
     add_to_log($course->id, "forum", "view forum", "view.php?f=$forum->id", "$forum->id");
 
     print_header("$course->shortname: $forum->name", "$course->fullname",
                  "$navigation $forum->name", "", "", true, $buttontext);
 
     if ($USER) {
-        $SESSION->fromdiscuss = "$FULLME";
-        if (is_subscribed($USER->id, $forum->id)) {
-            $subtext = "Unsubscribe me from this forum";
+        $SESSION->fromdiscussion = "$FULLME";
+        if (forum_is_forcesubscribed($forum->id)) {
+            $subtext = "Everyone is subscribed to this forum";
+            if (isteacher($course->id)) {
+                echo "<DIV ALIGN=RIGHT><FONT SIZE=1>";
+                echo "<A TITLE=\"Allow people to choose\" HREF=\"subscribe.php?id=$forum->id&force=no\">$subtext</A>";
+                echo "</FONT></DIV>";
+            } else {
+                echo "<DIV ALIGN=RIGHT><FONT SIZE=1>$subtext</FONT></DIV>";
+            }
+
         } else {
-            $subtext = "Subscribe me to this forum";
-        }
-        echo "<DIV ALIGN=RIGHT><FONT SIZE=1><A HREF=\"subscribe.php?id=$forum->id\">$subtext</A></FONT></DIV>";
-        if (isteacher($course->id)) {
-            echo "<DIV ALIGN=RIGHT><FONT SIZE=1><A HREF=\"subscribers.php?id=$forum->id\">Show subscribers</A></FONT></DIV>";
+            $subtext = "Everyone can choose to be subscribed";
+            if (isteacher($course->id)) {
+                echo "<DIV ALIGN=RIGHT><FONT SIZE=1>";
+                echo "<A TITLE=\"Force everyone to subscribe\" HREF=\"subscribe.php?id=$forum->id&force=yes\">$subtext</A>";
+                echo "</FONT></DIV>";
+                $subtext = "<A HREF=\"subscribers.php?id=$forum->id\">Show subscribers</A>";
+                echo "<DIV ALIGN=RIGHT><FONT SIZE=1>$subtext</FONT></DIV>";
+            }
+            if (forum_is_subscribed($USER->id, $forum->id)) {
+                $subtext = "Unsubscribe me";
+            } else {
+                $subtext = "Subscribe me";
+            }
+            $subtext = "<A TITLE=\"For this forum only\" HREF=\"subscribe.php?id=$forum->id\">$subtext</A>";
+            echo "<DIV ALIGN=RIGHT><FONT SIZE=1>$subtext</FONT></DIV>";
         }
     }
 
-    print_simple_box(text_to_html($forum->intro), "CENTER");
 
     switch ($forum->type) {
+        case "single":
+            if (! $discussion = get_record("forum_discussions", "forum", $forum->id)) {
+                if ($discussions = get_records("forum_discussions", "forum", $forum->id, "timemodified ASC")) {
+                    notify("Warning! There is more than one discussion in this forum - using the most recent");
+                    $discussion = array_pop($discussions);
+                } else {
+                    error("Could not find the discussion in this forum");
+                }
+            }
+            if (! $post = get_forum_post_full($discussion->firstpost)) {
+                error("Could not find the first post in this forum");
+            }
+            forum_set_display_mode($mode);
+            print_discussion($course, $discussion, $post, $USER->mode);
+            break;
+
         case "eachuser":
+            print_simple_box(text_to_html($forum->intro), "CENTER");
             echo "<P ALIGN=CENTER>";
             if (user_can_post_discussion($forum)) {
                 echo "This forum allows one discussion topic to be posted per person.";
@@ -80,14 +114,16 @@
                 echo "&nbsp";
             }
             echo "</P>";
+            print_forum_latest_topics($forum->id, 0);
             break;
 
         default:
+            print_simple_box(text_to_html($forum->intro), "CENTER");
             echo "<P>&nbsp;</P>";
+            print_forum_latest_topics($forum->id, 0);
             break;
     }
 
-    print_forum_latest_topics($forum->id, 0);
 
     print_footer($course);
 

@@ -276,10 +276,6 @@ function print_recent_activity($course) {
                 $info = split(" ", $log->info);
                 $modname = get_field($info[0], "name", "id", $info[1]);
             
-                if ($info[0] == "discuss") {
-                    $info[0] = "discussion";  // nasty hack, really.
-                }
-
                 switch ($log->action) {
                     case "add mod":
                        $changelist["$log->info"] = array ("operation" => "add", "text" => "Added a ".$info[0].":<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
@@ -322,19 +318,19 @@ function print_recent_activity($course) {
     $heading = false;
     foreach ($logs as $log) {
         
-        if ($log->module == "discuss") {
+        if ($log->module == "forum") {
             $post = NULL;
 
-            if ($log->action == "add post") {
+            if ($log->action == "add post" or $log->action == "add discussion") {
                 $post = get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, 
                                                u.email, u.picture, u.id as userid
-                                        FROM discuss d, discuss_posts p, user u 
-                                        WHERE p.id = '$log->info' AND d.id = p.discuss AND p.user = u.id");
+                                        FROM forum_discussions d, forum_posts p, user u 
+                                        WHERE p.id = '$log->info' AND d.id = p.discussion AND p.user = u.id");
 
             } else if ($log->action == "add") {
                 $post = get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, 
                                                u.email, u.picture, u.id as userid
-                                        FROM discuss d, discuss_posts p, user u 
+                                        FROM forum_discussions d, forum_posts p, user u 
                                         WHERE d.id = '$log->info' AND d.firstpost = p.id AND p.user = u.id");
             }
 
@@ -356,7 +352,7 @@ function print_recent_activity($course) {
                     $content = true;
                 }
                 echo "<P><FONT SIZE=1 $teacherpost>$post->firstname $post->lastname:<BR>";
-                echo "\"<A HREF=\"$CFG->wwwroot/mod/discuss/$log->url\">";
+                echo "\"<A HREF=\"$CFG->wwwroot/mod/forum/$log->url\">";
                 if ($log->action == "add") {
                     echo "<B>$post->subject</B>";
                 } else {

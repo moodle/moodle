@@ -19,7 +19,7 @@
         require_login($course->id);
     }
 
-    unset($SESSION->fromdiscuss);
+    unset($SESSION->fromdiscussion);
 
     add_to_log($course->id, "forum", "view forums", "index.php?id=$course->id", "");
 
@@ -42,7 +42,7 @@
     if ($forums = get_records("forum", "course", $id, "name ASC")) {
         foreach ($forums as $forum) {
             switch ($forum->type) {
-                case "discussion":
+                case "single":
                 case "general":
                 case "eachuser":
                     $contentforums[] = $forum;
@@ -61,22 +61,24 @@
 
     if ($generalforums) {
         foreach ($generalforums as $forum) {
-            $count = count_records("discuss", "forum", "$forum->id");
+            $count = count_records("forum_discussions", "forum", "$forum->id");
 
             if ($can_subscribe) {
-                if (is_subscribed($USER->id, $forum->id)) {
-                    $subscribed = "YES";
+                if (forum_is_forcesubscribed($forum->id)) {
+                    $sublink = "YES";
                 } else {
-                    $subscribed = "NO";
+                    if (forum_is_subscribed($USER->id, $forum->id)) {
+                        $subscribed = "YES";
+                    } else {
+                        $subscribed = "NO";
+                    }
+                    $sublink = "<A TITLE=\"Change your subscription\" HREF=\"subscribe.php?id=$forum->id\">$subscribed</A>";
                 }
                 $table->data[] = array ("<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
-                                  "$forum->intro", 
-                                  "$count",
-                                  "<A HREF=\"subscribe.php?id=$forum->id\">$subscribed</A>");
+                                        "$forum->intro", "$count", "$sublink");
             } else {
                 $table->data[] = array ("<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
-                                  "$forum->intro", 
-                                  "$count");
+                                        "$forum->intro", "$count");
             }
         }
         print_heading("General Forums");
@@ -86,22 +88,24 @@
 
     if ($contentforums) {
         foreach ($contentforums as $forum) {
-            $count = count_records("discuss", "forum", "$forum->id");
+            $count = count_records("forum_discussions", "forum", "$forum->id");
 
             if ($can_subscribe) {
-                if (is_subscribed($USER->id, $forum->id)) {
-                    $subscribed = "YES";
+                if (forum_is_forcesubscribed($forum->id)) {
+                    $sublink = "YES";
                 } else {
-                    $subscribed = "NO";
+                    if (forum_is_subscribed($USER->id, $forum->id)) {
+                        $subscribed = "YES";
+                    } else {
+                        $subscribed = "NO";
+                    }
+                    $sublink = "<A TITLE=\"Change your subscription\" HREF=\"subscribe.php?id=$forum->id\">$subscribed</A>";
                 }
                 $table->data[] = array ("<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
-                                  "$forum->intro", 
-                                  "$count",
-                                  "<A HREF=\"subscribe.php?id=$forum->id\">$subscribed</A>");
+                                        "$forum->intro", "$count", "$sublink");
             } else {
                 $table->data[] = array ("<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
-                                  "$forum->intro", 
-                                  "$count");
+                                        "$forum->intro", "$count");
             }
         }
         print_heading("Course content");
@@ -109,7 +113,7 @@
     }
 
     echo "<DIV ALIGN=CENTER>";
-    print_discussion_search_form($course, $search);
+    print_forum_search_form($course, $search);
     echo "</DIV>";
 
     print_footer($course);

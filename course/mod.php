@@ -97,19 +97,28 @@
             error("This course doesn't exist");
         }
 
-        if (! $module = get_record("modules", "id", $cm->module)) {
-            error("This module doesn't exist");
-        }
-
-        if (! $instance = get_record($module->name, "id", $cm->instance)) {
-            error("The required instance of this module doesn't exist");
-        }
-
         require_login($course->id);
 
         if (!isteacher($course->id)) {
             error("You can't modify this course!");
         }
+
+        if (! $module = get_record("modules", "id", $cm->module)) {
+            error("This module doesn't exist");
+        }
+
+        if (! $instance = get_record($module->name, "id", $cm->instance)) {
+            // Delete this module from the course right away
+            if (! delete_course_module($cm->id)) {
+                notify("Could not delete the $module->name (coursemodule)");
+            }
+            if (! delete_mod_from_section($cm->id, $cm->section)) {
+                notify("Could not delete the $module->name from that section");
+            }
+            error("The required instance of this module didn't exist.  Module deleted.",
+                  "$CFG->wwwroot/course/view.php?id=$course->id");
+        }
+
 
         $form->coursemodule = $cm->id;
         $form->section      = $cm->section;

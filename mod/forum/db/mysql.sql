@@ -13,7 +13,56 @@ CREATE TABLE forum (
   timemodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id)
-) TYPE=MyISAM COMMENT='Discussion Forums';
+) COMMENT='Forums contain and structure discussion';
+# --------------------------------------------------------
+
+#
+# Table structure for table `forum_discussions`
+#
+
+CREATE TABLE forum_discussions (
+  id int(10) unsigned NOT NULL auto_increment,
+  course int(10) unsigned NOT NULL default '0',
+  forum int(10) unsigned NOT NULL default '0',
+  name varchar(255) NOT NULL default '',
+  firstpost int(10) unsigned NOT NULL default '0',
+  assessed tinyint(1) NOT NULL default '1',
+  timemodified int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (id)
+) COMMENT='Forums are composed of discussions';
+# --------------------------------------------------------
+
+#
+# Table structure for table `forum_posts`
+#
+
+CREATE TABLE forum_posts (
+  id int(10) unsigned NOT NULL auto_increment,
+  discuss int(10) unsigned NOT NULL default '0',
+  parent int(10) unsigned NOT NULL default '0',
+  user int(10) unsigned NOT NULL default '0',
+  created int(10) unsigned NOT NULL default '0',
+  modified int(10) unsigned NOT NULL default '0',
+  mailed tinyint(1) unsigned NOT NULL default '0',
+  subject varchar(255) NOT NULL default '',
+  message text NOT NULL,
+  totalscore tinyint(4) NOT NULL default '0',
+  PRIMARY KEY  (id)
+) COMMENT='All posts are stored in this table';
+# --------------------------------------------------------
+
+#
+# Table structure for table `forum_ratings`
+#
+
+CREATE TABLE forum_ratings (
+  id int(10) unsigned NOT NULL auto_increment,
+  user int(10) unsigned NOT NULL default '0',
+  post int(10) unsigned NOT NULL default '0',
+  time int(10) unsigned NOT NULL default '0',
+  rating tinyint(4) NOT NULL default '0',
+  PRIMARY KEY  (id)
+) COMMENT='Contains user ratings for individual posts';
 # --------------------------------------------------------
 
 #
@@ -26,13 +75,18 @@ CREATE TABLE forum_subscriptions (
   forum int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id)
-) TYPE=MyISAM COMMENT='keeps track of who is subscribed to what forum';
-
+) COMMENT='Keeps track of who is subscribed to what forum';
+# --------------------------------------------------------
 
 #
 # Dumping data for table `log_display`
 #
 
+INSERT INTO log_display VALUES ('forum', 'add', 'forum', 'name');
+INSERT INTO log_display VALUES ('forum', 'add discussion', 'forum_discuss', 'name');
+INSERT INTO log_display VALUES ('forum', 'add post', 'forum_posts', 'subject');
+INSERT INTO log_display VALUES ('forum', 'update post', 'forum_posts', 'subject');
+INSERT INTO log_display VALUES ('forum', 'view discussion', 'forum_discuss', 'name');
 INSERT INTO log_display VALUES ('forum', 'view forum', 'forum', 'name');
 INSERT INTO log_display VALUES ('forum', 'subscribe', 'forum', 'name');
 INSERT INTO log_display VALUES ('forum', 'unsubscribe', 'forum', 'name');

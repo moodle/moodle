@@ -15,9 +15,29 @@ function add_instance($forum) {
 // will create a new instance and return the id number 
 // of the new instance.
 
+    global $CFG;
+
     $forum->timemodified = time();
 
-    return insert_record("forum", $forum);
+    if (! $forum->id = insert_record("forum", $forum)) {
+        return false;
+    }
+
+    if ($forum->type == "single") {  // Create related discussion.
+        include_once("$CFG->dirroot/mod/forum/lib.php");
+
+        $discussion->course   = $forum->course;
+        $discussion->forum    = $forum->id;
+        $discussion->name     = $forum->name;
+        $discussion->intro    = $forum->intro;
+        $discussion->assessed = $forum->assessed;
+
+        if (! forum_add_discussion($discussion)) {
+            error("Could not add the discussion for this forum");
+        }
+    }
+
+    return $forum->id;
 }
 
 
@@ -28,6 +48,34 @@ function update_instance($forum) {
 
     $forum->timemodified = time();
     $forum->id = $forum->instance;
+
+    if ($forum->type == "single") {  // Update related discussion and post.
+        if (! $discussion = get_record("forum_discussions", "forum", $forum->id)) {
+            if ($discussions = get_records("forum_discussions", "forum", $forum->id, "timemodified ASC")) {
+                notify("Warning! There is more than one discussion in this forum - using the most recent");
+                $discussion = array_pop($discussions);
+            } else {
+                error("Could not find the discussion in this forum");
+            }
+        }
+        if (! $post = get_record("forum_posts", "id", $discussion->firstpost)) {
+            error("Could not find the first post in this forum discussion");
+        }
+
+        $post->subject  = $forum->name;
+        $post->message  = $forum->intro;
+        $post->modified = $forum->timemodified;
+
+        if (! update_record("forum_posts", $post)) {
+            error("Could not update the first post");
+        }
+
+        $discussion->name = $forum->name;
+
+        if (! update_record("forum_discussions", $discussion)) {
+            error("Could not update the discussion");
+        }
+    }
 
     return update_record("forum", $forum);
 }
@@ -40,7 +88,7 @@ function delete_instance($id) {
 
     global $CFG;
 
-    include("$CFG->dirroot/mod/discuss/lib.php");
+    include_once("$CFG->dirroot/mod/forum/lib.php");
     
     if (! $forum = get_record("forum", "id", "$id")) {
         return false;
@@ -48,9 +96,9 @@ function delete_instance($id) {
 
     $result = true;
 
-    if ($discussions = get_records("discuss", "forum", $forum->id)) {
-        foreach ($discussions as $discuss) {
-            if (! delete_discussion($discuss)) {
+    if ($discussions = get_records("forum_discussions", "forum", $forum->id)) {
+        foreach ($discussions as $discussion) {
+            if (! forum_delete_discussion($discussion)) {
                 $result = false;
             }
         }

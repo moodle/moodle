@@ -46,10 +46,10 @@
       echo "</TD></TR></TABLE>";
       echo "<BR>";
 
-      // Print a form to search discussions
+      // Print a form to search forums
       print_simple_box("Search Discussions", $align="CENTER", $width="100%", $color="$THEME->cellheading");
       echo "<DIV ALIGN=CENTER>";
-      print_discussion_search_form($course);
+      print_forum_search_form($course);
       echo "</DIV>";
 
       // Print Admin links for teachers and admin.
@@ -81,7 +81,7 @@
           error("Could not find or create a social forum here");
       }
 
-      $SESSION->fromdiscuss = "$CFG->wwwdir/course/view.php?id=$course->id";
+      $SESSION->fromdiscussion = "$CFG->wwwdir/course/view.php?id=$course->id";
       if (is_subscribed($USER->id, $social->id)) {
           $subtext = "Unsubscribe";
       } else {

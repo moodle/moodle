@@ -52,10 +52,10 @@
     print_simple_box("Activities", $align="CENTER", $width="100%", $color="$THEME->cellheading");
     print_side_block("", $moddata, "", $modicon);
 
-    // Print a form to search discussions
+    // Print a form to search forums
     print_simple_box("Search Discussions", $align="CENTER", $width="100%", $color="$THEME->cellheading");
     echo "<DIV ALIGN=CENTER>";
-    print_discussion_search_form($course);
+    print_forum_search_form($course);
     echo "</DIV>";
 
     // Admin links and controls
