@@ -44,6 +44,7 @@
             $assignment->description = backup_todb($info['MOD']['#']['DESCRIPTION']['0']['#']);
             $assignment->format = backup_todb($info['MOD']['#']['FORMAT']['0']['#']);
             $assignment->resubmit = backup_todb($info['MOD']['#']['RESUBMIT']['0']['#']);
+            $assignment->emailteachers = backup_todb($info['MOD']['#']['EMAILTEACHERS']['0']['#']);
             $assignment->type = backup_todb($info['MOD']['#']['TYPE']['0']['#']);
             $assignment->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
             $assignment->timedue = backup_todb($info['MOD']['#']['TIMEDUE']['0']['#']);
