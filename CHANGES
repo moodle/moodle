@@ -1,3 +1,37 @@
+2002-09-11 Wednesday 10:26  martin
+
+	* course/lib.php: 
+	
+	Include guest user in list of users
+
+2002-09-10 Tuesday 21:47  martin
+
+	* index.php, course/lib.php, lang/en/moodle.php: 
+	
+	Changes to course display on front page when there is more than one
+	category
+
+2002-09-10 Tuesday 21:24  martin
+
+	* login/signup.php: 
+	
+	Removed some debugging stuff
+
+2002-09-10 Tuesday 20:54  martin
+
+	* version.php, lib/db/mysql.sql, login/confirm.php,
+	login/signup.php: 
+	
+	More security for email confirmation process ... a 15-character
+	random "secret" key is stored the user record on account creation,
+	sent via email and checked again during confirmation.
+
+2002-09-10 Tuesday 11:44  martin
+
+	* CHANGES: 
+	
+	CHANGES UP TO 1.0.4
+
 2002-09-10 Tuesday 10:13  martin
 
 	* mod/forum/: version.php, db/mysql.sql: 
