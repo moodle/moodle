@@ -129,6 +129,10 @@
         $CFG->sessioncookie = '';
     }
 
+/// Configure ampersands in URLs
+
+    @ini_set('arg_separator.output', '&amp;');
+
 /// Location of standard files
 
     $CFG->wordlist    = "$CFG->libdir/wordlist.txt";
