@@ -1,3 +1,16 @@
+2002-09-10 Tuesday 10:13  martin
+
+	* mod/forum/: version.php, db/mysql.sql: 
+	
+	Whoops, left attachment field out of the database schema (affected
+	new installations of 1.0.2 and later)
+
+2002-09-09 Monday 23:52  martin
+
+	* CHANGES: 
+	
+	CHANGES (this is 1.0.4 unless anything comes up very soon)
+
 2002-09-09 Monday 23:50  martin
 
 	* course/categories.php: 
