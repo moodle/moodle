@@ -263,7 +263,7 @@ function blocks_get_record($blockid = NULL, $invalidate = false) {
     static $cache = NULL;
 
     if($invalidate || empty($cache)) {
-        $cache = get_records('block');
+        $cache = get_records('block', '', '', 'name');
     }
 
     if($blockid === NULL) {
