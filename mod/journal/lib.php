@@ -6,6 +6,8 @@ $JOURNAL_RATING = array ("3" => get_string("journalrating3", "journal"),
 
 
 
+// STANDARD MODULE FUNCTIONS /////////////////////////////////////////////////////////
+
 function journal_user_outline($course, $user, $mod, $journal) {
     if ($entry = get_record_sql("SELECT * FROM journal_entries 
                                  WHERE user='$user->id' AND journal='$journal->id'")) {
@@ -159,7 +161,8 @@ function journal_print_recent_activity(&$logs, $isteacher=false) {
     return $content;
 }
 
-// End of standard module functions
+
+// OTHER JOURNAL FUNCTIONS ///////////////////////////////////////////////////////////////////
 
 
 function journal_get_users_done($journal) {
