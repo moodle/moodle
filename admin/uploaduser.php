@@ -130,7 +130,7 @@
                     }
                     // normal entry
                     else {
-                        $user->{$name} = $value;
+                        $user->{$name} = addslashes($value);
                     }
                 }
                 $user->confirmed = 1;
