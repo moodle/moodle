@@ -276,6 +276,18 @@
         if (!$category) {
             $category = get_record("course_categories","id","1");
         }
+        //If category 1 doesn'exists, lets create the course category (get it from backup file)
+        if (!$category) {
+            $ins_category->name = addslashes($course_header->category->name);
+            $ins_category->parent = 0;
+            $ins_category->sortorder = 0;
+            $ins_category->coursecount = 0;
+            $ins_category->visible = 0;            //To avoid interferences with the rest of the site
+            $ins_category->timemodified = time();
+            $newid = insert_record("course_categories",$ins_category);
+            $category->id = $newid;
+            $category->name = $course_header->category->name;
+        }
         //If exists, put new category id
         if ($category) {
             $course_header->category->id = $category->id;
