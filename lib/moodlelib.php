@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -34,15 +34,45 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+/**
+ * Moodle main library
+ *
+ * Main library file of miscellaneous general-purpose Moodle functions.
+ * Other main libraries:
+ *  <ul><li> weblib.php      - functions that produce web output
+ *   <li> datalib.php     - functions that access the database</ul>
+ * @author Martin Dougiamas
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @package moodlecore
+ */
 /// CONSTANTS /////////////////////////////////////////////////////////////
 
+/**
+ * No groups used?
+ */
 define('NOGROUPS', 0);
+
+/**
+ * Groups used?
+ */
 define('SEPARATEGROUPS', 1);
+
+/**
+ * Groups visible?
+ */
 define('VISIBLEGROUPS', 2);
 
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
+/**
+ * Ensure that a variable is set or display error
+ *
+ * If $var is undefined display an error message using the {@link error()} function.
+ *
+ * @param    mixed $var the variable which may not be set
+ */
 function require_variable($var) {
 /// Variable must be present
     if (! isset($var)) {
@@ -50,6 +80,16 @@ function require_variable($var) {
     }
 }
 
+
+/**
+ * Ensure that a variable is set
+ *
+ * If $var is undefined set it (by reference), otherwise return $var.
+ * This function is very similar to {@link nvl()}
+ *
+ * @param mixed $var the variable which may be unset
+ * @param mixed $default the value to return if $var is unset
+ */
 function optional_variable(&$var, $default=0) {
 /// Variable may be present, if not then set a default
     if (! isset($var)) {
@@ -57,11 +97,22 @@ function optional_variable(&$var, $default=0) {
     }
 }
 
-
+/**
+ * Set a key in global configuration
+ *
+ * Set a key/value pair in both this session's $CFG global variable
+ * and in the 'config' database table for future sessions.
+ *
+ * @param string $name the key to set
+ * @param string $value the value to set
+ * @uses $CFG
+ * @return bool
+ */
 function set_config($name, $value) {
 /// No need for get_config because they are usually always available in $CFG
 
     global $CFG;
+
 
     $CFG->$name = $value;  // So it's defined for this invocation at least
 
@@ -74,7 +125,10 @@ function set_config($name, $value) {
     }
 }
 
-
+/**
+ * Refresh current $USER session global variable with all their current preferences.
+ * @uses $USER
+ */
 function reload_user_preferences() {
 /// Refresh current USER with all their current preferences
 
@@ -92,6 +146,17 @@ function reload_user_preferences() {
     }        
 }
 
+/**
+ * Sets a preference for the current user
+ * Optionally, can set a preference for a different user object
+ * @uses $USER
+ * @todo Add a better description and include usage examples.
+ * @param string $name The key to set as preference for the specified user
+ * @param string $value The value to set forthe $name key in the specified user's record
+ * @param object $user A moodle user object
+ * @todo Add inline links to $USER and user functions in above line.
+ * @return boolean
+ */
 function set_user_preference($name, $value, $user=NULL) {
 /// Sets a preference for the current user
 /// Optionally, can set a preference for a different user object
@@ -127,6 +192,11 @@ function set_user_preference($name, $value, $user=NULL) {
     }
 }
 
+/**
+ * Sets a whole array of preferences for the current user
+ * @param array $prefarray An array of key/value pairs to be set
+ * @return boolean
+ */
 function set_user_preferences($prefarray) {
 /// Sets a whole array of preferences for the current user
 
@@ -144,6 +214,18 @@ function set_user_preferences($prefarray) {
     return $return;
 }
 
+/**
+ * If no arguments are supplied this function will return
+ * all of the current user preferences as an array.  
+ * If a name is specified then this function
+ * attempts to return that particular preference value.  If
+ * none is found, then the optional value $default is returned,
+ * otherwise NULL.
+ * @param string $name Name of the key to use in finding a preference value
+ * @param string $default Value to be returned if the $name key is not set in the user preferences
+ * @uses $USER
+ * @return string
+ */
 function get_user_preferences($name=NULL, $default=NULL) {
 /// Without arguments, returns all the current user preferences
 /// as an array.  If a name is specified, then this function
@@ -168,6 +250,12 @@ function get_user_preferences($name=NULL, $default=NULL) {
 
 /// FUNCTIONS FOR HANDLING TIME ////////////////////////////////////////////
 
+/**
+ * Given date parts in user time, produce a GMT timestamp.
+ *
+ * @param    type description
+ * @todo Finish documenting this function
+ */
 function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99) {
 /// Given date parts in user time, produce a GMT timestamp
 
@@ -181,7 +269,14 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
     }
 }
 
-function format_time($totalsecs, $str=NULL) {
+/**
+ * Given an amount of time in seconds, returns string
+ * formatted nicely as months, days, hours etc as needed
+ *
+ * @param    type description
+ * @todo Finish documenting this function
+ */
+ function format_time($totalsecs, $str=NULL) {
 /// Given an amount of time in seconds, returns string
 /// formatted nicely as months, days, hours etc as needed
 
@@ -227,6 +322,20 @@ function format_time($totalsecs, $str=NULL) {
     return get_string('now');
 }
 
+/**
+ * Returns a formatted string that represents a date in user time
+ * <b>WARNING: note that the format is for strftime(), not date().</b>
+ * Because of a bug in most Windows time libraries, we can't use
+ * the nicer %e, so we have to use %d which has leading zeroes.
+ * A lot of the fuss in the function is just getting rid of these leading
+ * zeroes as efficiently as possible.
+ * 
+ * If parammeter fixday = true (default), then take off leading
+ * zero from %d, else mantain it.
+ *
+ * @param    type description
+ * @todo Finish documenting this function
+ */
 function userdate($date, $format='', $timezone=99, $fixday = true) {
 /// Returns a formatted string that represents a date in user time
 /// WARNING: note that the format is for strftime(), not date().
@@ -271,6 +380,13 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
     return $datestring;
 }
 
+/**
+ * Given a $date timestamp in GMT, returns an array
+ * that represents the date in user time
+ *
+ * @param    type description
+ * @todo Finish documenting this function
+ */
 function usergetdate($date, $timezone=99) {
 /// Given a $date timestamp in GMT, returns an array
 /// that represents the date in user time
@@ -295,6 +411,13 @@ function usergetdate($date, $timezone=99) {
     return $getdate;
 }
 
+/**
+ * Given a GMT timestamp (seconds since epoch), offsets it by
+ * the timezone.  eg 3pm in India is 3pm GMT - 7 * 3600 seconds
+ *
+ * @param    type description
+ * @todo Finish documenting this function
+ */
 function usertime($date, $timezone=99) {
 /// Given a GMT timestamp (seconds since epoch), offsets it by
 /// the timezone.  eg 3pm in India is 3pm GMT - 7 * 3600 seconds
@@ -322,6 +445,12 @@ function usergetmidnight($date, $timezone=99) {
 
 }
 
+/**
+ * Returns a string that prints the user's timezone
+ *
+ * @param float $timezone The user's timezone
+ * @return string
+ */
 function usertimezone($timezone=99) {
 /// Returns a string that prints the user's timezone
 
@@ -340,6 +469,15 @@ function usertimezone($timezone=99) {
     }
 }
 
+/**
+ * Returns a float which represents the user's timezone difference from GMT in hours
+ * Checks various settings and picks the most dominant of those which have a value
+ *
+ * @param float $tz The user's timezone
+ * @return float
+ * @uses $CFG
+ * @uses $USER
+ */
 function get_user_timezone($tz = 99) {
 // Returns a float which represents the user's timezone difference from GMT in hours
 // Checks various settings and picks the most dominant of those which have a value
@@ -359,6 +497,21 @@ function get_user_timezone($tz = 99) {
 
 /// USER AUTHENTICATION AND LOGIN ////////////////////////////////////////
 
+/**
+ * This function checks that the current user is logged in, and optionally
+ * whether they are "logged in" or allowed to be in a particular course.
+ * If not, then it redirects them to the site login or course enrolment.
+ * $autologinguest determines whether visitors should automatically be
+ * logged in as guests provide $CFG->autologinguests is set to 1
+ *
+ * @param    type description
+ * @uses $CFG
+ * @uses  $SESSION
+ * @uses $USER
+ * @uses $FULLME
+ * @uses $MoodleSession
+ * @todo Finish documenting this function
+ */
 function require_login($courseid=0, $autologinguest=true) {
 /// This function checks that the current user is logged in, and optionally
 /// whether they are "logged in" or allowed to be in a particular course.
@@ -447,6 +600,15 @@ function require_login($courseid=0, $autologinguest=true) {
     }
 }
 
+/**
+ * This is a weaker version of {@link require_login()} which only requires login
+ * when called from within a course rather than the site page, unless
+ * the forcelogin option is turned on.
+ *
+ * @uses $CFG
+ * @param    type description
+ * @todo Finish documenting this function
+ */
 function require_course_login($course, $autologinguest=true) {
 // This is a weaker version of require_login which only requires login
 // when called from within a course rather than the site page, unless
@@ -460,6 +622,13 @@ function require_course_login($course, $autologinguest=true) {
     }
 }
 
+/**
+ * Modify the user table by setting the currently logged in user's
+ * last login to now.
+ *
+ * @uses $USER
+ * @return boolean
+ */
 function update_user_login_times() {
     global $USER;
 
@@ -471,10 +640,21 @@ function update_user_login_times() {
     return update_record('user', $user);
 }
 
+/**
+ * Determines if a user has completed setting up their account.
+ *
+ * @param object $user A user object to test for the existance of a valid name and email
+ * @return boolean
+ */
 function user_not_fully_set_up($user) {
     return ($user->username != 'guest' and (empty($user->firstname) or empty($user->lastname) or empty($user->email)));
 }
 
+/**
+ * Keeps track of login attempts
+ *
+ * @uses $SESSION
+ */
 function update_login_count() {
 /// Keeps track of login attempts
 
@@ -494,6 +674,11 @@ function update_login_count() {
     }
 }
 
+/**
+ * Resets login attempts
+ *
+ * @uses $SESSION
+ */
 function reset_login_count() {
 /// Resets login attempts
     global $SESSION;
@@ -501,6 +686,12 @@ function reset_login_count() {
     $SESSION->logincount = 0;
 }
 
+/**
+ * check_for_restricted_user
+ *
+ * @param    type description
+ * @todo Finish documenting this function
+ */
 function check_for_restricted_user($username=NULL, $redirect='') {
     global $CFG, $USER;
 
@@ -520,6 +711,13 @@ function check_for_restricted_user($username=NULL, $redirect='') {
     }
 }
 
+/**
+ * Determines if a user an admin
+ *
+ * @uses $USER
+ * @param integer $userid The id of the user as is found in the 'user' table
+ * @return boolean
+ */
 function isadmin($userid=0) {
 /// Is the user an admin?
     global $USER;
@@ -546,6 +744,16 @@ function isadmin($userid=0) {
     }
 }
 
+/**
+ * Determines if a user is a teacher or an admin
+ *
+  * @uses $USER
+ * @param integer $courseid The id of the course that is being viewed, if any
+ * @param integer $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
+ * @param boolean $includeadmin If true this function will return true when it encounters an admin user.
+ * @return boolean
+ * @todo Finish documenting this function
+ */
 function isteacher($courseid=0, $userid=0, $includeadmin=true) {
 /// Is the user a teacher or admin?
     global $USER;
@@ -571,6 +779,14 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
     return record_exists('user_teachers', 'userid', $userid, 'course', $courseid);
 }
 
+/**
+ * Determines if a user is allowed to edit a given course
+ *
+ * @uses $USER
+ * @param integer $courseid The id of the course that is being edited
+ * @param integer $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
+ * @return boolean
+ */
 function isteacheredit($courseid, $userid=0) {
 /// Is the user allowed to edit this course?
     global $USER;
@@ -586,6 +802,13 @@ function isteacheredit($courseid, $userid=0) {
     return get_field('user_teachers', 'editall', 'userid', $userid, 'course', $courseid);
 }
 
+/**
+ * Determines if a user can create new courses
+ *
+ * @uses $USER
+ * @param integer $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user. 
+ * @return boolean
+ */
 function iscreator ($userid=0) {
 /// Can user create new courses?
     global $USER;
@@ -602,6 +825,18 @@ function iscreator ($userid=0) {
     return record_exists('user_coursecreators', 'userid', $userid);
 }
 
+/**
+ * Determines if a user is a student in the specified course
+ * 
+ * If the course id specifies the site then the function determines
+ * if the user is a confirmed and valid user of this site.
+ *
+ * @uses $USER
+ * @uses $CFG
+ * @param integer $courseid The id of the course being tested
+ * @param integer $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user. 
+ * @return boolean
+ */
 function isstudent($courseid, $userid=0) {
 /// Is the user a student in this course?
 /// If course is site, is the user a confirmed user on the site?
@@ -639,6 +874,13 @@ function isstudent($courseid, $userid=0) {
     return record_exists('user_students', 'userid', $userid, 'course', $courseid);
 }
 
+/**
+ * Determines if the specified user is logged in as guest.
+ *
+ * @uses $USER
+ * @param integer $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user. 
+ * @return boolean
+ */
 function isguest($userid=0) {
 /// Is the user a guest?
     global $USER;
@@ -653,7 +895,14 @@ function isguest($userid=0) {
     return record_exists('user', 'id', $userid, 'username', 'guest');
 }
 
-
+/**
+ * Determines if the currently logged in user is in editing mode
+ *
+ * @uses $USER
+ * @param integer $courseid The id of the course being tested
+ * @param object $user A user object. If null then the currently logged in user is used.
+ * @return boolean
+ */
 function isediting($courseid, $user=NULL) {
 /// Is the current user in editing mode?
     global $USER;
@@ -666,6 +915,13 @@ function isediting($courseid, $user=NULL) {
     return ($user->editing and isteacher($courseid, $user->id));
 }
 
+/**
+ * Determines if the logged in user is currently moving an activity
+ *
+ * @uses $USER
+ * @param integer $courseid The id of the course being tested
+ * @return boolean
+ */
 function ismoving($courseid) {
 /// Is the current user currently moving an activity?
     global $USER;
@@ -676,6 +932,18 @@ function ismoving($courseid) {
     return false;
 }
 
+/**
+ * Given an object containing firstname and lastname
+ * values, this function returns a string with the
+ * full name of the person.
+ * The result may depend on system settings
+ * or language.  'override' will force both names
+ * to be used even if system settings specify one. 
+ * @uses $CFG
+ * @uses $SESSION
+ * @param    type description
+ * @todo Finish documenting this function
+ */
 function fullname($user, $override=false) {
 /// Given an object containing firstname and lastname
 /// values, this function returns a string with the
@@ -711,7 +979,12 @@ function fullname($user, $override=false) {
     return get_string('fullnamedisplay', '', $user);
 }
 
-
+/**
+ * Sets a moodle cookie with an encrypted string
+ *
+ * @uses $CFG
+ * @param string $thing The string to encrypt and place in a cookie
+ */
 function set_moodle_cookie($thing) {
 /// Sets a moodle cookie with an encrypted string
     global $CFG;
@@ -725,7 +998,12 @@ function set_moodle_cookie($thing) {
     setCookie($cookiename, rc4encrypt($thing), time()+$seconds, '/');
 }
 
-
+/**
+ * Gets a moodle cookie with an encrypted string
+ *
+ * @uses $CFG
+ * @return string
+ */
 function get_moodle_cookie() {
 /// Gets a moodle cookie with an encrypted string
     global $CFG;
@@ -739,6 +1017,15 @@ function get_moodle_cookie() {
     }
 }
 
+/**
+ * Returns true if an internal authentication method is being used.
+ * if method not specified then, global default is assumed
+ *
+ * @uses $CFG
+ * @param string $auth Form of authentication required
+ * @return boolean
+ * @todo Outline auth types and provide code example
+ */
 function is_internal_auth($auth='') {
 /// Returns true if an internal authentication method is being used.
 /// if method not specified then, global default is assumed
@@ -754,6 +1041,17 @@ function is_internal_auth($auth='') {
     return ($method == 'email' || $method == 'none' || $method == 'manual');
 }
 
+/**
+ * Creates a bare-bones user record
+ *
+ * @uses $CFG
+ * @uses $REMOTE_ADDR
+ * @param string $username New user's username to add to record
+ * @param string $password New user's password to add to record
+ * @param string $auth Form of authentication required
+ * @return object
+ * @todo Outline auth types and provide code example
+ */
 function create_user_record($username, $password, $auth='') {
 /// Creates a bare-bones user record
     global $REMOTE_ADDR, $CFG;
@@ -793,6 +1091,13 @@ function create_user_record($username, $password, $auth='') {
     return false;
 }
 
+/**
+ * Will update a local user record from an external source
+ *
+ * @uses $CFG
+ * @param string $username New user's username to add to record
+ * @return object
+ */
 function update_user_record($username) {
 /// will update a local user record from an external source. 
     global $CFG;
@@ -812,6 +1117,12 @@ function update_user_record($username) {
     return get_user_info_from_db('username', $username);
 }
 
+/**
+ * Retrieve the guest user object
+ *
+ * @uses $CFG
+ * @return object
+ */
 function guest_user() {
     global $CFG;
 
@@ -825,6 +1136,19 @@ function guest_user() {
     return $newuser;
 }
 
+/**
+ * Given a username and password, this function looks them
+ * up using the currently selected authentication mechanism,
+ * and if the authentication is successful, it returns a
+ * valid $user object from the 'user' table.
+ * 
+ * Uses auth_ functions from the currently active auth module
+ *
+ * @uses $CFG
+ * @param string $username  user's username 
+ * @param string $password  user's password 
+ * @return object
+ */
 function authenticate_user_login($username, $password) {
 /// Given a username and password, this function looks them
 /// up using the currently selected authentication mechanism,
@@ -909,6 +1233,16 @@ function authenticate_user_login($username, $password) {
     }
 }
 
+/**
+ * Enrols (or re-enrols) a student in a given course
+ *
+ * @param integer $courseid The id of the course that is being viewed
+ * @param integer $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
+ * @param integer $timestart ?
+ * @param integer $timeend ?
+ * @return boolean
+ * @todo Finish documenting this function
+ */
 function enrol_student($userid, $courseid, $timestart=0, $timeend=0) {
 /// Enrols (or re-enrols) a student in a given course
 
@@ -934,6 +1268,13 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0) {
     }
 }
 
+/**
+ * Unenrols a student from a given course
+ *
+ * @param integer $courseid The id of the course that is being viewed, if any
+ * @param integer $userid The id of the user that is being tested against.
+ * @return boolean
+ */
 function unenrol_student($userid, $courseid=0) {
 /// Unenrols a student from a given course
 
@@ -958,6 +1299,19 @@ function unenrol_student($userid, $courseid=0) {
     }
 }
 
+/**
+ * Add a teacher to a given course
+ *
+  * @uses $USER
+ * @param integer $courseid The id of the course that is being viewed, if any
+ * @param integer $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
+ * @param integer $editall ?
+ * @param string $role ?
+ * @param integer $timestart ?
+ * @param integer $timeend ?
+ * @return boolean
+ * @todo Finish documenting this function
+ */
 function add_teacher($userid, $courseid, $editall=1, $role='', $timestart=0, $timeend=0) {
 /// Add a teacher to a given course
     global $CFG;
@@ -1015,6 +1369,14 @@ function add_teacher($userid, $courseid, $editall=1, $role='', $timestart=0, $ti
 
 }
 
+/**
+ * Removes a teacher from a given course (or ALL courses)
+ * Does not delete the user account
+ *
+ * @param integer $courseid The id of the course that is being viewed, if any
+ * @param integer $userid The id of the user that is being tested against. 
+ * @return boolean
+ */
 function remove_teacher($userid, $courseid=0) {
 /// Removes a teacher from a given course (or ALL courses)
 /// Does not delete the user account
@@ -1043,7 +1405,12 @@ function remove_teacher($userid, $courseid=0) {
     }
 }
 
-
+/**
+ * Add a creator to the site
+ *
+ * @param integer $userid The id of the user that is being tested against. 
+ * @return boolean
+ */
 function add_creator($userid) {
 /// Add a creator to the site
 
@@ -1057,6 +1424,13 @@ function add_creator($userid) {
     return true;
 }
 
+/**
+ * Remove a creator from a site
+ *
+  * @uses $db
+ * @param integer $userid The id of the user that is being tested against.
+ * @return boolean
+ */
 function remove_creator($userid) {
 /// Removes a creator from a site
     global $db;
@@ -1064,6 +1438,13 @@ function remove_creator($userid) {
     return delete_records('user_coursecreators', 'userid', $userid);
 }
 
+/**
+ * Add an admin to a site
+ *
+ * @uses SITEID
+ * @param integer $userid The id of the user that is being tested against.
+ * @return boolean
+ */
 function add_admin($userid) {
 /// Add an admin to the site
 
@@ -1085,6 +1466,14 @@ function add_admin($userid) {
     return true;
 }
 
+/**
+ * Removes an admin from a site
+ *
+  * @uses $db
+  * @uses SITEID
+ * @param integer $userid The id of the user that is being tested against.
+ * @return boolean
+ */
 function remove_admin($userid) {
 /// Removes an admin from a site
     global $db;
@@ -1095,7 +1484,17 @@ function remove_admin($userid) {
     return delete_records('user_admins', 'userid', $userid);
 }
 
-
+/**
+ * Clear a course out completely, deleting all content
+ * but don't delete the course itself
+ *
+ * @uses $USER
+ * @uses $SESSION
+ * @uses $CFG
+ * @param integer $courseid The id of the course that is being viewed
+ * @param boolean $showfeedback Set this to false to suppress notifications from being printed as the functions performs its steps.
+ * @return boolean
+ */
 function remove_course_contents($courseid, $showfeedback=true) {
 /// Clear a course out completely, deleting all content
 /// but don't delete the course itself
@@ -1230,6 +1629,25 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
 }
 
+/**
+ * This function will empty a course of USER data as much as
+/// possible. It will retain the activities and the structure
+/// of the course.
+ *
+ * @uses $USER
+ * @uses $THEME
+ * @uses $SESSION
+ * @uses $CFG
+ * @param integer $courseid The id of the course that is being viewed
+ * @param boolean $showfeedback Set this to false to suppress notifications from being printed as the functions performs its steps.
+ * @param boolean $removestudents ?
+ * @param boolean $removeteachers ?
+ * @param boolean $removegroups ?
+ * @param boolean $removeevents ?
+ * @param boolean $removelogs ?
+ * @return boolean
+ * @todo Finish documenting this function
+ */
 function remove_course_userdata($courseid, $showfeedback=true,
                                 $removestudents=true, $removeteachers=false, $removegroups=true,
                                 $removeevents=true, $removelogs=false) {
@@ -1348,6 +1766,7 @@ function remove_course_userdata($courseid, $showfeedback=true,
 * Returns a boolean: is the user a member of the given group?
 *
 * @param    type description
+ * @todo Finish documenting this function
 */
 function ismember($groupid, $userid=0) {
     global $USER;
@@ -1375,6 +1794,7 @@ function ismember($groupid, $userid=0) {
 * Returns the group ID of the current user in the given course
 *
 * @param    type description
+ * @todo Finish documenting this function
 */
 function mygroupid($courseid) {
     global $USER;
@@ -1392,6 +1812,7 @@ function mygroupid($courseid) {
 * NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS
 *
 * @param    type description
+ * @todo Finish documenting this function
 */
 function groupmode($course, $cm=null) {
 
@@ -1406,6 +1827,7 @@ function groupmode($course, $cm=null) {
 * Sets the current group in the session variable
 *
 * @param    type description
+ * @todo Finish documenting this function
 */
 function set_current_group($courseid, $groupid) {
     global $SESSION;
@@ -1418,6 +1840,7 @@ function set_current_group($courseid, $groupid) {
 * Gets the current group for the current user as an id or an object
 *
 * @param    type description
+ * @todo Finish documenting this function
 */
 function get_current_group($courseid, $full=false) {
     global $SESSION, $USER;
@@ -1445,6 +1868,7 @@ function get_current_group($courseid, $full=false) {
 * that to reset the current group for the user.
 *
 * @param    type description
+ * @todo Finish documenting this function
 */
 function get_and_set_current_group($course, $groupmode, $groupid=-1) {
 
@@ -1489,6 +1913,7 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
 * Otherwise returns false if groups aren't relevant
 *
 * @param    type description
+ * @todo Finish documenting this function
 */
 function setup_and_print_groups($course, $groupmode, $urlroot) {
 
@@ -1525,6 +1950,24 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
 
 /// CORRESPONDENCE  ////////////////////////////////////////////////
 
+/**
+ * Send an email to a specified user
+ *
+ * Returns "true" if mail was sent OK, "emailstop" if email was blocked by user
+ *  and "false" if there was another sort of error.
+ *
+ * @uses $CFG
+ * @uses $_SERVER
+ * @param object $user  a user record as an object
+ * @param object $from a user record as an object
+ * @param string $subject plain text subject line of the email
+ * @param string $messagetext plain text version of the message
+ * @param string $messagehtml complete html version of the message (optional)
+ * @param string $attachment a file on the filesystem, relative to $CFG->dataroot
+ * @param string $attachname the name of the file (extension indicates MIME)
+ * @param boolean $usetrueaddress determines whether $from email address should be sent out. Will be overruled by user profile setting for maildisplay
+ * @return boolean
+ */
 function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true) {
 ///  user        - a user record as an object
 ///  from        - a user record as an object
@@ -1647,6 +2090,13 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     }
 }
 
+/**
+ * Resets specified user's password and send the new password to the user via email.
+ *
+ * @uses $CFG
+ * @param object $user
+ * @return boolean
+ */
 function reset_password_and_mail($user) {
 
     global $CFG;
@@ -1675,7 +2125,14 @@ function reset_password_and_mail($user) {
 
 }
 
-function send_confirmation_email($user) {
+/**
+ * Send email to specified user with confirmation text and activation link.
+ *
+ * @uses $CFG
+ * @param object $user
+ * @return boolean
+ */
+ function send_confirmation_email($user) {
 
     global $CFG;
 
@@ -1696,6 +2153,12 @@ function send_confirmation_email($user) {
 
 }
 
+/**
+ * send_password_change_confirmation_email.
+ *
+ * @param    type description
+ * @todo Finish documenting this function
+ */
 function send_password_change_confirmation_email($user) {
 
     global $CFG;
@@ -1715,7 +2178,13 @@ function send_password_change_confirmation_email($user) {
 
 }
 
-
+/**
+ * Check that an email is allowed.  It returns an error message if there
+ * was a problem.
+ *
+ * @param    type description
+ * @todo Finish documenting this function
+ */
 function email_is_not_allowed($email) {
 /// Check that an email is allowed.  It returns an error message if there
 /// was a problem.
@@ -1754,7 +2223,14 @@ function email_is_not_allowed($email) {
 
 /// FILE HANDLING  /////////////////////////////////////////////
 
-
+/**
+ * Create a directory.
+ *
+ * @uses $CFG
+ * @param string $directory  a string of directory names under $CFG->dataroot
+ * @return object
+ * @todo Finish documenting this function
+ */
 function make_upload_directory($directory, $shownotices=true) {
 /// $directory = a string of directory names under $CFG->dataroot
 /// eg  stuff/assignment/1
@@ -1793,7 +2269,13 @@ function make_upload_directory($directory, $shownotices=true) {
     return $currdir;
 }
 
-
+/**
+ * Makes an upload directory for a particular module.
+ *
+ * @uses $CFG
+ * @param integer $courseid ?
+ * @todo Finish documenting this function
+ */
 function make_mod_upload_directory($courseid) {
 /// Makes an upload directory for a particular module
     global $CFG;
@@ -1812,7 +2294,12 @@ function make_mod_upload_directory($courseid) {
     return $moddata;
 }
 
-
+/**
+ * Returns current name of file on disk if true.
+ *
+ * @param string $newfile ?
+ * @todo Finish documenting this function
+ */
 function valid_uploaded_file($newfile) {
 /// Returns current name of file on disk if true
     if (empty($newfile)) {
@@ -1825,6 +2312,25 @@ function valid_uploaded_file($newfile) {
     }
 }
 
+/**
+ * Returns the maximum size for uploading files.
+ *
+ * There are seven possible upload limits:
+ * 1. in Apache using LimitRequestBody (no way of checking or changing this)
+ * 2. in php.ini for 'upload_max_filesize' (can not be changed inside PHP)
+ * 3. in .htaccess for 'upload_max_filesize' (can not be changed inside PHP)
+ * 4. in php.ini for 'post_max_size' (can not be changed inside PHP)
+ * 5. by the Moodle admin in $CFG->maxbytes
+ * 6. by the teacher in the current course $course->maxbytes
+ * 7. by the teacher for the current module, eg $assignment->maxbytes
+ *
+ * These last two are passed to this function as arguments (in bytes).
+ * Anything defined as 0 is ignored.
+ * The smallest of all the non-zero numbers is returned.
+ *
+ * @param    type description
+ * @todo Finish documenting this function
+ */
 function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) {
 /// Returns the maximum size for uploading files
 /// There are seven possible upload limits:
@@ -1868,6 +2374,17 @@ function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) 
     return $minimumsize;
 }
 
+/**
+ * Related to the above function - this function returns an
+ * array of possible sizes in an array, translated to the
+ * local language.
+ *
+ * @param integer $sizebytes ?
+ * @param integer $coursebytes ?
+ * @param integer $modulebytes
+ * @return integer
+ * @todo Finish documenting this function
+ */
 function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
 /// Related to the above function - this function returns an
 /// array of possible sizes in an array, translated to the
@@ -1893,7 +2410,18 @@ function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
     return $filesize;
 }
 
-
+/**
+ * If there has been an error uploading a file, print the appropriate error message
+ * Numerical constants used as constant definitions not added until PHP version 4.2.0
+ *
+ * filearray is a 1-dimensional sub-array of the $_FILES array
+ * eg $filearray = $_FILES['userfile1']
+ * If left empty then the first element of the $_FILES array will be used *
+ * @param array $filearray  ?
+ * @param boolean $returnerror
+ * @return boolean
+ * @todo Finish documenting this function
+ */
 function print_file_upload_error($filearray = '', $returnerror = false) {
 /// If there has been an error uploading a file, print the appropriate error message
 /// Numerical constants used as constant definitions not added until PHP version 4.2.0
@@ -1949,7 +2477,18 @@ function print_file_upload_error($filearray = '', $returnerror = false) {
 
 }
 
-
+/**
+ * Returns an array with all the filenames in
+ * all subdirectories, relative to the given rootdir.
+ * If excludefile is defined, then that file/directory is ignored
+ * If getdirs is true, then (sub)directories are included in the output
+ * If getfiles is true, then files are included in the output
+ * (at least one of these must be true!)
+ *
+ * @param type name definition
+ * @return array
+ * @todo Finish documenting this function
+ */
 function get_directory_list($rootdir, $excludefile='', $descend=true, $getdirs=false, $getfiles=true) {
 /// Returns an array with all the filenames in
 /// all subdirectories, relative to the given rootdir.
@@ -1999,6 +2538,14 @@ function get_directory_list($rootdir, $excludefile='', $descend=true, $getdirs=f
     return $dirs;
 }
 
+/**
+ * Adds up all the files in a directory and works out the size.
+ *
+ * @param string $rootdir  ?
+ * @param string $excludefile  ?
+ * @return object
+ * @todo Finish documenting this function
+ */
 function get_directory_size($rootdir, $excludefile='') {
 /// Adds up all the files in a directory and works out the size
 
@@ -2029,6 +2576,13 @@ function get_directory_size($rootdir, $excludefile='') {
     return $size;
 }
 
+/**
+ * Converts numbers like 10M into bytes.
+ *
+ * @uses $CFG
+ * @param mixed $size The size to be converted
+ * @return mixed
+ */
 function get_real_size($size=0) {
 /// Converts numbers like 10M into bytes
     if (!$size) {
@@ -2052,10 +2606,18 @@ function get_real_size($size=0) {
     return $size;
 }
 
+/**
+ * Converts bytes into display form
+ *
+ * @uses $CFG
+ * @param string $directory  a string of directory names under $CFG->dataroot
+ * @return object
+ * @todo Finish documenting this function
+ */
 function display_size($size) {
 /// Converts bytes into display form
 
-    static $gb,$mb,$kb,$b;
+    static $gb, $mb, $kb, $b;
 
     if (empty($gb)) {
         $gb = get_string('sizegb');
@@ -2076,6 +2638,14 @@ function display_size($size) {
     return $size;
 }
 
+/**
+ * Create a directory.
+ *
+ * @uses $CFG
+ * @param string $directory  a string of directory names under $CFG->dataroot
+ * @return object
+ * @todo Finish documenting this function
+ */
 function clean_filename($string) {
 /// Cleans a given filename by removing suspicious or troublesome characters
 /// Only these are allowed:
@@ -2138,7 +2708,7 @@ function get_string($identifier, $module='', $a=NULL) {
     }
 
     $langpath = $CFG->dirroot .'/lang';
-    $langfile = $langpath .'/'. $lang .'/'. $module .'.php'.;
+    $langfile = $langpath .'/'. $lang .'/'. $module .'.php';
 
     // Look for the string - if found then return it
 

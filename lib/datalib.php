@@ -1,22 +1,44 @@
-<?php // $Id$
+<?php
+
+/**
+ * Library of functions for database manipulation.
+ * 
+ * Library of functions for database manipulation.
+ * Other main libraries:
+ * - weblib.php - functions that produce web output
+ * - moodlelib.php - general-purpose Moodle functions
+ * @author Martin Dougiamas
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @package moodlecore
+ */
+
 
 /// GLOBAL CONSTANTS /////////////////////////////////////////////////////////
+
 if ($SITE = get_site()) {
+    /**
+     * If $SITE global from get_site() function exists then set it to that id, otherwise set to 1.
+     */
     define('SITEID', $SITE->id);
 } else {
+    /**
+     * @ignore
+     */
     define('SITEID', 1);
 }
-
 
 /// FUNCTIONS FOR DATABASE HANDLING  ////////////////////////////////
 
 /**
-* execute a given sql command string
-*
-* Completely general function - it just runs some SQL and reports success.
-*
-* @param    type description
-*/
+ * Execute a given sql command string
+ *
+ * Completely general function - it just runs some SQL and reports success.
+ *
+ * @param string $command the sql string to be executed
+ * @param boolean $feedback should the output of this command be returned? Default is true.
+ * @return string
+ */
 function execute_sql($command, $feedback=true) {
 /// Completely general function - it just runs some SQL and reports success.
 
@@ -36,18 +58,20 @@ function execute_sql($command, $feedback=true) {
         return false;
     }
 }
-/**
-* Run an arbitrary sequence of semicolon-delimited SQL commands
-*
-* Assumes that the input text (file or string) consists of
-* a number of SQL statements ENDING WITH SEMICOLONS.  The
-* semicolons MUST be the last character in a line.
-* Lines that are blank or that start with "#" are ignored.
-* Only tested with mysql dump files (mysqldump -p -d moodle)
-*
-* @param    type description
-*/
 
+/**
+ * Run an arbitrary sequence of semicolon-delimited SQL commands
+ *
+ * Assumes that the input text (file or string) consists of
+ * a number of SQL statements ENDING WITH SEMICOLONS.  The
+ * semicolons MUST be the last character in a line.
+ * Lines that are blank or that start with "#" are ignored.
+ * Only tested with mysql dump files (mysqldump -p -d moodle)
+ *
+ * @param string $sqlfile The path where a file with sql commands can be found on the server.
+ * @param string $sqlstring If no path is supplied then a string with semicolon delimited sql 
+ * commands can be supplied in this argument.
+ */
 function modify_database($sqlfile='', $sqlstring='') {
 
     global $CFG;
@@ -99,6 +123,7 @@ function modify_database($sqlfile='', $sqlstring='') {
 * Add a new field to a table, or modify an existing one (if oldfield is defined).
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 
 function table_column($table, $oldfield, $field, $type='integer', $size='10',
@@ -200,7 +225,7 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
                 execute_sql('ALTER TABLE  '. $CFG->prefix . $table .' DROP COLUMN '. $oldfield);
             }
 
-            execute_sql('ALTER TABLE '. $CFG->prefix . $table .' RENAME COLUMN '. $field .' TO '. $realfield');
+            execute_sql('ALTER TABLE '. $CFG->prefix . $table .' RENAME COLUMN '. $field .' TO '. $realfield);
 
             return execute_sql('COMMIT');
             break;
@@ -244,6 +269,7 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
 * Returns true or false depending on whether the specified record exists
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function record_exists($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
@@ -271,6 +297,7 @@ function record_exists($table, $field1='', $value1='', $field2='', $value2='', $
 * The sql statement is provided as a string.
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function record_exists_sql($sql) {
 
@@ -297,6 +324,7 @@ function record_exists_sql($sql) {
 * Get all the records and count them
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function count_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
@@ -323,6 +351,7 @@ function count_records($table, $field1='', $value1='', $field2='', $value2='', $
 * Get all the records and count them
 *
 * @param    type description
+* @todo Finish documenting this function
 *
 */
 function count_records_select($table, $select='', $countitem='COUNT(*)') {
@@ -343,6 +372,7 @@ function count_records_select($table, $select='', $countitem='COUNT(*)') {
 * The sql statement is provided as a string.
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function count_records_sql($sql) {
 
@@ -401,6 +431,7 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
 * A LIMIT is normally added to only look for 1 record
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_record_sql($sql) {
 
@@ -446,6 +477,7 @@ function get_record_sql($sql) {
 * "select" is a fragment of SQL to define the selection criteria
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_record_select($table, $select='', $fields='*') {
 
@@ -468,6 +500,7 @@ function get_record_select($table, $select='', $fields='*') {
 * limitfrom and limitnum must both be specified or not at all
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_records($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
 
@@ -510,6 +543,7 @@ function get_records($table, $field='', $value='', $sort='', $fields='*', $limit
 * limitfrom and limitnum must both be specified or not at all
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_records_select($table, $select='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
 
@@ -551,6 +585,7 @@ function get_records_select($table, $select='', $sort='', $fields='*', $limitfro
 * The "key" is the first column returned, eg usually "id"
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_records_list($table, $field='', $values='', $sort='', $fields='*') {
 
@@ -578,6 +613,7 @@ function get_records_list($table, $field='', $values='', $sort='', $fields='*') 
 * The sql statement is provided as a string.
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_records_sql($sql) {
 
@@ -612,6 +648,7 @@ function get_records_sql($sql) {
 * The "key" is the first column returned, eg usually "id"
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_records_menu($table, $field='', $value='', $sort='', $fields='*') {
 
@@ -638,6 +675,7 @@ function get_records_menu($table, $field='', $value='', $sort='', $fields='*') {
 * Returns associative array of first two fields
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_records_select_menu($table, $select='', $sort='', $fields='*') {
 
@@ -663,6 +701,7 @@ function get_records_select_menu($table, $select='', $sort='', $fields='*') {
 * a form menu.
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_records_sql_menu($sql) {
 
@@ -693,6 +732,7 @@ function get_records_sql_menu($sql) {
 * longdesc
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_field($table, $return, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
 
@@ -729,6 +769,7 @@ function get_field($table, $return, $field1, $value1, $field2='', $value2='', $f
 * longdesc
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_field_sql($sql) {
 
@@ -755,6 +796,7 @@ function get_field_sql($sql) {
 * longdesc
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
 
@@ -779,6 +821,7 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
 * Delete one or more records from a table
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function delete_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
@@ -805,6 +848,7 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
 * "select" is a fragment of SQL to define the selection criteria
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function delete_records_select($table, $select='') {
 
@@ -825,6 +869,7 @@ function delete_records_select($table, $select='') {
 * $dataobject is an object containing needed data
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
@@ -878,6 +923,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 * specify the record to update
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function update_record($table, $dataobject) {
 
@@ -935,6 +981,7 @@ function update_record($table, $dataobject) {
 * Suitable for setting as $USER session cookie.
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_user_info_from_db($field, $value) {
 
@@ -997,6 +1044,7 @@ function get_user_info_from_db($field, $value) {
 * longdesc
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function adminlogin($username, $md5password) {
 
@@ -1017,6 +1065,7 @@ function adminlogin($username, $md5password) {
 * longdesc
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_guest() {
     return get_user_info_from_db('username', 'guest');
@@ -1029,6 +1078,7 @@ function get_guest() {
 * longdesc
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_admin () {
 
@@ -1049,6 +1099,7 @@ function get_admin () {
 * longdesc
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_admins() {
 
@@ -1067,6 +1118,7 @@ function get_admins() {
 * longdesc
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_creators() {
 
@@ -1085,6 +1137,7 @@ function get_creators() {
 * longdesc
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_teacher($courseid) {
 
@@ -1107,6 +1160,7 @@ function get_teacher($courseid) {
 * used to print recent activity
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_recent_enrolments($courseid, $timestart) {
 
@@ -1131,6 +1185,7 @@ function get_recent_enrolments($courseid, $timestart) {
 * or on this site if courseid is id of site
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_course_students($courseid, $sort='s.timeaccess', $dir='', $page=0, $recordsperpage=99999,
                              $firstinitial='', $lastinitial='', $group=NULL, $search='', $fields='', $exceptions='') {
@@ -1256,6 +1311,7 @@ function get_course_students($courseid, $sort='s.timeaccess', $dir='', $page=0, 
 * Counts the students in a given course (or site), or a subset of them
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function count_course_students($course, $search='', $firstinitial='', $lastinitial='', $group=NULL, $exceptions='') {
 
@@ -1271,6 +1327,7 @@ function count_course_students($course, $search='', $firstinitial='', $lastiniti
 * (also works for site)
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='') {
 
@@ -1296,6 +1353,7 @@ function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='')
 * Returns all the users of a course: students and teachers
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_course_users($courseid, $sort='timeaccess DESC', $exceptions='', $fields='') {
 
@@ -1320,6 +1378,7 @@ function get_course_users($courseid, $sort='timeaccess DESC', $exceptions='', $f
 * If used for the site course searches through all undeleted, confirmed users
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions='') {
     global $CFG;
@@ -1395,6 +1454,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
 * Obsolete, just calls get_course_users(SITEID)
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') {
 
@@ -1407,7 +1467,7 @@ function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') 
 *
 * longdesc
 *
-* @param    bookean $get    if false then only a count of the records is returned
+* @param    boolean $get    if false then only a count of the records is returned
 * @param    string  $search a simple string to search for
 * @param    boolean $confirmed  a switch to allow/disallow unconfirmed users
 * @param    array(int)  $exceptions a list of IDs to ignore, eg 2,4,5,8,9,10
@@ -1481,9 +1541,10 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
 * longdesc
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=99999,
-                           $search='', $firstinitial='', $lastinitial='") {
+                           $search='', $firstinitial='', $lastinitial='') {
 
     global $CFG;
 
@@ -1536,6 +1597,7 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
 * longdesc
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_users_confirmed() {
     global $CFG;
@@ -1554,6 +1616,7 @@ function get_users_confirmed() {
 * longdesc
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_users_unconfirmed($cutofftime=2000000000) {
     global $CFG;
@@ -1571,6 +1634,7 @@ function get_users_unconfirmed($cutofftime=2000000000) {
 * longdesc
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_users_longtimenosee($cutofftime) {
     global $CFG;
@@ -1586,6 +1650,7 @@ function get_users_longtimenosee($cutofftime) {
 * list of all groups in the course.
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_groups($courseid, $userid=0) {
     global $CFG;
@@ -1608,6 +1673,7 @@ function get_groups($courseid, $userid=0) {
 * Returns an array of user objects
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='') {
     global $CFG;
@@ -1628,6 +1694,7 @@ function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='') {
 * An efficient way of finding all the users who aren't in groups yet
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_users_not_in_group($courseid) {
     global $CFG;
@@ -1640,6 +1707,7 @@ function get_users_not_in_group($courseid) {
 * Returns an array of user objects
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_group_students($groupid, $sort='u.lastaccess DESC') {
     global $CFG;
@@ -1661,6 +1729,7 @@ function get_group_students($groupid, $sort='u.lastaccess DESC') {
 * Returns the user's group in a particular course
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function user_group($courseid, $userid) {
     global $CFG;
@@ -1685,6 +1754,7 @@ function user_group($courseid, $userid) {
 * Returns $course object of the top-level site.
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_site () {
 
@@ -1702,6 +1772,7 @@ function get_site () {
 * Returns list of courses, for whole site, or category
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_courses($categoryid='all', $sort='c.sortorder ASC', $fields='c.*') {
 
@@ -1744,6 +1815,7 @@ function get_courses($categoryid='all', $sort='c.sortorder ASC', $fields='c.*') 
 * Similar to get_courses, but allows paging
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_courses_page($categoryid='all', $sort='c.sortorder ASC', $fields='c.*',
                           &$totalcount, $limitfrom='', $limitnum='') {
@@ -1799,6 +1871,7 @@ function get_courses_page($categoryid='all', $sort='c.sortorder ASC', $fields='c
 * longdesc
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
 
@@ -1843,6 +1916,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
 * Returns a list of courses that match a search
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $recordsperpage=50, &$totalcount) {
 
@@ -1925,6 +1999,7 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 * Returns a sorted list of categories
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_categories($parent='none', $sort='sortorder ASC') {
 
@@ -1951,6 +2026,7 @@ function get_categories($parent='none', $sort='sortorder ASC') {
 * This recursive function makes sure that the courseorder is consecutive
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function fix_course_sortorder($categoryid=0, $n=0) {
 
@@ -1983,6 +2059,7 @@ function fix_course_sortorder($categoryid=0, $n=0) {
 * existing language translations and older sites.
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function make_default_scale() {
 
@@ -2023,6 +2100,7 @@ function make_default_scale() {
 * Returns a menu of all available scales from the site as well as the given course
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_scales_menu($courseid=0) {
 
@@ -2049,6 +2127,7 @@ function get_scales_menu($courseid=0) {
 * Just gets a raw list of all modules in a course
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_course_mods($courseid) {
     global $CFG;
@@ -2067,6 +2146,7 @@ function get_course_mods($courseid) {
 * Given an instance of a module, finds the coursemodule description
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_coursemodule_from_instance($modulename, $instance, $courseid) {
 
@@ -2147,6 +2227,7 @@ function get_all_instances_in_course($modulename, $course) {
 * is visible or not
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function instance_is_visible($moduletype, $module) {
 
@@ -2271,6 +2352,7 @@ function get_logs($select, $order='l.time DESC', $limitfrom='', $limitnum='', &$
 * select all log records for a given course and user
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_logs_usercourse($userid, $courseid, $coursestart) {
     global $CFG;
@@ -2294,6 +2376,7 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
 * select all log records for a given course, user, and day
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function get_logs_userday($userid, $courseid, $daystart) {
     global $CFG;
@@ -2351,6 +2434,7 @@ function count_login_failures($mode, $username, $lastlogin) {
 * Mostly just for debugging
 *
 * @param    type description
+* @todo Finish documenting this function
 */
 function print_object($object) {
 

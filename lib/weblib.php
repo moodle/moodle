@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 // weblib.php - functions for web output
@@ -29,21 +29,70 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+/**
+ * Library of functions for web output
+ *
+ * Library of all general-purpose Moodle PHP functions and constants
+ * that produce HTML output
+ *
+ * Other main libraries:
+ * - datalib.php - functions that access the database.
+ * - moodlelib.php - general-purpose Moodle functions.
+ * @author Martin Dougiamas
+ * @version  $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @package moodlecore
+ */
+ 
 /// Constants
 
 /// Define text formatting types ... eventually we can add Wiki, BBcode etc
+
+/**
+ * Does all sorts of transformations and filtering
+ */
 define('FORMAT_MOODLE',   '0');   // Does all sorts of transformations and filtering
+
+/**
+ * Plain HTML (with some tags stripped)
+ */
 define('FORMAT_HTML',     '1');   // Plain HTML (with some tags stripped)
+
+/**
+ * Plain text (even tags are printed in full)
+ */
 define('FORMAT_PLAIN',    '2');   // Plain text (even tags are printed in full)
+
+/**
+ * Wiki-formatted text
+ */
 define('FORMAT_WIKI',     '3');   // Wiki-formatted text
+
+/**
+ * Markdown-formatted text http://daringfireball.net/projects/markdown/
+ */
 define('FORMAT_MARKDOWN', '4');   // Markdown-formatted text http://daringfireball.net/projects/markdown/
 
+
+/**
+ * Allowed tags - string of html tags that can be tested against for safe html tags
+ * @global string $ALLOWED_TAGS
+ */
 $ALLOWED_TAGS =
 '<p><br /><b><i><u><font><table><tbody><span><div><tr><td><th><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><embed><object><param><acronym><nolink><style><lang><tex><algebra><math><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><partialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpose><selector><annotation><semantics><annotation-xml><tt><code>';
 
 
 /// Functions
 
+/**
+ * Add quotes to HTML characters
+ *
+ * Returns $var with HTML characters (like "<", ">", etc.) properly quoted.
+ * This function is very similar to {@link p()}
+ *
+ * @param string $var the string potentially containing HTML characters
+ * @return string
+ */
 function s($var) {
 /// returns $var with HTML characters (like "<", ">", etc.) properly quoted,
 
@@ -53,6 +102,15 @@ function s($var) {
     return htmlSpecialChars(stripslashes_safe($var));
 }
 
+/**
+ * Add quotes to HTML characters
+ *
+ * Returns $var with HTML characters (like "<", ">", etc.) properly quoted.
+ * This function is very similar to {@link s()}
+ *
+ * @param string $var the string potentially containing HTML characters
+ * @return string
+ */
 function p($var) {
 /// prints $var with HTML characters (like "<", ">", etc.) properly quoted,
 
@@ -62,13 +120,32 @@ function p($var) {
     echo htmlSpecialChars(stripslashes_safe($var));
 }
 
+
+/**
+ * Ensure that a variable is set
+ *
+ * Return $var if it is defined, otherwise return $default, 
+ * This function is very similar to {@link optional_variable()}
+ *
+ * @param    mixed $var the variable which may be unset
+ * @param    mixed $default the value to return if $var is unset
+ * @return   mixed
+ */
 function nvl(&$var, $default='') {
 /// if $var is undefined, return $default, otherwise return $var
 
     return isset($var) ? $var : $default;
 }
 
-function strip_querystring($url) {
+/**
+ * Remove query string from url
+ *
+ * Takes in a URL and returns it without the querystring portion
+ *
+ * @param string $url the url which may have a query string attached
+ * @return string
+ */
+ function strip_querystring($url) {
 /// takes a URL and returns it without the querystring portion
 
     if ($commapos = strpos($url, '?')) {
@@ -78,6 +155,10 @@ function strip_querystring($url) {
     }
 }
 
+/**
+ * Returns the URL of the HTTP_REFERER, less the querystring portion
+ * @return string
+ */
 function get_referer() {
 /// returns the URL of the HTTP_REFERER, less the querystring portion
 
@@ -85,7 +166,15 @@ function get_referer() {
 }
 
 
-function me() {
+/**
+ * Returns the name of the current script, WITH the querystring portion.
+ * this function is necessary because PHP_SELF and REQUEST_URI and SCRIPT_NAME
+ * return different things depending on a lot of things like your OS, Web
+ * server, and the way PHP is compiled (ie. as a CGI, module, ISAPI, etc.)
+ * NOTE: This function returns false if the global variables needed are not set.
+ * @return string
+ */
+ function me() {
 /// returns the name of the current script, WITH the querystring portion.
 /// this function is necessary because PHP_SELF and REQUEST_URI and SCRIPT_NAME
 /// return different things depending on a lot of things like your OS, Web
@@ -118,7 +207,12 @@ function me() {
     }
 }
 
-
+/**
+ * Like me() but returns a full URL
+ * @see me()
+ * @link me()
+ * @return string
+ */
 function qualified_me() {
 /// like me() but returns a full URL
 
@@ -146,7 +240,17 @@ function qualified_me() {
     return $url_prefix . me();
 }
 
-
+/**
+ * Determine if a web referer is valid
+ *
+ * Returns true if the referer is the same as the goodreferer. If
+ * the referer to test is not specified, use {@link qualified_me()}.
+ * If the admin has not set secure forms ($CFG->secureforms) then
+ * this function returns true regardless of a match.
+ * @uses $CFG
+ * @param string $goodreferer the url to compare to referer
+ * @return boolean
+ */
 function match_referer($goodreferer = '') {
 /// returns true if the referer is the same as the goodreferer.  If
 /// goodreferer is not specified, use qualified_me as the goodreferer
@@ -169,6 +273,21 @@ function match_referer($goodreferer = '') {
     return (($referer == $goodreferer) or ($referer == $CFG->wwwroot .'/'));
 }
 
+/**
+ * Determine if there is data waiting to be processed from a form
+ *
+ * Used on most forms in Moodle to check for data
+ * Returns the data as an object, if it's found.
+ * This object can be used in foreach loops without
+ * casting because it's cast to (array) automatically
+ * 
+ * Checks that submitted POST data exists, and also
+ * checks the referer against the given url (it uses
+ * the current page if none was specified
+ * @uses $CFG
+ * @param string $url the url to compare to referer for secure forms
+ * @return boolean
+ */
 function data_submitted($url='') {
 /// Used on most forms in Moodle to check for data
 /// Returns the data as an object, if it's found.
@@ -196,6 +315,16 @@ function data_submitted($url='') {
     }
 }
 
+/**
+ * Moodle replacement for php stripslashes() function
+ *
+ * The standard php stripslashes() removes ALL backslashes 
+ * even from strings - so  C:\temp becomes C:temp - this isn't good.
+ * This function should work as a fairly safe replacement
+ * to be called on quoted AND unquoted strings (to be sure)
+ * @param string the string to remove unsafe slashes from
+ * @return string
+ */
 function stripslashes_safe($string) {
 /// stripslashes() removes ALL backslashes even from strings
 /// so  C:\temp becomes C:temp  ... this isn't good.
@@ -208,7 +337,14 @@ function stripslashes_safe($string) {
     return $string;
 }
 
-
+/**
+ * Given some normal text, this function will break up any
+ * long words to a given size, by inserting the given character
+ * @param string $string the string to be modified
+ * @param integer $maxsize maximum length of the string to be returned
+ * @param string $cutchar the string used to represent word breaks
+ * @return string
+ */
 function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
 /// Given some normal text, this function will break up any
 /// long words to a given size, by inserting the given character
@@ -237,7 +373,16 @@ function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
     return $output;
 }
 
-
+/**
+ * This does a search and replace, ignoring case
+ * This function is only used for versions of PHP older than version 5
+ * which do not have a native version of this function.
+ * Taken from the PHP manual, by bradhuizenga @ softhome.net
+ * @param string $find the string to search for
+ * @param string $replace the string to replace $find with
+ * @param string $string the string to search through
+ * return string
+ */
 if (!function_exists('str_ireplace')) {    /// Only exists in PHP 5
     function str_ireplace($find, $replace, $string) {
     /// This does a search and replace, ignoring case
@@ -276,6 +421,16 @@ if (!function_exists('str_ireplace')) {    /// Only exists in PHP 5
     }
 }
 
+/**
+ * Locate the position of a string in another string
+ *
+ * This function is only used for versions of PHP older than version 5
+ * which do not have a native version of this function.
+ * Taken from the PHP manual, by dmarsh @ spscc.ctc.edu
+ * @param string $haystack The string to be searched
+ * @param string $needle The string to search for
+ * @param integer $offset The position in $haystack where the search should begin.
+ */
 if (!function_exists('stripos')) {    /// Only exists in PHP 5
     function stripos($haystack, $needle, $offset=0) {
     /// This function is only used for versions of PHP older than version 5
@@ -285,6 +440,17 @@ if (!function_exists('stripos')) {    /// Only exists in PHP 5
     }
 }
 
+/**
+ * Load a template from file
+ *
+ * Returns a (big) string containing the contents of a template file with all
+ * the variables interpolated.  all the variables must be in the $var[] array or
+ * object (whatever you decide to use).
+ *
+ * <b>WARNING: do not use this on big files!!</b>
+ * @param string $filename Location on the server's filesystem where template can be found.
+ * @param mixed $var Passed in by reference. An array or object which will be loaded with data from the template file.
+ */
 function read_template($filename, &$var) {
 /// return a (big) string containing the contents of a template file with all
 /// the variables interpolated.  all the variables must be in the $var[] array or
@@ -298,6 +464,16 @@ function read_template($filename, &$var) {
     return $template;
 }
 
+/**
+ * Set a variable's value depending on whether or not it already has a value.
+ *
+ * If variable is set, set it to the set_value otherwise set it to the 
+ * unset_value.  used to handle checkboxes when you are expecting them from
+ * a form
+ * @param mixed $var Passed in by reference. The variable to check.
+ * @param mixed $set_value The value to set $var to if $var already has a value.
+ * @param mixed $unset_value The value to set $var to if $var does not already have a value.
+ */
 function checked(&$var, $set_value = 1, $unset_value = 0) {
 /// if variable is set, set it to the set_value otherwise set it to the
 /// unset_value.  used to handle checkboxes when you are expecting them from
@@ -310,6 +486,13 @@ function checked(&$var, $set_value = 1, $unset_value = 0) {
     }
 }
 
+/**
+ * Prints the word "checked" if a variable is true, otherwise prints nothing,
+ * used for printing the word "checked" in a checkbox form element
+ * @param boolean $var Variable to be checked for true value
+ * @param string $true_value Value to be printed if $var is true
+ * @param string $false_value Value to be printed if $var is false
+ */
 function frmchecked(&$var, $true_value = 'checked', $false_value = '') {
 /// prints the word "checked" if a variable is true, otherwise prints nothing,
 /// used for printing the word "checked" in a checkbox form input
@@ -321,7 +504,23 @@ function frmchecked(&$var, $true_value = 'checked', $false_value = '') {
     }
 }
 
-
+/**
+ * This function will create a HTML link that will work on both
+ * Javascript and non-javascript browsers.
+ * Relies on the Javascript function openpopup in javascript.php
+ * $url must be relative to home page  eg /mod/survey/stuff.php
+ * @param string $url Web link relative to home page
+ * @param string $name Name to be assigned to the popup window
+ * @param string $linkname Text to be displayed as web link
+ * @param integer $height Height to assign to popup window
+ * @param integer $width Height to assign to popup window
+ * @param string $title Text to be displayed as popup page title
+ * @param string $options List of additional options for popup window
+ * @todo Add code examples and list of some options that might be used.
+ * @param boolean $return Should the link to the popup window be returned as a string (true) or printed immediately (false)?
+ * @return string
+ * @uses $CFG
+ */
 function link_to_popup_window ($url, $name='popup', $linkname='click here',
                                $height=400, $width=500, $title='Popup window', $options='none', $return=false) {
 /// This will create a HTML link that will work on both
@@ -337,7 +536,7 @@ function link_to_popup_window ($url, $name='popup', $linkname='click here',
     $fullscreen = 0;
 
     if (!(strpos($url,$CFG->wwwroot) === false)) { // some log url entries contain _SERVER[HTTP_REFERRER] in which case wwwroot is already there.
-        $url = substr($url,strlen($CFG->wwwroot)+1);
+        $url = substr($url, strlen($CFG->wwwroot)+1);
     }
 
     $link = '<a target="'. $name .'" title="'. $title .'" href="'. $CFG->wwwroot . $url .'" '.
@@ -349,7 +548,22 @@ function link_to_popup_window ($url, $name='popup', $linkname='click here',
     }
 }
 
-
+/**
+ * This function will print a button submit form element
+ * that will work on both Javascript and non-javascript browsers.
+ * Relies on the Javascript function openpopup in javascript.php
+ * $url must be relative to home page  eg /mod/survey/stuff.php
+ * @param string $url Web link relative to home page
+ * @param string $name Name to be assigned to the popup window
+ * @param string $linkname Text to be displayed as web link
+ * @param integer $height Height to assign to popup window
+ * @param integer $width Height to assign to popup window
+ * @param string $title Text to be displayed as popup page title
+ * @param string $options List of additional options for popup window
+ * @todo Add code examples and list of some options that might be used.
+ * @return string
+ * @uses $CFG
+ */
 function button_to_popup_window ($url, $name='popup', $linkname='click here',
                                  $height=400, $width=500, $title='Popup window', $options='none') {
 /// This will create a HTML link that will work on both
@@ -369,6 +583,9 @@ function button_to_popup_window ($url, $name='popup', $linkname='click here',
 }
 
 
+/**
+ * Prints a simple button to close a window
+ */
 function close_window_button() {
 /// Prints a simple button to close a window
 
@@ -2353,7 +2570,7 @@ function redirect($url, $message='', $delay='0') {
     $encodedurl = htmlentities($url);
     if (empty($message)) {
         echo '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
-        echo '<script type="text/javascript">'. "\n" .'<!--'. "\n". 'location.replace(\'$url\');'. "\n". '//-->'. "\n". '</script>';   // To cope with Mozilla bug
+        echo '<script type="text/javascript">'. "\n" .'<!--'. "\n". "location.replace('$url');". "\n". '//-->'. "\n". '</script>';   // To cope with Mozilla bug
     } else {
         if (empty($delay)) {
             $delay = 3;  // There's no point having a message with no delay
@@ -2365,7 +2582,7 @@ function redirect($url, $message='', $delay='0') {
         echo '</center>';
         flush();
         sleep($delay);
-        echo '<script type="text/javascript">'."\n".'<!--'."\n".'location.replace(\'$url\');'."\n".'//-->'."\n".'</script>';   // To cope with Mozilla bug
+        echo '<script type="text/javascript">'."\n".'<!--'."\nlocation.replace('$url');\n".'//-->'."\n".'</script>';   // To cope with Mozilla bug
     }
     die;
 }
