@@ -3,6 +3,7 @@
 
 
 $string['addanewdiscussion'] = "Colocar un mensaje aquí";
+$string['addanewtopic'] = "Agregar un nuevo tema";
 $string['allowchoice'] = "Permitir a todos escoger";
 $string['allowdiscussions'] = "Permitir que cualquier \$a abra nuevos temas";
 $string['allowratings'] = "Permitir la calificación de los mensajes";
@@ -61,6 +62,8 @@ $string['nameteacher'] = "Foro de maestros";
 $string['newforumposts'] = "Nuevos mensajes";
 $string['nodiscussions'] = "Aún no hay temas en este foro";
 $string['noguestpost'] = "Lo sentimos, los invitados no pueden escribir aquí";
+$string['nomorepostscontaining'] = "No se encontraron más mensajes conteniendo \$a";
+$string['nonews'] = "Sin novedades aún";
 $string['noposts'] = "No hay mensajes";
 $string['nopostscontaining'] = "No se encontraron mensajes con '\$a'";
 $string['nosubscribers'] = "Nadie se ha inscrito aún en este foro";
@@ -94,6 +97,7 @@ $string['repliesone'] = "\$a respuesta";
 $string['reply'] = "Responder";
 $string['search'] = "Buscar";
 $string['searchforums'] = "Buscar foro";
+$string['searcholderposts'] = "Buscar mensajes antiguos...";
 $string['searchresults'] = "Resultado";
 $string['sendinratings'] = "Guardar calificaciones";
 $string['showsubscribers'] = "Mostrar participantes";

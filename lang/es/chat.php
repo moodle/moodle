@@ -17,6 +17,7 @@ $string['messagebeepseveryone'] = "\$a beeps a alguien";
 $string['messagebeepsyou'] = "\$a le acaba de enviar un beep";
 $string['messageenter'] = "\$a entró a la sala";
 $string['messageexit'] = "\$a salió de la sala";
+$string['messages'] = "Mensajes";
 $string['modulename'] = "Chat";
 $string['modulenameplural'] = "Chats";
 $string['neverdeletemessages'] = "Nunca borrar mensajes";
