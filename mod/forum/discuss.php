@@ -58,13 +58,15 @@
 
     $navmiddle = "<A HREF=\"../forum/index.php?id=$course->id\">".get_string("forums", "forum")."</A> -> <A HREF=\"../forum/view.php?f=$forum->id\">$forum->name</A>";
 
+    $searchform = forum_print_search_form($course, $search, true, "plain");
+
     if ($course->category) {
         print_header("$course->shortname: $discussion->name", "$course->fullname",
                  "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> ->
-                  $navmiddle -> $navtail", "", "", true, "", navmenu($course, $cm));
+                  $navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
     } else {
         print_header("$course->shortname: $discussion->name", "$course->fullname",
-                 "$navmiddle -> $navtail", "", "", true);
+                 "$navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
     }
 
     forum_print_discussion($course, $forum, $discussion, $post, $displaymode);

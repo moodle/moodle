@@ -754,7 +754,8 @@ function get_users_longtimenosee($cutofftime) {
                                    {$CFG->prefix}user_students s
                              WHERE u.lastaccess > '0' 
                                AND u.lastaccess < '$cutofftime' 
-                               AND u.id = s.userid");
+                               AND u.id = s.userid
+                          GROUP BY u.id");
 }
 
 

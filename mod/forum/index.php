@@ -25,18 +25,22 @@
     add_to_log($course->id, "forum", "view forums", "index.php?id=$course->id");
 
     $strforums = get_string("forums", "forum");
-
-    if ($course->category) {
-        print_header("$course->shortname: $strforums", "$course->fullname",
-                    "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> $strforums",
-                    "", "", true, "", navmenu($course));
-    } else {
-        print_header("$course->shortname: $strforums", "$course->fullname", "$strforums");
-    }
     $strforum = get_string("forum", "forum");
     $strdescription = get_string("description");
     $strdiscussions = get_string("discussions", "forum");
     $strsubscribed = get_string("subscribed", "forum");
+
+    $searchform = forum_print_search_form($course, "", true, "plain");
+
+    if ($course->category) {
+        print_header("$course->shortname: $strforums", "$course->fullname",
+                    "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> $strforums",
+                    "", "", true, $searchform, navmenu($course));
+    } else {
+        print_header("$course->shortname: $strforums", "$course->fullname", "$strforums", 
+                    "", "", true, $searchform, navmenu($course));
+    }
+
 
     $table->head  = array ($strforum, $strdescription, $strdiscussions);
     $table->align = array ("LEFT", "LEFT", "CENTER");
@@ -145,9 +149,6 @@
         }
     }
 
-    echo "<DIV ALIGN=CENTER>";
-    forum_print_search_form($course, $search);
-    echo "</DIV>";
 
     print_footer($course);
 

@@ -22,25 +22,25 @@
     $strsearch = get_string("search", "forum");
     $strsearchresults = get_string("searchresults", "forum");
 
+    $searchform = forum_print_search_form($course, $search, true, "plain");
+
     if ($search) {
         print_header("$course->shortname: $strsearchresults", "$course->fullname",
                  "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> -> 
                   <A HREF=\"index.php?id=$course->id\">$strforums</A> -> 
-                  <A HREF=\"search.php?id=$course->id\">$strsearch</A> -> \"$search\"", "search.search");
+                  <A HREF=\"search.php?id=$course->id\">$strsearch</A> -> \"$search\"", "search.search", 
+                  "", "",  $searchform);
     } else {
         print_header("$course->shortname: $strsearch", "$course->fullname",
                  "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> -> 
-                  <A HREF=\"index.php?id=$course->id\">$strforums</A> -> $strsearch", "search.search");
+                  <A HREF=\"index.php?id=$course->id\">$strforums</A> -> $strsearch", "search.search",
+                  "", "",  $searchform);
     }
-
-    echo "<DIV ALIGN=CENTER>";
-    forum_print_search_form($course, $search);
-    echo "</DIV>";
 
     if ($search) {
     
         if (!$posts = forum_search_posts($search, $course->id)) {
-            print_heading("<BR>".get_string("nopostscontaining", "forum", $search));
+            print_heading(get_string("nopostscontaining", "forum", $search));
 
         } else {
             foreach ($posts as $post) {

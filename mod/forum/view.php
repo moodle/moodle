@@ -40,6 +40,9 @@
         error("Must specify a course module or a forum ID");
     }
 
+    if (!$buttontext) {
+        $buttontext = forum_print_search_form($course, $search, true, "plain");
+    } 
 
     if ($course->category) {
         require_login($course->id);

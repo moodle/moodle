@@ -408,7 +408,7 @@ function forum_get_child_posts($parent) {
 }
 
 
-function forum_search_posts($search, $courseid) {
+function forum_search_posts($search, $courseid, $page=0, $recordsperpage=50) {
 /// Returns a list of posts that were found
     global $CFG;
 
@@ -417,6 +417,13 @@ function forum_search_posts($search, $courseid) {
     } else {
         $notteacherforum = "";
     }
+
+    if ($CFG->dbtype == "mysql") {
+        $limit = "LIMIT $page,$recordsperpage";
+    } else {
+        $limit = "LIMIT $recordsperpage,$page";
+    }
+
 
     return get_records_sql("SELECT p.*,u.firstname,u.lastname,u.email,u.picture
                             FROM {$CFG->prefix}forum_posts p,  
@@ -429,7 +436,7 @@ function forum_search_posts($search, $courseid) {
                               AND d.course = '$courseid' 
                               AND d.forum = f.id 
                               $notteacherforum
-                         ORDER BY p.modified DESC LIMIT 0, 50");
+                         ORDER BY p.modified DESC $limit");
 }
 
 function forum_get_ratings($postid, $sort="u.firstname ASC") {
@@ -1016,18 +1023,30 @@ function forum_print_mode_form($discussion, $mode) {
     echo "</P></CENTER>\n";
 }
 
-function forum_print_search_form($course, $search="", $return=false) {
+function forum_print_search_form($course, $search="", $return=false, $type="") {
     global $CFG;
 
-    $output = "<TABLE BORDER=0 CELLPADDING=10 CELLSPACING=0><TR><TD ALIGN=CENTER>";
-    $output .= "<FORM NAME=search ACTION=\"$CFG->wwwroot/mod/forum/search.php\">";
-    $output .= "<FONT SIZE=\"-1\">";
-    $output .= "<INPUT NAME=search TYPE=text SIZE=15 VALUE=\"$search\"><BR>";
-    $output .= "<INPUT VALUE=\"".get_string("searchforums", "forum")."\" TYPE=submit>";
-    $output .= "</FONT>";
-    $output .= "<INPUT NAME=id TYPE=hidden VALUE=\"$course->id\">";
-    $output .= "</FORM>";
-    $output .= "</TD></TR></TABLE>";
+    if ($type == "plain") {
+        $output = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0><TR><TD NOWRAP>";
+        $output .= "<FORM NAME=search ACTION=\"$CFG->wwwroot/mod/forum/search.php\">";
+        $output .= "<FONT SIZE=\"-1\">";
+        $output .= "<INPUT NAME=search TYPE=text SIZE=15 VALUE=\"$search\">";
+        $output .= "<INPUT VALUE=\"".get_string("searchforums", "forum")."\" TYPE=submit>";
+        $output .= "</FONT>";
+        $output .= "<INPUT NAME=id TYPE=hidden VALUE=\"$course->id\">";
+        $output .= "</FORM>";
+        $output .= "</TD></TR></TABLE>";
+    } else {
+        $output = "<TABLE BORDER=0 CELLPADDING=10 CELLSPACING=0><TR><TD ALIGN=CENTER>";
+        $output .= "<FORM NAME=search ACTION=\"$CFG->wwwroot/mod/forum/search.php\">";
+        $output .= "<FONT SIZE=\"-1\">";
+        $output .= "<INPUT NAME=search TYPE=text SIZE=15 VALUE=\"$search\"><BR>";
+        $output .= "<INPUT VALUE=\"".get_string("searchforums", "forum")."\" TYPE=submit>";
+        $output .= "</FONT>";
+        $output .= "<INPUT NAME=id TYPE=hidden VALUE=\"$course->id\">";
+        $output .= "</FORM>";
+        $output .= "</TD></TR></TABLE>";
+    }
 
     if ($return) {
         return $output;
