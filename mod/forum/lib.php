@@ -2212,11 +2212,11 @@ function forum_print_user_discussions($courseid, $userid, $groupid=0) {
             /// should NOT be accessible to the current user
 
             if (!$isteacheredit and $discussion->groupid != -1) {   /// Editing teachers or open discussions
-                if (!isset($cm[$discussion->forum])) {
-                    $cm[$discussion->forum] = get_coursemodule_from_instance("forum", $discussion->forum, $courseid);
-                    $groupmode[$discussion->forum] = groupmode($course, $cm[$discussion->forum]);
+                if (!isset($cm[$discussion->forumid])) {
+                    $cm[$discussion->forumid] = get_coursemodule_from_instance("forum", $discussion->forumid, $courseid);
+                    $groupmode[$discussion->forumid] = groupmode($course, $cm[$discussion->forumid]);
                 }
-                if ($groupmode[$discussion->forum] == SEPARATEGROUPS) {
+                if ($groupmode[$discussion->forumid] == SEPARATEGROUPS) {
                     if ($currentgroup != $discussion->groupid) {
                         continue;
                     }
