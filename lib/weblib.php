@@ -41,6 +41,8 @@ define("FORMAT_MARKDOWN", "4");   // Markdown-formatted text http://daringfireba
 $ALLOWED_TAGS =
 "<p><br><b><i><u><font><table><tbody><span><div><tr><td><th><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><embed><object><param><acronym><nolink><style><lang><tex><algebra><math><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><partialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpose><selector><annotation><semantics><annotation-xml><tt><code>";
 
+$ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'teamspeak', 'gopher', 'color');
+
 
 /// Functions
 
@@ -780,30 +782,29 @@ function cleanAttributes2($htmlTag){
     ///  It calls ancillary functions in kses which are prefixed by kses
     ///         17/08/2004              ::          Eamon DOT Costello AT dcu DOT ie
 
-    global $CFG;
+    global $CFG, $ALLOWED_PROTOCOLS;
+
     require_once("$CFG->libdir/kses.php");
 
     $htmlTag = kses_stripslashes($htmlTag);
-    if (substr($htmlTag, 0, 1) != '<'){
+    if (substr($htmlTag, 0, 1) != '<') {
         return '&gt;';  //a single character ">" detected
     }
-    if (!preg_match('%^<\s*(/\s*)?([a-zA-Z0-9]+)([^>]*)>?$%', $htmlTag, $matches)){
+    if (!preg_match('%^<\s*(/\s*)?([a-zA-Z0-9]+)([^>]*)>?$%', $htmlTag, $matches)) {
         return ''; // It's seriously malformed
     }
     $slash = trim($matches[1]); //trailing xhtml slash
     $elem = $matches[2];    //the element name
     $attrlist = $matches[3]; // the list of attributes as a string
 
-    $allowed_protocols = array('http', 'https', 'ftp', 'news', 'mailto', 'teamspeak', 'gopher', 'color');
-    $attrArray =  kses_hair($attrlist, $allowed_protocols) ;
+    $attrArray = kses_hair($attrlist, $ALLOWED_PROTOCOLS);
 
     $attStr = '';
-    foreach ($attrArray as $arreach)
-    {
+    foreach ($attrArray as $arreach) {
         $attStr .=  ' '.strtolower($arreach['name']).'="'.$arreach['value'].'" ';
     }
     $xhtml_slash = '';
-    if (preg_match('%/\s*$%', $attrlist)){
+    if (preg_match('%/\s*$%', $attrlist)) {
         $xhtml_slash = ' /';
     }
     return "<$slash$elem$attStr$xhtml_slash>";
