@@ -151,6 +151,7 @@ $string['noattempts'] = 'No attempts have been made on this quiz';
 $string['nodataset'] = 'nothing - it is not a wild card';
 $string['nominal'] = 'Nominal';
 $string['nomoreattempts'] = 'No more attempts are allowed';
+$string['nopossibledatasets'] = 'No possible datasets';
 $string['noquestions'] = 'No questions have been added yet';
 $string['noresponse'] = 'No Response';
 $string['noreview'] = 'You are not allowed to review this quiz';
