@@ -1,21 +1,21 @@
-<?PHP // $Id$
+<?PHP // $Id$ 
+      // choice.php - created with Moodle 1.0.8.1 (2003011200)
 
-#------------------------------------------------------------
-$string['modulename'] = "Choice";
-$string['modulenameplural'] = "Choices";
-#------------------------------------------------------------
 
-$string['publish'] = "Publish results";
-$string['publishanonymous'] = "Publish anonymous results, do not show student names";
-$string['publishnames'] = "Publish full results, showing names and their choices";
-$string['publishnot'] = "Do not publish results to students";
-$string['answered'] = "Answered";
-$string['choice'] = "Choice \$a";
-$string['choicename'] = "Choice name";
-$string['choicetext'] = "Choice text";
-$string['notanswered'] = "Not answered yet";
-$string['responses'] = "Responses";
-$string['responsesto'] = "Responses to \$a";
-$string['savemychoice'] = "Save my choice";
-$string['viewallresponses'] = "View \$a responses";
+$string['answered'] = "Получено ответов";
+$string['choice'] = "Вариант \$a";
+$string['choicename'] = "Название опроса";
+$string['choicetext'] = "Текст опроса";
+$string['modulename'] = "Опрос";
+$string['modulenameplural'] = "Опросы";
+$string['notanswered'] = "Не получено ответов";
+$string['publish'] = "Результаты";
+$string['publishanonymous'] = "Анонимно";
+$string['publishnames'] = "Полный вариант (имена и оценки)";
+$string['publishnot'] = "Не показывать студентам";
+$string['responses'] = "Ответ";
+$string['responsesto'] = "Ответ на \$a";
+$string['savemychoice'] = "Сохранить мой ответ";
+$string['viewallresponses'] = "Посмотреть \$a ответы";
+
 ?>

@@ -1,42 +1,42 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.8 dev (2002121200)
+      // assignment.php - created with Moodle 1.0.8.1 (2003011200)
 
 
-$string['allowresubmit'] = "Allow resubmitting";
-$string['assignmentdetails'] = "Assignment details";
-$string['assignmentname'] = "оБЪЧБОЙЕ ЪБДБОЙС";
-$string['assignmenttype'] = "фЙР ЪБДБОЙС";
-$string['description'] = "пРЙУБОЙЕ";
-$string['duedate'] = "уТПЛ УДБЮЙ";
-$string['early'] = "\$a early";
-$string['failedupdatefeedback'] = "Failed to update submission feedback for user \$a";
-$string['feedback'] = "Feedback";
-$string['feedbackupdated'] = "Submissions feedback updated for \$a people";
-$string['late'] = "\$a late";
-$string['maximumgrade'] = "чЩУЫБС ПГЕОЛБ";
-$string['maximumsize'] = "нБЛУЙНБМШОЩК ТБЪНЕТ";
-$string['modulename'] = "ъБДБОЙЕ";
-$string['modulenameplural'] = "ъБДБОЙС";
-$string['newsubmissions'] = "Assignments submitted";
-$string['notsubmittedyet'] = "Not submitted yet";
-$string['overwritewarning'] = "Warning: uploading again will REPLACE your current submission";
-$string['saveallfeedback'] = "Save all my feedback";
-$string['submissionfeedback'] = "Submission feedback";
-$string['submissions'] = "Submissions";
-$string['submitassignment'] = "Submit your assignment using this form";
-$string['submitted'] = "Submitted";
-$string['typeoffline'] = "Offline activity";
-$string['typeuploadsingle'] = "Upload a single file";
-$string['uploadbadname'] = "This filename contained strange characters and couldn't be uploaded";
-$string['uploadedfiles'] = "uploaded files";
-$string['uploaderror'] = "An error happened while saving the file on the server";
-$string['uploadfailnoupdate'] = "File was uploaded OK but could not update your submission!";
-$string['uploadfiletoobig'] = "Sorry, but that file is too big (limit is \$a bytes)";
-$string['uploadnofilefound'] = "No file was found - are you sure you selected one to upload?";
-$string['uploadnotregistered'] = "'\$a' was uploaded OK but submission did not register!";
-$string['uploadsuccess'] = "Uploaded '\$a' successfully";
-$string['viewfeedback'] = "View assignment grades and feedback";
-$string['viewsubmissions'] = "View \$a submitted assignments";
-$string['yoursubmission'] = "Your submission";
+$string['allowresubmit'] = "Несколько попыток";
+$string['assignmentdetails'] = "Детали задания";
+$string['assignmentname'] = "Название задания";
+$string['assignmenttype'] = "Тип задания";
+$string['description'] = "Описание";
+$string['duedate'] = "Срок";
+$string['early'] = "\$a рано";
+$string['failedupdatefeedback'] = "Не удалось обновить ответ пользователя \$a";
+$string['feedback'] = "Изменить";
+$string['feedbackupdated'] = "Ответ изменен для \$a ";
+$string['late'] = "\$a срок закончился";
+$string['maximumgrade'] = "Максимальная оценка";
+$string['maximumsize'] = "Максимальный размер";
+$string['modulename'] = "Задание";
+$string['modulenameplural'] = "Задания";
+$string['newsubmissions'] = "Предложить ответ";
+$string['notsubmittedyet'] = "Отправить решение";
+$string['overwritewarning'] = "Предупреждение: Ваш ответ будет заменен";
+$string['saveallfeedback'] = "Сохранить все исправления";
+$string['submissionfeedback'] = "Ответ исправлен";
+$string['submissions'] = "Ответы";
+$string['submitassignment'] = "Отправьте Ваше решение, использую форму";
+$string['submitted'] = "Ответ принят";
+$string['typeoffline'] = "Ответ - вне сайта";
+$string['typeuploadsingle'] = "Ответ - в виде файла";
+$string['uploadbadname'] = "Этот файл содержит недопустимые символы и не может быть закачан";
+$string['uploadedfiles'] = "Закачанные файлы";
+$string['uploaderror'] = "При сохранении файла на сервер произошла ошибка";
+$string['uploadfailnoupdate'] = "Файл был закачан, но не может обновить ваш предыдущий ответ!";
+$string['uploadfiletoobig'] = "Файл слишком большой (ограничение в \$a байт)";
+$string['uploadnofilefound'] = "Файл не был найден. Вы уверены, что выбрали его для закачки";
+$string['uploadnotregistered'] = "'\$a' был закачан, но ответ не зарегистрирован";
+$string['uploadsuccess'] = "Закачка '\$a' завершена";
+$string['viewfeedback'] = "Посмотреть оценки задания";
+$string['viewsubmissions'] = "Посмотреть \$a ответов  на задание";
+$string['yoursubmission'] = "Ваш ответ";
 
 ?>

@@ -1,1 +1,2 @@
-Ilia Chipitsine - ilia@chel.skbkontur.ru
+ѕроблемы с кодировкой решаютс€ отключением кодировки по-умолчанию в настройках апача.
+AddDefaultCharset off или установкой его на Windows-1251

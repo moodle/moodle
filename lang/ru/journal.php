@@ -1,30 +1,31 @@
 <?PHP // $Id$
 
 #------------------------------------------------------------
-$string['modulename'] = "Journal";
-$string['modulenameplural'] = "Journals";
+$string['modulename'] = "Тетрадь";
+$string['modulenameplural'] = "Тетради";
 #------------------------------------------------------------
 
-$string['feedbackupdated'] = "Feedback updated for \$a entries";
-$string['saveallfeedback'] = "Save all my feedback";
-$string['alwaysopen'] = "Always open";
-$string['blankentry'] = "Blank entry";
-$string['daysavailable'] = "Days available";
-$string['editingends'] = "Editing period ends";
-$string['editingended'] = "Editing period has ended";
-$string['journalname'] = "Journal name";
-$string['journalquestion'] = "Journal question";
-$string['journalrating1'] = "Not satisfactory";
-$string['journalrating2'] = "Satisfactory";
-$string['journalrating3'] = "Outstanding";
-$string['newjournalentries'] = "New journal entries";
-$string['noentry'] = "No entry";
-$string['notopenuntil'] = "This journal won't be open until";
-$string['notstarted'] = "You have not started this journal yet";
-$string['noratinggiven'] = "No rating given";
-$string['overallrating'] = "Overall rating";
-$string['rate'] = "Rate";
-$string['startoredit'] = "Start or edit my journal entry";
-$string['viewallentries'] = "View \$a journal entries";
+$string['alwaysopen'] = "Всегда открыта";
+$string['blankentry'] = "Пустая запись";
+$string['daysavailable'] = "Дни, когда доступна";
+$string['editingends'] = "Время редактирования окончено";
+$string['editingended'] = "Время работы с тетрадью истекло";
+$string['feedbackupdated'] = "Изменения сохранены";
+$string['journalname'] = "Заголовок тетради";
+$string['journalquestion'] = "Тема работы";
+$string['journalrating1'] = "Не удовлетворительно";
+$string['journalrating2'] = "Удовлетворительно";
+$string['journalrating3'] = "Отлично";
+$string['newjournalentries'] = "Новые записи";
+$string['noentry'] = "Нет записей";
+$string['notopenuntil'] = "Тетрадь не будет открыта до…";
+$string['notstarted'] = "Тетрадь пустая";
+$string['noratinggiven'] = "Оценка не была выставлена";
+$string['overallrating'] = "Общая оценка";
+$string['rate'] = "Без оценки";
+$string['saveallfeedback'] = "Сохранить результаты";
+$string['startoredit'] = "Работать с тетрадью";
+$string['viewallentries'] = "Посмотреть записи тетради";
 
 ?>
+
