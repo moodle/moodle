@@ -124,7 +124,9 @@
         }
     }
 
-    if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category) or isteacher($course->id)) {
+    if ($user->maildisplay == 1 or 
+       ($user->maildisplay == 2 and $course->category and !isguest()) or 
+       isteacher($course->id)) {
 
         if (isteacheredit($course->id) or $currentuser) {   /// Can use the enable/disable email stuff
             if (!empty($_GET['enable'])) {     /// Recieved a paramter to enable the email address

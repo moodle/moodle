@@ -1230,7 +1230,7 @@ function print_user($user, $course) {
     if (!empty($user->role) and ($user->role <> $course->teacher)) {
         echo "$string->role: $user->role<br />";
     }
-    if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category) or $isteacher) {
+    if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category and !isguest()) or $isteacher) {
         echo "$string->email: <a href=\"mailto:$user->email\">$user->email</a><br />";
     }
     if ($user->city or $user->country) {
