@@ -14,7 +14,6 @@ require_once ("$CFG->libdir/xmlize.php");
 class quiz_file_format extends quiz_default_format {
 
 /********************************
-  Need to re-compile php with zip support before testing this
 
     function readdata($filename) {
     /// Returns complete file with an array, one item per line
@@ -60,6 +59,7 @@ class quiz_file_format extends quiz_default_format {
 
     process_tf($xml, $questions);
     process_mc($xml, $questions);
+    process_ma($xml, $questions);
     process_fib($xml, $questions);
     process_matching($xml, $questions);
 
@@ -149,6 +149,61 @@ function process_mc($xml, &$questions) {
               $question->feedback[$j] = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
             }
         }
+        $questions[] = $question;
+    }
+}
+
+//----------------------------------------
+// Process Multiple Choice Questions With Multiple Answers
+//----------------------------------------
+function process_ma($xml, &$questions) {
+
+    $maquestions = $xml["POOL"]["#"]["QUESTION_MULTIPLEANSWER"];
+
+    for ($i = 0; $i < sizeof ($maquestions); $i++) {
+
+        $question = NULL;
+
+        $question->qtype = MULTICHOICE;
+        $question->defaultgrade = 1;
+        $question->single = 0;	// More than one answers allowed
+        $question->image = "";	// No images with this format
+
+	$thisquestion = $maquestions[$i];
+        // put questiontext in question object
+	$question->questiontext = addslashes(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+        // put name of question in question object
+        $question->name = $question->questiontext;
+
+	$choices = $thisquestion["#"]["ANSWER"];
+        $correctanswers = $thisquestion["#"]["GRADABLE"][0]["#"]["CORRECTANSWER"];
+
+	for ($j = 0; $j < sizeof ($choices); $j++) {
+
+	    $choice = trim($choices[$j]["#"]["TEXT"][0]["#"]);
+            // put this choice in the question object.
+            $question->answer[$j] = addslashes($choice);
+
+            $correctanswercount = sizeof($correctanswers);
+            $id = $choices[$j]["@"]["id"];
+            $iscorrect = 0;
+            for ($k = 0; $k < $correctanswercount; $k++) {
+
+                $correct_answer_id = trim($correctanswers[$k]["@"]["answer_id"]);
+                if (strcmp ($id, $correct_answer_id) == 0) {
+                    $iscorrect = 1;
+                }
+
+            }
+            if ($iscorrect) { 
+                $question->fraction[$j] = floor(100000/$correctanswercount)/100000; // strange behavior if we have more than 5 decimal places
+                $question->feedback[$j] = addslashes(trim($thisquestion["#"]["GRADABLE"][$j]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
+            } else {
+                $question->fraction[$j] = 0;
+                $question->feedback[$j] = addslashes(trim($thisquestion["#"]["GRADABLE"][$j]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
+            }
+        }
+
         $questions[] = $question;
     }
 }
