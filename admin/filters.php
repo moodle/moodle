@@ -16,10 +16,6 @@
         error("Only administrators can use this page!");
     }
 
-    if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
-    }
-
     if (!$site = get_site()) {
         error("Site isn't defined!");
     }
@@ -86,22 +82,23 @@
 /// If data submitted, then process and store.
 
     if (!empty($options)) {
-	    if ($config = data_submitted()) {  
+	    if (($config = data_submitted()) && confirm_sesskey()) {  
             unset($config->options);
+            unset($config->sesskey);
             foreach ($config as $name => $value) {
                 set_config($name, $value);
             }
         }
     }
 
-    if (!empty($add) and !empty($uselect)) {
+    if (!empty($add) and !empty($uselect) and confirm_sesskey()) {
         $selectedfilter = $uselect;
         if (!in_array($selectedfilter, $installedfilters)) {
             $installedfilters[] = $selectedfilter;
             set_config("textfilters", implode(',', $installedfilters));
         }
 
-    } else if (!empty($remove) and !empty($iselect)) {
+    } else if (!empty($remove) and !empty($iselect) and confirm_sesskey()) {
         $selectedfilter = $iselect;
         foreach ($installedfilters as $key => $installedfilter) {
             if ($installedfilter == $selectedfilter) {
@@ -110,7 +107,7 @@
         }
         set_config("textfilters", implode(',', $installedfilters));
 
-    } else if ((!empty($up) or !empty($down)) and !empty($iselect)) {
+    } else if ((!empty($up) or !empty($down)) and !empty($iselect) and confirm_sesskey()) {
 
         if (!empty($up)) {
             if ($allfilters[$iselect]) {

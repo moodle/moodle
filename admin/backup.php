@@ -15,17 +15,13 @@
         error("Site isn't defined!");
     }
 
-    if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
-    }
-
     //Initialise error variables
     $error = false;
     $sche_destination_error = "";
 
     /// If data submitted, then process and store.
 
-    if ($config = data_submitted()) {
+    if (($config = data_submitted()) && confirm_sesskey()) {
 
         //First of all we check that everything is correct
         //Check for trailing slash and backslash in backup_sche_destination
