@@ -8,7 +8,7 @@
     // Layout the whole page as two big columns.
     echo "<TABLE BORDER=0 CELLPADDING=4>";
     echo "<TR VALIGN=top><TD VALIGN=top WIDTH=200>";
-    echo "<IMG SRC=\"../pix/spacer.gif\" WIDTH=180 HEIGHT=1><BR>";
+    echo "<IMG ALT=\"\" SRC=\"../pix/spacer.gif\" WIDTH=180 HEIGHT=1><BR>";
     
     // Layout the left column
 
@@ -37,7 +37,7 @@
     // Start main column
     echo "</TD><TD WIDTH=100%>";
 
-    echo "<P><IMG SRC=\"../pix/spacer.gif\" WIDTH=100% HEIGHT=3><BR>";
+    echo "<P><IMG ALT=\"\" SRC=\"../pix/spacer.gif\" WIDTH=100% HEIGHT=3><BR>";
     echo "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0 WIDTH=100%>";
     echo "<TR>";
     echo "<TD NOWRAP ALIGN=RIGHT><P><FONT SIZE=1>";

@@ -80,7 +80,7 @@
       }
       $headertext = "<TABLE BORDER=0 WIDTH=100% CELLPADDING=0 CELLSPACING=0><TR><TD>Social Forum - Current Topics<TD ALIGN=RIGHT><FONT SIZE=1><A HREF=\"../mod/discuss/subscribe.php?id=$social->id\">$subtext</A></TD></TR></TABLE>";
          print_simple_box("$headertext", $align="CENTER", $width="100%", $color="$THEME->cellheading"); ?>
-      <IMG HEIGHT=7 SRC="../pix/spacer.gif"><BR>
+      <IMG ALT="" HEIGHT=7 SRC="../pix/spacer.gif"><BR>
 
       <? 
           if ($social = get_course_social_forum($course->id)) {

@@ -19,7 +19,7 @@
     // Layout the whole page as three big columns.
     echo "<TABLE BORDER=0 CELLPADDING=4>";
     echo "<TR VALIGN=top><TD VALIGN=top WIDTH=180>";
-    echo "<IMG SRC=\"../pix/spacer.gif\" WIDTH=180 HEIGHT=1><BR>";
+    echo "<IMG ALT=\"\" SRC=\"../pix/spacer.gif\" WIDTH=180 HEIGHT=1><BR>";
     
     // Layout the left column
 
@@ -69,7 +69,7 @@
     echo "</TD><TD WIDTH=\"*\">";
 
     echo "<TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=0><TR><TD>";
-    echo "<P><IMG SRC=\"../pix/spacer.gif\" WIDTH=100% HEIGHT=3><BR>";
+    echo "<P><IMG ALT=\"\" SRC=\"../pix/spacer.gif\" WIDTH=100% HEIGHT=3><BR>";
     echo "<B><FONT SIZE=2>Weekly Outline</FONT></B>\n";
     
     echo "</FONT>";
@@ -144,7 +144,7 @@
         echo "</TD>";
         echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top>&nbsp;</TD>";
         echo "</TR>";
-        echo "<TR><TD COLSPAN=3><IMG SRC=../pix/spacer.gif WIDTH=1 HEIGHT=1></TD></TR>";
+        echo "<TR><TD COLSPAN=3><IMG ALT=\"\" SRC=\"../pix/spacer.gif\" WIDTH=1 HEIGHT=1></TD></TR>";
 
         $week++;
         $weekdate = $nextweekdate;
