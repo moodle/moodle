@@ -600,11 +600,13 @@ function calendar_top_controls($type, $data) {
 
             // Get the format string
             $text = get_string('strftimedaydate');
+            /*
             // Regexp hackery to make a link out of the month/year part
             $text = ereg_replace('(%B.+%Y|%Y.+%B|%Y.+%m[^ ]+)', '<a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $data['m'], $data['y']).'">\\1</a>', $text);
             $text = ereg_replace('(F.+Y|Y.+F|Y.+m[^ ]+)', '<a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $data['m'], $data['y']).'">\\1</a>', $text);
+            */
             // Replace with actual values and lose any day leading zero
-            $text = usergetdate($text, $time);
+            $text = userdate($time, $text);
             // Print the actual thing
             $content .= '<td class="current">'.$text.'</td>';
 

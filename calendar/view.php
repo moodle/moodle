@@ -217,7 +217,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
 
     if (empty($events)) {
         // There is nothing to display today.
-        echo '<p>'.get_string('daywithnoevents', 'calendar').'</p>';
+        echo '<h3>'.get_string('daywithnoevents', 'calendar').'</h3>';
 
     } else {
 
