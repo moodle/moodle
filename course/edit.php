@@ -139,12 +139,13 @@
     }
 
     $form->categories = get_records_select_menu("course_categories", "", "name", "id,name");
-    
-    $form->courseformats = array (
-             "weeks"  => get_string("formatweeks"),
-             "social" => get_string("formatsocial"),
-             "topics" => get_string("formattopics")
-    );
+
+    $courseformats = get_list_of_plugins("course/format");
+    $form->courseformats = array();
+
+    foreach ($courseformats as $courseformat) {
+        $form->courseformats["$courseformat"] = get_string("format$courseformat");
+    }
 
     $streditcoursesettings = get_string("editcoursesettings");
     $straddnewcourse = get_string("addnewcourse");
