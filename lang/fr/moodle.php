@@ -789,6 +789,7 @@ $string['restoreto'] = 'Restaurer vers';
 $string['returningtosite'] = 'Déjà inscrit ?';
 $string['revert'] = 'Version précédente';
 $string['role'] = 'Rôle';
+$string['rss'] = 'RSS';
 $string['rsstype'] = 'Canal RSS de cette activité';
 $string['rssarticles'] = 'Nombre d\'articles RSS récents';
 $string['savechanges'] = 'Enregistrer';
