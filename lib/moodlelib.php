@@ -524,6 +524,13 @@ function get_moodle_cookie() {
     }
 }
 
+function is_internal_auth() {
+/// Returns true if an internal authentication method is being used.
+
+    global $CFG;
+
+    return ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual");
+}
 
 function create_user_record($username, $password) {
 /// Creates a bare-bones user record 
