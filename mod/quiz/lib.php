@@ -967,7 +967,11 @@ function quiz_print_question_list($questionlist, $grades) {
     $order = explode(",", $questionlist);
 
     if (!$questions = get_records_list("quiz_questions", "id", $questionlist)) {
-        error("No questions were found!");
+        echo "<P align=center>";
+        print_string("noquestions", "quiz");
+        echo "</P>";
+        return;
+
     }
 
     $strorder = get_string("order");
