@@ -53,14 +53,33 @@ define('SEPARATEGROUPS', 1);
 define('VISIBLEGROUPS', 2);
 
 /**
- * Time constants
+ * Time constant - the number of seconds in a week
  */
-
 define('WEEKSECS', 604800); 
+
+/**
+ * Time constant - the number of seconds in a day
+ */
 define('DAYSECS', 86400);
+
+/**
+ * Time constant - the number of seconds in an hour
+ */
 define('HOURSECS', 3600);
+
+/**
+ * Time constant - the number of seconds in a minute
+ */
 define('MINSECS', 60);
+
+/**
+ * Time constant - the number of minutes in a day
+ */
 define('DAYMINS', 1440);
+
+/**
+ * Time constant - the number of minutes in an hour
+ */
 define('HOURMINS', 60);
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
@@ -338,6 +357,9 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * Given an amount of time in seconds, returns string
  * formatted nicely as months, days, hours etc as needed
  *
+ * @uses MINSECS
+ * @uses HOURSECS
+ * @uses DAYSECS
  * @param int $totalsecs ?
  * @param array $str ?
  * @return string
@@ -398,6 +420,7 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * If parameter fixday = true (default), then take off leading
  * zero from %d, else mantain it.
  *
+ * @uses HOURSECS
  * @param  int $date ?
  * @param string $format ?
  * @param int $timezone ?
@@ -445,6 +468,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
  * Given a $date timestamp in GMT (seconds since epoch), 
  * returns an array that represents the date in user time
  *
+ * @uses HOURSECS
  * @param  int $date Timestamp in GMT
  * @param int $timezone ?
  * @return array An array that represents the date in user time
@@ -476,6 +500,7 @@ function usergetdate($date, $timezone=99) {
  * Given a GMT timestamp (seconds since epoch), offsets it by
  * the timezone.  eg 3pm in India is 3pm GMT - 7 * 3600 seconds
  *
+ * @uses HOURSECS
  * @param  int $date Timestamp in GMT
  * @param int $timezone ?
  * @return int
@@ -1045,6 +1070,8 @@ function fullname($user, $override=false) {
  * Sets a moodle cookie with an encrypted string
  *
  * @uses $CFG
+ * @uses DAYSECS
+ * @uses HOURSECS
  * @param string $thing The string to encrypt and place in a cookie
  */
 function set_moodle_cookie($thing) {
@@ -3513,6 +3540,7 @@ function moodle_needs_upgrading() {
  *
  * @uses $CFG
  * @uses $db
+ * @uses HOURSECS
  * @todo Finish documenting this function. Add long description with more detail on what it does.
  */
 function notify_login_failures() {
@@ -3685,6 +3713,7 @@ function random_string ($length=15) {
  * Given dates in seconds, how many weeks is the date from startdate
  * The first week is 1, the second 2 etc ...
  *
+ * @uses WEEKSECS
  * @param ? $startdate ?
  * @param ? $thedate ?
  * @return string

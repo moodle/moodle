@@ -2575,6 +2575,7 @@ function get_logs($select, $order='l.time DESC', $limitfrom='', $limitnum='', &$
  * Select all log records for a given course and user
  *
  * @uses $CFG
+ * @uses DAYSECS
  * @param int $userid The id of the user as found in the 'user' table.
  * @param int $courseid The id of the course as found in the 'course' table.
  * @param string $coursestart ?
@@ -2589,7 +2590,7 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
         $courseselect = '';
     }
 
-    return get_records_sql("SELECT floor((`time` - $coursestart)/".DAYSECS.") as day, count(*) as num
+    return get_records_sql("SELECT floor((`time` - $coursestart)/". DAYSECS .") as day, count(*) as num
                             FROM {$CFG->prefix}log
                            WHERE userid = '$userid'
                              AND `time` > '$coursestart' $courseselect
@@ -2600,6 +2601,7 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
  * Select all log records for a given course, user, and day
  *
  * @uses $CFG
+ * @uses HOURSECS
  * @param int $userid The id of the user as found in the 'user' table.
  * @param int $courseid The id of the course as found in the 'course' table.
  * @param string $daystart ?
@@ -2615,7 +2617,7 @@ function get_logs_userday($userid, $courseid, $daystart) {
         $courseselect = '';
     }
 
-    return get_records_sql("SELECT floor((`time` - $daystart)/".HOURSECS.") as hour, count(*) as num
+    return get_records_sql("SELECT floor((`time` - $daystart)/". HOURSECS .") as hour, count(*) as num
                             FROM {$CFG->prefix}log
                            WHERE userid = '$userid'
                              AND `time` > '$daystart' $courseselect
