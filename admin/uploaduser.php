@@ -80,7 +80,12 @@
                           "course2" => 1,
                           "course3" => 1, 
                           "course4" => 1, 
-                          "course5" => 1);
+                          "course5" => 1,
+			  "group1" => 1,
+			  "group2" => 1,
+			  "group3" => 1,
+			  "group4" => 1,
+			  "group5" =>1);
 
         // --- get header (field names) ---
         $header = split("\,", fgets($fp,1024));
@@ -142,6 +147,11 @@
                 $addcourse[2] = $user->course3;
                 $addcourse[3] = $user->course4;
                 $addcourse[4] = $user->course5;
+                $addgroup[0] = $user->group1;
+                $addgroup[1] = $user->group2;
+                $addgroup[2] = $user->group3;
+                $addgroup[3] = $user->group4;
+                $addgroup[4] = $user->group5;
                 $courses = get_courses("all");
                 for ($i=0; $i<5; $i++) {
                     $courseid[$i]=0;
@@ -151,11 +161,6 @@
                         if ($course->shortname == $addcourse[$i]) {
                             $courseid[$i] = $course->id;
                         }
-                    }
-                }
-                for ($i=0; $i<5; $i++) {
-                    if ($addcourse[$i] && !$courseid[$i]) {
-                        notify(get_string('unknowncourse', 'error', $addcourse[$i]));
                     }
                 }
                 if (! $user->id = insert_record("user", $user)) {
@@ -174,6 +179,25 @@
                     $numusers++;
                 }
                 for ($i=0; $i<5; $i++) {
+                    if ($addcourse[$i] && !$courseid[$i]) {
+                        notify(get_string('unknowncourse', 'error', $addcourse[$i]));
+                    }
+                }
+		for ($i=0; $i<5; $i++) {
+                  $groupid[$i] = 0;
+                  if ($addgroup[$i]) {
+		    if (!$courseid[$i]) {
+		      notify(get_string('coursegroupunknown','error',$addgroup[$i]));
+		    } else {
+		      if ($group = get_record("groups","courseid",$courseid[$i],"name",$addgroup[$i])) {
+			$groupid[$i] = $group->id;
+		      } else {
+			notify(get_string('groupunknown','error',$addgroup[$i]));
+		      }
+		    }
+		  }
+		}
+                for ($i=0; $i<5; $i++) {
                     if ($courseid[$i]) {
                         if (enrol_student($user->id, $courseid[$i])) {
                             notify('-->'. get_string('enrolledincourse', '', $addcourse[$i]));
@@ -182,6 +206,27 @@
                         }
                     }
                 }
+                for ($i=0; $i<5; $i++) {
+		  if ($courseid[$i] && $groupid[$i]) {
+		    if (record_exists("user_students","userid",$user->id,"course",$courseid[$i])) {
+		      if (record_exists("groups_members","groupid",$groupid[$i],"userid",$user->id)) {
+			notify('-->' . get_string('addedtogroup','',$addgroup[$i]));
+		      } else {
+			$group_member->groupid = $groupid[$i];
+			$group_member->userid = $user->id;
+			$group_member->timeadded = time();
+			if (insert_record("groups_members",$group_member)) {
+			  notify('-->' . get_string('addedtogroup','',$addgroup[$i]));
+			} else {
+			  notify('-->' . get_string('addedtogroupnot','',$addgroup[$i]));
+			}
+		      }
+		    } else {
+			notify('-->' . get_string('addedtogroupnotenrolled','',$addgroup[$i]));
+		    }
+		  }
+		}
+
                 unset ($user);
             }
         }

@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
       // error.php - created with Moodle 1.2 development (2003122600)
 
-
+$string['coursegroupunknown'] = 'Course corresponding to group $a not specified';
 $string['erroronline'] = 'Error on line $a';
 $string['fieldrequired'] = '\"$a\" is a required field';
+$string['groupunknown'] = 'Group $a not associated to specified course';
 $string['invalidfieldname'] = '\"$a\" is not a valid field name';
 $string['missingfield'] = 'Field \"$a\" is missing';
 $string['modulerequirementsnotmet'] = 'Module \"$a->modulename\" ($a->moduleversion) could not be installed.  It requires a newer version of Moodle (currently you are using $a->currentmoodle, you need $a->requiremoodle).';
