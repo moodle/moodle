@@ -1,0 +1,64 @@
+<P ALIGN=CENTER><B>Berekende vragen</B></P>
+Berekende vragen bieden een manier om individueel verschillende numerieke vragen te maken door gebruik te maken van jokertekens in de vraag die vervangen worden door waarden wanneer de test afgenomen wordt. Elke leerling krijgt andere waarden.
+<br/>hier onder is een verkleinde weergave van de bewerkingspagina afgebeeld met enkele woorbeeldwaarden ingegeven:<br/>
+
+<table><tbody>
+<tr valign="top">
+    <td align="right"><p><b>Vraag:</b></p>
+    </td>
+    <td>
+        <textarea id="questiontext" name="questiontext" rows="5" cols="40" wrap="virtual">Hoe veel is {a} + {b} ?</textarea>
+</td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><b>Weer te geven afbeelding:</b></p></td>
+    <td>
+    <select name="image"><option value="" selected="selected">Geen</option><option value="grevture.gif">grevture.gif</option></select>
+    </td>
+</tr>
+
+<tr valign="top">
+<td align="right"><p><b>Juiste antwoordformule:</b></p></td>
+    <td>
+    <input align="left" type="text" id="formula0" name="answer[]" size="20" value="{a} + {b}">&nbsp;&nbsp;
+    <input type="hidden" name="fraction[]" value="1.0">
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><b>Tolerantie:</b></p></td>
+    <td>
+    <input align="left" type="text" id="tolerance0&quot;" name="tolerance[]" size="15" value="0.01">±
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><p><b>Toleratietype:</b></p></td>
+    <td>
+   <select name="tolerancetype[]"><option value="1" selected="selected">Relatief</option><option value="2">Nominaal</option><option value="3">Geometrisch</option></select>
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><p><b>Aantal beduidende cijfers:</b></p></td>
+    <td>
+    <select name="correctanswerlength[]"><option value="1">1</option><option value="2" selected="selected">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
+    </td>
+</tr>
+</tbody></table>
+
+<br/>
+Bij de invoer van de vraag en in de "Juiste antwoordformule" kun je {a} en {b} zien. Deze en andere {namen} kunnen gebruikt worden als jokerteken dat vervangen zal worden door een waarde wanneer de test afgenomen wordt. Het juiste antwoord wordt berekend met de uitdrukking in "Juiste antwoordformule" als een numerieke uitdrukking door het vervangen van de jokertekens wanneer de test ingestuurd wordt. De mogelijke waarden voor de jokertekens worden ingesteld of berekend op een volgende bewerkingspagina van berekende vragen...
+<br/>
+De formule in het voorbeeld gebruikt + als operator. Andere mogelijke operatoren zijn - * / en %, waarbij % voor modules staat. Het is ook mogelijk om enkele wiskundige functies in PHP-stijl te gebruiken. Daarnaast zijn er nog 24 functies met 1 argument mogelijk:<br/><b>
+abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos, cosh, deg2rad, exp, expm1, floor, log, log10, log1p, rad2deg, round, sin, sinh, sprt, tan, tanh
+</b><br/>en twee twee-argumentsfuncties<br/><b>atan2, pow</b><br/>en de functies<b>min</b> en<b>max</b> die twee of meer argumenten kunnen krijgen. Het is ook mogelijk om de functie <b>pi</b> zonder argumenten te gebruiken, maar vergeet dan de lege haakjes niet - de juiste notatie is <b>pi()</b>. Op dezelfde wijze moeten de andere functies hun argument(en) tussen haakjes meekrijgen. Voorbeelden van mogelijk gebruik zijn <b>sin({a}) + cos({b}) * 2</b>. Het is mogelijk om functies te nesten in elkaar, zoals <b>cos(deg2rad({a} + 90))</b> enz.
+<br/>Meer details over hoe je deze PHP-stijl functies kunt gebruiken vind je in de  <a target="phpmathdoc" href="http://www.php.net/manual/en/ref.math.php">documentatie op de PHP-website</a>
+<br/><br/>
+Net zoals voor de numerieke vragen is het mogelijk om een foutenmarge toe te laten, waarbinnen alle antwoorden als juist zullen worden aanvaard. Het "Tolerantie"-veld wordt hiervoor gebruikt. Er zijn drie types tolerantie mogelijk: <b>relatief, nominaal en geometrisch</b>. Als we bijvoorbeeld bij het insturen van de test als berekend juist antwoord 200 krijgen en de tolerantie is op 0,5 gezet, dan geven de verschillende tolerantiemogelijkheden volgende resultaten:
+<br/><br/>
+<b>Relatief</b>: het tolerantieïnterval wordt berekend door het juiste antwoord met 0,5 te vermenigvuldigen, wat in dit voorbeeld 100 geeft. Alle antwoorden tussen 100 en 300 zullen juist gerekend worden (200 ± 100
+<b>Nominaal</b>: dit is de eenvoudigste tolerantiemethode, maar niet erg krachtig. Het juiste antwoord moet tussen de 199,5 en de 200,5 liggen (200 ± 0,5)
+<b>Geometrisch:</b> De bovenste limiet van het tolerantieïnterval is berekend als 200 + 0,5 * 200 en is hetzelfde als bij de relatieve methode. De onderste limiet wordt berekend als 200 / (1 + 0,5). Het juiste antwoord moet dan tussen 133,33 en 300 liggen.<br/>Dit is nuttig voor moeilijke berekeningen die een grote tolerantie vragen, maar waar relatieve toleranties van 1 of meer goed zouden zijn voor de bovengrens, maar niet voor de ondergrens omdat hierdoor 0 een juist antwoord voor alle vragen zou kunnen worden.
+<br/><br/>
+Het veld <b>Aantal beduidende cijfers</b> slaat alleen op de manier waarop het juiste antwoord gegeven moet worden bij het herbekijken van de test. Als dat bijvoorbeeld op 3 gezet wordt, dan zal het juiste antwoord 13,33333 als 13,3 getoond worden en zal het getal 1236 als 1240 getoond worden, 23 zal als 23,0 getoond worden enz.
+<br/><br/>
+Het feedbackveld en het optionele eenheidveld werken zoals ze doen bij de numerieke vragen.
+<br/>
