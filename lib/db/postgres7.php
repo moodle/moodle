@@ -18,8 +18,8 @@
 // This file is tailored to PostgreSQL 7
 
 function main_upgrade($oldversion=0) {
-   global $CFG;
-
+    global $CFG;
+    $result = true;
     if ($oldversion < 2003010101) {
         delete_records("log_display", "module", "user");
         $new->module = "user";
@@ -75,8 +75,45 @@ function main_upgrade($oldversion=0) {
             }
         }
     }
-	
-    return true;
-}
 
-?>
+    if ($oldversion < 2003042401) {                 
+    //  Convert usernames to lowercase
+        $users = get_records_sql("SELECT  id, username FROM {$CFG->prefix}user"); 
+	    $cerrors = "";
+   	    $rarray = array();
+	    foreach ($users as $user) {
+        	$lcname = trim(moodle_strtolower($user->username));
+	        if (in_array($lcname, $rarray)) {
+                $cerrors .= $user->id."->".$lcname.'<br/>' ; 
+        	}else {
+            	    array_push($rarray,$lcname);
+        	}
+        }
+	    /// Do convert or give error message
+        if ($cerrors != '') {
+        	print "Error: Cannot convert usernames to lowercase. Following usernames would overlap (id->username):<br/> $cerrors . Please resolve overlapping errors."; 
+            $result = false;
+        }else {
+            $cerrors = '';
+            print "Checking userdatabase:<br>";
+            foreach ($users as $user) {
+            	$lcname = trim(moodle_strtolower($user->username));
+            	$convert = set_field("user" , "username" , $lcname, "id", $user->id);
+            	if (!$convert) {
+                    if ($cerrors){
+                       $cerrors .= ", ";
+                    }   
+                    $cerrors .= $item;
+            	} else {
+                    print ".";
+                }   
+            }
+            if ($cerrors != '') {
+                print "There was errors when converting following usernames to lowercase. '$cerrors' . Please maintain your database by hand.";
+                $result=false;
+            }
+        }
+    }
+    return $result;
+}
+?>    
