@@ -1,0 +1,76 @@
+<?PHP  // $Id$
+    //This page copies th zip to the temp directory,
+    //unzip it, check that it is a valid backup file
+    //inform about its contents and fill all the necesary
+    //variables to continue with the restore.
+
+    //Checks we have the file variable
+    if (!isset($file)) {         
+        error ("File not specified");
+    }
+
+    //Prepend dataroot to variable to have the absolute path
+    $file = $CFG->dataroot."/".$file;
+
+    //Start the main table
+    echo "<table cellpadding=5>";
+    echo "<tr><td>";
+    
+    //Start the mail ul
+    echo "<ul>";
+
+    //Check the file exists 
+    if (!is_file($file)) {
+        error ("File not exists ($file)");
+    }
+
+    //Check the file name ends with .zip
+    if (!substr($file,-4) == ".zip") {
+        error ("File has an incorrect extension");
+    }
+
+    //Now calculate the unique_code for this restore
+    $backup_unique_code = time();
+    
+    //Now check and create the backup dir (if it doesn't exist)
+    $status = check_and_create_backup_dir($backup_unique_code);
+    //Empty dir
+    if ($status) {
+        echo "<li>Creating temp dir";
+        $status = clear_backup_dir($backup_unique_code);
+    }
+
+    //Now delete old data and directories under dataroot/temp/backup
+    if ($status) {   
+        echo "<li>Cleaning old data";
+        $status = backup_delete_old_data();
+    }
+  
+    //Now copy he zip file to dataroot/temp/backup/backup_unique_code
+    if ($status) {
+        $status = backup_copy_file($file,$CFG->dataroot."/temp/backup/".$backup_unique_code."/".basename($file));
+    }
+
+    //Now unzip the file
+    if ($status) {
+        echo "<li>Retrieving backup file";
+        $status = restore_unzip ($CFG->dataroot."/temp/backup/".$backup_unique_code."/".basename($file),$moodle_home);
+    }
+
+    //Now check for the moodle.xml file
+    if ($status) {
+        echo "<li>Checking backup file";
+        $status = restore_check_moodle_file ($CFG->dataroot."/temp/backup/".$backup_unique_code."/moodle.xml");
+    }
+
+    //End the main ul
+    echo "</ul>";
+
+    //End the main table
+    echo "</tr></td>";
+    echo "</table>";
+
+    if (!$status) {
+        error ("An error has ocurred");
+    }
+?>
