@@ -136,7 +136,7 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
             //    $after = "AFTER '$after'";
             //}
 
-            if (!empty($oldfield)) {
+            if ($oldfield != "\"\"") {
                 execute_sql("ALTER TABLE {$CFG->prefix}$table RENAME COLUMN $oldfield TO $field");
             } else {
                 execute_sql("ALTER TABLE {$CFG->prefix}$table ADD COLUMN $field $type");
