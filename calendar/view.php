@@ -316,7 +316,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     }
 
     // Extract information: events vs. time
-    calendar_events_by_day($events, $display->tstart, $eventsbyday, $durationbyday, $typesbyday);
+    calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday);
 
     // New event button
     if(empty($USER) || isguest()) {

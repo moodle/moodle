@@ -130,7 +130,8 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
     // We want to have easy access by day, since the display is on a per-day basis.
     // Arguments passed by reference.
-    calendar_events_by_day($events, $display->tstart, $eventsbyday, $durationbyday, $typesbyday);
+    //calendar_events_by_day($events, $display->tstart, $eventsbyday, $durationbyday, $typesbyday);
+    calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday);
 
     $content .= '<table class="calendarmini">'; // Begin table
     $content .= '<thead><tr>'; // Header row: day names
@@ -700,27 +701,28 @@ function calendar_day_representation($tstamp, $now = false, $usecommonwords = tr
     // To have it in one place, if a change is needed
     $formal = userdate($tstamp, $shortformat);
 
-    // Reverse TZ compensation: make GMT stamps correspond to user's TZ
-    $tzfix = calendar_get_tz_offset();
-    $tstamp += $tzfix;
-    $now += $tzfix;
-
-    $eventdays = intval($tstamp / SECS_IN_DAY);
-    $nowdays = intval($now / SECS_IN_DAY);
+    $datestamp = usergetdate($tstamp);
+    $datenow   = usergetdate($now);
 
     if($usecommonwords == false) {
         // We don't want words, just a date
         return $formal;
     }
-    else if($eventdays == $nowdays) {
+    else if($datestamp['year'] == $datenow['year'] && $datestamp['yday'] == $datenow['yday']) {
         // Today
         return get_string('today', 'calendar');
     }
-    else if($eventdays == $nowdays - 1) {
+    else if(
+        ($datestamp['year'] == $datenow['year'] && $datestamp['yday'] == $datenow['yday'] - 1 ) ||
+        ($datestamp['year'] == $datenow['year'] - 1 && $datestamp['mday'] == 31 && $datestamp['mon'] == 12 && $datenow['yday'] == 1)
+        ) {
         // Yesterday
         return get_string('yesterday', 'calendar');
     }
-    else if($eventdays == $nowdays + 1) {
+    else if(
+        ($datestamp['year'] == $datenow['year'] && $datestamp['yday'] == $datenow['yday'] + 1 ) ||
+        ($datestamp['year'] == $datenow['year'] + 1 && $datenow['mday'] == 31 && $datenow['mon'] == 12 && $datestamp['yday'] == 1)
+        ) {
         // Tomorrow
         return get_string('tomorrow', 'calendar');
     }
@@ -780,7 +782,7 @@ function calendar_wday_name($englishname) {
 }
 
 function calendar_days_in_month($month, $year) {
-   return date('t', mktime(0, 0, 0, $month, 1, $year));
+   return intval(date('t', mktime(0, 0, 0, $month, 1, $year)));
 }
 
 function calendar_get_sideblock_upcoming($courses, $groups, $users, $daysinfuture, $maxevents) {
@@ -826,7 +828,7 @@ function calendar_sub_month($month, $year) {
     }
 }
 
-function calendar_events_by_day($events, $starttime, &$eventsbyday, &$durationbyday, &$typesbyday) {
+function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$durationbyday, &$typesbyday) {
     $eventsbyday = array();
     $typesbyday = array();
     $durationbyday = array();
@@ -835,61 +837,66 @@ function calendar_events_by_day($events, $starttime, &$eventsbyday, &$durationby
         return;
     }
 
-    // Reverse TZ compensation: make GMT stamps (from event table) correspond to user's TZ
-    $tzfix = calendar_get_tz_offset();
-
     foreach($events as $event) {
-        $eventdaystart = 1 + floor(($event->timestart + $tzfix - $starttime) / SECS_IN_DAY);
-        $eventdayend = 1 + floor(($event->timestart + $event->timeduration + $tzfix - $starttime) / SECS_IN_DAY);
 
-        // Give the event to its day
-        $eventsbyday[$eventdaystart][] = $event->id;
+        $startdate = usergetdate($event->timestart);
+        $enddate   = usergetdate($event->timestart + $event->timeduration);
 
-        // Mark the day as having such an event
-        if($event->courseid == 1 && $event->groupid == 0) {
-            $typesbyday[$eventdaystart]['startglobal'] = true;
-        }
-        else if($event->courseid > 1 && $event->groupid == 0) {
-            $typesbyday[$eventdaystart]['startcourse'] = true;
-        }
-        else if($event->groupid) {
-            $typesbyday[$eventdaystart]['startgroup'] = true;
-        }
-        else if($event->userid) {
-            $typesbyday[$eventdaystart]['startuser'] = true;
+        // Simple arithmetic: $year * 13 + $month is a distinct integer for each distinct ($year, $month) pair
+        if(!($startdate['year'] * 13 + $startdate['mon'] >= $year * 13 + $month) && ($enddate['year'] * 13 + $enddate['mon'] <= $year * 13 + $month)) {
+            // Out of bounds
+            continue;
         }
 
-        // Mark all days up to and including ending day as duration
-        if($eventdaystart < $eventdayend) {
+        $eventdaystart = intval($startdate['mday']);
 
-            // Normally this should be
+        if($startdate['mon'] == $month && $startdate['year'] == $year) {
+            // Give the event to its day
+            $eventsbyday[$eventdaystart][] = $event->id;
 
-            // $bound = min($eventdayend, $display->maxdays);
-            // for($i = $eventdaystart + 1; $i <= $bound; ++$i) {
-
-            // So that we don't go on marking days after the end of
-            // the month if the event continues. However, this code
-            // has moved and now we don't have access to $display->maxdays.
-            // In order to save the overhead of recomputing it, we just
-            // use this "dumb" approach. Anyway, the function that called
-            // us already knows up to what day it should display.
-
-            for($i = $eventdaystart + 1; $i <= $eventdayend; ++$i) {
-                $durationbyday[$i][] = $event->id;
-                if($event->courseid == 1 && $event->groupid == 0) {
-                    $typesbyday[$i]['durationglobal'] = true;
-                }
-                else if($event->courseid > 1 && $event->groupid == 0) {
-                    $typesbyday[$i]['durationcourse'] = true;
-                }
-                else if($event->groupid) {
-                    $typesbyday[$i]['durationgroup'] = true;
-                }
-                else if($event->userid) {
-                    $typesbyday[$i]['durationuser'] = true;
-                }
+            // Mark the day as having such an event
+            if($event->courseid == 1 && $event->groupid == 0) {
+                $typesbyday[$eventdaystart]['startglobal'] = true;
+            }
+            else if($event->courseid > 1 && $event->groupid == 0) {
+                $typesbyday[$eventdaystart]['startcourse'] = true;
+            }
+            else if($event->groupid) {
+                $typesbyday[$eventdaystart]['startgroup'] = true;
+            }
+            else if($event->userid) {
+                $typesbyday[$eventdaystart]['startuser'] = true;
             }
         }
+
+        if($event->timeduration == 0) {
+            // Proceed with the next
+            continue;
+        }
+
+        // The event starts on $month $year or before. So...
+        $lowerbound = $startdate['mon'] == $month && $startdate['year'] == $year ? intval($startdate['mday']) : 1;
+
+        // Also, it ends on $month $year or later...
+        $upperbound = $enddate['mon'] == $month && $enddate['year'] == $year ? intval($enddate['mday']) : calendar_days_in_month($month, $year);
+
+        // Mark all days between $lowerbound and $upperbound (inclusive) as duration
+        for($i = $lowerbound + 1; $i <= $upperbound; ++$i) {
+            $durationbyday[$i][] = $event->id;
+            if($event->courseid == 1 && $event->groupid == 0) {
+                $typesbyday[$i]['durationglobal'] = true;
+            }
+            else if($event->courseid > 1 && $event->groupid == 0) {
+                $typesbyday[$i]['durationcourse'] = true;
+            }
+            else if($event->groupid) {
+                $typesbyday[$i]['durationgroup'] = true;
+            }
+            else if($event->userid) {
+                $typesbyday[$i]['durationuser'] = true;
+            }
+        }
+
     }
     return;
 }
