@@ -2,6 +2,10 @@
    // Library of useful functions
 
 
+if (isset($COURSE_MAX_LOG_DISPLAY)) {  // Being included again - should never happen!!
+    return;
+}
+
 $COURSE_MAX_LOG_DISPLAY = 150;       // days
 
 $COURSE_MAX_LOGS_PER_PAGE = 1000;    // records
@@ -9,6 +13,7 @@ $COURSE_MAX_LOGS_PER_PAGE = 1000;    // records
 $COURSE_TEACHER_COLOR = "#990000";   // To hilight certain items that are teacher-only
 
 $COURSE_LIVELOG_REFRESH = 60;        // Seconds
+
 
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate="today") {
@@ -514,6 +519,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
         $sectionmods = explode(",", $section->sequence);
 
         foreach ($sectionmods as $modnumber) {
+            if (empty($mods[$modnumber])) {
+                continue;
+            }
             $mod = $mods[$modnumber];
             $instancename = urldecode($modinfo[$modnumber]->name);
             echo "<IMG SRC=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
