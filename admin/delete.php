@@ -27,7 +27,7 @@
 
     delete_subdirectories($deletedir);
 
-    echo "<H1 align=center>Done!</H1>";
+    echo "<h1 align="center">Done!</h1>";
     print_continue($CFG->wwwroot);
     exit;
 
@@ -43,16 +43,16 @@ function delete_subdirectories($rootdir) {
                 delete_subdirectories($fullfile);
                 echo "Deleting $fullfile ... ";
                 if (rmdir($fullfile)) {
-                    echo "Done.<BR>";
+                    echo "Done.<br />";
                 } else {
-                    echo "FAILED.<BR>";
+                    echo "FAILED.<br />";
                 }
             } else {
                 echo "Deleting $fullfile ... ";
                 if (unlink("$fullfile")) {
-                    echo "Done.<BR>";
+                    echo "Done.<br />";
                 } else {
-                    echo "FAILED.<BR>";
+                    echo "FAILED.<br />";
                 }
             }
         }

@@ -258,7 +258,7 @@
     echo '<center>';
     echo '<form method="post" enctype="multipart/form-data" action="uploaduser.php">'.
          $strchoose.':<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'">'.
-         '<input type="file" name="userfile" size=30>'.
+         '<input type="file" name="userfile" size="30">'.
          '<input type="submit" value="'.$struploadusers.'">'.
          '</form></br>';
     echo '</center>';

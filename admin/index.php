@@ -21,7 +21,7 @@
 
 /// Check some PHP server settings
 
-    $documentationlink = "please read the <A HREF=\"../doc/?frame=install.html&sub=webserver\">install documentation</A>";
+    $documentationlink = "please read the <a href=\"../doc/?frame=install.html&sub=webserver\">install documentation</a>";
 
     if (ini_get_bool('session.auto_start')) {
         error("The PHP server variable 'session.auto_start' should be Off - $documentationlink");
@@ -48,10 +48,10 @@
     $dirroot = dirname(realpath("../index.php"));
     if (!empty($dirroot) and $dirroot != $CFG->dirroot) {
         error("Please fix your settings in config.php:
-              <P>You have:
-              <P>\$CFG->dirroot = \"".addslashes($CFG->dirroot)."\";
-              <P>but it should be:
-              <P>\$CFG->dirroot = \"".addslashes($dirroot)."\";",
+              <p>You have:
+              <p>\$CFG->dirroot = \"".addslashes($CFG->dirroot)."\";
+              <p>but it should be:
+              <p>\$CFG->dirroot = \"".addslashes($dirroot)."\";",
               "./");
     }
 
@@ -92,7 +92,7 @@
         if (empty($agreelicence)) {
             $strlicense = get_string("license");
             print_header($strlicense, $strlicense, $strlicense, "", "", false, "&nbsp;", "&nbsp;");
-            print_heading("<A HREF=\"http://moodle.org\">Moodle</A> - Modular Object-Oriented Dynamic Learning Environment");
+            print_heading("<a href=\"http://moodle.org\">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment");
             print_heading(get_string("copyrightnotice"));
             print_simple_box_start("center");
             echo text_to_html(get_string("gpl"));
@@ -285,53 +285,53 @@
     $table->cellspacing = 3;
     $table->width = "40%";
 
-    $configdata  = "<font size=+1>&nbsp;</font><a href=\"config.php\">".get_string("configvariables")."</a> - <font size=1>".
+    $configdata  = "<font size=+1>&nbsp;</font><a href=\"config.php\">".get_string("configvariables")."</a> - <font size=\"1\">".
                     get_string("adminhelpconfigvariables")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"site.php\">".get_string("sitesettings")."</a> - <font size=1>".
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"site.php\">".get_string("sitesettings")."</a> - <font size=\"1\">".
                     get_string("adminhelpsitesettings")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"../theme/index.php\">".get_string("themes")."</a> - <font size=1>".
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"../theme/index.php\">".get_string("themes")."</a> - <font size=\"1\">".
                     get_string("adminhelpthemes")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"lang.php\">".get_string("language")."</a> - <font size=1>".
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"lang.php\">".get_string("language")."</a> - <font size=\"1\">".
                     get_string("adminhelplanguage")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"modules.php\">".get_string("managemodules")."</a> - <font size=1>".
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"modules.php\">".get_string("managemodules")."</a> - <font size=\"1\">".
                     get_string("adminhelpmanagemodules")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"blocks.php\">".get_string("manageblocks")."</a> - <font size=1>".
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"blocks.php\">".get_string("manageblocks")."</a> - <font size=\"1\">".
                     get_string("adminhelpmanageblocks")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"filters.php\">".get_string("managefilters")."</a> - <font size=1>".
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"filters.php\">".get_string("managefilters")."</a> - <font size=\"1\">".
                     get_string("adminhelpmanagefilters")."</font><br />";
     if (!isset($CFG->disablescheduledbackups)) {
-        $configdata .= "<font size=+1>&nbsp;</font><a href=\"backup.php\">".get_string("backup")."</a> - <font size=1>".
+        $configdata .= "<font size=+1>&nbsp;</font><a href=\"backup.php\">".get_string("backup")."</a> - <font size=\"1\">".
                         get_string("adminhelpbackup")."</font><br />";
     }
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"editor.php\">". get_string("editorsettings") ."</a> - <font size=1>".
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"editor.php\">". get_string("editorsettings") ."</a> - <font size=\"1\">".
                     get_string("adminhelpeditorsettings")."</font><br />";
 
     $table->data[] = array("<font size=+1><b><a href=\"configure.php\">".get_string("configuration")."</a></b>", 
                             $configdata);
 
 
-    $userdata = "<font size=+1>&nbsp;</font><a href=\"auth.php\">".get_string("authentication")."</a> - <font size=1>".
+    $userdata = "<font size=+1>&nbsp;</font><a href=\"auth.php\">".get_string("authentication")."</a> - <font size=\"1\">".
                  get_string("adminhelpauthentication")."</font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"user.php\">".get_string("edituser")."</a> - <font size=1>".
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"user.php\">".get_string("edituser")."</a> - <font size=\"1\">".
                  get_string("adminhelpedituser")."</font><br />";
     $userdata .= "<font size=+1>&nbsp;</font><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".
-                 get_string("addnewuser")."</a> - <font size=1>".
+                 get_string("addnewuser")."</a> - <font size=\"1\">".
                  get_string("adminhelpaddnewuser")."</font><br />";
     $userdata .= "<font size=+1>&nbsp;</font><a href=\"$CFG->wwwroot/$CFG->admin/uploaduser.php\">".
-                 get_string("uploadusers")."</a> - <font size=1>".
+                 get_string("uploadusers")."</a> - <font size=\"1\">".
                  get_string("adminhelpuploadusers")."</font><br />";
 
-    $userdata .= "<hr><font size=+1>&nbsp;</font><a href=\"enrol.php\">".get_string("enrolments")."</a> - <font size=1>".
+    $userdata .= "<hr /><font size=+1>&nbsp;</font><a href=\"enrol.php\">".get_string("enrolments")."</a> - <font size=\"1\">".
                  get_string("adminhelpenrolments")."</font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=off\">".get_string("assignstudents")."</a> - <font size=1>".
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=off\">".get_string("assignstudents")."</a> - <font size=\"1\">".
                  get_string("adminhelpassignstudents")."</font><br />";
 
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=on\">".get_string("assignteachers")."</a> - <font size=1>".
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=on\">".get_string("assignteachers")."</a> - <font size=\"1\">".
                  get_string("adminhelpassignteachers").
-                 " <img src=\"../pix/t/user.gif\" height=11 width=11></font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"creators.php\">".get_string("assigncreators")."</a> - <font size=1>".
+                 " <img src=\"../pix/t/user.gif\" height=\"11\" width=\"11\"></font><br />";
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"creators.php\">".get_string("assigncreators")."</a> - <font size=\"1\">".
                  get_string("adminhelpassigncreators")."</font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"admin.php\">".get_string("assignadmins")."</a> - <font size=1>".
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"admin.php\">".get_string("assignadmins")."</a> - <font size=\"1\">".
                  get_string("adminhelpassignadmins")."</font><br />";
 
     $table->data[] = array("<font size=+1><b><a href=\"users.php\">".get_string("users")."</a></b>", $userdata);
@@ -355,20 +355,20 @@
                      "<a href=\"../doc/?frame=release.html\">$CFG->release</a> ($CFG->version)<br />".
                      "Copyright &copy; 1999-2004 Martin Dougiamas<br />".
                      "<a href=\"../doc/?frame=licence.html\">GNU Public License</a>";
-    echo "<center><p><font size=1>$copyrighttext</font></p></center>";
+    echo "<center><p><font size=\"1\">$copyrighttext</font></p></center>";
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    echo "<table border=0 align=center width=100%><tr>";
-    echo "<td align=center width=33%>";
+    echo "<table border=\"0\" align=\"center\" width=\"100%\"><tr>";
+    echo "<td align=\"center\" width=\"33%\">";
     print_single_button("$CFG->wwwroot/doc", NULL, get_string("documentation"));
     echo "</td>";
 
-    echo "<td align=center width=33%>";
+    echo "<td align=\"center\" width=\"33%\">";
     print_single_button("phpinfo.php", NULL, get_string("phpinfo"));
     echo "</td>";
 
-    echo "<td align=center width=33%>";
+    echo "<td align=\"center\" width=\"33%\">";
     print_single_button("register.php", NULL, get_string("registration"));
     echo "</td>";
     echo "<tr></table>";

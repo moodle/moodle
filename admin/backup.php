@@ -111,7 +111,7 @@
                   "<a href=\"configure.php\">$strconfiguration</a> -> ".
                   $strbackup);
 
-    echo "<p align=right><a href=\"../backup/log.php\">".get_string("logs")."</a></p>";
+    echo "<p align=\"right\"><a href=\"../backup/log.php\">".get_string("logs")."</a></p>";
 
     print_heading($strbackup);
 

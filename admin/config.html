@@ -1,8 +1,8 @@
 <form method="post" action="config.php" name="form">
 
-<table cellpadding=9 cellspacing=0 >
-<tr valign=top>
-    <td align=right><p>lang:</td>
+<table cellpadding="9" cellspacing="0" >
+<tr valign="top">
+    <td align="right"><p>lang:</td>
     <td>
     <?php choose_from_menu (get_list_of_languages(), "lang", $config->lang, "", "", ""); ?>
     </td>
@@ -10,8 +10,8 @@
     <?php print_string("configlang") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>langmenu:</td>
+<tr valign="top">
+    <td align="right"><p>langmenu:</td>
     <td>
     <?php
        unset($options);
@@ -25,26 +25,26 @@
     <?php print_string("configlangmenu") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>langlist:</td>
+<tr valign="top">
+    <td align="right"><p>langlist:</td>
     <td>
-    <input name=langlist type=text size=40 value="<?php p($config->langlist) ?>">
+    <input name="langlist" type="text" size="40" value="<?php p($config->langlist) ?>">
     </td>
     <td>
     <?php print_string("configlanglist") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>locale:</td>
+<tr valign="top">
+    <td align="right"><p>locale:</td>
     <td>
-    <input name=locale type=text size=10 value="<?php p($config->locale) ?>">
+    <input name="locale" type="text" size="10" value="<?php p($config->locale) ?>">
     </td>
     <td>
     <?php print_string("configlocale") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>timezone:</td>
+<tr valign="top">
+    <td align="right"><p>timezone:</td>
     <td><?php
        if (abs($config->timezone) > 13) {
            $config->timezone = 99;
@@ -71,49 +71,49 @@
     <?php print_string("configtimezone") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>country:</td>
+<tr valign="top">
+    <td align="right"><p>country:</td>
     <td><?php choose_from_menu (get_list_of_countries(), "country", $config->country, get_string("selectacountry"), "") ?>
     </td>
     <td>
     <?php print_string("configcountry") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>smtphosts:</td>
+<tr valign="top">
+    <td align="right"><p>smtphosts:</td>
     <td>
-    <input name=smtphosts type=text size=30 value="<?php p($config->smtphosts)?>">
+    <input name="smtphosts" type="text" size="30" value="<?php p($config->smtphosts)?>">
     </td>
     <td>
     <?php print_string("configsmtphosts") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>smtpuser:</td>
+<tr valign="top">
+    <td align="right"><p>smtpuser:</td>
     <td>
-    <input name=smtpuser type=text size=10 value="<?php p($config->smtpuser)?>">
+    <input name="smtpuser" type="text" size="10" value="<?php p($config->smtpuser)?>">
     </td>
-    <td rowspan=2>
+    <td rowspan="2">
     <?php print_string("configsmtpuser") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>smtppass:</td>
+<tr valign="top">
+    <td align="right"><p>smtppass:</td>
     <td>
-    <input name=smtppass type=text size=10 value="<?php p($config->smtppass)?>">
+    <input name="smtppass" type="text" size="10" value="<?php p($config->smtppass)?>">
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>noreplyaddress:</td>
+<tr valign="top">
+    <td align="right"><p>noreplyaddress:</td>
     <td>
-    <input name=noreplyaddress type=text size=30 value="<?php p($config->noreplyaddress)?>">
+    <input name="noreplyaddress" type="text" size="30" value="<?php p($config->noreplyaddress)?>">
     </td>
     <td>
     <?php print_string("confignoreplyaddress") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>gdversion:</td>
+<tr valign="top">
+    <td align="right"><p>gdversion:</td>
     <td>
     <?php
        unset($options);
@@ -130,8 +130,8 @@
     <?php print_string("configgdversion") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>maxeditingtime:</td>
+<tr valign="top">
+    <td align="right"><p>maxeditingtime:</td>
     <td>
     <?php
        unset($options);
@@ -149,8 +149,8 @@
     <?php print_string("configmaxeditingtime") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>longtimenosee:</td>
+<tr valign="top">
+    <td align="right"><p>longtimenosee:</td>
     <td>
     <?php
        unset($options);
@@ -173,8 +173,8 @@
     <?php print_string("configlongtimenosee") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>deleteunconfirmed:</td>
+<tr valign="top">
+    <td align="right"><p>deleteunconfirmed:</td>
     <td>
     <?php
        unset($options);
@@ -197,8 +197,8 @@
     <?php print_string("configdeleteunconfirmed") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>loglifetime:</td>
+<tr valign="top">
+    <td align="right"><p>loglifetime:</td>
     <td>
     <?php
        unset($options);
@@ -265,8 +265,8 @@
     <?php print_string('confignotifyloginthreshold') ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>sessiontimeout:</td>
+<tr valign="top">
+    <td align="right"><p>sessiontimeout:</td>
     <td>
     <?php
        unset($options);
@@ -287,35 +287,35 @@
     <?php print_string("configsessiontimeout") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>sessioncookie:</td>
+<tr valign="top">
+    <td align="right"><p>sessioncookie:</td>
     <td>
-    <input name=sessioncookie type=text size=10 value="<?php p($config->sessioncookie)?>">
+    <input name="sessioncookie" type="text" size="10" value="<?php p($config->sessioncookie)?>">
     </td>
     <td>
     <?php print_string("configsessioncookie") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>zip:</td>
+<tr valign="top">
+    <td align="right"><p>zip:</td>
     <td>
-    <input name=zip type=text size=30 value="<?php p($config->zip) ?>">
+    <input name="zip" type="text" size="30" value="<?php p($config->zip) ?>">
     </td>
     <td>
     <?php print_string("configzip") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>unzip:</td>
+<tr valign="top">
+    <td align="right"><p>unzip:</td>
     <td>
-    <input name=unzip type=text size=30 value="<?php p($config->unzip) ?>">
+    <input name="unzip" type="text" size="30" value="<?php p($config->unzip) ?>">
     </td>
     <td>
     <?php print_string("configunzip") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>slasharguments:</td>
+<tr valign="top">
+    <td align="right"><p>slasharguments:</td>
     <td>
     <?php unset($options);
        $options[0] = "file.php?file=/pic.jpg";
@@ -328,23 +328,23 @@
     <?php print_string("configslasharguments") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>proxyhost:</td>
+<tr valign="top">
+    <td align="right"><p>proxyhost:</td>
     <td>
-    <input name=proxyhost type=text size=30 value="<?php p($config->proxyhost) ?>">
+    <input name="proxyhost" type="text" size="30" value="<?php p($config->proxyhost) ?>">
     </td>
-    <td rowspan=2>
+    <td rowspan="2">
     <?php print_string("configproxyhost") ?>
     </td>
-</TR>
-<tr valign=top>
-    <td align=right><p>proxyport:</td>
+</tr>
+<tr valign="top">
+    <td align="right"><p>proxyport:</td>
     <td>
-    <input name=proxyport type=text size=5 value="<?php p($config->proxyport) ?>">
+    <input name="proxyport" type="text" size="5" value="<?php p($config->proxyport) ?>">
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>debug:</td>
+<tr valign="top">
+    <td align="right"><p>debug:</td>
     <td>
     <?php
        unset($options);
@@ -358,22 +358,22 @@
     <?php print_string("configdebug") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>framename:</td>
+<tr valign="top">
+    <td align="right"><p>framename:</td>
     <td>
     <?php
        if (empty($config->framename)) {
            $config->framename = "_top";
        }
     ?>
-    <input name=framename type=text size=15 value="<?php p($config->framename)?>">
+    <input name="framename" type="text" size="15" value="<?php p($config->framename)?>">
     </td>
     <td>
     <?php print_string("configframename") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>secureforms:</td>
+<tr valign="top">
+    <td align="right"><p>secureforms:</td>
     <td>
     <?php
        unset($options);
@@ -388,8 +388,8 @@
     </td>
 </tr>
 
-<tr valign=top>
-    <td align=right><p>loginhttps:</td>
+<tr valign="top">
+    <td align="right"><p>loginhttps:</td>
     <td>
     <?php
        unset($options);
@@ -404,8 +404,8 @@
     </td>
 </tr>
 
-<tr valign=top>
-    <td align=right><p>teacherassignteachers:</td>
+<tr valign="top">
+    <td align="right"><p>teacherassignteachers:</td>
     <td>
     <?php
        unset($options);
@@ -419,8 +419,8 @@
     <?php print_string("configteacherassignteachers") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>allusersaresitestudents:</td>
+<tr valign="top">
+    <td align="right"><p>allusersaresitestudents:</td>
     <td>
     <?php
        unset($options);
@@ -434,8 +434,8 @@
     <?php print_string("configallusersaresitestudents") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>showsiteparticipantslist:</td>
+<tr valign="top">
+    <td align="right"><p>showsiteparticipantslist:</td>
     <td>
     <?php
        unset($options);
@@ -449,8 +449,8 @@
     <?php print_string("configshowsiteparticipantslist") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>allowunenroll:</td>
+<tr valign="top">
+    <td align="right"><p>allowunenroll:</td>
     <td>
     <?php
        unset($options);
@@ -464,8 +464,8 @@
     <?php print_string("configallowunenroll") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>maxbytes:</td>
+<tr valign="top">
+    <td align="right"><p>maxbytes:</td>
     <td>
     <?php
        $options = get_max_upload_sizes();
@@ -476,8 +476,8 @@
     <?php print_string("configmaxbytes") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>fullnamedisplay:</td>
+<tr valign="top">
+    <td align="right"><p>fullnamedisplay:</td>
     <td>
     <?php
        unset($options);
@@ -493,8 +493,8 @@
     <?php print_string("configfullnamedisplay") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>extendedusernamechars:</td>
+<tr valign="top">
+    <td align="right"><p>extendedusernamechars:</td>
     <td>
     <?php
        unset($options);
@@ -508,8 +508,8 @@
     <?php print_string("configextendedusernamechars") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>autologinguests:</td>
+<tr valign="top">
+    <td align="right"><p>autologinguests:</td>
     <td>
     <?php
        unset($options);
@@ -523,8 +523,8 @@
     <?php print_string("configautologinguests") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>forcelogin:</td>
+<tr valign="top">
+    <td align="right"><p>forcelogin:</td>
     <td>
     <?php
        unset($options);
@@ -538,8 +538,8 @@
     <?php print_string("configforcelogin") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>forceloginforprofiles:</td>
+<tr valign="top">
+    <td align="right"><p>forceloginforprofiles:</td>
     <td>
     <?php
        unset($options);
@@ -553,8 +553,8 @@
     <?php print_string("configforceloginforprofiles") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>opentogoogle:</td>
+<tr valign="top">
+    <td align="right"><p>opentogoogle:</td>
     <td>
     <?php
        unset($options);
@@ -569,8 +569,8 @@
     </td>
 </tr>
 
-<tr valign=top>
-        <td align=right><p>enablerssfeeds:</td>
+<tr valign="top">
+        <td align="right"><p>enablerssfeeds:</td>
         <td>
     <?php
        unset($options);
@@ -591,8 +591,8 @@
     </td>
 </tr>
 
-<tr valign=top>
-        <td align=right><p>digestmailtime:</td>
+<tr valign="top">
+        <td align="right"><p>digestmailtime:</td>
         <td>
     <?php
         $hours = array();
@@ -610,7 +610,7 @@
 </tr>
 
 <tr>
-    <td colspan=3 align=center>
+    <td colspan="3" align="center">
     <input type="submit" value="<?php print_string("savechanges") ?>"></td>
 </tr>
 </table>

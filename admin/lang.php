@@ -25,14 +25,14 @@
 
     switch ($mode) {
         case "missing":
-            $navigation = "<A HREF=\"lang.php\">$strlanguage</A> -> $strmissingstrings";
+            $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $strmissingstrings";
             $title = $strmissingstrings;
             $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/admin/lang.php">'.
                       '<input type="hidden" name="mode" value="compare" />'.
                       '<input type="submit" value="'.$strcomparelanguage.'" /></form>';
             break;
         case "compare":
-            $navigation = "<A HREF=\"lang.php\">$strlanguage</A> -> $strcomparelanguage";
+            $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $strcomparelanguage";
             $title = $strcomparelanguage;
             $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/admin/lang.php">'.
                       '<input type="hidden" name="mode" value="missing" />'.
@@ -55,14 +55,14 @@
     if (!$mode) {
         $currlang = current_language();
         $langs = get_list_of_languages();
-        echo "<table align=center><tr><td align=\"right\">";
+        echo "<table align=\"center\"><tr><td align=\"right\">";
         echo "<b>$strcurrentlanguage:</b>";
         echo "</td><td>";
         echo popup_form ("$CFG->wwwroot/admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
         echo "</td></tr></table>";
         print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>");
         print_heading("<a href=\"lang.php?mode=compare\">$strcomparelanguage</a>");
-        echo "<center><hr noshade size=1>";
+        echo "<center><hr noshade size=\"1\">";
         $options["lang"] = $currentlang;
         print_single_button("http://moodle.org/download/lang/", $options, get_string("latestlanguagepack"));
         echo "</center>";
@@ -91,7 +91,7 @@
         foreach ($stringfiles as $file) {
             if (!file_exists("$langdir/$file")) {
                 if (!touch("$langdir/$file")) {
-                    echo "<p><font color=red>".get_string("filemissing", "", "$langdir/$file")."</font></p>";
+                    echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/$file")."</font></p>";
                     continue;
                 }
             }
@@ -128,7 +128,7 @@
     
         foreach ($files as $filekey => $file) {    // check all the help files.
             if (!file_exists("$langdir/help/$file")) {
-                echo "<p><font color=red>".get_string("filemissing", "", "$langdir/help/$file")."</font></p>";
+                echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/help/$file")."</font></p>";
                 $somethingfound = true;
                 continue;
             }
@@ -139,7 +139,7 @@
         }
         foreach ($files as $filekey => $file) {    // check all the docs files.
             if (!file_exists("$langdir/docs/$file")) {
-                echo "<P><FONT COLOR=red>".get_string("filemissing", "", "$langdir/docs/$file")."</FONT></P>";
+                echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/docs/$file")."</font></p>";
                 $somethingfound = true;
                 continue;
             }
@@ -182,7 +182,7 @@
 
         if (!file_exists("$langdir/$currentfile")) {
             if (!touch("$langdir/$currentfile")) {
-                echo "<p><font color=red>".get_string("filemissing", "", "$langdir/$currentfile")."</font></p>";
+                echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/$currentfile")."</font></p>";
                 continue;
             }
         }
@@ -193,7 +193,7 @@
             fclose($f);
         } else {
             $editable = false;
-            echo "<p><font size=1>".get_string("makeeditable", "", "$langdir/$currentfile")."</font></p>";
+            echo "<p><font size=\"1\">".get_string("makeeditable", "", "$langdir/$currentfile")."</font></p>";
         }
         error_reporting(7);
 
@@ -215,7 +215,7 @@
         if ($editable) {
             echo "<form name=\"$currentfile\" action=\"lang.php\" method=\"post\">";
         }
-        echo "<table width=\"100%\" cellpadding=2 cellspacing=3 border=0>";
+        echo "<table width=\"100%\" cellpadding=\"2\" cellspacing=\"3\" border=\"0\">";
         foreach ($enstring as $key => $envalue) {
             $envalue = nl2br(htmlspecialchars($envalue));
             $envalue = preg_replace('/(\$a\-\&gt;[a-zA-Z0-9]*|\$a)/', '<b>$0</b>', $envalue);  // Make variables bold. 
@@ -223,8 +223,8 @@
             $envalue = str_replace("\\","",$envalue);              // Delete all slashes
 
             echo "\n\n<tr>";
-            echo "<td dir=ltr lang=en width=20% bgcolor=\"$THEME->cellheading\" nowrap valign=top>$key</td>\n";
-            echo "<td dir=ltr lang=en width=40% bgcolor=\"$THEME->cellheading\" valign=top>$envalue</td>\n";
+            echo "<td dir=\"ltr\" lang=\"en\" width=\"20%\" bgcolor=\"$THEME->cellheading\" nowrap=\"nowrap\" valign=\"top\">$key</td>\n";
+            echo "<td dir=\"ltr\" lang=\"en\" width=\"40%\" bgcolor=\"$THEME->cellheading\" valign=\"top\">$envalue</td>\n";
 
             $value = $string[$key];
             $value = str_replace("\r","",$value);              // Bad character caused by Windows
@@ -239,7 +239,7 @@
             $cellcolour = $value ? $THEME->cellcontent: $THEME->highlight;
 
             if ($editable) {
-                echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>\n";
+                echo "<td width=\"40%\" bgcolor=\"$cellcolour\" valign=\"top\">\n";
                 if (isset($string[$key])) {
                     $valuelen = strlen($value);
                 } else {
@@ -255,14 +255,14 @@
                     }
                     echo "<input type=\"text\" name=\"string-$key\" value=\"$value\" size=\"$cols\"></td>";
                 }
-                echo "</TD>\n";
+                echo "</td>\n";
 
             } else {
-                echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>$value</td>\n";
+                echo "<td width=\"40%\" bgcolor=\"$cellcolour\" valign=\"top\">$value</td>\n";
             }
         }
         if ($editable) {
-            echo "<tr><td colspan=2>&nbsp;<td><br />";
+            echo "<tr><td colspan=\"2\">&nbsp;<td><br />";
             echo "    <input type=\"hidden\" name=\"currentfile\" value=\"$currentfile\">";
             echo "    <input type=\"hidden\" name=\"mode\" value=\"compare\">";
             echo "    <input type=\"submit\" name=\"update\" value=\"".get_string("savechanges").": $currentfile\">";

@@ -323,10 +323,10 @@
                                         $confirmbutton);
             }
 
-            echo "<table align=center cellpadding=10><tr><td>";
-            echo "<form action=user.php method=post>";
-            echo "<input type=text name=search value=\"$search\" size=20>";
-            echo "<input type=submit value=\"$strsearch\">";
+            echo "<table align=\"center\" cellpadding=\"10\"><tr><td>";
+            echo "<form action=\"user.php\" method=\"post\">";
+            echo "<input type=\"text\" name=\"search\" value=\"$search\" size=\"20\">";
+            echo "<input type=\"submit\" value=\"$strsearch\">";
             if ($search) {
                 echo "<input type=\"button\" onclick=\"document.location='user.php';\" value=\"$strshowallusers\">";
             }

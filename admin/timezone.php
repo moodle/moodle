@@ -47,10 +47,10 @@
         }
     }
 
-    echo "<center><form action=timezone.php method=get>";
+    echo "<center><form action=\"timezone\".php method=\"get\">";
     echo "$strusers ($strall): ";
     choose_from_menu ($timezones, "zone", $user->timezone, get_string("serverlocaltime"), "", "99");
-    echo "<input type=submit value=\"$strsavechanges\">";
+    echo "<input type=\"submit\" value=\"$strsavechanges\">";
     echo "</form>";
 
     print_footer();

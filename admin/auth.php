@@ -15,7 +15,7 @@
 
 /// If data submitted, then process and store.
 
-	if ($config = data_submitted()) {
+    if ($config = data_submitted()) {
 
         $config = (array)$config;
         validate_form($config, $err);
@@ -35,7 +35,7 @@
                 $focus = "form.$key";
             }
         }
-	}
+    }
 
 /// Otherwise fill and print the form.
 
@@ -48,11 +48,11 @@
         $options[$module] = get_string("auth_$module"."title", "auth");
     }
     asort($options);
-	if (isset($_GET['auth'])) {
-	    $auth = $_GET['auth'];
-	} else {
-        $auth = $config->auth;
-	} 
+    if (isset($_GET['auth'])) {
+        $auth = $_GET['auth'];
+    } else {
+          $auth = $config->auth;
+    } 
     require_once("$CFG->dirroot/auth/$auth/lib.php"); //just to make sure that current authentication functions are loaded
     if (! isset($config->guestloginbutton)) {
         $config->guestloginbutton = 1;
@@ -89,15 +89,15 @@
     $strusers = get_string("users");
 
     print_header("$site->shortname: $strauthenticationoptions", "$site->fullname",
-                  "<A HREF=\"index.php\">$stradministration</A> -> <a href=\"users.php\">$strusers</a> -> $strauthenticationoptions", "$focus");
+                  "<a href=\"index.php\">$stradministration</a> -> <a href=\"users.php\">$strusers</a> -> $strauthenticationoptions", "$focus");
 
-    echo "<CENTER><P><B>";
-    echo "<form TARGET=\"{$CFG->framename}\" NAME=\"authmenu\" method=\"post\" action=\"auth.php\">";
+    echo "<center><p><b>";
+    echo "<form target=\"{$CFG->framename}\" name=\"authmenu\" method=\"post\" action=\"auth.php\">";
     print_string("chooseauthmethod","auth");
 
-	choose_from_menu ($options, "auth", $auth, "","document.location='auth.php?auth='+document.authmenu.auth.options[document.authmenu.auth.selectedIndex].value", "");
+    choose_from_menu ($options, "auth", $auth, "","document.location='auth.php?auth='+document.authmenu.auth.options[document.authmenu.auth.selectedIndex].value", "");
 
-    echo "</B></P></CENTER>";
+    echo "</b></p></center>";
         
     print_simple_box_start("center", "100%", "$THEME->cellheading");
     print_heading($options[$auth]);
@@ -106,7 +106,7 @@
     print_string("auth_$auth"."description", "auth");
     print_simple_box_end();
 
-    echo "<hr>";
+    echo "<hr />";
 
     print_heading($strsettings);
 
@@ -116,11 +116,11 @@
 
     if ($auth != "email" and $auth != "none" and $auth != "manual") {
         echo "<tr valign=\"top\">";
-	    echo "<td align=right nowrap><p>";
+        echo "<td align=\"right\" nowrap=\"nowrap\"><p>";
         print_string("changepassword", "auth");
         echo ":</p></td>";
-	    echo "<td>";
-        echo "<input type=\"text\" name=\"changepassword\" size=40 value=\"$config->changepassword\">";
+        echo "<td>";
+        echo "<input type=\"text\" name=\"changepassword\" size=\"40\" value=\"$config->changepassword\">";
         echo "</td>";
         echo "<td>";
         print_string("changepasswordhelp","auth");
@@ -129,10 +129,10 @@
     }
 
     echo "<tr valign=\"top\">";
-	echo "<td align=right nowrap><p>";
+    echo "<td align=\"right\" nowrap=\"nowrap\"><p>";
     print_string("guestloginbutton", "auth");
     echo ":</p></td>";
-	echo "<td>";
+    echo "<td>";
     choose_from_menu($guestoptions, "guestloginbutton", $config->guestloginbutton, "");
     echo "</td>";
     echo "<td>";
@@ -140,17 +140,17 @@
     echo "</td></tr>";
 
     if (function_exists('auth_user_create')){    
-	    echo "<tr valign=\"top\">";
-		echo "<td align=right nowrap><p>";
-		print_string("auth_user_create", "auth");
-		echo ":</p></td>";
-		echo "<td>";
-		choose_from_menu($createoptions, "auth_user_create", $config->auth_user_create, "");
-		echo "</td>";
-		echo "<td>";
-		print_string("auth_user_creation","auth");
-		echo "</td></tr>";
-	}
+    echo "<tr valign=\"top\">";
+    echo "<td align=\"right\" nowrap=\"nowrap\"><p>";
+    print_string("auth_user_create", "auth");
+    echo ":</p></td>";
+    echo "<td>";
+    choose_from_menu($createoptions, "auth_user_create", $config->auth_user_create, "");
+    echo "</td>";
+    echo "<td>";
+    print_string("auth_user_creation","auth");
+    echo "</td></tr>";
+    }
 
     echo "</table><center><p><input type=\"submit\" value=\"";
     print_string("savechanges");

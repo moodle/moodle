@@ -65,7 +65,7 @@
     print_string("description", "enrol_$enrol");
     print_simple_box_end();
 
-    echo "<hr>";
+    echo "<hr />";
    // print_heading($str->settings);
     
     $enrolment->config_form($frm);

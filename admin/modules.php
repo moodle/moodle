@@ -160,7 +160,7 @@
 
     foreach ($modulebyname as $modulename => $module) {
 
-        $icon = "<img src=\"$modpixpath/$module->name/icon.gif\" hspace=10 height=16 width=16 border=0>";
+        $icon = "<img src=\"$modpixpath/$module->name/icon.gif\" hspace=\"10\" height=\"16\" width=\"16\" border=\"0\">";
 
         $delete = "<a href=\"modules.php?delete=$module->name\">$strdelete</a>";
 
@@ -174,11 +174,11 @@
 
         if ($module->visible) {
             $visible = "<a href=\"modules.php?hide=$module->name\" title=\"$strhide\">".
-                       "<img src=\"$pixpath/i/hide.gif\" align=\"absmiddle\" height=16 width=16 border=0></a>";
+                       "<img src=\"$pixpath/i/hide.gif\" align=\"absmiddle\" height=\"16\" width=\"16\" border=\"0\"></a>";
             $class = "";
         } else {
             $visible = "<a href=\"modules.php?show=$module->name\" title=\"$strshow\">".
-                       "<img src=\"$pixpath/i/show.gif\" align=\"absmiddle\" height=16 width=16 border=0></a>";
+                       "<img src=\"$pixpath/i/show.gif\" align=\"absmiddle\" height=\"16\" width=\"16\" border=\"0\"></a>";
             $class = "class=\"dimmed_text\"";
         }
         if ($module->name == "forum") {

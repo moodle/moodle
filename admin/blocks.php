@@ -145,7 +145,7 @@
     foreach ($blockbyname as $blockname => $blockid) {
 
         // [pj] This is not used anywhere, but I'm leaving it in for the future
-        //$icon = "<img src=\"$modpixpath/$block->name/icon.gif\" hspace=10 height=16 width=16 border=0>";
+        //$icon = "<img src=\"$modpixpath/$block->name/icon.gif\" hspace="10" height="16" width="16" border="0">";
         $blockobject = $blockobjects[$blockid];
 
         $delete = '<a href="blocks.php?delete='.$blockid.'">'.$strdelete.'</a>';
