@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2004013000)
+      // moodle.php - created with Moodle 1.2 development (2004020300)
 
 
 $string['action'] = 'Actie';
@@ -431,6 +431,7 @@ $string['includelogentries'] = 'Voeg het logboek toe';
 $string['includemodules'] = 'Voeg&nbsp;modules&nbsp;toe';
 $string['includeneededusers'] = 'Voeg de nodige gebruikers toe';
 $string['includeuserfiles'] = 'Voeg gebruikersbestanden toe';
+$string['institution'] = 'Instituut';
 $string['invalidemail'] = 'Ongeldig e-mail adres';
 $string['invalidlogin'] = 'Ongeldige login, probeer het nog eens';
 $string['jumpto'] = 'Ga naar...';
