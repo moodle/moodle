@@ -209,8 +209,9 @@
                 for ($i=0; $i<5; $i++) {
 		  if ($courseid[$i] && $groupid[$i]) {
 		    if (record_exists("user_students","userid",$user->id,"course",$courseid[$i])) {
-		      if (record_exists("groups_members","groupid",$groupid[$i],"userid",$user->id)) {
-			notify('-->' . get_string('addedtogroup','',$addgroup[$i]));
+		      $usergroup = user_group($courseid[$i],$user->id);
+                      if ($usergroup) {
+			notify('-->' . get_string('groupalready','error',$usergroup->name));
 		      } else {
 			$group_member->groupid = $groupid[$i];
 			$group_member->userid = $user->id;
