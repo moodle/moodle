@@ -18,7 +18,7 @@ error_reporting(E_ERROR);
 }
 
 // cleanup
-if (!empty($HTTP_GET_VARS["lastquery"])) {
+if (isset($HTTP_GET_VARS["lastquery"])) {
     $HTTP_GET_VARS["lastquery"] = clean_param($HTTP_GET_VARS["lastquery"], PARAM_HOST);
 }
 
