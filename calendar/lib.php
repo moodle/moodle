@@ -46,7 +46,6 @@ else {
     define ('CALENDAR_STARTING_WEEKDAY', intval($firstday) % 7);
 }
 
-define ('SECS_IN_DAY', 86400);
 define ('CALENDAR_UPCOMING_DAYS', 21);
 define ('CALENDAR_UPCOMING_MAXEVENTS', 10);
 define ('CALENDAR_URL', $CFG->wwwroot.'/calendar/');
@@ -287,13 +286,8 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
         $display->tstart = $usermidnighttoday;
     }
 
-    // This effectively adds as many days as needed, and the final SECS_IN_DAY - 1
-    // serves to cover the duration until the end of the final day. We could
-    // just do another gmmktime() and an addition, but this is "faster" :)
-
-    // WARNING: IT IS ALSO BUGGY WITH REGARDS TO DST CHANGES! THIS HAS TO BE FIXED SOMEDAY!
-    // IF YOU DO SECS ARITHMETIC, THE CODE WILL ALWAYS BE BUGGY WITH REGARD TO DST!
-    $display->tend = $display->tstart + (SECS_IN_DAY * $display->range) - 1;
+    // This does include DST compensation, but unfortunately only with respect to the server's TZ
+    $display->tend = strtotime('+'.$display->range.' days', $display->tstart) - 1;
 
     // Get the events matching our criteria
     $whereclause = calendar_sql_where($display->tstart, $display->tend, $users, $groups, $courses);
@@ -922,13 +916,8 @@ function calendar_session_vars() {
 }
 
 function calendar_overlib_html() {
-    global $CFG;
-
-    $html = '';
-    $html .= '<div id="overDiv" style="position: absolute; visibility: hidden; z-index:1000;"></div>';
-    $html .= '<script type="text/javascript" src="'.CALENDAR_URL.'overlib.cfg.php"></script>';
-
-    return $html;
+    return '<div id="overDiv" style="position: absolute; visibility: hidden; z-index:1000;"></div>'
+          .'<script type="text/javascript" src="'.CALENDAR_URL.'overlib.cfg.php"></script>';
 }
 
 function calendar_set_referring_course($courseid) {
@@ -1164,17 +1153,6 @@ function calendar_format_event_time($event, $now, $morehref, $usecommonwords = t
     }
 
     return $eventtime;
-}
-
-if(!function_exists('array_diff_assoc')) {
-    // PHP < 4.3.0
-    function array_diff_assoc($source, $diff) {
-        $res = $source;
-        foreach ($diff as $key=>$data) {
-            unset($res[$key]);
-        }
-        return $res;
-    }
 }
 
 ?>
