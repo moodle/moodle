@@ -29,6 +29,9 @@ set_magic_quotes_runtime(0);
 
 error_reporting(E_ALL);
 
+/// Clear the decks of old stuff
+delete_records('chat_users');
+
 function chat_empty_connection() {
     return array('sid' => NULL, 'handle' => NULL, 'ip' => NULL, 'port' => NULL, 'groupid' => NULL);
 }
@@ -674,7 +677,7 @@ class ChatDaemon {
             {
 
                 // Simply give them the message
-                $output = chat_format_message_manually($message, 0, $sender, $info['user'], $info['lang']);
+                $output = chat_format_message_manually($message, $this->sets_info[$sessionid]['courseid'], $sender, $info['user'], $info['lang']);
                 $this->trace('Delivering message "'.$output->text.'" to '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL]);
 
                 if($output->beep) {
