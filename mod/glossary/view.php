@@ -221,7 +221,7 @@
 //    echo '<p>';
     echo '<table align="center" width="70%" bgcolor="' . $THEME->cellheading .'" class="generalbox"><tr><td align=center>';
     
-    echo '<p align="center>"';
+    echo '<p align="center">';
     echo '<form method="POST" action="view.php">';
     echo '<input type="submit" value="'.$strsearch.'" name="searchbutton"> ';
     echo '<input type="text" name="hook" size="20" value=""> ';
