@@ -962,49 +962,69 @@ function dst_offset_on($time) {
 
 }
 
-// "Find the ($index as int, 1st, 2nd, etc, -1 = last) ($weekday as int, sunday = 0) in ($month) of ($year)"
 function find_day_in_month($index, $weekday, $month, $year) {
+
+    $daysinmonth = days_in_month($month, $year);
+
     if($weekday == -1) {
-        // Any day of the week will do
-        if($index == -1) {
-            // Last day of that month
-            $targetday = days_in_month($month, $year);
+        // Don't care about weekday, so return either $index or $daysinmonth
+        return ($index == -1) ? $daysinmonth : $index;
+    }
+
+    // From now on we 're looking for a specific weekday
+    $numweeks = intval($weekday / 7); // 0 for first weekday, 1 for second etc.
+    $weekday  = $weekday % 7;
+
+    // Starting from day $index, -1 == last day of month
+
+    if($index == -1) {
+
+        $lastmonthweekday  = strftime('%w', mktime(12, 0, 0, $month, $daysinmonth, $year, 0));
+
+        // This is the last such weekday of the month
+        $lastinmonth = $daysinmonth + $weekday - $lastmonthweekday;
+        if($lastinmonth > $daysinmonth) {
+            $lastinmonth -= 7;
         }
-        else {
-            // Not last day; a straight index value
-            $targetday = $index;
+
+        // Skip the required number of weeks and return
+        while($numweeks--) {
+            $lastinmonth -= 7;
         }
+
+        return $lastinmonth;
+        
     }
     else {
-        // We need to calculate when exactly that weekday is
-        // Fist of all, what day of the week is the first of that month?
 
-        $firstmonthweekday = strftime('%w', mktime(12, 0, 0, $month, 1, $year, 0));
-        $daysinmonth       = days_in_month($month, $year);
+        $indexweekday = strftime('%w', mktime(12, 0, 0, $month, $index, $year, 0));
 
-        // This is the first such-named weekday of the month
-        $targetday = 1 + $weekday - $firstmonthweekday;
-        if($targetday <= 0) {
-            $targetday += 7;
+        $diff = $weekday - $indexweekday;
+        if($diff < 0) {
+            $diff += 7;
         }
 
-        if($index == -1) {
-            // To find the LAST such weekday, just keep adding 7 days at a time
-            while($targetday + 7 <= $daysinmonth) {
-                $targetday += 7;
-            }
+        // This is the first such weekday of the month equal to or after $index
+        $firstfromindex = $index + $diff;
+
+        // Skip the required number of weeks and return
+        while($numweeks--) {
+            $firstfromindex += 7;
         }
-        else {
-            // For a specific week, add as many weeks as required
-            $targetday += $index > 1 ? ($index - 1) * 7 : 0;
-        }
+
+        return $firstfromindex;
+
     }
-
-    return $targetday;
 }
 
 function days_in_month($month, $year) {
    return intval(date('t', mktime(12, 0, 0, $month, 1, $year, 0)));
+}
+
+function dayofweek($day, $month, $year) {
+    // I wonder if this is any different from
+    // strftime('%w', mktime(12, 0, 0, $month, $daysinmonth, $year, 0));
+    return intval(date('w', mktime(12, 0, 0, $month, $day, $year, 0)));
 }
 
 /// USER AUTHENTICATION AND LOGIN ////////////////////////////////////////
