@@ -4,7 +4,7 @@
    Moodle quiz questions from a text file.  It supports Multiple-Choice, 
    True-False, Short Answer and Numerical questions, as well as insertion 
    of a _____ for the Missing Word format.  Various question-types can be 
-   mixed in a single text file, and the format also supports inline comments, 
+   mixed in a single text file, and the format also supports line comments, 
    question names, feedback and percentage-weight grades.</p>
 
         <h3>QUESTION TYPES</h3>
@@ -52,8 +52,8 @@
          =%50%1822:2}</pre>
         <p>Note that since Moodle's browser GUI doesn't support multiple answers for Numerical questions, there's no way to see them or edit them through Moodle. The only way to change a numerical answer beyond the first, is to delete the question and re-import it (or use something like phpMyAdmin).</p>
         <h3>OPTIONS</h3>
-        <p>In addition to these basic question types, this filter offers the following options: inline comments, question name, feedback and percentage answer weight.</p>
-        <p><u>Inline Comments:</u><br />
+        <p>In addition to these basic question types, this filter offers the following options: line comments, question name, feedback and percentage answer weight.</p>
+        <p><u>Line Comments:</u><br />
         Comments that will not be imported into Moodle can be included in the text file. This can be used to provide headers or more information about the questions. All lines that start with a double backslash (not counting tabs or spaces) will be ignored by the filter.
 <pre>     // Subheading: Numerical questions below
      What's 2 plus 2? {#4}</pre>
@@ -117,10 +117,9 @@ The Multiple Answers option is used for multiple choice questions when two or mo
 <p>Short Answer questions can be made case sensitive by changing &quot;0&quot; to &quot;1&quot; in the following line:<br />
         <tt>$question-&gt;usecase = 0;  // Ignore case</tt></p>
 <p></p>
-<h3>TROUBLESHOOTING AND HELP</h3>
+<h3>TROUBLESHOOTING</h3>
 <p>The text encoding of your text file must be the same as your Moodle installation. </p>
-<p>An example questions text file can be found here: <b>gift/examples.txt</b>.</p>
-<p>For questions about this filter, or if errors are discovered, please post in the Quiz module forum at Moodle.org.</p>
+<p>An example questions text file can be found here: <a href="../../../../mod/quiz/format/gift/examples.txt">gift/examples.txt</a>.</p>
 <p></p>
 <h3>CREDITS</h3>
 <p>This filter was written through the collaboration of numerous members of the Moodle community. It was originally based on the missingword format, which included code from Martin Dougiamas, Thomas Robb and others. Paul Tsuchido Shew wrote this filter in December 2003 incorporating community suggestions for a more robust question format. The name was conceived as an acronym for  &quot;General Import Format Technology&quot; or something like that, but it's too long for a simple filter like this, so it just GIFT.</p>
