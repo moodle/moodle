@@ -1,5 +1,5 @@
 <center>
-<form name="theform" method="post" <?=$onsubmit ?> action="edit.php" enctype="multipart/form-data">
+<form name="form" method="post" <?=$onsubmit ?> action="edit.php" enctype="multipart/form-data">
 <table  class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
 <tr valign=top>
     <td align=right><p><b><?php echo get_string("concept","glossary") ?>:</b></p></td>
@@ -33,24 +33,18 @@
 <tr valign=top>
     <td align=right><p><b><?php echo get_string("entryusedynalink","glossary") ?>:</b></p></td>
     <td>
-    <select size="1" name="usedynalink">
-     <option value="1" <?php
-      if ( isset($newentry->usedynalink) ) {
-         if ($newentry->usedynalink) {
-             echo "selected";
-         }
-      }
-      ?> 
-      ><?php echo get_string("yes") ?></option>
-     <option value="0" <?php
-      if ( isset($newentry->usedynalink) ) {
-         if (!$newentry->usedynalink) {
-             echo "selected";
-	     }
-      }
-      ?>><?php echo get_string("no") ?>
-     </option>
-     </select> <?php helpbutton("usedynalink", get_string("usedynalink", "glossary"), "glossary") ?>
+    <script>
+        var items = ['casesensitive','fullmatch'];
+    </script>
+<?php
+    $selected = "";
+    if ( isset($newentry->usedynalink) ) {
+        if ($newentry->usedynalink) {
+            $selected = "checked";
+        }
+    }
+?> 
+    <input type="checkbox" name="usedynalink" value=1 <?php p($selected) ?> onclick="return lockoptions('form','usedynalink', items)"> <?php helpbutton("usedynalink", get_string("usedynalink", "glossary"), "glossary") ?>
     </td>
 </tr>
 <tr valign=top>
@@ -148,6 +142,11 @@
 		echo "<input type=\"hidden\" name=e value=\"$newentry->id\">";
    	 }
 	?>
+
+	<input type="hidden" name=husedynalink value="1">
+	<input type="hidden" name=hcasesensitive value="0">
+	<input type="hidden" name=hfullmatch value="1">
+
 	<input type="hidden" name=id value="<?=$cm->id ?>">
 	<input type="hidden" name=tab value="<?=$tab ?>">
 	<input type="hidden" name=cat value="<?=$cat ?>">
@@ -166,7 +165,7 @@
 
 <?PHP 
    if ($usehtmleditor) { 
-       print_richedit_javascript("theform", "text", "yes");
+       print_richedit_javascript("form", "text", "yes");
    }
 ?>
 

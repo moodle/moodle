@@ -34,13 +34,18 @@
     } 
     add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id&tab=$tab", "$glossary->id");
     
+/// stablishing default tab
+    $framebydefault = GLOSSARY_STANDARD_VIEW;
+    if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS) {
+        $framebydefault = GLOSSARY_DATE_VIEW;
+    }
 
 /// checking for valid values for sortorder and sortkey
     if ( $sortorder = strtolower($sortorder) ) {
         if ($sortorder != 'asc' and $sortorder != 'desc') {
             $sortorder = '';
         } else {
-            $l = '';
+            $l = ''; /// if we are sorting by date, reset the searching by terms or letters
             $search = '';
         }
     }
@@ -49,22 +54,31 @@
             $sortkey = '';
         }
     }
+/// in this point:
+///       $sortkey   = CREATION | UPDATE | ''
+///       $sortorder = asc | desc | ''
 
-    if ( $sortkey or $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS) {
-        if ( !$sortkey and $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS) {
+    if ( $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
+        $tab = $framebydefault;
+
+        if ( !$sortkey ) {
             $sortkey = 'CREATION';
-            $sortorder = 'asc';
         } 
         if ( !$sortorder ) {
             $sortorder = 'asc';
         }
     } else {
-        $orderby = 'concept ASC';
+        if ( !$sortkey ) {
+            $sortkey = 'concept';
+        } 
+        if ( !$sortorder ) {
+            $sortorder = 'asc';
+        }
     }
 
 // creating matrix of words to search if apply
     $search = trim(strip_tags($search));
-    if ($search and !$eid) {
+    if ($search and !$eid) {   /// searching terms
         $l = '';
         $searchterms = explode(' ', $search); // Search for words independently
         foreach ($searchterms as $key => $searchterm) {
@@ -73,18 +87,18 @@
             } 
         } 
         $search = trim(implode(' ', $searchterms));
-        $tab = GLOSSARY_STANDARD_VIEW;
-    } elseif ($eid) {
+        $tab = $framebydefault;
+    } elseif ($eid) {   /// searching a specify entry
         $search = '';
     } 
 
     $alphabet = explode('|', get_string("alphabet","glossary"));
-    if ($l == '' and $search == '' and $sortkey == '' and !$eid) {
+    if ($l == '' and $search == '' and !$eid) {
         // if the user is just entering the glossary...
         if ($tab != GLOSSARY_APPROVAL_VIEW) {
             $l = $alphabet[0];
         } else {
-            $l = 'ALL';
+            $l = 'ALL';  /// show ALL by default in the waiting approval frame
         }
     } elseif ($eid) {
         $l = '';
@@ -167,14 +181,15 @@
     $glossary_tCFG->TabsPerRow = 4;
     $glossary_tCFG->TabSeparation = 4;
 
-    $data[GLOSSARY_STANDARD_VIEW]->link = "view.php?id=$id";
     $data[GLOSSARY_STANDARD_VIEW]->caption = get_string("standardview", "glossary");
-    
-    $data[GLOSSARY_CATEGORY_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_CATEGORY_VIEW;
     $data[GLOSSARY_CATEGORY_VIEW]->caption = get_string("categoryview", "glossary");
-    
-    $data[GLOSSARY_DATE_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_DATE_VIEW;
     $data[GLOSSARY_DATE_VIEW]->caption = get_string("dateview", "glossary");
+
+    $data[GLOSSARY_DATE_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_DATE_VIEW;
+    if ( $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS ) {
+        $data[GLOSSARY_STANDARD_VIEW]->link = "view.php?id=$id";
+        $data[GLOSSARY_CATEGORY_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_CATEGORY_VIEW;
+    }
 
     if (isteacher($course->id)) {
         $data[GLOSSARY_APPROVAL_VIEW]->caption = get_string("waitingapproval", "glossary");
@@ -185,10 +200,10 @@
             $data[GLOSSARY_APPROVAL_VIEW]->caption .= "<br><font size=1>(" . count($hiddenentries) . " " . get_string("entries","glossary") . ")</font>";
             $data[GLOSSARY_APPROVAL_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_APPROVAL_VIEW;
         } elseif ( $tab == GLOSSARY_APPROVAL_VIEW ) {
-           $tab = GLOSSARY_STANDARD_VIEW;
+            $tab = $framebydefault;
         }
     } elseif ( $tab == GLOSSARY_APPROVAL_VIEW ) {
-        $tab = GLOSSARY_STANDARD_VIEW;
+        $tab = $framebydefault;
     }
 
 /// printing header of the current tab
@@ -220,6 +235,17 @@
     
 /// Printing the entries
 
+    switch ($sortkey) {
+        case 'CREATION':
+            $orderby = "timecreated $sortorder";
+        break;
+        case 'UPDATE':
+            $orderby = "timemodified $sortorder";
+        break;
+		default:
+            $orderby = "$sortkey $sortorder";
+    }
+    
     switch ($tab) {
         case GLOSSARY_CATEGORY_VIEW:
             if ($cat == GLOSSARY_SHOW_ALL_CATEGORIES) { 
@@ -259,11 +285,6 @@
             } elseif ($eid) { // looking for an entry
                 $allentries = get_records_select("glossary_entries", "id = $eid");
             } elseif ( $l or $sortkey ) {
-                if ($sortkey == 'CREATION') {
-                    $orderby = "timecreated $sortorder";
-                } else {
-                    $orderby = "timemodified $sortorder";
-                }
                 $where = '';
                 if ($l != 'ALL' and $l != 'SPECIAL') {
                     switch ($CFG->dbtype) {
@@ -402,10 +423,10 @@
     } else {
         switch ($glossary->displayformat) {
             case GLOSSARY_FORMAT_CONTINUOUS:
-                echo '</td></tr></table>';
+                echo '</td></tr></table><p>';
             break;
             case GLOSSARY_FORMAT_SIMPLE:
-                echo '</table></center>';
+                echo '</table></center><p>';
             break;
         } 
     } 

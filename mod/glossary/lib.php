@@ -249,6 +249,33 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $tab="",$cat="") 
         }
     }
 }
+function  glossary_print_entry_concept($entry) {
+        echo $entry->concept;
+}
+
+function glossary_print_entry_definition($entry) {
+    $definition = str_ireplace($entry->concept,"<nolink>$entry->concept</nolink>",$entry->definition);
+    echo format_text($definition, $entry->format);
+}
+
+function glossary_print_entry_attachment($entry,$format,$align) {
+///   valid format values: html  : Return the HTML link for the attachment as an icon
+///                        text  : Return the HTML link for tha attachment as text
+///                        blank : Print the output to the screen
+    if ($entry->attachment) {
+          $glossary = get_record("glossary","id",$entry->glossaryid);		  
+          $entry->course = $glossary->course; //used inside print_attachment
+          echo "<table border=0 align=$align><tr><td>";
+          echo glossary_print_attachments($entry,$format,$align);
+          echo "</td></tr></table>";
+    }
+}
+
+function  glossary_print_entry_approval($cm, $entry, $tab) {
+    if ( $tab == GLOSSARY_APPROVAL_VIEW ) {
+        echo "<a title=\"" . get_string("approve","glossary"). "\" href=\"approve.php?id=$cm->id&eid=$entry->id&tab=$tab\"><IMG align=\"right\" src=\"check.gif\" border=0 width=\"34\" height=\"34\"></a>";
+    }
+}
 
 function glossary_print_entry_by_default($course, $cm, $glossary, $entry,$tab="",$cat="") {
     global $THEME, $USER;
@@ -256,19 +283,14 @@ function glossary_print_entry_by_default($course, $cm, $glossary, $entry,$tab=""
     $colour = $THEME->cellheading2;
 
     echo "\n<TR>";
-    echo "<TD WIDTH=100% valign=\"top\" BGCOLOR=\"#FFFFFF\">";
-    if ( $tab == GLOSSARY_APPROVAL_VIEW ) {
-        echo "<a title=\"" . get_string("approve","glossary"). "\" href=\"approve.php?id=$cm->id&eid=$entry->id&tab=$tab\"><IMG align=\"right\" src=\"check.gif\" border=0 width=\"34\" height=\"34\"></a>";
-    }
-    if ($entry->attachment) {
-          $entry->course = $course->id;
-          echo "<table border=0 align=right><tr><td>";
-          echo glossary_print_attachments($entry,"html");
-          echo "</td></tr></table>";
-    }
-    echo "<b>$entry->concept</b>: ";
-    echo format_text($entry->definition, $entry->format);
-    glossary_print_entry_icons($course, $cm, $glossary, $entry,$tab,$cat);
+    echo "<TD WIDTH=100% class=\"generalbox\" valign=\"top\" BGCOLOR=\"#FFFFFF\">";
+        glossary_print_entry_approval($cm, $entry, $tab);
+        glossary_print_entry_attachment($entry,"html","right");
+        echo "<b>";
+        glossary_print_entry_concept($entry);
+        echo ":</b> ";
+        glossary_print_entry_definition($entry);
+        glossary_print_entry_icons($course, $cm, $glossary, $entry,$tab,$cat);
     echo "</td>";
     echo "</TR>";
 }
@@ -276,21 +298,15 @@ function glossary_print_entry_by_default($course, $cm, $glossary, $entry,$tab=""
 function glossary_print_entry_continuous($course, $cm, $glossary, $entry,$tab="",$cat="") {
     global $THEME, $USER;
     if ($entry) {
-        if ( $tab == GLOSSARY_APPROVAL_VIEW ) {
-            echo "<a title=\"" . get_string("approve","glossary"). "\" href=\"approve.php?id=$cm->id&eid=$entry->id&tab=$tab\"><IMG align=\"right\" src=\"check.gif\" border=0 width=\"34\" height=\"34\"></a>";
-        }
-        if ($entry->attachment) {
-            $entry->course = $course->id;
-            echo "<table border=0 align=right><tr><td>";
-            echo glossary_print_attachments($entry, "html");
-            echo "</td></tr></table>";
-        }
-        echo " $entry->concept ";
-        echo format_text($entry->definition, $entry->format);
-
+        glossary_print_entry_approval($cm, $entry, $tab);
+        glossary_print_entry_attachment($entry,"html","right");
+        glossary_print_entry_concept($entry);
+        echo " ";
+        glossary_print_entry_definition($entry);
         glossary_print_entry_icons($course, $cm, $glossary, $entry, $tab, $cat);
     }
 }
+
 function glossary_print_entry_icons($course, $cm, $glossary, $entry,$tab="",$cat="") {
     global $THEME, $USER;
 
@@ -953,11 +969,7 @@ function glossary_sort_entries ( $entry0, $entry1 ) {
 function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     global $THEME, $CFG, $USER;
 
-//    if ($entry->timemarked < $entry->modified) {
-        $colour = $THEME->cellheading2;
-//    } else {
-//        $colour = $THEME->cellheading;
-//    }
+    $colour = $THEME->cellheading2;
 
     $user = get_record("user", "id", $comment->userid);
     $strby = get_string("writtenby","glossary");
@@ -972,7 +984,7 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo "<br><FONT SIZE=1>(".get_string("lastedited").": ".userdate($comment->timemodified).")</FONT></small><br>";
     echo "</TD>";
 
-    echo "<TD NOWRAP valign=top WIDTH=75% BGCOLOR=\"$THEME->cellcontent\">";
+    echo "<TD valign=top WIDTH=75% BGCOLOR=\"$THEME->cellcontent\">";
     if ($comment) {
         echo format_text($comment->comment, $comment->format);
     } else {
@@ -995,30 +1007,28 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo "</td></tr></table>";
 }
 
-    function glossary_print_dynaentry($courseid, $entries) {
-        global $THEME, $USER;
+function glossary_print_dynaentry($courseid, $entries) {
+    global $THEME, $USER;
 
-        $colour = $THEME->cellheading2;
+    $colour = $THEME->cellheading2;
 
-        echo "\n<center><table width=95% border=0><tr>";
-        echo "<td width=100%\">";
-        if ( $entries ) {
-            foreach ( $entries as $entry ) {
-
-                if (! $glossary = get_record("glossary", "id", $entry->glossaryid)) {
-                    error("Glossary ID was incorrect or no longer exists");
-                }
-                if (! $course = get_record("course", "id", $glossary->course)) {
-                    error("Glossary is misconfigured - don't know what course it's from");
-                }
-                if (!$cm = get_coursemodule_from_instance("glossary", $entry->glossaryid, $courseid) ) {
-                    error("Glossary is misconfigured - don't know what course module it is ");
-                }
-
-                glossary_print_entry($course, $cm, $glossary, $entry);
+    echo "\n<center><table width=95% border=0><tr>";
+    echo "<td width=100%\">";
+    if ( $entries ) {
+        foreach ( $entries as $entry ) {
+            if (! $glossary = get_record("glossary", "id", $entry->glossaryid)) {
+                error("Glossary ID was incorrect or no longer exists");
             }
+            if (! $course = get_record("course", "id", $glossary->course)) {
+                error("Glossary is misconfigured - don't know what course it's from");
+            }
+            if (!$cm = get_coursemodule_from_instance("glossary", $entry->glossaryid, $courseid) ) {
+                error("Glossary is misconfigured - don't know what course module it is ");
+            }
+            glossary_print_entry($course, $cm, $glossary, $entry);
         }
-        echo "</td>";
-        echo "</tr></table></center>";
     }
+    echo "</td>";
+    echo "</tr></table></center>";
+}
 ?>

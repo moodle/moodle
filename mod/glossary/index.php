@@ -66,7 +66,7 @@
             $link = "<A HREF=\"view.php?id=$glossary->coursemodule\">$glossary->name</A>";
         }
 
-        $count = count_records("glossary_entries", "glossaryid", $glossary->id);
+        $count = count_records_sql("SELECT COUNT(*) FROM {$CFG->prefix}glossary_entries where (glossaryid = $glossary->id or sourceglossaryid = $glossary->id)");
 
         if ($course->format == "weeks" or $course->format == "topics") {
             if (empty($glossary->section)) {

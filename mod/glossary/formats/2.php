@@ -14,31 +14,27 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $tab=""
     echo "\n<td bgcolor=\"$colour\" width=35 valign=top class=\"forumpostpicture\">";
     if ($entry) {
         print_user_picture($user->id, $course->id, $user->picture);
-    }
-    echo "</td>";
-    echo "<td nowrap valign=\"top\" width=100% bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
-    if ( $tab == GLOSSARY_APPROVAL_VIEW ) {
-        echo "<a title=\"" . get_string("approve","glossary"). "\" href=\"approve.php?id=$cm->id&eid=$entry->id&tab=$tab\"><IMG align=\"right\" src=\"check.gif\" border=0 width=\"34\" height=\"34\"></a>";
-    }
-    if ($entry->attachment) {
-          $entry->course = $glossary->course;
-          echo "<table border=0 align=right><tr><td>";
-          echo glossary_print_attachments($entry, "html");
-          echo "</td></tr></table>";
-    }
-    if ($entry) {
-        echo "<b>$entry->concept</b><br />";
+
+        echo "</td>";
+        echo "<td nowrap valign=\"top\" width=100% bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
+
+        glossary_print_entry_approval($cm, $entry, $tab);
+        glossary_print_entry_attachment($entry,"html","right");
+
+        echo "<b>";
+        glossary_print_entry_concept($entry);
+		echo "</b><br />";
+
         echo "<font size=\"2\">$strby $user->firstname $user->lastname</font>";
         echo "&nbsp;&nbsp;<font size=1>(".get_string("lastedited").": ".
              userdate($entry->timemodified).")</font>";
-    }
-    echo "</tr>";
+        echo "</tr>";
 
-    echo "\n<tr>";
-    echo "\n<td bgcolor=\"$colour\" width=35 valign=top class=\"forumpostside\">&nbsp;</td>";
-    echo "\n<td width=100% bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
-    if ($entry) {
-        echo format_text($entry->definition, $entry->format);
+        echo "\n<tr>";
+        echo "\n<td bgcolor=\"$colour\" width=35 valign=top class=\"forumpostside\">&nbsp;</td>";
+        echo "\n<td width=100% bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
+
+        glossary_print_entry_definition($entry);
         glossary_print_entry_icons($course, $cm, $glossary, $entry,$tab,$cat);
 
     } else {

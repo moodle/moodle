@@ -30,7 +30,9 @@ if (! $glossary = get_record("glossary", "id", $cm->instance)) {
 }
 if ( $confirm ) {
     $form = data_submitted();
-
+    if ( !isset($form->usedynalink) ) {
+        $form->usedynalink = 0;
+    }
     $timenow = time();
     $form->text = clean_text($form->text, $form->format);
 
