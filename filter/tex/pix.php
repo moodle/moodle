@@ -59,6 +59,9 @@
                 case "Darwin":
                     $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp);
                 break;
+                default:      /// To allow drop-in binaries for other platforms
+                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname ". escapeshellarg($texexp);
+                break;
             }
             system($cmd, $status);
         }
