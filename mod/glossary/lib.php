@@ -666,10 +666,13 @@ function glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode
     }
 }
 
-function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook,$printicons,$ratings) {
+function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook,$printicons,$ratings,$aliases=true) {
 
-    $aliases = glossary_print_entry_aliases($course, $cm, $glossary, $entry, $mode, $hook,"html");
+    if ($aliases) {
+        $aliases = glossary_print_entry_aliases($course, $cm, $glossary, $entry, $mode, $hook,"html");
+    }
     $icons   = "";
+    $return   = "";
     if ( $printicons ) {
         $icons   = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,"html");
     }
@@ -699,7 +702,7 @@ function glossary_print_entry_attachment($entry,$format=NULL,$align="right") {
     if ($entry->attachment) {
           $glossary = get_record("glossary","id",$entry->glossaryid);		  
           $entry->course = $glossary->course; //used inside print_attachment
-          echo "<table border=0 width=\"100%\"><tr><td align=\"$align\">\n";
+          echo "<table border=0 width=\"100%\"><tr><td align=\"$align\" nowrap>\n";
           echo glossary_print_attachments($entry,$format,$align);
           echo "</td></tr></table>\n";
     }
