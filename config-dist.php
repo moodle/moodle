@@ -71,6 +71,12 @@ $CFG->lang     = "en";
 $CFG->smtphosts  = "";
 
 
+// There is no way, currently, to automatically tell whether the graphic
+// library GD is version 1.* or 2.*.  Specify that here (either 1 or 2).
+
+$CFG->gdversion = 1;
+
+
 // You should not need to change anything else. To continue setting up 
 // Moodle, use your web browser to go to the moodle/admin web page.
 ///////////////////////////////////////////////////////////////////////////

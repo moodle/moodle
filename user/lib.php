@@ -4,7 +4,9 @@
 
 function ImageCopyBicubic ($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h) {
 
-    if (function_exists("ImageCopyResampled")) {   // Assumes gd >= 2.0.1 as well
+    global $CFG;
+
+    if (function_exists("ImageCopyResampled") and $CFG->gdversion >= 2) { 
        return ImageCopyResampled($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y,
                                  $dst_w, $dst_h, $src_w, $src_h);
     }

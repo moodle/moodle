@@ -47,7 +47,7 @@
                     case 3: $im = ImageCreateFromPNG($imagefile); break;
                     default: error("Image must be in JPG or PNG format");
                 }
-                if (function_exists("ImageCreateTrueColor")) {
+                if (function_exists("ImageCreateTrueColor") and $CFG->gdversion >= 2) {
                     $im1 = ImageCreateTrueColor(100,100);
                     $im2 = ImageCreateTrueColor(35,35);
                 } else {
