@@ -402,6 +402,7 @@ function main_upgrade($oldversion=0) {
                         }
                     }
                 }
+                flush();
             }
         }
     }
