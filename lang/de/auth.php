@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.2 development (2004020300)
+      // auth.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['auth_dbdescription'] = 'Diese Methode benutzt eine externe Datenbank-Tabelle, um die Gültigkeit eines angegebenen Nutzernamens und Kennwort zu überprüfen, Wenn der Zugang neu ist, werden die Informationen der übrigen Felder ebenso zu Moodle hinüberkopiert.';
@@ -32,6 +32,7 @@ $string['auth_ldap_memberattribute'] = 'Geben Sie die Mitgliedsoptionen an, wenn
 $string['auth_ldap_search_sub'] = 'Wählen Sie &lt;&gt; 0 wenn Sie Nutzer aus Unterumgebungen suchen möchten.';
 $string['auth_ldap_update_userinfo'] = 'Nutzerdaten  (Vorname, Name, Adresse...) von LDAP zu Moodle aktualisieren. Weitere Informationen in /auth/ldap/attr_mappings.php';
 $string['auth_ldap_user_attribute'] = 'Verwendete Eigenschaften, um Nutzer zu benennen/suchen. Normalerweise \'cn\'.';
+$string['auth_ldap_version'] = 'Diese Version des LDAP Protokolls nutzt Ihr Server.';
 $string['auth_ldapdescription'] = 'Diese Methode bietet Authentifizierung gegenüber einem externen LDAP-Server.
                                   Wenn der vergebene Nutzername und Passwort gültig sind, erstellt Moodle einen
                                   neuen Nutzereintrag in seiner Datenbank. Diese Modul kann Nutzereinträge aus LDAP

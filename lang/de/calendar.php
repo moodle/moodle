@@ -1,5 +1,5 @@
-<?PHP // $Id$
-      // calendar.php - created with Moodle 1.2 Beta +++ (2004031300)
+<?PHP // $Id$ 
+      // calendar.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['april'] = 'April';
@@ -13,7 +13,7 @@ $string['courseevents'] = 'Kurstermine';
 $string['dayview'] = 'Tagesansicht';
 $string['daywithnoevents'] = 'Es gibt heute keine Termine';
 $string['december'] = 'Dezember';
-$string['default'];
+$string['default'] = 'Grundeinstellung';
 $string['deleteevent'] = 'Termin löschen';
 $string['detailedmonthview'] = 'Monatsgesamtansicht';
 $string['durationnone'] = 'Ohne Zeitangabe';
@@ -54,6 +54,7 @@ $string['mon'] = 'Mo';
 $string['monday'] = 'Montag';
 $string['monthlyview'] = 'Monatsübersicht';
 $string['newevent'] = 'Neuer Termin';
+$string['noupcomingevents'] = 'Es gibt keine weiteren Termine';
 $string['november'] = 'November';
 $string['october'] = 'Oktober';
 $string['oneevent'] = '1 Termin';

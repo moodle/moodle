@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004040500)
+      // moodle.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['action'] = 'Aktion';
@@ -42,6 +42,7 @@ $string['adminhelpcourses'] = 'Kurse und Kategorien definieren und ihnen Persone
 $string['adminhelpedituser'] = 'Liste der Nutzerzugänge durchsuchen und bearbeiten';
 $string['adminhelplanguage'] = 'Überprüfen und bearbeiten des aktuellen Sprachpakets';
 $string['adminhelplogs'] = 'Logfiles der Aktivitäten der Seite durchsuchen';
+$string['adminhelpmanageblocks'] = 'Bearbeiten der installierten Blöcke und Ihre Einstellungen';
 $string['adminhelpmanagedatabase'] = 'Direkt auf die Datenbank zugreifen (Vorsicht!)';
 $string['adminhelpmanagefilters'] = 'Textfilter und damit verbundene Einstellungen auswählen';
 $string['adminhelpmanagemodules'] = 'Installierte Module und deren Einstellungen verwalten';
@@ -100,6 +101,8 @@ $string['backupsavetohelp'] = 'Kompletter Pfad in dem die Backup-Dateien abgeleg
 $string['backupuserfileshelp'] = 'Wählen Sie, ob die Teilnehmer-Dateien (z.B. Portraitfotos aus dem Teilnehmerprofil) in die automatischen Backups einbezogen werden sollen';
 $string['backupusershelp'] = 'Wählen Sie, ob alle Nutzer auf dem Server oder nur die benötigten Teilnehmer/innen jedes Kurses einbezogen werden sollen';
 $string['backupversion'] = 'Sicherungsversion';
+$string['blocksetup'] = 'Einrichten der Blocktabellen';
+$string['blocksuccess'] = '$atabellen wurden richtig angelegt';
 $string['bycourseorder'] = 'Sortiert nach Kursen';
 $string['cancel'] = 'Abbrechen';
 $string['categories'] = 'Kurs-Kategorie';
@@ -227,6 +230,7 @@ $string['databaseperformance'] = 'Datenbankperformance';
 $string['databasesetup'] = 'Datenbank einspielen';
 $string['databasesuccess'] = 'Datenbank wurde erfolgreich aktualisiert';
 $string['databaseupgradebackups'] = 'Backupversion ist jetzt $a';
+$string['databaseupgradeblocks'] = 'Blöcheversion ist jetzt $a';
 $string['databaseupgrades'] = 'Aktualisiere Datenbank';
 $string['datemostrecentfirst'] = 'Daten - jüngste zuerst';
 $string['datemostrecentlast'] = 'Daten - älteste zuerst';
@@ -510,6 +514,7 @@ $string['logs'] = 'Statistiken';
 $string['mainmenu'] = 'Hauptmenü';
 $string['makeafolder'] = 'Verzeichnis erstellen';
 $string['makeeditable'] = 'Sofern Sie \'$a\' durch den Internet-Server bearbeitbar machen (beispielsweise Apache) können Sie diese Datei direkt auf dieser Seite bearbeiten';
+$string['manageblocks'] = 'Blöcke';
 $string['managedatabase'] = 'Datenbank verwalten';
 $string['managefilters'] = 'Filter';
 $string['managemodules'] = 'Module verwalten';
