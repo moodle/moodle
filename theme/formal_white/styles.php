@@ -820,3 +820,14 @@ TABLE.formtable TD {
     padding: 10px;
 }
 
+.sitetopic {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    -moz-border-radius: 15px;
+}
+
+.sitetopiccontent {
+    -moz-border-radius: 15px;
+}
+
