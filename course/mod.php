@@ -433,7 +433,7 @@
 
     if (file_exists($modform)) {
 
-        print_heading($pageheading);
+        print_heading_with_help($pageheading, "mods", $module->name);
         print_simple_box_start("center", "", "$THEME->cellheading");
         include_once($modform);
         print_simple_box_end();
