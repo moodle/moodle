@@ -373,6 +373,11 @@ table.userinfobox {
     padding: 4px;
 }
 
+.forumpost .footer {
+    padding-top: 0.5em;
+    text-align:right;
+}
+
 .forumpost .left {
     width: 35px;
     padding: 4px;
@@ -382,6 +387,14 @@ table.userinfobox {
 
 .forumpostindent {
     margin-left: 30px;
+}
+
+.forumolddiscussminimal {
+    text-align: center;
+}
+
+.forumolddiscuss {
+    text-align: right;
 }
 
 .forumheaderlist {

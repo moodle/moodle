@@ -291,7 +291,7 @@ table.formtable tbody th {
 
 
 /* glossary */
-.commands {
+.glossarypost .commands {
     font-size: 0.7em;
 }
 .glossarypost .entryheader .author {
