@@ -4,13 +4,13 @@
 
 $string['-about'] = "Sobre o Moodle";
 $string['intro.html'] = "Introdução";
-$string['background.html'] = "História";
+$string['background.html'] = "Contexto";
 $string['philosophy.html'] = "Filosofia";
 $string['licence.html'] = "Licença";
 $string['features.html'] = "Características";
 $string['release.html'] = "Notas de lançamento";
-$string['future.html'] = "Futuro";
-$string['credits.html'] = "Autoria";
+$string['future.html'] = "Plano de acção";
+$string['credits.html'] = "Créditos";
 
 $string['-installation'] = "Administração";
 $string['install.html'] = "Instalação";
@@ -25,7 +25,7 @@ $string['other.html'] = "Outros Documentos";
 $string['-development'] = "Desenvolvimento";
 $string['developer.html'] = "Manual do programador";
 $string['coding.html'] = "Guia de programação";
-$string['cvs.html'] = "Uso doCVS";
+$string['cvs.html'] = "Uso do CVS";
 
 
 ?>
