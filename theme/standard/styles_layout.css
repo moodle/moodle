@@ -527,6 +527,27 @@ table.generaltable th.header,
     width: 35px;
 }
 
+.glossarycomment {
+    border-width:1px;
+    border-style:solid;
+    border-collapse:separate;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+
+.glossarycomment .entry {
+    padding: 3px;
+}
+
+.glossarycomment .picture {
+    width: 35px;
+}
+
+.glossarycomment .icons {
+    text-align: right;
+}
+
 
 /* message */
 .message_link {

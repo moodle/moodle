@@ -166,3 +166,15 @@ table.minicalendar td {
     -moz-border-radius-bottomright:20px;
 }
 
+.glossarycomment {
+    -moz-border-radius-bottomleft:20px;
+    -moz-border-radius-bottomright:20px;
+}
+
+.glossarycomment .side {
+    -moz-border-radius-bottomleft:20px;
+}
+
+.glossarycomment .entry {
+    -moz-border-radius-bottomright:20px;
+}
