@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 development (2004070800)
+      // quiz.php - created with Moodle 1.4 development (2004072500)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -159,7 +159,7 @@ $string['recentlyaddedquestion'] = '最新の質問!';
 $string['regrade'] = '全解答を再評価する';
 $string['regradecomplete'] = '全解答が再評価されました';
 $string['regradecount'] = '$a->attempt 中 $a->changed の評点が変更されました ';
-$string['rename'] = '変名';
+$string['rename'] = 'リネーム';
 $string['report'] = 'レポート';
 $string['reportfullstat'] = '統計の詳細';
 $string['reportmulti_percent'] = 'マルチ - パーセンテージ';
