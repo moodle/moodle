@@ -103,12 +103,14 @@
     echo "</TD></TR></TABLE></TABLE>";
 
 //  Print other functions
-    echo "<CENTER><TABLE ALIGN=CENTER><TR>";
-    echo "<TD NOWRAP><P><FORM ACTION=\"../course/unenrol.php\" METHOD=GET>";
-    echo "<INPUT type=hidden name=id value=\"$course->id\">";
-    echo "<INPUT type=submit value=\"Unenrol me from $course->shortname\">";
-    echo "</FORM></P></TD>";
-    echo "</TR></TABLE></CENTER>\n";
+    if ($id == $USER->id) {
+        echo "<CENTER><TABLE ALIGN=CENTER><TR>";
+        echo "<TD NOWRAP><P><FORM ACTION=\"../course/unenrol.php\" METHOD=GET>";
+        echo "<INPUT type=hidden name=id value=\"$course->id\">";
+        echo "<INPUT type=submit value=\"Unenrol me from $course->shortname\">";
+        echo "</FORM></P></TD>";
+        echo "</TR></TABLE></CENTER>\n";
+    }
 
     print_footer($course);
 
