@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 unstable development (2004090402)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['addanewdiscussion'] = 'Lisää uusi keskustelu';
@@ -42,6 +42,7 @@ $string['editing'] = 'Muokataan';
 $string['emptymessage'] = 'Jotain oli vialla viestissäsi. Ehkä jätit viestisi tyhjäksi tai liitetiedosto oli liian suuri. Muutoksiasi EI tallennettu.';
 $string['everyonecanchoose'] = 'Kaikki voivat tilata tämän keskustelualueen';
 $string['everyoneissubscribed'] = 'Kaikki tilaavat tämän keskustelualueen';
+$string['existingsubscribers'] = 'Nykyiset tilaajat';
 $string['forcesubscribe'] = 'Pakota kaikki tilaajiksi';
 $string['forcesubscribeq'] = 'Pakota kaikki tilaajiksi?';
 $string['forum'] = 'Keskustelualue';
@@ -99,6 +100,7 @@ $string['postrating3'] = 'Suurimmaksi osaksi sosiaalista osaamista';
 $string['posts'] = 'Viestit';
 $string['posttoforum'] = 'Lähetä viesti';
 $string['postupdated'] = 'Viestisi on päivitetty';
+$string['potentialsubscribers'] = 'Mahdolliset tilaajat';
 $string['processingdigest'] = 'Kerätään viestejä käyttäjälle $a';
 $string['processingpost'] = 'Käsitellään viestiä $a';
 $string['prune'] = 'Jaa';

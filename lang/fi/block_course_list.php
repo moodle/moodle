@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // block_course_list.php - created with Moodle 1.4 development (2004072500)
+      // block_course_list.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['allcourses'] = 'Ylläpitäjä näkee kaikki kurssit';
-$string['blockname'] = 'Kurssi lista';
+$string['blockname'] = 'Kurssilista';
 $string['owncourses'] = 'Ylläpitäjä näkee omat kursssit';
 
 ?>

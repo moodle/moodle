@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004072901)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['action'] = '-- Toiminto --';
@@ -55,6 +55,7 @@ $string['export'] = 'Vie';
 $string['exportformats'] = 'Vienti muodot';
 $string['exportsuccessful'] = 'Vienti onnistui';
 $string['exportto'] = 'Vie ';
+$string['fetchback'] = 'Palauta';
 $string['file'] = 'Tiedosto';
 $string['filedownload'] = 'Tiedoston lataus';
 $string['fileisoftype'] = 'Tiedosto on tyyppiä';
@@ -103,6 +104,7 @@ $string['notadministratewiki'] = 'Sinulla ei ole tämän wikin ylläpitooikeuksia.'
 $string['nothingtostrip'] = 'Ei sivuja joilla olisi useampi kuin yksi versio';
 $string['nowikicreated'] = 'Tähän wikiin ei ole luotu sivuja';
 $string['offline'] = 'OFFLINE';
+$string['optional'] = 'Valinnainen';
 $string['orphanedpage'] = 'Orpo sivu';
 $string['orphanedpages'] = 'Orpo sivut';
 $string['otherwikis'] = 'Muut wikit';
@@ -138,6 +140,11 @@ $string['strippagecheck'] = 'Oletko varma että haluat siivota vanhat versiot näi
 $string['strippages'] = 'Siivoa sivuja';
 $string['studentadminoptions'] = 'Opiskelijan ylläpito oikeudet';
 $string['submit'] = 'Lähetä';
+$string['tabattachments'] = 'Liitteet';
+$string['tabedit'] = 'Muokkaa';
+$string['tabinfo'] = 'Historia';
+$string['tablinks'] = 'Linkit';
+$string['tabview'] = 'Katso';
 $string['thanksforcontribution'] = 'Kiitokset osallistumisesta';
 $string['thispageisntlinkedfromanywhereelse'] = 'Tätä sivua ei ole linkitetty minnekään';
 $string['updatedpages'] = 'Päivitetyt sivut';

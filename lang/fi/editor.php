@@ -1,13 +1,15 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3 Nearly Ready (2004052000)
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['about'] = 'Tietoja editorista';
 $string['absbottom'] = 'Absbottom';
-$string['middle'] = 'middle';
 $string['address'] = 'Osoite';
 $string['alignment'] = 'Tasaus';
 $string['alternatetext'] = 'Oletusteksti';
+$string['anchorhelp'] = 'Tämä luo vain ankkurin. Sinun pitää luoda akkuriin viittaava linkki itse.';
+$string['anchorname'] = 'Ankkurin nimi';
+$string['anchors'] = 'Ankkurit';
 $string['baseline'] = 'Baseline';
 $string['bold'] = 'Lihavoitu';
 $string['borderthickness'] = 'Reunan paksuus';
@@ -21,6 +23,7 @@ $string['chooseicon'] = 'Valitse liitettävä hymiö';
 $string['close'] = 'Sulje';
 $string['cols'] = 'Solut';
 $string['copy'] = 'Kopioi';
+$string['createanchor'] = 'Luo ankkuri';
 $string['createfolder'] = 'Luo kansio';
 $string['createlink'] = 'Lisää linkki';
 $string['cut'] = 'Leikkaa';

@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 unstable development (2004090402)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['addresource'] = 'Lisää aineisto';
 $string['chooseafile'] = 'Valitse tai lähetä tiedosto';
+$string['chooseparameter'] = 'Valitse parametri';
 $string['configdefaulturl'] = 'Tätä käytetään esimerkkiosoitteena, kun lisätään uusia URL-osoiteen sisältäviä aineistoja.';
 $string['configfilterexternalpages'] = 'Tämä asetus aiheuttaa kaikkien ulkoisten aineistoiden suodattamisen sivuston suotimien läpi. Tämän toiminnon kytkeminen päälle hidastaa sivustoa, käytä sitä vain, jos et muuta voi.';
 $string['configframesize'] = 'Kun WWW-sivu tai palvelimelle tallennettu tiedosto on osa kehystä, tämä arvo on yläkehyksen koko pikseleinä (sisältää navigointipalkit).';
@@ -20,6 +21,7 @@ $string['configpopupwidth'] = 'Ponnahdusikkunoiden leveys?';
 $string['configwebsearch'] = 'Kun lisätää WWW-sivun tai -linkin osoite, tätä osoitetta tarjotaan käyttäjälle etsimisen helpottamiseksi (esimerkiksi sopivan hakukoneen URL).';
 $string['directlink'] = 'Suora linkki tähän tiedostoon';
 $string['directoryinfo'] = 'Kaikki valitun hakemiston tiedostot näytetään';
+$string['display'] = 'Ikkuna';
 $string['editingaresource'] = 'Aineiston muokkaus';
 $string['encryptedcode'] = 'Suojaa koodi';
 $string['example'] = 'Esimerkki';

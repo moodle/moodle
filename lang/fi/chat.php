@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.4 development (2004072500)
+      // chat.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['beep'] = 'kutsu';
@@ -22,6 +22,10 @@ $string['deletesessionsure'] = 'Oletko varma, että haluat poistaa tämän istunnon
 $string['donotusechattime'] = 'Älä julkaise mitään chat-istuntoaikoja';
 $string['enterchat'] = 'Klikkaa tästä päästäksesi mukaan chat-istuntoon';
 $string['errornousers'] = 'Muita käyttäjiä ei löydy!';
+$string['explaingeneralconfig'] = 'Nämä asetukset ovat aina voimassa';
+$string['explainmethoddaemon'] = 'Näillä asetuksilla on vaikutusta vain jos käytät \"Chat-palvelu\"-asetusta.';
+$string['explainmethodnormal'] = 'Näillä asetuksilla on vaikutusta vain jos käytät \"Normaali toiminta\"-asetusta.';
+$string['generalconfig'] = 'Yleiset asetukset';
 $string['helpchatting'] = 'Apua chat-toiminnon käyttöön';
 $string['idle'] = 'Tyhjä';
 $string['messagebeepseveryone'] = '$a kutsuu kaikkia!';
@@ -35,6 +39,7 @@ $string['modulename'] = 'Chat';
 $string['modulenameplural'] = 'Chatit';
 $string['neverdeletemessages'] = 'Älä koskaan poista viestejä';
 $string['nextsession'] = 'Seuraava istunto';
+$string['noguests'] = 'Tämä chat ei ole avoinna vieraille';
 $string['nomessages'] = 'Ei viestejä';
 $string['repeatdaily'] = 'Joka päivä samaan aikaan';
 $string['repeatnone'] = 'Ei toistoja - julkaise vain määritellyt ajat';

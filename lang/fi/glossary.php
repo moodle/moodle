@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 development (2004072500)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['addcomment'] = 'Lis‰‰ kommentti';
@@ -71,6 +71,7 @@ $string['displayformatfullwithoutauthor'] = 'T‰ysi ilman kirjoittajaa';
 $string['displayformats'] = 'Sanaston tietueiden selaustavat';
 $string['displayformatssetup'] = 'N‰yttˆmuodon valinta';
 $string['duplicateentry'] = 'P‰‰llekk‰inen tietue';
+$string['editalways'] = 'Muokkaa aina';
 $string['editcategories'] = 'Muokkaa kategorioita';
 $string['editentry'] = 'Muokkaa tietuetta';
 $string['editingcomment'] = 'Muokkaa kommenttia';
@@ -84,6 +85,8 @@ $string['entrydeleted'] = 'Tietue poistettu';
 $string['entryexported'] = 'Tietueen vienti onnistui';
 $string['entryishidden'] = '(t‰m‰ tietue on t‰ll‰ hetkell‰ piilotettuna)';
 $string['entryleveldefaultsettings'] = 'Tietueiden oletusasetukset';
+$string['entrysaved'] = 'Tietue on tallennettu';
+$string['entryupdated'] = 'Tietue on p‰ivitetty';
 $string['entryusedynalink'] = 'T‰m‰ tietue pit‰isi linkitty‰ automaattisesti';
 $string['explainaddentry'] = 'Lis‰‰ uusi tietue sanastoon.<br />K‰site ja m‰‰ritelm‰ ovat pakollisia kentti‰.';
 $string['explainall'] = 'N‰yt‰ kaikki tietueet yhdell‰ sivulla';
@@ -157,6 +160,8 @@ $string['totalentries'] = 'Hakusanojen kokonaism‰‰r‰';
 $string['usedynalink'] = 'Linkit‰ sanaston tietueet automaattisesti';
 $string['waitingapproval'] = 'Odotetaan hyv‰ksynt‰‰';
 $string['warningstudentcapost'] = '(Soveltuu vain jos sanasto ei ole p‰‰sanasto)';
+$string['withauthor'] = 'K‰sitteet kirjoittajineen';
+$string['withoutauthor'] = 'K‰sitteet ilman kirjoittajaa';
 $string['writtenby'] = 'kirjoittanut';
 $string['youarenottheauthor'] = 'Et ole kommentin kirjoittaja, joten et voi muokata sit‰.';
 
