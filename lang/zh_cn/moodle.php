@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.1 development （2003053000）
+      // moodle.php - created with Moodle 1.1 development (2003053000)
 
 
 $string['action'] = "动作";
@@ -158,7 +158,7 @@ $string['editthisactivity'] = "编辑这个活动项目";
 $string['edituser'] = "编辑用户帐号";
 $string['email'] = "Email地址";
 $string['emailconfirm'] = "确认你的帐号";
-$string['emailconfirmation'] = "\$a->lastname ：
+$string['emailconfirmation'] = " \$a->lastname  ：
 
 你好！
 
@@ -187,7 +187,7 @@ $string['emaildisplayyes'] = "允许任何人看见我的email地址";
 $string['emailexists'] = "这个email地址已经注册过了。";
 $string['emailformat'] = "Email格式";
 $string['emailmustbereal'] = "注意：你的email地址必须是真实的";
-$string['emailpasswordconfirmation'] = "\$a->firstname ：
+$string['emailpasswordconfirmation'] = "\$a->lastname ：
 
 你好！
 
