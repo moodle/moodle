@@ -534,6 +534,9 @@ function print_course_admin_links($course, $width=180) {
     $admindata[]="<A HREF=\"teachers.php?id=$course->id\">$course->teachers...</A>";
     $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
 
+    $admindata[]="<A HREF=\"grades.php?id=$course->id\">".get_string("grades")."...</A>";
+    $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/grades.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+
     $admindata[]="<A HREF=\"log.php?id=$course->id\">".get_string("logs")."...</A>";
     $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/log.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
     $admindata[]="<A HREF=\"$CFG->wwwroot/files/index.php?id=$course->id\">".get_string("files")."...</A>";
