@@ -176,13 +176,19 @@ function journal_get_users_done($journal) {
 function journal_print_user_entry($course, $user, $entry, $teachers, $ratings) {
     global $THEME;
 
+    if ($entry->timemarked and $entry->timemarked < $entry->modified) {
+        $colour = $THEME->cellheading2;
+    } else {
+        $colour = $THEME->cellheading;
+    }
+
     echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10>";
         
     echo "\n<TR>";
     echo "\n<TD ROWSPAN=2 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
     print_user_picture($user->id, $course->id, $user->picture);
     echo "</TD>";
-    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">$user->firstname $user->lastname";
+    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$colour\">$user->firstname $user->lastname";
     if ($entry) {
         echo "&nbsp;&nbsp;<FONT SIZE=1>".get_string("lastedited").": ".userdate($entry->modified)."</FONT>";
     }
@@ -203,7 +209,7 @@ function journal_print_user_entry($course, $user, $entry, $teachers, $ratings) {
             $entry->teacher = $USER->id;
         }
         print_user_picture($entry->teacher, $course->id, $teachers[$entry->teacher]->picture);
-        echo "<TD BGCOLOR=\"$THEME->cellheading\">".get_string("feedback").":";
+        echo "<TD BGCOLOR=\"$colour\">".get_string("feedback").":";
         choose_from_menu($ratings, "r$entry->id", $entry->rating, get_string("rate", "journal")."...");
         if ($entry->timemarked) {
             echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($entry->timemarked)."</FONT>";
@@ -290,7 +296,7 @@ function journal_print_feedback($course, $entry) {
         echo get_string("overallrating", "journal").": ";
         echo $JOURNAL_RATING[$entry->rating];
     } else {
-        print_string("noratinggiven");
+        print_string("noratinggiven", "journal");
     }
     echo "</I></FONT></P>";
 
