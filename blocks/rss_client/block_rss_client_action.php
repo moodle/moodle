@@ -114,7 +114,7 @@
                 $dataobject->description = addslashes(rss_unhtmlentities($rss->channel['description']));
             }
             if (!empty($rss->channel['title'])) {
-                $dataobject->title = addslashes(unhtmlentities($rss->channel['title']));
+                $dataobject->title = addslashes(rss_unhtmlentities($rss->channel['title']));
             } 
             if (!update_record('block_rss_client', $dataobject)) {
                 error('There was an error trying to update rss feed with id:'. $rssid);
