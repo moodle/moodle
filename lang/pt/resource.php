@@ -17,7 +17,7 @@ $string['fulltext'] = "Texto completo";
 $string['htmlfragment'] = "Fragmento de HTML";
 $string['neverseen'] = "Nunca visto";
 $string['note'] = "Nota";
-$string['notefile'] = "Para subir mais ficheiros no curso (para aparecerem nesta lista) use o <a href=\"\$a\">Gestor de Ficheiros</a>.";
+$string['notefile'] = "Para subir mais ficheiros no curso (para aparecerem nesta lista) use o <a href='\$a\'>Gestor de Ficheiros</a>.";
 $string['notypechosen'] = "Tem que escolher um tipo. Use seu botão de voltar para traz no navegador e tente novamente.";
 $string['resourcetype'] = "Tipo de recurso";
 $string['resourcetype1'] = "Referência";
