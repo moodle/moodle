@@ -19,7 +19,6 @@ class quiz_report extends quiz_default_report {
 /*
 //These definitions must be in the lang/en/quiz.php file
 $string['corrresp'] = "Correct Response";
-$string['grade'] = "Grade";
 $string['indivresp'] = "Responses of Individuals to Each Item";
 $string['itemanal'] = "Item Response Analysis";
 $string['listitems'] = "Listing of Items in This Quiz";
@@ -28,12 +27,11 @@ $string['percentcorrect'] = "Percent Correct";
 $string['question'] = "Question";
 $string['withsummary'] = "with Summary Statistics";
 $string['discrimination'] = "Discrim. Index";
-$string[''] = "";
 */
 
+        $strgrade = get_string("grade");
         $strindivresp = get_string("indivresp", "quiz");
         $strname = get_string("name", "quiz");
-        $strgrade = get_string("grade", "quiz");
         $stritemanal = get_string("itemanal", "quiz");
         $strcorrresp = get_string("corrresp", "quiz");
         $strnoresponse = get_string("noresponse", "quiz");
