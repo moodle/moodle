@@ -115,6 +115,8 @@
     $backup_name .= userdate(time(),$backup_date_format,99,false);
     //The extension
     $backup_name .= ".zip";
+    //And finally, clean everything
+    $backup_name = clean_filename($backup_name);
 
     //Add as text field
     echo "<input type=\"text\" name=\"backup_name\" size=\"40\" value=\"".$backup_name."\">";

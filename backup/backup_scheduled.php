@@ -425,11 +425,15 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         $backup_name .= userdate(time(),$backup_date_format,99,false);
         //The extension
         $backup_name .= ".zip";
+        //And finally, clean everything
+        $backup_name = clean_filename($backup_name);
 
         //Calculate the string to match the keep preference
         $keep_name = $backup_word."-";
         //The shortname
         $keep_name .= strtolower($backup_shortname)."-";
+        //And finally, clean everything
+        $keep_name = clean_filename($keep_name);
  
         $preferences->backup_name = $backup_name;
         $preferences->keep_name = $keep_name;
