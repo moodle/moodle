@@ -15,7 +15,104 @@
 </head>
 
 <body bgcolor="#FFFFFF">
-<h1>Laatste release notes</h1>
+<h1>Laatste release notes</h1><h1>Laatste  Release notes</h1>
+<h3> Moodle 1.4.2   (1 Oktober 2004)</h3>
+
+<ul>
+  <dl>
+    <dt>Enkele kleine nieuwigheden</dt>
+    <dd> 
+      <ul>
+        <li>Nieuwe PAM authenticatiemodule voor rechtstreekse authenticatie op Unix/Linux</li>
+        <li>Vakaanmakers kunnen nu een backup terugplaaten naar zowel bestaande als nieuwe vakken</li>
+        <li>Forumberichten hebben nu gedetailleerde berichtkoppen zodat ze in draden kunnen gezet wordend door e-mailprogramma's</li>
+      </ul>
+    </dd>
+
+    <dt>Enkele belangrijke herstellingen aan de beveiliging</dt>
+    <dd> 
+      <ul>
+        <li>Betere controle/filtering van scriptparameteres die op heel wat plaatsen gebruikt worden. binnen Moodle (Dank aan Petr Skoda voor zijn beveiligingsaudit!)</li>
+        <li>Verbeteringen aan een aantal SQL parameters in de woordenlijstmodule</li>
+      </ul>
+    </dd>
+
+    <dt>En een hele reeks kleine herstellingen</dt>
+    <dd> 
+      <ul>
+        <li>Backup is nu wat meer bestand tegen fouten (bv als de backup onderbroken wordt) 
+            en kan nu foute bestanden opruimen</li>
+        <li>Herstellingen aan de databank voor authenticatie tegen een PostgreSQL databank</li>
+        <li>Herstellingen aan de installatie met gebruik van PostgreSQL</li>
+        <li>Onderwerplijnen van forumberichten worden nu alleen nog in het recente activiteitenvenster afgebroken</li>
+        <li>Vakaanmeldingen op basis van databanken werkt nu eindelijk  :-)</li>
+        <li>SQL-herstellingen voor het maken van RSS-feeds vanuit PostgreSQL</li>
+        <li>rtsp toegevoegd aand e lijst van toegelaten protocollen gekuiste HTML-tekst</li>
+        <li>Gebruikersprofiel en de pagina om het profiel te bewerken kunnen nu zonder parameters geopend worden</li>
+        <li>xmlize library geüpgradet tot de laatste versie</li>
+        <li>phpmailer library geüpgradet tot de laatste versie</li>
+        <li>Veel stukjes code gestructureerd</li>
+        <li>Beheermenu kan nu een backup en restore doen van de site startpagina</li>
+        <li>Een bug hersteld in het tonen van de index van de forums met PHP5</li>
+        <li>De highlight-functie  (bv na zoeken) verwijderde backslashes</li>
+        <li>Informatie van LDAP wordt nu vanuit utf8 gedecodeerd</li>
+        <li>Vaklijsten werken nu beter met erg lange vaklijsten</li>
+        <li>Twee SCORM-fouten hersteld (een typefout en een een probleem met onbeforeunload)</li>
+        <li>Wat opkuis bij het afdrukken van tekst, koppen en variablen in de lesmodule</li>
+        <li>De kalender werkt nu zoals verwacht, zelfs als je je aanmeldt als iemand anders</li>
+        <li>Nog enkele verkorte PHP tags weggewerkt</li>
+        <li>Betere willekeurigheid bij willekeurige vragen (herstelling van een fout die er bij 1.4 ingeslopen is)</li>
+        <li>Wanneer een leraar uit een vak verwijderd wordt, wordt die nu ook uit alle groepen in dat vak verwijderd.</li>
+        <li>De strip_pages bug is hersteld in Wiki</li>
+        <li>Fouten hersteld voor charset detectie in backups en multilang filter met PHP5</li>
+      </ul>
+    </dd>
+
+  </dl>
+</ul>
+
+<p>&nbsp;</p>
+
+<h3> Moodle 1.4.1   (12 September 2004)</h3>
+
+<ul><dl>
+    <dt>Enkele nieuwigheden</dt>
+    <dd> 
+      <ul>
+        <li>Nieuwe "Email Protection" filter die alle  e-mailaddressen in alle teksten verbergt (om het automatisch oogsten van adressen te verhinderen)</li>
+        <li>Toegelaten e-mailadressen kan nu beperkt worden (zie config-dist.php voor details)</li>
+        <li>Extra instructies voor vertalers in de vertalersinterface geplaatst</li>
+        <li>Nieuw helpbestand voor paden van mappen</li>
+      </ul>
+    </dd>
+    <dt>En sommige fouten hersteld</dt>
+    <dd> 
+      <ul>
+        <li>Verbeterde performantie bij het bekijken van logs</li>
+        <li>Verbeterde performantie in woordenlijsten</li>
+        <li>De items van woordenlijsten worden nu juist getoond als ze in meerdere categorieën staan</li>
+        <li>Auth_user_login wordt niet opnieuw gedeclareerd bij mislukte aanmelding</li>
+        <li>Twee ontbrekende icoontjes aangevuld in cordoroy blue</li>
+        <li>Ontbrekende "Nieuwe gebeurtenis"-knop geplaatst op de pagina met nieuwe gebeurtenissen</li>
+        <li>Voeg altijd schuine strepen toe bij chatboodschappen bij daemongebruikers voor ze in de db te zetten.</li>
+        <li>Problemen hersteld voor het afhandelen van vaste aanmeldingsperiodes wanneer dit ingesteld is voor een vak</li>
+        <li>Site vak ID (gedefinieerd als SITEID) moet niet meer altijd 1 zijn</li>
+        <li>Standaard geheugenbeperkingen zijn verhoogd boven 16M, pm Moodle te laten voortwerken, zelfs wanneer er onverwachte geheugenproblemen zijn.</li>
+        <li>Smileys worden nu als afbeeldingen verwerk in Markdownteksten</li>
+        <li>Workshops werken terug met recente activiteiten</li>
+        <li>file.php kan nu alleen maar data binnen vakken verwerken</li>
+        <li>Verbeterd gedrag van kalenderblokken op de vakpagina</li>
+        <li>Aanhalingstekenfout met PostgreSQL databank, veroorzaakt door de installer is hersteld</li>
+        <li>Het soms niet tonen van juiste antwoorden bij het nalezen van testen is hersteld</li>
+        <li>&lt;tt> and &lt;code> zijn nu toegelaten tags</li>
+        <li>Uit sectiesamenvattingen, vaksamenvattingen en labels wordt terug geen javascript meer gefilterd</li>
+        <li>Een zeldzame LDAP fout hersteld die er voor zorgde dat nieuwe accounts niet konden gemaakt worden</li>
+      </ul>
+    </dd>
+  </dl>
+</ul>
+
+<p>&nbsp;</p>
 
 <h3> Moodle 1.4   (31 Augustus 2004)</h3>
 
