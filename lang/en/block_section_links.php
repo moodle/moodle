@@ -1,6 +1,6 @@
 <?PHP // $Id$ 
 
-$string['blockname'] = 'Weeks/Topics';
+$string['blockname'] = 'Section links';
 $string['topics'] = 'Topics';
 $string['jumptocurrenttopic'] = 'Jump to current topic';
 $string['jumptocurrentweek'] = 'Jump to current week';
