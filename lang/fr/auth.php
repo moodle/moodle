@@ -46,6 +46,7 @@ $string['auth_ldap_host_url'] = 'Indiquer le serveur LDAP sous form d\'URL comme
 $string['auth_ldap_login_settings'] = 'Configuration de la connexion';
 $string['auth_ldap_memberattribute'] = 'Indiquer l\'attribut d\'appartenance à un groupe. D\'habitude cet attribut est « member ».';
 $string['auth_ldap_objectclass'] = 'Le filtre utilisé pour rechercher/renommer des utilisateurs. On y mettra d\'habitude quelque chose comme objectClass=posixAccount. La valeur par défaut est objectClass=*, ce que retournera tous les objets du serveur LDAP.';
+$string['auth_ldap_opt_deref'] = 'Détermine le traitement des alias durant la recherche. Veuillez sélectionner une des valeurs suivantes&nbsp;: «&nbsp;Non&nbsp;» (LDAP_DEREF_NEVER) ou «&nbsp;Oui&nbsp;» (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'Réglages de l\'échéance du mot de passe LDAP.';
 $string['auth_ldap_search_sub'] = 'Mettre une valeur différente de 0 pour rechercher les enregistrements dans les sous-contextes.';
 $string['auth_ldap_server_settings'] = 'Configuration du serveur LDAP';
