@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // countries.php - created with Moodle 1.2 development (2003122600)
+      // countries.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['AD'] = 'Andorra';
@@ -232,7 +232,7 @@ $string['VG'] = 'Ilhas Virgens (Britânicas)';
 $string['VI'] = 'Ilhas Virgens (Americanas)';
 $string['VN'] = 'Vietname';
 $string['VU'] = 'Vanuatu';
-$string['WA'] = 'Gáles';
+$string['WA'] = 'Gales';
 $string['WF'] = 'Wallis e Futuna';
 $string['WS'] = 'Samoa';
 $string['YE'] = 'Iémen';
