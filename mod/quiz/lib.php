@@ -501,7 +501,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
 
     echo '<table width="100%" cellspacing="10">';
     echo '<tr><td nowrap="nowrap" width="100" valign="top">';
-    echo '<p align="center"><b>$number</b></p>';
+    echo '<p align="center"><b>' . $number . '</b></p>';
     if ($showgrades) {
         if ($feedback or $response) {
             echo "<p align=\"center\"><font size=\"1\">$strmarks: $actualgrade/$grade</font></p>";
