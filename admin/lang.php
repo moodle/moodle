@@ -59,7 +59,7 @@
     }
 
     foreach ($stringfiles as $key => $file) {
-        if ($file == "README" or $file == "help" or $file == "docs") {
+        if ($file == "README" or $file == "help" or $file == "docs" or $file == "fonts") {
             unset($stringfiles[$key]);
         }
     }
