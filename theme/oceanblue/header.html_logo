@@ -14,7 +14,7 @@
 
      <TABLE WIDTH=100% CELLPADDING=10 CELLSPACING=0 BORDER=0>
        <TR>
-         <TD VALIGN=TOP><A HREF="<?=$CFG->wwwroot?>" TARGET="_top"><IMG SRC="<?=$CFG->wwwroot?>/theme/oceanblue/logo.jpg" ALT="Moodle" BORDER="0"></A></TD>
+         <TD VALIGN=TOP><A HREF="<?=$CFG->wwwroot?>" TARGET="<?=$CFG->main_frame?>"><IMG SRC="<?=$CFG->wwwroot?>/theme/oceanblue/logo.jpg" ALT="Moodle" BORDER="0"></A></TD>
          <TD ALIGN=RIGHT VALIGN=TOP><?=$menu ?></TD>
        </TR>
      </TABLE>

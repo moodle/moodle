@@ -364,7 +364,7 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
         $nothing = get_string("choose")."...";
     }
 
-    $output = "<FORM TARGET=_top NAME=$formname>";
+    $output = "<FORM TARGET=\"{$CFG->main_frame}\" NAME=$formname>";
     $output .= "<SELECT NAME=popup onChange=\"top.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value\">\n";
 
     if ($nothing != "") {
@@ -653,10 +653,10 @@ function print_footer ($course=NULL) {
             $course = get_site();
             $homepage = true;
         } else {
-            $homelink = "<A TARGET=_top HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A>";
+            $homelink = "<A TARGET=\"{$CFG->main_frame}\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A>";
         }
     } else {
-        $homelink = "<A TARGET=_top HREF=\"$CFG->wwwroot\">".get_string("home")."</A>";
+        $homelink = "<A TARGET=\"{$CFG->main_frame}\" HREF=\"$CFG->wwwroot\">".get_string("home")."</A>";
         $course = get_site();
     }
 
@@ -690,7 +690,7 @@ function print_navigation ($navigation) {
        if (! $site = get_site()) {
            $site->shortname = get_string("home");;
        }
-       echo "<A TARGET=_top HREF=\"$CFG->wwwroot/\">$site->shortname</A> -> $navigation";
+       echo "<A TARGET=\"{$CFG->main_frame}\" HREF=\"$CFG->wwwroot/\">$site->shortname</A> -> $navigation";
    }
 }
 
@@ -1140,6 +1140,16 @@ function notice_yesno ($message, $linkyes, $linkno) {
     echo "</B></FONT></P>";
     print_simple_box_end();
 }
+
+/* This is an alternate beginning to the redirect function
+function redirect($url, $message="", $delay=false) {
+// Uses META tags to redirect the user, after printing a notice
+    if(!empty($message) && $delay == false):
+        $delay = 10;
+    else:
+        $delay = 0;
+    endif;
+*/
 
 function redirect($url, $message="", $delay=0) {
 // Uses META tags to redirect the user, after printing a notice
