@@ -7,6 +7,7 @@
     }
 
     require_once("../config.php");
+    include_once("$CFG->dirroot/lib/adminlib.php");  // Contains various admin-only functions
 
 
 /// Check that PHP is of a sufficient version
@@ -222,113 +223,13 @@
 
 /// Check all blocks and load (or upgrade them if necessary)
     upgrade_blocks_plugins("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+
+/// Check all enrolment plugins and upgrade if necessary
+    upgrade_enrol_plugins("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
     
-/// Find and check all modules and load them up or upgrade them if necessary
+/// Find and check all main modules and load them up or upgrade them if necessary
+    upgrade_activity_modules("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
-    if (!$mods = get_list_of_plugins("mod") ) {
-        error("No modules installed!");
-    }
-
-    foreach ($mods as $mod) {
-
-        if ($mod == "NEWMODULE") {   // Someone has unzipped the template, ignore it
-            continue;
-        }
-
-        $fullmod = "$CFG->dirroot/mod/$mod";
-
-        unset($module);
-
-        if ( is_readable("$fullmod/version.php")) {
-            include_once("$fullmod/version.php");  # defines $module with version etc
-        } else {
-            notify("Module $mod: $fullmod/version.php was not readable");
-            continue;
-        }
-
-        if ( is_readable("$fullmod/db/$CFG->dbtype.php")) {
-            include_once("$fullmod/db/$CFG->dbtype.php");  # defines upgrading function
-        } else {
-            notify("Module $mod: $fullmod/db/$CFG->dbtype.php was not readable");
-            continue;
-        }
-
-        if (!isset($module)) {
-            continue;
-        }
-
-        if (!empty($module->requires)) {
-            if ($module->requires > $CFG->version) {
-                $info->modulename = $mod;
-                $info->moduleversion  = $module->version;
-                $info->currentmoodle = $CFG->version;
-                $info->requiremoodle = $module->requires;
-                notify(get_string('modulerequirementsnotmet', 'error', $info));
-                unset($info);
-                continue;
-            }
-        }
-
-        $module->name = $mod;   // The name MUST match the directory
-        
-        if ($currmodule = get_record("modules", "name", $module->name)) {
-            if ($currmodule->version == $module->version) {
-                // do nothing
-            } else if ($currmodule->version < $module->version) {
-                if (empty($updated_modules)) {
-                    $strmodulesetup  = get_string("modulesetup");
-                    print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, "", "", false, "&nbsp;", "&nbsp;");
-                }
-                print_heading("$module->name module needs upgrading");
-                $upgrade_function = $module->name."_upgrade";
-                if (function_exists($upgrade_function)) {
-                    $db->debug=true;
-                    if ($upgrade_function($currmodule->version, $module)) {
-                        $db->debug=false;
-                        // OK so far, now update the modules record
-                        $module->id = $currmodule->id;
-                        if (! update_record("modules", $module)) {
-                            error("Could not update $module->name record in modules table!");
-                        }
-                        notify(get_string("modulesuccess", "", $module->name), "green");
-                        echo "<HR>";
-                    } else {
-                        $db->debug=false;
-                        notify("Upgrading $module->name from $currmodule->version to $module->version FAILED!");
-                    }
-                }
-                $updated_modules = true;
-            } else {
-                error("Version mismatch: $module->name can't downgrade $currmodule->version -> $module->version !");
-            }
-    
-        } else {    // module not installed yet, so install it
-            if (empty($updated_modules)) {
-                $strmodulesetup    = get_string("modulesetup");
-                print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, "", "", false, "&nbsp;", "&nbsp;");
-            }
-            print_heading($module->name);
-            $updated_modules = true;
-            $db->debug = true;
-            @set_time_limit(0);  // To allow slow databases to complete the long SQL
-            if (modify_database("$fullmod/db/$CFG->dbtype.sql")) {
-                $db->debug = false;
-                if ($module->id = insert_record("modules", $module)) {
-                    notify(get_string("modulesuccess", "", $module->name), "green");
-                    echo "<HR>";
-                } else {
-                    error("$module->name module could not be added to the module list!");
-                }
-            } else { 
-                error("$module->name tables could NOT be set up successfully!");
-            }
-        }
-    }
-
-    if (!empty($updated_modules)) {
-        print_continue("index.php");
-        die;
-    }
 
 
 /// Set up the overall site name etc.
