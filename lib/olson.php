@@ -145,10 +145,45 @@ function olson_todst ($filename) {
                 
                 // start-of-year timestamp
                 // TODO: perhaps should consider the current DST rule
-                if($mdl_tz['from'] < 1970) {
-                    $mdl_tz['from'] = 1970;
+
+                if(empty($mdl_tz['dst_startday'])) {
+                    // Either 0 or unset, bottom line is that DST doesn't get on that year
+                    $timestamp_dst = 0;
                 }
-                $mdl_tz['from_timestamp'] = gmmktime(0, 0, 0, 1, 1, $mdl_tz['from'], 0) - $mdl_tz['gmtoff'] * 60 ;
+                else {
+                    $find_day      = find_day_in_month($mdl_tz['dst_startday'], $mdl_tz['dst_weekday'], $mdl_tz['dst_month'], $mdl_tz['from']);
+                    $timestamp_dst = gmmktime(0, 0, 0, $mdl_tz['dst_month'], $find_day, $mdl_tz['from'], 0) - $mdl_tz['gmtoff'] * 60;
+                    // Add the "nominal GMT time" at that moment
+if(!strpos($mdl_tz['dst_time'], ':')) {
+    print_object('x');
+    print_object($mdl_tz);
+}
+                    list($hours, $mins) = explode(':', $mdl_tz['dst_time']);
+
+                    $timestamp_dst += ($hours * 60 + $mins) * 60;
+                }
+                if(empty($mdl_tz['std_startday'])) {
+                    // Either 0 or unset, bottom line is that DST doesn't get on that year
+                    $timestamp_std = 0;
+                }
+                else {
+                    $find_day      = find_day_in_month($mdl_tz['std_startday'], $mdl_tz['std_weekday'], $mdl_tz['std_month'], $mdl_tz['from']);
+                    $timestamp_std = gmmktime(0, 0, 0, $mdl_tz['std_month'], $find_day, $mdl_tz['from'], 0) - $mdl_tz['gmtoff'] * 60;
+                    // Add the "nominal GMT time" at that moment
+                    list($hours, $mins) = explode(':', $mdl_tz['std_time']);
+                    $timestamp_dst += ($hours * 60 + $mins) * 60;
+                }
+
+                $timestamp = min($timestamp_dst, $timestamp_std);
+                // For zones that use no rule, this will still be 0. If so, make it Jan 1st of that year
+
+                if($timestamp == 0) {
+                    $mdl_tz['from_timestamp'] = gmmktime(0, 0, 0, 1, 1, $mdl_tz['from'], 0) - $mdl_tz['gmtoff'] * 60;
+                }
+                else {
+                    $mdl_tz['from_timestamp'] = $timestamp;
+                }
+
                 if($mdl_tz['from_timestamp'] < 0) {
                     // This can still happen if $mdl_tz['gmtoff'] < 0
                     continue;
