@@ -473,6 +473,8 @@ function make_log_url($module, $url) {
         case "login":
         case "lib":
         case "admin":
+        case "message":
+        case "calendar":
             return "/$module/$url";
             break;
         case "upload":
