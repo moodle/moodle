@@ -148,6 +148,8 @@
                     $status = quiz_backup_match($bf,$preferences,$question->id);
                 } else if ($question->qtype == "6") {
                     $status = quiz_backup_randomsamatch($bf,$preferences,$question->id);
+                } else if ($question->qtype == "7") {
+                    //Description question. Nothing to write.
                 }
                 //End question
                 $status =fwrite ($bf,end_tag("QUESTION",5,true));

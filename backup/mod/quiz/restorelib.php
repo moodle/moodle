@@ -186,6 +186,8 @@
                     $status = quiz_restore_match($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "6") {
                     $status = quiz_restore_randomsamatch($oldid,$newid,$que_info,$restore);
+                } else if ($question->qtype == "7") {
+                    //Description question. Nothing to do.
                 }
             } else {
                 $status = false;
@@ -879,6 +881,10 @@
                             $tok = strtok(",");
                         }
                         $response->answer = $answer_field;
+                        break;
+                    case 7:    //DESCRIPTION QTYPE
+                        //Nothing to do (there is no awser to this qtype)
+                        //But this case must exist !!
                         break;
                     default:   //UNMATCHED QTYPE.
                         //This is an error (unimplemented qtype)
