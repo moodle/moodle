@@ -185,34 +185,34 @@ input {
 
 
 /* entry page */
-#entry-page #left-column,
-#entry-page #left-column .sideblock
+.index .content #left-column,
+.index .content #left-column .sideblock
 {
     width:250px !important;
 }
 
-#entry-page #middle-column
+.index .content #middle-column
 {
     width:auto;
     padding:0em 2.5em;
 }
 
-#entry-page #right-column{
+.index .content #right-column{
     width:30%;
 }
 
-#entry-page .forumpost {
+#course-view #middle-column .forumpost {
     border-width:0px;
     border-style:none;
 }
 
-#entry-page .forumpostpicture,
-#entry-page .forumpostside {
+#course-view #middle-column .forumpostpicture,
+#course-view #middle-column .forumpostside {
     display:none;
 }
 
-#entry-page .headingblock,
-#entry-page .forumpostheadertopic {
+#course-view #middle-column .headingblock,
+#course-view #middle-column .forumpostheadertopic {
     padding:1em;
     border-width:0px 0px 0px 25px;
     border-style:solid;
@@ -262,8 +262,7 @@ table.formtable td {
 /* course, entry-page, login */
 .headingblock {
     background-image:none;
-    border-width:1px 0px 0px 5px;
-    border-style:solid;
+    border-style:none;
 }
 
 .generaltableheader {
@@ -285,7 +284,6 @@ table.formtable td {
 
 .outlineheadingblock {
     background-image:none;
-    border:none;
     display:none;
 }
 

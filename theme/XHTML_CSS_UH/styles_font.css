@@ -49,7 +49,7 @@ font {
 /* general styles */
 body {
     font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
-    /*font-size:1em;*/
+    font-size:0.95em;
     line-height:1.2em;
     letter-spacing:0.02em;
 }
@@ -183,7 +183,15 @@ h4 {
 
 
 /* entry page */
-#entry-page #block_course_summary {
+#course-view #entry-page #layout-table {
+    font-size:90%;
+}
+
+#course-view #entry-page #layout-table .sideblock a {
+    font-size:80%;
+}
+
+#course-view #entry-page #block_course_summary {
     line-height:1.5em;
 }
 

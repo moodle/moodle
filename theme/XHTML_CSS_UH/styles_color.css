@@ -124,6 +124,10 @@ body {
     border-color:#FFFFFF;
 }
 
+#layout-table {
+    background-color:#FFFFFF;
+}
+
 
 /* many places */
 .generalbox {
@@ -148,16 +152,16 @@ body {
 
 
 /* entry page */
-#entry-page {
+.index .content {
     background-color:#FFFFFF;
 }
 
-#entry-page #left-column {
+.index .content #left-column {
     background-color:#F9FAFA;
 }
 
-#entry-page .headingblock,
-#entry-page .forumpostheadertopic {
+#course-view #middle-column .headingblock,
+#course-view #middle-column .forumpostheadertopic {
     background-color:transparent;
     border-color:#FFC86C;
 }
@@ -200,9 +204,6 @@ body {
 /* course, entry-page, login */
 .headingblock {
 	background-color:#FFFFFF;
-    border-color:#D1D7DC;
-    border-top-color:#F68933;
-    border-left-color:#F68933;
 }
 
 
