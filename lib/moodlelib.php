@@ -228,6 +228,10 @@ function clean_param($param, $options) {
 function confirm_sesskey($sesskey=NULL) {
     global $USER;
 
+    if (!empty($USER->ignoresesskey)) {
+        return true;
+    }
+
     if (empty($sesskey)) {
         $sesskey = required_param('sesskey');  // Check script parameters
     }
