@@ -893,9 +893,10 @@
             if ($file=="." || $file=="..") {
                 continue;
             }
-            return backup_copy_file ("$from_file/$file","$to_file/$file");
+            $status = backup_copy_file ("$from_file/$file","$to_file/$file");
         }
-        return closedir($dir);
+        closedir($dir);
+        return $status;
     }
     ///Ends copy file/dirs functions
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
