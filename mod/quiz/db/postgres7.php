@@ -232,20 +232,20 @@ function quiz_upgrade($oldversion) {
     if ($oldversion < 2004111700) {
         execute_sql("DROP INDEX {$CFG->prefix}quiz_course_idx;",false);
         execute_sql("DROP INDEX {$CFG->prefix}quiz_answers_question_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_attempts_quiz_idx;",false); 
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_attempts_userid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_attempts_quiz_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_attempts_userid_idx;",false);
         execute_sql("DROP INDEX {$CFG->prefix}quiz_calculated_answer_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_categories_course_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_categories_course_idx;",false);
         execute_sql("DROP INDEX {$CFG->prefix}quiz_dataset_definitions_category_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_grades_quiz_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_grades_quiz_idx;",false);
         execute_sql("DROP INDEX {$CFG->prefix}quiz_grades_userid_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_numerical_question_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_numerical_question_idx;",false);
         execute_sql("DROP INDEX {$CFG->prefix}quiz_numerical_units_question_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_question_grades_quiz_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_question_grades_quiz_idx;",false);
         execute_sql("DROP INDEX {$CFG->prefix}quiz_question_grades_question_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_questions_category_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_questions_category_idx;",false);
         execute_sql("DROP INDEX {$CFG->prefix}quiz_randomsamatch_question_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_responses_attempt_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_responses_attempt_idx;",false);
         execute_sql("DROP INDEX {$CFG->prefix}quiz_responses_question_idx;",false);
 
         modify_database('','CREATE INDEX prefix_quiz_course_idx ON prefix_quiz (course);');
@@ -309,6 +309,10 @@ function quiz_upgrade($oldversion) {
                               newquestion integer NOT NULL default '0',
                               userid integer NOT NULL default '0',
                               timestamp integer NOT NULL default '0');");
+    }
+
+    if ($oldversion < 2005032000) {
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('quiz', 'editquestions', 'quiz', 'name') ");
     }
 
     return true;

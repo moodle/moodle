@@ -276,7 +276,7 @@ function quiz_upgrade($oldversion) {
         execute_sql("ALTER TABLE {$CFG->prefix}quiz_calculated DROP INDEX answer;",false);
         execute_sql("ALTER TABLE {$CFG->prefix}quiz_categories DROP INDEX course;",false);
         execute_sql("ALTER TABLE {$CFG->prefix}quiz_dataset_definitions DROP INDEX category;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical DROP INDEX question;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical DROP INDEX question;",false);
         execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical_units DROP INDEX question;",false);
         execute_sql("ALTER TABLE {$CFG->prefix}quiz_questions DROP INDEX category;",false);
 
@@ -326,6 +326,10 @@ function quiz_upgrade($oldversion) {
                               `timestamp` int(10) unsigned NOT NULL default '0',
                               PRIMARY KEY  (`id`)
                             ) TYPE=MyISAM COMMENT='The mapping between old and new versions of a question';");
+    }
+
+    if ($oldversion < 2005032000) {
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('quiz', 'editquestions', 'quiz', 'name') ");
     }
 
     return true;

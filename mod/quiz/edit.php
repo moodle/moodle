@@ -26,8 +26,8 @@
 
         $cm = get_coursemodule_from_instance('quiz', $modform->instance);
         add_to_log($cm->course, 'quiz', 'editquestions',
-                           "view.php?id=$modform->instance",
-                           "$modform->name", $cm->id);
+                           "view.php?id=$cm->id",
+                           "$quizid", $cm->id);
 
     } else if ($courseid) { // Page retrieve through "Edit Questions" link - no quiz selected
         $modform->course = $courseid;
