@@ -101,7 +101,7 @@
 
     $PAGE->print_header(get_string('course').': %fullname%');
 
-    echo '<div id="course-view" class="course">';  // course wrapper start
+    echo '<div class="course-content">';  // course wrapper start
 
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 

@@ -98,7 +98,7 @@
                      "<a href=\"index.php\">$strcategories</a> -> $category->name", "", "", true, $navbaritem);
     }
 
-    echo '<div id="course-category" class="course">';  // course wrapper start
+    echo '<div class="course-content">';  // course wrapper start
 
 /// Print the category selector
 
