@@ -45,9 +45,16 @@
     }
 
     if ($students = get_course_students($course->id)) {
-        echo "<H2 align=center>$course->students</H2>";
-        foreach ($students as $student) {
-            print_user($student, $course, $string);
+        $numstudents = count($students);
+        echo "<H2 align=center>$numstudents $course->students</H2>";
+        if ($numstudents < 40) {
+            foreach ($students as $student) {
+                print_user($student, $course, $string);
+            }
+        } else {
+            foreach ($students as $student) {
+                print_user_small($student, $course, $string);
+            }
         }
     } 
 
