@@ -33,7 +33,7 @@
                          'evil'       => '}-]' );
     
 ?>
-<html style="width: 320px; height: 350px;">
+<html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
 <meta name=vs_targetSchema content="HTML 4.0">
@@ -66,6 +66,12 @@ function cancel() {
   return false;
 };
 </script>
+<style type="text/css">
+body {
+  width: 330;
+  height: 360;
+}
+</style>
 </head>
 <body onload="Init()">
 <table class="dlg" cellpadding="0" cellspacing="2" width="100%" height="100%">

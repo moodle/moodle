@@ -6,13 +6,11 @@
         $course->fullname = "";   // Just to keep display happy, though browsing may fail
     }
 ?>
-<html style="width: 398; height: 218">
-
+<html>
 <head>
   <title>Insert Image</title>
 <meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
 <script type="text/javascript" src="popup.js"></script>
-
 <script type="text/javascript">
 var preview_window = null;
 
@@ -111,6 +109,8 @@ function set_url_value()
 
 <style type="text/css">
 html, body {
+  width: 410;
+  height: 240;
   background: ButtonFace;
   color: ButtonText;
   font: 11px Tahoma,Verdana,sans-serif;

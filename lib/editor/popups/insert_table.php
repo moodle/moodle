@@ -1,7 +1,7 @@
 <?php
 	include("../../../config.php");
 ?>
-<html style="width: 398; height: 218">
+<html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
   <title>Insert Table</title>
@@ -47,6 +47,8 @@ function onCancel() {
 
 <style type="text/css">
 html, body {
+  width: 410;
+  height: 240;
   background: ButtonFace;
   color: ButtonText;
   font: 11px Tahoma,Verdana,sans-serif;
