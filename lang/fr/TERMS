@@ -5,6 +5,7 @@ activity               activité
 assessment             évaluation
 assignment             devoir
 attachment             annexe
+attendance             
 authentication         authentification
 category               catégorie
 choice                 sondage
@@ -12,15 +13,19 @@ connected              lié (merci à Jean-François Nadeau)
 cookies                cookies                 témoin
 course category	       discipline
 department             département
+dialogue               dialogue
 download               télécharger (vers votre ordinateur)
 email                  courriel, adresse de courriel
 emoticons              binettes
 entry                  contribution
+exercise               exercice
 feedback               feedback                rétroaction, remarque
+glossary               glossaire
 grade                  note ou niveau
 guest                  visiteur anonyme
 hit                    requête
 journal                journal
+label                  
 login                  connexion, se connecter
 logs                   événements
 offline                hors-ligne
@@ -39,4 +44,5 @@ teacher                enseignant
 upload                 envoyer, déposer, télécharger vers le serveur
 user                   utilisateur
 username               nom d'utilisateur
+webquest
 workshop               atelier

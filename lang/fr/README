@@ -10,7 +10,7 @@ La traduction française de Moodle semblant ne plus être mise à jour,
 je (Nicolas Martignoni) me suis mis au travail pour améliorer et compléter
 le début de traduction de Sébastien Namèche.
 
-J'ai également incorporé certains fichiers d'aide (dossier help) et
+J'ai également incorporé les fichiers d'aide (dossier help) et
 workshop.php traduits pour nos amis du Canada francophone par Jean-François
 Nadeau, et que j'ai légèrement adaptés.
 
@@ -29,6 +29,7 @@ activity               activité
 assessment             évaluation
 assignment             devoir
 attachment             annexe
+attendance             
 authentication         authentification
 category               catégorie
 choice                 sondage
@@ -36,15 +37,19 @@ connected              lié (merci à Jean-François Nadeau)
 cookies                cookies                 témoin
 course category	       discipline
 department             département
+dialogue               dialogue
 download               télécharger (vers votre ordinateur)
 email                  courriel, adresse de courriel
 emoticons              binettes
 entry                  contribution
+exercise               exercice
 feedback               feedback                rétroaction, remarque
+glossary               glossaire
 grade                  note ou niveau
 guest                  visiteur anonyme
 hit                    requête
 journal                journal
+label                  
 login                  connexion, se connecter
 logs                   événements
 offline                hors-ligne
@@ -63,18 +68,16 @@ teacher                enseignant
 upload                 envoyer, déposer, télécharger vers le serveur
 user                   utilisateur
 username               nom d'utilisateur
+webquest
 workshop               atelier
 
 
 TODO
   Beaucoup de choses encore. Entre autres :
   - trouver une bonne traduction de "Reflective Thinking" ;
-  - finir l'intégration de la traduction du dossier help de
-    Jean-François Nadeau ;
-  - traduire chatarea.php ;
-  - traduire glossary.php ;
-  - traduire label.php ;
-  - traduire pgassignment.php.
+  - traduire les nouveaux fichiers de documentation introduits avec
+    Moodle 1.2 ;
+  - traduire les textes des nouveaux modules de Moodle 1.2.
 
 Voici quelques liens que j'utilise :
   - Dictionnaire de l'internaute
