@@ -149,7 +149,12 @@ Restore Details:
               x admins..........................................DONE
                  - None.........................................DONE
                  - Course.......................................DONE
-                 - All..........................................DONE 
+                 - All..........................................DONE
+           - Mods Info Prepare..................................DONE
+              x read modules zone...............................DONE
+              x separate every mod..............................DONE
+              x xmlize (to array) and serialize it..............DONE
+              x save to db (backup_ids).........................DONE
            - Mods Info..........................................NO EXISTS
               x assignments.....................................NO EXISTS
                  + course data..................................NO EXISTS
