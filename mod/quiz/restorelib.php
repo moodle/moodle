@@ -204,13 +204,11 @@
             //If the question exists, only record its id
             if ($question_exists) {
                 $newid = $question_exists->id;
-                echo $question->name." exists";
                 $creatingnewquestion = false;
             //Else, create a new question
             } else {
                 //The structure is equal to the db, so insert the quiz_questions
                 $newid = insert_record ("quiz_questions",$question);
-                echo $question->name." not exists";
                 $creatingnewquestion = true;
             }
 
