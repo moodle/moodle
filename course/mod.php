@@ -411,9 +411,8 @@
         $strdeletecheck = get_string("deletecheck", "", "$form->fullmodulename");
         $strdeletecheckfull = get_string("deletecheckfull", "", "$form->fullmodulename '$form->instancename'");
 
-        print_header("$course->shortname: $strdeletecheck", "$course->fullname",
-                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
-                      $strdeletecheck");
+        print_header_simple("$strdeletecheck", "$",
+                     "$strdeletecheck");
 
         print_simple_box_start("center", "60%", "#FFAAAA", 20, "noticebox");
         print_heading($strdeletecheckfull);
