@@ -100,7 +100,7 @@
         }
 
         foreach ($users as $user) {
-            if (! $usersdone[$user->id]) {
+            if (empty($usersdone[$user->id])) {
                 $entry = NULL;
                 journal_print_user_entry($course, $user, $entry, $teachers, $JOURNAL_RATING);
             }

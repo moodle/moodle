@@ -214,7 +214,7 @@ function journal_log_info($log) {
 
 
 function journal_print_user_entry($course, $user, $entry, $teachers, $ratings) {
-    global $THEME;
+    global $THEME, $USER;
 
     if ($entry->timemarked < $entry->modified) {
         $colour = $THEME->cellheading2;
