@@ -208,7 +208,7 @@ class block_base {
         if ($this->is_empty()) {
             if (empty($this->edit_controls)) {
                 // No content, no edit controls, so just shut up
-                break;
+                return;
             } else {
                 // No content but editing, so show something at least
                 $this->_print_shadow();
@@ -563,7 +563,7 @@ class block_list extends block_base {
         if ($this->is_empty()) {
             if (empty($this->edit_controls)) {
                 // No content, no edit controls, so just shut up
-                break;
+                return;
             } else {
                 // No content but editing, so show something at least
                 $this->_print_shadow();
