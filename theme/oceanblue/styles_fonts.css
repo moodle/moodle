@@ -91,6 +91,11 @@ h4 {
     font-weight:bold;
 }
 
+.warning {
+    font-weight: normal;
+    font-style: italic;
+}
+
 .errorbox .title {
     font-weight: normal;
     font-size: 1.2em;
@@ -112,9 +117,6 @@ h4 {
     font-size:larger;
     font-weight:normal;
 }
-
-
-
 .helplink {
     font-size:0.8em;
 }
@@ -474,6 +476,22 @@ body#mod-forum-search .introcontent {
 /*******************************************************************
 *** Modules: Journal
 *******************************************************************/
+#mod-journal-view .lastedit,
+#mod-journal-view .editend {
+    font-size: 0.7em;
+}
+#mod-journal-view .author {
+    font-size: 1em;
+    font-weight: normal;
+}
+#mod-journal-view .time {
+    font-size: 0.7em;
+    font-style: italic;
+}
+#mod-journal-view .grade {
+    font-weight: normal;
+    font-style: italic;
+}
 
 /*******************************************************************
 *** Modules: Label

@@ -650,6 +650,11 @@ table.message_search_results td {
 *** Modules: Journal
 *******************************************************************/
 
+#mod-journal-view .feedbackbox .left,
+#mod-journal-view .feedbackbox .entryheader {
+    background-color: #dddddd;
+}
+
 /*******************************************************************
 *** Modules: Label
 *******************************************************************/
