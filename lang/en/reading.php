@@ -12,6 +12,7 @@ $string[examplereference] = "Tobin, K. & Tippins, D (1993) Constructivism as a R
 $string[exampleurl] = "http://www.example.com/somedirectory/somefile.html";
 $string[filename] = "File name";
 $string[fulltext] = "Full text";
+$string[htmlfragment] = "HTML fragment";
 $string[neverread] = "Never read";
 $string[note] = "Note";
 $string[notefile] = "To upload more files into the course (so they appear in this list) use the 
@@ -23,5 +24,6 @@ $string[readingtype2] = "Web Page";
 $string[readingtype3] = "Uploaded File";
 $string[readingtype4] = "Plain text";
 $string[readingtype5] = "Web Link";
+$string[readingtype6] = "HTML text";
 
 ?>

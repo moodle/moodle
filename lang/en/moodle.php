@@ -168,6 +168,7 @@ $string[guestsyes] = "Allow guests without the key";
 $string[guestuser] = "Guest User";
 $string[guestuserinfo] = "This user is a special user that allows read-only access to some courses.";
 $string[help] = "Help";
+$string[helphtml] = "How to write html";
 $string[helppicture] = "How to upload a picture";
 $string[helptext] = "How to write text";
 $string[helpquestions] = "How to ask questions";
