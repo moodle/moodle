@@ -77,7 +77,240 @@
     //    (course independent)
     function quiz_backup_question_categories($bf,$preferences) {
 
+        global $CFG;
+
+        $status = true;
+
+        //First, we get the used categories from backup_ids
+        $categories = quiz_category_ids_by_backup ($preferences->backup_unique_code);
+      
+        //If we've categories
+        if ($categories) {
+             //Write start tag
+             $status = fwrite($bf,start_tag("QUESTION_CATEGORIES",2,true));
+             //Iterate over each category
+            foreach ($categories as $cat) {
+                //Start category
+                $status =fwrite ($bf,start_tag("QUESTION_CATEGORY",3,true));
+                //Get category data from quiz_categories
+                $category = get_record ("quiz_categories","id",$cat->old_id);
+                //Print category contents
+                fwrite($bf,full_tag("ID",4,false,$category->id));
+                fwrite($bf,full_tag("NAME",4,false,$category->name));
+                fwrite($bf,full_tag("INFO",4,false,$category->info));
+                fwrite($bf,full_tag("PUBLISH",4,false,$category->publish));
+                //Now, backup their questions
+                $status = quiz_backup_question($bf,$preferences,$category->id);
+                //End category
+                $status =fwrite ($bf,end_tag("QUESTION_CATEGORY",3,true));
+            }
+            //Write end tag    
+            $status =fwrite ($bf,end_tag("QUESTION_CATEGORIES",2,true));
+        }
+
+        return $status;
     }
+    
+    //This function backups all the questions in selected category and their
+    //asociated data 
+    function quiz_backup_question($bf,$preferences,$category) {
+
+        global $CFG;
+
+        $status = true;
+
+        $questions = get_records("quiz_questions","category",$category,"id");
+        //If there is questions
+        if ($questions) {
+            //Write start tag
+            $status =fwrite ($bf,start_tag("QUESTIONS",4,true));
+            //Iterate over each question
+            foreach ($questions as $question) {
+                //Start question
+                $status =fwrite ($bf,start_tag("QUESTION",5,true));
+                //Print question contents
+                fwrite ($bf,full_tag("ID",6,false,$question->id));
+                fwrite ($bf,full_tag("NAME",6,false,$question->name));
+                fwrite ($bf,full_tag("QUESTIONTEXT",6,false,$question->questiontext));
+                fwrite ($bf,full_tag("IMAGE",6,false,$question->image));
+                fwrite ($bf,full_tag("DEFAULTGRADE",6,false,$question->defaultgrade));
+                fwrite ($bf,full_tag("QTYPE",6,false,$question->qtype));
+                //Now, depending of the qtype, call one function or other
+                if ($question->qtype == "1") {
+                    $status = quiz_backup_shortanswer($bf,$preferences,$question->id);
+                } else if ($question->qtype == "2") {
+                    $status = quiz_backup_truefalse($bf,$preferences,$question->id);
+                } else if ($question->qtype == "3") {
+                    $status = quiz_backup_multichoice($bf,$preferences,$question->id);
+                } else if ($question->qtype == "4") {
+                    //Random question. Nothing to write.
+                } else if ($question->qtype == "5") {
+                    $status = quiz_backup_match($bf,$preferences,$question->id);
+                } else if ($question->qtype == "6") {
+                    $status = quiz_backup_randomsamatch($bf,$preferences,$question->id);
+                }
+                //End question
+                $status =fwrite ($bf,end_tag("QUESTION",5,true));
+            }
+            //Write end tag
+            $status =fwrite ($bf,end_tag("QUESTIONS",4,true));
+        }
+        return $status;
+    }
+
+    //This function backups the data in a truefalse question (qtype=2) and its
+    //asociated data
+    function quiz_backup_truefalse($bf,$preferences,$question) {
+
+        global $CFG;
+
+        $status = true;
+
+        $truefalses = get_records("quiz_truefalse","question",$question,"id");
+        //If there are truefalses
+        if ($truefalses) {
+            //Iterate over each truefalse
+            foreach ($truefalses as $truefalse) {
+                $status =fwrite ($bf,start_tag("TRUEFALSE",6,true));
+                //Print truefalse contents
+                fwrite ($bf,full_tag("TRUEANSWER",7,false,$truefalse->trueanswer));
+                fwrite ($bf,full_tag("FALSEANSWER",7,false,$truefalse->falseanswer));
+                $status =fwrite ($bf,end_tag("TRUEFALSE",6,true));
+            }
+            //Now print quiz_answers
+            $status = quiz_backup_answers($bf,$preferences,$question);
+        }
+        return $status;
+    }
+
+    //This function backups the data in a shortanswer question (qtype=1) and its
+    //asociated data
+    function quiz_backup_shortanswer($bf,$preferences,$question) {
+
+        global $CFG;
+
+        $status = true;
+
+        $shortanswers = get_records("quiz_shortanswer","question",$question,"id");
+        //If there are shortanswers
+        if ($shortanswers) {
+            //Iterate over each shortanswer
+            foreach ($shortanswers as $shortanswer) {
+                $status =fwrite ($bf,start_tag("SHORTANSWER",6,true));
+                //Print shortanswer contents
+                fwrite ($bf,full_tag("ANSWERS",7,false,$shortanswer->answers));
+                fwrite ($bf,full_tag("USECASE",7,false,$shortanswer->usecase));
+                $status =fwrite ($bf,end_tag("SHORTANSWER",6,true));
+            }
+            //Now print quiz_answers
+            $status = quiz_backup_answers($bf,$preferences,$question);
+        }
+        return $status;
+    } 
+
+    //This function backups the data in a multichoice question (qtype=3) and its
+    //asociated data
+    function quiz_backup_multichoice($bf,$preferences,$question) {
+
+        global $CFG;
+
+        $status = true;
+
+        $multichoices = get_records("quiz_multichoice","question",$question,"id");
+        //If there are multichoices
+        if ($multichoices) {
+            //Iterate over each multichoice
+            foreach ($multichoices as $multichoice) {
+                $status =fwrite ($bf,start_tag("MULTICHOICE",6,true));
+                //Print multichoice contents
+                fwrite ($bf,full_tag("LAYOUT",7,false,$multichoice->layout));
+                fwrite ($bf,full_tag("ANSWERS",7,false,$multichoice->answers));
+                fwrite ($bf,full_tag("SINGLE",7,false,$multichoice->single));
+                $status =fwrite ($bf,end_tag("MULTICHOICE",6,true));
+            }
+            //Now print quiz_answers
+            $status = quiz_backup_answers($bf,$preferences,$question);
+        }
+        return $status;
+    }
+
+    //This function backups the data in a randomsamatch question (qtype=6) and its
+    //asociated data
+    function quiz_backup_randomsamatch($bf,$preferences,$question) {
+
+        global $CFG;
+
+        $status = true;
+
+        $randomsamatchs = get_records("quiz_randomsamatch","question",$question,"id");
+        //If there are randomsamatchs
+        if ($randomsamatchs) {
+            //Iterate over each randomsamatch
+            foreach ($randomsamatchs as $randomsamatch) {
+                $status =fwrite ($bf,start_tag("RANDOMSAMATCH",6,true));
+                //Print randomsamatch contents
+                fwrite ($bf,full_tag("CHOOSE",7,false,$randomsamatch->choose));
+                $status =fwrite ($bf,end_tag("RANDOMSAMATCH",6,true));
+            }
+        }
+        return $status;
+    }
+
+    //This function backups the data in a match question (qtype=5) and its
+    //asociated data
+    function quiz_backup_match($bf,$preferences,$question) {
+
+        global $CFG;
+
+        $status = true;
+
+        $matchs = get_records("quiz_match_sub","question",$question,"id");
+        //If there are matchs
+        if ($matchs) {
+            $status =fwrite ($bf,start_tag("MATCHS",6,true));
+            //Iterate over each match
+            foreach ($matchs as $match) {
+                $status =fwrite ($bf,start_tag("MATCH",7,true));
+                //Print match contents
+                fwrite ($bf,full_tag("QUESTIONTEXT",8,false,$match->questiontext));
+                fwrite ($bf,full_tag("ANSWERTEXT",8,false,$match->answertext));
+                $status =fwrite ($bf,end_tag("MATCH",7,true));
+            }
+            $status =fwrite ($bf,end_tag("MATCHS",6,true));
+        }
+        return $status;
+    }
+
+    //This function backups the answers data in some question types
+    //(truefalse, shortanswer,multichoice)
+    function quiz_backup_answers($bf,$preferences,$question) {
+
+        global $CFG;
+
+        $status = true;
+
+        $answers = get_records("quiz_answers","question",$question,"id");
+        //If there are answers
+        if ($answers) {
+            $status =fwrite ($bf,start_tag("ANSWERS",6,true));
+            //Iterate over each answer
+            foreach ($answers as $answer) {
+                $status =fwrite ($bf,start_tag("ANSWER",7,true));
+                //Print answer contents
+                fwrite ($bf,full_tag("ID",8,false,$answer->id));
+                fwrite ($bf,full_tag("ANSWER_TEXT",8,false,$answer->answer));
+                fwrite ($bf,full_tag("FRACTION",8,false,$answer->fraction));
+                fwrite ($bf,full_tag("FEEDBACK",8,false,$answer->feedback));
+                $status =fwrite ($bf,end_tag("ANSWER",7,true));
+            }
+            $status =fwrite ($bf,end_tag("ANSWERS",6,true));
+        }
+        return $status;
+    }
+
+
+
+
 
     //STEP 2. Backup quizzes and associated structures
     //    (course dependent)
@@ -325,7 +558,8 @@
 
         return get_records_sql ("SELECT a.old_id, a.backup_code
                                  FROM {$CFG->prefix}backup_ids a
-                                 WHERE a.backup_code = '$backup_unique_code'");
+                                 WHERE a.backup_code = '$backup_unique_code' AND
+                                       a.table_name = 'quiz_categories'");
     }
 
     function quiz_question_ids_by_backup ($backup_unique_code) {
@@ -335,8 +569,9 @@
         return get_records_sql ("SELECT q.id, q.category
                                  FROM {$CFG->prefix}backup_ids a,
                                       {$CFG->prefix}quiz_questions q
-                                 WHERE a.backup_code = '$backup_unique_code' and
-                                       q.category = a.old_id");
+                                 WHERE a.backup_code = '$backup_unique_code' AND
+                                       q.category = a.old_id AND 
+                                       a.table_name = 'quiz_categories'");
     }
 
     function quiz_grade_ids_by_course ($course) {

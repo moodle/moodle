@@ -4,8 +4,7 @@ STATUS $Id$
 This documment shows the current status of the backup/restore option.
 
 Backup:  WORKING. COMPLETED but only assignments, resources,
-                  choices, forums, journals, quizzes (step 1)
-                  and surveys.
+                  choices, forums, journals, quizzes and surveys.
 
 Restore: WORKING. COMPLETED but only assignments, resources, 
                   choices and surveys.
@@ -51,9 +50,9 @@ Backup Details:
                  - Course.......................................DONE
                  - All..........................................DONE 
            - Logs...............................................DONE
-           - Categories and Questions.(STEP 1)..................IN PROGRESS
-              + categories......................................IN PROGRESS
-              + questions structure.............................IN PROGRESS
+           - Categories and Questions.(STEP 1)..................DONE
+              + categories......................................DONE
+              + questions structure.............................DONE
            - Mods Info..........................................IN PROGRESS
               x assignments.....................................DONE
                  + course data..................................DONE

@@ -170,6 +170,13 @@
         if ($status) {
             $status = backup_user_info($backup_file,$preferences);
         }
+
+        //If we have selected to backup quizzes, backup categories and
+        //questions structure (step 1). See notes on mod/quiz/backuplib.php
+        if ($status and $preferences->mods[quiz]->backup) {
+            echo "<li>Writing categories and questions";
+            $status = quiz_backup_question_categories($backup_file,$preferences);
+        }
         
         //Print logs if selected
         if ($status) {
