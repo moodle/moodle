@@ -425,7 +425,7 @@ function get_array_of_activities($courseid) {
 
     if ($sections = get_records("course_sections", "course", $courseid, "section ASC")) {
        foreach ($sections as $section) {
-           if ($section->sequence) {
+           if (!empty($section->sequence)) {
                $sequence = explode(",", $section->sequence);
                foreach ($sequence as $seq) {
                    if (empty($rawmods[$seq])) {
@@ -491,7 +491,7 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
     $modicon = array();
     $editbuttons = "";
 
-    if ($section->sequence) {
+    if (!empty($section->sequence)) {
 
         $sectionmods = explode(",", $section->sequence);
 
@@ -523,7 +523,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     $modinfo = unserialize($course->modinfo);
 
     echo "<TABLE WIDTH=\"$width\"><TR><TD>\n";
-    if ($section->sequence) {
+    if (!empty($section->sequence)) {
 
         $sectionmods = explode(",", $section->sequence);
 
@@ -808,7 +808,7 @@ function add_mod_to_section($mod) {
     GLOBAL $db;
 
     if ($section = get_record("course_sections", "course", "$mod->course", "section", "$mod->section")) {
-        if ($section->sequence) {
+        if (!empty($section->sequence)) {
             $newsequence = "$section->sequence,$mod->coursemodule";
         } else {
             $newsequence = "$mod->coursemodule";
@@ -894,7 +894,7 @@ function move_module($cm, $move) {
                     error("Previous section ($prevsection->id) doesn't exist");
                 }
 
-                if ($prevsection->sequence) {
+                if (!empty($prevsection->sequence)) {
                     $newsequence = "$prevsection->sequence,$cm->id";
                 } else {
                     $newsequence = "$cm->id";
@@ -936,7 +936,7 @@ function move_module($cm, $move) {
             if ($nextsection = get_record("course_sections", "course", "$thissection->course", 
                                                                "section", "$nextsectionnumber")) {
 
-                if ($nextsection->sequence) {
+                if (!empty($nextsection->sequence)) {
                     $newsequence = "$cm->id,$nextsection->sequence";
                 } else {
                     $newsequence = "$cm->id";
