@@ -1,6 +1,6 @@
 <?php //$Id$
 
-function get_records_csv($file, $tablename) {
+function get_records_csv($file, $table) {
     global $CFG, $db;
 
     if (!$metacolumns = $db->MetaColumns($CFG->prefix . $table)) {
@@ -56,7 +56,16 @@ function put_records_csv($file, $records, $table = NULL) {
         error('put_records_csv failed to open '.$file);
     }
 
-    $fields_records = array_keys(get_object_vars(reset($records)));
+    $proto = reset($records);
+    if(is_object($proto)) {
+        $fields_records = array_keys(get_object_vars($proto));
+    }
+    else if(is_array($proto)) {
+        $fields_records = array_keys($proto);
+    }
+    else {
+        return false;
+    }
 
     if(!empty($metacolumns)) {
         $fields_table = array_map(create_function('$a', 'return $a->name;'), $metacolumns);
@@ -70,13 +79,14 @@ function put_records_csv($file, $records, $table = NULL) {
     fwrite($fp, "\r\n");
 
     foreach($records as $record) {
+        $array  = (array)$record;
         $values = array();
         foreach($fields as $field) {
-            if(strpos($record->$field, ',')) {
-                $values[] = '"'.str_replace('"', '\"', $record->$field).'"';
+            if(strpos($array[$field], ',')) {
+                $values[] = '"'.str_replace('"', '\"', $array[$field]).'"';
             }
             else {
-                $values[] = $record->$field;
+                $values[] = $array[$field];
             }
         }
         fwrite($fp, implode(',', $values)."\r\n");
