@@ -58,43 +58,44 @@
 			// has the assignment any elements
 			if (count_records("exercise_elements", "exerciseid", $exercise->id)) {
 				$action = "teachersview";
-				}
+			}
 			else {
 				redirect("assessments.php?action=editelements&id=$cm->id");
-				}
 			}
 		}
+	}
 	elseif (!isguest()) { // it's a student then
 		if (!$cm->visible) {
 			notice(get_string("activityiscurrentlyhidden"));
-			}
+		}
 		switch ($exercise->phase) {
 			case 0 :
 			case 1 : $action = 'notavailable'; break;
 			case 2 : $action = 'studentsview'; break;
 			case 3 : $action = 'notavailable'; break;
 			case 4 : $action = 'displayfinalgrade';
-			}
 		}
+	}
 	else { // it's a guest, oh no!
 		$action = 'notavailable';
-		}
+	}
 	
 	
-	/*********************** close exercise for student assessments and submissions (move to phase 3) (for teachers)**/
+	/************** close exercise for student assessments and submissions (phase 3) (for teachers)**/
 	if ($action == 'closeexercise') {
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
-			}
-
-		// move tp phase 3
-		set_field("exercise", "phase", 3, "id", "$exercise->id");
-		redirect("view.php?id=$cm->id", get_string("movingtophase", "exercise", 3));
 		}
+
+		// move to phase 3
+		set_field("exercise", "phase", 3, "id", "$exercise->id");
+		add_to_log($course->id, "exercise", "close", "view.php?id=$cm->id", "$exercise->id");
+		redirect("view.php?id=$cm->id", get_string("movingtophase", "exercise", 3));
+	}
 	
 
-	/******************* display final grade (for students) ************************************/
+	/****************** display final grade (for students) ************************************/
 	elseif ($action == 'displayfinalgrade' ) {
 
 		// get the final weights from the database
@@ -118,11 +119,11 @@
 			if ($ownassessments = exercise_get_user_assessments($exercise, $USER)) {
 				foreach ($ownassessments as $ownassessment) {
 					break; // there should only be one
-					}
 				}
+			}
 			else {
 				$ownassessment->gradinggrade = 0;
-				}
+			}
 			foreach ($submissions as $submission) {
 				if ($assessments = exercise_get_assessments($submission)) {
 					foreach ($assessments as $assessment) { // (normally there should only be one
@@ -134,40 +135,40 @@
 							/ COMMENTSCALE )) * $exercise->grade) / 
 							($EXERCISE_FWEIGHTS[$teacherweight] + $EXERCISE_FWEIGHTS[$gradingweight]), 1).
 							"</td></TR>\n";
-						}
 					}
 				}
 			}
+		}
 		echo "</TABLE><BR CLEAR=ALL>\n";
 		exercise_print_league_table($exercise);
-		}
+	}
 
 
-	/*********************** make final grades available (for teachers only)**************/
+	/****************** make final grades available (for teachers only)**************/
 	elseif ($action == 'makeleaguetableavailable') {
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
-			}
+		}
 
 		set_field("exercise", "phase", 4, "id", "$exercise->id");
+		add_to_log($course->id, "exercise", "display", "view.php?id=$cm->id", "$exercise->id");
 		redirect("view.php?id=$cm->id", get_string("movingtophase", "exercise", 4));
-		add_to_log($course->id, "exercise", "display grades", "view.php?a=$exercise->id", "$exercise->id");
-		}
+	}
 	
 	
 	/*********************** assignment not available (for students)***********************/
 	elseif ($action == 'notavailable') {
 		print_heading(get_string("notavailable", "exercise"));
-		}
+	}
 
 
-	/*********************** open exercise for student assessments and submissions (move to phase 2) (for teachers)**/
+	/****************** open exercise for student assessments and submissions (phase 2) (for teachers)**/
 	elseif ($action == 'openexercise') {
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
-			}
+		}
 
 		// move to phase 2, check that teacher has made enough submissions
 		if (exercise_count_teacher_submissions($exercise) == 0) {
@@ -175,32 +176,33 @@
 			}
 		else {
 			set_field("exercise", "phase", 2, "id", "$exercise->id");
-			redirect("view.php?id=$cm->id", get_string("movingtophase", "exercise", 2));
 			add_to_log($course->id, "exercise", "open", "view.php?id=$cm->id", "$exercise->id");
-			}
+			redirect("view.php?id=$cm->id", get_string("movingtophase", "exercise", 2));
 		}
+	}
 
 
-	/*********************** set up assignment (move back to phase 1) (for teachers)***********************/
+	/****************** set up assignment (move back to phase 1) (for teachers)***********************/
 	elseif ($action == 'setupassignment') {
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
-			}
+		}
 
 		set_field("exercise", "phase", 1, "id", "$exercise->id");
+		add_to_log($course->id, "exercise", "set up", "view.php?id=$cm->id", "$exercise->id");
 		redirect("view.php?id=$cm->id", get_string("movingtophase", "exercise", 1));
-		}
+	}
 	
 	
-	/*********************** student's view could be in 1 of 4 stages ***********************/
+	/****************** student's view could be in 1 of 4 stages ***********************/
 	elseif ($action == 'studentsview') {
 		exercise_print_assignment_info($exercise);
 		// in Stage 1 - the student must make an assessment (linked to the teacher's exercise/submission
 		if (!exercise_test_user_assessments($exercise, $USER)) {
 			print_heading(get_string("pleaseviewtheexercise", "exercise", $course->teacher));
 			exercise_list_teacher_submissions($exercise, $USER);
-			}
+		}
 		// in stage 2? - submit own first attempt
 		else {
 			// show assessment the teacher's examples, there may be feedback from teacher
@@ -210,8 +212,9 @@
 				// print upload form
 				print_heading(get_string("pleasesubmityourwork", "exercise").":");
 				exercise_print_upload_form($exercise);
-				}
-			// in stage 3? - awaiting grading of assessment and assessment of work by teacher, may resubmit if allowed
+			}
+			// in stage 3? - awaiting grading of assessment and assessment of work by teacher, 
+            // may resubmit if allowed
 			else {
 				print_heading(get_string("yourassessment", "exercise"));
 				exercise_list_teacher_submissions($exercise, $USER);
@@ -224,18 +227,18 @@
 					print_heading(get_string("pleasesubmityourwork", "exercise").":");
 					exercise_print_upload_form($exercise);
 					echo "<hr size=\"1\" noshade>";
-					}
 				}
 			}
 		}
+	}
 
 
-	/*********************** submission of assignment by teacher only***********************/
+	/****************** submission of assignment by teacher only***********************/
 	elseif ($action == 'submitassignment') {
 	
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
-			}
+		}
 			
 		exercise_print_assignment_info($exercise);
 		
@@ -247,7 +250,7 @@
 		// print upload form
 		print_heading(get_string("submitexercisedescription", "exercise").":");
 		exercise_print_upload_form($exercise);
-		}
+	}
 
 
 	/****************** teacher's view - display admin page (current phase options) ************/
@@ -255,7 +258,7 @@
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
-			}
+		}
 
 		print_heading_with_help(get_string("managingassignment", "exercise"), "managing", "exercise");
 		
@@ -307,16 +310,16 @@
 				case 4: // show final grades
 					print_heading("<A HREF=\"submissions.php?id=$cm->id&action=displayfinalgrades\">".
 						  get_string("displayoffinalgrades", "exercise")."</A>");
-			}
+		}
 		print_heading("<A HREF=\"submissions.php?id=$cm->id&action=adminlist\">".
 			get_string("administration")."</A>");
-		}
+	}
 	
 	
 	/*************** no man's land **************************************/
 	else {
 		error("Fatal Error: Unknown Action: ".$action."\n");
-		}
+	}
 
 	print_footer($course);
 	

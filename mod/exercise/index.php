@@ -22,6 +22,8 @@
     $strtopic = get_string("topic");
     $strname = get_string("name");
 	$strtitle = get_string("title", "exercise");
+    $strphase = get_string("phase", "exercise");
+    $strgrade = get_string("grade");
     $strdeadline = get_string("deadline", "exercise");
 	$strsubmitted = get_string("submitted", "assignment");
 
@@ -35,11 +37,19 @@
     $timenow = time();
 
     if ($course->format == "weeks") {
-        $table->head  = array ($strweek, $strname, $strtitle, $strsubmitted, $strdeadline);
-        $table->align = array ("CENTER", "LEFT", "LEFT","LEFT", "LEFT");
+        if (isteacher($course->id)) {
+            $table->head  = array ($strweek, $strname, $strtitle, $strphase, $strsubmitted, $strdeadline);
+        } else {
+            $table->head  = array ($strweek, $strname, $strtitle, $strgrade, $strsubmitted, $strdeadline);
+        }
+        $table->align = array ("CENTER", "LEFT", "LEFT","center","LEFT", "LEFT");
     } else if ($course->format == "topics") {
-        $table->head  = array ($strtopic, $strname, $strtitle, $strsubmitted, $strdeadline);
-        $table->align = array ("CENTER", "LEFT", "LEFT", "LEFT", "LEFT");
+        if (isteacher($course->id)) {
+            $table->head  = array ($strtopic, $strname, $strtitle, $strphase, $strsubmitted, $strdeadline);
+        } else {
+            $table->head  = array ($strtopic, $strname, $strtitle, $strgrade, $strsubmitted, $strdeadline);
+        }
+        $table->align = array ("CENTER", "LEFT", "LEFT", "center", "LEFT", "LEFT");
     } else {
         $table->head  = array ($strname, $strsubmitted, $strdeadline);
         $table->align = array ("LEFT", "LEFT", "LEFT");
@@ -47,7 +57,7 @@
 
     foreach ($exercises as $exercise) {
         if ($submissions = exercise_get_user_submissions($exercise, $USER)) {
-			foreach ($submissions as $submission) {
+            foreach ($submissions as $submission) {
 				if ($submission->timecreated <= $exercise->deadline) {
 					$submitted = userdate($submission->timecreated);
 					} 
@@ -58,26 +68,63 @@
 				$link = "<A HREF=\"view.php?id=$exercise->coursemodule\">$exercise->name</A>";
 				$title = $submission->title;
 				if ($course->format == "weeks" or $course->format == "topics") {
-					$table->data[] = array ($exercise->section, $link, $title, $submitted, $due);
+                    if (isteacher($course->id)) {
+                        switch ($exercise->phase) {
+                            case 1: $phase = get_string("phase1short", "exercise");
+                                    break;
+                            case 2: $phase = get_string("phase2short", "exercise");
+                                    break;
+                            case 3: $phase = get_string("phase3short", "exercise");
+                                    break;
+                            case 4: $phase = get_string("phase4short", "exercise");
+                                    break;
+                        }
+					    $table->data[] = array ($exercise->section, $link, $title, $phase, 
+                                $submitted, $due);
+                    } else {
+                        if ($exercise->usemaximum) {
+                            $maximum = exercise_get_best_grade($submission);
+                            $grade = $maximum->grade;
+                        }else { // use mean value
+                            $mean = exercise_get_mean_grade($submission);
+                            $grade = $mean->grade;
+                        }
+                        // now get the user's grading grade
+                        if (!$assessments = exercise_get_user_assessments($exercise, $USER)) {
+                            error("Index: assessment record not found");
+                        }
+                        foreach ($assessments as $assessment) {
+                            // just use the first one (should only be one)
+                            $gradinggrade = $assessment->gradinggrade;
+                            break;
+                        }
+                        $overallgrade = (($gradinggrade * $EXERCISE_FWEIGHTS[$exercise->gradingweight] * $exercise->grade / COMMENTSCALE ) + ($grade * $EXERCISE_FWEIGHTS[$exercise->teacherweight] * $exercise->grade / 100.0)) / ($EXERCISE_FWEIGHTS[$exercise->gradingweight] + $EXERCISE_FWEIGHTS[$exercise->teacherweight]); 
+    					$table->data[] = array ($exercise->section, $link, $title, 
+                            number_format($overallgrade, 1), $submitted, $due);
 					} 
+                }
 				else {
 					$table->data[] = array ($link, $submitted, $due);
-					}
 				}
 			}
+		}
 		else {
             $submitted = get_string("no");
 			$title = '';
 			$due = userdate($exercise->deadline);
 			$link = "<A HREF=\"view.php?id=$exercise->coursemodule\">$exercise->name</A>";
 			if ($course->format == "weeks" or $course->format == "topics") {
-				$table->data[] = array ($exercise->section, $link, $title, $submitted, $due);
+                if (isteacher($course->id)) {
+				    $table->data[] = array ($exercise->section, $link, $title, $exercise->phase, 
+                            $submitted, $due);
+                } else {
+    				$table->data[] = array ($exercise->section, $link, $title, "0", $submitted, $due);
 				} 
-			else {
+            } else {
 				$table->data[] = array ($link, $submitted, $due);
-				}
 			}
 		}
+	}
     echo "<BR>";
 
     print_table($table);

@@ -130,6 +130,18 @@ function exercise_cron () {
 				echo "Could not find submission $assessment->submissionid\n";
 				continue;
 			}
+			if (! $exercise = get_record("exercise", "id", $submission->exerciseid)) {
+				echo "Could not find exercise record for id $submission->exerciseid\n";
+				continue;
+			}
+			if (! $course = get_record("course", "id", "$exercise->course")) {
+				echo "Could not find course $exercise->course\n";
+				continue;
+			}
+            if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
+                error("Course Module ID was incorrect");
+                continue;
+            }
 			if (! $submissionowner = get_record("user", "id", "$submission->userid")) {
 				echo "Could not find user $submission->userid\n";
 				continue;
@@ -138,19 +150,11 @@ function exercise_cron () {
 				echo "Could not find user $assessment->userid\n";
 				continue;
 			}
-			if (! $course = get_record("course", "id", "$assessment->course")) {
-				echo "Could not find course $assessment->course\n";
-				continue;
-			}
 			if (! isstudent($course->id, $submissionowner->id) and !isteacher($course->id, $submissionowner->id)) {
 				continue;  // Not an active participant
 			}
 			if (! isstudent($course->id, $assessmentowner->id) and !isteacher($course->id, $assessmentowner->id)) {
 				continue;  // Not an active participant
-			}
-			if (! $exercise = get_coursemodule_from_instance("exercise", $assessment->exerciseid, $course->id)) {
-				echo "Could not find course module for exercise id $submission->exercise\n";
-				continue;
 			}
 	
 			$strexercises = get_string("modulenameplural", "exercise");
@@ -170,17 +174,17 @@ function exercise_cron () {
 			$posttext .= $msg;
 			// "You can see it in your exercise assignment"
 			$posttext .= get_string("mail3", "exercise").":\n";
-			$posttext .= "   $CFG->wwwroot/mod/exercise/view.php?a=$exercise->id\n";
+			$posttext .= "   $CFG->wwwroot/mod/exercise/view.php?id=$cm->id\n";
 			$posttext .= "---------------------------------------------------------------------\n";
 			if ($sendto->mailformat == 1) {  // HTML
 				$posthtml = "<P><FONT FACE=sans-serif>".
 			  "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
 			  "<A HREF=\"$CFG->wwwroot/mod/exercise/index.php?id=$course->id\">$strexercises</A> ->".
-			  "<A HREF=\"$CFG->wwwroot/mod/exercise/view.php?a=$exercise->id\">$exercise->name</A></FONT></P>";
+			  "<A HREF=\"$CFG->wwwroot/mod/exercise/view.php?id=$cm->id\">$exercise->name</A></FONT></P>";
 			  $posthtml .= "<HR><FONT FACE=sans-serif>";
 			  $posthtml .= "<P>$msg</P>";
 			  $posthtml .= "<P>".get_string("mail3", "exercise").
-				  " <A HREF=\"$CFG->wwwroot/mod/exercise/view.php?a=$exercise->id\">$exercise->name</A>.</P></FONT><HR>";
+				  " <A HREF=\"$CFG->wwwroot/mod/exercise/view.php?id=$cm->id\">$exercise->name</A>.</P></FONT><HR>";
 			} else {
 			  $posthtml = "";
 			}
@@ -210,9 +214,16 @@ function exercise_cron () {
                 echo "Could not find submission $assessment->submissionid\n";
                 continue;
             }
-
-			if (! $submissionowner = get_record("user", "id", "$submission->userid")) {
-                echo "Could not find user $submission->userid\n";
+			if (! $exercise = get_record("exercise", "id", $submission->exerciseid)) {
+				echo "Could not find exercise record for id $submission->exerciseid\n";
+				continue;
+			}
+			if (! $course = get_record("course", "id", "$exercise->course")) {
+				echo "Could not find course $exercise->course\n";
+				continue;
+			}
+            if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
+                error("Course Module ID was incorrect");
                 continue;
             }
 
@@ -221,22 +232,8 @@ function exercise_cron () {
                 continue;
             }
 
-            if (! $course = get_record("course", "id", "$assessment->course")) {
-                echo "Could not find course $assessment->course\n";
-                continue;
-            }
-			
-            if (! isstudent($course->id, $submissionowner->id) and !isteacher($course->id, $submissionowner->id)) {
-                continue;  // Not an active participant
-            }
-
             if (! isstudent($course->id, $assessmentowner->id) and !isteacher($course->id, $assessmentowner->id)) {
                 continue;  // Not an active participant
-            }
-
-            if (! $exercise = get_coursemodule_from_instance("exercise", $assessment->exerciseid, $course->id)) {
-                echo "Could not find course module for exercise id $submission->exercise\n";
-                continue;
             }
 
             $strexercises = get_string("modulenameplural", "exercise");
@@ -256,17 +253,17 @@ function exercise_cron () {
             $posttext .= $msg;
 			// "You can see it in your exercise assignment"
 			$posttext .= get_string("mail3", "exercise").":\n";
-			$posttext .= "   $CFG->wwwroot/mod/exercise/view.php?a=$exercise->id\n";
+			$posttext .= "   $CFG->wwwroot/mod/exercise/view.php?id=$cm->id\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($sendto->mailformat == 1) {  // HTML
 				$posthtml = "<P><FONT FACE=sans-serif>".
 					"<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
-					"<A HREF=\"$CFG->wwwroot/mod/exercise/index.php?id=$course->id\">$strexercises</A> ->".
+					"<A HREF=\"$CFG->wwwroot/mod/exercise/index.php?id=$cm->id\">$strexercises</A> ->".
 					"<A HREF=\"$CFG->wwwroot/mod/exercise/view.php?a=$exercise->id\">$exercise->name</A></FONT></P>";
 				$posthtml .= "<HR><FONT FACE=sans-serif>";
 				$posthtml .= "<P>$msg</P>";
 				$posthtml .= "<P>".get_string("mail3", "exercise").
-					" <A HREF=\"$CFG->wwwroot/mod/exercise/view.php?a=$exercise->id\">$exercise->name</A>.</P></FONT><HR>";
+					" <A HREF=\"$CFG->wwwroot/mod/exercise/view.php?id=$cm->id\">$exercise->name</A>.</P></FONT><HR>";
             } else {
               $posthtml = "";
             }
@@ -335,10 +332,10 @@ global $EXERCISE_FWEIGHTS;
 	
 	if (!$exercise = get_record("exercise", "id", $exerciseid)) {
 		error("Exercise record not found");
-		}
+	}
 	if (! $course = get_record("course", "id", $exercise->course)) {
         error("Course is misconfigured");
-        }
+    }
 
 	// calculate scaling factor
 	$scaling = $exercise->grade / (100.0 * ($EXERCISE_FWEIGHTS[$exercise->gradingweight] +
@@ -350,17 +347,17 @@ global $EXERCISE_FWEIGHTS;
 			foreach ($bestgrades as $bestgrade) {
 				$return->grades[$bestgrade->userid] = $bestgrade->grade * 
 					$EXERCISE_FWEIGHTS[$exercise->teacherweight] * $scaling;
-				}
 			}
 		}
+	}
 	else { // use mean values
 		if ($meangrades = exercise_get_mean_submission_grades($exercise)) {
 			foreach ($meangrades as $meangrade) {
 				$return->grades[$meangrade->userid] = $meangrade->grade * 
 					$EXERCISE_FWEIGHTS[$exercise->teacherweight] * $scaling;
-				}
 			}
 		}
+	}
 	// now get the users grading grades
 	if ($assessments = exercise_get_teacher_submission_assessments($exercise)) {
 		foreach ($assessments as $assessment) {
@@ -368,9 +365,9 @@ global $EXERCISE_FWEIGHTS;
 			if (isset($return->grades[$assessment->userid])) {
 				$return->grades[$assessment->userid] += $assessment->gradinggrade * 
 					$EXERCISE_FWEIGHTS[$exercise->gradingweight] * $scaling * 100.0 / COMMENTSCALE;
-				}
 			}
 		}
+	}
     $return->maxgrade = get_field("exercise", "grade", "id", "$exerciseid");
     return $return;
 }
@@ -982,11 +979,24 @@ function exercise_get_assessments($submission) {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
+function exercise_get_best_grade($submission) {
+// Returns the best grade of students' submission (there may, occassionally be more than one assessment)
+	global $CFG;
+	
+	return get_record_sql("SELECT MAX(a.grade) grade FROM 
+                        {$CFG->prefix}exercise_assessments a 
+                            WHERE a.submissionid = $submission->id
+							  GROUP BY a.submissionid");
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
 function exercise_get_best_submission_grades($exercise) {
 // Returns the grades of students' best submissions
 	global $CFG;
 	
-	return get_records_sql("SELECT DISTINCT MAX(a.grade) grade, u.userid FROM {$CFG->prefix}exercise_submissions s, 
+	return get_records_sql("SELECT DISTINCT MAX(a.grade) grade, u.userid FROM 
+                        {$CFG->prefix}exercise_submissions s, 
 						{$CFG->prefix}exercise_assessments a, {$CFG->prefix}user_students u 
                             WHERE u.course = $exercise->course
                               AND s.userid = u.userid
@@ -1016,11 +1026,24 @@ function exercise_get_grade_logs($course, $timestart) {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
+function exercise_get_mean_grade($submission) {
+// Returns the mean grade of students' submission (may, very occassionally, be more than one assessment)
+	global $CFG;
+	
+	return get_record_sql("SELECT AVG(a.grade) grade FROM 
+                        {$CFG->prefix}exercise_assessments a 
+                            WHERE a.submissionid = $submission->id
+							  GROUP BY a.submissionid");
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
 function exercise_get_mean_submission_grades($exercise) {
 // Returns the mean grades of students' submissions
 	global $CFG;
 	
-	return get_records_sql("SELECT DISTINCT AVG(a.grade) grade, u.userid FROM {$CFG->prefix}exercise_submissions s, 
+	return get_records_sql("SELECT DISTINCT AVG(a.grade) grade, u.userid FROM 
+                        {$CFG->prefix}exercise_submissions s, 
 						{$CFG->prefix}exercise_assessments a, {$CFG->prefix}user_students u 
                             WHERE u.course = $exercise->course
                               AND s.userid = u.userid
