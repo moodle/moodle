@@ -119,6 +119,7 @@
 		$lowscore = 1000000000000;  // silly, but should work
 		$hightime = 0;
 		$lowtime = 1000000000000;  // :)
+		$table = new stdClass;
 		
 		// set up the table object
 		$table->head = array(get_string('studentname', 'lesson', $course->student), get_string('attempts', 'lesson'), get_string('highscore', 'lesson'));
@@ -217,13 +218,14 @@
 
 		// some stat calculations
 		$avescore = format_float($avescore/$numofattempts, 2, ".", ",");
-		$avetime = format_float($avetime/$numofattempts, 2, ".", ",");
+		$avetime = format_float($avetime/$numofattempts, 0, ".", ",");
 		$avetime = format_time($avetime);
 		$hightime = format_time($hightime);
 		$lowtime = format_time($lowtime);
 
 		// output the stats
 		print_heading(get_string('lessonstats', 'lesson'));
+		$stattable = new stdClass;
 		$stattable->head = array(get_string('averagescore', 'lesson'), get_string('averagetime', 'lesson'), 
 								get_string('highscore', 'lesson'), get_string('lowscore', 'lesson'), 
 								get_string('hightime', 'lesson'), get_string('lowtime', 'lesson'));
@@ -268,11 +270,13 @@
 		
 		// now gather the stats into an object
 		$firstpageid = $pageid;
+		$pagestats = array();
 		while ($pageid != 0) { // EOL
 			$page = $lessonpages[$pageid];
 
 			if ($allanswers = get_records_select("lesson_attempts", "lessonid = $lesson->id AND pageid = $page->id", "timeseen")) {
 				// get them ready for processing
+				$orderedanswers = array();
 				foreach ($allanswers as $singleanswer) {
 					// ordering them like this, will help to find the single attempt record that we want to keep.
 					$orderedanswers[$singleanswer->userid][$singleanswer->retry][] = $singleanswer;
@@ -362,7 +366,7 @@
 			} else {
 				// no one answered yet...
 			}
-			unset($orderedanswers);
+			//unset($orderedanswers);  initialized above now
 			$pageid = $page->nextpageid;
 		}
 
@@ -376,9 +380,9 @@
 		// and end of cluster pages
 		while ($pageid != 0) { // EOL
 			$page = $lessonpages[$pageid];
-			unset($answerpage);
-			unset($data);
-			unset($answerdata);
+			$answerpage = new stdClass;
+			$data ='';
+			$answerdata = new stdClass;
 			
 			$answerpage->title = $page->title;
             $answerpage->contents = $page->contents;
@@ -425,7 +429,6 @@
 			}
 			
 			
-			unset($answerdata);
 			if (empty($userid)) {
 				// there is no userid, so set these vars and display stats.
 				$answerpage->grayout = 0;
@@ -760,7 +763,7 @@
 		}
 		
 		/// actually start printing something
-		
+		$table = new stdClass;
         $table->wrap = array();
         $table->width = "60%";
 
@@ -815,7 +818,7 @@
 			$table->data[] = array($fontstart.get_string("answer", "lesson").":".$fontend);
 			// apply the font to each answer
 			foreach ($page->answerdata->answers as $answer){
-				unset($modified);
+				$modified = array();
 				foreach ($answer as $single) {
 					// need to apply a font to each one
 					$modified[] = $fontstart2.$single.$fontend2;
