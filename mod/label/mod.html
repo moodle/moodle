@@ -2,16 +2,14 @@
 <!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
 
 <?php
-    if ($usehtmleditor = can_use_richtext_editor()) {
+    if ($usehtmleditor = can_use_html_editor()) {
         $defaultformat = FORMAT_HTML;
-        $onsubmit = "onsubmit=\"copyrichtext(document.form.content);\"";
     } else {
         $defaultformat = FORMAT_MOODLE;
-        $onsubmit = "";
     }
 ?>
 
-<form name="form" method="post" <?php echo $onsubmit ?> action="mod.php">
+<form name="form" method="post" action="mod.php">
 <center>
 <table cellpadding=5>
 <tr valign=top>
@@ -51,6 +49,6 @@
 
 <?php 
    if ($usehtmleditor) { 
-       print_richedit_javascript("form", "content", "yes");
+       use_html_editor();
    }
 ?>
