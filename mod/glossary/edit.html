@@ -1,9 +1,6 @@
-<?PHP
-    global $CFG;
-?>
 <center>
 <form name="form" method="post" <?=$onsubmit ?> action="edit.php" enctype="multipart/form-data">
-<table  class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
+<table class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
 <?PHP
 if (isset($errors)) {
 ?>
@@ -15,41 +12,17 @@ if (isset($errors)) {
 }
 ?>
 <tr valign=top>
-    <td align=right><p><b><?php echo get_string("concept","glossary") ?>:</b></p></td>
-    <td>
-	<table boder="0" width="100%">
-	    <tr>
-		<td>
-        <INPUT type="text" name="concept" size=30 value="<?php p($newentry->concept) ?>"></td>
-	    <td align="right">
-<?PHP 
-    if ( !$glossary->usedynalink ) {
-    	echo '<input type="hidden" name=usedynalink value="0">';
-    	echo '<input type="hidden" name=casesensitive value="0">';
-    	echo '<input type="hidden" name=fullmatch value="0">';
-    } else {
-        echo '<small>' . get_string("entryusedynalink","glossary") . ':</small>';
-        echo '<script>var items = [\'casesensitive\',\'fullmatch\'];</script>';
-        $selected = "";
-        if ( isset($newentry->usedynalink) ) {
-            if ($newentry->usedynalink) {
-                $selected = "checked";
-            }
-        } elseif ( $CFG->glossary_linkentries ) {
-            $selected = "checked";
-        }
-        echo '<input type="checkbox" name="usedynalink" value=1 ' . $selected . ' onclick="return lockoptions(\'form\',\'usedynalink\', items)"> ' . helpbutton("usedynalink", strip_tags(get_string("usedynalink", "glossary")), "glossary"); 
-    }
-?> 
-	</td></tr></table>
-    </td>
-</tr>
-<tr valign=top>
-    <td align=right><p><b><?php echo get_string("categories","glossary") ?>:</b></p></td>
-    <td valign="top">
-    <table border=0>
-    <tr>
-    <td valign="top">
+<td colspan=2>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td valign="top"><table border="0" width="100%" border="0" cellspacing="0" cellpadding="5">
+        <tr>
+          <td width="150" align=right><p><b><?php echo get_string("concept","glossary") ?>:</b></p></td>
+          <td><input type="text" name="concept" size=30 value="<?php p($newentry->concept) ?>"></td>
+        </tr>
+        <tr>
+          <td align="right"><p><b><?php echo get_string("categories","glossary") ?>:</b></p></td>
+          <td valign="top">
     <?php
         $categories = get_records("glossary_categories","glossaryid",$glossary->id);
         echo "<select size=\"5\" name=\"categories[]\" multiple=\"yes\">";
@@ -67,59 +40,72 @@ if (isset($errors)) {
             }
         }
     ?>
-    </select>
-    </td>
-    <td width="100%" valign="top">
-    <table border="0">
+          </td>
+        </tr>
+      </table></td>
+    <td valign="top"><table border="0" width="100%" border="0" cellspacing="0" cellpadding="5">
         <tr>
-        <td align="center" width="58%" valign="top">
+          <td valign="top" align=right><p><b>
+            <?php 
+              echo get_string("aliases","glossary");
+              echo ':<br />';
+              helpbutton("aliases", strip_tags(get_string("aliases", "glossary")), "glossary");
+            ?></b></p></td>
+          </td>
+          <td valign="top">
+             <textarea rows="2" name="aliases" cols="20"><?php p($newentry->aliases) ?></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
 <?PHP 
-    if ( $glossary->usedynalink ) {
-        
-        echo '<table border="0" width="100%">';
-    	echo '<tr><td colspan="2" align="right"><small><strong> ' . get_string("aliases","glossary") . ' ';
-        helpbutton("aliases", strip_tags(get_string("aliases", "glossary")), "glossary");
-        echo '</strong><p></td></tr>';
-        echo '<tr><td align="right" width="80%" valign="top"><small> ' . get_string("casesensitive","glossary") . ':</small></td><td width=20%>';
+    if ( !$glossary->usedynalink ) {
+    	echo '<input type="hidden" name=usedynalink value="0">';
+    	echo '<input type="hidden" name=casesensitive value="0">';
+    	echo '<input type="hidden" name=fullmatch value="0">';
+    } else {
+        echo '<script>var items = [\'casesensitive\',\'fullmatch\'];</script>';
 
-        $selected = "";
-        if ( isset($newentry->casesensitive) ) {
-            if ($newentry->casesensitive) {
-                $selected = "checked";
-            }
-        } elseif ( $CFG->glossary_casesensitive ) {
+        if (!empty($newentry->usedynalink) or $CFG->glossary_linkentries) {
             $selected = "checked";
+        } else {
+            $selected = "";
         }
-        echo '<input type="checkbox" name="casesensitive" value=1 ' . $selected . '> ' . helpbutton("casesensitive", strip_tags(get_string("casesensitive", "glossary")), "glossary");
-        echo '</td></tr>';
-        echo '<tr><td align="right" width="80%" valign="top"><small>' . get_string("fullmatch","glossary") . ':</small></td><td width=20%>';
+        echo '<input type="checkbox" name="usedynalink" value=1 ' . $selected . ' onclick="return lockoptions(\'form\',\'usedynalink\', items)"> ';
+        print_string("entryusedynalink","glossary");
+        echo helpbutton("usedynalink", strip_tags(get_string("usedynalink", "glossary")), "glossary"); 
+        echo '<br />';
 
-        $selected = "";
-        if ( isset($newentry->fullmatch) ) {
-            if ($newentry->fullmatch) {
-                $selected = "checked";
-            }
-        } elseif ( $CFG->glossary_fullmatch ) {
+        if (!empty($newentry->casesensitive) or $CFG->glossary_casesensitive) {
             $selected = "checked";
+        } else {
+            $selected = "";
         }
-        echo '<input type="checkbox" name="fullmatch" value=1 ' .  $selected . ' ' . helpbutton("fullmatch", strip_tags(get_string("fullmatch", "glossary")), "glossary");
-        echo '</td></tr>';
-        echo '</table>';
+        echo '<input type="checkbox" name="casesensitive" value=1 ' . $selected . '> ';
+        print_string("casesensitive","glossary");
+        echo helpbutton("casesensitive", strip_tags(get_string("casesensitive", "glossary")), "glossary");
+        echo '<br />';
 
-        echo '</td>';
-        echo '<td align="center" width="42%" valign="top">';
-        echo '<textarea rows="5" name="aliases" cols="20">' . $newentry->aliases . '</textarea>';
-        echo '</td>';
-        echo '</tr>';
-    }  // end-if !$usedynalink
-    echo '</td></tr></table>';
-?>
 
-    </td>
-    </tr>
-    </table>
-    </td>
+        if (!empty($newentry->fullmatch) or $CFG->glossary_fullmatch) {
+            $selected = "checked";
+        } else {
+            $selected = "";
+        }
+        echo '<input type="checkbox" name="fullmatch" value=1 ' . $selected . '> ';
+        print_string("fullmatch","glossary");
+        echo helpbutton("fullmatch", strip_tags(get_string("fullmatch", "glossary")), "glossary");
+        echo '<br />';
+    }
+?> 
+          </td>
+        </tr>
+      </table></td>
+  </tr>
+</table>
+</td>
 </tr>
+
 <tr valign=top>
     <td align=right><p><b><?php echo get_string("definition","glossary") ?>:</b></p>
     <font size="1">
