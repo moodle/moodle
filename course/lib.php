@@ -173,10 +173,22 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
 
 
 function print_all_courses($category="all", $style="full", $maxcount=999) {
-    global $CFG;
+    global $CFG, $USER;
 
     if ($category == "all") {
         $courses = get_records_sql("SELECT * FROM course WHERE category > 0 ORDER BY fullname ASC");
+
+    } else if ($category == "my") {
+        if (isset($USER->id)) {
+            if ($courses = get_records_sql("SELECT * FROM course WHERE category > 0 ORDER BY fullname ASC")) {
+                foreach ($courses as $key => $course) {
+                    if (!isteacher($course->id) and !isstudent($course->id)) {
+                        unset($courses[$key]);
+                    }
+                }
+            }
+        }
+
     } else {
         $courses = get_records("course", "category", $category, "fullname ASC");
     }
@@ -583,7 +595,7 @@ function print_course_admin_links($course, $width=180) {
 }
 
 function print_course_categories($categories, $selected="none", $width=180) {
-    global $CFG, $THEME;
+    global $CFG, $THEME, $USER;
 
     foreach ($categories as $cat) {
         $caticon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/course.gif\" HEIGHT=16 WIDTH=16>";
@@ -593,8 +605,11 @@ function print_course_categories($categories, $selected="none", $width=180) {
             $catdata[]="<A HREF=\"$CFG->wwwroot/course/index.php?category=$cat->id\">$cat->name</A>";
         }
     }
-    $showall = "<P><A HREF=\"$CFG->wwwroot/course/index.php?category=all\">".get_string("fulllistofcourses")."</A>...";
-    print_side_block("", $catdata, $showall, $caticon, $width);
+    $catdata[] = "<A HREF=\"$CFG->wwwroot/course/index.php?category=all\">".get_string("fulllistofcourses")."</A>";
+    if (isset($USER->id)) {
+        $catdata[] = "<A HREF=\"$CFG->wwwroot/course/index.php?category=my\">".get_string("mycourses")."</A>";
+    }
+    print_side_block("", $catdata, $showall.$mine, $caticon, $width);
 }
 
 function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
