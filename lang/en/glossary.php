@@ -101,6 +101,7 @@ $string['filetoimport'] = 'File to import';
 $string['filtername'] = 'Glossary Auto-linking';
 $string['fillfields'] = 'Concept and definition are mandatory fields.';
 $string['fullmatch'] = 'Match whole words only';
+$string['globalglossary'] = 'Global glossary';
 $string['glossaryleveldefaultsettings'] = 'Glossary Level Default Settings';
 $string['glossarytype'] = 'Glossary Type';
 $string['glosssaryexported'] = 'Glossary exported.';
