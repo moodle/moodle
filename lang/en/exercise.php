@@ -99,6 +99,7 @@ $string['notgraded'] = "Not Graded";
 $string['notitlegiven'] = "No Title Given";
 $string['pleasemakeyourownassessment'] = "Please make your own Assessment of the Piece of Work from \$a. <br />Note that the Assessment Form is initially displayed with the Student's assessment.<br /> You should make any amendments you think necessary and then click on one <br />of the buttons at the foot of the page.";
 $string['numberofassessmentelements'] = "Number of Comments, Assessment Elements, Grade Bands, Criterion Statments or Categories in a Rubric";
+$string['numberofcriterionelements'] = "Number of Criterion Elements must be greater than one.";
 $string['numberofentries'] = "Number of Entries";
 $string['numberofentriesinleaguetable'] = "Number of Entries in League Table";
 $string['numberofnegativeresponses'] = "Number of Negative Responses";
