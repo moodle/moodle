@@ -52,6 +52,8 @@ $string['attls9'] = "Je discute souvent avec les auteurs de livres que je lis, e
 $string['attls9short'] = "discuter avec des auteurs";
 $string['attlsintro'] = "Le but de ce questionnaire est de nous aider à évaluer votre état d'esprit vis-à-vis de la pensée et de l'apprentissage.
 
+
+
 Il n'y a pas de « bonne » ou de « mauvaise » réponse ; seule votre opinion nous intéresse. Soyez assuré que vos réponses seront traitées avec le maximum de confidentialité, et qu'elles n'auront aucun effet sur votre note finale.";
 $string['attlsm1'] = "État d'esprit envers la pensée et l'étude";
 $string['attlsmintro'] = "En discussion ...";
@@ -115,21 +117,37 @@ $string['colles9'] = "J'explique mes idées aux autres étudiants";
 $string['colles9short'] = "J'explique mes idées";
 $string['collesaintro'] = "L'objet de ce questionnaire est de nous aider à comprendre à quel point ce cours en ligne vous a permis d'apprendre.
 
+
+
 Chacune des 24 affirmations ci-dessous vous interroge sur votre expérience dans ce cours.
+
+
 
 Il n'y a pas de réponse « juste » ou « fausse » ; nous ne nous intéressons qu'à votre opinion. Soyez assuré que vos réponses seront traitées avec le maximum de confidentialité, et qu'elles n'auront aucune influence sur votre note finale.
 
+
+
 Vos réponses soigneusement réfléchies nous aideront à améliorer la façon de présenter ce cours.
+
+
 
 Nous vous remercions de votre collaboration.";
 $string['collesaname'] = "COLLES (réel)";
 $string['collesapintro'] = "L'objet de ce questionnaire est de nous aider à comprendre à quel point ce cours en ligne vous a permis d'apprendre.
 
+
+
 Chacune des 24 affirmations ci-dessous vous demande de comparer votre expérience <b>idéale</b> (désirée) et <b>réelle</b> (vécue) dans ce cours.
+
+
 
 Il n'y a pas de réponse « juste » ou « fausse » ; nous ne nous intéressons qu'à votre opinion. Soyez assuré que vos réponses seront traitées avec le maximum de confidentialité, et qu'elles n'auront aucune influence sur votre note finale.
 
+
+
 Vos réponses soigneusement réfléchies nous aideront à améliorer la façon de présenter ce cours.
+
+
 
 Nous vous remercions de votre collaboration.";
 $string['collesapname'] = "COLLES (idéal et réel)";
@@ -146,11 +164,19 @@ $string['collesm6short'] = "Interprétation";
 $string['collesmintro'] = "Dans ce cours en ligne ...";
 $string['collespintro'] = "L'objet de ce questionnaire est de nous aider à comprendre à quel point ce cours en ligne vous a permis d'apprendre.
 
+
+
 Chacune des 24 affirmations ci-dessous vous interroge sur votre expérience <b>idéale</b> (désirée) dans ce cours.
+
+
 
 Il n'y a pas de réponse « juste » ou « fausse » ; nous ne nous intéressons qu'à votre opinion. Soyez assuré que vos réponses seront traitées avec le maximum de confidentialité, et qu'elles n'auront aucune influence sur votre note finale.
 
+
+
 Vos réponses soigneusement réfléchies nous aideront à améliorer la façon de présenter ce cours.
+
+
 
 Nous vous remercions de votre collaboration.";
 $string['collespname'] = "COLLES (idéal)";
@@ -185,7 +211,7 @@ $string['questionsnotanswered'] = "Certaines questions à choix multiples n'ont p
 $string['report'] = "Rapport des questionnaires";
 $string['savednotes'] = "Vos notes ont été enregistrées";
 $string['scaleagree5'] = "Pas du tout d'accord,Pas tout à fait d'accord,Neutre,Assez d'accord,Tout à fait d'accord";
-$string['scales'] = "Barêmes";
+$string['scales'] = "Barèmes";
 $string['scaletimes5'] = "Presque jamais,Rarement,Quelquefois,Souvent,Presque toujours";
 $string['seemoredetail'] = "Cliquer ici pour avoir plus de détail";
 $string['selectedquestions'] = "Question choisies dans un barème, tous les étudiants";
