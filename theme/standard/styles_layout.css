@@ -352,6 +352,26 @@ table.message_search_results td {
     padding:10px;
 }
 
+#block_quiz_results table.grades {
+    width: 100%;
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+
+#block_quiz_results h1 {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    margin: 4px;
+}
+
+#block_quiz_results h2 {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1em;
+    margin: 0px;
+}
+
 /* calendar, weblib.php, wiki */
 .sideblock {
     border-width:1px;
