@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // questionnaire.php - created with Moodle 1.5 unstable development (2004083000)
+      // questionnaire.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['alreadyfilled'] = 'あなたは既にこの質問に回答しています。ありがとうございます。';
@@ -9,5 +9,8 @@ $string['notavail'] = 'この質問は利用できません。後でお試しください。';
 $string['qmanage'] = '調査の管理';
 $string['qtype'] = 'タイプ';
 $string['questionnaireid'] = '調査';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 
 ?>

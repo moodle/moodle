@@ -15,53 +15,33 @@
   <p>Moodleは活発に進化し続けているシステムです。このページでは、Moodleの数多くの特徴の中から幾つかを取り上げます:</p>
   <h3>全体的なデザイン</h3>
   <ul>
-    <li>Promotes a social constructionist pedagogy (collaboration, activities, critical 
-    reflection, etc)</li>
-    <li>Suitable for 100% online classes as well as supplementing face-to-face learning 
-  </li>
-    <li>Simple, lightweight, efficient, compatible, low-tech browser interface</li>
-    <li>Easy to install on almost any platform that supports PHP. Requires only 
-    one database (and can share it).</li>
-    <li>Full database abstraction supports all major brands of database (except 
-    for initial table definition)</li>
-    <li>Course listing shows descriptions for every course on the server, including 
-    accessibility to guests.</li>
-    <li>Courses can be categorised and searched - one Moodle site can support thousands 
-    of courses</li>
-    <li>Emphasis on strong security throughout. Forms are all checked, data validated, 
-    cookies encrypted etc</li>
-    <li>Most text entry areas (resources, forum postings, journal entries etc) can 
-    be edited using an embedded WYSIWYG HTML editor</li>
+    <li>社会的構築主義教授法(協調、活動、批判的省察等)を促進します。</li>
+    <li>対面教育の補助及び100%のオンラインコースに適しています。</li>
+    <li>シンプル、軽い、能率的、互換性がある、バージョンの低いブラウザに対応しています。</li>
+    <li>PHPをサポートする殆どのプラットフォームへ簡単にインストール可能。1つのデータベースを必要(共有可)とします。</li>
+    <li>全てのメジャーなデータベースの抽出をフルサポート(初期テーブル作成を除く)しています。</li>
+    <li>コース一覧では、ゲストアクセスの可否も含めて、サーバ上の全コースの説明を表示します。</li>
+    <li>コースをカテゴリ分け、検索することが出来ます。一つのMoodleサイトは数千のコースをサポートします。</li>
+    <li>Moodleでは、サイト全体にわたる強固なセキュリティを重要視しています。フォームに関して、全てのチェック、データの正当性確認、クッキーの暗号化処理等が行われます。</li>
+    <li>殆どのテキストエリア (リソース、フォーラム投稿欄、日誌エントリ等)は、実装済みのWYSIWYG HTMLエディタで編集することが出来ます。</li>
   </ul>
   <h3 >サイト管理</h3>
   <ul>
-    <li>Site is managed by an admin user, defined during setup</li>
-    <li>Plug-in "themes" allow the admin to customise the site colours, fonts, layout 
-    etc to suit local needs</li>
-    <li>Plug-in activity modules can be added to existing Moodle installations</li>
-    <li>Plug-in language packs allow full localisation to any language. These can 
-    be edited using a built-in web-based editor. Currently there are language 
-    packs for over <a href="http://moodle.org/download/lang/" target="_top">43 
-    languages</a>.</li>
-    <li>The code is clearly-written PHP under a GPL license - easy to modify to 
-    suit your needs</li>
+    <li>サイトは、セットアップ時に設定した管理者によって管理されます。</li>
+    <li>「テーマ」プラグインにより、管理者は必要に応じてサイトの色、フォント、レイアウト等をカスタマイズすることが出来ます。</li>
+    <li>活動モジュールプラグインは、インストール済みのMoodleに追加することが出来ます。</li>
+    <li>言語パックプラグインにより、数多くの言語に対応することが出来ます。これらはMoodleに組み込まれたウェブベースのエディタで編集することが出来ます。現在、<a href="http://moodle.org/download/lang/" target="_top">43以上の言語</a>ファイルがあります。</li>
+    <li>コードは、GPLライセンスの下で分かりやすく記述され、必要に応じて簡単に修正を加えることが出来ます。</li>
   </ul>
   <h3 >ユーザ管理</h3>
   <ul>
-    <li>Goals are to reduce admin involvement to a minimum, while retaining high 
-    security</li>
-    <li>Supports a range of authentication mechanisms through plug-in authentication 
-    modules, allowing easy integration with existing systems.</li>
-    <li>Standard email method: students can create their own login accounts. Email 
-    addresses are verified by confirmation.</li>
-    <li>LDAP method: account logins can be checked against an LDAP server. Admin 
-    can specify which fields to use.</li>
-    <li>IMAP, POP3, NNTP: account logins are checked against a mail or news server. 
-    SSL, certificates and TLS are supported.</li>
-    <li>External database: any database containing at least two fields can be used 
-    as an external authentication source.</li>
-    <li>Each person requires only one account for the whole server - each account 
-    can have different access</li>
+    <li>ユーザ管理のゴールは、高度なセキュリティを保ったまま、管理者の負担を減らすことです。</li>
+    <li>既存のシステムに簡単に統合することが可能な認証モジュールプラグインにより、様々な認証手段をサポートします。</li>
+    <li>標準的なメールによる認証: 学生は自分のアカウントを作成することが出来ます。アカウント確定時に、メールアドレスが確認されます。</li>
+    <li>LDAPを使用した認証: LDAPサーバに対してアカウントのログインを照会することが出来ます。管理者は、どのフィールドを使用するか指定出来ます。</li>
+    <li>IMAP、POP3、NNTPを使用した認証: メールサーバ又はニュースサーバに対してアカウントのログインが照会されます。SSL認証及びTLS認証がサポートされます。</li>
+    <li>外部データベースを使用した認証: 少なくとも2つのフィールドを持つデータベースを外部認証用のデータベースとして使用出来ます。</li>
+    <li>それぞれユーザは、サーバ全体で1つのアカウントのみ必要です。各アカウントは異なるアクセス権限を持つことが出来ます。</li>
     <li>An admin account controls the creation of courses and creates teachers by 
     assigning users to courses</li>
     <li>A course creator account is only allowed to create courses and teach in 
@@ -212,7 +192,7 @@
   </ul>
   <p>&nbsp;</p>
 </blockquote>
-<p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="CENTER"><font size="1"><a href="." target="_top">Moodle文書</a></font></p>
 <p align="CENTER"><font size="1">Version: $Id$</font></p>
 </body>
 </html>

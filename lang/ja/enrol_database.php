@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_database.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
+      // enrol_database.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['dbhost'] = '¥Û¥¹¥ÈÌ¾';
@@ -14,5 +14,8 @@ $string['localcoursefield'] = '¥³¡¼¥¹¥Æ¡¼¥Ö¥ë¤Î¥Õ¥£¡¼¥ë¥ÉÌ¾¤ÈÈæ³Ó¤¹¤ë¥ê¥â¡¼¥È¥Ç¡
 $string['localuserfield'] = '¥æ¡¼¥¶¥Æ¡¼¥Ö¥ë¤Î¥Õ¥£¡¼¥ë¥ÉÌ¾¤ÈÈæ³Ó¤¹¤ë¥ê¥â¡¼¥È¥Ç¡¼¥¿¥Ù¡¼¥¹¤Î¥Õ¥£¡¼¥ë¥ÉÌ¾(Îã idnumber)';
 $string['remotecoursefield'] = 'course ID¤ËÂÐ¤¹¤ë¥ê¥â¡¼¥È¥Ç¡¼¥¿¥Ù¡¼¥¹¤Î¥Õ¥£¡¼¥ë¥ÉÌ¾';
 $string['remoteuserfield'] = 'user ID¤ËÂÐ¤¹¤ë¥ê¥â¡¼¥È¥Ç¡¼¥¿¥Ù¡¼¥¹¤Î¥Õ¥£¡¼¥ë¥ÉÌ¾';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004070800)
+      // forum.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['addanewdiscussion'] = 'ตั้งกระทู้';
@@ -43,6 +43,7 @@ $string['editing'] = 'กำลังแก้ไข';
 $string['emptymessage'] = 'โพสต์ของคุณมีข้อผิดพลาด ลองตรวจสอบอีกครั้งว่าไฟล์ที่ส่งไม่ใหญ่เกินไปและเขียนข้อความแล้ว  ยังไม่ได้บันทึกโพสต์นี้ลงฐานข้อมูล';
 $string['everyonecanchoose'] = 'สมาชิกสามารถเลือกที่จะเป็นสมาชิกของกระดานนี้';
 $string['everyoneissubscribed'] = 'ทุกคนเป็นสมาชิกของกระดานนี้';
+$string['existingsubscribers'] = 'เป็นสมาชิกอยู่แล้ว';
 $string['forcesubscribe'] = 'ทุกคนต้องสมัครเป็นสมาชิกกระดานนี้';
 $string['forcesubscribeq'] = 'ทุกคนต้องเป็นสมาชิกกระดานนี้เท่านั้น?';
 $string['forum'] = 'กระดานเสวนา';
@@ -100,6 +101,7 @@ $string['postrating3'] = 'แสดงถึงการรู้แบบเชื่อมโยง';
 $string['posts'] = 'โพสต์';
 $string['posttoforum'] = 'โพสต์ลงกระดานเสวนา';
 $string['postupdated'] = 'โพสต์ของคุณได้รับการอัพเดทแล้ว';
+$string['potentialsubscribers'] = 'ผู้ที่สามารถเป็นสมาชิกได้';
 $string['processingdigest'] = 'ประเมินผลการส่งอีเมลสำหรับ $a';
 $string['processingpost'] = 'กำลังดำเนินการโพสต์ $a';
 $string['prune'] = 'แยก';
@@ -147,6 +149,8 @@ $string['subscriptions'] = 'การเป็นสมาชิก';
 $string['unsubscribe'] = 'ต้องการออกจากการเป็นสมาชิกกระดาน';
 $string['unsubscribed'] = 'ไม่ได้เป็นสมาชิก';
 $string['unsubscribeshort'] = 'ยกเลิกการเป็นสมาชิก';
+$string['yesforever'] = 'ใช่ ตลอดเวลา';
+$string['yesinitially'] = 'ใช่ ตอนต้นเท่านั้น';
 $string['youratedthis'] = 'คุณให้คะแนน';
 $string['yournewtopic'] = 'กระทู้ใหม่';
 $string['yourreply'] = 'คำตอบ';

@@ -35,6 +35,7 @@ $string['deleteversions'] = 'Combien de dernières versions à détruire';
 $string['deleteversionserror'] = 'Veuillez saisir un numéro de version correct.';
 $string['diff'] = 'Diff';
 $string['differences'] = 'Différences entre les versions $a->new_ver et $a->old_ver de $a->pagename.';
+$string['disablecamel'] = 'Désactiver les liens CamelCase';
 $string['disabledpage'] = 'Cette page n\'est actuellement pas disponible.';
 $string['disabledpage'] = 'Page désactivées';
 $string['doesnotexist'] = 'Cette page n\'existe pas encore. si vous voulez la créer, veuillez cliquer sur le bouton modifier.';

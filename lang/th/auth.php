@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.4 development (2004070800)
+      // auth.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['auth_dbdescription'] = 'วิธีนี้เป็นการใช้ฐานข้อมูลนอกในการตรวจสอบว่าชื่อและรหัสผ่านนั้นถูกต้องหรือไม่ ถ้าหาก account ดังกล่าวเป็น ข้อมูลใหม่ ข้อมูลจะถูกส่งไปยังส่วนต่าง ๆ ใน Moodle';
@@ -16,6 +16,13 @@ $string['auth_dbtype'] = 'ประเภทของฐานข้อมูล(ดูข้อมูลเพิ่มเติมจาก  <A HREF=../li
 $string['auth_dbuser'] = 'Username ที่สามารถเข้าไปอ่านฐานข้อมูลได้';
 $string['auth_emaildescription'] = 'ในการสมัครเป็นสมาชิกนั้น ผู้สมัครจะได้รับการอนุมัติ ผ่านอีเมล ซึ่งเป็นค่าที่ตั้งไว้ของระบบ เมื่อผู้สมัครเลือก ชื่อ และ รหัสผ่านแล้ว ระบบจะทำการส่งอีเมลไปยัง อีเมลของสมาชิกนั้น อีเมลนี้จะมีลิงก์กลับไปยังหน้าหลักของหน้า ซึ่งจะเป็นการยืนยันว่า อีเมลดังกล่าวใช้ได้จริง  หลังจากนั้นสมาชิก สามารถล็อกอินโดยใช้ชื่อและรหัสผ่านเว็บ';
 $string['auth_emailtitle'] = 'ใช้วิธีอนุมัติผ่านอีเมล';
+$string['auth_fccreators'] = 'รายชื่อของกลุ่มที่สมาชิกสามารถสร้างรายวิชาใหม่ได้ ให้แยกแต่ละกลุ่มด้วยเครื่องหมาย \';\' ชื่อที่ตั้งขึ้นมาต้องตรงกับบนเซิร์ฟเวอร์';
+$string['auth_fcdescription'] = 'วิธีนี้เป็นการให้เซิร์ฟเวอร์ตรวจสอบก่อนว่า username และ Password ถูกต้องหรือไม่';
+$string['auth_fcfppport'] = 'พอร์ทของเซิร์ฟเวอร์ (ปกติตั้งไว้ที่ 3333)';
+$string['auth_fchost'] = 'ที่อยู่ของเซิร์ฟเวอรื ให้ใช้หมายเลข IP หรือ DNS';
+$string['auth_fcpasswd'] = 'รหัสผ่านของ account ข้างต้น';
+$string['auth_fctitle'] = 'ใช้เฟิร์สคลาสเซิร์ฟเวอร์';
+$string['auth_fcuserid'] = 'Userid สำหรับ FirstClass account  โดยให้สิทธิ์ \" Subadministrator\"';
 $string['auth_imapdescription'] = 'ใช้วิธีการ ชื่อและรหัส โดย IMAP เซิร์ฟเวอร์';
 $string['auth_imaphost'] = 'IMAP เซิร์ฟเวอร์นั้น ใช้ เลข  IP ไม่ใช่เลข DNS ';
 $string['auth_imapport'] = 'หมายเลขพอร์ต IMAP โดยปกติ คือ  143 หรือ 993.';
@@ -25,12 +32,12 @@ $string['auth_ldap_bind_dn'] = 'ถ้าหากต้องการใช้ bind-user เพื่อค้นห้าสมาชิกอื่น
 $string['auth_ldap_bind_pw'] = 'รหัสสำหรับ bind-user.';
 $string['auth_ldap_contexts'] = 'รายการที่มีรายชื่อของสมาชิกในนั้น  สามารถ แยก หัวข้อเรื่อง โดยใช้ โค้ด เช่น \'ou=users,o=org; ou=others,o=org\'';
 $string['auth_ldap_create_context'] = 'เปิดให้สมาชิกสามารถสร้างข้อความตอบรับทางอีเมลด้วยตนเองได้ 
-คุณไม่จำเป็นต้องใส่ข้อความนี้ที่ ldap_context-variable, Moodle จะค้นหาให้อัตโนมัติ
-';
+คุณไม่จำเป็นต้องใส่ข้อความนี้ที่ ldap_context-variable, Moodle จะค้นหาให้อัตโนมัติ';
 $string['auth_ldap_creators'] = 'รายการกลุ่มสมาชิกที่อนุญาตให้สามารถสร้างหลักสูตรใหม่ได้ สามารถใส่ได้หลายกลุ่ม โดยใช้เครื่องหมาย \';\' 
 ดังตัวอย่าง  \'cn=teachers,ou=staff,o=myorg\'';
 $string['auth_ldap_host_url'] = 'ระบุ LDAP host เช่น  \'ldap://ldap.myorg.com/\' หรือ  \'ldaps://ldap.myorg.com/\' ';
 $string['auth_ldap_memberattribute'] = 'คุณสมบัติของสมาชิกใหม่ของกลุ่ม ปกติใช้  \'member\'';
+$string['auth_ldap_objectclass'] = 'ฟิลเตอร์คุ้นเคยกับชื่อหรือการค้นหาสมาชิก โดยปกติแล้วจะตั้งค่าไว้ตัวอย่างเช่น objectClass=posixAccount  โดยค่าที่ตั้งไว้ objectClass=* ค่าที่จะแสดงจาก LDAP';
 $string['auth_ldap_search_sub'] = 'ใส่ค่า <> 0 ถ้าหากต้องการ ค้นหาสมาชิกผ่านหัวข้อย่อย ';
 $string['auth_ldap_update_userinfo'] = 'อัพเดทข้อมูลสมาชิก (ชื่อ,นามสกุล,ที่อยู่..) จาก LDAP ถึง  Moodle. ดูเพิ่มเติมที่  /auth/ldap/attr_mappings.php ';
 $string['auth_ldap_user_attribute'] = 'attribute ที่ใช้ในการค้นหาชื่อสมาชิก ส่วนใหญ่จะใช้  \'cn\'.';
@@ -49,6 +56,7 @@ $string['auth_nonedescription'] = 'สมาชิกสามารถ ล็อกอิน และสร้าง account ใหม่ทัน
 $string['auth_nonetitle'] = 'ไม่ต้องขออนุมัติ อนุญาตทันที';
 $string['auth_pop3description'] = 'เช็คชื่อ และรหัสว่าถูกต้องหรือไม่ ผ่านทาง  POP3 server ';
 $string['auth_pop3host'] = 'POP3 server ใช้ เลข IP  ไม่ใช่ DNS ';
+$string['auth_pop3mailbox'] = 'ชื่อของกล่องจดหมายที่ต้องการติดต่อ (ปกติคือ INBOX)';
 $string['auth_pop3port'] = 'Server port (110 โดยทั่วไป)';
 $string['auth_pop3title'] = 'ใช้ POP3 server';
 $string['auth_pop3type'] = 'ประเภทของเซิร์ฟเวอร์ ถ้าเซิร์ฟเวอร์ ใช้  certificate security ให้เลือก pop3cert.';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.5 development (2004082600)
+      // chat.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['beep'] = 'ビープ';
@@ -50,6 +50,9 @@ $string['seesession'] = 'このセッションを見る';
 $string['sessions'] = 'チャットセッション';
 $string['strftimemessage'] = '%%H:%%M';
 $string['studentseereports'] = '全ての人が過去のセッションを見ることが出来る';
-$string['viewreport'] = '過去のチャットセッションを閲覧';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
+$string['viewreport'] = '過去のチャットセッションを表示';
 
 ?>

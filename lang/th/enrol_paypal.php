@@ -1,7 +1,9 @@
 <?PHP // $Id$ 
-      // enrol_paypal.php - created with Moodle 1.4 development (2004070800)
+      // enrol_paypal.php - created with Moodle 1.5 unstable development (2004083000)
 
 
+$string['business'] = 'อีเมลที่คุณใช้ใน account Paypal';
+$string['description'] = 'ค่านี้เป็นการตั้งค่าให้นักเรียนเสียค่าใช้จ่ายในการเข้าเรียนก่อนเข้าศึกษาบทเรียน  ถ้าตั้งค่าไว้ที่ 0 ระบบจะไม่ถามให้เสียค่าใช้จ่ายก่อนเข้าศึกษา   ค่าที่ตั้งนี้จะเป็นค่าของทั้งเว็บไซต์ แต่สามารถเปลี่ยนแปลงสำหรับแต่ละรายวิชาได้ โดยการตั้งค่าในแต่ละรายวิชา';
 $string['enrolname'] = 'Paypal';
 $string['sendpaymentbutton'] = 'ส่งค่าลงทะเบียนผ่าน Paypal';
 

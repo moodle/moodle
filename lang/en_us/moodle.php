@@ -264,7 +264,7 @@ $string['emailconfirmsent'] = '   <P>An email should have been sent to your addr
    <P>If you continue to have difficulty, contact the site administrator.';
 $string['emaildisplay'] = 'Email display';
 $string['emaildisplaycourse'] = 'Allow only other course members to see my email address';
-$string['emaildisplayno'] = 'Hide my real email address from everyone';
+$string['emaildisplayno'] = 'Hide my email address from everyone';
 $string['emaildisplayyes'] = 'Allow everyone to see my email address';
 $string['emailexists'] = 'This email address is already registered.';
 $string['emailformat'] = 'Email format';

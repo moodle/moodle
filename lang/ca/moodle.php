@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 unstable development (2004083000)
+      // moodle.php - created with Moodle 1.5 unstable development (2004090402)
 
 
 $string['action'] = 'Acció';
@@ -370,6 +370,8 @@ $string['emailenableclick'] = 'Feu clic aquí per tornar a habilitar l\'enviament
 $string['emailexists'] = 'Aquesta adreça de correu ja està registrada.';
 $string['emailformat'] = 'Format del correu';
 $string['emailmustbereal'] = 'Nota: l\'adreça de correu ha de ser una adreça real';
+$string['emailnotallowed'] = 'Les adreces de correu d\'aquests dominis no són permeses ($a)';
+$string['emailonlyallowed'] = 'Aquest correu no és un dels permesos ($a)';
 $string['emailpasswordconfirmation'] = '$a->firstname,
 
 Algú (probablement vós) ha demanat una nova contrasenya 
@@ -974,9 +976,12 @@ $string['updatingain'] = 'S\'està actualitzant $a->what en $a->in';
 $string['upload'] = 'Penja';
 $string['uploadafile'] = 'Penja un fitxer';
 $string['uploadedfileto'] = 'S\'ha penjat $a->file en $a->directory';
+$string['uploadformlimit'] = 'El fitxer supera la mida màxima definida pel formulari';
 $string['uploadnofilefound'] = 'No s\'ha trobat cap fitxer. Segur que n\'havíeu seleccionat un?';
 $string['uploadnotallowed'] = 'No es permet penjar fitxers';
+$string['uploadpartialfile'] = 'Només s\'ha penjat una part del fitxer';
 $string['uploadproblem'] = 'S\'ha esdevingut un problema desconegut mentre es penjava el fitxer \'$a\' (potser era massa gran?)';
+$string['uploadserverlimit'] = 'El fitxer supera la mida màxima definida al servidor';
 $string['uploadthisfile'] = 'Penja aquest fitxer';
 $string['uploadusers'] = 'Carrega usuaris';
 $string['usedinnplaces'] = 'Utilitzat en $a llocs';

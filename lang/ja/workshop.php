@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.4 development (2004072500)
+      // workshop.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['absent'] = '·çÀÊ';
@@ -13,6 +13,7 @@ $string['allowresubmit'] = 'ºÆÄó½Ğ¤òµö²Ä¤¹¤ë';
 $string['alreadyinphase'] = '´û¤Ë¥Õ¥§¡¼¥º $a¡¡¤ËÃ£¤·¤Æ¤¤¤Ş¤¹';
 $string['amendassessmentelements'] = 'É¾²ÁÍ×ÁÇ¤ò¹¹¿·¤¹¤ë';
 $string['amendtitle'] = '¥¿¥¤¥È¥ë¤ò¹¹¿·¤¹¤ë';
+$string['analysis'] = 'Ê¬ÀÏ';
 $string['analysisofassessments'] = 'É¾²Á¤òÊ¬ÀÏ¤¹¤ë';
 $string['assess'] = 'É¾²Á¤¹¤ë';
 $string['assessedon'] = '$a ¤ËÂĞ¤¹¤ëÉ¾²Á';
@@ -63,6 +64,7 @@ $string['errortable'] = '¥¨¥é¡¼¥Æ¡¼¥Ö¥ë';
 $string['excellent'] = 'ÁÇÀ²¤é¤·¤¤';
 $string['excludingdroppedassessments'] = '²¼¤²¤é¤ì¤¿É¾²Á¤ò½ü¤¯';
 $string['expectederror'] = '$a ¤ò¿äÂ¬¤¹¤ë¾ì¹ç¤ÎÍ½ÁÛ¥¨¥é¡¼';
+$string['fair'] = '¸øÊ¿';
 $string['feedbackgoeshere'] = '¥Õ¥£¡¼¥É¥Ğ¥Ã¥¯¤Ï¤³¤³¤ËÉ½¼¨¤µ¤ì¤Ş¤¹';
 $string['generalcomment'] = '°ìÈÌÅª¤Ê¥³¥á¥ó¥È';
 $string['good'] = 'ÎÉ¤¤';
@@ -83,6 +85,7 @@ $string['hidenamesfromstudents'] = '$a ¤è¤êÌ¾Á°¤ò±£¤¹';
 $string['includeteachersgrade'] = '¶µ»Õ¤ÎºÎÅÀ¤ò´Ş¤à';
 $string['incorrect'] = 'ÉÔÀµ²ò';
 $string['iteration'] = '$a ¤Î·«¤êÊÖ¤·¤¬´°Î»¤·¤Ş¤·¤¿';
+$string['lax'] = '´Å¤¤';
 $string['leaguetable'] = 'Äó½ĞÊª¤Î¥ê¡¼¥°¥Æ¡¼¥Ö¥ë';
 $string['listassessments'] = 'É¾²Á°ìÍ÷';
 $string['listofallsubmissions'] = 'Á´Äó½ĞÊª°ìÍ÷';
@@ -99,19 +102,22 @@ $string['mail7'] = '$a ¤Ë¤è¤ë¥³¥á¥ó¥È¤Ï¥ï¡¼¥¯¥·¥ç¥Ã¥×Äó½ĞÊª¤Ç¸«¤ë¤³¤È¤¬½ĞÍè¤Ş¤¹'
 $string['mail8'] = '²İÂê $a ¤Ï½¤Àµ¤µ¤ì¤Æ¤¤¤Ş¤¹¡£';
 $string['mail9'] = '¥ï¡¼¥¯¥·¥ç¥Ã¥×Äó½ĞÊª $a ¤ÎÃæ¤ÇÉ¾²Á¤·¤Æ¤¯¤À¤µ¤¤';
 $string['managingassignment'] = '²İÂê¤ò´ÉÍı';
+$string['maximum'] = 'ºÇÂç';
 $string['maximumsize'] = 'ºÇÂç¥µ¥¤¥º';
+$string['minimum'] = 'ºÇ¾®';
 $string['modulename'] = '¥ï¡¼¥¯¥·¥ç¥Ã¥×';
 $string['modulenameplural'] = '¥ï¡¼¥¯¥·¥ç¥Ã¥×';
 $string['movingtophase'] = '¥Õ¥§¡¼¥º $a ¤Ë°ÜÆ°';
-$string['namesnotshowntostudents'] = 'Ì¾Á°¤Ï $a ¤ËÉ½¼¨¤µ¤ì¤Ş¤»¤ó';
+$string['namesnotshowntostudents'] = 'Ì¾Á°¤Ï $a ¤ËÉ½¼¨¤µ¤ì¤Ş¤»¤ó¡£';
 $string['newassessments'] = '¿·¤·¤¤¥ï¡¼¥¯¥·¥ç¥Ã¥×¤ÎÉ¾²Á';
 $string['newgradings'] = '¿·¤·¤¤ºÎÅÀ';
 $string['newsubmissions'] = '¿·¤·¤¤¥ï¡¼¥¯¥·¥ç¥Ã¥×¤ÎÄó½ĞÊª';
 $string['noassessments'] = 'É¾²ÁÌµ¤·';
 $string['noassessmentsdone'] = 'É¾²Á¤µ¤ì¤Æ¤¤¤Ş¤»¤ó';
 $string['nosubmission'] = 'Äó½ĞÊªÌµ¤·';
-$string['nosubmissionsavailableforassessment'] = 'É¾²Á¤¹¤Ù¤­Äó½ĞÊª¤Ï¤¢¤ê¤Ş¤»¤ó';
-$string['notavailable'] = 'ÍøÍÑ¤Ç¤­¤Ş¤»¤ó';
+$string['nosubmissionsavailableforassessment'] = 'É¾²Á¤¹¤Ù¤­Äó½ĞÊª¤Ï¤¢¤ê¤Ş¤»¤ó¡£';
+$string['notavailable'] = 'ÍøÍÑ½ĞÍè¤Ş¤»¤ó¡£';
+$string['notenoughexamplessubmitted'] = '½½Ê¬¤ÊÎã¤¬Äó½Ğ¤µ¤ì¤Æ¤¤¤Ş¤»¤ó¡£';
 $string['noteonassessmentelements'] = 'É¾²Á¤Ï¿ôÂ¿¤¯¤Î¡ÖÉ¾²ÁÍ×ÁÇ¡×¤Ë¤è¤êÀ®Î©¤Á¤Ş¤¹¡£¤³¤Î¤³¤È¤ÇÉ¾²Á¤ò¡¢
 <BR>
 ´ÊÃ±³î¤Ä¼óÈø°ì´Ó¤·¤¿¤â¤Î¤Ë¤¹¤ë¤³¤È¤¬½ĞÍè¤Ş¤¹¡£
@@ -124,7 +130,7 @@ $string['noteonassessmentelements'] = 'É¾²Á¤Ï¿ôÂ¿¤¯¤Î¡ÖÉ¾²ÁÍ×ÁÇ¡×¤Ë¤è¤êÀ®Î©¤Á¤Ş¤
 ¡Ö²İÂê¤ÎÊÔ½¸¡×²èÌÌ¤ÇÍ×ÁÇ¿ô¤òÊÑ¹¹¤¹¤ë¤³¤È¤¬½ĞÍè¤Ş¤¹¡£
 <BR>
 Í×ÁÇ¼«ÂÎ¤Ï¡ÖÉ¾²Á¤Î´ÉÍı¡×²èÌÌ¤ÇÊÑ¹¹½ĞÍè¤Ş¤¹¡£ ';
-$string['notgraded'] = 'ºÎÅÀÌµ¤·';
+$string['notgraded'] = 'É¾²ÁÌµ¤·';
 $string['notitlegiven'] = 'ÂêÌ¾¤¬¤¢¤ê¤Ş¤»¤ó';
 $string['numberofassessmentelements'] = '¥³¥á¥ó¥È¿ô¡¢É¾²ÁÍ×ÁÇ¿ô¡¢É¾²Á¤ÎÉı¡¢´ğ½à¿ô';
 $string['numberofassessments'] = 'É¾²Á¿ô';
@@ -156,8 +162,6 @@ $string['phase4'] = '$a ¤ÎÉ¾²Á¤òµö²Ä¤¹¤ë';
 $string['phase4short'] = 'É¾²Á';
 $string['phase5'] = 'ºÇ½ªÉ¾²Á¤Î·×»»';
 $string['phase5short'] = '·×»»';
-$string['phase6'] = 'ºÇ½ªÉ¾²Á¤òÉ½¼¨';
-$string['phase6short'] = 'É¾²Á¤òÉ½¼¨';
 $string['pleaseassesstheseexamplesfromtheteacher'] = '$a ¤Ë¤è¤ë¤³¤ì¤é¤ÎÌÏÈÏ²òÅú¤òÉ¾²Á¤·¤Æ¤¯¤À¤µ¤¤';
 $string['pleaseassessthesestudentsubmissions'] = '¤³¤ì¤é¤Î $a ¤ÎÄó½ĞÊª¤òÉ¾²Á¤·¤Æ¤¯¤À¤µ¤¤';
 $string['pleaseassessyoursubmissions'] = '¤¢¤Ê¤¿¤ÎÄó½ĞÊª¤òÉ¾²Á¤·¤Æ¤¯¤À¤µ¤¤';
@@ -188,7 +192,6 @@ $string['scalepresent'] = '2ÅÀ ½ĞÀÊ/·çÀÊ É¾²Á';
 $string['scaleyes'] = '2ÅÀ Yes/No É¾²Á';
 $string['select'] = 'ÁªÂò';
 $string['selfassessment'] = '¼«¸ÊÉ¾²Á';
-$string['setoverallocation'] = '¥ª¡¼¥Ğ¡¼¥¢¥í¥±¡¼¥·¥ç¥ó¥ì¥Ù¥ë¤òÀßÄê';
 $string['showgrades'] = 'É¾²Á¤òÉ½¼¨';
 $string['specimenassessmentform'] = 'É¾²Á¸«ËÜ¥Õ¥©¡¼¥à';
 $string['standarddeviation'] = 'Í×ÁÇ $a ¤ÎÉ¸½àÊĞº¹';
@@ -213,14 +216,18 @@ $string['teacherscomment'] = '¶µ»Õ¤Î¥³¥á¥ó¥È';
 $string['teachersgrade'] = '¶µ»Õ¤ÎºÎÅÀ';
 $string['teachersubmissionsforassessment'] = '$a ¶µ»Õ¤ÎÉ¾²ÁÂĞ¾İÄó½ĞÊª';
 $string['thegradeis'] = 'À®ÀÓ¤Ï $a ¤Ç¤¹';
-$string['thereisfeedbackfromtheteacher'] = '$a ¤Î¥Õ¥£¡¼¥É¥Ğ¥Ã¥¯¤¬¤¢¤ê¤Ş¤¹';
 $string['theseasessmentsaregradedbytheteacher'] = '¤³¤ì¤é¤ÎÉ¾²Á¤Ï $a ¤Ë¤è¤êºÎÅÀ¤µ¤ì¤Ş¤¹';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['timeassessed'] = 'É¾²Á»ş´Ö';
 $string['title'] = 'ÂêÌ¾';
 $string['typeofscale'] = 'É¾²Á´ğ½à';
 $string['ungradedassessmentsofstudentsubmissions'] = '$a ³ØÀ¸¤ÎÌ¤É¾²ÁÄó½ĞÊª';
 $string['ungradedassessmentsofteachersubmissions'] = '$a ¶µ»Õ¤ÎÌ¤É¾²ÁÄó½ĞÊª';
+$string['verylax'] = 'Èó¾ï¤Ë´Å¤¤';
 $string['verypoor'] = 'Èó¾ï¤Ë°­¤¤';
+$string['verystrict'] = 'Èó¾ï¤Ë¸·¤·¤¤';
 $string['view'] = 'É½¼¨';
 $string['viewassessmentofteacher'] = '$a ·ï¤ÎÉ¾²Á¤òÉ½¼¨¤¹¤ë';
 $string['viewotherassessments'] = 'Â¾¤ÎÉ¾²Á¤òÉ½¼¨¤¹¤ë';

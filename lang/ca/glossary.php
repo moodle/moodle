@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 development (2004070800)
+      // glossary.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['addcomment'] = 'Afegeix un comentari';
@@ -61,16 +61,17 @@ $string['deletingnoneemptycategory'] = 'Suprimir aquesta categoria no suprimirà 
 $string['descending'] = '(descendent)';
 $string['destination'] = 'Destinació';
 $string['displayformat'] = 'Format de visualització';
-$string['displayformat2'] = 'Complet amb autor';
-$string['displayformat3'] = 'Enciclopèdia';
-$string['displayformat4'] = 'PMF';
-$string['displayformat5'] = 'Complet sense autor';
-$string['displayformat6'] = 'Llista d\'entrades';
 $string['displayformatcontinuous'] = 'Continuat sense autor';
-$string['displayformatdefault'] = 'Simple, estil diccionari';
+$string['displayformatdictionary'] = 'Simple, tipus diccionari';
+$string['displayformatencyclopedia'] = 'Enciclopèdia';
+$string['displayformatentrylist'] = 'Llista d\'entrades';
+$string['displayformatfaq'] = 'PMF';
+$string['displayformatfullwithauthor'] = 'Complet amb autor';
+$string['displayformatfullwithoutauthor'] = 'Complet sense autor';
 $string['displayformats'] = 'Formats de visualització';
 $string['displayformatssetup'] = 'Configuració dels formats de visualització';
 $string['duplicateentry'] = 'Entrada duplicada';
+$string['editalways'] = 'Edita sempre';
 $string['editcategories'] = 'Edita categories';
 $string['editentry'] = 'Edita entrada';
 $string['editingcomment'] = 'S\'està editant un comentari';

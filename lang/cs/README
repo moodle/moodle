@@ -66,8 +66,13 @@ diakritiky.
 Pro pøeklad pou¾íváme na¹e oblíbené editory ViM a PSPad. 
 
 
-NEJDÙLE®ITÌJ©Í ZMÌNY VE VERZI 1.2
+DÙLE®ITÉ ZMÌNY
 
+R1.4
+* Modul "Dotazník" (Survey) pøejmenován na "Prùzkum"
+* Modul "Hlasování" (Choice) pøejmenován na "Anketa"
+
+R1.2
 * Dosavadní modul "Písemná práce" (Journal) se zmìnil na "Poznámky"
 * Modul "Zdroj" (Resource) je od nynìj¹ka pøekládán jako "Studijní materiál"
 

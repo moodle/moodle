@@ -13,12 +13,12 @@ $string['confirmclosure'] = 'Je gaat de dialoog met $a sluiten. Gesloten dialoge
 $string['deleteafter'] = 'Verwijder gesloten dialogen na (dagen)';
 $string['dialogueclosed'] = 'Dialoog gesloten';
 $string['dialogueintro'] = 'Inleiding dialoog';
-$string['dialoguemail'] = '$a->userfrom heeft een niewe boodschap in je dialoog gepost voor \'$a->dialoog\'
+$string['dialoguemail'] = '$a->userfrom heeft een nieuwe boodschap in je dialoog gepost voor \'$a->dialoog\'
 Je kunt het zien verschijnen bij je dialoogboodschap:
 $a->url';
 $string['dialoguemailhtml'] = '$a->userfrom heeft een nieuwe boodschap in je dialoog gepost voor \'<i>$a->dialogue</i>\'<br/><br/>
 Je kunt zien dat het aan jouw <a href=\"$a->url\">dialoog</a> toegevoegd is ';
-$string['dialoguename'] = 'Dialoog naam';
+$string['dialoguename'] = 'Naam dialoog';
 $string['dialogueopened'] = 'Dialoog geopend met $a';
 $string['dialoguewith'] = 'Dialoog met $a';
 $string['everybody'] = 'Iedereen';
@@ -28,9 +28,9 @@ $string['maildefault'] = 'Standaard e-mail zenden';
 $string['modulename'] = 'Dialoog';
 $string['modulenameplural'] = 'Dialogen';
 $string['namehascloseddialogue'] = '$a heeft de dialoog gesloten';
-$string['newdialogueentries'] = 'Nieuwe dialoog items';
+$string['newdialogueentries'] = 'Nieuwe dialoogitems';
 $string['newentry'] = 'Nieuw item';
-$string['noavailablepeople'] = 'Er is niemand om een Dialoog mee te starten';
+$string['noavailablepeople'] = 'Er is niemand om een dialoog mee te starten';
 $string['nopersonchosen'] = 'Niemand gekozen';
 $string['nosubject'] = 'Geen onderwerp toegevoegd';
 $string['notextentered'] = 'Geen tekst ingevoegd';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 development (2004020903)
+      // assignment.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['allowresubmit'] = '再提出を許可する';
@@ -37,6 +37,9 @@ $string['submissionfeedback'] = '提出のフィードバック';
 $string['submissions'] = '提出';
 $string['submitassignment'] = 'フォームを使用して課題を提出する';
 $string['submitted'] = '提出';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['typeoffline'] = 'オフライン課題';
 $string['typeuploadsingle'] = 'ファイルのアップロード';
 $string['uploadbadname'] = '不正な文字がファイル名に含まれているため、このファイルはアップロード出来ません';

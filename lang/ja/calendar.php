@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 development (2004082300)
+      // calendar.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['calendar'] = 'カレンダー';
@@ -68,6 +68,9 @@ $string['shown'] = '表示中';
 $string['spanningevents'] = '進行中イベント';
 $string['sun'] = '日';
 $string['sunday'] = '日曜日';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['thu'] = '木';
 $string['thursday'] = '木曜日';
 $string['timeformat_12'] = '12時間(午前/午後)';

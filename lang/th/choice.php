@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.4 development (2004070800)
+      // choice.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['allowupdate'] = 'อนุญาตให้โพลล์มีการอัพเดท';
@@ -9,6 +9,7 @@ $string['choiceclose'] = 'จนกระทั่ง';
 $string['choicename'] = 'ชื่อของโพลล์';
 $string['choiceopen'] = 'เปิด';
 $string['choicetext'] = 'ข้อความ';
+$string['havetologin'] = 'คุณต้องล็อกอินเข้าสุ่ระบบก่อนที่จะออกความเห็นในโพลล์ได้';
 $string['modulename'] = 'โพลล์';
 $string['modulenameplural'] = 'โพลล์';
 $string['mustchooseone'] = 'คุณต้องตอบคำถามก่อนทำการบันทึกค่ะ ขณะนี้ยังไม่ได้บันทึกคำตอบ';

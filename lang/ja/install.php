@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
+      // install.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['admindirerror'] = '設定されたadminディレクトリが間違っています。';
@@ -95,6 +95,9 @@ $string['sessionautostart'] = 'セッション自動スタート';
 $string['sessionautostarterror'] = 'これは無効にしてください。';
 $string['sessionautostarthelp'] = '<p>Moodleはセッションサポートを必要とします。また、セッションサポート無しでは動作しません。.</p>
 <p>セッションは、php.iniファイルで使用可にすることが出来ます ... session.auto_startパラメータを探してください。</p>';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['wwwroot'] = 'ウェブアドレス';
 $string['wwwrooterror'] = 'ウェブアドレスが間違っています - インストール済みMoodleはここに表示されません。';
 
