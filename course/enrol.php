@@ -55,32 +55,44 @@
         }
     }
 
+    $strloginto = get_string("loginto", "", $course->shortname);
+    $strcourses = get_string("courses");
 
     if (! $site = get_site()) {
         error("Could not find a site!");
     }
 
     if ($course->password == "") {   // no password, so enrol
-        
+
         if (isguest()) {
             add_to_log($course->id, "course", "guest", "view.php?id=$course->id", "$USER->id");
+
+        } else if (empty($confirm)) {
+
+            print_header($strloginto, $course->fullname, "<a href=\".\">$strcourses</a> -> $strloginto"); 
+            echo "<br />";
+            notice_yesno(get_string("enrolmentconfirmation"), "enrol.php?id=$course->id&confirm=1", $CFG->wwwroot);
+            print_footer();
+            exit;
+
         } else {
+
             if (! enrol_student($USER->id, $course->id)) {
                 error("An error occurred while trying to enrol you.");
             }
             add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
-        }
 
-        $USER->student["$id"] = true;
+            $USER->student["$id"] = true;
         
-        if ($SESSION->wantsurl) {
-            $destination = $SESSION->wantsurl;
-            unset($SESSION->wantsurl);
-        } else {
-            $destination = "$CFG->wwwroot/course/view.php?id=$id";
+            if ($SESSION->wantsurl) {
+                $destination = $SESSION->wantsurl;
+                unset($SESSION->wantsurl);
+            } else {
+                $destination = "$CFG->wwwroot/course/view.php?id=$id";
+            }
+    
+            redirect($destination);
         }
-
-        redirect($destination);
     }
 
     $teacher = get_teacher($course->id);
@@ -88,10 +100,8 @@
         $password = "";
     }
 
-    $strloginto = get_string("loginto", "", $course->shortname);
-    $strcourses = get_string("courses");
 
-    print_header($strloginto, $strloginto, "<A HREF=\".\">$strcourses</A> -> $strloginto", "form.password"); 
+    print_header($strloginto, $course->fullname, "<A HREF=\".\">$strcourses</A> -> $strloginto", "form.password"); 
 
     print_course($course); 
 

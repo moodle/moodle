@@ -272,6 +272,7 @@ $string['emailpasswordsent'] = "Thank you for confirming the change of password.
 <p>An email containing your new password has been sent to your address at <b>\$a->email</b>.
 <p>The new password was automatically generated - you might like to
 <a href=\$a->link>change your password</a> to something easier to remember.";
+$string['enrolmentconfirmation'] = "You are about to enroll yourself as a member of this course.<br />Are you sure you wish to do this?";
 $string['enrolmentkey'] = "Enrolment key";
 $string['enrolmentkeyfrom'] = "This course requires an 'enrolment key' - a one-time<BR>
 password that you should have received from \$a";
