@@ -26,20 +26,18 @@
 <H3><A NAME="requirements"></A>1. Requirements</H3>
 <blockquote>
   <p>Moodle is primarily developed in Linux using PHP, Apache and MySQL, and regularly 
-    tested under Windows XP and Mac OS X environments.</p>
+    tested with PostgreSQL and in Windows XP and Mac OS X environments.</p>
   <p>All you should need are:</p>
-  <ul>
+  <ol>
     <li>a working installation of <A HREF="http://www.php.net/">PHP</A> (version 
       4.1.0 or later), with the following features enabled (most PHP installations 
       these days will have all of these):
       <ul>
       <LI>JPEG and/or PNG image editing support via the <A HREF="http://www.boutell.com/gd/">GD library</A></li>
       <LI>Sessions support
-      <LI>File uploading
+      <LI>File uploading allowed
       </UL>
-    <li>a working database server (<A HREF="http://www.mysql.com/">MySQL</A> for 
-      now, but soon it will support PostgreSQL, MSSQL, Oracle, Interbase, Foxpro, 
-      Access, ADO, Sybase, DB2 or ODBC).</li>
+    <li>a working database server (<A HREF="http://www.mysql.com/">MySQL</A> or <A HREF="http://www.postgresql.org/">PostgreSQL</A>. (MSSQL, Oracle, Interbase, Foxpro, Access, ADO, Sybase, DB2 or ODBC are also theoretically supported but will require you to manually set up the database tables).</li>
   </ul>
   <p>On a Windows platform, the quickest way to satisfy these requirements is 
     to download <A HREF="http://www.foxserv.net/">FoxServ</A>, 
@@ -48,7 +46,7 @@
     images - you may have to edit php.ini and remove the comment (;) from this 
     line: 'extension=php_gd.dll'.</p>
   <p>On Mac OS X I highly recommend the <a href="http://fink.sourceforge.net/">fink</a> 
-    project.</p>
+    project as a way to download easily-maintainable packages for all of this.</p>
 </blockquote>
 <P>&nbsp;</P>
 <H3><A NAME="downloading"></A>2. Download</H3>
@@ -95,7 +93,7 @@
     such as course documents and user pictures.</p>
 
   <p>Create a directory for this purpose somewhere.  For security, it's best that 
-     this directory is NOT accessible via the web.  The easiest way to do this
+     this directory is NOT accessible directly via the web.  The easiest way to do this
      is to simply locate it OUTSIDE the web directory, otherwise protect it 
      by creating a file in the data directory called .htaccess, containing this line:
   <blockquote>
@@ -106,6 +104,13 @@
      the web server software (eg Apache) has permission to write 
     to this directory. On Unix machines, this means setting the owner of the directory 
     to be something like &quot;nobody&quot; or &quot;apache&quot;.</p>
+
+  <p>On many shared hosting servers, you will probably need to restrict all file access 
+     to your "group" (to prevent other webhost customers from looking at or changing your files), 
+     but provide full read/write access to everyone else (which will allow the web server
+     to access your files).  Speak to your server administrator if you are having 
+     trouble setting this up securely.</p>
+
 </blockquote>
 <P>&nbsp;</P>
 <H3><A NAME="database"></A>5. Create a database</H3>
@@ -117,7 +122,7 @@
     the password then your whole database system would be at risk, rather than 
     just one database.
 </p>
-  <p>eg for MySQL: </p>
+  <p>Example command lines for MySQL: </p>
   <PRE>
    # mysql -u root -p
    > CREATE DATABASE moodle; 
@@ -126,13 +131,17 @@
    > quit 
    # mysqladmin -p reload
 </PRE>
+  <p>Example command lines for PostgreSQL: </p>
+  <PRE>
+   # su - postgres
+   > psql -c "create user moodleuser createdb;" template1
+   > psql -c "create database moodle;" -U moodleuser template1
+   > psql -c "alter user moodleuser nocreatedb;" template1
+</PRE>
   <p>(For MySQL I highly recommend the use of <a href="http://phpmyadmin.sourceforge.net/">phpMyAdmin</a> 
     to manage your databases).</p>
-<p>Note that Moodle currently does  not yet support table name prefixes, and works best with a whole 
-   database to itself.  If you do want to install Moodle in a database that already contains
-   tables, and are SURE that Moodle tables will not conflict with any tables
-   that you already have installed, then you can call this script in your moodle 
-   installation: admin/forcetables.php</p>
+<p>As of version 1.0.8, Moodle now supports table prefixes, and so can safely share 
+   a database with tables from other applications.</p>
 </blockquote>
 <P>&nbsp;</P>
 <H3><A NAME="webserver" id="webserver"></A>6. Check your web server settings</H3>
@@ -193,7 +202,8 @@ php_value post_max_size 2M
   <p>To start with, make a copy of config-dist.php and call it config.php. We 
     do this so that your config.php won't be overwritten in case you upgrade Moodle 
     later on. </p>
-  <p>Edit config.php to specify the database details that you just defined, as 
+  <p>Edit config.php to specify the database details that you just defined (including 
+    a table prefix - notice this is REQUIRED for PostgreSQL), as 
     well as the site address, file system directory and data directory. 
     The config file has detailed directions.</p>
   <p>For the rest of this installation document we will assume your site is at: 
