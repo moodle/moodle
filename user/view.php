@@ -29,12 +29,16 @@
     $personalprofile = get_string("personalprofile");
     $participants = get_string("participants");
 
+    $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
+
     if ($course->category) {
         print_header("$personalprofile: $fullname", "$personalprofile: $fullname", 
                      "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> -> 
-                      <A HREF=\"index.php?id=$course->id\">$participants</A> -> $fullname", "");
+                      <A HREF=\"index.php?id=$course->id\">$participants</A> -> $fullname",
+                      "", "", true, "&nbsp;", $loggedinas);
     } else {
-        print_header("$course->fullname: $personalprofile: $fullname", "$course->fullname", "$fullname", "");
+        print_header("$course->fullname: $personalprofile: $fullname", "$course->fullname", 
+                     "$fullname", "", "", true, "&nbsp;", $loggedinas);
     }
 
     if ($course->category and ! isguest() ) {

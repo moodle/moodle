@@ -19,13 +19,15 @@
 
     add_to_log($course->id, "user", "view all", "index.php?id=$course->id", "");
 
+    $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
+
     if ($course->category) {
         print_header("$course->shortname: ".get_string("participants"), "$course->fullname",
                      "<A HREF=../course/view.php?id=$course->id>$course->shortname</A> -> ".
-                      get_string("participants"), "");
+                      get_string("participants"), "", "", true, "&nbsp;", $loggedinas);
     } else {
         print_header("$course->shortname: ".get_string("participants"), "$course->fullname", 
-                      get_string("participants"), "");
+                      get_string("participants"), "", "", true, "&nbsp;", $loggedinas);
     }
 
     $string->email       = get_string("email");
