@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.9 development (2003032400)
+      // auth.php - created with Moodle 1.0.9 development (2003042701)
 
 
 $string['auth_dbdescription'] = "Tämä moduli tarkistaa ulkoisen tietokannan taulusta käyttäjätunnuksen ja salasanan.";
@@ -39,6 +39,8 @@ $string['auth_ldapdescription'] = "Tämä tapa tarjoaa käyttäjätunnistuksen LDAP-p
 Seuraavilla kerroilla ainostaan tunnus ja salasana tarkistetaan.";
 $string['auth_ldapextrafields'] = "Nämä kentät ovat valinnaisia. Voit asettaa Moodlen hakemaan käyttäjätietoja LDAP-hakemistosta. Käyttäjä voi joka tapauksessa muuttaa omia henkilötietojaan jälkeenpäin.";
 $string['auth_ldaptitle'] = "Käytä LDAP-palvelinta";
+$string['auth_manualdescription'] = "Käyttäjät eivät voi itse luoda omia tunnuksiaan. Kaikki käyttäjät pitää luoda käsin pääkäyttäjien toimesta.";
+$string['auth_manualtitle'] = "Käsinluonti";
 $string['auth_nntpdescription'] = "Tämä tapa käyttää NNTP-palvelinta käyttäjän tunnistukseen.";
 $string['auth_nntphost'] = "NNTP-palvelimen osoite. Käytä IP-numeroa, älä domainnimeä.";
 $string['auth_nntpport'] = "Palvelimen portti (119 , yleensä)";

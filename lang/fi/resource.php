@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.0.8 dev (2002123000)
+      // resource.php - created with Moodle 1.0.9 development (2003042702)
 
 
 $string['addresource'] = "Lisää aineisto";
@@ -16,7 +16,7 @@ $string['neverseen'] = "Lukematta";
 $string['note'] = "Huomaa";
 $string['notefile'] = "Lisätäksesi tiedostoja kurssille (jotta ne näkysivät tässä listassa) käytä 
 <A HREF=\$a >Tiedostot-</A>työkalua.";
-$string['notypechosen'] = "Sinun pitää valita luettavan aineiston tyyppi tyyppi.  Kaytä selaimen \"back\"-nappia.";
+$string['notypechosen'] = "Sinun pitää valita luettavan aineiston tyyppi tyyppi.  Kaytä selaimen \\\"back\\\"-nappia.";
 $string['resourcetype'] = "Aineiston tyyppi";
 $string['resourcetype1'] = "Viittaus";
 $string['resourcetype2'] = "Web-sivu";

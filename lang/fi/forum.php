@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 development (2003041600)
+      // forum.php - created with Moodle 1.0.9 development (2003042701)
 
 
 $string['addanewdiscussion'] = "Lisää uusi keskustelu";
@@ -52,6 +52,7 @@ $string['modethreaded'] = "Näytä vastaukset säikeittäin";
 $string['modulename'] = "Foorumi";
 $string['modulenameplural'] = "Foorumit";
 $string['more'] = "lisää";
+$string['movethisdiscussionto'] = "Siirrä tämä keskustelu ...";
 $string['namenews'] = "Uutiset foorumi";
 $string['namesocial'] = "Keskustelu foorumi";
 $string['nameteacher'] = "Opettajain foorumi";

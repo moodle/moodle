@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003041600)
+      // moodle.php - created with Moodle 1.0.9 development (2003042701)
 
 
 $string['action'] = "Tapahtuma";
@@ -66,6 +66,7 @@ $string['configintro'] = "T‰ll‰ sivulla voit m‰‰ritell‰ joukon asetuksia , jotka
 $string['configlang'] = "Valitse oletuskieli koko sivustolle, k‰ytt‰j‰t vovat myˆhemmin halutessaan muuttaa asetusta.";
 $string['configlangdir'] = "Kirjoitus suunta ylleens‰ vasemmalta oikelle , mutta esim arabia ja heprea ovat poikkeuksia t‰h‰n.";
 $string['configlocale'] = "P‰iv‰m‰‰rien muotoilu tehd‰‰n t‰m‰n tiedon mukaan. Annetun locale-koodin pit‰‰ olla palvelimen tuntema (Esim. fi_FI).  Jos et ole varma, j‰t‰ t‰m‰ tyhj‰ksi.";
+$string['configloglifetime'] = "T‰ss‰ m‰‰ritet‰‰n kuinka pitk‰lt‰ aikav‰lilt‰ haluat  tallentaa k‰ytt‰jien toimet. M‰‰ritetty‰ aikaa vanhemmat tapahtumat poistetaan automaattisesti.  Yleens‰ on hyv‰ s‰ilytt‰‰ kaikki tapahtumat, mutta jos palvelimesi alkaa hyyty‰ isojen tapahtuma-lokien kanssa, voit haluta alentaa s‰ilytysaikaa.";
 $string['configlongtimenosee'] = "Opiskelijat jotka eiv‰t ole kirjaantuneet pitk‰‰n aikaan, poistetaan kursseilta automaattisesti. M‰‰rittele t‰ss‰ haluamasi aika.";
 $string['configmaxeditingtime'] = "M‰‰ritt‰‰ kauanko foorumiin l‰hettty‰ viesti‰ voidaan muokata.";
 $string['configproxyhost'] = "Jos <b>palvelimen</b> pit‰‰ k‰ytt‰‰ v‰lityspalvelinta internetyhteyksiin , m‰‰rit‰ palvelin ja portti t‰ss‰.";
@@ -181,6 +182,7 @@ $string['followingrequired'] = "Seuraavat tiedot pit‰‰ t‰ytt‰‰";
 $string['forgotten'] = "Unohditko salasanasi?";
 $string['format'] = "Muotoilu";
 $string['formathtml'] = "HTML-muoto";
+$string['formatplain'] = "Pelkk‰ teksti-muoto";
 $string['formatsocial'] = "Keskustelu";
 $string['formattext'] = "Automaattimuotoilu";
 $string['formattexttype'] = "Muotoilu";
@@ -334,6 +336,7 @@ $string['namesocial'] = "osio";
 $string['nametopics'] = "otsikko";
 $string['nameweeks'] = "viikko";
 $string['never'] = "Ei koskaan";
+$string['neverdeletelogs'] = "ƒl‰ poista tapahtumia";
 $string['new'] = "Uusi";
 $string['newaccount'] = "Uusi tunnus";
 $string['newpassword'] = "Uusi salasana";
