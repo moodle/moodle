@@ -112,6 +112,18 @@ td.spacer {
 	width : 200px;
 }
 
+.rebar .fontsize  {
+	font-size: 11px;
+	margin-top: 1; margin-bottom: 1;
+	width : 60px;
+}
+
+.rebar .fontstyle  {
+	font-size: 11px;
+	margin-top: 1; margin-bottom: 1;
+	width : 80px;
+}
+
 .rebar option { border: 5px solid red; }
 
 .rebar span.field {
