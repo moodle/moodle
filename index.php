@@ -110,7 +110,6 @@
                 print_section_add_menus($SITE, $section->section, $modnames);
             }
             print_simple_box_end();
-            print_spacer(10);
         }
     }
 
