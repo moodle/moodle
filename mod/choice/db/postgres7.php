@@ -42,7 +42,7 @@ function choice_upgrade($oldversion) {
         modify_database('','CREATE INDEX prefix_choice_answers_userid_idx ON prefix_choice_answers (userid);');
     }
     if ($oldversion < 2005033000){
-        if (execute_sql("CREATE TABLE {$CFG->prefix}choice_options (id SERIAL PRIMARY KEY, choiceid integer NOT NULL default '0', `text` TEXT, timemodified integer NOT NULL default '0');") ) {
+        if (execute_sql("CREATE TABLE {$CFG->prefix}choice_options (id SERIAL PRIMARY KEY, choiceid integer NOT NULL default '0', text TEXT, timemodified integer NOT NULL default '0');") ) {
             execute_sql("CREATE INDEX {$CFG->prefix}choice_options_choice_idx ON {$CFG->prefix}choice_options (choiceid);");
 
             table_column('choice_answers', 'choice', 'choiceid', 'integer', '10', 'unsigned', 0, 'not null');
