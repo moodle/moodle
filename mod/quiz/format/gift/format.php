@@ -1,12 +1,9 @@
 <?php // $Id$
 //
 ///////////////////////////////////////////////////////////////
-// GIFT
-//
-// The GIFT import filter is an easy to use method for teachers 
-// writing questions as a text file. It supports true-false, 
-// short answer, multiple-choice and numerical questions, as well 
-// as insertion of a blank line for the missing word format.
+// The GIFT import filter was designed as an easy to use method 
+// for teachers writing questions as a text file. It supports most
+// question types and the missing word format.
 //
 // Multiple Choice / Missing Word
 //     Who's buried in Grant's tomb?{~Grant ~Jefferson =no one}
@@ -17,39 +14,16 @@
 //     Who's buried in Grant's tomb?{=no one =nobody}
 // Numerical
 //     When was Ulysses S. Grant born?{#1822:5}
+// Matching
+//     Match the following countries with their corresponding
+//     capitals.{=Canada->Ottawa =Italy->Rome =Japan->Tokyo}
 //
 // Comment lines start with a double backslash (//). 
 // Optional question names are enclosed in double colon(::). 
 // Answer feedback is indicated with hash mark (#).
 // Percentage answer weights immediately follow the tilde (for
 // multiple choice) or equal sign (for short answer and numerical),
-// and are enclosed in percent signs (% %). Below are more
-// complicated examples with various options and formatting styles.
-// 
-//     ::Grant's Tomb::Grant is {
-//         ~buried#No one is buried there.
-//         =entombed#Right answer!
-//         ~living#We hope not!
-//     } in Grant's tomb.
-//
-//     Difficult multiple choice question.{
-//         ~wrong answer           #comment on wrong answer
-//         ~%50%half credit answer #comment on answer
-//         =full credit answer     #well done!}
-//
-//     ::Jesus' hometown (Short answer ex.):: Jesus Christ was from {
-//         =Nazareth#Yes! That's right!
-//         =%75%Nazereth#Right, but misspelled.
-//         =%25%Bethlehem#He was born here, but not raised here.
-//     }.
-//
-//     //comment about questions below (this line ignored by filter)
-//     ::Numerical example::
-//     When was Ulysses S. Grant born? {#
-//         =1822:0      #Correct! 100% credit
-//         =%50%1822:2  #He was born in 1822.
-//                       You get 50% credit for being close.
-//      }
+// and are enclosed in percent signs (% %). See docs and examples.txt for more.
 // 
 // This filter was written through the collaboration of numerous 
 // members of the Moodle community. It was originally based on 
@@ -164,10 +138,15 @@ class quiz_file_format extends quiz_default_format {
         if ($answertext{0} == "#"){
             $question->qtype = NUMERICAL;
 
-        } elseif (strstr($answertext, "~") !== false)  {
+        } elseif (strpos($answertext, "~") !== false)  {
             // only Multiplechoice questions contain tilde ~
             $question->qtype = MULTICHOICE;
     
+        } elseif (strpos($answertext, "=")  !== false 
+              AND strpos($answertext, "->") !== false) {
+              // only Matching contains both = and ->
+            $question->qtype = MATCH;
+
         } else { // either TRUEFALSE or SHORTANSWER
     
             // TRUEFALSE question check
@@ -238,6 +217,48 @@ class quiz_file_format extends quiz_default_format {
                     $question->fraction[$key] = $answer_weight;
                     $question->feedback[$key] = $this->commentparser($answer); // commentparser also removes comment from $answer
                     $question->answer[$key]   = addslashes($answer);    
+                }  // end foreach answer
+    
+                $question->defaultgrade = 1;
+                $question->image = "";   // No images with this format
+                return $question;
+                break;
+
+            case MATCH:
+                $answers = explode("=", $answertext);
+                if (isset($answers[0])) {
+                    $answers[0] = trim($answers[0]);
+                }
+                if (empty($answers[0])) {
+                    array_shift($answers);
+                }
+    
+                $countanswers = count($answers);
+                if ($countanswers < 3) {
+                    if ($this->displayerrors) {
+                        echo "<P>$text<P>Found markers for Matching format 
+                            (= and ->), but too few answers -- must be at least 3.<br />
+                            Found <u>$countanswers</u> answers in answertext.";
+                    }
+                    return false;
+                    break;
+                }
+    
+                foreach ($answers as $key => $answer) {
+                    $answer = trim($answer);
+                    if (strpos($answer, "->") <= 0) {
+                        if ($this->displayerrors) {
+                        echo "<P>$text<P>Error processing Matching question.<br />
+                            Improperly formatted answer: $answer";
+                        }
+                        return false;
+                        break 2;
+                    }
+
+                    $marker = strpos($answer,"->");
+                    $question->subquestions[$key] = addslashes(trim(substr($answer, 0, $marker)));
+                    $question->subanswers[$key]   = addslashes(trim(substr($answer, $marker+2)));
+
                 }  // end foreach answer
     
                 $question->defaultgrade = 1;

@@ -2,7 +2,7 @@
 
 <p>GIFT is the most comprehensive import format available for importing 
    Moodle quiz questions from a text file.  It supports Multiple-Choice, 
-   True-False, Short Answer and Numerical questions, as well as insertion 
+   True-False, Short Answer, Matching and Numerical questions, as well as insertion 
    of a _____ for the Missing Word format.  Various question-types can be 
    mixed in a single text file, and the format also supports line comments, 
    question names, feedback and percentage-weight grades.</p>
@@ -39,7 +39,23 @@
 
      The sun rises in the east.{T}</pre>
 
-        <p><u>Numerical:</u><br>
+        <p><u>Matching:</u><br />
+        Matching pairs begin with an equal sign (=) and are seperated by this symbol "->". There must be at least three matching pairs.</p>
+
+<pre>     Matching Question. {
+         =subquestion1 -> subanswer1
+         =subquestion2 -> subanswer2
+         =subquestion3 -> subanswer3
+         }
+     
+     Match the following countries with their corresponding capitals. {
+         =Canada -> Ottawa
+         =Italy  -> Rome
+         =Japan  -> Tokyo
+         =India  -> New Delhi
+         }</pre>
+<p>Matching questions do not support feedback or percentage answer weights.</p>
+        <p><u>Numerical:</u><br />
             The answer section for Numerical questions must start with a number sign (#). Numerical answers can include an error margin, which is written following the correct answer, seperated by a colon. So for example, if the correct answer is anything between 1.5 and 2.5, then it would be written as follows <u>{#2:0.5}</u>. This indicates that 2 with an error margin of 0.5 is correct (i.e., the span from 1.5 to 2.5). If no error margin is specified, it will be assumed to be zero.</p>
         <pre>     When was Ulysses S. Grant born? {#1822}
 
@@ -96,7 +112,7 @@ within percent signs (e.g., %50%). This option can be combined with feedback com
      =%25%Bethlehem#He was born here, but not raised here.}</pre>
 <p>Note that the last two examples are essentially the same question, first as multiple choice and then as short answer.</p>
 
-<p><small>Note that it is possible to specify percentage answer weights that are NOT available through the browser interface. Such answer-weights will calculate correctly (according to the value assigned when imported), and will appear normal to students taking the test. But such answer-weights will not display correctly to teachers when editing them through Moodle's Edit Question interface. The pull-down menu only allows certain fixed values, and if the answer-weight does not exactly match one of those predetermined values, then it will not display correctly. If you edit such a question through the browser interface, the answer weight will change to that displayed.</small></p>
+<p><font size="-1">Note that it is possible to specify percentage answer weights that are NOT available through the browser interface. Such answer-weights will calculate correctly (according to the value assigned when imported), and will appear normal to students taking the test. But such answer-weights will not display correctly to teachers when editing them through Moodle's Edit Question interface. The pull-down menu only allows certain fixed values, and if the answer-weight does not exactly match one of those predetermined values, then it will not display correctly. If you edit such a question through the browser interface, the answer weight will change to that displayed.</font></p>
 
 <p><u>Multiple Answers:</u><br />
 The Multiple Answers option is used for multiple choice questions when two or more answers must be selected in order to obtain full credit. The multiple answers option is enabled by assigning partial answer weight to multiple answers, while allowing no single answer to receive full credit.</p>
@@ -123,4 +139,4 @@ The Multiple Answers option is used for multiple choice questions when two or mo
 <p></p>
 <h3>CREDITS</h3>
 <p>This filter was written through the collaboration of numerous members of the Moodle community. It was originally based on the missingword format, which included code from Martin Dougiamas, Thomas Robb and others. Paul Tsuchido Shew wrote this filter in December 2003 incorporating community suggestions for a more robust question format. The name was conceived as an acronym for  &quot;General Import Format Technology&quot; or something like that, but it's too long for a simple filter like this, so it just GIFT.</p>
-        <p><small>GIFT documentation by Paul Tsuchido Shew, 10 Jan 2004.</small></p>
+        <p><font size="-1">GIFT documentation by Paul Tsuchido Shew, 13 Jan 2004.</font></p>

@@ -52,6 +52,21 @@ The sun rises in the east.{T}
 
 // ===Numerical===
 
+Matching Question. {
+    =subquestion1 -> subanswer1
+    =subquestion2 -> subanswer2
+    =subquestion3 -> subanswer3
+    }
+    
+Match the following countries with their corresponding capitals. {
+    =Canada -> Ottawa
+    =Italy  -> Rome
+    =Japan  -> Tokyo
+    =India  -> New Delhi
+    }
+
+// ===Numerical===
+
 When was Ulysses S. Grant born? {#1822}
 
 What is the value of pi (to 3 decimal places)? {#3.1415:0.0005}.
@@ -121,6 +136,23 @@ What two people are entombed in Grant's tomb? {
 
 //-----------------------------------------//
 //     EXAMPLES FROM gift/format.php
+//-----------------------------------------//
+
+Who's buried in Grant's tomb?{~Grant ~Jefferson =no one}
+
+Grant is {~buried =entombed ~living} in Grant's tomb.
+
+Grant is buried in Grant's tomb.{FALSE}
+
+Who's buried in Grant's tomb?{=no one =nobody}
+
+When was Ulysses S. Grant born?{#1822:5}
+
+Match the following countries with their corresponding
+capitals.{=Canada->Ottawa =Italy->Rome =Japan->Tokyo}
+
+//-----------------------------------------//
+//     MORE COMPLICATED EXAMPLES
 //-----------------------------------------//
 
 ::Grant's Tomb::Grant is {
