@@ -1621,14 +1621,15 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
     $maxdisplay = 20;
 
     if ($totalcount > $perpage) {
+        echo "<center>";
+        echo "<p>".get_string("page").":";
         $lastpage = ceil($totalcount / $perpage);
         if ($page > 15) {
             $startpage = $page - 10;
+            echo "&nbsp...";
         } else {
             $startpage = 0;
         }
-        echo "<center>";
-        echo "<p>".get_string("page").":";
         $currpage = $startpage;
         $displaycount = 0;
         while ($displaycount < $maxdisplay and $currpage < $lastpage) {
