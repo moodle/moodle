@@ -24,6 +24,7 @@ $string[createaccount] = "Create my new account";
 $string[createuserandpass] = "Create a new username and password to log in with";
 $string[currentlocaltime] = "your current local time";
 $string[delete] = "Delete";
+$string[editcoursesettings] = "Edit course settings";
 $string[editmyprofile] = "Edit my profile";
 $string[email] = "Email address";
 $string[emailformat] = "Email format";
