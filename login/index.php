@@ -20,6 +20,10 @@
             notify("Could not create guest user record !!!");
         }
     }
+
+    if ($CFG->auth == 'cas' && !empty($CFG->cas_enabled)) {
+        require($CFG->dirroot.'/auth/cas/login.php');
+    }
     
     //Define variables used in page
     if (!$site = get_site()) {
