@@ -146,7 +146,7 @@ remembering to hit the "Save changes" button at the end of each form.</li>
     <li>It's OK to leave strings empty - Moodle will simply use the
 parent language for that string instead. You can define the parent
 language in moodle.php, otherwise English is always used by default. </li>
-    <li>A quick way to see all the missing strings is by using the button to "Check for missing strings".<br />
+    <li>A quick way to see all the missing strings is by using the button to "Check for missing strings". Leave the untranslated strings completely empty or this handy tool won't work.<br />
       <br />
     </li>
 
@@ -170,7 +170,8 @@ the en language pack and paste it on the same location in your own
 language pack. Then use a plain text editor to translate the file,
 making sure not to modify any code in the file (there usually is no
 code, just HTML-tags). (DON'T USE A WORDPROCESSOR to write the
-help-files because these programs add too much rubbish to the files).</p>
+help-files because these programs add too much rubbish to the files).
+<br /><b>Don't leave untranslated help files in your language pack.</b></p>
 
 <p style="margin-left: 80px;">Take care to write the helpfiles XHTML-compliant. This means in short:</p>
 <ul style="margin-left: 80px;">
@@ -191,7 +192,7 @@ help-files because these programs add too much rubbish to the files).</p>
 <p style="margin-left: 80px;">Clicking on "Check for missing strings"
 in the language administration screen will also show you what files you
 are missing. If you have missing files then Moodle will use the parent
-language instead, so there is no need to leave copies of <strong>untranslated</strong> help files in your language pack.</p>
+language instead, so don't leave copies of <strong>untranslated</strong> help files in your language pack or this handy tool won't work.</p>
 
 
 <p>&nbsp;</p>
@@ -212,7 +213,17 @@ Your interface language will be available in future versions of Moodle.<br />
 </p>
 
 
-<p>&nbsp;</p>
+<p  style="margin-left: 40px;">Checklist you can use before committing::</p>
+<ul type="circle" style="margin-left: 80px;">
+<li>No empty files?</li>
+<li>No untranslated files or strings?</li>
+<li>Help files not edited with a wordprocessor?</li>
+<li>README file contains language, name and emailadress of the translator?</li>
+<li>Foldername is the right language code (check moodle\lib\languages.php)?</li>
+<li>Does the language pack run errorfree on a testsite?</li>
+<li>When "thislanguage" contains other then latin letters, is it written in NCR notation?</li>
+<li>Are the strings and files XHTML compliant?</li>
+</ul></p>
 
 
 <h2>Maintenance of a standard language pack<br />
