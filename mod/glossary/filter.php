@@ -108,9 +108,6 @@
                 }
             }
         }
-        /// <nolink> tags removed for XHTML compatibility
-        $text = str_replace('<nolink>', '', $text);
-        $text = str_replace('</nolink>', '', $text);
 
         return $text;
     }
