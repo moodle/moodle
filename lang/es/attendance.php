@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.3 development (2004042600)
+      // attendance.php - created with Moodle 1.3 Beta + (2004051600)
 
 
 $string['absentlong'] = 'Ausente';
@@ -57,6 +57,7 @@ $string['takeroll'] = '¿Pasar lista este día?';
 $string['tardiesperabsence'] = '¿Cuántas llegadas tarde suman una falta de asistencia?';
 $string['tardylong'] = 'Retrasado';
 $string['tardyshort'] = 'R';
+$string['teacheredit'] = 'Registrar asistencia';
 $string['thursday'] = 'Jue';
 $string['tuesday'] = 'Mar';
 $string['viewall'] = 'Ver todos los registros de asistencia';

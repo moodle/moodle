@@ -19,6 +19,7 @@ $string['configpopuptoolbar'] = 'Las ventanas \"popup\", ¿deben por defecto most
 $string['configpopupwidth'] = '¿Qué ancho deben tener por defecto las ventanas \"popup\"?';
 $string['configwebsearch'] = 'Cuando agregue una URL como página wueb o como enlace, esta ubicación se ofrece como un sitio para que el usuario busque la URL que desea.';
 $string['directlink'] = 'Enlace directo a este archivo';
+$string['directoryinfo'] = 'Se mostrarán todos los archivos en el directorio elegido.';
 $string['editingaresource'] = 'Editar material';
 $string['example'] = 'Ejemplo';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. En: K. Tobin (Ed.). The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
@@ -29,6 +30,7 @@ $string['fetchservererror'] = 'Ha ocurrido un problema con el servidor remoto al
 $string['filename'] = 'Nombre del archivo';
 $string['fulltext'] = 'Texto completo';
 $string['htmlfragment'] = 'Fragmento HTML';
+$string['maindirectory'] = 'Directorio principal de archivos';
 $string['modulename'] = 'Material';
 $string['modulenameplural'] = 'Materiales';
 $string['neverseen'] = 'Nunca visto';
@@ -59,5 +61,6 @@ $string['resourcetype5'] = 'Página web (se verá fuera)';
 $string['resourcetype6'] = 'Texto HTML';
 $string['resourcetype7'] = 'Programa';
 $string['resourcetype8'] = 'Texto Wiki';
+$string['resourcetype9'] = 'Directorio';
 
 ?>
