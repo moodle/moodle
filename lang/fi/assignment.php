@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 development (2003121500)
+      // assignment.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['allowresubmit'] = 'Salli uudelleenlähetys';
@@ -22,6 +22,7 @@ $string['description'] = 'Kuvaus';
 $string['duedate'] = 'Palautuspvm.';
 $string['duedateno'] = 'Ei palautuspäivämäärää';
 $string['early'] = '$a ennen';
+$string['existingfiledeleted'] = 'Tiedosto on poistettu: $a';
 $string['failedupdatefeedback'] = 'Palautteen tallentaminen epäonnistui käyttäjälle $a';
 $string['feedback'] = 'Palaute';
 $string['feedbackupdated'] = 'Palaute päivitetty oppilaalle $a';
