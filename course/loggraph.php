@@ -28,6 +28,7 @@
         }
     }
 
+    $logs = array();
 
     $timenow = time();
 
