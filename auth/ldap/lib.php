@@ -316,13 +316,13 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
 ///                         blinding fast inserts -- but test it: you may hit mysqld's 
 ///                         max_allowed_packet limit.
 
-    global $CFG ;
+    global $CFG,$db ;
     auth_ldap_init();
     $ldapusers     = auth_get_users('*', true); //list all but created users from ldap
 
     if (!$unsafe_optimizations) { 
         //NORMAL SYNRONIZATION ROUTINE STARTS
-        
+        $db->SetFetchMode(ADODB_FETCH_ASSOC) ; 
         if ($firstsync) {
             //fill idnumbers 
             $users = get_records(user, 'auth', 'ldap', '', 'id, username', '');
@@ -358,15 +358,16 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
         //make information available with idnumber
         $moodleldapusers = array(); //all users in moodle db
 
-        foreach ($users as $user){
-            $moodleldapusers[$user->idnumber]= $user;
+        foreach ($users as $id=>$info){
+            $moodleldapusers[$info->idnumber]= $info;
+            $moodleldapusers[$info->idnumber]->id=$id;
         }    
 
         unset($users); //not needed anymore
         
         //get attributemappings
         $attrmap = auth_ldap_attributes();
-        $updatelocals = array();
+        $updatelocals = array('username');
         $updateremotes = array();
         foreach ($attrmap as $key=>$value) {
             if (isset($CFG->{'auth_user_'.$key.'_updatelocal'}) && $CFG->{'auth_user_'.$key.'_updatelocal'}  ) {
@@ -389,8 +390,8 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
                     $user->idnumber = bin2hex($user->idnumber);
                 } 
                 $idnumber = $user->idnumber;
-
-                if (isset($moodleldapusers[$idnumber])) {
+                
+                if (array_key_exists($idnumber, $moodleldapusers)) {
                     $arraytoupdate = &$updateusers;
                     $userinfo = $moodleldapusers[$idnumber];
                     unset($moodleldapusers[$idnumber]); 
@@ -410,10 +411,11 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
                 $userinfo->timemodified = time();
                 $userinfo->confirmed = 1;
                 $userinfo->deleted = 0;
+                $userinfo->auth = 'ldap';
                 
                 //store userinfo to selected array
                 $arraytoupdate[$idnumber] = $userinfo;
-
+               
             } else {
                //cannot sync remoteuser  without idumber
                echo 'Cannot sync remote user to moodle '.$user->dn." without idnumber field\n";
@@ -422,6 +424,7 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
         
         //update local users
         foreach ($updateusers as $user) {
+
             if (update_record('user', $user)) {
                 echo 'Updated user record '.$user->username."\n";
             } else {
@@ -431,31 +434,32 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
         }    
 
         //add new users
-        foreach ($updateusers as $user) {
+        foreach ($newusers as $user) {
             if (insert_record('user', $user, $false)) {
                 echo 'Inserted user record'.$user->username."\n";
             } else {
                 echo 'Cannot insert user record'.$user->username."\n";
+                print_r($user);
             }
         }    
 
         //remove old users
-        foreach ($moodleldapusers as $remove) {
+        foreach ($moodleldapusers as $user) {
             //following is copy pasted from admin/user.php
             //maybe this should moved to function in lib/datalib.php
-            unset($updateuser);
+            unset($remove);
             $remove->id = $user->id;
             $remove->deleted = "1";
             $remove->username = "$user->email.".time();  // Remember it just in case
             $remove->email = "";               // Clear this field to free it up
             $remove->timemodified = time();
             if (update_record("user", $remove)) {
-                 unenrol_student($remove->id);  // From all courses
-                 remove_teacher($remove->id);   // From all courses
-                 remove_admin($remove->id);
-                 notify(get_string("deletedactivity", "", fullname($remove, true)) );
+                 unenrol_student($user->id);  // From all courses
+                 remove_teacher($user->id);   // From all courses
+                 remove_admin($user->id);
+                 notify(get_string("deletedactivity", "", fullname($user, true)) );
              } else {
-                 notify(get_string("deletednot", "", fullname($remove, true)));
+                 notify(get_string("deletednot", "", fullname($user, true)));
              }
              //copy pasted part ends
         }    
