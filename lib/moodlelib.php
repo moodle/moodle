@@ -442,7 +442,7 @@ function update_user_login_times() {
     global $USER;
 
     $USER->lastlogin = $user->lastlogin = $USER->currentlogin;
-    $USER->currentlogin = $user->currentlogin = time();
+    $USER->currentlogin = $user->lastaccess = $user->currentlogin = time();
 
     $user->id = $USER->id;
 
