@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004042600)
+      // moodle.php - created with Moodle 1.3 development (2004043001)
 
 
 $string['action'] = 'Actie';
@@ -441,9 +441,9 @@ $string['helpsummaries'] = 'Over deze opsommingen';
 $string['helptext'] = 'Hoe je een tekst kunt schrijven ';
 $string['helpwiki'] = 'Hoe je een Wiki-tekst kunt schrijven';
 $string['helpwriting'] = 'Schrijf zorgvuldig';
-$string['hiddentopics'] = 'Verborgen onderwerpen';
-$string['hiddentopicscollapsed'] = 'Verborgen onderwerpen worden samengeklapt getoond';
-$string['hiddentopicsinvisible'] = 'Verborgen onderwerpen zijn helemaal onzichtbaar';
+$string['hiddensections'] = 'Verborgen onderwerpen';
+$string['hiddensectionscollapsed'] = 'Verborgen secties worden samengeklapt getoond';
+$string['hiddensectionsinvisible'] = 'Verborgen secties worden helemaal niet getoond';
 $string['hide'] = 'Verberg';
 $string['hidepicture'] = 'Verberg afbeelding';
 $string['hits'] = 'Hits';
@@ -559,7 +559,7 @@ $string['missingurl'] = 'URL ontbreekt';
 $string['missingusername'] = 'Gebruikersnaam ontbreekt';
 $string['modified'] = 'Gewijzigd';
 $string['moduledeleteconfirm'] = 'Je staat op het punt de volledige module \'$a\' te verwijderen. Hierdoor zal alles wat met deze module is geassocieerd verdwijnen. Ben je ZEKER dat je wil verderdoen?';
-$string['moduledeletefiles'] = 'Alle gegevens in verband met de module \'$a->module\' is uit de databank verwijderd. Om deze verwijdering af te ronden (en om te verhinderen dat de module zich herinstalleerd), moet je nu de map $a->directory van je server verwijderen.';
+$string['moduledeletefiles'] = 'Alle gegevens in verband met de module \'$a->module\' zijn uit de databank verwijderd. Om deze verwijdering verder af te werken (en om te verhinderen dat de module zich herinstalleert), moet je nu de map $a->directory van je server verwijderen.';
 $string['modulesetup'] = 'Klaarmaken van de tabellen van de module';
 $string['modulesuccess'] = '$a tabellen zijn met succes klaar gemaakt';
 $string['moodleversion'] = 'Moodle versie';
