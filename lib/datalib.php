@@ -785,7 +785,6 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 }
 
 
-
 /**
 * Update a record in a table
 * 
@@ -1074,7 +1073,7 @@ function get_recent_enrolments($courseid, $timestart) {
 * @param	type description
 */
 function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, $recordsperpage=99999,
-                             $firstinitial="", $lastinitial="") {
+                             $firstinitial="", $lastinitial="", $group=NULL) {
 
     global $CFG;
 
@@ -1092,6 +1091,7 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
              $LIKE = "ILIKE";
     }
 
+    $groupmembers = '';
     $select = "s.course = '$courseid' AND s.userid = u.id AND u.deleted = '0' ";
 
     if ($firstinitial) {
@@ -1102,10 +1102,15 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
         $select .= " AND u.lastname $LIKE '$lastinitial%' ";
     }
 
+    if ($group) {
+        $groupmembers = ", {$CFG->prefix}groups_members gm ";
+        $select .= " AND u.id = gm.userid AND gm.groupid = '$group'";
+    }
+
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
                             u.email, u.city, u.country, u.lastlogin, u.picture, u.lang, u.timezone, s.timeaccess as lastaccess
                             FROM {$CFG->prefix}user u, 
-                                 {$CFG->prefix}user_students s
+                                 {$CFG->prefix}user_students s $groupmembers
                             WHERE $select
                             ORDER BY $sort $dir $limit");
 }
@@ -1115,7 +1120,7 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
 * 
 * @param	type description
 */
-function count_course_students($course, $search="", $firstinitial="", $lastinitial="") {
+function count_course_students($course, $search="", $firstinitial="", $lastinitial="", $group=NULL) {
 
     global $CFG;
 
@@ -1127,6 +1132,7 @@ function count_course_students($course, $search="", $firstinitial="", $lastiniti
              $LIKE = "ILIKE";
     }
 
+    $groupmembers = "";
     $select = "s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'";
 
     if ($search) {
@@ -1138,8 +1144,14 @@ function count_course_students($course, $search="", $firstinitial="", $lastiniti
     if ($lastinitial) {
         $select .= " AND u.lastname $LIKE '$lastinitial%'";
     } 
+    if ($group) {
+        $groupmembers = ", {$CFG->prefix}groups_members gm ";
+        $select .= " AND u.id = gm.userid AND gm.groupid = '$group'";
+    }
 
-    return count_records_sql("SELECT COUNT(*) FROM {$CFG->prefix}user u,{$CFG->prefix}user_students s WHERE $select");
+    return count_records_sql("SELECT COUNT(*) FROM {$CFG->prefix}user u,
+                                                   {$CFG->prefix}user_students s $groupmembers
+                                                   WHERE $select");
 
 }
 
@@ -1179,23 +1191,36 @@ function get_course_users($courseid, $sort="timeaccess DESC") {
 
     /// Using this method because the single SQL just would not always work!
 
+    $users = array();
+
     $teachers = get_course_teachers($courseid, $sort);
     $students = get_course_students($courseid, $sort);
 
     if ($teachers and $students) {
-        return array_merge($teachers, $students);
+        foreach ($students as $student) {
+            $users[$student->id] = $student;
+        }
+        foreach ($teachers as $teacher) {
+            $users[$teacher->id] = $teacher;
+        }
+        return $users;
+
     } else if ($teachers) {
         return $teachers;
-    } else {
+
+    } else if ($students) {
         return $students;
     }
 
-    /// Why wouldn't this work?
+    return $users;
+
+    /// This doesn't work ... why not?
     ///    return get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t
     ///                            WHERE (s.course = '$courseid' AND s.userid = u.id) OR 
     ///                                  (t.course = '$courseid' AND t.userid = u.id)
     ///                            ORDER BY $sort");
 }
+
 
 /**
 * Returns a list of all active users who are enrolled 
