@@ -37,21 +37,17 @@
                   update_module_button($cm->id, $course->id, $strjournal), navmenu($course, $cm));
 
     if (isteacher($course->id)) {
-        if ($allentries = get_records("journal_entries", "journal", $journal->id)) {
-            $entrycount = count($allentries);
-        } else {
-            $entrycount = 0;
-        }
-        echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".get_string("viewallentries","journal", $entrycount)."</A></P>";
+        $entrycount = count_records("journal_entries", "journal", $journal->id);
+        echo "<p align=right><a href=\"report.php?id=$cm->id\">".get_string("viewallentries","journal", $entrycount)."</a></p>";
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }
 
-    echo "<CENTER>\n";
+    echo "<center>\n";
     
     print_simple_box( text_to_html($journal->intro) , "center");
 
-    echo "<BR>";
+    echo "<br \>";
 
     $timenow = time();
 

@@ -39,11 +39,21 @@ function journal_user_complete($course, $user, $mod, $journal) {
 }
 
 function journal_user_complete_index($course, $user, $journal, $journalopen, $heading) {
+/// Prints a journal, entry and feedback ... used on the journal index page.
+
+    if (isteacher($course->id)) {
+        $entrycount = count_records("journal_entries", "journal", $journal->id);
+        $entryinfo  = "&nbsp;(<a href=\"report.php?id=$journal->coursemodule\">".get_string("viewallentries","journal", $entrycount)."</a>)";
+    } else {
+        $entryinfo = "";
+    }
+
+    $journal->name = "<a href=\"view.php?id=$journal->coursemodule\">$journal->name</a>";
 
     if ($heading) {
-        echo "<h3>$heading - $journal->name</h3>";
+        echo "<h3>$heading - $journal->name$entryinfo</h3>";
     } else {
-        echo "<h3>$journal->name</h3>";
+        echo "<h3>$journal->name$entryinfo</h3>";
     }
 
     print_simple_box_start("left", "90%");
