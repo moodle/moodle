@@ -1219,28 +1219,11 @@ function print_user($user, $course) {
 }
 
 
-function recent_internet_explorer() {
-/// Returns true if the current browser is a recent version 
-/// of Internet Explorer
-
-    $msie = '/msie\s([5-9])\.?[0-9]*.*(win)/i';
-    $opera='/opera\s+[0-9]+/i';                      
-
-    return isset($_SERVER['HTTP_USER_AGENT']) and 
-           preg_match($msie,$_SERVER['HTTP_USER_AGENT']) and
-          !preg_match($opera,$_SERVER['HTTP_USER_AGENT']);
-}
-
 function print_group_picture($group, $courseid, $large=false, $returnstring=false, $link=true) {
     global $CFG;
-    static $recentIE;
-
-    if (!isset($recentIE)) {
-        $recentIE = recent_internet_explorer();
-    }
 
     if ($link) {
-        $output = "<a href=\"$CFG->wwwroot/course/group.php?id=$courseid&group=$group->id\">";
+        $output = "<a href=\"$CFG->wwwroot/course/groupphp?id=$courseid&amp;group=$group->id\">";
     } else {
         $output = "";
     }
@@ -1253,22 +1236,15 @@ function print_group_picture($group, $courseid, $large=false, $returnstring=fals
     }
     if ($group->picture) {  // Print custom group picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $pngsrc = "$CFG->wwwroot/user/pixgroup.php/$group->id/$file.png";
+            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php/$group->id/$file.jpg\"".
+                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
         } else {
-            $pngsrc = "$CFG->wwwroot/user/pixgroup.php?file=/$group->id/$file.png";
+            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php?file=/$group->id/$file.jpg\"".
+                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
         }
-        $title = s($group->description);
-        if ($recentIE) {  // work around the HORRIBLE bug IE has with alpha transparencies
-            $output .= "<img align=\"absmiddle\" src=\"$CFG->pixpath/spacer.gif\" width=\"$size\" height=\"$size\"".
-                       " border=\"0\" style=\"width: {$size}px; height: {$size}px; ".
-                       " filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='$pngsrc', sizingMethod='scale') ".
-                       " alt=\"\" title=\"$title\" />";
-        } else {
-            $output .= "<img align=\"absmiddle\" src=\"$pngsrc\" border=\"0\" width=\"$size\" height=\"$size\" ".
-                       " alt=\"\" title=\"$title\" />";
-        }
-    } else {                // Print nothing
-        $output .= "";
+    } else {         // Print default user pictures (use theme version if available)
+        $output .= "<img align=\"absmiddle\" src=\"$CFG->pixpath/g/$file.png\"".
+                   " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
     }
     if ($link) {
         $output .= "</a>";
@@ -1280,6 +1256,33 @@ function print_group_picture($group, $courseid, $large=false, $returnstring=fals
         echo $output;
     }
 }
+
+
+function print_png($url, $sizex, $sizey, $returnstring, $parameters='alt=""') {
+    global $CFG;
+    static $recentIE;
+
+    if (!isset($recentIE)) {
+        $recentIE = check_browser_version('MSIE', '5.0');
+    }
+
+    if ($recentIE) {  // work around the HORRIBLE bug IE has with alpha transparencies
+        $output .= "<img src=\"$CFG->pixpath/spacer.gif\" width=\"$sizex\" height=\"$sizey\"".
+                   " border=\"0\" style=\"width: {$sizex}px; height: {$sizey}px; ".
+                   " filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='$url', sizingMethod='scale') ".
+                   " $parameters />";
+    } else {
+        $output .= "<img src=\"$url\" border=\"0\" width=\"$sizex\" height=\"$sizey\" ".
+                   " $parameters />";
+    }
+
+    if ($returnstring) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
 
 function print_table($table) {
 // Prints a nicely formatted table.
