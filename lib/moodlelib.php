@@ -1566,6 +1566,11 @@ function get_string($identifier, $module="", $a=NULL) {
 
     global $CFG;
 
+    global $course;     /// Not a nice hack, but quick
+    if (!empty($course->lang)) {
+        $CFG->courselang = $course->lang;
+    }
+
     $lang = current_language();
 
     if ($module == "") {
