@@ -170,9 +170,12 @@
             } else {
                 $headertext = $newsforum->name;
             }
-            print_heading_block($headertext);
-            print_spacer(8,1);
-            forum_print_latest_discussions($newsforum->id, $site->newsitems);
+            
+            if ($site->newsitems) { //print forums only when needed
+                print_heading_block($headertext);
+                print_spacer(8,1);
+                forum_print_latest_discussions($newsforum->id, $site->newsitems);
+            }    
         break;
 
         case FRONTPAGECOURSELIST:
