@@ -25,7 +25,7 @@
 
     unset($SESSION->fromdiscussion);
 
-    add_to_log($course->id, "forum", "view subscribers", "subscribers.php?id=$forum->id", "", $cm->id);
+    add_to_log($course->id, "forum", "view subscribers", "subscribers.php?id=$forum->id", $forum->id, $cm->id);
 
     $strsubscribers = get_string("subscribers", "forum");
     $strforums      = get_string("forums", "forum");
