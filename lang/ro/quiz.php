@@ -1,0 +1,110 @@
+<?PHP // $Id$ 
+      // quiz.php - created with Moodle 1.0.8.1 (2003011200)
+
+
+$string['addselectedtoquiz'] = "Adaugã cele selectate la test";
+$string['allowreview'] = "Permite recenzie";
+$string['alreadysubmitted'] = "Se pare ca deja ai parcurs acest test";
+$string['alwaysavailable'] = "Întotdeauna disponibil";
+$string['answer'] = "Rãspuns";
+$string['answerhowmany'] = "Unul sau mai multe rãspunsuri?";
+$string['answersingleno'] = "Rãspunsuri multiple";
+$string['answersingleyes'] = "Un singur rãspuns";
+$string['attempt'] = "Încercare \$a";
+$string['attemptfirst'] = "Prima încercare";
+$string['attemptlast'] = "Ultima încercare";
+$string['attemptquiznow'] = "Lanseazã testul acum";
+$string['attempts'] = "Încercãri";
+$string['attemptsallowed'] = "Încercãri permise";
+$string['attemptsunlimited'] = "Numãr nelimitat de încercãri";
+$string['backtoquiz'] = "Înapoi la modificarea testului";
+$string['bestgrade'] = "Cel mai bun rezultat";
+$string['caseno'] = "Desconsiderã majusculele";
+$string['casesensitive'] = "Senzitivitate caractere";
+$string['caseyes'] = "Considerã majusculele";
+$string['categories'] = "Categorii";
+$string['category'] = "Categorie";
+$string['categoryinfo'] = "Informaþie categorie";
+$string['categorymove'] = "Categoria '\$a->name' conþine \$a->count întrebari. Alege altã categorie în care sã le muþi.";
+$string['categorymoveto'] = "Mutã-le apoi în aceastã catogorie";
+$string['choice'] = "Opþiunea";
+$string['choices'] = "Opþiuni disponibile";
+$string['correctanswer'] = "Rãspuns corect";
+$string['correctanswers'] = "Rãspunsuri corecte";
+$string['createnewquestion'] = "Creeazã o nouã întrebare";
+$string['daysavailable'] = "Zile disponibile";
+$string['default'] = "Lipsã";
+$string['defaultinfo'] = "Categoria prestabilitã pentru întrebãri.";
+$string['deletequestioncheck'] = "Eºti sigur cã vrei sã ºtergi '\$a'?";
+$string['editcategories'] = "Modificare categorii";
+$string['editingmultichoice'] = "Modificã o întrebare cu rãspuns multiplu";
+$string['editingquestion'] = "Modificã o întrebare";
+$string['editingquiz'] = "Modificã un test";
+$string['editingshortanswer'] = "Modificã o întrebare cu rãspuns scurt";
+$string['editingtruefalse'] = "Modificã o întrebare de tipul adevãrat sau fals";
+$string['false'] = "Fals";
+$string['feedback'] = "Feedback";
+$string['filloutoneanswer'] = "Trebuie sã completezi mãcar un rãspus posibil. Câmpurile necompletate nu vor fi arãtate.";
+$string['fillouttwochoices'] = "Trebuie sã completezi mãcar douã variante. Câmpurile necompletate nu vor fi arãtate.";
+$string['fractionsaddwrong'] = "Notele repartizate nu întrunesc  un 100%%
+<BR>În schimb, ele reprezintã \$a%%
+<BR>Vrei sã te întorci pentru a rezolva aceastã problemã?";
+$string['fractionsnomax'] = "Unul dintre raspunsuri trebuie sa fie 100%%, aºa încât sã fie
+<BR>posibilã obþinerea notei maxime pentru aceastã întrebare.
+<BR>Vrei sã te întorci pentru a rezolva aceastã problemã?";
+$string['gradeaverage'] = "Nota medie";
+$string['gradehighest'] = "Nota maximã";
+$string['grademethod'] = "Metoda de notare";
+$string['guestsno'] = "Îmi pare rãu, dar cei care nu sunt îmscriºi nu pot sã vadã sau sã parcurgã testele";
+$string['imagedisplay'] = "Imagine";
+$string['introduction'] = "Introducere";
+$string['marks'] = "Puncte";
+$string['missingname'] = "Lipseºte numele întrebãrii";
+$string['missingquestiontext'] = "Lipseºte textul întrebãrii";
+$string['modulename'] = "Test";
+$string['modulenameplural'] = "Teste";
+$string['multichoice'] = "Mai multe rãspunsuri";
+$string['noanswers'] = "Nu a fost selectat nici un rãspuns!";
+$string['noattempts'] = "Testul acesta nu a fost parcurs niciodatã";
+$string['nomoreattempts'] = "Nu se mai permit încercãri";
+$string['noquestions'] = "Nici o întrebare nu a fost adãugatã încã";
+$string['noreview'] = "Nu þi se permite recenzia la acest test";
+$string['noreviewuntil'] = "Nu þi se permite sã faci recenzia la acest test pânã \$a";
+$string['publish'] = "Publicã";
+$string['question'] = "Întrebare";
+$string['questioninuse'] = "Întrebarea '\$a' este momentan folositã:";
+$string['questionname'] = "Numele întrebãrii";
+$string['questions'] = "Întrebãri";
+$string['quizavailable'] = "Acest test este disponibil pânã la: \$a";
+$string['quizclose'] = "Închide testul";
+$string['quizclosed'] = "Acest test a fost închis la \$a";
+$string['quiznotavailable'] = "Acest nu va fi disponibil decât de la data de: \$a";
+$string['quizopen'] = "Deschide testul";
+$string['random'] = "Setat aleatoriu";
+$string['readytosend'] = "Eºti pe cale de a trimite testul complet pentru a fi notat.  Eºti sigur cã vrei sã continui?";
+$string['regrade'] = "Renoteazã toate încercãrile";
+$string['regradecomplete'] = "Toate încercãrile vor fi renotate";
+$string['regradecount'] = "\$a->changed  din \$a->attempt note au fost schimbate";
+$string['rename'] = "Redenumeºte";
+$string['report'] = "Raporturi";
+$string['save'] = "Salveazã";
+$string['savegrades'] = "Salveazã notele";
+$string['savemyanswers'] = "Salveazã rãspusurile mele";
+$string['savequiz'] = "Salveazã întregul test";
+$string['score'] = "Punctaj net";
+$string['select'] = "Selecteazã";
+$string['selectcategoryabove'] = "Selecteazã o categorie anterioarã";
+$string['shortanswer'] = "Rãspuns scurt";
+$string['show'] = "Aratã";
+$string['showcorrectanswer'] = "În feedback, sã se arate rãspunsul corect?";
+$string['showfeedback'] = "Dupã rãspuns sã se arate feedback-ul?";
+$string['time'] = "timp";
+$string['timecompleted'] = "Completat";
+$string['timetaken'] = "Timp luat";
+$string['true'] = "Adevãrat";
+$string['truefalse'] = "Adevãrat/Fals";
+$string['type'] = "Tasteazã";
+$string['viewallanswers'] = "Vezi \$a teste completate";
+$string['yourfinalgradeis'] = "Nota ta finalã la acest test este \$a";
+
+?>
