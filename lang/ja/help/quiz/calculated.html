@@ -49,12 +49,12 @@
 この問題には、テキスト入力欄及び「正解の公式」{a} と {b} があります。これらの変数及びその他の{name}は、小テスト実施時に値と置換されるワイルドカードとして使用されます。
 また、データ送信時に「正解の公式」を使用して正解が計算されます。「正解の公式」は、ワイルドカードが値と置換された後に計算される数式です。
 ワイルドカードの値は、後のページにある計算問題の「編集ウィザード」で設定または生成されます ...
-<br/>The example formula uses the operator +. Other accepted operators are -*/ and % where % is the modulo operator. It is also possible to use some PHP-style mathematical function. Among these there are 24 single-argument function:<br/><b>
+<br/>例では演算子+を使用しています。他に使用できる演算子は、-*/ と余剰演算子の % です。また、PHPスタイルの数学関数も使用することができます。次に引数が1個の関数を24個挙ます:<br/><b>
 abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos, cosh, deg2rad, exp, expm1, floor, log, log10, log1p, rad2deg, round, sin, sinh, sprt, tan, tanh
-</b><br/>and two two-argument functions<br/><b>
+</b><br/>そして、引数が2個の関数を2個挙げます<br/><b>
 atan2, pow
-</b><br/>and the functions <b>min</b> and <b>max</b> that can take two or more arguments. It is also possible to use the function <b>pi</b> that takes no arguments but do not forget the use the parentheses - the correct usage is <b>pi()</b>. Similary the other function must have their argument(s) within parentheses. Possible usage is for example <b>sin({a}) + cos({b}) * 2</b>. It should not be any problem to wrap functions within eachother like <b>cos(deg2rad({a} + 90))</b> etc.
-<br/>More details on how to use these PHP-style functions can be found in the <a target="phpmathdoc" href="http://www.php.net/manual/en/ref.math.php">documentation at the PHP web site</a>
+</b><br/>関数<b>min</b> と <b>max</b> には、2個またはそれ以上の引数を渡すことができます。引数が不要な関数 <b>pi</b> を使用することもできますが、括弧を忘れないでください - 正しい使い方は、<b>pi()</b>です。同じように、他の関数も括弧内に引数を必要とします。使い方の例は、<b>sin({a}) + cos({b}) * 2</b> です。<b>cos(deg2rad({a} + 90))</b>のように関数を入れ子にしても問題はありません。
+<br/>PHPスタイルの関数の使用方法に関しては、<a target="phpmathdoc" href="http://www.php.net/manual/en/ref.math.php">PHPウェブサイトの文書</a>をご覧ください。
 <br/><br/>
 As for numerical questions it is possible to allow a margin within which all responses are accepted as correct. The "Tolerance" field is used for this. However, there are three different types of tolerances. These are <b>Relative, Nominal and Geometric</b>. If we say that the correct answer at quiz time is calculated to 200 and the tolerance is set to 0.5 then the different tolerance types work like this:
 <br/><br/><b>Relative:</b> A tolerance interval is calculated by multiplying the correct answer with 0.5, ie in this case we get 100 so for this tolerance the correct response must be between 100 and 300.  (200 ｱ 100)<br/>
