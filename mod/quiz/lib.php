@@ -931,7 +931,10 @@ function quiz_choose_random_questions($category, $draws, $excluded=0) {
 /// creates a random subset of that size - returned as an array of questions
 
     if (!$pool = get_records_select_menu("quiz_questions", 
-                "category = '$category' AND id NOT IN ($excluded) AND qtype <> ".RANDOM, "", "id,qtype")) {
+                "category = '$category' AND id NOT IN ($excluded) 
+                                        AND qtype <> ".RANDOM." 
+                                        AND qtype <> ".DESCRIPTION, 
+                                        "", "id,qtype")) {
         return false;
     }
 
