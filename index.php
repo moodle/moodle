@@ -45,6 +45,7 @@
          if (isadmin()) {
              print_simple_box("Admin", $align="CENTER", $width="100%", $color="$THEME->cellheading");
              echo "<LI><A HREF=\"$CFG->wwwroot/admin/\">Admin Page...</A></LI>";
+             echo "<LI><A HREF=\"$CFG->wwwroot/course/log.php?id=$site->id\">Site logs...</A></LI>";
              echo "<LI><A HREF=\"$CFG->wwwroot/admin/site.php\">Site settings...</A></LI>";
          }
       ?>
