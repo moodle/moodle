@@ -71,6 +71,7 @@ $string['datasetdefinitions'] = 'Définitions du jeu de données réutilisable de l
 $string['datasetnumber'] = 'Nombre';
 $string['daysavailable'] = 'Jours disponibles';
 $string['decimalformat'] = 'décimales';
+$string['decimalpoints'] = 'Points décimaux';
 $string['decimals'] = ' avec $a ';
 $string['default'] = 'Défaut';
 $string['defaultgrade'] = 'Note par défaut';
