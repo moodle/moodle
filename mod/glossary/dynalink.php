@@ -54,7 +54,9 @@
                             $category = get_record("glossary_categories","id",$concept->id);
                             $lastcategory = $concept->id;
                             if ( $cm->instance != $category->glossaryid  ) {
-                                $cm = get_coursemodule_from_instance("glossary", $category->glossaryid, $courseid);
+                                if ( !$cm = get_coursemodule_from_instance("glossary", $category->glossaryid, $courseid) ) {
+                                    $cm->id = 1;
+                                }
                             }
                         }
 
