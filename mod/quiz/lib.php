@@ -1672,9 +1672,10 @@ function quiz_grade_attempt_question_result($question,
 
                 $potentialgrade = (float)$answer->fraction * $question->grade;
 
-                if ($potentialgrade >= $grade
-                        and (strpos(' '.$answer->answer, '*'))) {
-                    $answer->answer = eregi_replace('\*','.*',$answer->answer);
+                if ($potentialgrade >= $grade and (strpos(' '.$answer->answer, '*'))) {
+                    $answer->answer = str_replace('\*','@@@@@@',$answer->answer);
+                    $answer->answer = str_replace('*','.*',$answer->answer);
+                    $answer->answer = str_replace('@@@@@@', '\*',$answer->answer);
                     if (eregi('^'.$answer->answer.'$', $question->answer)) {
                         $feedback[0] = $answer->feedback;
                         $grade = $potentialgrade;
