@@ -60,7 +60,29 @@ function save_user_image($userid, $filename) {
         return false;
     }
 
-    $imageinfo = GetImageSize($filename);
+    umask(0000);
+
+    if (!file_exists("$CFG->dataroot/users")) {
+        if (! mkdir("$CFG->dataroot/users", 0777)) {
+            return false;
+        }
+    }
+
+    if (!file_exists("$CFG->dataroot/users/$userid")) {
+        if (! mkdir("$CFG->dataroot/users/$userid", 0777)) {
+            return false;
+        }
+    }
+    
+    $originalfile = "$CFG->dataroot/users/$userid/original";
+
+    if (!move_uploaded_file($filename, $originalfile)) {
+        return false;
+    }
+
+    chmod($originalfile, 0777);
+
+    $imageinfo = GetImageSize($originalfile);
     $image->width  = $imageinfo[0];
     $image->height = $imageinfo[1];
     $image->type   = $imageinfo[2];
@@ -68,31 +90,37 @@ function save_user_image($userid, $filename) {
     switch ($image->type) {
         case 1: 
             if (function_exists("ImageCreateFromGIF")) {
-                $im = ImageCreateFromGIF($filename); 
+                $im = ImageCreateFromGIF($originalfile); 
             } else {
                 notice("GIF not supported on this server");
+                unlink($originalfile);
                 return false;
             }
             break;
         case 2: 
             if (function_exists("ImageCreateFromJPEG")) {
-                $im = ImageCreateFromJPEG($filename); 
+                $im = ImageCreateFromJPEG($originalfile); 
             } else {
                 notice("JPEG not supported on this server");
+                unlink($originalfile);
                 return false;
             }
             break;
         case 3:
             if (function_exists("ImageCreateFromPNG")) {
-                $im = ImageCreateFromPNG($filename); 
+                $im = ImageCreateFromPNG($originalfile); 
             } else {
                 notice("PNG not supported on this server");
+                unlink($originalfile);
                 return false;
             }
             break;
         default: 
+            unlink($originalfile);
             return false;
     }
+
+    unlink($originalfile);
 
     if (function_exists("ImageCreateTrueColor") and $CFG->gdversion >= 2) {
         $im1 = ImageCreateTrueColor(100,100);
@@ -111,42 +139,28 @@ function save_user_image($userid, $filename) {
         $half = floor($image->height / 2.0);
     }
 
-    if (!file_exists("$CFG->dataroot/users")) {
-        if (! mkdir("$CFG->dataroot/users", 0777)) {
-            $badpermissions = true;
-        }
-    }
-    if (!file_exists("$CFG->dataroot/users/$userid")) {
-        if (! mkdir("$CFG->dataroot/users/$userid", 0777)) {
-            $badpermissions = true;
-        }
-    }
-    
-    if (!empty($badpermissions)) {
-        return 0;
+    ImageCopyBicubic($im1, $im, 0, 0, $cx-$half, $cy-$half, 100, 100, $half*2, $half*2);
+    ImageCopyBicubic($im2, $im, 0, 0, $cx-$half, $cy-$half, 35, 35, $half*2, $half*2);
 
+    // Draw borders over the top.
+    $black1 = ImageColorAllocate ($im1, 0, 0, 0);
+    $black2 = ImageColorAllocate ($im2, 0, 0, 0);
+    ImageLine ($im1, 0, 0, 0, 99, $black1);
+    ImageLine ($im1, 0, 99, 99, 99, $black1);
+    ImageLine ($im1, 99, 99, 99, 0, $black1);
+    ImageLine ($im1, 99, 0, 0, 0, $black1);
+    ImageLine ($im2, 0, 0, 0, 34, $black2);
+    ImageLine ($im2, 0, 34, 34, 34, $black2);
+    ImageLine ($im2, 34, 34, 34, 0, $black2);
+    ImageLine ($im2, 34, 0, 0, 0, $black2);
+
+    if (ImageJpeg($im1, "$CFG->dataroot/users/$userid/f1.jpg", 90) and 
+        ImageJpeg($im2, "$CFG->dataroot/users/$userid/f2.jpg", 95) ) {
+        chmod("$CFG->dataroot/users/$userid/f1.jpg", 0666);
+        chmod("$CFG->dataroot/users/$userid/f2.jpg", 0666);
+        return 1;
     } else {
-        ImageCopyBicubic($im1, $im, 0, 0, $cx-$half, $cy-$half, 100, 100, $half*2, $half*2);
-        ImageCopyBicubic($im2, $im, 0, 0, $cx-$half, $cy-$half, 35, 35, $half*2, $half*2);
-
-        // Draw borders over the top.
-        $black1 = ImageColorAllocate ($im1, 0, 0, 0);
-        $black2 = ImageColorAllocate ($im2, 0, 0, 0);
-        ImageLine ($im1, 0, 0, 0, 99, $black1);
-        ImageLine ($im1, 0, 99, 99, 99, $black1);
-        ImageLine ($im1, 99, 99, 99, 0, $black1);
-        ImageLine ($im1, 99, 0, 0, 0, $black1);
-        ImageLine ($im2, 0, 0, 0, 34, $black2);
-        ImageLine ($im2, 0, 34, 34, 34, $black2);
-        ImageLine ($im2, 34, 34, 34, 0, $black2);
-        ImageLine ($im2, 34, 0, 0, 0, $black2);
-    
-        if (ImageJpeg($im1, "$CFG->dataroot/users/$userid/f1.jpg", 90) and 
-            ImageJpeg($im2, "$CFG->dataroot/users/$userid/f2.jpg", 95) ) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return 0;
     }
 }
 
