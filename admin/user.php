@@ -2,6 +2,7 @@
 
 	require("../config.php");
 	require("../user/lib.php");
+    require("../lib/countries.php");
 
     optional_variable($id);       // user id
 
@@ -56,11 +57,16 @@
         $users = get_records_sql("SELECT * from user ORDER BY firstname");
 
 	    print_header("Edit users", "Edit users", "<A HREF=\"$CFG->wwwroot/admin\">Admin</A> -> Edit users", "");
-        echo "<CENTER>";
+        print_heading("Choose a user to edit");
+        $table->head  = array ("Name", "Email", "City/Town", "Country");
+        $table->align = array ("LEFT", "LEFT", "CENTER", "CENTER");
         foreach ($users as $user) {
-            echo "<A HREF=\"user.php?id=$user->id\">$user->firstname $user->lastname</A><BR>";
+            $table->data[] = array ("<A HREF=\"user.php?id=$user->id\">$user->firstname $user->lastname</A>",
+                                    "$user->email",
+                                    "$user->city",
+                                    $COUNTRIES[$user->country]);
         }
-        echo "</CENTER>";
+        print_table($table);
         print_footer();
         exit;
     }

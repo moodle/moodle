@@ -167,7 +167,7 @@
     $table->head  = array ("Site Management", "Course Setup", "Other");
     $table->align = array ("CENTER", "CENTER", "CENTER");
     $table->data[0][0] = "<P><A HREF=\"site.php\">Site settings</A></P>".
-                         "<P><A HREF=\"../course/log.php?id=$site->id\">Site Logs</A></P>";
+                         "<P><A HREF=\"../course/log.php?id=$site->id\">Site logs</A></P>";
     $table->data[0][1] = "<P><A HREF=\"../course/edit.php\">Create a new course</A></P>".
                          "<P><A HREF=\"../course/teacher.php\">Assign teachers to a course</A></P>".
                          "<P><A HREF=\"../course/delete.php\">Delete a course</A></P>";
