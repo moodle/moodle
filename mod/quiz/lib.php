@@ -300,7 +300,7 @@ function quiz_get_answers($question) {
 }
 
 
-function quiz_get_attempt_responses($attempt) {
+function quiz_get_attempt_responses($attempt, $quiz) {
 // Given an attempt object, this function gets all the 
 // stored responses and returns them in a format suitable
 // for regrading using quiz_grade_attempt_results()
@@ -310,7 +310,8 @@ function quiz_get_attempt_responses($attempt) {
                                         FROM {$CFG->prefix}quiz_responses r, 
                                              {$CFG->prefix}quiz_questions q
                                        WHERE r.attempt = '$attempt->id' 
-                                         AND q.id = r.question")) {
+                                         AND q.id = r.question
+                                         AND q.id IN ($quiz->questions)")) {
         notify("Could not find any responses for that attempt!");
         return false;
     }

@@ -94,7 +94,7 @@
             }
         }
 
-        if (! $questions = quiz_get_attempt_responses($attempt)) {
+        if (! $questions = quiz_get_attempt_responses($attempt, $quiz)) {
             error("Could not reconstruct quiz results for attempt $attempt->id!");
         }
 
@@ -147,13 +147,15 @@
         $count->changed = 0;
         foreach ($attempts as $attempt) {
 
+            set_time_limit(120);
+
             if (!$attempt->timefinish) {  // Skip incomplete attempts
                 continue;
             }
 
             $count->attempt++;
 
-            if (! $questions = quiz_get_attempt_responses($attempt)) {
+            if (! $questions = quiz_get_attempt_responses($attempt, $quiz)) {
                 error("Could not reconstruct quiz results for attempt $attempt->id!");
             }
 
