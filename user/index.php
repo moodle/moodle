@@ -225,7 +225,7 @@
         print_table($table);
 
         print_paging_bar($matchcount, $page, $perpage, 
-                         "index.php?id=$course->id&sort=$sort&dir=$dir&perpage=$perpage&");
+                         "index.php?id=$course->id&sort=$sort&dir=$dir&perpage=$perpage&firstinitial=$firstinitial&lastinitial=$lastinitial&");
 
         if ($perpage != 99999) {
             echo "<center><p>";
