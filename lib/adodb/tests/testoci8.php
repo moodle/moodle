@@ -2,7 +2,7 @@
 <body>
 <?php
 /* 
-V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -47,7 +47,7 @@ if (1) {
 	$db->PConnect('','scott','natsoft');
 	$db->debug = true;
 	$db->Execute("delete from emp where ename='John'");
-	print $db->Affected_Rows().'<br />';
+	print $db->Affected_Rows().'<BR>';
 	$stmt = &$db->Prepare('insert into emp (empno, ename) values (:empno, :ename)');
 	$rs = $db->Execute($stmt,array('empno'=>4321,'ename'=>'John'));
 	// prepare not quite ready for prime time

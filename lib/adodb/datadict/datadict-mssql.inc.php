@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -15,8 +15,10 @@ if (!defined('ADODB_DIR')) die();
 
 class ADODB2_mssql extends ADODB_DataDict {
 	var $databaseType = 'mssql';
-	
 	var $dropIndex = 'DROP INDEX %2$s.%1$s';
+	var $renameTable = "EXEC sp_rename '%s','%s'";
+	var $renameColumn = "EXEC sp_rename '%s.%s','%s'";
+	//var $alterCol = ' ALTER COLUMN ';
 	
 	function MetaType($t,$len=-1,$fieldobj=false)
 	{
@@ -28,7 +30,7 @@ class ADODB2_mssql extends ADODB_DataDict {
 		
 		$len = -1; // mysql max_length is not accurate
 		switch (strtoupper($t)) {
-
+		case 'R':
 		case 'INT': 
 		case 'INTEGER': return  'I';
 		case 'BIT':
@@ -45,6 +47,7 @@ class ADODB2_mssql extends ADODB_DataDict {
 	function ActualType($meta)
 	{
 		switch(strtoupper($meta)) {
+
 		case 'C': return 'VARCHAR';
 		case 'XL':
 		case 'X': return 'TEXT';
@@ -58,6 +61,7 @@ class ADODB2_mssql extends ADODB_DataDict {
 		case 'T': return 'DATETIME';
 		case 'L': return 'BIT';
 		
+		case 'R':		
 		case 'I': return 'INT'; 
 		case 'I1': return 'TINYINT';
 		case 'I2': return 'SMALLINT';
@@ -81,7 +85,7 @@ class ADODB2_mssql extends ADODB_DataDict {
 		foreach($lines as $v) {
 			$f[] = "\n $v";
 		}
-		$s .= implode(',',$f);
+		$s .= implode(', ',$f);
 		$sql[] = $s;
 		return $sql;
 	}
@@ -108,9 +112,9 @@ class ADODB2_mssql extends ADODB_DataDict {
 		$f = array();
 		$s = 'ALTER TABLE ' . $tabname;
 		foreach($flds as $v) {
-			$f[] = "\n$this->dropCol $v";
+			$f[] = "\n$this->dropCol ".$this->NameQuote($v);
 		}
-		$s .= implode(',',$f);
+		$s .= implode(', ',$f);
 		$sql[] = $s;
 		return $sql;
 	}
@@ -239,12 +243,9 @@ CREATE TABLE
 		case 'BIGINT':
 			return $ftype;
 		}
-		if (strlen($fsize) && $ty != 'X' && $ty != 'B' && strpos($ftype,'(') === false) {
-			$ftype .= "(".$fsize;
-			if (strlen($fprec)) $ftype .= ",".$fprec;
-			$ftype .= ')';
-		}
-		return $ftype;
+    	if ($ty == 'T') return $ftype;
+    	return parent::_GetSize($ftype, $ty, $fsize, $fprec);    
+
 	}
 }
 ?>

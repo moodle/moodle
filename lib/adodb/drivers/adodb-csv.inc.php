@@ -1,6 +1,6 @@
 <?php
 /*
-V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -79,13 +79,13 @@ class ADODB_csv extends ADOConnection {
 	{
 	global $ADODB_FETCH_MODE;
 	
-		$url = $this->_url.'?sql='.urlencode($sql)."&amp;nrows=$nrows&amp;fetch=".
+		$url = $this->_url.'?sql='.urlencode($sql)."&nrows=$nrows&fetch=".
 			(($this->fetchMode !== false)?$this->fetchMode : $ADODB_FETCH_MODE).
-			"&amp;offset=$offset";
+			"&offset=$offset";
 		$err = false;
 		$rs = csv2rs($url,$err,false);
 		
-		if ($this->debug) print "$url<br /><i>$err</i><br />";
+		if ($this->debug) print "$url<br><i>$err</i><br>";
 
 		$at = strpos($err,'::::');
 		if ($at === false) {
@@ -136,13 +136,13 @@ class ADODB_csv extends ADOConnection {
 			$inputarr = false;
 		}
 		
-		$url =  $this->_url.'?sql='.urlencode($sql)."&amp;fetch=".
+		$url =  $this->_url.'?sql='.urlencode($sql)."&fetch=".
 			(($this->fetchMode !== false)?$this->fetchMode : $ADODB_FETCH_MODE);
 		$err = false;
 		
 		
 		$rs = csv2rs($url,$err,false);
-		if ($this->debug) print urldecode($url)."<br /><i>$err</i><br />";
+		if ($this->debug) print urldecode($url)."<br><i>$err</i><br>";
 		$at = strpos($err,'::::');
 		if ($at === false) {		
 			$this->_errorMsg = $err;

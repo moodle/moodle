@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -74,13 +74,13 @@ global $HTTP_SERVER_VARS;
 			$conn->debug = $dbg;
 		}
 		if (isset($HTTP_SERVER_VARS['HTTP_HOST'])) {
-			$tracer .= '<br />'.$HTTP_SERVER_VARS['HTTP_HOST'];
+			$tracer .= '<br>'.$HTTP_SERVER_VARS['HTTP_HOST'];
 			if (isset($HTTP_SERVER_VARS['PHP_SELF'])) $tracer .= $HTTP_SERVER_VARS['PHP_SELF'];
 		} else 
-			if (isset($HTTP_SERVER_VARS['PHP_SELF'])) $tracer .= '<br />'.$HTTP_SERVER_VARS['PHP_SELF'];
+			if (isset($HTTP_SERVER_VARS['PHP_SELF'])) $tracer .= '<br>'.$HTTP_SERVER_VARS['PHP_SELF'];
 		//$tracer .= (string) adodb_backtrace(false);
 		
-		$tracer = substr($tracer,0,500);
+		$tracer = (string) substr($tracer,0,500);
 		
 		if (is_array($inputarr)) {
 			if (is_array(reset($inputarr))) $params = 'Array sizeof='.sizeof($inputarr);
@@ -100,8 +100,10 @@ global $HTTP_SERVER_VARS;
 		$saved = $conn->debug;
 		$conn->debug = 0;
 		
+		$d = $conn->sysTimeStamp;
+		if (empty($d)) $d = date("'Y-m-d H:i:s'");
 		if ($conn->dataProvider == 'oci8' && $dbT != 'oci8po') {
-			$isql = "insert into $perf_table values($conn->sysTimeStamp,:b,:c,:d,:e,:f)";
+			$isql = "insert into $perf_table values($d,:b,:c,:d,:e,:f)";
 		} else if ($dbT == 'odbc_mssql' || $dbT == 'informix') {
 			$timer = $arr['f'];
 			if ($dbT == 'informix') $sql2 = substr($sql2,0,230);
@@ -111,12 +113,13 @@ global $HTTP_SERVER_VARS;
 			$params = $conn->qstr($arr['d']);
 			$tracer = $conn->qstr($arr['e']);
 			
-			$isql = "insert into $perf_table (created,sql0,sql1,params,tracer,timer) values($conn->sysTimeStamp,$sql1,$sql2,$params,$tracer,$timer)";
+			$isql = "insert into $perf_table (created,sql0,sql1,params,tracer,timer) values($d,$sql1,$sql2,$params,$tracer,$timer)";
 			if ($dbT == 'informix') $isql = str_replace(chr(10),' ',$isql);
 			$arr = false;
 		} else {
-			$isql = "insert into $perf_table (created,sql0,sql1,params,tracer,timer) values( $conn->sysTimeStamp,?,?,?,?,?)";
+			$isql = "insert into $perf_table (created,sql0,sql1,params,tracer,timer) values( $d,?,?,?,?,?)";
 		}
+
 		$ok = $conn->Execute($isql,$arr);
 		$conn->debug = $saved;
 		
@@ -138,7 +141,7 @@ global $HTTP_SERVER_VARS;
 				timer decimal(16,6))");
 			}
 			if (!$ok) {
-				ADOConnection::outp( "<b>LOGSQL Insert Failed</b>: $isql<br />$err2</br>");
+				ADOConnection::outp( "<p><b>LOGSQL Insert Failed</b>: $isql<br>$err2</p>");
 				$conn->_logsql = false;
 			}
 		}
@@ -293,7 +296,7 @@ Committed_AS:   348732 kB
 		$d_system = $info[2] - $last[2];
 		$d_idle = $info[3] - $last[3];
 		
-		//printf("Delta - User: %f  Nice: %f  System: %f  Idle: %f<br />",$d_user,$d_nice,$d_system,$d_idle);
+		//printf("Delta - User: %f  Nice: %f  System: %f  Idle: %f<br>",$d_user,$d_nice,$d_system,$d_idle);
 
 		if (strncmp(PHP_OS,'WIN',3)==0) {
 			if ($d_idle < 1) $d_idle = 1;
@@ -321,7 +324,7 @@ Committed_AS:   348732 kB
 		if ($arr) {
 			$s .= '<h3>Scripts Affected</h3>';
 			foreach($arr as $k) {
-				$s .= sprintf("%4d",$k[0]).' &nbsp; '.strip_tags($k[1]).'<br />';
+				$s .= sprintf("%4d",$k[0]).' &nbsp; '.strip_tags($k[1]).'<br>';
 			}
 		}
 		$this->conn->fnExecute = $saveE;
@@ -379,6 +382,7 @@ Committed_AS:   348732 kB
 			
 			$save = $ADODB_FETCH_MODE;
 			$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+			if ($this->conn->fetchMode !== false) $savem = $this->conn->SetFetchMode(false);
 			//$this->conn->debug=1;
 			$rs =& $this->conn->SelectLimit(
 			"select avg(timer) as avg_timer,$sql1,count(*),max(timer) as max_timer,min(timer) as min_timer
@@ -387,12 +391,13 @@ Committed_AS:   348732 kB
 				and (tracer is null or tracer not like 'ERROR:%')
 				group by sql1
 				order by 1 desc",$numsql);
+			if (isset($savem)) $this->conn->SetFetchMode($savem);
 			$ADODB_FETCH_MODE = $save;
 			$this->conn->fnExecute = $saveE;
 			
 			if (!$rs) return "<p>$this->helpurl. ".$this->conn->ErrorMsg()."</p>";
 			$s = "<h3>Suspicious SQL</h3>
-<font size=1>The following SQL have high average execution times</font><br />
+<font size=1>The following SQL have high average execution times</font><br>
 <table border=1 bgcolor=white><tr><td><b>Avg Time</b><td><b>Count</b><td><b>SQL</b><td><b>Max</b><td><b>Min</b></tr>\n";
 			$max = $this->maxLength;
 			while (!$rs->EOF) {
@@ -400,9 +405,9 @@ Committed_AS:   348732 kB
 				$raw = urlencode($sql);
 				if (strlen($raw)>$max-100) {
 					$sql2 = substr($sql,0,$max-500);
-					$raw = urlencode($sql2).'&amp;part='.crc32($sql);
+					$raw = urlencode($sql2).'&part='.crc32($sql);
 				}
-				$prefix = "<a target=sql".rand()." href=\"?hidem=1&amp;exps=1&amp;sql=".$raw."&x#explain\">";
+				$prefix = "<a target=sql".rand()." href=\"?hidem=1&exps=1&sql=".$raw."&x#explain\">";
 				$suffix = "</a>";
 				if ($this->explain == false || strlen($prefix)>$max) {
 					$suffix = ' ... <i>String too long for GET parameter: '.strlen($prefix).'</i>';
@@ -456,6 +461,8 @@ Committed_AS:   348732 kB
 			$sql1 = $this->sql1;
 			$save = $ADODB_FETCH_MODE;
 			$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+			if ($this->conn->fetchMode !== false) $savem = $this->conn->SetFetchMode(false);
+			
 			$rs =& $this->conn->SelectLimit(
 			"select sum(timer) as total,$sql1,count(*),max(timer) as max_timer,min(timer) as min_timer
 				from $perf_table
@@ -463,12 +470,12 @@ Committed_AS:   348732 kB
 				and (tracer is null or tracer not like 'ERROR:%')
 				group by sql1
 				order by 1 desc",$numsql);
-			
+			if (isset($savem)) $this->conn->SetFetchMode($savem);
 			$this->conn->fnExecute = $saveE;
 			$ADODB_FETCH_MODE = $save;
 			if (!$rs) return "<p>$this->helpurl. ".$this->conn->ErrorMsg()."</p>";
 			$s = "<h3>Expensive SQL</h3>
-<font size=1>Tuning the following SQL will reduce the server load substantially</font><br />
+<font size=1>Tuning the following SQL will reduce the server load substantially</font><br>
 <table border=1 bgcolor=white><tr><td><b>Load</b><td><b>Count</b><td><b>SQL</b><td><b>Max</b><td><b>Min</b></tr>\n";
 			$max = $this->maxLength;
 			while (!$rs->EOF) {
@@ -476,9 +483,9 @@ Committed_AS:   348732 kB
 				$raw = urlencode($sql);
 				if (strlen($raw)>$max-100) {
 					$sql2 = substr($sql,0,$max-500);
-					$raw = urlencode($sql2).'&amp;part='.crc32($sql);
+					$raw = urlencode($sql2).'&part='.crc32($sql);
 				}
-				$prefix = "<a target=sqle".rand()." href=\"?hidem=1&amp;expe=1&amp;sql=".$raw."&x#explain\">";
+				$prefix = "<a target=sqle".rand()." href=\"?hidem=1&expe=1&sql=".$raw."&x#explain\">";
 				$suffix = "</a>";
 				if($this->explain == false || strlen($prefix>$max)) {
 					$prefix = '';
@@ -639,7 +646,7 @@ Committed_AS:   348732 kB
 			break;
 		case 'poll':
 			echo "<iframe width=720 height=80% 
-				src=\"{$HTTP_SERVER_VARS['PHP_SELF']}?do=poll2&amp;hidem=1\"></iframe>";
+				src=\"{$HTTP_SERVER_VARS['PHP_SELF']}?do=poll2&hidem=1\"></iframe>";
 			break;
 		case 'poll2':
 			echo "<pre>";
@@ -653,7 +660,7 @@ Committed_AS:   348732 kB
 			break;
 		case 'viewsql':
 			if (empty($HTTP_GET_VARS['hidem']))
-				echo "&nbsp; <a href=\"?do=viewsql&amp;clearsql=1\">Clear SQL Log</a><br />";
+				echo "&nbsp; <a href=\"?do=viewsql&clearsql=1\">Clear SQL Log</a><br>";
 			echo($this->SuspiciousSQL($nsql));
 			echo($this->ExpensiveSQL($nsql));
 			echo($this->InvalidSQL($nsql));
@@ -679,6 +686,7 @@ Committed_AS:   348732 kB
 		set_time_limit(0);
 		sleep($secs);
 		while (1) {
+
 			$arr =& $this->PollParameters();
 			
 			$hits   = sprintf('%2.2f',$arr[0]);
@@ -698,6 +706,8 @@ Committed_AS:   348732 kB
 			$cnt += 1;
 			echo date('H:i:s').'  '.$osval."$hits  $sess $reads $writes\n";
 			flush();
+			
+			if (connection_aborted()) return;
 			
 			sleep($secs);
 			$arro = $arr;
@@ -880,7 +890,7 @@ Committed_AS:   348732 kB
 					if (empty($e1)) $e1 = '-1'; // postgresql fix
 					print ' &nbsp; '.$e1.': '.$e2;
 				} else {
-					print "<p>No Recordset returned<br /></p>";
+					print "<p>No Recordset returned<br></p>";
 				}
 			}
 		} // foreach

@@ -3,8 +3,8 @@
 // V4.50 6 July 2004
 
 error_reporting(E_ALL);
-
-require( "../adodb-xmlschema.inc.php" );
+include_once( "../adodb.inc.php" );
+include_once( "../adodb-xmlschema.inc.php" );
 
 // To build the schema, start by creating a normal ADOdb connection:
 $db = ADONewConnection( 'mysql' );

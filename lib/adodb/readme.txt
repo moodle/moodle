@@ -1,6 +1,6 @@
 >> ADODB Library for PHP4
 
-(c) 2000-2002 John Lim (jlim@natsoft.com.my)
+(c) 2000-2004 John Lim (jlim@natsoft.com.my)
 
 Released under both BSD and GNU Lesser GPL library license. 
 This means you can use it in proprietary products.
@@ -50,6 +50,8 @@ tute.htm is the tutorial.
 >> More Info
 
 For more information, including installation see readme.htm
+or visit
+           http://adodb.sourceforge.net/
 
 
 >> Feature Requests and Bug Reports

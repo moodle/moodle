@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -332,7 +332,7 @@ select  a.size_for_estimate as cache_mb_estimate,
 			if ($check != $rs->fields[0].'::'.$rs->fields[1]) {
 				if ($check) {
 					$carr = explode('::',$check);
-					$prefix = "<a href=\"?$type=1&amp;sql=".rawurlencode($sql).'&x#explain">';
+					$prefix = "<a href=\"?$type=1&sql=".rawurlencode($sql).'&x#explain">';
 					$suffix = '</a>';
 					if (strlen($prefix)>2000) {
 						$prefix = '';
@@ -351,7 +351,7 @@ select  a.size_for_estimate as cache_mb_estimate,
 		$rs->Close();
 		
 		$carr = explode('::',$check);
-		$prefix = "<a target=".rand()." href=\"?&amp;hidem=1&$type=1&amp;sql=".rawurlencode($sql).'&x#explain">';
+		$prefix = "<a target=".rand()." href=\"?&hidem=1&$type=1&sql=".rawurlencode($sql).'&x#explain">';
 		$suffix = '</a>';
 		if (strlen($prefix)>2000) {
 			$prefix = '';
