@@ -31,6 +31,7 @@ $string['auth_ldap_memberattribute'] = 'Specify user member attribute, when user
 $string['auth_ldap_search_sub'] = 'Put value &lt;&gt; 0 if  you like to search users from subcontexts.';
 $string['auth_ldap_update_userinfo'] = 'Update user information (firstname, lastname, address..) from LDAP to Moodle. Look at /auth/ldap/attr_mappings.php for mapping information';
 $string['auth_ldap_user_attribute'] = 'The attribute used to name/search users. Usually \'cn\'.';
+$string['auth_ldap_version'] = 'The version of the LDAP protocol your server is using.';
 $string['auth_ldapdescription'] = 'This method provides authentication against an external LDAP server.
                                   If the given username and password are valid, Moodle creates a new user 
                                   entry in its database. This module can read user attributes from LDAP and prefill 

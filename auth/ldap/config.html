@@ -17,6 +17,9 @@
     if (!isset($config->ldap_bind_pw)) {
         $config->ldap_bind_pw = "";
     }
+    if (empty($config->ldap_version)) {
+        $config->ldap_version  = "2";
+    }
 ?>
 <tr valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>ldap_host_url:</TD>
@@ -26,6 +29,21 @@
 	</TD>
     <TD>
     <?php  print_string("auth_ldap_host_url","auth") ?>
+    </TD>
+</TR>
+
+<tr valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
+	<TD ALIGN=RIGHT><P>ldap_version:</TD>
+	<TD>
+    <?php
+       $versions[2] = "2";
+       $versions[3] = "3";
+       choose_from_menu($versions, "ldap_version", $config->ldap_version, "");
+	   if (isset($err["ldap_version"])) formerr($err["ldap_version"]); 
+    ?>
+	</TD>
+    <TD>
+    <?php  print_string("auth_ldap_version","auth") ?>
     </TD>
 </TR>
 

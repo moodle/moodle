@@ -221,6 +221,10 @@ function auth_ldap_connect(){
     $result = ldap_connect($CFG->ldap_host_url);
 
     if ($result) {
+        if (!empty($CFG->ldap_version)) {
+            ldap_set_option($result, LDAP_OPT_PROTOCOL_VERSION, $CFG->ldap_version);
+        }
+
         return $result;
 
     } else {
