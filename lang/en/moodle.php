@@ -1,5 +1,10 @@
-<?php 
-// Strings for Moodle site 
+<?PHP // $Id$ 
+
+#------------------------------------------------------------
+$string[modulename] = "Site";
+$string[modulenameplural] = "Sites";
+#------------------------------------------------------------
+
 
 $string[activity] = "Activity";
 $string[activityreport] = "Activity report";
@@ -167,6 +172,8 @@ $string[selectacountry] = "Select a country";
 $string[senddetails] = "Send my details via email";
 $string[serverlocaltime] = "Server's local time";
 $string[shortname] = "Short name";
+$string[site] = "Site";
+$string[sites] = "Sites";
 $string[sitelogs] = "Site logs";
 $string[sitenews] = "Site news";
 $string[sitesettings] = "Site settings";
