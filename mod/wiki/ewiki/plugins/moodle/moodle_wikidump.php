@@ -299,7 +299,7 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
               $destfn=clean_filename(substr($id,strlen(EWIKI_IDF_INTERNAL)));
               $dest="$exportdir/".$destfn;
               if(!copy($fn,$dest)) {
-                error("Cannot copy $fn to $dest.");
+                notify("Cannot copy $fn to $dest.");
               }
                           
               #$fn = urlencode(preg_replace(EWIKI_DUMP_FILENAME_REGEX, "", $id));
@@ -416,10 +416,11 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
 
       #-- Headers
       Header("Content-type: application/zip");
-      Header("Content-disposition: attachment; filename=$archivename");
+      Header("Content-disposition: attachment; filename=\"$archivename\"");
       Header("Cache-control: private");
       Header("Original-Filename: $archivename");    
-      
+      Header("X-Content-Type: application/zip");
+      Header("Content-Location: $archivename");      
       if(!@readfile("$exportbasedir/$archivename")) {
         error("Cannot read $exportbasedir/$archivename");
       }
