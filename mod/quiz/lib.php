@@ -138,7 +138,7 @@ function quiz_delete_instance($id) {
 
     $result = true;
 
-    if ($attempts = get_record("quiz_attempts", "quiz", "$quiz->id")) {
+    if ($attempts = get_records("quiz_attempts", "quiz", "$quiz->id")) {
         foreach ($attempts as $attempt) {
             if (! delete_records("quiz_responses", "attempt", "$attempt->id")) {
                 $result = false;
@@ -168,9 +168,9 @@ function quiz_delete_instance($id) {
 function quiz_delete_course($course) {
 /// Given a course object, this function will clean up anything that
 /// would be leftover after all the instances were deleted
-/// In this case, all non-public quiz categories and questions
+/// In this case, all non-publish quiz categories and questions
 
-    if ($categories = get_records_select("quiz_categories", "course = '$course->id' AND public = '0'")) {
+    if ($categories = get_records_select("quiz_categories", "course = '$course->id' AND publish = '0'")) {
         foreach ($categories as $category) {
             if ($questions = get_records("quiz_questions", "category", $category->id)) {
                 foreach ($questions as $question) {
