@@ -125,13 +125,15 @@
         echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"weeklyoutlineside\" valign=top width=20>&nbsp;</td>";
         echo "<td valign=top bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontent\" width=\"100%\">";
 
+        echo format_text($thissection->summary, FORMAT_HTML);
+
         if (isediting($course->id)) {
-            $thissection->summary .= " <a title=\"$streditsummary\" ".
-                                  "href=\"editsection.php?id=$thissection->id\"><img height=11 width=11 src=\"$CFG->pixpath/t/edit.gif\" ".
-                                  "border=0 alt=\"$streditsummary\"></a></p>";
+            echo " <a title=\"$streditsummary\" ".
+                 " href=\"editsection.php?id=$thissection->id\"><img height=11 width=11 src=\"$CFG->pixpath/t/edit.gif\" ".
+                 " border=0 alt=\"$streditsummary\"></a><br />";
         }
-    
-        echo format_text($thissection->summary);
+
+        echo '<br clear="all">';
     
         print_section($course, $thissection, $mods, $modnamesused);
 
@@ -217,12 +219,14 @@
 
             echo "<p class=\"weeklydatetext\">$weekday - $endweekday</p>";
 
+            echo format_text($thissection->summary, FORMAT_HTML);
+
             if (isediting($course->id)) {
-                $thissection->summary .= " <a title=\"$streditsummary\" href=\"editsection.php?id=$thissection->id\">".
-                      "<img src=\"$CFG->pixpath/t/edit.gif\" height=11 width=11 border=0></a></p>";
+                echo " <a title=\"$streditsummary\" href=\"editsection.php?id=$thissection->id\">".
+                     "<img src=\"$CFG->pixpath/t/edit.gif\" height=11 width=11 border=0></a><br />";
             }
 
-            echo format_text($thissection->summary);
+            echo '<br clear="all">';
 
             print_section($course, $thissection, $mods, $modnamesused);
 

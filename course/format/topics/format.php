@@ -138,13 +138,15 @@
         echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=top width=20>&nbsp;</td>";
         echo "<td valign=top bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\" width=\"100%\">";
     
+        echo format_text($thissection->summary, FORMAT_HTML);
+
         if (isediting($course->id)) {
-            $thissection->summary .= " <a title=\"$streditsummary\" ".
-                                     "href=\"editsection.php?id=$thissection->id\"><img src=\"$CFG->pixpath/t/edit.gif\" ".
-                                     "height=11 width=11 border=0 alt=\"$streditsummary\"></a></p>";
+            echo "<a title=\"$streditsummary\" ".
+                 " href=\"editsection.php?id=$thissection->id\"><img src=\"$CFG->pixpath/t/edit.gif\" ".
+                 " height=11 width=11 border=0 alt=\"$streditsummary\"></a><br />";
         }
     
-        echo format_text($thissection->summary);
+        echo '<br clear="all">';
     
         print_section($course, $thissection, $mods, $modnamesused);
     
@@ -227,12 +229,14 @@
         } else {
             echo "<td valign=top $colormain width=\"100%\">";
 
+            echo format_text($thissection->summary, FORMAT_HTML);
+
             if (isediting($course->id)) {
-                $thissection->summary .= " <a title=\"$streditsummary\" href=editsection.php?id=$thissection->id>".
-                     "<img src=\"$CFG->pixpath/t/edit.gif\" border=0 height=11 width=11></a>";
+                echo " <a title=\"$streditsummary\" href=editsection.php?id=$thissection->id>".
+                     "<img src=\"$CFG->pixpath/t/edit.gif\" border=0 height=11 width=11></a><br />";
             }
-    
-            echo format_text($thissection->summary);
+
+            echo '<br clear="all">';
     
             print_section($course, $thissection, $mods, $modnamesused);
     
