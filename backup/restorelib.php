@@ -339,7 +339,7 @@
                 $section->sequence = "";
                 //Now calculate the section's newid
                 $newid = 0;
-                if ($restore->restoreto == 1) {
+                if ($restore->restoreto == 2) {
                 //Save it to db (only if restoring to new course)
                     $newid = insert_record("course_sections",$section);
                 } else {
