@@ -67,9 +67,9 @@
                      "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> ->
                       <a href=\"backup.php\">$strcoursebackup</a> -> $course->fullname ($course->shortname)");
     } else {
-        print_header("$site->shortname: $strcoursebackup", $site->fullname,
-                     "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> ->
-                      <a href=\"backup.php\">$strcoursebackup</a> -> $course->fullname ($course->shortname)");
+        print_header("$course->shortname: $strcoursebackup", $course->fullname,
+                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> 
+                     $strcoursebackup");
     }
 
     //Print form     
