@@ -1,5 +1,4 @@
 <?PHP
-$string['authintroduction'] = "Choose the authentication module you want to use.  The default is 'email' and has the best security.  The method 'none' has no checking whatsoever - be careful using it unless you really know what you are doing.";
 $string['showguestlogin'] = "You can hide or show the guest login button on the login page.";
 $string['authenticationoptions'] = "Authentication options";
 $string['authinstructions'] = "Here you can provide instructions for your users, so they know which username and password they should be using.  The text you enter here will appear on the login page.  If you leave this blank then no instructions will be printed.";
@@ -35,14 +34,13 @@ $string['auth_imapport'] = "IMAP server port number. Usually this is 143 or 993.
 $string['auth_dbtitle'] = "Use an external database";
 $string['auth_dbdescription'] = "This method uses an external database table to check whether a given username and password is valid.";
 $string['auth_dbhost']   = "The computer hosting the database server.";
-$string['auth_dbtype']   = "The database type (mysql, postgres7, access, oracle etc)";
+$string['auth_dbtype']   = "The database type (See the <A HREF=../lib/adodb/readme.htm#drivers>ADOdb documentation</A> for details)";
 $string['auth_dbname']   = "Name of the database itself";
 $string['auth_dbuser']   = "Username with read access to the database";
 $string['auth_dbpass']   = "Password matching the above username";
 $string['auth_dbtable']  = "Name of the table in the database";
 $string['auth_dbfielduser'] = "Name of the field containing usernames";
 $string['auth_dbfieldpass'] = "Name of the field containing passwords";
-$string['auth_db_instructions'] = "Use the same username and password as your school account";   
 
 $string['auth_nntptitle'] = "Use an NNTP server";
 $string['auth_nntpdescription'] = "This method uses an NNTP server to check whether a given username and password is valid.";
