@@ -236,7 +236,7 @@
             }
         }
         if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
-            error("This post is not part of a discussion! ($reply)");
+            error("This post is not part of a discussion!");
         }
         if (! $forum = get_record("forum", "id", $discussion->forum)) {
             error("The forum number was incorrect ($discussion->forum)");
