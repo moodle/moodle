@@ -48,14 +48,14 @@
         error("You can't modify these questions!");
     }
 
-    $streditingquiz = get_string(isset($modform->instance) ? "editingquiz"
-                                                           : "editquestions",
-                                 "quiz");
+    $strquizzes = get_string('modulenameplural', 'quiz');
+    $streditingquiz = get_string(isset($SESSION->modform->instance) ? "editingquiz" : "editquestions", "quiz");
     $streditingquestion = get_string("editingquestion", "quiz");
 
     print_header("$course->shortname: $streditingquestion", "$course->shortname: $streditingquestion",
-                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
-                  -> <A HREF=\"edit.php\">$streditingquiz</A> -> $streditingquestion");
+                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ".
+                 "-> <a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
+                  " -> <a href=\"edit.php\">$streditingquiz</a> -> $streditingquestion");
 
     if (isset($delete)) {
         if (isset($confirm)) {

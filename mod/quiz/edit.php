@@ -164,8 +164,9 @@
     $strediting = get_string(isset($modform->instance) ? "editingquiz"
                                                        : "editquestions",
                              "quiz");
+    $strheading = empty($modform->name) ? $strediting : $modform->name;
 
-    print_header("$course->shortname: $strediting", "$course->shortname: $strediting",
+    print_header("$course->shortname: $strediting", "$course->shortname: $strheading",
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> ".
                  "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a> -> $strediting");
 

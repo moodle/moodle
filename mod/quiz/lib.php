@@ -50,6 +50,10 @@ function quiz_add_instance($quiz) {
 /// will create a new instance and return the id number 
 /// of the new instance.
 
+    global $SESSION;
+
+    unset($SESSION->modform);
+
     $quiz->created      = time();
     $quiz->timemodified = time();
     $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday, 
@@ -100,6 +104,10 @@ function quiz_update_instance($quiz) {
 /// Given an object containing all the necessary data, 
 /// (defined by the form in mod.html) this function 
 /// will update an existing instance with new data.
+
+    global $SESSION;
+
+    unset($SESSION->modform);
 
     $quiz->timemodified = time();
     $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday, 
