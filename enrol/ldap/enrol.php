@@ -508,6 +508,9 @@ function find_ext_enrolments ($ldap_connection, $memberuid, $type){
 
     foreach ($ldap_contexts as $context) {
         $context == trim($context);
+        if (empty($context)) {
+            continue; // next;
+        }
         
         if ($CFG->enrol_ldap_search_sub){
             //use ldap_search to find first user from subtree
