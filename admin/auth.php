@@ -51,11 +51,11 @@
         $options[$module] = get_string("auth_$module"."title", "auth");
     }
     asort($options);
-	if (isset($_GET['auth'])) {
-	    $auth = $_GET['auth'];
-	} else {
+    if (isset($_GET['auth'])) {
+        $auth = $_GET['auth'];
+    } else {
         $auth = $config->auth;
-	} 
+    }
     $auth = clean_filename($auth);
     require_once("$CFG->dirroot/auth/$auth/lib.php"); //just to make sure that current authentication functions are loaded
     if (! isset($config->guestloginbutton)) {
@@ -97,13 +97,13 @@
 
     echo "<center><b>";
     echo "<form target=\"{$CFG->framename}\" name=\"authmenu\" method=\"post\" action=\"auth.php\">";
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">";
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />";
     print_string("chooseauthmethod","auth");
 
     choose_from_menu ($options, "auth", $auth, "","document.location='auth.php?sesskey=$USER->sesskey&auth='+document.authmenu.auth.options[document.authmenu.auth.selectedIndex].value", "");
 
     echo "</b></center>";
-        
+
     print_simple_box_start("center", "100%");
     print_heading($options[$auth]);
 
@@ -120,15 +120,15 @@
     require_once("$CFG->dirroot/auth/$auth/config.html");
     echo '<tr><td colspan="3">';
     print_heading(get_string('auth_common_settings', 'auth'));
-    echo '</h2><td/></tr>';
-    
+    echo '<td/></tr>';
+
     if ($auth != "email" and $auth != "none" and $auth != "manual") {
         echo "<tr valign=\"top\">";
         echo "<td align=\"right\" nowrap=\"nowrap\">";
         print_string("changepassword", "auth");
         echo ":</td>";
         echo "<td>";
-        echo "<input type=\"text\" name=\"changepassword\" size=\"40\" value=\"$config->changepassword\">";
+        echo "<input type=\"text\" name=\"changepassword\" size=\"40\" value=\"$config->changepassword\" />";
         echo "</td>";
         echo "<td>";
         print_string("changepasswordhelp","auth");
@@ -147,7 +147,7 @@
     print_string("showguestlogin","auth");
     echo "</td></tr>";
 
-    if (function_exists('auth_user_create')){    
+    if (function_exists('auth_user_create')){
         echo "<tr valign=\"top\">";
         echo "<td align=\"right\" nowrap=\"nowrap\">";
         print_string("auth_user_create", "auth");
@@ -164,10 +164,10 @@
     echo '<p align="center"><input type="submit" value="'.get_string('savechanges').'"></p>';
     echo '</form>';
 
-    print_simple_box_end(); 
+    print_simple_box_end();
 
     print_footer();
-    exit; 
+    exit;
 
 /// Functions /////////////////////////////////////////////////////////////////
 
