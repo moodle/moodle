@@ -29,15 +29,11 @@
     }
 
     if (isteacheredit($course->id) or (isteacher($course->id) and ismember($group->id) ) ) {
-        if (isset($edit)) {
-            if ($edit == "on") {
-                $USER->groupediting = true;
-            } else if ($edit == "off") {
-                $USER->groupediting = false;
-            }
-        }
+        $edit = isset($_GET['edit']);
+        $editbutton = $edit ? "" : update_group_button($course->id, $group->id);
     } else {
-        $USER->groupediting = false;
+        $edit = false;
+        $editbutton = "";
     }
 
 
@@ -51,7 +47,7 @@
         print_header("$strgroup : $group->name", "$course->fullname", 
                      "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
                       -> <a href=\"groups.php?id=$course->id\">$strgroups</a> -> $group->name", 
-                      "", "", true, update_group_button($course->id), $loggedinas);
+                      "", "", true, $editbutton, $loggedinas);
     } else {
         print_header("$strgroup : $group->name", "$course->fullname", 
                      "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
@@ -59,25 +55,54 @@
     }
 
 
-/// Display the current group information
 
-    if ($USER->groupediting) {          // Make an editing form for group information
-        print_heading($group->name);
-        echo '<div align="center">';
-        print_group_picture($group, $course->id, true, false, false);
-        echo '</div>';
-        if ($group->description) {
-            print_simple_box($group->description, 'center', '50%');
+/// If data submitted, then process and store.
+
+    if ($form = data_submitted()) { 
+
+        if (empty($form->name)) {
+            $edit = true;
+            $err['name'] = get_string("missingname");
+
+        } else {
+            $group->name = $form->name;
+            $group->description = $form->description;
+            if (!update_record("groups", $group)) {
+                notify("A strange error occurred while trying to save ");
+            } else {
+                redirect("group.php?id=$course->id&group=$group->id", get_string("changessaved"));
+            }
+        }
+    }
+
+
+/// Are we editing?  If so, handle it.
+
+    if ($edit) {          // We are editing a group's information
+        if ($usehtmleditor = can_use_richtext_editor()) {
+            $defaultformat = FORMAT_HTML;
+        } else {
+            $defaultformat = FORMAT_MOODLE;
         }
 
-    } else {                            // Just display the information 
-        print_heading($group->name);
-        echo '<div align="center">';
-        print_group_picture($group, $course->id, true, false, false);
-        echo '</div>';
-        if ($group->description) {
-            print_simple_box($group->description, 'center', '50%');
+        include('group-edit.html');
+
+        if ($usehtmleditor) {
+            use_html_editor();
         }
+
+        print_footer();
+        exit;
+    }
+    
+/// Just display the information 
+
+    print_heading($group->name);
+    echo '<div align="center">';
+    print_group_picture($group, $course->id, true, false, false);
+    echo '</div>';
+    if ($group->description) {
+        print_simple_box($group->description, 'center', '50%');
     }
 
     echo '<br />';

@@ -523,6 +523,7 @@ $string['missingemail'] = 'Missing email address';
 $string['missingfirstname'] = 'Missing given name';
 $string['missingfullname'] = 'Missing full name';
 $string['missinglastname'] = 'Missing surname';
+$string['missingname'] = 'Missing name';
 $string['missingnewpassword'] = 'Missing new password';
 $string['missingpassword'] = 'Missing password';
 $string['missingshortname'] = 'Missing short name';
