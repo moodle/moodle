@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004060400)
+      // wiki.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['action'] = '-- アクション --';
@@ -20,6 +20,7 @@ $string['checklinks'] = 'リンクをチェックする';
 $string['checklinkscheck'] = '本当にこのページのリンクをチェックしますか:';
 $string['checklinksnotice'] = 'しばらくお待ちください。';
 $string['chooseadministration'] = '-- 管理 --';
+$string['chooseafile'] = '初期ページの選択/アップロード';
 $string['choosewikilinks'] = '-- Wiki リンクの選択 --';
 $string['comment'] = 'コメント';
 $string['contentsize'] = 'コンテンツサイズ';
@@ -31,6 +32,7 @@ $string['diff'] = 'Diff';
 $string['disabledpage'] = 'このページは現在利用できません。';
 $string['downloadaszip'] = 'zip書庫をダウンロードする';
 $string['downloadtimes'] = 'ダウンロード回数: $a 回';
+$string['dwnlsection'] = 'ダウンロードセクション';
 $string['editthispage'] = '編集';
 $string['emptypage'] = '空のページ';
 $string['errorsize'] = 'ページサイズが64Kを超えています';
@@ -58,6 +60,7 @@ $string['htmlmode'] = 'HTMLモード';
 $string['htmlonly'] = 'HTMLのみ';
 $string['index'] = 'index';
 $string['infoaboutpage'] = 'ページの情報';
+$string['initialcontent'] = '初期ページの選択';
 $string['lastchanged'] = '最終更新: $a';
 $string['lastmodified'] = '最終更新';
 $string['linkok'] = 'OK';
@@ -107,8 +110,11 @@ $string['wikidefaultpagename'] = 'Wikiインデックス';
 $string['wikiexport'] = 'ページのエクスポート';
 $string['wikilinks'] = 'Wikiリンク';
 $string['wikiname'] = 'ページ名';
+$string['wikistartederror'] = '既にエントリーが存在します - 変更出来ません。';
 $string['wikitype'] = 'タイプ';
+$string['wikiusage'] = 'Wiki使用法';
 $string['withbinaries'] = 'バイナリコンテンツを含む';
+$string['withvirtualpages'] = 'Wikiリンクを含む';
 $string['wrongversionrange'] = '$a は正しい範囲にありません!';
 
 ?>
