@@ -52,6 +52,7 @@
             if ($USER->username == "guest") {
                 $USER->lang       = $CFG->lang;               // Guest language always same as site
                 $USER->firstname  = get_string("guestuser");  // Name always in current language
+                $USER->lastname   = " ";
             }
     
             if (!update_user_in_db()) {
