@@ -402,21 +402,7 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
         
     if(!$exportdestinations) {
       $archivename=$wname.".zip";
-      if (empty($CFG->zip)) {    // Use built-in php-based zip function
-        include_once("$CFG->libdir/pclzip/pclzip.lib.php");
-        $archive = new PclZip("$exportbasedir/$archivename");
-        if (($list = $archive->create($filestozip,'',"$exportbasedir/")) == 0) {
-            error($archive->errorInfo(true));
-        }
-      } else {                   // Use external zip program
-        $files = "";
-        foreach ($filestozip as $file) {
-            $files .= $wname."/".basename($file);
-            $files .= " ";
-        }
-        $command = "cd $exportbasedir ; $CFG->zip -r $archivename $files";
-        Exec($command);
-      }
+      zip_files($filestozip, "$exportbasedir/$archivename");
 
       #-- Headers
       Header("Content-type: application/zip");
