@@ -34,16 +34,22 @@ $string['auth_ldap_bind_settings'] = 'Sidosasetukset';
 $string['auth_ldap_contexts'] = 'Lista konteksteista, miss‰ k‰ytt‰j‰t sijaitsevat. Erota kontekstit toisistaan \';\'-merkill‰. Esim: \'ou=users,o=org; ou=others,o=org\'';
 $string['auth_ldap_create_context'] = 'Jos luodaan s‰hkˆpostiviestill‰ tunnuksensa varmentaneet k‰ytt‰j‰t automaattisesti ldap-hakemistoon, m‰‰rit‰ t‰ss‰ konteksti, minne k‰ytt‰j‰t luodaan. On hyv‰ k‰ytt‰‰ jotain erityst‰ kontekstia, jotta v‰ltyt tietoturvariskeilt‰. T‰t‰ kontekstia ei tarvitse erikseen lis‰t‰ yll‰ olevaan muuttujaan.';
 $string['auth_ldap_creators'] = 'Lista ryhmist‰, mink‰ j‰senet voivat luoda uusia kursseja Moodleen. Erota useat ryhm‰t toisistaan \';\'-merkill‰. Esimerkiksi \'cn=teachers,ou=staff,o=myorg;\'';
+$string['auth_ldap_expiration_desc'] = 'Valitse \"Ei\" poistaaksesi vanhentuneiden salasanojen seurannan. Tai \"LDAP\" jos haluat n‰ytt‰‰ k‰ytt‰jille viestin kun heid‰n salasanansa on vanhenemassa.';
+$string['auth_ldap_expireattr_desc'] = 'Valinnainen: ylim‰‰rit‰ haluamasi ';
+$string['auth_ldap_graceattr_desc'] = 'Valinnainen: ylim‰‰rit‰ graceLogin atribuutti';
+$string['auth_ldap_gracelogins_desc'] = 'K‰yt‰ graceLogin ominaisuutta. Esim Edirectory voidaan konfiguroida kirjaamaan k‰ytt‰j‰sis‰‰n  muutaman viel‰ kerran salasanan vanhenemisen j‰lkeen, jotta salana voidaan vaihtaa. JOs haluat antaa ilmoituksen kun k‰ytt‰j‰ k‰ytt‰‰ grace-logineja valise \"Kyll‰\".';
 $string['auth_ldap_host_url'] = 'M‰‰rit‰ LDAP-palvelin URL-muodossa. Esim. \'ldap://ldap.myorg.com/\' tai \'ldaps://ldap.myorg.com/\' ';
 $string['auth_ldap_login_settings'] = 'Kirjaantumisasetukset';
-$string['auth_ldap_memberattribute'] = 'M‰‰rit‰ k‰ytt‰j‰n ryhm‰j‰senyysattribuutti. Yleens‰ \'member\' tai \'groupMembership\' ';
+$string['auth_ldap_memberattribute'] = 'Valinnainen: ylim‰‰rit‰ k‰ytt‰j‰n ryhm‰j‰senyysattribuutti. Yleens‰ \'member\' tai \'groupMembership\' ';
+$string['auth_ldap_objectclass'] = 'Valinnainen: ylim‰‰rit‰ objectClass jota k‰ytet‰‰ k‰ytt‰jien hakuun.';
+$string['auth_ldap_passwdexpire_settings'] = 'LDAP salasanojen vanheneminen';
 $string['auth_ldap_search_sub'] = 'Aseta arvo <> 0, jos haluat hakea k‰ytt‰ji‰ myˆs alikonteksteista.';
 $string['auth_ldap_server_settings'] = 'LDAP palvelimen asetukset';
 $string['auth_ldap_update_userinfo'] = 'P‰ivit‰ k‰ytt‰j‰tiedot LDAP:ista Moodleen (etunimi, sukunimi, osoite..). Katso <a href=\"/auth/ldap/attr_mappings.php\">/auth/ldap/attr_mappings.php</a> tarkempia m‰‰rittelytietoja.';
-$string['auth_ldap_user_attribute'] = 'Attribuutti k‰ytt‰j‰nimille. Yleens‰ \'cn\'.';
+$string['auth_ldap_user_attribute'] = 'Valinnainen: ylim‰‰rit‰ attribuutti k‰ytt‰j‰nimille. Yleens‰ \'cn\'.';
 $string['auth_ldap_user_settings'] = 'K‰ytt‰jien etsint‰';
 $string['auth_ldap_version'] = 'Palvelimella k‰ytett‰v‰ LDAP protokolla versio';
-$string['auth_ldapdescription'] = 'T‰m‰ tapa tarjoaa k‰ytt‰j‰tunnistuksen LDAP-palvelimelta. Jos salasana ja tunnus t‰sm‰‰v‰t, Moodle luo uuden k‰ytt‰j‰n  tietokantaansa. Jos olet valinnut \'auth_ldap_update_userinfo\'-option, myˆs k‰ytt‰j‰tiedot kopioidaan LDAP:sta Moodleen.
+$string['auth_ldapdescription'] = 'T‰m‰ tapa tarjoaa k‰ytt‰j‰tunnistuksen LDAP-palvelimelta. Jos salasana ja tunnus t‰sm‰‰v‰t, Moodle luo uuden k‰ytt‰j‰n  tietokantaansa. 
 
 Seuraavilla kerroilla ainostaan tunnus ja salasana tarkistetaan.';
 $string['auth_ldapextrafields'] = 'N‰m‰ kent‰t ovat valinnaisia. Voit asettaa Moodlen hakemaan k‰ytt‰j‰tietoja t‰ss‰ m‰‰ritellyist‰ <b>LDAP-kentist‰</b>. Mik‰li j‰t‰t n‰m‰ tyhjiksi, mit‰‰n tietoja ei haeta LDAP-palvelimelta ja k‰ytet‰‰n Moodlen oletusarvoja.
