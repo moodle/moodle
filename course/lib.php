@@ -203,13 +203,13 @@ function print_recent_activity($course) {
                 $modname = get_field($info[0], "name", "id", $info[1]);
             
                 if ($info[0] == "discuss") {
-                    $info[0] == "discussion";  // nasty hack, really.
+                    $info[0] = "discussion";  // nasty hack, really.
                 }
 
                 echo "<LI><FONT SIZE=1>";
                 switch ($log->action) {
                     case "add mod":
-                       echo "Added a ".$info[0].": $modname";
+                       echo "Added a ".$info[0].": <A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>";
                     break;
                     case "update mod":
                        echo "Updated the ".$info[0].": <A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>";
