@@ -256,10 +256,18 @@ function get_slash_arguments($i=0) {
 }
 
 
-function text_to_html($text) {
-    global $CFG;
+function cleantext($text) {
+// Given raw text (eg typed in by a user), this function cleans it up 
+// and removes any nasty tags that could mess up Moodle pages.
 
+    return strip_tags($text, '<b><i><u><font>');
+}
+
+
+function text_to_html($text) {
 // Given plain text, makes it into HTML as nicely as possible.
+
+    global $CFG;
 
     // Make URLs into links.   eg http://moodle.com/
     $text = eregi_replace("([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])", 
