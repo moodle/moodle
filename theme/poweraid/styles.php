@@ -205,3 +205,7 @@ select {
 .homelink {
     font-size: x-small;
 }
+
+.teacheronly {
+    color: "#990000";
+}

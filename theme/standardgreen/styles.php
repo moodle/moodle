@@ -218,11 +218,14 @@ a.dimmed:hover {
     font-size: small;
 }
 
-
 .logininfo {
     font-size: x-small;
 }
 
 .homelink {
     font-size: x-small;
+}
+
+.teacheronly {
+    color: "#990000";
 }

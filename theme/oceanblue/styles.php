@@ -350,3 +350,7 @@ a.dimmed:hover {
 .homelink {
     font-size: x-small;
 }
+
+.teacheronly {
+    color: "#990000";
+}
