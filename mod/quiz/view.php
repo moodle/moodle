@@ -68,7 +68,7 @@
 
     print_heading($quiz->name);
 
-    print_simple_box($quiz->intro, "CENTER");
+    print_simple_box(text_to_html($quiz->intro), "CENTER");
 
     if ($available) {
         echo "<P ALIGN=CENTER>".get_string("quizavailable", "quiz", userdate($quiz->timeclose));
