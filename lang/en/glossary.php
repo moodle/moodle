@@ -71,6 +71,7 @@ $string['displayformatfullwithauthor'] = 'Full with author';
 $string['displayformatfullwithoutauthor'] = 'Full without author';
 $string['displayformatssetup'] = 'Display Formats Setup';
 $string['duplicateentry'] = 'Duplicate entry';
+$string['editalways'] = 'Edit always';
 $string['editcategories'] = 'Edit categories';
 $string['editentry'] = 'Edit entry';
 $string['editingcomment'] = 'Editing comment';
