@@ -9,7 +9,9 @@
 
     print_header("$site->fullname", "$site->fullname", "", "");
 
+
 ?>
+
 
 <TABLE WIDTH="100%" BORDER="0" CELLSPACING="5" CELLPADDING="5">
   <TR>
@@ -17,7 +19,8 @@
       <? print_simple_box("Main Menu", $align="CENTER", $width="100%", $color="$THEME->cellheading"); ?>
 
 	  <LI>Home</LI>
-      <LI><A TITLE="Available courses on this server" HREF="course/">Courses</A></LI>
+      <LI><A TITLE="Available courses on this server" HREF="course/"><B>Courses</B></A><BR></LI>
+      <LI><A TITLE="Site-level Forums" HREF="mod/discuss/index.php?id=<?=$site->id?>">Forums</A></LI>
 
       <? include("mod/reading/lib.php"); 
          list_all_readings();
@@ -41,8 +44,11 @@
   </TR>
 </TABLE>
 
-<HR SIZE=1 NOSHADE>
+<CENTER><P>
+<? print_editing_switch($site->id); ?>
+</P><CENTER>
 
+<? include("$CFG->dirroot/theme/$CFG->theme/footer.html"); ?>
 
 <P ALIGN=center>
 <A WIDTH=85 HEIGHT=25 HREF="http://moodle.com/"><IMG SRC="pix/madewithmoodle.gif" BORDER=0></A>
