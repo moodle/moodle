@@ -1,194 +1,208 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
 
-      // survey.php - created with Moodle 1.0.9 (2003052900)
-
-
-
-
-
-$string['actual'] = "Oraingoa";
-$string['actualclass'] = "Oraingo klasea";
-$string['actualstudent'] = "Oraingo \$a";
-$string['allquestions'] = "Gai guztiak ordenean, ikasle guztiak";
-$string['allscales'] = "Eskala guztiak, ikasle guztiak";
-$string['alreadysubmitted'] = "Informazio hau bidali duzu dagoeneko";
-$string['analysisof'] = "\$a(r)en analisia";
-$string['answers'] = "Erantzunak";
-$string['attls1'] = "Norbaitek dioena ebaluatzean, esaten duena hartzen dut kontuan, ez nork esaten duen.";
-$string['attls10'] = "Zerbait aztertzen dudanean ahalik eta objetiboen izatea da garrantzitsuena niretzat.";
-$string['attls10short'] = "Izan objetiboa";
-$string['attls11'] = "Pertsonekin batera pentsatzen saiatzen naiz ez euren kontra.";
-$string['attls11short'] = "Pentsa ezazu PERTSONEKIN";
-$string['attls12'] = "Irizpide bat daukat argudioak ebaluatzeko.";
-$string['attls12short'] = "Erabili irizpide bat ebaluatzeko";
-$string['attls13'] = "Besteak ebaluatu baino lehen nahiago dut ulertzen saiatu.";
-$string['attls13short'] = "Saiatu ulertzen";
-$string['attls14'] = "Besteei euren argudioak argitzen laguntzeko, pentsatzeko eran dituzten ahulguneak nabarmentzen saiatzen naiz.";
-$string['attls14short'] = "Nabarmendu ahulguneak";
-$string['attls15'] = "Besteen lekuan jartzen saiatzen naiz nola pentsatzen duten eta zergatik ulertzeko.";
-$string['attls15short'] = "Besteen lekuan jartzen naiz";
-$string['attls16'] = "Baten batek gauzak aztertzeko dudan moduari 'probatzea' esan liezaioke, nik froga guztiak arreta handiz kontuan hartzen baititut.";
-$string['attls16short'] = "Probatu";
-$string['attls17'] = "Arazoak konpontzean, nire interesen gainean, lojikaren erabilera baloratzen dut.";
-$string['attls17short'] = "Lojika batez ere baloratzen dut";
-$string['attls18'] = "Nirekin bat ez datozen iritziak uler ditzaket enpatiaren bitartez";
-$string['attls18short'] = "Enpatia bitartezko ulermena";
-$string['attls19'] = "Bitxiak iruditzen zaizkidan iritziak dituen jendea topatzen dudanean, saiatzen naiz ulertzen zergatik duten iritzi horiek.";
-$string['attls19short'] = "Bestea ulertzeko saiakerak egin";
-$string['attls1short'] = "Argudioaren kalitatean zentratu";
-$string['attls2'] = "Deabruaren abokatua izatea gustuko dut, norbaitek dioenari kontra egiten.";
-$string['attls20'] = "Dedico tiempo a comprender qué está 'equivocado' en las cosas. Por ejemplo, en una interpretación literaria busco algo que no esté suficientemente bien argumentado.";
-$string['attls20short'] = "¿qué está equivocado?";
-$string['attls2short'] = "ser el abogado del diablo";
-$string['attls3'] = "Me gusta entender 'de dónde vienen' los demás, que experiencias les han hecho sentir de la forma en que lo hacen.";
-$string['attls3short'] = "de dónde vienen los demás";
-$string['attls4'] = "La parte más importante de mi educación ha sido aprender a entender a la gente que es diferente a mí";
-$string['attls4short'] = "entender a la gente diferente";
-$string['attls5'] = "Siento que la mejor manera de conseguir mi propia identidad es interactuar con gente diferente.";
-$string['attls5short'] = "interactuar con la diversidad";
-$string['attls6'] = "Me encanta oír las opiniones de gente que viene de entornos diferentes al mío --me ayuda a entender cómo cosas iguales pueden ser vistas de maneras diferentes.";
-$string['attls6short'] = "me encanta oír opiniones";
-$string['attls7'] = "Veo que puedo fortalecer mi propia posición discutiendo con gente que discrepa conmigo.";
-$string['attls7short'] = "fortalecer a través del debate";
-$string['attls8'] = "Estoy siempre interesado en conocer por qué la gente dice y cree las cosas y la forma en que lo hacen.";
-$string['attls8short'] = "saber por qué";
-$string['attls9'] = "A menudo me encuentro a mí mismo discutiendo con los autores de los libros que leo, intentando entender por qué están equivocados.";
-$string['attls9short'] = "discutir con autores";
-$string['attlsintro'] = "El propósito de este cuestionario es ayudarnos a evaluar sus actitudes hacia el pensamiento y el aprendizaje.
-No hay respuestas 'correctas' o 'equivocadas', nos interesa sólo su opinión. Sus respuestas serán tratadas con alto grado de confidencialidad y no afectarán su evaluación.";
-$string['attlsm1'] = "Actitudes hacia el pensamiento y el aprendizaje";
-$string['attlsm2'] = "Aprendizaje Colaborativo";
-$string['attlsm3'] = "Aprendizaje Individualizado";
-$string['attlsmintro'] = "En discusión...";
-$string['attlsname'] = "ATTLS (versión de 20 elementos)";
-$string['ciq1'] = "¿En qué momento, durante la clase, se sintió más involucrado como estudiante?";
-$string['ciq2'] = "¿En qué momento, durante la clase, se sintió más distanciado como estudiante?";
-$string['ciq3'] = "¿Qué acción, de cualquiera de sus participantes, le ha parecido más útil o positiva dentro del foro?";
-$string['ciq4'] = "¿Qué acción dentro del foro le ha parecido más compleja o confusa por parte de cualquiera de sus participantes?";
-$string['ciq5'] = "¿Qué evento le ha sorprendido más?";
-$string['ciqintro'] = "Responda las siguientes preguntas pensando en los eventos ocurridos durante la semana pasada en esta clase.";
-$string['ciqname'] = "Incidentes críticos";
-$string['clicktocontinue'] = "Haz clic aquí para continuar";
-$string['clicktocontinuecheck'] = "Haz clic aquí para revisar y continuar";
-$string['colles1'] = "mi aprendizaje se centra en asuntos que me interesan.";
-$string['colles10'] = "Pido a otros estudiantes que me expliquen sus ideas.";
-$string['colles10short'] = "Pido explicaciones";
-$string['colles11'] = "otros estudiantes me piden que explique mis ideas.";
-$string['colles11short'] = "Se me pide que explique";
-$string['colles12'] = "otros estudiantes responden a mis ideas.";
-$string['colles12short'] = "los estudiantes me responden";
-$string['colles13'] = "el tutor me estimula a reflexionar.";
-$string['colles13short'] = "el tutor estimula la reflexión";
-$string['colles14'] = "el tutor me anima a participar.";
-$string['colles14short'] = "el tutor me anima";
-$string['colles15'] = "el tutor ejemplifica las buenas disertaciones.";
-$string['colles15short'] = "el tutor ejemplifica las disertaciones";
-$string['colles16'] = "el tutor ejemplifica la auto reflexión crítica.";
-$string['colles16short'] = "el tutor ejemplifica la auto reflexión";
-$string['colles17'] = "otros estudiantes me animan a participar.";
-$string['colles17short'] = "los estudiantes me animan";
-$string['colles18'] = "los otros estudiantes elogian mi contribución.";
-$string['colles18short'] = "los estudiantes me elogian";
-$string['colles19'] = "otros estudiantes valoran mi contribución.";
-$string['colles19short'] = "los estudiantes me valoran";
-$string['colles1short'] = "centrado en temas interesantes";
-$string['colles2'] = "lo que aprendo es importante para mi práctica profesional.";
-$string['colles20'] = "los otros estudiantes empatizan con mis esfuerzos por aprender.";
-$string['colles20short'] = "los estudiantes empatizan";
-$string['colles21'] = "entiendo bien los mensajes de otros estudiantes";
-$string['colles21short'] = "Entiendo a los otros estudiantes";
-$string['colles22'] = "los otros estudiantes entienden bien mis mensajes.";
-$string['colles22short'] = "los estudiantes me entienden";
-$string['colles23'] = "entiendo bien los mensajes del tutor.";
-$string['colles23short'] = "Entiendo al tutor";
-$string['colles24'] = "el tutor entiende bien mis mensajes.";
-$string['colles24short'] = "el tutor me comprende";
-$string['colles2short'] = "importante para mi práctica";
-$string['colles3'] = "aprendo cómo mejorar mi práctica profesional.";
-$string['colles3short'] = "mejoro mi práctica";
-$string['colles4'] = "lo que aprendo tiene relación con mi práctica profesional";
-$string['colles4short'] = "tiene relación con mi práctica";
-$string['colles5'] = "Pienso críticamente sobre cómo aprendo.";
-$string['colles5short'] = "Soy crítico con mi aprendizaje";
-$string['colles6'] = "Pienso críticamente sobre mis propias ideas.";
-$string['colles6short'] = "Soy crítico con mis propias ideas";
-$string['colles7'] = "Pienso críticamente sobre la ideas de otros estudiantes.";
-$string['colles7short'] = "Soy crítico con otros estudiantes";
-$string['colles8'] = "Pienso críticamente sobre las ideas que leo.";
-$string['colles8short'] = "Soy crítico con lo que leo";
-$string['colles9'] = "Explico mis ieas a otros estudiantes.";
-$string['colles9short'] = "Explico mis ideas";
-$string['collesaintro'] = "El propósito de esta encuesta es ayudarnos a entender hasta qué punto la presentación en línea de esta unidad le facilitó el aprendizaje.
-Cada una de las 24 declaraciones siguientes le interroga acerca de su experiencia en esta unidad.
-No hay respuestas 'correctas' o 'equivocadas', nosotros estamos interesados sólo en su opinión. Sus respuestas serán tratadas con alto grado de confidencialidad y no afectarán su evaluación.
-Sus respuestas, pensadas cuidadosamente, nos ayudarán a mejorar la manera de presentar esta unidad en el futuro.
-Muchas gracias.";
-$string['collesaname'] = "COLLES (Actual)";
-$string['collesapintro'] = "El propósito de este cuestionario es ayudarnos a entender hasta qué punto la presentación en línea de esta unidad le facilitó el aprendizaje.
-Cada una de las declaraciones siguientes le pedirán que compare su experiencia <strong>favorita</strong> (ideal) y su experiencia <strong>real</strong> en esta unidad. Sus respuestas serán tratadas con alto grado de confidencialidad y no afectarán su evaluación.
-Sus respuestas, pensadas cuidadosamente, nos ayudarán a mejorar la manera de presentar esta unidad en el futuro.
-Muchas gracias por su colaboración.";
-$string['collesapname'] = "COLLES (Favorita y actual)";
-$string['collesm1'] = "Relevancia";
-$string['collesm1short'] = "Relevancia";
-$string['collesm2'] = "Pensamiento reflexivo";
-$string['collesm2short'] = "Pensamiento reflexivo";
-$string['collesm3'] = "Interactividad";
-$string['collesm3short'] = "Interactividad";
-$string['collesm4'] = "Apoyo del tutor";
-$string['collesm4short'] = "Apoyo del tutor";
-$string['collesm5'] = "Apoyo de compañeros";
-$string['collesm5short'] = "Apoyo de compañeros";
-$string['collesm6'] = "Interpretación";
-$string['collesm6short'] = "Interpretación";
-$string['collesmintro'] = "En esta unidad en línea...";
-$string['collespintro'] = "El propósito de esta encuesta es ayudarnos a entender lo que usted valora en una experiencia de aprendizaje en línea.
-Cada una de las 24 declaraciones siguientes le interrogan sobre su experiencia <strong>favorita</em> (ideal) en esta unidad.
-No existen respuestas 'correctas' o 'equivocadas', a nosotros nos interesa sólo su opinión. Sus respuestas serán tratadas con alto grado de confidencialidad y no afectarán su evaluación.
-Sus respuestas, pensadas cuidadosamente, nos ayudarán a mejorar la manera de presentar esta unidad en el futuro.
-Muchas gracias por su colaboración.";
-$string['collespname'] = "COLLES (Gogokoa)";
-$string['done'] = "Eginda";
-$string['download'] = "Behera kargatu";
-$string['downloadexcel'] = "Kalkulu orri formatoan behera kargatu";
-$string['downloadinfo'] = "Informazio osoa kalkulu orrietarako programa batean analizatzeko formatoan behera kargatu ahal duzu";
-$string['downloadtext'] = "Testu formatoan behera kargatu";
-$string['editingasurvey'] = "Informazioa editatzen";
-$string['guestsnotallowed'] = "Gonbidatuek ezin dute inkestetan parte hartu";
-$string['helpsurveys'] = "Informazio mota ezberdinei buruzko laguntza";
-$string['howlong'] = "Zenbat denbora behar izan duzu galdetegi hau betetzeko?";
-$string['howlongoptions'] = "<abbr title=minutu>min.</abbr> 1 baino gutxiago, 1-2 <abbr title=minutu>min.</abbr>,  2-3 <abbr title=minutu>min.</abbr>,  3-4 <abbr title=minutu>min.</abbr>,  4-5 <abbr title=minutu>min.</abbr>,  5-10 <abbr title=minutu>min.</abbr>, 10 minutu baino gehiago.";
-$string['ifoundthat'] = "Aurkituta:";
-$string['introtext'] = "Sarrera testua";
-$string['ipreferthat'] = "Hau nahiago dut";
+#------------------------------------------------------------
 $string['modulename'] = "Inkesta";
 $string['modulenameplural'] = "Inkestak";
+#------------------------------------------------------------
+
+$string['actual'] = "Benetazkoa";
+$string['actualclass'] = "Klasearen benetazkoa";
+$string['actualstudent'] = "\$a -ren benetazkoa";
+$string['allquestions'] = "Galdera guztiak ordenean, ikasle guztiak";
+$string['allscales'] = "Eskala guztiak, ikasle guztiak";
+$string['alreadysubmitted'] = "Ikesta hau bidali duzu dagoeneko";
+$string['analysisof'] = "\$a -ren analisia";
+
+$string['attlsname'] = "Jarrerak (20 elementuko bertsioa)";
+$string['attlsintro'] = "Galdeketa honen helburua zure pentsatzeko eta ikasteko jarrera ebaluatzeko gu laguntzea da.
+
+Ez dago erantzun zuzen edo okerrik; zure iritzia jakin nahi dugu besterik gabe. Zure erantzunak konfidentzialtasun osoz tratatuko ditugula zihur egon zaitezke, eta hauek ez dute zure ebaluaketan eraginik izango.";
+
+$string['attls1'] = "Norbaitek esandakoa ebaluatzerakoan, argudioen kalitatean fijatzen naiz, ez hauek aurkezten dituen pertsonan.";
+$string['attls1short'] = "Argudioaren kalitatean fijatu";
+$string['attls2'] = "Deabruaren abokatuarena egitea dut gustoko - besteak esandakoaren kontrako posizioa hartuz.";
+$string['attls2short'] = "Deabruaren abokatuarena egin";
+$string['attls3'] = "Beste pertsonak 'nondik datozen' ulertzea gustatzen zait, sentitzen dutena sentitzera bultzatu duten esperientziak ezagutzea.";
+$string['attls3short'] = "Jendea nondik datorren";
+$string['attls4'] = "Nire hezkuntzaren atalik garrantzitsuena nirekiko oso desberdinak diren pertsonak ulertzen ikastea izan da.";
+$string['attls4short'] = "Pertsona desberdinak ulertzea";
+$string['attls5'] = "Nire identitate propioa lortzeko biderik onena mota askotariko jendearekin aritzea da.";
+$string['attls5short'] = "Mota askotarikoekin aritu";
+$string['attls6'] = "Nirearen jatorri oso desberdina duen jendearen iritziak gogo onez entzuten ditut - gauza berberak modu desberdinetan nola ikus daitezken ulertzen laguntzen dit.";
+$string['attls6short'] = "Iritziak entzutea gustoko";
+$string['attls7'] = "Nire posizio propioa indartzen dut nirekin ados ez dagoen norbaitekin eztabaidatuz.";
+$string['attls7short'] = "eztabaidaz indartu";
+$string['attls8'] = "Jendeak esan eta sinisten dituenen zergatiarengan interesa dut beti.";
+$string['attls8short'] = "Jendearen zergatia jakin";
+$string['attls9'] = "Sarritan nire burua irakurtzen ditudan liburuen egileekin eztabaidatzen aurkitzen dut, logikaren bidez zergatik okertzen diren aurkitu nahiean.";
+$string['attls9short'] = "Egileekin eztabaidatu";
+$string['attls10'] = "Zerbait aztertzerakoan objetibotasuna ahal bezain beste mantentzea garrantzitsua da niretzat.";
+$string['attls10short'] = "objetibotasuna mantendu";
+$string['attls11'] = "Jendearekin pentsatzen saiatzen naiz, ez beraien aurka.";
+$string['attls11short'] = "JendeareKIN pentsatu";
+$string['attls12'] = "Baditut irizpide batzuk argumentuak aztertzerakoan.";
+$string['attls12short'] = "Ebaluaketan irizpuideak erabili";
+$string['attls13'] = "Beste inoren iritzia ulertzen saiatuko naiz epaitu beharrean.";
+$string['attls13short'] = "Ulertzen saiatu";
+$string['attls14'] = "Besteen pentsakeraren puntu ahulak seinalatzen saiatzen naiz beraien argumentuak argitu nahiean.";
+$string['attls14short'] = "ahultasunak seinalatu";
+$string['attls15'] = "Auzi handiko gaiak eztabaidatzerakoan nire burua bestearen azalean jartzen saiatzen naiz, pentsatzen dutenaren zergatia ikusteko.";
+$string['attls15short'] = "Besteen azalean jarri";
+$string['attls16'] = "Nire analisi moduari 'gauzak frogapean jartzea' deitu dakioke froga guztiak kontutan hartzeko arreta dudalako.";
+$string['attls16short'] = "frogapean jarri";
+$string['attls17'] = "Arazoen konponketan, logika eta arrazoiaren erabilera baloratzen dut, nire kezkak gehitzea baino.";
+$string['attls17short'] = "logika gehien baloratu";
+$string['attls18'] = "Nirearen desberdinak diren iritziak hobetu ulkertu ditzazket enpatiaren bitartez.";
+$string['attls18short'] = "ulermena enpatiari ezker";
+$string['attls19'] = "Nirearen desberdinak diren iritziak dituen jendearekin topo egiten dudanean, pertsona horrengana hurbiltzeko saiakera berezia egiten dut, iritzi hoiek nola izan ditzakeen jakiteko.";
+$string['attls19short'] = "hurbiltzeko saiekera egin";
+$string['attls20'] = "'Txarto' zer dagoen asmatu nahiean denbora ematen dut. Adibidez, hitzez hitzezko azalpen batean nahiko argudiatuta ez dagoen zerbait bilatuko dut.";
+$string['attls20short'] = "zer dago gaizki?";
+
+$string['attlsmintro'] = "Eztabaidan ...";
+$string['attlsm1'] = "Pentsaera eta Ikasketa jarrerak";
+$string['attlsm2'] = "Taldean ikasi";
+$string['attlsm3'] = "Banatuta ikasi";
+$string['clicktocontinue'] = "Klik egin hemen jarraitzeko";
+$string['clicktocontinuecheck'] = "Klik egin hemen aztertu eta jarraitzeko";
+
+$string['colles1'] = "Nire ikasketa interesatzen zaizkidan gaietara bideratuta dago.";
+$string['colles1short'] = "gai interesgarrietara bidaratu";
+$string['colles2'] = "Ikasten dudana nire jarduera profesionalerako garrantzitsua da.";
+$string['colles2short'] = "jarduerarako garrantzitsua";
+$string['colles3'] = "Nire jarduera profesionala nola hobetu ikasten dut.";
+$string['colles3short'] = "jarduera hobetu";
+$string['colles4'] = "ikasten dudana nire jarduera profesionalarekin ondo lotuta dago.";
+$string['colles4short'] = "jarduerarekin lotuta";
+$string['colles5'] = "Ikasten dudanaren inguruan zorroztasunez pentsatzen dut.";
+$string['colles5short'] = "Nire ikasketekin zorrotza naiz";
+$string['colles6'] = "Nire ideia proioen inguruan zorroztasunez pentsatzen dut.";
+$string['colles6short'] = "Nire ideiekin zorrotza naiz";
+$string['colles7'] = "Beste ikasleen ideien inguruan zorroztasunez pentsatzen dut.";
+$string['colles7short'] = "Beste ikasleekiko zorrotza naiz";
+$string['colles8'] = "Irakurritako ideien inguruan zorroztasunez pentsatzen dut.";
+$string['colles8short'] = "Irakurketekin zorrotza naiz";
+$string['colles9'] = "Nire ideiak beste ikasleei azaltzen dizkiet.";
+$string['colles9short'] = "Nire ideiak azaltzen ditut";
+$string['colles10'] = "Beste ikasleei bere ideiak azaltzea eskatzen diet.";
+$string['colles10short'] = "Azalpenak eskatzen ditut";
+$string['colles11'] = "beste ikasleek nire ideiak azaltzea eskatzen didate.";
+$string['colles11short'] = "Azalpenak eskatzen dizkidate";
+$string['colles12'] = "Beste ikasleek nire ideiei erantzuten diote.";
+$string['colles12short'] = "Ikasleek erantzuten didate";
+$string['colles13'] = "Tutoreak pentsarazi egiten nau.";
+$string['colles13short'] = "Tutoreak pentsarazi";
+$string['colles14'] = "Tutoreak parte hartzera bultzatzen nau.";
+$string['colles14short'] = "Tutoreak parte hartzea eragin";
+$string['colles15'] = "Tutorea diskurtso egokiaren eredua da.";
+$string['colles15short'] = "Tutorea diskurtsoaren eredu";
+$string['colles16'] = "Tutorea norberaren irudiarekiko zorroztasunaren eredu da.";
+$string['colles16short'] = "Tutorea norberaren irudiaren eredu";
+$string['colles17'] = "beste ikasleek parte hartzera bultzatzen naute.";
+$string['colles17short'] = "ikasleek partehartzea eragin";
+$string['colles18'] = "Beste ikasleek nira aportazioa goraipatzen dute.";
+$string['colles18short'] = "ikasleek goraipatzen naute";
+$string['colles19'] = "Beste ikasleek nire aportazioa baloratzen dute.";
+$string['colles19short'] = "ikasleek baloiratzen naute";
+$string['colles20'] = "Beste ikasleek nire ikasteko ahaleginarekiko enpatia dute.";
+$string['colles20short'] = "ikasleek enpatia";
+$string['colles21'] = "Beste ikasleen mezuak ondo ulertzen ditut.";
+$string['colles21short'] = "beste ikasleak ulertzen ditut";
+$string['colles22'] = "Beste ikasleek nire mezuak ondo ulertzen dituzte.";
+$string['colles22short'] = "ikasleek ulertzen naute";
+$string['colles23'] = "Tutorearen mezuak ondo ulertzen ditut.";
+$string['colles23short'] = "Tutorea ondo ulertzen dut";
+$string['colles24'] = "Tutoreak nire mezuak ondo ulertzen ditu.";
+$string['colles24short'] = "Tutoreak ulertzen nau";
+
+$string['collesaname'] = "COLLES (Benetazkoa)";
+$string['collesaintro'] = "Inkesta honen helburua unitate honen linea bidezko banaketa lagungarria izan duzu jakitea da.
+
+Azpiko 24 esaldietako bakoitza unitate honekin izan duzun esperientziari buruz galdetzen du.
+
+Ez dago erantzun 'zuzen' edo 'okerrik'; zure iritzia jakin nahi dugu.  zure iritzia jakin nahi dugu besterik gabe. Zure erantzunak konfidentzialtasun osoz tratatuko ditugula zihur egon zaitezke, eta hauek ez dute zure ebaluaketan ez du eraginik izango.
+
+Zure erantzunek unitate hau etorkizunean hobetzen lagunduko digute.
+
+Eskerrik asko.";
+
+$string['collesapname'] = "COLLES (Nahia eta Benetakoa)";
+$string['collesapintro'] = "Galdeketa honen helburua unitate honen linea bidezko banaketak ikasten zenbat lagundu zaituen jakitea da. 
+
+Azpiko 24 esaldietako bakoitzak unitate honek sortutako esperientzia konparatzea eskatzen dizu, <B>nahia</B> (ideala) eta <B>benetako</B> esperientziaren artean.
+
+Ez dago erantzun 'zuzen' edo 'okerrik'; zure iritzia jakin nahi dugu.  zure iritzia jakin nahi dugu besterik gabe. Zure erantzunak konfidentzialtasun osoz tratatuko ditugula zihur egon zaitezke, eta hauek ez dute zure ebaluaketan ez du eraginik izango.
+
+Zure erantzunek unitate hau etorkizunean hobetzen lagunduko digute.
+
+Eskerrik asko.";
+
+$string['collespname'] = "COLLES (Nahia)";
+$string['collespintro'] = "Galdeketa honen helburua linea bidezko ikasketa esperientzia batean zer baloratzen duzun jakitea da.
+
+Azpiko 24 esaldietako bakoitza unitate honekin zure <B>nahia</B> (esperientzia ideala) baloratzen du.
+
+Ez dago erantzun 'zuzen' edo 'okerrik'; zure iritzia jakin nahi dugu.  zure iritzia jakin nahi dugu besterik gabe. Zure erantzunak konfidentzialtasun osoz tratatuko ditugula zihur egon zaitezke, eta hauek ez dute zure ebaluaketan ez du eraginik izango.
+
+Zure erantzunek unitate hau etorkizunean hobetzen lagunduko digute.
+
+Eskerrik asko.";
+
+
+$string['collesm1']      = "Garrantzia";
+$string['collesm1short'] = "Garrantzia";
+$string['collesm2']      = "Pentsakera erreflexiboa";
+$string['collesm2short'] = "Pentsakera erreflexiboa";
+$string['collesm3']      = "Interaktibitatea";
+$string['collesm3short'] = "Interaktibitatea";
+$string['collesm4']      = "Tutorearen laguntza";
+$string['collesm4short'] = "Tutorearen laguntza";
+$string['collesm5']      = "Kideen laguntza";
+$string['collesm5short'] = "Kideen laguntza";
+$string['collesm6']      = "Interpretazioa";
+$string['collesm6short'] = "Interpretazioa";
+
+$string['collesmintro'] = "Linea bidezko unitate honetan...";
+
+$string['done'] = "Eginda";
+$string['download'] = "Deskargatu";
+$string['downloadexcel'] = "Datuak Excel kalkulu orri gisa deskargatu";
+$string['downloadinfo'] = "Inkesta honen datu gordin guztiak Excel, SPSS edo beste paketeren batekin aztertzeko formatu egokian deskargatu ditzazkezu .";
+$string['downloadtext'] = "Datuak testu arrunt fitxategi gisa deskargatu";
+$string['editingasurvey'] = "Inkesta bat editatzen";
+$string['helpsurveys'] = "Inkesta mota ezberdinen gaineko laguntza";
+$string['howlong'] = "Zenbat denbora behar izan duzu inkesta hau betetzeko?";
+$string['howlongoptions'] = "minutu 1 baino gutxiago,1-2 min,2-3 min,3-4 min,4-5-min,5-10 min,10 minutu baino gehiago";
+$string['ifoundthat'] = "Hau aurkitu dut";
+$string['introtext'] = "Sarrera testua";
+$string['ipreferthat'] = "Nahiago dut";
 $string['name'] = "Izena";
-$string['newsurveyresponses'] = "Erantzun berriak inkestari";
-$string['nobodyyet'] = "Inkesta hau ez du inork bete oraindik";
-$string['notdone'] = "Oraindik egin gabea";
-$string['notes'] = "Zure analisi pribatua eta zure oharrak";
-$string['othercomments'] = "Beste komentariorik?";
-$string['peoplecompleted'] = "\$a pertsonak bete du inkesta hau";
+$string['newsurveyresponses'] = "Inkestari erantzun berriak";
+$string['nobodyyet'] = "Inork ez du oraindik inkesta hau erantzun";
+$string['notdone'] = "Oraindik egin gabe";
+$string['notes'] = "Zure analisi pribatua eta oharrak";
+$string['othercomments'] = "Beste ezer esan nahi al duzu?";
+$string['peoplecompleted'] = "\$a pertsonek bete dute inkesta hau orain arte";
 $string['preferred'] = "Gogokoa";
-$string['preferredclass'] = "Gogoko klasea";
-$string['preferredstudent'] = "gogoko \$a";
+$string['preferredclass'] = "Klaseak gogoko";
+$string['preferredstudent'] = "\$a(e)k gogoko";
 $string['question'] = "Galdera";
 $string['questions'] = "Galderak";
-$string['questionsnotanswered'] = "Aukera anitzeko galdera batzuk ez dira erantzun.";
-$string['report'] = "Inkestaren txostena";
-$string['savednotes'] = "Zure oharrak gorde dira";
-$string['scaleagree5'] = "guztiz kontra, kontra, ez ados es kontra, ados, guztiz ados";
+$string['questionsnotanswered'] = "Aukera anitzeko galderaren bat ez du erantzunik.";
+$string['report'] = "Inkesta txostena";
 $string['scales'] = "Eskalak";
-$string['scaletimes5'] = "Ia inoiz ez, gutxitan, noizean behin, sarritan, ia beti";
-$string['seemoredetail'] = "Klikatu hemen xehetasun gehiagorako";
-$string['selectedquestions'] = "Eskala batetik hautatutako galderak, ikasle guztiak";
+$string['savednotes'] = "Zure oharrak gorde dira";
+$string['scaleagree5'] = "Ezadostasun osoa,Ezadostasun apur bat,Ez ados ez kontra,Apur bat ados,Erabat ados";
+$string['scaletimes5'] = "Ia inoiz ez,Oso gutxitan,Batzuetan,Sarritan,Ia beti";
+$string['seemoredetail'] = "Hemen klik egin xehetasun gehiago ikusteko";
+$string['selectedquestions'] = "Eskala betetik aukeratutako galderak, ikasle gustiak";
 $string['summary'] = "Laburpena";
-$string['surveycompleted'] = "Inkesta bete duzu. Grafikoak zure emaitzak erakusten ditu klasearen batez bestekoarekin alderatuta.";
+$string['surveycompleted'] = "Inkesta hau burutu duzu.  Beheko grafikoak zure erantzunen eta klasearen erantzunen batasbestekoen arteko konparaketa bat plazaratzen du.";
 $string['surveyname'] = "Inkestaren izena";
-$string['surveysaved'] = "Inkesta gorde da";
+$string['surveysaved'] = "Inkesta gordeta";
 $string['surveytype'] = "Inkesta mota";
-$string['thanksforanswers'] = "Eskerrik asko inkesta hau erantzuteagatik, \$a";
+$string['thanksforanswers'] = "Eskerrik asko inkesta honi erantzureagatik, \$a";
 $string['time'] = "Denbora";
-$string['viewsurveyresponses'] = "\$a inkestaren erantzunak ikusi";
+$string['viewsurveyresponses'] = "Ikusi \$a inkestari erantzunak";
+
 ?>

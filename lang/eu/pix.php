@@ -1,25 +1,19 @@
 <?PHP // $Id$ 
-      // pix.php - created with Moodle 1.4.1 (2004083101)
+      // pix.php - created with Moodle 1.4 + (2004083100)
 
 
-$string['angry'] = 'haserre';
-$string['approve'] = 'onartu';
-$string['blackeye'] = 'begi beltza';
-$string['clown'] = 'pailazoa';
-$string['dead'] = 'hilda';
-$string['evil'] = 'deabrua';
-$string['kiss'] = 'musua';
-$string['mixed'] = 'nahasia';
-$string['parentlanguage'] = 'es';
-$string['sad'] = 'goibel';
-$string['sleepy'] = 'lotan';
-$string['smiley'] = 'irribarre';
-$string['surprise'] = 'ezustea';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Euskara';
-$string['thoughtful'] = 'pentsakor';
-$string['tongueout'] = 'mihia kanpoan';
-$string['wideeyes'] = 'begi zabalak';
+$string['angry'] = 'Haserre';
+$string['approve'] = 'Ondo da';
+$string['clown'] = 'Pailazoa';
+$string['cool'] = 'Primeran';
+$string['dead'] = 'Jota';
+$string['evil'] = 'Deabrua';
+$string['kiss'] = 'Musua';
+$string['sad'] = 'Goibel';
+$string['shy'] = 'Lotsak';
+$string['sleepy'] = 'Erdi lo';
+$string['smiley'] = 'Irribarre';
+$string['surprise'] = 'Harrituta';
+$string['tongueout'] = 'Arnas estuka';
 
 ?>

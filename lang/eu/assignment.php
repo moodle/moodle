@@ -1,53 +1,42 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 unstable development (2004091700)
+      // assignment.php - created with Moodle 1.4 + (2004083100)
 
 
-$string['allowresubmit'] = 'Zuzenketak onartu';
-$string['assignmentdetails'] = 'Atazaren xehetasunak';
-$string['assignmentmail'] = '$a->teacher irakasleak zure ataza hau: \'$a->assignment\' berrikusi du
-
-Bere iruzkinak ikusgai dituzu hemen:
-
-$a->url';
-$string['assignmentmailhtml'] = '$a->teacher irakasleak zure ataza hau:\'<i>$a->assignment</i>\'berrikusi du<br /><br />
-Bere iruzkinak ikusgai dituzu <a href=\"$a->url\">hemen</a>.';
-$string['assignmentname'] = 'Izenburua';
-$string['assignmenttype'] = 'Ataza mota';
+$string['allowresubmit'] = 'Berbidalketa baimendu';
+$string['assignmentdetails'] = 'Zereginaren xehetasunak';
+$string['assignmentname'] = 'Zereginaren izena';
+$string['assignmenttype'] = 'Zeregin-mota';
 $string['description'] = 'Deskribapena';
-$string['duedate'] = 'Aurkezpen data';
-$string['early'] = '$a lehenago';
-$string['failedupdatefeedback'] = 'Fallo al actualizar la calificación de $a';
+$string['duedate'] = 'Entregatze-data';
+$string['early'] = '$a goiz';
+$string['failedupdatefeedback'] = 'Bidalketei erantzunaren eguneraketak huts egin dut hurrengo erabiltzailearentzat $a';
 $string['feedback'] = 'Erantzuna';
-$string['feedbackupdated'] = 'Eguneratutako erantzuna $a personentzat';
-$string['late'] = '$a eta gero';
+$string['feedbackupdated'] = 'Bidalketei erantzuna $a pertsonentzat eguneratu da';
+$string['late'] = '$a berandu';
 $string['maximumgrade'] = 'Gehienezko kalifikazioa';
 $string['maximumsize'] = 'Gehienezko tamaina';
-$string['modulename'] = 'Ataza';
-$string['modulenameplural'] = 'Atazak';
-$string['newsubmissions'] = 'Bidalitako atazak';
-$string['notgradedyet'] = 'Oraindik kalifikatu gabe';
-$string['notsubmittedyet'] = 'Ataza hau ez duzu oraindik egin';
-$string['overwritewarning'] = 'Kasu: Fitxategi berri bat bidaliz gero aurrekoa ORDEZTUKO da.';
-$string['saveallfeedback'] = 'Erantzuna gorde';
-$string['submissionfeedback'] = 'Calificación de la tarea';
+$string['modulename'] = 'Zeregina';
+$string['modulenameplural'] = 'Zereginak';
+$string['newsubmissions'] = 'Zereginak bidalita';
+$string['notsubmittedyet'] = 'Oraindik bidali gabe';
+$string['overwritewarning'] = 'Oharra: berriz igotzeak zure oraingo bidalketa ORDEZKATUKO du';
+$string['saveallfeedback'] = 'Nire erantzun guztiak gorde';
+$string['submissionfeedback'] = 'Bidalketari erantzuna';
 $string['submissions'] = 'Bidalketak';
-$string['submitassignment'] = 'Bidali zure ataza';
+$string['submitassignment'] = 'Zure zeregina formulario hau erabiliz bidali ezazu';
 $string['submitted'] = 'Bidalita';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Euskara';
-$string['typeoffline'] = 'Lineaz kanpoko aktibitatea';
-$string['typeuploadsingle'] = 'Fitxategi bakar bat gora kargatu: 0tik 100 puntura';
-$string['uploadbadname'] = 'Izenak bateragarri ez diren karaktereak ditu eta ezin izan da sisteman kargatu.';
-$string['uploadedfiles'] = 'Bidalitako fitxategiak';
-$string['uploaderror'] = 'Errore bat egon da fitxategia zerbitzarian gordetzean.';
-$string['uploadfailnoupdate'] = 'Fitxategia zuzen gorde da, baina zure ataza ez.';
-$string['uploadfiletoobig'] = 'Barkatu, zure fitxategia handiegiea da.';
-$string['uploadnofilefound'] = 'Ez duzu fitxategirik hautatu.';
-$string['uploadnotregistered'] = '\'$a\' zuzen kargatu da sisteman, baina ataza ez da erregistratu.';
-$string['uploadsuccess'] = 'Bidalketa egiaztatua.';
-$string['viewfeedback'] = 'Kalifikazioak eta erantzunak ikusi';
-$string['viewsubmissions'] = 'Bidalitako $a ataza ikusi';
+$string['typeoffline'] = 'Lineaz kanpoko zereginak';
+$string['typeuploadsingle'] = 'Fitxategi bakarra igo';
+$string['uploadbadname'] = 'Fitxategi izen honek karaktere bereziak ditu eta ezin izan da igo';
+$string['uploadedfiles'] = 'Igotako fitxategiak';
+$string['uploaderror'] = 'Fitxategia zerbitzarian gordetzerakoan errore bat gertatu da';
+$string['uploadfailnoupdate'] = 'Fitxategia behar bezala igo da, baina ezin izan da zure bidalketa eguneratu!';
+$string['uploadfiletoobig'] = 'Barkatu, fitxategi hori haundiegia da (muga $a byte dira)';
+$string['uploadnofilefound'] = 'Ez da fitxategirik aurkitu - ziur baten bat aukeratu duzula igotzeko?';
+$string['uploadnotregistered'] = '\'$a\' ongi igo da, baina bidalketa ez da erregistratu!';
+$string['uploadsuccess'] = '\'$a\' ongi igo da';
+$string['viewfeedback'] = 'Zereginen kalifikazioak eta erantzunak ikusi';
+$string['viewsubmissions'] = '$a bidalitako zereginak ikusi';
 $string['yoursubmission'] = 'Zure bidalketa';
 
 ?>

@@ -1,37 +1,32 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.4.1 (2004083101)
+      // choice.php - created with Moodle 1.4 + (2004083100)
 
 
-$string['allowupdate'] = 'Kontsultak eguneratzea baimendu';
-$string['answered'] = 'Erantzuna emanda';
-$string['choice'] = '$a aukera';
+$string['allowupdate'] = 'Baimendu kontsultaren eguneratzea';
+$string['answered'] = 'Erantzunda';
+$string['choice'] = 'Kontsulta $a';
 $string['choiceclose'] = 'Noiz arte';
-$string['choicename'] = 'Kontsultaren izenburua';
-$string['choiceopen'] = 'Irekita';
-$string['choicetext'] = 'Erantzun beharreko galdera';
-$string['havetologin'] = 'Log egin behar duzu kontsulta bidali baino lehen';
+$string['choicename'] = 'Kontsultaren izena';
+$string['choiceopen'] = 'Zabaldu';
+$string['choicetext'] = 'Kontsulta-testua';
+$string['havetologin'] = 'Saioa hasi behar duzu zure kontsulta bidali ahal izateko.';
 $string['modulename'] = 'Kontsulta';
 $string['modulenameplural'] = 'Kontsultak';
-$string['mustchooseone'] = 'Erantzun bat aukeratu behar duzu gorde baino lehen. Ez da ezer gorde';
+$string['mustchooseone'] = 'Erantzunen bat aukeratu behar duzu gorde aurretik. Ezer ez da gorde orain arte.';
 $string['notanswered'] = 'Oraindik erantzun gabe';
-$string['notopenyet'] = 'Barkatu, aktibitate hau ez dago erabilgarri $a arte';
-$string['parentlanguage'] = 'es';
-$string['privacy'] = 'Emaitzen konfidenzialtasuna';
+$string['notopenyet'] = 'Barkatu, baina jarduera hau ez dago erabiltzeko moduan $a arte.';
+$string['privacy'] = 'Emaitzen pribatutasuna';
 $string['publish'] = 'Emaitzak argitaratu';
-$string['publishafteranswer'] = 'Emaitzak ikasleari erakutsi erantzun eta gero';
-$string['publishafterclose'] = 'Emaitzak ikasleari erakutsi kontsulta itxi eta gero';
-$string['publishalways'] = 'Emaitzak ikasleari beti erakutsi';
-$string['publishanonymous'] = 'Emaitzak anonimoki argitaratu, ikasleen izenak erakutsi gabe.';
-$string['publishnames'] = 'Emaitzak ikasleen izenekin batera argitaratu.';
-$string['publishnot'] = 'Emaitzak ez argitaratu.';
+$string['publishafteranswer'] = 'Erakutsi emaitzak ikasleari erantzun ondoren';
+$string['publishafterclose'] = 'Erakutsi emaitzak ikasleari bakarrik kontsulta itxi ondoren.';
+$string['publishalways'] = 'Beti erakutsi emaitzak ikasleari';
+$string['publishanonymous'] = 'Emaitzak anonimoki argitaratu. Ez erakutsi ikasleen izenak.';
+$string['publishnames'] = 'Emaitza osoak argitaratu, izenak eta egindako aukerak erakutsiz.';
+$string['publishnot'] = 'Ez argitaratu emaitzak ikasleei';
 $string['responses'] = 'Erantzunak';
-$string['responsesto'] = '$a(e)rako erantzunak';
-$string['savemychoice'] = 'Nire hautapena gorde';
-$string['showunanswered'] = 'Erantzun gabekoen zutabea erakutsi';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Euskara';
-$string['timerestrict'] = 'Erantzutea epe honetara mugatu';
-$string['viewallresponses'] = '$a erantzun ikusi';
+$string['responsesto'] = '$a -ri erantzunak';
+$string['savemychoice'] = 'Nire kontsulta gorde';
+$string['timerestrict'] = 'Mugatu erantzuteko denbora';
+$string['viewallresponses'] = 'Ikusi $a -ri erantzunak';
 
 ?>
