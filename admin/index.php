@@ -22,29 +22,29 @@
 
     $documentationlink = "please read the <A HREF=\"../doc/?frame=install.html&sub=webserver\">install documentation</A>";
 
-    if (!ini_get('short_open_tag')) {
+    if (!(bool)ini_get('short_open_tag')) {
         error("The PHP server variable 'short_open_tag' is not turned on - $documentationlink");
     }
 
-    if (!ini_get('magic_quotes_gpc')) {
+    if (!(bool)ini_get('magic_quotes_gpc')) {
         error("The PHP server variable 'magic_quotes_gpc' is not turned on - $documentationlink");
     }
-    if (ini_get('magic_quotes_runtime')) {
+    if ((bool)ini_get('magic_quotes_runtime')) {
         error("The PHP server variable 'magic_quotes_runtime' should be Off - $documentationlink");
     }
 
-    if (!ini_get('file_uploads')) {
+    if (!(bool)ini_get('file_uploads')) {
         error("The PHP server variable 'file_uploads' is not turned on - $documentationlink");
     }
 
-    if (ini_get('session.auto_start')) {
+    if ((bool)ini_get('session.auto_start')) {
         error("The PHP server variable 'session.auto_start' should be Off - $documentationlink");
     }
 
 
 /// Check that sessions are supported
 
-    if (!is_readable(ini_get('session.save_path')) and !ini_get('safe_mode')) {
+    if (!is_readable(ini_get('session.save_path')) and !(bool)ini_get('safe_mode')) {
         $sessionpath = ini_get('session.save_path');
         notify("Warning: It appears your server does not support sessions (session.save_path = '$sessionpath')");
     }
