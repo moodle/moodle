@@ -3322,6 +3322,58 @@ function unzip_cleanfilename ($p_event, &$p_header) {
     return 1;
 }
 
+/**
+* Function to raise the memory limit to a new value.
+* Will respect the memory limit if it is higher, thus allowing
+* settings in php.ini, apache conf or command line switches
+* to override it
+*
+* The memory limit should be expressed with a string (eg:'64M')
+* 
+* Return boolean
+*
+* @param    value    string with the new memory limit
+*/
+function raise_memory_limit ($newlimit) {
+
+    if (empty($newlimit)) { 
+        return false;
+    }
+    
+    $cur = return_bytes(@ini_get('memory_limit'));
+    $new = return_bytes($newlimit);
+    
+    if ($new > $cur) {
+        ini_set('memory_limit', $newlimit);
+        return true;    
+    }
+    return false;
+}
+
+/**
+* Function to transform strings like 5M or 128k into bytes.
+* Taken from PHP's documentation (see entry for ini_get())
+*
+* Return integer (in bytes)
+*
+* @param    value    string with the value
+*/
+function return_bytes($val) {
+   $val = trim($val);
+   $last = $val{strlen($val)-1};
+   switch($last) {
+       case 'k':
+       case 'K':
+           return (int) $val * 1024;
+           break;
+       case 'm':
+       case 'M':
+           return (int) $val * 1048576;
+           break;
+       default:
+           return $val;
+   }
+}
 
 function unzip_show_status ($list,$removepath) {
 //This function shows the results of the unzip execution
