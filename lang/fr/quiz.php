@@ -83,13 +83,9 @@ $string['editingshortanswer'] = 'Modifier une question à réponse courte';
 $string['editingtruefalse'] = 'Modifier une question Vrai/Faux';
 $string['editquestions'] = 'Modifier les questions';
 $string['errorsdetected'] = '$a erreur(s) détectée(s)';
-$string['existingcategory'] = ''
-	// The use of ) and ( below should really not be necessary but
-	// because of some sort of PHP bug it is better to keep'em
-	.'".(1==$a ? \'une lettre\' :(2==$a ? \'un fichier\' :(3==$a ? \'un lien\' : $a)))."'
-	.' d\'un jeu de données existant de '
-	.'".(1==$a ? \'lettres\' :(2==$a ? \'fichiers\' : (3==$a ? \'liens\' : $a)))."'
-	.' déjà utilisé dans d\'autres questions de cette catégorie';
+$string['existingcategory1'] = 'Une lettre d\'un jeu de données existant de lettres déjà utilisé dans d\'autres questions de cette catégorie';
+$string['existingcategory2'] = 'Un fichier d\'un jeu de données existant de fichiers déjà utilisé dans d\'autres questions de cette catégorie';
+$string['existingcategory3'] = 'Un lien d\'un jeu de données existant de liens déjà utilisé dans d\'autres questions de cette catégorie';
 $string['exportfilename'] = 'test';
 $string['exportname'] = 'Nom de fichier';
 $string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
@@ -124,20 +120,12 @@ $string['indivresp'] = 'Réponses de chaque personne à toutes les questions';
 $string['introduction'] = 'Introduction';
 $string['itemanal'] = 'Analyse des réponses à cette question';
 $string['itemdefinition'] = 'Définition';
-$string['keptcategory'] = ''
-	// The use of ) and ( below should really not be necessary but
-	// because of some sort of PHP bug it is better to keep'em
-	.'".(1==$a ? \'une lettre\' :(2==$a ? \'un fichier\' :(3==$a ? \'un lien\' : $a)))."'
-	.' d\'un jeu de données réutilisables de '
-	.'".(1==$a ? \'lettres\' :(2==$a ? \'fichiers\' : (3==$a ? \'liens\' : $a)))."'
-	.' de la même catégorie que précédemment';
-$string['keptlocal'] = ''
-	// The use of ) and ( below should really not be necessary but
-	// because of some sort of PHP bug it is better to keep'em
-	.'".(1==$a ? \'une lettre\' :(2==$a ? \'un fichier\' :(3==$a ? \'un lien\' : $a)))."'
-	.' du même jeu de données privé de '
-	.'".(1==$a ? \'lettres\' :(2==$a ? \'fichiers\' : (3==$a ? \'liens\' : $a)))."'
-	.' que précédemment';
+$string['keptcategory1'] = 'Une lettre d\'un jeu de données réutilisables de lettres de la même catégorie que précédemment';
+$string['keptcategory2'] = 'Un fichier d\'un jeu de données réutilisables de fichiers de la même catégorie que précédemment';
+$string['keptcategory3'] = 'Un lien d\'un jeu de données réutilisables de liens de la même catégorie que précédemment';
+$string['keptlocal1'] = 'Une lettre du même jeu de données privé de lettres que précédemment';
+$string['keptlocal2'] = 'Un fichier du même jeu de données privé de fichiers que précédemment';
+$string['keptlocal3'] = 'Un lien du même jeu de données privé de liens que précédemment';
 $string['link'] = 'Lien';
 $string['listitems'] = 'Liste des questions du test';
 $string['literal'] = 'Lettre';
@@ -159,25 +147,18 @@ $string['modulenameplural'] = 'Tests';
 $string['multianswer'] = 'Format Cloze';
 $string['multichoice'] = 'Choix multiples';
 $string['name'] = 'Nom';
-$string['newcategory'] = ''
-	// The use of ) and ( below should really not be necessary but
-	// because of some sort of PHP bug it is better to keep'em
-	.'".(1==$a ? \'une lettre\' :(2==$a ? \'un fichier\' :(3==$a ? \'un lien\' : $a)))."'
-	.' d\'un nouveau jeu de données de '
-	.'".(1==$a ? \'lettres\' :(2==$a ? \'fichiers\' : (3==$a ? \'liens\' : $a)))."'
-	.' qui pourra aussi être utilisé dans d\'autres questions de cette catégorie';
-$string['newlocal'] = ''
-	// The use of ) and ( below should really not be necessary but
-	// because of some sort of PHP bug it is better to keep'em
-	.'".(1==$a ? \'une lettre\' :(2==$a ? \'un fichier\' :(3==$a ? \'un lien\' : $a)))."'
-	.' d\'un nouveau jeu de données de '
-	.'".(1==$a ? \'lettres\' :(2==$a ? \'fichiers\' : (3==$a ? \'liens\' : $a)))."'
-	.' qui ne sera utilisé que pour cette question';
+$string['newcategory1'] = 'Une lettre d\'un nouveau jeu de données de lettres qui pourra aussi être utilisé dans d\'autres questions de cette catégorie';
+$string['newcategory2'] = 'Un fichier d\'un nouveau jeu de données de fichiers qui pourra aussi être utilisé dans d\'autres questions de cette catégorie';
+$string['newcategory3'] = 'Un lien d\'un nouveau jeu de données de liens qui pourra aussi être utilisé dans d\'autres questions de cette catégorie';
+$string['newlocal1'] = 'Une lettre d\'un nouveau jeu de données de lettres qui ne sera utilisé que pour cette question';
+$string['newlocal2'] = 'Un fichier d\'un nouveau jeu de données de fichiers qui ne sera utilisé que pour cette question';
+$string['newlocal3'] = 'Un lien d\'un nouveau jeu de données de liens qui ne sera utilisé que pour cette question';
 $string['noanswers'] = 'Aucune réponse n\'a été sélectionnée !';
 $string['noattempts'] = 'Aucune tentative n\'a été réalisée sur ce test';
 $string['nodataset'] = 'rien - ce n\'est pas un caractère joker';
 $string['nominal'] = 'Nominal';
 $string['nomoreattempts'] = 'Aucune autre tentative n\'est autorisée';
+$string['nopossibledatasets'] = 'Aucun jeu de données possible';
 $string['noquestions'] = 'Aucune question n\'a été encore ajoutée';
 $string['noresponse'] = 'Pas de response';
 $string['noreview'] = 'Vous n\'êtes pas autorisé à relire ce test';
