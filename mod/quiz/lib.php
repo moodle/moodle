@@ -523,6 +523,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
 /// Prints a quiz question, any format
 /// $question is provided as an object
 
+    $question->questiontextformat = isset($question->questiontextformat) ? $question->questiontextformat : NULL;
 
     if ($question->qtype == DESCRIPTION) {  // Special case question - has no answers etc
         echo '<p align="center">';
@@ -1067,6 +1068,8 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
         print_simple_box_end();
         echo "<br />";
     }
+
+    $results->attemptbuildsonthelast = isset($results->attemptbuildsonthelast) ? $results->attemptbuildsonthelast : NULL;
 
     if (empty($results) || $results->attemptbuildsonthelast) {
         if (!empty($quiz->shufflequestions)) {  // Things have been mixed up, so pass the question order
