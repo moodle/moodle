@@ -9,7 +9,7 @@
 
         require_login($mod->course);
 
-        if (!isteacher($mod->course) && !isadmin()) {
+        if (!isteacher($mod->course)) {
             error("You can't modify this course!");
         }
 
@@ -93,7 +93,7 @@
 
         require_login($course->id);
 
-        if (!isteacher($course->id) && !isadmin()) {
+        if (!isteacher($course->id)) {
             error("You can't modify this course!");
         }
 
@@ -177,7 +177,7 @@
 
     require_login($course->id);
 
-    if (!isteacher($course->id) && !isadmin()) {
+    if (!isteacher($course->id)) {
         error("You can't modify this course!");
     }
 

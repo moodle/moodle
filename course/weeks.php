@@ -46,7 +46,7 @@
 
     // Admin links and controls
 
-    if ($USER->teacher[$course->id] || isadmin()) {
+    if (isteacher($course->id)) {
         $adminicon[]="<IMG SRC=\"../pix/i/edit.gif\" HEIGHT=16 WIDTH=16 ALT=\"Edit\">";
         if ($USER->editing) {
             $admindata[]="<A HREF=\"view.php?id=$course->id&edit=off\">Turn editing off</A>";

@@ -78,13 +78,13 @@
       } else {
           $subtext = "Subscribe me by mail";
       }
-      $headertext = "<TABLE BORDER=0 WIDTH=100% CELLPADDING=0 CELLSPACING=0><TR><TD>Discussion Topics<TD ALIGN=RIGHT><FONT SIZE=1><A HREF=\"../mod/discuss/subscribe.php?id=$social->id\">$subtext</A></TD></TR></TABLE>";
+      $headertext = "<TABLE BORDER=0 WIDTH=100% CELLPADDING=0 CELLSPACING=0><TR><TD>Social Forum - Current Topics<TD ALIGN=RIGHT><FONT SIZE=1><A HREF=\"../mod/discuss/subscribe.php?id=$social->id\">$subtext</A></TD></TR></TABLE>";
          print_simple_box("$headertext", $align="CENTER", $width="100%", $color="$THEME->cellheading"); ?>
       <IMG HEIGHT=7 SRC="../pix/spacer.gif"><BR>
 
       <? 
           if ($social = get_course_social_forum($course->id)) {
-              forum_latest_topics($social->id, 5, "plain", "DESC", false);
+              forum_latest_topics($social->id, 10, "plain", "DESC", false);
           } else {
               error("Could not find or create a social forum here");
           }

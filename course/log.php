@@ -11,7 +11,7 @@
         error("That's an invalid course id");
     }
 
-    if ( ! isteacher($course->id) && ! isadmin()) {
+    if ( ! isteacher($course->id)) {
         error("Only teachers can view logs");
     }
 
