@@ -1030,8 +1030,8 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2005033100) {   // Get rid of defunct field from course modules table
          delete_records('course_modules', 'deleted', 1);  // Delete old records we don't need any more
-         execute_sql('DROP INDEX '.$CFG->prefix.'prefix_course_modules_deleted_idx;');  // Old index
-         execute_sql('ALTER TABLE '.$CFG->prefix.'course_modules DROP `deleted`;');    // Old field
+         execute_sql('DROP INDEX '.$CFG->prefix.'course_modules_deleted_idx;');  // Old index
+         execute_sql('ALTER TABLE '.$CFG->prefix.'course_modules DROP deleted;');    // Old field
     }
 
     return $result;
