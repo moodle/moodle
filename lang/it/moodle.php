@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 - (2004052400)
+      // moodle.php - created with Moodle 1.3 (2004052500)
 
 
 $string['action'] = 'Azione';
@@ -146,8 +146,10 @@ $string['configdeleteunconfirmed'] = 'Se viene utilizzata l\'autenticazione via 
 $string['configenablerssfeeds'] = 'Questa opzione abilita l\'utilizzo degli RSS nel sito. Per vedere i cambiamenti devi abilitare l\'RSS anche nei singoli moduli - gestione moduli nella pagina di configurazione.';
 $string['configenablerssfeedsdisabled'] = 'Questo non è disponibile perché gli RSS sono disabilitati in tutto il Sito. Per abilitali, vai a Configura variabili sotto Amministrazione Configurazione.';
 $string['configerrorlevel'] = 'Scegli il numero di messaggi di avvertimento PHP che vuoi siano mostrati. Questa <i>Normale</i> è, di solito la scelta migliore.';
+$string['configextendedusernamechars'] = 'Abilitando questa impostazione si permette agli utenti di utilizzare qualunque carattere nei loro nomi utente (Nota che questo no influenza il loro nome attuale). Il valore preimpostato è \"falso\" che restrige all\'utilizzo solo dei caratteri alfanumerici.';
 $string['configfilteruploadedfiles'] = 'Abilitando questa impostazione farà elaborare da Moodle con i filtri tutti i file HTML e di testo prima di visualizzarli.';
 $string['configforcelogin'] = 'Normalmente, la pagina principale del sito e la lista dei corsi (ma non i corsi) possono essere visualizzate senza registrarsi al sito. Se vuoi forzare le persone a registrarsi prima di poter fare QUALUNQUE COSA sul sito, allore devi abilitare questa impostazione.';
+$string['configforceloginforprofiles'] = 'Abilitando questa impostazione si forza la gente a collegarsi con un utente reale (non un ospite) prima di permettergli di vedere le pagine dei profili utente. La preimpostazione è disabilitato (\"falso\") nella prospettiva di permettere agli studenti di leggere le informazioni sugli insegnati di ogni corso, ma questo permette di farlo anche ai motori di ricerca.';
 $string['configframename'] = 'Se incorporate Moodle in un web frame, mettete il nome del frame qui. Altrimenti questo valore può rimanere a \'_top\'';
 $string['configfullnamedisplay'] = 'Questo definisce come devono essere mostrati i nomi quando devono essere visualizzati in modo completo. Per la maggior parte  dei siti mono-lingua l\'impostazione migliore è quella standard \"Nome + Cognome\", ma puoi decideredi nascondere tutti i cognomi, o lasciare che lo scelga l\'impostazione della lingua corrente (alcuni linguaggi hanno convenzioni differenti).';
 $string['configgdversion'] = 'Indica la versione della libreria GD che è installata sul tuo webserver.  La versione mostrata come predefinita è quella che è stata automaticamente rilevata.  Non cambiare questa impostazione senza che tu realmente sappia quello che stai facendo.';
