@@ -171,7 +171,7 @@ update -dP</div>
             <div class="commandline">cvs update -dPA</div>
           </li>
           <li>Merge everything on the branch since the last merge, into your trunk version<br><br>
-            <div class="commandline">cvs update -j MOODLE_13_MERGED -j MOODLE_13_STABLE</div>
+            <div class="commandline">cvs update -kk -j MOODLE_13_MERGED -j MOODLE_13_STABLE</div>
 	      </li>
           <li>Check the merged copy back into CVS trunk version<br><br>
             <div class="commandline">cvs commit</div>
@@ -210,7 +210,7 @@ update -dP</div>
 		  <br><br>
             <div class="commandline">
             <strong>cvs update -dPA</strong><br />
-            <strong>cvs update -j <span class="style1">MOODLE_XX_WIDGET</span></strong><br />
+            <strong>cvs update -kk -j <span class="style1">MOODLE_XX_WIDGET</span></strong><br />
             <strong>cvs commit </strong></div>
           </li>
       </ol>
