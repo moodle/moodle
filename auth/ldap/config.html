@@ -2,6 +2,7 @@
     // Initialize vars
     optional_variable($config->ldap_host_url,             "");
     optional_variable($config->ldap_contexts,             "");
+    optional_variable($config->ldap_user_type,    "");
     optional_variable($config->ldap_user_attribute,    "");
     optional_variable($config->ldap_search_sub,         "");
     optional_variable($config->ldap_bind_dn,             "");
@@ -103,7 +104,6 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
    </td>
 </tr>
 
-
 <tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
     <td align="right"><P>ldap_bind_dn:</td>
     <td>
@@ -124,11 +124,43 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-
 <tr>
    <td colspan="2">
         <h4><?php print_string("auth_ldap_user_settings", "auth") ?> </h4>
    </td>
+</tr>
+
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_user_type:</td>
+    <td>
+    <?php choose_from_menu(auth_ldap_suppported_usertypes(), "ldap_user_type", $config->ldap_user_type, ""); ?>
+    <?php  if (isset($err["ldap_user_type"])) formerr($err["ldap_user_type"]); ?>
+    </td>
+    <td>
+    <?php  print_string("auth_ldap_user_type","auth") ?>
+    </td>
+</tr>
+
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_contexts:</td>
+    <td>
+    <input name="ldap_contexts" type="text" size="30" value="<?php echo $config->ldap_contexts?>">
+    <?php  if (isset($err["ldap_contexts"])) formerr($err["ldap_contexts"]); ?>
+    </td>
+    <td>
+    <?php  print_string("auth_ldap_contexts","auth") ?>
+    </td>
+</tr>
+
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_search_sub:</td>
+    <td>
+    <input name="ldap_search_sub" type="text" size="1" value="<?php echo $config->ldap_search_sub?>">
+    <?php  if (isset($err["ldap_search_sub"])) formerr($err["ldap_search_sub"]); ?>
+    </td>
+    <td>
+    <?php  print_string("auth_ldap_search_sub","auth") ?>
+    </td>
 </tr>
 
 
@@ -153,7 +185,6 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-
 <tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
     <td align="right"><P>ldap_objectclass:</td>
     <td>
@@ -165,28 +196,6 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_contexts:</td>
-    <td>
-    <input name="ldap_contexts" type="text" size="30" value="<?php echo $config->ldap_contexts?>">
-    <?php  if (isset($err["ldap_contexts"])) formerr($err["ldap_contexts"]); ?>
-    </td>
-    <td>
-    <?php  print_string("auth_ldap_contexts","auth") ?>
-    </td>
-</tr>
-
-
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_search_sub:</td>
-    <td>
-    <input name="ldap_search_sub" type="text" size="1" value="<?php echo $config->ldap_search_sub?>">
-    <?php  if (isset($err["ldap_search_sub"])) formerr($err["ldap_search_sub"]); ?>
-    </td>
-    <td>
-    <?php  print_string("auth_ldap_search_sub","auth") ?>
-    </td>
-</tr>
 <tr>
    <td colspan="2">
         <h4><?php print_string("forcechangepassword", "auth") ?> </h4>

@@ -1,5 +1,9 @@
 <?PHP  // $Id$
 //CHANGELOG:
+//24.09.2004 Lot of changes:
+//           -Added usertype configuration, this removes need for separate obejcclass and attributename configuration
+//            Overriding values is still supported
+//           
 //21.09.2004 Added support for multiple ldap-servers.
 //           Theres no nedd to use auth_ldap_bind,
 //           Anymore auth_ldap_connect does this for you
@@ -112,12 +116,10 @@ function auth_user_login ($username, $password) {
 function auth_get_userinfo($username){
 /// reads userinformation from ldap and return it in array()
     global $CFG;
-
+    $ldapconnection=auth_ldap_connect();
     $config = (array)$CFG;
     $attrmap = auth_ldap_attributes();
-   
-    $ldapconnection=auth_ldap_connect();
-
+    
     $result = array();
     $search_attribs = array();
   
@@ -129,10 +131,6 @@ function auth_get_userinfo($username){
 
     $user_dn = auth_ldap_find_userdn($ldapconnection, $username);
 
-    if (empty($CFG->ldap_objectclass)) {        // Can't send empty filter
-        $CFG->ldap_objectclass="objectClass=*";
-    }
-  
     $user_info_result = ldap_read($ldapconnection,$user_dn,$CFG->ldap_objectclass, $search_attribs);
 
     if ($user_info_result) {
@@ -151,10 +149,13 @@ function auth_get_userinfo($username){
 
 function auth_get_userlist () {
     global $CFG;
+    auth_ldap_init();
     return auth_ldap_get_userlist("($CFG->ldap_user_attribute=*)");
 }
+
 function auth_user_exists ($username) {
    global $CFG; 
+   auth_ldap_init();
    //returns true if given usernname exist on ldap
    $users = auth_ldap_get_userlist("($CFG->ldap_user_attribute=$username)");
    return count($users); 
@@ -165,8 +166,8 @@ function auth_user_create ($userobject,$plainpass) {
 //use auth_user_exists to prevent dublicate usernames
 //return true if user is created, false on error
 	global $CFG;
-    $attrmap = auth_ldap_attributes();
     $ldapconnection = auth_ldap_connect();
+    $attrmap = auth_ldap_attributes();
     
     $newuser = array();
      
@@ -196,12 +197,8 @@ function auth_get_users($filter='*') {
 //returns all userobjects from external database
     global $CFG;
 
-    $fresult = array();
     $ldapconnection = auth_ldap_connect();
-
-    if (empty($CFG->ldap_objectclass)) {
-        $CFG->ldap_objectclass="objectClass=*";
-    }
+    $fresult = array();
 
     if ($filter=="*") {
        $filter = "(&(".$CFG->ldap_user_attribute."=*)(".$CFG->ldap_objectclass."))";
@@ -272,6 +269,7 @@ function auth_sync_users ($unsafe_optimizations = false, $bulk_insert_records = 
 ///                         max_allowed_packet limit.
 
     global $CFG ;
+    auth_ldap_init();
     $ldapusers     = auth_get_users();
     $usedidnumbers = Array();
 
@@ -415,7 +413,7 @@ function auth_user_disable ($username) {
 //activate new ldap-user after email-address is confirmed
 	global $CFG;
 
-    $ldapconnect = auth_ldap_connect();
+    $ldapconnection = auth_ldap_connect();
 
     $userdn = auth_ldap_find_userdn($ldapconnection, $username);
     $newinfo['loginDisabled']="TRUE";
@@ -428,6 +426,8 @@ function auth_user_disable ($username) {
 function auth_iscreator($username=0) {
 ///if user is member of creator group return true
     global $USER , $CFG; 
+    auth_ldap_init();
+
     if (! $username) {
         $username=$USER->username;
     }
@@ -460,10 +460,6 @@ function auth_user_update($olduser, $newuser) {
 
     $user_dn = auth_ldap_find_userdn($ldapconnection, $olduser->username);
 
-    if (empty($CFG->ldap_objectclass)) {
-        $CFG->ldap_objectclass="objectClass=*";
-    }
-  
     $user_info_result = ldap_read($ldapconnection,$user_dn,$CFG->ldap_objectclass, $search_attribs);
 
     if ($user_info_result){
@@ -531,6 +527,67 @@ function auth_user_update_password($username, $newpassword) {
 //PRIVATE FUNCTIONS starts
 //private functions are named as auth_ldap*
 
+function auth_ldap_suppported_usertypes (){
+// returns array of supported usertypes (schemas)
+// If you like to add our own please name and describe it here
+// And then add case clauses in relevant places in functions
+// iauth_ldap_init, auth_user_create, auth_check_expire, auth_check_grace
+    $types['edir']='Novell Edirectory';
+    $types['posix']='posixAccount (rfc2307)';
+    $types['samba']='sambaSamAccount (v.3.0.7)';
+    $types['ad']='ActiveDirectory'; 
+    return $types;
+}    
+
+function auth_ldap_init () {
+// initializes needed variables
+
+    global $CFG;
+    $default['ldap_objectclass'] = array(
+                        'edir' => 'inetOrgPerson',
+                        'posix' => 'posixAccount',
+                        'samba' => 'sambaSamAccount',
+                        'ad' => 'user',
+                        'default' => '*'
+                        );
+    $default['ldap_user_attribute'] = array(
+                        'edir' => 'cn',
+                        'posix' => 'uid',
+                        'samba' => 'uid',
+                        'ad' => 'cn',
+                        'default' => 'cn'
+                        );
+    $default['ldap_memberattribute'] = array(
+                        'edir' => 'groupMembership',
+                        'posix' => 'member',
+                        'samba' => 'member',
+                        'ad' => 'member', //is this right?
+                        'default' => 'member'
+                        );
+
+    foreach ($default as $key => $value) {
+        //set defaults if overriding fields not set
+        if(empty($CFG->{$key})) {
+            if (!empty($CFG->ldap_user_type) && !empty($default[$key][$CFG->ldap_user_type])) {
+                $CFG->{$key} = $default[$key][$CFG->ldap_user_type];
+            }else {
+                //use defaut value if user_type not set
+                if(!empty($default[$key]['default'])){
+                    $CFG->$key = $default[$key][$value]['default'];
+                }else {
+                    unset($CFG->$key);
+                }    
+            }
+        }
+    }   
+    //hack prefix to objectclass
+    if ('objectClass=' != substr($CFG->ldap_objectclass, 0, 12)) {
+       $CFG->ldap_objectclass = 'objectClass='.$CFG->ldap_objectclass;
+    }   
+
+    //all chages go in $CFG , no need to return value
+}
+
 function auth_ldap_isgroupmember ($username='', $groupdns='') {
 // Takes username and groupdn(s) , separated by ;
 // Returns true if user is member of any given groups
@@ -561,6 +618,7 @@ function auth_ldap_connect(){
 /// Returns connection result
 
     global $CFG;
+    auth_ldap_init();
     $urls = explode(";",$CFG->ldap_host_url);
 
     foreach ($urls as $server){
@@ -660,10 +718,6 @@ function auth_ldap_get_userlist($filter="*") {
     $fresult = array();
 
     $ldapconnection = auth_ldap_connect();
-
-    if (empty($CFG->ldap_objectclass)) {
-        $CFG->ldap_objectclass="objectClass=*";
-    }
 
     if ($filter=="*") {
        $filter = "(&(".$CFG->ldap_user_attribute."=*)(".$CFG->ldap_objectclass."))";
