@@ -3,7 +3,7 @@ STATUS $Id$
 
 This documment shows the current status of the backup/restore option.
 
-Backup:  WORKING. COMPLETED except workshops.
+Backup:  WORKING. COMPLETED !!
 
 Restore: WORKING. COMPLETED except workshops and logs.
                   
@@ -29,9 +29,9 @@ Backup Details:
         - Delete old entries at backup startup..................DONE
              - From database....................................DONE
              - From filesystem..................................DONE
-   - Backup Items:..............................................IN PROGRESS
+   - Backup Items:..............................................DONE
         - Backup Info data......................................DONE
-        - Course................................................IN PROGRESS
+        - Course................................................DONE
            - Course Summary Data................................DONE
               x course info.....................................DONE
               x sections info...................................DONE
@@ -52,7 +52,7 @@ Backup Details:
            - Categories and Questions.(STEP 1)..................DONE
               + categories......................................DONE
               + questions structure.............................DONE
-           - Mods Info..........................................IN PROGRESS
+           - Mods Info..........................................DONE
               x assignments.....................................DONE
                  + course data..................................DONE
                  + user data....................................DONE
@@ -85,17 +85,17 @@ Backup Details:
                  + course data..................................DONE
                  + user data....................................DONE
                  + files.....(NOT EXISTS).......................DONE
-              x workshops.......................................NO EXISTS
-                 + course data..................................NO EXISTS
-                 + user data....................................NO EXISTS
-                 + files........................................NO EXISTS
+              x workshops.......................................DONE
+                 + course data..................................DONE
+                 + user data....................................DONE
+                 + files........................................DONE
               x user files to temp..............................DONE
               x course files to temp............................DONE
-   - Compress the backup (zip)..................................DONE. PROBLEMS PCLZIP/UNZIP
-      - XML File................................................DONE. PROBLEMS PCLZIP/UNZIP
-      - moddata files...........................................DONE. PROBLEMS PCLZIP/UNZIP
-      - Course Files............................................DONE. PROBLEMS PCLZIP/UNZIP
-      - User Files..............................................DONE. PROBLEMS PCLZIP/UNZIP
+   - Compress the backup (zip)..................................DONE.
+      - XML File................................................DONE.
+      - moddata files...........................................DONE.
+      - Course Files............................................DONE.
+      - User Files..............................................DONE.
    - Copy finished file to browseable dir.......................DONE
    - Delete old entries at backup end...........................DONE
       - From database...........................................DONE      
@@ -194,10 +194,10 @@ Restore Details:
                  + course data..................................DONE
                  + user data....................................DONE
                  + files.(NOT EXISTS)...........................DONE
-              x workshops.......................................NO EXISTS
-                 + course data..................................NO EXISTS
-                 + user data....................................NO EXISTS
-                 + files........................................NO EXISTS
+              x workshops.......................................IN PROGRESS
+                 + course data..................................IN PROGRESS
+                 + user data....................................IN PROGRESS
+                 + files........................................IN PROGRESS
    - User files from temp.......................................DONE
    - Course files from temp.....................................DONE
    - Log entries................................................NO EXISTS
