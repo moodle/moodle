@@ -150,7 +150,7 @@
     print_heading_with_help($strcustomscales, "scales");
 
     if (!empty($notify)) {
-        notify($notify);
+        notify($notify, "green");
     }
 
 
