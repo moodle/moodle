@@ -107,6 +107,13 @@ th {
     border-color:#DDDDDD; /* borders */
 }
 
+.admin .generalboxcontent {
+    background-color:#EEEEEE; 
+}
+.admin .generalbox {
+    border-color:#BBBBBB; 
+}
+
 .noticebox {
     border-color:#DDDDDD; /* borders */
 }
