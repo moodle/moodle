@@ -11,6 +11,7 @@
        "country"          => "",
        "debug"            =>  7,
        "deleteunconfirmed" => 168,
+       "enablerssfeeds"   => 0,
        "filteruploadedfiles"  =>  true,
        "forcelogin"       =>  false,
        "fullnamedisplay"  => "firstname lastname",
