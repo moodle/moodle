@@ -274,6 +274,7 @@
 			}
 		}
 		echo "</TABLE><BR CLEAR=ALL>\n";
+        echo "<p>&lt; &gt; ".get_string("assessmentdropped", "workshop")."</p>\n";
 		if ($workshop->showleaguetable) {
 			workshop_print_league_table($workshop);
 		}

@@ -21,8 +21,6 @@
 
     require_login($course->id);
 
-    add_to_log($course->id, "workshop", "submit", "view.php?id=$cm->id", "$workshop->id");
-
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
     }
@@ -98,7 +96,8 @@
 					}
 					if (move_uploaded_file($newfile['tmp_name'], "$dir/$newfile_name")) {
 						print_heading(get_string("uploadsuccess", "assignment", $newfile_name) );
-					}
+					    add_to_log($course->id, "workshop", "submit", "view.php?id=$cm->id", "$workshop->id");
+                    }
 					else {
 						notify(get_string("uploaderror", "assignment") );
 					}

@@ -3400,6 +3400,7 @@ function workshop_print_league_table($workshop) {
 			}
 		print_heading(get_string("leaguetable", "workshop"));
 		print_table($table);
+        echo "<p>&lt; &gt; ".get_string("assessmentdropped", "workshop")."</p>\n";
 		}
 	}
 	

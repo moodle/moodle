@@ -621,6 +621,10 @@
                             number_format($finalgrade, 2));
                     }
                     // save grades in submission record
+                    set_field("workshop_submissions", "teachergrade", intval($submissiongrade + 0.5), "id", 
+                            $submission->id);
+                    set_field("workshop_submissions", "peergrade", intval($submissiongrade + 0.5), "id", 
+                            $submission->id);
                     set_field("workshop_submissions", "finalgrade", intval($finalgrade + 0.5), "id", 
                             $submission->id);
                     set_field("workshop_submissions", "gradinggrade", intval($assessmentgrade + 0.5), "id", 
