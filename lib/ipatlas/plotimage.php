@@ -1,4 +1,4 @@
-<?
+<?php
 
 include("plotconf.inc");
 include("plot.inc");

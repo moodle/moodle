@@ -10,7 +10,7 @@ error_reporting(E_ERROR);
 }
 
 ?>
-<?
+<?php
 
  if(shouldrun($HTTP_SERVER_VARS['HTTP_USER_AGENT'])) { 
    $drawmode = "GD";
@@ -75,7 +75,7 @@ if(shouldrun($HTTP_SERVER_VARS['HTTP_USER_AGENT'])) {
 
 <b><?php  echo t("IP-Atlas preferences"); ?></b> <?php  echo t("(cookie based)"); ?><br><br>
 
-<?
+<?php
 if(isset($HTTP_POST_VARS["button"])) {
 print t("Your settings have been saved. You can now try"); ?> <a href="plot.php<?php  if(isset($HTTP_GET_VARS["lastquery"])) { echo "?address=$HTTP_GET_VARS[lastquery]"; } ?>"><?php  print t("plotting something.")."</a>"."<br><br>";
 }
@@ -117,7 +117,7 @@ print "</select><br><br>";
 ?>
 
 <?php  echo t("Pointer Preferences (the dot that marks lat/lon):"); ?><br>
-<?
+<?php
 if($drawmode == "GD") {
 print '
 <input type="hidden" name="cssdot" value="reddot.gif">
@@ -204,7 +204,7 @@ print '
 <?php  echo t("Earth Image:") ?>&nbsp;
 <select name="earthimage">
 
-<?
+<?php
 
 foreach($earthimages as $curentry) {
 
