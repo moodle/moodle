@@ -3947,7 +3947,7 @@ function get_string($identifier, $module='', $a=NULL) {
 
     global $course;     /// Not a nice hack, but quick
     if (empty($CFG->courselang)) {
-        if (!empty($course->lang)) {
+        if (isset($course->lang)) {
             $CFG->courselang = $course->lang;
         }
     }

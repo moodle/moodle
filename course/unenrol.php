@@ -58,6 +58,6 @@
 
     notice_yesno ($strunenrolsure, "unenrol.php?id=$id&amp;user=$user->id&amp;confirm=yes&amp;sesskey=$USER->sesskey", "$HTTP_REFERER");
 
-    print_footer();
+    print_footer($course);
 
 ?>

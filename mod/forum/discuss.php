@@ -143,7 +143,7 @@
                 $canreply = false;
             } else {
                 print_heading("Sorry, you can't see this discussion because you are not in this group");
-                print_footer();
+                print_footer($course);
                 die;
             }
 

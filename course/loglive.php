@@ -36,7 +36,7 @@
     print_log($course, $user, $date, "l.time DESC", 0, 500, 
               "loglive.php?id=$course->id&amp;user=$user&amp;date=$date");
 
-    print_footer();
+    print_footer($course);
 
     exit;
 

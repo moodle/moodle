@@ -3,8 +3,8 @@
 /// Shows current group, and allows editing of the group 
 /// icon and other settings related to that group
 
-	require_once('../config.php');
-	require_once('lib.php');
+  require_once('../config.php');
+  require_once('lib.php');
 
     require_variable($id);        // Course id
     optional_variable($group);    // Optionally look at other groups
@@ -104,7 +104,7 @@
             use_html_editor("description");
         }
 
-        print_footer();
+        print_footer($course);
         exit;
     }
     

@@ -59,7 +59,7 @@
         }
         notice_yesno(get_string('noguestsubscribe', 'forum').'<br /><br />'.get_string('liketologin'),
                      $wwwroot, $_SERVER['HTTP_REFERER']);
-        print_footer();
+        print_footer($course);
         exit;
     }
 

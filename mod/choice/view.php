@@ -94,7 +94,7 @@
 
     if ($choice->timeopen > time() ) {
         print_simple_box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "center");
-        print_footer();
+        print_footer($course);
         exit;
     }
 

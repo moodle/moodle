@@ -105,7 +105,7 @@
             echo "</form>\n";
             
             if (empty($quiz->popup)) {
-                print_footer();
+                print_footer($course);
             }
             exit;
 

@@ -220,6 +220,6 @@
         echo "</center>";
     }
 
-    print_footer();
+    print_footer($course);
 
 ?>
