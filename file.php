@@ -37,10 +37,9 @@
     $pathname = "$CFG->dataroot$pathinfo";
     $filename = $args[$numargs-1];
 
-    $mimetype = mimeinfo("type", $filename);
-
     if (file_exists($pathname)) {
         $lastmodified = filemtime($pathname);
+        $mimetype = mimeinfo("type", $filename);
 
         header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
         header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
@@ -48,12 +47,22 @@
         header("Pragma: ");
         header("Content-disposition: inline; filename=$filename");
         header("Content-length: ".filesize($pathname));
-        header("Content-type: $mimetype");
+
 
         if ($mimetype == "text/html") {
-            echo format_text(implode('', file($pathname)), FORMAT_HTML);  // Filter HTML files
+            header("Content-type: text/html");
+            echo format_text(implode('', file($pathname)), FORMAT_HTML, NULL, $courseid);  // Filter HTML files
+
+        } else if ($mimetype == "text/plain") {
+            header("Content-type: text/html");
+            $options->newlines = false;
+            echo "<pre>";
+            echo format_text(implode('', file($pathname)), FORMAT_MOODLE, $options, $courseid);  // Filter TEXT files
+            echo "</pre>";
+
         } else {
-            readfile("$pathname");
+            header("Content-type: $mimetype");
+            readfile($pathname);
         }
     } else {
         error("Sorry, but the file you are looking for was not found ($pathname)", "course/view.php?id=$courseid");

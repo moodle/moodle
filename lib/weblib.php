@@ -551,7 +551,10 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             if (!isset($options->para)) {
                 $options->para=true;
             }
-            $text = text_to_html($text, $options->smiley, $options->para);
+            if (!isset($options->newlines)) {
+                $options->newlines=true;
+            }
+            $text = text_to_html($text, $options->smiley, $options->para, $options->newlines);
             $text = filter_text($text, $courseid);
             break;
     }
@@ -694,7 +697,7 @@ function replace_smilies(&$text) {
     $text = str_replace($e, $img, $text);
 }
 
-function text_to_html($text, $smiley=true, $para=true) {
+function text_to_html($text, $smiley=true, $para=true, $newlines=true) {
 /// Given plain text, makes it into HTML as nicely as possible.
 /// May contain HTML tags already
 
@@ -710,7 +713,9 @@ function text_to_html($text, $smiley=true, $para=true) {
     convert_urls_into_links($text);
 
 /// Make returns into HTML newlines.
-    $text = nl2br($text);
+    if ($newlines) {
+        $text = nl2br($text);
+    }
 
 /// Turn smileys into images.
     if ($smiley) {
