@@ -82,7 +82,7 @@ $string['openmode1'] = 'Eztabaida berriak ez daude onartuta, baina erantzunak ba
 $string['openmode2'] = 'Eztabaida berriak eta erantzunak onartuta daude';
 $string['parent'] = 'Erakutsi abiapuntua';
 $string['parentofthispost'] = 'Mezu honen abiapuntua';
-$string['postadded'] = 'Zure bidalketa ongi gehitu da.Aldaketaren bat egin nahi baduzu <P>$a dituzu berau editatzeko.';
+$string['postadded'] = 'Zure bidalketa ongi gehitu da.Aldaketaren bat egin nahi baduzu <p>$a dituzu berau editatzeko.';
 $string['postincontext'] = 'Mezu hau testuinguruan ikusi';
 $string['postmailinfo'] = 'Hau $a web gunean argitaratutako mezu baten kopia da.
 Zure erantzuna web gunearen bitartez gehitzeko, lotura hau erabili:';

@@ -460,7 +460,7 @@ eman beharko duzu web gune honetan zuretzat kontu bat sortuz.
     eta pasahitza besterik ez dituzu sartu beharko (orri honetako formularioan) partaide zaren edozein ikastarotan sartzeko.</li>
    </ol>';
 $string['loginstepsnone'] = '<p>Kaixo!</p>
-<P>Ikastaroetan sarrera-eskubide osoa izateko
+<p>Ikastaroetan sarrera-eskubide osoa izateko
 zuretzat kontu bat sortu beharko duzu.</p>
 <p>Egin behar duzun guztia erabiltzaile izen eta pasahitz bat sortzea da eta
 formulario honetan erabili!</p>
