@@ -1,0 +1,86 @@
+<P ALIGN=CENTER><B>Importar preguntas</B></P><P>Esta función permite importar preguntas de archivos de texto, subidos mediante un formulario.<P>Los formatos permitidos son:<P><B>GIFT</B></P>
+<ul>
+<p>GIFT es el formato de importación de preguntas más amigable para Moodle de todos los formatos disponible.  Su diseño permite que los profesores pueden escribir las preguntas en un archivo de texto de forma fácil. Permite preguntas de opción múltiple, Verdadero o Falso, Cortas, Emparejar y numéricas, también permite las preguntas de rellenar huecos insertandolas como  _____ . Se pueden mezclar Varios tipos de preguntas en un solo archivo del texto, y este formato también permite líneas comentarios, los nombres de la pregunta, retroalimentación y los porcentaje-peso (ponderar) calificaciones.  Veamos algunos ejemplos:</p>
+<pre>
+Who's buried in Grant's tomb?{~Grant ~Jefferson =no one}
+
+Grant is {~buried =entombed ~living} in Grant's tomb.
+
+Grant is buried in Grant's tomb.{FALSE}
+
+Who's buried in Grant's tomb?{=no one =nobody}
+
+When was Ulysses S. Grant born?{#1822}
+</pre>
+
+<p align=right><a href="help.php?file=formatgift.html&module=quiz">Más información sobre el formato "GIFT" </a></p>
+</ul>
+
+<P><B>Aiken</B></P>
+<ul>
+<p>El formato Aiken es una manera simple de crear preguntas de opción múltiple usando un formate de fácil lectura. Un ejemplo del formato:</p>
+<pre>
+¿Qué objetivo tienen los primerios auxilios?
+A. Salvar la vidad, prevenir más lesiones, mantener el buen estado de salud.
+B. Dar tratamiento médico o sanitario
+C. prevenir más lesiones
+D. Ayudar a las victimas que pedir auxilio
+ANSWER: A
+</pre>
+
+<p align=right><a href="help.php?file=formataiken.html&module=quiz">Más información sobre el formato "Aiken" </a></p>
+</ul>
+
+
+<P><B>Llenar el hueco</B></P>
+<UL>
+<P>Este formato sólo soporta preguntas de opción múltiple. Cada pregunta se separa con un tilde (~), y la respuesta correcta se precede con un signo de igual (=). Un ejemplo:
+
+
+<BLOCKQUOTE>Cuando comenzamos a explorar las partes de nuestro cuerpo nos convertimos en estudiosos de: {=anatomía y fisiología ~reflexología ~la ciencia ~los experimentos}, y en cierto sentido somos estudiantes de la vida. 
+
+</BLOCKQUOTE>
+
+<p align=right><a href="help.php?file=formatmissingword.html&module=quiz">Más información sobre el formato "Missing Word"</a></p>
+</UL>
+
+
+<P><B>AON</B></P>
+<UL>
+<P>Este es el mismo caso de llenar el hueco, excepto que luego de ser importadas, todas las preguntas se convierten en grupos de cuatro preguntas de seleccionar la correcta.
+</P>
+<p>Además, las respuestas de opción múltiple son mezcladas  aleatoriamente en la importación.
+<p>Se le llama así en honor a una empresa que impulsó el desarrollo de muchas caraterísticas para los cuestionarios.
+</p>
+</UL>
+
+
+<P><B>Blackboard</B></P>
+<UL>
+<P>Este módulo puede importar preguntas guardadas con la característica de exportar preguntas del programa Blackboard. Se apoya en la capacidad de compilar funciones XML en sus correspondientes PHP.</P>
+
+<p align=right><a href="help.php?file=formatblackboard.html&module=quiz">Más información sobre el formato "Blackboard"</a></p>
+</UL>
+
+<P><B>Course Test Manager</B></P>
+<UL>
+<P>Este módulo puede importar las preguntas guardadas en una banco de preguntas de Course Test Manager.  Tenemos varias formas de acceder al banco de preguntas en formato Acces de Microsoft, dependiendo si Moodle está funcionando en un servidor de Windows o de Linux:</P>
+<p>Desde Windows debemos subir la base de datos como cualquier otro archivo para importar sus datos.</p>
+<p>Desde Linux, debemos instalar el software ODBC Socket Server, que utiliza XML para transferir datos a moodle desde el servidor Linux.</p>  <p>Por favor, lea todo el archivo de ayuda antes de importar este tipo de formato.</p>
+
+
+<p align=right><a href="help.php?file=formatctm.html&module=quiz">Más información sobre el formato "CTM"</a></p>
+</UL>
+
+<P><B>Personal</B></P>
+<UL>
+<P>Si tiene su propio formato que desea importar, puede implementarlo editando mod/quiz/format/custom.php 
+
+
+<P>La cantidad de código nuevo necesaria es bastante pequeña. - será suficiente con analizar una sola pregunta del texto.
+
+<p align=right><a href="help.php?file=formatcustom.html&module=quiz">Más información sobre el formato "Custom"</a></p>
+</UL>
+
+
+<P>Se están desarrollando más formatos, incluyendo WebCT, IMS QTI y cualquier otro que los usuarios de Moodle quieran aportar.</p>
