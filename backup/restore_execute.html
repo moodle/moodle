@@ -333,6 +333,7 @@
     //Now if all is OK, update:
     //   - course modinfo field 
     //   - categories table
+    //   - add user as teacher
     if ($status) {
         echo "</li><li>".get_string("checkingcourse").'</li>';
         //modinfo field
@@ -340,6 +341,13 @@
         //categories table
         $course = get_record("course","id",$restore->course_id); 
         fix_course_sortorder();
+        //Make the user a teacher if the course hasn't teachers (bug 2381)
+        if (!isadmin()) {
+            if (!$checktea = get_records('user_teachers','course', $restore->course_id)) {
+                //Add the teacher to the course
+                $status = add_teacher($USER->id, $restore->course_id);
+            }
+        }
     }
 
     //Cleanup temps (files and db)
