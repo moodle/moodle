@@ -39,21 +39,21 @@
 
 
 
-
 <tr valign=top>
     <td align=right><p><b><?php print_string("formattexttype"); ?>:</b></p></td>
     <td>
     <?php 
-       choose_from_menu(format_text_menu(), "format", $post->format, "");
-     ?>
-    <font SIZE="1">
-    <?php 
+        if ($usehtmleditor) {   /// Trying this out for a while
+            print_string('formathtml');
+            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'">';
+        } else {
+            choose_from_menu(format_text_menu(), "format", $post->format, "");
+        }
         helpbutton("textformat", get_string("helpformatting"));
      ?>
-    </font>
-
     </td>
 </tr>
+
 
 <tr valign=top>
     <td align=right><p><b><?php print_string("subscription", "forum") ?>:</b></p></td>
