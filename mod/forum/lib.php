@@ -60,7 +60,6 @@ function forum_add_instance($forum) {
     global $CFG;
 
     $forum->timemodified = time();
-    $forum->intro = clean_text($forum->intro);
 
     if (!$forum->userating) {
         $forum->assessed = 0;
