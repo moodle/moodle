@@ -1,0 +1,63 @@
+<CENTER>
+
+<TABLE WIDTH="90%" BORDER="0" CELLSPACING="10" CELLPADDING="5" ALIGN="CENTER">
+  <TR>
+    <TD WIDTH="50%" bgcolor=<?=$THEME->cellheading2?>>
+      <P ALIGN="CENTER"><B><FONT SIZE=3>Returning to this web site?</FONT></B></P>
+    </TD>
+    <TD WIDTH="50%" bgcolor=<?=$THEME->cellheading2?>>
+      <P ALIGN="CENTER"><B><FONT SIZE=3>Is this your first time here?</FONT></B></P>
+    </TD>
+  </TR>
+  <TR>
+    <TD WIDTH="50%" VALIGN="TOP" bgcolor="<?=$THEME->cellheading?>"> 
+      <FONT SIZE=2>
+      <P ALIGN="CENTER">Log in using your username and password:</P>
+      <P ALIGN="CENTER"><? formerr($errormsg) ?></P>
+      <FORM NAME="form" ACTION="<?=$CFG->wwwroot?>/login/" METHOD=post>
+      <CENTER>
+      <TABLE ALIGN=center>
+      <TR><TD align=right><P><FONT SIZE=2>Username:</FONT></P></TD>
+          <TD><INPUT TYPE="text" NAME="username" SIZE="15" value="<? p($frm->username) ?>">
+      </TD></TR>
+      <TR><TD align=right><P><FONT SIZE=2>Password:</FONT></P></TD>
+          <TD><INPUT TYPE="password" NAME="password" SIZE="15" value="<? p($frm->password) ?>">
+      </TD></TR>
+      </TABLE>
+      <BR>
+      <INPUT TYPE="submit" NAME="Submit" VALUE="Login">
+      </FORM>
+      </CENTER>
+
+      <P>&nbsp;</P>
+      <P>If you've logged in before but can't remember your username or password, 
+        then you can <A HREF="forgot_password.php">have your details sent to you via email</A>.</P>
+      </FONT>
+    </TD>
+    <TD WIDTH="50%" VALIGN="TOP" bgcolor="<?=$THEME->cellheading?>">
+      <FONT SIZE=2>
+      <P>Hi! You need to create a new account for yourself on this server so we know who 
+        you are. Each of the individual courses may also have a one-time 
+        &quot;course entry key&quot;, which you won't need until later. Here are 
+        the steps:</P>
+        <OL size=2>
+      <LI>Fill out the <A HREF="signup.php">New Account</A> form with your details.
+      <LI>An email will be immediately sent to your email address. 
+      <LI>Read your email, and click on the web link it contains.
+      <LI>Your account will be confirmed and you will be logged in.
+      <LI>Now, select the course you want to participate in.
+      <LI>If you are prompted for a &quot;course entry key&quot; - use the one 
+        that your teacher has given you. This will &quot;enrol&quot; you in the 
+        course.
+      <LI>You can now access the full course. From now on you will only need 
+        to enter your personal username and password (in the form on this page) 
+        to log in and access any course you have enrolled in.
+      <P ALIGN="CENTER"><B><A HREF="signup.php">Start now by creating a new account!</A></B></P>
+      </FONT>
+      </TD>
+  </TR>
+</TABLE>
+
+<HR>
+<CENTER>
+<P><A HREF="<?=$CFG->wwwroot ?>">Home</A></P>

@@ -1,0 +1,72 @@
+<FORM METHOD="post" action="edit.php" NAME="form">
+<table cellpadding=9 cellspacing=0 >
+<tr valign=top>
+	<td><P>Full name:</td>
+	<td><input type="text" name="fullname" size=50 value="<? p($form->fullname) ?>">
+	<? formerr($err["fullname"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P>Short name:</td>
+	<td><input type="text" name="shortname" size=10 value="<? p($form->shortname) ?>">
+	<? formerr($err["shortname"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P>Password:</td>
+	<td><input type="text" name="password" size=25 value="<? p($form->password) ?>">
+	<? formerr($err["password"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P>Summary:</td>
+	<td><TEXTAREA NAME=summary COLS=50 ROWS=10 WRAP=virtual><? p($form->summary) ?></TEXTAREA>
+	<? formerr($err["summary"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P>Category:</td>
+	<td><? 
+           choose_from_menu ($form->categories, "category", "$form->category");
+	       formerr($err["category"]);
+        ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P>Format:</td>
+	<td><? 
+           choose_from_menu ($FORMATS, "format", "$form->format");
+	       formerr($err["format"]);
+        ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P>Word used to refer<BR>to your role:</td>
+	<td><input type="text" name="teacher" size=25 value="<? p($form->teacher) ?>">
+	<? formerr($err["teacher"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P>Start date:</td>
+	<td><?
+           choose_from_menu ($form->days, "startday", "$form->startday");
+           choose_from_menu ($form->months, "startmonth", "$form->startmonth");
+           choose_from_menu ($form->years, "startyear", "$form->startyear");
+	       formerr($err["startdate"]);
+	?></td>
+</tr>
+<tr valign=top>
+	<td><P>End date:</td>
+	<td><?
+           choose_from_menu ($form->days, "endday", "$form->endday");
+           choose_from_menu ($form->months, "endmonth", "$form->endmonth");
+           choose_from_menu ($form->years, "endyear", "$form->endyear");
+	       formerr($err["enddate"]);
+	?></td>
+</tr>
+<tr>
+	<td></td>
+	<td><input type="submit" value="Update this course"></td>
+</TABLE>
+<INPUT type="hidden" name="id" value="<?=$course->id ?>">
+</FORM>

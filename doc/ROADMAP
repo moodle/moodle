@@ -1,0 +1,15 @@
+Roadmap
+-------
+
+Here are some of the directions I would like to take
+Moodle now it has been released.
+
+- Code audit and clean up.  Standardise tabs, wordwrap.
+  Refactor a few bits.
+
+- Full internationalisation.  To start with I've hardcoded 
+  all the strings just to get things started and reduce 
+  obfuscation during development.  Modular "language packs"
+  need to implemented instead. eg using STPhp.
+
+

@@ -1,0 +1,28 @@
+<FORM METHOD="post" action="site.php" NAME="form">
+<TABLE cellpadding=9 cellspacing=0 >
+<tr valign=top>
+	<td><P>Full site name:</td>
+	<td><input type="text" name="fullname" size=50 value="<? p($form->fullname) ?>">
+	<? formerr($err["fullname"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P>Short name for site (eg single word):</td>
+	<td><input type="text" name="shortname" size=50 value="<? p($form->shortname) ?>">
+	<? formerr($err["shortname"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+    <td><P>Front page description:</td>
+    <td><TEXTAREA NAME=summary COLS=50 ROWS=10 WRAP=virtual><? p($form->summary) ?></TEXTAREA>
+    <? formerr($err["summary"]) ?>
+    </td>
+</tr>
+<tr>
+    <td></td>
+	<td><input type="submit" value="Update the site"></td>
+</tr>
+</TABLE>
+<INPUT type="hidden" name="id" value="<?=$form->id ?>">
+<INPUT type="hidden" name="category" value="<?=$form->category ?>">
+</FORM>

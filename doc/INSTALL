@@ -1,0 +1,95 @@
+===========================================================================
+==  MOODLE
+== 
+==  OPEN-SOURCE SOFTWARE FOR INTERNET-BASED EDUCATION
+==
+==  Copyright (c) Martin Dougiamas, 2001 
+==
+==  Freely available under the GNU License
+==
+===========================================================================
+
+
+Directory structure
+===================
+
+config.php  - the only file you need to edit to get started
+
+lib         - libraries of core Moodle code
+
+user        - code to display and manage users
+course      - code to display and manage courses 
+login       - code to handle login and account creation
+admin       - code to administrate the whole server
+pix         - Generic site graphics are in here
+
+mod         - All Moodle modules are in here
+theme       - All Moodle themes are in here
+
+
+
+HOW TO INSTALL MOODLE
+=====================
+
+1.  SET UP A DATABASE
+
+    Create an empty database (eg "moodle") in your database system
+    along with a special user (eg "moodle") that has access to that 
+    database.  (Don't use the "root" user for the moodle database - 
+    it's a security hazard).
+
+    eg for MySQL under a Unix system:
+
+    # mysql -u root -p 
+    > CREATE DATABASE moodle;
+    > GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* 
+      TO moodle@localhost IDENTIFIED BY 'yourpassword';
+    > quit
+    # mysqladmin -p reload
+
+
+2.  EDIT config.php
+ 
+    Edit the configuration file, putting in the database details that you 
+    just defined, as well as changing the site address and so on.
+
+    Make sure you specify what type of database you are using.
+
+    eg:
+
+    $CFG->wwwroot   = "http://example.com"; 
+    $CFG->dbtype    = "mysqlt";      // eg mysql, mysqlt, postgres ... etc
+    $CFG->dbhost    = "localhost";   // eg localhost 
+    $CFG->dbname    = "moodle";      // eg moodle
+    $CFG->dbuser    = "moodle";
+    $CFG->dbpass    = "yourpassword";
+    
+
+3.  GO TO THE ADMIN PAGE
+
+    The admin page should now be working at:  http://example.com/admin  
+
+    The first time you access this page, Moodle will automagically 
+    create all the tables it needs within your database.
+
+    You will then be asked to create an administration user for
+    future access to the admin pages..  
+    
+    All your further configuration of Moodle can now be done using the
+    administration web pages, including:
+      
+        - creating and deleting courses
+        - administering teacher accounts
+        - changing site-wide settings
+        - adding/deleting modules
+    
+    Configuration of each course is done by the teachers of that course.
+    See the teacher documentation for more information about that.
+    
+    Have fun and send me feedback so we can continue improving Moodle!
+        
+
+Cheers!
+
+Martin Dougiamas
+martin@moodle.com

@@ -1,0 +1,252 @@
+<!--
+============================================================
+Script:     Amazing Interactive No-Layers Menu Script
+
+Function:   A complete menu system with fully interactive
+            functionality, separate messaging box, and
+            programmable elements, including:
+               - link color and behavior
+               - link box motion indent
+               - link box border colors
+               - link box border styles
+               - link box border width
+               - individual link messages
+               - default link message
+            Designed as an alternative to costly Java
+            applets that perform similar functions, the
+            scripting uses no layers or divisions.
+
+Browsers:   IE4 and up, NS6
+            (others degrade functionally)
+
+Author:     etLux
+============================================================
+
+INSTRUCTIONS
+
+The simplest way to present this script was to provide an
+entire page, very clearly commented with internal instruc-
+tions.  That's what you'll find below, after the double
+lines.
+
+There is *no* extraneous code on this page (other than the
+comments).  Copy-and-paste *everything* into a fresh page;
+this is complete page code.
+
+(Note that you need one image, used as a spacer.  The name
+of the spacer image file should be spacer.gif, and it should
+be placed in the same directory as the page.  A 5x5-pixel
+transparent or standard .gif is fine.)
+
+Work from the commented instructions included in the page
+code, gradually modifying it until it meets your need.
+
+============================================================
+//-->
+<html>
+<head>
+
+<!-- Notes on style set-ups...
+
+   - the <style> ... </style> goes in the <head> of the page
+   
+   - set widths in pixels (px) for Menu Items box width
+         in both .BorderOn and .BorderOff
+         
+   - set border attributes (border:width style #color) as
+         desired:
+         - width is in px
+         - style can be solid, dashed, dotted, groove, etc.
+         - color is in standard #FFFFFF format 
+         
+   - set margin-left in .BorderOn in px for mouseOver indent   
+   
+   - set link colors and text-decoration as desired in A.mXxxxxx's
+   
+   - for more on styles, attributes, and their settings, see:
+     http://msdn.microsoft.com/workshop/author/css/reference/attributes.asp
+   
+//-->
+
+<style>
+<!--
+
+.BorderOn  { width:90px;
+             margin-left:10px;
+             border:1px solid #456789 }
+.BorderOff { width:90px;
+             margin-left:0px;
+             border:1px solid #444444 }
+             
+A.mBlue:link      {color:#00CCFF; text-decoration:none;}
+A.mBlue:visited   {color:#00CCFF; text-decoration:none;}
+A.mBlue:active    {color:#00CCFF; text-decoration:none;}
+A.mBlue:hover     {color:#FF0000; text-decoration:underline;}        
+
+A.mGreen:link     {color:#00FF80; text-decoration:none;}
+A.mGreen:visited  {color:#00FF80; text-decoration:none;}
+A.mGreen:active   {color:#00FF80; text-decoration:none;}
+A.mGreen:hover    {color:#FF0000; text-decoration:underline;} 
+
+A.mYellow:link    {color:#FFFF00; text-decoration:none;}
+A.mYellow:visited {color:#FFFF00; text-decoration:none;}
+A.mYellow:active  {color:#FFFF00; text-decoration:none;}
+A.mYellow:hover   {color:#FF0000; text-decoration:underline;}          
+
+//-->             
+</style>
+
+<!-- Notes on script set-ups...
+
+   - The <script> ... </script> goes in the head of the
+         page, usually after the <style> ... </style>
+         
+   - Set the offMessage as desired
+   
+//-->
+
+<script language="JavaScript1.2">
+<!--
+
+// (C) 2000 www.CodeLifter.com
+// http://www.codelifter.com
+// Free for all users, but leave in this header
+
+offMessage = "Welcome to CodeLifter..."
+
+function boxOn(which,message){
+   if (document.all||document.getElementById){
+      which.className='BorderOn'
+      if (document.getElementById) {document.getElementById("Message").innerHTML = message}
+         else {Message.innerHTML = message}
+   }
+}
+
+function boxOff(which){
+   if (document.all||document.getElementById){
+      which.className='BorderOff'
+      if (document.getElementById) {document.getElementById("Message").innerHTML = offMessage}
+         else {Message.innerHTML = offMessage}
+   }
+}
+
+//-->
+</script>
+<title></title>
+</head>
+
+<!-- General notes on installing the HTML code...
+
+   - everything from BEGINNING OF MENU through END OF MENU is
+        required
+        
+   - in general, other than noted, you can treat the contents of 
+        table cells as you normally would; however, take care to
+        preserve all class= and id= instances and all boxOn and
+        boxOff function calls, as these do the real work
+        
+   - messages are used only in the boxOn calls, but the 'this' 
+        reference must be included in both boxOn and boxOff calls
+        
+   - messages must be enclosed within single 'quote' marks
+   
+   - remember to change <a href> target= to _top for the same
+        window, _blank or _new for a new window, or the framename
+        if you're using frames (this is standard html)
+
+//-->
+
+<body bgcolor="#000000">
+<!-- BEGINNING OF MENU //-->
+
+<!-- Outer Container Table //-->
+<!-- Set this table width to largest margin-left + largest width in <style> script //-->
+<table cellpadding="0" cellspacing="0" width="100">
+<tr>
+<td align="center">
+
+<!-- Header Table // -->
+<table cellpadding="3" cellspacing="0" bgcolor="#000000" class="BorderOff">
+  <tr>
+    <td><font color="#FEDCBA" size="2" face="Arial">Heading</font></td>
+  </tr>
+</table>
+<img src="spacer.gif" width="5" height="5"><br>
+<!-- End Header Table //-->
+
+<!-- Menu Items Tables
+
+   - To add more, just follow the pattern
+   - Note class= in each <a href> to attach link style colors
+
+//-->
+
+<!-- Menu Item One Table //-->
+<table cellpadding="3" cellspacing="0" class="BorderOff" onMouseover="boxOn(this,'Eat my giant octopus feet with relish and abandon.')" onMouseout="boxOff(this)">
+  <tr>
+    <td><font color="#00FF80" size="2" face="Arial"><a class="mBlue" href="http://www.codebrain.com" target="_blank">Thing One</a></font></td>
+  </tr>
+</table>  
+<img src="spacer.gif" width="2" height="2"><br>
+<!-- Menu Item Two Table //-->
+<table cellpadding="3" cellspacing="0" class="BorderOff" onMouseover="boxOn(this,'Beguile me senseless with your big goatly beauty.')" onMouseout="boxOff(this)">
+  <tr>
+    <td><font color="#00FF80" size="2" face="Arial"><a class="mBlue" href="http://www.codebrain.com" target="_blank">Thing Two</a></font></td>
+  </tr>
+</table>
+<img src="spacer.gif" width="5" height="5"><br>
+<!-- Menu Item Three Table //-->
+<table cellpadding="3" cellspacing="0" class="BorderOff" onMouseover="boxOn(this,'Entrance me with the odor of your ugly blue cheese.')" onMouseout="boxOff(this)">  
+  <tr>
+    <td><font color="#00FF80" size="2" face="Arial"><a class="mGreen" href="http://www.braincode.com" target="_blank">Thing Three</a></font></td>
+  </tr>
+</table>
+<img src="spacer.gif" width="2" height="2"><br>
+<!-- Menu Item Four Table //-->
+<table cellpadding="3" cellspacing="0" class="BorderOff" onMouseover="boxOn(this,'Never remember me without fresh garlic around your neck.')" onMouseout="boxOff(this)">  
+  <tr>
+    <td><font color="#00FF80" size="2" face="Arial"><a class="mYellow" href="http://www.braincode.com" target="_blank">Thing Four</a></font></td>
+  </tr>
+</table>
+<img src="spacer.gif" width="2" height="2"><br>
+<!-- Menu Item Five Table //-->
+<table cellpadding="3" cellspacing="0" class="BorderOff" onMouseover="boxOn(this,'Speak, and you shall make noise in the night of my bookshelf.')" onMouseout="boxOff(this)">  
+  <tr>
+    <td><font color="#00FF80" size="2" face="Arial"><a class="mYellow" href="http://www.braincode.com" target="_blank">Thing Five</a></font></td>
+  </tr>
+</table>
+<img src="spacer.gif" width="5" height="5"><br>
+<!-- End Menu Items Tables //-->
+
+<!-- Message Table //-->
+<!-- Set the width= of this table the same as the overall
+     width in the <style> //-->
+<table cellpadding="1" cellspacing="0" bgcolor="#444444" width="90">
+<tr>
+<td>
+<!-- Set the width= of this table to the overall width
+     in the style table minus 2x the border width; set
+     the height= long (large) enough to accommodate your
+     longest message //-->
+<table cellpadding="3" cellspacing="0" bgcolor="#000000" width="88" height="100">
+  <tr>
+    <td align="left" valign="top"><font id="Message" color="#CBA987" size="2" face="Arial">Welcome to CodeLifter...</font></td>
+  </tr>
+</table>
+</td>
+</tr>
+</table>
+<!-- End Message Table //-->
+
+
+</td>
+</tr>
+</table>
+<!-- End Outer Container Table //-->
+
+
+<!-- END OF MENU //-->
+</body>
+</html>
+
+

@@ -1,0 +1,19 @@
+<CENTER>
+<P>
+<FORM name="form" method="post" action="view.php">
+<TABLE WIDTH=70% CELLPADDING=20 CELLSPACING=20><TR>
+<TD ALIGN=CENTER NOWRAP WIDTH=50%>
+<INPUT type="radio" name=answer value="1" <?=$answer1checked ?> >
+  <? p($choice->answer1) ?>
+</TD>
+<TD ALIGN=CENTER NOWRAP WIDTH=50%>
+<INPUT type="radio" name=answer value="2" <?=$answer2checked ?> >
+  <? p($choice->answer2) ?>
+</TD>
+</TR></TABLE>
+<P>
+<INPUT type="hidden" name=id value="<?=$cm->id ?>">
+<INPUT type="submit" value="Save my choice">
+</P>
+</FORM>
+</CENTER>

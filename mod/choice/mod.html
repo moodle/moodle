@@ -1,0 +1,54 @@
+<FORM NAME="form" METHOD="post" ACTION="<?=$ME ?>">
+
+<table cellpadding=5>
+
+<tr valign=top>
+    <td align=right><P><B>Choice Name:</B></P></TD>
+    <td>
+        <input type="text" name="name" size=30 value="<? p($form->name) ?>">
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B>Choice Text:</B></P></TD>
+    <td>
+        <textarea name="text" rows=15 cols=30 wrap="virtual"><? p($form->text) ?></textarea>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B>First choice:</B></P></TD>
+    <td>
+        <input type="text" name="answer1" size=30 value="<? 
+        if ($form->answer1) {
+            p($form->answer1);
+        } else {
+            echo "Yes";
+        } ?>">
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B>Second choice:</B></P></TD>
+    <td>
+        <input type="text" name="answer2" size=30 value="<? 
+        if ($form->answer2) {
+            p($form->answer2);
+        } else {
+            echo "No";
+        } ?>">
+    </td>
+</tr>
+
+</table>
+
+<CENTER>
+<input type="hidden" name=course     value="<? p($form->course) ?>">
+<input type="hidden" name=week       value="<? p($form->week) ?>">
+<input type="hidden" name=module     value="<? p($form->module) ?>">
+<input type="hidden" name=modulename value="<? p($form->modulename) ?>">
+<input type="hidden" name=instance   value="<? p($form->instance) ?>">
+<input type="hidden" name=mode       value="<? p($form->mode) ?>">
+<input type="submit" value="Save these settings">
+</CENTER>
+</FORM>

@@ -1,0 +1,26 @@
+<HTML>
+<HEAD>
+    <TITLE><?=$title ?></TITLE>
+    <META NAME="keywords" CONTENT="Moodle, <?=$title ?> ">
+    <?=$meta ?>
+    <LINK rel="stylesheet" HREF="<?=$styles ?>">
+    <? include("$CFG->javascript"); ?>
+</HEAD>
+
+<BODY <? if ($focus) { echo "onLoad=setfocus()"; } ?> bgcolor="<?=$THEME->body ?>" link="#000066" vlink="#222288">
+
+<?  if ($heading) { ?>
+    <FONT FACE="Trebuchet MS, Verdana, Arial, Helvetica, sans-serif" SIZE=4><B><?=$heading?></B></FONT>
+<?  } ?>
+
+<?  if ($navigation) { ?>
+    <TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 WIDTH=100%>
+    <TR><TD BGCOLOR="<?=$THEME->cellheading?>">
+    <FONT FACE="Trebuchet MS, Verdana, Arial, Helvetica, sans-serif" SIZE=2><B>
+<?  print_navigation("$navigation"); ?>
+    </B></FONT></TD></TR></TABLE>
+    <IMG SRC="$CFG->wwwroot/pix/spacer.gif" ALT="" HEIGHT=5 WIDTH=1>
+<?  } else { ?>
+    <HR SIZE=1 NOSHADE>
+<?  } ?>
+<!-- END OF HEADER  $Id$  -->

@@ -1,0 +1,10 @@
+<BLOCKQUOTE>
+<FORM name="form" method="post" action="edit.php">
+<TEXTAREA NAME=text COLS=60 ROWS=10 WRAP="virtual"><? p($entry->text) ?></TEXTAREA>
+<P>
+<INPUT type="hidden" name=id value="<?=$cm->id ?>">
+<INPUT type="submit" value="Save and continue">
+<INPUT type="reset" value="Revert">
+</P>
+</FORM>
+</BLOCKQUOTE>

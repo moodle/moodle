@@ -1,0 +1,65 @@
+<CENTER>
+<H3>You need to log in before you can fill out this survey</H3>
+
+<table cellpadding=10>
+  <tr valign=top> 
+    <td bgcolor=#f0f0f0> 
+      <form name="form" method="post" action="login.php">
+        <table cellpadding=10>
+          <tr> 
+            <td><P>Survey Password:<BR>(from your teacher)</td>
+            <td valign=top> 
+              <input type="password" name="password" size=20 value="<? pv($frm["password"]) ?>" >
+			  <? formerr($err["password"]) ?>
+            </td>
+	  	  </tr>
+          <tr> 
+            <td><P>Your first name:</td>
+            <td valign=top> 
+              <input type="text" name="firstname" size=20 value="<? pv($frm["firstname"]) ?>">
+			  <? formerr($err["firstname"]) ?>
+            </td>
+          </tr>
+          <tr> 
+            <td><P>Your last name:</td>
+            <td valign=top> 
+              <input type="text" name="lastname" size=20 value="<? pv($frm["lastname"]) ?>">
+			  <? formerr($err["lastname"]) ?>
+            </td>
+          </tr>
+          <tr> 
+            <td><P>Your email address:</td>
+            <td valign=top> 
+              <input type="text" name="email" size=20 value="<? pv($frm["email"]) ?>">
+			  <? formerr($err["email"]) ?>
+            </td>
+          </tr>
+          <tr> 
+            <td><P>Student ID Number:<BR>(optional)</td>
+            <td valign=top> 
+              <input type="text" name="idnumber" size=20 value="<? pv($frm["idnumber"]) ?>">
+			  <? formerr($err["idnumber"]) ?>
+            </td>
+          </tr>
+          <tr> 
+            <td>&nbsp;</td>
+            <td valign=bottom> 
+			  <BR>
+              <input type="submit" value="Login to the survey">
+			  </form>
+			  <form name=cancel method=post action="/mod/survey/">
+              <input type="submit" value="Cancel">
+              </form>
+            </td>
+        </table>
+    </td>
+  </tr>
+</table>
+</CENTER>
+
+<HR>
+<CENTER>
+<FONT SIZE=1>
+<P><A HREF="<?=$CFG->wwwroot ?>">Home</A></P>
+</BODY>
+

@@ -1,0 +1,16 @@
+<table align=center cellpadding=20> <tr> <td colspan=2 bgcolor=#ffaaaa>
+
+<CENTER>
+<FORM name="form" method="post" action="<?=$ME ?>">
+<? print_heading("Are you absolutely sure you want to delete the $form->modulename ?") ?>
+<input type="hidden" name=mode         value="delete">
+<input type="hidden" name=week         value="<? echo $form->week; ?>">
+<input type="hidden" name=course       value="<? p($form->course) ?>">
+<input type="hidden" name=coursemodule value="<? p($form->coursemodule) ?>">
+<input type="hidden" name=modulename   value="<? p($form->modulename) ?>">
+<input type="hidden" name=instance     value="<? p($form->instance) ?>">
+<input type="submit" value=" Yes "> <input type=button value=" No " onclick="javascript:history.go(-1);">
+</FORM>
+
+</td></tr></table>
+

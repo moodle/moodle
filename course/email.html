@@ -1,0 +1,32 @@
+<FORM name="form" method="post" action="email.php">
+<TABLE cellpadding=10 CELLSPACING=0 ALIGN=CENTER>
+<TR>
+<TD valign=top align=right BGCOLOR="<?=$THEME->cellheading?>">
+    <P>Subject:</P>
+</TD>
+<TD valign=top align=left BGCOLOR="<?=$THEME->cellheading?>">
+<FONT SIZE=2><INPUT TYPE=text SIZE=60 NAME=subject VALUE="<? p($form->subject); ?>">
+</TD>
+</TR>
+<TR>
+<TD valign=top align=right BGCOLOR="<?=$THEME->cellheading?>">
+    <P>Email:</P>
+</TD>
+<TD BGCOLOR="<?=$THEME->cellheading?>">
+<FONT SIZE=2><TEXTAREA NAME=message COLS=60 ROWS=15 WRAP=hard><? p($form->message); ?></TEXTAREA>
+</TD>
+</TR>
+<TR>
+<TD BGCOLOR="<?=$THEME->cellheading?>">
+&nbsp;
+</TD>
+<TD BGCOLOR="<?=$THEME->cellheading?>">
+    <P>
+    <INPUT type="hidden" name=id value="<?=$form->id ?>">
+    <INPUT type="submit" value="Send this email to everyone now">
+    <INPUT type="reset" value="Revert">
+    </P>
+</TD>
+</TABLE>
+
+</FORM>

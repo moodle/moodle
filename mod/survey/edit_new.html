@@ -1,0 +1,14 @@
+<CENTER>
+<H3>Choose a template for your new survey</H3>
+
+<P><? link_to_popup_window("/mod/survey/docs/surveytype.html", "info", "About the different survey types") ?></P>
+
+<FORM METHOD=post ACTION=edit.php>
+<INPUT TYPE=hidden NAME=edit VALUE=add>
+<? make_survey_menu("") ?>
+
+<INPUT TYPE=submit VALUE=OK>
+<P>
+
+</FORM>
+</CENTER>

@@ -1,0 +1,34 @@
+<CENTER>
+
+<table cellpadding=20>
+  <tr valign=top> 
+    <td>
+    <P ALIGN=CENTER>This course requires a "course entry key" - a one-time<BR>
+       password that you should have got from <A HREF="../user/view.php?id=<?=$teacher->id?>&course=<?=$site->id?>"><? p("$teacher->firstname $teacher->lastname") ?></A>.</P>
+    </td>
+  </tr>
+  <tr valign=top> 
+    <td bgcolor="<?=$THEME->cellheading?>"> <CENTER><? formerr($errormsg) ?> </CENTER>
+      <form name="form" method="post" action="login.php">
+        <table>
+          <tr> 
+            <td width=50% align=right><P>Entry Key:</P></td>
+            <td width=50% > 
+              <input type="password" name="password" size=20 value="<? p($password) ?>" >
+              <input type="hidden" name="id" value="<? p($id) ?>" >
+            </td>
+          <tr> 
+            <td width=50%>&nbsp;</td>
+            <td width=50%> 
+              <table cellpadding=1 cellspacing=0><tr>
+              <td><input type=submit value=Login></form></td>
+              <td><form action="<?=$CFG->wwwroot?>/" method=post>
+                  <input type=submit value=Cancel></form></td>
+              </tr></table>
+
+            </td>
+        </table>
+    </td>
+  </tr>
+</table>
+
