@@ -657,12 +657,11 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                          " <font size=2><a title=\"$mod->modfullname\" $linkcss $extra".
                          " href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a></font>";
                 }
-                echo "</td>";
                 if ($isediting) {
-                    echo "<td align=\"right\" valign=\"top\" nowrap=\"nowrap\" class=\"activityeditbuttons\">";
+                    echo "&nbsp;&nbsp;";
                     echo make_editing_buttons($mod->id, $absolute, $mod->visible, true, $mod->indent);
-                    echo " </td>";
                 }
+                echo "</td>";
                 echo "</tr>";
             }
         }
