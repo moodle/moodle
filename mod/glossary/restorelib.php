@@ -631,6 +631,17 @@
                 }
             }
             break;
+        case "view entry":
+            if ($log->cmid) {
+                //Get the new_id of the glossary_entry (to recode the info and url field)
+                $ent = backup_getid($restore->backup_unique_code,"glossary_entries",$log->info);
+                if ($ent) {
+                    $log->url = "showentry.php?&eid=".$ent->new_id;
+                    $log->info = $ent->new_id;
+                    $status = true;
+                }
+            }
+            break;
         case "add comment":
             if ($log->cmid) {
                 //Extract the entryid from the url field
