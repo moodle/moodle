@@ -1066,7 +1066,7 @@ function quiz_get_category_menu($courseid, $published=false) {
 function quiz_print_category_form($course, $current) {
 // Prints a form to choose categories
 
-    if (!$categories = get_records_select("quiz_categories", "course='$course->id' OR publish = '1'", "name ASC")) {
+    if (!$categories = get_records_select("quiz_categories", "course = '$course->id' OR publish = '1'", "name ASC")) {
         if (!$category = quiz_get_default_category($course->id)) {
             notify("Error creating a default category!");
             return false;
@@ -1074,12 +1074,12 @@ function quiz_print_category_form($course, $current) {
         $categories[$category->id] = $category;
     }
     foreach ($categories as $key => $category) {
-       if ($category->publish) {
-           if ($catcourse = get_record("course", "id", $category->course)) {
+       if ($catcourse = get_record("course", "id", $category->course)) {
+           if ($category->publish) {
                $category->name .= " ($catcourse->shortname)";
            }
+           $catmenu[$category->id] = $category->name;
        }
-       $catmenu[$category->id] = $category->name;
     }
     $strcategory = get_string("category", "quiz");
     $strshow = get_string("show", "quiz");
