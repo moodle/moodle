@@ -262,34 +262,8 @@
         echo '<table border="0" width="100%">';
         echo '<tr>';
         
-        echo '<td>';
-        if ($canedit) {
-          $iconstr="";
-          $editicon= '<img hspace=1 alt="'.get_string("editthispage","wiki").'" height=16 width=16 border=0 src="'.$CFG->pixpath.'/t/edit.gif">';
-          $infoicon= '<img hspace=1 alt="'.get_string("pageinfo","wiki").'" height=16 width=16 border=0 src="'.$CFG->pixpath.'/i/info.gif">';
-
-          if($ewiki_action!="edit" && !in_array($wikipage, $specialpages)) {          
-            $iconstr.='<a title="'.get_string("editthispage","wiki").'" href="'.$ewbase.'&wikipage=edit/'.$ewiki_id.'">'.$editicon."</a>";
-          }
-          else {
-            $iconstr.=$editicon;
-          }
-
-          if($ewiki_action!="info" && !in_array($wikipage, $specialpages)) {                      
-            $iconstr.='<a title="'.get_string("pageinfo","wiki").'" href="'.$ewbase.'&wikipage=info/'.$ewiki_id.'">'.$infoicon."</a>";
-          }
-          else {
-            $iconstr.=$infoicon;
-          }
-          echo $iconstr;
-        }
-        echo '</td>';
-        echo '<td>';
-        wiki_print_page_actions($cm->id, $specialpages, $ewiki_id, $ewiki_action, $wiki->ewikiacceptbinary, $canedit);
-        echo '</td>';    
-
         /// Searchform
-        echo '<td align="center">';    
+        echo '<td align="left">';    
         wiki_print_search_form($cm->id, $q, $userid, $groupid, false);
         echo '</td>';
     
@@ -315,14 +289,38 @@
     }
 
     if($ewiki_title==$wiki_entry->pagename && !empty($wiki->summary)) {
-      print "<br>";
-      print_simple_box(format_text($wiki->summary, FORMAT_MOODLE), "center");
-      print "<br>";
+      if (trim(strip_tags($wiki->summary))) {
+          print "<br>";
+          print_simple_box(format_text($wiki->summary, FORMAT_MOODLE), "center");
+          print "<br>";
+      }
     }
     
-    
     // The wiki Contents
-    print_simple_box_start( "center", "100%", "$THEME->cellcontent", "20");
+
+    if ($canedit) {   /// Print tabs with commands for this page
+        $tabstyle = ' style="padding-left: 5px;padding-right: 5px" ';
+
+        echo "<table align=right border=0>";
+        echo "<tr>";
+        $tabs = array('view', 'edit','links','info');
+        if ($binary) {
+            $tabs[] = 'attachments';
+        }
+        foreach ($tabs as $tab) {
+            $tabname = get_string("tab$tab", 'wiki');
+            if ($ewiki_action != "$tab" && !in_array($wikipage, $specialpages)) {          
+                echo '<td class="generaltab" '.$tabstyle.' bgcolor="'.$THEME->cellheading.'">';
+                echo '<a href="'.$ewbase.'&wikipage='.$tab.'/'.$ewiki_id.'">'.$tabname.'</a>';
+                echo '</td>';
+            } else {
+                echo '<td class="generaltabselected" '.$tabstyle.' bgcolor="'.$THEME->cellcontent.'">'.$tabname.'</td>';
+            }
+        }
+        echo "</tr>";
+        echo "</table>";
+    }
+    print_simple_box_start( "right", "100%", "$THEME->cellcontent", "20");
     if($ewiki_action=="edit") {
       # When editing, the filters shall not interfere the wiki-source
       print $content;
@@ -330,6 +328,7 @@
       print(format_text($content, $moodle_format));
     }
     print_simple_box_end();
+    echo "<br clear=all />";
 
 /// Finish the page
     print_footer($course);

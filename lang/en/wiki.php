@@ -193,4 +193,10 @@ $string['moduledirectory']='Module Directory';
 $string['exportto']='Export to';
 $string['exportsuccessful']='Export successful.';
 $string['index']='Index';
+
+$string['tabedit']='Edit';
+$string['tabview']='View';
+$string['tabinfo']='Info';
+$string['tablinks']='Links';
+$string['tabattachments']='Attachments';
 ?>
