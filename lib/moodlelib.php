@@ -2844,12 +2844,13 @@ function get_string($identifier, $module='', $a=NULL) {
 /**
  * This function is only used from {@link get_string()}.
  *
- * @internal Only used from get_string, not meant to be public api
+ * @internal Only used from get_string, not meant to be public API
  * @param string $identifier ?
  * @param string $langfile ?
  * @param string $destination ?
  * @return string|false ?
  * @staticvar array $strings Localized strings
+ * @access private
  * @todo Finish documenting this function.
  */
 function get_string_from_file($identifier, $langfile, $destination) {

@@ -73,6 +73,7 @@ function xmlize($data, $WHITE=1, $encoding='UTF-8') {
  * @internal You don't need to do anything with this function, it's called by
  * xmlize. It's a recursive function, calling itself as it goes deeper
  * into the xml levels.  If you make any improvements, please let me know.
+ * @access private
  */
 function xml_depth($vals, &$i) {
     $children = array();
