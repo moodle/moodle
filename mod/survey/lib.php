@@ -178,7 +178,7 @@ function survey_get_participants($surveyid) {
 
 function survey_log_info($log) {
     global $CFG;
-    return get_record_sql("SELECT s.name, u.firstname, u.lastname
+    return get_record_sql("SELECT s.name, u.firstname, u.lastname, u.picture
                              FROM {$CFG->prefix}survey s, 
                                   {$CFG->prefix}user u
                             WHERE s.id = '$log->info' 
@@ -189,11 +189,10 @@ function survey_get_responses($survey) {
     global $CFG;
     return get_records_sql("SELECT MAX(a.time) as time, 
                                    count(*) as numanswers, 
-                                   u.id, u.firstname, u.lastname
+                                   u.id, u.firstname, u.lastname, u.picture
                               FROM {$CFG->prefix}survey_answers AS a, 
                                    {$CFG->prefix}user AS u
-                             WHERE a.answer1 <> '0' AND a.answer2 <> '0'
-                                   AND a.survey = $survey 
+                             WHERE a.survey = $survey 
                                    AND a.userid = u.id
                           GROUP BY u.id, u.firstname, u.lastname
                           ORDER BY time ASC");
@@ -218,7 +217,7 @@ function survey_update_analysis($survey, $user, $notes) {
 }
 
 
-function survey_get_user_answers($surveyid, $questionid) {
+function survey_get_user_answers($surveyid, $questionid, $sort="sa.answer1,sa.answer2 ASC") {
     global $CFG;
 
     return get_records_sql("SELECT sa.*,u.firstname,u.lastname,u.picture 
@@ -227,7 +226,17 @@ function survey_get_user_answers($surveyid, $questionid) {
                              WHERE sa.survey = '$surveyid' 
                                AND sa.question = $questionid 
                                AND u.id = sa.userid 
-                          ORDER BY sa.answer1,sa.answer2 ASC");
+                          ORDER BY $sort");
+}
+
+function survey_get_user_answer($surveyid, $questionid, $userid) {
+    global $CFG;
+
+    return get_record_sql("SELECT sa.* 
+                              FROM {$CFG->prefix}survey_answers sa
+                             WHERE sa.survey = '$surveyid' 
+                               AND sa.question = '$questionid' 
+                               AND sa.userid = '$userid'");
 }
 
 // MODULE FUNCTIONS ////////////////////////////////////////////////////////
@@ -255,23 +264,20 @@ function survey_count_responses($survey) {
 }
 
 
-function survey_print_all_responses($survey, $results) {
+function survey_print_all_responses($cmid, $results, $courseid) {
     global $THEME;
 
-    $dateformat = get_string("strftimedatetime");
-
-    echo "<TABLE CELLPADDING=5 CELLSPACING=2 ALIGN=CENTER>";
-    echo "<TR><TD>Name<TD>Time<TD>Answered</TR>";
+    $table->head  = array ("", get_string("name"),  get_string("time"), get_string("answers", "survey"));
+    $table->align = array ("", "left", "left", "right");
+    $table->size = array (35, "", "", "");
 
     foreach ($results as $a) {
-                 
-        echo "<TR>";
-        echo "<TD><A HREF=\"report.php?action=student&student=$a->id&id=$survey\">".fullname($a)."</A></TD>";
-        echo "<TD>".userdate($a->time, $dateformat)."</TD>";
-        echo "<TD align=right>$a->numanswers</TD>";
-        echo "</TR>";
+        $table->data[] = array(print_user_picture($a->id, $courseid, $a->picture, false, true, false),
+               "<a href=\"report.php?action=student&student=$a->id&id=$cmid\">".fullname($a)."</a>", 
+               userdate($a->time), $a->numanswers);
     }
-    echo "</TABLE>";
+
+    print_table($table);
 }
 
 

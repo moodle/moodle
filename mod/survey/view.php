@@ -18,6 +18,12 @@
     if (! $survey = get_record("survey", "id", $cm->instance)) {
         error("Survey ID was incorrect");
     }
+
+    if (! $template = get_record("survey", "id", $survey->template)) {
+        error("Template ID was incorrect");
+    }
+
+    $showscales = ($template->name != 'ciqname');
  
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
@@ -32,7 +38,7 @@
 
     if (isteacher($course->id)) {
         $numusers = survey_count_responses($survey->id);
-        echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".
+        echo "<p align=right><a href=\"report.php?id=$cm->id\">".
               get_string("viewsurveyresponses", "survey", $numusers)."</A></P>";
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
@@ -46,13 +52,34 @@
 //  Check the survey hasn't already been filled out.
 
     if (survey_already_done($survey->id, $USER->id)) {
+
         add_to_log($course->id, "survey", "view graph", "view.php?id=$cm->id", $survey->id, $cm->id);
-        print_heading(get_string("surveycompleted", "survey"));
         $numusers = survey_count_responses($survey->id);
-        print_heading(get_string("peoplecompleted", "survey", $numusers));
-        echo "<center>";
-        survey_print_graph("id=$cm->id&sid=$USER->id&type=student.png");
-        echo "</center>";
+
+        if ($showscales) {
+            print_heading(get_string("surveycompleted", "survey"));
+            print_heading(get_string("peoplecompleted", "survey", $numusers));
+            echo "<center>";
+            survey_print_graph("id=$cm->id&sid=$USER->id&type=student.png");
+            echo "</center>";
+
+        } else {
+            $questions = get_records_list("survey_questions", "id", $survey->questions);
+            $questionorder = explode(",", $survey->questions);
+            foreach ($questionorder as $key => $val) {
+                $question = $questions[$val];
+                if ($question->type == 0 or $question->type == 1) {
+                    if ($answer = survey_get_user_answer($survey->id, $question->id, $USER->id)) {
+                        $table = NULL;
+                        $table->head = array(get_string($question->text, "survey"));
+                        $table->align = array ("left");
+                        $table->data[] = array("$answer->answer1");
+                        print_table($table);
+                    }
+                }
+            }
+        }
+   
         print_footer($course);
         exit;
     }

@@ -35,6 +35,7 @@ INSERT INTO `prefix_survey` (`id`, `course`, `template`, `days`, `timecreated`, 
 INSERT INTO `prefix_survey` (`id`, `course`, `template`, `days`, `timecreated`, `timemodified`, `name`, `intro`, `questions`) VALUES (2, 0, 0, 0, 985017600, 985017600, 'collespname', 'collespintro', '31,32,33,34,35,36,43,44');
 INSERT INTO `prefix_survey` (`id`, `course`, `template`, `days`, `timecreated`, `timemodified`, `name`, `intro`, `questions`) VALUES (3, 0, 0, 0, 985017600, 985017600, 'collesapname', 'collesapintro', '37,38,39,40,41,42,43,44');
 INSERT INTO `prefix_survey` (`id`, `course`, `template`, `days`, `timecreated`, `timemodified`, `name`, `intro`, `questions`) VALUES (4, 0, 0, 0, 985017600, 985017600, 'attlsname', 'attlsintro', '65,67,68');
+INSERT INTO `prefix_survey` (`id`, `course`, `template`, `days`, `timecreated`, `timemodified`, `name`, `intro`, `questions`) VALUES (5, 0, 0, 0, 985017600, 985017600, 'ciqname', 'ciqintro', '69,70,71,72,73');
 
 
 
@@ -166,6 +167,11 @@ INSERT INTO `prefix_survey_questions` (`id`, `text`, `shorttext`, `multi`, `intr
 INSERT INTO `prefix_survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (67, 'attlsm2', 'attlsm2', '63,62,59,57,55,49,52,50,48,47', 'attlsmintro', -1, 'scaleagree5');
 INSERT INTO `prefix_survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (68, 'attlsm3', 'attlsm3', '46,54,45,51,60,53,56,58,61,64', 'attlsmintro', -1, 'scaleagree5');
 
+INSERT INTO `prefix_survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (69, 'ciq1', 'ciq1short', '', '', 0, '');
+INSERT INTO `prefix_survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (70, 'ciq2', 'ciq2short', '', '', 0, '');
+INSERT INTO `prefix_survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (71, 'ciq3', 'ciq3short', '', '', 0, '');
+INSERT INTO `prefix_survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (72, 'ciq4', 'ciq4short', '', '', 0, '');
+INSERT INTO `prefix_survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (73, 'ciq5', 'ciq5short', '', '', 0, '');
 
 
 #

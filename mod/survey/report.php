@@ -5,7 +5,8 @@
 
 // Check that all the parameters have been provided.
  
-    require_variable($id);    // Course Module ID
+    require_variable($id);         // Course Module ID
+    optional_variable($action, "students");    // What to look at
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -25,10 +26,15 @@
         error("Survey ID was incorrect");
     }
 
+    if (! $template = get_record("survey", "id", $survey->template)) {
+        error("Template ID was incorrect");
+    }
 
-    $ME = qualified_me()."?id=$id";
+    $showscales = ($template->name != 'ciqname');
+
 
     $strreport = get_string("report", "survey");
+    $strsurvey = get_string("modulename", "survey");
     $strsurveys = get_string("modulenameplural", "survey");
     $strsummary = get_string("summary", "survey");
     $strscales = get_string("scales", "survey");
@@ -41,68 +47,56 @@
     $strseemoredetail = get_string("seemoredetail", "survey");
     $strnotes = get_string("notes", "survey");
 
-    if (empty($action)) {
-        $display = "summary";
+    add_to_log($course->id, "survey", "view report", "report.php?id=$cm->id", "$survey->id", $cm->id);
+
+    if ($course->category) {
+        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
+                       <a href=\"index.php?id=$course->id\">$strsurveys</a> ->
+                       <a href=\"view.php?id=$cm->id\">$survey->name</a> -> ";
+    } else {
+        $navigation = "<a href=\"index.php?id=$course->id\">$strsurveys</a> ->
+                       <a href=\"view.php?id=$cm->id\">$survey->name</a> -> ";
     }
 
-    if (!empty($display))  { // Display the frame containing something.
-        add_to_log($course->id, "survey", "view report", "report.php?id=$cm->id", "$survey->id");
-        echo "<HEAD><TITLE>$course->shortname: $strreport: $survey->name</TITLE>\n";
-        echo "<FRAMESET ROWS=70,* BORDER=1> ";
-        echo "  <FRAME NAME=reporttop SRC=\"report.php?action=top&id=$id\"> \n";
-        echo "  <FRAMESET COLS=150,* BORDER=1> ";
-        echo "    <FRAME NAME=reportmenu SRC=\"report.php?action=menu&id=$id\"> \n";
-        echo "    <FRAME NAME=reportmain SRC=\"report.php?action=$display&id=$id\"> \n";
-        echo "  </FRAMESET>\n";
-        echo "</FRAMESET>\n";
-        exit;
+    print_header("$course->shortname: $survey->name", "$course->fullname", "$navigation $strreport",
+                 "", "", true,
+                 update_module_button($cm->id, $course->id, $strsurvey), navmenu($course, $cm));
+
+    print_simple_box_start("center");
+    if ($showscales) {
+        echo "<a href=\"report.php?action=summary&id=$id\">$strsummary</a>";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=scales&id=$id\">$strscales</a>";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=questions&id=$id\">$strquestions</a>";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=students&id=$id\">$course->students</a>";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=download&id=$id\">$strdownload</a>";
+    } else {
+        echo "<a href=\"report.php?action=questions&id=$id\">$strquestions</a>";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=students&id=$id\">$course->students</a>";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=download&id=$id\">$strdownload</a>";
     }
+    print_simple_box_end();
+
+    print_spacer(30,30);
+
+
+/// Print the menu across the top
 
     switch ($action) {
-      case "top":
-        if ($course->category) {
-            $navigation = "<A TARGET=\"{$CFG->framename}\" HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->
-                           <A TARGET=\"{$CFG->framename}\" HREF=\"index.php?id=$course->id\">$strsurveys</A> ->
-                           <A TARGET=\"{$CFG->framename}\" HREF=\"view.php?id=$cm->id\">$survey->name</A> -> ";
-        } else {
-            $navigation = "<A TARGET=\"{$CFG->framename}\" HREF=\"index.php?id=$course->id\">$strsurveys</A> ->
-                           <A TARGET=\"{$CFG->framename}\" HREF=\"view.php?id=$cm->id\">$survey->name</A> -> ";
-        }
-        print_header("$course->shortname: $survey->name", "$course->fullname", "$navigation $strreport");
-        break;
-
-      case "menu":
-        print_header();
-        echo "<P><FONT SIZE=2><A TARGET=reportmain HREF=\"report.php?action=summary&id=$id\">$strsummary</A></FONT></P>";
-        echo "<P><FONT SIZE=2><A TARGET=reportmain HREF=\"report.php?action=scales&id=$id\">$strscales</A></FONT></P>";
-        echo "<P><FONT SIZE=2><A TARGET=reportmain HREF=\"report.php?action=questions&id=$id\">$strquestions</A></FONT></P>";
-        echo "<P><FONT SIZE=2><A TARGET=reportmain HREF=\"report.php?action=students&id=$id\">$course->student:</A></FONT></P>";
-        if ($users = survey_get_responses($survey->id)) {
-            foreach ($users as $user) {
-                echo "<LI><FONT SIZE=1>";
-                echo "<A TARGET=reportmain HREF=\"report.php?action=student&student=$user->id&id=$id\">";
-                echo "$user->firstname $user->lastname";
-                echo "</A></FONT></LI>";
-            }
-        }
-        echo "<P><FONT SIZE=2><A TARGET=reportmain HREF=\"report.php?action=download&id=$id\">$strdownload</A></FONT></P>";
-        break;
 
       case "summary":
-        print_header("$survey->name: $strsummary", "$strsummary - $strallscales");
+        print_heading($strsummary);
 
         if (survey_count_responses($survey->id)) {
-            echo "<P ALIGN=CENTER><A HREF=\"report.php?action=scales&id=$id\">";
+            echo "<p align=center><a href=\"report.php?action=scales&id=$id\">";
             survey_print_graph("id=$id&type=overall.png");
-            echo "</A>";
+            echo "</a>";
         } else {
-            echo "<P ALIGN=CENTER>".get_string("nobodyyet","survey")."</P>";
+            echo "<p align=center>".get_string("nobodyyet","survey")."</p>";
         }
-        print_footer($course);
         break;
 
       case "scales":
-        print_header("$survey->name: $strscales", "$strallscales");
+        print_heading($strscales);
 
         $questions = get_records_list("survey_questions", "id", $survey->questions);
         $questionorder = explode(",", $survey->questions);
@@ -121,13 +115,12 @@
                 if ($virtualscales && $question->type > 0) {  // Don't show non-virtual scales if virtual
                     continue;
                 }
-                echo "<P ALIGN=center><A TITLE=\"$strseemoredetail\" HREF=report.php?action=questions&id=$id&qid=$question->multi>";
+                echo "<p align=center><a title=\"$strseemoredetail\" href=report.php?action=questions&id=$id&qid=$question->multi>";
                 survey_print_graph("id=$id&qid=$question->id&type=multiquestion.png");
-                echo "</A></P><BR>";
+                echo "</a></p><br>";
             } 
         }
 
-        print_footer($course);
         break;
 
       case "questions":
@@ -138,16 +131,16 @@
 
             if ($scale = get_records("survey_questions", "multi", "$qid")) {
                 $scale = array_pop($scale);
-                print_header("$survey->name: $strquestions", "$scale->text - $strselectedquestions");
+                print_heading("$scale->text - $strselectedquestions");
             } else {
-                print_header("$survey->name: $strquestions", "$strselectedquestions");
+                print_heading($strselectedquestions);
             }
 
         } else {        // get all top-level questions
             $questions = get_records_list("survey_questions", "id", $survey->questions);
             $questionorder = explode(",", $survey->questions);
 
-            print_header("$survey->name: $strquestions", "$strallquestions");
+            print_heading($strallquestions);
         }
 
         foreach ($questionorder as $key => $val) {
@@ -167,38 +160,49 @@
             $question->text = get_string($question->text, "survey");
 
             if ($question->multi) {
-                echo "<H3>$question->text:</H3>";
+                echo "<h3>$question->text:</h3>";
 
                 $subquestions = get_records_list("survey_questions", "id", $question->multi);
                 $subquestionorder = explode(",", $question->multi);
                 foreach ($subquestionorder as $key => $val) {
                     $subquestion = $subquestions[$val];
                     if ($subquestion->type > 0) {
-                        echo "<P ALIGN=CENTER>";
-                        echo "<A TITLE=\"$strseemoredetail\" HREF=\"report.php?action=question&id=$id&qid=$subquestion->id\">";
+                        echo "<p align=center>";
+                        echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&id=$id&qid=$subquestion->id\">";
                         survey_print_graph("id=$id&qid=$subquestion->id&type=question.png");
-                        echo "</A></P>";
+                        echo "</a></p>";
                     }
                 }
             } else if ($question->type > 0 ) {
-                echo "<P ALIGN=CENTER>";
-                echo "<A TITLE=\"$strseemoredetail\" HREF=\"report.php?action=question&id=$id&qid=$question->id\">";
+                echo "<p align=center>";
+                echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&id=$id&qid=$question->id\">";
                 survey_print_graph("id=$id&qid=$question->id&type=question.png");
-                echo "</A></P>";
+                echo "</a></p>";
 
             } else {
-                echo "<H3>$question->text:</H3>";
-                if ($aaa = survey_get_user_answers($survey->id, $question->id)) {
-                    echo "<UL>";
+                $table = NULL;
+                $table->head = array($question->text);
+                $table->align = array ("left");
+
+                $contents = '<table cellpadding="15" width="100%">';
+
+                if ($aaa = survey_get_user_answers($survey->id, $question->id, "sa.time ASC")) {
                     foreach ($aaa as $a) {
-                        echo "<LI>$a->firstname $a->lastname: $a->answer1";
+                        $contents .= "<tr>";
+                        $contents .= '<td nowrap="nowrap" width="10%" valign="top">'.fullname($a).'</td>';
+                        $contents .= '<td valign="top">'.$a->answer1.'</td>';
+                        $contents .= "</tr>";
                     }
-                    echo "</UL>";
                 }
+                $contents .= "</table>";
+
+                $table->data[] = array($contents);
+
+                print_table($table);
+                print_spacer(30);
             }
         }
 
-        print_footer($course);
         break;
 
       case "question":
@@ -209,7 +213,7 @@
 
         $answers =  explode(",", get_string($question->options, "survey"));
 
-        print_header("$survey->name: $strquestion", "$strquestion: $question->text");
+        print_heading("$strquestion: $question->text");
 
 
         $strname = get_string("name", "survey");
@@ -218,49 +222,47 @@
         $strpreferred = get_string("preferred", "survey");
         $strdateformat = get_string("strftimedatetime");
 
-        echo "<TABLE ALIGN=center CELLPADDING=0 CELLSPACING=10><TR><TD>&nbsp;<TH align=left>$strname<TH align=left>$strtime<TH align=left>$stractual<TH align=left>$strpreferred</TR>";
+        $table = NULL;
+        $table->head = array("", $strname, $strtime, $stractual, $strpreferred);
+        $table->align = array ("left", "left", "left", "left", "right");
+        $table->size = array (35, "", "", "", "");
 
         if ($aaa = survey_get_user_answers($survey->id, $question->id)) {
             foreach ($aaa as $a) {
-                echo "<TR>";
-                echo "<TD WIDTH=35>";
-                print_user_picture($a->userid, $course->id, $a->picture, false);
-                echo "</TD>";
-                echo "<TD><P><A HREF=\"report.php?id=$id&action=student&student=$a->userid\">$a->firstname $a->lastname</A></TD>";
-                echo "<TD><P>".userdate($a->time, $strdateformat)."</TD>";
-                echo "<TD BGCOLOR=\"$THEME->cellcontent\"><P>";
                 if ($a->answer1) {
-                    echo "$a->answer1 - ".$answers[$a->answer1 - 1];
+                    $answer1 =  "$a->answer1 - ".$answers[$a->answer1 - 1];
                 } else {
-                    echo "&nbsp;";
+                    $answer1 =  "&nbsp;";
                 }
-                echo "</TD><TD BGCOLOR=\"$THEME->cellcontent\"><P>";
                 if ($a->answer2) {
-                    echo "$a->answer2 - ".$answers[$a->answer2 - 1];
+                    $answer2 = "$a->answer2 - ".$answers[$a->answer2 - 1];
                 } else {
-                    echo "&nbsp;";
+                    $answer2 = "&nbsp;";
                 }
-                echo "</TD></TR>";
+
+                $table->data[] = array(
+                       print_user_picture($a->userid, $course->id, $a->picture, false, true, true),
+                       "<a href=\"report.php?id=$id&action=student&student=$a->userid\">".fullname($a)."</a>",
+                       userdate($a->time), 
+                       $answer1, $answer2);
     
             }
         }
 
-        echo "</TABLE>";
+        print_table($table);
 
-        print_footer($course);
         break;
 
       case "students":
 
-         print_header("$survey->name: $course->student", get_string("analysisof", "survey", "$course->student"));
+         print_heading(get_string("analysisof", "survey", "$course->students"));
         
          if (! $results = survey_get_responses($survey->id) ) {
              notify(get_string("nobodyyet","survey"));
          } else {
-             survey_print_all_responses($cm->id, $results);
+             survey_print_all_responses($cm->id, $results, $course->id);
          }
 
-        print_footer($course);
         break;
 
       case "student":
@@ -268,8 +270,7 @@
              error("Student doesn't exist");
          }
 
-         print_header("$survey->name: $user->firstname $user->lastname", 
-                       get_string("analysisof", "survey", "$user->firstname $user->lastname"));
+         print_heading(get_string("analysisof", "survey", fullname($user)));
 
          if (isset($notes)) {
              if (survey_get_analysis($survey->id, $user->id)) {
@@ -287,40 +288,57 @@
              }
          }
 
-         print_heading("$user->firstname $user->lastname");
-
-         echo "<P ALIGN=CENTER>";
+         echo "<p align=center>";
          print_user_picture($user->id, $course->id, $user->picture, true);
-         echo "</P>";
+         echo "</p>";
 
-         // Print overall summary
-         echo "<P ALIGN=CENTER>";
-         survey_print_graph("id=$id&sid=$student&type=student.png");
-         echo "</P>";
-         
-         // Print scales
          $questions = get_records_list("survey_questions", "id", $survey->questions);
          $questionorder = explode(",", $survey->questions);
- 
-         foreach ($questionorder as $key => $val) {
-             $question = $questions[$val];
-             if ($question->type < 0) {  // We have some virtual scales.  Just show them.
-                 $virtualscales = true;
-                 break;
-             }
-         }
- 
-         foreach ($questionorder as $key => $val) {
-             $question = $questions[$val];
-             if ($question->multi) {
-                 if ($virtualscales && $question->type > 0) {  // Don't show non-virtual scales if virtual
-                     continue;
+
+         if ($showscales) {
+             // Print overall summary
+             echo "<p align=center>";
+             survey_print_graph("id=$id&sid=$student&type=student.png");
+             echo "</p>";
+         
+             // Print scales
+     
+             foreach ($questionorder as $key => $val) {
+                 $question = $questions[$val];
+                 if ($question->type < 0) {  // We have some virtual scales.  Just show them.
+                     $virtualscales = true;
+                     break;
                  }
-                 echo "<P ALIGN=center>";
-                 echo "<A TITLE=\"$strseemoredetail\" HREF=report.php?action=questions&id=$id&qid=$question->multi>";
-                 survey_print_graph("id=$id&qid=$question->id&sid=$student&type=studentmultiquestion.png");
-                 echo "</A></P><BR>";
-             } 
+             }
+     
+             foreach ($questionorder as $key => $val) {
+                 $question = $questions[$val];
+                 if ($question->multi) {
+                     if ($virtualscales && $question->type > 0) {  // Don't show non-virtual scales if virtual
+                         continue;
+                     }
+                     echo "<p align=center>";
+                     echo "<a title=\"$strseemoredetail\" href=report.php?action=questions&id=$id&qid=$question->multi>";
+                     survey_print_graph("id=$id&qid=$question->id&sid=$student&type=studentmultiquestion.png");
+                     echo "</a></p><br>";
+                 } 
+             }
+         }        
+
+         // Print non-scale questions
+
+         foreach ($questionorder as $key => $val) {
+             $question = $questions[$val];
+             if ($question->type == 0 or $question->type == 1) {
+                 if ($answer = survey_get_user_answer($survey->id, $question->id, $user->id)) {
+                     $table = NULL;
+                     $table->head = array(get_string($question->text, "survey"));
+                     $table->align = array ("left");
+                     $table->data[] = array("$answer->answer1");
+                     print_table($table);
+                     print_spacer(30);
+                 }
+             }
          }
 
          if ($rs = survey_get_analysis($survey->id, $user->id)) {
@@ -328,40 +346,41 @@
          } else {
             $notes = "";
          }
-         echo "<HR NOSHADE SIZE=1>";
-         echo "<CENTER>";
-         echo "<FORM ACTION=report.php METHOD=post NAME=form>";
-         echo "<H3>$strnotes:</H3>";
-         echo "<BLOCKQUOTE>";
-         echo "<TEXTAREA NAME=notes ROWS=10 COLS=60>";
+         echo "<hr noshade size=1>";
+         echo "<center>";
+         echo "<form action=report.php method=post name=form>";
+         echo "<h3>$strnotes:</h3>";
+         echo "<blockquote>";
+         echo "<textarea name=notes rows=10 cols=60>";
          p($notes);
-         echo "</TEXTAREA><BR>";
-         echo "<INPUT TYPE=hidden NAME=action VALUE=student>";
-         echo "<INPUT TYPE=hidden NAME=student VALUE=$student>";
-         echo "<INPUT TYPE=hidden NAME=id VALUE=$cm->id>";
-         echo "<INPUT TYPE=submit VALUE=\"".get_string("savechanges")."\">";
-         echo "</BLOCKQUOTE>";
-         echo "</FORM>";
-         echo "</CENTER>";
+         echo "</textarea><br>";
+         echo "<input type=hidden name=action value=student>";
+         echo "<input type=hidden name=student value=$student>";
+         echo "<input type=hidden name=id value=$cm->id>";
+         echo "<input type=submit value=\"".get_string("savechanges")."\">";
+         echo "</blockquote>";
+         echo "</form>";
+         echo "</center>";
  
 
-         print_footer($course);
          break;
 
       case "download":
-        print_header("$survey->name: $strdownload", "$strdownload");
+        print_heading($strdownload);
 
-        $strdownloadinfo = get_string("downloadinfo", "survey");
-        $strdownloadexcel = get_string("downloadexcel", "survey");
-        $strdownloadtext = get_string("downloadtext", "survey");
+        echo '<p align="center">'.get_string("downloadinfo", "survey").'</p>';
 
-        echo "<P>$strdownloadinfo</P>";
+        echo '<center>';
+        $options["id"] = "$cm->id";
+        $options["type"] = "xls";
+        print_single_button("download.php", $options, get_string("downloadexcel", "survey"));
 
-        echo "<H2 ALIGN=CENTER><A HREF=\"download.php?id=$id&type=xls\">$strdownloadexcel</A></H2>";
-        echo "<H2 ALIGN=CENTER><A HREF=\"download.php?id=$id&type=text\">$strdownloadtext</A></H2>";
-
-        print_footer($course);
+        $options["type"] = "txt";
+        print_single_button("download.php", $options, get_string("downloadtext", "survey"));
+        echo '</center>';
+    
         break;
 
     }
+    print_footer($course);
 ?>
