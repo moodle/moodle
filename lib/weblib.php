@@ -493,12 +493,12 @@ function format_text_email($text, $format) {
 
         case FORMAT_WIKI:
             $text = wiki_to_html($text);
-            return strip_tags($text);
+            return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
             break;
 
         default:  // FORMAT_MOODLE or anything else
         // Need to add something in here to create a text-friendly way of presenting URLs
-            return strip_tags($text);
+            return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
             break;
     }
 }
