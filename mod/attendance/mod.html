@@ -106,15 +106,16 @@ if ($form->hours >1) {
 	for($j=1;$j<=$form->hours;$j++) {
       // set the attendance defaults for each student
 	  $r1c=$r2c=$r3c=" ";
-	    if ($sroll[$student->id][$j]->status == 1) {$r2c="checked";}
-	    elseif ($sroll[$student->id][$j]->status == 2) {$r3c="checked";}
-	    else {$r1c="checked";}
-      $radio1="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"0\" ".$r1c.">";
+    $rollstatus = (($form->edited==0)?$CFG->attendance_default_student_status:$sroll[$student->id][$j]->status);
+    if ($rollstatus==1) {$r2c="checked";}
+    elseif ($rollstatus==2) {$r3c="checked";}
+    else {$r1c="checked";}
+    $radio1="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"0\" ".$r1c.">";
 	  $radio2="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"1\" ".$r2c.">";
-      $radio3="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"2\" ".$r3c.">";  	
-      echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-left: 1px dotted; border-top: 1px solid;\">".$radio1."</td>\n";
-      echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$radio2."</td>\n";
-      echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$radio3."</td>\n";
+    $radio3="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"2\" ".$r3c.">";  	
+    echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-left: 1px dotted; border-top: 1px solid;\">".$radio1."</td>\n";
+    echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$radio2."</td>\n";
+    echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$radio3."</td>\n";
 	} // for loop
     echo "</tr>\n";
 //      $radio1="<input type=\"radio\" name=\"student_".$student->id."\" value=\"0\" checked>";

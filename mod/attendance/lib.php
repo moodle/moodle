@@ -42,7 +42,7 @@ function attendance_add_instance($attendance) {
 	 if (isset($attendance->notes)) { 
 	 	$attendance->name = $attendance->name . " - " . $attendance->notes;
 	 }
-
+	  $attendance->edited = 0;
 if ($attendance->dynsection) { 
 	if ($mod->course) {
 		if (! $course = get_record("course", "id", $mod->course)) {
@@ -66,6 +66,7 @@ if ($attendance->dynsection) {
 
 function attendance_update_instance($attendance) {
 	global $mod;
+    $attendance->edited = 1;
     $attendance->timemodified = time();
 //    $attendance->oldid=$attendance->id;
     $attendance->id = $attendance->instance;
