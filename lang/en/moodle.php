@@ -393,7 +393,7 @@ $string['enrolmentnewuser'] = '$a->user has enrolled in course \"$a->course\"';
 $string['enrolmentnointernal'] = 'Manual enrolments are currently not enabled';
 $string['enrolmentnotyet'] = 'Sorry, you can not access this course until <br /> $a';
 $string['enrolments'] = 'Enrolments';
-$string['enrolperiod'] = 'Enrolment period';
+$string['enrolperiod'] = 'Enrolment duration';
 $string['entercourse'] = 'Click to enter this course';
 $string['enteremailaddress'] = 'Enter in your email address to reset your
    password and have the new password sent to you via email.';
