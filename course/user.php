@@ -5,7 +5,7 @@
 
     require_variable($id);       // course id
     require_variable($user);     // user id
-    optional_variable($mode, "graph");
+    optional_variable($mode, "outline");
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course id is incorrect.");
@@ -24,7 +24,7 @@
 
     add_to_log($course->id, "course", "user report", "user.php?id=$course->id&user=$user->id&mode=$mode", "$user->id"); 
 
-    print_header("$course->shortname: Activity Report", "$course->fullname",
+    print_header("$course->shortname: Activity Report ($mode)", "$course->fullname",
                  "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> ->
                   <A HREF=\"../user/index.php?id=$course->id\">Participants</A> ->
                   <A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A> -> 
@@ -33,11 +33,6 @@
 
     echo "<TABLE CELLPADDING=10 ALIGN=CENTER><TR>";
     echo "<TD>Reports: </TD>";
-    if ($mode != "graph") {
-        echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=graph>Graph</A></TD>";
-    } else {
-        echo "<TD><U>Graph</U></TD>";
-    }
     if ($mode != "outline") {
         echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=outline>Outline</A></TD>";
     } else {
@@ -48,15 +43,34 @@
     } else {
         echo "<TD><U>Complete</U></TD>";
     }
+    if ($mode != "today") {
+        echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=today>Today</A></TD>";
+    } else {
+        echo "<TD><U>Today</U></TD>";
+    }
+    if ($mode != "alllogs") {
+        echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=alllogs>All logs</A></TD>";
+    } else {
+        echo "<TD><U>All logs</U></TD>";
+    }
     echo "</TR></TABLE>";
 
 
     get_all_mods($course->id, $mods, $modtype);
 
     switch ($mode) {
-        case "graph" :
-            echo "<HR>";
-            echo "<CENTER><IMG SRC=\"loggraph.php?id=$course->id&user=$user->id&type=user.png\">";
+        case "today" :
+            echo "<HR><CENTER>";
+            print_log_graph($course, $user->id, "userday.png", usergetmidnight(time()) );
+            echo "</CENTER>";
+            print_log($course, $user->id, usergetmidnight(time()), "ORDER BY l.time DESC");
+            break;
+
+        case "alllogs" :
+            echo "<HR><CENTER>";
+            print_log_graph($course, $user->id, "usercourse.png");
+            echo "</CENTER>";
+            print_log($course, $user->id, 0, "ORDER BY l.time DESC");
             break;
 
         case "outline" :

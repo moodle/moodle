@@ -7,6 +7,7 @@
     require_variable($id);    // Course ID
     require_variable($type);  // Graph Type
     optional_variable($user);  // Student ID
+    optional_variable($date);  // Midnight of a date
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course is misconfigured");
@@ -15,7 +16,7 @@
     require_login($course->id);
 
     if (!isteacher($course->id)) {
-        if (! ($type == "student.png" and $user == $USER->id) ) {
+        if (! ($type == "usercourse.png" and $user == $USER->id) ) {
             error("Sorry, you aren't allowed to see this.");
         }
     }
@@ -31,7 +32,7 @@
 
     switch ($type) {
 
-     case "user.png":
+     case "usercourse.png":
 
        $timestart = $course->startdate;
        $i = 0;
@@ -51,7 +52,7 @@
        $maxlogs = max($logs);
 
 
-       $graph = new graph(600, 300);
+       $graph = new graph(750, 400);
        $graph->parameter['title'] = "Rough usage of $course->shortname by $user->firstname $user->lastname";
 
        $graph->x_data           = $days;
@@ -59,6 +60,7 @@
        $graph->y_data['logs']   = $logs;
        $graph->y_format['logs'] = array('colour' => 'blue','bar' => 'fill','legend' =>'actual','bar_size' => 0.4);
        $graph->y_label_left     = "Hits";
+       $graph->label_size       = "6";
 
        $graph->y_order = array('logs');
 
@@ -66,6 +68,16 @@
        $graph->parameter['shadow']          = 'none';
 
        $graph->draw_stack();
+
+       break;
+
+     case "userday.png":
+
+       if (! $date) {
+           error("Must specify a date if you use userday.png format");
+       }
+
+       // XXX still to be done.  The day was getting long!
 
        break;
 

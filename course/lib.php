@@ -424,4 +424,9 @@ function get_all_sections($courseid) {
                             ORDER BY section");
 }
 
+function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
+    global $CFG;
+    echo "<IMG BORDER=0 SRC=\"$CFG->wwwroot/course/loggraph.php?id=$course->id&user=$userid&type=$type&date=$date\">";
+}
+
 ?>
