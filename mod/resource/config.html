@@ -39,6 +39,20 @@
     </td>
 </tr>
 <tr valign="top">
+	<td align="right">resource_allowlocalfiles:</td>
+	<td>
+    <?php
+        unset($choices);
+        $choices["0"] = get_string("no");
+        $choices["1"] = get_string("yes");
+        choose_from_menu ($choices, "resource_allowlocalfiles", $CFG->resource_allowlocalfiles, "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configallowlocalfiles", "resource") ?>
+    </td>
+</tr>
+<tr valign="top">
 	<td align="right">resource_filterexternalpages:</td>
 	<td>
     <?php

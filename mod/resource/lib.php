@@ -32,6 +32,12 @@ if (!isset($CFG->resource_parametersettings)) {
     set_config("resource_parametersettings", "0");
 }
 
+if (!isset($CFG->resource_allowlocalfiles)) {
+    set_config("resource_allowlocalfiles", "0");
+}
+
+define('RESOURCE_LOCALPATH', 'LOCALPATH');
+
 $RESOURCE_WINDOW_OPTIONS = array('resizable', 'scrollbars', 'directories', 'location',
                                  'menubar', 'toolbar', 'status', 'height', 'width');
 

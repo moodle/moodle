@@ -265,7 +265,21 @@ function display() {
                 $fullurl .= '&'.$querystring;
             }
         }
-    } else {
+
+    } else if ($CFG->resource_allowlocalfiles and (strpos($resource->reference, RESOURCE_LOCALPATH) === 0)) {  // Localpath
+        $localpath = get_user_preferences('resource_localpath', 'D:');
+        $relativeurl = str_replace(RESOURCE_LOCALPATH, $localpath, $resource->reference);
+
+        if ($querystring) {
+            $relativeurl .= '?'.$querystring;
+        }
+
+        $relativeurl = str_replace('\\', '/', $relativeurl);
+        $relativeurl = str_replace(' ', '%20', $relativeurl);
+        $fullurl = 'file:///'.htmlentities($relativeurl);
+        $localpath = true;
+
+    } else {   // Normal uploaded file
         if ($CFG->slasharguments) {
             $relativeurl = "/file.php/{$course->id}/{$resource->reference}";
             if ($querystring) {
@@ -278,6 +292,22 @@ function display() {
             }
         }
         $fullurl = "$CFG->wwwroot$relativeurl";
+    }
+
+    /// Print a notice and redirect if we are trying to access a file on a local file system
+    /// and the config setting has been disabled
+    if (!$CFG->resource_allowlocalfiles and (strpos($resource->reference, RESOURCE_LOCALPATH) === 0)) {
+        if ($inpopup) {
+            print_header($pagetitle, $course->fullname);
+        } else {
+            print_header($pagetitle, $course->fullname, "$this->navigation {$resource->name}", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
+        }
+        notify(get_string('notallowedlocalfileaccess', 'resource', ''));
+        if ($inpopup) {
+            close_window_button();
+        }
+        print_footer('none');
+        die;
     }
 
 
@@ -323,7 +353,11 @@ function display() {
         echo "<title>{$course->shortname}: {$resource->name}</title></head>\n";
         echo "<frameset rows=\"$CFG->resource_framesize,*\">";
         echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;frameset=top\" />";
-        echo "<frame src=\"$fullurl\" />";
+        if (!empty($localpath)) {  // Show it like this so we interpose some HTML
+            echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;inpopup=true\" />";
+        } else {
+            echo "<frame src=\"$fullurl\" />";
+        }
         echo "</frameset>";
         echo "</html>";
         exit;
@@ -340,8 +374,14 @@ function display() {
     if (!empty($_GET['frameset']) and $_GET['frameset'] == "top") {
         print_header($pagetitle, $course->fullname, "$this->navigation {$resource->name}", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
 
-        echo "<center><font size=\"-1\">".text_to_html($resource->summary, true, false)."</font></center>";
-        echo "</body></html>";
+        $options->para = false;
+        echo '<div class="summary">'.format_text($resource->summary, FORMAT_HTML, $options).'</div>';
+        if (!empty($localpath)) {  // Show some help
+            echo '<div align="right" class="helplink">';
+            link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'), get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
+            echo '</div>';
+        }
+        echo '</body></html>';
         exit;
     }
 
@@ -369,9 +409,9 @@ function display() {
             } else {
                 $c = 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
                      'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
-                     'font=Arial&fontColour=3333FF&buffer=10&waitForPlay=no&autoPlay=yes&'.
-                     'volText='.get_string('vol', 'resource').'&panText='.get_string('pan','resource');
+                     'font=Arial&fontColour=3333FF&buffer=10&waitForPlay=no&autoPlay=yes';
             }
+            $c .= '&volText='.get_string('vol', 'resource').'&panText='.get_string('pan','resource');
             $c = htmlentities($c);
             echo '<div class="mp3player" align="center">';
             echo '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
@@ -449,6 +489,12 @@ function display() {
         }
     
     } else {              // Display the resource on it's own
+        if (!empty($localpath)) {   // Show a link to help work around browser security
+            echo '<div align="right" class="helplink">';
+            link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'), get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
+            echo '</div>';
+            echo "<center><p>(<a href=\"$fullurl\">$fullurl</a>)</p></center>";
+        }
         redirect($fullurl);
     }
     
