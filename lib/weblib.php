@@ -1843,7 +1843,7 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
 function theme_setup($theme = '', $params=NULL) {
 /// Sets up global variables related to themes
 
-    global $CFG, $THEME;
+    global $CFG, $THEME, $SESSION, $USER;
 
     if (empty($theme)) {
         $theme = current_theme();
@@ -1853,8 +1853,8 @@ function theme_setup($theme = '', $params=NULL) {
     if (!$params) {
         $params = array();
     }
-    if (!empty($CFG->coursetheme) and !empty($CFG->allowcoursethemes)) {  // Course theme can override all others
-        $params[] = 'forceconfig='.$CFG->coursetheme;
+    if ($theme != $CFG->theme) {
+        $params[] = 'forceconfig='.$theme;
     }
     if ($params) {
         $paramstring = '?'.implode('&amp;', $params);
