@@ -194,7 +194,7 @@
 		set_field("workshop_assessments", "timeagreed", $timenow, "id", $assessment->id);
 		echo "<CENTRE><B>".get_string("savedok", "workshop")."</B></CENTER><BR>\n";
 			
-		add_to_log($course->id, "workshop", "agree", "view.php?id=$cm->id", "$workshop->id");
+		add_to_log($course->id, "workshop", "agree", "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$assessment->id");
 		print_continue("view.php?id=$cm->id");
 		}
 
@@ -547,7 +547,7 @@
 			error("Could not insert workshop comment!");
 			}
 			
-		add_to_log($course->id, "workshop", "comment", "view.php?id=$cm->id", "$workshop->id");
+		add_to_log($course->id, "workshop", "comment", "view.php?id=$cm->id", "$comment->id");
 
 		print_continue("assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id");
 		}
@@ -875,7 +875,7 @@
 			set_field("workshop_assessments", "generalcomment", $form->generalcomment, "id", $assessment->id);
 			}
 			
-	    add_to_log($course->id, "workshop", "assess", "view.php?a=$workshop->id", "$workshop->id");
+	    add_to_log($course->id, "workshop", "assess", "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$assessment->id");
 		
 		// set up return address
 		if (!$returnto = $form->returnto) {
@@ -914,7 +914,7 @@
 			set_field("workshop_comments", "mailed", 0, "id", $comment->id);
 			echo "<CENTRE><B>".get_string("savedok", "workshop")."</B></CENTER><BR>\n";
 			
-			add_to_log($course->id, "workshop", "comment", "view.php?id=$cm->id", "$workshop->id");
+			add_to_log($course->id, "workshop", "comment", "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$comment->id");
 			}
 
 		print_continue("assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id");
@@ -942,7 +942,7 @@
 			set_field("workshop_assessments", "mailed", 0, "id", $assessment->id);
 			echo "<CENTRE><B>".get_string("savedok", "workshop")."</B></CENTRE><BR>\n";
 			
-			add_to_log($course->id, "workshop", "grade", "view.php?id=$cm->id", "$workshop->id");
+			add_to_log($course->id, "workshop", "grade", "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$assessment->id");
 			}
 		switch ($form->stype) {
 			case "student" : 
