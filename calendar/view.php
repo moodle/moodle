@@ -624,10 +624,8 @@ function calendar_course_filter_selector($getvars = '') {
         $selected = '';
     }
 
-    $form = popup_form(CALENDAR_URL.'set.php?var=setcourse&amp;'.$getvars.'&amp;id=',
+    return popup_form(CALENDAR_URL.'set.php?var=setcourse&amp;'.$getvars.'&amp;id=',
                        $courseoptions, 'cal_course_flt', $selected, '', '', '', true);
-
-    return str_replace('<form', '<form style="display: inline;"', $form);
 }
 
 ?>
