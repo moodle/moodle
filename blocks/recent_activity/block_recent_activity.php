@@ -1,6 +1,6 @@
 <?PHP //$Id$
 
-class CourseBlock_recent_activity extends MoodleBlock {
+class block_recent_activity extends block_base {
     function init() {
         $this->title = get_string('recentactivity');
         $this->content_type = BLOCK_TYPE_TEXT;

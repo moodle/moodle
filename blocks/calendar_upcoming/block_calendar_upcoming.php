@@ -1,6 +1,6 @@
 <?PHP //$Id$
 
-class CourseBlock_calendar_upcoming extends MoodleBlock {
+class block_calendar_upcoming extends block_base {
     function init() {
         $this->title = get_string('upcomingevents', 'calendar');
         $this->content_type = BLOCK_TYPE_TEXT;

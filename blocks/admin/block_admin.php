@@ -1,6 +1,6 @@
 <?php //$Id$
 
-class CourseBlock_admin extends MoodleBlock {
+class block_admin extends block_base {
     function init() {
         $this->title = get_string('administration');
         $this->content_type = BLOCK_TYPE_LIST;

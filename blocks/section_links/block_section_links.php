@@ -1,6 +1,6 @@
 <?PHP //$Id$
 
-class CourseBlock_section_links extends MoodleBlock {
+class block_section_links extends block_base {
 
     function init() {
         $this->title = get_string('blockname', 'block_section_links');

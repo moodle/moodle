@@ -108,7 +108,7 @@
 
     <p>To define a "block" in Moodle, in the most basic case we need to provide just one source code file. We start by creating the directory <span class="filename">/blocks/simplehtml/</span> and creating a file named <span class="filename">/blocks/simplehtml/block_simplehtml.php</span> which will hold our code. We then begin coding the block:</p>
 
-    <pre class="code">class CourseBlock_simplehtml extends MoodleBlock {
+    <pre class="code">class block_simplehtml extends block_base {
     function init() {
         $this->title = get_string('simplehtml', 'block_simplehtml');
         $this->content_type = BLOCK_TYPE_TEXT;
@@ -118,9 +118,9 @@
 
     <p>The first line is our block class definition; it must be named exactly in the manner shown. Again, only the "simplehtml" part can (and indeed must) change; everything else is standardized.</p>
 
-    <p>Our class is then given a small method: init(). This is essential for all blocks, and its function is to set the three class member variables listed inside it. But what do these values actually mean? Here's a more detailed description.</p>
+    <p>Our class is then given a small method: <a class="function_title" href="#method_init">init</a>. This is essential for all blocks, and its function is to set the three class member variables listed inside it. But what do these values actually mean? Here's a more detailed description.</p>
 
-    <p>$this->title is the title displayed in the header of our block. We can set it to whatever we like; in this case it's set to read the actual title from a language file we are presumably distributing together with the block. I 'll skip ahead a bit here and say that if you want your block to display NO title at all, then you should set this to any descriptive value you want (but NOT make it empty). We will later see in <a href=#">Part 9</a> how to disable the title's display.</p>
+    <p>$this->title is the title displayed in the header of our block. We can set it to whatever we like; in this case it's set to read the actual title from a language file we are presumably distributing together with the block. I 'll skip ahead a bit here and say that if you want your block to display NO title at all, then you should set this to any descriptive value you want (but NOT make it empty). We will later see <a href="#section_eye_candy">how to disable the title's display</a>.</p>
 
     <p>$this->content_type tells Moodle what kind of content to expect from this block. Here we have two simple choices. Either we set content_type to BLOCK_TYPE_TEXT, which tells Moodle to just take our content and display it on screen as-is; or we set it to BLOCK_TYPE_LIST, which tells Moodle that we want our block to display a nicely formatted list of items with optional icons next to each one. We can use BLOCK_TYPE_TEXT to manually create any content we want (do not be fooled by the name; HTML is allowed in the block's content without restriction) or use BLOCK_TYPE_LIST to easily create a simple menu.</p>
 
@@ -413,7 +413,7 @@ function instance_config_save($data) {
 
 </li>
 
-<li>
+<li id="section_eye_candy">
 
     <h3>Eye Candy</h3>
 
@@ -525,7 +525,7 @@ function get_content() {
 
 <h2 id="appendix_a">Appendix A: Reference</h2>
 
-<p>This Appendix will discuss the base class MoodleBlock from which all other block classes derive, and present each and every method that can be overridden by block developers in detail. Methods that should NOT be overridden are explicitly referred to as such. After reading this Appendix, you will have a clear understanding of every method which you should or could override to implement functionality for your block.</p>
+<p>This Appendix will discuss the base class block_base from which all other block classes derive, and present each and every method that can be overridden by block developers in detail. Methods that should NOT be overridden are explicitly referred to as such. After reading this Appendix, you will have a clear understanding of every method which you should or could override to implement functionality for your block.</p>
 
 <p>The methods are divided into three categories: those you may use and override in your block, those that you may NOT override but might want to use, and those that should NEITHER be used NOR overridden. In each category, methods are presented in alphabetical order.</p>
 
@@ -845,6 +845,24 @@ function specialization() {
 <p>This Appendix will discuss what changes in the Blocks API were introduced by Moodle 1.5 and what steps developers need to take to update their blocks to be fully compatible with Moodle 1.5. Unfortunately, with these changes backward compatibility is broken; this means that blocks from Moodle 1.4 will never work with 1.5 and vice versa.</p>
 
 <ol>
+
+<li>
+
+    <h3>Class naming conventions changed</h3>
+    
+    <p>In Moodle 1.4, all block classes were required to have a name like <strong>CourseBlock_something</strong> and the base class from which the derived was <strong>MoodleBlock</strong>. This has changed in Moodle 1.5, to bring the naming conventions in line with other object-oriented aspects of Moodle (for example there are classes enrolment_base, resource_base etc). The new block classes should instead be named like <strong>block_something</strong> and derive from <strong>block_base</strong>. This means that in order to make a block compatible with Moodle 1.5, you need to change the class definition
+    
+    <pre class="code">
+class CourseBlock_online_users extends MoodleBlock { ... }
+</pre>
+
+<p>to</p>
+
+    <pre class="code">
+class block_online_users extends block_base { ... }
+</pre>
+
+</li>
 
 <li>
 

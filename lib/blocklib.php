@@ -61,7 +61,7 @@ function block_method_result($blockname, $method) {
     if(!block_load_class($blockname)) {
         return NULL;
     }
-    return eval('return CourseBlock_'.$blockname.'::'.$method.'();');
+    return eval('return block_'.$blockname.'::'.$method.'();');
 }
 
 //This function creates a new object of the specified block class
@@ -69,7 +69,7 @@ function block_instance($blockname, $instance = NULL) {
     if(!block_load_class($blockname)) {
         return false;
     }
-    $classname = 'CourseBlock_'.$blockname;
+    $classname = 'block_'.$blockname;
     $retval = new $classname;
     if($instance !== NULL) {
         $retval->load_instance($instance);
@@ -83,7 +83,7 @@ function block_load_class($blockname) {
     global $CFG;
 
     @include_once($CFG->dirroot.'/blocks/moodleblock.class.php');
-    $classname = 'CourseBlock_'.$blockname;
+    $classname = 'block_'.$blockname;
     @include_once($CFG->dirroot.'/blocks/'.$blockname.'/block_'.$blockname.'.php');
 
     // After all this, return value indicating success or failure
@@ -677,8 +677,8 @@ function upgrade_blocks_plugins($continueto) {
     }
 
     include_once($CFG->dirroot .'/blocks/moodleblock.class.php');
-    if(!class_exists('moodleblock')) {
-        error('Class MoodleBlock is not defined or file not found for /blocks/moodleblock.class.php');
+    if(!class_exists('block_base')) {
+        error('Class block_base is not defined or file not found for /blocks/moodleblock.class.php');
     }
 
     foreach ($blocks as $blockname) {
@@ -705,7 +705,7 @@ function upgrade_blocks_plugins($continueto) {
             }
         }
 
-        $classname = 'CourseBlock_'.$blockname;
+        $classname = 'block_'.$blockname;
         if(!class_exists($classname)) {
             $notices[] = 'Block '. $blockname .': '. $classname .' not implemented';
             continue;
@@ -732,9 +732,9 @@ function upgrade_blocks_plugins($continueto) {
         $block    = new stdClass;     // This may be used to update the db below
         $blockobj = new $classname;   // This is what we 'll be testing
 
-        // Inherits from MoodleBlock?
-        if(!is_subclass_of($blockobj, 'moodleblock')) {
-            $notices[] = 'Block '. $blockname .': class does not inherit from MoodleBlock';
+        // Inherits from block_base?
+        if(!is_subclass_of($blockobj, 'block_base')) {
+            $notices[] = 'Block '. $blockname .': class does not inherit from block_base';
             continue;
         }
 

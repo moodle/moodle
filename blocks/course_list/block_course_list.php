@@ -1,6 +1,6 @@
 <?PHP //$Id$
 
-class CourseBlock_course_list extends MoodleBlock {
+class block_course_list extends block_base {
     function init() {
         $this->title = get_string('courses');
         $this->content_type = BLOCK_TYPE_LIST;

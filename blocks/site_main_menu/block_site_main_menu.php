@@ -1,6 +1,6 @@
 <?php   //$Id$
 
-class CourseBlock_site_main_menu extends MoodleBlock {
+class block_site_main_menu extends block_base {
     function init() {
         $this->title = get_string('mainmenu');
         $this->content_type = BLOCK_TYPE_LIST;

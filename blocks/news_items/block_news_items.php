@@ -1,6 +1,6 @@
 <?PHP //$Id$
 
-class CourseBlock_news_items extends MoodleBlock {
+class block_news_items extends block_base {
     function init() {
         $this->title = get_string('latestnews');
         $this->content_type = BLOCK_TYPE_TEXT;

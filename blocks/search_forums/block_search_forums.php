@@ -1,6 +1,6 @@
 <?PHP //$Id$
 
-class CourseBlock_search_forums extends MoodleBlock {
+class block_search_forums extends block_base {
     function init() {
         $this->title = get_string('search', 'forum');
         $this->content_type = BLOCK_TYPE_TEXT;

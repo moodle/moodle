@@ -1,6 +1,6 @@
 <?php //$Id$
 
-class CourseBlock_social_activities extends MoodleBlock {
+class block_social_activities extends block_base {
     function init(){
         $this->title = get_string('blockname','block_social_activities');
         $this->content_type = BLOCK_TYPE_LIST;

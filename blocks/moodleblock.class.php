@@ -33,7 +33,7 @@ define('BLOCK_TYPE_NUKE',    3);
  * @author Jon Papaioannou
  * @package blocks
  */
-class MoodleBlock {
+class block_base {
 
     /**
      * Internal var for storing/caching translated strings
@@ -90,7 +90,7 @@ class MoodleBlock {
      * The class constructor
      *
      */
-    function MoodleBlock() {
+    function block_base() {
         $this->init();
     }
 
@@ -99,7 +99,7 @@ class MoodleBlock {
      *
      */
     function __construct() {
-        $this->MoodleBlock();
+        $this->block_base();
     }
 
     /**
@@ -558,7 +558,7 @@ class MoodleBlock {
  * @author Jon Papaioannou
  * @package blocks
  */
-class MoodleBlock_Nuke extends MoodleBlock {
+class block_nuke extends block_base {
     function get_content() {
 
         if ($this->content !== NULL) {

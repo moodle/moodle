@@ -1,6 +1,6 @@
 <?PHP //$Id$
 
-class CourseBlock_login extends MoodleBlock {
+class block_login extends block_base {
     function init() {
         $this->title = get_string('login');
         $this->content_type = BLOCK_TYPE_TEXT;
