@@ -110,7 +110,7 @@ function rss_save_file ($modname,$mod,$result) {
 //This function return all the common headers for every rss feed in the site
 function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
 
-    global $CFG, $USER;
+    global $CFG, $THEME, $USER;
 
     static $pixpath = '';
 
