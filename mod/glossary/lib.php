@@ -359,7 +359,42 @@ function  glossary_print_entry_concept($entry) {
 }
 
 function glossary_print_entry_definition($entry) {
-    $definition = str_ireplace($entry->concept,"<nolink>$entry->concept</nolink>",$entry->definition);
+    $definition = $entry->definition;
+
+    //getting ride of A tags
+    $links = array();
+    preg_match_all('/<img (.+?)>/is',$definition,$list_of_links);
+
+    foreach (array_unique($list_of_links[0]) as $key=>$value) {
+        $links['<@'.$key.'@>'] = $value;
+    }
+    if ( $links ) {
+        $definition = str_replace($links,array_keys($links),$definition);
+    }
+
+    //getting ride of IMG tags
+    $images = array();
+    preg_match_all('/<A (.+?)>/is',$definition,$list_of_images);
+
+    foreach (array_unique($list_of_images[0]) as $key=>$value) {
+        $images['<@'.$key.'@>'] = $value;
+    }
+    if ( $images ) {
+        $definition = str_replace($images,array_keys($images),$definition);
+    }
+        
+    $definition = str_ireplace($entry->concept,"<nolink>$entry->concept</nolink>",$definition);
+
+    //restoring A tags
+    if ( $links ) {
+        $definition = str_replace(array_keys($links),$links,$definition);
+    }
+
+    //restoring IMG tags
+    if ( $images ) {
+        $definition = str_replace(array_keys($images),$images,$definition);
+    }
+
 /*    if ( $aliases = get_records("glossary_alias","entryid",$entry->id) ) {
         foreach ($aliases as $alias) {
         echo "<small><font color=red>$alias->alias: ";
