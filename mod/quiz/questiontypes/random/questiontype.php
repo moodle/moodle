@@ -84,7 +84,9 @@ class quiz_random_qtype extends quiz_default_questiontype {
                        WHERE category = '$question->category'
                          AND id NOT IN ($questionsinuse)
                          AND qtype IN ($possiblerandomqtypes)");
-            shuffle($this->catrandoms[$question->category]);
+            $this->catrandoms[$question->category] = 
+                  draw_rand_array($this->catrandoms[$question->category], 
+                            count($this->catrandoms[$question->category])); // from bug 1889
         }
 
         while ($randomquestion =
