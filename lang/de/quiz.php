@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // quiz.php - created with Moodle 1.0.8 dev (2002122301)
 
 
@@ -114,7 +114,7 @@ $string['randomsamatch'] = "Zufällige Kurzantwort-Zuordnungsfrage";
 $string['randomsamatchcreate'] = "Erzeuge zufällige Kurzantwort-Zuordnungsfragen";
 $string['randomsamatchintro'] = "Wählen Sie für jede der folgenden Fragen die passende Antwort aus dem Menü aus";
 $string['randomsamatchnumber'] = "Nummer auszuwählender Fragen";
-$string['readytosend'] = "Sie sind dabei, Ihr ganzes Quiz zu senden, um benotet zu werden.  Sind Sie sicher, daß Sie weitermachen wollen?";
+$string['readytosend'] = "Sie sind dabei, Ihr ganzes Quiz zu senden, um benotet zu werden.  Sind Sie sicher, dass Sie weitermachen wollen?";
 $string['regrade'] = "Alle Versuche zurücksetzen";
 $string['regradecomplete'] = "Alle Versuche wurden zurückgesetzt";
 $string['regradecount'] = "\$a->changed von \$a->attempt Noten wurden geändert";

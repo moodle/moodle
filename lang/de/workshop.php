@@ -1,8 +1,8 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // workshop.php - created with Moodle 1.0.8 dev (2002122301)
 
 
-$string['accumulative'] = "Wachsend";
+$string['accumulative'] = "Akkumuliert";
 $string['action'] = "Aktion";
 $string['addacomment'] = "Einen Kommentar hinzufügen";
 $string['afterdeadline'] = "Nach dem Stichtag: \$a";
@@ -58,7 +58,7 @@ $string['gradedbyteacher'] = "Benotet von \$a";
 $string['gradeforassessments'] = "Note für Bewertung";
 $string['gradeforbias'] = "Note für Vorbereitung";
 $string['gradeforreliability'] = "Note für Zuverlässigkeit";
-$string['gradeforstudentsassessment'] = "Note für Bewertung des Kurteilnehmers";
+$string['gradeforstudentsassessment'] = "Note für Bewertung des Kursteilnehmers";
 $string['gradeofsubmission'] = "Note des Beitrages: \$a";
 $string['gradingstrategy'] = "Benotungsstrategie";
 $string['hidegradesbeforeagreement'] = "Noten vor Zustimmung verbergen";
@@ -70,14 +70,14 @@ $string['maximumsize'] = "Maximale Größe";
 $string['modulename'] = "Workshop";
 $string['modulenameplural'] = "Workshops";
 $string['movedtophase'] = "Verschoben in Phase \$a";
-$string['moveonto'] = "Witerverschieben nach";
+$string['moveonto'] = "Weiterverschieben nach";
 $string['noassessmentsdone'] = "Keine Bewertung durchgeführt";
 $string['nosubmissionsavailableforassessment'] = "Keine Beiträge für die Bewertung vorhanden";
 $string['notavailable'] = "Nicht verfügbar";
 $string['noteonassessmentelements'] = "Beachte Sie, das die Benotung aufgeteilt ist in eine Anzahl von 'Bewertungskriterien'.<br>
 Dies macht die Benotung einfacher und plausibeler. Als Kursleiter müssen Sie diese<br>
-Kriterien hinzufügen, bevor Sie die Aufgabe dem Kursteilnehmer zugänglich machen. Dies geschieht durch das <br>Klicken auf die Aufgabe im Kurs, sofern keine Kriterien vorhanden sind werden Sie gefragt<br>diese hinzuzufügen. Sie können dieses Anzahl von Kriterien ändern, indem Sie die Seite der Aufgabenbearbeitung benutzen,<br>
-die Kriterien selbst können übner die Seite &quot;Aufgabenverwaltung&quot; bearbeitet werden";
+Kriterien hinzufügen, bevor Sie die Aufgabe dem Kursteilnehmer zugänglich machen. Dies geschieht durch das <br>Klicken auf die Aufgabe im Kurs, sofern keine Kriterien vorhanden sind, werden Sie gefragt<br>diese hinzuzufügen. Sie können die Anzahl der Kriterien ändern, indem Sie die Seite der Aufgabenbearbeitung benutzen,<br>
+die Kriterien selbst können über die Seite &quot;Aufgabenverwaltung&quot; bearbeitet werden";
 $string['notgraded'] = "Nicht benotet";
 $string['notitlegiven'] = "Kein Titel angegeben";
 $string['numberofassessmentelements'] = "Anzahl der Kommentare, Bewertungskriterien, Note des Verbunds oder Kriteriumsaussage";
@@ -86,7 +86,7 @@ $string['numberofassessmentsofstudentsubmissions'] = "Anzahl Bewertungen der Kur
 $string['numberofassessmentsofteachersexamples'] = "Anzahl der Bewertungen von Beispielen vom Kursleiter";
 $string['on'] = "von \$a";
 $string['openassignment'] = "Aufgabe öffnen";
-$string['optionforpeergrade'] = "Auswahl fürDurchschnittsnote";
+$string['optionforpeergrade'] = "Auswahl für Durchschnittsnote";
 $string['overallgrade'] = "Gesamtnote";
 $string['overallpeergrade'] = "Gesamtdurchschnittsnote: \$a";
 $string['overallteachergrade'] = "Gesamtnote des Lehrers: \$a";
@@ -143,16 +143,16 @@ $string['view'] = "Ansicht";
 $string['viewassessmentofteacher'] = "Bewertung anzeigen von \$a";
 $string['viewotherassessments'] = "Andere Bewertungen anzeigen";
 $string['warningonamendingelements'] = "WARNUNG: Es existieren eingereichte Bewertungen<br>Ändern Sie nicht die Anzahl der Kriterien, den Skalentyp oder die Kriterienwichtung";
-$string['weightederrorcount'] = "Durchnittsfehlerzahl: \$a";
-$string['weightforbias'] = "Wichtung für Vorbereitung";
-$string['weightforgradingofassessments'] = "Wichtung der Benotung der Bewertungen";
-$string['weightforpeerassessments'] = "Wichtung für Durchschnittsbewertung";
-$string['weightforreliability'] = "Wichtung der Zuverlässigkeit";
-$string['weightforteachersassessment'] = "Wichtung der Kursleiter-Bewertung";
-$string['weights'] = "Wichtungen";
-$string['weightsusedforfinalgrade'] = "Wichtungen, die ifür die Endnote verwendet werdem";
-$string['weightsusedforsubmissions'] = "Wichtungen, die für die Beiträge verwenden werden";
+$string['weightederrorcount'] = "gewichtete Fehlerzahl: \$a";
+$string['weightforbias'] = "Gewichtung für Vorbereitung";
+$string['weightforgradingofassessments'] = "Gewichtung der Benotung der Bewertungen";
+$string['weightforpeerassessments'] = "Gewichtung für Durchschnittsbewertung";
+$string['weightforreliability'] = "Gewichtung der Zuverlässigkeit";
+$string['weightforteachersassessment'] = "Gewichtung der Kursleiter-Bewertung";
+$string['weights'] = "Gewichtungen";
+$string['weightsusedforfinalgrade'] = "Gewichtung, die für die Endnote verwendet wird";
+$string['weightsusedforsubmissions'] = "Gewichtung, die für die Beiträge verwenden wird";
 $string['yourassessments'] = "Ihre Bewertung";
-$string['yourfeedbackgoeshere'] = "Ihre Bwewertung behinnt hier";
+$string['yourfeedbackgoeshere'] = "Ihre Bewertung beginnt hier";
 
 ?>
