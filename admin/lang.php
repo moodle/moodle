@@ -203,7 +203,7 @@
         unset($string);
         include("$enlangdir/$currentfile");
         $enstring = $string;  
-        if ($currentlang != 'en') {
+        if ($currentlang != 'en' and $currentfile == 'moodle.php') {
             $enstring['thislanguage'] = "<< TRANSLATORS: Specify the name of your language here.  If possible use Unicode Numeric Character References >>";
             $enstring['thischarset'] = "<< TRANSLATORS: Specify the character set of your language here. Note that all text created while this language is active will be stored using this character set, so don't change it once you have set it. Example: iso-8859-1 >>";
             $enstring['thisdirection'] = "<< TRANSLATORS: This string specifies the direction of your text, either left-to-right or right-to-left.  Insert either 'ltr' or 'rtl' here. >>";
