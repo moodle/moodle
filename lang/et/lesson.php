@@ -1,0 +1,69 @@
+<?PHP // $Id$ 
+      // lesson.php - created with Moodle 1.2.1 (2004032500)
+
+
+$string['actionaftercorrectanswer'] = 'Tegevus peale õiget vastust';
+$string['addanewpage'] = 'Lisa uus leht';
+$string['addpagehere'] = 'Lisa leht siia';
+$string['answer'] = 'Vastus';
+$string['answersfornumerical'] = 'Numbriliste küsimuste vastused peaksid olema sobivad  paarid miinimun ja maksimum väärtustest';
+$string['attempt'] = 'Katse: $a';
+$string['attempts'] = 'Katseid';
+$string['available'] = 'Saadaval alates';
+$string['canretake'] = '$a saab uuesti teha';
+$string['casesensitive'] = 'Täheregistritundlik';
+$string['checknavigation'] = 'Kontrolli navigatsiooni';
+$string['checkquestion'] = 'Kontrolli küsimust';
+$string['confirmdeletionofthispage'] = 'Kinnita selle lehe kustutamine';
+$string['congratulations'] = 'Õnnitlen - tunni lõpp';
+$string['continue'] = 'Jätka';
+$string['deadline'] = 'Tähtaeg';
+$string['deletingpage'] = 'Kustutan lehte: $a';
+$string['displayofgrade'] = 'Hinde näitamine (ainult õpilastele)';
+$string['endoflesson'] = 'Tunni lõpp';
+$string['fileformat'] = 'Failiformaat';
+$string['firstanswershould'] = 'Esimene vastus peaks viima &quot;õigele&quot; lehele';
+$string['gradeis'] = 'Hinne on $a';
+$string['importquestions'] = 'Impordi küsimused';
+$string['jumpto'] = 'Liigu';
+$string['maximumnumberofanswers'] = 'Maksimaalne vastuste arv';
+$string['maximumnumberofattempts'] = 'Maksimaalne proovide arv';
+$string['modulename'] = 'Tund';
+$string['modulenameplural'] = 'Tunnid';
+$string['movepagehere'] = 'Liiguta leht siia';
+$string['moving'] = 'Liigutan lehte: $a';
+$string['movingtonextpage'] = 'Liigun järgmisele lehele';
+$string['multianswer'] = 'Mitmik-vastus';
+$string['multipleanswer'] = 'Mitu vastust';
+$string['nextpage'] = 'Järgmine lehekülg';
+$string['noanswer'] = 'Vastust ei ole antud';
+$string['noattemptrecordsfound'] = 'Proovide kohta puuduvad andmed: Hinnet ei antud';
+$string['normal'] = 'Normaalne - järgi Tunni plaani';
+$string['numberofcorrectanswers'] = 'Õigete vastuste arv: $a';
+$string['numberofcorrectmatches'] = 'Õigete paaride arv: $a';
+$string['numberofpagestoshow'] = 'Kuvatavate lehtede (kaartide) arv';
+$string['numberofpagesviewed'] = 'Vaadatud lehtede arv: $a';
+$string['ordered'] = 'Järjestatud';
+$string['outof'] = '$a hulgast';
+$string['page'] = 'Leht: $a';
+$string['pagecontents'] = 'Lehe sisu';
+$string['pagetitle'] = 'Lehe pealkiri';
+$string['pleasecheckoneanswer'] = 'Palun vali üks vastus';
+$string['pleasecheckoneormoreanswers'] = 'Palun vali üks või rohkem vastust';
+$string['pleaseenteryouranswerinthebox'] = 'Palun sisesta oma vastus kasti';
+$string['pleasematchtheabovepairs'] = 'Leia sobivad paarid';
+$string['questionoption'] = 'Küsimuse valik';
+$string['questiontype'] = 'Küsimuse tüüp';
+$string['response'] = 'Vastus';
+$string['sanitycheckfailed'] = 'Terve mõistuse kontroll kukkus läbi: See katse on kustutatud';
+$string['savepage'] = 'Salvesta lehekülg';
+$string['showanunansweredpage'] = 'Näita vastamata lehte';
+$string['showanunseenpage'] = 'Näita veel nägemata lehte';
+$string['singleanswer'] = 'Üksik vastus';
+$string['thatsthecorrectanswer'] = 'Õige vastus';
+$string['thatsthewronganswer'] = 'Vale vastus';
+$string['thispage'] = 'See leht';
+$string['youhaveseen'] = 'Sa oled näinud rohkem kui ühte lehte sellest tunnist.<br />Kas tahad alustada viimasest nähtud lehest?';
+$string['youranswer'] = 'Sinu vastus';
+
+?>

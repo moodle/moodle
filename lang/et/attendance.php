@@ -1,0 +1,71 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.2 (2004032000)
+
+
+$string['absentlong'] = 'Puuduja';
+$string['absentshort'] = 'P';
+$string['addingmultiple'] = 'Mitmete osavõtjatega nimistuid lisama';
+$string['addmultiple'] = 'Lisa mitme osavõtjaga nimistu';
+$string['allmodulename'] = 'Kõik osavõtu nimistud';
+$string['auto'] = 'automaatne';
+$string['autoattend'] = 'Tuginedes kasutajate aktiivsuse logidele võta automaatselt osa';
+$string['autoattendmulti'] = 'Tuginedes kasutajate aktiivsuse logidele võta automaatselt osa kõigis nimekirjades';
+$string['autoattendshort'] = 'Automaatselt logidest';
+$string['choosedays'] = 'Osavõtu päevad igas nädalas';
+$string['dayofroll'] = 'Kuupäev, mille kohta nimistu teha';
+$string['defaultautoattend'] = 'Kas võtta automaatselt osa tuginedes kasutajate aktiivsuse logidele';
+$string['defaultdynamicsection'] = 'Kas panna osalejate nimistud vaikimisi õigesse nädalasse või mitte';
+$string['defaultgrade'] = 'Kas teha osalejate nimistud vaikimisi hinnatavaks või mitte';
+$string['defaulthoursinclass'] = 'Kui palju tunde peaks osalejate nimistus vaikimisi olema';
+$string['defaultmaxgrade'] = 'Mis peaks olema maksimaalne hinde vaikeväärtus täieliku osalemise korral';
+$string['defaultstudentstatus'] = 'Õpilase osavõtu vaikeväärtus uutel osalejate nimistutel';
+$string['downloadexcelfull'] = 'Laadi alla täielik Exceli arvutustabel';
+$string['downloadexceltotals'] = 'Laadi alla kokkuvõttev Exceli arvutustabel';
+$string['downloadtextfull'] = 'Laadi alla täielik tekstaruanne';
+$string['downloadtexttotals'] = 'Laadi alla kokkuvõttev tekstaruanne';
+$string['dynamicsection'] = 'Tee selle kuupäeva alusel kindlaks nimistu nädal';
+$string['dynamicsectionmulti'] = 'Pane nimekirjad automaatselt nende nädala sektsioonidesse';
+$string['dynsectionshort'] = 'Liigutati dünaamiliselt sektsiooni';
+$string['endbeforestart'] = 'Lõpptähtaeg on enne algtähtaega';
+$string['endmulti'] = 'Viimase osalejate nimistu kuupäev';
+$string['for'] = ' ';
+$string['friday'] = 'Reede';
+$string['gradeshort'] = 'Hinnatud';
+$string['gradevalue'] = 'Tee see nimistu hinnatavaks';
+$string['gradevaluemulti'] = 'Tee need nimistud hinnatavaks';
+$string['hoursinclass'] = 'Tunni vältus tundides';
+$string['hoursineachclass'] = 'Iga klassi iga tunni pikkus tundides';
+$string['hoursinfullreport'] = 'Maksimaalne osalemise tundide arv, mida kuvada ühel aruande lehel';
+$string['maxgradeshort'] = 'Maksimaalne hinne';
+$string['maxgradevalue'] = 'Maksimaalne hinne täieliku osalemise eest';
+$string['modulename'] = 'Osalemine';
+$string['modulenameplural'] = 'Osalejate nimistud';
+$string['monday'] = 'Esmaspäev';
+$string['norolls'] = 'Sellel kursusel puuduvad osalejate nimistud';
+$string['notes'] = 'Erandlik info';
+$string['notesfor'] = 'Erandlik info ... kohta';
+$string['noviews'] = 'Kahju, sinu konto kohta puuduvad andmed';
+$string['of'] = ' ';
+$string['pages'] = 'Leheküljed';
+$string['presentlong'] = 'Olemas';
+$string['presentshort'] = 'O';
+$string['saturday'] = 'Laup';
+$string['startafterend'] = 'Alguskuupäev on peale kursuse lõppu';
+$string['startmulti'] = 'Esimese osalejate nimistu kuupäev';
+$string['sunday'] = 'Pühap';
+$string['takeroll'] = 'Tee selle päeva nimistu?';
+$string['tardiesperabsence'] = 'Kui mitu hilinemist saab kokku lugeda üheks puudumiseks?';
+$string['tardylong'] = 'Pikaldane';
+$string['tardyshort'] = 'Pi';
+$string['thursday'] = 'Neljapäev';
+$string['tuesday'] = 'Teisipäev';
+$string['viewall'] = 'Näita kõiki osavõtjate nimistuid';
+$string['viewmulti'] = 'Vaata kokkuvõtet mitmel lehel';
+$string['viewone'] = 'Näita kõiki aruande lehti';
+$string['viewsection'] = 'Näita kõik osavõtjate nimistud sellest sektsioonist';
+$string['viewtable'] = 'Näita aruannet ühe tabelina';
+$string['viewweek'] = 'Näita kõiki osavõtjate nimistuid kalendrinädalast';
+$string['wednesday'] = 'Kolmapäev';
+$string['weekmodulename'] = 'Kõik osavõtjate nimistud eelmise nädala jooksul';
+
+?>

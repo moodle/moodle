@@ -1,0 +1,168 @@
+<P ALIGN=CENTER><B>About the Richtext HTML editor</B></P>
+
+<P>Availability: <B>
+<?php  if (!$CFG->htmleditor) {
+       print_string("htmleditordisabledadmin");
+   } else if (!$USER->htmleditor) {
+       print_string("htmleditordisabled");
+   } else if (!can_use_richtext_editor()) {
+       print_string("htmleditordisabledbrowser");
+   } else {
+       print_string("htmleditoravailable");
+   }
+?>
+</B></P>
+
+<P>The Richtext HTML editor provides a word-processor interface embedded in your web page to allow you to edit text in an intuitive way, and produces normal HTML code.
+
+<P><font size="2" face="Arial, Helvetica, sans-serif">Richtext HTML redaktor annab 
+  tekstit&ouml;&ouml;tlusliidese, mis on manustatud sinu veebilehte, v&otilde;imaldamaks 
+  sul teksti intuitiivselt redigeerida ning tekitab normaalse HTML koodi.<br>
+  Lisaks teksti formaatimisele annab see redaktor rea kasulikke lisav&otilde;imalusi. 
+  </font>
+<P><font size="2" face="Arial, Helvetica, sans-serif"><strong>Kleebi teksti teistest 
+  rakendusprogrammidest<br>
+  </strong><br>
+  V&otilde;id l&otilde;igata ja kleepida rich text teistest Windowsi rakendusprogrammidest 
+  nagu Microsoft Word, otse sellesse redaktorisse ning sinu vormingud j&auml;&auml;vad 
+  alles. Kasuta tavalist l&otilde;ikamise ja kleepimise men&uuml;&uuml;d oma veebilehitsejas 
+  (v&otilde;i Control-C ja Control-V). </font></P>
+<P><font size="2" face="Arial, Helvetica, sans-serif"><B>Kujutiste lisamine<img border="0" hspace="10" src="lib/rte/images/icon_ins_image.gif"></B></font></P>
+<UL>
+  <P><font size="2" face="Arial, Helvetica, sans-serif">Kui sul on kujutisi, mis 
+    on juba veebilehel ilmunud ja veebiaadressi kaudu k&auml;ttesaadavad, v&otilde;id 
+    lisada neid kujutisi tekstidesse, kasutades klahvi &#8221;Lisa kujutis&#8221;. 
+    </font>
+</UL>
+<P><font size="2" face="Arial, Helvetica, sans-serif"><B>Tabelite lisamine<img border="0" hspace="10" src="lib/rte/images/icon_ins_table.gif"></B></font></P>
+<UL>
+  <P><font size="2" face="Arial, Helvetica, sans-serif">Et oma tekstide paigutust 
+    muuta, v&otilde;id kasutada t&ouml;&ouml;ribal klahvi &#8220;Lisa tabelid&#8221;. 
+    </font>
+</UL>
+<P><font size="2" face="Arial, Helvetica, sans-serif"><B>Linkide lisamine<img border="0" hspace="10" src="lib/rte/images/icon_ins_link.gif"></B></font></P>
+<UL>
+  <P><font size="2" face="Arial, Helvetica, sans-serif">Uue lingi tegemiseks tr&uuml;ki 
+    k&otilde;igepealt tekst, mida lingiks soovid. Siis tee see aktiivseks ja kl&otilde;psa 
+    lingi klahvi t&ouml;&ouml;ribal. Tr&uuml;ki veebiaadress, millega tahad seda 
+    linkida ja ongi valmis! </font>
+</UL>
+<P><font size="2" face="Arial, Helvetica, sans-serif"><B>Emotikonide lisamine<img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></B></font></P>
+<UL>
+  <P><font size="2" face="Arial, Helvetica, sans-serif">Nende v&auml;ikeste ikoonide 
+    teksti paigutamiseks kl&otilde;psa smaili ikoonile t&ouml;&ouml;ribal. Avaneb 
+    dialoogikast, mis v&otilde;imaldab valida j&auml;rgmiste smaili ikoonide hulgast. 
+    (Alternatiivina v&otilde;id tr&uuml;kkida vastava koodi otse oma teksti sisse 
+    ja see muudetakse hiljem &auml;ra teksti kuvamise k&auml;igus). </font>
+  <table border="1">
+    <tr valign="top"> 
+      <td> <table border="0" align="center" cellpadding="10">
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">naeratab</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>:-)</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">lai irve</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>:-D</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">pilgutab ilma</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>;-)</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">segaduses</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>:-/</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">m&otilde;tlik 
+              </font></td>
+            <td NOWRAP><FONT size="2" FACE=Arial, Helvetica, sans-serif>V-.</FONT></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">n&auml;itab 
+              keelt </font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>:-P</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">lahe</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>B-)</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">n&otilde;ustub</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>^-)</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">silmad p&auml;rani</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>8-)</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">&uuml;llatunud</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>8-o</font></td>
+          </tr>
+        </table></td>
+      <td> <table border="0" align="center" cellpadding="10">
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">kurvastab</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>:-(</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">h&auml;beneb</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>8-.</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">punastab</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>:-I</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">musid</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>:-X</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">kloun</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>:o)</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">sinikas</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>P-|</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">tige</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>8-[</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">surnud</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>xx-P</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">unine</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>|-.</font></td>
+          </tr>
+          <tr> 
+            <td><font size="2" face="Arial, Helvetica, sans-serif"><img alt border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15"></font></td>
+            <td><font size="2" face="Arial, Helvetica, sans-serif">&otilde;el</font></td>
+            <td NOWRAP><font size="2" face="Arial, Helvetica, sans-serif"><FONT FACE=Courier>}-]</font></td>
+          </tr>
+        </table> 
+  </table>
+</UL>
+
+
