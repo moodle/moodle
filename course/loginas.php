@@ -28,6 +28,7 @@
 
     $USER = get_user_info_from_db("id", $user);
     $USER->loggedin = true;
+    $USER->site = $CFG->wwwroot;
     $USER->realuser = $teacher_id;
     save_session("USER");
 
