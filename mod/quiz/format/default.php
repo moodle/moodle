@@ -13,6 +13,12 @@ class quiz_default_format {
 
 /// Importing functions
 
+    function preprocess($category) {
+    /// Does any pre-processing that may be desired
+
+        return true;
+    }
+
     function readdata($filename) {
     /// Returns complete file with an array, one item per line
 
@@ -26,7 +32,7 @@ class quiz_default_format {
     function readquestions($lines) {
     /// Parses an array of lines into an array of questions, 
     /// where each item is a question object as defined by 
-    /// readquestion().   Questions are defines as anything 
+    /// readquestion().   Questions are defined as anything 
     /// between blank lines.
      
         $questions = array();
@@ -60,6 +66,14 @@ class quiz_default_format {
         return NULL;
     }
 
+
+    function postprocess($questionids) {
+    /// Does any post-processing that may be desired
+    /// Argument is a simple array of question ids that 
+    /// have just been added.
+
+        return true;
+    }
 
 }
 
