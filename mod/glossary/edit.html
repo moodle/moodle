@@ -66,7 +66,7 @@ if (isset($errors)) {
     } else {
         echo '<script>var items = [\'casesensitive\',\'fullmatch\'];</script>';
 
-        if (!empty($newentry->usedynalink) or $CFG->glossary_linkentries) {
+        if (!empty($newentry->usedynalink) or ($CFG->glossary_linkentries and !isset($newentry->id) ) ) {
             $selected = "checked";
         } else {
             $selected = "";
@@ -78,7 +78,7 @@ if (isset($errors)) {
         echo helpbutton("usedynalink", strip_tags(get_string("usedynalink", "glossary")), "glossary"); 
         echo '<br />';
 
-        if (!empty($newentry->casesensitive) or $CFG->glossary_casesensitive) {
+        if (!empty($newentry->casesensitive) or ($CFG->glossary_casesensitive and !isset($newentry->id)) ) {
             $selected = "checked";
         } else {
             $selected = "";
@@ -91,7 +91,7 @@ if (isset($errors)) {
         echo '<br />';
 
 
-        if (!empty($newentry->fullmatch) or $CFG->glossary_fullmatch) {
+        if (!empty($newentry->fullmatch) or ($CFG->glossary_fullmatch and !isset($newentry->id)) ) {
             $selected = "checked";
         } else {
             $selected = "";
