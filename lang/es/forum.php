@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1 Beta (2003082001)
+      // forum.php - created with Moodle 1.1 (2003082800)
 
 
 $string['addanewdiscussion'] = "Colocar un mensaje aquí";
@@ -78,6 +78,7 @@ $string['olderdiscussions'] = "mensajes anteriores";
 $string['openmode0'] = "No se pueden colocar temas ni respuestas ";
 $string['openmode1'] = "No se puede colocar temas, sólo respuestas";
 $string['openmode2'] = "Permitir nuevos temas y respuestas";
+$string['parent'] = "Mostrar mensaje anterior";
 $string['parentofthispost'] = "Anterior a este mensaje";
 $string['postadded'] = "Su mensaje se ha colocado con éxito.<P>Tiene \$a para hacer cualquier cambio.";
 $string['postincontext'] = "Ver el mensaje en su contexto";
@@ -127,4 +128,5 @@ $string['unsubscribed'] = "No inscrito";
 $string['youratedthis'] = "Usted calificó este mensaje";
 $string['yournewtopic'] = "Su nuevo tema ";
 $string['yourreply'] = "Su respuesta";
+
 ?>
