@@ -21,7 +21,7 @@
                 $backup_config[$config->name] = $config->value;
             }
         }
-        return $backup_config;
+        return (object)$backup_config;
     }
 
     //Delete old data in backup tables (if exists)
