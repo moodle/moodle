@@ -108,7 +108,7 @@ function set_parameters() {
                                        'value'   => current_language()),
             'sitename'        => array('langstr' => get_string('fullsitename'),
                                        'value'   => $site->fullname),
-            'serverurl'       => array('langstr' => get_string('serverurl'),
+            'serverurl'       => array('langstr' => get_string('serverurl', 'resource'),
                                        'value'   => $CFG->wwwroot),
             'currenttime'     => array('langstr' => get_string('time'),
                                        'value'   => time()),
