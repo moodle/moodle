@@ -42,50 +42,53 @@
         
         //Select all users from user
         $users = get_records ("user");
-        //Iterate over users putting their roles
-        foreach ($users as $user) {
-               $user->info = "";
-            //Is Admin in tables (not is_admin()) !!
-            if (record_exists("user_admins","userid",$user->id)) {
-                $user->info .= "admin";
-                $user->role_admin = true;
-            }
-            //Is Course Creator in tables (not is_coursecreator()) !!
-            if (record_exists("user_coursecreators","userid",$user->id)) {
-                $user->info .= "coursecreator";
-                $user->role_coursecreator = true;
-            }
-            //Is Teacher in tables (not is_teacher()) !!
-            if (record_exists("user_teachers","course",$course,"userid",$user->id)) {
-                $user->info .= "teacher";
-                $user->role_teacher = true;
-            }
-            //Is Student in tables (not is_student()) !!
-            if (record_exists("user_students","course",$course,"userid",$user->id)) {
-                $user->info .= "student";
-                $user->role_student = true;
-            }
-            //Now create the backup_id record
-            $backupids_rec->backup_code = $backup_unique_code;
-            $backupids_rec->table_name = "user";
-            $backupids_rec->old_id = $user->id;
-            $backupids_rec->info = $user->info;
-
-            //Insert the record id. backup_users decide it.
-            //When all users
-            if ($backup_users == 0) { 
-                $status = insert_record("backup_ids",$backupids_rec,false);
-                $count_users++;
-            //When course users
-            } else if ($backup_users == 1) {
-                 //Only if user has any role
-                if ($backupids_rec->info) {
+        //If we have users
+        if ($users) {
+            //Iterate over users putting their roles
+            foreach ($users as $user) {
+                   $user->info = "";
+                //Is Admin in tables (not is_admin()) !!
+                if (record_exists("user_admins","userid",$user->id)) {
+                    $user->info .= "admin";
+                    $user->role_admin = true;
+                }
+                //Is Course Creator in tables (not is_coursecreator()) !!
+                if (record_exists("user_coursecreators","userid",$user->id)) {
+                    $user->info .= "coursecreator";
+                    $user->role_coursecreator = true;
+                }
+                //Is Teacher in tables (not is_teacher()) !!
+                if (record_exists("user_teachers","course",$course,"userid",$user->id)) {
+                    $user->info .= "teacher";
+                    $user->role_teacher = true;
+                }
+                //Is Student in tables (not is_student()) !!
+                if (record_exists("user_students","course",$course,"userid",$user->id)) {
+                    $user->info .= "student";
+                    $user->role_student = true;
+                }
+                //Now create the backup_id record
+                $backupids_rec->backup_code = $backup_unique_code;
+                $backupids_rec->table_name = "user";
+                $backupids_rec->old_id = $user->id;
+                $backupids_rec->info = $user->info;
+    
+                //Insert the record id. backup_users decide it.
+                //When all users
+                if ($backup_users == 0) { 
                     $status = insert_record("backup_ids",$backupids_rec,false);
                     $count_users++;
+                //When course users
+                } else if ($backup_users == 1) {
+                     //Only if user has any role
+                    if ($backupids_rec->info) {
+                        $status = insert_record("backup_ids",$backupids_rec,false);
+                        $count_users++;
+                    }
                 }
             }
         }
-        
+            
         //Prepare Info
         //Gets the user data
         $info[0][0] = get_string("users");
