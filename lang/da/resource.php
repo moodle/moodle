@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3.3 (2004052503)
+      // resource.php - created with Moodle 1.4 (2004083100)
 
 
 $string['addresource'] = 'Tilføj materiale';
 $string['chooseafile'] = 'Vælg eller upload en fil';
+$string['chooseparameter'] = 'Vælg parametre';
 $string['configdefaulturl'] = 'Denne værdi bruges til at indsætte i URL formen når en ny URL-baseret resource laves.';
 $string['configfilterexternalpages'] = 'Hvis du bruger denne setting vil alle externe resourcer (websider, uploaded HTMLfiler) blive behandlet af det nuværende sidefiltre (såsom ordbogs autolinks, for eksempel). Brugen af denne setting kan forårsage at sidevisningen bliver betydeligt langsommere. Brug den med omtanke og når det virkeligt er nødvendigt.';
 $string['configframesize'] = 'Når en webside eller en uploadet fil vises i en frame, så angiver denne værdi højden på topbaren (den øverste frame som indeholder navigationen)';
@@ -20,9 +21,10 @@ $string['configpopupwidth'] = 'Hvilken bredde skal popupvinduer have som standar
 $string['configwebsearch'] = 'Når der tilføjes en URL som en webside eller weblink, vil denne lokation tilbydes som et sted der kan hjælpe brugeren med at søge efter den URL de ønsker.';
 $string['directlink'] = 'Direkte link til denne fil';
 $string['directoryinfo'] = 'Alle filer i det valgte bibliotek vil blive vist';
+$string['display'] = 'Vindue';
 $string['editingaresource'] = 'Rediger i materialet';
+$string['encryptedcode'] = 'Krypteret kode';
 $string['example'] = 'Eksempel';
-$string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.eksempel.com/enmappe/enfil.html';
 $string['fetchclienterror'] = 'Der er opstået en fejl med din webclient da den skulle hente websiden (Måske en forkert URL)';
 $string['fetcherror'] = 'Der er opstået en fejl i forbindelse med hentningen af websiden.';
@@ -50,6 +52,10 @@ $string['newwindowopen'] = 'Vis denne resource i et nyt popupvindue';
 $string['note'] = 'Note';
 $string['notefile'] = 'For at uploade filer til kurset(så de vises i denne liste) brug<A HREF=$a >File Manager</A>.';
 $string['notypechosen'] = 'Du skal vælge en type. Brug tilbage knappen og prøv igen';
+$string['pagedisplay'] = 'Vis denne resource i dette vindue';
+$string['pagewindow'] = 'Samme vindue';
+$string['parameter'] = 'Parameter';
+$string['parameters'] = 'Parametre';
 $string['popupresource'] = 'Dette materiale skal  vises i et popupvindue.';
 $string['popupresourcelink'] = 'Hvis det ikke gjorde, tryk her: $a';
 $string['resourcetype'] = 'Materiale type';
@@ -62,5 +68,12 @@ $string['resourcetype6'] = 'HTML tekst';
 $string['resourcetype7'] = 'Program';
 $string['resourcetype8'] = 'Wikitekst';
 $string['resourcetype9'] = 'Directory';
+$string['resourcetypedirectory'] = 'Et bibliotek';
+$string['resourcetypefile'] = 'Fil eller URL';
+$string['resourcetypehtml'] = 'Webside';
+$string['resourcetypelabel'] = 'Overskrift';
+$string['resourcetypetext'] = 'Tekstside';
+$string['searchweb'] = 'Søge';
+$string['variablename'] = 'Variabel navn';
 
 ?>
