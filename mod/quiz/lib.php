@@ -81,16 +81,13 @@ class quiz_default_questiontype {
     }
 
     function save_question($question, $form, $course) {
-        // As this function uses formcheck, it can only be used by
-        // question.php
-        
         // This default implementation is suitable for most
         // question types.
         
         // First, save the basic question itself
 
-        $question->name               = $form->name;
-        $question->questiontext       = $form->questiontext;
+        $question->name               = trim($form->name);
+        $question->questiontext       = trim($form->questiontext);
         $question->questiontextformat = $form->questiontextformat;
 
         if (empty($form->image)) {
@@ -99,52 +96,53 @@ class quiz_default_questiontype {
             $question->image = $form->image;
         }
 
+        if (empty($question->name)) {
+            $question->name = strip_tags($question->questiontext);
+            if (empty($question->name)) {
+                $question->name = '-';
+            }
+        }
+
         if (isset($form->defaultgrade)) {
             $question->defaultgrade = $form->defaultgrade;
         }
 
-        if ($err = formcheck($question)) {
-            notify(get_string("someerrorswerefound"));
-
-        } else {
-
-            if (!empty($question->id)) { // Question already exists
-                $question->version ++;    // Update version number of question
-                if (!update_record("quiz_questions", $question)) {
-                    error("Could not update question!");
-                }
-            } else {         // Question is a new one
-                $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
-                $question->version = 1;
-                if (!$question->id = insert_record("quiz_questions", $question)) {
-                    error("Could not insert new question!");
-                }
+        if (!empty($question->id)) { // Question already exists
+            $question->version ++;    // Update version number of question
+            if (!update_record("quiz_questions", $question)) {
+                error("Could not update question!");
             }
-    
-            // Now to save all the answers and type-specific options
-
-            $form->id       = $question->id;
-            $form->qtype    = $question->qtype;
-            $form->category = $question->category;
-
-            $result = $this->save_question_options($form);
-
-            if (!empty($result->error)) {
-                error($result->error);
+        } else {         // Question is a new one
+            $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
+            $question->version = 1;
+            if (!$question->id = insert_record("quiz_questions", $question)) {
+                error("Could not insert new question!");
             }
-
-            if (!empty($result->notice)) {
-                notice($result->notice, "question.php?id=$question->id");
-            }
-
-            if (!empty($result->noticeyesno)) {
-                notice_yesno($result->noticeyesno, "question.php?id=$question->id", "edit.php");
-                print_footer($course);
-                exit;
-            }
-    
-            redirect("edit.php");
         }
+   
+        // Now to save all the answers and type-specific options
+
+        $form->id       = $question->id;
+        $form->qtype    = $question->qtype;
+        $form->category = $question->category;
+
+        $result = $this->save_question_options($form);
+
+        if (!empty($result->error)) {
+            error($result->error);
+        }
+
+        if (!empty($result->notice)) {
+            notice($result->notice, "question.php?id=$question->id");
+        }
+
+        if (!empty($result->noticeyesno)) {
+            notice_yesno($result->noticeyesno, "question.php?id=$question->id", "edit.php");
+            print_footer($course);
+            exit;
+        }
+    
+        redirect("edit.php");
     }
     
     /// Convenience function that is used within the question types only
@@ -250,7 +248,7 @@ class quiz_default_questiontype {
                 ($currentnumber,
                  $quiz->grade ? $question->maxgrade : false,
                  empty($resultdetails) ? false : $resultdetails->grade,
-                 $question->recentlyadded);
+                 isset($question->recentlyadded) ? $question->recentlyadded : false);
         
         $this->print_question_formulation_and_controls(
                 $question, $quiz, $readonly, $resultdetails->answers,

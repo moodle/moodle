@@ -156,20 +156,6 @@
         $defaultformat = FORMAT_MOODLE;
     }
 
-    echo '<script lang="Javascript">';
-    echo 'function validatequestion() {';
-    echo '  if (document.theform.name.value == "") {';
-    echo '    alert("'.get_string('specifyname').'");';
-    echo '    focus(document.theform.name.value);';
-    echo '    return false;';
-    echo '  } else {';
-    echo '    return true; ';
-    echo '  }';
-    echo '}';
-    echo '</script>'."\n\n";
-
-    $onsubmit = ' onSubmit="return validatequestion();" ';
-
     require('questiontypes/'.$QUIZ_QTYPES[$qtype]->name().'/editquestion.php');
 
     if ($usehtmleditor) { 
@@ -177,18 +163,5 @@
     }
 
     print_footer($course);
-
-
-function formcheck($question) {
-   $err = array();
-
-   if (empty($question->name)) {
-       $err["name"] = get_string("missingname", "quiz");
-   }
-   if (empty($question->questiontext)) {
-       $err["questiontext"] = get_string("missingquestiontext", "quiz");
-   }
-   return $err;
-}
 
 ?>
