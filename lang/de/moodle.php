@@ -199,7 +199,7 @@ Sofern Sie weiter Schwierigkeiten haben, kontaktieren Sie bitte den Verwalter.";
 $string['emailpasswordsent'] = "Danke für Ihre Bestätigung des neuen Kennworts.
 <p>Eine Email mit dem Inhalt Ihres neuen Kennwortes wurde an Ihre Adresse <b>\$a->email</b> versendet.
 <p>Das Kennwort wurde automatisch generiert -
-Vielleicht möchten Sie <a href=§a->link>Iht Kennwort ändern</a>, um es dich leichter zu merken.";
+Vielleicht möchten Sie <a href=\$a->link>Ihr Kennwort ändern</a>, um es sich leichter zu merken.";
 $string['enrolmentkey'] = "Zugangs-Schlüssel";
 $string['enrolmentkeyfrom'] = "Für diesen Kurs benötigen Sie einen 'Zugangs-Schlüssel' - ein einmaliges Kennwort,<br>das Sie von \$a bekommen haben sollten<BR>";
 $string['enrolmentkeyhint'] = "Der Zugangs-Schlüssel war falsch, bitte versuchen Sie es erneut<BR>
