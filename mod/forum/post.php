@@ -114,6 +114,10 @@
         if (! $course = get_record("course", "id", $discussion->course)) {
             error("The course number was incorrect ($discussion->course)");
         }
+
+        if (! forum_user_can_post($forum)) {
+            error("Sorry, but you can not post in this forum.");
+        }
         // Load up the $post variable.
 
         $post->course  = $course->id;
