@@ -5,8 +5,10 @@
 
     require_variable($id);           // course id
     optional_variable($search, "");  // search string
+    optional_variable($page, "0");   // which page to show
+    optional_variable($perpage, "20");   // which page to show
 
-    $search = strip_tags($search);
+    $search = trim(strip_tags($search));
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course id is incorrect.");
@@ -38,12 +40,19 @@
     }
 
     if ($search) {
-    
-        if (!$posts = forum_search_posts($search, $course->id)) {
-            print_heading(get_string("nopostscontaining", "forum", $search));
+     
+        if (!$posts =  forum_search_posts($search, $course->id, $page*$perpage, $perpage)) {
+            if ($page) {
+                print_heading(get_string("nomorepostscontaining", "forum", $search));
+                print_continue("search.php?id=$course->id&search=".urlencode($search));
+            } else {
+                print_heading(get_string("nopostscontaining", "forum", $search));
+            }
 
         } else {
+
             foreach ($posts as $post) {
+
                 if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
                     error("Discussion ID was incorrect");
                 }
@@ -51,8 +60,8 @@
                     error("Could not find forum $discussion->forum");
                 }
 
-                $post->subject = highlightfast("$search", $post->subject);
-                $discussion->name = highlightfast("$search", $discussion->name);
+                $post->subject = highlight("$search", $post->subject);
+                $discussion->name = highlight("$search", $discussion->name);
 
                 $fullsubject = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
                 if ($forum->type != "single") {
@@ -67,8 +76,19 @@
                 $fulllink = "<p align=\"right\"><a href=\"discuss.php?d=$post->discussion&parent=$post->id\">".get_string("postincontext", "forum")."</a></p>";
                 forum_print_post($post, $course->id, false, false, false, false, $fulllink, $search);
 
-                echo "<BR>";
+                echo "<br />";
             }
+        }
+
+        if (count($posts) == $perpage) {
+            $options = array();
+            $options["id"] = $course->id;
+            $options["search"] = urlencode($search);
+            $options["page"] = $page+1;
+            $options["perpage"] = $perpage;
+            echo "<center>";
+            print_single_button("search.php", $options, get_string("searcholderposts", "forum"));
+            echo "</center>";
         }
     }
 

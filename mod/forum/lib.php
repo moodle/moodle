@@ -498,16 +498,34 @@ function forum_search_posts($search, $courseid, $page=0, $recordsperpage=50) {
     //to allow caseinsensitive search for postgesql
     if($CFG->dbtype == "postgres7") {
        $LIKE = "ILIKE";
-       }else {
+    } else {
        $LIKE = "LIKE";
     }
+
+    $messagesearch = "";
+    $subjectsearch = "";
+
+    $searchterms = explode(" ", $search);     // Search for words independently
+
+    foreach ($searchterms as $searchterm) {
+        if ($messagesearch) {
+            $messagesearch .= " AND ";
+        }
+        $messagesearch .= " p.message $LIKE '%$searchterm%' ";
+
+        if ($subjectsearch) {
+            $subjectsearch .= " AND ";
+        }
+        $subjectsearch .= " p.subject $LIKE '%$searchterm%' ";
+    }
+
 
     return get_records_sql("SELECT p.*,u.firstname,u.lastname,u.email,u.picture
                             FROM {$CFG->prefix}forum_posts p,  
                                  {$CFG->prefix}forum_discussions d, 
                                  {$CFG->prefix}user u, 
                                  {$CFG->prefix}forum f
-                            WHERE (p.message $LIKE '%$search%' OR p.subject $LIKE '%$search%')
+                            WHERE ($messagesearch OR $subjectsearch)
                               AND p.userid = u.id 
                               AND p.discussion = d.id 
                               AND d.course = '$courseid' 
