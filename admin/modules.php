@@ -1,8 +1,8 @@
 <?PHP // $Id$
       // Allows the admin to create, delete and rename course categories
 
-	require_once("../config.php");
-	require_once("../course/lib.php");
+    require_once("../config.php");
+    require_once("../course/lib.php");
 
     optional_variable($disable);
     optional_variable($enable);
@@ -25,9 +25,10 @@
     $strdelete = get_string("delete");
     $strhide = get_string("hide");
     $strshow = get_string("show");
+    $strsettings = get_string("settings");
     $stractivitymodule = get_string("activitymodule");
 
-	print_header("$site->shortname: $strmanagemodules", "$site->fullname", 
+    print_header("$site->shortname: $strmanagemodules", "$site->fullname", 
                  "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> $strmanagemodules");
 
     print_heading($strmanagemodules);
@@ -145,10 +146,10 @@
         $modpixpath = "../theme/$CFG->theme/pix/mod";
     }
 
-    $table->head  = array ($stractivitymodule, "$strhide/$strshow", $strdelete);
-    $table->align = array ("LEFT", "CENTER", "CENTER");
-    $table->wrap = array ("NOWRAP", "", "");
-    $table->size = array ("100%", "10", "10");
+    $table->head  = array ($stractivitymodule, "$strhide/$strshow", $strdelete, $strsettings);
+    $table->align = array ("LEFT", "CENTER", "CENTER", "CENTER");
+    $table->wrap = array ("NOWRAP", "", "","");
+    $table->size = array ("100%", "10", "10","12");
     $table->width = "100";
 
     foreach ($modulebyname as $modulename => $module) {
@@ -156,6 +157,12 @@
         $icon = "<img src=\"$modpixpath/$module->name/icon.gif\" hspace=10 height=16 width=16 border=0>";
 
         $delete = "<a href=\"modules.php?delete=$module->name\">$strdelete</a>";
+
+        if (file_exists("$CFG->dirroot/mod/$module->name/config.php")) {
+            $settings = "<a href=\"$CFG->wwwroot/mod/$module->name/config.php\">$strsettings</a>";
+        } else {
+            $settings = "";
+        }
 
         if ($module->visible) {
             $visible = "<a href=\"modules.php?hide=$module->name\" title=\"$strhide\">".
@@ -171,7 +178,7 @@
             $visible = "";
             $class = "";
         }
-        $table->data[] = array ("<p $class>$icon $modulename</p>", $visible, $delete);
+        $table->data[] = array ("<p $class>$icon $modulename</p>", $visible, $delete, $settings);
     }
     print_table($table);
 
