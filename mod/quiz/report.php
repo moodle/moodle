@@ -84,8 +84,10 @@
 
 /// Open the selected quiz report and display it
 
+    $mode = clean_filename($mode);
+
     if (! is_readable("report/$mode/report.php")) {
-        error("Report not known ($mode)");
+        error("Report not known (".clean_text($mode).")");
     }
 
     include("report/default.php");  // Parent class
