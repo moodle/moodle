@@ -47,6 +47,10 @@
 
     if ($usernew = data_submitted()) {
 
+        if (isset($USER->username)) {
+            check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
+        }
+
         foreach ($usernew as $key => $data) {
             $usernew->$key = clean_text($usernew->$key, FORMAT_MOODLE);
         }
