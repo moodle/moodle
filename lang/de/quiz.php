@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.6 dev 3 (2002102101)
+      // quiz.php - created with Moodle 1.0.8 dev (2002122301)
 
 
 $string['addselectedtoquiz'] = "Auswahl zum Quiz hinzufügen";
+$string['allowreview'] = "Bericht erlauben";
 $string['alreadysubmitted'] = "Es sieht so aus, als hätten Sie diesen Versuch schon eingetragen";
 $string['alwaysavailable'] = "Immer verfügbar";
 $string['answer'] = "Antwort";
@@ -58,6 +59,8 @@ $string['guestsno'] = "Entschuldigung, aber Gäste können Quiz nicht sehen oder p
 $string['imagedisplay'] = "Bild für die Anzeige";
 $string['introduction'] = "Einleitung";
 $string['marks'] = "Anmerkungen";
+$string['missingname'] = "Der Name der Frage fehlt";
+$string['missingquestiontext'] = "Der Text der Frage fehlt";
 $string['modulename'] = "Quiz";
 $string['modulenameplural'] = "Quiz";
 $string['multichoice'] = "Mehrfachauswahl";
@@ -65,6 +68,8 @@ $string['noanswers'] = "Es wurde keine Antworten ausgewählt!";
 $string['noattempts'] = "Dieses Quiz hat keiner ausgefüllt";
 $string['nomoreattempts'] = "Kein Versuch mehr zugelassen";
 $string['noquestions'] = "Es wurden noch keine Fragen eingetragen";
+$string['noreview'] = "Sie dürfen dieses Quiz nicht überprüfen";
+$string['noreviewuntil'] = "Sie dürfen dieses Quiz bis \$a nicht überprüfen";
 $string['publish'] = "Veröffentlichen";
 $string['question'] = "Frage";
 $string['questioninuse'] = "Die Frage '\$a' wird momentan benutzt:";

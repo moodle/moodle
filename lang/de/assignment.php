@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.6 dev 3 (2002102101)
+      // assignment.php - created with Moodle 1.0.8 dev (2002122301)
 
 
 $string['allowresubmit'] = "Erneutes Einreichen erlauben";

@@ -54,6 +54,7 @@ $string['closewindow'] = "Dieses Fenster schließen";
 $string['comparelanguage'] = "Sprache vergleichen und bearbeiten";
 $string['complete'] = "Fertig";
 $string['configcountry'] = "Wenn Sie hier ein Land einstellen, wird dieses Land alsVorgabe für neue Benutzerkonten gewählt.  Um Benutzer zu zwingen, ein Land zu wählen, lassen Sie dieses Feld leer.";
+$string['configdebug'] = "Wenn Sie dies einschalten, wird das error_reporting von PHP erweitert, so dass mehr Warnungen ausgegeben werden. Dies ist nur nützlich für Entwickler.";
 $string['configerrorlevel'] = "Wählen Sie die Menge der PHP Warnungen, die Sie angezeigt bekommen möchten. Normal ist gebräuchlicherwiese die beste Wahl.";
 $string['configgdversion'] = "Zeigt Ihnen die Version von GD an, die installiert. Die Version, die als Standard angezeigt wird, ist die, die automatisch ermittelt worden ist. Ändern Sie diese nicht, es sei denn Sie wissen wirklich, was Sie tun. ";
 $string['confightmleditor'] = "Wählen Sie aus, ob Sie die Verwendung der HTML Text-Eingabe zulassen möchten. Selbst, wenn Sie es zulassen, erscheint diese Text-Eingabe nur, wenn der Benutzer einen geeigneten Browser ( wie z.B. den IE 5.5 oder höher) benutzt.

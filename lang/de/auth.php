@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.6 dev 3 (2002102101)
+      // auth.php - created with Moodle 1.0.8 dev (2002122301)
 
 
 $string['auth_dbdescription'] = "This method uses an external database table to check whether a given username and password is valid.  If the account is a new one, then information from other fields may also be copied across into Moodle.";
@@ -9,6 +9,7 @@ $string['auth_dbfielduser'] = "Name of the field containing usernames";
 $string['auth_dbhost'] = "The computer hosting the database server.";
 $string['auth_dbname'] = "Name of the database itself";
 $string['auth_dbpass'] = "Password matching the above username";
+$string['auth_dbpasstype'] = "Spezifizieren Sie das Format, das das Kennwortfeld benutzt. MD5-Verschlüsselung ist nützlich dafür, mit anderen üblichen Netzanwendungen Verbindung aufzunehmen wie z.B. PostNuke";
 $string['auth_dbtable'] = "Name of the table in the database";
 $string['auth_dbtitle'] = "Use an external database";
 $string['auth_dbtype'] = "The database type (See the <A HREF=../lib/adodb/readme.htm#drivers>ADOdb documentation</A> for details)";
@@ -52,6 +53,8 @@ $string['changepasswordhelp'] = "Hier können Sie einen Ort angeben, an dem Ihre 
 $string['chooseauthmethod'] = "Choose an authentication method: ";
 $string['guestloginbutton'] = "Guest login button";
 $string['instructions'] = "Instructions";
+$string['md5'] = "MD5-Verschlüsselung";
+$string['plaintext'] = "Reiner Text";
 $string['showguestlogin'] = "You can hide or show the guest login button on the login page.";
 
 ?>
