@@ -69,6 +69,7 @@
         if (find_form_errors($user, $usernew, $err)) {
             if ($filename = valid_uploaded_file($_FILES['imagefile'])) { 
                 $usernew->picture = save_profile_image($user->id, $filename);
+                set_field('user', 'picture', $usernew->picture, 'id', $user->id);  /// Note picture in DB
             }
 
             $user = $usernew;
