@@ -94,9 +94,7 @@
         error("Could not re-grade this quiz attempt!");
     }
 
-    if($quiz->timelimit) {
-        $timelimit = $quiz->timelimit * 60;
-    }
+    $timelimit = (int)$quiz->timelimit * 60;
 
     if ($timetaken = ($attempt->timefinish - $attempt->timestart)) {
         if($timelimit && $timetaken > ($timelimit + 60)) {
@@ -111,7 +109,7 @@
     $table->align  = array("right", "left");
     $table->data[] = array("$strtimetaken:", $timetaken);
     $table->data[] = array("$strtimecompleted:", userdate($attempt->timefinish));
-    if($overtime) {
+    if (!empty($overtime)) {
         $table->data[] = array("$stroverdue:", $overtime);
     }
     if ($quiz->grade) {
