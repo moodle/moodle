@@ -122,6 +122,10 @@ function quiz_upgrade($oldversion) {
                               ) TYPE=MyISAM COMMENT='Options for multianswer questions'; ");
     }
 
+    if ($oldversion < 2003080301) {
+        execute_sql(" ALTER TABLE {$CFG->prefix}quiz ADD eachattemptbuildsonthelast TINYINT(4) DEFAULT '0' NOT NULL AFTER `attempts` ");
+    }
+
     return true;
 }
 
