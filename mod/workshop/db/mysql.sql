@@ -7,6 +7,7 @@ CREATE TABLE `prefix_workshop` (
   `course` int(10) unsigned NOT NULL default '0',
   `name` varchar(255) NOT NULL default '',
   `description` text NOT NULL,
+  `wtype` tinyint(3) unsigned NOT NULL default '0',
   `nelements` tinyint(3) unsigned NOT NULL default '1',
   `nattachments` tinyint(3) unsigned NOT NULL default '0',
   `phase` tinyint(2) unsigned NOT NULL default '0',
@@ -28,6 +29,8 @@ CREATE TABLE `prefix_workshop` (
   `timemodified` int(10) unsigned NOT NULL default '0',
   `teacherweight` tinyint(3) unsigned NOT NULL default '1',
   `showleaguetable` tinyint(3) unsigned NOT NULL default '0',
+  `usepassword` tinyint(3) unsigned NOT NULL default '0',
+  `password` varchar(32) NOT NULL default '',
   PRIMARY KEY  (`id`)
 ) COMMENT='Defines workshop';
 # --------------------------------------------------------
@@ -50,6 +53,7 @@ CREATE TABLE `prefix_workshop_submissions` (
   `reliabilitygrade` int(3) unsigned NOT NULL default '0',
   `gradinggrade` int(3) unsigned NOT NULL default '0',
   `finalgrade` int(3) unsigned NOT NULL default '0',
+  `late` int(3) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   INDEX `userid` (`userid`) 
 ) COMMENT='Info about submitted work from teacher and students';

@@ -80,8 +80,13 @@
                     $link .= " ($submission->title)"; // show students the title of their submission(s)
                     $gradinggrade = workshop_gradinggrade($workshop, $USER);
                     $grade = workshop_submission_grade($workshop, $submission);
-                    $info = get_string("gradeforassessments", "workshop").": $gradinggrade/$workshop->gradinggrade; ".
-                       get_string("gradeforsubmission", "workshop").": $grade/$workshop->grade"; 
+                    if ($workshop->wtype) {
+                        $info = get_string("gradeforassessments", "workshop").
+                            ": $gradinggrade/$workshop->gradinggrade; ".get_string("gradeforsubmission", "workshop").
+                            ": $grade/$workshop->grade";
+                    } else { // simple assignemnt, don't show grading grade 
+                        $info = get_string("gradeforsubmission", "workshop").": $grade/$workshop->grade";
+                    }
                 }
                 if ($course->format == "weeks" or $course->format == "topics") {
                     $table->data[] = array ($workshop->section, $link, $info, $submitted, $due);

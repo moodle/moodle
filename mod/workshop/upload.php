@@ -43,7 +43,10 @@
     $newsubmission->userid         = $USER->id;
     $newsubmission->title  = $title;
     $newsubmission->description = trim($form->description);
-    $newsubmission->timecreated  = time();
+    $newsubmission->timecreated  = $timenow;
+    if ($timenow > $workshop->deadline) {
+        $newsubmission->late = 1;
+    }
     if (!$newsubmission->id = insert_record("workshop_submissions", $newsubmission)) {
         error("Workshop upload: Failure to create new submission record!");
     }

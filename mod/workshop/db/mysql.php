@@ -102,6 +102,23 @@ function workshop_upgrade($oldversion) {
         execute_sql("ALTER TABLE `{$CFG->prefix}workshop_assessments` ADD INDEX (`userid`)");
     }
 
+    if ($oldversion < 2004092700) {
+		table_column("workshop", "", "wtype", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "description");
+		table_column("workshop", "", "usepassword", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL");
+		table_column("workshop", "", "password", "VARCHAR", "32", "", "", "NOT NULL");
+		table_column("workshop_submissions", "", "late", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL");
+
+        // update wkey value
+        if ($workshops = get_records("workshop")) {
+            foreach ($workshops as $workshop) {
+                $wtype = 0; // 3 phases, no grading grades
+                if ($workshop->includeself or $workshop->ntassessments) $wtype = 1; // 3 phases with grading grades
+                if ($workshop->nsassessments) $wtype = 2; // 5 phases with grading grades 
+                set_field("workshop", "wtype", $wtype, "id", $workshop->id);
+            }
+        }
+    }
+
     
     return true;
 }

@@ -89,6 +89,29 @@
         }
     
 
+    /******************* admin clear late (flag) ************************************/
+    elseif ($action == 'adminclearlate' ) {
+
+        if (!isteacher($course->id)) {
+            error("Only teachers can look at this page");
+        }
+        if (empty($_GET['sid'])) {
+            error("Admin clear late flag: submission id missing");
+        }
+    
+        if (!$submission = get_record("workshop_submissions", "id", $_GET['sid'])) {
+            error("Admin clear late flag: can not get submission record");
+        }
+        if (set_field("workshop_submissions", "late", 0, "id", $_GET['sid'])) {
+            print_heading(get_string("clearlateflag", "workshop")." ".get_string("ok"));
+        }
+        
+        add_to_log($course->id, "workshop", "late flag cleared", "view.php?id=$cm->id", "submission $submission->id");
+        
+        redirect("submissions.php?id=$cm->id&amp;action=adminlist");
+    }
+    
+
     /******************* admin confirm delete ************************************/
     elseif ($action == 'adminconfirmdelete' ) {
 
@@ -135,6 +158,25 @@
         workshop_delete_submitted_files($workshop, $submission);
         
         print_continue("submissions.php?id=$cm->id&amp;action=adminlist");
+        }
+    
+
+    /******************* admin (confirm) late flag ************************************/
+    elseif ($action == 'adminlateflag' ) {
+
+        if (!isteacher($course->id)) {
+            error("Only teachers can look at this page");
+            }
+        if (empty($_GET['sid'])) {
+            error("Admin confirm late flag: submission id missing");
+            }
+        if (!$submission = get_record("workshop_submissions", "id", $_GET['sid'])) {
+            error("Admin confirm late flag: can not get submission record");
+            }
+
+        notice_yesno(get_string("clearlateflag","workshop")."?", 
+             "submissions.php?action=adminclearlate&amp;id=$cm->id&amp;sid=$_GET[sid]", 
+             "submissions.php?id=$cm->id&amp;action=adminlist");
         }
     
 
@@ -210,14 +252,18 @@
 		echo "<center><table border=\"1\" width=\"90%\"><tr>
 			<td bgcolor=\"$THEME->cellheading2\"><b>".$course->student."</b></td>";
 		echo "<td bgcolor=\"$THEME->cellheading2\"><b>".get_string("submission", "workshop")."</b></td>";
-		echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsdone", "workshop").
+		if ($workshop->wtype) {
+            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsdone", "workshop").
                 "</b></td>";
-		echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforassessments", 
+		    echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforassessments", 
                 "workshop")."</b></td>";
+        }
 		echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsby", "workshop", 
                 $course->teachers)."</b></td>";
-	    echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsby", "workshop", 
+	    if ($workshop->wtype) {
+            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsby", "workshop", 
                 $course->students)."</b></td>";
+        }
 		echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforsubmission", 
                 "workshop")."</b></td>";
 		echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("overallgrade", "workshop").
@@ -236,12 +282,16 @@
                     $grade = workshop_submission_grade($workshop, $submission);
 					echo "<tr><td>$user->firstname $user->lastname</td>";
 					echo "<td>".workshop_print_submission_title($workshop, $submission)."</td>\n";
-					echo "<td align=\"center\">".workshop_print_user_assessments($workshop, $user)."</td>";
-					echo "<td align=\"center\">$gradinggrade</td>";
+					if ($workshop->wtype) {
+                        echo "<td align=\"center\">".workshop_print_user_assessments($workshop, $user)."</td>";
+					    echo "<td align=\"center\">$gradinggrade</td>";
+                    }
 					echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, 
                             "teacher")."</td>";
-					echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, 
+					if ($workshop->wtype) {
+                        echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, 
                             "student")."</td>";
+                    }
 					echo "<td align=\"center\">$grade</td>";
 					echo "<td align=\"center\">".number_format($gradinggrade + $grade, 1)."</td></tr>\n";
 				}

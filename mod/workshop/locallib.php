@@ -1352,16 +1352,18 @@ function workshop_list_submissions_for_admin($workshop, $order) {
     switch ($order) {
         case "title" :
             $table->head = array("<a href=\"submissions.php?action=adminlist&amp;id=$cm->id&amp;order=name\">".
-                 get_string("submittedby", "workshop")."</a>", get_string("title", "workshop"), get_string("action", "workshop"));
+                 get_string("submittedby", "workshop")."</a>", get_string("title", "workshop"), 
+                 get_string("submitted", "workshop"), get_string("action", "workshop"));
             break;
         case "name" :
             $table->head = array (get_string("submittedby", "workshop"), 
                 "<a href=\"submissions.php?action=adminlist&amp;id=$cm->id&amp;order=title\">".
-                get_string("title", "workshop")."</a>", get_string("action", "workshop"));
+                get_string("title", "workshop")."</a>", get_string("submitted", "workshop"), 
+                get_string("action", "workshop"));
             break;
     }
-    $table->align = array ("left", "left", "left");
-    $table->size = array ("*", "*", "*");
+    $table->align = array ("left", "left", "left", "left");
+    $table->size = array ("*", "*", "*", "*");
     $table->cellpadding = 2;
     $table->cellspacing = 0;
 
@@ -1376,6 +1378,10 @@ function workshop_list_submissions_for_admin($workshop, $order) {
                 if (!ismember($groupid, $user->id)) {
                     continue; // skip this user
                 }
+            }
+            $datesubmitted = userdate($submission->timecreated);
+            if ($submission->late) {
+                $datesubmitted = "<font color=\"red\">".$datesubmitted."</font>";
             }
             $action = "<a href=\"submissions.php?action=adminamendtitle&amp;id=$cm->id&amp;sid=$submission->id\">".
                 get_string("amendtitle", "workshop")."</a>";
@@ -1400,12 +1406,17 @@ function workshop_list_submissions_for_admin($workshop, $order) {
                 $action .= " | <a href=\"assessments.php?action=adminlist&amp;id=$cm->id&amp;sid=$submission->id\">".
                     get_string("listassessments", "workshop")." ($nassessments)</a>";
             }
+            if ($submission->late) {
+                $action .= " | <a href=\"submissions.php?action=adminlateflag&amp;id=$cm->id&amp;sid=$submission->id\">".
+                    get_string("clearlateflag", "workshop")."</a>";
+            }
             $action .= " | <a href=\"submissions.php?action=adminconfirmdelete&amp;id=$cm->id&amp;sid=$submission->id\">".
                 get_string("delete", "workshop")."</a>";
             $table->data[] = array("$user->firstname $user->lastname", $submission->title.
                 " (".get_string("grade").": ".workshop_submission_grade($workshop, $submission)." ".
                 workshop_print_submission_assessments($workshop, $submission, "teacher").
-                " ".workshop_print_submission_assessments($workshop, $submission, "student").")", $action);
+                " ".workshop_print_submission_assessments($workshop, $submission, "student").")", $datesubmitted, 
+                $action);
         }
         print_heading(get_string("studentsubmissions", "workshop", $course->student), "center");
         print_table($table);
@@ -1754,10 +1765,14 @@ function workshop_list_user_submissions($workshop, $user) {
             else {
                 $action = '';
             }
+            $datesubmitted = userdate($submission->timecreated);
+            if ($submission->late) {
+                $datesubmitted = "<font color=\"red\">".$datesubmitted."</font>";
+            }
             $n = count_records_select("workshop_assessments", "submissionid = $submission->id AND
                     timecreated < ($timenow - $CFG->maxeditingtime)");
             $table->data[] = array(workshop_print_submission_title($workshop, $submission), $action,
-                userdate($submission->timecreated), $n);
+                $datesubmitted, $n);
         }
         print_table($table);
     }
@@ -2599,9 +2614,12 @@ function workshop_print_submission_assessments($workshop, $submission, $type) {
                                 $str .= "&lt;".number_format($assessment->grade, 0)." (0)&gt;</a> ";
                             }
                         } else {
-                            $str .= "[".number_format($assessment->grade, 0)." ((".
-                                    number_format($assessment->gradinggrade * $workshop->gradinggrade / 100, 0).
-                                    "))]</a> ";
+                            $str .= "[".number_format($assessment->grade, 0);
+                            if ($workshop->wtype) { // print null grade if there are student assessments
+                                $str .= " ((".number_format($assessment->gradinggrade * $workshop->gradinggrade / 100,
+                                            0)."))";
+                            }
+                            $str .= "]</a> ";
                         }
                     }
                 }

@@ -619,11 +619,19 @@ global $CFG;
         if ($workshop->phase > 1) {
             if ($students = get_course_students($workshop->course)) {
                 foreach ($students as $student) {
-                    $gradinggrade = workshop_gradinggrade($workshop, $student);
+                    if ($workshop->wtype) {
+                        $gradinggrade = workshop_gradinggrade($workshop, $student);
+                    } else { // ignore grading grades for simple assignments
+                        $gradinggrade = 0;
+                    }
                     $bestgrade = 0;
                     if ($submissions = workshop_get_user_submissions($workshop, $student)) {
                         foreach ($submissions as $submission) {
-                            $grade = workshop_submission_grade($workshop, $submission);
+                            if (!$submission->late) {
+                                $grade = workshop_submission_grade($workshop, $submission);
+                            } else {
+                                $grade = 0.01;
+                            }
                             if ($grade > $bestgrade) {
                                 $bestgrade = $grade;
                             }
@@ -633,7 +641,11 @@ global $CFG;
                 }
             }
         }
-        $return->maxgrade = $workshop->grade + $workshop->gradinggrade;
+        if ($workshop->wtype) {
+            $return->maxgrade = $workshop->grade + $workshop->gradinggrade;
+        } else { // ignore grading grades for simple assignemnts
+            $return->maxgrade = $workshop->grade;
+        }
     }
     return $return;
 }
@@ -915,6 +927,19 @@ function workshop_update_instance($workshop) {
     $workshop->deadline = make_timestamp($workshop->deadlineyear, 
             $workshop->deadlinemonth, $workshop->deadlineday, $workshop->deadlinehour, 
             $workshop->deadlineminute);
+
+    // set the workshop's type
+    $wtype = 0; // 3 phases, no grading grades
+    if ($workshop->includeself or $workshop->ntassessments) $wtype = 1; // 3 phases with grading grades
+    if ($workshop->nsassessments) $wtype = 2; // 5 phases with grading grades 
+    $workshop->wtype = $wtype;
+    
+    // encode password if necessary
+    if (!empty($workshop->password)) {
+		$workshop->password = md5($workshop->password);
+	} else {
+		unset($workshop->password);
+	}
 
     $workshop->id = $workshop->instance;
 
