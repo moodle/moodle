@@ -1,12 +1,12 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012800)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['addresource'] = 'Kaynak ekle';
-$string['chooseafile'] = 'Anket veya bir dosya yükle';
+$string['chooseafile'] = 'Seç veya bir dosya yükle';
 $string['chooseparameter'] = 'parametre seç';
 $string['directlink'] = 'Bu dosyaya direkt link';
-$string['directoryinfo'] = 'Seçilmiþ dizindeki tüm dizinler gösterilir.';
+$string['directoryinfo'] = 'Seçilmiþ dizindeki tüm dosyalar gösterilir.';
 $string['display'] = 'Pencere';
 $string['editingaresource'] = 'Kaynak düzenleme';
 $string['encryptedcode'] = 'Þifrelenmiþ kod';
@@ -14,6 +14,7 @@ $string['example'] = 'Örnek';
 $string['exampleurl'] = 'http://www.ornek.com/ornekdizin/dosya.html';
 $string['filename'] = 'Dosya adý';
 $string['filtername'] = 'Kaynak Adlarý Otomatik-Linkleme';
+$string['frameifpossible'] = 'Site navigasyonunu görünür kýlmak için kaynak frame içinde görünsün';
 $string['fulltext'] = 'Tam metin';
 $string['htmlfragment'] = 'HTML parçasý';
 $string['maindirectory'] = 'Ana dosya dizini';
@@ -34,8 +35,8 @@ $string['newwindow'] = 'Yeni pencere';
 $string['newwindowopen'] = 'Bu kaynaðý yeni bir pencerede aç';
 $string['note'] = 'Not';
 $string['notefile'] = 'Bu listede görülecek daha çok dosya yüklemek için 
-<A HREF=\"$a\">Dosya Yöneticisini</A> kullanýnýz.';
-$string['notypechosen'] = 'Bir tür seçmelisiniz.  Geri düðmesini kullanarak tekrar deneyiniz.';
+<a href=\"$a\">Dosya Yöneticisini</a> kullanýnýz.';
+$string['notypechosen'] = 'Bir tür seçmelisiniz. Geri düðmesini kullanarak tekrar deneyiniz.';
 $string['pagedisplay'] = 'Bu kaynaðý þu anki pencerede göster';
 $string['pagewindow'] = 'Ayný pencere';
 $string['parameter'] = 'Parametre';
@@ -51,10 +52,10 @@ $string['resourcetype5'] = 'Web Baðlantýsý';
 $string['resourcetype6'] = 'HTML Metni';
 $string['resourcetype9'] = 'Dizin';
 $string['resourcetypedirectory'] = 'Bir dizin göster';
-$string['resourcetypefile'] = 'Bir dosyaya veya web sitesine baðlantý';
+$string['resourcetypefile'] = 'Bir dosya/siteye baðlantý';
 $string['resourcetypehtml'] = 'Bir web sayfasý oluþtur';
-$string['resourcetypelabel'] = 'Yeni bir Etiket ekle';
-$string['resourcetypetext'] = 'Düz metin dosyasý oluþtur';
+$string['resourcetypelabel'] = 'Yeni bir etiket ekle';
+$string['resourcetypetext'] = 'Düzmetin dosyasý oluþtur';
 $string['searchweb'] = 'Web sayfasýný ara';
 $string['variablename'] = 'Deðiþken adý';
 

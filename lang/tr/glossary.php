@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4.4 (2004083140)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['addcomment'] = 'Yorum ekle';
@@ -72,10 +72,10 @@ $string['entryleveldefaultsettings'] = 'Kayýt Bazýndaki Varsayýlan Ayarlar';
 $string['entrysaved'] = 'Bu kayýt kaydedildi';
 $string['entryupdated'] = 'Bu kayýt güncellendi';
 $string['entryusedynalink'] = 'Bu kayýt otomatikmen linklensin';
-$string['explainaddentry'] = 'Þu anki terimler sözlüðüne yeni bir kayýt ekleyin.<br/>Kavram ve Taným zorunlu alanlardýr.';
+$string['explainaddentry'] = 'Þu anki terimler sözlüðüne yeni bir kayýt ekleyin.<br />Kavram ve Taným zorunlu alanlardýr.';
 $string['explainall'] = 'Bütün kayýtlarýn HEPSÝNÝ bir sayfada kullan';
 $string['explainalphabet'] = 'Bu dizini kullanarak göz atýn';
-$string['explainexport'] = 'Dosya oluþturuldu.<br/> Ýndirin ve güvenli bir yerde saklayýn. Bu kayýtlarý istediðiniz zaman bu derste veya diðer derslerde tekrar yükleyebilirsiniz.';
+$string['explainexport'] = 'Dosya oluþturuldu.<br /> Ýndirin ve güvenli bir yerde saklayýn. Bu kayýtlarý istediðiniz zaman bu derste veya diðer derslerde tekrar yükleyebilirsiniz.';
 $string['explainimport'] = 'Alýnacak dosyayý ve iþlem türünü belirtmeniz gerekiyor. <p>Dosyanýzý gönderin ve sonuçlarý inceleyin.</p>';
 $string['explainspecial'] = 'Bir harfle baþlamayan kayýtlarý gösterir';
 $string['exportedentry'] = 'Çýkartýlmýþ kayýt';
