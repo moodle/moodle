@@ -475,6 +475,12 @@ function main_upgrade($oldversion=0) {
         rebuild_course_cache();
     }
 
+    if ($oldversion < 2004042700) {
+        table_column("user",   "lang", "lang", "varchar", "10", "", "en");
+        table_column("groups", "lang", "lang", "varchar", "10", "", "");
+        table_column("course", "lang", "lang", "varchar", "10", "", "");
+    }
+
     return $result;
 
 }
