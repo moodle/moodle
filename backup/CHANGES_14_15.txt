@@ -23,7 +23,7 @@ Now I show the specific detailed status of every item in the process:
 13. TODO: quiz_calculated->correctaswerformat.
 14. TODO: quiz->popup and questionsperpage.
 15. TODO: quiz_categories->parent and sortorder.
-16. TODO: Messages subsystem (should it be done?).
+16. DONE: Message subsystem (MIM). Available in SITE backups!
 17. TODO: Detect questions without categories and create a category for them
           (in backup process).
 18. TODO: If the course hasn't users and the importer is a teacher, make him
@@ -45,5 +45,6 @@ Now I show the specific detailed status of every item in the process:
           Done in manual backups, config, logs and restore.
 28. TODO: Add course->theme, groups->them and user->theme. If no present,
           default blank.
+29. TODO: Add support for block instances in modules. Bug 2517.
 Eloy (stronk7)
 23-01-2004
