@@ -99,6 +99,10 @@ line at the top of your web browser window.
 Cheers from the '\$a->sitename' administrator,
 \$a->admin";
 
+$string[emaildisplay] = "Email display";
+$string[emaildisplayno] = "Hide my real email address from everyone";
+$string[emaildisplayyes] = "Allow everyone to see my email address";
+$string[emaildisplaycourse] = "Allow only other course members to see my email address";
 $string[emailexists] = "This email address is already registered.";
 $string[emailmustbereal] = "Note: your email address must be a real one";
 $string[enrolmentkey] = "Enrolment key";

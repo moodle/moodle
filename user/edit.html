@@ -67,6 +67,15 @@ if (isadmin()) {
 	</td>
 </tr>
 <tr valign=top>
+	<td><P><? print_string("emaildisplay") ?>:</td>
+	<td><? 
+    $choices["0"] = get_string("emaildisplayno");
+    $choices["1"] = get_string("emaildisplayyes");
+    $choices["2"] = get_string("emaildisplaycourse");
+    choose_from_menu ($choices, "maildisplay", $user->maildisplay, "") ?>
+	</td>
+</tr>
+<tr valign=top>
 	<td><P><? print_string("webpage") ?>:</td>
 	<td><input type="text" name="url" size=30 value="<? p($user->url) ?>">
 	<? formerr($err["url"]) ?>

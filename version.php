@@ -17,7 +17,7 @@
 // If there's something it cannot do itself, it 
 // will tell you what you need to do.
 
-$version = 2002082100;
+$version = 2002082101;
 
 function upgrade_moodle($oldversion=0) {
 
@@ -49,6 +49,10 @@ function upgrade_moodle($oldversion=0) {
 
     if ($oldversion < 2002082100) {
         execute_sql(" ALTER TABLE `course` CHANGE `guest` `guest` TINYINT(2) UNSIGNED DEFAULT '0' NOT NULL ");
+    }
+
+    if ($oldversion < 2002082101) {
+        execute_sql("  ALTER TABLE `user` ADD `maildisplay` TINYINT(2) UNSIGNED DEFAULT '2' NOT NULL AFTER `mailformat` ");
     }
 
     return true;

@@ -94,7 +94,9 @@
         }
     }
 
-    print_row(get_string("email").":", "<A HREF=\"mailto:$user->email\">$user->email</A>");
+    if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category) or isteacher($course->id)) {
+        print_row(get_string("email").":", "<A HREF=\"mailto:$user->email\">$user->email</A>");
+    }
 
     if ($user->url) {
         print_row(get_string("webpage").":", "<A HREF=\"$user->url\">$user->url</A>");
