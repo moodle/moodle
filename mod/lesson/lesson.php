@@ -400,6 +400,9 @@
 			} else {
 				lesson_qtype_menu($LESSON_QUESTION_TYPE, LESSON_MULTICHOICE, 
 								  "lesson.php?id=$cm->id&action=addpage&pageid=".$_GET['pageid'].$linkadd);
+				echo "<br><br><b>".get_string("multianswer", "lesson").":</b> \n";
+				echo " <label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>"; //CDC hidden label added.
+				helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
 			}
 			echo "</td></tr>\n";
 		?>
@@ -658,15 +661,20 @@
 				}
 				if ((($timer->starttime + $lesson->maxtime * 60) - time()) > 0) {
 					// code for the clock
-					echo "<table align=\"right\"><tr><td>";
-					echo "<script language=\"javascript\">\n";
-						echo "var starttime = ". $timer->starttime . ";\n";
-						echo "var servertime = ". time() . ";\n";
-						echo "var testlength = ". $lesson->maxtime * 60 .";\n";
-						echo "document.write('<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"timer.js\"><\/SCRIPT>');\n";
-						echo "window.onload = function () { show_clock(); }";
-					echo "</script>\n";
-					echo "</td></tr></table><br><br>";
+						print_simple_box_start("right", "150px", "#ffffff", 0);
+                        echo "<table border=\"0\" valign=\"top\" align=\"center\" class=\"generaltable\" width=\"100%\" cellspacing=\"0\">".
+							"<tr><th valign=\"top\" class=\"generaltableheader\">".get_string("timeremaining", "lesson").
+							"</th></tr><tr><td align=\"center\" class=\"generaltablecell\">";
+                        echo "<script language=\"javascript\">\n";
+                            echo "var starttime = ". $timer->starttime . ";\n";
+                            echo "var servertime = ". time() . ";\n";
+                            echo "var testlength = ". $lesson->maxtime * 60 .";\n";
+                            echo "document.write('<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"timer.js\"><\/SCRIPT>');\n";
+                            echo "window.onload = function () { show_clock(); }\n";
+                        echo "</script>\n";
+                        echo "</td></tr></table>";
+						print_simple_box_end();
+						echo "<br /><br /><br /><br />";
 				} else {
 						redirect("view.php?id=$cm->id&action=navigation&pageid=".LESSON_EOL."&outoftime=normal", get_string("outoftime", "lesson"));
 				}
@@ -717,20 +725,13 @@
 					$newpageid = $answer->jumpto;
 				}
 				/// 6/29/04 //
-	            $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
-
-				$newessay->lessonid = $lesson->id;
-				$newessay->pageid = $pageid;
-				$newessay->answerid = $answerid;
-				$newessay->try = $nretakes;
-				$newessay->userid = $USER->id;
-				$newessay->answer = $useranswer;
-				$newessay->timesubmitted = time();
-				if (!isteacher($course->id)) {
-					if (!insert_record("lesson_essay", $newessay)) {
-						error("Error: could not submit essay");
-					}
-				}
+				$userresponse->sent=0;
+				$userresponse->graded = 0;
+				$userresponse->score = 0;
+				$userresponse->answer = $useranswer;
+				$userresponse->response = "";
+				$userresponse = serialize($userresponse);
+				
 			 	break;
 			/// CDC-FLAG ///
 		     case LESSON_SHORTANSWER :
@@ -738,36 +739,35 @@
                     $noanswer = true;
                     break;
                 }
+				$userresponse = $useranswer;
                 if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
                     error("Continue: No answers found");
                 }
                 foreach ($answers as $answer) {
 					/// CDC-FLAG ///
-					if ($lesson->custom) {
-						if($answer->score > 0) {
-							if ($page->qoption) {
-								// case sensitive
-								if ($answer->answer == $useranswer) {
-									$correctanswer = true;
-									$answerid = $answer->id;
-									$newpageid = $answer->jumpto;
-									if (trim(strip_tags($answer->response))) {
-										$response = $answer->response;
-									}
+					if ($lesson->custom && $answer->score > 0) {
+						if ($page->qoption) {
+							// case sensitive
+							if ($answer->answer == $useranswer) {
+								$correctanswer = true;
+								$answerid = $answer->id;
+								$newpageid = $answer->jumpto;
+								if (trim(strip_tags($answer->response))) {
+									$response = $answer->response;
 								}
-							} else {
-								// case insensitive
-								if (strcasecmp($answer->answer, $useranswer) == 0) {
-									$correctanswer = true;
-									$answerid = $answer->id;
-									$newpageid = $answer->jumpto;
-									if (trim(strip_tags($answer->response))) {
-										$response = $answer->response;
-									}
+							}
+						} else {
+							// case insensitive
+							if (strcasecmp($answer->answer, $useranswer) == 0) {
+								$correctanswer = true;
+								$answerid = $answer->id;
+								$newpageid = $answer->jumpto;
+								if (trim(strip_tags($answer->response))) {
+									$response = $answer->response;
 								}
 							}
 						}
-					} elseif (lesson_iscorrect($pageid, $answer->jumpto)) {  /// CDC-FLAG 6/21/04 ///
+					} elseif (lesson_iscorrect($pageid, $answer->jumpto) && !$lesson->custom) {  /// CDC-FLAG 6/21/04 ///
                         if ($page->qoption) {
                             // case sensitive
                             if ($answer->answer == $useranswer) {
@@ -848,6 +848,8 @@
                         $noanswer = true;
                         break;
                     }
+					// get what the user answered
+					$userresponse = implode(",", $useranswers);
                     // get the answers in a set order, the id order
                     if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
                         error("Continue: No answers found");
@@ -1000,6 +1002,16 @@
                     }
                     $i++;
                 }
+				// get he users exact responses for record keeping
+				foreach ($response as $value) {
+					foreach($answers as $answer) {
+						if ($value == $answer->response) {
+							$userresponse[] = $answer->id;
+						}
+					}
+				}
+				$userresponse = implode(",", $userresponse);
+
                 if ($ncorrect == count($answers)-2) {  // dont count correct/wrong responses in the total.
                    	$response = get_string("thatsthecorrectanswer", "lesson");
 					foreach ($answers as $answer) {
@@ -1012,7 +1024,7 @@
                     if (isset($correctpageid)) {
 						$newpageid = $correctpageid;
 					}
-					if (isset($correctasnwerid)) {
+					if (isset($correctanswerid)) {
 						$answerid = $correctanswerid;
 					}
                     $correctanswer = true;
@@ -1043,6 +1055,7 @@
                     $noanswer = true;
                     break;
                 }
+				$userresponse = $useranswer;
                 if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
                     error("Continue: No answers found");
                 }
@@ -1068,13 +1081,14 @@
 							if ($answer->score > 0) {
 								$correctanswer = true;
 								$answerid = $answer->id;
+							} else {
+								$correctanswer = false;
 							}
 						}
 						/// CDC-FLAG ///
                         break;
                     }
                 }
-                
                 if ($correctanswer) {
                     if (!$response) {
                         $response = get_string("thatsthecorrectanswer", "lesson");
@@ -1140,7 +1154,7 @@
 					$newpageid = lesson_unseen_branch_jump($lesson->id, $USER->id);
 				}
 				/// CDC-FLAG ///
-                // no need to record anything in lesson_attempts				 
+                // no need to record anything in lesson_attempts			
                 redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$newpageid");
             	print_footer($course);
                 exit();
@@ -1160,9 +1174,16 @@
                 $attempt->answerid = $answerid;
                 $attempt->retry = $nretakes;
                 $attempt->correct = $correctanswer;
+				if(isset($userresponse)) {
+					$attempt->useranswer = $userresponse;
+				}
                 $attempt->timeseen = time();
 				/// CDC-FLAG /// -- dont want to insert the attempt if they ran out of time
 				if (!$outoftime) {
+					// if allow modattempts, then update the old attempt record, otherwise, insert new answer record
+                    if (isset($USER->modattempts[$lesson->id])) {
+						$attempt->retry = $nretakes - 1; // they are going through on review, $nretakes will be too high
+					}
 					if (!$newattemptid = insert_record("lesson_attempts", $attempt)) {
 						error("Continue: attempt not inserted");
 					}
@@ -1234,7 +1255,11 @@
 				if (isteacher($course->id)) {
 					echo "<div align=\"center\">".get_string("teacherongoingwarning", "lesson")."</div><br>";
 				} else {
-					lesson_calculate_ongoing_score($lesson, $USER);
+					$ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
+					if (isset($USER->modattempts[$lesson->id])) {
+						$ntries--;
+					}
+					lesson_calculate_ongoing_score($lesson, $USER->id, $ntries);
 				}
 			}
 			/// CDC-FLAG ///
@@ -1262,18 +1287,47 @@
 
 		
 		/// CDC-FLAG 6/18/04 ///  - this is where some jump numbers are interpreted
-		if ($newpageid != LESSON_CLUSTERJUMP && $pageid != 0 && $newpageid > 0) {  // going to check to see if the page that the user is going to view next, is a cluster page.  If so, dont display, go into the cluster.  The $newpageid > 0 is used to filter out all of the negative code jumps.
+		if($outoftime) {
+			$newpageid = LESSON_EOL;  // ran out of time for the test, so go to eol
+		} elseif (isset($USER->modattempts[$lesson->id])) {
+			// make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time
+			if ($USER->modattempts[$lesson->id] == $pageid) {  // remember, this session variable holds the pageid of the last page that the user saw
+				$newpageid = LESSON_EOL;
+			} else {
+				$nretakes--; // make sure we are looking at the right try.
+				$attempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $USER->id AND retry = $nretakes", "timeseen", "id, pageid");
+				$found = false;
+				$temppageid = 0;
+				foreach($attempts as $attempt) {
+					if ($found && $temppageid != $attempt->pageid) { // now try to find the next page, make sure next few attempts do no belong to current page
+						$newpageid = $attempt->pageid;
+						break;
+					}
+					if ($attempt->pageid == $pageid) {
+						$found = true; // if found current page
+						$temppageid = $attempt->pageid;
+					}
+				}
+			}
+		} elseif ($newpageid != LESSON_CLUSTERJUMP && $pageid != 0 && $newpageid > 0) {  // going to check to see if the page that the user is going to view next, is a cluster page.  If so, dont display, go into the cluster.  The $newpageid > 0 is used to filter out all of the negative code jumps.
 			if (!$page = get_record("lesson_pages", "id", $newpageid)) {
 				error("Error: could not find page");
 			}
 			if ($page->qtype == LESSON_CLUSTER) {
 				$newpageid = LESSON_CLUSTERJUMP;
-				$pageid = $page->id;
+			} elseif ($page->qtype == LESSON_ENDOFCLUSTER) {
+				$jump = get_field("lesson_answers", "jumpto", "pageid", $page->id, "lessonid", $lesson->id);
+				if ($jump == LESSON_NEXTPAGE) {
+					if ($page->nextpageid == 0) {
+						$newpageid = LESSON_EOL;
+					} else {
+						$newpageid = $page->nextpageid;
+					}
+				} else {
+					$newpageid = $jump;
+				}
 			}
-		}
-		if($outoftime) {
-			$newpageid = LESSON_EOL;  // ran out of time for the test, so go to eol
-		} elseif($newpageid == LESSON_UNSEENBRANCHPAGE) {
+		} elseif ($newpageid == LESSON_UNSEENBRANCHPAGE) {
 			if (isteacher($course->id)) {
 				if ($page->nextpageid == 0) {
 					$newpageid = LESSON_EOL;
@@ -1308,25 +1362,41 @@
 			echo "</div>"; //Close Mark's big div tag???
 			
 			echo "<table width=\"$lesson->width\" cellpadding=\"5\" cellspacing=\"5\"><tr><td>\n";
+			if (isset($USER->modattempts[$lesson->id])) {
+				echo "<p align=\"center\">".
+					get_string("savechangesandeol", "lesson")."<br /><br />".
+					"<input type=\"submit\" onClick='pageform.pageid.value=".LESSON_EOL.";' name=\"save\" value=\"".
+					get_string("savechanges", "lesson")."\"></p>\n";
+				echo "<p align=\"center\">".get_string("or", "lesson")."<br /><br />".
+					get_string("continuetoanswer", "lesson")."</p>\n";
+			}
 			if ($lesson->review && !$correctanswer && !$noanswer) {
 				echo "<p class=\"lessonAbutton\" align=\"center\"><input type=\"submit\" onClick='pageform.pageid.value=$pageid;' name=\"review\" value=\"".
 					get_string("reviewquestionback", "lesson")."\"></p>\n";
-				echo "<p class=\"lessonAbutton\" align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
+				echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
 					get_string("reviewquestioncontinue", "lesson")."\"></p>\n";
 			} else {
-				echo "<p class=\"lessonAbutton\" align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
+				echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
 					get_string("continue", "lesson")."\"></p>\n";
 			}
 			echo "</td></tr></table>";
 
 		} else {
+			if (isset($USER->modattempts[$lesson->id])) {
+				echo "<p align=\"center\">".
+					get_string("savechangesandeol", "lesson")."<br /><br />".
+					"<input type=\"submit\" onClick='pageform.pageid.value=".LESSON_EOL.";' name=\"save\" value=\"".
+					get_string("savechanges", "lesson")."\"></p>\n";
+				echo "<p align=\"center\">".get_string("or", "lesson")."<br /><br />".
+					get_string("continuetoanswer", "lesson")."</p>\n";
+			}
 			if ($lesson->review && !$correctanswer && !$noanswer) {
-				echo "<p class=\"lessonAbutton\" align=\"center\"><input type=\"submit\" onClick='pageform.pageid.value=$pageid;' name=\"review\" value=\"".
+				echo "<p align=\"center\"><input type=\"submit\" onClick='pageform.pageid.value=$pageid;' name=\"review\" value=\"".
 					get_string("reviewquestionback", "lesson")."\"></p>\n";
-				echo "<p class=\"lessonAbutton\" align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
+				echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
 					get_string("reviewquestioncontinue", "lesson")."\"></p>\n";
 			} else {
-				echo "<p class=\"lessonAbutton\" align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
+				echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
 					get_string("continue", "lesson")."\"></p>\n";
 			}
 		}
