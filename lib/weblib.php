@@ -1636,7 +1636,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     if (substr($path, -1) == '/') {
         $path .= 'index';
     }
-    if (empty($path)) {
+    if (empty($path) or $path = '/index') {
         $pageid    = 'site-index';
         $pageclass = 'course course-'.SITEID;
     } else {
