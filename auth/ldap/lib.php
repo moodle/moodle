@@ -1,53 +1,40 @@
-<?PHP  // $Id$
-/* CHANGELOG:
-30.09.2004 Removed outdated documentation
-24.09.2004 Lot of changes:
-           -Added usertype configuration, this removes need for separate obejcclass and attributename configuration
-            Overriding values is still supported
-           
-21.09.2004 Added support for multiple ldap-servers.
-           Theres no nedd to use auth_ldap_bind,
-           Anymore auth_ldap_connect does this for you
-19.09.2004 Lot of changes are coming from Martin Langhoff
-           Current code is working but can change a lot. Be warned...
-15.08.2004 Added support for user syncronization
-24.02.2003 Added support for coursecreators
-20.02.2003 Added support for user creation
-12.10.2002 Reformatted source for consistency
-03.10.2002 First version to CVS
-29.09.2002 Clean up and splitted code to functions v. 0.02
-29.09.2002 LDAP authentication functions v. 0.01
-Distributed under GPL (c)Petri Asikainen 2002-2004
-
-AUTOMATING SYNCRONIZATION
-Right now moodle does not automaticly run auth_sync_users() so you have to create
-your own script like:
-auth/ldap/cron.php
-<?
-    require_once("../../config.php");
-    require_once("../../course/lib.php");
-    require_once('../../lib/blocklib.php');
-    require_once("../../mod/resource/lib.php");
-    require_once("lib.php");
-    require_once("../../mod/forum/lib.php");
-    auth_sync_users();
-?>
-
-Usersync is quite heavy process, it could be good idea to place that script outside of webroot and run it  with cron.
-                            
-
-Any feedback is wellcome,
-
-Petri Asikainen paca@sci.fi
-*/
+<?PHP  
 /**
- * auth_user_login() authenticates user againt external userdatabase
+ *
+ * @author Petri Asikainen
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package moodleauth
+ 
+ * LDAPA-authentication functions
+ *
+ * 30.09.2004 Removed outdated documentation
+ * 24.09.2004 Lot of changes:
+ *           -Added usertype configuration, this removes need for separate obejcclass and attributename configuration
+ *            Overriding values is still supported
+ *          
+ * 21.09.2004 Added support for multiple ldap-servers.
+ *          Theres no nedd to use auth_ldap_bind,
+ *          Anymore auth_ldap_connect does this for you
+ * 19.09.2004 Lot of changes are coming from Martin Langhoff
+ *          Current code is working but can change a lot. Be warned...
+ * 15.08.2004 Added support for user syncronization
+ * 24.02.2003 Added support for coursecreators
+ * 20.02.2003 Added support for user creation
+ * 12.10.2002 Reformatted source for consistency
+ * 03.10.2002 First version to CVS
+ * 29.09.2002 Clean up and splitted code to functions v. 0.02
+ * 29.09.2002 LDAP authentication functions v. 0.01
+ */
+
+/**
+ * authenticates user againt external userdatabase
  *
  * Returns true if the username and password work
  * and false if they don't
  *
- * @username  username
- * @password  plaintext password
+ * @param string  username
+ * @param string  plaintext password
  *
  */
 
@@ -84,13 +71,14 @@ function auth_user_login ($username, $password) {
 }
 
 /**
- * auth_get_userinfo reads userinformation from ldap and return it in array()
+ * reads userinformation from ldap and return it in array()
  *
  * Read user information from external database and returns it as array().
  * Function should return all information available. If you are saving
  * this information to moodle user-table you should honor syncronization flags
  *
- * @username username
+ * @param string $username username
+ * @return array
  */
 function auth_get_userinfo($username){
     global $CFG;
@@ -126,10 +114,11 @@ function auth_get_userinfo($username){
 }
 
 /**
- * auth_get_userlist returns all usernames from external database
+ * returns all usernames from external database
  *
  * auth_get_userlist returns all usernames from external database
  *
+ * @return array 
  */
 function auth_get_userlist () {
     global $CFG;
@@ -137,7 +126,7 @@ function auth_get_userlist () {
     return auth_ldap_get_userlist("($CFG->ldap_user_attribute=*)");
 }
 /**
- * auth_user_exists() checks if user exists on external db
+ * checks if user exists on external db
  */
 function auth_user_exists ($username) {
    global $CFG; 
@@ -148,14 +137,14 @@ function auth_user_exists ($username) {
 }
 
 /**
- * auth_user_create() creates new user on external database
+ * creates new user on external database
  *
  * auth_user_create() creates new user on external database
  * By using information in userobject
  * Use auth_user_exists to prevent dublicate usernames
  *
- * @userobject  Moodle userobject
- * @plainpass   Plaintext password
+ * @param mixed $userobject  Moodle userobject
+ * @param mixed $plainpass   Plaintext password
  */
 function auth_user_create ($userobject,$plainpass) {
 	global $CFG;
@@ -186,14 +175,15 @@ function auth_user_create ($userobject,$plainpass) {
     
 }
 
-/*
+/*/
+ * 
  * auth_get_users() returns userobjects from external database
  *
  * Function returns users from external databe as Moodle userobjects
  * If filter is not present it should return ALL users in external database
  * 
- * @filter Optinal: substring of username
- * 
+ * @param mixed $filter substring of username
+ * @returns array of userobjects 
  */
 function auth_get_users($filter='*') {
     global $CFG;
@@ -259,12 +249,12 @@ function auth_get_users($filter='*') {
 }
 
 /**
- * auth_password_expire return number of daysi to user users password expires
+ * return number of daysi to user users password expires
  *
  * If userpassword does not expire it should return 0. If password is already expired
  * it should return negative value.
  *
- * @username    username
+ * @param mixed $username    username
  *
  */
 function auth_password_expire($username) {
@@ -299,7 +289,7 @@ function auth_password_expire($username) {
 }
 
 /**
- * auth_sync_users syncronizes user fron external db to moodle user table
+ * syncronizes user fron external db to moodle user table
  *
  * Sync shouid be done by using idnumber attribute, not username.
  * You need to pass firstsync parameter to function to fill in
@@ -308,7 +298,7 @@ function auth_password_expire($username) {
  * Syncing users removes (disables) users that dont exists anymore in external db.
  * Creates new users and updates coursecreator status of users. 
  * 
- * @firstsync  Optional: set to true to fill idnumber fields if not filled yet
+ * @param mixed $firstsync  Optional: set to true to fill idnumber fields if not filled yet
  */
 function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_insert_records = 1) {
 //Syncronizes userdb with ldap
@@ -452,7 +442,7 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
  *
  * Activates (enables) user in external db so user can login to external db
  *
- * @username    username
+ * @param mixed $username    username
  *
  */
 function auth_user_activate ($username) {
@@ -474,7 +464,7 @@ function auth_user_activate ($username) {
  *
  * Disables user in external db so user can't login to external db
  *
- * @username    username
+ * @param mixed $username    username
  *
  */
 function auth_user_disable ($username) {
@@ -495,8 +485,8 @@ function auth_user_disable ($username) {
  *
  * auth_iscreator returns true if user should be coursecreator
  *
- * @username    username
- *
+ * @param mixed $username    username
+ * @return
  */
 function auth_iscreator($username=0) {
 ///if user is member of creator group return true
@@ -522,9 +512,9 @@ function auth_iscreator($username=0) {
  * Modifies user in external database. It takes olduser (before changes) and newuser (after changes) 
  * conpares information saved modified information to external db.
  *
- * @olduser     Userobject before modifications
- *
- * @newuser     Userobject new modified userobject
+ * @param mixed $olduser     Userobject before modifications
+ * @param mixed $newuser     Userobject new modified userobject
+ * @return
  *
  */
 function auth_user_update($olduser, $newuser) {
@@ -585,9 +575,9 @@ function auth_user_update($olduser, $newuser) {
  * called when the user password is updated.
  * changes userpassword in external db
  *
- * @username    Username
- *
- * @newpassword Plaintext password
+ * @param mixed $username    Username
+ * @param mixed $newpassword Plaintext password
+ * @return
  *
  */
 function auth_user_update_password($username, $newpassword) {
@@ -624,8 +614,9 @@ function auth_user_update_password($username, $newpassword) {
 //private functions are named as auth_ldap*
 
 /**
- * auth_ldap_supported_usertypes return predefined usertypes
+ * returns predefined usertypes
  *
+ * @return
  */
 
 function auth_ldap_suppported_usertypes (){
@@ -642,7 +633,7 @@ function auth_ldap_suppported_usertypes (){
 }    
 
 /**
- * auth_ldap_init initializes needed variables for ldap-module
+ * initializes needed variables for ldap-module
  *
  * Uses names defined in auth_ldap_supported_usertypes.
  * $default is first defined as:
@@ -725,13 +716,14 @@ function auth_ldap_init () {
 }
 
 /**
- * auth_ldap_expirationtime2unix take expirationtime and return it as unixseconds
+ * take expirationtime and return it as unixseconds
  * 
  * takes expriration timestamp readed from ldap
  * returns it as unix seconds
  * depends on $CFG->usertype variable
  *
- * @time   Time stamp readed from ldap as it is.
+ * @param mixed time   Time stamp readed from ldap as it is.
+ * @return timestamp
  */
 
 function auth_ldap_expirationtime2unix ($time) {
@@ -758,13 +750,12 @@ function auth_ldap_expirationtime2unix ($time) {
 }
 
 /*
- * auth_ldap_isgroupmember checks if user belong to specific group(s)
+ * checks if user belong to specific group(s)
  *
  * Returns true if user belongs group in grupdns string.
  *
- * @username    username
- *
- * @groupdns    string of group dn separated by ;
+ * @param mixed $username    username
+ * @param mixed $groupdns    string of group dn separated by ;
  *
  */
 function auth_ldap_isgroupmember ($username='', $groupdns='') {
@@ -802,11 +793,12 @@ function auth_ldap_isgroupmember ($username='', $groupdns='') {
 }
 
 /**
- * auth_ldap_connect() connect to ldap server
+ * connects to ldap server
  *
  * Tries connect to specified ldap servers.
  * Returns connection result or error.
  *
+ * @return connection result
  */
 function auth_ldap_connect(){
 /// connects  and binds to ldap-server
@@ -843,14 +835,13 @@ function auth_ldap_connect(){
 }
 
 /**
- * auth_ldap_find_userdn retuns dn of username
+ * retuns dn of username
  *
  * Search specified contexts for username and return user dn
  * like: cn=username,ou=suborg,o=org
  *
- * @ldapconnection  $ldapconnection result
- * 
- * @username username
+ * @param mixed $ldapconnection  $ldapconnection result
+ * @param mixed $username username
  *
  */
 
@@ -893,8 +884,9 @@ function auth_ldap_find_userdn ($ldapconnection, $username){
 }
 
 /**
- * auth_ldap_attributes retuns user attribute mappings between moodle and ldap
+ * retuns user attribute mappings between moodle and ldap
  *
+ * @return array
  */
 
 function auth_ldap_attributes (){
@@ -917,8 +909,9 @@ function auth_ldap_attributes (){
 }
 
 /**
- * auth_ldap_get_userlist return all usernames from ldap
+ * return all usernames from ldap
  *
+ * @return array
  */
 
 function auth_ldap_get_userlist($filter="*") {
@@ -965,11 +958,12 @@ function auth_ldap_get_userlist($filter="*") {
 }
 
 /**
- * auth_ldap_get_entries return entries from ldap
+ * return entries from ldap
  *
  * Returns values like ldap_get_entries but is
  * binary compatible
  *
+ * @return array ldap-entries
  */
    
 function auth_ldap_get_entries($conn, $searchresult){
