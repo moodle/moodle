@@ -4,8 +4,6 @@
     require_once("lib.php");
 
     require_variable($id);                // forum
-    optional_variable($subscribe, '');    // 'all' or 'none'
-    optional_variable($unsubscribe, '');  // a single user id
     optional_variable($group);            // change of group
     
     optional_variable($edit);     // Turn editing on and off
@@ -32,19 +30,14 @@
 
     add_to_log($course->id, "forum", "view subscribers", "subscribers.php?id=$forum->id", $forum->id, $cm->id);
     
-    if (isteacheredit($course->id)) {
-        if (isset($_GET['edit'])) {
-            if($edit == "on") {
-                $USER->subscriptionsediting = true;
-            } else {
-                $USER->subscriptionsediting = false;
-            }
+    if (isset($_GET['edit'])) {
+        if($edit == "on") {
+            $USER->subscriptionsediting = true;
+        } else {
+            $USER->subscriptionsediting = false;
         }
-    } else {
-        $USER->subscriptionsediting = false;
     }
 
-    $strunsubscribeshort = get_string("unsubscribeshort", "forum");
     $strsubscribeall = get_string("subscribeall", "forum");
     $strsubscribenone = get_string("subscribenone", "forum");
     $strsubscribers = get_string("subscribers", "forum");
@@ -62,76 +55,20 @@
     print_header("$course->shortname: $strsubscribers", "$course->fullname", "$navigation", 
         "", "", true, forum_update_subscriptions_button($course->id, $id));
 
-    if (empty($USER->subscriptionsediting)) {         /// Display an overview of subscribers
-    
 /// Check to see if groups are being used in this forum
-        if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-            $currentgroup = setup_and_print_groups($course, $groupmode, "subscribers.php?id=$forum->id");
-        } else {
-            $currentgroup = false;
-        }
-    
-        if ($subscribe == 'all') {
-            if ($forum->type == 'teacher') {
-                $users = get_course_teachers($course->id);
-            } elseif ($currentgroup) {
-                $users = get_group_users($currentgroup);
-            } else {
-                $users = get_course_users($course->id);
-            }
-            if ($users) {
-                foreach ($users as $user) {
-                    forum_subscribe($user->id, $forum->id);
-                }
-            }
-        } else if ($subscribe == 'none') {
-            if ($currentgroup) {
-                if ($users = get_group_users($currentgroup)) {
-                    foreach ($users as $user) {
-                        forum_unsubscribe($user->id, $forum->id);
-                    }
-                }
-            } else {
-                delete_records("forum_subscriptions", "forum", $forum->id);
-            }
-        }
-    
-        if ($unsubscribe) {
-            if ($user = get_record('user', 'id', $unsubscribe)) {
-                forum_unsubscribe($user->id, $forum->id);
-                $info->name  = fullname($user);
-                $info->forum = $forum->name;
-                notify(get_string("nownotsubscribed", "forum", $info));
-            }
-        }
-    
+    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
+        $currentgroup = setup_and_print_groups($course, $groupmode, "subscribers.php?id=$forum->id");
+    } else {
+        $currentgroup = false;
+    }
+
+    if (empty($USER->subscriptionsediting)) {         /// Display an overview of subscribers
+        
         if (! $users = forum_subscribed_users($course, $forum, $currentgroup) ) {
-    
-            if (!$forum->forcesubscribe) {
-                echo '<center>';
-                $options['id'] = $forum->id;
-                $options['subscribe'] = 'all';
-                print_single_button('subscribers.php', $options, $strsubscribeall);
-                echo '</center>';
-            }
     
             print_heading(get_string("nosubscribers", "forum"));
     
         } else {
-    
-            if (!$forum->forcesubscribe) {
-                echo '<table align="center"><tr>';
-                echo '<td>';
-                $options['id'] = $forum->id;
-                $options['subscribe'] = 'all';
-                print_single_button('subscribers.php', $options, $strsubscribeall);
-                echo '</td>';
-                echo '<td>';
-                $options['subscribe'] = 'none';
-                print_single_button('subscribers.php', $options, $strsubscribenone);
-                echo '</td>';
-                echo '</tr></table>';
-            }
     
             print_heading(get_string("subscribersto","forum", "'$forum->name'"));
     
@@ -140,11 +77,9 @@
                 echo "<tr><td>";
                 print_user_picture($user->id, $course->id, $user->picture);
                 echo "</td><td bgcolor=\"$THEME->cellcontent\">";
-                echo "$user->firstname $user->lastname";
+                echo fullname($user);
                 echo "</td><td bgcolor=\"$THEME->cellcontent\">";
                 echo "$user->email";
-                echo "</td><td>";
-                echo "<font size=1><a href=\"subscribers.php?id=$forum->id&unsubscribe=$user->id\">$strunsubscribeshort</a></font>";
                 echo "</td></tr>";
             }
             echo "</table>";
@@ -196,7 +131,7 @@
     $previoussearch = (!empty($frm->search) or ($frm->previoussearch == 1)) ;
 
 /// Get all existing subscribers for this forum.
-    if (!$subscribers = forum_subscribed_users($course, $forum)) {
+    if (!$subscribers = forum_subscribed_users($course, $forum, $currentgroup)) {
         $subscribers = array();
     }
     
@@ -228,7 +163,22 @@
         $except = '';
     }
     if (!empty($frm->searchtext) and $previoussearch) {
-        $searchusers = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
+        if ($currentgroup) {
+            $searchusers = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
+                              FROM {$CFG->prefix}user u, 
+                                   {$CFG->prefix}groups_members g
+                              WHERE g.groupid = '$currentgroup' AND g.userid = u.id AND u.deleted = '0'
+                                  AND ($fullname $LIKE '%$frm->searchtext%' OR u.email $LIKE '%$frm->searchtext%')
+                                  $except
+                              ORDER BY u.firstname ASC, u.lastname ASC");
+
+            $usercount = count_records_sql("SELECT COUNT(*)
+                              FROM {$CFG->prefix}user u, 
+                                   {$CFG->prefix}groups_members g
+                              WHERE g.groupid = '$currentgroup' AND g.userid = u.id AND u.deleted = '0'
+                                  $except");
+        } else {
+            $searchusers = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
                               FROM {$CFG->prefix}user u, 
                                    {$CFG->prefix}user_students s
                               WHERE s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'
@@ -243,39 +193,47 @@
                                   $except
                               ORDER BY u.firstname ASC, u.lastname ASC");
 
-        $usercount = count_records_sql("SELECT COUNT(*)
+            $usercount = count_records_sql("SELECT COUNT(*)
                               FROM {$CFG->prefix}user u, 
                                    {$CFG->prefix}user_students s
                               WHERE s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'
                                   $except") +
-                     count_records_sql("SELECT COUNT(*)
+                         count_records_sql("SELECT COUNT(*)
                               FROM {$CFG->prefix}user u, 
                                    {$CFG->prefix}user_teachers s
                               WHERE s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'
                                   $except");
+        }
     }
     
 /// If no search results then get potential subscribers for this forum excluding users already subscribed
     if (empty($searchusers)) {
-        if (!$users = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
-                              FROM {$CFG->prefix}user u, 
-                                   {$CFG->prefix}user_students s
-                              WHERE s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'
-                                  $except
-                              UNION
-                              SELECT u.id, u.firstname, u.lastname, u.email
-                              FROM {$CFG->prefix}user u, 
-                                   {$CFG->prefix}user_teachers s
-                              WHERE s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'
-                                  $except
-                              ORDER BY u.firstname ASC, u.lastname ASC")) {
+        if ($currentgroup) {
+            $users = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
+                                  FROM {$CFG->prefix}user u, 
+                                       {$CFG->prefix}groups_members g
+                                  WHERE g.groupid = '$currentgroup' AND g.userid = u.id AND u.deleted = '0'
+                                      $except
+                                  ORDER BY u.firstname ASC, u.lastname ASC");
+        } else {
+             $users = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
+                                  FROM {$CFG->prefix}user u, 
+                                       {$CFG->prefix}user_students s
+                                  WHERE s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'
+                                      $except
+                                  UNION
+                                  SELECT u.id, u.firstname, u.lastname, u.email
+                                  FROM {$CFG->prefix}user u, 
+                                       {$CFG->prefix}user_teachers s
+                                  WHERE s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'
+                                      $except
+                                  ORDER BY u.firstname ASC, u.lastname ASC");
+        }
+        if (!$users) {
             $users = array();
         }
         $usercount = count($users);
     }
-
-
-    
 
     $searchtext = (isset($frm->searchtext)) ? $frm->searchtext : "";
     $previoussearch = ($previoussearch) ? '1' : '0';

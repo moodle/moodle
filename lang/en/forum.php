@@ -149,7 +149,6 @@ $string['subscription'] = 'Subscription';
 $string['subscriptions'] = 'Subscriptions';
 $string['unsubscribe'] = 'Unsubscribe from this forum';
 $string['unsubscribed'] = 'Unsubscribed';
-$string['unsubscribeshort'] = 'Unsubscribe';
 $string['youratedthis'] = 'You rated this';
 $string['yournewtopic'] = 'Your new discussion topic';
 $string['yourreply'] = 'Your reply';
