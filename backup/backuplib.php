@@ -990,6 +990,7 @@
                 fwrite ($bf,full_tag("ID",4,false,$event->id));
                 fwrite ($bf,full_tag("NAME",4,false,$event->name));
                 fwrite ($bf,full_tag("DESCRIPTION",4,false,$event->description));
+                fwrite ($bf,full_tag("FORMAT",4,false,$event->format));
                 fwrite ($bf,full_tag("GROUPID",4,false,$event->groupid));
                 fwrite ($bf,full_tag("USERID",4,false,$event->userid));
                 fwrite ($bf,full_tag("EVENTTYPE",4,false,$event->eventtype));

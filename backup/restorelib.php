@@ -1047,6 +1047,7 @@
                         //Now build the EVENT record structure
                         $eve->name = backup_todb($info['EVENT']['#']['NAME']['0']['#']);
                         $eve->description = backup_todb($info['EVENT']['#']['DESCRIPTION']['0']['#']);
+                        $eve->format = backup_todb($info['EVENT']['#']['FORMAT']['0']['#']);
                         $eve->courseid = $restore->course_id;
                         $eve->groupid = backup_todb($info['EVENT']['#']['GROUPID']['0']['#']);
                         $eve->userid = backup_todb($info['EVENT']['#']['USERID']['0']['#']);
