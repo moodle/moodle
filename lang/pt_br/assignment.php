@@ -19,14 +19,15 @@ $string[late] = "\$a tarde";
 $string[maximumgrade] = "Grau de máximo";
 $string[maximumsize] = "Tamanho máximo";
 $string[notsubmittedyet] = "Ainda não submetido";
-$string[overwritewarning] = "Advertindo: uploading SUBSTITUIRÃO seu envio atual novamente";
+$string[overwritewarning] = "Advertindo: enviado SUBSTITUIRÃO seu envio atual novamente";
 $string[submissionfeedback] = "Realimentação de submissão";
 $string[submissions] = "Submissões";
 $string[submitted] = "Enviado";
-$string[typeuploadsingle] = "Upload um único arquivo, preço entre 0 - 100 marcas";
+$string[typeuploadsingle] = "Enviar um único arquivo, preço entre 0 - 100 marcas";
 $string[uploadedfiles] = "Arquivo enviado";
 $string[viewsubmissions] = "Ver \$a tarefas enviadas";
 $string[yoursubmission] = "Sua submissão";
 $string[newsubmissions] = "Tarefas enviadas";
+$string[submitassignment] = "Submeta sua tarefa usando esta forma";
 ?>
 

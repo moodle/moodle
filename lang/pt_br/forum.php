@@ -67,21 +67,8 @@ $string[numposts] = "\$a postos";
 $string[olderdiscussions] = "Discussões mais velhas";
 $string[parentofthispost] = "Pai deste posto";
 $string[postadded] = "Seu posto foi somado prosperamente.<P>Você tem \$a editar isto se você quer fazer qualquer mudança.";
-$string[postmailinfo] = "Esta é uma cópia de uma mensagem postada no \$a website.
-Somar sua resposta pelo website, faça clique neste link:";
-$string[postingtip] = "<B>Gorjetas postando:</B>
-Quando respondendo:
-<UL>
-<LI>leia o posto deles cuidadosamente e empathically
-<LI>procure coisas sobre as que você pode fazer um comentário
-</UL>
-
-Enquanto escrevendo:
-<UL>
-<LI>mantenha seus postos pequeno e em-tópico
-<LI>explique suas próprias idéias claramente
-<LI>pense em perguntas que você pode fazer
-</UL>";
+$string[postmailinfo] = "Esta é uma cópia de uma mensagem postada no \$a website. Somar sua resposta pelo website, faça clique neste link:";
+$string[postingtip] = "<B>Gorjetas postando:</B> Quando respondendo: <UL> <LI>leia o posto deles cuidadosamente e empathically <LI>procure coisas sobre as que você pode fazer um comentário </UL> Enquanto escrevendo: <UL> <LI>mantenha seus postos pequeno e em-tópico <LI>explique suas próprias idéias claramente <LI>pense em perguntas que você pode fazer </UL>";
 $string[postrating1] = "Mostre principalmente SEPARE sabendo";
 $string[postrating2] = "Igualmente separe e conectou";
 $string[postrating3] = "Espetáculos CONECTARAM sabendo principalmente";
@@ -109,5 +96,7 @@ $string[youratedthis] = "Você taxou isto";
 $string[yournewtopic] = "Seu tópico de discussão novo";
 $string[yourreply] = "Sua resposta";
 $string[newforumposts] = "Postos de forum novos";
-
+$string[openmode0] = "Nenhuma discussão, nenhuma resposta";
+$string[openmode1] = "Nenhuma discussão, mas são permitidas respostas";
+$string[openmode2] = "São permitidas discussões e respostas";
 ?>

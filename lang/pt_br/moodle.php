@@ -1,179 +1,144 @@
 <?PHP // $Id$ 
 // Traduzido por Fabricio Valadares - Três Corações - MG - Brasil
 // Webdesigner da Universidade Vale do Rio Verde
-$string[thislanguage] = "Português - Brasil";  // Francais, Italiano, etc etc
+$string['thislanguage'] = "Português - Brasil";  // Francais, Italiano, etc etc
 $string['thischarset'] = "iso-8859-1";
 
-$string[action] = "Ação";
-$string[activity] = "Atividade";
-$string[activities] = "Atividades";
-$string[activityreport] = "Relatório de atividade";
-$string[add] = "Adicionar";
-$string[added] = "Adicionado \$a";
-$string[addinganew] = "Adicionar um novo \$a";
-$string[addinganewto] = "Adicionar um novo \$a->what to \$a->to";
-$string[addnewcourse] = "Adicionar novo curso";
-$string[addnewuser] = "Adicionar novo usuário";
-$string[address] = "Endereço";
-$string[addteacher] = "Adicionar professor";
-$string[admin] = "Administrador";
-$string[administration] = "Administração";
-$string[again] = "novamente";
-$string[alldays] = "Todos os dias";
-$string[allfieldsrequired] = "Todos os campos são requeridos";
-$string[alllogs] = "Todos logs";
-$string[allowguests] = "This course allows guest users to enter";
-$string[allparticipants] = "Todos os participantes";
-$string[alphanumerical] = "Possa conter cartas só alfabéticas ou números";
-$string[alreadyconfirmed] = "Inscrição já foi confirmada";
-$string[answer] = "Resposta";
-$string[assignteachers] = "Direcionar professor";
-$string[availablecourses] = "Cursos avaliados";
-$string[cancel] = "Cancelar";
-$string[categories] = "Categoria dos Cursos";
-$string[category] = "Categoria";
-$string[categoryadded] = "A categoria '\$a' foi adicionada";
-$string[categorydeleted] = "A categoria '\$a' foi apagada";
-$string[changepassword] = "Mudar a senha";
-$string[changedpassword] = "Mudanda a senha";
-$string[changessaved] = "Mudanças salvas";
-$string[checklanguage] = "Verificar idioma";
-$string[choose] = "Escolha";
-$string[choosecourse] = "Escolha um curso";
-$string[chooselivelogs] = "Ou assiste atividade atual";
-$string[chooselogs] = "Escolha quais troncos quer você para ver";
-$string[choosetheme] = "Troca o tema";
-$string[chooseuser] = "Escolha um usuário";
-$string[city] = "Cidade/Estado";
-$string[comparelanguage] = "Compare idioma com o inglês";
-$string[confirmed] = "Seu registro foi confirmado com sucesso";
-$string[courseupdates] = "Curso atualizado";
-$string[cookiesenabled] = "Cookies ativo em seu navegador";
-$string[complete] = "Completo";
-$string[copyrightnotice] = "Advertência protegido por direitos autorais";
-$string["continue"] = "Continue";
-$string[country] = "País";
-$string[course] = "Curso";
-$string[courseformats] = "Formato do curso";
-$string[courses] = "Cursos";
-$string[createaccount] = "Criar minha nova conta";
-$string[createuserandpass] = "Crie um nome de usuário novo e senha para anotar em com";
-$string[createziparchive] = "Cria um arquivo zip";
-$string[currentlanguage] = "Idioma atual";
-$string[currentlocaltime] = "Seu horário local correto";
-$string[databasechecking] = "Atualizar a base de dados Moodle versão \$a->oldversion para \$a->newversion...";
-$string[databasesetup] = "Opções de base de dados";
-$string[databasesuccess] = "Base de dados atualizada";
-$string[databaseupgrades] = "Atualizar base de dados";
-$string[defaultcoursefullname] = "Course Fullname 101";
-$string[defaultcourseshortname] = "CF101";
-$string[defaultcoursestudent] = "Estudante";
-$string[defaultcoursestudents] = "Estudantes";
-$string[defaultcoursesummary] = "Write a concise and interesting paragraph here that explains what this course is about";
-$string[defaultcourseteacher] = "Professor";
-$string[defaultcourseteachers] = "Professores";
-$string[delete] = "Apagar";
-$string[deletecheck] = "Apagar \$a ?";
-$string[deletecheckfull] = "Absolutamente seguramente é você você quer apagar completamente \$a ?";
-$string[deletecompletely] = "Apagado com sucesso";
-$string[deletecoursecheck] = "Você absolutamente seguramente é você quer apagar este curso e todos os dados completamente contém?";
-$string[deletecourse] = "Apagar um curso";
-$string[deleted] = "Apagado";
-$string[deletedactivity] = "Apagado \$a";
-$string[deletedcourse] = "\$a foi completamente apagado";
-$string[deletingcourse] = "Apagando \$a";
-$string[description] = "Descrição";
-$string[doyouagree] = "Você leu estas condições e os entendeu?";
-$string[edit] = "Editar \$a";
-$string[editcoursesettings] = "Editar configurações de curso";
-$string[editinga] = "Editando um \$a";
-$string[editmyprofile] = "Editar perfil";
-$string[editsummary] = "Editar summary";
-$string[editthisactivity] = "Editar this activity";
-$string[edituser] = "Editar contas de usuários";
-$string[email] = "Endereço de e-mail";
-$string[emailformat] = "Formato de e-mail";
-$string[emailconfirm] = "Confirmar seu registro";
-$string[emailconfirmsent] = "
-   <P>Um email deveria ter sido enviado a seu endereço a <B>\$a</B>
-   <P>Contém instruções fáceis para completar sua inscrição.
-   <P>Se você continua tendo dificuldade, contacte o administrador de local.";
-$string[emailconfirmation] = "Olá \$a->firstname,
-
-Uma conta nova foi pedida a '\$a->sitename'
-usando seu endereço de email.
-
-Para confonfirmar seu registro, por favor acesse
-este endereço:
-
-  \$a->link
-
-Em a maioria programas de correio, isto deveria aparecer como um vínculo azul  
-o qual você há pouco pode clicar em.  Se isso não trabalha,  
-então corte e cola o endereço no endereço  
-enfileire ao topo de sua janela de navegador de rede.  
-  
-Alegrias do '\$a->sitename' administrador,
-\$a->admin";
-
-$string[emaildisplay] = "Visualizar e-mail";
-$string[emaildisplayno] = "Esconda meu real endereço de email de todo o mundo";
-$string[emaildisplayyes] = "Permita todo o mundo para ver meu endereço de email";
-$string[emaildisplaycourse] = "Permita para só outros sócios de curso ver meu endereço de email";
-$string[emailexists] = "Este endereço de email já é registrado.";
-$string[emailmustbereal] = "Nota: seu endereço de email deve ser um real";
-$string[enrolmentkey] = "Chave de acesso";
-$string[enrolmentkeyfrom] = "Este curso requer um ' chave' de acesso - um tempo<BR>
-senha da que você deveria ter \$a";
-$string[enrolmentkeyhint] = "Aquela chave de acesso estava incorreta, por favor tente novamente<BR>
-(Aqui é uma sugestão - começa com '\$a'";
-$string[entercourse] = "Click para entrar no curso";
-$string[enteremailaddress] = "Entre em seu endereço de email para reajustar sua   
-senha e tem a senha nova enviada a você por email.";
-$string[existingteachers] = "Professores existentes";
-$string[error] = "Erro";
-$string[feedback] = "Realimentação";
-$string[filemissing] = "\$a está perdendo";
-$string[files] = "Arquivos";
-$string[filloutallfields] = "Por favor preencha todos os campos nesta forma";
-$string[firstname] = "Primeiro nome";
-$string[firsttime] = "É este seu primeiro tempo em aqui?";
-$string[forgotten] = "Esquecido de seu nome de usuário ou senha?";
-$string[format] = "Formato";
-$string[formatsocial] = "Formato social";
-$string[formattopics] = "Formato tópicos";
-$string[formatweeks] = "Formato semanal";
-$string[frontpagedescription] = "Descrição da página frontal";
-$string[frontpageformat] = "Formato da página frontal";
-$string[fulllistofcourses] = "Todos os cursos";
-$string[fullprofile] = "Perfil completo";
-$string[fullname] = "Nome completo";
-$string[fullsitename] = "Nome completo do site";
-$string[gpl] = "Direito autorais (C) 2001-2002 Martin Dougiamas (http://dougiamas.com)  
-  
-Este programa é software grátis; você pode redistribuir isto and/or modificam  
-isto sob a condição do GNU General Licença de Público como publicou por  
-a Fundação de Software Grátis; qualquer versão 2 da Licença, ou  
-(a sua opção) qualquer mais recente versão.  
-  
-Este programa é distribuído na esperança que será útil,  
-mas SEM QUALQUER GARANTIA; sem até mesmo a garantia implícita de  
-MERCHANTABILITY ou APTIDÃO PARA UM PROPÓSITO PARTICULAR.  Veja o  
-GNU General Licença de Público para mais detalhes:  
-  
-http://www.gnu.org/copyleft/gpl.html";
-$string[grade] = "Grau";
-$string[guestskey] = "Permita convidados que têm a chave";
-$string[guestsno] = "Não permita os convidados em";
-$string[guestsnotallowed] = "Desculpe, '\$a' não permitida para os convidados entrar.";
-$string[guestsyes] = "Permita os convidados sem a chave";
-$string[guestuser] = "Visitante";
-$string[guestuserinfo] = "Este usuário é um usuário especial que permite acesso somente de leitura a alguns cursos.";
-$string[help] = "Ajuda";
+$string['action'] = "Ação";
+$string['activity'] = "Atividade";
+$string['activities'] = "Atividades";
+$string['activityreport'] = "Relatório de atividade";
+$string['add'] = "Adicionar";
+$string['added'] = "Adicionado \$a";
+$string['addinganew'] = "Adicionar um novo \$a";
+$string['addinganewto'] = "Adicionar um novo \$a->what to \$a->to";
+$string['addnewcourse'] = "Adicionar novo curso";
+$string['addnewuser'] = "Adicionar novo usuário";
+$string['address'] = "Endereço";
+$string['addteacher'] = "Adicionar professor";
+$string['admin'] = "Administrador";
+$string['administration'] = "Administração";
+$string['again'] = "novamente";
+$string['alldays'] = "Todos os dias";
+$string['allfieldsrequired'] = "Todos os campos são requeridos";
+$string['alllogs'] = "Todos logs";
+$string['allowguests'] = "This course allows guest users to enter";
+$string['allparticipants'] = "Todos os participantes";
+$string['alphanumerical'] = "Possa conter cartas só alfabéticas ou números";
+$string['alreadyconfirmed'] = "Inscrição já foi confirmada";
+$string['answer'] = "Resposta";
+$string['assignteachers'] = "Direcionar professor";
+$string['availablecourses'] = "Cursos avaliados";
+$string['cancel'] = "Cancelar";
+$string['categories'] = "Categoria dos Cursos";
+$string['category'] = "Categoria";
+$string['categoryadded'] = "A categoria '\$a' foi adicionada";
+$string['categorydeleted'] = "A categoria '\$a' foi apagada";
+$string['changepassword'] = "Mudar a senha";
+$string['changedpassword'] = "Mudanda a senha";
+$string['changessaved'] = "Mudanças salvas";
+$string['checklanguage'] = "Verificar idioma";
+$string['choose'] = "Escolha";
+$string['choosecourse'] = "Escolha um curso";
+$string['chooselivelogs'] = "Ou assiste atividade atual";
+$string['chooselogs'] = "Escolha quais troncos quer você para ver";
+$string['choosetheme'] = "Troca o tema";
+$string['chooseuser'] = "Escolha um usuário";
+$string['city'] = "Cidade/Estado";
+$string['comparelanguage'] = "Compare idioma com o inglês";
+$string['confirmed'] = "Seu registro foi confirmado com sucesso";
+$string['courseupdates'] = "Curso atualizado";
+$string['cookiesenabled'] = "Cookies ativo em seu navegador";
+$string['complete'] = "Completo";
+$string['copyrightnotice'] = "Advertência protegido por direitos autorais";
+$string['continue'] = "Continue";
+$string['country'] = "País";
+$string['course'] = "Curso";
+$string['courseformats'] = "Formato do curso";
+$string['courses'] = "Cursos";
+$string['createaccount'] = "Criar minha nova conta";
+$string['createuserandpass'] = "Crie um nome de usuário novo e senha para anotar em com";
+$string['createziparchive'] = "Cria um arquivo zip";
+$string['currentlanguage'] = "Idioma atual";
+$string['currentlocaltime'] = "Seu horário local correto";
+$string['databasechecking'] = "Atualizar a base de dados Moodle versão \$a->oldversion para \$a->newversion...";
+$string['databasesetup'] = "Opções de base de dados";
+$string['databasesuccess'] = "Base de dados atualizada";
+$string['databaseupgrades'] = "Atualizar base de dados";
+$string['defaultcoursefullname'] = "Course Fullname 101";
+$string['defaultcourseshortname'] = "CF101";
+$string['defaultcoursestudent'] = "Estudante";
+$string['defaultcoursestudents'] = "Estudantes";
+$string['defaultcoursesummary'] = "Escreva um parágrafo conciso e interessante aqui isso explica o sobre o qual este curso é";
+$string['defaultcourseteacher'] = "Professor";
+$string['defaultcourseteachers'] = "Professores";
+$string['delete'] = "Apagar";
+$string['deletecheck'] = "Apagar \$a ?";
+$string['deletecheckfull'] = "Absolutamente seguramente é você você quer apagar completamente \$a ?";
+$string['deletecompletely'] = "Apagado com sucesso";
+$string['deletecoursecheck'] = "Você absolutamente seguramente é você quer apagar este curso e todos os dados completamente contém?";
+$string['deletecourse'] = "Apagar um curso";
+$string['deleted'] = "Apagado";
+$string['deletedactivity'] = "Apagado \$a";
+$string['deletedcourse'] = "\$a foi completamente apagado";
+$string['deletingcourse'] = "Apagando \$a";
+$string['description'] = "Descrição";
+$string['doyouagree'] = "Você leu estas condições e os entendeu?";
+$string['edit'] = "Editar \$a";
+$string['editcoursesettings'] = "Editar configurações de curso";
+$string['editinga'] = "Editando um \$a";
+$string['editmyprofile'] = "Editar perfil";
+$string['editsummary'] = "Editar resumo";
+$string['editthisactivity'] = "Editar this activity";
+$string['edituser'] = "Editar contas de usuários";
+$string['email'] = "Endereço de e-mail";
+$string['emailformat'] = "Formato de e-mail";
+$string['emailconfirm'] = "Confirmar seu registro";
+$string['emailconfirmsent'] = "<P>Um email deveria ter sido enviado a seu endereço a <B>\$a</B><P>Contém instruções fáceis para completar sua inscrição.   <P>Se você continua tendo dificuldade, contacte o administrador de local.";
+$string['emailconfirmation'] = "Olá \$a->firstname, Uma conta nova foi pedida a '\$a->sitename' usando seu endereço de email. Para confonfirmar seu registro, por favor acesse este endereço:  \$a->link Em a maioria programas de correio, isto deveria aparecer como um vínculo azul  o qual você há pouco pode clicar em.  Se isso não trabalha,  então corte e cola o endereço no endereço  enfileire ao topo de sua janela de navegador de rede.  Alegrias do '\$a->sitename' administrador, \$a->admin";
+$string['emaildisplay'] = "Visualizar e-mail";
+$string['emaildisplayno'] = "Esconda meu real endereço de email de todo o mundo";
+$string['emaildisplayyes'] = "Permita todo o mundo para ver meu endereço de email";
+$string['emaildisplaycourse'] = "Permita para só outros sócios de curso ver meu endereço de email";
+$string['emailexists'] = "Este endereço de email já é registrado.";
+$string['emailmustbereal'] = "Nota: seu endereço de email deve ser um real";
+$string['enrolmentkey'] = "Chave de acesso";
+$string['enrolmentkeyfrom'] = "Este curso requer um ' chave' de acesso - um tempo<BR> senha da que você deveria ter \$a";
+$string['enrolmentkeyhint'] = "Aquela chave de acesso estava incorreta, por favor tente novamente<BR> (Aqui é uma sugestão - começa com '\$a'";
+$string['entercourse'] = "Click para entrar no curso";
+$string['enteremailaddress'] = "Entre em seu endereço de email para reajustar sua senha e tem a senha nova enviada a você por email.";
+$string['existingteachers'] = "Professores existentes";
+$string['error'] = "Erro";
+$string['feedback'] = "Realimentação";
+$string['filemissing'] = "\$a está perdendo";
+$string['files'] = "Arquivos";
+$string['filloutallfields'] = "Por favor preencha todos os campos nesta forma";
+$string['firstname'] = "Primeiro nome";
+$string['firsttime'] = "É este seu primeiro tempo em aqui?";
+$string['forgotten'] = "Esquecido de seu nome de usuário ou senha?";
+$string['format'] = "Formato";
+$string['formatsocial'] = "Formato social";
+$string['formattopics'] = "Formato tópicos";
+$string['formatweeks'] = "Formato semanal";
+$string['frontpagedescription'] = "Descrição da página frontal";
+$string['frontpageformat'] = "Formato da página frontal";
+$string['fulllistofcourses'] = "Todos os cursos";
+$string['fullprofile'] = "Perfil completo";
+$string['fullname'] = "Nome completo";
+$string['fullsitename'] = "Nome completo do site";
+$string['gpl'] = "Direito autorais (C) 2001-2002 Martin Dougiamas (http://dougiamas.com)  Este programa é software grátis; você pode redistribuir isto and/or modificam  isto sob a condição do GNU General Licença de Público como publicou por  a Fundação de Software Grátis; qualquer versão 2 da Licença, ou  (a sua opção) qualquer mais recente versão.  Este programa é distribuído na esperança que será útil,  mas SEM QUALQUER GARANTIA; sem até mesmo a garantia implícita de  MERCHANTABILITY ou APTIDÃO PARA UM PROPÓSITO PARTICULAR.  Veja o  GNU General Licença de Público para mais detalhes:  http://www.gnu.org/copyleft/gpl.html";
+$string['grade'] = "Grau";
+$string['guestskey'] = "Permita convidados que têm a chave";
+$string['guestsno'] = "Não permita os convidados em";
+$string['guestsnotallowed'] = "Desculpe, '\$a' não permitida para os convidados entrar.";
+$string['guestsyes'] = "Permita os convidados sem a chave";
+$string['guestuser'] = "Visitante";
+$string['guestuserinfo'] = "Este usuário é um usuário especial que permite acesso somente de leitura a alguns cursos.";
+$string['help'] = "Ajuda";
 $string[helppicture] = "Como para upload um quadro";
 $string[helptext] = "Como escrever texto";
 $string[helpquestions] = "Como fazer perguntas";
-$string[home] = "Home";
+$string[home] = "Página principal";
 $string[htmlformat] = "Bonito formato de HTML";
 $string[icqnumber] = "Número de ICQ";
 $string[idnumber] = "Número de identificação";
@@ -185,7 +150,7 @@ $string[lastaccess] = "Por último acesso";
 $string[lastedited] = "Últimos editados";
 $string[lastmodified] = "Últimos modificados";
 $string[lastname] = "Por último nome";
-$string[latestnews] = "Latest news";
+$string[latestnews] = "Últimas notícias";
 $string[listofallpeople] = "Lista de todas as pessoas";
 $string[license] = "Licensa GPL";
 $string[livelogs] = "Troncos ao vivo da última hora";
@@ -198,24 +163,7 @@ $string[loginguest] = "Acesso como um convidado";
 $string[loginsite] = "Acesso para o site";
 $string[loginto] = "Acesso para \$a";
 $string[loginusing] = "O acesso aqui que usa seu nome de usuário e senha";
-$string[loginsteps] = "Olá! Para acesso cheio para cursos você precisará levar   
-   um minuto para criar uma conta nova para você neste local de rede.  
-   Cada dos cursos individuais também pode ter um um-tempo
-   &quot;chave de acesso&quot;, o qual você não precisará depois até. Aqui está  
-   os passos:
-   <OL size=2>
-   <LI>Preencha o <A HREF=\$a>formulário</A> de nova conta com seus dados.
-   <LI>Um email será enviado imediatamente a seu endereço de email.
-   <LI>Leia seu email, e faça clique no vínculo de rede que contém.
-   <LI>Sua conta será confirmada e você será acessado em.
-   <LI>Agora, selecione o curso que você quer participar em.
-   <LI>Se você é incitado para uma &quot;chave de acesso&quot; - use o um  
-   que seu professor o deu. Isto vai para você no  
-   curso.
-   <LI>Você pode ter acesso o curso cheio agora. De agora em diante você só precisará  
-   entrar em seu nome de usuário pessoal e senha (na forma nesta página)  
-   anotar em e ter acesso qualquer curso você se registraram em.
-   </OL>";
+$string[loginsteps] = "Olá! Para acesso cheio para cursos você precisará levar   um minuto para criar uma conta nova para você neste local de rede.  Cada dos cursos individuais também pode ter um um-tempo  &quot;chave de acesso&quot;, o qual você não precisará depois até. Aqui está  os passos: <OL size=2><LI>Preencha o <A HREF=\$a>formulário</A> de nova conta com seus dados.<LI>Um email será enviado imediatamente a seu endereço de email.<LI>Leia seu email, e faça clique no vínculo de rede que contém.<LI>Sua conta será confirmada e você será acessado em.<LI>Agora, selecione o curso que você quer participar em.<LI>Se você é incitado para uma &quot;chave de acesso&quot; - use o um  que seu professor o deu. Isto vai para você no  curso.   <LI>Você pode ter acesso o curso cheio agora. De agora em diante você só precisará  entrar em seu nome de usuário pessoal e senha (na forma nesta página)  anotar em e ter acesso qualquer curso você se registraram em.</OL>";
 $string[logout] = "Sair";
 $string[logs] = "Logs";
 $string[makeafolder] = "Faça uma pasta de papéis";
@@ -262,25 +210,7 @@ $string[nameweeks] = "semana";
 $string[newaccount] = "Novo cadastro";
 $string[newforumposts] = "Novo fórum postado";
 $string[newpassword] = "Nova senha";
-$string[newpasswordtext] = "Olá \$a->firstname,
-
-Sua senha de conta a '\$a->sitename' foi reajustado  
-e você foi emitido com uma senha temporária nova.
-Sua informação de acesso atual é agora:
-   Nome de usuário: \$a->username
-   Senha: \$a->newpassword
-
-Por favor vá para esta página para mudar sua senha:
-   \$a->link
-
-Em a maioria programas de correio, isto deveria aparecer como um vínculo azul  
-o qual você há pouco pode clicar em.  Se isso não trabalha,  
-então corte e cola o endereço no endereço  
-enfileire ao topo de sua janela de navegador de rede.  
-
-Alegrias do '\$a->sitename' administrador,
-\$a->signoff\n";
-
+$string[newpasswordtext] = "Olá \$a->firstname, Sua senha de conta a '\$a->sitename' foi reajustado  e você foi emitido com uma senha temporária nova. Sua informação de acesso atual é agora: Nome de usuário: \$a->username Senha: \$a->newpassword Por favor vá para esta página para mudar sua senha: \$a->link Em a maioria programas de correio, isto deveria aparecer como um vínculo azul  o qual você há pouco pode clicar em.  Se isso não trabalha,  então corte e cola o endereço no endereço  enfileire ao topo de sua janela de navegador de rede.  Alegrias do '\$a->sitename' administrador, \$a->signoff\n";
 $string[newpicture] = "Nova imagem";
 $string[newuser] = "Novo usuário";
 $string[newusers] = "Novos usuários";
@@ -316,11 +246,7 @@ $string[password] = "Senha";
 $string[passwordchanged] = "Senha foi mudada";
 $string[passwordsdiffer] = "Estas senhas não emparelham";
 $string[passwordsent] = "Senha enviada com sucesso";
-$string[passwordsenttext] = "
-   <P>Um email foi enviado a seu endereço a \$a->email.
-   <P><B>Por favor confira seu email para sua senha nova</B>
-   <P>A senha nova foi gerada automaticamente, assim você poderia gostar
-   <A HREF=\$a->link>mude a algo mais fácil se lembrar</A>.";
+$string[passwordsenttext] = "<P>Um email foi enviado a seu endereço a \$a->email.<P><B>Por favor confira seu email para sua senha nova</B><P>A senha nova foi gerada automaticamente, assim você poderia gostar <A HREF=\$a->link>mude a algo mais fácil se lembrar</A>.";
 $string[people] = "Colegas";
 $string[personalprofile] = "Perfil pessoal";
 $string[phone] = "Telefone";
@@ -410,12 +336,7 @@ $string[webpage] = "Página da web";
 $string[week] = "Semana";
 $string[weeklyoutline] = "Agenda do curso";
 $string[welcometocourse] = "Bem vindo ao \$a";
-$string[welcometocoursetext] = "Bem vindo ao \$a->coursename!
-
-Um das primeiras coisas você deveria fazer é edite sua página de perfil  
-dentro do curso de forma que nós mais pode aprender sobre você:
-
-  \$a->profileurl";
+$string[welcometocoursetext] = "Bem vindo ao \$a->coursename! Um das primeiras coisas você deveria fazer é edite sua página de perfil  dentro do curso de forma que nós mais pode aprender sobre você:  \$a->profileurl";
 $string[withchosenfiles] = "Com arquivos escolhidos";
 $string[wordforteacher] = "Sua palavra para Professor";
 $string[wordforteachereg] = "ex Professor, Tutor, Facilitador etc";
@@ -452,9 +373,48 @@ $string[configlocale] = "Escolha um lugar de sitewide - isto afetará a exibição 
 $string[configlongtimenosee] = "Se os estudantes não anotaram em durante um tempo muito longo, então eles são automaticamente desmatriculados de cursos.  Este parâmetro especifica aquele prazo.";
 $string[configmaxeditingtime] = "Isto especifica a quantia das pessoas de tempo tenha que ré-editar artigos de forum, realimentação de diário etc. Normalmente 30 minutos são um valor bom.";
 $string[configproxyhost] = "Se este <B>servidor</B> necessidades para usar um computador de procuração (ex um firewall) ter acesso a Internet, então proveja o hostname de procuração e porto aqui.  Caso contrário deixe espaço em branco para isto.";
-$string[configslasharguments] = "Arquivos (imagens, uploads etc) é provido por uma escritura que usa ' argumentos de golpe (a segunda opção em aqui). Este método permite arquivos para ser mais facilmente cached em browsers de rede, servidores de procuração etc. Infelizmente, alguns servidores de PHP não permitem este método, assim se você tem que dificuldade que vê uploaded arquiva ou imagens (o usuário de eg se imagina), fixe esta variável para a primeira opção";
+$string[configslasharguments] = "Arquivos (imagens, uploads etc) é provido por uma escritura que usa ' argumentos de golpe (a segunda opção em aqui). Este método permite arquivos para ser mais facilmente visualizados em navegadores de rede, servidores de procuração etc. Infelizmente, alguns servidores de PHP não permitem este método, assim se você tem que dificuldade que vê uploaded arquiva ou imagens (o usuário de eg se imagina), fixe esta variável para a primeira opção";
 $string[configsmtphosts] = "Dê o nome cheio de um ou servidores de SMTP mais locais que Moodle deveria usar para enviar correio (ex ' mail.a.com' ou ' mail.a.com;mail.b.com '). Se você deixa isto em branco, Moodle usará o PHP omitem método de enviar correio.";
 $string[configunzip] = "Indique a localização de seu programa de unzip (Unix só). Isto é precisado desempacotar arquivos de nervo no servidor.";
 $string[configzip] = "Indique a localização de seu programa de zip (Unix só). Isto é precisado criar arquivos de nervo no servidor.";
 $string[deletednot] = "Não possa apagar \$a !";
+$string['allow'] = "Permita";
+$string['allownot'] = "Não permita";
+$string['assessment'] = "Avaliação";
+$string['closewindow'] = "Feche esta janela";
+$string['configauth'] = "Escolha o módulo de autenticação que você quer usar.  A falta é ' email' e tem a melhor segurança.  O método ' none' não tem nenhum conferindo tudo que - tem cuidado que usa isto a menos que você realmente saiba o que você está fazendo.";
+$string['confightmleditor'] = "Escolha se ou não permitir uso do HTML texto editor embutido. Até mesmo se você escolhe permita, este editor só se aparecerá quando o usuário estiver usando um browser compatível (IE 5.5 ou depois). os Usuários também podem escolher não usar isto.";
+$string['configlangdir'] = "A maioria dos idiomas são esquerda-para-direito impresso, mas alguns, como árabe e hebreu, é direito-para-esquerda impresso.";
+$string['day'] = "dia";
+$string['days'] = "dias";
+$string['downloadexcel'] = "Copiar no formato Excel";
+$string['downloadtext'] = "Copiar no formato Texto";
+$string['formathtml'] = "Formato HTML";
+$string['formattext'] = "Auto-formato Moodle";
+$string['formattexttype'] = "Formatando";
+$string['grades'] = "Graus";
+$string['helprichtext'] = "Sobre o Richtext o editor de HTML";
+$string['hour'] = "hora";
+$string['hours'] = "horas";
+$string['htmleditor'] = "Use Richtext o editor de HTML (IE só, 5.5 ou depois)";
+$string['htmleditoravailable'] = "O editor de Richtext está disponível";
+$string['htmleditordisabled'] = "Você incapacitou o editor de Richtext em seu perfil de usuário";
+$string['htmleditordisabledadmin'] = "O administrador incapacitou o editor de Richtext neste local";
+$string['htmleditordisabledbrowser'] = "O editor de Richtext é indisponível porque você não está usando Internet Explorer 5.5 ou melhor";
+$string['langltr'] = "Esquerda-para-direita de direção de idioma";
+$string['langrtl'] = "Direita-para-esquerda de direção de idioma";
+$string['loginstepsnone'] = "Olá! <P> Para acesso completo para cursos você precisará se criar uma conta. <P> Tudo que você precisa fazer são compor um nome de usuário e senha e usar isto na forma nesta página! <P> Se outra pessoa já escolheu então seu nome de usuário que você terá que tentar usando um nome de usuário diferente novamente.";
+$string['makeeditable'] = "Se você faz '\$a' editado pelo processo de servidor de rede (apache de eg) então você poderia editar este arquivo diretamente desta página";
+$string['maximumshort'] = "Máximo";
+$string['min'] = "minuto";
+$string['mins'] = "minutos";
+$string['new'] = "novo";
+$string['nofilesyet'] = "Nenhum arquivo foi incluido a seu curso contudo";
+$string['noimagesyet'] = "Nenhuma imagem foi incluido a seu curso contudo";
+$string['sec'] = "segundo";
+$string['secs'] = "segundos";
+$string['textediting'] = "Ao editar texto";
+$string['texteditor'] = "Use formas de rede padrão";
+$string['total'] = "Total";
+$string['updatethis'] = "Atualize este \$a";
 ?>
