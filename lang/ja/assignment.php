@@ -1,9 +1,17 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.8 dev (2002121200)
+      // assignment.php - created with Moodle 1.0.9 development (2003051200)
 
 
 $string['allowresubmit'] = "再提出を許可する";
 $string['assignmentdetails'] = "課題の詳細";
+$string['assignmentmail'] = "\$a->teacher があなたの '\$a->assignment' に対する提出課題にフィードバックを投稿しました。
+
+フィードバックはあなたの提出課題に追加されています:
+
+\$a->url";
+$string['assignmentmailhtml'] = "\$a->teacher があなたの '<i>\$a->assignment</i>' に対する提出課題にフィードバックを投稿しました。
+<br><br>
+フィードバックはあなたの<a href=\\\"\$a->url\\\">提出課題</a>に追加されています。";
 $string['assignmentname'] = "課題名";
 $string['assignmenttype'] = "課題タイプ";
 $string['description'] = "詳細";
