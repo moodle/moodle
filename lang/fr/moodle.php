@@ -276,6 +276,7 @@ $string['downloadtext'] = 'Télécharger en format texte';
 $string['doyouagree'] = 'Avez-vous lu et compris ces conditions ?';
 $string['edit'] = 'Modifier $a';
 $string['editcoursesettings'] = 'Modifier les paramètres du cours';
+$string['editfiles'] = 'Modifier les fichiers';
 $string['editgroupprofile'] = 'Modifier le profil du groupe';
 $string['editinga'] = 'Modifier un(e) $a';
 $string['editmyprofile'] = 'Modifier mon profil';
