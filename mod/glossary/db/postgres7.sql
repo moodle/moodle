@@ -22,8 +22,13 @@ CREATE TABLE prefix_glossary (
      showall int2 NOT NULL default '1',
      allowcomments int2 NOT NULL default '0',
      usedynalink int2 NOT NULL default '1',
+     defaultapproval int2 NOT NULL default '1',
      globalglossary int2 NOT NULL default '0',
      entbypage int NOT NULL default '10',
+	 assessed int4 NOT NULL default '0',
+	 assesstimestart int4 NOT NULL default '0',
+	 assesstimefinish int4 NOT NULL default '0',
+	 scale int4 NOT NULL default '0',
      timecreated int4 NOT NULL default '0',
      timemodified int4 NOT NULL default '0',
      PRIMARY KEY  (id)
@@ -48,6 +53,7 @@ CREATE TABLE prefix_glossary_entries (
      usedynalink int2 NOT NULL default '1',
      casesensitive int2 NOT NULL default '0',
      fullmatch int2 NOT NULL default '1',
+     approved int2 unsigned NOT NULL default '1',
      PRIMARY KEY(id)
 );
 
@@ -100,6 +106,41 @@ CREATE TABLE prefix_glossary_comments (
 );
 
 #
+# Table structure for table `glossary_displayformats`
+#
+
+CREATE TABLE prefix_glossary_displayformats (
+     id SERIAL,
+     fid int4 NOT NULL default '0',
+     visible int2 unsigned NOT NULL default '1',
+
+     relatedview int4 NOT NULL default '-1',
+     showgroup int2 unsigned NOT NULL default '1',
+
+     defaultmode varchar(50) NOT NULL default '',
+     defaulthook varchar(50) NOT NULL default '',
+	 
+     sortkey varchar(50) NOT NULL default '',
+     sortorder varchar(50) NOT NULL default '',
+	 
+     PRIMARY KEY  (id)
+);
+
+
+#
+# Table structure for table `forum_ratings`
+#
+
+CREATE TABLE prefix_glossary_ratings (
+  id int4 SERIAL,
+  userid int4 unsigned NOT NULL default '0',
+  entryid int4 unsigned NOT NULL default '0',
+  time int4 unsigned NOT NULL default '0',
+  rating int4 NOT NULL default '0',
+  PRIMARY KEY  (id)
+);
+
+#
 # Dumping data for table `log_display`
 #
 
@@ -115,3 +156,4 @@ INSERT INTO prefix_log_display VALUES ('glossary', 'delete category', 'glossary'
 INSERT INTO prefix_log_display VALUES ('glossary', 'add comment', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'update comment', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'delete comment', 'glossary', 'name');
+INSERT INTO prefix_log_display VALUES ('glossary', 'approve entry', 'glossary', 'name');
