@@ -21,12 +21,6 @@
 
     $primaryadmin = get_admin();
 
-/// If you want any administrator to have the ability to assign admin
-/// rights, then comment out the following if statement
-    if ($primaryadmin->id != $USER->id) {
-        error("You must be the primary administrator to use this page.");
-    }
-
 /// assign all of the configurable language strings
     $stringstoload = array (
         "assigncreators",
