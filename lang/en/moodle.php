@@ -346,6 +346,7 @@ $string['makeafolder'] = "Make a folder";
 $string['makeeditable'] = "If you make '\$a' editable by the web server process (eg apache) then you could edit this file directly from this page";
 $string['mainmenu'] = "Main menu";
 $string['managedatabase'] = "Manage database";
+$string['markedthistopic'] = "This topic is highlighted as the current topic";
 $string['markthistopic'] = "Highlight this topic as the current topic";
 $string['maximumchars'] = "Maximum of \$a characters";
 $string['maximumgrade'] = "Maximum grade";
