@@ -1,26 +1,26 @@
 <?php
-require_once('../../../config.php');
+    require_once('../../../config.php');
     require_once('../lib.php');
 
     require_variable($id);
     optional_variable($groupid, -1);
 
-    if (!$chat = get_record("chat", "id", $id)) {
-        error("Could not find that chat room!");
+    if (!$chat = get_record('chat', 'id', $id)) {
+        error('Could not find that chat room!');
     }
 
-    if (!$course = get_record("course", "id", $chat->course)) {
-        error("Could not find the course this belongs to!");
+    if (!$course = get_record('course', 'id', $chat->course)) {
+        error('Could not find the course this belongs to!');
     }
 
-    if (!$cm = get_coursemodule_from_instance("chat", $chat->id, $course->id)) {
-        error("Course Module ID was incorrect");
+    if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
+        error('Course Module ID was incorrect');
     }
 
     require_login($course->id);
 
     if (isguest()) {
-        error("Guest does not have access to chat rooms");
+        error('Guest does not have access to chat rooms');
     }
 
 /// Check to see if groups are being used here
@@ -67,7 +67,7 @@ require_once('../../../config.php');
    <frame src="chatinput.php?<?php echo $params ?>" name="input" scrolling="no" marginwidth="2" marginheight="1">
   </frameset>
   <frame src="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport?win=users&amp;$params"; ?>" name="users" scrolling="auto" marginwidth="5" marginheight="5"> 
-<!--  
+  <!--  
   <frame src="../users.php?<?php echo $params ?>" name="users" scrolling="auto" marginwidth="5" marginheight="5">
   -->
  </frameset>

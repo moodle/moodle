@@ -78,7 +78,7 @@ class ChatDaemon {
         // This will set it just fine for bookkeeping purposes.
         if($now - $this->sets_info[$sessionid]['lastinfocommit'] > $this->live_data_update_threshold) {
             // commit to permanent storage
-            trace('Committing volatile lastmessageping for session '.$sessionid);
+            // trace('Committing volatile lastmessageping for session '.$sessionid);
             $this->sets_info[$sessionid]['lastinfocommit'] = $now;
             update_record('chat_users', $this->sets_info[$sessionid]['chatuser']);
         }
@@ -151,6 +151,9 @@ class ChatDaemon {
         }
         echo '</tbody></table>';
 
+        // About 2K of HTML comments to force browsers to render the HTML
+        echo $GLOBALS['CHAT_DUMMY_DATA'];
+
         echo "</body>\n</html>\n";
 
         chat_language_restore($oldlang);
@@ -221,31 +224,7 @@ class ChatDaemon {
             break;
 
             case CHAT_SIDEKICK_USERS:
-            /*
-                //$x = pusers($this->sets_info[$sessionid]['chatid'], $this->sets_info[$sessionid]['groupid']);
-                //$x = "<html>Lalalala! ".time()."</html>";
-
-                $header  = "HTTP/1.1 200 OK\n";
-                $header .= "Connection: close\n";
-                $header .= "Date: ".date('r')."\n";
-                $header .= "Server: Moodle\n";
-                $header .= "Content-Type: text/html\n";
-                $header .= "Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT\n";
-                $header .= "Cache-Control: no-cache, must-revalidate\n";
-                $header .= "Expires: Wed, 4 Oct 1978 09:32:45 GMT\n";
-                //$header .= "Refresh: 3; url=http://$CFG->chat_serverhost:$CFG->chat_serverport?win=users&".
-                //           "chat_sid=".$sessionid."&groupid=".$this->sets_info[$sessionid]['groupid']."\n";
-                $header .= "\n";
-
-                $x = $header.$x;
-*/
-
-/*
-                trace('Outputting user list('.strlen($x).' chars)');
-                //trace($x);
-
-                chat_socket_write($handle, $x);
-*/
+                // A request to paint a user window
 
                 $content = $this->get_user_window($sessionid);
 
