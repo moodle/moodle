@@ -3,8 +3,14 @@
 
     require_once("../config.php");
 
-    $USER = NULL;
-    $SESSION = NULL;
+    if (ini_get("register_globals")) {
+        // This method is to try to avoid silly warnings from PHP 4.3.0
+        session_unregister("SESSION");
+        session_unregister("USER");
+    } else {
+        unset($_SESSION['USER']);
+        unset($_SESSION['SESSION']);
+    }
     redirect($CFG->wwwroot);
 
 ?>
