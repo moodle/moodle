@@ -244,6 +244,10 @@ class Wiki {
     $line = eregi_replace("([[:space:]])www\.([^[:space:]]*)([[:alnum:]#?/&=])", 
       "\\1<A HREF=\"http://www.\\2\\3\" TARGET=\"newpage\">www.\\2\\3</A>", $line);
 
+    // make email addresses into mailtos....
+    $line = eregi_replace("([[:space:]]|^)([a-zA-Z0-9@.]+)\(([^)]+)\)",
+      "\\1<a href=\"mailto:\\2\">\\3</a>", $line);
+
     // !# at the beginning of any lines means a heading
     $line = eregi_replace( "^!([1-6]) (.*)$", "<h\\1>\\2</h\\1>", $line );
     
@@ -260,10 +264,10 @@ class Wiki {
       global $course;    // This is a bit risky - it won't work everywhere
 
       if ($CFG->slasharguments) {
-        $line = eregi_replace( "/([a-zA-Z./_-]+)(png|gif|jpg)\(([^)]+)\)",
+        $line = eregi_replace( "/([a-zA-Z0-9./_-]+)(png|gif|jpg)\(([^)]+)\)",
           "<img src=\"$CFG->wwwroot/file.php/$course->id/\\1\\2\" alt=\"\\3\" />", $line );
       } else {
-        $line = eregi_replace( "/([a-zA-Z./_-]+)(png|gif|jpg)\(([^)]+)\)",
+        $line = eregi_replace( "/([a-zA-Z0-9./_-]+)(png|gif|jpg)\(([^)]+)\)",
           "<img src=\"$CFG->wwwroot/file.php\?file=$course->id/\\1\\2\" alt=\"\\3\" />", $line );
       }
 
