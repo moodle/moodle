@@ -139,7 +139,7 @@
                 $moreinfo->count  = $USER_LARGE_CLASS;
                 $moreinfo->things = strtolower($course->students);
                 echo "<center><p>".get_string("displayingfirst", "", $moreinfo);
-                echo " (<a href=\"index.php?id=$course->id&sort=$sort&dir=$dir&showall=1\">".get_string("showallusers")."</a>)";
+                echo " (<a href=\"index.php?id=$course->id&sort=$sort&dir=$dir&showall=1\">".get_string("showall")."</a>)";
                 echo "</p></center>";
             }
 
