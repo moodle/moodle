@@ -32,10 +32,10 @@
 
     $showcategories = (count($categories) > 1);
     if ($showcategories) {
-        echo "<TABLE WIDTH=\"100%\" CELLPADDING=10 BORDER=0>";
-        echo "<TR><TD WIDTH=180 VALIGN=TOP>";
-        print_course_categories($categories, $category, 180);
-        echo "</TD><TD WIDTH=\"100%\" VALIGN=TOP>";
+        echo "<TABLE WIDTH=\"100%\" CELLPADDING=\"8\" BORDER=\"0\">";
+        echo "<TR><TD WIDTH=\"200\" VALIGN=\"TOP\">";
+        print_course_categories($categories, $category, 200);
+        echo "</TD><TD WIDTH=\"*\" VALIGN=\"TOP\">";
     } else {
         echo "<TABLE WIDTH=80% ALIGN=CENTER><TR><TD VALIGN=top>";
         $category="all";
