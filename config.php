@@ -59,6 +59,11 @@ $CFG->dataroot  = "/home/moodledata";
 $CFG->theme     = "standard";
 
 
+// Choose a sitewide language - this will affect navigation, help etc
+
+$CFG->lang     = "en";
+
+
 // Give the full name (eg mail.example.com) of an SMTP server that the 
 // web server machine has access to (to send mail).
 
