@@ -12,7 +12,9 @@ function auth_user_login ($username, $password) {
     // two databases of the same kind ... it seems to get confused when trying to access
     // the first database again, after having accessed the second.
     // The following hack will make the database explicit which keeps it happy
-    $CFG->prefix = "$CFG->dbname.$CFG->prefix";
+    if ($CFG->dbtype != 'postgres7') {
+       $CFG->prefix = "$CFG->dbname.$CFG->prefix";
+    }   
 
     // Connect to the external database
     $authdb = &ADONewConnection($CFG->auth_dbtype);         
