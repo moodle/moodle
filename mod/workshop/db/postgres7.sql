@@ -23,7 +23,7 @@ CREATE TABLE prefix_workshop (
   assessmentstart INT8  NOT NULL default '0',
   submissionend INT8  NOT NULL default '0',
   assessmentend INT8  NOT NULL default '0',
-  releasegrades INT8 NOT NULL "0",
+  releasegrades INT8 NOT NULL default'0',
   grade INT8 NOT NULL default '0',
   gradinggrade INT4 NOT NULL default '0',
   ntassessments INT  NOT NULL default '0',
@@ -34,7 +34,7 @@ CREATE TABLE prefix_workshop (
   teacherweight INT  NOT NULL default '1',
   showleaguetable INT4 NOT NULL default '0',
   usepassword INT NOT NULL DEFAULT '0',
-  password VARCHAR(32) NOT NULL DEFAULT '0'
+  password VARCHAR(32) NOT NULL DEFAULT ''
 );
 
 CREATE INDEX prefix_workshop_course_idx ON prefix_workshop (course);
@@ -107,8 +107,8 @@ CREATE TABLE prefix_workshop_elements (
   scale INT  NOT NULL default '0',
   maxscore INT  NOT NULL default '1',
   weight INT4 NOT NULL default '11',
-  stddev FLOAT NOT NULL default "0",
-  totalrassesments INT8 NOT NULL DEFAULT "0"
+  stddev FLOAT NOT NULL default '0',
+  totalrassesments INT8 NOT NULL DEFAULT '0'
 );
 
 CREATE INDEX prefix_workshop_elements_workshopid_idx ON prefix_workshop_elements (workshopid);
