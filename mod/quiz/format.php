@@ -164,6 +164,14 @@ class quiz_default_format {
         return true;
     }
 
+    function presave_process( $content ) {
+    /// enables any processing to be done on the content
+    /// just prior to the file being saved
+    /// default is to do nothing
+ 
+        return $content;
+    }
+
     function exportprocess($filename) {
     /// Exports a given category.  There's probably little need to change this
 
@@ -194,8 +202,11 @@ class quiz_default_format {
         foreach($questions as $question) {
           $count++;
           echo "<hr><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
-          $expout .= $this->writequestion( $question );
+          $expout .= $this->writequestion( $question ) . "\n";
           }
+
+        // final pre-process on exported data
+        $expout = $this->presave_process( $expout );
 
         // write file
         $filepath = $path."/".$filename . $this->export_file_extension();
@@ -212,8 +223,6 @@ class quiz_default_format {
 
     function exportpostprocess() {
     /// Does any post-processing that may be desired
-    /// Argument is a simple array of question ids that 
-    /// have just been added.
 
         return true;
     }
