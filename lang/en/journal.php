@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.2 development (2003111400)
+      // journal.php - created with Moodle 1.2 + (2004032100)
 
 
 $string['alwaysopen'] = 'Always open';
@@ -17,7 +17,7 @@ You can see it appended to your journal entry:
     $a->url';
 $string['journalmailhtml'] = '$a->teacher has posted some feedback on your
 journal entry for \'<i>$a->journal</i>\'<br /><br />
-You can see it appended to your <a href="$a->url">journal entry</a>.';
+You can see it appended to your <a href=\"$a->url\">journal entry</a>.';
 $string['journalname'] = 'Journal name';
 $string['journalquestion'] = 'Journal question';
 $string['journalrating1'] = 'Not satisfactory';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 development (2003111400)
+      // assignment.php - created with Moodle 1.2 + (2004032100)
 
 
 $string['allowresubmit'] = 'Allow resubmitting';
@@ -12,7 +12,7 @@ You can see it appended to your assignment submission:
     $a->url';
 $string['assignmentmailhtml'] = '$a->teacher has posted some feedback on your
 assignment submission for \'<i>$a->assignment</i>\'<br /><br />
-You can see it appended to your <a href="$a->url">assignment submission</a>.';
+You can see it appended to your <a href=\"$a->url\">assignment submission</a>.';
 $string['assignmentname'] = 'Assignment name';
 $string['assignmenttype'] = 'Assignment type';
 $string['configmaxbytes'] = 'Default maximum assignment size for all assignments on the site (subject to course limits and other local settings)';
