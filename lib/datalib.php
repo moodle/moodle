@@ -88,6 +88,10 @@ function modify_database($sqlfile="", $sqlstring="") {
             $lines = file($sqlfile);
         }
     } else {
+        $sqlstring = trim($sqlstring);
+        if ($sqlstring{strlen($sqlstring)-1} != ";") {
+            $sqlstring .= ";"; // add it in if it's not there.
+        }
         $lines[] = $sqlstring;
     }
 
