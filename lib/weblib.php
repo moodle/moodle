@@ -240,6 +240,10 @@ function get_slash_arguments($i=0) {
         return false;
     }
 
+    if (strpos($PATH_INFO, "..")) {  // check for funny business
+        return false;
+    }
+
     $args = explode("/", $PATH_INFO);
 
     if ($i) {     // return just the required argument
