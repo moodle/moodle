@@ -3,21 +3,25 @@
     require("../../config.php");
     require("lib.php");
 
-    require_variable($a);          // workshop ID
+    require_variable($id);          // CM ID
 
     $newfile = $HTTP_POST_FILES["newfile"];
 
-    if (! $workshop = get_record("workshop", "id", $a)) {
-        error("Not a valid workshop ID");
+    if (! $cm = get_record("course_modules", "id", $id)) {
+        error("Course Module ID was incorrect");
     }
 
-    if (! $course = get_record("course", "id", $workshop->course)) {
+    if (! $course = get_record("course", "id", $cm->course)) {
         error("Course is misconfigured");
+    }
+
+    if (! $workshop = get_record("workshop", "id", $cm->instance)) {
+        error("Course module is incorrect");
     }
 
     require_login($course->id);
 
-    add_to_log($course->id, "workshop", "submit", "view.php?a=$workshop->id", "$workshop->id");
+    add_to_log($course->id, "workshop", "submit", "view.php?id=$cm->id", "$workshop->id");
 
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
@@ -73,7 +77,6 @@
                         if ($assessments = workshop_get_assessments($submission, 'ALL')) {
                             foreach ($assessments as $assessment) {
                                 if ($assessment->timecreated < $timenow) {
-                                    echo "Copying $assessment->id ...<br/>";
                                     // a Cold or Warm assessment - copy it with feedback..
                                     $newassessment = workshop_copy_assessment($assessment, $newsubmission, 
                                             true);
@@ -87,7 +90,7 @@
                                 }
                             }
                         }
-                        add_to_log($course->id, "workshop", "resubmit", "view.php?a=$workshop->id", 
+                        add_to_log($course->id, "workshop", "resubmit", "view.php?id=$cm->id", 
                                 "$workshop->id");
                     }
 					if (! $dir = workshop_file_area($workshop, $newsubmission)) {

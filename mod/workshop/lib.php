@@ -3190,10 +3190,10 @@ function workshop_print_assignment_info($workshop) {
 
 	if (! $course = get_record("course", "id", $workshop->course)) {
         error("Course is misconfigured");
-        }
+    }
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
         error("Course Module ID was incorrect");
-		}
+	}
 	// print standard assignment heading
 	$strdifference = format_time($workshop->deadline - time());
 	if (($workshop->deadline - time()) < 0) {
@@ -3495,10 +3495,17 @@ function workshop_print_time_to_deadline($time) {
 function workshop_print_upload_form($workshop) {
 // Arguments are objects, needs title coming in
 
+    if (! $course = get_record("course", "id", $workshop->course)) {
+        error("Course is misconfigured");
+    }
+    if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
+        error("Course Module ID was incorrect");
+	}
+
     echo "<DIV ALIGN=CENTER>";
     echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"POST\" ACTION=upload.php>";
     echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$workshop->maxbytes\">";
-    echo " <INPUT TYPE=hidden NAME=a VALUE=\"$workshop->id\">";
+    echo " <INPUT TYPE=hidden NAME=id VALUE=\"$cm->id\">";
 	echo "<b>".get_string("title", "workshop")."</b>: <INPUT NAME=\"title\" TYPE=\"text\" SIZE=\"60\" MAXSIZE=\"100\"><BR><BR>\n";
     echo " <INPUT NAME=\"newfile\" TYPE=\"file\" size=\"50\">";
     echo " <INPUT TYPE=submit NAME=save VALUE=\"".get_string("uploadthisfile")."\">";

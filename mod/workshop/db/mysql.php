@@ -7,12 +7,9 @@ function workshop_upgrade($oldversion) {
     global $CFG;
 
     if ($oldversion < 2003050400) {
-
 		execute_sql(" ALTER TABLE `{$CFG->prefix}workshop` CHANGE `graded` `agreeassessments` TINYINT(2) UNSIGNED DEFAULT '0' NOT NULL");
 		execute_sql(" ALTER TABLE `{$CFG->prefix}workshop` CHANGE `showgrades` `hidegrades` TINYINT(2) UNSIGNED DEFAULT '0' NOT NULL");
-		
 		execute_sql(" ALTER TABLE `{$CFG->prefix}workshop_assessments` ADD `timeagreed` INT(10) UNSIGNED DEFAULT '0' NOT NULL AFTER `timecreated`");
-	
 		execute_sql("
         CREATE TABLE `{$CFG->prefix}workshop_comments` (
           `id` int(10) unsigned NOT NULL auto_increment,
@@ -26,13 +23,10 @@ function workshop_upgrade($oldversion) {
           PRIMARY KEY  (`id`)
         ) COMMENT='Defines comments'
         ");
-        
-		}
+	}
 
 	if ($oldversion < 2003051400) {
-
 		execute_sql(" ALTER TABLE `{$CFG->prefix}workshop` ADD `showleaguetable` TINYINT(3) UNSIGNED NOT NULL  DEFAULT '0' AFTER `gradingweight`");
-
 		execute_sql("
 		CREATE TABLE `{$CFG->prefix}workshop_rubrics` (
 		  `id` int(10) unsigned NOT NULL auto_increment,
@@ -43,26 +37,35 @@ function workshop_upgrade($oldversion) {
 		  PRIMARY KEY  (`id`)
 		) COMMENT='Info about the rubrics marking scheme'
         ");
-        
-		}
+	}
 		
 	if ($oldversion < 2003082200) {
 	
 		execute_sql(" ALTER TABLE `{$CFG->prefix}workshop_rubrics` CHANGE `elementid` `elementno` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
-		
-		}
+	}
 
 	if ($oldversion < 2003092500) {
-	
 		execute_sql(" ALTER TABLE `{$CFG->prefix}workshop` ADD `overallocation` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER `nsassessments`");
-		
-		}
-		if ($oldversion < 2003100200) {
+	}
+
+    if ($oldversion < 2003100200) {
 	
 		execute_sql(" ALTER TABLE `{$CFG->prefix}workshop_assessments` ADD `resubmission` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER `mailed`");
+	}
 		
-		}
-		
+    if ($oldversion < 2003100800) {
+        // tidy up log_display entries
+        execute_sql("DELETE FROM `{$CFG->prefix}log_display` WHERE `module` = 'workshop'");
+        execute_sql("INSERT INTO `{$CFG->prefix}log_display` VALUES('workshop', 'assessments', 'workshop', 'name')");
+        execute_sql("INSERT INTO `{$CFG->prefix}log_display` VALUES ('workshop', 'close', 'workshop', 'name')");
+        execute_sql("INSERT INTO `{$CFG->prefix}log_display` VALUES ('workshop', 'display', 'workshop', 'name')");
+        execute_sql("INSERT INTO `{$CFG->prefix}log_display` VALUES ('workshop', 'resubmit', 'workshop', 'name')");
+        execute_sql("INSERT INTO `{$CFG->prefix}log_display` VALUES ('workshop', 'set up', 'workshop', 'name')");
+        execute_sql("INSERT INTO `{$CFG->prefix}log_display` VALUES ('workshop', 'submissions', 'workshop', 'name')");
+        execute_sql("INSERT INTO `{$CFG->prefix}log_display` VALUES ('workshop', 'view', 'workshop', 'name')");
+        execute_sql("INSERT INTO `{$CFG->prefix}log_display` VALUES ('workshop', 'update', 'workshop', 'name')");
+    }
+
     return true;
 }
 

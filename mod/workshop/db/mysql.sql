@@ -143,10 +143,12 @@ CREATE TABLE `prefix_workshop_comments` (
         
         
 
+INSERT INTO `prefix_log_display` VALUES ('workshop', 'assessments', 'workshop', 'name');
 INSERT INTO `prefix_log_display` VALUES ('workshop', 'close', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'display grades', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'hide grades', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'open', 'workshop', 'name');
+INSERT INTO `prefix_log_display` VALUES ('workshop', 'display', 'workshop', 'name');
+INSERT INTO `prefix_log_display` VALUES ('workshop', 'resubmit', 'workshop', 'name');
+INSERT INTO `prefix_log_display` VALUES ('workshop', 'set up', 'workshop', 'name');
+INSERT INTO `prefix_log_display` VALUES ('workshop', 'submissions', 'workshop', 'name');
 INSERT INTO `prefix_log_display` VALUES ('workshop', 'view', 'workshop', 'name');
 INSERT INTO `prefix_log_display` VALUES ('workshop', 'update', 'workshop', 'name');
 

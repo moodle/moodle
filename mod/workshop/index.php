@@ -34,13 +34,13 @@
     $timenow = time();
 
     if ($course->format == "weeks") {
-        $table->head  = array ($strweek, $strname, $strdeadline, $strsubmitted);
+        $table->head  = array ($strweek, $strname, $strsubmitted, $strdeadline);
         $table->align = array ("CENTER", "LEFT", "LEFT", "LEFT");
-    } else if ($course->format == "topics") {
-        $table->head  = array ($strtopic, $strname, $strdeadline, $strsubmitted);
+    } elseif ($course->format == "topics") {
+        $table->head  = array ($strtopic, $strname, $strsubmitted, $strdeadline);
         $table->align = array ("CENTER", "LEFT", "LEFT", "LEFT");
     } else {
-        $table->head  = array ($strname, $strdeadline, $strsubmitted);
+        $table->head  = array ($strname, $strsubmitted, $strdeadline);
         $table->align = array ("LEFT", "LEFT", "LEFT");
     }
 
@@ -49,47 +49,47 @@
 			foreach ($submissions as $submission) {
 				if ($submission->timecreated <= $workshop->deadline) {
 					$submitted = userdate($submission->timecreated);
-					} 
+				} 
 				else {
 					$submitted = "<FONT COLOR=red>".userdate($submission->timecreated)."</FONT>";
-					}
-				$due = userdate($workshop->deadline);
-                                if (!$workshop->visible) {
-                                    //Show dimmed if the mod is hidden
-				    $link = "<A class=\"dimmed\" HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A><BR>".
-					    "($submission->title)";
-                                } else {
-                                    //Show normal if the mod is visible
-				    $link = "<A HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A><BR>".
-					    "($submission->title)";
-                                }
-				if ($course->format == "weeks" or $course->format == "topics") {
-					$table->data[] = array ($workshop->section, $link, $due, $submitted);
-					} 
-				else {
-					$table->data[] = array ($link, $due, $submitted);
-					}
 				}
-			}
-		else {
-            $submitted = get_string("no");
-			$due = userdate($workshop->deadline);
-                        if (!$workshop->visible) {
-                            //Show dimmed if the mod is hidden
-                            $link = "<A class=\"dimmed\" HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A>";
-                        } else {
-                            //Show normal if the mod is visible
-                            $link = "<A HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A>";
-                        }
-			if ($course->format == "weeks" or $course->format == "topics") {
-				$table->data[] = array ($workshop->section, $link, $due, $submitted);
-				} 
-			else {
-				$table->data[] = array ($link, $due, $submitted);
+				$due = userdate($workshop->deadline);
+                if (!$workshop->visible) {
+                    //Show dimmed if the mod is hidden
+				    $link = "<A class=\"dimmed\" HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A><br />".
+					    "($submission->title)";
+                    } else {
+                    //Show normal if the mod is visible
+				    $link = "<A HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A><br />".
+					    "($submission->title)";
+                }
+				if ($course->format == "weeks" or $course->format == "topics") {
+					$table->data[] = array ($workshop->section, $link, $submitted, $due);
+	    		} 
+				else {
+		    		$table->data[] = array ($link, $submitted, $due);
 				}
 			}
 		}
-    echo "<BR>";
+		else {
+            $submitted = get_string("no");
+			$due = userdate($workshop->deadline);
+            if (!$workshop->visible) {
+                //Show dimmed if the mod is hidden
+                $link = "<A class=\"dimmed\" HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A>";
+            } else {
+                //Show normal if the mod is visible
+                $link = "<A HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A>";
+            }
+			if ($course->format == "weeks" or $course->format == "topics") {
+	    			$table->data[] = array ($workshop->section, $link, $submitted, $due);
+			} 
+			else {
+				$table->data[] = array ($link, $submitted, $due);
+			}
+		}
+	}
+    echo "<br />";
 
     print_table($table);
 

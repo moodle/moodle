@@ -71,16 +71,16 @@
 			// has the assignment any elements
 			if (count_records("workshop_elements", "workshopid", $workshop->id)) {
 				$action = "teachersview";
-				}
+			}
 			else {
-				redirect("assessments.php?action=editelements&id=$cm->id");
-				}
+    			redirect("assessments.php?action=editelements&id=$cm->id");
 			}
 		}
+	}
 	elseif (!isguest()) { // it's a student then
 		if (!$cm->visible) {
 			notice(get_string("activityiscurrentlyhidden"));
-			}
+		}
 		switch ($workshop->phase) {
 			case 0 :
 			case 1 : $action = 'notavailable'; break;
@@ -88,11 +88,11 @@
 			case 3: $action = 'studentsview'; break;
 			case 4 : $action = 'notavailable'; break;
 			case 5 : $action = 'displayfinalgrade';
-			}
 		}
+	}
 	else { // it's a guest, oh no!
 		$action = 'notavailable';
-		}
+	}
 	
 	
 	/************** allow peer assessments (move to phase 3) (for teachers)**/
@@ -100,12 +100,13 @@
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
-			}
-
-		// move tp phase 3
-		set_field("workshop", "phase", 3, "id", "$workshop->id");
-		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 3));
 		}
+
+		// move to phase 3
+		set_field("workshop", "phase", 3, "id", "$workshop->id");
+		add_to_log($course->id, "workshop", "assessments", "view.php?id=$cm->id", "$workshop->id");
+		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 3));
+	}
 	
 
 	/****************** close workshop for student assessments/submissions (move to phase 4) (for teachers)**/
@@ -113,12 +114,13 @@
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
-			}
-
-		// move tp phase 4
-		set_field("workshop", "phase", 4, "id", "$workshop->id");
-		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 4));
 		}
+
+		// move to phase 4
+		set_field("workshop", "phase", 4, "id", "$workshop->id");
+		add_to_log($course->id, "workshop", "close", "view.php?id=$cm->id", "$workshop->id");
+		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 4));
+	}
 	
 
 	/****************** display final grade (for students) ************************************/
@@ -135,38 +137,38 @@
 		// teacher grades?
 		if ($workshop->gradingstrategy and $teacherweight) {
 			$useteachersgrades = 1;
-			}
+		}
 		else {
 			$useteachersgrades = 0;
-			}
+		}
 		// peergrades?
 		if ($workshop->gradingstrategy and $workshop->nsassessments and $peerweight) {
 			$usepeergrades = 1;
-			}
+		}
 		else {
 			$usepeergrades = 0;
-			}
+		}
 		// bias grades?
 		if ((($workshop->ntassessments >= 3) or ($workshop->nsassessments >= 3)) and $biasweight ) {
 			$usebiasgrades = 1;
-			}
+		}
 		else {
 			$usebiasgrades = 0;
-			}
+		}
 		// reliability grades?
 		if ((($workshop->ntassessments >= 3) or ($workshop->nsassessments >= 3)) and $reliabilityweight ) {
 			$usereliabilitygrades = 1;
-			}
+		}
 		else {
 			$usereliabilitygrades = 0;
-			}
+		}
 		// grading grades?
 		if (($workshop->ntassessments or $workshop->nsassessments) and $gradingweight ) {
 			$usegradinggrades = 1;
-			}
+		}
 		else {
 			$usegradinggrades = 0;
-			}
+		}
 		
 		// show the final grades as stored in the tables...
 		print_heading_with_help(get_string("displayoffinalgrades", "workshop"), "finalgrades", "workshop");
@@ -176,70 +178,70 @@
 			if ($useteachersgrades) {
 				echo "<td align=\"center\"><b>".get_string("teacherassessments", "workshop", 
                         $course->teacher)."</b></td>";
-				}
+			}
 			if ($usepeergrades) {
 				echo "<td align=\"center\"><b>".get_string("studentassessments", "workshop", 
                         $course->student)."</b></td>";
-				}
+			}
 			echo "<td align=\"center\"><b>".get_string("assessmentsdone", "workshop")."</b></td>";
 			if ($usebiasgrades) {
 				echo "<td align=\"center\"><b>".get_string("gradeforbias", "workshop")."</b></td>";
-				}
+			}
 			if ($usereliabilitygrades) {
 				echo "<td align=\"center\"><b>".get_string("gradeforreliability", "workshop")."</b></td>";
-				}
+			}
 			if ($usegradinggrades) {
 				echo "<td align=\"center\"><b>".get_string("gradeforassessments", "workshop")."</b></td>";
-				}
+			}
 			echo "<td align=\"center\"><b>".get_string("overallgrade", "workshop")."</b></td></TR>\n";
 			// now the weights
 			echo "<TR><td><b>".get_string("weights", "workshop")."</b></td>";
 			if ($useteachersgrades) {
 				echo "<td align=\"center\"><b>$WORKSHOP_FWEIGHTS[$teacherweight]</b></td>\n";
-				}
+			}
 			if ($usepeergrades) {
 				echo "<td align=\"center\"><b>$WORKSHOP_FWEIGHTS[$peerweight]</b></td>\n";
-				}
+			}
 			echo "<td><b>&nbsp;</b></td>\n";
 			if ($usebiasgrades) {
 				echo "<td align=\"center\"><b>$WORKSHOP_FWEIGHTS[$biasweight]</b></td>\n";
-				}
+			}
 			if ($usereliabilitygrades) {
 				echo "<td align=\"center\"><b>$WORKSHOP_FWEIGHTS[$reliabilityweight]</b></td>\n";
-				}
+			}
 			if ($usegradinggrades) {
 				echo "<td align=\"center\"><b>$WORKSHOP_FWEIGHTS[$gradingweight]</b></td>\n";
-				}
+			}
 			echo "<td><b>&nbsp;</b></td></TR>\n";
 			foreach ($submissions as $submission) {
 				echo "<TR><td>".workshop_print_submission_title($workshop, $submission)."</td>\n";
 				if ($useteachersgrades) {
 					echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, 
                             $submission, "teacher")."</td>";
-					}
+				}
 				if ($usepeergrades) {
 					echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, 
                             $submission, "student")."</td>";
-					}
+				}
 				echo "<td align=\"center\">".workshop_print_user_assessments($workshop, $USER)."</td>";
 				if ($usebiasgrades) {
 					echo "<td align=\"center\">$submission->biasgrade</td>";
-					}
+				}
 				if ($usereliabilitygrades) {
 					echo "<td align=\"center\">$submission->reliabilitygrade</td>";
-					}
+				}
 				if ($usegradinggrades) {
 					echo "<td align=\"center\">$submission->gradinggrade</td>";
-					}
-				echo "<td align=\"center\">$submission->finalgrade</td></TR>\n";
 				}
+				echo "<td align=\"center\">$submission->finalgrade</td></TR>\n";
 			}
+		}
 		echo "</TABLE><BR CLEAR=ALL>\n";
 		if ($workshop->showleaguetable) {
 			workshop_print_league_table($workshop);
-			}
-		echo "<br />".get_string("allgradeshaveamaximumof", "workshop", $workshop->grade);
 		}
+		echo "<br />".get_string("allgradeshaveamaximumof", "workshop", $workshop->grade);
+	}
 
 
 	/****************** make final grades available (for teachers only)**************/
@@ -247,18 +249,18 @@
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
-			}
+		}
 
 		set_field("workshop", "phase", 5, "id", "$workshop->id");
+		add_to_log($course->id, "workshop", "display", "view.php?id=$cm->id", "$workshop->id");
 		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 5));
-		add_to_log($course->id, "workshop", "display grades", "view.php?a=$workshop->id", "$workshop->id");
-		}
+	}
 	
 	
 	/****************** assignment not available (for students)***********************/
 	elseif ($action == 'notavailable') {
 		print_heading(get_string("notavailable", "workshop"));
-		}
+	}
 
 
 	/****************** open workshop for student assessments (move to phase 2) (for teachers)**/
@@ -266,18 +268,18 @@
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
-			}
+		}
 
 		// move to phase 2, check that teacher has made enough submissions
 		if (workshop_count_teacher_submissions($workshop) < $workshop->ntassessments) {
 			redirect("view.php?id=$cm->id", get_string("notenoughexamplessubmitted", "workshop", $course->teacher));
-			}
+		}
 		else {
 			set_field("workshop", "phase", 2, "id", "$workshop->id");
+			add_to_log($course->id, "workshop", "submissions", "view.php?id=$cm->id", "$workshop->id");
 			redirect("view.php?id=$cm->id", get_string("movingtophase", "workshop", 2));
-			add_to_log($course->id, "workshop", "open", "view.php?a=$workshop->id", "$workshop->id");
-			}
 		}
+	}
 
 
 	/****************** set up assignment (move back to phase 1) (for teachers)***********************/
@@ -285,11 +287,12 @@
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
-			}
+		}
 
 		set_field("workshop", "phase", 1, "id", "$workshop->id");
+		add_to_log($course->id, "workshop", "set up", "view.php?id=$cm->id", "$workshop->id");
 		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 1));
-		}
+	}
 	
 	
 	/****************** student's view could be in 1 of 4 stages ***********************/
@@ -301,7 +304,7 @@
 			print_heading(get_string("pleaseassesstheseexamplesfromtheteacher", "workshop", 
                         $course->teacher));
 			workshop_list_teacher_submissions($workshop, $USER);
-			}
+		}
 		// in stage 2? - submit own first attempt
 		else {
 			if ($workshop->ntassessments) { 
@@ -309,7 +312,7 @@
 				print_heading(get_string("yourassessmentsofexamplesfromtheteacher", "workshop", 
                             $course->teacher));
 				workshop_list_teacher_submissions($workshop, $USER);
-				}
+			}
 			if (!workshop_get_user_submissions($workshop, $USER)) {
 				// print upload form
 				print_heading(get_string("submitassignmentusingform", "workshop").":");
@@ -321,16 +324,16 @@
 				if (workshop_count_teacher_assessments($workshop, $USER)) {
 					print_heading(get_string("assessmentsby", "workshop", $course->teachers));
 					workshop_list_teacher_assessments($workshop, $USER);
-					}
+				}
 				// is self assessment used in this workshop?
 				if ($workshop->includeself) {
 					// prints a table if there are any submissions which have not been self assessed yet
 					workshop_list_self_assessments($workshop, $USER);
-					}
+				}
 				// if peer assessments are being done and workshop is in phase 3 then show some  to assess...
 				if ($workshop->nsassessments and ($workshop->phase == 3)) {  
 					workshop_list_student_submissions($workshop, $USER);
-					}
+				}
 				// ..and any they have already done (and have gone cold)...
 				if (workshop_count_user_assessments($workshop, $USER, "student")) {
 					print_heading(get_string("yourassessments", "workshop"));
@@ -340,7 +343,7 @@
 				if (workshop_count_peer_assessments($workshop, $USER)) {
 					print_heading(get_string("assessmentsby", "workshop", $course->students));
 					workshop_list_peer_assessments($workshop, $USER);
-					}
+				}
 				// list previous submissions
 				print_heading(get_string("submissions", "workshop"));
 				workshop_list_user_submissions($workshop, $USER);
@@ -374,7 +377,7 @@
 	
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
-			}
+		}
 			
 		$strdifference = format_time($workshop->deadline - time());
 		if (($workshop->deadline - time()) < 0) {
@@ -392,7 +395,7 @@
 		// print upload form
 		print_heading(get_string("submitassignment", "assignment").":");
 		workshop_print_upload_form($workshop);
-		}
+	}
 
 
 	/****************** teacher's view - display admin page (current phase options) ************/
@@ -418,9 +421,9 @@
 			"view.php?id=$cm->id&action=makefinalgradesavailable");
 		if ($workshop->phase) { // phase 1 or more
 			$tabs->highlight = $workshop->phase - 1;
-			} else {
+		} else {
 			$tabs->highlight = 0; // phase is zero
-			}
+		}
 		workshop_print_tabbed_heading($tabs);
 		echo "<center>\n";
 			switch ($workshop->phase) {
@@ -441,7 +444,7 @@
 							  "</a></b> \n";
 						helpbutton("assessmentofexamples", get_string("teachersubmissionsforassessment", 
                                     "workshop"), "workshop");
-						}
+					}
 					break;
 					
 				case 2: // submissions and assessments
@@ -493,7 +496,7 @@
 		}
 		print_heading("<A HREF=\"submissions.php?id=$cm->id&action=adminlist\">".
 			get_string("administration")."</A>");
-		}
+	}
 	
 	
 	/*************** no man's land **************************************/
