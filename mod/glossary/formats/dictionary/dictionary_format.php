@@ -9,9 +9,9 @@ function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode='
     echo '<td class="entry">';
     glossary_print_entry_approval($cm, $entry, $mode);
     glossary_print_entry_attachment($entry,'html','right');
-    echo '<b>';
+    echo '<span class="concept">';
     glossary_print_entry_concept($entry);
-    echo ':</b> ';
+    echo ':</span> ';
     glossary_print_entry_definition($entry);
     echo '</td></tr>';
     echo '<tr valign="top"><td class="entrylowersection">';

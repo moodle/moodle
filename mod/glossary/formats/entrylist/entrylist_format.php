@@ -11,9 +11,9 @@ function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode=''
     echo '<td class="entry">';
     if ($entry) {
         glossary_print_entry_approval($cm, $entry, $mode);
-        echo "<b><a href=\"showentry.php?courseid=$course->id\&amp;eid=$entry->id\&amp;displayformat=dictionary\" target=\"_blank\" onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$course->id\&amp;eid=$entry->id\&amp;displayformat=dictionary', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
+        echo "<span class=\"concept\"><a href=\"showentry.php?courseid=$course->id\&amp;eid=$entry->id\&amp;displayformat=dictionary\" target=\"_blank\" onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$course->id\&amp;eid=$entry->id\&amp;displayformat=dictionary', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
         glossary_print_entry_concept($entry);
-        echo '</a></b> ';
+        echo '</a></span> ';
 
         if ( $return = glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook, 'html') ) {
             echo "($return)";

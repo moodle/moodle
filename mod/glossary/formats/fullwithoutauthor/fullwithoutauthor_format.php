@@ -11,9 +11,9 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
 
         echo '<td class="entryheader">';
 
-        echo '<strong>';
+        echo '<span class="concept">';
         glossary_print_entry_concept($entry);
-		echo '</strong><br />';
+		echo '</span><br />';
 
         echo '('.get_string('lastedited').': '.
              userdate($entry->timemodified).')';

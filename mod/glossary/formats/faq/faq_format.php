@@ -11,9 +11,9 @@ function glossary_show_entry_faq($course, $cm, $glossary, $entry, $mode="", $hoo
         echo '<td class="entryheader">';
         $entry->course = $course->id;
 
-        echo '<b>' . get_string('question','glossary') . ':</b> ';
+        echo '<span class="concept">' . get_string('question','glossary') . ': ';
         glossary_print_entry_concept($entry);
-        echo '<br />';
+        echo '</span><br />';
 
         echo '<span class="author">('.get_string('lastedited').': '.
              userdate($entry->timemodified).')</span>';

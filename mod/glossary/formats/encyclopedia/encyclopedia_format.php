@@ -17,9 +17,9 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
     
         echo '</td>';
         echo '<td class="entryheader">';
-        echo '<b>';
+        echo '<span class="concept">';
         glossary_print_entry_concept($entry);
-        echo '</b><br />';
+        echo '</span><br />';
         echo '<span class="author">'.$strby.' '.fullname($user, isteacher($course->id));
         echo '&nbsp;&nbsp;('.get_string('lastedited').': '.
              userdate($entry->timemodified).')</span>';
