@@ -110,9 +110,9 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
             $key = "$type-0-$name";
             if ($currentdatasetdef->type == $type
                     and $currentdatasetdef->category == 0) {
-                $options[$key] = get_string('keptlocal', 'quiz', $type);
+                $options[$key] = get_string("keptlocal$type", 'quiz');
             } else {
-                $options[$key] = get_string('newlocal', 'quiz', $type);
+                $options[$key] = get_string("newlocal$type", 'quiz');
             }
         }
         
@@ -130,16 +130,15 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
                     and $categorydef = $categorydatasetdefs[$type]) {
                 if ($currentdatasetdef->type == $type
                         and $currentdatasetdef->id == $categorydef->id) {
-                    $options[$key] = get_string('keptcategory', 'quiz', $type);
+                    $options[$key] = get_string("keptcategory$type", 'quiz');
                 } else {
-                    $options[$key] = get_string('existingcategory',
-                                                'quiz', $type);
+                    $options[$key] = get_string("existingcategory$type", 'quiz');
                 }
             } else {
-                $options[$key] = get_string('newcategory', 'quiz', $type);
+                $options[$key] = get_string("newcategory$type", 'quiz');
             }
         }
-        
+
         // All done!
         return array($options, $currentdatasetdef->type
                 ? "$currentdatasetdef->type-$currentdatasetdef->category-$name"
