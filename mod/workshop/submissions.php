@@ -25,6 +25,8 @@
     require("locallib.php");
 
     require_variable($id);    // Course Module ID
+    
+    $timenow = time();
 
     // get some useful stuff...
     if (! $cm = get_record("course_modules", "id", $id)) {
@@ -416,7 +418,7 @@
         if ($submission->userid <> $USER->id) {
             error("Edit submission: Userids do not match");
         }
-        if (($submission->timecreated < ($timenow - $CFG->maxeditingtime)) and ($workshop->assessmentstart < time()) {
+        if (($submission->timecreated < ($timenow - $CFG->maxeditingtime)) and ($workshop->assessmentstart < $timenow)) {
             error(get_string('notallowed', 'workshop'));
         }
         ?>
@@ -578,7 +580,6 @@
     /*************** update submission ***************************/
     elseif ($action == 'updatesubmission') {
 
-        $timenow = time();
         $form = data_submitted();
         
         if (empty($form->sid)) {
@@ -663,5 +664,4 @@
 
     print_footer($course);
  
-?>
-
+?> 
