@@ -1,24 +1,36 @@
-<form method="post" action="<?php print($_SERVER['PHP_SELF']);?>">
+<form method="post" action="<?php print($GLOBALS['ME']);?>">
 <table border="0" cellpadding="4" cellspacing="2">
-<tr><td colspan="3"><input type="checkbox" name="resettodefaults" value="" /> <?php print_string("editorresettodefaults");?>.</td></tr>
-<tr><td colspan="3"><strong><?php print_string("editorcommonsettings");?></strong></td></tr>
+<tr valign=top>
+    <td align=right><p>htmleditor:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0] = get_string("allownot");
+       $options[1] = get_string("allow");
+       choose_from_menu ($options, "htmleditor", $CFG->htmleditor, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("confightmleditor") ?>
+    </td>
+</tr>
 <tr>
-    <td align="right" valign="top"><?php print_string("editorbgcolor");?>:</td>
+    <td align="right" valign="top">editorbackgroundcolor:</td>
     <td valign="top"><input type="text" name="backgroundcolor" size="10" value="<?php print($CFG->editorbackgroundcolor);?>"></td>
     <td valign="top"><?php print_string("edhelpbgcolor");?></td>
 </tr>
 <tr>
-    <td align="right" valign="top"><?php print_string("editordefaultfont");?>:</td>
+    <td align="right" valign="top">editorfontfamily:</td>
     <td valign="top"><input type="text" name="fontfamily" size="30" value="<?php print($CFG->editorfontfamily);?>"></td>
     <td valign="top"><?php print_string("edhelpfontfamily");?></td>
 </tr>
 <tr>
-    <td align="right" valign="top"><?php print_string("editorfontsize");?>:</td>
+    <td align="right" valign="top">editorfontsize:</td>
     <td valign="top"><input type="text" name="fontsize" size="10" value="<?php print($CFG->editorfontsize);?>"></td>
     <td valign="top"><?php print_string("edhelpfontsize");?></td>
 </tr>
 <tr>
-    <td align="right" valign="top"><?php print_string("editorcleanonpaste");?>:</td>
+    <td align="right" valign="top">editorkillword:</td>
     <td valign="top"><select name="killword">
     <option value="1"<?php print(!$CFG->editorkillword)?"":" selected=\"selected\"";?>><?php print_string("yes");?></option>
     <option value="0"<?php print(!$CFG->editorkillword)?" selected=\"selected\"":"";?>><?php print_string("no");?></option>
@@ -26,9 +38,9 @@
     <td valign="top"><?php print_string("edhelpcleanword");?></td>
 </tr>
 <tr>
-    <td align="right" valign="top"><?php print_string("editorenablespelling");?>:</td>
+    <td align="right" valign="top">editorspelling:</td>
     <td valign="top"><select name="spelling"<?php
-    if(empty($CFG->aspellpath)) {
+    if (empty($CFG->aspellpath)) {
         echo " disabled=\"disabled\"";
         $CFG->editorspelling = false;
     }
@@ -38,26 +50,34 @@
     </select></td>
     <td valign="top"><?php print_string("edhelpenablespelling");?></td>
 </tr>
-<tr><td colspan="2"><strong><?php print_string("editorfontlist");?></strong></td>
-    <td valign="top"><?php print_string("edhelpfontlist");?></td></tr>
+<tr><td colspan="3"><br /><?php print_string("edhelpfontlist");?></td></tr>
 <?php
     if(is_array($fontlist)) {
         foreach($fontlist as $fontkey => $fontvalue) {
         ?>
 <tr>
-    <td align="right"><input type="text" name="fontname[]" size="15" value="<?php print($fontkey);?>"></td>
-    <td colspan="2"><input type="text" name="fontnamevalue[]" size="30" value="<?php print($fontvalue);?>"></td>
+    <td>&nbsp;</td>
+    <td colspan="2"><input type="text" name="fontname[]" size="15" value="<?php print($fontkey);?>">
+    <input type="text" name="fontnamevalue[]" size="30" value="<?php print($fontvalue);?>"></td>
 </tr>
     <?php
         }
     }
 ?>
 <tr>
-    <td align="right"><input type="text" name="fontname[]" size="15" value=""></td>
-    <td colspan="2"><input type="text" name="fontnamevalue[]" size="30" value=""></td>
+    <td>&nbsp;</td>
+    <td colspan="2"><input type="text" name="fontname[]" size="15" value="">
+    <input type="text" name="fontnamevalue[]" size="30" value=""></td>
 </tr>
 <tr>
     <td colspan="3" align="center"><input type="submit" value="<?php print_string("savechanges");?>"></td>
 </tr>
 </table>
 </form>
+
+<form method="post" action="<?php print($GLOBALS['ME']);?>">
+<center>
+<input type="submit" name="resettodefaults" value="<?php print_string('editorresettodefaults') ?>" />
+</center>
+</form>
+
