@@ -86,6 +86,8 @@
                     fwrite ($bf,full_tag("DEFINITION",6,false,$glo_ent->definition));
                     fwrite ($bf,full_tag("FORMAT",6,false,$glo_ent->format));
                     fwrite ($bf,full_tag("ATTACHMENT",6,false,$glo_ent->attachment));
+                    fwrite ($bf,full_tag("TIMECREATED",6,false,$glo_ent->timecreated));
+                    fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$glo_ent->timemodified));
                     fwrite ($bf,full_tag("TEACHERENTRY",6,false,$glo_ent->teacherentry));
 
                     $status =fwrite ($bf,end_tag("ENTRY",5,true));
