@@ -64,13 +64,16 @@
 
 
        $graph = new graph(750, 400);
-       $graph->parameter['title'] = "Hits on $course->shortname by $user->firstname $user->lastname";
+
+       $a->coursename = $course->shortname;
+       $a->username = "$user->firstname $user->lastname";
+       $graph->parameter['title'] = get_string("hitsoncourse", "", $a);
 
        $graph->x_data           = $days;
 
        $graph->y_data['logs']   = $logs;
        $graph->y_format['logs'] = array('colour' => 'blue','line' => 'line');
-       $graph->y_label_left     = "Hits";
+       $graph->y_label_left     = get_string("hits");
        $graph->label_size       = "6";
 
        $graph->y_order = array('logs');
@@ -78,6 +81,7 @@
        
        $graph->parameter['shadow']          = 'none';
 
+       error_reporting(5);
        $graph->draw_stack();
 
        break;
@@ -112,13 +116,16 @@
        $maxlogs = max($logs);
 
        $graph = new graph(750, 400);
-       $graph->parameter['title'] = "Today's hits on $course->shortname by $user->firstname $user->lastname";
+
+       $a->coursename = $course->shortname;
+       $a->username = "$user->firstname $user->lastname";
+       $graph->parameter['title'] = get_string("hitsoncoursetoday", "", $a);
 
        $graph->x_data           = $hours;
 
        $graph->y_data['logs']   = $logs;
        $graph->y_format['logs'] = array('colour' => 'blue','bar' => 'fill','legend' =>'actual','bar_size' => 0.9);
-       $graph->y_label_left     = "Hits";
+       $graph->y_label_left     = get_string("hits");
        $graph->label_size       = "6";
 
        $graph->y_order = array('logs');
@@ -126,6 +133,7 @@
        
        $graph->parameter['shadow']          = 'none';
 
+       error_reporting(5);
        $graph->draw_stack();
 
        break;
