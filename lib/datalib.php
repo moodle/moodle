@@ -2657,7 +2657,9 @@ function get_logs($select, $order='l.time DESC', $limitfrom='', $limitnum='', &$
     }
 
     $selectsql = $CFG->prefix .'log l LEFT JOIN '. $CFG->prefix .'user u ON l.userid = u.id '. ((strlen($select) > 0) ? 'WHERE '. $select : '');
-    $totalcount = count_records_sql('SELECT COUNT(*) FROM '. $selectsql);
+    $countsql = $CFG->prefix.'log l '.((strlen($select) > 0) ? ' WHERE '. $select : '');
+
+    $totalcount = count_records_sql("SELECT COUNT(*) FROM $countsql");
 
     return get_records_sql('SELECT l.*, u.firstname, u.lastname, u.picture
                                 FROM '. $selectsql .' '. $order .' '. $limit);
