@@ -27,8 +27,9 @@ optional_variable($chat_pretext, '');
 
 <?php include("$CFG->javascript"); ?>
 
-<script language="Javascript">
+<script type="text/javascript">
 <!--
+
 scroll_active = true;
 function empty_field_and_submit() {
     cf = document.getElementById('chatform');
@@ -39,27 +40,36 @@ function empty_field_and_submit() {
     document.f.chat_message.focus();
     return false;
 }
+function prepareusers() {
+    var frm = window.parent.frames;
+    for(i = 0; i < frm.length; ++i) {
+        if(frm(i).name == "users") {
+            window.userFrame = frm(i);
+            window.setTimeout("reloadusers();", <?php echo $CFG->chat_refresh_userlist; ?> * 1000);
+        }
+    }
+}
+function reloadusers() {
+    if(window.userFrame) {
+        window.userFrame.location.reload();
+        window.setTimeout("reloadusers();", <?php echo $CFG->chat_refresh_userlist; ?> * 1000);
+    }
+}
 // -->
 </script>
 </head>
 
-<body bgcolor="<?php echo $THEME->body ?>" onload="document.f.chat_message.focus();document.f.chat_message.select();">
+<body bgcolor="<?php echo $THEME->body ?>" onload="document.f.chat_message.focus();document.f.chat_message.select(); prepareusers();">
 
 <!--
 <form action="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport"; ?>" method="GET" target="empty" name="f" onsubmit="return empty_field_and_submit()">
 -->
-<form action="../insert.php" method="GET" target="empty" name="f" onsubmit="return empty_field_and_submit()">
-
-&gt;&gt;<input type="text" name="chat_message" size="60" value="<?php echo $chat_pretext; ?>">
+<form action="../insert.php" method="get" target="empty" name="f" onsubmit="return empty_field_and_submit()">
+&gt;&gt; <input type="text" name="chat_message" size="60" value="<?php echo $chat_pretext; ?>">
 <?php helpbutton("chatting", get_string("helpchatting", "chat"), "chat", true, false); ?>
 </form>
 
-
-
-<form action="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport/"; ?>" method="GET" target="empty" id="chatform">
-<!--
-<form action="../insert.php" method="GET" target="empty" id="chatform" onsubmit="return empty_field_and_submit()">
--->
+<form action="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport/"; ?>" method="get" target="empty" id="chatform">
     <input type="hidden" name="win" value="message" />
     <input type="hidden" name="chat_version" value="sockets" />
     <input type="hidden" name="chat_message" value="" />
@@ -67,7 +77,6 @@ function empty_field_and_submit() {
     <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>" />
     <input type="hidden" name="groupid" value="<?php echo $groupid ?>" />
 </form>
-
 </body>
 
 </html>
