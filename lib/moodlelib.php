@@ -743,11 +743,14 @@ function usergetdate($time, $timezone=99) {
 
     $timezone = get_user_timezone($timezone);
 
+    $time += dst_offset_on($time);
+
     if (abs($timezone) > 13) {
-        return getdate($time);
+        $time += intval(date('O')) * HOURSECS;
     }
-    //There is no gmgetdate so I have to fake it...
-    $time += (int)($timezone * HOURSECS);
+    else {
+        $time += (intval($timezone) * HOURSECS);
+    }
 
     // This is independent of the server's TZ settings,
     // unlike gmstrftime. It's also a bit faster this way.
@@ -800,12 +803,8 @@ function usergetmidnight($date, $timezone=99) {
     $timezone = get_user_timezone($timezone);
     $userdate = usergetdate($date, $timezone);
 
-    if (abs($timezone) > 13) {
-        return mktime(0, 0, 0, $userdate['mon'], $userdate['mday'], $userdate['year']);
-    }
-
-    $timemidnight = gmmktime (0, 0, 0, $userdate['mon'], $userdate['mday'], $userdate['year']);
-    return usertime($timemidnight, $timezone); // Time of midnight of this user's day, in GMT
+    // Time of midnight of this user's day, in GMT
+    return make_timestamp($userdate['year'], $userdate['mon'], $userdate['mday'], 0, 0, 0, $timezone);
 
 }
 
@@ -868,7 +867,6 @@ function dst_update_preset($dstpreset) {
 
     // Great... let's see where exactly we are now.
     if($now < $changes['activate']) {
-        print_object("<<");
         // DST has not been turned on this year
         $dstpreset->next_change = $changes['activate'];
         // For the last change, we need to fetch the previous year's DST deactivation timestamp
@@ -877,14 +875,12 @@ function dst_update_preset($dstpreset) {
         $dstpreset->current_offset = 0;
     }
     else if($now < $changes['deactivate']) {
-        print_object("<>");
         // DST is on for this year right now
         $dstpreset->last_change = $changes['activate'];
         $dstpreset->next_change = $changes['deactivate'];
         $dstpreset->current_offset = $dstpreset->apply_offset;
     }
     else {
-        print_object(">>");
         // DST has already been turned off; we are nearing the end of the year
         $dstpreset->last_change = $changes['deactivate'];
         // For the next change, we need to fetch next year's DST activation timestamp
@@ -923,6 +919,30 @@ function dst_changes_for_year($year, $dstpreset) {
     return array('activate' => $timeactivate, 0 => $timeactivate, 'deactivate' => $timedeactivate, 1 => $timedeactivate);
 }
 
+// $time must NOT be compensated at all, it has to be a pure timestamp
+function dst_offset_on($time) {
+    if(($dstid = get_user_preferences('calendar_dstpreset')) !== NULL) {
+        $preset = get_record('dst_preset', 'id', $dstid);
+
+        if($time >= $preset->last_change && $time < $preset->next_change) {
+            return $preset->current_offset * MINSECS;
+        }
+        else {
+            // It's in some other time period, we need to recalculate
+            $changes = dst_changes_for_year(gmdate('Y', $time), $preset);
+    
+            if($time >= $changes['activate'] && $time < $changes['deactivate']) {
+                // Compensation required
+                return $preset->apply_offset * MINSECS;
+            }
+            else {
+                return 0;
+            }
+        }
+    }
+}
+
+
 // "Find the ($index as int, 1st, 2nd, etc, -1 = last) ($weekday as int, sunday = 0) in ($month) of ($year)"
 function find_day_in_month($index, $weekday, $month, $year) {
     if($weekday == -1) {
@@ -940,10 +960,7 @@ function find_day_in_month($index, $weekday, $month, $year) {
         // We need to calculate when exactly that weekday is
         // Fist of all, what day of the week is the first of that month?
 
-        // Convert to timestamp and back to readable representation using the server's timezone;
-        // this should be correct regardless of what the user's timezone is.
         $firstmonthweekday = strftime('%w', mktime(12, 0, 0, $month, 1, $year, 0));
-//PJ        print_object('The first of '.$month.'/'.$year.' is '.$firstmonthweekday);
         $daysinmonth       = days_in_month($month, $year);
 
         // This is the first such-named weekday of the month
@@ -951,14 +968,12 @@ function find_day_in_month($index, $weekday, $month, $year) {
         if($targetday <= 0) {
             $targetday += 7;
         }
-//PJ        print_object('The FIRST SPECIFIC '.$weekday.' of '.$month.'/'.$year.' is on '.$targetday);
 
         if($index == -1) {
             // To find the LAST such weekday, just keep adding 7 days at a time
             while($targetday + 7 <= $daysinmonth) {
                 $targetday += 7;
             }
-//PJ            print_object('The LAST SPECIFIC '.$weekday.' of '.$month.'/'.$year.' is on '.$targetday);
         }
         else {
             // For a specific week, add as many weeks as required
