@@ -12,6 +12,7 @@ $string['allquestions'] = "All questions in order, all students";
 $string['allscales'] = "All scales, all students";
 $string['alreadysubmitted'] = "You have already submitted this survey";
 $string['analysisof'] = "Analysis of \$a";
+$string['answers'] = "Answers";
 
 $string['attlsname'] = "ATTLS (20 item version)";
 $string['attlsintro'] = "The purpose of this questionnaire is to help us evaluate your attitudes towards thinking and learning.

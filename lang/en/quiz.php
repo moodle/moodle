@@ -69,6 +69,7 @@ $string['fractionsnomax'] = "One of the answers should be 100%%, so that it is
 $string['gradeaverage'] = "Average grade";
 $string['gradehighest'] = "Highest grade";
 $string['grademethod'] = "Grading method";
+$string['grades'] = "Grades";
 $string['guestsno'] = "Sorry, guests can not see or attempt quizzes";
 $string['imagedisplay'] = "Image to display";
 $string['importquestions'] = "Import questions from file";

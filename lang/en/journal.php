@@ -11,6 +11,7 @@ $string['blankentry'] = "Blank entry";
 $string['daysavailable'] = "Days available";
 $string['editingends'] = "Editing period ends";
 $string['editingended'] = "Editing period has ended";
+$string['entries'] = "Entries";
 $string['feedbackupdated'] = "Feedback updated for \$a entries";
 $string['journalname'] = "Journal name";
 $string['journalquestion'] = "Journal question";
