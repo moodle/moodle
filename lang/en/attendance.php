@@ -30,6 +30,7 @@ $string['hoursinfullreport'] = "The maximum number of hours of attendance that s
 $string['pages'] = "Pages";
 $string['of'] = "of";
 $string['viewall'] = "View All Attendance Rolls";
+$string['teacheredit'] = "Take Attendance";
 $string['viewone'] = "View All Pages of Report";
 $string['viewtable'] = "View Report as One Table";
 $string['viewmulti'] = "View Report as Multiple Pages";
