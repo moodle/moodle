@@ -94,7 +94,8 @@
     // If a course has been supplied in the URL, change the filters to show that one
     if(!empty($_GET['course'])) {
         if(is_numeric($_GET['course']) && $_GET['course'] > 0 && record_exists('course', 'id', $_GET['course'])) {
-            $SESSION->cal_courses_shown = $_GET['course'];
+            $SESSION->cal_courses_shown = intval($_GET['course']);
+            calendar_set_referring_course($SESSION->cal_courses_shown);
         }
     }
 
