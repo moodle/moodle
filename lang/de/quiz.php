@@ -76,6 +76,7 @@ $string['quizclosed'] = "Diese Quiz schließt am \$a";
 $string['quiznotavailable'] = "Diese Quiz ist nicht verfügbar bis: \$a";
 $string['quizopen'] = "Ein Quiz beginnen";
 $string['random'] = "Zufällig setzen";
+$string['readytosend'] = "Sie sind dabei, Ihr ganzes Quiz zu senden, um benotet zu werden.  Sind Sie sicher, daß Sie weitermachen wollen?";
 $string['regrade'] = "Alle Versuche zurücksetzen";
 $string['regradecomplete'] = "Alle Versuche wurden zurückgesetzt";
 $string['regradecount'] = "\$a->changed von \$a->attempt Noten wurden geändert";
