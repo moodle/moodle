@@ -17,6 +17,50 @@
 <body bgcolor="#FFFFFF">
 <h1>Latest Release notes</h1>
 
+<h3> Moodle 1.4.1   (12th September, 2004)</h3>
+
+<ul><dl>
+    <dt>A few little new things</dt>
+    <dd> 
+      <ul>
+        <li>New "Email Protection" filter will obfuscate all email addresses within all texts 
+            (to help prevent automated address-harvesting)</li>
+        <li>Allowed email addresses can now be restricted (see config-dist.php for details)</li>
+        <li>Extra instructions for translators embedded in translation interface</li>
+        <li>New help page for Directory Paths</li>
+      </ul>
+    </dd>
+    <dt>And some bug fixes</dt>
+    <dd> 
+      <ul>
+        <li>Improved performance when viewing site logs</li>
+        <li>Improved paging and performance in glossary</li>
+        <li>Glossary entries are now shown correctly if they belong to multiple categories</li>
+        <li>Do not redeclare auth_user_login upon failed login</li>
+        <li>Fixed two missing icons in the cordoroyblue theme</li>
+        <li>Fixed missing "New event" button on Upcoming Events page</li>
+        <li>Always addslashes on chat messages from daemon users before inserting into db.</li>
+        <li>Fixes for handling of fixed enrollment periods when this is set for a course</li>
+        <li>Site course ID (defined as SITEID) is no longer assumed to be always 1</li>
+        <li>Default memory limits are increased beyond 16M, to help Moodle continue 
+            working even when there is some unplanned memory problem</li>
+        <li>Smilies are now rendered as pictures in Markdown format texts</li>
+        <li>Workshops work under Recent Activity again</li>
+        <li>file.php can now only be used to access data within courses</li>
+        <li>Improved behaviour of calendar blocks on home page</li>
+        <li>Fixed quotes bug with PostgreSQL database specification produced by installer</li>
+        <li>Fixed sometimes-missing display of correct answers during quiz review</li>
+        <li>&lt;tt> and &lt;code> are now allowed tags</li>
+        <li>Section summaries, course summaries and labels are again no longer cleaned of Javascript</li>
+        <li>Fixed a rare LDAP bug that could cause new accounts not to be created </li>
+      </ul>
+    </dd>
+  </dl>
+</ul>
+
+<p>&nbsp;</p>
+
+
 <h3> Moodle 1.4   (31st August, 2004)</h3>
 
 <ul><dl>
