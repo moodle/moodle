@@ -352,18 +352,20 @@ function quiz_print_category_form($course, $current) {
     }
     $strcategory = get_string("category", "quiz");
     $strshow = get_string("show", "quiz");
-    $stredit = get_string("edit");
-    $strdelete = get_string("delete");
-    $strnew = get_string("new");
+    $streditcats = get_string("editcategories", "quiz");
 
+    echo "<TABLE width=\"100%\"><TR><TD>";
     echo "<FORM METHOD=POST ACTION=edit.php>"; 
     echo "<B>$strcategory:</B>&nbsp;";
     choose_from_menu($categories, "cat", "$current");
     echo "<INPUT TYPE=submit NAME=catshow VALUE=\"$strshow\">";
-    echo "<INPUT TYPE=submit NAME=catedit VALUE=\"$stredit\">";
-    echo "<INPUT TYPE=submit NAME=catdelete VALUE=\"$strdelete\">&nbsp;";
-    echo "<INPUT TYPE=submit NAME=catnew VALUE=\"$strnew\">";
     echo "</FORM>";
+    echo "</TD><TD align=right>";
+    echo "<FORM METHOD=GET ACTION=category.php>"; 
+    echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
+    echo "<INPUT TYPE=submit VALUE=\"$streditcats\">";
+    echo "</FORM>";
+    echo "</TD></TR></TABLE>";
 }
 
 
@@ -494,7 +496,6 @@ function quiz_print_cat_question_list($categoryid) {
         notify("Category not found!");
         return;
     }
-    echo "<P><B>$strcategory:</B> $category->name</P>\n";
     echo "<CENTER>";
     echo text_to_html($category->info);
 
