@@ -31,7 +31,7 @@
     $timenow = time();
 
     $table->head  = array ($strname, $stropendialogues, $strcloseddialogues);
-    $table->align = array ("CENTER", "CENTER", "CENTER");
+    $table->align = array ("center", "center", "center");
  
     foreach ($dialogues as $dialogue) {
 

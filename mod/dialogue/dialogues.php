@@ -42,8 +42,8 @@
     
     // ... print the header and...
     print_header_simple("$dialogue->name", "",
-                 "<A HREF=index.php?id=$course->id>$strdialogues</A> -> 
-                  <A HREF=\"view.php?id=$cm->id\">$dialogue->name</A>", 
+                 "<a href=\"index.php?id=$course->id\">$strdialogues</a> -> 
+                  <a hre=\"view.php?id=$cm->id\">$dialogue->name</a>", 
                   "", "", true);
 
 
@@ -66,7 +66,7 @@
         $pane=$_GET['pane'];
 
         add_to_log($course->id, "dialogue", "closed", "view.php?id=$cm->id", "$conversationid");
-        redirect("view.php?id=$cm->id&pane=$pane", get_string("dialogueclosed", "dialogue"));
+        redirect("view.php?id=$cm->id&amp;pane=$pane", get_string("dialogueclosed", "dialogue"));
     }
     
     
@@ -91,8 +91,8 @@
         }
         $pane = $_GET['pane'];
         notice_yesno(get_string("confirmclosure", "dialogue", fullname($user)), 
-             "dialogues.php?action=closeconversation&id=$cm->id&cid=$conversation->id&pane=$pane", 
-             "view.php?id=$cm->id&pane=$pane");
+             "dialogues.php?action=closeconversation&amp;id=$cm->id&amp;cid=$conversation->id&amp;pane=$pane", 
+             "view.php?id=$cm->id&amp;pane=$pane");
     }
     
     /****************** get subject ************************************/
@@ -102,18 +102,18 @@
             error("Confirm Close: conversation id missing");
         }
         print_heading(get_string("addsubject", "dialogue"));
-        echo "<form name=\"getsubjectform\" method=\"post\" action=\"dialogues.php\">\n";
-        echo "<input type=\"hidden\" name=\"action\" value=\"updatesubject\">\n";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$_GET[id]\">\n";
-        echo "<input type=\"hidden\" name=\"cid\" value=\"$_GET[cid]\">\n";
-        echo "<input type=\"hidden\" name=\"pane\" value=\"$_GET[pane]\">\n";
-        echo "<center><table border=\"1\" width=\"60%\">\n";
+        echo "<form name=\"getsubjectform\" method=\"post\" action=\"dialogues.php\"/>\n";
+        echo "<input type=\"hidden\" name=\"action\" value=\"updatesubject\"/>\n";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$_GET[id]\"/>\n";
+        echo "<input type=\"hidden\" name=\"cid\" value=\"$_GET[cid]\"/>\n";
+        echo "<input type=\"hidden\" name=\"pane\" value=\"$_GET[pane]\"/>\n";
+        echo "<table align=\"center\"border=\"1\" width=\"60%\">\n";
         echo "<tr><td align=\"right\"><b>".get_string("subject", "dialogue")."</b></td>";
         echo "<td><input type=\"text\" size=\"50\" maxsize=\"100\" name=\"subject\" 
                 value=\"\"></td></tr>\n";
         echo "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"".
             get_string("addsubject", "dialogue")."\"></td></tr>\n";
-        echo "</table></center></form>\n";
+        echo "</table></form>\n";
     }
     
         
@@ -159,14 +159,13 @@
                 }
             }
         }
-        redirect("view.php?id=$cm->id&pane={$_POST['pane']}", get_string("numberofentriesadded", 
+        redirect("view.php?id=$cm->id&amp;pane={$_POST['pane']}", get_string("numberofentriesadded", 
                     "dialogue", $n));
     }
     
     /****************** list closed conversations *********************************/
     elseif ($action == 'listclosed') {
     
-        echo "<center>\n";
         print_simple_box( text_to_html($dialogue->intro) , "center");
         echo "<br />";
         
@@ -262,7 +261,6 @@
             error("Print Dialogue: can not get conversation record");
         }
             
-        echo "<center>\n";
         print_simple_box( text_to_html($dialogue->intro) , "center");
         echo "<br />";
         
@@ -277,7 +275,6 @@
             error("Show Dialogue: can not get conversation record");
         }
             
-        echo "<center>\n";
         print_simple_box( text_to_html($dialogue->intro) , "center");
         echo "<br />";
         
@@ -294,11 +291,11 @@
         }
             
         if (!$_POST['subject']) {
-            redirect("view.php?id=$cm->id&pane=$_POST[pane]", get_string("nosubject", "dialogue"));
+            redirect("view.php?id=$cm->id&amp;pane=$_POST[pane]", get_string("nosubject", "dialogue"));
         } elseif (!set_field("dialogue_conversations", "subject", $_POST['subject'], "id", $_POST['cid'])) {
             error("Update subject: could not update conversation record");
         }
-        redirect("view.php?id=$cm->id&pane=$_POST[pane]", get_string("subjectadded", "dialogue"));
+        redirect("view.php?id=$cm->id&amp;pane=$_POST[pane]", get_string("subjectadded", "dialogue"));
     }
     
 

@@ -305,7 +305,7 @@ function dialogue_list_conversations_closed($dialogue) {
         }
         natcasesort($names);
         
-        print_simple_box_start();
+        print_simple_box_start("center");
         $table->head = array (get_string("dialoguewith", "dialogue"), get_string("subject", "dialogue"),  
             get_string("numberofentries", "dialogue"), get_string("lastentry", "dialogue"), 
             get_string("status", "dialogue"));
@@ -326,7 +326,7 @@ function dialogue_list_conversations_closed($dialogue) {
             } else {
                 $status = get_string("open", "dialogue");
             }
-            $table->data[] = array("<a href=\"dialogues.php?id=$cm->id&action=showdialogues&cid=$conversation->id\">".
+            $table->data[] = array("<a href=\"dialogues.php?id=$cm->id&amp;action=showdialogues&amp;cid=$conversation->id\">".
                 "$name</a>", $conversation->subject, $byuser." ".get_string("of", "dialogue")." ".$total,
                 userdate($conversation->timemodified), $status);
             }
@@ -366,7 +366,7 @@ function dialogue_list_conversations_other($dialogue) {
         }
         natcasesort($names);
         
-        print_simple_box_start();
+        print_simple_box_start("center");
         $table->head = array (get_string("dialoguewith", "dialogue"), get_string("subject", "dialogue"),  
             get_string("numberofentries", "dialogue"), get_string("lastentry", "dialogue"), 
             get_string("status", "dialogue"));
@@ -387,7 +387,7 @@ function dialogue_list_conversations_other($dialogue) {
             } else {
                 $status = get_string("notyetseen", "dialogue");
             }
-            $table->data[] = array("<a href=\"dialogues.php?id=$cm->id&action=printdialogue&cid=$conversation->id\">".
+            $table->data[] = array("<a href=\"dialogues.php?id=$cm->id&amp;action=printdialogue&amp;cid=$conversation->id\">".
                 "$name</a>", $conversation->subject, $byuser." ".get_string("of", "dialogue")." ".$total,
                 userdate($conversation->timemodified), $status);
             }
@@ -416,9 +416,9 @@ function dialogue_list_conversations_self($dialogue) {
     $showbutton = false;
     
     echo "<form name=\"replies\" method=\"post\" action=\"dialogues.php\">\n";
-    echo "<input type=\"hidden\" name=\"action\" value=\"insertentries\">\n";
-    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-    echo "<input type=\"hidden\" name=\"pane\" value=\"1\">\n";
+    echo "<input type=\"hidden\" name=\"action\" value=\"insertentries\"/>\n";
+    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\"/>\n";
+    echo "<input type=\"hidden\" name=\"pane\" value=\"1\"/>\n";
 
     // list the conversations requiring a resonse from this user in full
     if ($conversations = dialogue_get_conversations($dialogue, $USER, "lastid != $USER->id AND closed = 0")) {
@@ -431,9 +431,9 @@ function dialogue_list_conversations_self($dialogue) {
                     error("List conversations self: could not set seenon");
                 }
             }
-            echo "<center><table border=\"1\" cellspacing=\"0\" valign=\"top\" cellpadding=\"4\" 
+            echo "<table align=\"center\" border=\"1\" cellspacing=\"0\" valign=\"top\" cellpadding=\"4\" 
                 width=\"100%\">\n";
-            echo "<tr><TD BGCOLOR=\"$THEME->cellheading2\" valign=\"top\">\n";
+            echo "<tr><td bgcolor=\"$THEME->cellheading2\" valign=\"top\">\n";
             if ($conversation->userid == $USER->id) {
                 if (!$otheruser = get_record("user", "id", $conversation->recipientid)) {
                     error("User not found");
@@ -451,13 +451,13 @@ function dialogue_list_conversations_self($dialogue) {
             echo "<div align=\"right\">\n";
             if (!$conversation->subject) {
                 // conversation does not have a subject, show add subject link
-                echo "<a href=\"dialogues.php?action=getsubject&id=$cm->id&cid=$conversation->id&pane=2\">".
+                echo "<a href=\"dialogues.php?action=getsubject&amp;id=$cm->id&amp;cid=$conversation->id&amp;pane=2\">".
                     get_string("addsubject", "dialogue")."</a>\n";
                 helpbutton("addsubject", get_string("addsubject", "dialogue"), "dialogue");
                 echo "&nbsp; | ";
             }
             if (dialogue_count_entries($dialogue, $conversation)) {
-                echo "<a href=\"dialogues.php?action=confirmclose&id=$cm->id&cid=$conversation->id&pane=1\">".
+                echo "<a href=\"dialogues.php?action=confirmclose&amp;id=$cm->id&amp;cid=$conversation->id&amp;pane=1\">".
                     get_string("close", "dialogue")."</a>\n";
                 helpbutton("closedialogue", get_string("close", "dialogue"), "dialogue");
             }
@@ -500,13 +500,14 @@ function dialogue_list_conversations_self($dialogue) {
             // use a cumbersome name on the textarea is just historical :-) 
             print_textarea($usehtmleditor, 20, 75, 630, 300, "reply$conversation->id");
             echo "</td></tr>";
-            echo "</table></center><br />\n";
+            echo "</table><br />\n";
         }
         print_simple_box_end();
         use_html_editor();
         if ($showbutton) {
             echo "<hr />\n";
-            echo "<br /><input type=\"submit\" value=\"".get_string("addmynewentries", "dialogue")."\">\n";
+            echo "<p align=\"center\"><input type=\"submit\" value=\"".get_string("addmynewentries", "dialogue").
+                "\"/></p>\n";
         }
         echo "</form>\n";
     }
@@ -529,13 +530,13 @@ function dialogue_print_conversation($dialogue, $conversation) {
     $showbutton = false;
     
     echo "<form name=\"replies\" method=\"post\" action=\"dialogues.php\">\n";
-    echo "<input type=\"hidden\" name=\"action\" value=\"insertentries\">\n";
-    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-    echo "<input type=\"hidden\" name=\"pane\" value=\"2\">\n";
+    echo "<input type=\"hidden\" name=\"action\" value=\"insertentries\"/>\n";
+    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\"/>\n";
+    echo "<input type=\"hidden\" name=\"pane\" value=\"2\"/>\n";
 
     $showbutton = true;
     print_simple_box_start("center", "", $THEME->cellcontent2);
-    echo "<center><table border=\"1\" cellspacing=\"0\" valign=\"top\" cellpadding=\"4\" 
+    echo "<table align=\"center\" border=\"1\" cellspacing=\"0\" valign=\"top\" cellpadding=\"4\" 
         width=\"100%\">\n";
     echo "<tr><td bgcolor=\"$THEME->cellheading2\" valign=\"top\">\n";
     if ($conversation->userid == $USER->id) {
@@ -555,12 +556,12 @@ function dialogue_print_conversation($dialogue, $conversation) {
     echo "<div align=\"right\">\n";
     if (!$conversation->subject) {
         // conversation does not have a subject, show add subject link
-        echo "<a href=\"dialogues.php?action=getsubject&id=$cm->id&cid=$conversation->id&pane=2\">".
+        echo "<a href=\"dialogues.php?action=getsubject&amp;id=$cm->id&amp;cid=$conversation->id&pane=2\">".
             get_string("addsubject", "dialogue")."</a>\n";
         helpbutton("addsubject", get_string("addsubject", "dialogue"), "dialogue");
         echo "&nbsp; | ";
     }
-    echo "<a href=\"dialogues.php?action=confirmclose&id=$cm->id&cid=$conversation->id&pane=2\">".
+    echo "<a href=\"dialogues.php?action=confirmclose&amp;id=$cm->id&amp;cid=$conversation->id&amp;pane=2\">".
         get_string("close", "dialogue")."</a>\n";
     helpbutton("closedialogue", get_string("close", "dialogue"), "dialogue");
     echo "</div></td></tr>\n";
@@ -592,7 +593,7 @@ function dialogue_print_conversation($dialogue, $conversation) {
     print_textarea($usehtmleditor, 20, 75, 630, 300, "reply$conversation->id");
     use_html_editor();
     echo "</td></tr>";
-    echo "</table></center><br />\n";
+    echo "</table><br />\n";
     print_simple_box_end();
     if ($showbutton) {
         echo "<hr />\n";
@@ -702,7 +703,7 @@ function dialogue_show_conversation($dialogue, $conversation) {
     
     $timenow = time();
     print_simple_box_start("center");
-    echo "<center><TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=4 width=\"100%\">\n";
+    echo "<table border=\"1\" cellspacing=\"0\" valign=\"top\" cellpadding=\"4\" width=\"100%\">\n";
         
     echo "<tr>";
     echo "<td bgcolor=\"$THEME->cellheading2\" valign=\"top\">\n";
@@ -738,9 +739,9 @@ function dialogue_show_conversation($dialogue, $conversation) {
             }
         }
     }
-    echo "</TABLE></center><BR CLEAR=ALL>\n";
+    echo "</table><br />\n";
     print_simple_box_end();
-    print_continue("view.php?id=$cm->id&pane=3");
+    print_continue("view.php?id=$cm->id&amp;pane=3");
 }
 
 
@@ -782,10 +783,10 @@ function dialogue_show_other_conversations($dialogue, $conversation) {
                         }
                     } 
                     print_simple_box_start("center");
-                    echo "<center><TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=4 width=\"100%\">\n";
-                        
-                    echo "<TR>";
-                    echo "<TD BGCOLOR=\"$THEME->cellheading2\" VALIGN=TOP>\n";
+                    echo "<table align=\"center\" border=\"1\" cellspacing=\"0\" valign=\"top\" cellpadding=\"4\"
+                         width=\"100%\">\n";
+                    echo "<tr>";
+                    echo "<td bgcolor=\"$THEME->cellheading2\" valign=\"top\">\n";
                     // print_user_picture($otheruser->id, $course->id, $otheruser->picture);
                     echo "<b>".get_string("dialoguewith", "dialogue", 
                         fullname($otheruser))."</b></td>";
@@ -809,11 +810,11 @@ function dialogue_show_other_conversations($dialogue, $conversation) {
                         }
                     }
                 
-                    echo "</TABLE></center><BR CLEAR=ALL>\n";
+                    echo "</table><br />\n";
                     print_simple_box_end();
                 }
             }
-            print_continue("view.php?id=$cm->id&pane=3");
+            print_continue("view.php?id=$cm->id&amp;pane=3");
         }
     }
 }

@@ -108,13 +108,13 @@
             $tabs->names[3] = get_string("pane3", "dialogue", $countclosed);
         }
 
-        $tabs->urls[0] = "view.php?id=$cm->id&pane=0";
-        $tabs->urls[1] = "view.php?id=$cm->id&pane=1";
-        $tabs->urls[2] = "view.php?id=$cm->id&pane=2";
-        $tabs->urls[3] = "view.php?id=$cm->id&pane=3";
+        $tabs->urls[0] = "view.php?id=$cm->id&amp;pane=0";
+        $tabs->urls[1] = "view.php?id=$cm->id&amp;pane=1";
+        $tabs->urls[2] = "view.php?id=$cm->id&amp;pane=2";
+        $tabs->urls[3] = "view.php?id=$cm->id&amp;pane=3";
         $tabs->highlight = $pane;
         dialogue_print_tabbed_heading($tabs);
-        echo "<br/><center>\n";
+        echo "<br />\n";
         
        
         switch ($pane) {
@@ -136,11 +136,10 @@
 
                 if ($names = dialogue_get_available_users($dialogue)) {
                     print_simple_box_start("center");
-                    echo "<center>";
                     echo "<form name=\"startform\" method=\"post\" action=\"dialogues.php\">\n";
-                    echo "<input type=\"hidden\" name=\"id\"value=\"$cm->id\">\n";
-                    echo "<input type=\"hidden\" name=\"action\" value=\"openconversation\">\n";
-                    echo "<table border=\"0\"><tr>\n";
+                    echo "<input type=\"hidden\" name=\"id\"value=\"$cm->id\"/>\n";
+                    echo "<input type=\"hidden\" name=\"action\" value=\"openconversation\"/>\n";
+                    echo "<table align=\"center\" border=\"0\"><tr>\n";
                     echo "<td align=\"right\"><b>".get_string("openadialoguewith", "dialogue").
                         " : </b></td>\n";
                     echo "<td>";
@@ -160,9 +159,8 @@
                     use_html_editor();
                     echo "</td></tr>";
                     echo "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"".
-                        get_string("opendialogue","dialogue")."\"></td></tr>\n";
+                        get_string("opendialogue","dialogue")."\"/></td></tr>\n";
                     echo "</table></form>\n";
-                    echo "</center>";
                     print_simple_box_end();
                 } else {
                     print_heading(get_string("noavailablepeople", "dialogue"));
