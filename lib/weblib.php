@@ -57,6 +57,13 @@ $SMILEY_IMAGE[] = "<IMG ALT=\"|-.\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s
 $SMILEY_TEXT[]  = "}-]";
 $SMILEY_IMAGE[] = "<IMG ALT=\"}-]\" WIDTH=15 HEIGHT=15 SRC=\"$CFG->wwwroot/pix/s/evil.gif\">";
 
+$JAVASCRIPT_TAGS = array("javascript:", "onclick=", "ondblclick=", "onkeydown=", "onkeypress=", "onkeyup=", 
+                         "onmouseover=", "onmouseout=", "onmousedown=", "onmouseup=",
+                         "onblur=", "onfocus=", "onload=", "onselect=");
+
+$ALLOWED_TAGS = "<b><i><u><font><table><tbody><span><div><tr><td><ol><ul><dl><li><dt><dd><h1><h2><h3><hr><img><a>";
+
+
 /// Functions
 
 function s($var) {
@@ -136,6 +143,23 @@ function match_referer($good_referer = "") {
 	return $good_referer == get_referer();
 }
 
+
+function stri_replace($find, $replace, $string ) {
+// This does a search and replace, ignoring case
+// This function is only here because one doesn't exist yet in PHP
+// Unlike str_replace(), this only works on single values (not arrays)
+
+    $parts = explode(strtolower($find), strtolower($string));
+
+    $pos = 0;
+
+    foreach ($parts as $key => $part) {
+        $parts[$key] = substr($string, $pos, strlen($part));
+        $pos += strlen($part) + strlen($find);
+    }
+
+    return (join($replace, $parts));
+}
 
 function read_template($filename, &$var) {
 // return a (big) string containing the contents of a template file with all
@@ -339,7 +363,7 @@ function format_text($text, $format, $options=NULL) {
 
         case FORMAT_HTML:
             $text = replace_smilies($text);
-            return $text;   // Is re-cleaning needed?
+            return $text;
             break;
     }
 }
@@ -349,14 +373,22 @@ function clean_text($text, $format) {
 // Given raw text (eg typed in by a user), this function cleans it up 
 // and removes any nasty tags that could mess up Moodle pages.
 
-    switch ($format) {
+    global $JAVASCRIPT_TAGS, $ALLOWED_TAGS;
+
+    switch ($format) {   // Does the same thing, currently, but it's nice to have the option
         case FORMAT_MOODLE:
-            return strip_tags($text, '<b><i><u><font><ol><ul><dl><li><dt><dd><h1><h2><h3><hr><img>');
-            break;
+            $text = strip_tags($text, $ALLOWED_TAGS);
+            foreach ($JAVASCRIPT_TAGS as $tag) {
+                $text = stri_replace($tag, "", $text);
+            }
+            return $text;
 
         case FORMAT_HTML:
-            return $text;   // XX May want to add some cleaning on this. 
-            break;
+            $text = strip_tags($text, $ALLOWED_TAGS);
+            foreach ($JAVASCRIPT_TAGS as $tag) {
+                $text = stri_replace($tag, "", $text);
+            }
+            return $text;
     }
 }
 
@@ -368,6 +400,7 @@ function replace_smilies($text) {
 
 function text_to_html($text, $smiley=true, $para=true) {
 // Given plain text, makes it into HTML as nicely as possible.
+// May contain most HTML tags
 
     // Remove any whitespace that may be between HTML tags
     $text = eregi_replace(">([[:space:]]+)<", "><", $text);
@@ -376,9 +409,9 @@ function text_to_html($text, $smiley=true, $para=true) {
     $text = eregi_replace("([\n\r])<", " <", $text);
     $text = eregi_replace(">([\n\r])", "> ", $text);
 
-    // Make URLs into links.   eg http://moodle.com/
-    $text = eregi_replace("([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])", 
-                          "<A HREF=\"\\1://\\2\\3\" TARGET=\"newpage\">\\1://\\2\\3</A>", $text);
+    // Make lone URLs into links.   eg http://moodle.com/
+    $text = eregi_replace("([ ([])([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])", 
+                          "\\1<A HREF=\"\\2://\\3\\4\" TARGET=\"newpage\">\\2://\\3\\4</A>", $text);
 
     // eg www.moodle.com
     $text = eregi_replace("([[:space:]])www.([^[:space:]]*)([[:alnum:]#?/&=])", 
