@@ -1,3 +1,127 @@
+2002-09-22 Sunday 14:47  martin
+
+	* mod/: README, newmodule_template.zip: 
+	
+	Updated module template with module_print_recent_activity()
+
+2002-09-22 Sunday 14:41  martin
+
+	* lang/en/assignment.php, mod/assignment/lib.php: 
+	
+	Added assignments under "Recent Activity"
+
+2002-09-22 Sunday 13:33  martin
+
+	* index.php: 
+	
+	When redirecting to admin page go direct to index.php just in case
+	DirectoryIndex hasn't been fixed yet.
+
+2002-09-22 Sunday 12:29  martin
+
+	* mod/journal/lib.php: 
+	
+	Some comments to indicate standard and other functions
+
+2002-09-22 Sunday 12:27  martin
+
+	* mod/survey/lib.php: 
+	
+	Reaaranged the functions into standard and other
+
+2002-09-22 Sunday 11:58  martin
+
+	* mod/survey/lib.php: 
+	
+	Fixed stupidity
+
+2002-09-22 Sunday 11:57  martin
+
+	* mod/survey/lib.php: 
+	
+	Error in the SQL - fixed now
+
+2002-09-22 Sunday 11:51  martin
+
+	* lang/en/survey.php, mod/survey/lib.php: 
+	
+	New function to show new surveys in recent activity box
+
+2002-09-22 Sunday 11:17  martin
+
+	* mod/journal/view.php: 
+	
+	Whoops typo - left in some old stuff
+
+2002-09-22 Sunday 11:16  martin
+
+	* lang/en/journal.php, mod/journal/view.php: 
+	
+	SHow number of journal entries in the teacher link to report
+
+2002-09-22 Sunday 11:13  martin
+
+	* mod/journal/lib.php: 
+	
+	Use log URL for link to journal
+
+2002-09-22 Sunday 11:11  martin
+
+	* lib/: moodlelib.php, db/mysql.sql: 
+	
+	Support for new deleted field in user table
+
+2002-09-22 Sunday 11:05  martin
+
+	* mod/forum/lib.php: 
+	
+	Changes to not include deleted users in some things
+
+2002-09-22 Sunday 11:01  martin
+
+	* CHANGES, version.php, admin/user.php, lib/moodlelib.php,
+	user/view.php: 
+	
+	Changes to enable DELETION of user accounts.  Accounts aren't
+	actually deleted, they are just marked with a deleteion flag that
+	prevents them from logging in, or from being listed anywhere.
+
+2002-09-22 Sunday 01:11  martin
+
+	* course/lib.php, lang/en/forum.php, lang/en/journal.php,
+	lang/en/moodle.php, mod/forum/lib.php, mod/journal/lib.php: 
+	
+	Changes to print_recent_activity in course/lib.php.  It is now more
+	modular (at slight cost to performance) and every modules can now
+	have a module_print_recent_activity() function.  This function
+	takes a list of logs, searches for things to display and does so.
+	
+	So far I've done forum and journal functions
+
+2002-09-21 Saturday 16:44  martin
+
+	* admin/config.html: 
+	
+	Allow 1-minute delay (mostly good for testing)
+
+2002-09-21 Saturday 16:42  martin
+
+	* version.php: 
+	
+	Need more room for language variable (eg pt_br)
+
+2002-09-21 Saturday 16:40  martin
+
+	* mod/: assignment/lib.php, forum/lib.php, journal/lib.php: 
+	
+	Make sure user language works OK (it does now)
+
+2002-09-21 Saturday 16:39  martin
+
+	* lib/moodlelib.php: 
+	
+	Make mail format explicitly 8bit
+
 2002-09-21 Saturday 15:46  martin
 
 	* mod/: assignment/lib.php, forum/lib.php, journal/lib.php: 
