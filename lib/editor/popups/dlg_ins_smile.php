@@ -35,7 +35,7 @@
 ?>
 <html style="width: 320px; height: 350px;">
 <head>
-<meta http-equiv="content-type" content="text/html; <?php print_string("thischarset");?>" />
+<meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
 <meta name=vs_targetSchema content="HTML 4.0">
 <meta name="GENERATOR" content="Microsoft Visual Studio 7.0">
 <LINK rel="stylesheet" type="text/css" href="dialog.css">

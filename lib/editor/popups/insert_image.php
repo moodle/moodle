@@ -10,7 +10,7 @@
 
 <head>
   <title>Insert Image</title>
-<meta http-equiv="content-type" content="text/html; <?php print_string("thischarset");?>" />
+<meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
 <script type="text/javascript" src="popup.js"></script>
 
 <script type="text/javascript">
