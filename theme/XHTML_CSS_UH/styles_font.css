@@ -1,23 +1,118 @@
+/*  $Id$ */
 
-/***********************
-*  typography css
-************************/
+/************************************************* 
+***
+*** fonts
+***
+**************************************************/
 
+/*************************************************
+***
+*** This CSS file contains all font definitions
+*** like family, size, weight,
+*** text-align, letter-spacing
+*** etc.
+***
+*** Shortindex:
+*** basic and general styles
+*** header and footer styles
+*** content styles (alphabetically)
+*** admin, course, activities, calendar, blocks
+*** 
+*** Please sort new styles for existing content
+*** into the appropriate part of this CSS file.
+*** Styles for new Blocks or Activities please
+*** place at the end.
+*** Wouldn't the alphabetical order be better?
+***
+**************************************************/
+
+
+/* basic styles */
+font {
+    font-size:100% !important;
+}
 
 .clearer {
     font-size:1px;
 }
-/* basic definitions */
-font {
-    font-size:100% !important;
+
+.smallinfo {
+    font-size:1em;
 }
+
+.smallinfohead {
+    font-size:1em;
+}
+
+
+/* general styles */
 body {
     font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
     /*font-size:1em;*/
     line-height:1.2em;
     letter-spacing:0.02em;
 }
-#footer,
+
+td, th {
+ 	font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+	font-size:1em;
+}
+
+th {
+    font-weight:bold;
+}
+
+a {
+    font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+    font-size:1em;
+    line-height:1.5em;
+    text-decoration:none;
+}
+
+a:hover {
+    text-decoration:underline;
+}
+
+a.dimmed:link {
+    text-decoration:none;
+}
+
+a.dimmed:visited {
+    text-decoration:none;
+}
+
+a.dimmed:hover {
+    text-decoration:none;
+}
+
+a.autolink:link {
+    text-decoration:none;
+}
+
+a.autolink:visited {
+    text-decoration:none;
+}
+
+a.autolink:hover {
+    text-decoration:none;
+}
+
+h2 {
+	font-size:1.5em;
+    font-weight:bold;
+}
+h3 {
+	font-size:1.3em;
+    font-weight:bold;
+}
+h4 {
+	font-size:1.1em;
+    font-weight:bold;
+}
+
+
+/* header styles */
 #header,
 #header-home,
 #nav-bar {
@@ -36,13 +131,70 @@ body {
     text-align:right;
 }
 
+.headermain {
+    font-weight:bold;
+}
+
+.headerhomemain {
+    font-weight:bold;
+}
+
+.headerhomemenu {
+    font-size:0.8em;
+}
+
+.headerhomemenu a {
+    font-size:0.8em;
+}
+
+.logininfo {
+   	font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+	font-size:0.9em;
+}
+
+
+/* footer styles */
 #footer {
+    font-size:0.8em;
     text-align:center;
 }
+
+.homelink {
+    font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+	font-size:0.9em;
+}
+
+
+
+/*****************************
+***
+*** content styles
+***
+******************************/
 #content {
     font-size:0.9em;
     text-align:left;
 }
+
+
+/* many places */
+.noticeboxcontent {
+    text-align:center;
+}
+
+
+/* entry page */
+#entry-page #block_course_summary {
+    line-height:1.5em;
+}
+
+
+
+/*****************************
+***
+*** Admin
+***
+******************************/
 .admin .generalboxcontent {
     font-size:0.8em;
     text-align:left;
@@ -52,44 +204,32 @@ body {
     font-size:0.9em;
     text-align:left;
 }
+
 #admin-lang FORM {
     font-size:0.9em;
 }
+
+
+
+/*****************************
+***
+*** Course
+***
+******************************/
 .course {
     text-align:left;
 }
-#containerPageActions {
-    text-align:left;
-}
 
-td, th {
- 	font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
-	font-size:1em;
-}
-th {
-    font-weight:bold;
-}
 
-a {
+/* course, entry-page, login */
+.headingblock {
     font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
-    font-size:1em;
-    line-height:1.5em;
-    text-decoration:none;
-}
-
-h2 {
-	font-size:1.5em;
-    font-weight:bold;
-}
-h3 {
-	font-size:1.3em;
-    font-weight:bold;
-}
-h4 {
-	font-size:1.1em;
+    font-size:0.9em;
     font-weight:bold;
 }
 
+
+/* course */
 #left-column,
 #right-column {
     text-align:left;
@@ -98,29 +238,6 @@ h4 {
 #middle-column{
     text-align:left;
     font-size:0.9em;
-}
-
-.headingblock {
-    font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
-    font-size:0.9em;
-    font-weight:bold;
-}
-
-.sideblock {
-	font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
-	font-size:0.75em;
-}
-
-.sideblockheading {
-	font-weight:bold;
-}
-
-td.sideblockmain center, td.sideblockmain p, td.sideblockmain div {
-    text-align:left;
-}
-
-.sideblocklinks {
-	/*font-size:0.9em;*/
 }
 
 .outlineheadingblock {
@@ -133,83 +250,63 @@ td.sideblockmain center, td.sideblockmain p, td.sideblockmain div {
 	font-weight:bold;
 }
 
-.noticeboxcontent {
-    text-align:center;
+.courseboxinfo {
+	font-size:0.9em;
+	font-weight:bold;
 }
 
-a.dimmed:link {
-    text-decoration:none;
+
+
+/*****************************
+***
+*** Activities
+***
+******************************/
+/* index, admin, course, lang, adodb, quiz */
+.categoryname,
+.categorynumber {
+    font-weight:bold;
 }
 
-a.dimmed:visited {
-    text-decoration:none;
-}
 
-a.dimmed:hover {
-    text-decoration:none;
+/* forum */
+.forum {
+    text-align:left;
 }
 
 .forumpostheadertopic {
    	font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
 }
 
-.logininfo {
-   	font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
-	font-size:0.9em;
+
+/* glossary */
+.glossary .generaltab B,
+.glossary .generaltabselected B {
+    font-size:0.85em;
+    font-weight:normal;
 }
 
-.homelink {
+
+/* wiki */
+.mwiki {
+    text-align:left;
+}
+
+.wiki .upload {
     font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
-	font-size:0.9em;
+    font-size:0.9em;
 }
 
-.headermain {
-    font-weight:bold;
+#containerPageActions {
+    text-align:left;
 }
 
-.headerhomemain {
-    font-weight:bold;
-}
 
-.headerhomemenu {
-    font-size:0.8em;
-}
-.headerhomemenu a {
-    font-size:0.8em;
-}
-
-.categoryname {
-    font-weight:bold;
-}
-
-.categorynumber {
-    font-weight:bold;
-}
-
-.courseboxinfo {
-	font-size:0.9em;
-	font-weight:bold;
-}
-
-a.autolink:link {
-    text-decoration:none;
-}
-
-a.autolink:visited {
-    text-decoration:none;
-}
-
-a.autolink:hover {
-    text-decoration:none;
-}
-
-.smallinfo {
-    font-size:1em;
-}
-.smallinfohead {
-    font-size:1em;
-}
-
+/*****************************
+***
+*** Calendar
+***
+******************************/
 TABLE.calendarmini {
 	font-size:0.9em;
     letter-spacing:0.1em;
@@ -241,10 +338,6 @@ TABLE.calendarmonth THEAD TD {
 	font-weight:bold;
 }
 
-.sideblockmain .cal_event { }
-
-.sideblockmain .cal_event_date { }
-
 TABLE.cal_controls td {
 	font-size:1em;
 	line-height:1.2em;
@@ -253,25 +346,15 @@ TABLE.cal_controls td {
 .mycalendar .cal_event {
 	font-weight:bold;
 }
+
 .mycalendar .cal_event_date {
 	font-size:0.8em;
 }
-
-.mycalendar TABLE.cal_filters { }
-
-.mycalendar .cal_filters THEAD TD { }
-
-
-.mycalendar .cal_event_table { }
 
 .mycalendar .cal_event_table THEAD {
 	text-align:center;
 	font-weight:bold;
 }
-
-.sideblockmain HR { }
-
-.mycalendar HR { }
 
 .calendarexpired {
 	font-weight:bold;
@@ -280,12 +363,6 @@ TABLE.cal_controls td {
 .calendarreferer {
 	font-weight:bold;
 }
-
-TD.cal_event_description { }
-
-.cal_popup_fg { }
-
-.cal_popup_bg { }
 
 .cal_popup_caption {
 	font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
@@ -303,37 +380,33 @@ TD.cal_event_description { }
 	font-size:0.8em;
 }
 
-.sitetopiccontent { }
+
+
+/*****************************
+***
+*** Blocks
+***
+******************************/
+/* sideblock */
+.sideblock {
+	font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+	font-size:0.75em;
+}
+
+.sideblockheading {
+	font-weight:bold;
+}
+
+.sideblocklinks {
+	/*font-size:0.9em;*/
+}
+
+td.sideblockmain center, td.sideblockmain p, td.sideblockmain div {
+    text-align:left;
+}
+
+
+/* course summary */
 #block_course_summary .sideblockmain {
     font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
-}
-#entry-page #block_course_summary {
-    line-height:1.5em;
-}
-.forum {
-    text-align:left;
-}
-.mwiki {
-    text-align:left;
-}
-
-
-
-/* glossary styles */
-
-.glossary .generaltab B,
-.glossary .generaltabselected B {
-    font-size:0.85em;
-    font-weight:normal;
-}
-
-
-/* wiki styles */
-
-.wiki { }
-.wiki .title { }
-
-.wiki .upload {
-    font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
-    font-size:0.9em;
 }
