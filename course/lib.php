@@ -308,11 +308,13 @@ function print_recent_activity($course) {
                 $changes[$changeinfo] = $change;
             }
         }
-        if (count($changes) > 0) {
-            print_headline(get_string("courseupdates").":");
-            $content = true;
-            foreach ($changes as $changeinfo => $change) {
-                echo "<p><font size=1>".$change["text"]."</font></p>";
+        if (isset($changes)){
+            if (count($changes) > 0) {
+                print_headline(get_string("courseupdates").":");
+                $content = true;
+                foreach ($changes as $changeinfo => $change) {
+                    echo "<p><font size=1>".$change["text"]."</font></p>";
+                }
             }
         }
     }    
