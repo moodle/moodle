@@ -116,8 +116,7 @@
                 foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
                     $stringname = "str$optionname";
                     $$stringname = get_string("new$optionname", "resource");
-                    $defaultvalue = "resource_popup$optionname";
-                    $window->$optionname = $CFG->$defaultvalue;
+                    $window->$optionname = "";
                     $jsoption[] = "\"$optionname\"";
                 }
                 $alljsoptions = implode(",", $jsoption);
@@ -140,6 +139,10 @@
                         }
                     }
                 } else {
+                    foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
+                        $defaultvalue = "resource_popup$optionname";
+                        $window->$optionname = $CFG->$defaultvalue;
+                    }
                     $newwindow = $CFG->resource_popup;
                 }
 
@@ -225,8 +228,7 @@
                 foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
                     $stringname = "str$optionname";
                     $$stringname = get_string("new$optionname", "resource");
-                    $defaultvalue = "resource_popup$optionname";
-                    $window->$optionname = $CFG->$defaultvalue;
+                    $window->$optionname = "";
                     $jsoption[] = "\"$optionname\"";
                 }
                 $alljsoptions = implode(",", $jsoption);
@@ -249,6 +251,10 @@
                         }
                     }
                 } else {
+                    foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
+                        $defaultvalue = "resource_popup$optionname";
+                        $window->$optionname = $CFG->$defaultvalue;
+                    }
                     $newwindow = $CFG->resource_popup;
                 }
 
