@@ -31,7 +31,7 @@
 
     $student_name = "$USER->firstname $USER->lastname";
     
-    add_to_log($course->id, "course", "loginas", "view.php?id=$course->id&user=$user", "$teacher_name -> $student_name");
+    add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&user=$user", "$teacher_name");
 
     notice("You are now logged in as $student_name", "$CFG->wwwroot/course/view.php?id=$course->id");
 
