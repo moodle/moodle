@@ -1,12 +1,15 @@
-<?PHP  //$Id$
-// This file defines the current version of the
-// Moodle code that is being used.  This can be
-// compared against the values stored in the
-// database to determine whether upgrades should
-// be performed (see lib/db/*.php)
+<?php 
 
-$version = 2004083101;   // MUST NOT BE CHANGED!  (except by Martin)
+// MOODLE VERSION INFORMATION
 
-$release = "1.4.1+";      // User-friendly version number
+// This file defines the current version of the core Moodle code being used.  
+// This is compared against the values stored in the database to determine 
+// whether upgrades should be performed (see lib/db/*.php)
+
+   $version = 2004083110;  // YYYMMDD   = date of first major branch release 1.4
+                           //        X  = point release version 1,2,3 etc
+                           //         Y = increments between point releases
+
+   $release = '1.4.1+';    // Human-friendly version name
 
 ?>
