@@ -34,7 +34,7 @@
 // will be stored.  This database must already have been created
 // and a username/password created to access it.   See doc/INSTALL.
 
-$CFG->dbtype    = "mysql";       // eg mysql, postgres7, oracle, access etc 
+$CFG->dbtype    = "mysql";       // eg mysql (postgres7, oracle, access coming soon)
 $CFG->dbhost    = "localhost";   // eg localhost 
 $CFG->dbname    = "moodle";      // eg moodle
 $CFG->dbuser    = "username";
