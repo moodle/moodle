@@ -153,6 +153,15 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
 /// Used for user activity reports.
 /// $return->time = the time they did it
 /// $return->info = a short text description
+    if ($grade = get_record_sql("SELECT * FROM quiz_grades WHERE user = '$user->id' AND quiz = '$quiz->id'")) {
+        
+        if ($grade->grade) {
+            $result->info = get_string("grade").": $grade->grade";
+        }
+        $result->time = $grade->timemodified;
+        return $result;
+    }
+    return NULL;
 
     return $return;
 }

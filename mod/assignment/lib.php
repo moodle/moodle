@@ -57,15 +57,10 @@ function assignment_delete_instance($id) {
 
 function assignment_user_outline($course, $user, $mod, $assignment) {
     if ($submission = assignment_get_submission($assignment, $user)) {
-        if ($basedir = assignment_file_area($assignment, $user)) {
-            if ($files = get_directory_list($basedir)) {
-                $countfiles = count($files)." ".get_string("uploadedfiles", "assignment");
-                foreach ($files as $file) {
-                    $countfiles .= "; $file";
-                }
-            }
+        
+        if ($submission->grade) {
+            $result->info = get_string("grade").": $submission->grade";
         }
-        $result->info = $countfiles;
         $result->time = $submission->timemodified;
         return $result;
     }
