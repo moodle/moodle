@@ -134,7 +134,7 @@
         //Execute backup's cron
         //Perhaps a long time and memory could help in large sites
         @set_time_limit(0);
-        raise_memory_limit("128M");
+        @raise_memory_limit("128M");
         if (file_exists("$CFG->dirroot/backup/backup_scheduled.php") and
             file_exists("$CFG->dirroot/backup/backuplib.php") and
             file_exists("$CFG->dirroot/backup/lib.php") and
