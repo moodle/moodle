@@ -150,7 +150,7 @@ $string['choosereportfilter'] = '리포터에 관계된 필터를 선택하시�
 $string['choosetheme'] = '어떤 테마';
 $string['chooseuser'] = '어떤 사용자';
 $string['city'] = '도시';
-$string['clambroken'] = '관리자가 업로드파일에 바이러스 체크를 활성화시킨 상태입니다만 설정제어에 문제가 있습니다.<br/>당신의 파일 업로드는 실패했습니다.관리자가 그것을 알리고 고치기 위한 메일을 보낸상태입니다.<br/>다음에 업로드해 보십시오.';
+$string['clambroken'] = '관리자가 업로드파일에 바이러스 체크를 활성화시킨 상태입니다만 설정제어에 문제가 있습니다.<br />당신의 파일 업로드는 실패했습니다.관리자가 그것을 알리고 고치기 위한 메일을 보낸상태입니다.<br />다음에 업로드해 보십시오.';
 $string['clamdeletedfile'] = '파일이 삭제 되었습니다';
 $string['clamdeletedfilefailed'] = '파일을 삭제할수없습니다';
 $string['clammovedfile'] = '이 파일은 당신의 지정된 격리디렉토리로 옮겨졌습니다,새로운 장소는 $a입니다.';
@@ -280,9 +280,9 @@ $string['doyouagree'] = '이러한 조건을 읽고 이해하였습니까?';
 $string['duplicate'] = '복사';
 $string['duplicatinga'] = '$a 를 복사중';
 $string['duplicatingain'] = '$a를 $a에 복사중';
-$string['edhelpbgcolor'] = '편집범위의 배경색을 결정합니다.<br/>유효값은 예를들어:#ffffff 또는 흰색입니다.';
-$string['edhelpenablespelling'] = '맞춤법검사를 가능하거나 불가능하게 합니다.가능하게할경우,<strong>aspell<strong>이 서버에 설치되어 있어야만 합니다';
-$string['edhelpfontsize'] = '기본폰트크기에서 폰트의크기를 결정합니다.<br/>유효한값은 예를들어: 중간,큰,작은,더큰,10pt,11px입니다.';
+$string['edhelpbgcolor'] = '편집범위의 배경색을 결정합니다.<br />유효값은 예를들어:#ffffff 또는 흰색입니다.';
+$string['edhelpenablespelling'] = '맞춤법검사를 가능하거나 불가능하게 합니다.가능하게할경우,<strong>aspell</strong>이 서버에 설치되어 있어야만 합니다';
+$string['edhelpfontsize'] = '기본폰트크기에서 폰트의크기를 결정합니다.<br />유효한값은 예를들어: 중간,큰,작은,더큰,10pt,11px입니다.';
 $string['edit'] = '고치기 $a';
 $string['editcoursesettings'] = '배움터 설정 고치기';
 $string['editfiles'] = '파일 고치기';
@@ -320,8 +320,8 @@ $a->link
 대부분의 메일 프로그램에서 파란색 링크로 보일 것입니다. 클릭하면 됩니다. 
 웹 브라우저의 주소창에 복사해 넣으셔도 가능합니다.';
 $string['emailconfirmationsubject'] = '$a: 계정 승인';
-$string['emailconfirmsent'] = '   <P>당신의 이메일 주소로 메일이 갔습니다.<B>$a</B>
-   <P>간단한 도움말을 포함합니다.';
+$string['emailconfirmsent'] = '   <p>당신의 이메일 주소로 메일이 갔습니다.<b>$a</b></p>
+   <p>간단한 도움말을 포함합니다.</p>';
 $string['emaildigest'] = '이메일 요약 양식';
 $string['emaildigestcomplete'] = '완료(일상 메일';
 $string['emaildigestoff'] = '요약하지 않음(포럼 우편 ';
@@ -351,10 +351,10 @@ $a->link
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: 비밀번호 변경 확인';
 $string['emailpasswordconfirmsent'] = '이메일이 보내지게 됩니다.<b>$a</b>.
-<p>비밀번호 변경 확인을 위한 내용이 포함됩니다.';
+<br />비밀번호 변경 확인을 위한 내용이 포함됩니다.';
 $string['emailpasswordsent'] = '비밀번호 변경 확인을 해 주셔서 감사합니다.
-<p>새로운 비밀번호가 포함된 이메일이 보내졌습니다.<b>$a->email</b>.
-<p>새비밀번호는 자동으로 생성되었습니다.
+<br />새로운 비밀번호가 포함된 이메일이 보내졌습니다.<b>$a->email</b>.
+<br />새비밀번호는 자동으로 생성되었습니다.
 기억하기 쉽도록 <a href=\"$a->link\">비밀번호 변경하기</a> ';
 $string['enable'] = '사용가능';
 $string['encryptedcode'] = '암호와 코드';
@@ -363,8 +363,8 @@ $string['enrolledincoursenot'] = '배움터 \"$a\" 에  참여하지 않음';
 $string['enrollfirst'] = '당신은 당신이 사이트의 행동을 사용하기 전에 한가지의 진로에 등록해야함';
 $string['enrolmentconfirmation'] = '이 배움터의 구성원으로 참여하려고 합니까?<br />';
 $string['enrolmentkey'] = '참여 키';
-$string['enrolmentkeyfrom'] = '이 배움터는 \'참여키\'가 필요합니다.<BR> 참여키는 $a 에게 받을 수 있습니다.';
-$string['enrolmentkeyhint'] = '참여키가 부정확합니다. 다시 입력해 주세요.<BR>
+$string['enrolmentkeyfrom'] = '이 배움터는 \'참여키\'가 필요합니다.<br /> 참여키는 $a 에게 받을 수 있습니다.';
+$string['enrolmentkeyhint'] = '참여키가 부정확합니다. 다시 입력해 주세요.<br />
 (힌트:  \'$a\'로 시작됨)';
 $string['enrolmentnew'] = '$a에 새로운 등록';
 $string['enrolmentnewuser'] = '$a->사용자가 진로\"$a->진로\"에 등록됨';
@@ -562,19 +562,19 @@ $string['loginguest'] = '손님으로 로그인';
 $string['loginsite'] = '사이트에 로그인';
 $string['loginsteps'] = '안녕하세요! 이 웹사이트를 충분히 이용하시려면 새로운 계정을 만들어야 합니다.
   각각의 배움터는 각각 참여키를 갖고 있습니다.
-   <OL size=2>
-   <LI> <A HREF=\"$a\">New Account</A> 만들기 양식에 채워넣기
-   <LI> 입력한 이메일 주소로 확인 메일이 즉시 전송됩니다.
-   <LI>이메일을 읽고, 포함된 웹링크를 클릭합니다.
-   <LI>당신의 계정이 등록 확인되고 로그인할 수 있습니다.
-   <LI>이제 참여하고 싶은 배움터를 선택합니다.
-   <LI>만약 참여키를 입력하는 칸이 있다면 선생님이 알려주신 번호를 넣으시면 됩니다.
-   <LI>이제 배움터를 충분히 이용할 수 있습니다.
-   </OL>';
+   <ol>
+   <li> <a href=\"$a\">New Account</a> 만들기 양식에 채워넣기</li>
+   <li> 입력한 이메일 주소로 확인 메일이 즉시 전송됩니다.</li>
+   <li>이메일을 읽고, 포함된 웹링크를 클릭합니다.</li>
+   <li>당신의 계정이 등록 확인되고 로그인할 수 있습니다.</li>
+   <li>이제 참여하고 싶은 배움터를 선택합니다.</li>
+   <li>만약 참여키를 입력하는 칸이 있다면 선생님이 알려주신 번호를 넣으시면 됩니다.</li>
+   <li>이제 배움터를 충분히 이용할 수 있습니다.</li>
+   </ol>';
 $string['loginstepsnone'] = '안녕하세요!
-<P> 배움터를 충분히 이용하기 위해서는 계정을 생성하여야 합니다.
-<P> 사용자 아이디와 비밀번호를 입력해야 합니다.
-<P> 만약 누군가 사용자 아이디를 사용하고 있다면 다른 아이디를 사용해야 합니다.';
+<br /> 배움터를 충분히 이용하기 위해서는 계정을 생성하여야 합니다.
+<br /> 사용자 아이디와 비밀번호를 입력해야 합니다.
+<br /> 만약 누군가 사용자 아이디를 사용하고 있다면 다른 아이디를 사용해야 합니다.';
 $string['loginto'] = '$a 로그인하기';
 $string['loginusing'] = '사용자이름과 비밀번호를 사용하여 로그인하세요.';
 $string['logout'] = '로그아웃';
@@ -753,15 +753,15 @@ $string['passwordconfirmchange'] = '비밀번호 변경 확인하기';
 $string['passwordrecovery'] = '예, 로그인을 도와주세요.';
 $string['passwordsdiffer'] = '비밀번호가 일치하지 않습니다.';
 $string['passwordsent'] = '비밀번호가 보내졌습니다.';
-$string['passwordsenttext'] = '   <P>이메일이 아래 주소로 보내졌습니다. $a->email.
-   <P><B>새로운 비밀번호를 위한 이메일을 확인해 주세요.</B>
-   <P>새 비밀번호는 자동으로 생성되었습니다. 기억하기 쉬운 번호로 고치려면 <A HREF=$a->link> 기억하기 쉽게 비밀번호 변경하려면 여기를 클릭하세요</A>.';
+$string['passwordsenttext'] = '   <p>이메일이 아래 주소로 보내졌습니다. $a->email.</p>
+   <p><b>새로운 비밀번호를 위한 이메일을 확인해 주세요.</b></p>
+   <p>새 비밀번호는 자동으로 생성되었습니다. 기억하기 쉬운 번호로 고치려면 <a href=\"$a->link\"> 기억하기 쉽게 비밀번호 변경하려면 여기를 클릭하세요</a>.</p>';
 $string['pathnotexists'] = '길이 당신의 서버에 존재하지 않음';
 $string['pathslasherror'] = '길이 슬래쉬와 함께 끝날 수 없음';
 $string['paymentinstant'] = '짧은 시간의 지불과 등록을 위해 아래의 버튼을 사용하시오.';
 $string['paymentrequired'] = '이 진로는 들어가기 위해 지불이 필요합니다.';
 $string['paymentsorry'] = '당신의 지불에 감사드립니다! 불행하게도 당신의 지불은 완전이 진행되지 않았습니다, 그리고 당신은 진로에 들어가는데 아직 등록되지 않았습니다 \"$a->완전한이름\". 몇초후에 계속 진로를 진행해 보시길 바랍니다,그러나 당신이 연속으로 문제가 있다면 사이트 관리자나 $a->선생님 에게 알려주기 바랍니다.';
-$string['paymentthanks'] = '당신의 지불에 감사드립니다! 당신은 당신의 진로에 이제 등록되었음:<br/>';
+$string['paymentthanks'] = '당신의 지불에 감사드립니다! 당신은 당신의 진로에 이제 등록되었음:<br />';
 $string['people'] = '사람들';
 $string['personalprofile'] = '개인 정보';
 $string['phone'] = '전화';
@@ -793,10 +793,10 @@ $string['recreatedcategory'] = '$a 부분(범주) 재설정';
 $string['refreshingevents'] = '사건을 재환기 시킴';
 $string['registration'] = '무들 등록하기';
 $string['registrationemail'] = '이메일 통지';
-$string['registrationinfo'] = '<p> 이 페이지는 무들 사이트를  moodle.org에 등록하도록 해 줍니다. 등록은 무료입니다.
-<p> 만약 선택한다면, 사이트 이름, 국가, 웹주소가 무들 사이트에 등록될 것입니다.
+$string['registrationinfo'] = '<p> 이 페이지는 무들 사이트를  moodle.org에 등록하도록 해 줍니다. 등록은 무료입니다.</p>
+<p> 만약 선택한다면, 사이트 이름, 국가, 웹주소가 무들 사이트에 등록될 것입니다.</p>
 <p> 모든 등록은 수동으로 이루어집니다.
-일단 등록하면 등록된 내용은 쉽게 수정할 수 있습니다.';
+일단 등록하면 등록된 내용은 쉽게 수정할 수 있습니다.</p>';
 $string['registrationno'] = '아니오, 이메일을 받지 않겠습니다.';
 $string['registrationsend'] = 'moodle.org 에 등록 정보 보내기';
 $string['registrationyes'] = '중요한 사항을 나에게 알려주세요.';
@@ -838,9 +838,9 @@ $string['screenshot'] = '스크린의 범위';
 $string['search'] = '찾기';
 $string['searchagain'] = '다시 찾기';
 $string['searchcourses'] = '배움터 찾기';
-$string['searchhelp'] = '여러 개의 단어로 검색할 수 있습니다.<p>word : 텍스트안에 이 단어와 관련된 어떤 것이라도 검색
-<br>+word : 정확이 일치하는 것만 검색
-<br>-word : 이 단어를 포함하지 않는 것만 보여주기';
+$string['searchhelp'] = '여러 개의 단어로 검색할 수 있습니다.<br />word : 텍스트안에 이 단어와 관련된 어떤 것이라도 검색
+<br />+word : 정확이 일치하는 것만 검색
+<br />-word : 이 단어를 포함하지 않는 것만 보여주기';
 $string['searchresults'] = '찾은 결과';
 $string['sec'] = '초';
 $string['secs'] = '초';
@@ -975,7 +975,7 @@ $string['uploadafile'] = '파일 업로드';
 $string['uploadedfile'] = '파일업로드 성공';
 $string['uploadedfileto'] = '업로드됨 $a->file to $a->directory';
 $string['uploadedfiletoobig'] = '죄송합니다 파일이 너무큽니다($a 이상 불가)';
-$string['uploadfailednotrecovering'] = '당신의 파일 업로드가 실패했음 왜냐하면 한개의 파일에 문제가 있었음 $a->이름. <br/> 여기 문제의 로그가 있음:<br/>$a->problem<br/>치유되지 않음.';
+$string['uploadfailednotrecovering'] = '당신의 파일 업로드가 실패했음 왜냐하면 한개의 파일에 문제가 있었음 $a->이름. <br /> 여기 문제의 로그가 있음:<br />$a->problem<br />치유되지 않음.';
 $string['uploadfilelog'] = '$a 파일을 위해 업로드 로그 함';
 $string['uploadformlimit'] = '서한이 제한한 최고의 크기를 파일이 초과함';
 $string['uploadlabel'] = '제목:';

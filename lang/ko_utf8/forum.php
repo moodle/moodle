@@ -82,7 +82,7 @@ $string['openmode1'] = '토론 없음, 답글 허용됨';
 $string['openmode2'] = '토론과 답글 허용됨';
 $string['parent'] = '윗글 보기';
 $string['parentofthispost'] = '이글의 윗글';
-$string['postadded'] = '성공적으로 글이 추가되었습니다.<P> $a 글을 수정할 수 있습니다.';
+$string['postadded'] = '성공적으로 글이 추가되었습니다.<br /> $a 글을 수정할 수 있습니다.';
 $string['postincontext'] = '문맥에서 이 글 보기';
 $string['postmailinfo'] = '$a 웹사이트에 게시된 글입니다.
 웹사이트에 답글을 추가하려면 링크를 클릭해 주세요:';

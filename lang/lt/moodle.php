@@ -234,9 +234,9 @@ Eikite á nuorodà, kad patvirtintumëte uþsiregistravimà: $a->link
 
 Jei kyla problemø, susisiekite su administratorium $a->admin';
 $string['emailconfirmationsubject'] = '$a: vartotojo vardo patvirtinimas';
-$string['emailconfirmsent'] = '   <P>Iðsiøstas laiðkas jums á <B>$a</B>
-   <P>Jame paraðyta kaip pabaigti registracijà.
-   <P>Jei kas netaip, susisiekite su administratoriumi.';
+$string['emailconfirmsent'] = '   <p>Iðsiøstas laiðkas jums á <b>$a</b></p>
+   <p>Jame paraðyta kaip pabaigti registracijà.</p>
+   <p>Jei kas netaip, susisiekite su administratoriumi.</p>';
 $string['emaildisplay'] = 'El. paðto rodymas';
 $string['emaildisplaycourse'] = 'Rodyti mano el. paðto adresà tik paskaitos nariams';
 $string['emaildisplayno'] = 'Nerodyti mano el. paðto adreso kitiems';
@@ -253,11 +253,11 @@ Eikite á nuorodà, jei norite gauti el. paðtu naujà slaptaþodá: a->link
 Jei kyla problemø, susisiekite su administratorium $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: pakeisto slaptaþodþio patvirtinimas';
 $string['emailpasswordconfirmsent'] = 'Iðsiøstas laiðkas adresu <b>$a</b>.
-<p>Jame yra paraðyta kaip uþbaigti slaptaþodþio keitimà.
+<br />Jame yra paraðyta kaip uþbaigti slaptaþodþio keitimà.
 Jei kas nors ne taip, susisiekite su administratorium.';
 $string['emailpasswordsent'] = 'Aèiû kad patvirtinotë slaptaþodþio pakeitimà.
-<p>Iðsiøstas laiðkas su nauju slaptaþodþiu adresu<b>$a->email</b>.
-<p>Naujas slaptaþodis yra automatiðkai sugeneruotas - gal norite já <a href=$a->link>pakeisti</a> á labiaus ásimenamà.';
+<br />Iðsiøstas laiðkas su nauju slaptaþodþiu adresu<b>$a->email</b>.
+<br />Naujas slaptaþodis yra automatiðkai sugeneruotas - gal norite já <a href=\"$a->link\">pakeisti</a> á labiaus ásimenamà.';
 $string['enrolmentconfirmation'] = 'Jûs bandote save ásiraðyti á paskaitas.<br />Ar tikrai to norite?';
 $string['enrolmentkey'] = 'Ásiraðymo raktas';
 $string['enrolmentkeyfrom'] = 'Ði paskaita reikalauja ásiraðymo rakto - vienkartinio slaptaþodþio<br />
@@ -397,16 +397,16 @@ $string['loginas'] = 'Prisijunk kaip';
 $string['loginguest'] = 'Prisijunk kaip sveèias';
 $string['loginsite'] = 'Prisijunk prie puslapio';
 $string['loginsteps'] = 'Sveiki! Norëdami prisijungiti ir naudotis visomis paskaitomis jûs turite susikurti vartotojà. Gali prireikti ir \"áraðymo rakto\", apie já vëliau. Ðtai ka reikia daryti:
-   <OL size=2>
-   <LI>Uþpildyti <A HREF=$a>Naujo Vartotojo</A> formà savo duomenimis.
-   <LI>Tada gausite el. laiðkà.
-   <LI>Spauskite ant nuorodos laiðke.
-   <LI>Jûsø registracija bus patvirtinta ir jûs bûsite prijungtas.
-   <LI>Dabar galite pasirinkti paskaità, kuri jums patinka.
-   <LI>Jei praðoma \"áraðymo rakto\" - naudokite tà, kurá davë dëstytojas. Taip ásiraðysite save á paskaitas.
-   <LI>Dabar galite naudotis paskaitomis, prisijungdami savo vartotojo vardu ir slaptaþodþiu.
-   </OL>';
-$string['loginstepsnone'] = 'Sveiki!<P>Norëdami naudotis paskaitomis turi uþsiregistruoti.<P>Tam reikia sugalvoti vartotojo vardà ir slaptaþodá.';
+   <ol>
+   <li>Uþpildyti <a href=\"$a\">Naujo Vartotojo</a> formà savo duomenimis.</li>
+   <li>Tada gausite el. laiðkà.</li>
+   <li>Spauskite ant nuorodos laiðke.</li>
+   <li>Jûsø registracija bus patvirtinta ir jûs bûsite prijungtas.</li>
+   <li>Dabar galite pasirinkti paskaità, kuri jums patinka.</li>
+   <li>Jei praðoma \"áraðymo rakto\" - naudokite tà, kurá davë dëstytojas. Taip ásiraðysite save á paskaitas.</li>
+   <li>Dabar galite naudotis paskaitomis, prisijungdami savo vartotojo vardu ir slaptaþodþiu.</li>
+   </ol>';
+$string['loginstepsnone'] = '<p>Sveiki!</p><p>Norëdami naudotis paskaitomis turi uþsiregistruoti.</p><p>Tam reikia sugalvoti vartotojo vardà ir slaptaþodá.</p>';
 $string['loginto'] = 'Prisijunk prie $a';
 $string['loginusing'] = 'Prisijunk èia naudodamas savo vartotojo vardà ir slaptaþodá';
 $string['logout'] = 'Atsijungti';
@@ -546,9 +546,9 @@ $string['passwordconfirmchange'] = 'Patvirtinkite slaptaþodþio pakeitimà';
 $string['passwordrecovery'] = 'Taip, padëti man prisijungti';
 $string['passwordsdiffer'] = 'Ðie slaptaþodþiai nevienodi';
 $string['passwordsent'] = 'Slaptaþodis iðsiøstas';
-$string['passwordsenttext'] = '   <P>Iðsiøstas laiðkas adresu $a->email.
-   <P><B>Pasitikrinkite paðtà dël naujo slaptaþodþio</B>
-   <P>Naujas slaptaþodis yra automatiðkai sugeneruotas ir jûs turbût norësitë já <A HREF=$a->link>pakeisti</A> á labiau ásimenamà.';
+$string['passwordsenttext'] = '<p>Iðsiøstas laiðkas adresu $a->email.</p>
+   <p><b>Pasitikrinkite paðtà dël naujo slaptaþodþio</b></p>
+   <p>Naujas slaptaþodis yra automatiðkai sugeneruotas ir jûs turbût norësitë já <a href=\"$a->link\">pakeisti</a> á labiau ásimenamà.</p>';
 $string['people'] = 'Kolegos';
 $string['personalprofile'] = 'Asmeninis profilis';
 $string['phone'] = 'Telefonas';
@@ -572,14 +572,6 @@ $string['readme'] = 'SKAITYK_MANE';
 $string['recentactivity'] = 'Paskutiniai veiksmai';
 $string['registration'] = 'Moodle Registracija';
 $string['registrationemail'] = 'El. paðto praneðimai';
-$string['registrationinfo'] = '<p>This page allows you to register your Moodle site with moodle.org.  Registration is free.
-The main benefit of registering is that you will be added to a low-volume mailing list 
-for important notifications such as security alerts and new releases of Moodle.
-<p>By default, your information will be kept private, and will never be sold or passed on to anyone else.  The only 
-   reason for collecting this information is for support purposes, and to help build up a statistical 
-   picture of the Moodle community as a whole.
-<p>If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.
-<p>All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time by resubmitting this form.';
 $string['registrationno'] = 'Ne, nenoriu gauti laiðkø';
 $string['registrationsend'] = 'Siûsti registracijos informacijà á moodle.org';
 $string['registrationyes'] = 'Taip, praneðkite man apie svarbesniu ávykius';
