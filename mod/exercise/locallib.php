@@ -24,8 +24,8 @@ function exercise_count_user_submissions($exercise, $user) {
 function exercise_delete_submitted_files($exercise, $submission) {
 function exercise_delete_user_files($exercise, $user, $exception) {
 
-function exercise_file_area($exercise, $submission) {
-function exercise_file_area_name($exercise, $submission) {
+function exercise_file_area($exercise, $submission) { <--- in lib.php
+function exercise_file_area_name($exercise, $submission) { <--- in lib.php
 
 function exercise_get_assess_logs($course, $timestart) {  <--- in lib.php
 function exercise_get_assessments($submission)   <--- in lib.php{
@@ -397,21 +397,6 @@ function exercise_delete_user_files($exercise, $user, $exception) {
             }
         }
     }
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-function exercise_file_area($exercise, $submission) {
-    return make_upload_directory( exercise_file_area_name($exercise, $submission) );
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-function exercise_file_area_name($exercise, $submission) {
-//  Creates a directory file name, suitable for make_upload_directory()
-    global $CFG;
-
-    return "$exercise->course/$CFG->moddata/exercise/$submission->id";
-}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

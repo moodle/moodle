@@ -594,6 +594,24 @@ function exercise_get_participants($exerciseid) {
     return ($st_submissions);
 }
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+// Non-standard Exercise functions
+///////////////////////////////////////////////////////////////////////////////////////////////
+function exercise_file_area($exercise, $submission) {
+    return make_upload_directory( exercise_file_area_name($exercise, $submission) );
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+function exercise_file_area_name($exercise, $submission) {
+//  Creates a directory file name, suitable for make_upload_directory()
+    global $CFG;
+
+    return "$exercise->course/$CFG->moddata/exercise/$submission->id";
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 function exercise_get_assess_logs($course, $timestart) {
     // get the "assess" entries for this user and add the first and last names...
