@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
     if (!empty($question->id)) {
         $options = get_record("quiz_randomsamatch", "question", $question->id);
     } else {

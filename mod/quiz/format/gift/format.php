@@ -126,7 +126,7 @@ class quiz_file_format extends quiz_default_format {
         $answerstart = strpos($text, "{");
         if ($answerstart === false) {
             if ($this->displayerrors) {
-                echo "<P>$text<P>Could not find a {";
+                echo "<p>$text<p>Could not find a {";
             }
             return false;
         }
@@ -134,7 +134,7 @@ class quiz_file_format extends quiz_default_format {
         $answerfinish = strpos($text, "}");
         if ($answerfinish === false) {
             if ($this->displayerrors) {
-                echo "<P>$text<P>Could not find a }";
+                echo "<p>$text<p>Could not find a }";
             }
             return false;
         }
@@ -193,7 +193,7 @@ class quiz_file_format extends quiz_default_format {
 
         if (!isset($question->qtype)) {
             if ($this->displayerrors) {
-                echo "<P>$text<P>Question type not set.";
+                echo "<p>$text<p>Question type not set.";
                 }
             return false;
         }
@@ -218,7 +218,7 @@ class quiz_file_format extends quiz_default_format {
                 $countanswers = count($answers);
                 if ($countanswers < 2) {
                     if ($this->displayerrors) {
-                        echo "<P>$text<P>Found tilde for multiple choice, 
+                        echo "<p>$text<p>Found tilde for multiple choice, 
                             but too few answers for Multiple Choice.<br />
                             Found <u>$countanswers</u> answers in answertext.";
                     }
@@ -262,7 +262,7 @@ class quiz_file_format extends quiz_default_format {
                 $countanswers = count($answers);
                 if ($countanswers < 3) {
                     if ($this->displayerrors) {
-                        echo "<P>$text<P>Found markers for Matching format 
+                        echo "<p>$text<p>Found markers for Matching format 
                             (= and ->), but too few answers -- must be at least 3.<br />
                             Found <u>$countanswers</u> answers in answertext.";
                     }
@@ -274,7 +274,7 @@ class quiz_file_format extends quiz_default_format {
                     $answer = trim($answer);
                     if (strpos($answer, "->") <= 0) {
                         if ($this->displayerrors) {
-                        echo "<P>$text<P>Error processing Matching question.<br />
+                        echo "<p>$text<p>Error processing Matching question.<br />
                             Improperly formatted answer: $answer";
                         }
                         return false;
@@ -323,7 +323,7 @@ class quiz_file_format extends quiz_default_format {
                 if (count($answers) == 0) {
                     // invalid question
                     if ($this->displayerrors) {
-                        echo "<P>$text<P>Found equals=, but no answers in answertext";
+                        echo "<p>$text<p>Found equals=, but no answers in answertext";
                     }
                     return false;
                     break;
@@ -364,7 +364,7 @@ class quiz_file_format extends quiz_default_format {
                 if (count($answers) == 0) {
                     // invalid question
                     if ($this->displayerrors) {
-                        echo "<P>$text<P>No answers found in answertext (Numerical answer)";
+                        echo "<p>$text<p>No answers found in answertext (Numerical answer)";
                     }
                     return false;
                     break;
@@ -407,8 +407,8 @@ class quiz_file_format extends quiz_default_format {
                      OR !is_numeric($question->max[$key])
                      OR !is_numeric($question->max[$key])) {
                         if ($this->displayerrors) {
-                            echo "<P>$text<P>For numerical questions, answer must be numbers.
-                                <P>Answer: <u>$answer</u><P>ErrorMargin: <u>$errormargin</u> .";
+                            echo "<p>$text<p>For numerical questions, answer must be numbers.
+                                <p>Answer: <u>$answer</u><p>ErrorMargin: <u>$errormargin</u> .";
                         }
                         return false;
                         break;
@@ -423,7 +423,7 @@ class quiz_file_format extends quiz_default_format {
 
                 default:
                 if ($this->displayerrors) {
-                    echo "<P>$text<P> No valid question type. Error in switch(question->qtype)";
+                    echo "<p>$text<p> No valid question type. Error in switch(question->qtype)";
                 }
                 return false;
                 break;                

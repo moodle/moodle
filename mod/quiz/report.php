@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 // This script uses installed report plugins to print quiz reports
 
@@ -51,7 +51,7 @@
         $strreport  = get_string("report", "quiz");
     
         print_header_simple("$quiz->name", "",
-                     "<A HREF=index.php?id=$course->id>$strquizzes</A> 
+                     "<a href=\"index.php?id=$course->id\">$strquizzes</a> 
                       -> <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strreport", 
                      "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
     
@@ -69,7 +69,7 @@
             }
         }
 
-        echo "<table cellpadding=10 align=center><tr>";
+        echo "<table cellpadding=\"10\" align=\"center\"><tr>";
         foreach ($reportlist as $report) {
             $strreport = get_string("report$report", "quiz");
             if ($report == $mode) {

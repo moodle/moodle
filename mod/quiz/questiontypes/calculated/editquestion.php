@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 // Get a handle to the question type we are dealing with here
 $qtypeobj = $QUIZ_QTYPES[CALCULATED];

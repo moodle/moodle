@@ -139,7 +139,7 @@ function display() {
         print_simple_box(format_text($resource->alltext, $resource->options, $formatoptions, $course->id), 
                          "center", "", "$THEME->cellcontent", "20");
     
-        echo "<center><p><font size=1>$strlastmodified: ".userdate($resource->timemodified)."</p></center>";
+        echo "<center><p><font size=\"1\">$strlastmodified: ".userdate($resource->timemodified)."</p></center>";
     
         print_footer($course);
     }

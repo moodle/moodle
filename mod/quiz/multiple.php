@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // A quick way to add lots of questions to a category (and a quiz)
 
     require_once("../../config.php");
@@ -122,39 +122,39 @@
     $options[1] = get_string("yes");
 
     print_simple_box_start("center", "", "$THEME->cellheading");
-    echo "<FORM METHOD=\"POST\" ACTION=multiple.php>";
-    echo "<TABLE cellpadding=5>";
-    echo "<TR><TD align=right>";
+    echo "<form method=\"POST\" action=\"multiple.php\">";
+    echo "<table cellpadding="5">";
+    echo "<tr><td align="right">";
     print_string("category", "quiz");
-    echo ":</TD><TD>";
+    echo ":</td><td>";
     // choose_from_menu($categories, "category", "$category->id", "");
     quiz_category_select_menu($course->id, true, true, $category->id );
-    echo "</TR>";
+    echo "</tr>";
 
-    echo "<TR><TD align=right>";
+    echo "<tr><td align="right">";
     print_string("randomcreate", "quiz");
-    echo ":</TD><TD>";
+    echo ":</td><td>";
     choose_from_menu($randomcount, "randomcreate", "10", "");
-    echo "</TR>";
+    echo "</tr>";
 
-    echo "<TR><TD align=right>";
+    echo "<tr><td align="right">";
     print_string("defaultgrade", "quiz");
-    echo ":</TD><TD>";
+    echo ":</td><td>";
     choose_from_menu($gradecount, "randomgrade", "1", "");
-    echo "</TR>";
+    echo "</tr>";
 
-    echo "<TR><TD align=right>";
+    echo "<tr><td align="right">";
     print_string("addquestionstoquiz", "quiz");
-    echo ":</TD><TD>";
+    echo ":</td><td>";
     choose_from_menu($options, "addquestionstoquiz", "1", "");
-    echo "</TR>";
+    echo "</tr>";
 
-    echo "<TR><TD>&nbsp;</TD><TD>";
-    echo " <INPUT TYPE=hidden NAME=category VALUE=\"$category->id\" />";
-    echo " <INPUT TYPE=submit NAME=save VALUE=\"$strcreatemultiple\" />";
-    echo "</TD></TR>";
-    echo "</TABLE>";
-    echo "</FORM>";
+    echo "<tr><td>&nbsp;</td><td>";
+    echo " <input type="hidden" name="category" value=\"$category->id\" />";
+    echo " <input type="submit" name="save" value=\"$strcreatemultiple\" />";
+    echo "</td></tr>";
+    echo "</table>";
+    echo "</form>";
     print_simple_box_end();
 
     print_footer();

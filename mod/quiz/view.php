@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 // This page prints a particular instance of quiz
 
@@ -46,7 +46,7 @@
     $strquiz  = get_string("modulename", "quiz");
 
     print_header_simple("$quiz->name", "",
-                 "<A HREF=index.php?id=$course->id>$strquizzes</A> -> $quiz->name", 
+                 "<a href=\"index.php?id=$course->id\">$strquizzes</a> -> $quiz->name", 
                  "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
 
     if (isteacher($course->id)) {
@@ -54,7 +54,7 @@
         $usercount = count_records("quiz_grades", "quiz", "$quiz->id");
         $strusers  = get_string("users");
         $strviewallanswers  = get_string("viewallanswers","quiz",$attemptcount);
-        echo "<p align=right><a href=\"report.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a></p>";
+        echo "<p align=\"right\"><a href=\"report.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a></p>";
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }
@@ -83,8 +83,8 @@
     }
 
     if ($quiz->attempts > 1) {
-        echo "<p align=center>".get_string("attemptsallowed", "quiz").": $quiz->attempts</p>";
-        echo "<p align=center>".get_string("grademethod", "quiz").": ".$QUIZ_GRADE_METHOD[$quiz->grademethod]."</p>";
+        echo "<p align=\"center\">".get_string("attemptsallowed", "quiz").": $quiz->attempts</p>";
+        echo "<p align=\"center\">".get_string("grademethod", "quiz").": ".$QUIZ_GRADE_METHOD[$quiz->grademethod]."</p>";
     } else {
         echo "<br />";
     }
@@ -116,7 +116,7 @@
             if ($quiz->grade) {
                 $attemptgrade = format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade);
                 if ($attemptgrade == $mygrade) {
-                    $attemptgrade = "<span class=highlight>$attemptgrade</span>";
+                    $attemptgrade = "<span class=\"highlight\">$attemptgrade</span>";
                 }
                 if (!$available and $quiz->review) {
                     $attemptgrade = "<a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</a>";

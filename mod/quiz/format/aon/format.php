@@ -1,4 +1,4 @@
-<?PHP  // $Id$ 
+<?php  // $Id$ 
 
 ////////////////////////////////////////////////////////////////////////////
 /// Academy of Nursing format
@@ -38,7 +38,7 @@ class quiz_file_format extends quiz_default_format {
         $answerstart = strpos($text, "{");
         if ($answerstart === false) {
             if ($this->displayerrors) {
-                echo "<P>$text<P>Could not find a {";
+                echo "<p>$text<p>Could not find a {";
             }
             return false;
         }
@@ -46,7 +46,7 @@ class quiz_file_format extends quiz_default_format {
         $answerfinish = strpos($text, "}");
         if ($answerfinish === false) {
             if ($this->displayerrors) {
-                echo "<P>$text<P>Could not find a }";
+                echo "<p>$text<p>Could not find a }";
             }
             return false;
         }
@@ -67,7 +67,7 @@ class quiz_file_format extends quiz_default_format {
         switch ($countanswers) {
             case 0:  // invalid question
                 if ($this->displayerrors) {
-                    echo "<P>No answers found in $answertext";
+                    echo "<p>No answers found in $answertext";
                 }
                 return false;
 

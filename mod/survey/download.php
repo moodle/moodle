@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     require ("../../config.php");
 

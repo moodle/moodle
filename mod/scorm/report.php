@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 // This script uses installed report plugins to print quiz reports
 
@@ -52,7 +52,7 @@
         $strreport  = get_string("report", "scorm");
     
         print_header("$course->shortname: $scorm->name", "$course->fullname",
-                     "$navigation <A HREF=index.php?id=$course->id>$strscorms</A> 
+                     "$navigation <a href=\"index.php?id=$course->id\">$strscorms</a> 
                       -> <a href=\"view.php?id=$cm->id\">$scorm->name</a> -> $strreport", 
                      "", "", true);
     

@@ -1,36 +1,36 @@
-<FORM name="theform" method="post" action="question.php">
+<form name="theform" method="post" action="question.php">
 
-<CENTER>
+<center>
 
-<TABLE cellpadding=5>
+<table cellpadding="5">
 
-<TR valign=top>
+<tr valign="top">
 
-    <TD align=right><P><B><?php  print_string("category", "quiz") ?>:</B></P></TD>
+    <td align="right"><p><b><?php  print_string("category", "quiz") ?>:</b></p></td>
 
-    <TD>
+    <td>
 
     <?php   quiz_category_select_menu($course->id, true, true, $question->category); ?>
 
-    </TD>
+    </td>
 
-</TR>
+</tr>
 
-<TR valign=top>
+<tr valign="top">
 
-    <TD align=right><P><B><?php  print_string("questionname", "quiz") ?>:</B></P></TD>
+    <td align="right"><p><b><?php  print_string("questionname", "quiz") ?>:</b></p></td>
 
-    <TD>
+    <td>
 
-        <INPUT type="text" name="name" size=40 value="<?php  p($question->name) ?>" />
+        <input type="text" name="name" size="40" value="<?php  p($question->name) ?>" />
 
         <?php  if (isset($err["name"])) formerr($err["name"]); ?>
 
-    </TD>
+    </td>
 
-</TR>
+</tr>
 
-<tr valign=top>
+<tr valign="top">
 
     <td align="right"><p><b><?php  print_string("question", "quiz") ?>:</b></p>
 
@@ -40,7 +40,7 @@
 
     <br />
 
-    <p><font SIZE="1">
+    <p><font size="1">
 
     <?php
 
@@ -82,7 +82,7 @@
 
            } else {
 
-               echo "<div align=right>";
+               echo "<div align=\"right\">";
 
                print_string("formattexttype");
 
@@ -108,11 +108,11 @@
 
 </tr>
 
-<TR valign=top>
+<tr valign="top">
 
-    <TD align=right><P><B><?php  print_string("imagedisplay", "quiz") ?>:</B></P></TD>
+    <td align="right"><p><b><?php  print_string("imagedisplay", "quiz") ?>:</b></p></td>
 
-    <TD>
+    <td>
 
     <?php   if (empty($images)) {
 
@@ -126,25 +126,25 @@
 
     ?>
 
-    </TD>
+    </td>
 
-</TR>
-
-
-
-<TR valign=top>
-
-    <TD align=right><P><B><?php  print_string("choices", "quiz") ?></B>:</P></TD>
-
-    <TD><P><?php  print_string("filloutthreequestions", "quiz") ?></P>
-
-    </TD>
-
-</TR>
+</tr>
 
 
 
-<?PHP 
+<tr valign="top">
+
+    <td align="right"><p><b><?php  print_string("choices", "quiz") ?></b>:</p></td>
+
+    <td><p><?php  print_string("filloutthreequestions", "quiz") ?></p>
+
+    </td>
+
+</tr>
+
+
+
+<?php 
 
     for ($i=1; $i<=QUIZ_MAX_NUMBER_ANSWERS; $i++) {
 
@@ -152,27 +152,27 @@
 
 
 
-<TR valign=top>
+<tr valign="top">
 
-    <TD align=right><P><B><?php  echo get_string("question", "quiz")." $i";  ?> :</B></P></TD>
+    <td align="right"><p><b><?php  echo get_string("question", "quiz")." $i";  ?> :</b></p></td>
 
-    <TD>
+    <td>
 
-        <textarea name="subquestions[]" rows=5 cols=50><?php  p($subquestions[$i-1]) ?></textarea>
+        <textarea name="subquestions[]" rows="5" cols="50"><?php  p($subquestions[$i-1]) ?></textarea>
 
         <br />
 
         <?php  echo get_string("matchanswer", "quiz")." $i";  ?>&nbsp;&nbsp;
 
-        <INPUT type="text" name="subanswers[]" size=50 value="<?php  p($subanswers[$i-1]) ?>" />
+        <input type="text" name="subanswers[]" size="50" value="<?php  p($subanswers[$i-1]) ?>" />
 
-    </TD>
+    </td>
 
-</TR>
+</tr>
 
 
 
-<?PHP
+<?php
 
     }
 
@@ -180,19 +180,19 @@
 
 
 
-</TABLE>
+</table>
 
 
 
-<INPUT type="hidden" name=id value="<?php  p($question->id) ?>" />
+<input type="hidden" name="id" value="<?php  p($question->id) ?>" />
 
-<INPUT type="hidden" name=qtype value="<?php  p($question->qtype) ?>" />
+<input type="hidden" name="qtype" value="<?php  p($question->qtype) ?>" />
 
-<INPUT type="submit" value="<?php  print_string("savechanges") ?>" />
+<input type="submit" value="<?php  print_string("savechanges") ?>" />
 
 
 
-</CENTER>
+</center>
 
-</FORM>
+</form>
 

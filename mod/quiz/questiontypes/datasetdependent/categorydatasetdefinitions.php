@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     /////////////////////////////////////////////////////////////////////
     ///// This page offers a way to define category level datasets  /////
@@ -32,7 +32,7 @@
     $strquestions = get_string("questions", "quiz");
 
     print_header_simple("$strdefinedataset", "$strdefinedataset",
-                 "<A HREF=\"../../edit.php\">$streditingquiz</A> -> $strdefinedataset");
+                 "<a href=\"../../edit.php\">$streditingquiz</a> -> $strdefinedataset");
 
     if ($form = data_submitted()) {   /// Filename
 
@@ -74,7 +74,7 @@
         echo "<input type=\"hidden\" name=\"question\" value=\"$question\" />";
     }
     
-    echo "<table cellpadding=5>";
+    echo "<table cellpadding=\"5\">";
 
     $definitions = get_records('quiz_dataset_definitions',
                                'category',
@@ -86,7 +86,7 @@
             $definition = NULL;
         }
 
-        echo "<tr><td align=right>";
+        echo "<tr><td align=\"right\">";
         print_string("itemdefinition", "quiz");
         echo ":</td><td>";
         echo "<input name=\"name[]\" type=\"text\" size=\"20\" value=\"$definition->name\" />";
@@ -96,7 +96,7 @@
         echo "</td></tr>\n";
     }
 
-    echo "<tr><td align=\"CENTER\" colspan=\"3\"><input type=submit value=\"".get_string("continue")."\" /></td></tr>";
+    echo "<tr><td align=\"CENTER\" colspan=\"3\"><input type=\"submit\" value=\"".get_string("continue")."\" /></td></tr>";
     echo "</table>";
     echo "</form>";
     print_simple_box_end();

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 // Graph size
 $SURVEY_GHEIGHT = 500;
@@ -166,7 +166,7 @@ function survey_print_recent_activity($course, $isteacher, $timestart) {
         print_headline(get_string("newsurveyresponses", "survey").":");
         foreach ($surveys as $survey) {
             $date = userdate($survey->time, $strftimerecent);
-            echo "<p><font size=1>$date - ".fullname($survey)."<br />";
+            echo "<p><font size=\"1\">$date - ".fullname($survey)."<br />";
             echo "\"<a href=\"$CFG->wwwroot/mod/survey/$survey->url\">";
             echo "$survey->name";
             echo "</a>\"</font></p>";
@@ -358,10 +358,10 @@ function survey_print_multi($question) {
 
     $stripreferthat = get_string("ipreferthat", "survey");
     $strifoundthat = get_string("ifoundthat", "survey");
-    echo "<P>&nbsp</P>\n";
-	echo "<P><FONT SIZE=4><B>$question->text</B></FONT></P>";
+    echo "<p>&nbsp</p>\n";
+	echo "<p><font size=\"4\"><b>$question->text</b></font></p>";
 
-	echo "<TABLE ALIGN=CENTER WIDTH=90% CELLPADDING=4 CELLSPACING=1 BORDER=0>";
+	echo "<table align=\"center\" width=\"90%\" cellpadding=\"4\" cellspacing=\"1\" border=\"0\">";
 
     $options = explode( ",", $question->options);
     $numoptions = count($options);
@@ -374,15 +374,15 @@ function survey_print_multi($question) {
 	}
    
     if ($oneanswer) { 
-        echo "<TR WIDTH=100% ><TD COLSPAN=2><P>$question->intro</P></TD>";
+        echo "<tr width=\"100%\" ><td colspan=\"2\"><p>$question->intro</p></td>";
     } else {
-        echo "<TR WIDTH=100% ><TD COLSPAN=3><P>$question->intro</P></TD>"; 
+        echo "<tr width=\"100%\" ><td colspan=\"3\"><p>$question->intro</p></td>"; 
     }
 
     while (list ($key, $val) = each ($options)) {
-        echo "<TD width=10% ALIGN=CENTER><FONT SIZE=1><P>$val</P></FONT></TD>\n";
+        echo "<td width=\"10%\" align=\"center\"><font size=\"1\"><p>$val</p></font></td>\n";
     }
-    echo "<TD ALIGN=CENTER BGCOLOR=\"$THEME->body\">&nbsp</TD></TR>\n";
+    echo "<td align=\"center\" bgcolor=\"$THEME->body\">&nbsp</td></tr>\n";
 
     $subquestions = get_records_list("survey_questions", "id", $question->multi);
 
@@ -394,38 +394,38 @@ function survey_print_multi($question) {
             $q->text = get_string($q->text, "survey");
         }
 
-        echo "<TR BGCOLOR=$bgcolor>";
+        echo "<tr bgcolor=$bgcolor>";
         if ($oneanswer) {
-            echo "<TD WIDTH=10 VALIGN=top><P><B>$qnum</B></P></TD>";
-            echo "<TD VALIGN=top><P>$q->text</P></TD>";
+            echo "<td width=\"10\" valign=\"top\"><p><b>$qnum</b></p></td>";
+            echo "<td valign=\"top\"><p>$q->text</p></td>";
             for ($i=1;$i<=$numoptions;$i++) {
-                echo "<TD WIDTH=10% ALIGN=CENTER><INPUT TYPE=radio NAME=q$P$q->id VALUE=$i /></TD>";
+                echo "<td width=\"10%\" align=\"center\"><input type=\"radio\" name=\"q$P$q->id\" value=\"$i\" /></td>";
             }
-            echo "<TD BGCOLOR=white><INPUT TYPE=radio NAME=q$P$q->id VALUE=0 checked=\"checked\" /></TD>";
+            echo "<td bgcolor=\"white\"><input type=\"radio\" name=\"q$P$q->id\" value=\"0\" checked=\"checked\" /></td>";
             $checklist["q$P$q->id"] = $numoptions;
         
         } else {
-            echo "<TD WIDTH=10 VALIGN=middle rowspan=2><P><B>$qnum</B></P></TD>";
-            echo "<TD WIDTH=10% NOWRAP><P><FONT SIZE=1>$stripreferthat&nbsp;</FONT></P></TD>";
-            echo "<TD WIDTH=40% VALIGN=middle rowspan=2><P>$q->text</P></TD>";
+            echo "<td width=\"10\" valign=\"middle\" rowspan=\"2\"><p><b>$qnum</b></p></td>";
+            echo "<td width=\"10%\" nowrap=\"nowrap\"><p><font size=\"1\">$stripreferthat&nbsp;</font></p></td>";
+            echo "<td width=\"40%\" valign=\"middle\" rowspan=\"2\"><p>$q->text</p></td>";
             for ($i=1;$i<=$numoptions;$i++) {
-                echo "<TD WIDTH=10% ALIGN=CENTER><INPUT TYPE=radio NAME=qP$q->id VALUE=$i /></TD>";
+                echo "<td width=\"10%\" align=\"center\"><input type=\"radio\" name=\"qP$q->id\" value=\"$i\" /></td>";
             }
-            echo "<TD BGCOLOR=\"$THEME->body\"><INPUT TYPE=radio NAME=qP$q->id VALUE=0 checked=\"checked\" /></TD>";
-            echo "</TR>";
+            echo "<td bgcolor=\"$THEME->body\"><input type=\"radio\" name=\"qP$q->id\" value=\"0\" checked=\"checked\" /></td>";
+            echo "</tr>";
 
-            echo "<TR BGCOLOR=$bgcolor>";
-            echo "<TD WIDTH=10% NOWRAP><P><FONT SIZE=1>$strifoundthat&nbsp;</P></TD>";
+            echo "<tr bgcolor=$bgcolor>";
+            echo "<td width=\"10%\" nowrap=\"nowrap\"><p><font size=\"1\">$strifoundthat&nbsp;</p></td>";
             for ($i=1;$i<=$numoptions;$i++) {
-                echo "<TD WIDTH=10% ALIGN=CENTER><INPUT TYPE=radio NAME=q$q->id VALUE=$i /></TD>";
+                echo "<td width=\"10%\" align=\"center\"><input type=\"radio\" name=\"q$q->id\" value=\"$i\" /></td>";
             }
-            echo "<TD WIDTH=5% BGCOLOR=\"$THEME->body\"><INPUT TYPE=radio NAME=q$q->id VALUE=0 checked=\"checked\" /></TD>";
+            echo "<td width=\"5%\" bgcolor=\"$THEME->body\"><input type=\"radio\" name=\"q$q->id\" value=\"0\" checked=\"checked\" /></td>";
             $checklist["qP$q->id"] = $numoptions;
             $checklist["q$q->id"] = $numoptions;
         }
-        echo "</TR>\n";
+        echo "</tr>\n";
     }
-    echo "</TABLE>";
+    echo "</table>";
 }
 
 
@@ -437,34 +437,34 @@ function survey_print_single($question) {
 
     $qnum++;
 
-    echo "<P>&nbsp</P>\n";
-    echo "<TABLE ALIGN=CENTER WIDTH=90% CELLPADDING=4 CELLSPACING=0>\n";
-    echo "<TR BGCOLOR=$bgcolor>";
-    echo "<TD VALIGN=top><B>$qnum</B></TD>";
-    echo "<TD WIDTH=50% VALIGN=top><P>$question->text</P></TD>\n";
-    echo "<TD WIDTH=50% VALIGN=top><P><FONT SIZE=+1>\n";
+    echo "<p>&nbsp</p>\n";
+    echo "<table align=\"center\" width=\"90%\" cellpadding=\"4\" cellspacing=\"0\">\n";
+    echo "<tr bgcolor=$bgcolor>";
+    echo "<td valign=\"top\"><b>$qnum</b></td>";
+    echo "<td width=\"50%\" valign=\"top\"><p>$question->text</p></td>\n";
+    echo "<td width=\"50%\" valign=\"top\"><p><font size=+1>\n";
 
 
     if ($question->type == 0) {           // Plain text field
-        echo "<TEXTAREA ROWS=3 COLS=30 WRAP=virtual NAME=\"$question->id\">$question->options</TEXTAREA>";
+        echo "<textarea rows=\"3\" cols=\"30\" wrap=\"virtual\" name=\"$question->id\">$question->options</textarea>";
 
     } else if ($question->type > 0) {     // Choose one of a number
         $strchoose = get_string("choose");
-        echo "<SELECT NAME=$question->id>";
-        echo "<OPTION VALUE=0 SELECTED>$strchoose...</OPTION>";
+        echo "<select name=$question->id>";
+        echo "<option value=\"0\" SELECTED>$strchoose...</option>";
         $options = explode( ",", $question->options);
         foreach ($options as $key => $val) {
             $key++;
-            echo "<OPTION VALUE=\"$key\">$val</OPTION>";
+            echo "<option value=\"$key\">$val</option>";
         }
-        echo "</SELECT>";
+        echo "</select>";
 
     } else if ($question->type < 0) {     // Choose several of a number
         $options = explode( ",", $question->options);
         notify("This question type not supported yet");
     }
 
-    echo "</FONT></TD></TR></TABLE>";
+    echo "</font></td></tr></table>";
 
 }
 

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Import quiz questions into the given category
 
     require_once("../../config.php");
@@ -89,15 +89,15 @@
 
     print_simple_box_start("center", "", "$THEME->cellheading");
     echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"export.php\">";
-    echo "<table cellpadding=5>";
+    echo "<table cellpadding=\"5\">";
 
-    echo "<tr><td align=right>";
+    echo "<tr><td align=\"right\">";
     print_string("category", "quiz");
     echo ":</td><td>";
     choose_from_menu($categories, "category", "$category->id", "");
     echo "</tr>";
 
-    echo "<tr><td align=right>";
+    echo "<tr><td align=\"right\">";
     print_string("fileformat", "quiz");
     echo ":</td><td>";
     choose_from_menu($fileformatnames, "format", "gift", "");
@@ -111,8 +111,8 @@
     echo "</td></tr>";
 
     echo "<tr><td align=\"center\" colspan=\"2\">";
-    echo " <input type=hidden name=category value=\"$category->id\" />";
-    echo " <input type=submit name=save value=\"".get_string("exportquestions","quiz")."\" />";
+    echo " <input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
+    echo " <input type=\"submit\" name=\"save\" value=\"".get_string("exportquestions","quiz")."\" />";
     echo "</td></tr>";
 
     echo "</table>";

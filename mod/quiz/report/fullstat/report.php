@@ -1,4 +1,4 @@
-<?PHP  // $Id: report.php,
+<?php  // $Id: report.php,
 //  created from the above 2003/11/20 by Tom Robb tom@robb.net
 // Version 2.5  Modified 2004/01/18
 //  Further errorsin percentage calculations corrected
@@ -657,7 +657,7 @@ class quiz_report extends quiz_default_report {
         }
         ////////--------------------------- If it falls through both of the $download choices, print on screen
     //Print user responses
-    print ("<table border=1 align=center width=95% cellpadding=2 cellspacing=0>\n");
+    print ("<table border=\"1\" align=\"center\" width=\"95%\" cellpadding=\"2\" cellspacing=\"0\">\n");
     $totcolcount = $table_colcount+2;
     print("<tr><th colspan=$totcolcount>$strindivresp</th></tr>");
     qr_print_headers($data_tally,"$strname","$strgrade");
@@ -674,23 +674,23 @@ class quiz_report extends quiz_default_report {
                 //else the data to be printed is in $thisitem['data'] and $thisitem['score'] == 1 shows that the item was correct
                     if ($thisitem['score'] < 1) {$thiscolor = "ff0000";} else {$thiscolor = "000000";}
                     if ($thisitemkey == 0){
-                        print("<th align='left'>$thisitem&nbsp;</th>");
+                        print("<th align=\"left\">$thisitem&nbsp;</th>");
                     } elseif ($thisitemkey == 1){
-                        print("<td align='right'>&nbsp;$thisitem%&nbsp;&nbsp;</td>");
+                        print("<td align=\"right\">&nbsp;$thisitem%&nbsp;&nbsp;</td>");
                     } elseif ($thisitemkey['qtype'] == 2){
                         print("<td>&nbsp;&nbsp;$thisitem[data][answer]&nbsp;&nbsp;</td>");
                     } elseif ($thisitem['qtype'] == 5) {
                         if ($thisitem['score'] == 1) {$thiscolor = "blue";}
                         if(!$thisitem['data'][1]){$thisitem['data'][1]="($strnoresponse)";}
-                        print("<td align=center><font size=-2>{$thisitem['data'][0]}<br /><font color='$thiscolor'>{$thisitem['data'][1]}</font></font></td>");
+                        print("<td align=\"center\"><font size=\"-2\">{$thisitem['data'][0]}<br /><font color='$thiscolor'>{$thisitem['data'][1]}</font></font></td>");
                     } elseif  ($thisitem['qtype'] == 3) {
                         if ($showtext) {
-                            print("<td align=center><font color='$thiscolor' size=-2>&nbsp;&nbsp;{$thisitem['data']}&nbsp;&nbsp;</font></td>");
+                            print("<td align=\"center\"><font color='$thiscolor' size=\"-2\">&nbsp;&nbsp;{$thisitem['data']}&nbsp;&nbsp;</font></td>");
                         } else {
-                            print("<td align=center><font color='$thiscolor'>&nbsp;&nbsp;{$thisitem['data']}&nbsp;&nbsp;</font></td>");
+                            print("<td align=\"center\"><font color='$thiscolor'>&nbsp;&nbsp;{$thisitem['data']}&nbsp;&nbsp;</font></td>");
                         }
                     } else {
-                        print("<td align=center><font color='$thiscolor'>&nbsp;&nbsp;{$thisitem['data']}&nbsp;&nbsp;</font></td>");
+                        print("<td align=\"center\"><font color='$thiscolor'>&nbsp;&nbsp;{$thisitem['data']}&nbsp;&nbsp;</font></td>");
                     }
                 }
             }
@@ -705,44 +705,44 @@ class quiz_report extends quiz_default_report {
     print_object($qtally);
     }
     //print tally of how many selected each choice
-    print ("<p><table width=95% border=1 align=center cellpadding=2 cellspacing=0>\n");
+    print ("<p><table width=\"95%\" border=\"1\" align=\"center\" cellpadding=\"2\" cellspacing=\"0\">\n");
     print("<tr><th colspan=$totcolcount>$stritemanal</th></tr>");
     qr_print_headers($data_tally,"Item","&nbsp;");
     //display row with correct answers
-    print("<tr><th colspan=2 align=right>$strcorrresp:</th>");
+    print("<tr><th colspan=\"2\" align=\"right\">$strcorrresp:</th>");
     foreach ($qs_in_order as $qid){
         if ($quests[$qid]['qtype'] == 5) {
             foreach($match_answers[$qid] as $thisans){
-                print("<th align='center'>&nbsp;$thisans&nbsp;</th>");
+                print("<th align=\"center\">&nbsp;$thisans&nbsp;</th>");
             }
         } else {
-            print("<th align='center'>&nbsp;{$quests[$qid]['correct']}&nbsp;</th>");
+            print("<th align=\"center\">&nbsp;{$quests[$qid]['correct']}&nbsp;</th>");
         }
     }
     print("</tr>\n");
 
     //display a row for each possible multiple choice with $max_choices being highest row,$table_colcount is the width
     for ($i = 1; $i<= $max_choices;$i++){
-        print("<tr valign=top><th colspan=2 align=right>&nbsp;M/C #$i</td>");
+        print("<tr valign=\"top\"><th colspan=\"2\" align=\"right\">&nbsp;M/C #$i</td>");
         //display answer tallies
         for ($j = 1; $j <= $table_colcount; $j++){
            //substitute "<br />" for a "//"
            $nowdata = $analysis[$i][$j];
            if (strpos($nowdata,"//")>0) {$nowdata = str_replace("//","<br />",$nowdata);}
-           print("<td align='center'>&nbsp;$nowdata</td>");
+           print("<td align=\"center\">&nbsp;$nowdata</td>");
         
         }
     }
     print("</tr>\n");
     //Display the total percent correct
-    print("<tr valign=top><th align=right colspan=2>$strpercentcorrect:</th>");
+    print("<tr valign=\"top\"><th align=\"right\" colspan=\"2\">$strpercentcorrect:</th>");
 
     for ($i = 0; $i< $table_colcount;$i++){
         print ("<th>{$pct_correct[$i]}</th> ");
     }
     print("</tr>\n");
     //Finally display the itemanalysis
-    print("<tr valign=top valign='middle'><th align=right colspan=2>");
+    print("<tr valign=\"top\" valign=\"middle\"><th align=\"right\" colspan=\"2\">");
     helpbutton("discrimination", "", "quiz");
     print(" $strdiscrimination:</th>");
     for ($i = 1; $i<= $table_colcount;$i++){
@@ -753,30 +753,30 @@ class quiz_report extends quiz_default_report {
         } else {
             $val = 0;
         }
-        print ("<th valign='middle'><font size=-1>$val ({$top_scores[$i]}/{$bott_scores[$i]})</font></th> ");
+        print ("<th valign=\"middle\"><font size=\"-1\">$val ({$top_scores[$i]}/{$bott_scores[$i]})</font></th> ");
     }
     print("</tr>\n");
     print("</table>\n");
 
     //Now printout the questions (and M/C answers if $containsMC
 
-    print ("<p><table width=95% border=1 align=center cellpadding=2 cellspacing=0>\n");
+    print ("<p><table width=\"95%\" border=\"1\" align=\"center\" cellpadding=\"2\" cellspacing=\"0\">\n");
     if ($containsMCTF){$ws = " ". $strwithsummary;} else {$ws = "";}
-    print("<tr><th colspan=3>QUIZ: $quiz->name&nbsp;&nbsp; -- &nbsp;&nbsp;$strlistitems$ws</th></tr>\n");
+    print("<tr><th colspan=\"3\">QUIZ: $quiz->name&nbsp;&nbsp; -- &nbsp;&nbsp;$strlistitems$ws</th></tr>\n");
     $qcount = 0;
     $itemcount = 0; //needed since matching Qs adds additional columns of data in $analysis
     foreach ($qs_in_order as $qid){
         $qcount++;
         if ($quests[$qid]['qtype']==5) { $itemcount = $itemcount + $match_number[$qid];} else {$itemcount++;}
-        print("<tr valign=top><th  width='10%'>Q-$qcount</th><td colspan=2>{$quests[$qid]['qtext']}</td></tr>\n");
+        print("<tr valign=\"top\"><th  width='10%'>Q-$qcount</th><td colspan=\"2\">{$quests[$qid]['qtext']}</td></tr>\n");
         if($quests[$qid]['qtype']==3){
             $nowchoices = $quests[$qid]['choice'];
             foreach($nowchoices as $thischoice){
                 $cno = $thischoice['choiceno'];
                 $nowstat =  $analysis[$cno][$itemcount];
                 $pct_cor = qr_make_pct($nowstat,$total_user_count);
-                print("<tr valign=top><td align='right' width='10%'>$nowstat ($pct_cor%)&nbsp;</td>");
-                print("<td width='5%' align='center'><b>A-$cno</b></td><td>{$thischoice['answer']}</td></tr>\n");
+                print("<tr valign=\"top\"><td align=\"right\" width=\"10%\">$nowstat ($pct_cor%)&nbsp;</td>");
+                print("<td width=\"5%\" align=\"center\"><b>A-$cno</b></td><td>{$thischoice['answer']}</td></tr>\n");
             }
         }
         if($quests[$qid]['qtype']==2){
@@ -785,21 +785,21 @@ class quiz_report extends quiz_default_report {
             $colpos = strpos($nowstat,":");
             $nowresp = substr($nowstat,$colpos+1);
             $pct_cor = qr_make_pct($nowresp,$total_user_count);
-            print("<tr valign=top><td align='right'>$nowresp ($pct_cor%)&nbsp;</td>");
-            print("<td colspan=2 align=left>True</td></tr>\n");
+            print("<tr valign=\"top\"><td align=\"right\">$nowresp ($pct_cor%)&nbsp;</td>");
+            print("<td colspan=\"2\" align=\"left\">True</td></tr>\n");
             //"False" responses
             $nowstat =  $analysis[2][$itemcount];
             $colpos = strpos($nowstat,":");
             $nowresp = substr($nowstat,$colpos+1);
             $pct_cor = qr_make_pct($nowresp,$total_user_count);
-            print("<tr valign=top><td align='right'>$nowresp ($pct_cor%)&nbsp;</td>");
-            print("<td colspan=2 align=left>False</td></tr>\n");
+            print("<tr valign=\"top\"><td align=\"right\">$nowresp ($pct_cor%)&nbsp;</td>");
+            print("<td colspan=\"2\" align=\"left\">False</td></tr>\n");
         }
     }
     print("</table>\n");
     
     echo "<br />\n";
-    echo "<table border=0 align=center><tr>\n";
+    echo "<table border=\"0\" align=\"center\"><tr>\n";
     echo "<td>";
     unset($options);
     $options["id"] = "$cm->id";
@@ -894,7 +894,7 @@ function qr_print_headers($data_tally,$nm,$gd){
     global  $qs_in_order,$qtally,$quests,$total_user_count,$match_number,$strquestion;
     $qcount = 0;
     if($nm == "Item") {
-        print("<tr><th colspan=2 align=right>$strquestion:</th>");
+        print("<tr><th colspan=\"2\" align=\"right\">$strquestion:</th>");
     } else {
         print("<tr><th>$nm</th><th width='5%'>$gd</th>");
     }
@@ -1025,20 +1025,20 @@ function qr_match_array($nowQ){
 
 function qr_match_table($resplist){
     global $quiz_matches;
-    $tbl = "\n<table border=0 cellspacing=0 cellpadding=2 align=center><tr valign='middle' align='center'>";
+    $tbl = "\n<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\"><tr valign=\"middle\" align=\"center\">";
     $resp_array = explode(",",$resplist);
     $q_cnt=0;
     foreach ($resp_array as $resp_pair){
         $q_cnt++;
         $tbl = $tbl ."<td><font size-1> $q_cnt</font></td>";
     }
-    $tbl = $tbl . "</tr>\n<tr valign=middle>";
+    $tbl = $tbl . "</tr>\n<tr valign=\"middle\">";
     foreach ($resp_array as $resp_pair){
         $resp_QA = explode("-",$resp_pair);
         if ($resp_QA[0] == $resp_QA[1]){
-          $qa = "<b> <font size=-2>{$quiz_matches[$resp_QA[0]]['Q']}</font>&nbsp;- <font color='blue' size=-2>{$quiz_matches[$resp_QA[1]]['A']}</font></b>";
+          $qa = "<b> <font size=\"-2\">{$quiz_matches[$resp_QA[0]]['Q']}</font>&nbsp;- <font color=\"blue\" size=\"-2\">{$quiz_matches[$resp_QA[1]]['A']}</font></b>";
         } else{
-          $qa = "<b><font size=-2> {$quiz_matches[$resp_QA[0]]['Q']}</font>&nbsp;- <font color='red' size=-2> {$quiz_matches[$resp_QA[1]]['A']}</font></b>";
+          $qa = "<b><font size=\"-2\"> {$quiz_matches[$resp_QA[0]]['Q']}</font>&nbsp;- <font color=\"red\" size=\"-2\"> {$quiz_matches[$resp_QA[1]]['A']}</font></b>";
         }
 //        $qa = $resp_QA[0]  . "=" . $resp_QA[1] ;
         $tbl = $tbl . "<td>$qa</td>";

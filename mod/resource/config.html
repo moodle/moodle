@@ -1,44 +1,44 @@
 <form method="post" action="module.php" name="form">
 
-<table cellpadding=9 cellspacing=0 >
-<tr valign=top>
-	<td align=right><p>resource_framesize:</td>
+<table cellpadding="9" cellspacing="0" >
+<tr valign="top">
+	<td align="right"><p>resource_framesize:</td>
 	<td>
-    <input name=resource_framesize type=text size=5 value="<?php p($CFG->resource_framesize) ?>" />
+    <input name="resource_framesize" type="text" size="5" value="<?php p($CFG->resource_framesize) ?>" />
     </td>
     <td>
     <?php print_string("configframesize", "resource") ?>
     </td>
 </tr>
-<tr valign=top>
-	<td align=right><p>resource_websearch:</td>
+<tr valign="top">
+	<td align="right"><p>resource_websearch:</td>
 	<td>
-    <input name=resource_websearch type=text size=30 value="<?php p($CFG->resource_websearch) ?>" />
+    <input name="resource_websearch" type="text" size="30" value="<?php p($CFG->resource_websearch) ?>" />
     </td>
     <td>
     <?php print_string("configwebsearch", "resource") ?>
     </td>
 </tr>
-<tr valign=top>
-	<td align=right><p>resource_defaulturl:</td>
+<tr valign="top">
+	<td align="right"><p>resource_defaulturl:</td>
 	<td>
-    <input name=resource_defaulturl type=text size=30 value="<?php p($CFG->resource_defaulturl) ?>" />
+    <input name="resource_defaulturl" type="text" size="30" value="<?php p($CFG->resource_defaulturl) ?>" />
     </td>
     <td>
     <?php print_string("configdefaulturl", "resource") ?>
     </td>
 </tr>
-<tr valign=top>
-	<td align=right><p>resource_secretphrase:</td>
+<tr valign="top">
+	<td align="right"><p>resource_secretphrase:</td>
 	<td>
-    <input name=resource_secretphrase type=text size=30 value="<?php p($CFG->resource_secretphrase) ?>" />
+    <input name="resource_secretphrase" type="text" size="30" value="<?php p($CFG->resource_secretphrase) ?>" />
     </td>
     <td>
     <?php print_string("configsecretphrase", "resource") ?>
     </td>
 </tr>
-<tr valign=top>
-	<td align=right><p>resource_filterexternalpages:</td>
+<tr valign="top">
+	<td align="right"><p>resource_filterexternalpages:</td>
 	<td>
     <?php
         unset($choices);
@@ -51,8 +51,8 @@
     <?php print_string("configfilterexternalpages", "resource") ?>
     </td>
 </tr>
-<tr valign=top>
-	<td align=right><p>resource_popup:</td>
+<tr valign="top">
+	<td align="right"><p>resource_popup:</td>
 	<td>
     <?php
         unset($choices);
@@ -67,11 +67,11 @@
 </tr>
 <?php foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
           $defaultvalue = "resource_popup$optionname";
-          echo "<tr valign=top>";
-	      echo "<td align=right><p>$defaultvalue:</td>";
+          echo "<tr valign=\"top\">";
+	      echo "<td align=\"right\"><p>$defaultvalue:</td>";
 	      echo "<td>";
           if ($optionname == "height" or $optionname == "width") {
-              echo "<input name=$defaultvalue type=text size=5 value=\"".$CFG->$defaultvalue."\" />";
+              echo "<input name=$defaultvalue type=\"text\" size=\"5\" value=\"".$CFG->$defaultvalue."\" />";
           } else {
               choose_from_menu ($choices, $defaultvalue, $CFG->$defaultvalue, "");
           }
@@ -82,8 +82,8 @@
           echo "</tr>";
       }
 ?>
-<tr valign=top>
-	<td align=right><p>resource_windowsettings:</td>
+<tr valign="top">
+	<td align="right"><p>resource_windowsettings:</td>
 	<td>
     <?php
         unset($choices);
@@ -96,8 +96,8 @@
     <?php print_string("configwindowsettings", "resource") ?>
     </td>
 </tr>
-<tr valign=top>
-	<td align=right><p>resource_parametersettings:</td>
+<tr valign="top">
+	<td align="right"><p>resource_parametersettings:</td>
 	<td>
     <?php
         unset($choices);
@@ -111,7 +111,7 @@
     </td>
 </tr>
 <tr>
-    <td colspan=3 align=center>
+    <td colspan="3" align="center">
 	<input type="submit" value="<?php print_string("savechanges") ?>" /></td>
 </tr>
 </table>

@@ -337,7 +337,7 @@ function display() {
     if (!empty($_GET['frameset']) and $_GET['frameset'] == "top") {
         print_header($pagetitle, $course->fullname, "$navigation <a target=\"$CFG->framename\" href=\"$fullurl\">{$resource->name}</a>", "", "", true, update_module_button($this->cm->id, $course->id, $strresource), navmenu($course, $this->cm, "parent"));
 
-        echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
+        echo "<center><font size=\"-1\">".text_to_html($resource->summary, true, false)."</font></center>";
         echo "</body></html>";
         exit;
     }
@@ -365,11 +365,11 @@ function display() {
             echo '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
             echo '        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
             echo '        width="600" height="70" id="mp3player" align="">';
-            echo "<param name=movie value=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=$fullurl&autostart=yes\">";
-            echo '<param name=quality value=high>';
-            echo '<param name=bgcolor value="#333333">';
+            echo "<param name=\"movie\" value=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=$fullurl&autostart=yes\">";
+            echo '<param name="quality" value="high">';
+            echo '<param name="bgcolor" value="#333333">';
             echo "<embed src=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=$fullurl&autostart=yes\" ";
-            echo " quality=high bgcolor=\"#333333\" width=\"600\" height=\"70\" name=\"mp3player\" ";
+            echo " quality=\"high\" bgcolor=\"#333333\" width=\"600\" height=\"70\" name=\"mp3player\" ";
             echo ' type="application/x-shockwave-flash" ';
             echo ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
             echo '</embed>';
@@ -383,15 +383,15 @@ function display() {
             echo '        standby="Loading Microsoft® Windows® Media Player components..." ';
             echo '        id="msplayer" align="" type="application/x-oleobject">';
             echo "<param name=\"Filename\" value=\"$fullurl\">";
-            echo '<param name="ShowControls" value=true />';
-            echo '<param name="AutoRewind" value=true />';
-            echo '<param name="AutoStart" value=true />';
-            echo '<param name="Autosize" value=true />';
-            echo '<param name="EnableContextMenu" value=true />';
-            echo '<param name="TransparentAtStart" value=false />';
-            echo '<param name="AnimationAtStart" value=false />';
-            echo '<param name="ShowGotoBar" value=false />';
-            echo '<param name="EnableFullScreenControls" value=true />';
+            echo '<param name="ShowControls" value="true" />';
+            echo '<param name="AutoRewind" value="true" />';
+            echo '<param name="AutoStart" value="true" />';
+            echo '<param name="Autosize" value="true" />';
+            echo '<param name="EnableContextMenu" value="true" />';
+            echo '<param name="TransparentAtStart" value="false" />';
+            echo '<param name="AnimationAtStart" value="false" />';
+            echo '<param name="ShowGotoBar" value="false" />';
+            echo '<param name="EnableFullScreenControls" value="true" />';
             echo "\n<embed src=\"$fullurl\" name=\"msplayer\" type=\"$mimetype\" ";
             echo ' ShowControls="1" AutoRewind="1" AutoStart="1" Autosize="0" EnableContextMenu="1"';
             echo ' TransparentAtStart="0" AnimationAtStart="0" ShowGotoBar="0" EnableFullScreenControls="1"';
@@ -408,9 +408,9 @@ function display() {
             echo '        height="450" width="600"';
             echo '        id="quicktime" align="" type="application/x-oleobject">';
             echo "<param name=\"src\" value=\"$fullurl\" />";
-            echo '<param name="autoplay" value=true />';
-            echo '<param name="loop" value=true />';
-            echo '<param name="controller" value=true />';
+            echo '<param name="autoplay" value="true" />';
+            echo '<param name="loop" value="true" />';
+            echo '<param name="controller" value="true" />';
             echo '<param name="scale" value="aspect" />';
             echo "\n<embed src=\"$fullurl\" name=\"quicktime\" type=\"$mimetype\" ";
             echo ' height="450" width="600" scale="aspect"';

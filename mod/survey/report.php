@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -109,7 +109,7 @@
         print_heading($strsummary);
 
         if (survey_count_responses($survey->id, $currentgroup)) {
-            echo "<p align=center><a href=\"report.php?action=scales&id=$id\">";
+            echo "<p align=\"center\"><a href=\"report.php?action=scales&id=$id\">";
             survey_print_graph("id=$id&group=$currentgroup&type=overall.png");
             echo "</a>";
         } else {
@@ -142,7 +142,7 @@
                     if ($virtualscales && $question->type > 0) {  // Don't show non-virtual scales if virtual
                         continue;
                     }
-                    echo "<p align=center><a title=\"$strseemoredetail\" href=report.php?action=questions&id=$id&qid=$question->multi>";
+                    echo "<p align=\"center\"><a title=\"$strseemoredetail\" href=\"report.php?action=questions&id=$id&qid=$question->multi\">";
                     survey_print_graph("id=$id&qid=$question->id&group=$currentgroup&type=multiquestion.png");
                     echo "</a></p><br />";
                 } 
@@ -200,14 +200,14 @@
                     foreach ($subquestionorder as $key => $val) {
                         $subquestion = $subquestions[$val];
                         if ($subquestion->type > 0) {
-                            echo "<p align=center>";
+                            echo "<p align=\"center\">";
                             echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&id=$id&qid=$subquestion->id\">";
                             survey_print_graph("id=$id&qid=$subquestion->id&group=$currentgroup&type=question.png");
                             echo "</a></p>";
                         }
                     }
                 } else if ($question->type > 0 ) {
-                    echo "<p align=center>";
+                    echo "<p align=\"center\">";
                     echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&id=$id&qid=$question->id\">";
                     survey_print_graph("id=$id&qid=$question->id&group=$currentgroup&type=question.png");
                     echo "</a></p>";
@@ -322,7 +322,7 @@
              }
          }
 
-         echo "<p align=center>";
+         echo "<p align=\"center\">";
          print_user_picture($user->id, $course->id, $user->picture, true);
          echo "</p>";
 
@@ -331,7 +331,7 @@
 
          if ($showscales) {
              // Print overall summary
-             echo "<p align=center>";
+             echo "<p align=\"center\">";
              survey_print_graph("id=$id&sid=$student&type=student.png");
              echo "</p>";
          
@@ -351,8 +351,8 @@
                      if ($virtualscales && $question->type > 0) {  // Don't show non-virtual scales if virtual
                          continue;
                      }
-                     echo "<p align=center>";
-                     echo "<a title=\"$strseemoredetail\" href=report.php?action=questions&id=$id&qid=$question->multi>";
+                     echo "<p align=\"center\">";
+                     echo "<a title=\"$strseemoredetail\" href=\"report.php?action=questions&id=$id&qid=$question->multi\">";
                      survey_print_graph("id=$id&qid=$question->id&sid=$student&type=studentmultiquestion.png");
                      echo "</a></p><br />";
                  } 
@@ -380,18 +380,18 @@
          } else {
             $notes = "";
          }
-         echo "<hr noshade size=1>";
+         echo "<hr noshade=\"noshade\" size=\"1\" />";
          echo "<center>";
-         echo "<form action=report.php method=post name=form>";
+         echo "<form action=\"report.php\" method=\"post\" name=\"form\">";
          echo "<h3>$strnotes:</h3>";
          echo "<blockquote>";
-         echo "<textarea name=notes rows=10 cols=60>";
+         echo "<textarea name=\"notes\" rows=\"10\" cols=\"60\">";
          p($notes);
          echo "</textarea><br />";
-         echo "<input type=hidden name=action value=student />";
-         echo "<input type=hidden name=student value=\"$student\" />";
-         echo "<input type=hidden name=id value=\"$cm->id\" />";
-         echo "<input type=submit value=\"".get_string("savechanges")."\" />";
+         echo "<input type=\"hidden\" name=\"action\" value=\"student\" />";
+         echo "<input type=\"hidden\" name=\"student\" value=\"$student\" />";
+         echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
+         echo "<input type=\"submit\" value=\"".get_string("savechanges")."\" />";
          echo "</blockquote>";
          echo "</form>";
          echo "</center>";

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -82,17 +82,17 @@
         //
         print_simple_box_start("center", "", "$THEME->cellheading");
         echo "<table cellpadding=\"5\" align=\"center\">\n";
-        echo "    <tr><td align=\"right\" nowrap><p><b>$strname:</b></p></td><td><p>$form->name</p></a></td></tr>\n";
-        echo "    <tr><td align=\"right\" nowrap><p><b>".get_string("validation","scorm").":</b></p></td><td><p>".get_string($result,"scorm")."</p></a></td></tr>\n";
+        echo "    <tr><td align=\"right\" nowrap=\"nowrap\"><p><b>$strname:</b></p></td><td><p>$form->name</p></a></td></tr>\n";
+        echo "    <tr><td align=\"right\" nowrap=\"nowrap\"><p><b>".get_string("validation","scorm").":</b></p></td><td><p>".get_string($result,"scorm")."</p></a></td></tr>\n";
         if ($errorlogs != '') {
             $lines = round(count($errors)/4);
             if ($lines < 5) {
                 $lines = 5;
             }
-            echo "    <tr><td align=\"right\" nowrap><p><b>".get_string("errorlogs","scorm").":</b></p></td><td><textarea rows=\"".$lines."\" cols=\"30\" readonly>".$errorlogs."</textarea></a></td></tr>\n";
+            echo "    <tr><td align=\"right\" nowrap=\"nowrap\"><p><b>".get_string("errorlogs","scorm").":</b></p></td><td><textarea rows=\"".$lines."\" cols=\"30\" readonly>".$errorlogs."</textarea></a></td></tr>\n";
         }
         if (($form->mode == "update") && ($form->launch == 0) && (get_records("scorm_sco_users","scormid",$form->instance)))
-        echo "    <tr><td align=\"center\" colspan=\"2\" nowrap><p><b>".get_string("trackingloose","scorm")."</b></p></td></tr>\n";
+        echo "    <tr><td align=\"center\" colspan=\"2\" nowrap=\"nowrap\"><p><b>".get_string("trackingloose","scorm")."</b></p></td></tr>\n";
         echo "</table>\n";
         if (($result == "regular") || ($result == "found")){
             if (empty($form->auto)) {
@@ -150,8 +150,8 @@
         
 ?>
     <table cellpadding="5" align="center">
-      <tr valign=top>
-            <td align=right><p><b><?php print_string("grademethod", "scorm") ?>:</b></p></td>
+      <tr valign="top">
+            <td align="right"><p><b><?php print_string("grademethod", "scorm") ?>:</b></p></td>
             <td>
               <?php
             $options = array();
@@ -163,8 +163,8 @@
               ?>
             </td>
       </tr>
-      <tr valign=top>
-            <td align=right><p><b><?php print_string("maximumgrade") ?>:</b></p></td>
+      <tr valign="top">
+            <td align="right"><p><b><?php print_string("maximumgrade") ?>:</b></p></td>
             <td>
               <?php
             for ($i=100; $i>=1; $i--) {
@@ -176,8 +176,8 @@
               ?>
             </td>
       </tr>
-      <tr valign=top>
-        <td align=right><p><b><?php print_string("autocontinue","scorm") ?>:</b></p></td>
+      <tr valign="top">
+        <td align="right"><p><b><?php print_string("autocontinue","scorm") ?>:</b></p></td>
         <td>
         <?php
             $options = array();
@@ -188,7 +188,7 @@
         </td>
       </tr>
       <tr valign="top">
-            <td align="right" nowrap>
+            <td align="right" nowrap="nowrap">
                 <p><b><?php p($strnewwindow) ?></b></p>
             </td>
             <td>
@@ -207,8 +207,8 @@
                             echo "document.theform.auto.disabled=true;\n";
                     ?>
                 </script>
-                <input name="setnewwindow" type=hidden value=1 />
-                <input name="newwindow" type=checkbox value=1 <?php p($newwindow) ?> onclick="autowindow();return lockoptions('theform','newwindow', subitems);" /> 
+                <input name="setnewwindow" type="hidden" value="1" />
+                <input name="newwindow" type="checkbox" value="1" <?php p($newwindow) ?> onclick="autowindow();return lockoptions('theform','newwindow', subitems);" /> 
                 <?php p($strnewwindowopen) ?>
                 <ul>
                 <?php
@@ -223,10 +223,10 @@
                      }
                 ?>
 
-                <input name="hwidth" type=hidden value="0" />
-                <input name="width" type=text size=4 value="<?php p($window->width) ?>" /> <?php p($strwidth) ?><br />
-                <input name="hheight" type=hidden value="0" />
-                <input name="height" type=text size=4 value="<?php p($window->height) ?>" /> <?php p($strheight) ?><br />
+                <input name="hwidth" type="hidden" value="0" />
+                <input name="width" type="text" size="4" value="<?php p($window->width) ?>" /> <?php p($strwidth) ?><br />
+                <input name="hheight" type="hidden" value="0" />
+                <input name="height" type="text" size="4" value="<?php p($window->height) ?>" /> <?php p($strheight) ?><br />
                  <?php
                      if (!$newwindow) {
                          echo "<script>\n<!--\n";
@@ -253,7 +253,7 @@
         <input type="hidden" name="mode"    value="<?php p($form->mode) ?>" />
     <div align="center">
         <input type="submit" value="<?php print_string("savechanges") ?>" />
-        <input type="submit" name=cancel value="<?php print_string("cancel") ?>" />
+        <input type="submit" name="cancel" value="<?php print_string("cancel") ?>" />
     </div>
         </form>
 <?php

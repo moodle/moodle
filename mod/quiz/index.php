@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 // This page lists all the instances of quiz in a particular course
 
@@ -76,10 +76,10 @@
     foreach ($quizzes as $quiz) {
         if (!$quiz->visible) { 
             //Show dimmed if the mod is hidden
-            $link = "<A class=\"dimmed\" HREF=\"view.php?id=$quiz->coursemodule\">$quiz->name</A>";
+            $link = "<a class=\"dimmed\" href=\"view.php?id=$quiz->coursemodule\">$quiz->name</a>";
         } else {
             //Show normal if the mod is visible
-            $link = "<A HREF=\"view.php?id=$quiz->coursemodule\">$quiz->name</A>";
+            $link = "<a href=\"view.php?id=$quiz->coursemodule\">$quiz->name</a>";
         }
 
         $bestgrade = quiz_get_best_grade($quiz->id, $USER->id);

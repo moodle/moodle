@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 function scorm_upgrade($oldversion) {
 // This function does anything necessary to upgrade

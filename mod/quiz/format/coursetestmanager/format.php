@@ -1,4 +1,4 @@
-<?PHP  // $Id$ 
+<?php  // $Id$ 
 ////////////////////////////////////////////////////////////////////
 /// Class for importing course test manager questions.            //
 ///                                                               //
@@ -51,25 +51,25 @@ class quiz_file_format {
 		    print_simple_box_start("center", "", "$THEME->cellheading");
 				if ($hostname_access_error) { notify("couldn't connect to ODBC Socket Server on " . $hostname_access_error); }
 		    echo "<form method=\"post\" action=\"import.php\">";
-		    echo "<table cellpadding=5>";
+		    echo "<table cellpadding=\"5\">";
 
-        echo "<tr><td align=right>";
+        echo "<tr><td align=\"right\">";
 		    echo "What is the hostname or IP address of the ODBC Socket Server:</td><td>";
 		    echo " <input name=\"hostname\" type=\"text\" size=\"50\" value=\"".stripslashes($hostname_access_error)."\" />";
 		    echo " <input name=\"filename\" type=\"hidden\" value=\"".$filename."\" />";
 		    echo " <input name=\"category\" type=\"hidden\" value=\"".$category->id."\" />";
 		    echo " <input name=\"format\" type=\"hidden\" value=\"".$form->format."\" />";
 		    echo "</td><td>&nbsp;</td></tr>";
-        echo "<tr><td align=right>";
+        echo "<tr><td align=\"right\">";
 		    echo "What is the location of the database (.mdb file) on the Socket Server:</td><td>";
 		    echo " <input name=\"mdbpath\" type=\"text\" size=\"50\" value=\"".stripslashes($mdbpath)."\" />";
 				echo "</td><td>&nbsp;</td></tr>";
-        echo "<tr><td align=right>";
+        echo "<tr><td align=\"right\">";
 		    echo "What is the location of the system database (System.mda file) on the Socket Server:</td><td>";
 		    echo " <input name=\"mdapath\" type=\"text\" size=\"50\" value=\"".stripslashes($mdapath)."\" />";
 				echo "</td><td>&nbsp;</td></tr>";
 		    echo "<tr><td>&nbsp;</td><td>";
-		    echo " <input type=submit name=save value=\"Connect to Server\" />";
+		    echo " <input type=\"submit\" name=\"save\" value=\"Connect to Server\" />";
 		    echo "</td></tr>";
 		    echo "</table>";
 		    echo "</form>";
@@ -112,8 +112,8 @@ class quiz_file_format {
 		    print_heading_with_help($strimportquestions, "import", "quiz");
 		    print_simple_box_start("center", "", "$THEME->cellheading");
 		    echo "<form method=\"post\" action=\"import.php\">";
-		    echo "<table cellpadding=5>";
-        echo "<tr><td align=right>";
+		    echo "<table cellpadding=\"5\">";
+        echo "<tr><td align=\"right\">";
 		    echo "Choose a category of questions to import:</td><td>";
 		    asort($question_categories);
 		    choose_from_menu($question_categories, "question_category","All Categories","All Categories", "", "allcategories");
@@ -127,7 +127,7 @@ class quiz_file_format {
 		    }
 		    echo "</td><td>&nbsp;</td>";
 		    echo "</tr><tr><td>&nbsp;</td><td>";
-		    echo " <input type=submit name=save value=\"Import Questions\" />";
+		    echo " <input type=\"submit\" name=\"save\" value=\"Import Questions\" />";
 		    echo "</td></tr>";
 		    echo "</table>";
 		    echo "</form>";
@@ -265,7 +265,7 @@ class quiz_file_format {
 
 	  function deletedatabase($filename) {
 	  	if (! $this->fulldelete($filename)) {
-        echo "<BR>Error: Could not delete: $filename";
+        echo "<br>Error: Could not delete: $filename";
         return false;
       }
 			return true;

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -29,7 +29,7 @@
     $strsurvey = get_string("modulename", "survey");
 
     print_header_simple("$survey->name", "",
-                 "<A HREF=index.php?id=$course->id>$strsurveys</A> -> $survey->name", "", "", true,
+                 "<a href=\"index.php?id=$course->id\">$strsurveys</a> -> $survey->name", "", "", true,
                   update_module_button($cm->id, $course->id, $strsurvey), navmenu($course, $cm));
 
 /// Check to see if groups are being used in this survey
@@ -45,8 +45,8 @@
 
     if (isteacher($course->id)) {
         $numusers = survey_count_responses($survey->id, $currentgroup);
-        echo "<p align=right><a href=\"report.php?id=$cm->id\">".
-              get_string("viewsurveyresponses", "survey", $numusers)."</A></P>";
+        echo "<p align=\"right\"><a href=\"report.php?id=$cm->id\">".
+              get_string("viewsurveyresponses", "survey", $numusers)."</a></p>";
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }
@@ -99,8 +99,8 @@
 //  Start the survey form
     add_to_log($course->id, "survey", "view form", "view.php?id=$cm->id", $survey->id, $cm->id);
 
-    echo "<form name=form method=post action=save.php>";
-    echo "<input type=hidden name=id value=\"$id\" />";
+    echo "<form name=\"form\" method=\"post\" action=\"save.php\">";
+    echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
 
     print_simple_box(format_text($survey->intro), "center", "80%");
 
@@ -176,10 +176,10 @@ function checkform() {
     }
 }
 
-<?php echo "document.write('<INPUT TYPE=button VALUE=\"".get_string("clicktocontinuecheck", "survey")."\" onClick=\"checkform()\" />');";  ?>
+<?php echo "document.write('<input type=\"button\" value=\"".get_string("clicktocontinuecheck", "survey")."\" onClick=\"checkform()\" />');";  ?>
 
 // END -->
-</SCRIPT>
+</script>
 
 <noscript>
     <!-- Without Javascript, no checking is done -->

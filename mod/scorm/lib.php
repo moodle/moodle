@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 /// Library of functions and constants for module scorm
 /// (replace scorm with the name of your module and delete this line)
@@ -588,7 +588,7 @@ function scorm_string_round($stringa) {
 // Crop a string to $len character and set an anchor title to the full string
     $len=11;
     if ( strlen($stringa)>$len ) {
-    return "<A name=\"\" title=\"$stringa\">".substr($stringa,0,$len-4).'...'.substr($stringa,strlen($stringa)-1,1).'</A>';
+    return "<a name=\"\" title=\"$stringa\">".substr($stringa,0,$len-4).'...'.substr($stringa,strlen($stringa)-1,1).'</a>';
     } else
     return $stringa;
 }

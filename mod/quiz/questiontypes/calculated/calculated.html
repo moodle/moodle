@@ -1,27 +1,27 @@
-<FORM name="theform" method="post" action="question.php">
-<CENTER>
-<INPUT type="hidden" name="nextwizardpage" value="<?php p($nextwizardpage)?>" />
+<form name="theform" method="post" action="question.php">
+<center>
+<input type="hidden" name="nextwizardpage" value="<?php p($nextwizardpage)?>" />
 <?php foreach ($calculatedmessages as $message) {formerr("$message<br/>");} ?>
-<TABLE cellpadding=5>
-<TR valign=top>
-    <TD align=right><P><B><?php  print_string("category", "quiz") ?>:</B></P></TD>
-    <TD>
+<table cellpadding="5">
+<tr valign="top">
+    <td align="right"><p><b><?php  print_string("category", "quiz") ?>:</b></p></td>
+    <td>
     <?php   quiz_category_select_menu($course->id, true, true, $question->category); ?>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><?php  print_string("questionname", "quiz") ?>:</B></P></TD>
-    <TD>
-        <INPUT type="text" name="name" size=50 value="<?php  p($question->name) ?>" />
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><b><?php  print_string("questionname", "quiz") ?>:</b></p></td>
+    <td>
+        <input type="text" name="name" size="50" value="<?php  p($question->name) ?>" />
         <?php  if (isset($err["name"])) formerr($err["name"]); ?>
-    </TD>
-</TR>
-<tr valign=top>
+    </td>
+</tr>
+<tr valign="top">
     <td align="right"><p><b><?php  print_string("question", "quiz") ?>:</b></p>
     <br />
     <br />
     <br />
-    <p><font SIZE="1">
+    <p><font size="1">
     <?php
            if ($usehtmleditor) {
                helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
@@ -42,7 +42,7 @@
            if ($usehtmleditor) {   /// Trying this out for a while
                echo '<input type="hidden" name="questiontextformat" value="'.FORMAT_HTML.'" />';
            } else {
-               echo "<div align=right>";
+               echo "<div align=\"right\">";
                print_string("formattexttype");
                echo ":&nbsp;";
                if (!isset($question->questiontextformat)) {
@@ -55,93 +55,93 @@
         ?>
     </td>
 </tr>
-<TR valign=top>
-    <TD align=right><P><B><?php  print_string("imagedisplay", "quiz") ?>:</B></P></TD>
-    <TD>
+<tr valign="top">
+    <td align="right"><p><b><?php  print_string("imagedisplay", "quiz") ?>:</b></p></td>
+    <td>
     <?php   if (empty($images)) {
             print_string("noimagesyet");
         } else {
             choose_from_menu($images, "image", "$question->image", get_string("none"),"","");
         }
     ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR valign=top>
-<TD align=right><P><B><?php  print_string("correctanswerformula", "quiz") ?>:</B></P></TD>
-    <TD>
-    <INPUT align="LEFT" type="text" id="formula0" name="answer[]" size="20" value="<?php  p($answers[0]->answer) ?>" />&nbsp;&nbsp;
-    <INPUT type="hidden" name="fraction[]" value="1.0" />
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><?php  print_string("tolerance", "quiz"); ?>:</B></P></TD>
-    <TD>
-    <INPUT align="LEFT" type="text" id=tolerance0" name="tolerance[]" size="15" value="<?php  p($answers[0]->tolerance) ?>" />&plusmn;
-    </TD>
-</TR>
-<TR valign=top>
-<TD align=right><P><B><?php  print_string("tolerancetype", "quiz"); ?>:</B></P></TD>
-    <TD>
+<tr valign="top">
+<td align="right"><p><b><?php  print_string("correctanswerformula", "quiz") ?>:</b></p></td>
+    <td>
+    <input align="LEFT" type="text" id="formula0" name="answer[]" size="20" value="<?php  p($answers[0]->answer) ?>" />&nbsp;&nbsp;
+    <input type="hidden" name="fraction[]" value="1.0" />
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><b><?php  print_string("tolerance", "quiz"); ?>:</b></p></td>
+    <td>
+    <input align="LEFT" type="text" id="tolerance0" name="tolerance[]" size="15" value="<?php  p($answers[0]->tolerance) ?>" />&plusmn;
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><p><b><?php  print_string("tolerancetype", "quiz"); ?>:</b></p></td>
+    <td>
     <?php choose_from_menu($qtypeobj->tolerance_types(),
             'tolerancetype[]', $answers[0]->tolerancetype, false); ?>
-    </TD>
-</TR>
-<TR valign=top>
-<TD align=right><P><B><?php  print_string("correctanswerlength", "quiz"); ?>:</B></P></TD>
-    <TD>
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><p><b><?php  print_string("correctanswerlength", "quiz"); ?>:</b></p></td>
+    <td>
     <?php choose_from_menu(array('1' => '1', '2' => '2', '3' => '3',
                                  '4' => '4', '5' => '5', '6' => '6',
                                  '7' => '7', '8' => '8', '9' => '9',
                                  '10' => '10'),
                            'correctanswerlength[]',
                            $answers[0]->correctanswerlength, false); ?>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><?php  print_string("feedback", "quiz") ?>:</B></P></TD>
-    <TD>
-        <textarea name="feedback[]" rows=2 cols=50 wrap="virtual"><?php  p($answers[0]->feedback) ?></textarea>
-    </TD>
-</TR>
-<TR valign=top>
-<TD align=right><P><B><?php  print_string("unit", "quiz") ?>:</B></P></TD>
-    <TD>
-        <P><INPUT type="HIDDEN" name="multiplier[]" value="1.0" />
-        <INPUT align="LEFT" type="text" id="defaultunit" name="unit[]"
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><b><?php  print_string("feedback", "quiz") ?>:</b></p></td>
+    <td>
+        <textarea name="feedback[]" rows="2" cols="50" wrap="virtual"><?php  p($answers[0]->feedback) ?></textarea>
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><p><b><?php  print_string("unit", "quiz") ?>:</b></p></td>
+    <td>
+        <p><input type="HIDDEN" name="multiplier[]" value="1.0" />
+        <input align="LEFT" type="text" id="defaultunit" name="unit[]"
                 size="5" value="<?php  p($units[0]->unit) ?>" />
-        <B>(<?php  print_string("optional", "quiz") ?>)</B></P>
-    </TD>
-</TR>
-<TR valign=top>
+        <b>(<?php  print_string("optional", "quiz") ?>)</b></p>
+    </td>
+</tr>
+<tr valign="top">
 <td></td>
-<TD align=left><P><B><?php  print_string("alternativeunits", "quiz") ?>:</B></P></TD>
+<td align="left"><p><b><?php  print_string("alternativeunits", "quiz") ?>:</b></p></td>
 <td></td>
-</TR>
-<?PHP
+</tr>
+<?php
 for ($i=1; $i<count($units); $i++) {
     $unit=$units[$i];
 ?>
-<TR valign=top>
+<tr valign="top">
 <td></td>
-    <TD align=left>
-        <P><B><?php  print_string("multiplier", "quiz") ?>:</B>
-        <INPUT type="text" id="<?php  p("multiplier$i") ?>" size="10"
+    <td align="left">
+        <p><b><?php  print_string("multiplier", "quiz") ?>:</b>
+        <input type="text" id="<?php  p("multiplier$i") ?>" size="10"
                 align="RIGHT" name="multiplier[]"
                 value="<?php  p($unit->multiplier) ?>" />
-        <B>&nbsp;&nbsp;&nbsp;<?php  print_string("unit", "quiz") ?>:</B>
-        <INPUT align="LEFT" type="text" id="<?php  p("unit$i") ?>"
+        <b>&nbsp;&nbsp;&nbsp;<?php  print_string("unit", "quiz") ?>:</b>
+        <input align="LEFT" type="text" id="<?php  p("unit$i") ?>"
                 name="unit[]"
-                size="5" value="<?php  p($unit->unit) ?>" /></P>
-    </TD>
-</TR>
-<?PHP
+                size="5" value="<?php  p($unit->unit) ?>" /></p>
+    </td>
+</tr>
+<?php
 } /// END for
 ?>
-</TABLE>
+</table>
 
-<input type="hidden" name=id value="<?php  p($question->id) ?>" />
-<input type="hidden" name=qtype value="<?php  p($question->qtype) ?>" />
+<input type="hidden" name="id" value="<?php  p($question->id) ?>" />
+<input type="hidden" name="qtype" value="<?php  p($question->qtype) ?>" />
 <input type="submit" onClick="return determineMinAndMax();"  value="<?php  print_string("savechanges") ?>" />
 </center>
 </form>

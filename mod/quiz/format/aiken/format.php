@@ -1,4 +1,4 @@
-<?PHP  // $Id$ 
+<?php  // $Id$ 
 
 ///
 /// Written by Tom Robb <tom@robb.net> 2 November 2003

@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 /// This page prints a particular instance of scorm
 /// (Replace scorm with the name of your module)
@@ -81,7 +81,7 @@
     	
     	echo "<table width=\"100%\">\n    <tr><td align=\"center\">".text_to_html($scorm->summary, true, false)."</td>\n";
     	if ($mode == "browse")
-	    echo "<td align=\"right\" width=\"10%\" nowrap>".get_string("browsemode","scorm")."</td>\n";
+	    echo "<td align=\"right\" width=\"10%\" nowrap=\"nowrap\">".get_string("browsemode","scorm")."</td>\n";
     	echo "     </tr>\n</table>\n";
     	
     	if ($scorm->popup != "") {
@@ -122,7 +122,7 @@
             print_simple_box_start("CENTER");
     	    echo "<table>\n";
     	    echo "  <tr><th>".get_string("coursestruct","scorm")."</th></tr>\n";
-    	    echo "  <tr><td nowrap>\n<ul class=\"scormlist\"'>\n";
+    	    echo "  <tr><td nowrap=\"nowrap\">\n<ul class=\"scormlist\"'>\n";
     	    $incomplete = false;
     	    if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' AND organization='$currentorg' order by id ASC")){
     		$level=0;
@@ -212,7 +212,7 @@
         }
 	    
     	echo "<table width=\"100%\">\n    <tr>\n";
-    	echo "          <td align=\"center\" nowrap>
+    	echo "          <td align=\"center\" nowrap=\"nowrap\">
 		     <iframe name=\"cmi\" width=\"1\" height=\"1\" src=\"cmi.php?id=$cm->id\" style=\"visibility: hidden\"></iframe>
 		     <form name=\"navform\" method=\"POST\" action=\"playscorm.php?id=$cm->id\" target=\"_top\">
 		     	<input name=\"scoid\" type=\"hidden\" />

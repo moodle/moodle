@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 /////////////////
 /// CALCULATED ///
@@ -43,12 +43,12 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
                                                 ? 'decimals'
                                                 : 'significantfigures'), 'quiz', $i);
             }
-            return '<INPUT TYPE="submit" onClick="'
+            return '<input type="submit" onClick="'
                     . "document.addform.regenerateddefid.value='$datasetdef->id'; return true;"
-                    .'" VALUE="'. get_string('generatevalue', 'quiz') . '"/><br/>'
-                    . '<INPUT TYPE="text" SIZE="3" NAME="calcmin[]" '
-                    . " VALUE=\"$regs[2]\"/> &amp; <INPUT NAME=\"calcmax[]\" "
-                    . ' TYPE="text" SIZE="3" VALUE="' . $regs[3] .'"/> '
+                    .'" value="'. get_string('generatevalue', 'quiz') . '"/><br/>'
+                    . '<input type="text" size="3" name="calcmin[]" '
+                    . " value=\"$regs[2]\"/> &amp; <input name=\"calcmax[]\" "
+                    . ' type="text" size="3" value="' . $regs[3] .'"/> '
                     . choose_from_menu($lengthoptions, 'calclength[]',
                                        $regs[4], // Selected
                                        '', '', '', true) . '<br/>'

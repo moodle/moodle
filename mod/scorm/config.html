@@ -1,8 +1,8 @@
 <form method="post" action="module.php" name="form">
 
-<table cellpadding=9 cellspacing=0 >
-<tr valign=top>
-    <td align=right><p>scorm_validate:</td>
+<table cellpadding="9" cellspacing="0" >
+<tr valign="top">
+    <td align="right"><p>scorm_validate:</td>
     <td>
     <?php
         unset($choices);
@@ -20,17 +20,17 @@
     <?php print_string("validationtype", "scorm") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>scorm_framesize:</td>
+<tr valign="top">
+    <td align="right"><p>scorm_framesize:</td>
     <td>
-    	<input name=scorm_framesize type=text size=5 value="<?php p($CFG->scorm_framesize) ?>" />
+    	<input name="scorm_framesize" type="text" size="5" value="<?php p($CFG->scorm_framesize) ?>" />
     </td>
     <td>
     <?php print_string("configframesize", "scorm") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p>scorm_popup:</td>
+<tr valign="top">
+    <td align="right"><p>scorm_popup:</td>
     <td>
     <?php
         unset($choices);
@@ -45,11 +45,11 @@
 </tr>
 <?php foreach ($SCORM_WINDOW_OPTIONS as $optionname) {
           $defaultvalue = "scorm_popup$optionname";
-          echo "<tr valign=top>";
-	      echo "<td align=right><p>$defaultvalue:</td>";
+          echo "<tr valign=\"top\">";
+	      echo "<td align=\"right\"><p>$defaultvalue:</td>";
 	      echo "<td>";
           if ($optionname == "height" or $optionname == "width") {
-              echo "<input name=$defaultvalue type=text size=5 value=\"".$CFG->$defaultvalue."\" />";
+              echo "<input name=$defaultvalue type=\"text\" size=\"5\" value=\"".$CFG->$defaultvalue."\" />";
           } else {
               choose_from_menu ($choices, $defaultvalue, $CFG->$defaultvalue, "");
           }
@@ -61,7 +61,7 @@
       }
 ?>
 <tr>
-    <td colspan=3 align=center>
+    <td colspan="3" align="center">
 	<input type="submit" value="<?php print_string("savechanges") ?>" />
     </td>
 </tr>

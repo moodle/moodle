@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     // This will only support one answer of the type NUMERICAL
     // However, lib.php has support for multiple answers

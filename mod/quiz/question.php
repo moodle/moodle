@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       /// For creating and editing quiz questions.
 
     require_once("../../config.php");
@@ -93,7 +93,7 @@
             }
             if ($beingused) {
                 $beingused = implode(", ", $beingused);
-                $beingused = get_string("questioninuse", "quiz", "<I>$question->name</I>")."<P>".$beingused;
+                $beingused = get_string("questioninuse", "quiz", "<i>$question->name</i>")."<p>".$beingused;
                 notice($beingused, "edit.php");
 
             } else { // the question is not used in any of the existing quizzes

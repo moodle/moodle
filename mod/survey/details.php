@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     require_once("../../config.php");
 
@@ -27,13 +27,13 @@
 
         print_simple_box_start("center", "", "$THEME->cellheading");
         ?>
-        <form name=form method=post action="<?php p($form->destination)?>">
-        <table cellpadding=5 align=center>
-        <tr><td align=right nowrap><p><b><?php print_string("name") ?>:</b></p></td>
+        <form name="form" method="post" action="<?php p($form->destination)?>">
+        <table cellpadding="5" align="center">
+        <tr><td align="right" nowrap="nowrap"><p><b><?php print_string("name") ?>:</b></p></td>
             <td><p><?php p($form->name) ?></p></a></td></tr>
 
-        <tr valign=top>
-            <td align=right nowrap>
+        <tr valign="top">
+            <td align="right" nowrap="nowrap">
                 <p><b><?php print_string("introtext", "survey") ?>:</b></p><br />
                 <font size="1">
                 <?php helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?> <br />
@@ -42,7 +42,7 @@
                 </font>
             </td>
             <td>
-                <textarea name="intro" rows=20 cols=50 wrap="virtual"><?php 
+                <textarea name="intro" rows="20" cols="50" wrap="virtual"><?php 
                 if ($form->intro) {
                     p($form->intro);
                 } else {
@@ -54,16 +54,16 @@
             </td>
         </tr>
         </table>
-        <input type="hidden" name=name       value="<?php p($form->name) ?>" />
-        <input type="hidden" name=template   value="<?php p($form->template) ?>" />
+        <input type="hidden" name="name"       value="<?php p($form->name) ?>" />
+        <input type="hidden" name="template"   value="<?php p($form->template) ?>" />
 
-        <input type="hidden" name=course     value="<?php p($form->course) ?>" />
-        <input type="hidden" name=coursemodule     value="<?php p($form->coursemodule) ?>" />
-        <input type="hidden" name=section       value="<?php p($form->section) ?>" />
-        <input type="hidden" name=module     value="<?php p($form->module) ?>" />
-        <input type="hidden" name=modulename value="<?php p($form->modulename) ?>" />
-        <input type="hidden" name=instance   value="<?php p($form->instance) ?>" />
-        <input type="hidden" name=mode       value="<?php p($form->mode) ?>" />
+        <input type="hidden" name="course"     value="<?php p($form->course) ?>" />
+        <input type="hidden" name="coursemodule"     value="<?php p($form->coursemodule) ?>" />
+        <input type="hidden" name="section"       value="<?php p($form->section) ?>" />
+        <input type="hidden" name="module"     value="<?php p($form->module) ?>" />
+        <input type="hidden" name="modulename" value="<?php p($form->modulename) ?>" />
+        <input type="hidden" name="instance"   value="<?php p($form->instance) ?>" />
+        <input type="hidden" name="mode"       value="<?php p($form->mode) ?>" />
         <center>
         <input type="submit" value="<?php print_string("savechanges") ?>" />
         </center>

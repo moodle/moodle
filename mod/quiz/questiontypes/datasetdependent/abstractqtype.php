@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 ///////////////////////////////////////////////////////////////
 /// ABSTRACT SUPERCLASS FOR QUSTION TYPES THAT USE DATASETS ///
@@ -360,9 +360,9 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
                 $value = $item->value;
 
             } else {
-                $icon = "<IMG SRC=\"$CFG->wwwroot/pix/f/"
+                $icon = "<img src=\"$CFG->wwwroot/pix/f/"
                         . mimeinfo('icon', $item->value)
-                        . '" HEIGHT="16" WIDTH="16" BORDER="0" ALT="File" />';
+                        . '" height="16" width="16" border="0" alt="File" />';
                 if (substr(strtolower($item->value), 0, 7)=='http://') {
                     $link = $item->value;
                         

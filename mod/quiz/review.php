@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 // This page prints a review of a particular quiz attempt
 
@@ -73,7 +73,7 @@
     $stroverdue = get_string("overdue", "quiz");
 
     print_header_simple("$quiz->name", "",
-                 "<A HREF=index.php?id=$course->id>$strquizzes</A> 
+                 "<a href=\"index.php?id=$course->id\">$strquizzes</a> 
                   -> <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strreview", 
                  "", "", true);
 

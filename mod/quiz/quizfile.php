@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // This function fetches files from the data directory
       // Syntax:   quizfile.php/quiz id/question id/dir/.../dir/filename.ext
       // It is supposed to be used by the quiz module only

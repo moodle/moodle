@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 // This page prints a particular instance of quiz
 
@@ -58,8 +58,8 @@
     $strquiz  = get_string("modulename", "quiz");
 
     print_header_simple("$quiz->name", "",
-                 "<A HREF=index.php?id=$course->id>$strquizzes</A> ->
-                  <A HREF=\"view.php?id=$cm->id\">$quiz->name</A> -> $strattemptnum",
+                 "<a href=\"index.php?id=$course->id\">$strquizzes</a> ->
+                  <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strattemptnum",
                   "", "", true);
 
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib

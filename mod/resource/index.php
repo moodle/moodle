@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     require_once("../../config.php");
 
@@ -14,7 +14,7 @@
 
     if ($course->category) {
         require_login($course->id);
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
     } else {
         $navigation = '';
     }

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Allows a teacher to create, edit and delete categories
 
     require_once("../../config.php");
@@ -40,7 +40,7 @@
     $streditcategories = get_string("editcategories", "quiz");
 
     print_header_simple("$streditcategories", " $streditcategories",
-                 "<A HREF=\"edit.php\">$streditingquiz</A> -> $streditcategories");
+                 "<a href=\"edit.php\">$streditingquiz</a> -> $streditcategories");
 
 
 /// Delete category if the user wants to delete it
@@ -65,13 +65,13 @@
                 print_simple_box(get_string("categorymove", "quiz", $vars), "CENTER");
                 $categories = quiz_get_category_menu($course->id);
                 unset($categories[$category->id]);
-                echo "<CENTER><P><FORM ACTION=category.php METHOD=get>";
-                echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\" />";
-                echo "<INPUT TYPE=hidden NAME=delete VALUE=\"$category->id\" />";
+                echo "<center><p><form action=\"category.php\" method=\"get\">";
+                echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
+                echo "<input type=\"hidden\" name=\"delete\" value=\"$category->id\" />";
                 choose_from_menu($categories, "confirm", "", "");
-                echo "<INPUT TYPE=submit VALUE=\"".get_string("categorymoveto", "quiz")."\" />";
-                echo "<INPUT TYPE=submit NAME=cancel VALUE=\"$strcancel\" />";
-                echo "</FORM></P></CENTER>";
+                echo "<input type=\"submit\" value=\"".get_string("categorymoveto", "quiz")."\" />";
+                echo "<input type=\"submit\" name=\"cancel\" value=\"$strcancel\" />";
+                echo "</form></p></center>";
                 print_footer($course);
                 exit;
             }
@@ -82,10 +82,10 @@
 
 /// Print heading
 
-    echo "<P ALIGN=CENTER><FONT SIZE=3>";
+    echo "<p align=\"center\"><font size=\"3\">";
     echo $streditcategories;
     helpbutton("categories", $streditcategories, "quiz");
-    echo "</FONT></P>";
+    echo "</font></p>";
 
 /// If data submitted, then process and store.
 
@@ -151,31 +151,31 @@
     $table->width = 200;
     $table->nowrap = true;
 
-    echo "<FORM ACTION=category.php METHOD=post>";
+    echo "<form action=\"category.php\" method=\"post\">";
     foreach ($categories as $category) {
         $count = count_records("quiz_questions", "category", $category->id);
         if ($category->id == $default) { 
             $delete = "";  // Can't delete default category
         } else {
-            $delete = "<A HREF=\"category.php?id=$course->id&delete=$category->id\">$strdelete</A>";
+            $delete = "<a href=\"category.php?id=$course->id&delete=$category->id\">$strdelete</a>";
         }
-        $table->data[] = array ("<INPUT TYPE=text NAME=\"c$category->id\" VALUE=\"$category->name\" SIZE=15 />",
-                                "<INPUT TYPE=text NAME=\"i$category->id\" VALUE=\"$category->info\" SIZE=50 />",
+        $table->data[] = array ("<input type=\"text\" name=\"c$category->id\" value=\"$category->name\" size=\"15\" />",
+                                "<input type=\"text\" name=\"i$category->id\" value=\"$category->info\" size=\"50\" />",
                                 choose_from_menu ($publishoptions, "p$category->id", "$category->publish", "", "", "", true),
                                 "$count", 
                                 $delete);
     }
-    $table->data[] = array ("<INPUT TYPE=text NAME=\"new\" VALUE=\"\" SIZE=15 />", 
-                            "<INPUT TYPE=text NAME=\"newinfo\" VALUE=\"\" SIZE=50 />", 
+    $table->data[] = array ("<input type=\"text\" name=\"new\" value=\"\" size=\"15\" />", 
+                            "<input type=\"text\" name=\"newinfo\" value=\"\" size=\"50\" />", 
                             choose_from_menu ($publishoptions, "newpublish", "", "", "", "", true),
                             "", 
                             "$stradd");
     print_table($table);
-    echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\" />";
-    echo "<CENTER><BR><INPUT TYPE=submit VALUE=\"$strsavechanges\" /> ";
-    echo "<BR><BR><INPUT TYPE=submit NAME=backtoquiz VALUE=\"$strbacktoquiz\" /> ";
-    echo "</CENTER>";
-    echo "</FORM>";
+    echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
+    echo "<center><br><input type=\"submit\" value=\"$strsavechanges\" /> ";
+    echo "<br><br><input type=\"submit\" name=\"backtoquiz\" value=\"$strbacktoquiz\" /> ";
+    echo "</center>";
+    echo "</form>";
 
     print_footer();
 

@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 ///////////////////
 /// MULTIANSWER /// (Embedded - cloze)

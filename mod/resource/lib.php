@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 if (!isset($CFG->resource_framesize)) {
     set_config("resource_framesize", 130);

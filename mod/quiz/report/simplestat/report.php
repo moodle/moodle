@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 /// Overview report just displays a big table of all the attempts
 
@@ -642,7 +642,7 @@ class quiz_report extends quiz_default_report {
 
     /// Otherwise, display the table as HTML
 
-        echo "<table border=1 align=\"center\">";
+        echo "<table border=\"1\" align=\"center\">";
         echo "<tr>";
         echo "<td>&nbsp;</td>";
         for ($i=1; $i<=$count; $i++) {
@@ -679,7 +679,7 @@ class quiz_report extends quiz_default_report {
         echo "</table>";
 
         echo "<br />";
-        echo "<table border=0 align=center><tr>";
+        echo "<table border=\"0\" align=\"center\"><tr>";
         echo "<td>";
         unset($options);
         $options["id"] = "$cm->id";

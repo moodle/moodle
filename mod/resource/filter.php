@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
     //This function provides automatic linking to
     //resources when its name (title) is found inside every Moodle text
     //It's based in the glosssary filter by Williams Castillo
@@ -94,7 +94,7 @@
 
         //Now avoid searching inside links
         $links = array();
-        preg_match_all('/<A[\s](.+?)>(.+?)<\/A>/is',$text,$list_of_links);
+        preg_match_all('/<a[\s](.+?)>(.+?)<\/A>/is',$text,$list_of_links);
         foreach (array_unique($list_of_links[0]) as $key=>$value) {
             $links['<@'.$key.'@>'] = $value;
         }

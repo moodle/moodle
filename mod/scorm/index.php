@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     require_once("../../config.php");
 
@@ -10,7 +10,7 @@
 
     if ($course->category) {
         require_login($course->id);
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
     } else {
         $navigation = '';
     }
@@ -58,20 +58,20 @@
                 $tt = "$scorm->section";
             }
         } else {
-            $tt = "<FONT SIZE=1>".userdate($scorm->timemodified);
+            $tt = "<font size=\"1\">".userdate($scorm->timemodified);
         }
         if (!$scorm->visible) {
            //Show dimmed if the mod is hidden
-           $table->data[] = array ($tt, "<A class=\"dimmed\" HREF=\"view.php?id=$scorm->coursemodule\">$scorm->name</A>",
+           $table->data[] = array ($tt, "<a class=\"dimmed\" href=\"view.php?id=$scorm->coursemodule\">$scorm->name</a>",
                                    text_to_html($scorm->summary) );
         } else {
            //Show normal if the mod is visible
-           $table->data[] = array ($tt, "<A HREF=\"view.php?id=$scorm->coursemodule\">$scorm->name</A>",
+           $table->data[] = array ($tt, "<a href=\"view.php?id=$scorm->coursemodule\">$scorm->name</a>",
                                    text_to_html($scorm->summary) );
         }
     }
 
-    echo "<BR>";
+    echo "<br>";
 
     print_table($table);
 

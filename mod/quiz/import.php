@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Import quiz questions into the given category
 
     require_once("../../config.php");
@@ -101,30 +101,30 @@
     print_heading_with_help($strimportquestions, "import", "quiz");
 
     print_simple_box_start("center", "", "$THEME->cellheading");
-    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=import.php>";
-    echo "<table cellpadding=5>";
+    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"import.php\">";
+    echo "<table cellpadding=\"5\">";
 
-    echo "<tr><td align=right>";
+    echo "<tr><td align=\"right\">";
     print_string("category", "quiz");
     echo ":</td><td>";
     // choose_from_menu($categories, "category", "$category->id", "");
     echo quiz_get_category_coursename($category);
     echo "</tr>";
 
-    echo "<tr><td align=right>";
+    echo "<tr><td align=\"right\">";
     print_string("fileformat", "quiz");
     echo ":</td><td>";
     choose_from_menu($fileformatnames, "format", "gift", "");
     helpbutton("import", $strimportquestions, "quiz");
     echo "</tr>";
 
-    echo "<tr><td align=right>";
+    echo "<tr><td align=\"right\">";
     print_string("upload");
     echo ":</td><td>";
     echo " <input name=\"newfile\" type=\"file\" size=\"50\" />";
     echo "</tr><tr><td>&nbsp;</td><td>";
-    echo " <input type=hidden name=category value=\"$category->id\" />";
-    echo " <input type=submit name=save value=\"".get_string("uploadthisfile")."\" />";
+    echo " <input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
+    echo " <input type=\"submit\" name=\"save\" value=\"".get_string("uploadthisfile")."\" />";
     echo "</td></tr>";
 
     echo "</table>";

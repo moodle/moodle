@@ -61,7 +61,7 @@
     print_header();
     print_heading(get_string("previewquestion","quiz"));
 
-    echo "<p align='center'><input type=\"button\" onClick=\"window.close()\" value=\"" . get_string("close", "quiz") . "\" /></p>";
+    echo "<p align=\"center\"><input type=\"button\" onClick=\"window.close()\" value=\"" . get_string("close", "quiz") . "\" /></p>";
 
     if (empty($question->id)) {
         $question->id = "";

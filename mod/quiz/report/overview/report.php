@@ -107,7 +107,7 @@ class quiz_report extends quiz_default_report {
         }
 
         //Embed script for warning
-        echo "\n<script lang=javascript>\n<!--\nfunction delcheck(){\n ";
+        echo "\n<script lang=\"javascript\">\n<!--\nfunction delcheck(){\n ";
         echo "if (confirm('$strreallydel')) {\n";
         echo " document.delform.del.value='all';\n return true;\n";
         echo " } else {\n";
@@ -124,7 +124,7 @@ class quiz_report extends quiz_default_report {
     
         //There might be a more elegant way than using the <center> tag for this
         echo "<center><input type=\"submit\" value=\"$strdeleteselected\">&nbsp;";
-        echo "<input type=button value=\"$strdeleteall\" onClick=\"if(delcheck()){document.delform.submit()}\" />\n</center>\n";
+        echo "<input type=\"button\" value=\"$strdeleteall\" onClick=\"if(delcheck()){document.delform.submit()}\" />\n</center>\n";
         echo "</form>\n";
 
         return true;
@@ -145,7 +145,7 @@ class quiz_report extends quiz_default_report {
             } else {
                 $attemptlapse = "...";
             }
-            $button = "<input type=checkbox name=\"box$attempt->id\" value=\"$attempt->id\" />";
+            $button = "<input type=\"checkbox\" name=\"box$attempt->id\" value=\"$attempt->id\" />";
             $revurl = "review.php?q=$quiz->id&attempt=$attempt->id";
             if ($attemptgrade == $bestgrade) {
                 $userattempts[] = "$button&nbsp;<span class=\"highlight\">$attemptgrade</span>&nbsp;<a href=\"$revurl\">$attemptdate</a>&nbsp;($attemptlapse)";

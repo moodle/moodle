@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 /// Library of function for module quiz
 
@@ -1263,7 +1263,7 @@ function quiz_print_question_list($questionlist, $grades) {
 
         $sumgrade += $grades[$qnum];
     }
-    echo "<tr><td colspan=5 align=\"right\">\n";
+    echo "<tr><td colspan=\"5\" align=\"right\">\n";
     echo "<input type=\"submit\" value=\"$strsavegrades:\" />\n";
     echo "<input type=\"hidden\" name=\"setgrades\" value=\"save\" />\n";
     echo "<td align=\"left\" bgcolor=\"$THEME->cellcontent\">\n";
@@ -1399,11 +1399,11 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
         if ($canedit) {
             echo "<td>\n";
                 echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&delete=$question->id\">\n<img
-                     src=\"../../pix/t/delete.gif\" border=0></a>&nbsp;";
+                     src=\"../../pix/t/delete.gif\" border=\"0\"></a>&nbsp;";
                 echo "<a title=\"$strpreview\" href=\"#\" onClick=\"openpopup('/mod/quiz/preview.php?id=$question->id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
                       src=\"../../pix/i/search.gif\" border=\"0\"></a>&nbsp;";
                 echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img
-                     src=\"../../pix/t/edit.gif\" border=0></a>";
+                     src=\"../../pix/t/edit.gif\" border=\"0\"></a>";
             echo "</td>\n";// deleted </tr> jm
         }
         echo "</tr>\n";
@@ -1411,7 +1411,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
     if ($quizselected) {
         echo "<tr>\n<td colspan=\"3\">";
         echo "<input type=\"submit\" name=\"add\" value=\"<< $straddselectedtoquiz\" />\n";
-        //echo "<input type=submit name=\"delete\" value=\"XX Delete selected\">";
+        //echo "<input type=\"submit\" name=\"delete\" value=\"XX Delete selected\">";
         echo "<input type=\"button\" onclick=\"checkall()\" value=\"$strselectall\" />\n";
         echo "</td></tr>";
     }
@@ -1795,11 +1795,11 @@ function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
 
     echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
     print_user_picture($activity->user->userid, $course, $activity->user->picture);
-    echo "</td><td width=\"100%\"><font size=2>";
+    echo "</td><td width=\"100%\"><font size=\"2\">";
 
     if ($detail) {
         echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-             "height=16 width=16 alt=\"$activity->type\">  ";
+             "height=\"16\" width=\"16\" alt=\"$activity->type\">  ";
         echo "<a href=\"$CFG->wwwroot/mod/quiz/view.php?id=" . $activity->instance . "\">"
              . $activity->name . "</a> - ";
 

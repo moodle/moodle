@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 /// This page prints a particular instance of scorm
 /// (Replace scorm with the name of your module)
@@ -72,9 +72,9 @@
         
     	if (isteacher($course->id)) {
     	    if ($sco_users = get_records_select("scorm_sco_users", "scormid='$scorm->id' GROUP BY userid")) {
-        	echo "<p align=right><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\">".get_string("viewallreports","scorm",count($sco_users))."</a></p>";
+        	echo "<p align=\"right\"><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\">".get_string("viewallreports","scorm",count($sco_users))."</a></p>";
             } else {
-           	echo "<p align=right>".get_string("noreports","scorm")."</p>";
+           	echo "<p align=\"right\">".get_string("noreports","scorm")."</p>";
             }
     	}
     	// Print the main part of the page
@@ -112,7 +112,7 @@
 	    	$orgidentifier = $org->organization;
 	    }
 	}
-    	echo "  <tr><td nowrap>\n<ul class=\"scormlist\"'>\n";
+    	echo "  <tr><td nowrap=\"nowrap\">\n<ul class=\"scormlist\"'>\n";
     	$incomplete = false;
     	if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' AND organization='$orgidentifier' order by id ASC")){
 	    $level=0;

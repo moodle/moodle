@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
     if ($question->questiontext and $question->id) {
         $answers = quiz_get_answers($question);
 
