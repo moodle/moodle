@@ -1109,6 +1109,8 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
 function print_user($user, $course) {
 /// Prints a summary of a user in a nice little box
 
+    global $CFG;
+
     static $string;
     static $datestring;
     static $countries;
@@ -1170,13 +1172,13 @@ function print_user($user, $course) {
     echo '<font size="1">';
     if ($isteacher) {
         $timemidnight = usergetmidnight(time());
-        echo "<a href=\"../course/user.php?id=$course->id&user=$user->id\">$string->activity</a><br>";
+        echo "<a href=\"$CFG->wwwroot/course/user.php?id=$course->id&user=$user->id\">$string->activity</a><br>";
         if (isstudent($course->id, $user->id) and !iscreator($user->id)) {  // Includes admins
-            echo "<a href=\"../course/unenrol.php?id=$course->id&user=$user->id\">$string->unenrol</a><br />";
-            echo "<a href=\"../course/loginas.php?id=$course->id&user=$user->id\">$string->loginas</a><br />";
+            echo "<a href=\"$CFG->wwwroot/course/unenrol.php?id=$course->id&user=$user->id\">$string->unenrol</a><br />";
+            echo "<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&user=$user->id\">$string->loginas</a><br />";
         }
     } 
-    echo "<a href=\"view.php?id=$user->id&course=$course->id\">$string->fullprofile...</a>";
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$string->fullprofile...</a>";
     echo '</font>';
 
     echo '</td></tr></table>';
