@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 development (2004080300)
+      // scorm.php - created with Moodle 1.5 unstable development (2004083000)
 
 
+$string['asset'] = 'Bezit';
 $string['attr_error'] = 'Foute waarde voor attribuut ($a->attr) in tag $a->tag.';
 $string['autocontinue'] = 'Ga automatisch verder';
 $string['badmanifest'] = 'Enkele belangrijke fouten: zie foutenlogboek';

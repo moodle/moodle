@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 development (2004082600)
+      // resource.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['addresource'] = 'Bron toevoegen';
 $string['chooseafile'] = 'Kies of upload een bestand';
+$string['chooseparameter'] = 'Kies parameter';
 $string['configdefaulturl'] = 'Deze waarde wordt gebruikt om een deel van de URL in te vullen wanneer er een nieuwe URL-gebaseerde bron gemaakt wordt.';
 $string['configfilterexternalpages'] = 'Door deze instelling in te schakelen zullen alle externe bronnen (web paginas, geüploade HTML-pagina\'s) verwerkt worden door de site-filters (zoals de autolinks van de woordenlijst bijvoorbeeld). Door deze optie in te schakelen kan je site behoorlijk vertragen - gebruik dit voorzichtig en alleen als je het echt nodig hebt';
 $string['configframesize'] = 'Als een webpagina of een geüpload bestand binnen een frame wordt weergegeven, dan is deze waarde de hoogte (in pixels) van het bovenste frame (dat de navigatie bevat).';

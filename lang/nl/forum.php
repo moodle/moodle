@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 alpha (2004081500)
+      // forum.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
@@ -150,6 +150,8 @@ $string['subscriptions'] = 'Inschrijvingen';
 $string['unsubscribe'] = 'Zeg het lidmaatschap van dit forum op';
 $string['unsubscribed'] = 'Lidmaatschap opgezegd';
 $string['unsubscribeshort'] = 'Lidmaatschap opzeggen';
+$string['yesforever'] = 'Ja, voor altijd';
+$string['yesinitially'] = 'Ja, initieel';
 $string['youratedthis'] = 'Je beoordeelde dit';
 $string['yournewtopic'] = 'Je nieuwe discussie onderwerp';
 $string['yourreply'] = 'Jouw antwoord';
