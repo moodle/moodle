@@ -108,7 +108,7 @@
     }
 
     if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category) or isteacher($course->id)) {
-        print_row(get_string("email").":", "<A HREF=\"mailto:$user->email\">$user->email</A>");
+        print_row(get_string("email").":", obfuscate_mailto($user->email));
     }
 
     if ($user->url) {

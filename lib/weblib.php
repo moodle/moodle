@@ -598,8 +598,9 @@ function text_to_html($text, $smiley=true, $para=true) {
 
 function wiki_to_html($text) {
 /// Given Wiki formatted text, make it into XHTML using external function
+    global $CFG;
 
-    require_once('wiki.php');
+    require_once("$CFG->libdir/wiki.php");
 
     $wiki = new Wiki;
     return $wiki->format($text);
@@ -876,12 +877,12 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
     }
     if ($picture) {
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= "<img src=\"$CFG->wwwroot/user/pix.php/$userid/$file\" border=0 width=$size height=$size alt=\"\">";
+            $output .= "<img align=absmiddle src=\"$CFG->wwwroot/user/pix.php/$userid/$file\" border=0 width=$size height=$size alt=\"\">";
         } else {
-            $output .= "<img src=\"$CFG->wwwroot/user/pix.php?file=/$userid/$file\" border=0 width=$size height=$size alt=\"\">";
+            $output .= "<img align=absmiddle src=\"$CFG->wwwroot/user/pix.php?file=/$userid/$file\" border=0 width=$size height=$size alt=\"\">";
         }
     } else {
-        $output .= "<img src=\"$CFG->wwwroot/user/default/$file\" border=0 width=$size height=$size alt=\"\">";
+        $output .= "<img align=absmiddle src=\"$CFG->wwwroot/user/default/$file\" border=0 width=$size height=$size alt=\"\">";
     }
     if ($link) {
         $output .= "</a>";
@@ -1268,6 +1269,52 @@ function redirect($url, $message="", $delay=0) {
 
 function notify ($message, $color="red", $align="center") {
     echo "<p align=\"$align\"><b><font color=\"$color\">$message</font></b></p>\n";
+}
+
+function obfuscate_email($email) {
+/// Given an email address, this function will return an obfuscated version of it
+    $i = 0;
+    $length = strlen($email);
+    $obfuscated = "";
+    while ($i < $length) {
+        if (rand(0,2)) {
+            $obfuscated.='%'.dechex(ord($email{$i}));
+        } else {
+            $obfuscated.=$email{$i};
+        }
+        $i++;
+    }
+    return $obfuscated;
+}
+
+function obfuscate_text($plaintext) {
+/// This function takes some text and replaces about half of the characters
+/// with HTML entity equivalents.   Return string is obviously longer.
+    $i=0;
+    $length = strlen($plaintext);
+    $obfuscated="";
+    while ($i < $length) {
+        if (rand(0,2)) {
+            $obfuscated.='&#'.ord($plaintext{$i});
+        } else {
+            $obfuscated.=$plaintext{$i};
+        }
+        $i++;
+    }
+    return $obfuscated;
+}
+
+function obfuscate_mailto($email, $label="") {
+/// This function uses the above two functions to generate a fully
+/// obfuscated email link, ready to use.
+
+    if (empty($label)) {
+        $label = $email;
+    }
+    return sprintf('<a href="%s:%s" title="%s">%s</a>', obfuscate_text('mailto'),
+                                                        obfuscate_email($email),
+                                                        obfuscate_text($email),
+                                                        obfuscate_text($label));
 }
 
 
