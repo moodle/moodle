@@ -63,7 +63,7 @@ $CFG->prefix    = 'mdl_';        // Prefix to use for all table names
 // Now you need to tell Moodle where it is located. Specify the full
 // web address to where moodle has been installed.  If your web site 
 // is accessible via multiple URLs then choose the most natural one 
-// that your students would use.  Do not include a trailing slash.
+// that your students would use.  Do not include a trailing slash
 
 $CFG->wwwroot   = 'http://example.com/moodle';
 
