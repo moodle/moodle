@@ -202,7 +202,7 @@ function forum_cron () {
         $strforums = get_string('forums', 'forum');
     }
 
-    if (!empty($USER)) { // Remember real USER account if necessary
+    if (!empty($USER->id)) { // Remember real USER account if necessary
         $realuser = $USER;
     }
 

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     require_once("../config.php");
     require_once("$CFG->libdir/gdlib.php");
@@ -30,7 +30,7 @@
         // so that users can set up their accounts
         $newaccount  = true;
 
-        if (empty($USER)) {
+        if (empty($USER->id)) {
             error("Sessions don't seem to be working on this server!");
         }
 
