@@ -12,7 +12,7 @@ $string['auth_dbpass'] = 'Password matching the above username';
 $string['auth_dbpasstype'] = 'Specify the format that the password field is using.  MD5 encryption is useful for connecting to other common web applications like PostNuke';
 $string['auth_dbtable'] = 'Name of the table in the database';
 $string['auth_dbtitle'] = 'Use an external database';
-$string['auth_dbtype'] = 'The database type (See the <A HREF="../lib/adodb/readme.htm#drivers">ADOdb documentation</A> for details)';
+$string['auth_dbtype'] = 'The database type (See the <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb documentation</a> for details)';
 $string['auth_dbuser'] = 'Username with read access to the database';
 $string['auth_emaildescription'] = 'Email confirmation is the default authentication method.  When the user signs up, choosing their own new username and password, a confirmation email is sent to the user\'s email address.  This email contains a secure link to a page where the user can confirm their account. Future logins just check the username and password against the stored values in the Moodle database.';
 $string['auth_emailtitle'] = 'Email-based authentication';
