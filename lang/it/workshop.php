@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.1.1 (2003091000)
+      // workshop.php - created with Moodle 1.2 development (2003091800)
 
 
 $string['absent'] = "Assente";
@@ -69,6 +69,7 @@ $string['gradeforstudentsassessment'] = "Punteggio per valutazione studente";
 $string['gradeofsubmission'] = "Punteggio di sottomissione: \$a";
 $string['gradingstrategy'] = "Strategia di punteggio";
 $string['hidegradesbeforeagreement'] = "Nascondi punteggi prima dell'accettazione";
+$string['hidenamesfromstudents'] = "Nascondi nomi da \$a";
 $string['includeteachersgrade'] = "Includi punteggio docente";
 $string['incorrect'] = "Incorretto";
 $string['leaguetable'] = "Tabella della lega  del Lavoro Presentato";
@@ -87,6 +88,7 @@ $string['maximumsize'] = "Dimensione massima";
 $string['modulename'] = "Workshop";
 $string['modulenameplural'] = "Workshops";
 $string['movingtophase'] = "Sposta alla fase \$a";
+$string['namesnotshowntostudents'] = "Nomi non visibili a \$a";
 $string['newassessments'] = "Nuove valutazioni";
 $string['newgradings'] = "Nuovi punteggi";
 $string['newsubmissions'] = "Nuove sottomissioni";
@@ -100,18 +102,21 @@ $string['numberofassessmentelements'] = "Numero di Commenti, Elementi di valutaz
 $string['numberofassessments'] = "Numero di valutazioni";
 $string['numberofassessmentsofstudentsubmissions'] = "Numero di valutazioni delle sottomissioni degli studenti";
 $string['numberofassessmentsofteachersexamples'] = "Numero di valutazioni degli esempi del docente";
+$string['numberofentries'] = "Numero di Elementi";
 $string['on'] = "su \$a";
 $string['openassignment'] = "Apri assegnazione";
 $string['optionforpeergrade'] = "Opzione per grado di parità";
 $string['overallgrade'] = "Punteggio generale";
+$string['overallocation'] = "Sovrallocazione";
 $string['overallpeergrade'] = "Grado di parità generale: \$a";
 $string['overallteachergrade'] = "Punteggio docente in generale: \$a";
 $string['ownwork'] = "Nostro lavoro";
 $string['phase'] = "Fase";
 $string['phase1'] = "Prepara assegnamento";
-$string['phase2'] = "\$a Sottomissioni e Valutazioni";
-$string['phase3'] = "Calcolo dei punteggi finali";
-$string['phase4'] = "Mostra punteggi finali";
+$string['phase2'] = "\$a Sottomissioni...";
+$string['phase3'] = "...e Valutazioni";
+$string['phase4'] = "Calcolo dei punteggi finali";
+$string['phase5'] = "Mostra punteggi finali";
 $string['pleaseassesstheseexamplesfromtheteacher'] = "Valuta questi esempi dal \$a";
 $string['pleaseassessthesestudentsubmissions'] = "Valuta queste \$a Sottomissioni";
 $string['pleaseassessyoursubmissions'] = "Valuta le tue Sottomissioni";
@@ -126,6 +131,7 @@ $string['savedok'] = "Correttamente salvato";
 $string['savemyassessment'] = "Salva la mia valutazione";
 $string['savemycomment'] = "Salva il mio commento";
 $string['savemygrading'] = "Salva il mio punteggio";
+$string['saveoverallocation'] = "Salva livello di sovrallocazione";
 $string['scale10'] = "segno su 10";
 $string['scale100'] = "segno su 100";
 $string['scale20'] = "segno su 20";
@@ -138,6 +144,7 @@ $string['scalepresent'] = "2 punti scala Presente/Assente";
 $string['scaleyes'] = "2 punti scala Si/No";
 $string['select'] = "Seleziona";
 $string['selfassessment'] = "Auto valutazione";
+$string['setoverallocation'] = "Imposta livello di sovrallocazione";
 $string['showgrades'] = "Mostra punteggi";
 $string['specimenassessmentform'] = "Form di valutazione esemplare";
 $string['studentassessments'] = "\$a Valutazioni";
@@ -178,6 +185,7 @@ $string['weights'] = "Pasi";
 $string['weightsusedforfinalgrade'] = "Pesi usati per il punteggio finale";
 $string['weightsusedforsubmissions'] = "Pesi usati per le sottomissioni";
 $string['yourassessments'] = "La tua valutazione";
+$string['yourassessmentsofexamplesfromtheteacher'] = "La tua valutazione di esempi dal \$a";
 $string['yourfeedbackgoeshere'] = "Il tuo commento va qui";
 
 ?>
