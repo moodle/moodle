@@ -192,7 +192,7 @@ class quiz_file_format {
       				$question->questiontext = addslashes(trim($qrec[2]));
 			        $question->name = preg_replace("/<br>/", "", $question->questiontext);
 							// for TF, $question->answer should be 1 for true, 0 for false
- 			        if ($qrec[8] == "T") { $question->answer =1; echo "answer T"; } else { $question->answer = 0; }
+ 			        if ($qrec[8] == "T") { $question->answer =1;} else { $question->answer = 0; }
 				      // for TF, use $question->feedbacktrue and feedbackfalse
        				$question->feedbacktrue = (($qrec[8] =="T")?"Correct. ":"Incorrect. ") . $ref;
        				$question->feedbackfalse = (($qrec[8] =="F")?"Correct. ":"Incorrect. ") . $ref;
@@ -204,14 +204,14 @@ class quiz_file_format {
  			        $question->name = preg_replace("/<br>/", "", $question->questiontext);
 	          		$question->usecase=0;  // Ignore case -- for SHORT ANSWER questions
 							$answers = explode("~", $qrec[8]);
-							$question->answer[1]=" ";
-							$question->fraction[1]=1;
+							$question->answer[0]=" ";
+							$question->fraction[0]=1;
 							for ($i=0;$i<count($answers);$i++) {
 								$question->answer[$i] = addslashes(trim($answers[$i]));
       							$question->feedback[$i] = $ref;
 								$question->fraction[$i] = 1; // 1 for 100%, 0 for none or somewhere in between
 							}
-    					break;
+     					break;
 						case 4:
 						  $question = 0;
 							notify("Cannot use essay questions - skipping question ". $qrec[2] . " " . $ref);
