@@ -1444,7 +1444,7 @@ function quiz_get_best_grade($quizid, $userid) {
         return NULL;
     }
 
-    return (round($grade->grade, 2));
+    return (round($grade->grade));
 }
 
 function quiz_save_best_grade($quiz, $userid) {
