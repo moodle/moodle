@@ -47,6 +47,7 @@
             $attendance->notes = backup_todb($info['MOD']['#']['NOTES']['0']['#']);
             $attendance->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
             $attendance->dynsection = backup_todb($info['MOD']['#']['DYNSECTION']['0']['#']);
+            $attendance->edited = backup_todb($info['MOD']['#']['EDITED']['0']['#']);
 
             //The structure is equal to the db, so insert the attendance
             $newid = insert_record ("attendance",$attendance);
