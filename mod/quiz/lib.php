@@ -1292,7 +1292,7 @@ function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
         $response->question = $question->id;
         $response->grade = $result->grades[$question->id];
 
-        if ($question->random) {
+        if (!empty($question->random)) {
             // First save the response of the random question
             // the answer is the id of the REAL response
             $response->answer = $question->random;
@@ -1514,16 +1514,20 @@ function quiz_save_question_options($question) {
 /// this function parses, organises and saves the question
 /// It is used by question.php when saving new data from a 
 /// form, and also by import.php when importing questions
+/// 
+/// If this is an update, and old answers already exist, then
+/// these are overwritten using an update().  To do this, it 
+/// it is assumed that the IDs in quiz_answers are in the same
+/// sort order as the new answers being saved.  This should always
+/// be true, but it's something to keep in mind if fiddling with
+/// question.php
 ///
 /// Returns $result->error or $result->notice
     
     switch ($question->qtype) {
         case SHORTANSWER:
-            // Delete all the old answers
-            // FIXME - instead of deleting, update existing answers
-            //         so as not to break existing references to them
-            delete_records("quiz_answers", "question", $question->id);
-            delete_records("quiz_shortanswer", "question", $question->id);
+
+            $oldanswers = get_records("quiz_answers", "question", $question->id, "id ASC"); // might be NULL
 
             $answers = array();
             $maxfraction = -1;
@@ -1531,14 +1535,25 @@ function quiz_save_question_options($question) {
             // Insert all the new answers
             foreach ($question->answer as $key => $dataanswer) {
                 if ($dataanswer != "") {
-                    unset($answer);
-                    $answer->answer   = $dataanswer;
-                    $answer->question = $question->id;
-                    $answer->fraction = $question->fraction[$key];
-                    $answer->feedback = $question->feedback[$key];
-                    if (!$answer->id = insert_record("quiz_answers", $answer)) {
-                        $result->error = "Could not insert quiz answer!";
-                        return $result;
+                    if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
+                        $answer = $oldanswer;
+                        $answer->answer   = $dataanswer;
+                        $answer->fraction = $question->fraction[$key];
+                        $answer->feedback = $question->feedback[$key];
+                        if (!update_record("quiz_answers", $answer)) {
+                            $result->error = "Could not update quiz answer! (id=$answer->id)";
+                            return $result;
+                        }
+                    } else {    // This is a completely new answer
+                        unset($answer);
+                        $answer->answer   = $dataanswer;
+                        $answer->question = $question->id;
+                        $answer->fraction = $question->fraction[$key];
+                        $answer->feedback = $question->feedback[$key];
+                        if (!$answer->id = insert_record("quiz_answers", $answer)) {
+                            $result->error = "Could not insert quiz answer!";
+                            return $result;
+                        }
                     }
                     $answers[] = $answer->id;
                     if ($question->fraction[$key] > $maxfraction) {
@@ -1547,13 +1562,22 @@ function quiz_save_question_options($question) {
                 }
             }
 
-            unset($options);
-            $options->question = $question->id;
-            $options->answers = implode(",",$answers);
-            $options->usecase = $question->usecase;
-            if (!insert_record("quiz_shortanswer", $options)) {
-                $result->error = "Could not insert quiz shortanswer options!";
-                return $result;
+            if ($options = get_record("quiz_shortanswer", "question", $question->id)) {
+                $options->answers = implode(",",$answers);
+                $options->usecase = $question->usecase;
+                if (!update_record("quiz_shortanswer", $options)) {
+                    $result->error = "Could not update quiz shortanswer options! (id=$options->id)";
+                    return $result;
+                }
+            } else {
+                unset($options);
+                $options->question = $question->id;
+                $options->answers = implode(",",$answers);
+                $options->usecase = $question->usecase;
+                if (!insert_record("quiz_shortanswer", $options)) {
+                    $result->error = "Could not insert quiz shortanswer options!";
+                    return $result;
+                }
             }
 
             /// Perform sanity checks on fractional grades
@@ -1563,44 +1587,76 @@ function quiz_save_question_options($question) {
                 return $result;
             }
         break;
+
+
+
         case TRUEFALSE:
-            // FIXME - instead of deleting, update existing answers
-            //         so as not to break existing references to them
-            delete_records("quiz_answers", "question", $question->id);
-            delete_records("quiz_truefalse", "question", $question->id);
 
-            $true->answer   = get_string("true", "quiz");
-            $true->question = $question->id;
-            $true->fraction = $question->answer;
-            $true->feedback = $question->feedbacktrue;
-            if (!$true->id = insert_record("quiz_answers", $true)) {
-                $result->error = "Could not insert quiz answer \"true\")!";
-                return $result;
+            $oldanswers = get_records("quiz_answers", "question", $question->id, "id ASC"); // might be NULL
+
+            if ($true = array_shift($oldanswers)) {  // Existing answer, so reuse it
+                $true->fraction = $question->answer;
+                $true->feedback = $question->feedbacktrue;
+                if (!update_record("quiz_answers", $true)) {
+                    $result->error = "Could not update quiz answer \"true\")!";
+                    return $result;
+                }
+            } else {
+                unset($true);
+                $true->answer   = get_string("true", "quiz");
+                $true->question = $question->id;
+                $true->fraction = $question->answer;
+                $true->feedback = $question->feedbacktrue;
+                if (!$true->id = insert_record("quiz_answers", $true)) {
+                    $result->error = "Could not insert quiz answer \"true\")!";
+                    return $result;
+                }
             }
 
-            $false->answer   = get_string("false", "quiz");
-            $false->question = $question->id;
-            $false->fraction = 1 - (int)$question->answer;
-            $false->feedback = $question->feedbackfalse;
-            if (!$false->id = insert_record("quiz_answers", $false)) {
-                $result->error = "Could not insert quiz answer \"false\")!";
-                return $result;
+            if ($false = array_shift($oldanswers)) {  // Existing answer, so reuse it
+                $false->fraction = 1 - (int)$question->answer;
+                $false->feedback = $question->feedbackfalse;
+                if (!update_record("quiz_answers", $false)) {
+                    $result->error = "Could not insert quiz answer \"false\")!";
+                    return $result;
+                }
+            } else {
+                unset($false);
+                $false->answer   = get_string("false", "quiz");
+                $false->question = $question->id;
+                $false->fraction = 1 - (int)$question->answer;
+                $false->feedback = $question->feedbackfalse;
+                if (!$false->id = insert_record("quiz_answers", $false)) {
+                    $result->error = "Could not insert quiz answer \"false\")!";
+                    return $result;
+                }
             }
 
-            unset($options);
-            $options->question    = $question->id;
-            $options->trueanswer  = $true->id;
-            $options->falseanswer = $false->id;
-            if (!insert_record("quiz_truefalse", $options)) {
-                $result->error = "Could not insert quiz truefalse options!";
-                return $result;
+            if ($options = get_record("quiz_truefalse", "question", $question->id)) {
+                // No need to do anything, since the answer IDs won't have changed
+                // But we'll do it anyway, just for robustness
+                $options->trueanswer  = $true->id;
+                $options->falseanswer = $false->id;
+                if (!update_record("quiz_truefalse", $options)) {
+                    $result->error = "Could not update quiz truefalse options! (id=$options->id)";
+                    return $result;
+                }
+            } else {
+                unset($options);
+                $options->question    = $question->id;
+                $options->trueanswer  = $true->id;
+                $options->falseanswer = $false->id;
+                if (!insert_record("quiz_truefalse", $options)) {
+                    $result->error = "Could not insert quiz truefalse options!";
+                    return $result;
+                }
             }
         break;
+
+
         case MULTICHOICE:
-            // FIXME - instead of deleting, update existing answers
-            //         so as not to break existing references to them
-            delete_records("quiz_answers", "question", $question->id);
-            delete_records("quiz_multichoice", "question", $question->id);
+
+            $oldanswers = get_records("quiz_answers", "question", $question->id, "id ASC"); // might be NULL
 
             $totalfraction = 0;
             $maxfraction = -1;
@@ -1610,14 +1666,24 @@ function quiz_save_question_options($question) {
             // Insert all the new answers
             foreach ($question->answer as $key => $dataanswer) {
                 if ($dataanswer != "") {
-                    unset($answer);
-                    $answer->answer   = $dataanswer;
-                    $answer->question = $question->id;
-                    $answer->fraction = $question->fraction[$key];
-                    $answer->feedback = $question->feedback[$key];
-                    if (!$answer->id = insert_record("quiz_answers", $answer)) {
-                        $result->error = "Could not insert quiz answer!";
-                        return $result;
+                    if ($answer = array_shift($oldanswers)) {  // Existing answer, so reuse it
+                        $answer->answer   = $dataanswer;
+                        $answer->fraction = $question->fraction[$key];
+                        $answer->feedback = $question->feedback[$key];
+                        if (!update_record("quiz_answers", $answer)) {
+                            $result->error = "Could not update quiz answer! (id=$answer->id)";
+                            return $result;
+                        }
+                    } else {
+                        unset($answer);
+                        $answer->answer   = $dataanswer;
+                        $answer->question = $question->id;
+                        $answer->fraction = $question->fraction[$key];
+                        $answer->feedback = $question->feedback[$key];
+                        if (!$answer->id = insert_record("quiz_answers", $answer)) {
+                            $result->error = "Could not insert quiz answer! ";
+                            return $result;
+                        }
                     }
                     $answers[] = $answer->id;
 
@@ -1630,13 +1696,22 @@ function quiz_save_question_options($question) {
                 }
             }
 
-            unset($options);
-            $options->question = $question->id;
-            $options->answers = implode(",",$answers);
-            $options->single = $question->single;
-            if (!insert_record("quiz_multichoice", $options)) {
-                $result->error = "Could not insert quiz multichoice options!";
-                return $result;
+            if ($options = get_record("quiz_multichoice", "question", $question->id)) {
+                $options->answers = implode(",",$answers);
+                $options->single = $question->single;
+                if (!update_record("quiz_multichoice", $options)) {
+                    $result->error = "Could not update quiz multichoice options! (id=$options->id)";
+                    return $result;
+                }
+            } else {
+                unset($options);
+                $options->question = $question->id;
+                $options->answers = implode(",",$answers);
+                $options->single = $question->single;
+                if (!insert_record("quiz_multichoice", $options)) {
+                    $result->error = "Could not insert quiz multichoice options!";
+                    return $result;
+                }
             }
 
             /// Perform sanity checks on fractional grades
@@ -1657,8 +1732,8 @@ function quiz_save_question_options($question) {
         break;
 
         case MATCH:
-            delete_records("quiz_match", "question", $question->id);
-            delete_records("quiz_match_sub", "question", $question->id);
+
+            $oldsubquestions = get_records("quiz_match_sub", "question", $question->id, "id ASC"); // might be NULL
 
             $subquestions = array();
 
@@ -1666,13 +1741,22 @@ function quiz_save_question_options($question) {
             foreach ($question->subquestions as $key => $questiontext) {
                 $answertext = $question->subanswers[$key];
                 if (!empty($questiontext) and !empty($answertext)) {
-                    unset($answer);
-                    $subquestion->question = $question->id;
-                    $subquestion->questiontext = $questiontext;
-                    $subquestion->answertext   = $answertext;
-                    if (!$subquestion->id = insert_record("quiz_match_sub", $subquestion)) {
-                        $result->error = "Could not insert quiz answer!";
-                        return $result;
+                    if ($subquestion = array_shift($oldsubquestions)) {  // Existing answer, so reuse it
+                        $subquestion->questiontext = $questiontext;
+                        $subquestion->answertext   = $answertext;
+                        if (!update_record("quiz_match_sub", $subquestion)) {
+                            $result->error = "Could not insert quiz match subquestion! (id=$subquestion->id)";
+                            return $result;
+                        }
+                    } else {
+                        unset($subquestion);
+                        $subquestion->question = $question->id;
+                        $subquestion->questiontext = $questiontext;
+                        $subquestion->answertext   = $answertext;
+                        if (!$subquestion->id = insert_record("quiz_match_sub", $subquestion)) {
+                            $result->error = "Could not insert quiz match subquestion!";
+                            return $result;
+                        }
                     }
                     $subquestions[] = $subquestion->id;
                 }
@@ -1683,15 +1767,24 @@ function quiz_save_question_options($question) {
                 return $result;
             }
 
-            unset($options);
-            $options->question = $question->id;
-            $options->subquestions = implode(",",$subquestions);
-            if (!insert_record("quiz_match", $options)) {
-                $result->error = "Could not insert quiz match options!";
-                return $result;
+            if ($options = get_record("quiz_match", "question", $question->id)) {
+                $options->subquestions = implode(",",$subquestions);
+                if (!update_record("quiz_match", $options)) {
+                    $result->error = "Could not update quiz match options! (id=$options->id)";
+                    return $result;
+                }
+            } else {
+                unset($options);
+                $options->question = $question->id;
+                $options->subquestions = implode(",",$subquestions);
+                if (!insert_record("quiz_match", $options)) {
+                    $result->error = "Could not insert quiz match options!";
+                    return $result;
+                }
             }
 
             break;
+
 
         case RANDOMSAMATCH:
             $options->question = $question->id;
