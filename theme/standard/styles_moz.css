@@ -83,6 +83,28 @@
     -moz-border-radius-bottomright:15px;
 }
 
+#calendar .maincalendar,
+#calendar .sidecalendar
+{
+    -moz-border-radius-bottomright:20px;
+    -moz-border-radius-bottomleft:20px;
+}
+
+#calendar .maincalendar .filters table,
+#calendar .sidecalendar .filters table,
+.sideblock.block_calendar_month .filters table
+{
+    -moz-border-radius:4px;
+}
+
+table.minicalendar {
+    -moz-border-radius:10px;
+}
+
+table.minicalendar tbody td {
+    -moz-border-radius:4px;
+}
+
 .block_course_summary, .block_course_summary .sideblockmain {
     -moz-border-radius:20px;
 }
@@ -95,7 +117,7 @@
     -moz-border-radius:15px;
 }
 
-.headingblock, .outlineheadingblock {
+.headingblock {
     -moz-border-radius:3px;
 }
 

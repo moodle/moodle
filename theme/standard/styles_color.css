@@ -179,7 +179,7 @@ th {
 
 
 /* course */
-.outlineheadingblock {
+.headingblock.outline {
     border-color:#DDDDDD; /* borders */
 }
 .weeklyoutlinesidehidden,
@@ -349,6 +349,30 @@ table.message_search_results td {
 *** Calendar
 ***
 ******************************/
+
+#calendar .maincalendar,
+#calendar .sidecalendar
+{
+    border-color: #DDDDDD;
+}
+
+#calendar .maincalendar table.calendarmonth thead th {
+    border-color: #000000;
+}
+
+table.minicalendar {
+    border-color:#DDDDDD;
+}
+
+#calendar .maincalendar .eventlist .eventfull {
+    border-color:#DDDDDD;
+}
+
+#calendar .maincalendar .eventlist .eventfullheader,
+#calendar .maincalendar .eventlist .eventfullpicture,
+#calendar .maincalendar .eventlist .eventfullside {
+    background-color:#EEEEEE;
+}
 
 #calendar .event_global,
 .minicalendar .event_global,

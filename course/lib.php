@@ -977,7 +977,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
     $modinfo = unserialize($course->modinfo);
 
-    echo '<table width="'.$width.'" cellpadding="1" cellspacing="0">';
+    echo '<table width="'.$width.'" class="section">';
     if (!empty($section->sequence)) {
 
         $sectionmods = explode(",", $section->sequence);
@@ -989,15 +989,15 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $mod = $mods[$modnumber];
 
             if ($mod->visible or $isteacher) {
-                echo "<tr><td class=\"activity$mod->modname\">";
+                echo '<tr><td class="activity '.$mod->modname.'">';
                 if ($ismoving) {
                     if ($mod->id == $USER->activitycopy) {
                         continue;
                     }
                     echo '<a title="'.$strmovefull.'"'.
                          ' href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.$USER->sesskey.'">'.
-                         '<img height="16" width="80" src="'.$CFG->pixpath.'/movehere.gif" '.
-                         ' alt="'.$strmovehere.'" border="0" /></a><br />
+                         '<img class="movetarget" src="'.$CFG->pixpath.'/movehere.gif" '.
+                         ' alt="'.$strmovehere.'" /></a><br />
                          ';
                 }
                 $instancename = urldecode($modinfo[$modnumber]->name);
@@ -1033,10 +1033,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 } else { // Normal activity
                     $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
                     echo '<img src="'.$icon.'"'.
-                         ' height="16" width="16" alt="'.$mod->modfullname.'" />'.
-                         ' <font size="2"><a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
+                         ' class="activityicon" alt="'.$mod->modfullname.'" />'.
+                         ' <a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
                          ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.
-                         $instancename.'</a></font>';
+                         $instancename.'</a>';
                 }
                 if ($CFG->forum_trackreadposts && $mod->modname == 'forum') {
                     $groupmode = groupmode($course, $mod);
@@ -1077,8 +1077,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     if ($ismoving) {
         echo '<tr><td><a title="'.$strmovefull.'"'.
              ' href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.$USER->sesskey.'">'.
-             '<img height="16" width="80" src="'.$CFG->pixpath.'/movehere.gif" '.
-             ' alt="'.$strmovehere.'" border="0" /></a></td></tr>
+             '<img class="movetarget" src="'.$CFG->pixpath.'/movehere.gif" '.
+             ' alt="'.$strmovehere.'" /></a></td></tr>
              ';
     }
     echo "</table>\n\n";
@@ -1150,12 +1150,12 @@ function rebuild_course_cache($courseid=0) {
 }
 
 
-function print_heading_block($heading, $width="100%", $class="headingblock") {
-
-    echo "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"5\">";
-    echo "<tr><td class=\"$class\">";
-    echo stripslashes($heading);
-    echo "</td></tr></table>";
+function print_heading_block($heading, $class = NULL) {
+    $divclass = 'headingblock';
+    if(!empty($class)) {
+        $divclass .= ' '.$class;
+    }
+    echo '<div class="'.$divclass.'">'.stripslashes($heading).'</div>';
 }
 
 

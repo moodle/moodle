@@ -70,7 +70,7 @@
 /// Start main column
     echo '<td id="middle-column">';
 
-    print_heading_block(get_string("topicoutline"), "100%", "outlineheadingblock");
+    print_heading_block(get_string('topicoutline'), 'outline');
     print_spacer(8, 1, true);
 
     echo "<table class=\"topicsoutline\" border=\"0\" cellpadding=\"8\" cellspacing=\"0\" width=\"100%\">";

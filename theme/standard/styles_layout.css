@@ -189,6 +189,18 @@ table.formtable td {
 *** Course
 ***
 ******************************/
+
+.section .activity img.activityicon {
+    vertical-align:middle;
+    height:16px;
+    weight:16px;
+}
+
+.section img.movetarget {
+    height:16px;
+    width:80px;
+}
+
 /* course, entry-page, login */
 .headingblock {
     background-image:url(gradient.jpg);
@@ -196,11 +208,12 @@ table.formtable td {
     background-repeat:repeat-x;
     border-width:1px;
     border-style:solid;
+    padding:5px;
 }
 
 
 /* course */
-.outlineheadingblock {
+.headingblock.outline {
     background-image:url(gradient.jpg);
     background-position:top;
     background-repeat:repeat-x;
@@ -306,6 +319,138 @@ table.message_search_results td {
 ******************************/
 /* calendar */
 
+#calendar {
+    width: 100%;
+    border-spacing: 5px;
+    border-collapse: separate;
+}
+
+#calendar .maincalendar,
+#calendar .sidecalendar
+{
+    vertical-align: top;
+    border: 1px solid;
+}
+
+#calendar .sidecalendar {
+    width: 25%;
+}
+
+#calendar .maincalendar table.calendarmonth {
+    border-collapse: separate;
+    margin: 0px auto;
+    width: 98%;
+}
+
+#calendar .maincalendar table.calendarmonth thead th {
+    padding:10px;
+    border-bottom:2px solid;
+}
+
+#calendar .maincalendar table.calendarmonth tbody td {
+    height: 5em;
+    padding-left: 4px;
+    padding-top: 4px;
+}
+
+#calendar .maincalendar table.calendarmonth tbody td,
+table.minicalendar tbody td,
+table.minicalendar thead th {
+    width:14%;
+    vertical-align:top;
+}
+
+#calendar .maincalendar table.calendarmonth tbody td table td {
+    height: auto;
+}
+
+#calendar .maincalendar .heading,
+#calendar .sidecalendar .heading
+{
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
+    padding: 5px;
+}
+
+#calendar .maincalendar .heading .buttons {
+    float: right;
+}
+
+#calendar .maincalendar .filters table,
+#calendar .sidecalendar .filters table,
+.sideblock.block_calendar_month .filters table
+{
+    border-collapse:separate;
+    border-spacing: 2px;
+    background-color: #EEEEEE;
+    padding: 2px;
+    width: 100%;
+}
+
+#calendar .maincalendar .filters {
+    padding: 0px 10px;
+}
+
+#calendar .sidecalendar .filters,
+.sideblock.block_calendar_month .filters
+{
+    padding: 5px;
+}
+
+#calendar .maincalendar .controls {
+    clear:both;
+    padding:10px;
+}
+
+#calendar .maincalendar ul {
+    padding:0px;
+    margin:0px;
+    list-style-type:none;
+}
+
+#calendar .maincalendar ul li {
+    margin-top: 4px;
+}
+
+table.minicalendar {
+    margin:10px auto;
+    padding:2px;
+    border-width:1px;
+    border-style:solid;
+    border-collapse:separate;
+    border-spacing:1px !important;
+}
+
+table.minicalendar thead th {
+    padding: 0px 2px;
+}
+
+#calendar .maincalendar .eventlist {
+    padding: 10px;
+}
+
+#calendar .maincalendar .eventlist .eventfull {
+    width: 100%;
+    margin-bottom:10px;
+    border-spacing:0px;
+    border-collapse:separate;
+    border-width:1px;
+    border-style:solid;
+}
+
+#calendar .maincalendar .eventlist .eventfullmessage {
+    padding: 5px;
+}
+
+#calendar .maincalendar .eventlist .eventfullpicture {
+    padding:8px;
+}
+
+#calendar #selecteventtype table {
+    margin:auto;
+}
+
 #calendar .event_global,
 #calendar .event_course,
 #calendar .event_group,
@@ -348,6 +493,13 @@ table.message_search_results td {
 
 .cal_popup_close {
     margin-right:5px;
+}
+
+.cal_popup_caption {
+    background-image:url(gradient.jpg);
+    border-bottom-width:1px;
+    border-bottom-style:solid;
+    padding-bottom:2px;
 }
 
 /*****************************
@@ -495,171 +647,4 @@ body#admin-blocks .generaltablecell {
 body#admin-config .confighelp {
     display: block;
     padding-bottom: 20px;
-}
-
-
-
-
-/*
-CALENDAR STYLES -- PROVISIONALLY PLACED HERE UNTIL FINALIZED
-*/
-
-.cal_popup_caption {
-    background-image:url(gradient.jpg);
-    border-bottom-width:1px;
-    border-bottom-style:solid;
-    padding-bottom:2px;
-}
-
-#calendar .maincalendar .calendarmonth tbody td {
-    height: 5em;
-    font-size:0.8em;
-    line-height:1.2em;
-    padding-left: 4px;
-    padding-top: 4px;
-}
-
-#calendar .maincalendar .calendarmonth tbody td table td{
-    height: auto;
-}
-
-#calendar .maincalendar table.calendarmonth {
-    -moz-border-radius: 10px;
-    margin: 0px auto;
-    width: 98%;
-}
-
-#calendar .maincalendar table.calendarmonth thead th {
-    padding:10px;
-    border-bottom:2px #000000 solid;
-}
-
-#calendar {
-    width: 100%;
-    border-spacing: 5px;
-}
-
-#calendar,
-#calendar .maincalendar table.calendarmonth {
-    border-collapse: separate;
-}
-
-#calendar .maincalendar .controls {
-    clear:both;
-    padding:10px;
-    font-size:1.2em;
-}
-
-table.calendarmonth tbody td, table.minicalendar tbody td, table.minicalendar thead th {
-    width:14%;
-    vertical-align:top;
-}
-
-#calendar .sidecalendar, #calendar .maincalendar {
-    vertical-align: top;
-    border: 1px #DDDDDD solid;
-    -moz-border-radius-bottomright:20px;
-    -moz-border-radius-bottomleft:20px;
-}
-
-#calendar .sidecalendar {
-    width: 25%;
-}
-
-#calendar .maincalendar .heading .buttons {
-    float: right;
-}
-
-#calendar .maincalendar .filters table,
-#calendar .sidecalendar .filters table,
-.sideblock.block_calendar_month .filters table {
-    border-collapse:separate;
-    border-spacing: 2px;
-    -moz-border-radius:4px;
-    background-color: #EEEEEE;
-    padding: 2px;
-    width: 100%;
-}
-
-#calendar .sidecalendar .filters,
-.sideblock.block_calendar_month .filters {
-    font-size:0.75em;
-    padding: 5px;
-}
-
-#calendar .maincalendar .filters {
-    padding: 0px 10px;
-}
-
-#calendar .maincalendar .day {
-    font-weight: bold;
-}
-
-#calendar .maincalendar .heading, #calendar .sidecalendar .heading {
-    background-image:url(gradient.jpg);
-    background-position:top;
-    background-repeat:repeat-x;
-    font-weight:bold;
-    padding: 5px;
-}
-
-table.minicalendar {
-    font-size:0.85em;
-    border-collapse:separate;
-    -moz-border-radius:10px;
-    border-color:#DDDDDD;
-    margin:10px auto;
-    padding:2px;
-    border-width:1px;
-    border-style:solid;
-    border-spacing:1px !important;
-}
-
-table.minicalendar thead th {
-    padding: 0px 2px;
-}
-
-table.minicalendar tbody td {
-    -moz-border-radius:4px;
-    text-align: center;
-}
-
-#calendar .eventlist {
-    padding: 10px;
-}
-
-#calendar .eventlist .eventfull {
-    margin-bottom:10px;
-    width: 100%;
-    border-spacing:0px;
-    border-collapse:separate;
-    border-width:1px;
-    border-style:solid;
-    border-color:#DDDDDD;
-}
-
-#calendar .eventfullheader, #calendar .eventfullpicture, #calendar .eventfullside {
-    background-color:#EEEEEE;
-}
-
-#calendar .eventlist .eventfullmessage {
-    padding: 5px;
-}
-
-#calendar .eventlist .eventfullpicture {
-    padding:8px;
-}
-
-#calendar .maincalendar ul {
-    padding:0px;
-    margin:0px;
-    list-style-type:none;
-}
-
-#calendar .maincalendar ul li {
-    margin-top: 4px;
-}
-
-#calendar #selecteventtype table {
-    margin:auto;
 }

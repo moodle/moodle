@@ -60,7 +60,8 @@
 
 /// Start main column
     echo '<td id="middle-column">';
-    print_heading_block(get_string("weeklyoutline"), "100%", "outlineheadingblock");
+
+    print_heading_block(get_string('weeklyoutline'), 'outline');
     print_spacer(8, 1, true);
 
     echo "<table class=\"weeklyoutline\" border=\"0\" cellpadding=\"8\" cellspacing=\"0\" width=\"100%\">";
