@@ -1,0 +1,40 @@
+CHANGES_14_15 $Id$
+----------
+
+This document shows changes between 1.4 and 1.5 and their current
+status in backup/restore code.
+
+========== ========== ========== ========== ========== ==========
+
+Now I show the specific detailed status of every item in the process:
+
+ 1. TODO: check user->idnumber
+ 2. TODO: check user->lang (at restore set mi_nt where ma_nt).
+ 3. TODO: check course->lang (at restore set mi_nt where ma_nt).
+ 4. TODO: user_students->enrol (analyse and proceed).
+ 5. TODO: user_teachers->enrol (analyse and proceed).
+ 6. TODO: user->policyagreed (analyse and proceed).
+ 7. TODO: groups->password
+ 8. TODO: assignment->emailteachers
+ 9. TODO: exercise->usepassword and exercise->password
+10. TODO: exercise_assessments->generalcomment and teachercomment
+11. TODO: glossary->allowprintview
+12. TODO: quiz_responses->answer (analyse).
+13. TODO: quiz_calculated->correctaswerformat.
+14. TODO: quiz->popup and questionsperpage.
+15. TODO: quiz_categories->parent and sortorder.
+16. TODO: Messages subsystem (should it be done?).
+17. TODO: Detect questions without categories and create a category for them
+          (in backup process).
+18. TODO: If the course hasn't users and the importer is a teacher, make him
+          teacher in the restored course.
+19. TODO: Move blocks code to libraries and use it in a standard way.
+20. TODO: Review the lesson module completely! Check the upgrade process to
+          mimic it.
+21. TODO: Review the workshop module completely! Check the upgrade process to
+          mimic it.
+22. TODO: Review the wiki module fully (if possible, try to make binary
+          uploaded contents to work).
+
+Eloy (stronk7)
+23-01-2004
