@@ -4980,5 +4980,16 @@ function message_popup_window() {
     return '';
 }
 
+// Used to make sure that $min <= $value <= $max
+function bounded_number($min, $value, $max) {
+    if($value < $min) {
+        return $min;
+    }
+    if($value > $max) {
+        return $max;
+    }
+    return $value;
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
