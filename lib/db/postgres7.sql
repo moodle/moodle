@@ -30,6 +30,8 @@ CREATE TABLE prefix_course (
    timemodified integer NOT NULL default '0'
 );
 
+CREATE INDEX prefix_course_category_idx ON prefix_course (category);
+
 CREATE TABLE prefix_course_categories (
    id SERIAL PRIMARY KEY,
    name varchar(255) NOT NULL default ''

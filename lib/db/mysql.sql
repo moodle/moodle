@@ -51,7 +51,8 @@ CREATE TABLE `prefix_course` (
   `visible` int(10) unsigned NOT NULL default '1',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `category` (`category`)
 ) TYPE=MyISAM;
 # --------------------------------------------------------
 

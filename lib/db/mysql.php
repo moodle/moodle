@@ -494,6 +494,10 @@ function main_upgrade($oldversion=0) {
         table_column("course", "", "showgrades", "integer", "2", "unsigned", "1", "", "format");
     }
 
+    if ($oldversion < 2003082101) {
+        execute_sql(" ALTER TABLE `{$CFG->prefix}course` ADD INDEX category (category) ");
+    }
+
     return $result;
 
 }
