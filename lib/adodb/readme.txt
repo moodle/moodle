@@ -14,7 +14,7 @@ different databases (encapsulate the differences) so we can easily
 switch databases.
 
 We currently support MySQL, Interbase, Sybase, PostgreSQL, Oracle, 
-Microsoft SQL server,  Foxpro ODBC, Access ODBC, Informix, DB2 ODBC,
+Microsoft SQL server,  Foxpro ODBC, Access ODBC, Informix, DB2,
 Sybase SQL Anywhere, generic ODBC and Microsoft's ADO. 
 
 We hope more people will contribute drivers to support other databases.

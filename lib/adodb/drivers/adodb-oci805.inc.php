@@ -1,6 +1,6 @@
 <?php
 /** 
- * @version V3.60 16 June 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V4.00 20 Oct 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -23,9 +23,9 @@ class ADODB_oci805 extends ADODB_oci8 {
 		$this->ADODB_oci8();
 	}
 	
-	function &SelectLimit($sql,$nrows=-1,$offset=-1, $inputarr=false,$arg3=false,$secs2cache=0)
+	function &SelectLimit($sql,$nrows=-1,$offset=-1, $inputarr=false,$secs2cache=0)
 	{
-		/*  seems that oracle only supports 1 hint comment in 8i */
+		// seems that oracle only supports 1 hint comment in 8i
 		if (strpos($sql,'/*+') !== false)
 			$sql = str_replace('/*+ ','/*+FIRST_ROWS ',$sql);
 		else
@@ -42,7 +42,7 @@ class ADODB_oci805 extends ADODB_oci8 {
 		}
 		*/
 
-		return ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$arg3,$secs2cache);
+		return ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
 	}
 }
 

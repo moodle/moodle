@@ -1,7 +1,7 @@
 <?php
 /*
 
-  V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.00 20 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -13,7 +13,7 @@
 error_reporting(E_ALL);
 include_once('../adodb.inc.php');
 
-foreach(array('mysql','access','oci8','postgres','odbc_mssql','odbc','sybase','firebird','informix','db2') as $dbType) {
+foreach(array('sybase','mysql','access','oci8','postgres','odbc_mssql','odbc','sybase','firebird','informix','db2') as $dbType) {
 	echo "<h3>$dbType</h3><p>";
 	$db = NewADOConnection($dbType);
 	$dict = NewDataDictionary($db);
@@ -60,19 +60,19 @@ TS            T      DEFTIMESTAMP";
 	$dict->SetSchema('KUTU');
 	
 	$sqli = ($dict->CreateTableSQL('testtable',$flds, $opts));
-	$sqla = array_merge($sqla,$sqli);
+	$sqla =& array_merge($sqla,$sqli);
 	
 	$sqli = $dict->CreateIndexSQL('idx','testtable','firstname,lastname',array('BITMAP','FULLTEXT','CLUSTERED','HASH'));
-	$sqla = array_merge($sqla,$sqli);
-	$sqli = $dict->CreateIndexSQL('idx2','testtable','price,lastname');/* ,array('BITMAP','FULLTEXT','CLUSTERED')); */
-	$sqla = array_merge($sqla,$sqli);
+	$sqla =& array_merge($sqla,$sqli);
+	$sqli = $dict->CreateIndexSQL('idx2','testtable','price,lastname');//,array('BITMAP','FULLTEXT','CLUSTERED'));
+	$sqla =& array_merge($sqla,$sqli);
 	
 	$addflds = array(array('height', 'F'),array('weight','F'));
 	$sqli = $dict->AddColumnSQL('testtable',$addflds);
-	$sqla = array_merge($sqla,$sqli);
+	$sqla =& array_merge($sqla,$sqli);
 	$addflds = array(array('height', 'F','NOTNULL'),array('weight','F','NOTNULL'));
 	$sqli = $dict->AlterColumnSQL('testtable',$addflds);
-	$sqla = array_merge($sqla,$sqli);
+	$sqla =& array_merge($sqla,$sqli);
 	
 	
 	printsqla($dbType,$sqla);
@@ -83,13 +83,19 @@ TS            T      DEFTIMESTAMP";
 		$sqla2 = $dict->ChangeTableSQL('adoxyz',$flds);
 		if ($sqla2) printsqla($dbType,$sqla2);
 	}
+		if ($dbType == 'postgres') {
+		$db->Connect('localhost', "tester", "test", "test");
+		$dict->SetSchema('');
+		$sqla2 = $dict->ChangeTableSQL('adoxyz',$flds);
+		if ($sqla2) printsqla($dbType,$sqla2);
+	}
 	
 }
 
 function printsqla($dbType,$sqla)
 {
 	print "<pre>";
-	/* print_r($dict->MetaTables()); */
+	//print_r($dict->MetaTables());
 	foreach($sqla as $s) {
 		$s = htmlspecialchars($s);
 		print "$s;\n";

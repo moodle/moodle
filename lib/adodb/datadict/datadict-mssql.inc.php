@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.00 20 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -22,7 +22,7 @@ class ADODB2_mssql extends ADODB_DataDict {
 			$len = $fieldobj->max_length;
 		}
 		
-		$len = -1; /*  mysql max_length is not accurate */
+		$len = -1; // mysql max_length is not accurate
 		switch (strtoupper($t)) {
 
 		case 'INT': 
@@ -108,7 +108,7 @@ class ADODB2_mssql extends ADODB_DataDict {
 		return $sql;
 	}
 	
-	/*  return string must begin with space */
+	// return string must begin with space
 	function _CreateSuffix($fname,$ftype,$fnotnull,$fdefault,$fautoinc,$fconstraint)
 	{	
 		$suffix = '';
@@ -194,7 +194,7 @@ CREATE TABLE
 */
 	function _IndexSQL($idxname, $tabname, $flds, $idxoptions)
 	{
-		if (isset($idxoptions['REPLACE'])) $sql[] = "DROP INDEX $idxname";
+		if (isset($idxoptions['REPLACE'])) $sql[] = "DROP INDEX $tabname.$idxname";
 		if (isset($idxoptions['UNIQUE'])) $unique = ' UNIQUE';
 		else $unique = '';
 		if (is_array($flds)) $flds = implode(', ',$flds);

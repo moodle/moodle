@@ -1,5 +1,4 @@
 <?php 
-
 /*
  * Set tabs to 4 for best viewing.
  * 
@@ -15,32 +14,31 @@
 /**
 	\mainpage 	
 	
-	 @version V3.60 16 June 2003 (c) 2000-2003 John Lim (jlim\@natsoft.com.my). All rights reserved.
+	 @version V4.00 20 Oct 2003 (c) 2000-2003 John Lim (jlim\@natsoft.com.my). All rights reserved.
 
-	Released under both BSD license and Lesser GPL library license. 
- 	Whenever there is any discrepancy between the two licenses, 
- 	the BSD license will take precedence. 
+	Released under both BSD license and Lesser GPL library license. You can choose which license
+	you prefer.
 	
 	PHP's database access functions are not standardised. This creates a need for a database 
 	class library to hide the differences between the different database API's (encapsulate 
 	the differences) so we can easily switch databases.
 
-	We currently support MySQL, Oracle, Microsoft SQL Server, Sybase, Sybase SQL Anywhere,
+	We currently support MySQL, Oracle, Microsoft SQL Server, Sybase, Sybase SQL Anywhere, DB2,
 	Informix, PostgreSQL, FrontBase, Interbase (Firebird and Borland variants), Foxpro, Access,
-	 ADO and ODBC. We have had successful reports of connecting to Progress and DB2 via ODBC. 
-	 We hope more people will contribute drivers to support other databases.
+	ADO, SAP DB, SQLite and ODBC. We have had successful reports of connecting to Progress and
+	other databases via ODBC. 
 	 
-	 Latest Download at http://php.weblogs.com/adodb<br>
-	 Manual is at http://php.weblogs.com/adodb_manual
+	Latest Download at http://php.weblogs.com/adodb<br>
+	Manual is at http://php.weblogs.com/adodb_manual
 	  
  */
  
  if (!defined('_ADODB_LAYER')) {
  	define('_ADODB_LAYER',1);
 	
-	/* ==============================================================================================	 */
-	/*  CONSTANT DEFINITIONS */
-	/* ==============================================================================================	 */
+	//==============================================================================================	
+	// CONSTANT DEFINITIONS
+	//==============================================================================================	
 
 	define('ADODB_BAD_RS','<p>Bad $rs in %s. Connection or SQL invalid. Try using $connection->debug=true;</p>');
 	
@@ -57,9 +55,9 @@
 		1 = assoc uppercase field names. $rs->fields['ORDERID']
 		2 = use native-case field names. $rs->fields['OrderID']
 	*/
-	if (!defined('ADODB_ASSOC_CASE')) define('ADODB_ASSOC_CASE',2);
+	//if (!defined('ADODB_ASSOC_CASE')) define('ADODB_ASSOC_CASE',2);
 	
-	/*  allow [ ] @ ` and . in table names */
+	// allow [ ] @ ` and . in table names
 	define('ADODB_TABLE_REGEX','([]0-9a-z_\`\.\@\[-]*)');
 	
 	
@@ -73,22 +71,22 @@
 	
 	if (!defined('TIMESTAMP_FIRST_YEAR')) define('TIMESTAMP_FIRST_YEAR',100);
 	
-	/* ==============================================================================================	 */
-	/*  GLOBAL VARIABLES */
-	/* ==============================================================================================	 */
+	//==============================================================================================	
+	// GLOBAL VARIABLES
+	//==============================================================================================	
 
 	GLOBAL 
-		$ADODB_vers, 		/*  database version */
-		$ADODB_Database, 	/*  last database driver used */
-		$ADODB_COUNTRECS,	/*  count number of records returned - slows down query */
-		$ADODB_CACHE_DIR,	/*  directory to cache recordsets */
-		$ADODB_EXTENSION,   /*  ADODB extension installed */
-		$ADODB_COMPAT_PATCH, /*  If $ADODB_COUNTRECS and this is true, $rs->fields is available on EOF */
-	 	$ADODB_FETCH_MODE;	/*  DEFAULT, NUM, ASSOC or BOTH. Default follows native driver default... */
+		$ADODB_vers, 		// database version
+		$ADODB_Database, 	// last database driver used
+		$ADODB_COUNTRECS,	// count number of records returned - slows down query
+		$ADODB_CACHE_DIR,	// directory to cache recordsets
+		$ADODB_EXTENSION,   // ADODB extension installed
+		$ADODB_COMPAT_PATCH, // If $ADODB_COUNTRECS and this is true, $rs->fields is available on EOF
+	 	$ADODB_FETCH_MODE;	// DEFAULT, NUM, ASSOC or BOTH. Default follows native driver default...
 	
-	/* ==============================================================================================	 */
-	/*  GLOBAL SETUP */
-	/* ==============================================================================================	 */
+	//==============================================================================================	
+	// GLOBAL SETUP
+	//==============================================================================================	
 	
 	if (strnatcmp(PHP_VERSION,'4.3.0')>=0) {
 		define('ADODB_PHPVER',0x4300);
@@ -100,7 +98,7 @@
 		define('ADODB_PHPVER',0x4000);
 	}
 	$ADODB_EXTENSION = defined('ADODB_EXTENSION');
-	/* if (extension_loaded('dbx')) define('ADODB_DBX',1); */
+	//if (extension_loaded('dbx')) define('ADODB_DBX',1);
 	
 	/**
 	 	Accepts $src and $dest arrays, replacing string $data
@@ -122,10 +120,10 @@
 	function ADODB_Setup()
 	{
 	GLOBAL 
-		$ADODB_vers, 		/*  database version */
-		$ADODB_Database, 	/*  last database driver used */
-		$ADODB_COUNTRECS,	/*  count number of records returned - slows down query */
-		$ADODB_CACHE_DIR,	/*  directory to cache recordsets */
+		$ADODB_vers, 		// database version
+		$ADODB_Database, 	// last database driver used
+		$ADODB_COUNTRECS,	// count number of records returned - slows down query
+		$ADODB_CACHE_DIR,	// directory to cache recordsets
 	 	$ADODB_FETCH_MODE;
 		
 		$ADODB_FETCH_MODE = ADODB_FETCH_DEFAULT;
@@ -133,13 +131,13 @@
 		if (!isset($ADODB_CACHE_DIR)) {
 			$ADODB_CACHE_DIR = '/tmp';
 		} else {
-			/*  do not accept url based paths, eg. http:/ or ftp:/ */
-			if (strpos($ADODB_CACHE_DIR,':/* ') !== false)  
-				die("Illegal path http:/*  or ftp://"); 
+			// do not accept url based paths, eg. http:/ or ftp:/
+			if (strpos($ADODB_CACHE_DIR,'://') !== false) 
+				die("Illegal path http:// or ftp://");
 		}
 		
 			
-		/*  Initialize random number generator for randomizing cache flushes */
+		// Initialize random number generator for randomizing cache flushes
 		srand(((double)microtime())*1000000);
 		
 		/**
@@ -150,7 +148,7 @@
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'V3.60 16 June 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved. Released BSD & LGPL.';
+		$ADODB_vers = 'V4.00 20 Oct 2003 (c) 2000-2003 John Lim (jlim#natsoft.com.my). All rights reserved. Released BSD & LGPL.';
 	
 		/**
 		 * Determines whether recordset->RecordCount() is used. 
@@ -161,15 +159,15 @@
 	}
 	
 	
-	/* ==============================================================================================	 */
-	/*  CHANGE NOTHING BELOW UNLESS YOU ARE CODING */
-	/* ==============================================================================================	 */
+	//==============================================================================================	
+	// CHANGE NOTHING BELOW UNLESS YOU ARE DESIGNING ADODB
+	//==============================================================================================	
 	
 	ADODB_Setup();
 
-	/* ==============================================================================================	 */
-	/*  CLASS ADOFieldObject */
-	/* ==============================================================================================	 */
+	//==============================================================================================	
+	// CLASS ADOFieldObject
+	//==============================================================================================	
 	/**
 	 * Helper class for FetchFields -- holds info on a column
 	 */
@@ -178,22 +176,21 @@
 		var $max_length=0;
 		var $type="";
 
-		/*  additional fields by dannym... (danny_milo@yahoo.com) */
+		// additional fields by dannym... (danny_milo@yahoo.com)
 		var $not_null = false; 
-		/*  actually, this has already been built-in in the postgres, fbsql AND mysql module? ^-^ */
-		/*  so we can as well make not_null standard (leaving it at "false" does not harm anyways) */
+		// actually, this has already been built-in in the postgres, fbsql AND mysql module? ^-^
+		// so we can as well make not_null standard (leaving it at "false" does not harm anyways)
 
-		var $has_default = false; /*  this one I have done only in mysql and postgres for now ...  */
-			/*  others to come (dannym) */
-		var $default_value; /*  default, if any, and supported. Check has_default first. */
+		var $has_default = false; // this one I have done only in mysql and postgres for now ... 
+			// others to come (dannym)
+		var $default_value; // default, if any, and supported. Check has_default first.
 	}
 	
 
 	
 	function ADODB_TransMonitor($dbms, $fn, $errno, $errmsg, $p1, $p2, &$thisConnection)
 	{
-		/* print "Errorno ($fn errno=$errno m=$errmsg) "; */
-		
+		//print "Errorno ($fn errno=$errno m=$errmsg) ";
 		$thisConnection->_transOK = false;
 		if ($thisConnection->_oldRaiseFn) {
 			$fn = $thisConnection->_oldRaiseFn;
@@ -201,89 +198,94 @@
 		}
 	}
 	
-	/* ==============================================================================================	 */
-	/*  CLASS ADOConnection */
-	/* ==============================================================================================	 */
+	//==============================================================================================	
+	// CLASS ADOConnection
+	//==============================================================================================	
 	
-    /**
+	/**
 	 * Connection object. For connecting to databases, and executing queries.
 	 */ 
 	class ADOConnection {
-	/*  */
-	/*  PUBLIC VARS  */
-	/*  */
+	//
+	// PUBLIC VARS 
+	//
 	var $dataProvider = 'native';
-	var $databaseType = '';		/* / RDBMS currently in use, eg. odbc, mysql, mssql					 */
-	var $database = '';			/* / Name of database to be used.	 */
-	var $host = ''; 			/* / The hostname of the database server	 */
-	var $user = ''; 			/* / The username which is used to connect to the database server.  */
-	var $password = ''; 		/* / Password for the username. For security, we no longer store it. */
-	var $debug = false; 		/* / if set to true will output sql statements */
-	var $maxblobsize = 256000; 	/* / maximum size of blobs or large text fields -- some databases die otherwise like foxpro */
-	var $concat_operator = '+'; /* / default concat operator -- change to || for Oracle/Interbase	 */
-	var $fmtDate = "'Y-m-d'";	/* / used by DBDate() as the default date format used by the database */
-	var $fmtTimeStamp = "'Y-m-d, h:i:s A'"; /* / used by DBTimeStamp as the default timestamp fmt. */
-	var $true = '1'; 			/* / string that represents TRUE for a database */
-	var $false = '0'; 			/* / string that represents FALSE for a database */
-	var $replaceQuote = "\\'"; 	/* / string to use to replace quotes */
-	var $charSet=false; 		/* / character set to use - only for interbase */
+	var $databaseType = '';		/// RDBMS currently in use, eg. odbc, mysql, mssql					
+	var $database = '';			/// Name of database to be used.	
+	var $host = ''; 			/// The hostname of the database server	
+	var $user = ''; 			/// The username which is used to connect to the database server. 
+	var $password = ''; 		/// Password for the username. For security, we no longer store it.
+	var $debug = false; 		/// if set to true will output sql statements
+	var $maxblobsize = 256000; 	/// maximum size of blobs or large text fields -- some databases die otherwise like foxpro
+	var $concat_operator = '+'; /// default concat operator -- change to || for Oracle/Interbase	
+	var $fmtDate = "'Y-m-d'";	/// used by DBDate() as the default date format used by the database
+	var $fmtTimeStamp = "'Y-m-d, h:i:s A'"; /// used by DBTimeStamp as the default timestamp fmt.
+	var $true = '1'; 			/// string that represents TRUE for a database
+	var $false = '0'; 			/// string that represents FALSE for a database
+	var $replaceQuote = "\\'"; 	/// string to use to replace quotes
+	var $charSet=false; 		/// character set to use - only for interbase
 	var $metaDatabasesSQL = '';
 	var $metaTablesSQL = '';
-	var $uniqueOrderBy = false; /* / All order by columns have to be unique */
+	var $uniqueOrderBy = false; /// All order by columns have to be unique
 	var $emptyDate = '&nbsp;';
-	/* -- */
-	var $hasInsertID = false; 		/* / supports autoincrement ID? */
-	var $hasAffectedRows = false; 	/* / supports affected rows for update/delete? */
-	var $hasTop = false;			/* / support mssql/access SELECT TOP 10 * FROM TABLE */
-	var $hasLimit = false;			/* / support pgsql/mysql SELECT * FROM TABLE LIMIT 10 */
-	var $readOnly = false; 			/* / this is a readonly database - used by phpLens */
-	var $hasMoveFirst = false;  /* / has ability to run MoveFirst(), scrolling backwards */
-	var $hasGenID = false; 		/* / can generate sequences using GenID(); */
-	var $hasTransactions = true; /* / has transactions */
-	/* -- */
-	var $genID = 0; 			/* / sequence id used by GenID(); */
-	var $raiseErrorFn = false; 	/* / error function to call */
-	var $upperCase = false; 	/* / uppercase function to call for searching/where */
-	var $isoDates = false; /* / accepts dates in ISO format */
-	var $cacheSecs = 3600; /* / cache for 1 hour */
-	var $sysDate = false; /* / name of function that returns the current date */
-	var $sysTimeStamp = false; /* / name of function that returns the current timestamp */
-	var $arrayClass = 'ADORecordSet_array'; /* / name of class used to generate array recordsets, which are pre-downloaded recordsets */
+	//--
+	var $hasInsertID = false; 		/// supports autoincrement ID?
+	var $hasAffectedRows = false; 	/// supports affected rows for update/delete?
+	var $hasTop = false;			/// support mssql/access SELECT TOP 10 * FROM TABLE
+	var $hasLimit = false;			/// support pgsql/mysql SELECT * FROM TABLE LIMIT 10
+	var $readOnly = false; 			/// this is a readonly database - used by phpLens
+	var $hasMoveFirst = false;  /// has ability to run MoveFirst(), scrolling backwards
+	var $hasGenID = false; 		/// can generate sequences using GenID();
+	var $hasTransactions = true; /// has transactions
+	//--
+	var $genID = 0; 			/// sequence id used by GenID();
+	var $raiseErrorFn = false; 	/// error function to call
+	var $upperCase = false; 	/// uppercase function to call for searching/where
+	var $isoDates = false; /// accepts dates in ISO format
+	var $cacheSecs = 3600; /// cache for 1 hour
+	var $sysDate = false; /// name of function that returns the current date
+	var $sysTimeStamp = false; /// name of function that returns the current timestamp
+	var $arrayClass = 'ADORecordSet_array'; /// name of class used to generate array recordsets, which are pre-downloaded recordsets
 	
-	var $noNullStrings = false; /* / oracle specific stuff - if true ensures that '' is converted to ' ' */
+	var $noNullStrings = false; /// oracle specific stuff - if true ensures that '' is converted to ' '
 	var $numCacheHits = 0; 
 	var $numCacheMisses = 0;
 	var $pageExecuteCountRows = true;
-	var $uniqueSort = false; /* / indicates that all fields in order by must be unique */
-	var $leftOuter = false; /* / operator to use for left outer join in WHERE clause */
-	var $rightOuter = false; /* / operator to use for right outer join in WHERE clause */
-	var $ansiOuter = false; /* / whether ansi outer join syntax supported */
-	var $autoRollback = false; /*  autoRollback on PConnect(). */
-	var $poorAffectedRows = false; /*  affectedRows not working or unreliable */
+	var $uniqueSort = false; /// indicates that all fields in order by must be unique
+	var $leftOuter = false; /// operator to use for left outer join in WHERE clause
+	var $rightOuter = false; /// operator to use for right outer join in WHERE clause
+	var $ansiOuter = false; /// whether ansi outer join syntax supported
+	var $autoRollback = false; // autoRollback on PConnect().
+	var $poorAffectedRows = false; // affectedRows not working or unreliable
 	
 	var $fnExecute = false;
 	var $fnCacheExecute = false;
-	var $blobEncodeType = false; /*  false=not required, 'I'=encode to integer, 'C'=encode to char */
-	var $dbxDriver = false;
+	var $blobEncodeType = false; // false=not required, 'I'=encode to integer, 'C'=encode to char
+	var $rsPrefix = "ADORecordSet_";
 	
-	 /*  */
-	 /*  PRIVATE VARS */
-	 /*  */
-	var $_oldRaiseFn =  false;
-	var $_transOK = null;
-	var $_connectionID	= false;	/* / The returned link identifier whenever a successful database connection is made.	 */
-	var $_errorMsg = '';		/* / A variable which was used to keep the returned last error message.  The value will */
-								/* / then returned by the errorMsg() function	 */
-						
-	var $_queryID = false;		/* / This variable keeps the last created result link identifier */
-	
-	var $_isPersistentConnection = false;	/* / A boolean variable to state whether its a persistent connection or normal connection.	*/ 
-	var $_bindInputArray = false; /* / set to true if ADOConnection.Execute() permits binding of array parameters. */
-	var $autoCommit = true; 	/* / do not modify this yourself - actually private */
-	var $transOff = 0; 			/* / temporarily disable transactions */
-	var $transCnt = 0; 			/* / count of nested transactions */
+	var $autoCommit = true; 	/// do not modify this yourself - actually private
+	var $transOff = 0; 			/// temporarily disable transactions
+	var $transCnt = 0; 			/// count of nested transactions
 	
 	var $fetchMode=false;
+	 //
+	 // PRIVATE VARS
+	 //
+	var $_oldRaiseFn =  false;
+	var $_transOK = null;
+	var $_connectionID	= false;	/// The returned link identifier whenever a successful database connection is made.	
+	var $_errorMsg = false;		/// A variable which was used to keep the returned last error message.  The value will
+								/// then returned by the errorMsg() function	
+	var $_errorCode = false;	/// Last error code, not guaranteed to be used - only by oci8					
+	var $_queryID = false;		/// This variable keeps the last created result link identifier
+	
+	var $_isPersistentConnection = false;	/// A boolean variable to state whether its a persistent connection or normal connection.	*/
+	var $_bindInputArray = false; /// set to true if ADOConnection.Execute() permits binding of array parameters.
+	var $_evalAll = false;
+	var $_affected = false;
+	var $_logsql = false;
+	
+
 	
 	/**
 	 * Constructor
@@ -338,7 +340,7 @@
 	 * @param [argUsername]		Userid to login
 	 * @param [argPassword]		Associated password
 	 * @param [argDatabaseName]	database
-	 * @param [forceNew]        force new connection
+	 * @param [forceNew]		force new connection
 	 *
 	 * @return true or false
 	 */	  
@@ -346,7 +348,7 @@
 	{
 		if ($argHostname != "") $this->host = $argHostname;
 		if ($argUsername != "") $this->user = $argUsername;
-		if ($argPassword != "") $this->password = $argPassword; /*  not stored for security reasons */
+		if ($argPassword != "") $this->password = $argPassword; // not stored for security reasons
 		if ($argDatabaseName != "") $this->database = $argDatabaseName;		
 		
 		$this->_isPersistentConnection = false;	
@@ -425,11 +427,11 @@
 		return false;
 	}
 
-	/*  Format date column in sql string given an input format that understands Y M D */
+	// Format date column in sql string given an input format that understands Y M D
 	function SQLDate($fmt, $col=false)
 	{	
 		if (!$col) $col = $this->sysDate;
-		return $col; /*  child class implement */
+		return $col; // child class implement
 	}
 	
 	/**
@@ -477,6 +479,14 @@
 	function Quote($s)
 	{
 		return $this->qstr($s,false);
+	}
+	
+	/**
+	 Requested by "Karsten Dambekalns" <k.dambekalns@fishfarm.de>
+	*/
+	function QMagic($s)
+	{
+		return $this->qstr($s,get_magic_quotes_gpc());
 	}
 
 	function q(&$s)
@@ -559,9 +569,9 @@
 	/**
 	* PEAR DB Compat - do not use internally
 	*/
-	function &LimitQuery($sql, $offset, $count)
+	function &LimitQuery($sql, $offset, $count, $params=false)
 	{
-		$rs = &$this->SelectLimit($sql, $count, $offset); /*  swap  */
+		$rs = &$this->SelectLimit($sql, $count, $offset, $params); 
 		if (!$rs && defined('ADODB_PEAR')) return ADODB_PEAR_Error();
 		return $rs;
 	}
@@ -574,7 +584,17 @@
 	{
 		return $this->Close();
 	}
-
+	
+	/*
+		 returns placeholder for parameter, eg.
+		 $DB->Param('a')
+		 
+		 will return ':a' for Oracle, and '?' for most other databases...
+	*/
+	function Param($name)
+	{
+		return '?';
+	}
 	/* 
 	Usage in oracle
 		$stmt = $db->Prepare('select * from table where id =:myid and group=:group');
@@ -639,8 +659,13 @@
 		$this->raiseErrorFn = $this->_oldRaiseFn;
 		
 		$this->transOff = 0;
-		if ($this->_transOK && $autoComplete) $this->CommitTrans();
-		else $this->RollbackTrans();
+		if ($this->_transOK && $autoComplete) {
+			$this->CommitTrans();
+			if ($this->debug) ADOConnection::outp("Smart Commit occurred");
+		} else {
+			$this->RollbackTrans();
+			if ($this->debug) ADOCOnnection::outp("Smart Rollback occurred");
+		}
 		
 		return $this->_transOK;
 	}
@@ -650,49 +675,91 @@
 	*/
 	function FailTrans()
 	{
-		if ($this->debug && $this->transOff == 0) {
-			ADOConnection::outp("FailTrans outside StartTrans/CompleteTrans");
-		}
+		if ($this->debug) 
+			if ($this->transOff == 0) {
+				ADOConnection::outp("FailTrans outside StartTrans/CompleteTrans");
+			} else {
+				ADOConnection::outp("FailTrans was called");
+				adodb_backtrace();
+			}
 		$this->_transOK = false;
 	}
+	
+	/**
+		Check if transaction has failed, only for Smart Transactions.
+	*/
+	function HasFailedTrans()
+	{
+		if ($this->transOff > 0) return $this->_transOK == false;
+		return false;
+	}
+	
 	/**
 	 * Execute SQL 
 	 *
 	 * @param sql		SQL statement to execute, or possibly an array holding prepared statement ($sql[0] will hold sql text)
 	 * @param [inputarr]	holds the input data to bind to. Null elements will be set to null.
-	 * @param [arg3]	reserved for john lim for future use
 	 * @return 		RecordSet or false
 	 */
-	function &Execute($sql,$inputarr=false,$arg3=false) 
+	function &Execute($sql,$inputarr=false) 
 	{
 		if ($this->fnExecute) {
 			$fn = $this->fnExecute;
-			$fn($this,$sql,$inputarr);
+			$ret =& $fn($this,$sql,$inputarr);
+			if (isset($ret)) return $ret;
 		}
-		if (!$this->_bindInputArray && $inputarr) {
-			$sqlarr = explode('?',$sql);
-			$sql = '';
-			$i = 0;
-			foreach($inputarr as $v) {
-
-				$sql .= $sqlarr[$i];
-				/*  from Ron Baldwin <ron.baldwin@sourceprose.com> */
-				/*  Only quote string types	 */
-				if (gettype($v) == 'string')
-					$sql .= $this->qstr($v);
-				else if ($v === null)
-					$sql .= 'NULL';
-				else
-					$sql .= $v;
-				$i += 1;
-	
+		if ($inputarr && is_array($inputarr)) {
+			$element0 = reset($inputarr);
+			# is_object check is because oci8 descriptors can be passed in
+			$array_2d = is_array($element0) && !is_object(reset($element0));
+			
+			if (!is_array($sql) && !$this->_bindInputArray) {
+				$sqlarr = explode('?',$sql);
+				
+				if (!$array_2d) $inputarr = array($inputarr);
+				while(list(,$arr) = each($inputarr)) {
+					$sql = ''; $i = 0;
+					foreach($arr as $v) {
+						$sql .= $sqlarr[$i];
+						// from Ron Baldwin <ron.baldwin@sourceprose.com>
+						// Only quote string types	
+						if (gettype($v) == 'string')
+							$sql .= $this->qstr($v);
+						else if ($v === null)
+							$sql .= 'NULL';
+						else
+							$sql .= $v;
+						$i += 1;
+					}
+					$sql .= $sqlarr[$i];
+					if ($i+1 != sizeof($sqlarr))	
+						ADOConnection::outp( "Input Array does not match ?: ".htmlspecialchars($sql));
+					
+					$ret =& $this->_Execute($sql,false);
+					if (!$ret) return $ret;
+				}
+				
+			} else {
+				
+				if ($array_2d) {
+					$stmt = $this->Prepare($sql);
+					while(list(,$arr) = each($inputarr)) {
+						$ret =& $this->_Execute($stmt,$arr);
+						if (!$ret) return $ret;
+					}
+				} else
+					$ret =& $this->_Execute($sql,$inputarr);
 			}
-			$sql .= $sqlarr[$i];
-			if ($i+1 != sizeof($sqlarr))	
-				ADOConnection::outp( "Input Array does not match ?: ".htmlspecialchars($sql));
-			$inputarr = false;
+		} else {
+			$ret =& $this->_Execute($sql,false);
 		}
-		/*  debug version of query */
+		
+		return $ret;
+	}
+	
+	function& _Execute($sql,$inputarr=false)
+	{
+		// debug version of query
 		if ($this->debug) {
 		global $HTTP_SERVER_VARS;
 		
@@ -706,24 +773,25 @@
 			}
 			$sqlTxt = str_replace(',',', ',is_array($sql) ?$sql[0] : $sql);
 			
-			/*  check if running from browser or command-line */
+			// check if running from browser or command-line
 			$inBrowser = isset($HTTP_SERVER_VARS['HTTP_USER_AGENT']);
 			
 			if ($inBrowser)
-				ADOConnection::outp( "<hr />\n($this->databaseType): ".htmlspecialchars($sqlTxt)." &nbsp; <code>$ss</code>\n<hr />\n",false);
+				if ($this->debug === -1)
+				ADOConnection::outp( "<br>\n($this->databaseType): ".htmlspecialchars($sqlTxt)." &nbsp; <code>$ss</code>\n<br>\n",false);
+				else ADOConnection::outp( "<hr />\n($this->databaseType): ".htmlspecialchars($sqlTxt)." &nbsp; <code>$ss</code>\n<hr />\n",false);
 			else
 				ADOConnection::outp(  "=----\n($this->databaseType): ".($sqlTxt)." \n-----\n",false);
 			flush();
 			
-			$this->_queryID = $this->_query($sql,$inputarr,$arg3);
-
+			$this->_queryID = $this->_query($sql,$inputarr);
 			/* 
 				Alexios Fakios notes that ErrorMsg() must be called before ErrorNo() for mssql
 				because ErrorNo() calls Execute('SELECT @ERROR'), causing recure
 			*/
 			if ($this->databaseType == 'mssql') { 
-			/*  ErrorNo is a slow function call in mssql, and not reliable */
-			/*  in PHP 4.0.6 */
+			// ErrorNo is a slow function call in mssql, and not reliable
+			// in PHP 4.0.6
 				if($emsg = $this->ErrorMsg()) {
 					$err = $this->ErrorNo();
 					if ($err) {
@@ -739,32 +807,36 @@
 					flush();
 				}
 		} else {
-			/*  non-debug version of query */
+			// non-debug version of query
 			
-			$this->_queryID =@$this->_query($sql,$inputarr,$arg3);
-			
+			$this->_queryID =@$this->_query($sql,$inputarr);
 		}
-		/*  error handling if query fails */
+		
+		/************************
+			OK, query executed
+		*************************/
+		// error handling if query fails
 		if ($this->_queryID === false) {
+			if ($this->debug == 99) adodb_backtrace(true,5);	
 			$fn = $this->raiseErrorFn;
 			if ($fn) {
 				$fn($this->databaseType,'EXECUTE',$this->ErrorNo(),$this->ErrorMsg(),$sql,$inputarr,$this);
-			}
+			} 
+				
 			return false;
 		} else if ($this->_queryID === true) {
-		/*  return simplified empty recordset for inserts/updates/deletes with lower overhead */
-			$rs = new ADORecordSet_empty();
+		// return simplified empty recordset for inserts/updates/deletes with lower overhead
+			$rs =& new ADORecordSet_empty();
 			return $rs;
 		}
 		
-		/*  return real recordset from select statement */
-		$rsclass = "ADORecordSet_".$this->databaseType;
-		$rs = new $rsclass($this->_queryID,$this->fetchMode); /*  &new not supported by older PHP versions */
-		$rs->connection = &$this; /*  Pablo suggestion */
+		// return real recordset from select statement
+		$rsclass = $this->rsPrefix.$this->databaseType;
+		$rs =& new $rsclass($this->_queryID,$this->fetchMode); // &new not supported by older PHP versions
+		$rs->connection = &$this; // Pablo suggestion
 		$rs->Init();
 		if (is_array($sql)) $rs->sql = $sql[0];
 		else $rs->sql = $sql;
-		
 		if ($rs->_numOfRows <= 0) {
 		global $ADODB_COUNTRECS;
 	
@@ -803,7 +875,7 @@
 	function GenID($seqname='adodbseq',$startID=1)
 	{
 		if (!$this->hasGenID) {
-			return 0; /*  formerly returns false pre 1.60 */
+			return 0; // formerly returns false pre 1.60
 		}
 		
 		$getnext = sprintf($this->_genIDSQL,$seqname);
@@ -813,7 +885,7 @@
 			$rs = $this->Execute($getnext);
 		}
 		if ($rs && !$rs->EOF) $this->genID = reset($rs->fields);
-		else $this->genID = 0; /*  false */
+		else $this->genID = 0; // false
 	
 		if ($rs) $rs->Close();
 
@@ -853,8 +925,12 @@
 	 function Affected_Rows()
 	 {
 		  if ($this->hasAffectedRows) {
-				 $val = $this->_affectedrows();
-				 return ($val < 0) ? false : $val;
+		  		if ($this->fnExecute === 'adodb_log_sql') {
+				
+					if ($this->_logsql && $this->_affected !== false) return $this->_affected;
+				}
+				$val = $this->_affectedrows();
+				return ($val < 0) ? false : $val;
 		  }
 				  
 		  if ($this->debug) ADOConnection::outp( '<p>Affected_Rows error</p>',false);
@@ -897,7 +973,7 @@
 	 */
 	function MetaPrimaryKeys($table, $owner=false)
 	{
-	/*  owner not used in base class - see oci8 */
+	// owner not used in base class - see oci8
 		$p = array();
 		$objs =& $this->MetaColumns($table);
 		if ($objs) {
@@ -910,7 +986,13 @@
 		return false;
 	}
 	
-	
+	/**
+	 * @returns assoc array where keys are tables, and values are foreign keys
+	 */
+	function MetaForeignKeys($table, $owner=false, $upper=false)
+	{
+		return false;
+	}
 	/**
 	 * Choose a database to connect to. Many databases do not support this.
 	 *
@@ -937,28 +1019,31 @@
 	* @param [offset]	is the row to start calculations from (1-based)
 	* @param [nrows]		is the number of rows to get
 	* @param [inputarr]	array of bind variables
-	* @param [arg3]		is a private parameter only used by jlim
 	* @param [secs2cache]		is a private parameter only used by jlim
 	* @return		the recordset ($rs->databaseType == 'array')
  	*/
-	function &SelectLimit($sql,$nrows=-1,$offset=-1, $inputarr=false,$arg3=false,$secs2cache=0)
+	function &SelectLimit($sql,$nrows=-1,$offset=-1, $inputarr=false,$secs2cache=0)
 	{
 		if ($this->hasTop && $nrows > 0) {
-		/*  suggested by Reinhard Balling. Access requires top after distinct  */
-		 /*  Informix requires first before distinct - F Riosa */
+		// suggested by Reinhard Balling. Access requires top after distinct 
+		 // Informix requires first before distinct - F Riosa
 			$ismssql = (strpos($this->databaseType,'mssql') !== false);
 			if ($ismssql) $isaccess = false;
 			else $isaccess = (strpos($this->databaseType,'access') !== false);
 			
 			if ($offset <= 0) {
 				
-					/*  access includes ties in result */
+					// access includes ties in result
 					if ($isaccess) {
 						$sql = preg_replace(
 						'/(^\s*select\s+(distinctrow|distinct)?)/i','\\1 '.$this->hasTop.' '.$nrows.' ',$sql);
 
-						if ($secs2cache>0) return $this->CacheExecute($secs2cache, $sql,$inputarr,$arg3);
-						else return $this->Execute($sql,$inputarr,$arg3);
+						if ($secs2cache>0) {
+							$ret =& $this->CacheExecute($secs2cache, $sql,$inputarr);
+						} else {
+							$ret =& $this->Execute($sql,$inputarr);
+						}
+						return $ret; // PHP5 fix
 					} else if ($ismssql){
 						$sql = preg_replace(
 						'/(^\s*select\s+(distinctrow|distinct)?)/i','\\1 '.$this->hasTop.' '.$nrows.' ',$sql);
@@ -978,25 +1063,25 @@
 			}
 		}
 		
-		/*  if $offset>0, we want to skip rows, and $ADODB_COUNTRECS is set, we buffer  rows */
-		/*  0 to offset-1 which will be discarded anyway. So we disable $ADODB_COUNTRECS. */
+		// if $offset>0, we want to skip rows, and $ADODB_COUNTRECS is set, we buffer  rows
+		// 0 to offset-1 which will be discarded anyway. So we disable $ADODB_COUNTRECS.
 		global $ADODB_COUNTRECS;
 		
 		$savec = $ADODB_COUNTRECS;
 		$ADODB_COUNTRECS = false;
 			
 		if ($offset>0){
-			if ($secs2cache>0) $rs = &$this->CacheExecute($secs2cache,$sql,$inputarr,$arg3);
-			else $rs = &$this->Execute($sql,$inputarr,$arg3);
+			if ($secs2cache>0) $rs = &$this->CacheExecute($secs2cache,$sql,$inputarr);
+			else $rs = &$this->Execute($sql,$inputarr);
 		} else {
-			if ($secs2cache>0) $rs = &$this->CacheExecute($secs2cache,$sql,$inputarr,$arg3);
-			else $rs = &$this->Execute($sql,$inputarr,$arg3);
+			if ($secs2cache>0) $rs = &$this->CacheExecute($secs2cache,$sql,$inputarr);
+			else $rs = &$this->Execute($sql,$inputarr);
 		}
 		$ADODB_COUNTRECS = $savec;
 		if ($rs && !$rs->EOF) {
-			return $this->_rs2rs($rs,$nrows,$offset);
+			$rs =& $this->_rs2rs($rs,$nrows,$offset);
 		}
-		/* print_r($rs); */
+		//print_r($rs);
 		return $rs;
 	}
 	
@@ -1017,12 +1102,12 @@
 		
 		$dbtype = $rs->databaseType;
 		if (!$dbtype) {
-			$rs = &$rs;  /*  required to prevent crashing in 4.2.1, but does not happen in 4.3.1 -- why ? */
+			$rs = &$rs;  // required to prevent crashing in 4.2.1, but does not happen in 4.3.1 -- why ?
 			return $rs;
 		}
 		if (($dbtype == 'array' || $dbtype == 'csv') && $nrows == -1 && $offset == -1) {
 			$rs->MoveFirst();
-			$rs = &$rs; /*  required to prevent crashing in 4.2.1, but does not happen in 4.3.1-- why ? */
+			$rs = &$rs; // required to prevent crashing in 4.2.1, but does not happen in 4.3.1-- why ?
 			return $rs;
 		}
 		$flds = array();
@@ -1030,12 +1115,12 @@
 			$flds[] = $rs->FetchField($i);
 		}
 		$arr =& $rs->GetArrayLimit($nrows,$offset);
-		/* print_r($arr); */
+		//print_r($arr);
 		if ($close) $rs->Close();
 		
 		$arrayClass = $this->arrayClass;
 		
-		$rs2 = new $arrayClass();
+		$rs2 =& new $arrayClass();
 		$rs2->connection = &$this;
 		$rs2->sql = $rs->sql;
 		$rs2->dataProvider = $this->dataProvider;
@@ -1043,10 +1128,35 @@
 		return $rs2;
 	}
 	
-	
-	function &GetArray($sql, $inputarr=false)
+	/*
+	* Return all rows. Compat with PEAR DB
+	*/
+	function &GetAll($sql, $inputarr=false)
 	{
-		return $this->GetAll($sql,$inputarr);
+		$arr =& $this->GetArray($sql,$inputarr);
+		return $arr;
+	}
+	
+	function &GetAssoc($sql, $inputarr=false,$force_array = false, $first2cols = false)
+	{
+		$rs =& $this->Execute($sql, $inputarr);
+		if (!$rs) return false;
+		
+		$arr =& $rs->GetAssoc($force_array,$first2cols);
+		return $arr;
+	}
+	
+	function &CacheGetAssoc($secs2cache, $sql=false, $inputarr=false,$force_array = false, $first2cols = false)
+	{
+		if (!is_numeric($secs2cache)) {
+			$first2cols = $force_array;
+			$force_array = $inputarr;
+		}
+		$rs =& $this->CacheExecute($secs2cache, $sql, $inputarr);
+		if (!$rs) return false;
+		
+		$arr =& $rs->GetAssoc($force_array,$first2cols);
+		return $arr;
 	}
 	
 	/**
@@ -1141,20 +1251,18 @@
 	
 	
 	/**
-	* Return all rows. Compat with PEAR DB
 	*
 	* @param sql			SQL statement
 	* @param [inputarr]		input bind array
 	*/
-	function &GetAll($sql,$inputarr=false)
+	function &GetArray($sql,$inputarr=false)
 	{
 	global $ADODB_COUNTRECS;
 		
 		$savec = $ADODB_COUNTRECS;
 		$ADODB_COUNTRECS = false;
-		$rs = $this->Execute($sql,$inputarr);
+		$rs =& $this->Execute($sql,$inputarr);
 		$ADODB_COUNTRECS = $savec;
-		
 		if (!$rs) 
 			if (defined('ADODB_PEAR')) return ADODB_PEAR_Error();
 			else return false;
@@ -1169,7 +1277,7 @@
 		
 		$savec = $ADODB_COUNTRECS;
 		$ADODB_COUNTRECS = false;
-		$rs = $this->CacheExecute($secs2cache,$sql,$inputarr);
+		$rs =& $this->CacheExecute($secs2cache,$sql,$inputarr);
 		$ADODB_COUNTRECS = $savec;
 		
 		if (!$rs) 
@@ -1195,7 +1303,7 @@
 		$crecs = $ADODB_COUNTRECS;
 		$ADODB_COUNTRECS = false;
 		
-		$rs = $this->Execute($sql,$inputarr);
+		$rs =& $this->Execute($sql,$inputarr);
 		
 		$ADODB_COUNTRECS = $crecs;
 		if ($rs) {
@@ -1210,7 +1318,7 @@
 	
 	function &CacheGetRow($secs2cache,$sql=false,$inputarr=false)
 	{
-		$rs = $this->CacheExecute($secs2cache,$sql,$inputarr);
+		$rs =& $this->CacheExecute($secs2cache,$sql,$inputarr);
 		if ($rs) {
 			$arr = false;
 			if (!$rs->EOF) $arr = $rs->fields;
@@ -1250,11 +1358,11 @@
 			$keyCol = array($keyCol);
 		}
 		foreach($fieldArray as $k => $v) {
-			if ($autoQuote && !is_numeric($v) and substr($v,0,1) != "'" and strcasecmp($v,'null')!=0) {
+			if ($autoQuote && !is_numeric($v) and strncmp($v,"'",1) !== 0 and strcasecmp($v,'null')!=0) {
 				$v = $this->qstr($v);
 				$fieldArray[$k] = $v;
 			}
-			if (in_array($k,$keyCol)) continue; /*  skip UPDATE if is key */
+			if (in_array($k,$keyCol)) continue; // skip UPDATE if is key
 			
 			if ($first) {
 				$first = false;			
@@ -1289,16 +1397,16 @@
 				# for mysql - which is silly. 
 			
 					$cnt = $this->GetOne("select count(*) from $table where $where");
-					if ($cnt > 0) return 1; /*  record already exists */
+					if ($cnt > 0) return 1; // record already exists
 				} else
 					 if (($this->Affected_Rows()>0)) return 1;
 			}
 				
 		}
-	/* 	print "<p>Error=".$this->ErrorNo().'<p>'; */
+	//	print "<p>Error=".$this->ErrorNo().'<p>';
 		$first = true;
 		foreach($fieldArray as $k => $v) {
-			if ($has_autoinc && in_array($k,$keyCol)) continue; /*  skip autoinc col */
+			if ($has_autoinc && in_array($k,$keyCol)) continue; // skip autoinc col
 			
 			if ($first) {
 				$first = false;			
@@ -1331,20 +1439,20 @@
 	* @param [offset]	is the row to start calculations from (1-based)
 	* @param [nrows]	is the number of rows to get
 	* @param [inputarr]	array of bind variables
-	* @param [arg3]		is a private parameter only used by jlim
 	* @return		the recordset ($rs->databaseType == 'array')
  	*/
-	function &CacheSelectLimit($secs2cache,$sql,$nrows=-1,$offset=-1,$inputarr=false, $arg3=false)
+	function &CacheSelectLimit($secs2cache,$sql,$nrows=-1,$offset=-1,$inputarr=false)
 	{	
 		if (!is_numeric($secs2cache)) {
 			if ($sql === false) $sql = -1;
 			if ($offset == -1) $offset = false;
-									  /*  sql,	nrows, offset,inputarr,arg3 */
-			return $this->SelectLimit($secs2cache,$sql,$nrows,$offset,$inputarr,$this->cacheSecs);
+									  // sql,	nrows, offset,inputarr
+			$rs =& $this->SelectLimit($secs2cache,$sql,$nrows,$offset,$inputarr,$this->cacheSecs);
 		} else {
 			if ($sql === false) ADOConnection::outp( "Warning: \$sql missing from CacheSelectLimit()");
-			return $this->SelectLimit($sql,$nrows,$offset,$inputarr,$arg3,$secs2cache);
+			$rs =& $this->SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
 		}
+		return $rs;
 	}
 	
 	/**
@@ -1356,11 +1464,11 @@
 	global $ADODB_CACHE_DIR;
 	
 		if (strlen($ADODB_CACHE_DIR) > 1 && !$sql) {
-			if (strpos(strtoupper(PHP_OS),'WIN') !== false) {
+			if (strncmp(PHP_OS,'WIN',3) === 0) {
 				$cmd = 'del /s '.str_replace('/','\\',$ADODB_CACHE_DIR).'\adodb_*.cache';
 			} else {
 				$cmd = 'rm -rf '.$ADODB_CACHE_DIR.'/??/adodb_*.cache'; 
-				/*  old version 'rm -f `find '.$ADODB_CACHE_DIR.' -name adodb_*.cache`'; */
+				// old version 'rm -f `find '.$ADODB_CACHE_DIR.' -name adodb_*.cache`';
 			}
 			if ($this->debug) {
 				ADOConnection::outp( "CacheFlush: $cmd<br><pre>\n", system($cmd),"</pre>");
@@ -1370,8 +1478,10 @@
 			return;
 		} 
 		$f = $this->_gencachename($sql.serialize($inputarr),false);
-		adodb_write_file($f,''); /*  is adodb_write_file needed? */
-		@unlink($f);
+		adodb_write_file($f,''); // is adodb_write_file needed?
+		if (!@unlink($f)) {
+			if ($this->debug) ADOConnection::outp( "CacheFlush: failed for $f");
+		}
 	}
 	
 	/**
@@ -1410,19 +1520,20 @@
 	 *					  This is an optional parameter.
 	 * @param sql		SQL statement to execute
 	 * @param [inputarr]	holds the input data  to bind to
-	 * @param [arg3]	reserved for john lim for future use
 	 * @return 		RecordSet or false
 	 */
-	function &CacheExecute($secs2cache,$sql=false,$inputarr=false,$arg3=false)
+	function &CacheExecute($secs2cache,$sql=false,$inputarr=false)
 	{
 		if (!is_numeric($secs2cache)) {
-			$arg3 = $inputarr;
 			$inputarr = $sql;
 			$sql = $secs2cache;
 			$secs2cache = $this->cacheSecs;
 		}
-		include_once(ADODB_DIR.'/adodb-csvlib.inc.php');
+		global $ADODB_INCLUDED_CSV;
+		if (empty($ADODB_INCLUDED_CSV)) include_once(ADODB_DIR.'/adodb-csvlib.inc.php');
 		
+		if (is_array($sql)) $sql = $sql[0];
+			
 		$md5file = $this->_gencachename($sql.serialize($inputarr),true);
 		$err = '';
 		
@@ -1435,18 +1546,18 @@
 			$this->numCacheMisses += 1;
 		}
 		if (!$rs) {
-		/*  no cached rs found */
+		// no cached rs found
 			if ($this->debug) {
 				if (get_magic_quotes_runtime()) {
 					ADOConnection::outp("Please disable magic_quotes_runtime - it corrupts cache files :(");
 				}
-				ADOConnection::outp( " $md5file cache failure: $err (see sql below)");
+				if ($this->debug !== -1) ADOConnection::outp( " $md5file cache failure: $err (see sql below)");
 			}
-			$rs = &$this->Execute($sql,$inputarr,$arg3);
+			$rs = &$this->Execute($sql,$inputarr);
 			if ($rs) {
 				$eof = $rs->EOF;
-				$rs = &$this->_rs2rs($rs); /*  read entire recordset into memory immediately */
-				$txt = _rs2serialize($rs,false,$sql); /*  serialize */
+				$rs = &$this->_rs2rs($rs); // read entire recordset into memory immediately
+				$txt = _rs2serialize($rs,false,$sql); // serialize
 		
 				if (!adodb_write_file($md5file,$txt,$this->debug)) {
 					if ($fn = $this->raiseErrorFn) {
@@ -1456,22 +1567,25 @@
 				}
 				if ($rs->EOF && !$eof) {
 					$rs->MoveFirst();
-					/* $rs = &csv2rs($md5file,$err);		 */
-					$rs->connection = &$this; /*  Pablo suggestion */
+					//$rs = &csv2rs($md5file,$err);		
+					$rs->connection = &$this; // Pablo suggestion
 				}  
 				
 			} else
 				@unlink($md5file);
 		} else {
+			$this->_errorMsg = '';
+			$this->_errorCode = 0;
+			
 			if ($this->fnCacheExecute) {
 				$fn = $this->fnCacheExecute;
 				$fn($this, $secs2cache, $sql, $inputarr);
 			}
-		/*  ok, set cached object found */
-			$rs->connection = &$this; /*  Pablo suggestion */
+		// ok, set cached object found
+			$rs->connection = &$this; // Pablo suggestion
 			if ($this->debug){ 
 			global $HTTP_SERVER_VARS;
-        			
+					
 				$inBrowser = isset($HTTP_SERVER_VARS['HTTP_USER_AGENT']);
 				$ttl = $rs->timeCreated + $secs2cache - time();
 				$s = is_array($sql) ? $sql[0] : $sql;
@@ -1497,7 +1611,8 @@
   	 */
 	function GetUpdateSQL(&$rs, $arrFields,$forceUpdate=false,$magicq=false)
 	{
-		include_once(ADODB_DIR.'/adodb-lib.inc.php');
+		global $ADODB_INCLUDED_LIB;
+		if (empty($ADODB_INCLUDED_LIB)) include_once(ADODB_DIR.'/adodb-lib.inc.php');
 		return _adodb_getupdatesql($this,$rs,$arrFields,$forceUpdate,$magicq);
 	}
 
@@ -1512,7 +1627,8 @@
   	 */
 	function GetInsertSQL(&$rs, $arrFields,$magicq=false)
 	{	
-		include_once(ADODB_DIR.'/adodb-lib.inc.php');
+		global $ADODB_INCLUDED_LIB;
+		if (empty($ADODB_INCLUDED_LIB)) include_once(ADODB_DIR.'/adodb-lib.inc.php');
 		return _adodb_getinsertsql($this,$rs,$arrFields,$magicq);
 	}
 	
@@ -1569,6 +1685,34 @@
 		return $blob;
 	}
 	
+	function SetCharSet($charset)
+	{
+		return false;
+	}
+	
+	function IfNull( $field, $ifNull ) 
+	{
+		return " CASE WHEN $field is null THEN $ifNull ELSE $field END ";
+	}
+	
+	function LogSQL($enable=true)
+	{
+		include_once(ADODB_DIR.'/adodb-perf.inc.php');
+		
+		if ($enable) $this->fnExecute = 'adodb_log_sql';
+		else $this->fnExecute = false;
+		
+		$old = $this->_logsql;	
+		$this->_logsql = $enable;
+		if ($enable && !$old) $this->_affected = false;
+		return $old;
+	}
+	
+	function GetCharSet()
+	{
+		return false;
+	}
+	
 	/**
 	* Usage:
 	*	UpdateClob('TABLE', 'COLUMN', $var, 'ID=1', 'CLOB');
@@ -1579,6 +1723,36 @@
 	function UpdateClob($table,$column,$val,$where)
 	{
 		return $this->UpdateBlob($table,$column,$val,$where,'CLOB');
+	}
+	
+	
+	/**
+	*  Change the SQL connection locale to a specified locale.
+	*  This is used to get the date formats written depending on the client locale.
+	*/
+	function SetDateLocale($locale = 'En')
+	{
+		$this->locale = $locale;
+		switch ($locale)
+		{
+			default:
+			case 'En':
+				$this->fmtDate="Y-m-d";
+				$this->fmtTimeStamp = "Y-m-d H:i:s";
+				break;
+	
+			case 'Fr':
+			case 'Ro':
+			case 'It':
+				$this->fmtDate="d-m-Y";
+				$this->fmtTimeStamp = "d-m-Y H:i:s";
+				break;
+				
+			case 'Ge':
+				$this->fmtDate="d.m.Y";
+				$this->fmtTimeStamp = "d.m.Y H:i:s";
+				break;
+		}
 	}
 	
 	
@@ -1621,20 +1795,21 @@
 
 	/*
 	* Maximum size of C field
-	*/
+	*
 	function CharMax()
 	{
-		return 255; /*  make it conservative if not defined */
+		return 255; // make it conservative if not defined
 	}
 	
 	
 	/*
 	* Maximum size of X field
-	*/
+	*
 	function TextMax()
 	{
-		return 4000; /*  make it conservative if not defined */
+		return 4000; // make it conservative if not defined
 	}
+	*/
 	
 	/**
 	 * Close Connection
@@ -1643,10 +1818,10 @@
 	{
 		return $this->_close();
 		
-		/*  "Simon Lee" <simon@mediaroad.com> reports that persistent connections need  */
-		/*  to be closed too! */
-		/* if ($this->_isPersistentConnection != true) return $this->_close(); */
-		/* else return true;	 */
+		// "Simon Lee" <simon@mediaroad.com> reports that persistent connections need 
+		// to be closed too!
+		//if ($this->_isPersistentConnection != true) return $this->_close();
+		//else return true;	
 	}
 	
 	/**
@@ -1704,14 +1879,23 @@
 		}
 		
 	/**
+	 * @param ttype can either be 'VIEW' or 'TABLE' or false. 
+	 * 		If false, both views and tables are returned.
+	 *		"VIEW" returns only views
+	 *		"TABLE" returns only tables
+	 * @param showSchema returns the schema/user with the table name, eg. USER.TABLE
+	 * @param mask  is the input mask - only supported by oci8 and postgresql
+	 *
 	 * @return  array of tables for current database.
 	 */ 
-	function &MetaTables() 
+	function &MetaTables($ttype=false,$showSchema=false,$mask=false) 
 	{
 	global $ADODB_FETCH_MODE;
 	
+		if ($mask) return false;
+		
 		if ($this->metaTablesSQL) {
-			/*  complicated state saving by the need for backward compat */
+			// complicated state saving by the need for backward compat
 			$save = $ADODB_FETCH_MODE; 
 			$ADODB_FETCH_MODE = ADODB_FETCH_NUM; 
 			
@@ -1724,8 +1908,20 @@
 			if ($rs === false) return false;
 			$arr =& $rs->GetArray();
 			$arr2 = array();
+			
+			if ($hast = ($ttype && isset($arr[0][1]))) { 
+				$showt = strncmp($ttype,'T',1);
+			}
+			
 			for ($i=0; $i < sizeof($arr); $i++) {
-				$arr2[] = $arr[$i][0];
+				if ($hast) {
+					if ($showt == 0) {
+						if (strncmp($arr[$i][1],'T',1) == 0) $arr2[] = trim($arr[$i][0]);
+					} else {
+						if (strncmp($arr[$i][1],'V',1) == 0) $arr2[] = trim($arr[$i][0]);
+					}
+				} else
+					$arr2[] = trim($arr[$i][0]);
 			}
 			$rs->Close();
 			return $arr2;
@@ -1757,8 +1953,8 @@
 			if ($rs === false) return false;
 
 			$retarr = array();
-			while (!$rs->EOF) { /* print_r($rs->fields); */
-				$fld = new ADOFieldObject();
+			while (!$rs->EOF) { //print_r($rs->fields);
+				$fld =& new ADOFieldObject();
 				$fld->name = $rs->fields[0];
 				$fld->type = $rs->fields[1];
 				if (isset($rs->fields[3]) && $rs->fields[3]) {
@@ -1767,9 +1963,9 @@
 					if ($fld->scale>0) $fld->max_length += 1;
 				} else
 					$fld->max_length = $rs->fields[2];
-				
-				$retarr[strtoupper($fld->name)] = $fld;	
-				
+					
+				if ($ADODB_FETCH_MODE == ADODB_FETCH_NUM) $retarr[] = $fld;	
+				else $retarr[strtoupper($fld->name)] = $fld;
 				$rs->MoveNext();
 			}
 			$rs->Close();
@@ -1822,7 +2018,6 @@
 	 */
 	function DBDate($d)
 	{
-	
 		if (empty($d) && $d !== 0) return 'null';
 
 		if (is_string($d) && !is_numeric($d)) {
@@ -1830,7 +2025,7 @@
 			if ($this->isoDates) return "'$d'";
 			$d = ADOConnection::UnixDate($d);
 		}
-			
+
 		return adodb_date($this->fmtDate,$d);
 	}
 	
@@ -1867,7 +2062,7 @@
 			($v), $rr)) return false;
 
 		if ($rr[1] <= TIMESTAMP_FIRST_YEAR) return 0;
-		/*  h-m-s-MM-DD-YY */
+		// h-m-s-MM-DD-YY
 		return @adodb_mktime(0,0,0,$rr[2],$rr[3],$rr[1]);
 	}
 	
@@ -1881,11 +2076,12 @@
 	function UnixTimeStamp($v)
 	{
 		if (!preg_match( 
-			"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
+			"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ ,-]+(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
 			($v), $rr)) return false;
+			
 		if ($rr[1] <= TIMESTAMP_FIRST_YEAR && $rr[2]<= 1) return 0;
 	
-		/*  h-m-s-MM-DD-YY */
+		// h-m-s-MM-DD-YY
 		if (!isset($rr[5])) return  adodb_mktime(0,0,0,$rr[2],$rr[3],$rr[1]);
 		return  @adodb_mktime($rr[5],$rr[6],$rr[7],$rr[2],$rr[3],$rr[1]);
 	}
@@ -1904,10 +2100,10 @@
 	function UserDate($v,$fmt='Y-m-d')
 	{
 		$tt = $this->UnixDate($v);
-		/*  $tt == -1 if pre TIMESTAMP_FIRST_YEAR */
+		// $tt == -1 if pre TIMESTAMP_FIRST_YEAR
 		if (($tt === false || $tt == -1) && $v != false) return $v;
 		else if ($tt == 0) return $this->emptyDate;
-		else if ($tt == -1) { /*  pre-TIMESTAMP_FIRST_YEAR */
+		else if ($tt == -1) { // pre-TIMESTAMP_FIRST_YEAR
 		}
 		
 		return adodb_date($fmt,$tt);
@@ -1931,19 +2127,19 @@
 		if (!$magic_quotes) {
 		
 			if ($this->replaceQuote[0] == '\\'){
-				/*  only since php 4.0.5 */
+				// only since php 4.0.5
 				$s = adodb_str_replace(array('\\',"\0"),array('\\\\',"\\\0"),$s);
-				/* $s = str_replace("\0","\\\0", str_replace('\\','\\\\',$s)); */
+				//$s = str_replace("\0","\\\0", str_replace('\\','\\\\',$s));
 			}
 			return  "'".str_replace("'",$this->replaceQuote,$s)."'";
 		}
 		
-		/*  undo magic quotes for " */
+		// undo magic quotes for "
 		$s = str_replace('\\"','"',$s);
 		
-		if ($this->replaceQuote == "\\'")  /*  ' already quoted, no need to change anything */
+		if ($this->replaceQuote == "\\'")  // ' already quoted, no need to change anything
 			return "'$s'";
-		else {/*  change \' to '' for sybase/mssql */
+		else {// change \' to '' for sybase/mssql
 			$s = str_replace('\\\\','\\',$s);
 			return "'".str_replace("\\'",$this->replaceQuote,$s)."'";
 		}
@@ -1961,18 +2157,18 @@
 	* @param nrows		is the number of rows per page to get
 	* @param page		is the page number to get (1-based)
 	* @param [inputarr]	array of bind variables
-	* @param [arg3]		is a private parameter only used by jlim
 	* @param [secs2cache]		is a private parameter only used by jlim
 	* @return		the recordset ($rs->databaseType == 'array')
 	*
 	* NOTE: phpLens uses a different algorithm and does not use PageExecute().
 	*
 	*/
-	function &PageExecute($sql, $nrows, $page, $inputarr=false, $arg3=false, $secs2cache=0) 
+	function &PageExecute($sql, $nrows, $page, $inputarr=false, $secs2cache=0) 
 	{
-		include_once(ADODB_DIR.'/adodb-lib.inc.php');
-		if ($this->pageExecuteCountRows) return _adodb_pageexecute_all_rows($this, $sql, $nrows, $page, $inputarr, $arg3, $secs2cache);
-		return _adodb_pageexecute_no_last_page($this, $sql, $nrows, $page, $inputarr, $arg3, $secs2cache);
+		global $ADODB_INCLUDED_LIB;
+		if (empty($ADODB_INCLUDED_LIB)) include_once(ADODB_DIR.'/adodb-lib.inc.php');
+		if ($this->pageExecuteCountRows) return _adodb_pageexecute_all_rows($this, $sql, $nrows, $page, $inputarr, $secs2cache);
+		return _adodb_pageexecute_no_last_page($this, $sql, $nrows, $page, $inputarr, $secs2cache);
 
 	}
 	
@@ -1987,10 +2183,9 @@
 	* @param nrows		is the number of rows per page to get
 	* @param page		is the page number to get (1-based)
 	* @param [inputarr]	array of bind variables
-	* @param [arg3]		is a private parameter only used by jlim
 	* @return		the recordset ($rs->databaseType == 'array')
 	*/
-	function &CachePageExecute($secs2cache, $sql, $nrows, $page,$inputarr=false, $arg3=false) 
+	function &CachePageExecute($secs2cache, $sql, $nrows, $page,$inputarr=false) 
 	{
 		/*switch($this->dataProvider) {
 		case 'postgres':
@@ -1998,16 +2193,17 @@
 			break;
 		default: $secs2cache = 0; break;
 		}*/
-		return $this->PageExecute($sql,$nrows,$page,$inputarr,$arg3,$secs2cache);
+		$rs =& $this->PageExecute($sql,$nrows,$page,$inputarr,$secs2cache);
+		return $rs;
 	}
 
-} /*  end class ADOConnection */
+} // end class ADOConnection
 	
 	
 	
-	/* ==============================================================================================	 */
-	/*  CLASS ADOFetchObj */
-	/* ==============================================================================================	 */
+	//==============================================================================================	
+	// CLASS ADOFetchObj
+	//==============================================================================================	
 		
 	/**
 	* Internal placeholder for record objects. Used by ADORecordSet->FetchObj().
@@ -2015,9 +2211,9 @@
 	class ADOFetchObj {
 	};
 	
-	/* ==============================================================================================	 */
-	/*  CLASS ADORecordSet_empty */
-	/* ==============================================================================================	 */
+	//==============================================================================================	
+	// CLASS ADORecordSet_empty
+	//==============================================================================================	
 	
 	/**
 	* Lightweight recordset when there are no records to be returned
@@ -2038,16 +2234,16 @@
 		function FieldCount(){ return 0;}
 	}
 	
-	/* ==============================================================================================	 */
-	/*  DATE AND TIME FUNCTIONS */
-	/* ==============================================================================================	 */
+	//==============================================================================================	
+	// DATE AND TIME FUNCTIONS
+	//==============================================================================================	
 	include_once(ADODB_DIR.'/adodb-time.inc.php');
 	
-	/* ==============================================================================================	 */
-	/*  CLASS ADORecordSet */
-	/* ==============================================================================================	 */
+	//==============================================================================================	
+	// CLASS ADORecordSet
+	//==============================================================================================	
 	
- 
+
    /**
 	 * RecordSet class that represents the dataset returned by the database.
 	 * To keep memory overhead low, this class holds only the current row in memory.
@@ -2059,21 +2255,21 @@
 	 * public variables	
 	 */
 	var $dataProvider = "native";
-	var $fields = false; 	/* / holds the current row data */
-	var $blobSize = 100; 	/* / any varchar/char field this size or greater is treated as a blob */
-							/* / in other words, we use a text area for editting. */
-	var $canSeek = false; 	/* / indicates that seek is supported */
-	var $sql; 				/* / sql text */
-	var $EOF = false;		/* / Indicates that the current record position is after the last record in a Recordset object.  */
+	var $fields = false; 	/// holds the current row data
+	var $blobSize = 100; 	/// any varchar/char field this size or greater is treated as a blob
+							/// in other words, we use a text area for editting.
+	var $canSeek = false; 	/// indicates that seek is supported
+	var $sql; 				/// sql text
+	var $EOF = false;		/// Indicates that the current record position is after the last record in a Recordset object. 
 	
-	var $emptyTimeStamp = '&nbsp;'; /* / what to display when $time==0 */
-	var $emptyDate = '&nbsp;'; /* / what to display when $time==0 */
+	var $emptyTimeStamp = '&nbsp;'; /// what to display when $time==0
+	var $emptyDate = '&nbsp;'; /// what to display when $time==0
 	var $debug = false;
-	var $timeCreated=0; 	/* / datetime in Unix format rs created -- for cached recordsets */
+	var $timeCreated=0; 	/// datetime in Unix format rs created -- for cached recordsets
 
-	var $bind = false; 		/* / used by Fields() to hold array - should be private? */
-	var $fetchMode;			/* / default fetch mode */
-	var $connection = false; /* / the parent connection */
+	var $bind = false; 		/// used by Fields() to hold array - should be private?
+	var $fetchMode;			/// default fetch mode
+	var $connection = false; /// the parent connection
 	/*
 	 *	private variables	
 	 */
@@ -2115,12 +2311,11 @@
 			$this->_numOfRows = 0;
 			$this->_numOfFields = 0;
 		}
-	
 		if ($this->_numOfRows != 0 && $this->_numOfFields && $this->_currentRow == -1) {
 			
 			$this->_currentRow = 0;
 			if ($this->EOF = ($this->_fetch() === false)) {
-				$this->_numOfRows = 0; /*  _numOfRows could be -1 */
+				$this->_numOfRows = 0; // _numOfRows could be -1
 			}
 		} else {
 			$this->EOF = true;
@@ -2151,7 +2346,8 @@
 	function GetMenu($name,$defstr='',$blank1stItem=true,$multiple=false,
 			$size=0, $selectAttr='',$compareFields0=true)
 	{
-		include_once(ADODB_DIR.'/adodb-lib.inc.php');
+		global $ADODB_INCLUDED_LIB;
+		if (empty($ADODB_INCLUDED_LIB)) include_once(ADODB_DIR.'/adodb-lib.inc.php');
 		return _adodb_getmenu($this, $name,$defstr,$blank1stItem,$multiple,
 			$size, $selectAttr,$compareFields0);
 	}
@@ -2165,7 +2361,8 @@
 	 */
 	function GetMenu2($name,$defstr='',$blank1stItem=true,$multiple=false,$size=0, $selectAttr='')	
 	{
-		include_once(ADODB_DIR.'/adodb-lib.inc.php');
+		global $ADODB_INCLUDED_LIB;
+		if (empty($ADODB_INCLUDED_LIB)) include_once(ADODB_DIR.'/adodb-lib.inc.php');
 		return _adodb_getmenu($this,$name,$defstr,$blank1stItem,$multiple,
 			$size, $selectAttr,false);
 	}
@@ -2192,6 +2389,12 @@
 		return $results;
 	}
 	
+	function &GetAll($nRows = -1)
+	{
+		$arr =& $this->GetArray($nRows);
+		return $arr;
+	}
+	
 	/*
 	* Some databases allow multiple recordsets to be returned. This function
 	* will return true if there is a next recordset, or false if no more.
@@ -2213,7 +2416,8 @@
 	function &GetArrayLimit($nrows,$offset=-1) 
 	{	
 		if ($offset <= 0) {
-			return $this->GetArray($nrows);
+			$arr =& $this->GetArray($nrows);
+			return $arr;
 		} 
 		
 		$this->Move($offset);
@@ -2238,7 +2442,8 @@
 	 */
 	function &GetRows($nRows = -1) 
 	{
-		return $this->GetArray($nRows);
+		$arr =& $this->GetArray($nRows);
+		return $arr;
 	}
 	
 	/**
@@ -2278,16 +2483,16 @@
 				}
 			}
 		} else {
-			/*  return scalar values */
+			// return scalar values
 			if ($numIndex) {
 				while (!$this->EOF) {
-				/*  some bug in mssql PHP 4.02 -- doesn't handle references properly so we FORCE creating a new string */
+				// some bug in mssql PHP 4.02 -- doesn't handle references properly so we FORCE creating a new string
 					$results[trim(($this->fields[0]))] = $this->fields[1];
 					$this->MoveNext();
 				}
 			} else {
 				while (!$this->EOF) {
-				/*  some bug in mssql PHP 4.02 -- doesn't handle references properly so we FORCE creating a new string */
+				// some bug in mssql PHP 4.02 -- doesn't handle references properly so we FORCE creating a new string
 					$v1 = trim(reset($this->fields));
 					$v2 = ''.next($this->fields); 
 					$results[$v1] = $v2;
@@ -2309,7 +2514,7 @@
 	function UserTimeStamp($v,$fmt='Y-m-d H:i:s')
 	{
 		$tt = $this->UnixTimeStamp($v);
-		/*  $tt == -1 if pre TIMESTAMP_FIRST_YEAR */
+		// $tt == -1 if pre TIMESTAMP_FIRST_YEAR
 		if (($tt === false || $tt == -1) && $v != false) return $v;
 		if ($tt == 0) return $this->emptyTimeStamp;
 		return adodb_date($fmt,$tt);
@@ -2325,10 +2530,10 @@
 	function UserDate($v,$fmt='Y-m-d')
 	{
 		$tt = $this->UnixDate($v);
-		/*  $tt == -1 if pre TIMESTAMP_FIRST_YEAR */
+		// $tt == -1 if pre TIMESTAMP_FIRST_YEAR
 		if (($tt === false || $tt == -1) && $v != false) return $v;
 		else if ($tt == 0) return $this->emptyDate;
-		else if ($tt == -1) { /*  pre-TIMESTAMP_FIRST_YEAR */
+		else if ($tt == -1) { // pre-TIMESTAMP_FIRST_YEAR
 		}
 		return adodb_date($fmt,$tt);
 	
@@ -2347,7 +2552,7 @@
 			($v), $rr)) return false;
 			
 		if ($rr[1] <= TIMESTAMP_FIRST_YEAR) return 0;
-		/*  h-m-s-MM-DD-YY */
+		// h-m-s-MM-DD-YY
 		return @adodb_mktime(0,0,0,$rr[2],$rr[3],$rr[1]);
 	}
 	
@@ -2361,11 +2566,11 @@
 	{
 		
 		if (!preg_match( 
-			"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
+			"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ ,-]+(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
 			($v), $rr)) return false;
 		if ($rr[1] <= TIMESTAMP_FIRST_YEAR && $rr[2]<= 1) return 0;
 	
-		/*  h-m-s-MM-DD-YY */
+		// h-m-s-MM-DD-YY
 		if (!isset($rr[5])) return  adodb_mktime(0,0,0,$rr[2],$rr[3],$rr[1]);
 		return  @adodb_mktime($rr[5],$rr[6],$rr[7],$rr[2],$rr[3],$rr[1]);
 	}
@@ -2424,7 +2629,7 @@
 		if ($this->EOF) return (defined('PEAR_ERROR_RETURN')) ? new PEAR_Error('EOF',-1): false;
 		$arr = $this->fields;
 		$this->MoveNext();
-		return 1; /*  DB_OK */
+		return 1; // DB_OK
 	}
 	
 	
@@ -2548,7 +2753,7 @@
 	{
 		$this->bind = array();
 		for ($i=0; $i < $this->_numOfFields; $i++) {
-			$o = $this->FetchField($i);
+			$o =& $this->FetchField($i);
 			if ($upper === 2) $this->bind[$o->name] = $i;
 			else $this->bind[($upper) ? strtoupper($o->name) : strtolower($o->name)] = $i;
 		}
@@ -2563,7 +2768,7 @@
    *
    * $upper  0 = lowercase, 1 = uppercase, 2 = whatever is returned by FetchField
    */
-	function GetRowAssoc($upper=1)
+	function &GetRowAssoc($upper=1)
 	{
 	 
 	   	if (!$this->bind) {
@@ -2586,9 +2791,9 @@
 	 */
 	function Close() 
 	{
-		/*  free connection object - this seems to globally free the object */
-		/*  and not merely the reference, so don't do this... */
-		/*  $this->connection = false;  */
+		// free connection object - this seems to globally free the object
+		// and not merely the reference, so don't do this...
+		// $this->connection = false; 
 		if (!$this->_closed) {
 			$this->_closed = true;
 			return $this->_close();		
@@ -2632,7 +2837,7 @@
 	function PO_RecordCount($table="", $condition="") {
 		
 		$lnumrows = $this->_numOfRows;
-		/*  the database doesn't support native recordcount, so we do a workaround */
+		// the database doesn't support native recordcount, so we do a workaround
 		if ($lnumrows == -1 && $this->connection) {
 			IF ($table) {
 				if ($condition) $condition = " WHERE " . $condition; 
@@ -2671,7 +2876,7 @@
 	 */
 	function &FetchField($fieldoffset) 
 	{
-		/*  must be defined by child class */
+		// must be defined by child class
 	}	
 	
 	/**
@@ -2694,7 +2899,8 @@
 	*/
 	function &FetchObj()
 	{
-		return FetchObject(false);
+		$o =& $this->FetchObject(false);
+		return $o;
 	}
 	
 	/**
@@ -2708,7 +2914,7 @@
 	function &FetchObject($isupper=true)
 	{
 		if (empty($this->_obj)) {
-			$this->_obj = new ADOFetchObj();
+			$this->_obj =& new ADOFetchObj();
 			$this->_names = array();
 			for ($i=0; $i <$this->_numOfFields; $i++) {
 				$f = $this->FetchField($i);
@@ -2796,7 +3002,7 @@
 			$t = $fieldobj->type;
 			$len = $fieldobj->max_length;
 		}
-	/*  changed in 2.32 to hashing instead of switch stmt for speed... */
+	// changed in 2.32 to hashing instead of switch stmt for speed...
 	static $typeMap = array(
 		'VARCHAR' => 'C',
 		'VARCHAR2' => 'C',
@@ -2826,7 +3032,7 @@
 		'LONGBINARY' => 'B',
 		'B' => 'B',
 		##
-		'YEAR' => 'D', /*  mysql */
+		'YEAR' => 'D', // mysql
 		'DATE' => 'D',
 		'D' => 'D',
 		##
@@ -2842,18 +3048,19 @@
 		##
 		'COUNTER' => 'R',
 		'R' => 'R',
-		'SERIAL' => 'R', /*  ifx */
+		'SERIAL' => 'R', // ifx
 		'INT IDENTITY' => 'R',
 		##
 		'INT' => 'I',
 		'INTEGER' => 'I',
+		'INTEGER UNSIGNED' => 'I',
 		'SHORT' => 'I',
 		'TINYINT' => 'I',
 		'SMALLINT' => 'I',
 		'I' => 'I',
 		##
-		'LONG' => 'N', /*  interbase is numeric, oci8 is blob */
-		'BIGINT' => 'N', /*  this is bigger than PHP 32-bit integers */
+		'LONG' => 'N', // interbase is numeric, oci8 is blob
+		'BIGINT' => 'N', // this is bigger than PHP 32-bit integers
 		'DECIMAL' => 'N',
 		'DEC' => 'N',
 		'REAL' => 'N',
@@ -2889,7 +3096,7 @@
 		switch ($tmap) {
 		case 'C':
 		
-			/*  is the char field is too long, return as text field...  */
+			// is the char field is too long, return as text field... 
 			if (!empty($this->blobSize)) {
 				if ($len > $this->blobSize) return 'X';
 			} else if ($len > 250) {
@@ -2953,11 +3160,11 @@
 		if ($status != false) $this->_atLastPage = $status;
 		return $this->_atLastPage;
 	}
-} /*  end class ADORecordSet */
+} // end class ADORecordSet
 	
-	/* ==============================================================================================	 */
-	/*  CLASS ADORecordSet_array */
-	/* ==============================================================================================	 */
+	//==============================================================================================	
+	// CLASS ADORecordSet_array
+	//==============================================================================================	
 	
 	/**
 	 * This class encapsulates the concept of a recordset created in memory
@@ -2970,11 +3177,11 @@
 	{
 		var $databaseType = 'array';
 
-		var $_array; 	/*  holds the 2-dimensional data array */
-		var $_types;	/*  the array of types of each column (C B I L M) */
-		var $_colnames;	/*  names of each column in array */
-		var $_skiprow1;	/*  skip 1st row because it holds column names */
-		var $_fieldarr; /*  holds array of field objects */
+		var $_array; 	// holds the 2-dimensional data array
+		var $_types;	// the array of types of each column (C B I L M)
+		var $_colnames;	// names of each column in array
+		var $_skiprow1;	// skip 1st row because it holds column names
+		var $_fieldarr; // holds array of field objects
 		var $canSeek = true;
 		var $affectedrows = false;
 		var $insertid = false;
@@ -2988,9 +3195,9 @@
 		{
 		global $ADODB_FETCH_MODE,$ADODB_COMPAT_FETCH;
 		
-			/*  fetch() on EOF does not delete $this->fields */
+			// fetch() on EOF does not delete $this->fields
 			$this->compat = !empty($ADODB_COMPAT_FETCH);
-			$this->ADORecordSet($fakeid); /*  fake queryID		 */
+			$this->ADORecordSet($fakeid); // fake queryID		
 			$this->fetchMode = $ADODB_FETCH_MODE;
 		}
 		
@@ -3040,7 +3247,8 @@
 			if ($nRows == -1 && $this->_currentRow <= 0 && !$this->_skiprow1) {
 				return $this->_array;
 			} else {
-				return ADORecordSet::GetArray($nRows);
+				$arr =& ADORecordSet::GetArray($nRows);
+				return $arr;
 			}
 		}
 		
@@ -3076,7 +3284,7 @@
 			$o =  new ADOFieldObject();
 			$o->name = $this->_colnames[$fieldOffset];
 			$o->type =  $this->_types[$fieldOffset];
-			$o->max_length = -1; /*  length not known */
+			$o->max_length = -1; // length not known
 			
 			return $o;
 		}
@@ -3129,11 +3337,11 @@
 			return true;	
 		}
 	
-	} /*  ADORecordSet_array */
+	} // ADORecordSet_array
 
-	/* ==============================================================================================	 */
-	/*  HELPER FUNCTIONS */
-	/* ==============================================================================================			 */
+	//==============================================================================================	
+	// HELPER FUNCTIONS
+	//==============================================================================================			
 	
 	/**
 	 * Synonym for ADOLoadCode.
@@ -3159,7 +3367,7 @@
 			case 'postgres':
 			case 'pgsql': $ADODB_Database = 'postgres7'; break;
 		}
-		/*  Karsten Kraus <Karsten.Kraus@web.de>  */
+		// Karsten Kraus <Karsten.Kraus@web.de> 
 		return @include_once(ADODB_DIR."/drivers/adodb-".$ADODB_Database.".inc.php");		
 	}
 
@@ -3168,7 +3376,8 @@
 	 */
 	function &NewADOConnection($db='')
 	{
-		return ADONewConnection($db);
+		$tmp =& ADONewConnection($db);
+		return $tmp;
 	}
 	
 	/**
@@ -3181,7 +3390,18 @@
 	 */
 	function &ADONewConnection($db='')
 	{
-	GLOBAL $ADODB_Database;
+	GLOBAL $ADODB_Database,$ADODB_NEWCONNECTION;
+		
+		if (!defined('ADODB_ASSOC_CASE')) define('ADODB_ASSOC_CASE',2);
+		$errorfn = (defined('ADODB_ERROR_HANDLER')) ? ADODB_ERROR_HANDLER : false;
+		
+		if (!empty($ADODB_NEWCONNECTION)) {
+			$obj = $ADODB_NEWCONNECTION($db);
+			if ($obj) {
+				if ($errorfn)  $obj->raiseErrorFn = $errorfn;
+				return $obj;
+			}
+		}
 		
 		$rez = true;
 		if ($db) {
@@ -3194,10 +3414,9 @@
 			}
 		}
 		
-		$errorfn = (defined('ADODB_ERROR_HANDLER')) ? ADODB_ERROR_HANDLER : false;
 		if (!$rez) {
 			 if ($errorfn) {
-				/*  raise an error */
+				// raise an error
 				$errorfn('ADONewConnection', 'ADONewConnection', -998,
 						 "could not load the database driver for '$db",
 						 $dbtype);
@@ -3214,27 +3433,49 @@
 		return $obj;
 	}
 	
-	function &NewDataDictionary(&$conn)
+	// $perf == true means called by NewPerfMonitor()
+	function _adodb_getdriver($provider,$drivername,$perf=false)
 	{
-		$provider = $conn->dataProvider;
-		$drivername = $conn->databaseType;
 		if ($provider !== 'native' && $provider != 'odbc' && $provider != 'ado') 
-			$drivername = $conn->dataProvider;
+			$drivername = $provider;
 		else {
 			if (substr($drivername,0,5) == 'odbc_') $drivername = substr($drivername,5);
 			else if (substr($drivername,0,4) == 'ado_') $drivername = substr($drivername,4);
 			else 
 			switch($drivername) {
 			case 'oracle': $drivername = 'oci8';break;
-			case 'sybase': $drivername = 'mssql';break;
-			case 'access':
-			case 'db2':		
-				break;
+			//case 'sybase': $drivername = 'mssql';break;
+			case 'access': 
+						if ($perf) $drivername = '';
+						break;
+			case 'db2':	
+						if ($perf) break;
 			default:
 				$drivername = 'generic';
 				break;
 			}
 		}
+		
+		return $drivername;
+	}
+	
+	function &NewPerfMonitor(&$conn)
+	{
+		$drivername = _adodb_getdriver($conn->dataProvider,$conn->databaseType,true);
+		if (!$drivername || $drivername == 'generic') return false;
+		include_once(ADODB_DIR.'/adodb-perf.inc.php');
+		@include_once(ADODB_DIR."/perf/perf-$drivername.inc.php");
+		$class = "Perf_$drivername";
+		if (!class_exists($class)) return false;
+		$perf =& new $class($conn);
+		
+		return $perf;
+	}
+	
+	function &NewDataDictionary(&$conn)
+	{
+		$drivername = _adodb_getdriver($conn->dataProvider,$conn->databaseType);
+		
 		include_once(ADODB_DIR.'/adodb-lib.inc.php');
 		include_once(ADODB_DIR.'/adodb-datadict.inc.php');
 		$path = ADODB_DIR."/datadict/datadict-$drivername.inc.php";
@@ -3261,7 +3502,7 @@
 	*/
 	function adodb_write_file($filename, $contents,$debug=false)
 	{ 
-	# http:/* www.php.net/bugs.php?id=9203 Bug that flock fails on Windows */
+	# http://www.php.net/bugs.php?id=9203 Bug that flock fails on Windows
 	# So to simulate locking, we assume that rename is an atomic operation.
 	# First we delete $filename, then we create a $tempfile write to it and 
 	# rename to the desired $filename. If the rename works, then we successfully 
@@ -3272,12 +3513,12 @@
 	# 2. unlink($filename) fails -- ok, rename will fail
 	# 3. adodb reads stale file because unlink fails -- ok, $rs timeout occurs
 	# 4. another process creates $filename between unlink() and rename() -- ok, rename() fails and  cache updated
-		if (strpos(strtoupper(PHP_OS),'WIN') !== false) {
-			/*  skip the decimal place */
+		if (strncmp(PHP_OS,'WIN',3) === 0) {
+			// skip the decimal place
 			$mtime = substr(str_replace(' ','_',microtime()),2); 
-			/*  unlink will let some latencies develop, so uniqid() is more random */
+			// unlink will let some latencies develop, so uniqid() is more random
 			@unlink($filename);
-			/*  getmypid() actually returns 0 on Win98 - never mind! */
+			// getmypid() actually returns 0 on Win98 - never mind!
 			$tmpname = $filename.uniqid($mtime).getmypid();
 			if (!($fd = fopen($tmpname,'a'))) return false;
 			$ok = ftruncate($fd,0);			
@@ -3306,9 +3547,14 @@
 	
 		return $ok;
 	}
-
 	
-	function adodb_backtrace($print=true)
+
+	function adodb_pr($var)
+	{
+		echo " <pre>\n";print_r($var);echo "</pre>\n";
+	}
+	
+	function adodb_backtrace($print=true,$levels=9999)
 	{
 		$s = '';
 		if (PHPVERSION() >= 4.3) {
@@ -3321,6 +3567,9 @@
 			$tabs = sizeof($traceArr)-1;
 			
 			foreach ($traceArr as $arr) {
+				$levels -= 1;
+				if ($levels < 0) break;
+				
 				$args = array();
 				for ($i=0; $i < $tabs; $i++) $s .= ' &nbsp; ';
 				$tabs -= 1;
@@ -3332,7 +3581,7 @@
 					else if (is_array($v)) $args[] = 'Array['.sizeof($v).']';
 					else if (is_object($v)) $args[] = 'Object:'.get_class($v);
 					else if (is_bool($v)) $args[] = $v ? 'true' : 'false';
-					else { 
+					else {
 						$v = (string) @$v;
 						$str = htmlspecialchars(substr($v,0,$MAXSTRLEN));
 						if (strlen($v) > $MAXSTRLEN) $str .= '...';
@@ -3340,7 +3589,7 @@
 					}
 				}
 				$s .= $arr['function'].'('.implode(', ',$args).')';
-				$s .= @sprintf("</font><font color=#808080 size=-1> # line %4d, file: <a href=\"file:/%s\">%s</a></font>",
+				$s .= @sprintf("</font><font color=#808080 size=-1> %% line %4d, file: <a href=\"file:/%s\">%s</a></font>",
 					$arr['line'],$arr['file'],$arr['file']);
 				$s .= "\n";
 			}	
@@ -3349,6 +3598,7 @@
 		}
 		return $s;
 	}
+
 	
-} /*  defined */
+} // defined
 ?>

@@ -1,0 +1,43 @@
+2003-05-03 14:20  richtl
+
+	* INSTALL, xmlschema.html: Renamed adodb-xmlschema.php to
+	adodb-xmlschema.inc.php in the docs.
+
+2003-05-03 14:17  richtl
+
+	* adodb-xmlschema.inc.php, adodb-xmlschema.php: Renamed
+	adodb-xmlschema.php to adodb-xmlschema.inc.php to fit in with the
+	ADODB standard.
+
+2003-05-03 14:16  richtl
+
+	* xmlschema.html: Fixed a doc bug in the example.
+
+2003-05-03 14:15  richtl
+
+	* example.php, example.xml: Initial add to CVS
+
+2003-05-03 13:46  richtl
+
+	* adodb-xmlschema.php, xmlschema.html, INSTALL, LICENSE, README,
+	xmlschema.dtd, docs/blank.html, docs/classtrees_xmlschema.html,
+	docs/elementindex.html, docs/elementindex_xmlschema.html,
+	docs/errors.html, docs/index.html, docs/li_xmlschema.html,
+	docs/packages.html, docs/media/bg_left.png,
+	docs/media/stylesheet.css,
+	docs/xmlschema/_adodb-xmlschema_php.html,
+	docs/xmlschema/adoSchema.html,
+	docs/xmlschema/package_xmlschema.html: Initial import
+
+2003-05-03 13:46  richtl
+
+	* adodb-xmlschema.php, xmlschema.html, INSTALL, LICENSE, README,
+	xmlschema.dtd, docs/blank.html, docs/classtrees_xmlschema.html,
+	docs/elementindex.html, docs/elementindex_xmlschema.html,
+	docs/errors.html, docs/index.html, docs/li_xmlschema.html,
+	docs/packages.html, docs/media/bg_left.png,
+	docs/media/stylesheet.css,
+	docs/xmlschema/_adodb-xmlschema_php.html,
+	docs/xmlschema/adoSchema.html,
+	docs/xmlschema/package_xmlschema.html: Initial revision
+

@@ -1,6 +1,6 @@
 <?php
 /* 
-V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.00 20 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -13,15 +13,24 @@ function NotifyExpire($ref,$key)
 {
 	print "<p><b>Notify Expiring=$ref, sessionkey=$key</b></p>";
 }
-$USER = 'JLIM'.rand();
-$ADODB_SESSION_EXPIRE_NOTIFY = array('USER','NotifyExpire');
 
-GLOBAL $HTTP_SESSION_VARS;
+//-------------------------------------------------------------------
+	
+	$ADODB_SESSION_DRIVER='oci8';
+	$ADODB_SESSION_CONNECT='';
+	$ADODB_SESSION_USER ='scott';
+	$ADODB_SESSION_PWD ='natsoft';
+	$ADODB_SESSION_DB ='';
+
+	$USER = 'JLIM'.rand();
+	$ADODB_SESSION_EXPIRE_NOTIFY = array('USER','NotifyExpire');
+	
+	GLOBAL $HTTP_SESSION_VARS;
 	ob_start();
 	error_reporting(E_ALL);
 	
 	$ADODB_SESS_DEBUG = true;
-	include('../adodb-cryptsession.php');
+	include('../adodb-session.php');
 	session_start();
 	
 	print "<h3>PHP ".PHP_VERSION."</h3>";
@@ -32,6 +41,10 @@ GLOBAL $HTTP_SESSION_VARS;
 	print "<p><b>\$HTTP_SESSION_VARS['AVAR']={$HTTP_SESSION_VARS['AVAR']}</b></p>";
 	
 	if (rand() % 10 == 0) {
+	
+		print "<p>GC</p>";
+		adodb_sess_gc(10);
+		
 		print "<p>Random session destroy</p>";
 		session_destroy();
 	}

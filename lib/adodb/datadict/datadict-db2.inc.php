@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.00 20 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -22,8 +22,8 @@ class ADODB2_db2 extends ADODB_DataDict {
 		case 'XL':
 		case 'X': return 'VARCHAR(3600)'; 
 		
-		case 'C2': return 'VARCHAR'; /*  up to 32K */
-		case 'X2': return 'VARCHAR(3600)'; /*  up to 32000, but default page size too small */
+		case 'C2': return 'VARCHAR'; // up to 32K
+		case 'X2': return 'VARCHAR(3600)'; // up to 32000, but default page size too small
 		
 		case 'B': return 'BLOB';
 			
@@ -44,7 +44,7 @@ class ADODB2_db2 extends ADODB_DataDict {
 		}
 	}
 	
-	/*  return string must begin with space */
+	// return string must begin with space
 	function _CreateSuffix($fname,$ftype,$fnotnull,$fdefault,$fautoinc,$fconstraint)
 	{	
 		$suffix = '';

@@ -30,7 +30,7 @@ include_once('DB.php');
 	$hostname = 'JAGUAR\vsdotnet';
 	$databasename = 'northwind';
 	
-	$dsn = "mssql:/* $username:$password@$hostname/$databasename"; */
+	$dsn = "mssql://$username:$password@$hostname/$databasename";
 	$conn = &DB::connect($dsn);
 	print "date=".$conn->GetOne('select getdate()')."<br>";
 	@$conn->query('create table tester (id integer)');
@@ -46,7 +46,7 @@ include_once('../adodb.inc.php');
 	print "<h3>ADOdb</h3>";
 	$conn = NewADOConnection('mssql');
 	$conn->Connect('JAGUAR\vsdotnet','adodb','natsoft','northwind');
-/* 	$conn->debug=1; */
+//	$conn->debug=1;
 	print "date=".$conn->GetOne('select getdate()')."<br>";
 	$conn->Execute('create table tester (id integer)');
 	print "<p>Delete</p>"; flush();

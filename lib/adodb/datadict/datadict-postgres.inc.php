@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.00 20 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -15,7 +15,8 @@ class ADODB2_postgres extends ADODB_DataDict {
 	var $databaseType = 'postgres';
 	var $seqField = false;
 	var $seqPrefix = 'SEQ_';
-	
+	var $addCol = ' ADD COLUMN';
+	var $quote = '"';
 	
 	function MetaType($t,$len=-1,$fieldobj=false)
 	{
@@ -36,9 +37,9 @@ class ADODB2_postgres extends ADODB_DataDict {
 			case 'TEXT':
 				return 'X';
 	
-			case 'IMAGE': /*  user defined type */
-			case 'BLOB': /*  user defined type */
-			case 'BIT':	/*  This is a bit string, not a single bit, so don't return 'L' */
+			case 'IMAGE': // user defined type
+			case 'BLOB': // user defined type
+			case 'BIT':	// This is a bit string, not a single bit, so don't return 'L'
 			case 'VARBIT':
 			case 'BYTEA':
 				return 'B';
@@ -106,7 +107,13 @@ class ADODB2_postgres extends ADODB_DataDict {
 			return $meta;
 		}
 	}
-
+	
+	/* The following does not work in Pg 6.0 - does anyone want to contribute code? 
+	
+	//"ALTER TABLE table ALTER COLUMN column SET DEFAULT mydef" and
+	//"ALTER TABLE table ALTER COLUMN column DROP DEFAULT mydef"
+	//"ALTER TABLE table ALTER COLUMN column SET NOT NULL" and
+	//"ALTER TABLE table ALTER COLUMN column DROP NOT NULL"*/
 	function AlterColumnSQL($tabname, $flds)
 	{
 		if ($this->debug) ADOConnection::outp("AlterColumnSQL not supported for PostgreSQL");
@@ -116,11 +123,11 @@ class ADODB2_postgres extends ADODB_DataDict {
 	
 	function DropColumnSQL($tabname, $flds)
 	{
-		if ($this->debug) ADOConnection::outp("DropColumnSQL not supported for PostgreSQL");
-		return array();
+		if ($this->debug) ADOConnection::outp("DropColumnSQL only works with PostgreSQL 7.3+");
+		return ADODB_DataDict::DropColumnSQL($tabname, $flds)."/* only works for PostgreSQL 7.3+ */";
 	}
-	
-	/*  return string must begin with space */
+
+	// return string must begin with space
 	function _CreateSuffix($fname, &$ftype, $fnotnull,$fdefault,$fautoinc,$fconstraint)
 	{
 		if ($fautoinc) {

@@ -1,6 +1,6 @@
 <?php
 /*
-V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.00 20 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -37,11 +37,14 @@ so:
   create table sessions (
 	   SESSKEY char(32) not null,
 	   EXPIRY int(11) unsigned not null,
-	   DATA text not null,
+	   EXPIREREF varchar(64),
+	   DATA CLOB,
 	  primary key (sesskey)
   );
   
-  2. Then define the following parameters in this file:
+  2. Then define the following parameters. You can either modify
+     this file, or define them before this file is included:
+	 
   	$ADODB_SESSION_DRIVER='database driver, eg. mysql or ibase';
 	$ADODB_SESSION_CONNECT='server to connect to';
 	$ADODB_SESSION_USER ='user';
@@ -50,8 +53,7 @@ so:
 	$ADODB_SESSION_TBL = 'sessions'
 	
   3. Recommended is PHP 4.0.2 or later. There are documented
-session bugs in 
-	 earlier versions of PHP.
+session bugs in earlier versions of PHP.
 
 */
 
@@ -59,10 +61,11 @@ session bugs in
 include_once('crypt.inc.php');
 
 if (!defined('_ADODB_LAYER')) {
-	include ('adodb.inc.php');
+	include (dirname(__FILE__).'/adodb.inc.php');
 }
 
-
+ /* if database time and system time is difference is greater than this, then give warning */
+ define('ADODB_SESSION_SYNCH_SECS',60); 
 
 if (!defined('ADODB_SESSION')) {
 
@@ -79,7 +82,7 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 	$ADODB_SESS_INSERT,
 	$ADODB_SESSION_EXPIRE_NOTIFY; 
 
-	/* $ADODB_SESS_DEBUG = true; */
+	//$ADODB_SESS_DEBUG = true;
 	
 	/* SET THE FOLLOWING PARAMETERS */
 if (empty($ADODB_SESSION_DRIVER)) {
@@ -109,8 +112,8 @@ $ADODB_CRYPT_KEY = 'CRYPTED ADODB SESSIONS ROCK!';
 
 $ADODB_SESS_LIFE = ini_get('session.gc_maxlifetime');
 if ($ADODB_SESS_LIFE <= 1) {
-	/*  bug in PHP 4.0.3 pl 1  -- how about other versions? */
-	/* print "<h3>Session Error: PHP.INI setting <i>session.gc_maxlifetime</i>not set: $ADODB_SESS_LIFE</h3>"; */
+	// bug in PHP 4.0.3 pl 1  -- how about other versions?
+	//print "<h3>Session Error: PHP.INI setting <i>session.gc_maxlifetime</i>not set: $ADODB_SESS_LIFE</h3>";
 	$ADODB_SESS_LIFE=1440;
 }
 
@@ -156,7 +159,7 @@ global $ADODB_SESS_CONN,$ADODB_SESS_INSERT,$ADODB_SESSION_TBL;
 			$ADODB_SESS_INSERT = true;
 			$v = '';
 		} else {
-			/*  Decrypt session data */
+			// Decrypt session data
 			$v = rawurldecode($Crypt->Decrypt(reset($rs->fields), ADODB_Session_Key()));
 		}
 		$rs->Close();
@@ -174,7 +177,7 @@ $Crypt = new MD5Crypt;
 
 	$expiry = time() + $ADODB_SESS_LIFE;
 
-	/*  encrypt session data..	 */
+	// encrypt session data..	
 	$val = $Crypt->Encrypt(rawurlencode($val), ADODB_Session_Key());
 	
 	$arr = array('sesskey' => $key, 'expiry' => $expiry, 'data' => $val);
@@ -190,8 +193,8 @@ $Crypt = new MD5Crypt;
 	if (!$rs) {
 		ADOConnection::outp( '<p>Session Replace: '.$ADODB_SESS_CONN->ErrorMsg().'</p>',false);
 	} else {
-		/*  bug in access driver (could be odbc?) means that info is not commited */
-		/*  properly unless select statement executed in Win2000 */
+		// bug in access driver (could be odbc?) means that info is not commited
+		// properly unless select statement executed in Win2000
 	
 	if ($ADODB_SESS_CONN->databaseType == 'access') $rs = $ADODB_SESS_CONN->Execute("select sesskey from $ADODB_SESSION_TBL WHERE sesskey='$key'");
 	}
@@ -228,7 +231,7 @@ function adodb_sess_destroy($key)
 
 
 function adodb_sess_gc($maxlifetime) {
-	global $ADODB_SESS_CONN, $ADODB_SESSION_TBL,$ADODB_SESSION_EXPIRE_NOTIFY;
+	global $ADODB_SESS_CONN, $ADODB_SESSION_TBL,$ADODB_SESSION_EXPIRE_NOTIFY,$ADODB_SESS_DEBUG;
 
 	if ($ADODB_SESSION_EXPIRE_NOTIFY) {
 		reset($ADODB_SESSION_EXPIRE_NOTIFY);
@@ -252,7 +255,7 @@ function adodb_sess_gc($maxlifetime) {
 		$ADODB_SESS_CONN->Execute($qry);
 	}
 	
-	/*  suggested by Cameron, "GaM3R" <gamr@outworld.cx> */
+	// suggested by Cameron, "GaM3R" <gamr@outworld.cx>
 	if (defined('ADODB_SESSION_OPTIMIZE'))
 	{
 		switch( $ADODB_SESSION_DRIVER ) {
@@ -264,6 +267,25 @@ function adodb_sess_gc($maxlifetime) {
 			case 'postgresql7':
 				$opt_qry = 'VACUUM '.$ADODB_SESSION_TBL;	
 				break;
+		}
+	}
+	
+	if ($ADODB_SESS_CONN->dataProvider === 'oci8') $sql = 'select  TO_CHAR('.($ADODB_SESS_CONN->sysTimeStamp).', \'RRRR-MM-DD HH24:MI:SS\') from '. $ADODB_SESSION_TBL;
+	else $sql = 'select '.$ADODB_SESS_CONN->sysTimeStamp.' from '. $ADODB_SESSION_TBL;
+	
+	$rs =& $ADODB_SESS_CONN->SelectLimit($sql,1);
+	if ($rs && !$rs->EOF) {
+	
+		$dbts = reset($rs->fields);
+		$rs->Close();
+		$dbt = $ADODB_SESS_CONN->UnixTimeStamp($dbts);
+		$t = time();
+		if (abs($dbt - $t) >= ADODB_SESSION_SYNCH_SECS) {
+		global $HTTP_SERVER_VARS;
+			$msg = 
+			__FILE__.": Server time for webserver {$HTTP_SERVER_VARS['HTTP_HOST']} not in synch with database: database=$dbt ($dbts), webserver=$t (diff=".(abs($dbt-$t)/3600)." hrs)";
+			error_log($msg);
+			if ($ADODB_SESS_DEBUG) ADOConnection::outp("<p>$msg</p>");
 		}
 	}
 	

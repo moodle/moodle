@@ -158,6 +158,57 @@ SELECT col1, col2, null FROM t1 <br>	   WHERE t1.col not in (select distinct col
 <p>ADOdb supports portable Prepare/Execute with:</p>
 <pre>$stmt = $db-&gt;Prepare('select * from customers where custid=? and state=?');
 $rs = $db-&gt;Execute($stmt, array($id,'New York'));</pre>
+<p>Oracle uses named bind placeholders, not "?", so to support portable binding, we have Param() that generates 
+the correct placeholder (available since ADOdb 3.92):
+<pre><font color="#000000">$sql = <font color="#993300">'insert into table (col1,col2) values ('</font>.$DB-&gt;Param('a').<font color="#993300">','</font>.$DB-&gt;Param('b').<font color="#993300">')'</font>;
+<font color="#006600"># generates 'insert into table (col1,col2) values (?,?)'
+# or        'insert into table (col1,col2) values (:a,:b)</font>'
+$stmt = $DB-&gt;Prepare($sql);
+$stmt = $DB-&gt;Execute($stmt,array('one','two'));
+</font></pre>
+<h2>Portable Native SQL</h2>
+<p>ADOdb provides the following functions for portably generating SQL functions 
+  as strings to be merged into your SQL statements (some are only available since 
+  ADOdb 3.92): </p>
+<table width="75%" border="1">
+  <tr> 
+    <td><b>Function</b></td>
+    <td><b>Description</b></td>
+  </tr>
+  <tr> 
+    <td height="63">DBDate($date)</td>
+    <td>Pass in a UNIX timestamp or ISO date and it will convert it to a date 
+      string formatted for INSERT/UPDATE</td>
+  </tr>
+  <tr> 
+    <td>DBTimeStamp($date)</td>
+    <td>Pass in a UNIX timestamp or ISO date and it will convert it to a timestamp 
+      string formatted for INSERT/UPDATE</td>
+  </tr>
+  <tr> 
+    <td>SQLDate($date, $fmt)</td>
+    <td>Portably generate a date formatted using $fmt mask, for use in SELECT 
+      statements.</td>
+  </tr>
+  <tr> 
+    <td>OffsetDate($date, $ndays)</td>
+    <td>Portably generate a $date offset by $ndays.</td>
+  </tr>
+  <tr> 
+    <td>Concat($s1, $s2, ...)</td>
+    <td>Portably concatenate strings. Alternatively, for mssql use mssqlpo driver, 
+      which allows || operator.</td>
+  </tr>
+  <tr> 
+    <td>IfNull($fld, $replaceNull)</td>
+    <td>Returns a string that is the equivalent of MySQL IFNULL or Oracle NVL.</td>
+  </tr>
+  <tr>
+    <td>Param($name)</td>
+    <td>Generates bind placeholders, using ? or named conventions as appropriate.</td>
+  </tr>
+</table>
+<p>&nbsp; </p>
 <h2>DDL and Tuning</h2>
 There are database design tools such as ERWin or Dezign that allow you to generate data definition language commands such as ALTER TABLE or CREATE INDEX from Entity-Relationship diagrams. 
 <p>
@@ -279,7 +330,7 @@ your data carefully. Understand how joins and indexes work and how they are used
   <a href="http://php.weblogs.com/sql_tutorial">http://php.weblogs.com/sql_tutorial</a>. 
   Also read this article on <a href=http://phplens.com/lens/php-book/optimizing-debugging-php.php>Optimizing PHP</a>.
 <p>
-<font size=1>(c) 2002 John Lim.</font>
+<font size=1>(c) 2002-2003 John Lim.</font>
 
 </body>
 </html>

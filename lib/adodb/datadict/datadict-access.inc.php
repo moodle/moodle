@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.00 20 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -23,7 +23,7 @@ class ADODB2_access extends ADODB_DataDict {
 		case 'XL':
 		case 'X': return 'MEMO'; 
 		
-		case 'C2': return 'TEXT'; /*  up to 32K */
+		case 'C2': return 'TEXT'; // up to 32K
 		case 'X2': return 'MEMO';
 		
 		case 'B': return 'BINARY';
@@ -45,7 +45,7 @@ class ADODB2_access extends ADODB_DataDict {
 		}
 	}
 	
-	/*  return string must begin with space */
+	// return string must begin with space
 	function _CreateSuffix($fname, &$ftype, $fnotnull,$fdefault,$fautoinc,$fconstraint)
 	{
 		if ($fautoinc) {
@@ -55,7 +55,7 @@ class ADODB2_access extends ADODB_DataDict {
 		if (substr($ftype,0,7) == 'DECIMAL') $ftype = 'DECIMAL';
 		$suffix = '';
 		if (strlen($fdefault)) {
-			/* $suffix .= " DEFAULT $fdefault"; */
+			//$suffix .= " DEFAULT $fdefault";
 			if ($this->debug) ADOConnection::outp("Warning: Access does not supported DEFAULT values (field $fname)");
 		}
 		if ($fnotnull) $suffix .= ' NOT NULL';

@@ -1,0 +1,8 @@
+INSTALL
+
+To install adodb-xmlschema, simply copy the adodb-xmlschema.inc.php file into your ADODB directory.
+
+------------------------------------------------------------------------------------------------------------------------------------
+If you have any questions or comments, please email them to me at richtl@arscognita.com.
+
+$Id$

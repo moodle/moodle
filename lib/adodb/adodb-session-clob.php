@@ -1,6 +1,6 @@
 <?php
 /*
-V3.40 19 May 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V3.92  2 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -71,15 +71,19 @@ To force non-persistent connections, call adodb_session_open first before sessio
 	 	{
 	 	}
 	 
-	 Then define a global variable, with the first parameter being the
-	 global variable you would like to store in the EXPIREREF field, and
-	 the second is the function name.
+	 Then you need to define a global variable $ADODB_SESSION_EXPIRE_NOTIFY.
+	 This is an array with 2 elements, the first being the name of the variable
+	 you would like to store in the EXPIREREF field, and the 2nd is the 
+	 notification function's name.
 	 
 	 In this example, we want to be notified when a user's session 
-	 has expired, so we store the user id in $USERID, and make this
-	 the value stored in the EXPIREREF field:
+	 has expired, so we store the user id in the global variable $USERID, 
+	 store this value in the EXPIREREF field:
 	 
 	 	$ADODB_SESSION_EXPIRE_NOTIFY = array('USERID','NotifyFn');
+		
+	Then when the NotifyFn is called, we are passed the $USERID as the first
+	parameter, eg. NotifyFn($userid, $sesskey).
 */
 
 if (!defined('_ADODB_LAYER')) {
@@ -105,22 +109,23 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 	$ADODB_SESS_LIFE,
 	$ADODB_SESS_DEBUG,
 	$ADODB_SESSION_EXPIRE_NOTIFY,
-	$ADODB_SESSION_CRC;
+	$ADODB_SESSION_CRC,
 	$ADODB_SESSION_USE_LOBS;
 	
+	if (!isset($ADODB_SESSION_USE_LOBS)) $ADODB_SESSION_USE_LOBS = 'CLOB';
 	
 	$ADODB_SESS_LIFE = ini_get('session.gc_maxlifetime');
 	if ($ADODB_SESS_LIFE <= 1) {
-	 /*  bug in PHP 4.0.3 pl 1  -- how about other versions? */
-	 /* print "<h3>Session Error: PHP.INI setting <i>session.gc_maxlifetime</i>not set: $ADODB_SESS_LIFE</h3>"; */
+	 // bug in PHP 4.0.3 pl 1  -- how about other versions?
+	 //print "<h3>Session Error: PHP.INI setting <i>session.gc_maxlifetime</i>not set: $ADODB_SESS_LIFE</h3>";
 	 	$ADODB_SESS_LIFE=1440;
 	}
 	$ADODB_SESSION_CRC = false;
-	/* $ADODB_SESS_DEBUG = true; */
+	//$ADODB_SESS_DEBUG = true;
 	
-	/* //////////////////////////////// */
+	//////////////////////////////////
 	/* SET THE FOLLOWING PARAMETERS */
-	/* //////////////////////////////// */
+	//////////////////////////////////
 	
 	if (empty($ADODB_SESSION_DRIVER)) {
 		$ADODB_SESSION_DRIVER='mysql';
@@ -133,13 +138,13 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 	if (empty($ADODB_SESSION_EXPIRE_NOTIFY)) {
 		$ADODB_SESSION_EXPIRE_NOTIFY = false;
 	}
-	/*   Made table name configurable - by David Johnson djohnson@inpro.net */
+	//  Made table name configurable - by David Johnson djohnson@inpro.net
 	if (empty($ADODB_SESSION_TBL)){
 		$ADODB_SESSION_TBL = 'sessions';
 	}
 	
 
-	/*  defaulting $ADODB_SESSION_USE_LOBS */
+	// defaulting $ADODB_SESSION_USE_LOBS
 	if (!isset($ADODB_SESSION_USE_LOBS) || empty($ADODB_SESSION_USE_LOBS)) {
 		$ADODB_SESSION_USE_LOBS = false;
 	}
@@ -174,7 +179,7 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 	$ADODB_SESSION_DB,
 	$ADODB_SESS_DEBUG;
 	
-	/*  cannot use & below - do not know why... */
+	// cannot use & below - do not know why...
 	$ADODB_SESS_CONN = ADONewConnection($ADODB_SESSION_DRIVER);
 	if (!empty($ADODB_SESS_DEBUG)) {
 		$ADODB_SESS_CONN->debug = true;
@@ -215,13 +220,13 @@ global $ADODB_SESS_CONN,$ADODB_SESSION_TBL,$ADODB_SESSION_CRC;
 			
 		$rs->Close();
 		
-		/*  new optimization adodb 2.1 */
+		// new optimization adodb 2.1
 		$ADODB_SESSION_CRC = strlen($v).crc32($v);
 		
 		return $v;
 	}
 	
-	return ''; /*  thx to Jorma Tuomainen, webmaster#wizactive.com */
+	return ''; // thx to Jorma Tuomainen, webmaster#wizactive.com
 }
 
 /****************************************************************************************\
@@ -238,13 +243,13 @@ function adodb_sess_write($key, $val)
 		$ADODB_SESS_DEBUG, 
 		$ADODB_SESSION_CRC,
 		$ADODB_SESSION_EXPIRE_NOTIFY,
-		$ADODB_SESSION_DRIVER,			/*  added */
-		$ADODB_SESSION_USE_LOBS;		/*  added */
+		$ADODB_SESSION_DRIVER,			// added
+		$ADODB_SESSION_USE_LOBS;		// added
 
 	$expiry = time() + $ADODB_SESS_LIFE;
 	
-	/*  crc32 optimization since adodb 2.1 */
-	/*  now we only update expiry date, thx to sebastian thom in adodb 2.32 */
+	// crc32 optimization since adodb 2.1
+	// now we only update expiry date, thx to sebastian thom in adodb 2.32
 	if ($ADODB_SESSION_CRC !== false && $ADODB_SESSION_CRC == strlen($val).crc32($val)) {
 		if ($ADODB_SESS_DEBUG) echo "<p>Session: Only updating date - crc32 not changed</p>";
 		$qry = "UPDATE $ADODB_SESSION_TBL SET expiry=$expiry WHERE sesskey='$key' AND expiry >= " . time();
@@ -261,15 +266,15 @@ function adodb_sess_write($key, $val)
 	}
 
 	
-	if ($ADODB_SESSION_USE_LOBS === false) {	/*  no lobs, simply use replace() */
+	if ($ADODB_SESSION_USE_LOBS === false) {	// no lobs, simply use replace()
 		$rs = $ADODB_SESS_CONN->Replace($ADODB_SESSION_TBL,$arr, 'sesskey',$autoQuote = true);
 		if (!$rs) {
 			$err = $ADODB_SESS_CONN->ErrorMsg();
 		}
 	} else {
-		/*  what value shall we insert/update for lob row? */
+		// what value shall we insert/update for lob row?
 		switch ($ADODB_SESSION_DRIVER) {
-			/*  empty_clob or empty_lob for oracle dbs */
+			// empty_clob or empty_lob for oracle dbs
 			case "oracle":
 			case "oci8":
 			case "oci8po":
@@ -277,18 +282,18 @@ function adodb_sess_write($key, $val)
 				$lob_value = sprintf("empty_%s()", strtolower($ADODB_SESSION_USE_LOBS));
 				break;
 
-			/*  null for all other */
+			// null for all other
 			default:
 				$lob_value = "null";
 				break;
 		}
 
-		/*  do we insert or update? => as for sesskey */
+		// do we insert or update? => as for sesskey
 		$res = $ADODB_SESS_CONN->Execute("select count(*) as cnt from $ADODB_SESSION_TBL where sesskey = '$key'");
-		if ($res && ($res->fields["CNT"] > 0)) {
+		if ($res && reset($res->fields) > 0) {
 			$qry = sprintf("update %s set expiry = %d, data = %s where sesskey = '%s'", $ADODB_SESSION_TBL, $expiry, $lob_value, $key);
 		} else {
-			/*  insert */
+			// insert
 			$qry = sprintf("insert into %s (sesskey, expiry, data) values ('%s', %d, %s)", $ADODB_SESSION_TBL, $key, $expiry, $lob_value);
 		}
 
@@ -307,8 +312,8 @@ function adodb_sess_write($key, $val)
 	if (!$rs) {
 		ADOConnection::outp( '<p>Session Replace: '.nl2br($err).'</p>',false);
 	}  else {
-		/*  bug in access driver (could be odbc?) means that info is not commited */
-		/*  properly unless select statement executed in Win2000 */
+		// bug in access driver (could be odbc?) means that info is not commited
+		// properly unless select statement executed in Win2000
 		if ($ADODB_SESS_CONN->databaseType == 'access') 
 			$rs = $ADODB_SESS_CONN->Execute("select sesskey from $ADODB_SESSION_TBL WHERE sesskey='$key'");
 	}
@@ -370,7 +375,7 @@ function adodb_sess_gc($maxlifetime)
 	
 		if ($ADODB_SESS_DEBUG) ADOConnection::outp("<p><b>Garbage Collection</b>: $qry</p>");
 	}
-	/*  suggested by Cameron, "GaM3R" <gamr@outworld.cx> */
+	// suggested by Cameron, "GaM3R" <gamr@outworld.cx>
 	if (defined('ADODB_SESSION_OPTIMIZE')) {
 	global $ADODB_SESSION_DRIVER;
 	
@@ -388,17 +393,20 @@ function adodb_sess_gc($maxlifetime)
 			$ADODB_SESS_CONN->Execute($opt_qry);
 		}
 	}
+	if ($ADODB_SESS_CONN->dataProvider === 'oci8') $sql = 'select  TO_CHAR('.($ADODB_SESS_CONN->sysTimeStamp).', \'RRRR-MM-DD HH24:MI:SS\') from '. $ADODB_SESSION_TBL;
+	else $sql = 'select '.$ADODB_SESS_CONN->sysTimeStamp.' from '. $ADODB_SESSION_TBL;
 	
-	$rs = $ADODB_SESS_CONN->SelectLimit('select '.$ADODB_SESS_CONN->sysTimeStamp.' from '. $ADODB_SESSION_TBL,1);
+	$rs =& $ADODB_SESS_CONN->SelectLimit($sql,1);
 	if ($rs && !$rs->EOF) {
 	
-		$dbt = reset($rs->fields);
+		$dbts = reset($rs->fields);
 		$rs->Close();
-		$dbt = $ADODB_SESS_CONN->UnixTimeStamp($dbt);
+		$dbt = $ADODB_SESS_CONN->UnixTimeStamp($dbts);
 		$t = time();
 		if (abs($dbt - $t) >= ADODB_SESSION_SYNCH_SECS) {
 		global $HTTP_SERVER_VARS;
-			$msg = "adodb-session.php: Server time for webserver {$HTTP_SERVER_VARS['HTTP_HOST']} not in synch: database=$dbt, webserver=".$t;
+			$msg = 
+			__FILE__.": Server time for webserver {$HTTP_SERVER_VARS['HTTP_HOST']} not in synch with database: database=$dbt ($dbts), webserver=$t (diff=".(abs($dbt-$t)/3600)." hrs)";
 			error_log($msg);
 			if ($ADODB_SESS_DEBUG) ADOConnection::outp("<p>$msg</p>");
 		}

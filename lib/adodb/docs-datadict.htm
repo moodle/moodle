@@ -11,14 +11,13 @@
 <body bgcolor="#FFFFFF">
 
 <h2>ADOdb Data Dictionary Library for PHP</h2>
-<p> V3.60 16 June 2003 (c) 2000-2003 John Lim (<a href="mailto:jlim#natsoft.com.my">jlim#natsoft.com.my</a>)</p>
-<p><font size=1>This software is dual licensed using BSD-Style and LGPL. 
-Where there is any discrepancy, the BSD-Style license will take precedence. 
-This means you can use it in proprietary and commercial products.</font></p>
+<p> V4.00 20 Oct 2003 (c) 2000-2003 John Lim (<a href="mailto:jlim#natsoft.com.my">jlim#natsoft.com.my</a>)</p>
+<p><font size=1>This software is dual licensed using BSD-Style and LGPL. This 
+  means you can use it in compiled proprietary and commercial products.</font></p>
+<p>Useful ADOdb links:  <a href=http://php.weblogs.com/adodb?dd=1>Download</a> &nbsp; <a href=http://php.weblogs.com/adodb_manual?dd=1>Other Docs</a>
 
 <p>This documentation describes a class library to automate the creation of tables, 
-  indexes and foreign key constraints portably for multiple databases. Download 
-  from <a href="http://php.weblogs.com/adodb">http://php.weblogs.com/adodb</a> 
+  indexes and foreign key constraints portably for multiple databases. 
 <p>Currently the following databases are supported: 
 <p> Well-tested: PostgreSQL, MySQL, Oracle, MSSQL. <br>
 Beta-quality: DB2, Informix, Sybase, Interbase, Firebird.<br>
@@ -241,6 +240,10 @@ $db->Connect( ... );
 // Create the schema object and build the query array.
 $schema = <B>new adoSchema</B>( $db );
 
+// Optionally, set a prefix for newly-created tables. In this example
+// the prefix "myprefix_" will result in a table named "myprefix_tablename".
+//$schema-><B>setPrefix</B>( "myprefix_" );
+	
 // Build the SQL array
 $sql = $schema-><B>ParseSchema</B>( "schema.xml" );
 
@@ -250,6 +253,7 @@ $result = $schema-><B>ExecuteSchema</B>( $sql );
 // Finally, clean up after the XML parser
 // (PHP won't do this for you!)
 $schema-><B>Destroy</B>();
+
 </PRE>
 	
 <H3>XML Schema Format:</H3>

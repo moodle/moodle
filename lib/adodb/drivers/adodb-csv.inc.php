@@ -1,6 +1,6 @@
 <?php
 /*
-V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.00 20 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -25,12 +25,12 @@ class ADODB_csv extends ADOConnection {
 	var $_affectedrows=0;
 	var $_insertid=0;
 	var $_url;
-	var $replaceQuote = "''"; /*  string to use to replace quotes */
+	var $replaceQuote = "''"; // string to use to replace quotes
 	var $hasTransactions = false;
 	var $_errorNo = false;
 	
 	function ADODB_csv() 
-	{			
+	{		
 	}
 	
 	function _insertid()
@@ -49,18 +49,18 @@ class ADODB_csv extends ADOConnection {
 	}
 
 	
-	/*  returns true or false */
+	// returns true or false
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
-		if (strtolower(substr($argHostname,0,7)) !== 'http:/* ') return false; */
+		if (strtolower(substr($argHostname,0,7)) !== 'http://') return false;
 		$this->_url = $argHostname;
 		return true;	
 	}
 	
-	/*  returns true or false */
+	// returns true or false
 	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
-		if (strtolower(substr($argHostname,0,7)) !== 'http:/* ') return false; */
+		if (strtolower(substr($argHostname,0,7)) !== 'http://') return false;
 		$this->_url = $argHostname;
 		return true;
 	}
@@ -71,14 +71,14 @@ class ADODB_csv extends ADOConnection {
 	}
 		
 		
-	/*  parameters use PostgreSQL convention, not MySQL */
-	function &SelectLimit($sql,$nrows=-1,$offset=-1,$arg3=false)
+	// parameters use PostgreSQL convention, not MySQL
+	function &SelectLimit($sql,$nrows=-1,$offset=-1)
 	{
 	global $ADODB_FETCH_MODE;
 	
 		$url = $this->_url.'?sql='.urlencode($sql)."&nrows=$nrows&fetch=".
 			(($this->fetchMode !== false)?$this->fetchMode : $ADODB_FETCH_MODE).
-			"&offset=$offset&arg3=".urlencode($arg3);
+			"&offset=$offset";
 		$err = false;
 		$rs = csv2rs($url,$err,false);
 		
@@ -106,8 +106,8 @@ class ADODB_csv extends ADOConnection {
 		return $rs;
 	}
 	
-	/*  returns queryID or false */
-	function &Execute($sql,$inputarr=false,$arg3=false)
+	// returns queryID or false
+	function &_Execute($sql,$inputarr=false)
 	{
 	global $ADODB_FETCH_MODE;
 	
@@ -118,8 +118,8 @@ class ADODB_csv extends ADOConnection {
 			foreach($inputarr as $v) {
 
 				$sql .= $sqlarr[$i];
-				/*  from Ron Baldwin <ron.baldwin@sourceprose.com> */
-				/*  Only quote string types	 */
+				// from Ron Baldwin <ron.baldwin@sourceprose.com>
+				// Only quote string types	
 				if (gettype($v) == 'string')
 					$sql .= $this->qstr($v);
 				else if ($v === null)
@@ -137,8 +137,8 @@ class ADODB_csv extends ADOConnection {
 		
 		$url =  $this->_url.'?sql='.urlencode($sql)."&fetch=".
 			(($this->fetchMode !== false)?$this->fetchMode : $ADODB_FETCH_MODE);
-		if ($arg3) $url .= "&arg3=".urlencode($arg3);
 		$err = false;
+		
 		
 		$rs = csv2rs($url,$err,false);
 		if ($this->debug) print urldecode($url)."<br><i>$err</i><br>";
@@ -178,12 +178,12 @@ class ADODB_csv extends ADOConnection {
 		return $this->_errorNo;
 	}
 	
-	/*  returns true or false */
+	// returns true or false
 	function _close()
 	{
 		return true;
 	}
-} /*  class */
+} // class
 
 class ADORecordset_csv extends ADORecordset {
 	function ADORecordset_csv($id,$mode=false)
@@ -197,6 +197,6 @@ class ADORecordset_csv extends ADORecordset {
 	}
 }
 
-} /*  define */
+} // define
 	
 ?>

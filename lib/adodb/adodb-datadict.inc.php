@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.00 20 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -25,7 +25,7 @@ print "<pre>";
 print_r($a);
 print "</pre>";
 }
-/* Lens_ParseTest(); */
+//Lens_ParseTest();
 
 /**
 	Parse arguments, treat "text" (text) and 'text' as quotation marks.
@@ -150,9 +150,10 @@ class ADODB_DataDict {
 	var $schema = false;
 	var $serverInfo = array();
 	var $autoIncrement = false;
+	var $quote = '';
 	var $dataProvider;
-	var $blobSize = 100; 	/* / any varchar/char field this size or greater is treated as a blob */
-							/* / in other words, we use a text area for editting. */
+	var $blobSize = 100; 	/// any varchar/char field this size or greater is treated as a blob
+							/// in other words, we use a text area for editting.
 	
 	function GetCommentSQL($table,$col)
 	{
@@ -184,7 +185,7 @@ class ADODB_DataDict {
 		return ADORecordSet::MetaType($t,$len,$fieldobj);
 	}
 	
-	/*  Executes the sql array returned by GetTableSQL and GetIndexSQL */
+	// Executes the sql array returned by GetTableSQL and GetIndexSQL
 	function ExecuteSQLArray($sql, $continueOnError = true)
 	{
 		$rez = 2;
@@ -230,6 +231,7 @@ class ADODB_DataDict {
 	function CreateDatabase($dbname,$options=false)
 	{
 		$options = $this->_Options($options);
+		if (!preg_match('/^[a-z0-9A-Z_]*$/',$dbname)) $dbname = $this->quote.$dbname.$this->quote;
 		$s = 'CREATE DATABASE '.$dbname;
 		if (isset($options[$this->upperName])) $s .= ' '.$options[$this->upperName];
 		$sql[] = $s;
@@ -357,8 +359,8 @@ class ADODB_DataDict {
 			$fnotnull = false;
 			$funsigned = false;
 			
-			/* ----------------- */
-			/*  Parse attributes */
+			//-----------------
+			// Parse attributes
 			foreach($fld as $attr => $v) {
 				if ($attr == 2 && is_numeric($v)) $attr = 'SIZE';
 				else if (is_numeric($attr) && $attr > 1 && !is_numeric($v)) $attr = strtoupper($v);
@@ -387,11 +389,11 @@ class ADODB_DataDict {
 				case 'DEFDATE': $fdefdate = $v; break;
 				case 'DEFTIMESTAMP': $fdefts = $v; break;
 				case 'CONSTRAINT': $fconstraint = $v; break;
-				} /* switch */
-			} /*  foreach $fld */
+				} //switch
+			} // foreach $fld
 			
-			/* -------------------- */
-			/*  VALIDATE FIELD INFO */
+			//--------------------
+			// VALIDATE FIELD INFO
 			if (!strlen($fname)) {
 				if ($this->debug) ADOConnection::outp("Undefined NAME");
 				return false;
@@ -406,15 +408,15 @@ class ADODB_DataDict {
 			
 			$ftype = $this->_GetSize($ftype, $ty, $fsize, $fprec);
 			
-			if ($ty == 'X' || $ty == 'X2' || $ty == 'B') $fnotnull = false; /*  some blob types do not accept nulls */
+			if ($ty == 'X' || $ty == 'X2' || $ty == 'B') $fnotnull = false; // some blob types do not accept nulls
 			
 			if ($fprimary) $pkey[] = $fname;
 			
-			/*  some databases do not allow blobs to have defaults */
+			// some databases do not allow blobs to have defaults
 			if ($ty == 'X') $fdefault = false;
 			
-			/* -------------------- */
-			/*  CONSTRUCT FIELD SQL */
+			//--------------------
+			// CONSTRUCT FIELD SQL
 			if ($fdefts) {
 				if (substr($this->connection->databaseType,0,5) == 'mysql') {
 					$ftype = 'TIMESTAMP';
@@ -440,7 +442,7 @@ class ADODB_DataDict {
 			$lines[] = "$fname $ftype$suffix";
 			
 			if ($fautoinc) $this->autoIncrement = true;
-		} /*  foreach $flds */
+		} // foreach $flds
 		
 		
 		return array($lines,$pkey);
@@ -461,7 +463,7 @@ class ADODB_DataDict {
 	}
 	
 	
-	/*  return string must begin with space */
+	// return string must begin with space
 	function _CreateSuffix($fname,$ftype,$fnotnull,$fdefault,$fautoinc,$fconstraint)
 	{	
 		$suffix = '';
@@ -553,7 +555,7 @@ This function changes/adds new fields to your table. You
 own.
 
 */
-	function ChangeTableSQL($tablename, $flds)
+	function ChangeTableSQL($tablename, $flds,$tableoptions=false)
 	{
 		if ($this->schema) $tabname = $this->schema.'.'.$tablename;
 		else $tabname = $tablename;
@@ -561,8 +563,8 @@ own.
 		$conn = &$this->connection;
 		if (!$conn) return false;
 		
-		$colarr = $conn->MetaColumns($tabname);
-		if (!$colarr) return $this->CreateTableSQL($tablename,$flds);
+		$colarr = &$conn->MetaColumns($tabname);
+		if (!$colarr) return $this->CreateTableSQL($tablename,$flds,$tableoptions);
 		foreach($colarr as $col) $cols[strtoupper($col->name)] = " ALTER ";
 		
 		$sql = array();
@@ -578,5 +580,5 @@ own.
 		}
 		return $sql;
 	}
-} /*  class */
+} // class
 ?>

@@ -2,7 +2,7 @@
 <body bgcolor=white>
 <?php
 /** 
- * V3.60 16 June 2003  (c) 2001-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * V4.00 20 Oct 2003  (c) 2001-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -10,7 +10,7 @@
  * set tabs to 8
  */
  
- /*  documentation on usage is at http://php.weblogs.com/adodb_csv */
+ // documentation on usage is at http://php.weblogs.com/adodb_csv
  
 include('../adodb.inc.php');
 include('../tohtml.inc.php');
@@ -30,7 +30,7 @@ include('../tohtml.inc.php');
  }
 
 
-$serverURL = 'http:/* localhost/php/phplens/adodb/server.php'; */
+$serverURL = 'http://localhost/php/phplens/adodb/server.php';
 $testhttp = false;
 
 $sql1 = "insertz into products (productname) values ('testprod 1')";
