@@ -36,7 +36,7 @@ function get_student_courses(&$user) {
         foreach ($user->student as $courseid=>$value) {
         
             /// Get the value of the local course field
-            $localcoursevalue = getfield("course", $CFG->enrol_localcoursefield, "id", $courseid);
+            $localcoursevalue = get_field("course", $CFG->enrol_localcoursefield, "id", $courseid);
             
             /// Find a record in the external database that matches the local course field and local user field
             /// to the respective remote fields
