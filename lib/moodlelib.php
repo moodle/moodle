@@ -681,7 +681,7 @@ function optional_variable(&$var, $default=0) {
 
 /// DATABASE HANDLING ////////////////////////////////////////////////
 
-function execute_sql($command) {
+function execute_sql($command, $feedback=true) {
 // Completely general
 
     global $db;
@@ -689,10 +689,14 @@ function execute_sql($command) {
     $result = $db->Execute("$command");
 
     if ($result) {
-        echo "<P><FONT COLOR=green><B>".get_string("success")."</B></FONT></P>";
+        if ($feedback) {
+            echo "<P><FONT COLOR=green><B>".get_string("success")."</B></FONT></P>";
+        }
         return true;
     } else {
-        echo "<P><FONT COLOR=red><B>".get_string("error")."</B></FONT></P>";
+        if ($feedback) {
+            echo "<P><FONT COLOR=red><B>".get_string("error")."</B></FONT></P>";
+        }
         return false;
     }
 }

@@ -16,7 +16,7 @@
         }
 
         if (! $category = get_record("quiz_categories", "id", $question->category)) {
-            error("This question doesn't belong to a vald category!");
+            error("This question doesn't belong to a valid category!");
         }
         if (! $course = get_record("course", "id", $category->course)) {
             error("This question category doesn't belong to a valid course!");
@@ -61,6 +61,7 @@
         $question->name         = $form->name;
         $question->questiontext = $form->questiontext;
         $question->image        = $form->image;
+        $question->category     = $form->category;
 
         if ($question->id) { // Question already exists
             if (!update_record("quiz_questions", $question)) {
@@ -187,9 +188,7 @@
     arsort($gradeoptions, SORT_NUMERIC);
     arsort($gradeoptionsfull, SORT_NUMERIC);
 
-    if (!$categories = get_records_sql_menu("SELECT id,name FROM quiz_categories 
-                                             WHERE course='$course->id' OR publish = '1'
-                                             ORDER by name ASC")) {
+    if (!$categories = quiz_get_category_menu($course->id, true)) {
         error("No categories!");
     }
 
@@ -241,7 +240,7 @@
             require("multichoice.html");
         break;
             case RANDOM:
-                print_heading("Not supported yet");
+                print_heading("Sorry, random questions are not supported yet");
                 print_continue("edit.php");
             break;
 

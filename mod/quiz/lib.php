@@ -221,14 +221,28 @@ function quiz_print_correctanswer($text) {
     echo "<P ALIGN=RIGHT><SPAN CLASS=highlight>$text</SPAN></P>";
 }
 
-function  quiz_print_question($number, $questionid, $grade, $courseid, 
+function quiz_print_question_icon($question) {
+// Prints a question icon
+    switch ($question->type) {
+        case SHORTANSWER:
+            echo "<IMG HEIGHT=16 WIDTH=16 SRC=\"pix/sa.gif\">";
+            break;
+        case TRUEFALSE:
+            echo "<IMG HEIGHT=16 WIDTH=16 SRC=\"pix/tf.gif\">";
+            break;
+        case MULTICHOICE:
+            echo "<IMG HEIGHT=16 WIDTH=16 SRC=\"pix/mc.gif\">";
+            break;
+        case RANDOM:
+            echo "<IMG HEIGHT=16 WIDTH=16 SRC=\"pix/rs.gif\">";
+            break;
+    }
+}
+
+function quiz_print_question($number, $questionid, $grade, $courseid, 
                               $feedback=NULL, $response=NULL, $actualgrade=NULL, $correct=NULL) {
 /// Prints a quiz question, any format
-    global $THEME;
 
-    $comment = $THEME->cellheading2;
-    $green = "#AAFFAA";
-    
     if (!$question = get_record("quiz_questions", "id", $questionid)) {
         notify("Error: Question not found!");
     }
@@ -263,7 +277,7 @@ function  quiz_print_question($number, $questionid, $grade, $courseid,
                quiz_print_comment("<P ALIGN=right>$feedback[0]</P>");
            }
            if ($correct) {
-               $correctanswers = implode(",", $correct);
+               $correctanswers = implode(", ", $correct);
                quiz_print_correctanswer($correctanswers);
            }
            break;
@@ -445,12 +459,17 @@ function quiz_get_default_category($courseid) {
     return $category;
 }
 
+function quiz_get_category_menu($courseid, $published=false) {
+    if ($published) {
+        $publish = "OR publish = '1'";
+    }
+    return get_records_sql_menu("SELECT id,name FROM quiz_categories WHERE course='$courseid' $publish ORDER by name ASC");
+}
+
 function quiz_print_category_form($course, $current) {
 // Prints a form to choose categories
 
-    if (!$categories = get_records_sql_menu("SELECT id,name FROM quiz_categories 
-                                             WHERE course='$course->id' OR publish = '1'
-                                             ORDER by name ASC")) {
+    if (!$categories = quiz_get_category_menu($course->id, true)) {
         if (!$category = quiz_get_default_category($course->id)) {
             notify("Error creating a default category!");
             return false;
@@ -533,6 +552,7 @@ function quiz_print_question_list($questionlist, $grades) {
     $strmoveup = get_string("moveup");
     $strmovedown = get_string("movedown");
     $strsavegrades = get_string("savegrades", "quiz");
+    $strtype = get_string("type", "quiz");
 
     for ($i=10; $i>=0; $i--) {
         $gradesmenu[$i] = $i;
@@ -542,7 +562,7 @@ function quiz_print_question_list($questionlist, $grades) {
     $total = count($order);
     echo "<FORM METHOD=post ACTION=edit.php>";
     echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2 WIDTH=\"100%\">";
-    echo "<TR><TH WIDTH=10 COLSPAN=3>$strorder</TH><TH align=left WIDTH=\"100%\">$strquestionname</TH><TH WIDTH=10>$strgrade</TH><TH WIDTH=10>$stredit</TH></TR>";
+    echo "<TR><TH WIDTH=10 COLSPAN=3>$strorder</TH><TH align=left WIDTH=\"100%\">$strquestionname</TH><TH width=16>$strtype</TH><TH WIDTH=10>$strgrade</TH><TH WIDTH=10>$stredit</TH></TR>";
     foreach ($order as $qnum) {
         $count++;
         echo "<TR BGCOLOR=\"$THEME->cellcontent\">";
@@ -560,6 +580,9 @@ function quiz_print_question_list($questionlist, $grades) {
         }
         echo "</TD>";
         echo "<TD>".$questions[$qnum]->name."</TD>";
+        echo "<TD WIDTH=16 ALIGN=CENTER>";
+        quiz_print_question_icon($questions[$qnum]);
+        echo "</TD>";
         echo "<TD>";
         choose_from_menu($gradesmenu, "q$qnum", (string)$grades[$qnum], "");
         echo "<TD>";
@@ -571,7 +594,7 @@ function quiz_print_question_list($questionlist, $grades) {
 
         $sumgrade += $grades[$qnum];
     }
-    echo "<TR><TD COLSPAN=3><TD ALIGN=right>";
+    echo "<TR><TD COLSPAN=5 ALIGN=right>";
     echo "<INPUT TYPE=submit VALUE=\"$strsavegrades:\">";
     echo "<INPUT TYPE=hidden NAME=setgrades VALUE=\"save\">";
     echo "<TD ALIGN=LEFT BGCOLOR=\"$THEME->cellcontent\">";
@@ -598,6 +621,7 @@ function quiz_print_cat_question_list($categoryid) {
     $strdelete = get_string("delete");
     $stredit = get_string("edit");
     $straddselectedtoquiz = get_string("addselectedtoquiz", "quiz");
+    $strtype = get_string("type", "quiz");
 
     if (!$categoryid) {
         echo "<P align=center>";
@@ -632,7 +656,7 @@ function quiz_print_cat_question_list($categoryid) {
 
     echo "<FORM METHOD=post ACTION=edit.php>";
     echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2 WIDTH=\"100%\">";
-    echo "<TR><TH width=10>$strselect</TH><TH width=* align=left>$strquestionname</TH>";
+    echo "<TR><TH width=10>$strselect</TH><TH width=* align=left>$strquestionname</TH><TH WIDTH=16>$strtype</TH>";
     if ($canedit) {
         echo "<TH width=10>$stredit</TH>";
     }
@@ -643,6 +667,9 @@ function quiz_print_cat_question_list($categoryid) {
         echo "<INPUT TYPE=CHECKBOX NAME=q$question->id VALUE=\"1\">";
         echo "</TD>";
         echo "<TD>".$question->name."</TD>";
+        echo "<TD WIDTH=16 ALIGN=CENTER>";
+        quiz_print_question_icon($question);
+        echo "</TD>";
         if ($canedit) {
             echo "<TD>";
                 echo "<A TITLE=\"$strdelete\" HREF=\"question.php?delete=$question->id\"><IMG 
