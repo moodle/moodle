@@ -1370,9 +1370,32 @@ function get_list_of_countries() {
         }
     }
 
-    include("$CFG->dirroot/lang/$lang/countries.php"); 
+    include_once("$CFG->dirroot/lang/$lang/countries.php"); 
 
     asort($string);
+
+    return $string;
+}
+
+function get_list_of_pixnames() {
+/// Returns a list of picture names in the current language
+    global $CFG;
+
+    $lang = current_language();
+
+    if (!file_exists("$CFG->dirroot/lang/$lang/pix.php")) {
+        if ($parentlang = get_string("parentlanguage")) {
+            if (file_exists("$CFG->dirroot/lang/$parentlang/pix.php")) {
+                $lang = $parentlang;
+            } else {
+                $lang = "en";  // countries.php must exist in this pack
+            }
+        } else {
+            $lang = "en";  // countries.php must exist in this pack
+        }
+    }
+
+    include_once("$CFG->dirroot/lang/$lang/pix.php"); 
 
     return $string;
 }
