@@ -228,7 +228,7 @@ function algebra_filter ($courseid, $text) {
 	     $texcache->md5key = $md5;
 	     $texcache->rawtext = addslashes($texexp);
 	     $texcache->timemodified = time();
-	     insert_record("cache_filters",$texcache);
+	     insert_record("cache_filters",$texcache, false);
              $text = str_replace( $matches[0][$i], string_file_picture_algebra($filename, $texexp, '', '', $align), $text);
 	   } else {
 	     $text = str_replace( $matches[0][$i],"<b>Undetermined error:</b> ",$text);

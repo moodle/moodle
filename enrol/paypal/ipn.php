@@ -184,7 +184,7 @@
 
 
         } else if (strcmp ($result, "INVALID") == 0) { // ERROR
-            insert_record("enrol_paypal", $data);
+            insert_record("enrol_paypal", $data, false);
             email_paypal_error_to_admin("Received an invalid payment notification!! (Fake payment?)", $data);
         }
     }

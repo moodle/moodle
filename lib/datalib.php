@@ -771,6 +771,13 @@ function get_records_sql($sql) {
             foreach ($records as $key => $record) {
                 $objects[$key] = (object) $record;
             }
+            // log performance info
+            if ($rs->RecordCount() > 100 
+                && !empty($CFG->perfdebug)
+                && function_exists('memory_get_usage')) {
+                error_log("get_records_sql() in $_SERVER[REQUEST_URI]. Fetched $rs->RecordCount() records. Memory allocated: "
+                          . memory_get_usage());
+            }
             return $objects;
         } else {
             return false;
@@ -1069,6 +1076,19 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
     unset($dataobject->id);
 
+    /// Postgres doesn't have the concept of primary key built in
+    /// and will return the OID which isn't what we want.
+    /// The efficient and transaction-safe strategy is to 
+    /// move the sequence forward first, and make the insert
+    /// with an explicit id.
+    if ( !isset($dataobject->{$primarykey}) 
+         && $CFG->dbtype === 'postgres7'      
+         && $returnid == true ) {        
+        if ($nextval = get_field_sql("SELECT NEXTVAL('{$CFG->prefix}{$table}_{$primarykey}_seq')")) {
+            $dataobject->{$primarykey} = $nextval;            
+        } 
+    }
+
 /// Get the correct SQL from adoDB
     if (!$insertSQL = $db->GetInsertSQL($rs, (array)$dataobject, true)) {
         return false;
@@ -1087,20 +1107,32 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         return true;
     }
 
-/// Find the return ID of the newly inserted record
-    switch ($CFG->dbtype) {
-        case 'postgres7':             // Just loves to be special
-            $oid = $db->Insert_ID();
-            if ($rs = $db->Execute('SELECT '. $primarykey .' FROM '. $CFG->prefix . $table .' WHERE oid = '. $oid)) {
-                if ($rs->RecordCount() == 1) {
-                    return (integer) $rs->fields[0];
-                }
-            }
-            return false;
-
-        default:
-            return (int)$db->Insert_ID();  // Should work on most databases, but not all!
+/// We already know the record PK
+/// if it's been passed explicitly,
+/// or if we've retrieved it from a
+/// sequence (Postgres).
+    if (isset($dataobject->{$primarykey})) {
+        return $dataobject->{$primarykey};
     }
+
+/// This only gets triggered with non-Postgres databases
+/// however we have some postgres fallback in case we failed 
+/// to find the sequence.
+    $id = $db->Insert_ID();  
+
+    if ($CFG->dbtype === 'postgres7') {
+        // try to get the primary key based on id
+        if ( ($rs = $db->Execute('SELECT '. $primarykey .' FROM '. $CFG->prefix . $table .' WHERE oid = '. $id))
+             && ($rs->RecordCount() == 1) ) {
+            trigger_error("Retrieved $primarykey from oid on table $table because we could not find the sequence.");
+            return (integer)$rs->fields[0];
+        } 
+        trigger_error('Failed to retrieve primary key after insert: SELECT '. $primarykey .' FROM '. $CFG->prefix . $table .' WHERE oid = '. $id);
+        return false;
+    }
+
+    return (integer)$id;
+    
 }
 
 

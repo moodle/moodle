@@ -326,7 +326,7 @@ class ChatDaemon {
                 $msg->timestamp = time();
 
                 // Commit to DB
-                insert_record('chat_messages', $msg);
+                insert_record('chat_messages', $msg, false);
 
                 // OK, now push it out to all users
                 $this->message_broadcast($msg, $this->sets_info[$sessionid]['user']);
@@ -420,7 +420,7 @@ class ChatDaemon {
                 $msg->message = addslashes($msg->message);
 
                 // Commit to DB
-                insert_record('chat_messages', $msg);
+                insert_record('chat_messages', $msg, false);
 
                 // Undo the hack
                 $msg->message = $origmsg;
@@ -530,7 +530,7 @@ class ChatDaemon {
         $msg->message = 'enter';
         $msg->timestamp = time();
 
-        insert_record('chat_messages', $msg);
+        insert_record('chat_messages', $msg, false);
         $this->message_broadcast($msg, $this->sets_info[$sessionid]['user']);
 
         return true;
@@ -735,7 +735,7 @@ class ChatDaemon {
         $msg->timestamp = time();
 
         $this->trace('User has disconnected, destroying uid '.$info['userid'].' with SID '.$sessionid, E_USER_WARNING);
-        insert_record('chat_messages', $msg);
+        insert_record('chat_messages', $msg, false);
 
         // *************************** IMPORTANT
         //
