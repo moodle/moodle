@@ -116,7 +116,7 @@ if(isset($address)) {
 print "$username $values[desc]";
 }
 
-$PHP_SELF = $HTTP_SERVER_VARS['PHP_SELF'];
+$PHP_SELF = 'plot.php';
 
 print '
 <br><br>
