@@ -54,14 +54,14 @@
 <table cellpadding="5">
 
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("choicename","choice") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("choicename","choice") ?>:</b></td>
     <td>
         <input type="text" name="name" size="30" value="<?php p($form->name) ?>" />
     </td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("choicetext","choice") ?>:</b></p>
+    <td align="right"><b><?php print_string("choicetext","choice") ?>:</b>
     <font size="1">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
@@ -99,7 +99,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("choice","choice","1") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("choice","choice","1") ?>:</b></td>
     <td>
         <input type="text" name="answer1" size="60" value="<?php p($form->answer1) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
@@ -107,7 +107,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("choice","choice","2") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("choice","choice","2") ?>:</b></td>
     <td>
         <input type="text" name="answer2" size="60" value="<?php p($form->answer2) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
@@ -115,28 +115,28 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("choice","choice","3") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("choice","choice","3") ?>:</b></td>
     <td>
         <input type="text" name="answer3" size="60" value="<?php p($form->answer3) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("choice","choice","4") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("choice","choice","4") ?>:</b></td>
     <td>
         <input type="text" name="answer4" size="60" value="<?php p($form->answer4) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("choice","choice","5") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("choice","choice","5") ?>:</b></td>
     <td>
         <input type="text" name="answer5" size="60" value="<?php p($form->answer5) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("choice","choice","6") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("choice","choice","6") ?>:</b></td>
     <td>
         <input type="text" name="answer6" size="60" value="<?php p($form->answer6) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
@@ -144,7 +144,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("timerestrict", "choice") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("timerestrict", "choice") ?>:</b></td>
     <td>
         <script type="text/javascript">
             var timeitems = ['openday','openmonth','openyear','openhour', 'openminute', 'closeday','closemonth','closeyear','closehour','closeminute'];
@@ -157,12 +157,12 @@
     </td>
 </tr>
 <tr valign="top">
-    <td><p>&nbsp;</p></td>
+    <td>&nbsp;</td>
     <td>
 
         <table>
             <tr>
-                <td align="right"><p><b><?php print_string("choiceopen", "choice") ?>:</b></p></td>
+                <td align="right"><b><?php print_string("choiceopen", "choice") ?>:</b></td>
                 <td>
                 
     <?php
@@ -181,7 +181,7 @@
                 </td>
             </tr>
             <tr>
-                <td align="right"><p><b><?php print_string("choiceclose", "choice") ?>:</b></p></td>
+                <td align="right"><b><?php print_string("choiceclose", "choice") ?>:</b></td>
                 <td>
                 
     <?php
@@ -214,7 +214,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("publish","choice") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("publish","choice") ?>:</b></td>
     <td>
         <?php
         require_once("$CFG->dirroot/mod/choice/lib.php");
@@ -225,7 +225,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("privacy","choice") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("privacy","choice") ?>:</b></td>
     <td>
         <?php
         require_once("$CFG->dirroot/mod/choice/lib.php");
@@ -237,7 +237,7 @@
 
 
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("allowupdate","choice") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("allowupdate","choice") ?>:</b></td>
     <td>
         <?php
         $options[0] = get_string("no");
@@ -250,7 +250,7 @@
 
 
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("showunanswered","choice") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("showunanswered","choice") ?>:</b></td>
     <td>
         <?php
         $options[0] = get_string("no");

@@ -38,13 +38,13 @@
 
     if ($course->format == "weeks") {
         $table->head  = array (get_string("week"), get_string("question"), get_string("answer"));
-        $table->align = array ("CENTER", "LEFT", "LEFT");
+        $table->align = array ("center", "left", "left");
     } else if ($course->format == "topics") {
         $table->head  = array (get_string("topic"), get_string("question"), get_string("answer"));
-        $table->align = array ("CENTER", "LEFT", "LEFT");
+        $table->align = array ("center", "left", "left");
     } else {
         $table->head  = array (get_string("question"), get_string("answer"));
-        $table->align = array ("LEFT", "LEFT");
+        $table->align = array ("left", "left");
     }
 
     $currentsection = "";

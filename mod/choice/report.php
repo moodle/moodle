@@ -97,19 +97,20 @@
 
     foreach ($useranswer as $key => $answer) {
         if ($key) {
-            echo "<td width=\"$tablewidth%\" valign=\"top\" nowrap bgcolor=\"$THEME->cellcontent\">";
+            echo "<td width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\" bgcolor=\"$THEME->cellcontent\">";
         } else {
-            echo "<td width=\"$tablewidth%\" valign=\"top\" nowrap bgcolor=\"$THEME->body\">";
+            echo "<td width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\" bgcolor=\"$THEME->body\">";
         }
 
         echo "<table width=\"100%\">";
         foreach ($answer as $user) {
-            echo "<tr><td width=\"10\" nowrap>";
+            echo "<tr><td width=\"10\" nowrap=\"nowrap\">";
             print_user_picture($user->id, $course->id, $user->picture);
-            echo "</td><td width=\"100%\" nowrap>";
+            echo "</td><td width=\"100%\" nowrap=\"nowrap\">";
             echo "<p>".fullname($user, true)."</p>";
             echo "</td></tr>";
         }
+        echo "<tr><td colspan=\"2\">&nbsp;</td></tr>"; /// need to have at least one row within table tags
         echo "</table>";
 
         echo "</td>";

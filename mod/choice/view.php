@@ -99,26 +99,28 @@
     if ( (!$current or $choice->allowupdate) and ($choice->timeclose >= time() or $choice->timeclose == 0) ) { 
     // They haven't made their choice yet or updates allowed and choice is open
     
-        echo "<center><p><form name=\"form\" method=\"post\" action=\"view.php\">";
-        echo "<table cellpadding=\"20\" cellspacing=\"20\"><tr>";
+        echo "<form name=\"form\" method=\"post\" action=\"view.php\">";
+        echo "<table cellpadding=\"20\" cellspacing=\"20\" align=\"center\"><tr>";
 
         foreach ($choice->answer as $key => $answer) {
             if ($answer) {
                 echo "<td align=\"center\">";
-                echo "<input type=\"radio\" name=\"answer\" value=\"$key\" ".$answerchecked[$key]." />";
+                echo "<input type=\"radio\" name=\"answer\" value=\"$key\" ".$answerchecked[$key]." alt=\"$answer\" />";
                 p($answer);
                 echo "</td>";
             }
         }
     
         echo "</tr></table>";
+        echo "<center>";
         echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
         if (isstudent($course->id) or isteacher($course->id, 0, false)) {
             echo "<input type=\"submit\" value=\"".get_string("savemychoice","choice")."\" />";
         } else {
             print_string('havetologin', 'choice');
         }
-        echo "</p></form></center>";
+        echo "</center>";
+        echo "</form>";
 
     }
 
@@ -196,18 +198,18 @@
         
             foreach ($useranswer as $key => $answer) {
                 if ($key) {
-                    echo "<td width=\"$tablewidth%\" valign=\"top\" nowrap bgcolor=\"$THEME->cellcontent\">";
+                    echo "<td width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\" bgcolor=\"$THEME->cellcontent\">";
                 } else if ($choice->showunanswered) {
-                    echo "<td width=\"$tablewidth%\" valign=\"top\" nowrap bgcolor=\"$THEME->body\">";
+                    echo "<td width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\" bgcolor=\"$THEME->body\">";
                 } else {
                     continue;
                 }
     
                 echo "<table width=\"100%\">";
                 foreach ($answer as $user) {
-                    echo "<tr><td width=\"10\" nowrap>";
+                    echo "<tr><td width=\"10\" nowrap=\"nowrap\">";
                     print_user_picture($user->id, $course->id, $user->picture);
-                    echo "</td><td width=\"100%\" nowrap>";
+                    echo "</td><td width=\"100%\" nowrap=\"nowrap\">";
                     echo "<p>".fullname($user, $isteacher)."</p>";
                     echo "</td></tr>";
                 }
