@@ -38,6 +38,6 @@ $string['seesession'] = 'Visualitza aquesta sessió';
 $string['sessions'] = 'Sessions de xat';
 $string['strftimemessage'] = '%%H:%%M';
 $string['studentseereports'] = 'Tothom pot veure les sessions anteriors';
-$string['viewreport'] = 'Vissualitza les sessions de xat anteriors';
+$string['viewreport'] = 'Visualitza les sessions de xat anteriors';
 
 ?>
