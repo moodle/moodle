@@ -96,6 +96,23 @@ function clean_param($param, $options) {
     return $param;
 }
 
+function confirm_sesskey($sesskey=NULL) {
+/// For security purposes, this function will check that the currently
+/// given sesskey (passed as a parameter to the script or this function)
+/// matches that of the current user.
+    global $USER;
+
+    if (empty($sesskey)) {
+        $sesskey = required_param('sesskey');  // Check script parameters
+    }
+
+    if (!isset($USER->sesskey)) {
+        return false;
+    }
+
+    return ($USER->sesskey == $sesskey);
+}
+
 function require_variable($var) {
 /// Variable must be present
 /// This old function is retained for backward compatibility

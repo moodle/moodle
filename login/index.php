@@ -49,7 +49,8 @@
                 $USER->description = true;       // No need to cart all of it around
             }
             $USER->loggedin = true;
-            $USER->site = $CFG->wwwroot;   // for added security
+            $USER->site     = $CFG->wwwroot;     // for added security, store the site in the session
+            $USER->sesskey  = random_string(10); // for added security, used to check script parameters
             
             if ($USER->username == "guest") {
                 $USER->lang       = $CFG->lang;               // Guest language always same as site
