@@ -156,7 +156,7 @@ function survey_print_recent_activity($course, $isteacher, $timestart) {
         if ($modvisible) {
             $surveys[$log->id] = survey_log_info($log);
             $surveys[$log->id]->time = $log->time;
-            $surveys[$log->id]->url = str_replace('&', '&amp;' $log->url);
+            $surveys[$log->id]->url = str_replace('&', '&amp;', $log->url);
         }
     }
 
