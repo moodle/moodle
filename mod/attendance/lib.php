@@ -565,22 +565,6 @@ function get_attendance_for_week($id, $courseid) {
 }
 
 /**
-* Determines if two dates are on the same day
-* 
-* This function takes two unix timestamps and determines if they occur within the same 24 hours
-* It does this by comparing the year, month, and day
-*
-* @param	timestamp $d1	The first date to compare
-* @param	timestamp $d2	The second date to compare
-* @return	boolean	whether the two dates occur on the same day 
-*/
-function attendance_dates_same_day($d1,$d2) {
-  $da1 = getdate($d1);
-  $da2 = getdate($d2);
-  return (($da1["mday"]==$da2["mday"]) &&($da1["mon"]==$da2["mon"]) && ($da1["year"]==$da2["year"])); 
-}
-
-/**
 * Finds the beginning of the day for the date specified
 * 
 * This function returns the timestamp for midnight of the day specified in the timestamp
@@ -589,10 +573,13 @@ function attendance_dates_same_day($d1,$d2) {
 * @return	timestamp	midnight for that day
 */
 function attendance_find_today($d) {
-  // add 24 hours to the current time - to solve end of month date issues
-  $da = getdate($d);
+//  $da = getdate($d);
+  $damon = gmdate("m",$d);
+  $daday = gmdate("d",$d);
+  $dayear = gmdate("Y",$d);
   // now return midnight of that day
-  return mktime(0,0,0,$da["mon"], $da["mday"], $da["year"]); 
+  //  return mktime(0,0,0,$da["mon"], $da["mday"], $da["year"]); 
+  return gmmktime(0,0,0,$damon, $daday, $dayear);
 }
 
 /**
