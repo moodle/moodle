@@ -88,7 +88,7 @@ if (isadmin()) {
 	<td><P><? print_string("preferredlanguage") ?>:</td>
 	<td><? if ($languages = get_list_of_languages()) {
                if (!$user->lang) {
-                   $user->lang = "en";
+                   $user->lang = $CFG->lang;
                }
                choose_from_menu ($languages, "lang", $user->lang, "", "", "");
            }
