@@ -142,7 +142,7 @@
       les cha&icirc;nes de caract&egrave;res du module. Voir ci-dessous pour des d&eacute;tails.</li>
     </ul>
     <p>Pour programmer un nouveau module d'activit&eacute;, le plus simple est d'utiliser le
-    mod&egrave;le <strong><a href="http://moodle.org/mod/newmodule_template.zip">mod/newmodule_template.zip</a></strong>.</p>
+    mod&egrave;le <strong><a href="http://moodle.org/mod/newmodule_template.zip">mod/newmodule_template.zip</a></strong>.
     D&eacute;compressez-le est suivez les instructions du fichier README inclus.</p>
     <p>Il est &eacute;galement judicieux de poster auparavant un message sur le forum
     <a href="http://moodle.org/mod/forum/view.php?id=44" target="_top">Activities 
@@ -171,124 +171,137 @@
     </ul>
     <p>Pour cr&eacute;er votre propre th&egrave;me avec la version actuelle de Moodle&nbsp;:</p>
     <ol>
-      <li>Copy one of the existing theme folders to one with a new name. I recommend 
-        starting with one of the standard themes. </li>
-      <li>Edit config.php and insert your own colours. </li>
-      <li>Edit styles.php and change your CSS styles. </li>
-      <li>Edit header.html and footer.html to add new logos, or change the layout. 
-      </li>
+      <li>Copier le dossier d'un des th&egrave;mes existants et donner un nouveau nom
+      &agrave; la copie. Il est recommand&eacute; de commencer avec l'un des th&egrave;mes standard.</li>
+      <li>Ouvrir config.php et y ins&eacute;rer vos couleurs pr&eacute;f&eacute;r&eacute;es.</li>
+      <li>Ouvrir styles.php et changer les styles CSS.</li>
+      <li>Ouvrir header.html et footer.html pour y ajouter les nouveaux logos
+      ou pour modifier la mise en page.</li>
     </ol>
-    <p>Note that all these steps are optional - you can make a radically different 
-      look to your site simply by editing the colours in config.php</p>
-    <p>Note also that Moodle upgrades <em>may</em> break themes slightly, so check 
-      the release notes carefully if you are using a custom theme.</p>
-    <p>In particular, Moodle 2.0 will have a completely new display system, probably 
-      based on XSL transformations of XML output from Moodle. It is likely that 
-      the themes for this will be a completely different format, but the advantage 
-      will be a much higher possible degree of customisation (including moving 
-      elements around the page).</p>
-    <p>More discussion about this in the <a target="_top" href="http://moodle.org/mod/forum/view.php?id=46">Themes 
-      forum on Using Moodle</a>. If you create a nice theme that you think others 
-      might want to use, please post your zip file on the themes forum!<br />
+    <p>Toutes ces &eacute;tapes sont optionnelles. Vous pouvez obtenir un aspect
+    compl&egrave;tement diff&eacute;rent en modifiant uniquement les couleurs dans config.php.</p>
+    <p>Il est &agrave; noter que les mises &agrave; jour de Moodle <em>pourraient</em> emp&ecirc;cher
+    le fonctionnement correct d'un th&egrave;me personnalis&eacute;. V&eacute;rifier les notes
+    de mise &agrave; jour si vous utilisez un tel th&egrave;me.</p>
+    <p>En particulier, Moodle 2.0 aura un syst&egrave;me d'affichage compl&egrave;tement
+    diff&eacute;rent, probablement bas&eacute; sur la transformation XSL du code XML de Moodle. Il
+    est vraisemblable que les th&egrave;mes auront alors un format totalement diff&eacute;rent,
+    avec en contrepartie une libert&eacute; bien plus grande pour la personnalisation
+    (y compris le d&eacute;placement des &eacute;l&eacute;ments sur la page).</p>
+    <p>Pour en savoir plus, participez &agrave; la discussion sur le forum
+    <a target="_top" href="http://moodle.org/mod/forum/view.php?id=46">Themes</a> dans
+    le cours &laquo;&nbsp;Using Moodle&nbsp;&raquo;. si vous cr&eacute;ez un joli th&egrave;me susceptible d'int&eacute;resser
+    d'autres utilisateurs, merci de poster votre fichier zip sur ce m&ecirc;me forum.<br />
     </p>
   </blockquote>
   <h3><a name="languages" id="languages"></a>Langues</h3>
   <blockquote>
-    <p>Moodle has been designed for internationalisation. Each 'string' or 'page' 
-      of text that is displayed as part of the interface is drawn from a set of 
-      language files. Each language is a subdirectory of the directory 'lang'. 
-      The structure of the lang directory is as follows:</p>
-    <p><strong>lang/en</strong> - directory containing all files for one language 
-      (eg English)</p>
+    <p>Moodle a &eacute;t&eacute; con&ccedil;u pour permettre son internationalisation. Chaque
+    cha&icirc;ne de caract&egrave;re ou page de texte faisant partie de l'interface
+    est affich&eacute;e &agrave; partir d'un ensemble de fichiers de langue. Chaque langue
+    consiste en un sous-dossier du dossier &laquo;&nbsp;lang&nbsp;&raquo;. La structure
+    du dossier lang est la suivante&nbsp;:</p>
+    <p><strong>lang/fr</strong> - dossier contenant tous les fichiers pour une langue
+    (par exemple le fran&ccedil;ais)</p>
     <ul>
-      <li>moodle.php - strings for main interface</li>
-      <li>assignment.php - strings for assignment module</li>
-      <li>choice.php - strings for choice module</li>
-      <li>forum.php - strings for forum module</li>
-      <li>journal.php - strings for journal module </li>
-      <li>quiz.php - strings for quiz module</li>
-      <li>resource.php - strings for resource module</li>
-      <li>survey.php - strings for survey module</li>
-      <li>.... plus other modules if any.<br />
-        <br />
-        A string is called from these files using the <strong><em>get_string()</em></strong><em> 
-        </em>or<em> <strong>print_string()</strong> </em>functions. Each string 
-        supports variable substitution, to support variable ordering in different 
-        languages.<em><br />
-        <br />
-        </em>eg $strdueby = get_string(&quot;assignmentdueby&quot;, &quot;assignment&quot;, 
-        userdate($date)); <br />
-        <br />
-        If a string doesn't exist in a particular language, then the equivalent 
-        in English will automatically be used instead.</li>
+      <li>moodle.php - cha&icirc;nes de l'interface principale</li>
+      <li>assignment.php - cha&icirc;nes du module devoir</li>
+      <li>choice.php - cha&icirc;nes du module sondage</li>
+      <li>forum.php - cha&icirc;nes du module forum</li>
+      <li>journal.php - cha&icirc;nes du module journal</li>
+      <li>quiz.php - cha&icirc;nes du module test</li>
+      <li>resource.php - cha&icirc;nes du module ressource</li>
+      <li>survey.php - cha&icirc;nes du module questionnaire</li>
+      <li>... ainsi que d'autres modules le cas &eacute;ch&eacute;ant.<br /><br />
+        Chaque cha&icirc;ne est tir&eacute;e de ces fichiers &agrave; l'aide des fonctions
+        <strong><em>get_string()</em></strong> or <em><strong>print_string()</strong></em>.
+        Toutes les cha&icirc;nes permettent la substitution des variables, afin de
+        permettre un ordre diff&eacute;rent des variables dans les diff&eacute;rentes langues.<br />
+        Par exemple, $strdueby = get_string(&quot;assignmentdueby&quot;, &quot;assignment&quot;, 
+        userdate($date)); <br /><br />
+        Si une cha&icirc;ne n'est pas d&eacute;finie dans une langue, la cha&icirc;ne &eacute;quivalente
+        en anglais est automatiquement utilis&eacute;e &agrave; la place.</li>
     </ul>
-    <p><strong>lang/en/help</strong> - contains whole help pages (for popup context-sensitive 
-      help)</p>
+    <p><strong>lang/fr/help</strong> - contient toutes les pages d'aide
+    (pour l'aide contextuelle, fenêtres « popup »)</p>
     <blockquote>
-      <p>Main help pages are situated here, while help pages specific to each 
-        module are located in subdirectories with the module's name.</p>
-      <p>You can insert a helpbutton in a page with the helpbutton function.</p>
-      <p>eg helpbutton(&quot;text&quot;, &quot;Click here for help about text&quot;);</p>
-      <p>and for modules:</p>
-      <p>helpbutton(&quot;forumtypes&quot;, &quot;Forum types&quot;, &quot;forum&quot;);</p>
+      <p>Les pages d'aide principales y sont stockées, alors que les pages
+      d'aide spécifiques aux différents modules sont placées dans des sous-dossiers
+      portant le nom du module.</p>
+      <p>Vous pouvez insérer un bouton d'aide dans une page au moyen de la fonction
+      helpbutton.</p>
+      <p>Par exemple, helpbutton(&quot;text&quot;, &quot;Cliquer ici pour obtenir
+      de l'aide sur le texte&quot;);</p>
+      <p>et pour les modules :</p>
+      <p>helpbutton(&quot;forumtypes&quot;, &quot;Types de forums&quot;, &quot;forum&quot;);</p>
     </blockquote>
-    <p>Note that you can edit languages online, using the administration web tools 
-      under &quot;Check this language&quot;. This makes it easy to not to only 
-      create new languages but to refine existing ones. If you are starting a 
-      new language, please contact me, <a target="_top" href="http://dougiamas.com/">Martin 
-      Dougiamas</a>. </p>
-    <p>You might also like to post in the <a target="_top" href="http://moodle.org/mod/forum/view.php?id=43">Languages 
-      forum on Using Moodle</a>. </p>
-    <p>If you are maintaining a language an ongoing basis, I can give you <a href="?file=cvs.html">CVS 
-      write access to the Moodle source code</a> so that you can directly maintain 
-      the files.</p>
+    <p>Vous pouvez modifier en ligne les fichier de langue, en utilisant les outils
+    web d'administration &laquo;&nbsp;Configuration -&gt; Langue&nbsp;&raquo;. Cela vous permet non
+    seulement de cr&eacute;er de nouvelles langues, mais aussi de perfectionner les traductions
+    existantes. Si vous vous attaquez &agrave; une nouvelle langue, merci de me contacter,
+    <a target="_top" href="http://dougiamas.com/">Martin Dougiamas</a>.</p>
+    <p>Vous pouvez aussi participer au forum
+    <a target="_top" href="http://moodle.org/mod/forum/view.php?id=43">Languages</a>
+    du cours &laquo;&nbsp;Using Moodle&nbsp;&raquo;.</p>
+    <p>Si vous entretenez les fichiers d'une langue de mani&egrave;re r&eacute;guli&egrave;re, je peux
+    vous donner un <a href="?file=cvs.html">acc&egrave;s CVS en &eacute;criture au code
+    source de Moodle</a>, afin que vous puissiez ainsi directement modifier les
+    fichiers.</p>
   </blockquote>
   <h3><a name="database" id="database"></a>Sch&eacute;mas de bases de donn&eacute;es</h3>
   <blockquote>
-    <p>Given a working database with defined tables, the intentionally simple 
-      SQL used in Moodle should work fine with a wide variety of database brands.</p>
-    <p>A problem exists with <strong>automatically creating</strong> new tables 
-      in a database, which is what Moodle tries to do upon initial installation. 
-      Because every database is very different, there doesn't yet exist any way 
-      to do this in a platform-independent way. To support this automation in 
-      each database, schemas can be created that list the required SQL to create 
-      Moodle tables in a particular database. These are files in <strong>lib/db</strong> 
-      and inside the <strong>db</strong> subdirectory of each module.</p>
-    <p>Currently, only MySQL and PostgreSQL are fully supported in this way (no-one 
-      wrote the schemas for other brands).</p>
-    <p>Moodle 1.2 will use a new method of database-independent XML schemas that 
-      will make all this unnecessary.</p>
+    <p>Avec une de base de donn&eacute;es et des tables d&eacute;finies, le langage SQL
+    intentionnellement simple utilis&eacute; par Moodle devrait fonctionner
+    correctement avec un grand nombre de marques de bases de donn&eacute;es.</p>
+    <p>Il peut arriver que la <strong>cr&eacute;ation automatique</strong> des
+    nouvelles tables d'une base de donn&eacute;es pose probl&egrave;me. Cette op&eacute;ration
+    a justement lieu lors de l'installation initiale de Moodle. Parce que
+    les diverses bases de donn&eacute;es sont tr&egrave;s diff&eacute;rentes, il n'existe pas
+    encore de moyen de faire cela ind&eacute;pendamment de la plateforme. Pour
+    permettre cette automatisation dans chaque type de base de donn&eacute;es,
+    des sch&eacute;mas de base de donn&eacute;es peuvent &ecirc;tre cr&eacute;&eacute;s, qui comportent les
+    commandes SQL n&eacute;cessaires pour cr&eacute;er les tables n&eacute;cessaires &agrave; Moodle pour
+    une base de donn&eacute;es particuli&egrave;re. Ces sch&eacute;mas sont des fichiers dans
+    <strong>lib/db</strong> ainsi que dans le sous-dossier <strong>db</strong> de
+    chaque module.</p>
+    <p>Actuellement, seul MySQL et PostgreSQL sont support&eacute;s de cette mani&egrave;re
+    (personne n'a encore &eacute;crit les sch&eacute;mas pour d'autres marques).</p>
+    <p>Moodle 1.2 utilisera une nouvelle m&eacute;thode de sch&eacute;mas XML ind&eacute;pendants de 
+    la base de donn&eacute;es, qui rendra tout cela inutile.</p>
   </blockquote>
   <p>&nbsp;</p>
   <h3><a name="courseformats" id="courseformats"></a>Formats de cours</h3>
   <blockquote>
-    <p>Moodle currently supports three different course formats: weekly, topics 
-      and social. </p>
-    <p>These are a little more connected to the rest of the code (and hence, less 
-      &quot;pluggable&quot;) but it is still quite easy to add new ones.</p>
-    <p>If you have any ideas for different formats that you need or would like 
-      to see, get in touch with me and I'll do my absolute best to have them available 
-      in future releases.</p>
+    <p>Moodle offre actuellement trois formats de cours diff&eacute;rents&nbsp;: hebdomadaire,
+    th&eacute;matique et informel. </p>
+    <p>Ces formats sont un peu plus d&eacute;pendants du reste du code (et par cons&eacute;quent
+    moins modulaires), mais il est malgr&eacute; tout assez facile d'en ajouter de nouveaux.</p>
+    <p>Si vous avez des id&eacute;es de formats diff&eacute;rents dont vous auriez l'utilit&eacute; ou
+    que vous aimeriez voir dans Moodle, prenez contact avec moi et je ferai
+    tout mon possible pour les rendre disponibles dans de futures versions.</p>
   </blockquote>
   <p>&nbsp;</p>
   <h3><a name="doc" id="doc"></a>Documentation et articles</h3>
   <blockquote>
-    <p>If you feel like writing a tutorial, an article, an academic paper or anything 
-      else about Moodle, please do! </p>
-    <p>Put it on the web and make sure you include links to <a target="_top" href="http://moodle.org/">http://moodle.org/</a></p>
+    <p>Si vous avez envie d'&eacute;crire un tutoriel, un article, un article universitaire ou
+    quoi que ce soit d'autre sur Moodle, ne vous en privez pas&nbsp;!</p>
+    <p>Publiez-le sur le web et assurez-vous de mettre des liens
+    vers <a target="_top" href="http://moodle.org/">http://moodle.org/</a>.</p>
   </blockquote>
   <p>&nbsp;</p>
   <h3><a name="bugs" id="bugs"></a>Participer &agrave; la traque des bogues</h3>
   <blockquote>
-    <p>Finally, I would like to invite you to register on the &quot;bug tracker&quot; 
-      at <a target="_top" href="http://moodle.org/bugs/">http://moodle.org/bugs</a> 
-      so you can file any bugs that you find and perhaps participate in discussing 
-      and fixing them. </p>
-    <p>&quot;Bugs&quot; not only includes software bugs with current versions 
-      of Moodle, but also new ideas, feature requests and even constructive criticism 
-      of existing features. The beauty of open source is that anyone can participate 
-      in some way and help to create a better product for all of us to enjoy. 
-      In this project, your input is very welcome!</p>
+    <p>J'aimerais pour terminer vous inviter &agrave; vous inscrire sur le &laquo;&nbsp;bug tracker&nbsp;&raquo;
+    &agrave; l'adresse <a target="_top" href="http://moodle.org/bugs/">http://moodle.org/bugs</a>,
+    afin que vous puissiez annoncer tous les bogues que vous d&eacute;couvrirez et
+    peut-&ecirc;tre participer &agrave; la discussion et &agrave; la correction des bogues.</p>
+    <p>Les &laquo;&nbsp;bogues&nbsp;&raquo; ne sont pas seulement les erreurs du code source des
+    versions actuelles de Moodle. Ce sont aussi les nouvelles id&eacute;es, les
+    demandes de nouvelles fonctionnalit&eacute;s et m&ecirc;mes la critique constructive
+    des fonctionnalit&eacute;s existantes. La beaut&eacute; du logiciel libre est de permettre
+    &agrave; chacun de participer d'une fa&ccedil;on ou d'une autrre et d'aider &agrave; cr&eacute;er
+    une meilleur produit pour le bien de tous. Dans ce projet, votre contribution
+    est la bienvenue !</p>
   </blockquote>
 </blockquote>
 <p>&nbsp;</p>
