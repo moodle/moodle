@@ -28,6 +28,28 @@
             if ($forums = get_records("forum")) {
                 foreach ($forums as $forum) {
                     if (!empty($forum->rsstype) && !empty($forum->rssarticles) && $status) {
+
+                        $filename = rss_file_name('forum', $forum);  // RSS file
+
+                        //First let's make sure there is work to do by checking existing files
+                        if (file_exists($filename)) {
+                            if ($lastmodified = filemtime($filename)) {
+                                if (!forum_rss_newstuff($forum, $lastmodified)) {
+                                    continue;
+                                }
+                            }
+                        }
+
+                        //Ignore hidden forums
+                        if (!instance_is_visible('forum',$forum)) {
+                            if (file_exists($filename)) {
+                                @unlink($filename);
+                            }
+                            continue;
+                        }
+
+                        mtrace("Updating RSS feed for $forum->name, ID: $forum->id");
+
                         //Some debug...
                         if ($CFG->debug > 7) {
                             echo "ID: $forum->id->";
@@ -55,6 +77,17 @@
             }
         }
         return $status;
+    }
+
+    function forum_rss_newstuff($forum, $time) {
+    // If there is new stuff in the forum since $time then this returns
+    // true.  Otherwise it returns false.
+        if ($forum->rsstype == 1) {  
+            $items = forum_rss_feed_discussions($forum, $time);
+        } else {             
+            $items = forum_rss_feed_posts($forum, $time);
+        }
+        return (!empty($items));
     }
 
     //This function return the XML rss contents about the forum record passed as parameter
@@ -118,11 +151,17 @@
 
     //This function returns "items" record array to be used to build the rss feed
     //for a Type=discussions forum
-    function forum_rss_feed_discussions($forum) {
+    function forum_rss_feed_discussions($forum, $newsince=0) {
 
         global $CFG;
 
         $items = array();
+
+        if ($newsince) {
+            $newsince = " AND p.created > '$newsince'";
+        } else {
+            $newsince = "";
+        }
 
         if ($recs = get_records_sql ("SELECT d.id discussionid, 
                                              d.name discussionname, 
@@ -138,8 +177,14 @@
                                       WHERE d.forum = '$forum->id' AND
                                             p.discussion = d.id AND
                                             p.parent = 0 AND
-                                            u.id = p.userid
+                                            u.id = p.userid $newsince
                                       ORDER BY p.created desc")) {
+
+            //Are we just looking for new ones?  If so, then return now.
+            if ($newsince) {
+                return true;
+            }
+
             //Iterate over each discussion to get forum->rssarticles records
             $articlesleft = $forum->rssarticles;
             $item = NULL;
@@ -166,11 +211,17 @@
     
     //This function returns "items" record array to be used to build the rss feed
     //for a Type=posts forum
-    function forum_rss_feed_posts($forum) {
+    function forum_rss_feed_posts($forum, $newsince=0) {
 
         global $CFG;
 
         $items = array();
+
+        if ($newsince) {
+            $newsince = " AND p.created > '$newsince'";
+        } else {
+            $newsince = "";
+        }
 
         if ($recs = get_records_sql ("SELECT p.id postid,
                                              d.id discussionid,
@@ -186,8 +237,14 @@
                                            {$CFG->prefix}user u
                                       WHERE d.forum = '$forum->id' AND
                                             p.discussion = d.id AND
-                                            u.id = p.userid
+                                            u.id = p.userid $newsince
                                       ORDER BY p.created desc")) {
+
+            //Are we just looking for new ones?  If so, then return now.
+            if ($newsince) {
+                return true;
+            }
+
             //Iterate over each discussion to get forum->rssarticles records
             $articlesleft = $forum->rssarticles;
             $item = NULL;

@@ -98,7 +98,7 @@ function rss_save_file ($modname,$mod,$result) {
     }
 
     if ($status) {
-        $file = $basedir .= "/".$mod->id.".xml";
+        $file = rss_file_name($modname, $mod);
         $rss_file = fopen($file,"w");
         if ($rss_file) {
             $status = fwrite ($rss_file,$result);
@@ -108,6 +108,13 @@ function rss_save_file ($modname,$mod,$result) {
         }
     }
     return $status;
+}
+
+
+function rss_file_name($modname, $mod) {
+    global $CFG;
+
+    return "$CFG->dataroot/rss/$modname/$mod->id.xml";
 }
 
 //This function return all the common headers for every rss feed in the site
