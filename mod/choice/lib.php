@@ -29,8 +29,8 @@ $CHOICE_DISPLAY = array (CHOICE_DISPLAY_HORIZONTAL   => get_string('displayhoriz
 /// Standard functions /////////////////////////////////////////////////////////
 
 function choice_user_outline($course, $user, $mod, $choice) {
-    if ($current = get_record("choice_responses", "choice", $choice->id, "userid", $user->id)) {
-        $result->info = "'".choice_get_answer($choice, $current->answer)."'";
+    if ($current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id)) {
+        $result->info = "'".choice_get_option_text($choice, $current->optionid)."'";
         $result->time = $current->timemodified;
         return $result;
     }
@@ -39,8 +39,8 @@ function choice_user_outline($course, $user, $mod, $choice) {
 
 
 function choice_user_complete($course, $user, $mod, $choice) {
-    if ($current = get_record("choice_responses", "choice", $choice->id, "userid", $user->id)) {
-        $result->info = "'".choice_get_answer($choice, $current->answer)."'";
+    if ($current = get_record('choice_answers', "choiceid", $choice->id, "userid", $user->id)) {
+        $result->info = "'".choice_get_option_text($choice, $current->optionid)."'";
         $result->time = $current->timemodified;
         echo get_string("answered", "choice").": $result->info , last updated ".userdate($result->time);
     } else {
@@ -68,24 +68,21 @@ function choice_add_instance($choice) {
     }
 
     //insert answers    
-    $result = insert_record("choice", $choice);
-    if ($result) {
-        for ($i = 1; $i < 7; $i++) {                      
-            if (!empty($choice->{'newanswer'.$i})) {         
-                $choiceanswers->answer = $choice->{'newanswer'.$i};
-                $choiceanswers->choice = $result;
-                $choiceanswers->timemodified = time();
-                insert_record("choice_answers", $choiceanswers);                
-            } else {
-                break;
+    if ($choice->id = insert_record("choice", $choice)) {
+        foreach ($choice as $name => $value) {        
+            if (strstr($name, "newoption")) {   /// New option
+                $value = trim($value);
+                if ($value) {
+                    $option = NULL;
+                    $option->text = $value;
+                    $option->choiceid = $choice->id;
+                    $option->timemodified = time();
+                    insert_record("choice_options", $option);                
+                }
             }
         }
     }
-    if ($choice->addmorechoices > 0) { //make sure the page is reloaded if the user wants to add more choices.
-       redirect('mod.php?update='.$choice->coursemodule.'&return=true&addmore='.$choice->addmorechoices.'&sesskey='.sesskey());
-    } else {        
-       return $result; 
-    }    
+    return $choice->id;
 }
 
 
@@ -110,44 +107,31 @@ function choice_update_instance($choice) {
     
     //update answers
     
-    $i = 0;
-    foreach ($choice as $current=>$value) {        
-    
-        if (strstr($current, "choiceanswer")) {
-           //this val is old, so update_record
-           if (!empty($value)) {
-                $choiceanswers->id = substr($current, 14); //get the ID of the answer that needs to be updated.
-                $choiceanswers->answer = $value;
-                $choiceanswers->choice = $choice->id;
-                $choiceanswers->timemodified = time();
-                update_record("choice_answers", $choiceanswers);                
-            }                                                              
-        } else if (strstr($current, "newanswer")) {
-            //this val is new, so insert_record            
-            if (!empty($value)) {
-                $choiceanswers->id = "";
-                $choiceanswers->answer = $value;
-                $choiceanswers->choice = $choice->id;
-                $choiceanswers->timemodified = time();
-                insert_record("choice_answers", $choiceanswers);                
-            }  
-        }      
-               
-    }
-   
-    
-    
-    
-//    global $db; $db->debug=true;
+    foreach ($choice as $name => $value) {        
+        $value = trim($value);
 
-      $result = update_record("choice", $choice);
+        if (strstr($current, "oldoption")) {  // Old option
+            if ($value) {
+                $option = NULL;
+                $option->id = substr($current, 10); // Get the ID of the answer that needs to be updated.
+                $option->text = $value;
+                $option->choiceid = $choice->id;
+                $option->timemodified = time();
+                update_record("choice_options", $option);                
+            }                                                              
+        } else if (strstr($name, "newoption")) {   /// New option
+            if ($value) {
+                $option = NULL;
+                $option->text = $value;
+                $option->choiceid = $choice->id;
+                $option->timemodified = time();
+                insert_record("choice_options", $option);                
+            }
+        }      
+    }
+
+    return update_record('choice', $choice);
       
-      
-      if ($choice->addmorechoices > 0) { //make sure the page is reloaded if the user wants to add more choices.
-         redirect('mod.php?update='.$choice->coursemodule.'&return=true&addmore='.$choice->addmorechoices.'&sesskey='.$choice->sesskey);
-      } else {        
-         return $result; 
-      }
 }
 
 
@@ -162,7 +146,11 @@ function choice_delete_instance($id) {
 
     $result = true;
 
-    if (! delete_records("choice_responses", "choice", "$choice->id")) {
+    if (! delete_records("choice_answers", "choiceid", "$choice->id")) {
+        $result = false;
+    }
+
+    if (! delete_records("choice_options", "choiceid", "$choice->id")) {
         $result = false;
     }
 
@@ -170,9 +158,6 @@ function choice_delete_instance($id) {
         $result = false;
     }
     
-    if (! delete_records("choice_answers", "choice", "$choice->id")) {
-        $result = false;
-    }
 
     return $result;
 }
@@ -186,40 +171,37 @@ function choice_get_participants($choiceid) {
     //Get students
     $students = get_records_sql("SELECT DISTINCT u.id, u.id
                                  FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}choice_responses c
-                                 WHERE c.choice = '$choiceid' and
-                                       u.id = c.userid");
+                                      {$CFG->prefix}choice_answers a
+                                 WHERE a.choiceid = '$choiceid' and
+                                       u.id = a.userid");
 
     //Return students array (it contains an array of unique users)
     return ($students);
 }
 
 
-function choice_get_answer($choice, $code) {
-// Returns text string which is the answer that matches the code
-    if ($result = get_record("choice_answers", "id", $code)) {
-       return $result->answer;
+function choice_get_option_text($choice, $id) {
+// Returns text string which is the answer that matches the id
+    if ($result = get_record("choice_options", "id", $id)) {
+        return $result->text;
     } else {
         return get_string("notanswered", "choice");
     }            
 }
 
 function choice_get_choice($choiceid) {
-
 // Gets a full choice record      
-   if ($choice = get_record("choice", "id", $choiceid)) {
-       if ($choices = get_records("choice_answers", "choice", $choiceid, "id")) {
-           $inti = 1;
-           foreach ($choices as $aa) {                         
-              $choice->answer[$aa->id] = $aa->answer;     
-              $choice->answerid[$aa->id] = $aa->id;            
-              $inti = $inti +1;
-           }        
-           return $choice;
-       } else {     
-          return false;
-       }
-   }
+
+    if ($choice = get_record("choice", "id", $choiceid)) {
+        if ($options = get_records("choice_options", "choiceid", $choiceid, "id")) {
+            foreach ($options as $option) {                         
+                $choice->option[$option->id] = $option->text;     
+                $choice->optionid[$option->id] = $option->id;            
+            }        
+            return $choice;
+        }
+    }
+    return false;
 }
 
 ?>
