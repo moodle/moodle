@@ -45,7 +45,13 @@
                  "<a href=\"configure.php\">$strconfiguration</a> -> $navigation");
 
     if (!$mode) {
-        print_heading("$strcurrentlanguage: $currentlang - ".get_string("thislanguage"));
+        $currlang = current_language();
+        $langs = get_list_of_languages();
+        echo "<table align=center><tr><td align=\"right\">";
+        echo "<b>$strcurrentlanguage:</b>";
+        echo "</td><td>";
+        echo popup_form ("$CFG->wwwroot/admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+        echo "</td></tr></table>";
         print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>");
         print_heading("<a href=\"lang.php?mode=compare\">$strcomparelanguage</a>");
         echo "<center><hr noshade size=1>";
