@@ -89,6 +89,17 @@ class block_admin extends block_base {
                 } else {
                     $this->content->items[]='<a href="view.php?id='.$this->instance->pageid.'&amp;edit=on">'.get_string('turneditingon').'</a>';
                 }
+                
+                if (!$course->student) {
+                    $course->student = get_string('defaultcoursestudent');
+                }
+                
+                if (!isset($USER->realuser) and 
+                        $student = get_field_sql('SELECT userid FROM '.$CFG->prefix.'user_students WHERE course = '.$course->id.' LIMIT 1')) {
+                    $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" height="16" width="16" alt="" />';
+                    $this->content->items[]='<a href="loginas.php?id='.$course->id.'&amp;user='.$student.'">'.get_string('loginas').' '.$course->student.'</a>';
+                }
+                
                 $this->content->items[]='<a href="edit.php?id='.$this->instance->pageid.'">'.get_string('settings').'...</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/settings.gif" height="16" width="16" alt="" />';
 
