@@ -37,6 +37,7 @@
 
     foreach ($students as $student) {
         $grades[$student->id] = array();    // Collect all grades in this array
+        $gradeshtml[$student->id] = array(); // Collect all grades html formatted in this array
         $totals[$student->id] = array();    // Collect all totals in this array
     }
     $columns = array();     // Accumulate column names in this array.
@@ -65,26 +66,48 @@
                             if ($modgrades = $gradefunction($mod->instance)) {
 
                                 if (!empty($modgrades->maxgrade)) {
-                                    $maxgrade = "<BR>$strmax: $modgrades->maxgrade";
+                                    if ($mod->visible) {
+                                        $maxgrade = "$strmax: $modgrades->maxgrade";
+                                        $maxgradehtml = "<BR>$strmax: $modgrades->maxgrade";
+                                    } else {
+                                        $maxgrade = "$strmax: $modgrades->maxgrade";
+                                        $maxgradehtml = "<BR><FONT class=\"dimmed_text\">$strmax: $modgrades->maxgrade</FONT>";
+                                    }
                                 } else {
                                     $maxgrade = "";
+                                    $maxgradehtml = "";
                                 }
     
                                 $image = "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\"".
                                          "   TITLE=\"$mod->modfullname\">".
                                          "<IMG BORDER=0 VALIGN=absmiddle SRC=\"../mod/$mod->modname/icon.gif\" ".
                                          "HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\"></A>";
-                                $columnhtml[] = "$image ".
-                                             "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                             "$instance->name".
-                                             "</A>$maxgrade";
+                                if ($mod->visible) {
+                                    $columnhtml[] = "$image ".
+                                                 "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
+                                                 "$instance->name".
+                                                 "</A>$maxgradehtml";
+                                } else {
+                                    $columnhtml[] = "$image ".
+                                                 "<A CLASS=\"dimmed\" HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
+                                                 "$instance->name".
+                                                 "</A>$maxgradehtml";
+                                }
                                 $columns[] = "$mod->modfullname: $instance->name - $maxgrade";
     
                                 foreach ($students as $student) {
                                     if (!empty($modgrades->grades[$student->id])) {
                                         $grades[$student->id][] = $currentstudentgrade = $modgrades->grades[$student->id];
+                                        if ($mod->visible) {
+                                            $gradeshtml[$student->id][] = $modgrades->grades[$student->id];
+                                        } else {
+                                            $gradeshtml[$student->id][] = "<FONT class=\"dimmed_text\">".
+                                                                           $modgrades->grades[$student->id].
+                                                                           "</FONT>";
+                                        }
                                     } else {
                                         $grades[$student->id][] = $currentstudentgrade = "";
+                                        $gradeshtml[$student->id][] = "";
                                     }
                                     if (!empty($modgrades->maxgrade)) {
                                         $totals[$student->id] = (float)($totals[$student->id]) + (float)($currentstudentgrade);
@@ -190,7 +213,7 @@
         $table->align[] = "CENTER";
     
         foreach ($students as $key => $student) {
-            $studentgrades = $grades[$student->id];
+            $studentgrades = $gradeshtml[$student->id];
             $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
             $name = array ("$picture", "$student->firstname", "$student->lastname");
             $total = array ($totals[$student->id]);
