@@ -33,8 +33,8 @@
                 break;
             }
             
-            $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink != 0 and approved != 0 and concept != ''","$ebylenght glossaryid","id,glossaryid,concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY category,fullmatch");
-            $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries) AND usedynalink != 0", "$cbylenght glossaryid","id,glossaryid,name concept, 1 casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY category, 1 fullmatch");
+            $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink != 0 and approved != 0 and concept != ''","$ebylenght glossaryid","id,glossaryid, concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY category,fullmatch");
+            $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries) AND usedynalink != 0", "$cbylenght glossaryid","id,glossaryid, name concept, 1 casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY category, 1 fullmatch");
             if ( $entries and $categories ) {
                 $concepts = array_merge($entries, $categories);
                 usort($concepts,'glossary_sort_entries_by_lenght');
@@ -54,7 +54,8 @@
                             $category = get_record("glossary_categories","id",$concept->id);
                             $lastcategory = $concept->id;
                             if ( $cm->instance != $category->glossaryid  ) {
-                                if ( !$cm = get_coursemodule_from_instance("glossary", $category->glossaryid, $courseid) ) {
+                                $gcat = get_record("glossary","id",$category->glossaryid);
+                                if ( !$cm = get_coursemodule_from_instance("glossary", $category->glossaryid, $gcat->course) ) {
                                     $cm->id = 1;
                                 }
                             }
