@@ -2006,7 +2006,8 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                     if ($stockcomments = get_records_select("workshop_stockcomments", "workshopid = $workshop->id
                             AND elementno = $i", "id")) { // show comments in fixed order (oldest first)
                         foreach ($stockcomments as $stockcomment) {
-                            echo "<a onclick=\"document.assessmentform.feedback_$i.value+=' '+'$stockcomment->comments';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
+                            echo "<a onclick=\"document.assessmentform.feedback_$i.value+=' '+'".
+                                addslashes($stockcomment->comments)."';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
                             if (isteacheredit($course->id, $USER->id)) {
                                 echo " <a onclick=\"document.assessmentform.action.value='removestockcomment';document.assessmentform.stockcommentid.value=$stockcomment->id;document.assessmentform.submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
                             }
@@ -2109,7 +2110,9 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                     if ($stockcomments = get_records_select("workshop_stockcomments", "workshopid = $workshop->id
                             AND elementno = $i", "id")) { // get comments in a fixed order - oldest first
                         foreach ($stockcomments as $stockcomment) {
-                            echo "<a onclick=\"document.assessmentform.feedback_$i.value+=' '+'$stockcomment->comments';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
+                            echo "<a onclick=\"document.assessmentform.feedback_$i.value+=' '+'".
+                                addslashes($stockcomment->comments).
+                                "';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
                             if (isteacheredit($course->id, $USER->id)) {
                                 echo " <a onclick=\"document.assessmentform.action.value='removestockcomment';document.assessmentform.stockcommentid.value=$stockcomment->id;document.assessmentform.submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
                             }
@@ -2212,7 +2215,9 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                     if ($stockcomments = get_records_select("workshop_stockcomments", "workshopid = $workshop->id
                             AND elementno = $i", "id")) { // get comments in a fixed order - oldest first
                         foreach ($stockcomments as $stockcomment) {
-                            echo "<a onclick=\"document.assessmentform.feedback_$i.value+=' '+'$stockcomment->comments';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
+                            echo "<a onclick=\"document.assessmentform.feedback_$i.value+=' '+'".
+                                addslashes($stockcomment->comments).
+                                "';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
                             if (isteacheredit($course->id, $USER->id)) {
                                 echo " <a onclick=\"document.assessmentform.action.value='removestockcomment';document.assessmentform.stockcommentid.value=$stockcomment->id;document.assessmentform.submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
                             }
@@ -2373,7 +2378,9 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                         if ($stockcomments = get_records_select("workshop_stockcomments", "workshopid = $workshop->id
                                     AND elementno = $i", "id")) { // show comments in fixed (creation) order
                             foreach ($stockcomments as $stockcomment) {
-                                echo "<a onclick=\"document.assessmentform.feedback_$i.value+=' '+'$stockcomment->comments';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
+                                echo "<a onclick=\"document.assessmentform.feedback_$i.value+=' '+'".
+                                    addslashes($stockcomment->comments).
+                                    "';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
                                 if (isteacheredit($course->id, $USER->id)) {
                                     echo " <a onclick=\"document.assessmentform.action.value='removestockcomment';document.assessmentform.stockcommentid.value=$stockcomment->id;document.assessmentform.submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
                                 }
@@ -2432,7 +2439,8 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
         if ($stockcomments = get_records_select("workshop_stockcomments", "workshopid = $workshop->id
                     AND elementno = 99", "id")) { // show in the same order (oldest at the top)
             foreach ($stockcomments as $stockcomment) {
-                echo "<a onclick=\"document.assessmentform.generalcomment.value+=' '+'$stockcomment->comments';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
+                echo "<a onclick=\"document.assessmentform.generalcomment.value+=' '+'".
+                    addslashes($stockcomment->comments)."';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
                 if (isteacheredit($course->id, $USER->id)) {
                     echo " <a onclick=\"document.assessmentform.action.value='removestockcomment';document.assessmentform.stockcommentid.value=$stockcomment->id;document.assessmentform.submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
                 }
