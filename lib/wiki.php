@@ -231,10 +231,15 @@ class Wiki {
     $line = $this->do_replace( $line, "-", "del" );
     $line = $this->do_replace_sub( $line, "~", "sub" );
     $line = $this->do_replace_sub( $line, "\^", "sup" );
-    $line = $this->do_replace( $line, "\"", "q" );
+    // $line = $this->do_replace( $line, "\"", "q" );
     // $line = $this->do_replace( $line, "'", "q" );
     $line = $this->do_replace( $line, "%", "code" );
     $line = $this->do_replace( $line, "@", "cite" );
+
+    // replace quotes
+    $regex = '(^| |[(.,])\"([^\"]*)\"([^[:alnum:]]|$)';
+    $replace = '\\1&#8220;\\2&#8221;\\3';
+    $line = eregi_replace( $regex, $replace, $line );
    
     // convert urls into proper link with optional link text URL(text)
     $line = eregi_replace("([[:space:]]|^)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])\(([^)]+)\)",
