@@ -137,7 +137,7 @@
         $myxls->InsertText(get_string("firstname"));
         $myxls->InsertText(get_string("lastname"));
         foreach ($columns as $column) {
-            $myxls->InsertText($column);
+            $myxls->InsertText(strip_tags($column));
         }
         $myxls->InsertText(get_string("total"));
 
@@ -154,7 +154,7 @@
             $myxls->InsertText($student->lastname);
 
             foreach ($studentgrades as $grade) {
-                $myxls->InsertText($grade);
+                $myxls->InsertText(strip_tags($grade));
             }
             $myxls->InsertNumber($totals[$student->id]);
         }
@@ -175,6 +175,7 @@
 
         echo get_string("firstname")."\t".get_string("lastname");
         foreach ($columns as $column) {
+            $column = strip_tags($column);
             echo "\t$column";
         }
         echo "\t".get_string("total")."\n";
@@ -185,6 +186,7 @@
             $student = $students[$studentid];
             echo "$student->firstname\t$student->lastname";
             foreach ($studentgrades as $grade) {
+                $grade = strip_tags($grade);
                 echo "\t$grade";
             }
             echo "\t".$totals[$student->id];
