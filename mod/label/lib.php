@@ -55,26 +55,9 @@ function label_delete_instance($id) {
     return $result;
 }
 
-function label_user_outline($course, $user, $mod, $label) {
-/// Return a small object with summary information about what a 
-/// user has done with a given particular instance of this module
-/// Used for user activity reports.
-/// $return->time = the time they did it
-/// $return->info = a short text description
-
-    return NULL;
-}
-
-function label_user_complete($course, $user, $mod, $label) {
-/// Print a detailed representation of what a  user has done with 
-/// a given particular instance of this module, for user activity reports.
-
-    return false;
-}
-
 function label_get_participants($labelid) {
 //Returns the users with data in one resource
-//(NONE, byt must exists on EVERY mod !!)
+//(NONE, but must exist on EVERY mod !!)
 
     return false;
 }
