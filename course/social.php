@@ -61,7 +61,7 @@
           print_heading_block($headertext);
           echo "<IMG ALT=\"\" HEIGHT=7 SRC=\"../pix/spacer.gif\"><BR>";
     
-          forum_print_latest_discussions($social->id, 10, "plain", "DESC", false);
+          forum_print_latest_discussions($social->id, 10, "plain", "", false);
 
       } else {
           notify("Could not find or create a social forum here");
