@@ -244,13 +244,13 @@
     if ($status) {
         echo "<li>".get_string("creatingcoursemodules");
         if (!$status = restore_create_modules($restore,$xml_file)) {
-            notify("Could not restore custom scales!");
+            notify("Could not restore modules!");
         }
     }
 
     //Now create log entries as needed
     if ($status and ($restore->logs)) {
-        echo "<li>".get_string("creatinglogentries")."<b>(not implemented!!)</b>";
+        echo "<li>".get_string("creatinglogentries")."<b> (not implemented!!)</b>";
     }    
 
     //Now, if all is OK, adjust the instance field in course_modules !!
