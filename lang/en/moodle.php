@@ -209,13 +209,10 @@ GNU General Public License for more details:
 
 http://www.gnu.org/copyleft/gpl.html
 
-Redistribution of modified copies of Moodle must be distributed 
-as clean base sources plus patches, so that 'unofficial' changes
-can be readily distinguished from the original Moodle code.
-
-If you wish to redistribute modified copies of this software
-WITHOUT including or mentioning the original Moodle software
-then please contact martin@dougiamas.com to request a commercial license.";
+If you wish to sell modified copies of this software
+but are unable to conform to the GPL requirements for providing
+downloadable copies of the Moodle source code to all your clients 
+then contact martin@dougiamas.com to discuss a commercial license. ";
 
 $string['grade'] = "Grade";
 $string['grades'] = "Grades";
