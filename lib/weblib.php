@@ -3413,17 +3413,17 @@ function print_side_block_end() {
 
     $fontlist = isset($CFG->editorfontlist) ? explode(';', $CFG->editorfontlist) : array();
     $i = 1;                     // Counter is used to get rid of the last comma.
-    $count = count($fontlist);  // Otherwise IE doesn't load the editor.
 
     foreach($fontlist as $fontline) {
         if(!empty($fontline)) {
-            list($fontkey, $fontvalue) = split(':', $fontline);
-            echo '"'. $fontkey ."\":\t'". $fontvalue ."'";
-            if($i < $count) {
+            if ($i > 1) {
                 echo ','."\n";
             }
+            list($fontkey, $fontvalue) = split(':', $fontline);
+            echo '"'. $fontkey ."\":\t'". $fontvalue ."'";
+
+            $i++;
         }
-        $i++;
     }
     echo '};';
 
