@@ -17,6 +17,8 @@
     optional_variable($userid, 0);     // User wiki.
     optional_variable($groupid, 0);    // Group wiki.
 
+    $action = clean_text($action);
+
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
