@@ -93,11 +93,14 @@
        $graph->x_data           = $days;
 
        $graph->y_data['logs']   = $logs;
-       $graph->y_format['logs'] = array('colour' => 'blue','line' => 'line');
-       $graph->y_label_left     = get_string("hits");
-       $graph->label_size       = "6";
-
        $graph->y_order = array('logs');
+       $graph->y_format['logs'] = array('colour' => 'blue','line' => 'line');
+
+
+       $graph->parameter['y_label_left']     = get_string("hits");
+       $graph->parameter['label_size']       = "12";
+       $graph->parameter['x_axis_angle']     = 90;
+       $graph->parameter['x_label_angle']    = 0;
 
        
        $graph->parameter['shadow']          = 'none';
@@ -127,8 +130,7 @@
        for ($i=0; $i<=23; $i++) {
            $logs[$i] = 0;
            $hour = $daystart + $i * 3600;
-           $hh        = (int)userdate($hour, "%I");
-           $hours[$i] = userdate($hour, "$hh %p");
+           $hours[$i] = $i;
        }
 
        if ($rawlogs = get_logs_userday($user->id, $courseselect, $daystart)) {
@@ -146,11 +148,14 @@
        $graph->x_data           = $hours;
 
        $graph->y_data['logs']   = $logs;
-       $graph->y_format['logs'] = array('colour' => 'blue','bar' => 'fill','legend' =>'actual','bar_size' => 0.9);
-       $graph->y_label_left     = get_string("hits");
-       $graph->label_size       = "6";
-
        $graph->y_order = array('logs');
+       $graph->y_format['logs'] = array('colour' => 'blue','bar' => 'fill','legend' =>'actual','bar_size' => 0.9);
+
+       $graph->parameter['y_label_left']     = get_string("hits");
+       $graph->parameter['label_size']       = "12";
+       $graph->parameter['x_axis_angle']     = 0;
+       $graph->parameter['x_label_angle']    = 0;
+
 
        
        $graph->parameter['shadow']          = 'none';
