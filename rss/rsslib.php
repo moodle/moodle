@@ -2,7 +2,7 @@
        // This file contains all the common stuff to be used in RSS System
 
 //This function returns the icon (from theme) with the link to rss/file.php
-function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext="") {
+function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
 
  global $CFG, $THEME, $USER;
 
@@ -23,20 +23,20 @@ function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext="") {
 
     if (empty($pixpath)) {
         if (empty($THEME->custompix)) {
-            $pixpath = "$CFG->wwwroot/pix";
+            $pixpath = $CFG->wwwroot .'/pix';
         } else {
-            $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
+            $pixpath = $CFG->wwwroot .'/theme/'. $CFG->theme .'/pix';
         }
     }
 
-    $rsspix = $pixpath."/i/rss.gif";
+    $rsspix = $pixpath .'/i/rss.gif';
 
-    return "<a href=\"".$rsspath."\"><img src=\"$rsspix\" title=\"$tooltiptext\" alt=\"\" /></a>";
+    return '<a href="'. $rsspath .'"><img src="'. $rsspix .'" title="'. $tooltiptext .'" alt="" /></a>';
 
 }
 
 //This function prints the icon (from theme) with the link to rss/file.php
-function rss_print_link($courseid, $userid, $modulename, $id, $tooltiptext="") {
+function rss_print_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
 
     echo rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext);
 
@@ -50,15 +50,15 @@ function cron_rss_feeds () {
 
     $status = true;
    
-    mtrace("    Generating rssfeeds...");
+    mtrace('    Generating rssfeeds...');
 
     //Check for required functions...
     if(!function_exists('utf8_encode')) {
-        mtrace("        ERROR: You need to add XML support to your PHP installation!");
+        mtrace('        ERROR: You need to add XML support to your PHP installation!');
         return true;
     }
 
-    if ($allmods = get_records("modules") ) {
+    if ($allmods = get_records('modules') ) {
         foreach ($allmods as $mod) {
             mtrace('        '.$mod->name.': ', '');
             $modname = $mod->name;
@@ -72,48 +72,48 @@ function cron_rss_feeds () {
                         mtrace('generating ', '');;
                         $status = $generaterssfeeds();
                         if (!empty($status)) {
-                            mtrace("...OK");
+                            mtrace('...OK');
                         } else {
-                            mtrace("...FAILED");
+                            mtrace('...FAILED');
                         }
                     } else {
-                        mtrace("...SKIPPED (failed above)");
+                        mtrace('...SKIPPED (failed above)');
                     }
                 } else {
-                    mtrace("...NOT SUPPORTED (function)");
+                    mtrace('...NOT SUPPORTED (function)');
                 }
             } else {
-                mtrace("...NOT SUPPORTED (file)");
+                mtrace('...NOT SUPPORTED (file)');
             }
         }
     }
-    mtrace("    Ending  rssfeeds...", '');
+    mtrace('    Ending  rssfeeds...', '');
     if (!empty($status)) {
-        mtrace("...OK");
+        mtrace('...OK');
     } else {
-        mtrace("...FAILED");
+        mtrace('...FAILED');
     }
 
     return $status;
 }
 
 //This function saves to file the rss feed specified in the parameters
-function rss_save_file ($modname,$mod,$result) {
+function rss_save_file ($modname, $mod, $result) {
  
     global $CFG;
     
     $status = true;
 
-    if (! $basedir = make_upload_directory ("rss/".$modname)) {
+    if (! $basedir = make_upload_directory ('rss/'. $modname)) {
         //Cannot be created, so error
         $status = false;
     }
 
     if ($status) {
         $file = rss_file_name($modname, $mod);
-        $rss_file = fopen($file,"w");
+        $rss_file = fopen($file, "w");
         if ($rss_file) {
-            $status = fwrite ($rss_file,$result);
+            $status = fwrite ($rss_file, $result);
             fclose($rss_file);
         } else {
             $status = false;
@@ -547,6 +547,17 @@ function rss_display_feeds($rssid='none') {
     global $db, $USER, $CFG, $THEME;
     global $blogid; //hackish, but if there is a blogid it would be good to preserve it
 
+    static $pixpath = '';
+    if (empty($pixpath)) {
+        if (empty($THEME->custompix)) {
+            $pixpath = $CFG->wwwroot .'/pix';
+        } else {
+            $pixpath = $CFG->wwwroot .'/theme/'. $CFG->theme .'/pix';
+        }
+    }
+
+    $rsspix = $pixpath .'/i/rss.gif';
+
     $closeTable = false;
     //Daryl Hawes note: convert this sql statement to a moodle function call
     if ($rssid != 'none'){
@@ -587,7 +598,7 @@ $deleteString .= '" title="'. get_string('delete') .'" align="absmiddle" border=
             print '<tr bgcolor="'. $THEME->cellcontent .'" class="forumpostmessage"><td><strong><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=view&rssid=';
             print $res->fields['id'] .'&blogid='. $blogid .'">'. $res->fields['title'] .'</a></strong><br />' ."\n";
             print $res->fields['description'] .'&nbsp;<br />' ."\n";
-            print $res->fields['url'] .'&nbsp;&nbsp;<a href="'. $res->fields['url'] .'" target=_new><img src="'. $CFG->pixpath .'/blog/xml.gif" border="0" /></a>' ."\n";
+            print $res->fields['url'] .'&nbsp;&nbsp;<a href="'. $res->fields['url'] .'" target=_new><img src="'. $rsspix .'" border="0" /></a>' ."\n";
             print '<a href="http://feeds.archive.org/validator/check?url='. $res->fields['url'] .'">(Validate)</a>';
             print '</td><td align="center">'. $editString .'</td>' ."\n";
             print '<td align=\"center\">'. $deleteString .'</td>' ."\n";
