@@ -12,10 +12,13 @@
         $form->open = 2;
     }
     if (!isset($form->assessed)) {
-        $form->assessed = "";
+        $form->assessed = 0;
+    }
+    if (!isset($form->assesspublic)) {
+        $form->assesspublic = 0;
     }
     if (!isset($form->forcesubscribe)) {
-        $form->forcesubscribe = "";
+        $form->forcesubscribe = 0;
     }
     if (!isset($form->maxbytes)) {
         $form->maxbytes = $CFG->forum_maxbytes;
@@ -112,9 +115,10 @@
         <?php 
             echo "<script>";
             echo "  var subitemstime = ['startday','startmonth','startyear','starthour', 'startminute',".
-                                   "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
-            echo "  var subitemsall = ['assessed', 'ratingtime', 'scale', 'startday','startmonth','startyear','starthour', 'startminute',".
-                                   "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
+                                       "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
+            echo "  var subitemsall = ['assessed', 'assesspublic', 'ratingtime', 'scale', ".
+                                      "'startday','startmonth','startyear','starthour', 'startminute',".
+                                      "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
             echo "</script>";
 
             echo "<input name=\"userating\" type=checkbox value=1 ";
@@ -132,6 +136,13 @@
             $options[1] = get_string("ratingeveryone", "forum");
             echo get_string("users").":";
             choose_from_menu($options, "assessed", $form->assessed, "");
+            echo "<br />";
+
+            unset($options);
+            $options[0] = get_string("ratingpublicnot", "forum", $course->students);
+            $options[1] = get_string("ratingpublic", "forum", $course->students);
+            echo get_string("view").":";
+            choose_from_menu($options, "assesspublic", $form->assesspublic, "");
             echo "<br />";
 
             echo get_string("grade").":";
@@ -159,6 +170,7 @@
             echo "</td></tr></table>";
             echo "<input type=\"hidden\" name=\"hratingtime\" value=0>";
             echo "<input type=\"hidden\" name=\"hassessed\" value=0>";
+            echo "<input type=\"hidden\" name=\"hassesspublic\" value=0>";
             echo "<input type=\"hidden\" name=\"hscale\" value=0>";
             echo "<input type=\"hidden\" name=\"hstartday\" value=0>";
             echo "<input type=\"hidden\" name=\"hstartmonth\" value=0>";

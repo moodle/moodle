@@ -5,7 +5,7 @@
 //  This fragment is called by /admin/index.php
 ////////////////////////////////////////////////////////////////////////////////
 
-$module->version  = 2003100600;
+$module->version  = 2004010100;
 $module->cron     = 60;
 
 ?>

@@ -79,6 +79,10 @@ function forum_upgrade($oldversion) {
   if ($oldversion < 2003100600) {
       table_column("forum", "", "maxbytes", "integer", "10", "unsigned", "0", "", "scale");
   }
+
+  if ($oldversion < 2004010100) {
+      table_column("forum", "", "assesspublic", "integer", "4", "unsigned", "0", "", "assessed");
+  }
   
   return true;
 

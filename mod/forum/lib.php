@@ -1098,7 +1098,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     global $THEME, $USER, $CFG;
 
-    static $stredit, $strdelete, $strreply, $strparent, $threadedmode;
+    static $stredit, $strdelete, $strreply, $strparent, $threadedmode, $isteacher;
 
     if (empty($stredit)) {
         $stredit = get_string("edit", "forum");
@@ -1106,6 +1106,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $strreply = get_string("reply", "forum");
         $strparent = get_string("parent", "forum");
         $threadedmode = (!empty($USER->mode) and ($USER->mode == FORUM_MODE_THREADED));
+        $isteacher = isteacher($courseid);
     }
 
     echo "<a name=\"$post->id\"></a>";
@@ -1128,7 +1129,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo "<font size=3><b>$post->subject</b></font><br \>";
     echo "<font size=2>";
 
-    $fullname = fullname($post, isteacher($courseid));
+    $fullname = fullname($post, $isteacher);
     $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$fullname</a>";
     $by->date = userdate($post->modified);
     print_string("bynameondate", "forum", $by);
@@ -1185,7 +1186,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
             echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?edit=$post->id\">$stredit</a> | ";
         }
     }
-    if ($ownpost or isteacher($courseid)) {
+    if ($ownpost or $isteacher) {
         echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">$strdelete</a>";
         if ($reply) {
             echo "| ";
@@ -1210,14 +1211,16 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
             }
         }
         if ($useratings) {
-            if (isteacher($courseid)) {
-                forum_print_ratings_mean($post->id, $ratings->scale);
-                if ($USER->id != $post->userid) {
-                     forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
-                     $ratingsmenuused = true;
-                }
-            } else if ($USER->id == $post->userid) {
-                forum_print_ratings_mean($post->id, $ratings->scale);
+            $mypost = ($USER->id == $post->userid);
+
+            if (($isteacher or $ratings->assesspublic) and !$mypost) {
+                forum_print_ratings_mean($post->id, $ratings->scale, $isteacher);
+                forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
+                $ratingsmenuused = true;
+
+            } else if ($mypost) {
+                forum_print_ratings_mean($post->id, $ratings->scale, true);
+
             } else if (!empty($ratings->allow) ) {
                 forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
                 $ratingsmenuused = true;
@@ -1335,7 +1338,7 @@ function forum_shorten_post($message) {
 }
 
 
-function forum_print_ratings_mean($postid, $scale) {
+function forum_print_ratings_mean($postid, $scale, $link=true) {
 /// Print the multiple ratings on a post given to the current user by others.
 /// Scale is an array of ratings
 
@@ -1350,7 +1353,11 @@ function forum_print_ratings_mean($postid, $scale) {
         }
 
         echo "$strratings: ";
-        link_to_popup_window ("/mod/forum/report.php?id=$postid", "ratings", $mean, 400, 600);
+        if ($link) {
+            link_to_popup_window ("/mod/forum/report.php?id=$postid", "ratings", $mean, 400, 600);
+        } else {
+            echo "$mean ";
+        }
     }
 }
 
@@ -2089,19 +2096,17 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
     } else {
         $ownpost = false;
     }
-    $reply   = forum_user_can_post($forum);
+    $reply = forum_user_can_post($forum);
 
     $ratings = NULL;
     $ratingsmenuused = false;
     if ($forum->assessed and !empty($USER->id)) {
         if ($ratings->scale = make_grades_menu($forum->scale)) {
+            $ratings->assesspublic = $forum->assesspublic;
             $ratings->assesstimestart = $forum->assesstimestart;
             $ratings->assesstimefinish = $forum->assesstimefinish;
-            if ($forum->assessed == 2 and !isteacher($course->id)) {
-                $ratings->allow = false;
-            } else {
-                $ratings->allow = true;
-            }
+            $ratings->allow = ($forum->assessed != 2 or isteacher($course->id));
+
             echo "<form name=form method=post action=rate.php>";
             echo "<input type=hidden name=id value=\"$course->id\">";
         }
