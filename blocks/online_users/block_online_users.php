@@ -65,7 +65,7 @@ class CourseBlock_online_users extends MoodleBlock {
                                           $groupmembers
                                      WHERE u.id = s.userid and
                                            s.course = {$this->course->id} and
-                                           s.timeaccess > $timefrom $select ORDER BY s.timeaccess ASC");
+                                           s.timeaccess > $timefrom $select ORDER BY s.timeaccess DESC");
 
         $teachers = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, s.timeaccess
                                      FROM {$CFG->prefix}user u,
@@ -73,7 +73,7 @@ class CourseBlock_online_users extends MoodleBlock {
                                           $groupmembers
                                      WHERE u.id = s.userid and
                                            s.course = {$this->course->id} and
-                                           s.timeaccess > $timefrom $select ORDER BY s.timeaccess ASC");
+                                           s.timeaccess > $timefrom $select ORDER BY s.timeaccess DESC");
 
         if ($teachers || $students) {
             if ($students) {
@@ -84,7 +84,7 @@ class CourseBlock_online_users extends MoodleBlock {
             }
             if ($teachers) {
                 foreach ($teachers as $teacher) {
-                    $teacher->fullname = fullname($teacher);
+                    $teacher->fullname = '<b>'.fullname($teacher).'</b>';
                     $users[$teacher->id] = $teacher;
                 }
             }
