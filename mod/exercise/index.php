@@ -82,16 +82,28 @@
 					    $table->data[] = array ($exercise->section, $link, $title, $phase, 
                                 $submitted, $due);
                     } else {
+                        $assessed = false; 
                         if ($exercise->usemaximum) {
                             $maximum = exercise_get_best_grade($submission);
-                            $grade = $maximum->grade;
+                            if (isset($maximum)) {
+                                $grade = $maximum->grade;
+                                $assessed = true;
+                            }
                         }else { // use mean value
                             $mean = exercise_get_mean_grade($submission);
-                            $grade = $mean->grade;
+                            if (isset($mean->grade)) {
+                                $grade = $mean->grade;
+                                $assessed = true;
+                            }
                         }
-                        $actualgrade = $grade * $exercise->grade / 100.0; 
-    					$table->data[] = array ($exercise->section, $link, $title, 
-                            number_format($actualgrade, 1), $submitted, $due);
+                        if ($assessed) {
+                            $actualgrade = $grade * $exercise->grade / 100.0; 
+    					    $table->data[] = array ($exercise->section, $link, $title, 
+                                    number_format($actualgrade, 1), $submitted, $due);
+                        } else {
+    					    $table->data[] = array ($exercise->section, $link, $title, 
+                                    "-", $submitted, $due);
+                        }
 					} 
                 }
 				else {
@@ -109,7 +121,7 @@
 				    $table->data[] = array ($exercise->section, $link, $title, $exercise->phase, 
                             $submitted, $due);
                 } else {
-    				$table->data[] = array ($exercise->section, $link, $title, "0", $submitted, $due);
+    				$table->data[] = array ($exercise->section, $link, $title, "-", $submitted, $due);
 				} 
             } else {
 				$table->data[] = array ($link, $submitted, $due);
