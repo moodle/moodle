@@ -5,6 +5,7 @@
 $string['action'] = 'Action';
 $string['activities'] = 'Activités';
 $string['activity'] = 'Activité';
+$string['activityclipboard'] = 'Activitén cours de déacement: <b>$a</b>';
 $string['activityiscurrentlyhidden'] = 'Désolé, cette activitée n\'est pas visible actuellement';
 $string['activitymodule'] = 'Module d\'activité';
 $string['activityreport'] = 'Journal d\'activité';
