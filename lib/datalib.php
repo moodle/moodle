@@ -1064,6 +1064,11 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         return false;
     }
 
+/// In Moodle we always use auto-numbering fields for the primary ID
+/// so let's unset it now before it causes any trouble
+
+    unset($dataobject->$primarykey);
+
 /// Get the correct SQL from adoDB
     if (!$insertSQL = $db->GetInsertSQL($rs, (array)$dataobject, true)) {
         return false;
