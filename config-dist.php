@@ -42,7 +42,7 @@ $CFG->dbpass    = "password";
 
 
 // Next you need to tell Moodle where it is located.
-// Specify the full URL that moodle has been installed in:
+// Specify the full URL where moodle has been installed (without a trailing slash):
 
 $CFG->wwwroot   = "http://example.com/moodle";
 
