@@ -662,6 +662,7 @@ $string['maximumupload'] = 'Taille maximale des fichiers déposés';
 $string['maxsize'] = 'Taille maximale : $a';
 $string['min'] = 'min';
 $string['mins'] = 'mins';
+$string['minutes'] = 'minutes';
 $string['miscellaneous'] = 'Divers';
 $string['missingcategory'] = 'Vous devez choisir une catégorie';
 $string['missingcity'] = 'La ville ne peut pas être vide';
