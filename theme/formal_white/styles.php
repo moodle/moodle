@@ -749,28 +749,32 @@ TD.cal_event_description {
 .cal_popup_fg {
 	background-color: <?php echo $THEME->cellcontent?>;
 	font-size: 11px;
-	font-family: Courier;
 	padding: 0px;
 	margin: 0px;
 }
 
 .cal_popup_bg {
-	border-top: 2px #ffcc66 solid;
-	border-left: 2px #ffcc66 solid;
+	border-top: 2px #C6BDA8 solid;
+	border-left: 2px #C6BDA8 solid;
 	border-right: 2px #663300 solid;
 	border-bottom: 2px #663300 solid;
+	background-color: #E3DFD4;
 	padding: 0px;
 	margin: 0px;
 }
 
 .cal_popup_caption {
-	font-size: 11px;
+	background-color: #E3DFD4;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
 	font-weight: bold;
 	margin: 5px;
 }
 
 .cal_popup_close {
-	font-size: 11px;
+	background-color: #E3DFD4;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
 	font-weight: bold;
 	margin-right: 5px;
 }
