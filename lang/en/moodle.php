@@ -421,6 +421,7 @@ $string['showallweeks'] = "Show all weeks";
 $string['showlistofcourses'] = "Show list of courses";
 $string['showonlytopic'] = "Show only topic \$a";
 $string['showonlyweek'] = "Show only week \$a";
+$string['showrecent'] = "Show recent activity";
 $string['showtheselogs'] = "Show these logs";
 $string['socialheadline'] = "Social forum - latest topics";
 $string['showallcourses'] = "Show all courses";

@@ -99,6 +99,16 @@
 	?></td>
 </tr>
 <tr valign=top>
+	<td><P><? print_string("showrecent") ?>:</td>
+	<td><?
+    unset($choices);
+    $choices["0"] = get_string("no");
+    $choices["1"] = get_string("yes");
+    choose_from_menu ($choices, "showrecent", $form->showrecent, "");
+    helpbutton("courserecent", get_string("showrecent")); ?>
+	</td>
+</tr>
+<tr valign=top>
 	<td><P><? print_string("wordforteacher") ?>:</td>
 	<td><input type="text" name="teacher" size=25 value="<? p($form->teacher) ?>">
 	(<? print_string("wordforteachereg") ?>) <? formerr($err["teacher"]) ?>

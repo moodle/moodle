@@ -44,6 +44,7 @@ CREATE TABLE `course` (
   `guest` tinyint(2) unsigned NOT NULL default '0',
   `startdate` int(10) unsigned NOT NULL default '0',
   `numsections` smallint(5) unsigned NOT NULL default '1',
+  `showrecent` smallint(5) unsigned NOT NULL default '1',
   `marker` int(10) unsigned NOT NULL default '0',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',

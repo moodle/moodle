@@ -201,28 +201,31 @@
     }
     echo "</TABLE>";
     
+    if ($news or $course->showrecent) {
+        echo "</TD><TD WIDTH=210>";
 
-    echo "</TD><TD WIDTH=210>";
+        // Print all the news items.
 
-    // Print all the news items.
-
-    if ($news) {
-        print_simple_box(get_string("latestnews"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
-        print_simple_box_start("CENTER", "100%", "#FFFFFF", 3, 0);
-        echo "<FONT SIZE=1>";
-        forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "DESC", false);
-        echo "</FONT>";
-        print_simple_box_end();
-        echo "<BR>";
-    }
+        if ($news) {
+            print_simple_box(get_string("latestnews"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+            print_simple_box_start("CENTER", "100%", "#FFFFFF", 3, 0);
+            echo "<FONT SIZE=1>";
+            forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "DESC", false);
+            echo "</FONT>";
+            print_simple_box_end();
+            echo "<BR>";
+        }
+        
+        // Print all the recent activity
+        if ($course->showrecent) {
+            print_simple_box(get_string("recentactivity"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+            print_simple_box_start("CENTER", "100%", "#FFFFFF", 3, 0);
+            print_recent_activity($course);
+            print_simple_box_end();
+        }
     
-    // Print all the recent activity
-    print_simple_box(get_string("recentactivity"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
-    print_simple_box_start("CENTER", "100%", "#FFFFFF", 3, 0);
-    print_recent_activity($course);
-    print_simple_box_end();
-
-    echo "<BR><IMG SRC=\"../pix/spacer.gif\" WIDTH=210 HEIGHT=1>";
+        echo "<BR><IMG SRC=\"../pix/spacer.gif\" WIDTH=210 HEIGHT=1>";
+    }
 
     echo "</TD></TR></TABLE>\n";
 

@@ -193,6 +193,10 @@ function main_upgrade($oldversion=0) {
         print_simple_box_end();
     }
 
+    if ($oldversion < 2002111200) {
+        execute_sql(" ALTER TABLE `course` ADD `showrecent` TINYINT(5) UNSIGNED DEFAULT '1' NOT NULL AFTER `numsections` ");
+    }
+
 
     return true;
 }
