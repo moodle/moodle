@@ -110,7 +110,7 @@ $string['backuplogshelp'] = 'Je-li povoleno, budou do automatických záloh zahrnu
 $string['backupnameformat'] = '%%Y-%%m-%%d-%%H-%%M';
 $string['backupnoneusersinfo'] = 'Poznámka: Zvolili jste, ¾e nechcete zálohovat ¾ádné u¾ivatele. V¹echny zálohy modulù byly proto pøepnuty do re¾imu \"bez dat u¾ivatelù\". Prosím, pov¹imnìte si, ¾e moduly \"cvièení\" a \"workshop\" nejsou s tímto re¾imem kompatibilní, tak¾e jejich zálohování bylo vypnuto úplnì.';
 $string['backuporiginalname'] = 'Název zálohy';
-$string['backupsavetohelp'] = 'Úplná cesta k adresáøi, do nìho¾ chcete ukládat soubory záloh<br>(ponecháte-li pole prázdné, budou se soubory ukládat do vlastního adresáøe daného kurzu)';
+$string['backupsavetohelp'] = 'Úplná cesta k adresáøi, do nìho¾ chcete ukládat soubory záloh<br />(ponecháte-li pole prázdné, budou se soubory ukládat do vlastního adresáøe daného kurzu)';
 $string['backuptakealook'] = 'Prosím, zkontrolujte protokoly záloh: $a';
 $string['backupuserfileshelp'] = 'Vyberte, zda mají být soubory u¾ivatele (napø. jeho fotografie) zahrnuty do automatických záloh.';
 $string['backupusershelp'] = 'Vyberte si, zda chcete zahrnout v¹echny u¾ivatele na serveru, nebo jen potøebné u¾ivatele pro ';
@@ -207,7 +207,7 @@ $string['confignotifyloginfailures'] = 'Pøi neúspì¹ném pøihlá¹ení mohou být zasí
 $string['confignotifyloginthreshold'] = 'Je-li aktivní upozoròování na neúspì¹ná pøihlá¹ení, po kolika neúspì¹ných pokusech na jednoho u¾ivatele nebo jednu IP adresu se má upozornìní rozeslat?';
 $string['configopentogoogle'] = 'Povolíte-li toto nastavení, umo¾níte vyhledávaèi Google, aby vstoupil na va¹e stránky jako host. Navíc lidé, kteøí se k vám dostanou pøes vyhledávání v Google, budou automaticky pøihlá¹ení jako host. Pov¹imnìte si, ¾e toto umo¾ní transparentní pøístup pouze do kurzù, které mají povolen vstup hostù.';
 $string['configpathtoclam'] = 'Cesta k antivirovému programu Clam AV. Pravdìpodobnì nìco jako /usr/bin/clamscan nebo /usr/bin/clamdscan. Toto musíte nastavit, chcete-li spou¹tet Clam AV.';
-$string['configproxyhost'] = 'Pokud tento <B>server</B> pou¾ívá proxy (napø. firewall) pro pøipojení k Internetu, zadejte hostname a port proxy. Jinak nechejte pole prázdné.';
+$string['configproxyhost'] = 'Pokud tento <b>server</b> pou¾ívá proxy (napø. firewall) pro pøipojení k Internetu, zadejte hostname a port proxy. Jinak nechejte pole prázdné.';
 $string['configquarantinedir'] = 'Chcete-li, aby Clam AV pøesouval infikované soubory do karantény, vlo¾te sem adresáø, který bude tuto funkci zastávat. Webový server musí mít práva zápisu do tohoto adresáøe. Pokud necháte pole prázdné, popø. pokud nebude vlo¾ený adresáø existovat èi nebude zapisovatelný, budou infikované soubory odstranìny. Adresáø zapisujte bez koncového lomítka.';
 $string['configrunclamonupload'] = 'Spoustìt Clam AV na nahrávané soubory? Budete muset vlo¾it platnou pathtoclam. Clam AV je volnì ¹íøitelný antivirový program, který si mù¾ete stáhnout z http://clamav.net/';
 $string['configsecureforms'] = 'Moodle mù¾e pou¾ívat vy¹¹í úroveò zabezpeèení pøi pøijímání údajù z webových formuláøù. Je-li tato volba povolena, pak je promìnná prohlí¾eèe HTTP_REFERER ovìøována proti aktuální adrese formuláøe. V nìkolika málo pøípadech v¹ak toto mù¾e zpùsobovat problémy, zejména pou¾ívá-li u¾ivatel firewall (napø. Zonealarm) nastavený tak, aby promìnnou HTTP_REFERER z webového provozu odøízl. Pøíznakem tohoto jsou problémy s formuláøi. Pokud tedy u¾ivatelé mají problém napøíklad na pøihla¹ovací stránce, mo¾ná budete chtít tuto metodu zakázat a tím ulehèit práci pøípadným útokùm na hesla u¾ivatelù (brute-force password attacks). Jste-li na pochybách, ponechejte zde hodnotu \'Ano\'.';
@@ -371,7 +371,7 @@ Potvrdte prosim tuto zadost na teto webove adrese:  $a->link
 
 Toto je automaticky generovany email. Neni nutne na nej odpovidat jeho odesilateli. Potrebujete-li pomoc, spojte se se spravcem stranek $a->admin';
 $string['emailconfirmationsubject'] = '$a: potvrzeni uctu';
-$string['emailconfirmsent'] = '<P>Na va¹i adresu <B>$a</B> byl odeslán email s jednoduchými pokyny k dokonèení va¹í registrace.<P>Narazíte-li na nìjaké obtí¾e, spojte se se správcem tìchto stránek.';
+$string['emailconfirmsent'] = '<p>Na va¹i adresu <b>$a</b> byl odeslán email s jednoduchými pokyny k dokonèení va¹í registrace.<p>Narazíte-li na nìjaké obtí¾e, spojte se se správcem tìchto stránek.';
 $string['emaildigest'] = 'Typ souhrnných emailù';
 $string['emaildigestcomplete'] = 'Kompletní (dennì email s plným textem pøíspìvkù)';
 $string['emaildigestoff'] = 'Nepou¾ívat souhrny (jeden email na ka¾dý pøíspìvek)';
@@ -406,8 +406,8 @@ $string['enrolledincoursenot'] = 'Nezapsán do kurzu ';
 $string['enrollfirst'] = 'Pøed pou¾itím tìchto èinností se musíte zapsat alespoò do jednoho kurzu';
 $string['enrolmentconfirmation'] = 'Chystáte zapsat sebe sama jako èlena tohoto kurzu.<br />Jste si jistí, ¾e to opravdu chcete?';
 $string['enrolmentkey'] = 'Klíè k zápisu';
-$string['enrolmentkeyfrom'] = 'Tento kurz vy¾aduje \'klíè k zápisu\' - vstupní<br>heslo, které mù¾ete obdr¾et od $a';
-$string['enrolmentkeyhint'] = 'Tento klíè k zápisu nebyl správný, zkuste to je¹tì jednou<br>(Napovím vám - klíè zaèíná na \'$a\')';
+$string['enrolmentkeyfrom'] = 'Tento kurz vy¾aduje \'klíè k zápisu\' - vstupní<br />heslo, které mù¾ete obdr¾et od $a';
+$string['enrolmentkeyhint'] = 'Tento klíè k zápisu nebyl správný, zkuste to je¹tì jednou<br />(Napovím vám - klíè zaèíná na \'$a\')';
 $string['enrolmentnew'] = 'Nový zápis v $a';
 $string['enrolmentnewuser'] = '$a->user je zapsán do kurzu \"$a->course\"';
 $string['enrolmentnointernal'] = 'Ruèní zápisy nejsou momentálnì umo¾nìny.';
@@ -484,7 +484,7 @@ Tento program je volný software; mù¾ete jej ¹íøit a modifikovat podle ustanovení
 Tento program je roz¹iøován v nadìji, ¾e bude u¾iteèný, av¹ak BEZ JAKÉKOLI ZÁRUKY; neposkytují se ani odvozené záruky PRODEJNOSTI anebo VHODNOSTI PRO URÈITÝ ÚÈEL. Dal¹í podrobnosti hledejte ve Obecné veøejné licenci GNU:
 <p>
 http://staff.cesnet.cz/~lhotka/gnugpl-cz.html
-<br>
+<br />
 http://www.gnu.org/copyleft/gpl.html';
 $string['grade'] = 'Body';
 $string['grades'] = 'Body';
@@ -603,7 +603,7 @@ $string['loginsteps'] = 'Zdravíèko! K plnému pøístupu do kurzù budete muset strá
 <li>Pokud budete vyzváni k vlo¾ení \"klíèe k zápisu\", zadejte text, který obdr¾íte od va¹eho uèitele. Tím se \"zapí¹ete\" do kurzu.</li>
 <li>Pak ji¾ máte pøístup k celému kurzu. Od té chvíle ji¾ budete zadávat pouze va¹e u¾ivatelské jméno a heslo (do formuláøe na této stránce) k pøihlá¹ení a pøístupu do v¹ech kurzù, v nich¾ jste zapsáni.</li>
 </ol>';
-$string['loginstepsnone'] = 'Zdravíèko!<P>K plnému pøístupu do kurzù si budete muset vytvoøit u¾ivatelský úèet.<P>Staèí vám pouze vymyslet si u¾ivatelské jméno a heslo a zadat jej do formuláøe na této stránce!<P>Pokud vás nìkdo pøedbìhl a va¹e u¾ivatelské jméno si ji¾ zaregistroval, budete to muset zkusit znovu s jiným jménem.';
+$string['loginstepsnone'] = 'Zdravíèko!<p>K plnému pøístupu do kurzù si budete muset vytvoøit u¾ivatelský úèet.<p>Staèí vám pouze vymyslet si u¾ivatelské jméno a heslo a zadat jej do formuláøe na této stránce!<p>Pokud vás nìkdo pøedbìhl a va¹e u¾ivatelské jméno si ji¾ zaregistroval, budete to muset zkusit znovu s jiným jménem.';
 $string['loginto'] = 'Pøihlásit se k $a';
 $string['loginusing'] = 'Pøihla¹te se zde pomocí va¹eho u¾ivatelského jména a hesla';
 $string['logout'] = 'Odhlásit se';
@@ -764,12 +764,12 @@ $string['passwordconfirmchange'] = 'Potvrïte zmìnu hesla';
 $string['passwordrecovery'] = 'Ano, pomoz mi se pøihlásit';
 $string['passwordsdiffer'] = 'Tato hesla se od sebe li¹í';
 $string['passwordsent'] = 'Heslo bylo zasláno';
-$string['passwordsenttext'] = '<P>
+$string['passwordsenttext'] = '<p>
 Na va¹i adresu $a->email byl odeslán email
-<P>
-<B>s va¹ím novým heslem.</B>
-<P>
-Nové heslo bylo vygenerováno automaticky, tak¾e si jej mo¾ná budete chtít <A HREF=$a->link>zmìnit</A>.';
+<p>
+<b>s va¹ím novým heslem.</b>
+<p>
+Nové heslo bylo vygenerováno automaticky, tak¾e si jej mo¾ná budete chtít <a href=$a->link>zmìnit</a>.';
 $string['pathnotexists'] = 'Tato cesta na va¹em serveru neexistuje!!';
 $string['pathslasherror'] = 'Cesta nesmí konèit lomítkem!!';
 $string['paymentinstant'] = 'Pomocí následujícího tlaèítka mù¾ete provést platbu a bìhem nìkolika minut se zapsat do kurzu!';
@@ -842,7 +842,7 @@ $string['scheduledbackupstatus'] = 'Stav plánovaných záloh';
 $string['search'] = 'Hledat';
 $string['searchagain'] = 'Hledat znovu';
 $string['searchcourses'] = 'Vyhledat kurzy';
-$string['searchhelp'] = 'Mù¾ete vyhledávat i nìkolik slov najednou.<p>slovo : hledej v textu jakoukoliv shodu s tímto slovem.<br>+slovo : bude nalezena pouze pøesná shoda.<br>-slovo : nezobrazuj výsledky s tímto slovem.';
+$string['searchhelp'] = 'Mù¾ete vyhledávat i nìkolik slov najednou.<p>slovo : hledej v textu jakoukoliv shodu s tímto slovem.<br />+slovo : bude nalezena pouze pøesná shoda.<br />-slovo : nezobrazuj výsledky s tímto slovem.';
 $string['searchresults'] = 'Výsledky hledání';
 $string['sec'] = 'sek';
 $string['secs'] = 'sekund';

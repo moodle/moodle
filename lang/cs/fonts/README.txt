@@ -1,4 +1,4 @@
-Fonty
+fonty
 -----
 
 Tento adresar obsahuje fonty, ktere jsou pouzivany pri

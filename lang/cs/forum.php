@@ -91,7 +91,7 @@ $string['openmode1'] = 'Bez témat diskuse, ale odpovìdi jsou povoleny';
 $string['openmode2'] = 'Nová témata diskuse i odpovìdi jsou povoleny';
 $string['parent'] = 'Ukázat pøedchùdce';
 $string['parentofthispost'] = 'Pøedchùdce tohoto pøíspìvku';
-$string['postadded'] = 'Vá¹ pøíspìvek byl úspì¹nì pøidán.<P>Na pøípadné úpravy máte $a .';
+$string['postadded'] = 'Vá¹ pøíspìvek byl úspì¹nì pøidán.<p>Na pøípadné úpravy máte $a .';
 $string['postincontext'] = 'Ukázat pøíspìvek v kontextu';
 $string['postmailinfo'] = 'Toto je kopie nove zpravy ze stranek $a .
 Chcete-li na prispevek odpovedet, nasledujte tento odkaz:';
