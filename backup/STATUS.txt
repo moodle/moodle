@@ -17,6 +17,9 @@ Backup Details:
         - Check Security........................................DONE
         - Select Info to Backup.(from mods).....................DONE
         - Check (summary info)..................................IN PROGRESS
+             - Check mods.......................................DONE
+             - Check logs.......................................IN PROGRESS
+             - Check users......................................DONE
         - Launch Backup.........................................NO EXISTS
         - Show progress.........................................NO EXISTS
         - Determine Backup location.............................NO EXISTS
