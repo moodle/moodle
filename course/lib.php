@@ -135,7 +135,7 @@ function print_recent_selector_form($course, $selecteduser=0, $selecteddate="tod
     choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
     choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
     choose_from_menu ($activities, "modid", $selectedactivity, get_string("allactivities"), "", "");
-    echo "<input type=submit value=\"".get_string("showthesereports")."\">";
+    echo "<input type=submit value=\"".get_string("showrecent")."\">";
     echo "</form>";
     echo "</center>";
 }
