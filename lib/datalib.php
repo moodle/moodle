@@ -618,7 +618,7 @@ function insert_record($table, $dataobject, $returnid=true) {
     }
 
     if ($returnid) {
-        if ($CFG->dbtype == "mysql" || $CFG->dbtype == "postgres7") { 
+        if ($CFG->dbtype == "mysql" ) { 
             return $db->Insert_ID();   // ADOdb has stored the ID for us, but it isn't reliable
         }
         
