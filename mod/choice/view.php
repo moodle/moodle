@@ -66,7 +66,12 @@
                   update_module_icon($cm->id, $course->id));
 
     if (isteacher($course->id)) {
-        echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".get_string("viewallresponses", "choice")."</A></P>";
+        if ( $allanswers = get_records("choice_answers", "choice", $choice->id)) {
+            $responsecount = count($allanswers);
+        } else {
+            $responsecount = 0;
+        }
+        echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".get_string("viewallresponses", "choice", $responsecount)."</A></P>";
     }
 
     print_simple_box( text_to_html($choice->text) , "center");
