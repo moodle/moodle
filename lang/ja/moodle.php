@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 unstable development (2004090402)
+      // moodle.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['action'] = '操作';
@@ -243,7 +243,7 @@ $string['creatingevents'] = 'イベントの作成';
 $string['creatinggroups'] = 'グループの作成';
 $string['creatinglogentries'] = 'ログエントリーの作成';
 $string['creatingnewcourse'] = '新しいコースの作成';
-$string['creatingscales'] = 'スケールの作成';
+$string['creatingscales'] = '尺度の作成';
 $string['creatingsections'] = 'セクションの作成';
 $string['creatingtemporarystructures'] = 'テンポラリ構造の作成';
 $string['creatingusers'] = 'ユーザの作成';
@@ -391,8 +391,8 @@ $string['emailpasswordsent'] = 'パスワードの変更確認ありがとうございます。
 <a href=$a->link>パスワードの変更</a> で覚えやすいものに変更出来ます。';
 $string['enable'] = '有効にする';
 $string['encryptedcode'] = '暗号化コード';
-$string['enrolledincourse'] = 'コース ';
-$string['enrolledincoursenot'] = 'コース ';
+$string['enrolledincourse'] = 'コース「 $a 」登録済';
+$string['enrolledincoursenot'] = 'コース「 $a 」未登録';
 $string['enrollfirst'] = 'サイトの活動を利用する為には、事前にコースに登録を行ってください。';
 $string['enrolmentconfirmation'] = 'あなたはこのコースに参加します。<br />本当にこの処理を行って宜しいですか?';
 $string['enrolmentkey'] = '登録キー';
@@ -776,7 +776,7 @@ $string['potentialstudents'] = '潜在的な学生';
 $string['potentialteachers'] = '潜在的な教師';
 $string['preferredlanguage'] = '表示言語';
 $string['preview'] = 'プレビュー';
-$string['previeworchoose'] = 'テーマを選択してください';
+$string['previeworchoose'] = 'テーマを選択してください。';
 $string['previous'] = '前へ';
 $string['publicdirectory'] = 'パブリックディレクトリ';
 $string['publicdirectory0'] = 'このサイトを公開しません';
@@ -821,13 +821,13 @@ $string['rssarticles'] = '最近の記事のRSS数';
 $string['rsstype'] = 'この活動のRSSフィード';
 $string['savechanges'] = '変更を保存';
 $string['saveto'] = '保存先';
-$string['scale'] = 'スケール';
-$string['scales'] = 'スケール';
-$string['scalescustom'] = 'カスタムスケール';
-$string['scalescustomcreate'] = '新しいスケールの追加';
-$string['scalescustomno'] = 'カスタムスケールはまだ作成されていません。';
-$string['scalesstandard'] = 'スタンダードスケール';
-$string['scalestip'] = 'カスタムスケールを作成する為には、コース管理メニューにある\'スケール...\'を使用してください。';
+$string['scale'] = '尺度';
+$string['scales'] = '尺度';
+$string['scalescustom'] = '独自尺度';
+$string['scalescustomcreate'] = '新しい尺度の追加';
+$string['scalescustomno'] = '独自尺度はまだ作成されていません。';
+$string['scalesstandard'] = '標準尺度';
+$string['scalestip'] = '独自尺度を作成する為には、コース管理メニューにある\'尺度...\'を使用してください。';
 $string['schedule'] = 'スケジュール';
 $string['scheduledbackupstatus'] = 'バックアップスケジュール状態';
 $string['search'] = '検索';
@@ -1020,7 +1020,7 @@ $string['writinggroupsinfo'] = 'グループ情報の書き出し';
 $string['writingheader'] = 'ヘッダの書き出し';
 $string['writingloginfo'] = 'ログ情報の書き出し';
 $string['writingmoduleinfo'] = 'モジュール情報の書き出し';
-$string['writingscalesinfo'] = 'スケール情報の書き出し';
+$string['writingscalesinfo'] = '尺度情報の書き出し';
 $string['writinguserinfo'] = 'ユーザ情報の書き出し';
 $string['wrongpassword'] = 'パスワードが間違っています。';
 $string['yes'] = 'Yes';

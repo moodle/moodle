@@ -1,12 +1,12 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.4 development (2004072500)
+      // survey.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['actual'] = '実体験';
 $string['actualclass'] = 'クラスの実体験';
 $string['actualstudent'] = '$a の実体験';
 $string['allquestions'] = '全質問一覧、全学生';
-$string['allscales'] = '全スケール、全学生';
+$string['allscales'] = '全尺度、全学生';
 $string['alreadysubmitted'] = 'この調査は完了しています';
 $string['analysisof'] = '$a の分析';
 $string['answers'] = '回答';
@@ -194,10 +194,10 @@ $string['questionsnotanswered'] = '未回答の質問があります。';
 $string['report'] = '調査報告';
 $string['savednotes'] = 'メモが保存されました';
 $string['scaleagree5'] = '全く同意出来ない,多少同意できない,どちらでもない,多少同意できる,強く同意できる';
-$string['scales'] = 'スケール';
+$string['scales'] = '尺度';
 $string['scaletimes5'] = 'ほとんど無い,まれに,時々,頻繁に,ほとんどいつも';
 $string['seemoredetail'] = '詳細を見るためにはここをクリックしてください';
-$string['selectedquestions'] = 'スケールから選ばれた質問, 全学生';
+$string['selectedquestions'] = '尺度から選ばれた質問, 全学生';
 $string['summary'] = '概略';
 $string['surveycompleted'] = '調査が終了しました。下のグラフはクラスの平均とあなたの結果を比較したものです。';
 $string['surveyname'] = '調査名';
