@@ -1,6 +1,7 @@
 <?PHP // $Id$ 
 
 $string['thislanguage'] = "English";  // Name of this language in the native language eg Français 
+$string['thischarset'] = "iso-8859-1";  // The best charset to use for this language
 
 $string['action'] = "Action";
 $string['activity'] = "Activity";

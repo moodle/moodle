@@ -47,7 +47,6 @@ $string['city'] = "Ville";
 $string['comparelanguage'] = "Comparer et éditer la langue active";
 $string['complete'] = "Complet";
 $string['configauth'] = "Choisir la méthode d'authentification souhaitée. Celle utilisée par défaut est « email » et fournit le meilleur niveau de sécurité. La méthode « none » ne fournit aucune vérification ; par conséquent, soyez prudent lorsque vous l'utilisez.";
-$string['configcharset'] = "Cette chaîne représente la méthode d'encodage des caractères des pages HTML. Elle est utilisée par les navigateurs Web pour afficher correctement les autres langues que l'anglais.L'encodage par défaut dépend de la langue sélectionnée.";
 $string['configerrorlevel'] = "Choisir la quantité d'avertissement PHP que vous souhaitez voir afficher. « Normal » est généralement le meilleur choix.";
 $string['configgdversion'] = "Indiquer la version de la librairie GD qui est installée. La version selectionnée par défaut est celle qui a été détectée. Ne pas modifier cette valeur à moins de savoir réellement ce qu'il en découle.";
 $string['configintro'] = "Cette page permet de configurer un certain nombre de variables de configuration permettront à Moodle de fonctionner correctement sur ce serveur. Inutile de trop s'en inquiéter, les paramètres par défaut devraient, la plupart du temps, convenir et il est toujours possible de revenir plus tard sur cette page pour les modifier.";
