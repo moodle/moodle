@@ -372,18 +372,20 @@ function forum_grades($forumid) {
     if (!$forum->assessed) {
         return false;
     }
-    if ($ratings = get_records_sql_menu("SELECT p.user, r.rating
-                                          FROM forum_discussions d, forum_posts p, forum_ratings r
-                                         WHERE d.forum = '$forumid' 
-                                           AND p.discussion = d.id
-                                           AND r.post = p.id")) {
-        foreach ($ratings as $user => $rating) {
-            if (!isset($sumrating[$user])) {
-                $sumrating[$user][1] = 0;
-                $sumrating[$user][2] = 0;
-                $sumrating[$user][3] = 0;
+    if ($ratings = get_records_sql("SELECT p.user, r.rating
+                                      FROM forum_discussions d, forum_posts p, forum_ratings r
+                                     WHERE d.forum = '$forumid' 
+                                       AND p.discussion = d.id
+                                       AND r.post = p.id")) {
+        foreach ($ratings as $rating) {
+            $u = $rating->user;
+            $r = $rating->rating;
+            if (!isset($sumrating[$u])) {
+                $sumrating[$u][1] = 0;
+                $sumrating[$u][2] = 0;
+                $sumrating[$u][3] = 0;
             }
-            $sumrating[$user][$rating] += 1;
+            $sumrating[$u][$r]++;
         }
         foreach ($sumrating as $user => $rating) {
             $return->grades[$user] = $rating[1]."s/".$rating[2]."/".$rating[3]."c";
