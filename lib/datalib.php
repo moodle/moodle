@@ -969,8 +969,9 @@ function get_course_mods($courseid) {
 /// Just gets a raw list of all modules in a course
     global $CFG;
 
-    return get_records_sql("SELECT cm.*, m.name as modname, cm.visible as visible
-                            FROM {$CFG->prefix}modules m, {$CFG->prefix}course_modules cm
+    return get_records_sql("SELECT cm.*, m.name as modname
+                            FROM {$CFG->prefix}modules m, 
+                                 {$CFG->prefix}course_modules cm
                             WHERE cm.course = '$courseid' 
                             AND cm.deleted = '0'
                             AND cm.module = m.id ");
@@ -982,7 +983,9 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid) {
     global $CFG;
 
     return get_record_sql("SELECT cm.*, m.name
-                           FROM {$CFG->prefix}course_modules cm, {$CFG->prefix}modules md, {$CFG->prefix}$modulename m 
+                           FROM {$CFG->prefix}course_modules cm, 
+                                {$CFG->prefix}modules md, 
+                                {$CFG->prefix}$modulename m 
                            WHERE cm.course = '$courseid' AND 
                                  cm.deleted = '0' AND
                                  cm.instance = m.id AND 
@@ -1006,8 +1009,10 @@ function get_all_instances_in_course($modulename, $courseid, $sort="cw.section")
     }
 
     return get_records_sql("SELECT m.*,cw.section,cm.id as coursemodule 
-                            FROM {$CFG->prefix}course_modules cm, {$CFG->prefix}course_sections cw, 
-                                 {$CFG->prefix}modules md, {$CFG->prefix}$modulename m 
+                            FROM {$CFG->prefix}course_modules cm, 
+                                 {$CFG->prefix}course_sections cw, 
+                                 {$CFG->prefix}modules md, 
+                                 {$CFG->prefix}$modulename m 
                             WHERE cm.course = '$courseid' AND 
                                   cm.instance = m.id AND 
                                   cm.deleted = '0' AND
