@@ -1,9 +1,16 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.8 (2003010600)
-
+      // assignment.php - created with Moodle 1.0.9 Beta 1 + (2003051700)
+//Traducción de Claudio Tavares (claudio@enlaceacademico.com)
 
 $string['allowresubmit'] = "Permitir corrección";
 $string['assignmentdetails'] = "Detalles de la tarea";
+$string['assignmentmail'] = "El maestro \$a->teacher ya ha revisado su tarea '\$a->assignment'
+
+Puedes ver sus comentarios en:
+
+\$a->url";
+$string['assignmentmailhtml'] = "El maestro \$a->teacher ya ha revisado su tarea '<i>\$a->assignment</i>'<br /><br />
+Puedes ver sus comentarios <a href=\\\"\$a->url\\\">aquí</a>.";
 $string['assignmentname'] = "Título";
 $string['assignmenttype'] = "Tipo de tarea";
 $string['description'] = "Descripción";
@@ -18,15 +25,15 @@ $string['maximumsize'] = "Tamaño máximo";
 $string['modulename'] = "Tarea";
 $string['modulenameplural'] = "Tareas";
 $string['newsubmissions'] = "Tareas enviadas";
-$string['notsubmittedyet'] = "Aún no ha hecho esta tarea";
-$string['overwritewarning'] = "Advertencia: Si envía un nuevo archivo, REEMPLAZARÁ al anterior.";
+$string['notsubmittedyet'] = "Aún no ha realizado esta tarea";
+$string['overwritewarning'] = "Advertencia: Si envía un nuevo archivo REEMPLAZARÁ al anterior.";
 $string['saveallfeedback'] = "Guardar respuesta";
 $string['submissionfeedback'] = "Calificación de la tarea";
 $string['submissions'] = "Envíos";
 $string['submitassignment'] = "Enviar su tarea";
 $string['submitted'] = "Enviada";
 $string['typeoffline'] = "Actividad no en línea";
-$string['typeuploadsingle'] = "Subir un solo archivo, valor entre 0 - 100 puntos";
+$string['typeuploadsingle'] = "Subir un solo archivo: 0 a 100 puntos";
 $string['uploadbadname'] = "El nombre contiene caracteres incompatibles y no se pudo cargar al sistema.";
 $string['uploadedfiles'] = "Archivos enviados";
 $string['uploaderror'] = "Ha ocurrido un error cuando se guardaba el archivo en el servidor.";

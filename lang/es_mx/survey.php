@@ -1,6 +1,6 @@
 <?PHP // $Id$ 
       // survey.php - created with Moodle 1.0.8 (2003010600)
-
+//Traducción de Claudio Tavares (claudio@enlaceacademico.com)
 
 $string['actual'] = "Actual";
 $string['actualclass'] = "Clase actual";
@@ -32,7 +32,7 @@ $string['helpsurveys'] = "Ayuda sobre los diferentes tipos de información";
 $string['ifoundthat'] = "Encontrado:";
 $string['introtext'] = "Texto de introducción";
 $string['ipreferthat'] = "Prefiero esto";
-$string['modulename'] = "Encuestas";
+$string['modulename'] = "Encuesta";
 $string['modulenameplural'] = "Encuestas";
 $string['name'] = "Nombre";
 $string['newsurveyresponses'] = "Nuevas respuestas a la encuesta";

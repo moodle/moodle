@@ -1,60 +1,65 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.6.4 beta (2002112001)
+      // auth.php - created with Moodle 1.0.9 development (2003032602)
+			//Traducción de Claudio Tavares (claudio@enlaceacademico.com)
+	  // Revisi&oacute;n de la traducci&oacute;n al espa&ntilde;ol:
+	  // Emmanuelle Guti&eacute;rrez y Restrepo (emmanuelle@sidar.org)
 
-
-$string['auth_dbdescription'] = "This method uses an external database table to check whether a given username and password is valid.  If the account is a new one, then information from other fields may also be copied across into Moodle.";
-$string['auth_dbextrafields'] = "These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <B>external database fields</B> that you specify here. <P>If you leave these blank, then defaults will be used.<P>In either case, the user will be able to edit all of these fields after they log in.";
-$string['auth_dbfieldpass'] = "Name of the field containing passwords";
-$string['auth_dbfielduser'] = "Name of the field containing usernames";
-$string['auth_dbhost'] = "The computer hosting the database server.";
-$string['auth_dbname'] = "Name of the database itself";
-$string['auth_dbpass'] = "Password matching the above username";
-$string['auth_dbpasstype'] = "Specify the format that the password field is using.  MD5 encryption is useful for connecting to other common web applications like PostNuke";
-$string['auth_dbtable'] = "Name of the table in the database";
-$string['auth_dbtitle'] = "Use an external database";
-$string['auth_dbtype'] = "The database type (See the <A HREF=../lib/adodb/readme.htm#drivers>ADOdb documentation</A> for details)";
-$string['auth_dbuser'] = "Username with read access to the database";
-$string['auth_emaildescription'] = "Email confirmation is the default authentication method.  When the user signs up, choosing their own new username and password, a confirmation email is sent to the user's email address.  This email contains a secure link to a page where the user can confirm their account. Future logins just check the username and password against the stored values in the Moodle database.";
-$string['auth_emailtitle'] = "Email-based authentication";
-$string['auth_imapdescription'] = "This method uses an IMAP server to check whether a given username and password is valid.";
-$string['auth_imaphost'] = "The IMAP server address. Use the IP number, not DNS name.";
-$string['auth_imapport'] = "IMAP server port number. Usually this is 143 or 993.";
-$string['auth_imaptitle'] = "Use an IMAP server";
-$string['auth_imaptype'] = "The IMAP server type.  IMAP servers can have different types of authentication and negotiation.";
-$string['instructions'] = "Instructions";
-$string['auth_ldap_bind_dn'] = "If you want to use bind-user to search users, specify it here. Someting like 'cn=ldapuser,ou=public,o=org'";
-$string['auth_ldap_bind_pw'] = "Password for bind-user.";
-$string['auth_ldap_contexts'] = "List of contexts where users are located. Separate different contexts with ';'. For example: 'ou=users,o=org; ou=others,o=org'";
-$string['auth_ldap_host_url'] = "Specify LDAP host in URL-form like 'ldap://ldap.myorg.com/' or 'ldaps://ldap.myorg.com/' ";
-$string['auth_ldap_search_sub'] = "Put value &lt;&gt; 0 if  you like to search users from subcontexts.";
-$string['auth_ldap_update_userinfo'] = "Update user information (firstname, lastname, address..) from LDAP to Moodle. Look at /auth/ldap/attr_mappings.php for mapping information";
-$string['auth_ldap_user_attribute'] = "The attribute used to name/search users. Usually 'cn'.";
-$string['auth_ldapdescription'] = "This method provides authentication against an external LDAP server.
-                                  If the given username and password are valid, Moodle creates a new user 
-                                  entry in its database. This module can read user attributes from LDAP and prefill 
-                                  wanted fields in Moodle.  For following logins only the username and 
-                                  password are checked.";
-$string['auth_ldapextrafields'] = "These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <B>LDAP fields</B> that you specify here. <P>If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.<P>In either case, the user will be able to edit all of these fields after they log in.";
-$string['auth_ldaptitle'] = "Use an LDAP server";
-$string['auth_nntpdescription'] = "This method uses an NNTP server to check whether a given username and password is valid.";
-$string['auth_nntphost'] = "The NNTP server address. Use the IP number, not DNS name.";
-$string['auth_nntpport'] = "Server port (119 is the most common)";
-$string['auth_nntptitle'] = "Use an NNTP server";
-$string['auth_nonedescription'] = "Users can sign in and create valid accounts immediately, with no authentication against an external server and no confirmation via email.  Be careful using this option - think of the security and administration problems this could cause.";
-$string['auth_nonetitle'] = "No authentication";
-$string['auth_pop3description'] = "This method uses a POP3 server to check whether a given username and password is valid.";
-$string['auth_pop3host'] = "The POP3 server address. Use the IP number, not DNS name.";
-$string['auth_pop3port'] = "Server port (110 is the most common)";
-$string['auth_pop3title'] = "Use a POP3 server";
-$string['auth_pop3type'] = "Server type. If your server uses certificate security, choose pop3cert.";
-$string['authenticationoptions'] = "Authentication options";
-$string['authinstructions'] = "Here you can provide instructions for your users, so they know which username and password they should be using.  The text you enter here will appear on the login page.  If you leave this blank then no instructions will be printed.";
-$string['changepassword'] = "Change password URL";
-$string['changepasswordhelp'] = "Here you can specify a location at which your users can recover or change their username/password if they've forgotten it.  This will be provided to users as a button on the login page and their user page.  if you leave this blank the button will not be printed.";
-$string['chooseauthmethod'] = "Choose an authentication method: ";
-$string['guestloginbutton'] = "Guest login button";
-$string['md5'] = "MD5 encryption";
-$string['plaintext'] = "Plain text";
-$string['showguestlogin'] = "You can hide or show the guest login button on the login page.";
+$string['auth_dbdescription'] = "Este método utiliza una tabla de una base de datos externa para comprobar si un determinado usuario y contraseña son válidos. Si la cuenta es nueva, la información de otros campos puede también ser copiada en Moodle.";
+$string['auth_dbextrafields'] = "Estos campos son opcionales. Usted puede elegir pre-rellenar algunos campos del usuario de Moodle con información desde los <strong>campos de la base de datos externa</strong> que especifique aquí. <p>Si deja esto en blanco, se tomarán los valores por defecto</p>.<p>En ambos casos, el usuario podrá editar todos estos campos después de entrar</p>.";
+$string['auth_dbfieldpass'] = "Nombre del campo que contiene las contraseñas";
+$string['auth_dbfielduser'] = "Nombre del campo que contiene los nombres de usuario";
+$string['auth_dbhost'] = "El ordenador que hospeda el servidor de la base de datos.";
+$string['auth_dbname'] = "Nombre de la base de datos";
+$string['auth_dbpass'] = "La contraseña correspondiente al nombre de usuario anterior";
+$string['auth_dbpasstype'] = "Especifique el formato que usa el campo de contraseña. La encriptación MD5 es útil para conectar con otras aplicaciones web como PostNuke.";
+$string['auth_dbtable'] = "Nombre de la tabla en la base de datos";
+$string['auth_dbtitle'] = "Usar una base de datos externa";
+$string['auth_dbtype'] = "El tipo de base de datos (Vea la <a href=../lib/adodb/readme.htm#drivers>documentación de ADOdb</a> para obtener más detalles)";
+$string['auth_dbuser'] = "Usuario con acceso de lectura a la base de datos";
+$string['auth_emaildescription'] = "La confirmación por correo alectrónico es el método de autenticación predeterminado. Cuando el usuario se inscribe, escogiendo su propio nombre de usuario y contraseña, un email de confirmación es enviado a su dirección de correo electrónico. Este email contiene un enlace seguro a una página donde el usuario puede confirmar su cuenta. Las futuras entradas comprueban el nombre de usuario y contraseña contra los valores guardados en la base de datos de Moodle.";
+$string['auth_emailtitle'] = "Autenticación basada en Email";
+$string['auth_imapdescription'] = "Este método usa un servidor IMAP para comprobar si el nombre de usuario y contraseña son válidos.";
+$string['auth_imaphost'] = "La dirección del servidor IMAP. Use el número IP, no el nombre DNS.";
+$string['auth_imapport'] = "Número del puerto del servidor IMAP. Normalmente es el 143 o 993.";
+$string['auth_imaptitle'] = "Usar un servidor IMAP";
+$string['auth_imaptype'] = "El tipo de servidor IMAP. Los servidores IMAP pueden tener diferentes tipos de autenticación y negociación.";
+$string['auth_ldap_bind_dn'] = "Si quiere usar 'bind-user' para buscar usuarios, especifíquelo aquí. Algo como 'cn=ldapuser,ou=public,o=org'";
+$string['auth_ldap_bind_pw'] = "Contraseña para bind-user.";
+$string['auth_ldap_contexts'] = "Lista de contextos donde están localizados los usuarios. Separar contextos diferentes con ';'. Por ejemplo: 'ou=usuarios,o=org; ou=otros,o=org'";
+$string['auth_ldap_create_context'] = "Si habilita la creación de usuario con confirmación por medio de correo electrónico, especifique el contexto en el que se crean los usuarios. Este contexto debe ser diferente de otros usuarios para prevenir problemas de seguridad. No es necesario añadir este contexto a Idap_context-variable, Moodle buscará automáticamente los usuarios para este contexto.";
+$string['auth_ldap_creators'] = "Lista de grupos cuyos miembros están autorizados para crear nuevos cursos. Pueden separarse varios grupos con ';'. Normalmente así: 'cn=teachers,ou=staff,o=myorg'";
+$string['auth_ldap_host_url'] = "Especificar el host LDAP en forma de URL como 'ldap://ldap.myorg.com/' o 'ldaps://ldap.myorg.com/' ";
+$string['auth_ldap_memberattribute'] = "Especificar el atributo para nombre de usuario, cuando los usuarios se integran en un grupo. Normalmente 'miembro'";
+$string['auth_ldap_search_sub'] = "Ponga el valor &lt;&gt; 0 si quiere buscar usuarios desde subcontextos.";
+$string['auth_ldap_update_userinfo'] = "Actualizar información del usuario (nombre, apellido, dirección..) desde LDAP a Moodle. Mire en /auth/ldap/attr_mappings.php para información de mapeado";
+$string['auth_ldap_user_attribute'] = "El atributo usado para nombrar/buscar usuarios. Normalmente 'cn'.";
+$string['auth_ldapdescription'] = "Este método proporciona autenticación contra un servidor LDAP externo.
+Si el nombre de usuario y contraseña facilitados son válidos, Moodle crea una nueva entrada para el usuario en su base de datos. Este módulo puede leer atributos de usuario desde LDAP y prerrellenar los campos requeridos en Moodle. Para las entradas sucesivas sólo se comprueba el usuario y la contraseña.";
+$string['auth_ldapextrafields'] = "Estos campos son opcionales. Usted puede elegir pre-rellenar algunos campos de usuario en Moodle con información de los <strong>campos LDAP</strong> que especifique aquí. <p>Si deja estos campos en blanco, entonces no se transferirá nada desde LDAP y se usará el sistema predeterminado en Moodle.</p><p>En ambos casos, los usuarios podrán editar todos estos campos después de entrar.</p>";
+$string['auth_ldaptitle'] = "Usar un servidor LDAP";
+$string['auth_nntpdescription'] = "Este método usa un servidor NNTP para comprobar si el nombre de usuario y contraseña facilitados son válidos.";
+$string['auth_nntphost'] = "La dirección del servidor NNTP. Usar el número IP, no el nombre DNS.";
+$string['auth_nntpport'] = "Puerto del Servidor (119 es el más habitual)";
+$string['auth_nntptitle'] = "Usar un servidor NNTP";
+$string['auth_nonedescription'] = "Los usuarios pueden registrarse y crear cuentas válidas inmediatamente, sin autenticación contra un servidor externo y sin confirmación vía email. Tenga cuidado al usar esta opción - piense en los problemas de seguridad y de administración que puede ocasionar.";
+$string['auth_nonetitle'] = "Sin autenticación";
+$string['auth_pop3description'] = "Este método utiliza un servidor POP3 para comprobar si el nombre de usuario y contraseña facilitados son válidos.";
+$string['auth_pop3host'] = "La dirección del servidor POP3. Use el número IP, no el nombre DNS.";
+$string['auth_pop3port'] = "Puerto del Servidor (110 es el más habitual)";
+$string['auth_pop3title'] = "Usar un servidor POP3";
+$string['auth_pop3type'] = "Tipo de servidor. Si su servidor utiliza certificado de seguridad, escoja pop3cert.";
+$string['auth_user_create'] = "Habilitar creación por parte del usuario";
+$string['auth_user_creation'] = "Los nuevos usuarios (anónimos) pueden crear cuentas de usuario sobre el código externo de autentificación y confirmar vía correo electrónico. Si usted habilita esto, recuerde también configurar las opciones del módulo específico para la creación de usuario.";
+$string['auth_usernameexists'] = "El nombre de usuario seleccionado ya existe. Por favor, elija otro.";
+$string['authenticationoptions'] = "Opciones de Autenticación";
+$string['authinstructions'] = "Aquí puede proporcionar instrucciones a sus usuarios, de forma que sepan qué usuario y contraseña deben usar. El texto que incluya aquí aparecerá en la página de acceso. Si deja esto en blanco no aparecerá ninguna instrucción.";
+$string['changepassword'] = "Cambiar contraseña URL";
+$string['changepasswordhelp'] = "Aquí puede especificar dónde pueden sus usuarios recuperar o cambiar su nombre de usuario/contraseña si lo han olvidado. Para ello, aparecerá un botón en la página de entrada. Si deja esto en blanco, este botón no se mostrará.";
+$string['chooseauthmethod'] = "Escoger un método de autenticación: ";
+$string['guestloginbutton'] = "Botón de entrada para invitados";
+$string['instructions'] = "Instrucciones";
+$string['md5'] = "Encriptación M5";
+$string['plaintext'] = "Texto plano";
+$string['showguestlogin'] = "Puede ocultar o mostrar el botón de entrada para invitados en la página de acceso.";
 
 ?>
