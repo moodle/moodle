@@ -23,10 +23,6 @@
         }
     }
 
-    if (isset($lang)) {
-        $SESSION->lang = $lang;
-        save_session("SESSION");
-    }
     $currlang = current_language();
     $langs = get_list_of_languages();
     $langmenu = popup_form ("$CFG->wwwroot/?lang=", $langs, "chooselang", $currlang, "", "", "", true);
