@@ -4368,7 +4368,7 @@ function unzip_file ($zipfile, $destination = '') {
     }
 
     //Display some info about the unzip execution
-    unzip_show_status($list);
+    unzip_show_status($list,$destpath);
   
     return true;
 }
@@ -4384,7 +4384,7 @@ function unzip_approvefile ($p_event, &$p_header) {
     }
 }
 
-function unzip_show_status ($list) {
+function unzip_show_status ($list,$removepath) {
 //This function shows the results of the unzip execution
 //depending of the value of the $CFG->zip, results will be
 //text or an array of files.
@@ -4392,6 +4392,10 @@ function unzip_show_status ($list) {
     global $CFG;
 
     if (empty($CFG->unzip)) {    // Use built-in php-based zip function
+        $strname = get_string("name");
+        $strsize = get_string("size");
+        $strmodified = get_string("modified");
+        $strstatus = get_string("status");
         echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\" width=640>";
         echo "<tr><th align=left>$strname</th>";
         echo "<th align=right>$strsize</th>";
@@ -4399,7 +4403,7 @@ function unzip_show_status ($list) {
         echo "<th align=right>$strstatus</th></tr>";
         foreach ($list as $item) {
             echo "<tr>";
-            $item['filename'] = str_replace(cleardoubleslashes("$basedir/$wdir/"), "", $item['filename']);
+            $item['filename'] = str_replace(cleardoubleslashes($removepath).'/', "", $item['filename']);
             print_cell("left", $item['filename']);
             if (! $item['folder']) {
                 print_cell("right", display_size($item['size']));
