@@ -19,11 +19,16 @@
             error("You can't modify this course!");
         }
 
+        $stredit = get_string("edit");
         $strediting = get_string("editingaresource", "resource");
         $strname = get_string("name");
+        $strtypename = $RESOURCE_TYPE["$form->type"];
+        $strexample  = get_string("example", "resource");
+        $strresources = get_string("modulenameplural", "resource");
 
         print_header("$course->shortname: $strediting", "$course->shortname: $strediting",
-                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> $strediting");
+                      "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> 
+                       <a href=\"index.php?id=$course->id\">$strresources</a> -> $form->name ($stredit)");
 
         if (!$form->name or !$form->type or !$form->summary) {
             error(get_string("filloutallfields"), $_SERVER["HTTP_REFERER"]);
@@ -40,8 +45,6 @@
         echo "<table cellpadding=5 align=center>";
         echo "<tr><td align=right nowrap><p><b>$strname:</b></p></td><td><p>$form->name</p></a></td></tr>";
 
-        $strtypename = $RESOURCE_TYPE["$form->type"];
-        $strexample  = get_string("example", "resource");
 
         switch ($form->type) {
             case REFERENCE: 
@@ -62,7 +65,7 @@
                     <td>
                     <p><?php echo $strexamplereference?></p>
                     </td>
-                </TR>
+                </tr>
 
                 <?php
                 break;
