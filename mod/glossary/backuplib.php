@@ -83,7 +83,7 @@
                     $entries = get_records("glossary_entries_categories","categoryid",$glo_cat->id,"glossaryid");
                     if ($entries) {
                          $status =fwrite ($bf,start_tag("ENTRIES",6,true));
-                         foreach ($entries -> $entry) {
+                         foreach ($entries as $entry) {
                               fwrite ($bf,full_tag("ENTRYID",7,false,$entry->entryid));
                          }
                          $status =fwrite ($bf,end_tag("ENTRIES",6,true));
