@@ -681,11 +681,10 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  */
 function userdate($date, $format='', $timezone=99, $fixday = true) {
 
+
     if ($format == '') {
         $format = get_string('strftimedaydatetime');
     }
-
-    $timezone = get_user_timezone($timezone);
 
     $formatnoday = str_replace('%d', 'DD', $format);
     if ($fixday) {
@@ -693,21 +692,28 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
     }
 
     $date += dst_offset_on($date);
-    if (abs($timezone) > 13) {
-        $date += intval((float)date('O') * HOURSECS);
-    }
-    else {
-        $date += intval((float)$timezone * HOURSECS);
+
+    $timezone = get_user_timezone($timezone);
+
+    if (abs($timezone) > 13) {   /// Server time
+        if ($fixday) {  
+            $datestring = strftime($formatnoday, $date);
+            $daystring  = str_replace(' 0', '', strftime(' %d', $date));
+            $datestring = str_replace('DD', $daystring, $datestring);
+        } else {
+            $datestring = strftime($format, $date);
+        }
+    } else {
+        $date += (int)($timezone * 3600);
+        if ($fixday) {
+            $datestring = gmstrftime($formatnoday, $date);
+            $daystring  = str_replace(' 0', '', gmstrftime(' %d', $date));
+            $datestring = str_replace('DD', $daystring, $datestring);
+        } else {
+            $datestring = gmstrftime($format, $date);
+        }
     }
 
-    if ($fixday) {
-        $datestring = gmstrftime($formatnoday, $date);
-        $daystring  = str_replace(' 0', '', gmstrftime(' %d', $date));
-        $datestring = str_replace('DD', $daystring, $datestring);
-    } else {
-        $datestring = gmstrftime($format, $date);
-    }
-    
     return $datestring;
 }
 
