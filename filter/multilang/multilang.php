@@ -48,6 +48,8 @@ if (function_exists($textfilter_function)) {
 
 function multilang_filter($courseid, $text) {
 
+    global $CFG;
+
 /// Make sure XML is enabled in this PHP
     if (!function_exists('xml_parser_create')) {
         return $text;
@@ -57,6 +59,9 @@ function multilang_filter($courseid, $text) {
     if (stripos($text, '<lang') === false) {
         return $text;
     }
+
+/// Flag this text as something not to cache
+    $CFG->currenttextiscacheable = false;
 
 /// Get current language
     $currentlanguage = current_language();
