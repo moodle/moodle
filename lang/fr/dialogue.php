@@ -24,6 +24,7 @@ $string['everybody'] = 'Tout le monde';
 $string['furtherinformation'] = 'Informations générales';
 $string['lastentry'] = 'Dernière contribution';
 $string['maildefault'] = 'Envoyer par défaut les courriels';
+$string['mailnotification'] = 'Notification par courriel';
 $string['modulename'] = 'Dialogue';
 $string['modulenameplural'] = 'Dialogues';
 $string['namehascloseddialogue'] = '$a a terminé le dialogue';
