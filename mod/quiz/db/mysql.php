@@ -314,6 +314,20 @@ function quiz_upgrade($oldversion) {
         table_column("quiz", "", "decimalpoints", "integer", "4", "", "2", "not null", "grademethod");
     }
 
+    if($oldversion < 2005022800) {
+        table_column('quiz_questions', '', 'hidden', 'integer', '1', 'unsigned', '0', 'not null', 'version');
+        table_column('quiz_responses', '', 'originalquestion', 'integer', '10', 'unsigned', '0', 'not null', 'question');
+        modify_database ('', "CREATE TABLE `prefix_quiz_question_version` (
+                              `id` int(10) unsigned NOT NULL auto_increment,
+                              `quiz` int(10) unsigned NOT NULL default '0',
+                              `oldquestion` int(10) unsigned NOT NULL default '0',
+                              `newquestion` int(10) unsigned NOT NULL default '0',
+                              `userid` int(10) unsigned NOT NULL default '0',
+                              `timestamp` int(10) unsigned NOT NULL default '0',
+                              PRIMARY KEY  (`id`)
+                            ) TYPE=MyISAM COMMENT='The mapping between old and new versions of a question';");
+    }
+
     return true;
 }
 

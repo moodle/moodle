@@ -203,6 +203,20 @@ CREATE INDEX prefix_quiz_question_grades_question_idx ON prefix_quiz_question_gr
 # --------------------------------------------------------
 
 #
+# Table structure for table `quiz_question_version`
+#
+
+CREATE TABLE prefix_quiz_question_version (
+  id SERIAL PRIMARY KEY,
+  quiz integer NOT NULL default '0',
+  oldquestion integer NOT NULL default '0',
+  newquestion integer NOT NULL default '0',
+  userid integer NOT NULL default '0',
+  timestamp integer NOT NULL default '0'
+);
+# --------------------------------------------------------
+
+#
 # Table structure for table quiz_questions
 #
 
@@ -216,7 +230,8 @@ CREATE TABLE prefix_quiz_questions (
   defaultgrade integer NOT NULL default '1',
   qtype integer NOT NULL default '0',
   stamp varchar(255) NOT NULL default '',
-  version integer NOT NULL default '1'
+  version integer NOT NULL default '1',
+  hidden integer NOT NULL default '0'
 );
 
 CREATE INDEX prefix_quiz_questions_category_idx ON prefix_quiz_questions (category);
@@ -243,6 +258,7 @@ CREATE TABLE prefix_quiz_responses (
   id SERIAL PRIMARY KEY,
   attempt integer NOT NULL default '0',
   question integer NOT NULL default '0',
+  originalquestion integer NOT NULL default '0',
   answer text NOT NULL default '',
   grade varchar(10) NOT NULL default '0.0'
 );

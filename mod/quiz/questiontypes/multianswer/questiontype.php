@@ -166,7 +166,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
             exit;
         }
         
-        redirect("edit.php");
+        return $question;
     }
     
     function convert_to_response_answer_field($questionresponse) {

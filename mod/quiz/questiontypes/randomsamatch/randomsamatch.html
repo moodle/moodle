@@ -2,14 +2,14 @@
 <center>
 <table cellpadding="5">
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("category", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("category", "quiz") ?>:</b></td>
     <td>
     <?php echo $categories[$question->category]; ?>
     <input type="hidden" name="category" value="<?php echo "$question->category"; ?>" />
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("questionname", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("questionname", "quiz") ?>:</b></td>
     <td>
         <?php
            if (empty($question->name)) {
@@ -21,9 +21,9 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("introduction", "quiz") ?>:</b></p>
+    <td align="right"><b><?php  print_string("introduction", "quiz") ?>:</b>
     <br />
-    <p><font size="1">
+    <font size="1">
     <?php
            if ($usehtmleditor) {
                helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
@@ -31,7 +31,7 @@
                helpbutton("text", get_string("helptext"), "moodle", true, true);
            }
     ?>
-    </font></p>
+    </font>
     </td>
     <td>
         <?php  if (isset($err["questiontext"])) {
@@ -59,7 +59,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("randomsamatchnumber", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("randomsamatchnumber", "quiz") ?>:</b></td>
     <td>
     <?php 
         if ($numberavailable < 2) {
@@ -78,10 +78,10 @@
      ?>
     </td>
 </tr>
+<?php 
+    $QUIZ_QTYPES[$question->qtype]->print_replacement_options($question, $course, $contextquiz);
+    $QUIZ_QTYPES[$question->qtype]->print_question_form_end($question);
+?>
 </table>
-<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey; ?>" />
-<input type="hidden" name="id" value="<?php  p($question->id) ?>" />
-<input type="hidden" name="qtype" value="<?php  p($question->qtype) ?>" />
-<input type="submit" value="<?php  print_string("savechanges") ?>" />
 </center>
 </form>

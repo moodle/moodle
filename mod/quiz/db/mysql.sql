@@ -291,6 +291,21 @@ CREATE TABLE `prefix_quiz_question_grades` (
 # --------------------------------------------------------
 
 #
+# Table structure for table `quiz_question_version`
+#
+
+CREATE TABLE `prefix_quiz_question_version` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `quiz` int(10) unsigned NOT NULL default '0',
+  `oldquestion` int(10) unsigned NOT NULL default '0',
+  `newquestion` int(10) unsigned NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
+  `timestamp` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) TYPE=MyISAM COMMENT='The mapping between old and new versions of a question';
+# --------------------------------------------------------
+
+#
 # Table structure for table `quiz_questions`
 #
 
@@ -305,6 +320,7 @@ CREATE TABLE `prefix_quiz_questions` (
   `qtype` smallint(6) NOT NULL default '0',
   `stamp` varchar(255) NOT NULL default '',
   `version` int(10) NOT NULL default '1',
+  `hidden` int(1) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `category` (`category`)
 ) TYPE=MyISAM COMMENT='The quiz questions themselves';
@@ -331,6 +347,7 @@ CREATE TABLE `prefix_quiz_responses` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `attempt` int(10) unsigned NOT NULL default '0',
   `question` int(10) unsigned NOT NULL default '0',
+  `originalquestion` int(10) unsigned NOT NULL default '0',
   `answer` text NOT NULL default '',
   `grade` varchar(10) NOT NULL default '0.0',
   PRIMARY KEY  (`id`),

@@ -132,13 +132,12 @@ for ($i=1; $i<count($units); $i++) {
 </tr>
 <?php
 } /// END for
+
+    $QUIZ_QTYPES[$question->qtype]->print_replacement_options($question, $course, $contextquiz);
+    $QUIZ_QTYPES[$question->qtype]->print_question_form_end($question, 'onclick="return determineMinAndMax();"');
 ?>
 </table>
 
-<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey; ?>" />
-<input type="hidden" name="id" value="<?php  p($question->id) ?>" />
-<input type="hidden" name="qtype" value="<?php  p($question->qtype) ?>" />
-<input type="submit" onclick="return determineMinAndMax();"  value="<?php  print_string("savechanges") ?>" />
 </center>
 </form>
 <script language="javascript" type="text/javascript">

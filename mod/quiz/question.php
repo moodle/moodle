@@ -1,5 +1,14 @@
 <?php // $Id$
-      /// For creating and editing quiz questions.
+/* Responsibilities of question.php
+ * - create new question (category, qtype)
+ * - edit question (id, contextquiz (o))
+ * - delete question from quiz (delete, sesskey)
+ * - delete question (in two steps)
+ *   - if question is in use: display this conflict (allow to hide the question?)
+ *   - else: confirm deletion and delete from database (sesskey, id, delete, confirm)
+ * - cancel (cancel)
+ * (o) = optional
+ */
 
     require_once("../../config.php");
     require_once("locallib.php");
@@ -10,7 +19,18 @@
     $qtype = optional_param('qtype');
     $category = optional_param('category');
     
-    $copy = optional_param('copy', false); // true if a copy of the question should be created
+    $contextquiz = optional_param('contextquiz'); // the quiz from which this question is being edited
+
+    if (isset($_REQUEST['cancel'])) {
+        redirect("edit.php");
+    }
+
+    if(!empty($id) && isset($_REQUEST['hide']) && confirm_sesskey()) {
+        if(!set_field('quiz_questions', 'hidden', $_REQUEST['hide'], 'id', $id)) {
+            error("Faild to hide the question.");
+        }
+        redirect('edit.php');
+    }
 
     if ($id) {
         if (! $question = get_record("quiz_questions", "id", $id)) {
@@ -29,7 +49,7 @@
         $qtype = $question->qtype;
 
 
-    } else if ($category) {
+    } else if ($category) { // only for creating new questions
         if (! $category = get_record("quiz_categories", "id", $category)) {
             error("This wasn't a valid category!");
         }
@@ -57,7 +77,7 @@
     }
 
     $strquizzes = get_string('modulenameplural', 'quiz');
-    $streditingquestion = ($copy) ? get_string('copyingquestion', 'quiz') : get_string('editingquestion', 'quiz');
+    $streditingquestion = get_string('editingquestion', 'quiz');
     if (isset($SESSION->modform->instance)) {
         $strediting = '<a href="edit.php">'.get_string('editingquiz', 'quiz').'</a> -> '.
             $streditingquestion;
@@ -114,7 +134,110 @@
     }
 
     if ($form = data_submitted() and confirm_sesskey()) {
-        $question = $QUIZ_QTYPES[$qtype]->save_question($question, $form, $course);
+    
+        if (isset($form->versioning)) { // use new code that 
+            // handles whether to overwrite or copy a question and keeps
+            // track of the versions in the quiz_question_version table
+            
+            // $replaceinquiz is an array with the ids of all quizzes in which the teacher has chosen to replace the old version
+            $replaceinquiz = array();
+            foreach($form as $key => $val) {
+                if ($tmp = quiz_parse_fieldname($key, 'q')) {
+                    if ($tmp['mode'] == 'replace') {
+                        $replaceinquiz[$tmp['id']] = $tmp['id'];
+                        unset($form->$key);
+                    }
+                }
+            }
+
+            // $quizlist is an array with the ids of quizzes which use this question
+            $quizlist = array();
+            if ($grades = get_records('quiz_question_grades', 'question', $form->id)) {
+                foreach($grades as $grade) {
+                    $quizlist[$grade->quiz] = $grade->quiz;
+                }
+            }
+
+            // Logic to determine whether old version should be overwritten
+            $makecopy     = isset($form->makecopy) || (!$form->id); unset($form->makecopy);
+            $noresponses  = $makecopy || !(record_exists('quiz_responses', 'question', $form->id) or 
+                record_exists('quiz_responses', 'originalquestion', $form->id)); // Should be improved once the preview flag exists so that teacher preview responses are not taken into account
+            $notused      = $makecopy || !record_exists('quiz_question_grades', 'question', $form->id);
+            $replaceinall = ($quizlist == $replaceinquiz); // question is being replaced in all quizzes
+            $replaceold   = (!$makecopy && $noresponses && ($notused || $replaceinall));
+
+            if (!$replaceold) { // create a new question
+                $oldquestion = clone($question);
+                if (!$makecopy) {
+                    $oldquestion->hidden =  1;
+                    if (!set_field("quiz_questions", 'hidden', 1, 'id', $question->id)) {
+                        error("Could not hide question!");
+                    }
+                }
+                unset($question->id);
+            }
+            unset($makecopy, $noresponses, $notused, $replaceinall, $replaceold);
+
+            $question = $QUIZ_QTYPES[$qtype]->save_question($question, $form, $course);
+
+            if(!isset($question->id)) {
+                error("Failed to save the question!");
+            }
+
+            if(isset($oldquestion->id)) {
+                // create version entries for different quizzes
+                $version = new object();
+                $version->oldquestion = $oldquestion->id;
+                $version->newquestion = $question->id;
+                $version->userid      = $USER->id; // field still needs to be added to table
+                $version->timestamp   = time();
+
+                foreach($replaceinquiz as $qid) {
+                    $version->quiz = $qid;
+                    if(!insert_record("quiz_question_version", $version)) {
+                        error("Could not store version information of question $oldquestion->id in quiz $qid!");
+                    }
+                }
+
+                /// now update the question references in the quizzes
+
+                $quizzes = implode(',', $replaceinquiz);
+                if (empty($quizzes) || !$quizzes = get_records_list("quiz", "id", $quizzes)) {
+                    $quizzes = array();
+                }
+                foreach($quizzes as $quiz) {
+                    $questionlist = ",$quiz->questions,"; // a little hack with the commas here. not nice but effective
+                    $questionlist = str_replace(",$oldquestion->id,", ",$question->id,", $questionlist);
+                    $questionlist = substr($questionlist, 1, -1); // and get rid of the surrounding commas again
+                    if (!set_field("quiz", 'questions', $questionlist, 'id', $quiz->id)) {
+                        error("Could not update questionlist in quiz $quiz->id!");
+                    }
+                    // the quiz_question_grades table needs to be updated too (aah, the joys of duplication :)
+                    if (!set_field('quiz_question_grades', 'question', $question->id, 'quiz', $quiz->id, 'question', $oldquestion->id)) {
+                        error("Could not update question grade!");
+                    }
+                    if (isset($SESSION->modform) && (int)$SESSION->modform->instance === (int)$quiz->id) {
+                        $SESSION->modform->questions = $questionlist;
+                        $SESSION->modform->grades[$question->id] = $SESSION->modform->grades[$oldquestion->id];
+                        unset($SESSION->modform->grades[$oldquestion->id]);
+                    }
+                }
+                
+                // fix responses
+                if ($attempts = get_records_list('quiz_attempts', 'quiz', implode(',', $replaceinquiz))) {
+                    foreach ($attempts as $attempt) {
+                        if (!set_field('quiz_responses', 'originalquestion', $oldquestion->id, 'attempt', $attempt->id, 'question', $oldquestion->id)
+                            or !set_field('quiz_responses', 'question', $question->id, 'attempt', $attempt->id, 'question', $oldquestion->id)) {
+                            error("Could not point responses to new question");
+                        }
+                    }
+                }
+            }
+
+            redirect("edit.php");
+        } else { // use the old code which simply overwrites old versions
+            $question = $QUIZ_QTYPES[$qtype]->save_question($question, $form, $course);
+        }
     } 
 
     $grades = array(1,0.9,0.8,0.75,0.70,0.66666,0.60,0.50,0.40,0.33333,0.30,0.25,0.20,0.16666,0.10,0.05,0);
@@ -165,14 +288,10 @@
         $defaultformat = FORMAT_MOODLE;
     }
     
-    if ($copy) {
-        print_heading(get_string('copyingfrom', 'quiz', $question->name));
-        // clear question id so that the data is saved to a new question
-        $question->id = '';
-        $question->name .= '_copy';
-    }
-
+    echo '<br />';
+    print_simple_box_start('center');
     require('questiontypes/'.$QUIZ_QTYPES[$qtype]->name().'/editquestion.php');
+    print_simple_box_end();
 
     if ($usehtmleditor) { 
         use_html_editor('questiontext');

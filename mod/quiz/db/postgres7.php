@@ -299,6 +299,18 @@ function quiz_upgrade($oldversion) {
         table_column("quiz", "", "decimalpoints", "integer", "4", "", "2", "not null", "grademethod");
     }
 
+    if($oldversion < 2005022800) {
+        table_column('quiz_questions', '', 'hidden', 'integer', '1', 'unsigned', '0', 'not null', 'version');
+        table_column('quiz_responses', '', 'originalquestion', 'integer', '10', 'unsigned', '0', 'not null', 'question');
+        modify_database ('', "CREATE TABLE prefix_quiz_question_version (
+                              id SERIAL PRIMARY KEY,
+                              quiz integer NOT NULL default '0',
+                              oldquestion integer NOT NULL default '0',
+                              newquestion integer NOT NULL default '0',
+                              userid integer NOT NULL default '0',
+                              timestamp integer NOT NULL default '0');");
+    }
+
     return true;
 }
 

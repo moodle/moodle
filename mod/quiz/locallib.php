@@ -149,7 +149,7 @@ class quiz_default_questiontype {
             exit;
         }
 
-        redirect("edit.php");
+        return $question;
     }
 
     /// Convenience function that is used within the question types only
@@ -345,6 +345,97 @@ class quiz_default_questiontype {
         // No options by default
         return false;
     }
+
+    function print_replacement_options($question, $course, $quizid='0') {
+    // This function is used near the end of the question edit forms in all questiontypes
+    // It prints the table of quizzes in which the question is used
+    // containing the checkboxes to allow the teacher to replace the old question version
+
+        // no need to display replacement options if the question is new
+        if(empty($question->id)) {
+            return true;
+        }
+
+        // get quizzes using the question (using the question_grades table)
+        $quizlist = array();
+        if(!$grades = get_records('quiz_question_grades', 'question', $question->id)) {
+            $grades = array();
+        }
+        foreach($grades as $grade) {
+            $quizlist[$grade->quiz] = $grade->quiz;
+        }
+        $quizlist = implode(',', $quizlist);
+        if(empty($quizlist) or !$quizzes = get_records_list('quiz', 'id', $quizlist)) {
+            $quizzes = array();
+        }
+
+        // do the printing
+        if(count($quizzes) > 0) {
+            // print the table
+            $strquizname  = get_string('modulename', 'quiz');
+            $strdoreplace = get_string('replace', 'quiz');
+            $straffectedstudents = get_string('affectedstudents', 'quiz', $course->students);
+            echo "<tr valign=\"top\">\n";
+            echo "<td align=\"right\"><b>".get_string("replacementoptions", "quiz").":</b></td>\n";
+            echo "<td align=\"left\">\n";
+            echo "<table cellpadding=\"5\" align=\"left\" class=\"generalbox\" width=\"100%\">\n";
+            echo "<tr>\n";
+            echo "<th align=\"left\" valign=\"top\" nowrap=\"nowrap\" class=\"generaltableheader c0\">$strquizname</th>\n";
+            echo "<th align=\"center\" valign=\"top\" nowrap=\"nowrap\" class=\"generaltableheader c0\">$strdoreplace</th>\n";
+            echo "<th align=\"left\" valign=\"top\" nowrap=\"nowrap\" class=\"generaltableheader c0\">$straffectedstudents</th>\n";
+            echo "</tr>\n";
+            foreach($quizzes as $quiz) {
+                // work out whethere it should be checked by default
+                $checked = '';
+                if((int)$quizid === (int)$quiz->id
+                    or empty($quiz->usercount)) {
+                    $checked = "checked=\"checked\"";
+                }
+
+                // find how many different students have already attempted this quiz
+                $students = array();
+                if($attempts = get_records('quiz_attempts', 'quiz', $quiz->id)) {
+                    foreach($attempts as $attempt) {
+                        if (!isteacher($course->id, $attempt->userid)  // Ignore teacher attempts
+                            and record_exists('quiz_responses', 'attempt', $attempt->id, 'question', $question->id, 'originalquestion', 0)) {
+                            $students[$attempt->userid] = 1;
+                        }
+                    }
+                }
+                $studentcount = count($students);
+
+                $strstudents = $studentcount === 1 ? $course->student : $course->students;
+                echo "<tr>\n";
+                echo "<td align=\"left\" class=\"generaltablecell c0\">$quiz->name</td>\n";
+                echo "<td align=\"center\" class=\"generaltablecell c0\"><input name=\"q{$quiz->id}replace\" type=\"checkbox\" ".$checked." /></td>\n";
+                echo "<td align=\"left\" class=\"generaltablecell c0\">".(($studentcount) ? $studentcount.' '.$strstudents : '-')."</td>\n";
+                echo "</tr>\n";
+            }
+            echo "</table>\n";
+        }
+        echo "</td></tr>\n";
+    }
+
+    function print_question_form_end($question, $submitscript='') {
+    // This function is used at the end of the question edit forms in all questiontypes
+    // It prints the submit buttons and the standard hidden form fields 
+        global $USER;
+        echo '<tr valign="top">
+              <td colspan="2" align="center">
+              <input type="submit" '.$submitscript.' value="'.get_string('savechanges').'" /> ';
+        if ($question->id) {
+            echo '<input type="submit" name="makecopy" '.$submitscript.' value="'.get_string("makecopy", "quiz").'" /> ';
+        }
+        echo '<input type="submit" name="cancel" value="'.get_string("cancel").'" />
+              <input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />
+              <input type="hidden" name="id" value="'.$question->id.'" />
+              <input type="hidden" name="qtype" value="'.$question->qtype.'" />';
+        // The following hidden field indicates that the versioning code should be turned on, i.e.,
+        // that old versions should be kept if necessary
+        echo '<input type="hidden" name="versioning" value="on" />
+              </td></tr>';
+    }
+
 }
 
 quiz_load_questiontypes();
@@ -960,7 +1051,7 @@ function quiz_get_category_menu($courseid, $published=false) {
     return $catmenu;
 }
 
-function quiz_print_category_form($course, $current, $recurse=1) {
+function quiz_print_category_form($course, $current, $recurse=1, $showhidden=false) {
 /// Prints a form to choose categories
 
 /// Make sure the default category exists for this course
@@ -998,14 +1089,22 @@ function quiz_print_category_form($course, $current, $recurse=1) {
     echo "<input type=\"submit\" value=\"$streditcats\" />";
     echo "</form>";
     echo '</td></tr></table>';
-    echo '<form method="get" action="edit.php" name="recurse">';
-    print_string('recurse', 'quiz');
-    echo '<input type="hidden" name="recurse" value="0">';
+    echo '<form method="post" action="edit.php" name="displayoptions">';
+    echo '<input type="hidden" name="displayoptions" value="true">';
     echo '<input type="checkbox" name="recurse" value="1"';
     if ($recurse) {
         echo ' checked="checked"';
     }
-    echo ' onclick="document.recurse.submit(); return true;">';
+    echo ' onchange="document.displayoptions.submit(); return true;" />';
+    print_string('recurse', 'quiz');
+    // hide-feature
+    echo '<br />';
+    echo '<input type="checkbox" name="showhidden"';
+    if ($showhidden) {
+        echo ' checked="checked"';
+    }
+    echo ' onchange="document.displayoptions.submit(); return true;" />';
+    print_string('showhidden', 'quiz');
     echo '</form>';
 }
 
@@ -1222,7 +1321,7 @@ function quiz_print_question_list($questionlist, $grades, $allowdelete=true) {
 }
 
 
-function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=1, $page, $perpage) {
+function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=1, $page, $perpage, $showhidden=false) {
 // Prints the table of questions in a category with interactions
 
     global $QUIZ_QUESTION_TYPE, $USER;
@@ -1239,7 +1338,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
     $strquestionname = get_string("questionname", "quiz");
     $strdelete = get_string("delete");
     $stredit = get_string("edit");
-    $strcopy = get_string("copy");
+
     $straddselectedtoquiz = get_string("addselectedtoquiz", "quiz");
     $strtype = get_string("type", "quiz");
     $strcreatemultiple = get_string("createmultiple", "quiz");
@@ -1298,7 +1397,9 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
 
     $categorylist = ($recurse) ? quiz_categorylist($category->id) : $category->id;
 
-    if (!$questions = get_records_select('quiz_questions', "category IN ($categorylist) AND qtype != '".RANDOM."'", 'qtype, name ASC', '*', $page*$perpage, $perpage)) {
+    // hide-feature
+    $showhidden = $showhidden ? '' : " AND hidden = '0'";
+    if (!$questions = get_records_select('quiz_questions', "category IN ($categorylist) AND qtype != '".RANDOM."'$showhidden", 'qtype, name ASC', '*', $page*$perpage, $perpage)) {
         echo "<p align=\"center\">";
         print_string("noquestions", "quiz");
         echo "</p>";
@@ -1341,8 +1442,18 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
                       src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
                 echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img
                      src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
-                echo "<a title=\"$strcopy\" href=\"question.php?id=$question->id&amp;copy=true\"><img
-                     src=\"../../pix/t/copy.gif\" border=\"0\" alt=\"$strcopy\" /></a>";
+                // hide-feature
+                if($question->hidden) {
+                    $strhideshow = get_string("show");
+                    $imghideshow = "show.gif";
+                    $hideshow = 0;
+                } else {
+                    $strhideshow = get_string("hide");
+                    $imghideshow = "hide.gif";
+                    $hideshow = 1;
+                }
+                echo "<a title=\"$strhideshow\" href=\"question.php?id=$question->id&amp;hide=$hideshow&amp;sesskey=$USER->sesskey\"><img
+                     src=\"../../pix/t/$imghideshow\" border=\"0\" alt=\"$strhideshow\" /></a>";
             echo "</td>\n";
         }
         echo "</tr>\n";
@@ -1369,7 +1480,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
         echo '<form method="post" action="multiple.php">';
         echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
         print_string('addrandom1', 'quiz');
-        choose_from_menu($randomcount, 'randomcreate', '10', '');
+        choose_from_menu($randomcount, 'randomcreate', '1', '');
         print_string('addrandom2', 'quiz');
         // Don't offer the option to change the grade
         //choose_from_menu($randomcount, 'randomgrade', '1', '');
@@ -1896,5 +2007,14 @@ function quizzes_question_used( $id, $published=false, $courseid=0 ) {
     }
   }
   return $beingused;
+}
+
+function quiz_parse_fieldname($name, $nameprefix='question') {
+    $reg = array();
+    if(preg_match("/q(\\d+)(\w+)/", $name, $reg)) {
+        return array('mode' => $reg[2], 'id' => (int)$reg[1]);
+    } else {
+        return false;
+    }
 }
 ?>

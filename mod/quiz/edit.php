@@ -177,8 +177,9 @@
         $modform->category = $cat;
     }
 
-    if (isset($_REQUEST['recurse'])) { /// coming from checkbox below category selection form
-        $modform->recurse = $recurse;
+    if(isset($_REQUEST['displayoptions'])) {
+        $modform->recurse = isset($_REQUEST['recurse']) ? 1 : 0;
+        $modform->showhidden = isset($_REQUEST['showhidden']);
     }
 
 /// all commands have been dealt with, now print the page
@@ -189,6 +190,9 @@
     }
     if (!isset($modform->recurse)) {
         $modform->recurse = 1;
+    }
+    if (!isset($modform->showhidden)) {
+        $modform->showhidden = false;
     }
 
     $SESSION->modform = $modform;
@@ -258,14 +262,14 @@
     // non-quiz-specific column
     print_simple_box_start("center", "100%");
     // starts with category selection form
-    quiz_print_category_form($course, $modform->category, $modform->recurse);
+    quiz_print_category_form($course, $modform->category, $modform->recurse, $modform->showhidden);
     print_simple_box_end();
 
     print_spacer(5,1);
     // continues with list of questions
     print_simple_box_start("center", "100%");
     quiz_print_cat_question_list($modform->category,
-                                 isset($modform->instance), $modform->recurse, $page, $perpage);
+                                 isset($modform->instance), $modform->recurse, $page, $perpage, $modform->showhidden);
     print_simple_box_end();
     if (!isset($modform->instance)) {
         print_continue("index.php?id=$modform->course");
