@@ -1613,31 +1613,32 @@ function quiz_grade_attempt_question_result($question,
                 $question->answer = "";
             }
             $response[0] = $question->answer;
-            $bestshortanswer = 0;
+            $feedback[0] = '';  // Default
             foreach ($answers as $answer) {  // There might be multiple right answers
 
                 $answer->answer = trim($answer->answer);  // Just in case
 
-                if ($answer->fraction > $bestshortanswer) {
-                    $correct[$answer->id] = $answer->answer;
-                    $bestshortanswer = $answer->fraction;
+                if ($answer->fraction >= 1.0) {
+                    $correct[] = $answer->answer;
                 }
                 if (!$answer->usecase) {       // Don't compare case
                     $answer->answer = strtolower($answer->answer);
                     $question->answer = strtolower($question->answer);
                 }
 
-                if ((strpos(' '.$answer->answer, '*'))) {
+                $potentialgrade = (float)$answer->fraction * $question->grade;
+
+                if ($potentialgrade >= $grade
+                        and (strpos(' '.$answer->answer, '*'))) {
                     $answer->answer = eregi_replace('\*','.*',$answer->answer);
                     if (eregi('^'.$answer->answer.'$', $question->answer)) {
                         $feedback[0] = $answer->feedback;
-                        $grade = (float)$answer->fraction * $question->grade;
+                        $grade = $potentialgrade;
                     }
-                } else {
-                    if ($answer->answer == $question->answer) {
-                        $feedback[0] = $answer->feedback;
-                        $grade = (float)$answer->fraction * $question->grade;
-                    }
+
+                } else if ($answer->answer == $question->answer) {
+                    $feedback[0] = $answer->feedback;
+                    $grade = $potentialgrade;
                 }
             }
             break;
