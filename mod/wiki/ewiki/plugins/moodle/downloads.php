@@ -8,7 +8,9 @@
 
 
 #-- settings
-define("EWIKI_UPLOAD_MAXSIZE", 2*1024*1024);
+
+# Defined in view.php
+#define("EWIKI_UPLOAD_MAXSIZE", 2*1024*1024);
 define("EWIKI_PAGE_UPLOAD", "FileUpload");
 define("EWIKI_PAGE_DOWNLOAD", "FileDownload");
 define("EWIKI_ACTION_ATTACHMENTS", "attachments");  #-- define to 0 to disable

@@ -95,7 +95,10 @@
         global $ewiki_title;
 
 ///     #-- predefine some of the configuration constants
-        define("EWIKI_NAME", $wiki_entry->pagename);
+        
+        
+        /// EWIKI_NAME is defined in ewikimoodlelibs, so that also admin.php can use this
+        #define("EWIKI_NAME", $wiki_entry->pagename);
 
         /// Search Hilighting
         if($ewiki_title=="SearchPages") {
@@ -212,6 +215,11 @@
     }
 
 
+    # Group wiki, ...: No wikipage and no ewiki_title
+    if(!isset($ewiki_title)) {
+          $ewiki_title="";
+    }
+        
 /// Moodle Log
     add_to_log($course->id, "wiki", $ewiki_action, "view.php?id=$cm->id&groupid=$groupid&userid=$userid&wikipage=$wikipage", $wiki->name." ".$ewiki_title);
 
@@ -225,7 +233,7 @@
     $strwiki  = get_string("modulename", "wiki");
 
     print_header("$course->shortname: ".($ewiki_title?$ewiki_title:$wiki->name), "$course->fullname",
-                "$navigation <A HREF=\"index.php?id=$course->id\">$strwikis</A> -> <A HREF=\"view.php?id=$moodleID\">$wiki->name</a> -> $ewiki_title",
+                "$navigation <A HREF=\"index.php?id=$course->id\">$strwikis</A> -> <A HREF=\"view.php?id=$moodleID\">$wiki->name</a>".($ewiki_title?" -> $ewiki_title":""),
                 "", "", true, update_module_button($cm->id, $course->id, $strwiki),
                 navmenu($course, $cm));
 

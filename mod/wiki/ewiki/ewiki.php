@@ -279,8 +279,10 @@
 	if ($pf_a = $ewiki_plugins["init"]) foreach ($pf_a as $pf) {
            // Binary Handling starts here
            #### MOODLE CHANGE TO BE COMPATIBLE WITH PHP 4.1
+           #if(headers_sent($file,$line)) {
+           #  error("Headers already sent: $file:$line");
            if(headers_sent()) {
-             error("Headers already sent");
+             error("Headers already sent.");
            }
            $pf($GLOBALS);
         }

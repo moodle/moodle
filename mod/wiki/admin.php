@@ -6,8 +6,6 @@
     require_once("../../config.php");
     require_once("lib.php");
     
-    include_once($CFG->dirroot."/mod/wiki/ewikimoodlelib.php");
-    include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/moodle_binary_store.php");
 
     require_login($course->id);
     
@@ -83,6 +81,10 @@
       }          
     }
             
+    # Database and Binary Handler
+    include_once($CFG->dirroot."/mod/wiki/ewikimoodlelib.php");
+    include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/moodle_binary_store.php");
+    
     /// The wiki_entry->pagename is set to the specified value of the wiki,
     /// or the default value in the 'lang' file if the specified value was empty.
     define("EWIKI_PAGE_INDEX",$wiki_entry->pagename);

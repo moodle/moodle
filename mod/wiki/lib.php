@@ -1357,4 +1357,4 @@ function wiki_admin_revert($proceed, $authorfieldpattern, $changesfield, $howtoo
   } #-- while($row)
   return $ret;
 }
-?> 
+?>
