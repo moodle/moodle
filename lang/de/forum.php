@@ -11,6 +11,12 @@ $string['allowsdiscussions'] = "Jeder darf in diesem Forum ein Diskussionsthema 
 $string['anyfile'] = "Jede Datei";
 $string['attachment'] = "Anhang";
 $string['bynameondate'] = "von  \$a->name - \$a->date ";
+$string['configdisplaymode'] = "Anzeige Voreinstellung für Diskussionen, falls keine eingestellt wurde.";
+$string['configlongpost'] = "Jeder Beitrag oberhalb dieser Länge (ohne HTML) wird als lang eingestuft.";
+$string['configmanydiscussions'] = "Maximale Anzahl Diskussionen eines Forums pro Seite";
+$string['configshortpost'] = "Jeder Beitrag unterhalb dieser Länge (ohne HTML) wird als kurz eingestuft.";
+
+
 $string['couldnotadd'] = "Ihr Eintrag konnte aufgrund eines unbekannten Fehlers nicht hinzugefügt werden";
 $string['couldnotdeleteratings'] = "Das kann nicht gelöscht werden, weil es schon bewertet wurde";
 $string['couldnotdeletereplies'] = "Das kann nicht gelöscht werden, weil darauf schon Anworten geschrieben wurden";
