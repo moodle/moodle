@@ -344,7 +344,8 @@ function quiz_get_attempt_responses($attempt) {
 // for regrading using quiz_grade_attempt_results()
     global $CFG;
    
-    if (!$responses = get_records_sql("SELECT q.id, q.qtype, q.category, q.questiontext, q.defaultgrade, r.answer 
+    if (!$responses = get_records_sql("SELECT q.id, q.qtype, q.category, q.questiontext, 
+                                              q.defaultgrade, q.image, r.answer 
                                         FROM {$CFG->prefix}quiz_responses r, 
                                              {$CFG->prefix}quiz_questions q
                                        WHERE r.attempt = '$attempt->id' 
