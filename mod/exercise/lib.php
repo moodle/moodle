@@ -546,6 +546,35 @@ function exercise_user_outline($course, $user, $mod, $exercise) {
     return NULL;
 }
 
+/*******************************************************************/
+function exercise_get_participants($exerciseid) {
+//Returns the users with data in one exercise
+//(users with records in exercise_submissions and exercise_assessments, students)
+
+    global $CFG;
+
+    //Get students from exercise_submissions
+    $st_submissions = get_records_sql("SELECT DISTINCT u.*
+                                       FROM {$CFG->prefix}user u,
+                                            {$CFG->prefix}exercise_submissions s
+                                       WHERE s.exerciseid = '$exerciseid' and
+                                             u.id = s.userid");
+    //Get students from exercise_assessments
+    $st_assessments = get_records_sql("SELECT DISTINCT u.*
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}exercise_assessments a
+                                 WHERE a.exerciseid = '$exerciseid' and
+                                       u.id = a.userid");
+
+    //Add st_assessments to st_submissions
+    if ($st_assessments) {
+        foreach ($st_assessments as $st_assessment) {
+            $st_submissions[$st_assessment->id] = $st_assessment;
+        }
+    }
+    //Return st_submissions array (it contains an array of unique users)
+    return ($st_submissions);
+}
 
 //////////////////////////////////////////////////////////////////////////////////////
 
