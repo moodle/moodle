@@ -11,6 +11,12 @@ function schedule_backup_cron() {
 
     $emailpending = false;
 
+    //Check for required functions...
+    if(!function_exists('utf8_encode')) {
+        echo "        ERROR: You need to add XML support to your PHP installation!\n";
+        return true;
+    }
+
     //Get now
     $now = time();
 
