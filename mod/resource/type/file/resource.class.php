@@ -455,7 +455,7 @@ function setup($form) {
     $this->set_parameters(); // set the parameter array for the form
 
     
-    $strfilename = get_string("filename", "resource");
+    $strfilename = get_string("location");
     $strnote     = get_string("note", "resource");
     $strchooseafile = get_string("chooseafile", "resource");
     $strnewwindow     = get_string("newwindow", "resource");
