@@ -3270,7 +3270,7 @@ function address_in_subnet($addr, $subnetstr) {
         }
 
         if ($found) {
-            continue;
+            break;
         }
     }
 
