@@ -5,7 +5,7 @@
 
     if (isset($_GET['p']) and isset($_GET['s']) ) {     #  p = user.secret   s = user.username
 
-        $user = get_user_info_from_db("username", "$s");
+        $user = get_user_info_from_db("username", $_GET['s']);
 
         if (!empty($user)) {
 
@@ -18,7 +18,7 @@
                 exit;
             }
 
-            if ($user->secret == $p) {   // They have provided the secret key to get in
+            if ($user->secret == $_GET['p']) {   // They have provided the secret key to get in
 
                 if (!set_field("user", "confirmed", 1, "id", $user->id)) {
                     error("Could not confirm this user!");
