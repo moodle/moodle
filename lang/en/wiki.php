@@ -172,6 +172,7 @@ $string['contentsize']='Content size';
 $string['pageslinkingto']="Pages linking to this page";
 $string['viewsmfor']="View sitemap for";
 $string['smfor']="Sitemap for";
+$string['uplinsect']="Upload into";
 $string['invalidroot']="You are not authorized to access the current root page so no sitemap can be created.";
 $string['thispageisntlinkedfromanywhereelse'] = 'This page isn\'t linked from anywhere else.';
 

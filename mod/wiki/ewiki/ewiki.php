@@ -1144,7 +1144,7 @@ function ewiki_page_info($id, &$data, $action) {
    ##### BEGIN MOODLE ADDITION #####
          $o .= '<a href="' .
            ewiki_script($action, $id, array("version"=>$current["version"])) .
-           '">' . get_string($title,"wiki") . '</a> ';
+           '">' . get_string($title,"wiki") . '</a>&nbsp;';
    ##### END MOODLE ADDITION #####
       }
       $o .= "</td></tr>\n";

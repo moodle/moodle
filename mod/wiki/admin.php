@@ -78,7 +78,7 @@
     # Check for dangerous events (hacking) !
     if(in_array($action,array("removepages","strippages","revertpages"))) {
       if(!($wiki->wtype=="student" || isteacher($course->id))) {
-        add_to_log($course->id, "wiki", "hack", "", $wiki->name.": Tried to trick admin.php with $action.");
+        add_to_log($course->id, "wiki", "hack", "", $wiki->name.": Tried to trick admin.php with action=$action.");
         error("Hack attack detected !");
       }          
     }
@@ -151,7 +151,7 @@
           // No additional info
         break;
       }
-      add_to_log($course->id, "wiki", $action, "admin.php?action=$action&userid=$userid&groupid=$groupid&id=$id", $wiki->name.($addloginfo?" ".$addloginfo:""));
+      add_to_log($course->id, "wiki", $action, "admin.php?action=$action&userid=$userid&groupid=$groupid&id=$id", $wiki->name.($addloginfo?": ".$addloginfo:""));
       $link="admin.php?action=$action&userid=$userid&groupid=$groupid&id=$id&wikipage=$wikipage";            
       switch($action) {
         case "removepages": 

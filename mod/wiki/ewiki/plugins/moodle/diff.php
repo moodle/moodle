@@ -34,17 +34,29 @@
 
     # Different handling for html: closes Bug #1530 - Wiki diffs useless when using HTML editor    
     if($wiki->htmlmode==2) {
-      $htmlendings=array("<br />","<br>","</p>","<hr />","<hr>","</li>","</tr>");
-      $splitregexp="+\s*\n|\s*(".join("|",$htmlendings).")+";
-      $content0=preg_replace("+(".join("|",$htmlendings).")+","\n",$data0["content"]);
-      $content=preg_replace("+(".join("|",$htmlendings).")+","\n",$data["content"]);
+      $htmlendings=array("<br />","<br>","<p>","</p>","<p />","<hr />","<hr>","</li>","</tr>");
+      /// Replace <p>&nbsp;</p>
+      $content0=preg_replace("+<p>&nbsp;</p>+i","\n",$data0["content"]);
+      $content0=preg_replace("+(".join("|",$htmlendings).")+","\n",$content0);
+      $content=preg_replace("+<p>&nbsp;</p>+i","\n",$data["content"]);
+      $content=preg_replace("+(".join("|",$htmlendings).")+","\n",$content);
     } else {
-      $splitregexp="/\s*\n/";      
       $content0=$data0["content"];
       $content=$data["content"];
     }
-    $txt0 = preg_split($splitregexp, trim($content0));
-    $txt2 = preg_split($splitregexp, trim($content));
+    $txt0 = preg_split("+\s*\n+", trim($content0));
+    $txt2 = preg_split("+\s*\n+", trim($content));
+    ///print "<pre>\n";
+    ///print "\$data0[content]:\n $data0[content]\n";
+    ///print "\n\n-----------\n\n";
+    ///print "\$data[content]:\n $data[content]\n";
+    ///print "\n\n-----------\n\n";
+    ///print "\$content0:\n $content0\n";
+    ///print "\n\n-----------\n\n";
+    ///print "\$content:\n $content\n";
+    ///print "\n\n-----------\n\n";    
+    ///print "</pre>";
+    ///exit;
 
     /// Remove empty lines in html
     if($wiki->htmlmode==2) {
@@ -54,14 +66,16 @@
       $txt2=array();
       
       for($i=0;$i<count($html0);$i++) {
-        if(trim(strip_tags($html0[$i]))) { // There is something !
+#        $linecontent=trim(strip_tags(preg_replace("+&nbsp;+","",$html0[$i])));
+#        if($linecontent) { // There is something !
           $txt0[]=$html0[$i];
-        }
+#        }
       }
       for($i=0;$i<count($html2);$i++) {
-        if(trim(strip_tags($html2[$i]))) { // There is something !
+#        $linecontent=trim(strip_tags(preg_replace("+&nbsp;+","",$html2[$i])));
+#        if($linecontent) { // There is something !
           $txt2[]=$html2[$i];
-        }
+#        }
       }  
     }
         
@@ -75,7 +89,7 @@
        $i2 = $i;
        while ($rm = $diff0[$i2++]) {          
           if($wiki->htmlmode == 2) {
-            $o .= "<br><b>-</b><font color=\"#990000\">$rm</font><br>\n";
+            $o .= "<b>-</b><font color=\"#990000\">$rm</font><br>\n";
           } else {
             $o .= "<b>-</b><font color=\"#990000\"><tt>$rm</tt></font><br>\n";
           }
@@ -84,14 +98,14 @@
 
        if (in_array($line, $diff2)) {
           if($wiki->htmlmode == 2) {
-            $o .= "<br><b>+</b><font color=\"#009900\">$line</font>\n";
+            $o .= "<b>+</b><font color=\"#009900\">$line</font><br>\n";
           } else {
             $o .= "<b>+</b><font color=\"#009900\"><tt>$line</tt></font><br>\n";
           }
        }
        else {
           if($wiki->htmlmode == 2) {
-            $o .= "$line\n";
+            $o .= "$line<br>\n";
           } else {
             $o .= "&nbsp; $line<br>\n";
           }

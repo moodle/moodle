@@ -8,7 +8,8 @@ Mike:
  - Grading
 
 Michael:
- - More Logging
+ - Upload: There is an error when having a bin html-wiki: File does not show up
+   - Log when up- or download
  - Notify when page changes
 
 Unassigned or not ready:
