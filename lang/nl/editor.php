@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 alpha (2004022200)
+      // editor.php - created with Moodle 1.2 + (2004032100)
 
 
 $string['about'] = 'Info';
@@ -73,6 +73,7 @@ $string['preformatted'] = 'Vaste opmaak (pre)';
 $string['preview'] = 'Voorbeeld';
 $string['properties'] = 'Eigenschappen';
 $string['redo'] = 'Opnieuw';
+$string['removelink'] = 'Verwijder link';
 $string['rename'] = 'Hernoem';
 $string['right'] = 'Rechts';
 $string['rows'] = 'Rijen';
