@@ -2,7 +2,7 @@
 <head>
 <title>Moodle Docs: How to use CVS</title>
     <link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
-    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 <body bgcolor="#ffffff">
 <h2>Using CVS to access and update Moodle source code</h2>
@@ -83,63 +83,52 @@ update -dP</strong> </pre>
   </blockquote>
   <h3>2. Using CVS on Windows</h3>
   <blockquote> 
-    <p>These instructions are based on notes provided by Mitsuhiro Yoshida &lt;mits@mitstek.com&gt;.</p>
-    <p>Firstly, download and install WinCVS.</p>
+    <p>First, you need to download a completely fresh copy of Moodle using your 
+      developer account.</p>
     <blockquote> 
-      <p><a href="https://sourceforge.net/project/showfiles.php?group_id=10072">https://sourceforge.net/project/showfiles.php?group_id=10072</a></p>
+      <p> 1. Get TortoiseCVS from <a href="http://www.tortoisecvs.org/">tortoisecvs.org</a> 
+        and install it, then reboot.<br>
+        <br>
+        2. Find or create a new folder somewhere where you want Moodle to be downloaded 
+        to.<br>
+        <br>
+        3. Right-mouse-click that folder and choose &quot;<strong>CVS Checkout</strong>&quot; 
+        from the menu. You should see a dialog box.<br>
+        <br>
+        4. Copy this text into the CVSROOT field:</p>
+      <blockquote> 
+        <pre> :ext:<font color="#990000">myusername</font>@cvs.moodle.sourceforge.net:/cvsroot/moodle</pre>
+      </blockquote>
+      <p><br>
+        5. Press the button: &quot;<strong>Fetch list...</strong>&quot;.<br>
+        <br>
+        6. To the right of the button you should see a list of modules: choose 
+        &quot;<strong>moodle</strong>&quot; from that list.<br>
+        <br>
+        7. Press the button: &quot;<strong>OK</strong>&quot; and everything should 
+        be downloaded.<br>
+      </p>
     </blockquote>
-    <p>Secondly, download sfsetup for SourceForge ssh access, install it and reboot 
-      Windows.</p>
+    <p>A dialog box should show all the files being downloaded, and after a while 
+      you should have a complete copy of Moodle. After this first checkout, you 
+      can fetch the latest updated files from the CVS server:</p>
     <blockquote> 
-      <p><a href="http://sourceforge.net/projects/sfsetup/">http://sourceforge.net/projects/sfsetup/</a></p>
+      <p> 1. Right-mouse-click on your Moodle folder (or any file) and select 
+        &quot;<strong>CVS Update</strong>&quot;. <br>
+      </p>
     </blockquote>
-    <p>Next, configure WinCVS. Launch it, and select Admin -&gt; Preferences. 
-      Then change them as follows:</p>
+    <p>After modifying files (you will note they change from green top red!), 
+      you can commit them back to the CVS server like this:</p>
     <blockquote> 
-      <p> [General]<br>
-        <strong>CVSROOT data</strong>:<br>
-        <strong>Authentication</strong>: ssh<br>
-        <strong>Path</strong>: /cvsroot/moodle<br>
-        <strong>Host address</strong>: cvs.moodle.sourceforge.net<br>
-        <strong>User name</strong>: <font color="#990000">myusername</font><br>
-        <strong>CVSROOT</strong>: <font color="#990000">myusername</font>@cvs.moodle.sourceforge.net:/cvsroot/moodle</p>
-      <p>[Globals]<br>
-        <strong>Checkout read-only</strong>: uncheck<br>
-        <strong>Supply control when adding files</strong>: check<br>
-        <strong>Quiet mode</strong>: uncheck<br>
-        <strong>TCP/IP compression</strong>: check and select 9<br>
-        <strong>Dirty files support</strong>: check<br>
-        <strong>Prune(remove) empty directories</strong>: check<br>
-        <strong>Disable splash screen</strong>: uncheck</p>
+      <p> 1. Right-mouse-click on your Moodle folder (or any file) and select 
+        &quot;<strong>CVS Commit...</strong>&quot;.<br>
+        <br>
+        2. In the dialog box, type a clear description of the changes you are 
+        committing. <br>
+        <br>
+        3. Click &quot;OK&quot;. Your changes will be sent to the server.<br>
+      </p>
     </blockquote>
-    <p>Congratulations, WinCVS is set up. Now, you should check out a complete 
-      working copy of the Moodle course code:</p>
-    <ol>
-      <li>Select 'Create -&gt; checkout'</li>
-      <li>For the setting 'Module name and path on the server&quot;, type &quot;moodle&quot;, 
-        then click OK.</li>
-      <li>Type in <strong><font color="#990000">mypassword</font></strong> and 
-        press Enter in the DOS window.</li>
-    </ol>
-    <p>After this first checkout, you can fetch updated files from the CVS server 
-      like this:</p>
-    <ol>
-      <li> Select folders or files you want to update</li>
-      <li>Press right mouse button and select '<strong>Update selection</strong>'</li>
-      <li>Press OK button</li>
-      <li>Type in <strong><font color="#990000">mypassword</font></strong> and 
-        press Enter in the DOS window.</li>
-    </ol>
-    <p>After modifying files, you can commit them back to the CVS server like 
-      this:</p>
-    <ol>
-      <li>Select folders or files you want to commit</li>
-      <li>Press right button and select '<strong>Commit selection</strong>'</li>
-      <li>Press OK button</li>
-      <li>Type in a meaningful comment and press OK button.</li>
-      <li>Type in <strong><font color="#990000">mypassword</font></strong> and 
-        press Enter in the DOS window.</li>
-    </ol>
   </blockquote>
   <p>&nbsp;</p>
   <p align="center">Good luck!</p>
