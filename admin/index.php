@@ -69,11 +69,10 @@
     }
 
     if (!isadmin()) {
-        if (record_exists_sql("SELECT * FROM user_admins")) {
-            require_login();
-        } else {
+        if (! record_exists_sql("SELECT * FROM user_admins")) {
             redirect("user.php");
         }
+        error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/");
     }
 
 
