@@ -1,3 +1,430 @@
+2002-11-19 Tuesday 22:35  moodler
+
+	* config-dist.php: 
+	
+	Changed it to DOS format to help Windows users
+
+2002-11-19 Tuesday 22:27  moodler
+
+	* course/lib.php, course/log.php, course/loggraph.php,
+	course/weeks.php, files/index.php, lib/moodlelib.php,
+	mod/assignment/lib.php, mod/forum/lib.php, mod/journal/lib.php,
+	mod/survey/lib.php, mod/survey/report.php: 
+	
+	Changed all references of %e to %d to fix strftime on Windows
+
+2002-11-19 Tuesday 17:55  moodler
+
+	* course/lib.php: 
+	
+	Added Authentication to admin_links
+
+2002-11-19 Tuesday 17:09  moodler
+
+	* lang/en/auth.php: 
+	
+	More fixes
+
+2002-11-19 Tuesday 17:06  moodler
+
+	* lang/en/auth.php: 
+	
+	Fixed some strings
+
+2002-11-19 Tuesday 16:51  moodler
+
+	* admin/auth.php, admin/config.html, admin/index.php,
+	auth/db/config.html, auth/db/lib.php, auth/email/config.html,
+	auth/imap/config.html, auth/imap/lib.php, auth/ldap/config.html,
+	auth/nntp/config.html, auth/nntp/lib.php, auth/none/config.html,
+	auth/pop3/config.html, auth/pop3/lib.php, lang/en/auth.php,
+	lang/en/moodle.php, login/index.php, login/index_form.html: 
+	
+	
+	A significant new system for authentication configuration that
+	exposes the wide array of authentication possibilities.
+	
+	Authentication now has it's own page separate from other variables.
+	
+	Most of this work was done by Petri Asikainen <paca@sci.fi>, who
+	started these changes off.
+	
+	I've done some cleanups and additions which is why I'm checking it
+	in.
+	
+	It's all working pretty well at the moment but could use some
+	testing.
+	
+	Thanks, Petri!	:-)
+
+2002-11-18 Monday 20:21  moodler
+
+	* admin/user.php: 
+	
+	Small change to allow the same user (by email) be deleted more than
+	once.  Also some security in making deleted usernames very hard to
+	guess.
+
+2002-11-18 Monday 15:00  compuproggy
+
+	* lang/de/help/assignment/resubmit.html: 
+	
+	An alle English-Deutsch Übersetzer, wer hilf mit? - To all english
+	german translators, who wants to help me?
+
+2002-11-18 Monday 14:57  compuproggy
+
+	* lang/de/assignment.php: 
+	
+	[no log message]
+
+2002-11-18 Monday 09:57  moodler
+
+	* doc/credits.html: 
+	
+	Fixed the O's
+
+2002-11-18 Monday 09:56  moodler
+
+	* doc/credits.html: 
+	
+	Added Norwegian
+
+2002-11-18 Monday 09:42  moodler
+
+	* lang/no/quiz.html: 
+	
+	Removed an empty file
+
+2002-11-18 Monday 09:41  moodler
+
+	* lang/no/: README, assignment.php, choice.php, forum.php,
+	journal.php, moodle.php, quiz.html, quiz.php, resource.php,
+	survey.php, docs/module_files.txt, help/coursecategory.html,
+	help/courseformats.html, help/coursefullname.html,
+	help/coursenewsitems.html, help/coursenumsections.html,
+	help/courserecent.html, help/courseshortname.html,
+	help/coursestartdate.html, help/enrolmentkey.html,
+	help/guestaccess.html, help/html.html, help/langedit.html,
+	help/mods.html, help/picture.html, help/questions.html,
+	help/richtext.html, help/surveys.html, help/teachers.html,
+	help/text.html, help/textformat.html,
+	help/assignment/assignmenttype.html, help/choice/options.html,
+	help/forum/allowdiscussions.html, help/forum/attachment.html,
+	help/forum/forumtype.html, help/forum/ratings.html,
+	help/forum/subscription.html, help/quiz/attempts.html,
+	help/quiz/categories.html, help/quiz/correctanswers.html,
+	help/quiz/feedback.html, help/quiz/grademethod.html,
+	help/quiz/maxgrade.html, help/quiz/multichoice.html,
+	help/quiz/questiontypes.html, help/quiz/random.html,
+	help/quiz/shortanswer.html, help/quiz/timeopen.html,
+	help/quiz/truefalse.html, help/resource/resourcetype.html,
+	help/resource/summary.html: 
+	
+	Complete Norwegian translation by Joran Sorbo! 
+	joran.sorbo@teleweb.no
+
+2002-11-17 Sunday 23:11  moodler
+
+	* auth/imap/lib.php: 
+	
+	New imap type (imaptls) solved problems with TLS capable servers
+	(eg Courier)
+
+2002-11-17 Sunday 19:03  moodler
+
+	* doc/credits.html: 
+	
+	Minor formatting
+
+2002-11-17 Sunday 19:00  moodler
+
+	* config-dist.php: 
+	
+	Added info about $CFG->buggy_referer
+
+2002-11-17 Sunday 18:46  moodler
+
+	* version.php: 
+	
+	Updated version for those using CVS etc
+
+2002-11-17 Sunday 18:45  moodler
+
+	* lib/weblib.php: 
+	
+	A default format for format_text() and a workaround embedded for
+	sites with the buggy referer problem :
+	
+	  define $CFG->buggy_referer = true in the config.php to activate
+	it
+
+2002-11-17 Sunday 18:07  moodler
+
+	* login/index_form.html: 
+	
+	Now displays instructions for any authentication method
+
+2002-11-17 Sunday 17:57  moodler
+
+	* auth/: db/lib.php, imap/lib.php, nntp/lib.php, pop3/lib.php: 
+	
+	Slight updates
+
+2002-11-17 Sunday 10:51  moodler
+
+	* auth/imap/lib.php: 
+	
+	Remove { error, and move things around
+
+2002-11-16 Saturday 22:24  moodler
+
+	* login/logout.php: 
+	
+	When someone logs out, cler all sessions and send them to home page
+
+2002-11-16 Saturday 12:26  moodler
+
+	* auth/db/lib.php: 
+	
+	Some docs added
+
+2002-11-16 Saturday 11:56  moodler
+
+	* auth/: nntp/lib.php, pop3/lib.php: 
+	
+	Slight fixes with defaults etc
+
+2002-11-16 Saturday 11:49  moodler
+
+	* auth/: README, imap/lib.php, nntp/lib.php, pop3/lib.php: 
+	
+	Separated code for IMAP into IMAP, POP3 and NNTP
+
+2002-11-16 Saturday 00:59  moodler
+
+	* lib/rte/rte_lang.js: 
+	
+	Added es_mx from Claudio ... :-)
+
+2002-11-15 Friday 20:49  moodler
+
+	* doc/credits.html: 
+	
+	Small tidy up of names
+
+2002-11-15 Friday 17:40  compuproggy
+
+	* contrib/compuproggy/merger.php: 
+	
+	Sorry, a message was missing and the stored file is now highlighted
+	for preview.
+
+2002-11-15 Friday 17:25  compuproggy
+
+	* contrib/compuproggy/: help_translator.php, merger.php: 
+	
+	This versions both  including the moodle header and footer with the
+	moodle security.  merger.php does not need parameters anymore, but
+	a module in its folder.
+	
+	Warnings are included.
+
+2002-11-15 Friday 17:13  moodler
+
+	* auth/: db/lib.php, imap/lib.php: 
+	
+	Nothing missing, just needs testing and debugging
+
+2002-11-15 Friday 16:59  moodler
+
+	* auth/imap/lib.php: 
+	
+	More options and faster (use IPs always)
+
+2002-11-15 Friday 16:42  moodler
+
+	* auth/: README, db/lib.php, imap/lib.php: 
+	
+	More authentication possibilities
+
+2002-11-15 Friday 16:25  moodler
+
+	* auth/db/lib.php: 
+	
+	First version of code to authenticate against external database.
+	
+	This NOT TESTED yet, and has parameters hardcoded ... it will of
+	course be using Petri's config interface later when that's ready.
+
+2002-11-15 Friday 15:21  carlesbellver
+
+	* lang/ca/moodle.php: 
+	
+	[no log message]
+
+2002-11-15 Friday 15:05  compuproggy
+
+	* contrib/compuproggy/: help_translator.php, merger.php: 
+	
+	[no log message]
+
+2002-11-15 Friday 11:32  moodler
+
+	* mod/assignment/mod.html, lang/en/assignment.php,
+	lang/en/help/assignment/resubmit.html, mod/assignment/upload.php,
+	mod/assignment/version.php, mod/assignment/view.php,
+	mod/assignment/db/mysql.php, mod/assignment/db/mysql.sql: 
+	
+	Add option that allows students to resubmit after being graded
+
+2002-11-15 Friday 10:46  moodler
+
+	* lib/moodlelib.php, user/edit.html: 
+	
+	Extend the range of allowable timezones up to 13 hours ... (NZ
+	Daylight savings)
+
+2002-11-14 Thursday 23:00  compuproggy
+
+	* contrib/compuproggy/: merger.php, FolderBrowser.php, Rte.php,
+	help_translator.php, readme.txt, rte/_header_css.txt,
+	rte/_header_html.txt, rte/_header_js.txt, rte/about_logo.swf,
+	rte/about_logo.swi, rte/changelog, rte/colorchooser.html,
+	rte/credits.html, rte/custom.css, rte/debug_embedded.asp,
+	rte/dialog.css, rte/dlg_about.html, rte/dlg_ins_char.html,
+	rte/dlg_ins_image.html, rte/dlg_ins_smile.html,
+	rte/dlg_ins_table.html, rte/example.html, rte/license.html,
+	rte/license.txt, rte/popup_editor.html, rte/readme.txt,
+	rte/richedit.css, rte/richedit.html, rte/rte.js,
+	rte/rte_codesweep.js, rte/rte_debug.js, rte/rte_dunno.css,
+	rte/rte_editmode.js, rte/rte_history.js, rte/rte_interface.js,
+	rte/rte_lang.js, rte/rte_xhtml.js, rte/syntax.css,
+	rte/tableEditor.js, rte/images/CloseWindow.gif,
+	rte/images/Editor_r11_c2.gif, rte/images/Editor_r11_c5.gif,
+	rte/images/Editor_r4_c1.gif, rte/images/Editor_r4_c4.gif,
+	rte/images/Editor_r4_c7.gif, rte/images/Editor_r5_c2.gif,
+	rte/images/Editor_r5_c5.gif, rte/images/Editor_r7_c2.gif,
+	rte/images/Editor_r7_c5.gif, rte/images/Editor_r9_c2.gif,
+	rte/images/Editor_r9_c5.gif, rte/images/add_col.gif,
+	rte/images/add_col_f2.gif, rte/images/add_row.gif,
+	rte/images/add_row_f2.gif, rte/images/bg.gif,
+	rte/images/em.icon.angry.gif, rte/images/em.icon.angry.png,
+	rte/images/em.icon.approve.gif, rte/images/em.icon.approve.png,
+	rte/images/em.icon.bigsmile.gif, rte/images/em.icon.bigsmile.png,
+	rte/images/em.icon.blackeye.gif, rte/images/em.icon.blackeye.png,
+	rte/images/em.icon.blush.gif, rte/images/em.icon.blush.png,
+	rte/images/em.icon.clown.gif, rte/images/em.icon.clown.png,
+	rte/images/em.icon.cool.gif, rte/images/em.icon.cool.png,
+	rte/images/em.icon.dead.gif, rte/images/em.icon.dead.png,
+	rte/images/em.icon.dissapprove.gif,
+	rte/images/em.icon.dissapprove.png,
+	rte/images/em.icon.eightball.gif, rte/images/em.icon.eightball.png,
+	rte/images/em.icon.evil.gif, rte/images/em.icon.evil.png,
+	rte/images/em.icon.kiss.gif, rte/images/em.icon.kiss.png,
+	rte/images/em.icon.question.gif, rte/images/em.icon.question.png,
+	rte/images/em.icon.sad.gif, rte/images/em.icon.sad.png,
+	rte/images/em.icon.shocked.gif, rte/images/em.icon.shocked.png,
+	rte/images/em.icon.shy.gif, rte/images/em.icon.shy.png,
+	rte/images/em.icon.sleepy.gif, rte/images/em.icon.sleepy.png,
+	rte/images/em.icon.smile.gif, rte/images/em.icon.smile.png,
+	rte/images/em.icon.tongue.gif, rte/images/em.icon.tongue.png,
+	rte/images/em.icon.wink.gif, rte/images/em.icon.wink.png,
+	rte/images/hdr_tables.gif, rte/images/icon_about.gif,
+	rte/images/icon_block.gif, rte/images/icon_bold.gif,
+	rte/images/icon_bullist.gif, rte/images/icon_center.gif,
+	rte/images/icon_color_fill.gif, rte/images/icon_color_text.gif,
+	rte/images/icon_copy.gif, rte/images/icon_cut.gif,
+	rte/images/icon_edt_table.gif, rte/images/icon_indent.gif,
+	rte/images/icon_ins_char.gif, rte/images/icon_ins_image.gif,
+	rte/images/icon_ins_link.gif, rte/images/icon_ins_sub.gif,
+	rte/images/icon_ins_sup.gif, rte/images/icon_ins_table.gif,
+	rte/images/icon_italic.gif, rte/images/icon_left.gif,
+	rte/images/icon_numlist.gif, rte/images/icon_outdent.gif,
+	rte/images/icon_paste.gif, rte/images/icon_post.gif,
+	rte/images/icon_redo.gif, rte/images/icon_rem_formatting.gif,
+	rte/images/icon_rem_link.gif, rte/images/icon_right.gif,
+	rte/images/icon_rule.gif, rte/images/icon_select_all.gif,
+	rte/images/icon_spell.gif, rte/images/icon_strikethrough.gif,
+	rte/images/icon_underline.gif, rte/images/icon_undo.gif,
+	rte/images/incr_colspan.gif, rte/images/incr_colspan_f2.gif,
+	rte/images/incr_rowspan.gif, rte/images/incr_rowspan_f2.gif,
+	rte/images/minimize.gif, rte/images/plt_ftr.gif,
+	rte/images/plt_hdr.gif, rte/images/rmv_col.gif,
+	rte/images/rmv_col_f2.gif, rte/images/rmv_colspan.gif,
+	rte/images/rmv_colspan_f2.gif, rte/images/rmv_row.gif,
+	rte/images/rmv_row_f2.gif, rte/images/rmv_rowspan.gif,
+	rte/images/rmv_rowspan_f2.gif, rte/images/spacer.gif,
+	rte/images/toolbar.gif, rte/images/lang/de.icon_post.gif,
+	rte/images/lang/no.icon_post.gif: 
+	
+	[no log message]
+
+2002-11-14 Thursday 21:33  moodler
+
+	* doc/credits.html: 
+	
+	Some updates
+
+2002-11-14 Thursday 19:48  moodler
+
+	* lib/moodlelib.php: 
+	
+	Typo in variable
+
+2002-11-14 Thursday 19:45  moodler
+
+	* lib/moodlelib.php: 
+	
+	Set the character set of email to be the same as the default
+	language
+
+2002-11-14 Thursday 15:59  carlesbellver
+
+	* lang/ca/moodle.php: 
+	
+	[no log message]
+
+2002-11-14 Thursday 14:34  moodler
+
+	* version.php: 
+	
+	Re-rolling 1.0.6.3
+
+2002-11-14 Thursday 14:22  moodler
+
+	* lib/moodlelib.php, theme/standard/header.html,
+	theme/standardblue/header.html, theme/standardgreen/header.html,
+	theme/standardlogo/header.html, theme/standardred/header.html: 
+	
+	Argh ... fix for Netscape fix - was causing problems on other
+	browsers
+
+2002-11-14 Thursday 14:01  compuproggy
+
+	* lang/de/moodle.php: 
+	
+	[no log message]
+
+2002-11-14 Thursday 12:14  moodler
+
+	* doc/credits.html: 
+	
+	Updated link for Antonio
+
+2002-11-14 Thursday 11:59  moodler
+
+	* doc/release.html: 
+	
+	Mention the fix for very large classes
+
+2002-11-14 Thursday 11:14  moodler
+
+	* CHANGES, version.php, doc/credits.html, doc/release.html,
+	lib/db/mysql.php: 
+	
+	Getting ready for 1.0.6.3 release today
+
 2002-11-14 Thursday 10:43  moodler
 
 	* lang/es_es/: assignment.php, choice.php, forum.php, journal.php,
