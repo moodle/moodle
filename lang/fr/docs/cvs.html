@@ -23,35 +23,35 @@
 		Si vous d&eacute;sirez simplement t&eacute;l&eacute;charger par CVS la version actuelle de Moodle pour lancer un site, vous n'avez pas besoin de cette page. Il vous suffit de suivre les instructions (plus simples) pour t&eacute;l&eacute;charger Moodle par CVS sur la page <a target="_top" href="http://moodle.org/download">T&eacute;l&eacute;chargement de Moodle</a>. 
 	</p>
 
-	<h2><a name="1"></a>Th&egrave;mes de ce document</h2>
+	<h2>Th&egrave;mes de ce document</h2>
 	<ol>
 		<li>
-			<a href="#1">Rejoindre le projet en tant que d&eacute;veloppeur</a>
+			<a href="#sec1">Rejoindre le projet en tant que d&eacute;veloppeur</a>
 		</li>
 		<li>
-			<a href="#2">Modules CVS</a> 
+			<a href="#sec2">Modules CVS</a> 
 		</li>
 		<li>
-			<a href="#3">Commandes CVS de base</a> 
+			<a href="#sec3">Commandes CVS de base</a> 
 				<br />
-				3.1. <a href="#3.1">CVS sur Unix ou Mac OS X</a> 
+				3.1. <a href="#sec3.1">CVS sur Unix ou Mac OS X</a> 
 				<br />
-				3.2. <a href="#3.2">CVS sous Windows</a>
+				3.2. <a href="#sec3.2">CVS sous Windows</a>
 			</li>
 		<li>
-			<a href="#4">Travailler avec des branches</a>
+			<a href="#sec4">Travailler avec des branches</a>
 				<br />
-				4.1. <a href="#4.1">D&eacute;veloppement du tronc</a>
+				4.1. <a href="#sec4.1">D&eacute;veloppement du tronc</a>
 				<br />
-				4.2. <a href="#4.2">Branches stables pour chaque version</a>
+				4.2. <a href="#sec4.2">Branches stables pour chaque version</a>
 				<br />
-				4.3. <a href="#4.3">Branches particuli&egrave;res pour tout changement important</a> 
+				4.3. <a href="#sec4.3">Branches particuli&egrave;res pour tout changement important</a> 
 		</li>
 	</ol>
 	<p>
 		&nbsp;
 	</p>
-	<h2><a name="1" id="1"></a>1. Rejoindre le projet en tant que d&eacute;veloppeur</h2>
+	<h2><a name="sec1" id="sec1"></a>1. Rejoindre le projet en tant que d&eacute;veloppeur</h2>
 	<blockquote>
 	<p>On vient de vous proposer un acc&egrave;s en &eacute;criture au CVS pour vous permettre de nous aider &agrave; d&eacute;velopper et &agrave; maintenir Moodle&nbsp;? <a href="http://sourceforge.net/project/memberlist.php?group_id=30935">Bienvenue au club</a>&nbsp;!</p>
 	<p>Pour avoir l'autorisation d'&eacute;crire dans l'<a target="_top" href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/moodle/moodle/">archive CVS de Moodle</a>, il vous faut avant tout un compte sur Sourceforge (<a href="http://sourceforge.net/account/register.php">l'enregistrement</a> est simple et gratuit). Nous admettrons pour les exemples de ce texte que votre nom d'utilisateur chez Sourceforge est <strong><font color="#990000">myusername</font></strong> et que votre mot de passe est <strong><font color="#990000">mypassword</font></strong>. Lisez attentivement les instructions de Sourceforge (en anglais) pour <a target="_top" href="http://sourceforge.net/docman/display_doc.php?docid=768&amp;group_id=1#develhomedir">cr&eacute;er votre dossier CVS initial</a> (home directory) &mdash; une proc&eacute;dure que vous devez faire pour chaque nouveau dossier en vue de l'utiliser avec le CVS. Il s'agit simplement de vous connecter &agrave; l'adresse cvs.sourceforge.net via le protocole SSH. 
@@ -67,7 +67,7 @@
 	</p>
 	<p>&nbsp;</p>
     </blockquote>
-    <h2><a name="2" id="2"></a>2. Modules CVS</h2>
+    <h2><a name="sec2" id="sec2"></a>2. Modules CVS</h2>
     <blockquote>	
 	<p>
 	Dans le jargon de CVS, les &laquo;&nbsp;Module&nbsp;&raquo; sont des collections s&eacute;par&eacute;es de code. Moodle poss&egrave;de les modules suivants&nbsp;: 
@@ -83,9 +83,9 @@
 	</p>
 	<p>&nbsp;</p>
     </blockquote>
-    <h2><a name="3" id="3"></a>3. Commandes CVS de base</h2>
+    <h2><a name="sec3" id="sec3"></a>3. Commandes CVS de base</h2>
     <blockquote>	
-    <h3><a name="3.1" id="3.1"></a>3.1 CVS sur Unix ou Mac OS X</h3>
+    <h3><a name="sec3.1" id="sec3.1"></a>3.1 CVS sur Unix ou Mac OS X</h3>
 	<blockquote>		
 		<p>
 		Le CVS de Sourceforge utilise SSH comme couche de transport pour la s&eacute;curit&eacute;. Vous devrez donc configurer la variable d'environnement CVS_RSH dans votre &laquo;&nbsp;shell&nbsp;&raquo;&nbsp;comme ci-dessous. Le mieux est de placer cette commande dans votre .bashrc ou .cshrc afin que vous n'ayez pas &agrave; la retaper tout le temps&nbsp;: 
@@ -136,7 +136,7 @@ cvs commit</div>
 	</p>
 	<p>&nbsp;</p>
 	</blockquote>
-	<h3><a name="3.2" id="3.2"></a>3.2 CVS sous Windows</h3> 
+	<h3><a name="sec3.2" id="sec3.2"></a>3.2 CVS sous Windows</h3> 
 	<blockquote>
 	<p>
 	Pour commencer, il vous faut t&eacute;l&eacute;charger une copie compl&egrave;te de Moodle avec votre compte d&eacute;veloppeur. 
@@ -178,7 +178,7 @@ cvs commit</div>
 	</ol>
 	<p>&nbsp;</p>
 	</blockquote>
-	<h2><a name="4" id="4"></a>4. Travailler avec des branches</h2>
+	<h2><a name="sec4" id="sec4"></a>4. Travailler avec des branches</h2>
 	<blockquote>
 	<p>Le diagramme suivant montre comment le module principal <strong>moodle</strong> se ramifie en plusieurs versions (branches) au cours du temps.</p>
 	<p align="center"><img src="pix/cvstree.png" width="500" height="200" alt="cvstree" /></p>
@@ -191,7 +191,7 @@ cvs commit</div>
 		<li>Il n'est pas autoris&eacute; de changer le nom des balises, car des d&eacute;veloppeurs comptent dessus&nbsp;! Tapez-les donc correctement du premier coup.</li>	
 	</ul>	
 	<p>&nbsp;</p>	
-	<h3><a name="4.1" id="4.1"></a>4.1 D&eacute;veloppement du tronc</h3>
+	<h3><a name="sec4.1" id="sec4.1"></a>4.1 D&eacute;veloppement du tronc</h3>
 	<blockquote>
 	<p>Dans le jargon CVS, le <strong>tronc</strong> (trunk) est la version principale en d&eacute;veloppement de Moodle. Elle est aussi appel&eacute;e <span class="style4">HEAD</span>, ou encore branche par d&eacute;faut.</p>
 	<p>Les d&eacute;veloppeurs de Moodle font en sorte que le tronc reste aussi stable que possible, mais il contient d'habitude du nouveau code, avec des bogues et de petites instabilit&eacute;s.</p>
@@ -201,7 +201,7 @@ cvs commit</div>
   	     
   	     
 	<p>&nbsp;</p>
-	<h3><a name="4.2" id="4.2"></a>4.2 Branches stables pour chaque version</h3>
+	<h3><a name="sec4.2" id="sec4.2"></a>4.2 Branches stables pour chaque version</h3>
 	<blockquote>
 	<p>D&egrave;s que la branche stable <span class="style3">MOODLE_XX_STABLE</span> est cr&eacute;&eacute;e, les efforts de d&eacute;veloppement se divisent temporairement en deux. Certains d&eacute;veloppeurs continuent &agrave; travailler sur de nouvelles fonctionnalit&eacute;s du tronc pour les prochaines versions, mais la plupart d'entre eux se concentrent sur la branche <span class="style1"><strong>STABLE</strong></span> actuelle et corrigent les bogues qui y sont d&eacute;couverts.</p>
 	<p>Vous pouvez faire en sorte que votre copie locale de Moodle soit en synchronisation avec la version STABLE en tapant la commande unix suivante depuis le dossier principal de Moodle&nbsp;:</p>
@@ -233,7 +233,7 @@ cvs commit</div>
 	<p>Enfin, les valeurs des variables <strong>$version</strong> de tous les fichiers &laquo;&nbsp;version.php&nbsp;&raquo; de Moodle de la branche stable ne doivent pas &ecirc;tre mis &agrave; jour si possible (&agrave; part le dernier chiffre si n&eacute;cessaire). La raison en est que si quelqu'un fait une mise &agrave; jour d'une version tr&egrave;s stable &agrave; la version tr&egrave;s stable suivante, il pourrait sans cela manquer une mise &agrave; jour arriv&eacute;e sur le tronc.</p>
 	</blockquote>
 	<p>&nbsp;</p>
-	<h3><a name="4.3" id="4.3"></a>4.3 Branches particuli&egrave;res pour tout changement important</h3>
+	<h3><a name="sec4.3" id="sec4.3"></a>4.3 Branches particuli&egrave;res pour tout changement important</h3>
 	<blockquote>
 	<p>Occasionnellement, il est n&eacute;cessaire d'incorporer une nouvelle fonctionnalit&eacute; afin que plusieurs d&eacute;veloppeurs puissent y travailler ensemble, m&ecirc;me si elle est encore trop instable pour &ecirc;tre incorpor&eacute;e dans le tronc.</p>
 	<p>Dans ces cas, une branche temporaire est cr&eacute;&eacute;e pour travailler sur la fonctionnalit&eacute;, puis incorpor&eacute;e au tronc principal d&egrave;s que possible. Un exemple de branche appel&eacute;e <span class="style1"><strong>MOODLE_14_WIDGET</strong></span> peut &ecirc;tre vu sur le diagramme ci-dessus.</p>
