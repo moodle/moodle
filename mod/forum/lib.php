@@ -1126,7 +1126,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     global $THEME, $USER, $CFG;
 
-    static $stredit, $strdelete, $strreply, $strparent, $threadedmode, $isteacher;
+    static $stredit, $strdelete, $strreply, $strparent, $threadedmode, $isteacher, $adminedit;
 
     if (empty($stredit)) {
         $stredit = get_string("edit", "forum");
@@ -1135,6 +1135,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $strparent = get_string("parent", "forum");
         $threadedmode = (!empty($USER->mode) and ($USER->mode == FORUM_MODE_THREADED));
         $isteacher = isteacher($courseid);
+        $adminedit = (isadmin() and !empty($CFG->admineditalways));
     }
 
     echo "<a name=\"$post->id\"></a>";
@@ -1213,8 +1214,8 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
 
     $age = time() - $post->created;
-    if ($ownpost) {
-        if ($age < $CFG->maxeditingtime) {
+    if ($ownpost or $adminedit) {
+        if (($age < $CFG->maxeditingtime) or $adminedit) {
             echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?edit=$post->id\">$stredit</a> | ";
         }
     }

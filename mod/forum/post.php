@@ -204,13 +204,15 @@
 
     } else if (isset($edit)) {  // User is editing their own post
 
+        $adminedit = (isadmin() and !empty($CFG->admineditalways));
+
         if (! $post = forum_get_post_full($edit)) {
             error("Post ID was incorrect");
         }
-        if ($post->userid <> $USER->id) {
+        if (($post->userid <> $USER->id) and !$adminedit) {
             error("You can't edit other people's posts!");
         }
-        if ((time() - $post->created) > $CFG->maxeditingtime) {
+        if (((time() - $post->created) > $CFG->maxeditingtime) and !$adminedit) {
             error( get_string("maxtimehaspassed", "forum", format_time($CFG->maxeditingtime)) );
         }
         if ($post->parent) {
