@@ -1753,10 +1753,10 @@
 
        	$essayinfo->graded = 1;
         $essayinfo->score = $form->score;
-        $essayinfo->response = $form->response;
+        $essayinfo->response = stripslashes_safe($form->response);
 		$essayinfo->sent = 0;
 
-		$essay->useranswer = serialize($essayinfo);
+		$essay->useranswer = addslashes(serialize($essayinfo));
 
 		if (!update_record("lesson_attempts", $essay)) {
 			error("Could not update essay score");
@@ -1840,7 +1840,7 @@
 
 			    if(email_to_user($users[$essay->userid], $USER, $subject, $plaintxt, $message)) {
 					$essayinfo->sent = 1;
-					$essay->useranswer = serialize($essayinfo);
+					$essay->useranswer = addslashes(serialize($essayinfo));
                     update_record("lesson_attempts", $essay);
                 } else {
                     echo "Email Failed!<br>";
