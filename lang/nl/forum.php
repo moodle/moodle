@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
 $string['addanewtopic'] = 'Voeg een nieuw onderwerp toe';
+$string['allforums'] = 'Alle forums';
 $string['allowchoice'] = 'Sta iedereen toe om te kiezen';
 $string['allowdiscussions'] = 'Mag een $a berichten posten?';
 $string['allowratings'] = 'Mogen berichten beoordeeld worden?';
@@ -137,9 +138,21 @@ $string['replyforum'] = 'Antwoord op het forum';
 $string['rsssubscriberssdiscussions'] = 'Met deze link kun je inschrijven op het \'$a\' forum RSS-discussiekanaal';
 $string['rsssubscriberssposts'] = 'Met deze link kun je inschrijven op het \'$a\' forum RSS-postkanaal';
 $string['search'] = 'Zoek';
+$string['searchdatefrom'] = 'Berichten nieuwer dan dit';
+$string['searchdateto'] = 'Berichten ouder dan dit';
+$string['searchforumintro'] = 'Geef zoekwoorden in één of meer van volgende velden:';
 $string['searchforums'] = 'Zoeken in forums';
+$string['searchfullwords'] = 'Deze woorden moeten als volledige woorden voorkomen';
+$string['searchnotwords'] = 'Deze woorden mogen NIET voorkomen';
 $string['searcholderposts'] = 'Doorzoek oudere berichten...';
+$string['searchphrase'] = 'Dit zinsdeel moet exact voorkomen in het bericht';
 $string['searchresults'] = 'Zoekresultaten';
+$string['searchsubject'] = 'Deze woorden moeten in het onderwerp staan';
+$string['searchuser'] = 'Dit is de naam van de auteur';
+$string['searchuserid'] = 'Dit is de Moodle ID van de auteur';
+$string['searchwhichforums'] = 'Kies in welke forums je wil zoeken';
+$string['searchwords'] = 'Deze woorden mogen overal in het bericht voorkomen';
+$string['seeallposts'] = 'Bekijk alle berichten die deze gebruiker gepost heeft';
 $string['sendinratings'] = 'Bewaar mijn beoordelingen';
 $string['showsubscribers'] = 'Toon / wijzig leden';
 $string['singleforum'] = 'Eén eenvoudige discussie';

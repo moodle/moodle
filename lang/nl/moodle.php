@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021800)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
 
 
 $string['action'] = 'Actie';
@@ -61,9 +61,11 @@ $string['administrator'] = 'Beheerder';
 $string['administrators'] = 'Beheerders';
 $string['administratorsall'] = 'Alle beheerders';
 $string['administratorsandteachers'] = 'Beheerders en leraren';
+$string['advanced'] = 'Geavanceerd';
 $string['advancedfilter'] = 'Geavanceerd zoeken';
 $string['advancedsettings'] = 'Geavanceerde instellingen';
 $string['again'] = 'nogmaals';
+$string['aimid'] = 'AIM ID';
 $string['all'] = 'Alle';
 $string['allactivities'] = 'Alle activiteiten';
 $string['alldays'] = 'Alle dagen';
@@ -288,6 +290,7 @@ $string['doyouagree'] = 'Heb je deze voorwaarden gelezen en begrepen?';
 $string['duplicate'] = 'Dupliceer';
 $string['duplicatinga'] = '$a aan het dupliceren';
 $string['duplicatingain'] = '$a-<what in $a->in aan het dupliceren';
+$string['edhelpaspellpath'] = 'Om spellingscontrole te kunnen gebruiken in de editor heb je <strong>aspell 0.50</strong> of later nodig op je server en moet je het juiste pad ingeven om de aspell-bestanden aan te spreken. Op een Unix/Linux systeem is dit pad gewoonlijk <strong>/usr/bin/aspell</strong>, maar het kan natuurlijk anders zijn.';
 $string['edhelpbgcolor'] = 'Definiëer de achtergrondkleur van het bewerkingsscherm.<br />Geldige waarden zijn bijvoorbeeld:#ffffff of white';
 $string['edhelpcleanword'] = 'Deze instelling schakelt Word-specifieke opmaakfiltering in of uit.';
 $string['edhelpenablespelling'] = 'Schakel spellingscontrole in of uit. Wanneer je dit inschakelt moet <strong>aspell</strong> geïnstalleerd zijn  op deze server.';

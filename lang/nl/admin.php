@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021800)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
 
 
 $string['adminseesallevents'] = 'Beheerders zien alle gebeurtenissen';
@@ -10,6 +10,7 @@ $string['cachetext'] = 'Hoelang mag tekst in cache blijven';
 $string['calendarsettings'] = 'Kalender';
 $string['change'] = 'wijzig';
 $string['configallowcoursethemes'] = 'Als je dit inschakelt, dan kan elk vak zijn eigen thema instellen. De thema\'s van de vakken zullen alle andere thema\'s overschrijven (site, gebruiker of sessiethema\'s)';
+$string['configallowemailaddresses'] = 'Als je nieuwe e-mailadressen wil beperken tot bepaalde domeinen, zet ze dan hier in een lijst met een spatie als scheidingsteken. Alle andere domeinen zullen niet geaccepteerd worden. bv <strong>onzeschool.edu.be .onscollege.nl</strong>';
 $string['configallowunenroll'] = 'Als dit op \'ja\' staat, dan mogen leerlingen zichzelf uitschrijven uit vakken wanneer ze willen. Anders mogen zij dat niet en dan wordt dit proces uitsluitend door leraren en beheerders gecontroleerd.';
 $string['configallowuserblockhiding'] = 'Wil je gebruikers toelaten om blokken te verbergen of te tonen? Deze functie gebruikt Javascript en cookies om de status van elk samenklapbaar blok te bewaren en heeft enkel gevolg voor het beeld van de individuele gebruiker.';
 $string['configallowuserthemes'] = 'Als je dit inschakelt, dan kunnen gebruikers hun eigen thema kiezen. Gebruikersthema\'s gaan boven site-thema\'s (maar niet boven vakthema\'s)';
@@ -23,6 +24,7 @@ $string['configcountry'] = 'Als je hier een land invult zal dit land als standaa
 $string['configdbsessions'] = 'Als dit ingeschakeld is, dan zal de databank gebruikt worden om informatie over de sessies te bewaren. Dit is vooral nuttig op grote, veel gebruikte sites of sites op een cluster van servers.  Voor de meeste sites kan dit waarschijnlijk beter uitgeschakeld zijn zodat de server de informatie op schijf bewaard. Merk op dat het wijzigen van deze instelling alle gebruikers zal afmelden (jij inbegrepen).';
 $string['configdebug'] = 'Als je dit aan zet zullen er meer PHP-fouten op het scherm worden weergegeven. Dit is alleen maar handig voor ontwikkelaars van de applicatie.';
 $string['configdeleteunconfirmed'] = 'Als je met e-mailauthenticatie werkt dan is dit de periode waarbinnen gebruikers moeten reageren op de bevestigingsmail voor de nieuwe account. Na deze periode zullen oude, niet-bevestigde accounts verwijderd worden.';
+$string['configdenyemailaddresses'] = 'Om e-mailadressen van bepaalde domeinen te weigeren, kun je ze hier op dezelfde manier opnemen. Alle andere domeinen zullen aanvaard worden. bv <strong>hotmail.com yahoo.co.uk</strong>';
 $string['configdigestmailtime'] = 'Gebruikers die ervoor kiezen dat de e-mails hun als samenvatting toegezonden worden, zullen dagelijks een e-mail ontvangen. Deze instelling controleert op welk moment van de dag dat deze dagelijkse mail verzonden wordt (de mail wordt verstuurd door de cron die volgt op het uur dat hier gekozen wordt)';
 $string['configdisplayloginfailures'] = 'Dit zal informatie tonen over mislukte aanmeldingen van de geselecteerde gebruikers';
 $string['configenablerssfeeds'] = 'Met deze instelling maak je RSS-feeds mogelijk voor heel de site. Om ze echt te kunnen gebruiken, moet je de RSS-feeds nog inschakelen voor elke module afzonderlijk - ga naar \'Beheer van de modules\' onder Beheer, Configuratie.';
