@@ -45,7 +45,8 @@
 
 	print_header("$course->shortname: $strassignstudents", 
                  "$site->fullname", 
-                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strassignstudents", "");
+                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strassignstudents", 
+                 "studentform.searchtext");
 
 /// Don't allow restricted teachers to even see this page (because it contains
 /// a lot of email addresses and access to all student on the server
