@@ -242,6 +242,8 @@ function delete_instance($id) {
 function resource_add_instance($resource) {
     global $CFG;
     
+    $resource->type = clean_filename($resource->type);   // Just to be safe
+
     require_once("$CFG->dirroot/mod/resource/type/$resource->type/resource.class.php");
     $resourceclass = "resource_$resource->type";
     $res = new $resourceclass();
@@ -252,6 +254,8 @@ function resource_add_instance($resource) {
 function resource_update_instance($resource) {
     global $CFG;
     
+    $resource->type = clean_filename($resource->type);   // Just to be safe
+
     require_once("$CFG->dirroot/mod/resource/type/$resource->type/resource.class.php");
     $resourceclass = "resource_$resource->type";
     $res = new $resourceclass();
@@ -265,6 +269,8 @@ function resource_delete_instance($id) {
     if (! $resource = get_record("resource", "id", "$id")) {
         return false;
     }
+
+    $resource->type = clean_filename($resource->type);   // Just to be safe
     
     require_once("$CFG->dirroot/mod/resource/type/$resource->type/resource.class.php");
     $resourceclass = "resource_$resource->type";
