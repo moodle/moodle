@@ -1,6 +1,6 @@
 <P ALIGN=CENTER><B>Help on writing text</B></P>
 
-Writing text in Moodle works pretty much the way you would expect, but you also have the ability to include "smilies" and "URL addresses" in your text.
+Writing text in Moodle works pretty much the way you would expect, but you also have the ability to include "smilies", "URL addresses" and some HTML tags in your text.
 
 <P><B>Smilies (emoticons)</B></P>
 <UL>
@@ -23,3 +23,19 @@ Writing text in Moodle works pretty much the way you would expect, but you also 
 <P>Any "word" starting with <B>www.</B> or <B>http://</B> will automatically be turned into a clickable link. 
 <P>For example:  <A HREF="http://www.yahoo.com">www.yahoo.com</A> or <A HREF="http://curtin.edu">http://curtin.edu</A>
 </UL>
+
+<P><B>HTML tags</B></P>
+<UL>
+<P>You can use a limited subset of HTML tags to add emphasis to your texts.
+<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=5>
+<TR><TH>HTML tags<TH>Produces</TR>
+<TR><TD>&lt;B> bold &lt;/B> <TD> <B>bold text</B> </TR>
+<TR><TD>&lt;I> italic &lt;/I> <TD> <I>italic text</I> </TR>
+<TR><TD>&lt;U> underline &lt;/U> <TD> <U>underlined text</U> </TR>
+<TR><TD>&lt;FONT SIZE=1> small &lt;/FONT> <TD> <FONT SIZE=1>small</FONT> </TR>
+<TR><TD>&lt;FONT SIZE=4> large &lt;/FONT> <TD> <FONT SIZE=4>large</FONT> </TR>
+<TR><TD>&lt;FONT COLOR=green> example &lt;/FONT> <TD> <FONT color=green>example</FONT> </TR>
+</TABLE>
+</UL>
+
+
