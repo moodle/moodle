@@ -2555,7 +2555,7 @@ function notify_login_failures() {
             }
             $message .= "\n\n".get_string('notifyloginfailuresmessageend','',$CFG->wwwroot)."\n\n";
             foreach ($recip as $admin) {
-                echo "Emailing $admin->username about ".count($logs)." failed login attempts\n";
+                mtrace("Emailing $admin->username about ".count($logs)." failed login attempts");
                 email_to_user($admin,get_admin(),$subject,$message);
             }
             $conf->name = "lastnotifyfailure";
@@ -2563,11 +2563,11 @@ function notify_login_failures() {
             if ($current = get_record("config", "name", "lastnotifyfailure")) {
                 $conf->id = $current->id;
                 if (! update_record("config", $conf)) {
-                    echo "Could not update last notify time";
+                    mtrace("Could not update last notify time");
                 }
 
             } else if (! insert_record("config", $conf)) {
-                echo "Could not set last notify time";
+                mtrace("Could not set last notify time");
             }
         }
     }

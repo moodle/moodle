@@ -1139,7 +1139,7 @@ function get_recent_enrolments($courseid, $timestart) {
 * @param    type description
 */
 function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, $recordsperpage=99999,
-                             $firstinitial="", $lastinitial="", $group=NULL, $search="") {
+                             $firstinitial="", $lastinitial="", $group=NULL, $search="", $fields='') {
 
     global $CFG;
 
@@ -1173,6 +1173,13 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
     $groupmembers = '';
     $select = "s.course = '$courseid' AND s.userid = u.id AND u.deleted = '0' ";
 
+    if (!$fields) {
+        $fields = 'u.id, u.confirmed, u.username, u.firstname, u.lastname, '.
+                  'u.maildisplay, u.mailformat, u.maildigest, u.email, u.city, '.
+                  'u.country, u.picture, u.idnumber, u.department, u.institution, '.
+                  'u.emailstop, u.lang, u.timezone, s.timeaccess as lastaccess';
+    }
+
     if ($search) {
         $search = " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
     }
@@ -1197,9 +1204,7 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
         $sort = " ORDER BY $sort ";
     }
 
-    return get_records_sql("SELECT u.id, u.confirmed, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
-                            u.maildigest, u.email, u.city, u.country, u.picture, u.idnumber, u.department, u.institution,
-                            u.emailstop, u.lang, u.timezone, s.timeaccess as lastaccess
+    return get_records_sql("SELECT $fields
                             FROM {$CFG->prefix}user u,
                                  {$CFG->prefix}user_students s
                                  $groupmembers
@@ -1377,9 +1382,14 @@ function get_site_users($sort="u.lastaccess DESC", $select="") {
 * @param    boolean $confirmed  a switch to allow/disallow unconfirmed users
 * @param    array(int)  $exceptions a list of IDs to ignore, eg 2,4,5,8,9,10
 * @param    string  $sort   a SQL snippet for the sorting criteria to use
+* @param    string  $firstinitial
+* @param    string  $lastinitial
+* @param    string  $page
+* @param    string  $recordsperpage
+* @param    string  $fields a comma separated list of fields
 */
 function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sort="firstname ASC",
-                   $firstinitial="", $lastinitial="", $page=0, $recordsperpage=99999) {
+                   $firstinitial="", $lastinitial="", $page=0, $recordsperpage=99999, $fields="*") {
 
     global $CFG;
 
@@ -1428,7 +1438,7 @@ function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sor
     }
 
     if ($get) {
-        return get_records_select("user", "$select $sort $limit");
+        return get_records_select("user", "$select $sort $limit", '', $fields);
     } else {
         return count_records_select("user", "$select $sort $limit");
     }
