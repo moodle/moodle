@@ -147,14 +147,20 @@
                  print_spacer(8,1);
                  print_my_moodle();
              } else {
-                 print_heading_block(get_string("availablecourses"));
-                 print_spacer(8,1);
                  if (count_records("course_categories") > 1) {
+                     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
+                         print_heading_block(get_string("availablecourses"));
+                     } else {
+                         print_heading_block(get_string("categories"));
+                     }
+                     print_spacer(8,1);
                      print_simple_box_start("center", "100%");
                      print_whole_category_list();
                      print_simple_box_end();
                      print_course_search("", false, "short");
                  } else {
+                     print_heading_block(get_string("availablecourses"));
+                     print_spacer(8,1);
                      print_courses(0, "100%");
                  }
              }
