@@ -666,7 +666,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
 /// Clear a course out completely, deleting all content
 /// but don't delete the course itself
 
-    global $CFG;
+    global $CFG, $THEME, $USER, $SESSION;
 
     $result = true;
 
