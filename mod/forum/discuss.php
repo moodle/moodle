@@ -147,7 +147,17 @@
     echo "</td><td width=\"33%\">";
     if (isteacher($course->id)) {    // Popup menu to allow discussions to be moved to other forums
         if ($forums = get_all_instances_in_course("forum", $course)) {
+            if ($course->format == 'weeks') {
+                $strsection = get_string("week");
+            } else {
+                $strsection = get_string("topic");
+            }
+            $section = -1;
             foreach ($forums as $courseforum) {
+                if (!empty($courseforum->section) and $section != $courseforum->section) {
+                    $forummenu[] = "-------------- $strsection $courseforum->section --------------";
+                }
+                $section = $courseforum->section;
                 if ($courseforum->id != $forum->id) {
                     $url = "discuss.php?d=$discussion->id&move=$courseforum->id";
                     $forummenu[$url] = $courseforum->name;
