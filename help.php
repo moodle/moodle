@@ -113,7 +113,6 @@
 
     close_window_button();
 
-    echo '<center><p><a href="help.php?file=index.html">'. get_string('helpindex') .'</a><p></center>';
+    echo '<p align="center"><a href="help.php?file=index.html">'. get_string('helpindex') .'</a></p>';
+    print_footer('none');
 ?>
-</body>
-</html>
