@@ -1,6 +1,12 @@
 <?PHP  // $Id$
        // index.php - the front page.
 
+    // Bounds for block widths
+    define('BLOCK_L_MIN_WIDTH', 160);
+    define('BLOCK_L_MAX_WIDTH', 210);
+    define('BLOCK_R_MIN_WIDTH', 160);
+    define('BLOCK_R_MAX_WIDTH', 210);
+
     require_once("config.php");
     require_once("course/lib.php");
     require_once('lib/blocklib.php');
@@ -122,6 +128,11 @@
         $preferred_width_left = $SESSION->blockcache->width->{$site->id}->left;
         $preferred_width_right = $SESSION->blockcache->width->{$site->id}->right;
     }
+
+    $preferred_width_left = min($preferred_width_left, BLOCK_L_MAX_WIDTH);
+    $preferred_width_left = max($preferred_width_left, BLOCK_L_MIN_WIDTH);
+    $preferred_width_right = min($preferred_width_right, BLOCK_R_MAX_WIDTH);
+    $preferred_width_right = max($preferred_width_right, BLOCK_R_MIN_WIDTH);
 
 ?>
 
