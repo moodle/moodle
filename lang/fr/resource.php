@@ -64,6 +64,6 @@ $string['resourcetypelabel'] = 'Insérer une étiquette';
 $string['resourcetypereference'] = 'Afficher une référence';
 $string['resourcetypetext'] = 'Composer une page de texte';
 $string['searchweb'] = 'Rechercher une page web';
-$string['variablename'] = 'Nom de variable';
+$string['variablename'] = 'Nom de la variable';
 
 ?>
