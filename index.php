@@ -139,7 +139,6 @@
                 }
     
                 print_heading_block($headertext);
-                print_spacer(8,1);
                 forum_print_latest_discussions($SITE, $newsforum, $SITE->newsitems);
             }
         break;
@@ -149,7 +148,6 @@
 
             if (isset($USER->id) and !isset($USER->admin)) {
                 print_heading_block(get_string('mycourses'));
-                print_spacer(8,1);
                 print_my_moodle();
             } else {
                 if (count_records('course_categories') > 1) {
@@ -158,14 +156,12 @@
                     } else {
                         print_heading_block(get_string('categories'));
                     }
-                    print_spacer(8,1);
-                    print_simple_box_start('center', '100%');
+                    print_simple_box_start('center', '100%', '', 5, 'categorybox');
                     print_whole_category_list();
                     print_simple_box_end();
                     print_course_search('', false, 'short');
                 } else {
                     print_heading_block(get_string('availablecourses'));
-                    print_spacer(8,1);
                     print_courses(0, '100%');
                 }
             }
