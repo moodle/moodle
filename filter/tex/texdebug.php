@@ -147,10 +147,15 @@ function tex2image($texexp) {
            }
            if (file_exists($commandpath)) {
               echo "File size of mimetex executable  $commandpath is " . filesize($commandpath) . "<br>";
-              $handle = fopen($commandpath,"rb");
-              $contents = fread($handle,16384);
-              fclose($handle);
-              echo "The md5 checksum of the first 16384 bytes is " . md5($contents) . "<br>";
+              echo "The file permissions are: " . decoct(fileperms($commandpath)) . "<br>";
+              if (function_exists("md5_file")) {
+		echo "The md5 checksum of the file is " . md5_file($commandpath) . "<br>";
+              } else {
+                $handle = fopen($commandpath,"rb");
+                $contents = fread($handle,16384);
+                fclose($handle);
+                echo "The md5 checksum of the first 16384 bytes is " . md5($contents) . "<br>";
+	      }
            } else {
               echo "mimetex executable $commandpath not found!<br>";
            }
