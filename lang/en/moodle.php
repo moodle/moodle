@@ -767,6 +767,7 @@ $string['nofilesyet'] = 'No files have been uploaded to your course yet';
 $string['nograde'] = 'No grade';
 $string['noimagesyet'] = 'No images have been uploaded to your course yet';
 $string['nomorecourses'] = 'No more matching courses could be found';
+$string['nomoreidnumber'] = 'Not using an idnumber to avoid collisions';
 $string['none'] = 'None';
 $string['nopotentialadmins'] = 'No potential admins';
 $string['nopotentialcreators'] = 'No potential course creators';

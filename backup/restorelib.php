@@ -518,6 +518,7 @@
             $course->fullname = addslashes($course_header->course_fullname);
             $course->shortname = addslashes($course_header->course_shortname);
             $course->idnumber = addslashes($course_header->course_idnumber);
+            $course->idnumber = ''; //addslashes($course_header->course_idnumber); // we don't want this at all.
             $course->summary = restore_decode_absolute_links(addslashes($course_header->course_summary));
             $course->format = addslashes($course_header->course_format);
             $course->showgrades = addslashes($course_header->course_showgrades);
