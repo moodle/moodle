@@ -193,7 +193,7 @@ Restore Details:
    - Log entries................................................NO EXISTS
    - Readjust instance in course_modules........................DONE
    - Readjust modinfo in course (serialize).....................DONE
-   - Delete old entries at restore end.  .......................DONE (COMMENTED !!!) 
+   - Delete old entries at restore end.  .......................DONE
       - From database...........................................DONE
       - From filesystem.........................................DONE
    - Upload backup files........................................DONE
