@@ -441,7 +441,7 @@
             echo "</td></tr>\n";
             echo "<tr><td><b>".get_string("questiontype", "lesson").":</b> \n";
             choose_from_menu($LESSON_QUESTION_TYPE, "qtype", LESSON_MULTICHOICE, "");
-            helpbutton("questiontype", get_string("questiontype", "lesson"), "lesson");
+            helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson");
             echo "<br /><b>".get_string("questionoption", "lesson").":</b>\n";
             echo " <input type=\"checkbox\" name=\"qoption\" value=\"1\"/>";
             helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
