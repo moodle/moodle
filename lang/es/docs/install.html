@@ -102,7 +102,7 @@ satisfacer estos requisitos es descargar <a
 
  href="http://www.easyphp.org/">EasyPHP</a> que instalar&aacute;n
 
-Apache,     PHP, y MySQL por usted. Aseg&uacute;rese de habilitar el
+Apache, PHP y MySQL por usted. Aseg&uacute;rese de habilitar el
 
 m&oacute;dulo GD de manera que Moodle pueda procesar im&aacute;genes.
 
@@ -134,9 +134,7 @@ y ejecutarlo en un nuevo servidor Mac OS X.</p>
 
 <p>&iexcl;Si usted usa Linux u otro sistema Unix, entonces
 
-asumir&eacute; que usted ya se figura todo esto por s&iacute; mismo! <abbr
-
- title="sonrisa con gui&ntilde;o">;-)</abbr> </p>
+asumir&eacute; que usted ya comprende todo esto. ;-)</p>
 
 <p>&nbsp;</p>
 
@@ -185,7 +183,7 @@ directorio Moodle, para ayudarle a orientarse:</p>
 
 <p>config.php - El &uacute;nico archivo que necesita editar para
 
-conseguir comenzar<br>
+hacer trabajar a Moodle<br>
 
 version.php - Define la versi&oacute;n actual del c&oacute;digo de
 
@@ -199,17 +197,13 @@ index.php - La p&aacute;gina principal del sitio</p>
 
   <li>admin/ - C&oacute;digo para administrar todo el servidor.</li>
 
-  <li>auth/ - m&ouml;dulos para la autenticaci&oacute;n de usuarios.</li>
+  <li>auth/ - M&oacute;dulos para la autenticaci&oacute;n de usuarios.</li>
 
-  <li>course/ - c&oacute;digo para presentar y gestionar los cursos.</li>
+  <li>course/ - C&oacute;digo para presentar y gestionar los cursos.</li>
 
-  <li>doc/ - Documentaci&oacute;n de ayuda de Moodle (<abbr
+  <li>doc/ - Documentaci&oacute;n de ayuda de Moodle. Por ejemplo esta p&aacute;gina).</li>
 
- title="Ejemplo">Ej.</abbr>, esta p&aacute;gina).</li>
-
-  <li>files/ - C&oacute;digo para presentar y gestionar los archivos
-
-subidos.</li>
+  <li>files/ - C&oacute;digo para presentar y gestionar los archivos cargados.</li>
 
   <li>lang/ - Textos en diferentes idiomas, un directorio por idioma.</li>
 
@@ -243,19 +237,21 @@ sitio.</li>
 
 <p>Moodle tambi&eacute;n necesita algo de espacio en su disco duro para
 
-almacenar los archivos que vayan a ser subidos, tales como la
+almacenar los archivos que vayan a ser cargados, tales como la
 
 documentaci&oacute;n de los cursos y las fotos de los usuarios.</p>
 
 <p>Cree un directorio para esto en cualquier parte. Por seguridad, es
 
-mejor que este directorio no est&eacute; accesible directamente a
+mejor que este directorio no sea accesible desde la Web. 
 
-trav&eacute;s de la Web. La manera m&aacute;s sencilla de conseguir
+La manera m&aacute;s sencilla de conseguir
 
-esto, es colocarlo FUERA del directorio Web, en caso contrario
+esto es colocarlo FUERA del directorio Web, en caso contrario
 
-prot&eacute;jalo creando un archivo en el directorio de datos llamado <span>.htaccess</span>,
+prot&eacute;jalo creando un archivo en el directorio de datos 
+
+llamado <span>.htaccess</span>,
 
 conteniendo la siguiente l&iacute;nea:</p>
 
@@ -283,9 +279,9 @@ tendr&aacute; que restringir todo acceso a los archivos de su "grupo"
 
 all&iacute; vean o cambien sus archivos), pero proporcionar pleno
 
-acceso de lectura/escritura a cualquiera (lo que permitir&aacute; el
+acceso de lectura/escritura a cualquiera (lo que permitir&aacute; que el
 
-servidor Web acceder a sus archivos). Hable con el administrador de su
+servidor Web acceda a sus archivos). Hable con el administrador de su
 
 servidor si tiene alg&uacute;n problema al establecer esto de forma
 
@@ -317,7 +313,9 @@ peligro, en vez de s&oacute;lo una base de datos.</p>
 
 <p>Ejemplo de l&iacute;neas de comando para MySQL:</p>
 
-<pre>   # mysql -u root -p<br>   &gt; CREATE DATABASE moodle; <br>   &gt; GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* <br>           TO moodleuser@localhost IDENTIFIED BY 'yourpassword'; <br>   &gt; quit <br>   # mysqladmin -p reload<br></pre>
+<pre>   # mysql -u root -p<br>   &gt; CREATE DATABASE moodle; <br>
+
+&gt; GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* <br>           TO moodleuser@localhost IDENTIFIED BY 'yourpassword'; <br>   &gt; quit <br>   # mysqladmin -p reload<br></pre>
 
 <p>Ejemplo de l&iacute;neas de comando para PostgreSQL: </p>
 
@@ -351,9 +349,9 @@ su servidor Web</h3>
 
 preparado para usar <span>index.php</span> como p&aacute;gina por
 
-defecto (quiz&aacute;s adem&aacute;s de, index.html, default.htm y
+defecto (quiz&aacute;s adem&aacute;s de index.html, default.htm y
 
-as&iacute;).</p>
+otras).</p>
 
 <p>En Apache, esto se logra usando un par&aacute;metro <span>DirectoryIndex</span>
 
@@ -399,7 +397,7 @@ su archivo <span>httpd.conf</span>.</p>
 
 de opciones para funcionar. <strong>En la mayor&iacute;a de los
 
-servidores &eacute;stas est&aacute;n activadas por defecto</strong>. Si
+servidores &eacute;stas ya est&aacute;n activadas</strong>. Sin
 
 embargo, algunos servidores PHP (y algunas de las m&aacute;s recientes
 
@@ -493,13 +491,13 @@ tenga en cuenta que esto lo EXIGE PostgreSQL), as&iacute; como la
 
 direcci&oacute;n del sitio, el directorio archivos de sistema y el
 
-directorio de datos. El archivo config contiene instrucciones
+directorio de datos. El mismo archivo contiene instrucciones
 
 detalladas.</p>
 
 <p>Para el resto de este documento de instalaci&oacute;n vamos a asumir
 
-que su sitio est&aacute; en: <span style="text-decoration: underline;">http://example.com/moodle</span></p>
+que su sitio est&aacute; en: <span style="text-decoration: underline;">http://ejemplo.com/moodle</span></p>
 
 <p>&nbsp;</p>
 
@@ -513,7 +511,7 @@ administraci&oacute;n</h3>
 
 <p>La p&aacute;gina de administraci&oacute;n debe estar ahora
 
-funcionando en: <span style="text-decoration: underline;">http://example.com/moodle/admin</span>.
+funcionando en: <span style="text-decoration: underline;">http://ejemplo.com/moodle/admin</span>.
 
 Si intenta acceder a la p&aacute;gina principal de su sitio se
 
@@ -521,19 +519,19 @@ encontrar&aacute; autom&aacute;ticamente en ella de todas maneras. La
 
 primera vez que acceda a la p&aacute;gina de administraci&oacute;n, se
 
-le presentar&aacute; el acuerdo <abbr title="General Public License">GPL</abbr>
+le presentar&aacute; la licencia <abbr title="General Public License">GPL</abbr>
 
 que necesariamente tendr&aacute; que aceptar para poder continuar con la
 
 configuraci&oacute;n.</p>
 
-<p>(Moodle tambi&eacute;n intentar&aacute; poner algunas <em lang="en">cookies</em>
+<p>(Moodle tambi&eacute;n intentar&aacute; poner algunas cookies
 
 en su navegador. Si tiene configurado su navegador para avisarle antes
 
-de aceptar las <em lang="en">cookies</em>, entonces <strong>debe</strong>
+de aceptar las cookies, entonces <strong>debe</strong>
 
-aceptar las <em lang="en">cookies</em> de Moodle, o Moodle no
+aceptar las cookies de Moodle, o Moodle no
 
 podr&aacute; funcionar de forma apropiada.)</p>
 
@@ -541,7 +539,7 @@ podr&aacute; funcionar de forma apropiada.)</p>
 
 tablas para almacenar los datos. En primer lugar, se crean las tablas
 
-principales de la base de datos. Ver&aacute; una serie de declaraciones
+principales de la base de datos. Ver&aacute; una serie de sentencias
 
 SQL seguidas de mensajes de estado (en color verde o rojo) parecidos a
 
@@ -567,15 +565,13 @@ default       '0', timemodified int(10) unsigned NOT NULL default '0',
 
 PRIMARY KEY (id))       TYPE=MyISAM</p>
 
-  <p lang="en"><span
+<span style="color: rgb(0, 102, 0); background-color: transparent;">SUCCESS</span></p>
 
- style="color: rgb(0, 102, 0); background-color: transparent;">SUCCESS</span></p>
-
-  <p>...y cosas as&iacute;, seguidas de: <span
+  <p>Y cosas as&iacute;, seguidas de: <span
 
  style="color: rgb(255, 0, 0); background-color: transparent;" lang="en">Main
 
-databases set up       successfully</span>. </p>
+databases set up successfully</span>. </p>
 
 </blockquote>
 
@@ -585,9 +581,8 @@ la base de datos o las opciones de configuraci&oacute;n que ha definido
 
 en <span>config.php</span>. Revise que PHP no est&eacute; restringido
 
-por un "<span lang="en">safe mode</span>" (A menudo los alojamientos
-
-Web comerciales tienen establecido el modo seguro). Puede revisar las
+por un "safe mode" (A menudo los hospedajes Web comerciales tienen establecido 
+el modo seguro). Puede revisar las
 
 variables PHP creando un peque&ntilde;o archivo que contenga &lt;?    
 
@@ -693,7 +688,7 @@ puede ahora hacerse desde este men&uacute;, como por ejemplo:</p>
 
   <li>Administrar cuentas de profesores</li>
 
-  <li>Cambiar opciones del sitio como los temas, etc.</li>
+  <li>Cambiar opciones del sitio, como colores, fuentes, etc.</li>
 
 </ul>
 
@@ -729,25 +724,23 @@ definidos para cada m&oacute;dulo.</p>
 
 <p>Tenga en cuenta que al m&aacute;quina que cronometra <strong>no
 
-tiene que ser necesariamente la misma en la que est&aacute; corriendo
+tiene que ser necesariamente la misma en la que est&aacute; ejecutando
 
-Moodle</strong>. Por ejemplo, si usted tiene un servicio de alojamiento
+Moodle</strong>. Por ejemplo, si usted tiene un servicio de hospedaje
 
 Web limitado que no tiene crono, usted puede elegir ejecutar el crono
 
 en otro servidor o en su ordenador personal. Lo que importa es que el
 
-archivo <span>cron.php</span> sea llamado cada cinco minutos o
+archivo <span>cron.php</span> sea llamado cada cierto tiempo.</p>
 
-as&iacute;.</p>
-
-<p>Primero, pruebe que el script funcione siendo ejecutado directamente
+<p>Primero, pruebe que el script funcione directamente
 
 desde su navegador:</p>
 
 <blockquote>
 
-  <pre>http://example.com/moodle/admin/cron.php</pre>
+  <pre>http://ejemplo.com/moodle/admin/cron.php</pre>
 
 </blockquote>
 
@@ -765,7 +758,7 @@ una utilidad Unix como 'wget':</p>
 
 <blockquote>
 
-  <pre>wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
+  <pre>wget -q -O /dev/null http://ejemplo.com/moodle/admin/cron.php</pre>
 
 </blockquote>
 
@@ -777,7 +770,7 @@ una utilidad Unix como 'wget':</p>
 
 <blockquote>
 
-  <pre>lynx -dump http://example.com/moodle/admin/cron.php &gt; /dev/null</pre>
+  <pre>lynx -dump http://ejemplo.com/moodle/admin/cron.php &gt; /dev/null</pre>
 
 </blockquote>
 
@@ -817,15 +810,13 @@ a&ntilde;ada una l&iacute;nea como la siguiente:</p>
 
 aplicaci&oacute;n <a
 
- title="Descarga la aplicaci&oacute;n moodle-cron-for-windows (150k)"
+ title="Descargar la aplicaci&oacute;n moodle-cron-for-windows (150k)"
 
  href="http://moodle.com/download/moodle-cron-for-windows.zip">moodle-cron-for-windows.zip</a>
 
 que hace todo esto de forma muy f&aacute;cil. Tambi&eacute;n puede
 
-probar a usar la aplicaci&oacute;n integrada en Windows "Scheduled
-
-Tasks".</p>
+probar a usar la aplicaci&oacute;n integrada en Windows "Tareas programadas".</p>
 
 <p>&nbsp;</p>
 
@@ -835,9 +826,7 @@ Tasks".</p>
 
 <div style="padding-left: 3em;">
 
-<p>Ahora que Moodle est&aacute; funcionando de manera apropiada, usted
-
-puede crear un curso.</p>
+<p>Ahora que Moodle est&aacute; funcionando de manera apropiada puede crear un curso.</p>
 
 <p>Seleccione "Crear un nuevo curso" desde la p&aacute;gina "Admin" (o
 
@@ -857,17 +846,17 @@ formulario en el que puede asignar profesores al curso. Desde este
 
 formulario s&oacute;lo pueden a&ntilde;adirse cuentas de usuarios
 
-existentes, si quiere crear una nueva cuenta para un profesor debe
+existentes, si necesita una cuenta para un profesor debe
 
-pedirle al profesor que cree una cuenta &eacute;l mismo (vea la
+pedirle al profesor que cree su cuenta &eacute;l mismo (vea la
 
-p&aacute;gina de entradas) o crear una para &eacute;l usando la
+p&aacute;gina de entradas) o crearla usted utilizando la
 
 opci&oacute;n "a&ntilde;adir nuevo usuario" en la p&aacute;gina Admin.</p>
 
 <p>Una vez hecho esto, el curso est&aacute; listo para ser
 
-personalizado y puede accederse a &eacute;l a trav&eacute;s del enlace
+personalizado y puede accederse al mismo a trav&eacute;s del enlace
 
 "Cursos" en la p&aacute;gina principal.</p>
 

@@ -4,12 +4,17 @@
 
 $string['allowresubmit'] = "Permitir corrección";
 $string['assignmentdetails'] = "Detalles de la tarea";
-$string['assignmentmail'] = "El maestro \$a->teacher ya ha revisado su tarea '\$a->assignment'
+$string['assignmentmail'] = "El maestro \$a->teacher ya ha revisado tu tarea '\$a->assignment'
+
+
 
 Puedes ver sus comentarios en:
 
+
+
 \$a->url";
-$string['assignmentmailhtml'] = "El maestro \$a->teacher ya ha revisado su tarea '<i>\$a->assignment</i>'<br /><br />
+$string['assignmentmailhtml'] = "El maestro \$a->teacher ya ha revisado tu tarea '<i>\$a->assignment</i>'<br /><br />
+
 Puedes ver sus comentarios <a href=\\\"\$a->url\\\">aquí</a>.";
 $string['assignmentname'] = "Título";
 $string['assignmenttype'] = "Tipo de tarea";
