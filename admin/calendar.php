@@ -33,9 +33,9 @@
             redirect('dst_update.php');
             die();
         }
-        if(isset($form->mode_dst)) {
+        if(isset($form->mode_timezones)) {
             // Move to DST presets configuration
-            redirect('dst.php');
+            redirect('timezones.php');
             die();
         }
         // Normal configuration, just save the variables

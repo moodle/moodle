@@ -1,6 +1,6 @@
 
 <form method="post" action="calendar.php">
-<?php print_simple_box_start('center'); ?>
+<?php print_simple_box_start('center', '80%'); ?>
 <p><input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>"></p>
 
 <table class="formtable">
@@ -54,19 +54,19 @@
       </td>
     </tr>
     <tr>
-      <th>dstforusers:</th>
+      <th>forcetimezone:</th>
       <td>
-        <div><?php print_string('helpdstforusers', 'admin'); ?></div>
+        <div><?php print_string('helpforcetimezone', 'admin'); ?></div>
         <p>
-        <?php if(empty($presets)) { print_string('nodstpresetsexist', 'admin'); } else { ?>
+        <?php if(empty($presets)) { print_string('notimezonesexist', 'admin'); } else { ?>
         <div>
           <nobr>
-          <input type="radio" id="dstradio1" name="dstforusers" value="preference" <?php if(empty($CFG->calendar_dstforusers)) echo 'checked="checked"';?> /> <label for="dstradio1"><?php print_string('dstisapreference', 'admin'); ?></label>
+          <input type="radio" id="timezone1" name="forcetimezone" value="no" <?php if(empty($CFG->forcetimezone)) echo 'checked="checked"';?> /> <label for="timezone1"><?php print_string('timezonenotforced', 'admin'); ?></label>
           </nobr>
         </div>
         <div>
-          <nobr><input type="radio" id="dstradio2" name="dstforusers" value="force" <?php if(!empty($CFG->calendar_dstforusers)) echo 'checked="checked"';?> /> <label for="dstradio2"><?php print_string('dstisforcedto', 'admin'); ?></label>
-          <?php choose_from_menu($presets, 'dstpreset', (empty($CFG->calendar_dstforusers) ? 0 : $CFG->calendar_dstforusers), get_string('choose').'...', 'form.dstradio2.checked=\'checked\''); ?>
+          <nobr><input type="radio" id="timezone2" name="forcetimezone" value="force" <?php if(!empty($CFG->forcetimezone)) echo 'checked="checked"';?> /> <label for="timezone2"><?php print_string('timezoneisforcedto', 'admin'); ?></label>
+          <?php choose_from_menu($presets, 'dstpreset', (empty($CFG->forcetimezone) ? 0 : $CFG->forcetimezone), get_string('choose').'...', 'form.timezone2.checked=\'checked\''); ?>
           </nobr>
         </div>
         <?php } ?>
@@ -74,12 +74,13 @@
       </td>
     </tr>
     <tr>
-      <th>managedstpresets:</th>
+      <th>managetimezones:</th>
       <td>
-        <div><?php print_string('helpmanagedstpresets', 'admin'); ?></div>
-        <p><input type="submit" name="mode_dst" value="<?php print_string('managedstpresets', 'admin'); ?>..." /></p>
-        <div><?php print_string('helpupdatedstpresets', 'admin'); ?></div>
-        <p><input type="submit" name="mode_dst_update" value="<?php print_string('updatedstpresets', 'admin'); ?>..." /></p>
+        <div><?php print_string('helpmanagetimezones', 'admin'); ?></div>
+        <p>
+          <input type="submit" name="mode_timezones" value="<?php print_string('managetimezones', 'admin'); ?>..." />
+          <input type="submit" name="mode_dst_update" value="<?php print_string('updatetimezones', 'admin'); ?>..." />
+        </p>
       </td>
     </tr>
   </tbody>

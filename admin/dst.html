@@ -8,7 +8,7 @@
       <td style="vertical-align: top; width: 40%;">
         <div style="text-align: center;">
         <?php if (!empty($presets)) {
-            echo '<select style="width: 100%;" id="dstselectmenu" size="10" name="preset" onclick="showdstinfo();">';
+            echo '<select style="width: 100%;" id="dstselectmenu" size="10" name="preset" onchange="showdstinfo();">';
             foreach($presets as $id => $preset) {
                 echo '<option value="'.$id.'">'.$preset->name.'</option>';
             }
