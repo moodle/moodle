@@ -1,3 +1,233 @@
+2002-12-30 Monday 01:32  moodler
+
+	* CHANGES, index.php, version.php, admin/config.php,
+	admin/index.php, admin/lang.php, course/grades.php, course/lib.php,
+	course/user.php, course/view.php, course/weeks.php,
+	lang/en/docs/README.txt, lang/en/docs/release.html,
+	lib/defaults.php, lib/moodlelib.php, lib/setup.php, lib/weblib.php,
+	login/index.php, mod/assignment/index.php, mod/forum/discuss.php,
+	mod/forum/lib.php, mod/forum/post.php, mod/journal/index.php,
+	mod/quiz/index.php, mod/quiz/lib.php, mod/survey/index.php,
+	user/edit.html, user/edit.php: 
+	
+	Various little fixes to remove warnings (usually about empty
+	variables) when error_reporting is turned up to 15 or so ... more
+	of these to come ...
+
+2002-12-30 Monday 00:28  moodler
+
+	* doc/: index.php, top.php: 
+	
+	It's now possible to choose a documentation language on the fly!
+
+2002-12-30 Monday 00:28  moodler
+
+	* lib/datalib.php: 
+	
+	New get_record_select function (for completeness) and a completely
+	revamped update_user_in_db() function
+
+2002-12-30 Monday 00:26  moodler
+
+	* lib/moodlelib.php: 
+	
+	Use session-specified language if possible
+
+2002-12-30 Monday 00:23  moodler
+
+	* lang/ca/: assignment.php, choice.php, forum.php, journal.php,
+	moodle.php, quiz.php, resource.php, survey.php: 
+	
+	Cleaned up files  using new admin/lang.php
+
+2002-12-30 Monday 00:15  moodler
+
+	* lang/ca/moodle.php: 
+	
+	Cleaned up some strings without quotes
+
+2002-12-29 Sunday 23:33  coolbit
+
+	* lang/zh_cn/docs/: COPYRIGHT.txt, background.html, contents.html,
+	contents.php, module_files.txt, credits.html, cvs.html,
+	developer.html, features.html, future.html, index.html, index.php,
+	install.html, intro.html, licence.html, release.html, teacher.html,
+	top.php, upgrade.html, view.php: 
+	
+	remove them and wait for new translations
+
+2002-12-29 Sunday 23:12  moodler
+
+	* README.txt: 
+	
+	Clearer info
+
+2002-12-29 Sunday 23:06  moodler
+
+	* doc/install.html: 
+	
+	Adding this back again to help brand-new installations and to keep
+	some old links alive.
+
+2002-12-29 Sunday 22:43  moodler
+
+	* doc/index.php: 
+	
+	Better way to include initial intro.html
+
+2002-12-29 Sunday 22:41  moodler
+
+	* lib/moodlelib.php: 
+	
+	New function document_file() for fetching documentation from
+	language packs, and a few cleanups to reduce warnings
+
+2002-12-29 Sunday 22:39  moodler
+
+	* doc/: background.html, contents.html, contents.php, credits.html,
+	cvs.html, developer.html, features.html, future.html, index.html,
+	index.php, install.html, intro.html, licence.html, release.html,
+	teacher.html, upgrade.html, view.php: 
+	
+	Changes to how documentation works.  A thin PHP interface now
+	fetches files from the language packs.	If a file isn't available
+	in the current language, then English is used.
+
+2002-12-29 Sunday 22:37  moodler
+
+	* lang/en/docs/: README.txt, background.html, credits.html,
+	cvs.html, developer.html, features.html, future.html, install.html,
+	intro.html, licence.html, release.html, teacher.html, upgrade.html:
+	
+	
+	Added document files to English translation
+
+2002-12-29 Sunday 17:13  mits
+
+	* lang/ja/: README, resource.php: 
+	
+	New translation added.
+
+2002-12-29 Sunday 12:18  moodler
+
+	* lib/setup.php: 
+	
+	Accidentally left debugging on
+
+2002-12-29 Sunday 12:17  moodler
+
+	* lib/: datalib.php, setup.php, weblib.php, db/mysql.php: 
+	
+	More little fixes
+
+2002-12-29 Sunday 12:02  moodler
+
+	* lib/datalib.php: 
+	
+	Some changes to remove warnings about empty variables and cleanup
+
+2002-12-29 Sunday 05:14  compuproggy
+
+	* lang/de/: moodle.php, resource.php: 
+	
+	[no log message]
+
+2002-12-28 Saturday 22:45  moodler
+
+	* lib/moodlelib.php: 
+	
+	Fixes to allow the GD detection to work on PHP 4.3.0 (with bundled
+	GD)
+
+2002-12-28 Saturday 21:05  moodler
+
+	* mod/forum/post.html: 
+	
+	fixed user --> userid
+
+2002-12-27 Friday 01:02  moodler
+
+	* lib/db/mysql.php: 
+	
+	Er, unfinished code while upgrading log_display
+
+2002-12-27 Friday 01:01  coolbit
+
+	* lang/zh_cn/docs/: COPYRIGHT.txt, background.html, contents.html,
+	contents.php, credits.html, cvs.html, developer.html,
+	features.html, future.html, index.html, index.php, install.html,
+	intro.html, licence.html, release.html, teacher.html, top.php,
+	upgrade.html, view.php: 
+	
+	new docs
+
+2002-12-27 Friday 00:37  coolbit
+
+	* lang/zh_cn/docs/module_files.txt: 
+	
+	new docs
+
+2002-12-27 Friday 00:27  moodler
+
+	* mod/assignment/mod.html: 
+	
+	Added "source" mode in richtext editor
+
+2002-12-27 Friday 00:26  moodler
+
+	* files/index.php: 
+	
+	Use HTML editor for editing HTML files
+
+2002-12-25 Wednesday 21:56  ahmed_nabil
+
+	* lang/ar/survey.php: 
+	
+	no message
+
+2002-12-25 Wednesday 21:35  set_lo
+
+	* lang/sv/quiz.php: 
+	
+	spelling error vilkor substituted with villkor
+
+2002-12-25 Wednesday 21:34  set_lo
+
+	* lang/sv/moodle.php: 
+	
+	action substituted with swedish aktion
+
+2002-12-24 Tuesday 21:29  ahmed_nabil
+
+	* lang/ar/: assignment.php, auth.php, choice.php, forum.php,
+	journal.php, moodle.php, quiz.php, resource.php: 
+	
+	no message
+
+2002-12-24 Tuesday 18:08  moodler
+
+	* lib/moodlelib.php: 
+	
+	Er... on the cookies I meant.
+
+2002-12-24 Tuesday 18:07  moodler
+
+	* lib/moodlelib.php: 
+	
+	Use table prefixes on database too  :-)
+
+2002-12-24 Tuesday 17:34  moodler
+
+	* doc/release.html: 
+	
+	Updates
+
+2002-12-24 Tuesday 15:29  moodler
+
+	* doc/release.html: 
+	
+	Updated release notes
+
 2002-12-24 Tuesday 15:01  moodler
 
 	* mod/resource/: details.php, lib.php, view.php: 
