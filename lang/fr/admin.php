@@ -1,8 +1,8 @@
 <?PHP // $Id$
 
-
-$string['upgradelogs'] = 'Pour profiter de toutes les fonctionnalits, les journaux d\'activit doivent tre mis ˆ jour. <a href=\"$a\">Plus d\'informations</a>';
-$string['upgradelogsinfo'] = 'Des changements ont eu lieu quant ˆ la faon dont les journaux d\'activit sont conservs. Afin de pouvoir profiter de l\'affichage des jounaux par activit, ceux-ci doivent tre mis ˆ jour. Selon la taille de votre site, cette opration peut durer assez longtemps (c\'est-ˆ-dire plusieurs heures) et peut ralentir les grosses bases de donnes. Une fois l\'opration dmarre, vous devez la laisser se terminer (en laissant la fentre du navigateur ouverte). N\'ayez crainte, votre site continuera ˆ trs bien fonctionner pour les autres utilisateurs durant la mise ˆ jour des journaux.<br /><br />Voulez-vous mettre ˆ jour maintenant vos journaux d\'activit&nbsp;?';
-$string['upgradinglogs'] = 'Mise ˆ jour des journaux d\'activit';
+$string['cachetext'] = 'Durée de vie du cache texte';
+$string['upgradelogs'] = 'Pour profiter de toutes les fonctionnalités, les journaux d\'activité doivent être mis à jour. <a href=\"$a\">Plus d\'informations</a>';
+$string['upgradelogsinfo'] = 'Des changements ont eu lieu quant à la façon dont les journaux d\'activité sont conservés. Afin de pouvoir profiter de l\'affichage des jounaux par activité, ceux-ci doivent être mis à jour. Selon la taille de votre site, cette opération peut durer assez longtemps (c\'est-à-dire plusieurs heures) et peut ralentir les grosses bases de données. Une fois l\'opération démarrée, vous devez la laisser se terminer (en laissant la fenêtre du navigateur ouverte). N\'ayez crainte, votre site continuera à très bien fonctionner pour les autres utilisateurs durant la mise à jour des journaux.<br /><br />Voulez-vous mettre à jour maintenant vos journaux d\'activité&nbsp;?';
+$string['upgradinglogs'] = 'Mise à jour des journaux d\'activité';
 
 ?>
