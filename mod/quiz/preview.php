@@ -43,7 +43,7 @@ if ($id) {
 if (empty($qtype)) {
     error("No question type was specified!");
 } else if (!isset($QUIZ_QTYPES[$qtype])) {
-    error("Could not find question type: '$qtype'");
+    error("Could not find specified question type");
 }
 
 require_login($course->id);
@@ -115,8 +115,8 @@ if ($rawanswers = data_submitted()) {
 
     print_simple_box_end();
     echo "<p align=\"center\"><input name=\"backbtn\" type=\"button\" 
-             onclick=\"history.back()\" value=\"".get_string("back", "quiz")."\"/>\n";
-    echo "<input type=\"button\" onClick=\"window.close()\" value=\"" . get_string("close", "quiz") . "\"></p>\n";
+             onclick=\"history.back()\" value=\"".get_string("back", "quiz")."\" />\n";
+    echo "<input type=\"button\" onClick=\"window.close()\" value=\"" . get_string("close", "quiz") . "\" /></p>\n";
 
 } else { //show question list
     echo "<form method=\"post\" action=\"preview.php\" $onsubmit>\n";
@@ -129,8 +129,8 @@ if ($rawanswers = data_submitted()) {
 
     echo "<br />";
     echo "<center>";
-    echo "<input name=\"submit\" type=\"submit\" value=\"".get_string("checkanswer", "quiz")."\"/>\n";
-    echo "<input type=\"button\" onClick=\"window.close()\" value=\"" . get_string("close", "quiz") . "\">";
+    echo "<input name=\"submit\" type=\"submit\" value=\"".get_string("checkanswer", "quiz")."\" />\n";
+    echo "<input type=\"button\" onClick=\"window.close()\" value=\"" . get_string("close", "quiz") . "\" />";
     echo "</center>";
     echo "</form>";
 }
