@@ -4,6 +4,7 @@
     require_once("lib.php");
 
     require_variable($id);    // Course Module ID
+    optional_variable($frameset, "");
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -52,7 +53,7 @@
             break;
 
         case WEBPAGE:
-            if (!empty($frameset)) {
+            if ($frameset == "top") {
                 print_header("$course->shortname: $resource->name", "$course->fullname", 
                 "$navigation <A TARGET=\"{$CFG->framename}\" HREF=\"$resource->reference\" TITLE=\"$resource->reference\">$resource->name</A>",
                 "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
@@ -62,32 +63,46 @@
                 add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
                 echo "<HEAD><TITLE>$course->shortname: $resource->name</TITLE></HEAD>\n";
                 echo "<FRAMESET ROWS=$RESOURCE_FRAME_SIZE,*>";
-                echo "<FRAME SRC=\"view.php?id=$cm->id&frameset=true\">";
+                echo "<FRAME SRC=\"view.php?id=$cm->id&frameset=top\">";
                 echo "<FRAME SRC=\"$resource->reference\">";
                 echo "</FRAMESET>";
             }
             break;
 
         case UPLOADEDFILE:
+            require_once("../../files/mimetypes.php");
+
             if ($CFG->slasharguments) {
                 $fullurl = "$CFG->wwwroot/file.php/$course->id/$resource->reference";
             } else {
                 $fullurl = "$CFG->wwwroot/file.php?file=/$course->id/$resource->reference";
             }
 
-            if (!empty($frameset)) {
+
+            if ($frameset == "top") {
                 print_header("$course->shortname: $resource->name", "$course->fullname", 
-                             "$navigation <A TARGET=\"$CFG->framename\" HREF=\"$fullurl\">$resource->name</A>",
+                             "$navigation <a target=\"$CFG->framename\" HREF=\"$fullurl\">$resource->name</A>",
                              "", "", true, update_module_button($cm->id, $course->id, $strresource), 
                              navmenu($course, $cm));
-                echo "<CENTER><FONT SIZE=-1>".text_to_html($resource->summary, true, false)."</FONT></CENTER>";
+                echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
+            } else if ($frameset == "image") {
+                echo "<html><head>";
+	            echo "<link rel=\"stylesheet\" href=\"$CFG->wwwroot/theme/standard/styles.php\" type=\"text/css\">";
+                echo "</head><body bgcolor=\"$THEME->body\">";
+                echo "<div align=center class=resourceimage><img align=\"center\" src=\"$fullurl\"></div>";
+                echo "</body>";
+                
             } else {
                 add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
-                echo "<HEAD><TITLE>$course->shortname: $resource->name</TITLE></HEAD>\n";
-                echo "<FRAMESET ROWS=$RESOURCE_FRAME_SIZE,*>";
-                echo "<FRAME SRC=\"view.php?id=$cm->id&frameset=true\">";
-                echo "<FRAME SRC=\"$fullurl\">";
-                echo "</FRAMESET>";
+                echo "<head><title>$course->shortname: $resource->name</title></head>\n";
+                echo "<frameset rows=$RESOURCE_FRAME_SIZE,*>";
+                echo "<frame src=\"view.php?id=$cm->id&frameset=top\">";
+                if (mimeinfo("icon", $fullurl) == "image.gif") {
+                    echo "<frame src=\"view.php?id=$cm->id&frameset=image\">";
+                } else {
+                    echo "<frame src=\"$fullurl\">";
+                }
+                echo "</frameset>";
             }
             break;
 
