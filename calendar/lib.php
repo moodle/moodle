@@ -290,6 +290,9 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
     // This effectively adds as many days as needed, and the final SECS_IN_DAY - 1
     // serves to cover the duration until the end of the final day. We could
     // just do another gmmktime() and an addition, but this is "faster" :)
+
+    // WARNING: IT IS ALSO BUGGY WITH REGARDS TO DST CHANGES! THIS HAS TO BE FIXED SOMEDAY!
+    // IF YOU DO SECS ARITHMETIC, THE CODE WILL ALWAYS BE BUGGY WITH REGARD TO DST!
     $display->tend = $display->tstart + (SECS_IN_DAY * $display->range) - 1;
 
     // Get the events matching our criteria
@@ -537,8 +540,8 @@ function calendar_top_controls($type, $data) {
         case 'day':
             $data['d'] = $date['mday']; // Just for convenience
             $dayname = calendar_wday_name($date['weekday']);
-            $prevdate = getdate($time - SECS_IN_DAY);
-            $nextdate = getdate($time + SECS_IN_DAY);
+            $prevdate = getdate(make_timestamp($data['y'], $data['m'], $data['d'] - 1));
+            $nextdate = getdate(make_timestamp($data['y'], $data['m'], $data['d'] + 1));
             $prevname = calendar_wday_name($prevdate['weekday']);
             $nextname = calendar_wday_name($nextdate['weekday']);
             $content .= "<table style='width: 100%;'><tr>\n";
