@@ -94,7 +94,9 @@
                 echo '</font></p>';
             }
 
-            echo format_text($section->summary, FORMAT_HTML);
+            $options = NULL;
+            $options->noclean = true;
+            echo format_text($section->summary, FORMAT_HTML, $options);
 
             if ($editing) {
                 $streditsummary = get_string('editsummary');
