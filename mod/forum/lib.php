@@ -306,32 +306,43 @@ function forum_print_recent_activity(&$logs, $isteacher=false) {
 
     foreach ($logs as $log) {
         if ($log->module == "forum") {
+            //Get post info, I'll need it later
+            $post = forum_get_post_from_log($log);
 
-            if ($post = forum_get_post_from_log($log)) {
-                $teacherpost = "";
-                if ($forum = get_record("forum", "id", $post->forum) ) {
-                    if ($forum->type == "teacher") {
-                        if ($isteacher) {
-                            $teacherpost = "COLOR=$COURSE_TEACHER_COLOR";
-                        } else {
-                            continue;
+            //Create a temp valid module structure (course,id)
+            $tempmod->course = $log->course;
+            $tempmod->id = $post->forum;
+            //Obtain the visible property from the instance
+            $modvisible = instance_is_visible($log->module,$tempmod);
+
+            //Only if the mod is visible
+            if ($modvisible) {
+                if ($post) {
+                    $teacherpost = "";
+                    if ($forum = get_record("forum", "id", $post->forum) ) {
+                        if ($forum->type == "teacher") {
+                            if ($isteacher) {
+                                $teacherpost = "COLOR=$COURSE_TEACHER_COLOR";
+                            } else {
+                                continue;
+                            }
                         }
                     }
+                    if (! $heading) {
+                        print_headline(get_string("newforumposts", "forum").":");
+                        $heading = true;
+                        $content = true;
+                    }
+                    $date = userdate($post->modified, $strftimerecent);
+                    echo "<P><FONT SIZE=1 $teacherpost>$date - $post->firstname $post->lastname<BR>";
+                    echo "\"<A HREF=\"$CFG->wwwroot/mod/forum/$log->url\">";
+                    if ($log->action == "add") {
+                        echo "<B>$post->subject</B>";
+                    } else {
+                        echo "$post->subject";
+                    }
+                    echo "</A>\"</FONT></P>";
                 }
-                if (! $heading) {
-                    print_headline(get_string("newforumposts", "forum").":");
-                    $heading = true;
-                    $content = true;
-                }
-                $date = userdate($post->modified, $strftimerecent);
-                echo "<P><FONT SIZE=1 $teacherpost>$date - $post->firstname $post->lastname<BR>";
-                echo "\"<A HREF=\"$CFG->wwwroot/mod/forum/$log->url\">";
-                if ($log->action == "add") {
-                    echo "<B>$post->subject</B>";
-                } else {
-                    echo "$post->subject";
-                }
-                echo "</A>\"</FONT></P>";
             }
         }
     }
