@@ -474,7 +474,7 @@ function forum_get_child_posts($parent) {
 }
 
 
-function forum_search_posts($search, $courseid, $page=0, $recordsperpage=50, $wholewords=true) {
+function forum_search_posts($search, $courseid, $page=0, $recordsperpage=50) {
 /// Returns a list of posts that were found
     global $CFG;
 
@@ -497,11 +497,11 @@ function forum_search_posts($search, $courseid, $page=0, $recordsperpage=50, $wh
 
     /// Some differences in syntax for PostgreSQL
     if ($CFG->dbtype == "postgres7") {
-       $LIKE = "ILIKE";   // case-insensitive
-       $REGEXP = "~";
+        $LIKE = "ILIKE";   // case-insensitive
+        $REGEXP = "~";
     } else {
-       $LIKE = "LIKE";
-       $REGEXP = "REGEXP";
+        $LIKE = "LIKE";
+        $REGEXP = "REGEXP";
     }
 
     $messagesearch = "";
@@ -517,9 +517,14 @@ function forum_search_posts($search, $courseid, $page=0, $recordsperpage=50, $wh
             $subjectsearch .= " AND ";
         }
 
-        if ($wholewords) {
+        if (substr($searchterm,0,1) == "+") {
+            $searchterm = substr($searchterm,1);
             $messagesearch .= " p.message $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
             $subjectsearch .= " p.subject $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+        } else if (substr($searchterm,0,1) == "-") {
+            $searchterm = substr($searchterm,1);
+            $messagesearch .= " p.message NOT $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $subjectsearch .= " p.subject NOT $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
         } else {
             $messagesearch .= " p.message $LIKE '%$searchterm%' ";
             $subjectsearch .= " p.subject $LIKE '%$searchterm%' ";
