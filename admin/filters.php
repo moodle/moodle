@@ -80,6 +80,7 @@
 
     if (!empty($options)) {
 	    if ($config = data_submitted()) {  
+            unset($config->options);
             foreach ($config as $name => $value) {
                 set_config($name, $value);
             }
