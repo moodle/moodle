@@ -1462,8 +1462,8 @@ function quiz_print_cat_question_list($course, $categoryid, $quizselected=true, 
     }
     echo "</table>\n";
     
-    echo "<input type=\"button\" onclick=\"checkall()\" value=\"$strselectall\" />\n";
-    echo "<input type=\"button\" onclick=\"checknone()\" value=\"$strselectnone\" />\n";
+    echo '<a href="javascript:checkall();">'.$strselectall.'</a> /'.
+     ' <a href="javascript:checknone();">'.$strselectnone.'</a>';
     echo "&nbsp;<input type=\"submit\" name=\"deleteselected\" value=\"$strdeleteselected\" />\n";
     echo "<br />";
     
