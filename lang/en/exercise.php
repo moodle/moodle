@@ -65,6 +65,7 @@ $string['movingtophase'] = "Moving to Phase \$a";
 $string['multiplesubmissions'] = "Multiple Submissions";
 $string['noexercisedescriptionssubmitted'] = "No Exercise Descriptions Submitted";
 $string['nosubmissions'] = "No Submissions";
+$string['notassessedyet'] = "Not Assessed Yet";
 $string['notavailable'] = "Not Available";
 $string['noteonassessmentelements'] = 
 	"Note that grading is broken down into a number of 'Assessment Elements'.<br />
@@ -118,7 +119,7 @@ $string['scale100'] = "Score out of 100";
 $string['specimenassessmentform'] = "Specimen Assessment Form";
 $string['studentallowedtoresubmit'] = "\$a ALLOWED to re-submit";
 $string['studentassessments'] = "\$a Assessments";
-$string['studentnotallowed'] = "\$a NOT allowed to re-submit";
+$string['studentnotallowed'] = "\$a NOT allowed to re-submit (or not needed)";
 $string['studentsubmissionsforassessment'] = "\$a Student Submissions for Assessment";
 $string['studentsubmissions'] = "\$a Submissions";
 $string['submitexercisedescription'] = "Submit Exercise Description";
