@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3.3 (2004052503)
+      // glossary.php - created with Moodle 1.4 (2004083100)
 
 
 $string['addcomment'] = 'Tilføj kommentar';
@@ -61,16 +61,17 @@ $string['deletingnoneemptycategory'] = 'Ved sletning af denne kategori vil de op
 $string['descending'] = '(faldene)';
 $string['destination'] = 'Destination';
 $string['displayformat'] = 'Vis format';
-$string['displayformat2'] = 'Vis med forfatter';
-$string['displayformat3'] = 'leksikon';
-$string['displayformat4'] = 'SOS';
-$string['displayformat5'] = 'Komplet med forfatter';
-$string['displayformat6'] = 'Indlægs liste';
 $string['displayformatcontinuous'] = 'Kontinuerlig med forfatter';
-$string['displayformatdefault'] = 'Simpel ordbogs-stil';
+$string['displayformatdictionary'] = 'Simple, ordbogsstil';
+$string['displayformatencyclopedia'] = 'Opslagsværk';
+$string['displayformatentrylist'] = 'Indgangsliste';
+$string['displayformatfaq'] = 'FAQ';
+$string['displayformatfullwithauthor'] = 'Fuldt med forfatter';
+$string['displayformatfullwithoutauthor'] = 'Fuldt men uden forfatter';
 $string['displayformats'] = 'visnings formater';
 $string['displayformatssetup'] = 'Vis formaterings opsætning';
 $string['duplicateentry'] = 'Dubletter';
+$string['editalways'] = 'Ret altid';
 $string['editcategories'] = 'Ret kategorier';
 $string['editentry'] = 'Ret opslagsord';
 $string['editingcomment'] = 'Ret kommentar';
@@ -88,7 +89,7 @@ $string['entryusedynalink'] = 'Dette opslagsord skulle blive automatisk linket.'
 $string['explainaddentry'] = 'Tilføj et nyt opslagsord til det nyværende opslagsværk. <br />Koncept og definition skal udfyldes! ';
 $string['explainall'] = 'Vis ALLE opslagsord på en side';
 $string['explainalphabet'] = 'Vis ordforklaring udfra denne indholdsfortegnelse';
-$string['explainexport'] = 'Der er genereret en fil<br />Download den og gem den sikkert. Du kan importere den nårsomhelst du ønsker i dette eller andre kurser';
+$string['explainexport'] = 'Der er genereret en fil<br>Download den og gem den sikkert. Du kan importere den nårsomhelst du ønsker i dette eller andre kurser';
 $string['explainimport'] = 'Du må specificere hvilken fil der skal importere og definere kriterierne for processen.';
 $string['explainspecial'] = 'Vis opslagsord der ikke begynder med et bogstav';
 $string['exportedentry'] = 'Exporteret opslagsord ';

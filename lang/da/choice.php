@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.3.3 (2004052503)
+      // choice.php - created with Moodle 1.4 (2004083100)
 
 
 $string['allowupdate'] = 'Tillad spørgsmålet at blive opdateret';
@@ -9,6 +9,7 @@ $string['choiceclose'] = 'Indtil';
 $string['choicename'] = 'Spørgsmål navn';
 $string['choiceopen'] = 'Åben';
 $string['choicetext'] = 'Spørgsmål tekst';
+$string['havetologin'] = 'Du bliver nødt til at logge på før du kan afgive dit valg.';
 $string['modulename'] = 'Spørgsmål';
 $string['modulenameplural'] = 'Spørgsmål';
 $string['mustchooseone'] = 'Du skal vælge et svar før du gemmer. Der blev ikke gemt noget.';

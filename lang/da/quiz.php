@@ -86,9 +86,9 @@ $string['filloutoneanswer'] = 'Du skal give mindst et muligt svar. Blanke felter
 $string['filloutthreequestions'] = 'Du skal udfylde mindst tre spørgsmål. Blanke spørgsmål vil ikke blive brugt.';
 $string['fillouttwochoices'] = 'Du skal give mindst to svar.  Blanke felter vil ikke blive bedømt.';
 $string['fractionsaddwrong'] = 'De positive bedømmelser giver ikke sammenlagt 100%%
-<br />I stedet giver de $a%%
-<br />Vil du vende tilbage og lave det om?';
-$string['fractionsnomax'] = 'Et eller flere svar skal give 100%%, så det er <br />få fuld bedømmelse for dette spørgsmål<br />Vil du vende tilbage og lave det om?';
+<BR>I stedet giver de $a%%
+<BR>Vil du vende tilbage og lave det om?';
+$string['fractionsnomax'] = 'Et eller flere svar skal give 100%%, så det er <BR>få fuld bedømmelse for dette spørgsmål<BR>Vil du vende tilbage og lave det om?';
 $string['gift'] = 'GIFT format';
 $string['gradeaverage'] = 'Gennemsnitlig bedømmelse';
 $string['gradehighest'] = 'Højeste bedømmelse';

@@ -1,13 +1,16 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3.3 (2004052503)
+      // editor.php - created with Moodle 1.4 (2004083100)
 
 
 $string['about'] = 'Om denne editor';
 $string['absbottom'] = 'Absolut Bund';
-$string['middle'] = 'Absolut midt';
+$string['absmiddle'] = 'Absolut midt';
 $string['address'] = 'Adresse';
 $string['alignment'] = 'Placering';
 $string['alternatetext'] = 'Alternativ tekst';
+$string['anchorhelp'] = 'Dette laver kun ankeret. Du bliver stadig nødt til at lave linket manuelt.';
+$string['anchorname'] = 'Ankernavn';
+$string['anchors'] = 'Ankre';
 $string['baseline'] = 'grundlinie';
 $string['bold'] = 'Fed';
 $string['borderthickness'] = 'Kanttykkelse';
@@ -21,6 +24,7 @@ $string['chooseicon'] = 'Vælg en ikon der skal indsættes';
 $string['close'] = 'Luk';
 $string['cols'] = 'Kolonner';
 $string['copy'] = 'Kopier markeret tekst';
+$string['createanchor'] = 'Lav anker';
 $string['createfolder'] = 'Lav mappe';
 $string['createlink'] = 'Indsæt weblink';
 $string['cut'] = 'Klip markeret tekst';
