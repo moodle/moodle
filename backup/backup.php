@@ -68,6 +68,8 @@
         error("Course ID was incorrect (can't find it)");
     }
 
+    check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
+
     //Print header
     if (isadmin()) {
         print_header("$site->shortname: $strcoursebackup", $site->fullname,
