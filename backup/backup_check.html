@@ -77,7 +77,8 @@
     echo get_string("name").":";
     echo "</B></td><td>";
     //Calculate the backup string
-    $backup_name = strtolower(get_string("backup"));
+    //Take off spaces in the filename !!
+    $backup_name = str_replace(" ","_",strtolower(get_string("backupfilename")));
     //If non-translated, use "backup"
     if (substr($backup_name,0,1) == "[") {
         $backup_name = "backup";
