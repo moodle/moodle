@@ -96,12 +96,21 @@ function assignment_delete_instance($id) {
     return $result;
 }
 
-function assignment_refresh_events() {
+function assignment_refresh_events($courseid = 0) {
 // This standard function will check all instances of this module
 // and make sure there are up-to-date events created for each of them.
+// If courseid = 0, then every assignment event in the site is checked, else
+// only assignment events belonging to the course specified are checked.
+// This function is used, in its new format, by restore_refresh_events()
 
-    if (! $assignments = get_records("assignment")) {
-        return true;
+    if ($courseid == 0) {
+        if (! $assignments = get_records("assignment")) {
+            return true;
+        }
+    } else {
+        if (! $assignments = get_records("assignment", "course", $courseid)) {
+            return true;
+        }
     }
 
     foreach ($assignments as $assignment) {
