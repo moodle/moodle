@@ -1,0 +1,64 @@
+<p align="center"><b>Innbakt svar (Cloze)</b></p>
+<p>Dette er en fleksibel type spørsmål som ligner på det populære formatet 'Cloze'.&nbsp;
+</p>
+<p>Spørsmålene består av et stykke tekst (i Moodle-format). I teksten fins ulike 
+svar innbakt. Dette kan være svar på flervalgspørsmål, kortsvar eller numeriske 
+spørsmål. </p>
+<p>Pr. t. fins det ikke noe grafisk grensesnitt for å lage disse spørsmålene. I 
+stedet må du angi spørsmålsformatet med en tekstboks eller importere fra 
+eksterne filer. </p>
+<p>Her er et eksempel på en innbakt tekst som brukes for å angi et slikt 
+spørsmål:&nbsp; </p>
+<form>
+  <center>
+  <p><textarea rows="15" wrap="virtual" cols="60" name="Multianswer">Dette spørsmålet består av litt tekst med et innbakt svarsvar som er akkurat her {1:MULTICHOICE:Feil svar#Tilbakemelding for dette svaret~Enda et feil svar#Tilbakemelding til det andre feile svaret~=Riktig svar#Tilbakemelding for riktig svar~%50%Svar som gir halv uttelling#Tilbakemelding for svar med halv uttelling} og umiddelbart etter det må du svare på dette 'kort svar'-spørsmålet {1:SHORTANSWER:Feil svar#Tilbakemelding til dette feile svaret~=Riktig svar#Tilbakemelding til riktig svar~%50%Svar som gir halv uttelling#Tilbakemelding til svar som gir halv uttelling} og til slutt har vi et numerisk spørsmål {2:NUMERICAL:=23.8:0.1#Tilbakemelding for riktig svar 23.8~%50%N/A#Tilbakemelding for svar som gir halv uttelling nært det riktige svaret}.
+
+Legg merke til at adresser som www.moodle.org og smilefjes :-) fungerer som vanlig:
+ a) Hvor bra er dette? {:MULTICHOICE:=Ja#Riktig~Nei#Vi har en annen oppfatning}
+ b) Hvilken vurdering vil du gi det? {3:NUMERICAL:=3:2}
+
+Lykke til!
+</textarea> </p>
+  </center>
+</form>
+<p>Dette eksempelet vil vises til studentene på følgende måte: </p>
+<form>
+  <table class="generalbox" cellSpacing="0" cellPadding="5" width="90%" align="center" border="0">
+    <tr>
+      <td class="generalboxcontent" bgColor="#ffffff">
+      <table cellSpacing="10" width="100%">
+        <tr>
+          <td vAlign="top" noWrap width="100">
+          <p align="center"><b>3</b></p>
+          <p align="center"><font size="1">8 Vurdering</font></p>
+          <p><img height="1" alt src="pix/spacer.gif" width="100"><br>
+&nbsp;</td>
+          <td vAlign="top">Dette spørsmålet består av litt tekst med et innbakt 
+          svarsvar som er akkurat her <select name="q4ma1">
+          <option selected></option>
+          <option value="4">Felaktigt svar</option>
+          <option value="5">Ett annat felaktigt svar</option>
+          <option value="6">Korrekt svar</option>
+          <option value="7">Svar som ger 50% rätt</option>
+          </select> og umiddelbart etter det må du svare på dette 'kort 
+          svar'-spørsmålet <input size="8" name="q4ma2"> og til slutt har vi et 
+          numerisk spørsmål <input size="8" name="q4ma3"> .<br>
+          <br>
+          Legg merke til at adresser som <a href="http://www.moodle.org">
+          www.moodle.org</a> og smilefjes :-)&nbsp; fungerer som vanlig:&nbsp;
+          <img height="19" alt=":-)" src="http://server.dougiamas.net/moodle/pix/s/smiley.gif" width="15"><br>
+          a) Hvor bra er dette? <select name="q4ma4">
+          <option selected></option>
+          <option value="13">Ja</option>
+          <option value="14">Nej</option>
+          </select> <br>
+          b) Hvilken vurdering vil du gi det? <input size="8" name="q4ma5">
+          <br>
+          <br>
+          Lykke til!</td>
+        </tr>
+      </table>
+      </td>
+    </tr>
+  </table>
+</form>
