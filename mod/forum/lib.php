@@ -450,7 +450,7 @@ function forum_cron () {
                     $posthtml .= '<hr size="1" noshade="noshade" /></p>';
                 }
 
-                if (! email_to_user($userto, $userfrom, $postsubject, $posttext, $posthtml, '', '', $CFG->forum_replytouser)) {
+                if (! email_to_user($userto, $site->shortname, $postsubject, $posttext, $posthtml, '', '', $CFG->forum_replytouser)) {
                     echo "ERROR!\n";
                     echo "Error: mod/forum/cron.php: Could not send out digest mail to user $userto->id ($userto->email)... not trying again.\n";
                     add_to_log($course->id, 'forum', 'mail digest error', '', '', $cm->id, $userto->id);

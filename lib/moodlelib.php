@@ -823,10 +823,10 @@ function add_teacher($userid, $courseid, $editall=1, $role="") {
 
     if ($teacher = get_record('user_teachers', 'userid', $userid, 'course', $courseid)) {
         if ($teacher->editall == $editall) {     // Already exists
-            return true;  
+            return true;
         } else {                                 // Just change field
             set_field('user_teachers', 'editall', $editall, 'id', $teacher->id);
-            return true;  
+            return true;
         }
     }
 
@@ -1241,7 +1241,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 ///  messagehtml - complete html version of the message (optional)
 ///  attachment  - a file on the filesystem, relative to $CFG->dataroot
 ///  attachname  - the name of the file (extension indicates MIME)
-///  usetrueaddress - determines whether $from email address should be sent out. 
+///  usetrueaddress - determines whether $from email address should be sent out.
 ///                   Will be overruled by user profile setting for maildisplay
 
     global $CFG, $_SERVER;
@@ -1296,7 +1296,10 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     $mail->Sender   = "$adminuser->email";
 
-    if ($usetrueaddress and $from->maildisplay) {
+    if (is_string($from)) { // So we can pass whatever we want if there is need
+        $mail->From     = $CFG->noreplyaddress;
+        $mail->FromName = $from.' '.get_string('noreply', 'forum');
+    } else if ($usetrueaddress and $from->maildisplay) {
         $mail->From     = "$from->email";
         $mail->FromName = fullname($from);
     } else {
@@ -1681,7 +1684,7 @@ function display_size($size) {
 function clean_filename($string) {
 /// Cleans a given filename by removing suspicious or troublesome characters
 /// Only these are allowed:
-///    alphanumeric _ - . 
+///    alphanumeric _ - .
 
     $string = eregi_replace("\.\.+", "", $string);
     $string = preg_replace('/[^\.a-zA-Z\d\_-]/','_', $string ); // only allowed chars
@@ -2513,7 +2516,7 @@ function course_scale_used($courseid,$scaleid) {
 ////using scaleid in a courseid
 
     global $CFG;
-    
+
     $return = 0;
 
     if (!empty($scaleid)) {
@@ -2536,7 +2539,7 @@ function course_scale_used($courseid,$scaleid) {
 }
 
 function site_scale_used($scaleid) {
-////This function returns the nummber of activities 
+////This function returns the nummber of activities
 ////using scaleid in the entire site
 
     global $CFG;
