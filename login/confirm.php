@@ -3,7 +3,7 @@
     require_once("../config.php");
     require_once("../auth/$CFG->auth/lib.php");
 
-    if ( isset($p) and isset($s) ) {     #  p = user.secret   s = user.username
+    if (isset($_GET['p']) and isset($_GET['s']) ) {     #  p = user.secret   s = user.username
 
         $user = get_user_info_from_db("username", "$s");
 
@@ -60,6 +60,8 @@
                 error("Invalid confirmation data");
             }
         }
+    } else {
+        error(get_string("errorwhenconfirming"));
     }
 
     redirect("$CFG->wwwroot/");
