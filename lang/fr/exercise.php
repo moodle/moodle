@@ -41,7 +41,7 @@ $string['edit'] = 'Modifier';
 $string['editingassessmentelements'] = 'Modifier les éléments d\'évaluation';
 $string['element'] = 'Élément';
 $string['elementweight'] = 'Coefficient';
-$string['entriessaved'] = 'Entrées enregistrées';
+$string['entriessaved'] = 'Réglage enregistré';
 $string['errorbanded'] = 'Erreur cumulée';
 $string['excellent'] = 'Excellent';
 $string['exerciseassessments'] = 'Évaluations de l\'exercice';
@@ -91,7 +91,7 @@ $string['nowpleasemakeyourownassessment'] = 'Veuillez maintenant évaluer le trav
 	Student\'s Form. You should make any amendments you think necessary and then <br />
 	click on one of the buttons at the foot of the page.';
 $string['numberofassessmentelements'] = 'Nombre de commentaires, d\'éléments d\'évaluation, de critères, de notes ou de catégories dans une rubrique';
-$string['numberofentries'] = 'Nombre d\'entrées';
+$string['numberofentries'] = 'Nombre de travaux';
 $string['numberofnegativeresponses'] = 'Nombre de réponses négatives';
 $string['onesubmission'] = 'Un travail remis';
 $string['optionaladjustment'] = 'Ajustement facultatif';
@@ -123,7 +123,7 @@ $string['resubmitnote'] = '* signifie que l\'étudiant peut remettre un autre doc
 $string['rubric'] = 'Rubrique';
 $string['savemyassessment'] = 'Enregistrer mon évaluation';
 $string['savedok'] = 'Enregistrement réussi';
-$string['saveentries'] = 'Enregistrer les entrées';
+$string['saveentries'] = 'Enregistrer les réglages';
 $string['saveweights'] = 'Enregistrer les coefficients';
 $string['scaleyes'] = 'Barème à 2 points (Oui/Non)';
 $string['scalepresent'] = 'Barème à 2 points (Présent/Absent)';
