@@ -341,8 +341,6 @@ function print_recent_activity($course) {
 
     $mods = get_records("modules", "visible", "1", "name", "id, name");
 
-    print_object($mods);
-
     foreach ($mods as $mod) {      // Each module gets it's own logs and prints them
         include_once("$CFG->dirroot/mod/$mod->name/lib.php");
         $print_recent_activity = $mod->name."_print_recent_activity";
