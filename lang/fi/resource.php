@@ -1,18 +1,18 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 development (2004080300)
+      // resource.php - created with Moodle 1.5 unstable development (2004090402)
 
 
 $string['addresource'] = 'Lisää aineisto';
 $string['chooseafile'] = 'Valitse tai lähetä tiedosto';
 $string['configdefaulturl'] = 'Tätä käytetään esimerkkiosoitteena, kun lisätään uusia URL-osoiteen sisältäviä aineistoja.';
-$string['configfilterexternalpages'] = 'Tämä asetus aiheuttaa kaikkien ulkoisten aineistoiden suodattamisen sivuston suotimien läpi. Tämän toiminnon kytkeminen päälle hidastaa sivustoa, kaytä sitä vain, jos et muuta voi.';
+$string['configfilterexternalpages'] = 'Tämä asetus aiheuttaa kaikkien ulkoisten aineistoiden suodattamisen sivuston suotimien läpi. Tämän toiminnon kytkeminen päälle hidastaa sivustoa, käytä sitä vain, jos et muuta voi.';
 $string['configframesize'] = 'Kun WWW-sivu tai palvelimelle tallennettu tiedosto on osa kehystä, tämä arvo on yläkehyksen koko pikseleinä (sisältää navigointipalkit).';
 $string['configpopup'] = 'Jos uusi aineisto on mahdollista näyttää ponnahdusikkunassa, otetetaanko ponnahdusikkuna käyttöön?';
 $string['configpopupdirectories'] = 'Näytetäänkö ponnahdusikkunoissa hakemistolinkit?';
 $string['configpopupheight'] = 'Ponnahdusikkunoiden korkeus?';
 $string['configpopuplocation'] = 'Näytetäänkö ponnahdusikkunoissa sijanti?';
 $string['configpopupmenubar'] = 'Näytetäänkö ponnahdusikkunoissa valikkorivi?';
-$string['configpopupresizable'] = 'Voiko ponnahdus ikkunoiden kokoa muuttaa?';
+$string['configpopupresizable'] = 'Voiko ponnahdusikkunoiden kokoa muuttaa?';
 $string['configpopupscrollbars'] = 'Näytetäänkö ponnahdusikkunoissa vierityspalkit?';
 $string['configpopupstatus'] = 'Näytetäänkö ponnahdusikkunoissa tilarivi?';
 $string['configpopuptoolbar'] = 'Näytetäänkö ponnahdusikkunoissa työkalurivi?';
@@ -59,11 +59,12 @@ $string['parameters'] = 'Asetukset';
 $string['popupresource'] = 'Tämän aineiston tulee näkyä ponnahdusikkunassa.';
 $string['popupresourcelink'] = 'Jos et vielä klikannut, klikkaa tässä: $a';
 $string['resourcetype'] = 'Aineiston tyyppi';
+$string['resourcetype9'] = 'Hakemisto';
 $string['resourcetypedirectory'] = 'Näytä hakemisto';
 $string['resourcetypefile'] = 'Linkitä  tiedostoon tai web-sivuun';
 $string['resourcetypehtml'] = 'Tee uusi web-sivu';
 $string['resourcetypelabel'] = 'Lisää otsikko';
-$string['resourcetypetext'] = 'Tee uusi teksti-sivu';
+$string['resourcetypetext'] = 'Tee uusi tekstisivu';
 $string['searchweb'] = 'Etsi web-sivua';
 $string['variablename'] = 'Muuttujan nimi';
 

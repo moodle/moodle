@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004072500)
+      // moodle.php - created with Moodle 1.5 unstable development (2004090402)
 
 
 $string['action'] = 'Tapahtuma';
@@ -41,6 +41,7 @@ $string['adminhelpbackup'] = 'Määritä, kuinka varmuuskopiointi toimii';
 $string['adminhelpconfiguration'] = 'Määritä sivuston ulkoasu ja toiminnot';
 $string['adminhelpconfigvariables'] = 'Määritä sivuston yleiseen toimintaan vaikuttavat muuttujat';
 $string['adminhelpcourses'] = 'Määritä kategoriat ja kurssit sekä niille käyttäjät';
+$string['adminhelpeditorsettings'] = 'Määrittele HTML editorin perusasetukset';
 $string['adminhelpedituser'] = 'Selaa käyttäjälistaa ja muokkaa tunnuksia';
 $string['adminhelpenrolments'] = 'Valitse sisäiset tai ulkoiset tavat kurssijäsenyyksien hallintaan';
 $string['adminhelpfailurelogs'] = 'Selaa epäonnistuneita kirjaantumisia';
@@ -72,6 +73,7 @@ $string['allow'] = 'Salli';
 $string['allowguests'] = 'Tämä kurssi päästää vierailijatunnuksella sisään.';
 $string['allownot'] = 'Älä salli';
 $string['allparticipants'] = 'Kaikki osallistujat';
+$string['allteachers'] = 'Kaikki opettajat';
 $string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,Å,Ä,Ö';
 $string['alphanumerical'] = 'Voi sisältää ainostaan kirjaimia tai numeroita';
 $string['alreadyconfirmed'] = 'Rekisteröinti on jo aiemmin vahvistettu.';
@@ -489,6 +491,7 @@ $string['hiddensectionscollapsed'] = 'Piilotetut osiot näytetään tiivistetyssä m
 $string['hiddensectionsinvisible'] = 'Piilotetut osAatovat kokonaan näkymättömissä';
 $string['hide'] = 'Piilota';
 $string['hidepicture'] = 'Piilota kuva';
+$string['hidesettings'] = 'Piilota asetukset';
 $string['hits'] = 'Sivupyynnöt';
 $string['hitsoncourse'] = 'Käyttäjän $a->username sivupyynnöt kurssilla $a->coursename';
 $string['hitsoncoursetoday'] = 'Sivupyynnöt tänään kurssilla $a->coursename';
@@ -688,8 +691,6 @@ $string['noteachersyet'] = 'Kurssilla ei ole vielä opettajaa';
 $string['notenrolled'] = '$a ei ole tällä kursilla.';
 $string['noteuserschangednonetocourse'] = 'Huom: Kurssin käyttäjät tulee palauttaa kun käyttäjätietoja palautetaan. Tämä asetus on muutettu sinun kohdaltasi.';
 $string['nothingnew'] = 'Ei uutisia edellisen käyntisi jälkeen';
-$string['notifyloginfailuresmessagefromip'] = 'IP osoitteesta';
-$string['notifyloginfailuresmessagewithuser'] = 'tunnuksella';
 $string['notincluded'] = 'Ei  mukana';
 $string['notingroup'] = 'Sinun pitää olla ryhmän jäsen nähdäksesi tämän aktiviteetin.';
 $string['nousersmatching'] = 'Haku \'$a\' ei löytänyt käyttäjiä';
@@ -818,6 +819,7 @@ $string['showonlytopic'] = 'Näytä vain aihe $a';
 $string['showonlyweek'] = 'Näytä vain viikko $a';
 $string['showrecent'] = 'Näytä viimeiset tapahtumat';
 $string['showreports'] = 'Näytä tapahtuma raportti';
+$string['showsettings'] = 'Näytä asetukset';
 $string['showtheselogs'] = 'Näytä nämä tapahtumat';
 $string['since'] = 'Alkaen';
 $string['sincelast'] = 'viime kirjaantumisen jälkeen';

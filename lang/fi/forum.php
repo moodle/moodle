@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004072500)
+      // forum.php - created with Moodle 1.5 unstable development (2004090402)
 
 
 $string['addanewdiscussion'] = 'Lisää uusi keskustelu';
@@ -146,6 +146,8 @@ $string['subscriptions'] = 'Tilaukset';
 $string['unsubscribe'] = 'Peru tämän keskustelualueen tilaus';
 $string['unsubscribed'] = 'Tilaamaton';
 $string['unsubscribeshort'] = 'Peru tilaus';
+$string['yesforever'] = 'Kyllä, aluksi';
+$string['yesinitially'] = 'Kyllä, pysyvästi';
 $string['youratedthis'] = 'Arvioit tämän';
 $string['yournewtopic'] = 'Uusi keskustelun aihe';
 $string['yourreply'] = 'Vastauksesi';
