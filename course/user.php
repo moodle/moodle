@@ -5,7 +5,7 @@
 
     require_variable($id);       // course id
     require_variable($user);     // user id
-    optional_variable($mode, "outline");
+    optional_variable($mode, "graph");
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course id is incorrect.");
@@ -33,10 +33,10 @@
 
     echo "<TABLE CELLPADDING=10 ALIGN=CENTER><TR>";
     echo "<TD>Reports: </TD>";
-    if ($mode != "summary") {
-        echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=summary>Summary</A></TD>";
+    if ($mode != "graph") {
+        echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=graph>Graph</A></TD>";
     } else {
-        echo "<TD><U>Summary</U></TD>";
+        echo "<TD><U>Graph</U></TD>";
     }
     if ($mode != "outline") {
         echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=outline>Outline</A></TD>";
@@ -54,10 +54,9 @@
     get_all_mods($course->id, $mods, $modtype);
 
     switch ($mode) {
-        case "summary" :
+        case "graph" :
             echo "<HR>";
             echo "<CENTER><IMG SRC=\"loggraph.php?id=$course->id&user=$user->id&type=user.png\">";
-            echo "<HR>";
             break;
 
         case "outline" :
