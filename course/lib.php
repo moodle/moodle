@@ -38,7 +38,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     $timenow = time(); // GMT
 
     // What day is it now for the user, and when is midnight that day (in GMT).
-    $timemidnight = usergetmidnight($timenow);
+    $timemidnight = $today = usergetmidnight($timenow);
 
     // Put today up the top of the list
     $dates = array("$timemidnight" => "Today, ".userdate($timenow, "j F Y") );
