@@ -40,7 +40,7 @@
                  "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $strchoosetheme");
 
     if ($choose) {
-        if (set_field("config", "value", $choose, "name", "theme")) {
+        if (set_config("theme", $choose)) {
             print_heading(get_string("themesaved"));
             print_continue("$CFG->wwwroot");
             print_footer();
