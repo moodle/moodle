@@ -30,6 +30,13 @@ function add_instance($resource) {
         $resource->popup = "";
     }
 
+    if (isset($resource->parametersettingspref)) {
+        set_user_preference('resource_parametersettingspref', $resource->parametersettingspref);
+    }
+    if (isset($resource->windowsettingspref)) {
+        set_user_preference('resource_windowsettingspref', $resource->windowsettingspref);
+    }
+
     return insert_record("resource", $resource);
 }
 
@@ -55,6 +62,13 @@ function update_instance($resource) {
 
     } else if (isset($resource->windowpage)) {
         $resource->popup = "";
+    }
+
+    if (isset($resource->parametersettingspref)) {
+        set_user_preference('resource_parametersettingspref', $resource->parametersettingspref);
+    }
+    if (isset($resource->windowsettingspref)) {
+        set_user_preference('resource_windowsettingspref', $resource->windowsettingspref);
     }
 
     return update_record("resource", $resource);

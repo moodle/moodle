@@ -1,17 +1,29 @@
 <script language="javascript">
-    function showhide (id) {
+    function showhide (id, set) {
         divobj = document.getElementById(id);
         butobj = document.getElementById(id+'button');
-        if (divobj.style.display != 'none') {
-            divobj.style.display = 'none';
-            butobj.value = '<?php print_string("showsettings") ?>...';
+        prefobj = document.getElementById(id+'pref');
+        if (set == true) {
+            if (prefobj.value == '1') {
+                divobj.style.display = 'block';
+                butobj.value = '<?php print_string("hidesettings") ?>';
+            } else {
+                divobj.style.display = 'none';
+                butobj.value = '<?php print_string("showsettings") ?>...';
+            }
         } else {
-            divobj.style.display = 'block';
-            butobj.value = '<?php print_string("hidesettings") ?>';
+            if (prefobj.value == '1') {
+                divobj.style.display = 'none';
+                butobj.value = '<?php print_string("showsettings") ?>...';
+                prefobj.value = '0';
+            } else {
+                divobj.style.display = 'block';
+                butobj.value = '<?php print_string("hidesettings") ?>';
+                prefobj.value = '1';
+            }
         }
     }
 </script>
-
 
 
 <tr valign="top">
@@ -34,6 +46,8 @@
     <td align="right"><p><b><?php print_string("display", "resource") ?>:</b></p></td>
     <td>
         <input type="button" value="hide settings" id="windowsettingsbutton" onClick="javascript: return showhide('windowsettings');" />
+        <input type="hidden" name="windowsettingspref" id="windowsettingspref" 
+               value="<?php echo get_user_preferences('resource_windowsettingspref', 0); ?>" />
     </td>
 </tr>
 <tr><td colspan="2">
@@ -101,6 +115,6 @@
 
 
 <script language="javascript">
-    showhide('windowsettings');
+    showhide('windowsettings', true);
 </script>
 
