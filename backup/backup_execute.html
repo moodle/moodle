@@ -220,6 +220,14 @@
             }
         }
 
+        //Print events info
+        if ($status) { 
+            echo "<li>".get_string("writingeventsinfo");
+            if (!$status = backup_events_info($backup_file,$preferences)) {
+                notify("An error occurred while backing up events");
+            }
+        }
+
         //Module info, this unique function makes all the work!!
         //db export and module fileis copy
         if ($status) {

@@ -961,6 +961,46 @@
         return $status;
     }
 
+    //Backup events info (course events)
+    function backup_events_info($bf,$preferences) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Counter, points to current record
+        $counter = 0;
+
+        //Get events (course events)
+        $events = get_records_select("event","courseid='$preferences->backup_course' AND instance='0'","id");
+
+        //Pring events header
+        if ($events) {
+            //Pring events header
+            fwrite ($bf,start_tag("EVENTS",2,true));
+            //Iterate
+            foreach ($events as $event) {
+                //Begin event tag
+                fwrite ($bf,start_tag("EVENT",3,true));
+                //Output event tag
+                fwrite ($bf,full_tag("ID",4,false,$event->id));
+                fwrite ($bf,full_tag("NAME",4,false,$event->name));
+                fwrite ($bf,full_tag("DESCRIPTION",4,false,$event->description));
+                fwrite ($bf,full_tag("GROUPID",4,false,$event->groupid));
+                fwrite ($bf,full_tag("USERID",4,false,$event->userid));
+                fwrite ($bf,full_tag("EVENTTYPE",4,false,$event->eventtype));
+                fwrite ($bf,full_tag("TIMESTART",4,false,$event->timestart));
+                fwrite ($bf,full_tag("TIMEDURATION",4,false,$event->timeduration));
+                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$event->timemodified));
+                //End event tag
+                fwrite ($bf,end_tag("EVENT",3,true));
+            }
+            //End events tag
+            $status = fwrite ($bf,end_tag("EVENTS",2,true));
+        }
+        return $status;
+    }
+
     //Backup groups info
     function backup_groups_info($bf,$preferences) {
     

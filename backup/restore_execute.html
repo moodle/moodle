@@ -235,6 +235,14 @@
         }
     }
 
+    //Now create events as needed
+    if ($status) {
+        echo "<li>".get_string("creatingevents");
+        if (!$status = restore_create_events($restore,$xml_file)) {
+            notify("Could not restore course events!");
+        }
+    }
+
     //Now create course modules as needed
     if ($status) {
         echo "<li>".get_string("creatingcoursemodules");

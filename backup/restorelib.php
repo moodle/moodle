@@ -119,6 +119,16 @@
         return $info;
     }
 
+    //This function read the xml file and store its data from the events (course) in
+    //backup_ids->info db (and event's id in $info)
+    function restore_read_xml_events ($restore,$xml_file) {
+
+        //We call the main read_xml function, with todo = EVENTS
+        $info = restore_read_xml ($xml_file,"EVENTS",$restore);
+
+        return $info;
+    }
+
     //This function read the xml file and store its data from the modules in
     //backup_ids->info
     function restore_read_xml_modules ($restore,$xml_file) {
@@ -841,7 +851,6 @@
                         //print_object ($GLOBALS['traverse_array']);                                                  //Debug
                         //$GLOBALS['traverse_array']="";                                                              //Debug
                         //Now build the GROUP record structure
-                        $gro->id = backup_todb($info['GROUP']['#']['ID']['0']['#']);
                         $gro->courseid = backup_todb($info['GROUP']['#']['COURSEID']['0']['#']);
                         $gro->name = backup_todb($info['GROUP']['#']['NAME']['0']['#']);
                         $gro->description = backup_todb($info['GROUP']['#']['DESCRIPTION']['0']['#']);
@@ -929,6 +938,95 @@
             }
         }
 
+        return $status;
+    }
+
+    //This function creates all the course events
+    function restore_create_events($restore,$xml_file) {
+
+        global $CFG, $db;
+
+        $status = true;
+        //Check it exists
+        if (!file_exists($xml_file)) {
+            $status = false;
+        }
+        //Get info from xml
+        if ($status) {
+            //events will contain the old_id of every event
+            //in backup_ids->info will be the real info (serialized)
+            $events = restore_read_xml_events($restore,$xml_file);
+        }
+        //Now, if we have anything in events, we have to restore that
+        //events
+        if ($events) {
+            if ($events !== true) {
+                //Iterate over each event
+                foreach ($events as $event) {
+                    //Get record from backup_ids
+                    $data = backup_getid($restore->backup_unique_code,"event",$event->id);
+                    //Init variables
+                    $create_event = false;
+
+                    if ($data) {
+                        //Now get completed xmlized object
+                        $info = $data->info;
+                        //traverse_xmlize($info);                                                                     //Debug
+                        //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                        //$GLOBALS['traverse_array']="";                                                              //Debug
+
+                        //Now build the EVENT record structure
+                        $eve->name = backup_todb($info['EVENT']['#']['NAME']['0']['#']);
+                        $eve->description = backup_todb($info['EVENT']['#']['DESCRIPTION']['0']['#']);
+                        $eve->courseid = $restore->course_id;
+                        $eve->groupid = backup_todb($info['EVENT']['#']['GROUPID']['0']['#']);
+                        $eve->userid = backup_todb($info['EVENT']['#']['USERID']['0']['#']);
+                        $eve->modulename = "";
+                        $eve->instance = 0;
+                        $eve->eventtype = backup_todb($info['EVENT']['#']['EVENTTYPE']['0']['#']);
+                        $eve->timestart = backup_todb($info['EVENT']['#']['TIMESTART']['0']['#']);
+                        $eve->timeduration = backup_todb($info['EVENT']['#']['TIMEDURATION']['0']['#']);
+                        $eve->timemodified = backup_todb($info['EVENT']['#']['TIMEMODIFIED']['0']['#']);
+
+
+                        //Now search if that event exists (by description and timestart field) in
+                        //restore->course_id course 
+                        $eve_db = get_record("event","courseid",$restore->course_id,"description",$eve->description,"timestart",$eve->timestart);
+                        //If it doesn't exist, create
+                        if (!$eve_db) {
+                            $create_event = true;
+                        }
+                        //If we must create the event
+                        if ($create_event) {
+
+                            //We must recode the userid
+                            $user = backup_getid($restore->backup_unique_code,"user",$eve->userid);
+                            if ($user) {
+                                $eve->userid = $user->new_id;
+                            } else {
+                                //Assign it to admin
+                                $eve->userid = 1;
+                            }
+                            //We have to recode the groupid field
+                            $group = backup_getid($restore->backup_unique_code,"group",$eve->groupid);
+                            if ($group) {
+                                $eve->groupid = $group->new_id;
+                            }
+
+                            //The structure is equal to the db, so insert the event
+                            $newid = insert_record ("event",$eve);
+                        }
+                        if ($newid) {
+                            //We have the newid, update backup_ids
+                            backup_putid($restore->backup_unique_code,"event",
+                                         $event->id, $newid);
+                        }
+                    }
+                }
+            }
+        } else {
+            $status = false;
+        } 
         return $status;
     }
 
@@ -1341,6 +1439,15 @@
                 $toinsert = true;
             }
             break;
+        case "change password":
+            //recode the info field (it's the user id)
+            $user = backup_getid($restore->backup_unique_code,"user",$log->info);
+            if ($user) {
+                $log->info = $user->new_id;
+                $log->url = "view.php?id=".$log->info."&course=".$log->course;
+                $toinsert = true;
+            }
+            break;
         case "view all":
             $log->url = "view.php?id=".$log->course;
             $log->info = "";
@@ -1605,6 +1712,34 @@
             //If we are under a GROUP tag under a GROUPS zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
                 if (($this->tree[4] == "GROUP") and ($this->tree[3] == "GROUPS")) {
+                    if (!isset($this->temp)) {
+                        $this->temp = "";
+                    }
+                    $this->temp .= "<".$tagName.">";
+                }
+            }
+        }
+
+        //This is the startTag handler we use where we are reading the events zone (todo="EVENTS")
+        function startElementEvents($parser, $tagName, $attrs) {
+            //Refresh properties
+            $this->level++;
+            $this->tree[$this->level] = $tagName;
+
+            //if ($tagName == "EVENT" && $this->tree[3] == "EVENTS") {                                 //Debug
+            //    echo "<P>EVENT: ".strftime ("%X",time()),"-";                                        //Debug
+            //}                                                                                        //Debug
+
+            //Output something to avoid browser timeouts...
+            backup_flush();
+
+            //Check if we are into EVENTS zone
+            //if ($this->tree[3] == "EVENTS")                                                           //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+
+            //If we are under a EVENT tag under a EVENTS zone, accumule it
+            if (isset($this->tree[4]) and isset($this->tree[3])) {
+                if (($this->tree[4] == "EVENT") and ($this->tree[3] == "EVENTS")) {
                     if (!isset($this->temp)) {
                         $this->temp = "";
                     }
@@ -2322,6 +2457,56 @@
             $this->content = "";
         }
 
+        //This is the endTag handler we use where we are reading the events zone (todo="EVENTS")
+        function endElementEvents($parser, $tagName) {
+            //Check if we are into EVENTS zone
+            if ($this->tree[3] == "EVENTS") {
+                //if (trim($this->content))                                                                     //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //Acumulate data to info (content + close tag)
+                //Reconvert: strip htmlchars again and trim to generate xml data
+                if (!isset($this->temp)) {
+                    $this->temp = "";
+                }
+                $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";
+                //If we've finished a event, xmlize it an save to db
+                if (($this->level == 4) and ($tagName == "EVENT")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one EVENT)
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                                //Debug
+                    $data = xmlize($xml_data,0);
+                    //echo strftime ("%X",time())."<p>";                                                          //Debug
+                    //traverse_xmlize($data);                                                                     //Debug
+                    //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                    //$GLOBALS['traverse_array']="";                                                              //Debug
+                    //Now, save data to db. We'll use it later
+                    //Get id and from data
+                    $event_id = $data["EVENT"]["#"]["ID"]["0"]["#"];
+                    //Save to db
+                    $status = backup_putid($this->preferences->backup_unique_code,"event",$event_id,
+                                     null,$data);
+                    //Create returning info
+                    $ret_info->id = $event_id;
+                    $this->info[] = $ret_info;
+                    //Reset temp
+                    unset($this->temp);
+                }
+            }
+
+            //Stop parsing if todo = EVENTS and tagName = EVENT (en of the tag, of course)
+            //Speed up a lot (avoid parse all)
+            if ($tagName == "EVENTS" and $this->level == 3) {
+                $this->finished = true;
+            }
+
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+        }
+
         //This is the endTag handler we use where we are reading the modules zone (todo="MODULES")
         function endElementModules($parser, $tagName) {
             //Check if we are into MODULES zone
@@ -2491,6 +2676,9 @@
         } else if ($todo == "GROUPS") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementGroups", "endElementGroups");
+        } else if ($todo == "EVENTS") {
+            //Define handlers to that zone
+            xml_set_element_handler($xml_parser, "startElementEvents", "endElementEvents");
         } else if ($todo == "MODULES") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementModules", "endElementModules");

@@ -527,11 +527,17 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
             schedule_backup_log($starttime,$preferences->backup_course,"      scales");
             $status = backup_scales_info($backup_file,$preferences);
         }
-
+ 
         //Print groups info
         if ($status) {
             schedule_backup_log($starttime,$preferences->backup_course,"      groups");
             $status = backup_groups_info($backup_file,$preferences);
+        }
+
+        //Print events info
+        if ($status) {
+            schedule_backup_log($starttime,$preferences->backup_course,"      events");
+            $status = backup_events_info($backup_file,$preferences);
         }
 
         //Module info, this unique function makes all the work!!
