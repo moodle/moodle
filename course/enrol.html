@@ -4,7 +4,14 @@
   <tr valign=top> 
     <td>
     <P ALIGN=CENTER>This course requires an "enrolment key" - a one-time<BR>
-       password that you should have got from <A HREF="../user/view.php?id=<?=$teacher->id?>&course=<?=$site->id?>"><? p("$teacher->firstname $teacher->lastname") ?></A>.</P>
+       password that you should have got from 
+       <? if ($teacher) {
+           echo "<A HREF=\"../user/view.php?id=$teacher->id&course=$site->id\">$teacher->firstname $teacher->lastname.</A>";
+       } else {
+           echo "your teacher";
+       }
+       ?>
+       </P>
     </td>
   </tr>
   <tr valign=top> 
