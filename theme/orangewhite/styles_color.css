@@ -556,29 +556,21 @@ TD.event_description {
 }
 
 .sideblock,
-.sideblockmain,
-.sideblocklinks {
+.sideblock .content,
+.sideblock .list {
     background-color:#F9FAFA;
 }
 
-.sideblockheading {
+.sideblock .heading {
     background-color:#EEF0F2;
-}
-
-.sideblock,
-.sideblockheading {
-    border-color:#D1D7DC;
-}
-
-.sideblockheading {
     color:#666666;
 }
 
-.sideblockmain {
+.sideblock .content {
     color:#666666;
 }
 
-.sideblockmain HR {
+.sideblock .content hr {
 	border-top-color:#999;
 }
 

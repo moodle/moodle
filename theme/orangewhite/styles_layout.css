@@ -722,37 +722,26 @@ table.calendar-controls .next
 /* sideblock */
 .sideblock {
     width:100%;
-    border-width:1px 1px 1px 1px;
-    border-style:solid;
+    border:0 none;
 }
 
-.sideblockheading {
+.sideblock .heading {
     background-image:none;
     padding:0px 5px;
-    border-width:1px 0px 0px 1px;
-    border-style:solid;
+    border:0 none;
 }
 
-.sideblockheading a {
-    cursor:pointer;
-    border-bottom:none;
-}
-
-.sideblockheading a img {
-    padding-top:0.5em;
-}
-
-.sideblockheading .hide-show {
+.sideblock .heading .hide-show {
     float:right;
 }
 
-.sideblockheading  .hide-show img.hide-show-image {
+.sideblock .heading  .hide-show img.hide-show-image {
     height:11px;
     width:11px;
     padding-top:0.35em;
 }
 
-.sideblock .sideblockheading .hide-show img.hide-show-image {
+.sideblock .heading .hide-show img.hide-show-image {
     background:url('../../pix/t/switch_minus.gif') no-repeat bottom;
 }
 
@@ -760,8 +749,26 @@ table.calendar-controls .next
     background:url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
-.sideblock.hidden .sideblockmain {
+.sideblock.hidden .content {
     display:none;
+}
+
+.sideblock .heading .commands {
+    float: right;
+    padding-left:0.2em;
+}
+
+.sideblock .heading .commands a {
+    cursor:pointer;
+    border-bottom:none;
+}
+
+.sideblock .heading .commands a img {
+    padding-top:0.5em;
+}
+
+.sideblock .list {
+    width: 100%;
 }
 
 .sideblockmain HR {
@@ -780,12 +787,12 @@ table.calendar-controls .next
     padding:1px 0px;
 }
 
-#left-column .sideblockheading,
+#left-column .sideblock .heading,
 #left-column .sideblock {
     border-width:0px 0px 0px 1px;
 }
 
-#left-column .sideblocklist {
+#left-column .sideblock .list {
     padding-left:5px;
 }
 
