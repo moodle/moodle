@@ -43,6 +43,7 @@ $string['discussionsstartedbyrecent'] = 'Discussions recently started by $a';
 $string['discussthistopic'] = 'Discuss this topic';
 $string['eachuserforum'] = 'Each person posts one discussion';
 $string['edit'] = 'Edit';
+$string['editedby'] = 'Edited by $a->name -  $a->date';
 $string['editing'] = 'Editing';
 $string['emptymessage'] = 'Something was wrong with your post.  Perhaps you left it blank, or the attachment was too big.  Your changes have NOT been saved.';
 $string['everyonecanchoose'] = 'Everyone can choose to be subscribed';
