@@ -21,7 +21,7 @@ class CourseBlock_admin extends MoodleBlock {
 
         if (empty($this->course)) {
             $this->content = '';
-        } else if ($this->course->category == 0) {
+        } else if ($this->course->id == SITEID) {
             $this->load_content_for_site();
         } else {
             $this->load_content_for_course();
