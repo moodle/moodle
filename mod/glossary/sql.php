@@ -43,7 +43,7 @@
     case GLOSSARY_CATEGORY_VIEW:
         if ($hook == GLOSSARY_SHOW_ALL_CATEGORIES  ) { 
 
-            $sqlselect = "SELECT ge.*, gec.entryid, gc.name $as pivot";
+            $sqlselect = "SELECT gec.id, ge.*, gec.entryid, gc.name $as pivot";
             $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge,
                          {$CFG->prefix}glossary_entries_categories gec,
                          {$CFG->prefix}glossary_categories gc";
