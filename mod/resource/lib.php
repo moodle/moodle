@@ -184,7 +184,7 @@ function resource_get_coursemodule_info($coursemodule) {
 
        require_once("$CFG->dirroot/files/mimetypes.php");
 
-       if ($resource->type == UPLOADEDFILE) {
+       if ($resource->type == UPLOADEDFILE or $resource->type == WEBLINK or $resource->type == WEBPAGE) {
 	       $icon = mimeinfo("icon", $resource->reference);
            if ($icon != 'unknown.gif') {
 		       $info->icon ="f/$icon";
