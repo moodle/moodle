@@ -17,91 +17,24 @@
   added, so it should be easy to see what has changed.
   
   --------------------------------------------------------------
-
-The reason this library was written was to convert HTML email contents into a text
-based email content, where the rendering does not have to be as accurate as with
-a text based browser. However, there must be many more uses for it.
-
-This library attempts to deal with non-standard HTML, but may occasionally suffer
-from problems with pages that are not properly written - most especially:
-Tags written as <tagName attribute=somethingWithA"or'InItButNotSurroundedByQuotes>,
-Closing </pre> or </textarea> tags without their corresponding opening tags,
-Tags within <textarea> </textarea> tags, which will be rendered, even though they
-should not be.
-
-Conversion requires a lot of preg_replace statements, so it can be quite slow with
-large HTML files.
-
-******
-To use
-******
-
-This library requires PHP 4+
-
-To use this library, put the following line in your script before the part that needs it:
-require('PATH_TO_THIS_FILE/html2text.php');
-
-To convert HTML/PHP to text:
-	$textVersion = html2text( $HTMLversion );
-
-************
-Further info
-************
-
-For the technically minded, this is the process I use for converting HTML to approx text:
-
-REMOVE php start and end tags
-REMOVE <!-- -->
-ensure HTML uses entities in the right places (like inside tags) so strip_tags works properly
-<STYLE|SCRIPT|OPTION>
-carefully remove everything between them
-strip_tags except the important ones
-replace all \s that are after the start or a </pre> and before <pre> or end with a single space
-</TITLE|HR>
-\n          --------------------
-<H1|H2|H3|H4|H5|H6|DIV|P|PRE>
-\n\n
-<SUP>
-^
-<UL|OL|BR|DL|DT|TABLE|CAPTION|TR->(TH|TD)>
-\n
-<LI>
-\n· 
-<DD>
-\n\t
-<TH|TD>
-\t
-<A|AREA href=(!javascript:&&!#)>
-[LINK:hrefWithout#]
-<IMG>
-[IMG:alt]
-<FORM>
-[FORM:action]
-<INPUT|TEXTAREA|BUTTON|SELECT>
-[INPUT]
-strip tags again, leaving nothing this time
-un-htmlspecialchars
-word wrap (this will also affect pre, but as this is intended for email use, I don't care)
-
-
 */
 
 function html2text( $badStr ) {
 	//remove PHP if it exists
-	if( $andPHP ) { while( substr_count( $badStr, '<'.'?' ) && substr_count( $badStr, '?'.'>' ) && strpos( $badStr, '?'.'>' ) > strpos( $badStr, '<'.'?' ) ) {
-		$badStr = substr( $badStr, 0, strpos( $badStr, '<'.'?' ) ) . substr( $badStr, strpos( $badStr, '?'.'>' ) + 2 ); } }
+	if( $andPHP ) { while( substr_count( $badStr, '<'.'?' ) && substr_count( $badStr, '?'.'>' ) && strpos( $badStr, '?'.'>' ) > strpos( $badStr, '<'.'?', strpos( $badStr, '?'.'>' ) ) ) {
+		$badStr = substr( $badStr, 0, strpos( $badStr, '<'.'?' ) ) . substr( $badStr, strpos( $badStr, '?'.'>', strpos( $badStr, '?'.'>' ) ) + 2 ); } }
 	//remove comments
-	while( substr_count( $badStr, '<!--' ) && substr_count( $badStr, '-->' ) && strpos( $badStr, '-->' ) > strpos( $badStr, '<!--' ) ) {
-		$badStr = substr( $badStr, 0, strpos( $badStr, '<!--' ) ) . substr( $badStr, strpos( $badStr, '-->' ) + 3 ); }
+	while( substr_count( $badStr, '<!--' ) && substr_count( $badStr, '-->' ) && strpos( $badStr, '-->' ) > strpos( $badStr, '<!--', strpos( $badStr, '-->' ) ) ) {
+		$badStr = substr( $badStr, 0, strpos( $badStr, '<!--' ) ) . substr( $badStr, strpos( $badStr, '-->', strpos( $badStr, '-->' ) ) + 3 ); }
 	//now make sure all HTML tags are correctly written (> not in between quotes)
 	for( $x = 0, $goodStr = '', $is_open_tb = false, $is_open_sq = false, $is_open_sq = false; strlen( $chr = $badStr{$x} ); $x++ ) {
 		//take each letter in turn and check if that character is permitted there
 		switch( $chr ) {
 			case '<':
 				if( !$is_open_tb && strtolower( substr( $badStr, $x + 1, 5 ) ) == 'style' ) {
-					$badStr = substr( $badStr, 0, $x ) . substr( $badStr, strpos( strtolower( $badStr ), '</style>' ) + 7 ); $chr = '';
+					$badStr = substr( $badStr, 0, $x ) . substr( $badStr, strpos( strtolower( $badStr ), '</style>', $x ) + 7 ); $chr = '';
 				} elseif( !$is_open_tb && strtolower( substr( $badStr, $x + 1, 6 ) ) == 'script' ) {
-					$badStr = substr( $badStr, 0, $x ) . substr( $badStr, strpos( strtolower( $badStr ), '</script>' ) + 8 ); $chr = '';
+					$badStr = substr( $badStr, 0, $x ) . substr( $badStr, strpos( strtolower( $badStr ), '</script>', $x ) + 8 ); $chr = '';
 				} elseif( !$is_open_tb ) { $is_open_tb = true; } else { $chr = '&lt;'; }
 				break;
 			case '>':
@@ -141,10 +74,10 @@ function html2text( $badStr ) {
 	$goodStr = preg_replace( "/<li[^>]*>/i", "\n· ", $goodStr );
 	$goodStr = preg_replace( "/<dd[^>]*>/i", "\n\t", $goodStr );
 	$goodStr = preg_replace( "/<(th|td)[^>]*>/i", "\t", $goodStr );
-	///$goodStr = preg_replace( "/<a[^>]* href=(\"((?!\"|#|javascript:)[^\"#]*)(\"|#)|'((?!'|#|javascript:)[^'#]*)('|#)|((?!'|\"|>|#|javascript:)[^#\"'> ]*))[^>]*>/i", "[LINK: $2$4$6] ", $goodStr ); /// Moodle
+	//$goodStr = preg_replace( "/<a[^>]* href=(\"((?!\"|#|javascript:)[^\"#]*)(\"|#)|'((?!'|#|javascript:)[^'#]*)('|#)|((?!'|\"|>|#|javascript:)[^#\"'> ]*))[^>]*>/i", "[LINK: $2$4$6] ", $goodStr );    // Moodle
 	$goodStr = preg_replace( "/<a[^>]* href=(\"((?!\"|#|javascript:)[^\"#]*)(\"|#)|'((?!'|#|javascript:)[^'#]*)('|#)|((?!'|\"|>|#|javascript:)[^#\"'> ]*))[^>]*>/i", "[$2$4$6] ", $goodStr );
-	/// $goodStr = preg_replace( "/<img[^>]* alt=(\"([^\"]+)\"|'([^']+)'|([^\"'> ]+))[^>]*>/i", "[IMAGE: $2$3$4] ", $goodStr );/// Moodle
-	$goodStr = preg_replace( "/<img[^>]* alt=(\"([^\"]+)\"|'([^']+)'|([^\"'> ]+))[^>]*>/i", "{$2$3$4} ", $goodStr );
+	//$goodStr = preg_replace( "/<img[^>]* alt=(\"([^\"]+)\"|'([^']+)'|([^\"'> ]+))[^>]*>/i", "[IMAGE: $2$3$4] ", $goodStr );    // Moodle
+	$goodStr = preg_replace( "/<img[^>]* alt=(\"([^\"]+)\"|'([^']+)'|([^\"'> ]+))[^>]*>/i", "[$2$3$4] ", $goodStr );
 	$goodStr = preg_replace( "/<form[^>]* action=(\"([^\"]+)\"|'([^']+)'|([^\"'> ]+))[^>]*>/i", "\n[FORM: $2$3$4] ", $goodStr );
 	$goodStr = preg_replace( "/<(input|textarea|button|select)[^>]*>/i", "[INPUT] ", $goodStr );
 	//strip all remaining tags (mostly closing tags)
@@ -153,8 +86,8 @@ function html2text( $badStr ) {
 	$goodStr = strtr( $goodStr, array_flip( get_html_translation_table( HTML_ENTITIES ) ) );
 	preg_replace( "/&#(\d+);/me", "chr('$1')", $goodStr );
 	//wordwrap
-	///$goodStr = wordwrap($goodStr);    /// Moodle
-	$goodStr = wordwrap($goodStr, 70);
+	// $goodStr = wordwrap( $goodStr );  // Moodle
+	$goodStr = wordwrap( $goodStr, 70 );
 	//make sure there are no more than 3 linebreaks in a row and trim whitespace
 	return preg_replace( "/^\n*|\n*$/", '', preg_replace( "/[ \t]+(\n|$)/", "$1", preg_replace( "/\n(\s*\n){2}/", "\n\n\n", preg_replace( "/\r\n?|\f/", "\n", str_replace( chr(160), ' ', $goodStr ) ) ) ) );
 }
