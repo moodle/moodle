@@ -42,6 +42,11 @@ unset($CFG);  // Ignore this line
 //
 //   postgres7  - the prefix is REQUIRED, regardless of whether the      //
 //                database already contains tables.                      //
+//                                                                       //
+// A special case exists when using PostgreSQL databases via sockets.    //
+// Define dbhost as follows, leaving dbname, dbuser, dbpass BLANK!:      //
+//    $CFG->dbhost = " user='muser' password='mpass' dbname='mdata'";    //
+//                
 
 $CFG->dbtype    = 'mysql';       // mysql or postgres7 (for now)
 $CFG->dbhost    = 'localhost';   // eg localhost or db.isp.com 
