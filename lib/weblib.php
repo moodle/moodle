@@ -2525,7 +2525,7 @@ function print_side_block_start($heading='', $attributes = array()) {
     // to CSS and banish the evil to the abyss from whence it came.
     echo '<table style="width: 100%;" cellspacing="0" cellpadding="5"'.$attrtext.'>';
     if ($heading) {
-        echo '<thead class="sideblockheading"><tr><td>'.$heading.'</td></tr></thead>';
+        echo '<thead><tr><td class="sideblockheading">'.$heading.'</td></tr></thead>';
     }
     echo '<tbody style="background-color: '.$THEME->cellcontent2.';"><tr><td class="sideblockmain">';
 }
