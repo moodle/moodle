@@ -6,8 +6,9 @@
     require_variable($id);    // Assignment
     optional_variable($sort, "timemodified"); 
     optional_variable($dir, "DESC");
-    optional_variable($timewas);
+    optional_variable($timenow, 0);
 
+    $timewas = $timenow;
     $timenow = time();
 
     if (! $assignment = get_record("assignment", "id", $id)) {
@@ -113,13 +114,9 @@
 
                 // Make sure that we aren't overwriting any recent feedback from other teachers. (see bug #324)
                 if ($timewas < $submission->timemarked && (!empty($submission->grade)) && (!empty($submission->comment))) {
-                    $u = $users[$submission->userid];
-                    $uname = $u->firstname . " " . $u->lastname;
-                    notify(get_string("failedupdatefeedback", "assignment", $uname)
+                    notify(get_string("failedupdatefeedback", "assignment", fullname($users[$submission->userid]))
                     . "<br>" . get_string("grade") . ": $newsubmission->grade" 
                     . "<br>" . get_string("feedback", "assignment") . ": $newsubmission->comment\n");
-                    unset($u);
-                    unset($uname);
                 } else { //print out old feedback and grade
                     if (empty($submission->timemodified)) {   // eg for offline assignments
                         $newsubmission->timemodified = $timenow;
