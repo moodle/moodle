@@ -94,7 +94,7 @@
     if (! $maintables) {
         if (!$agreelicence) {
             $strlicense = get_string("license");
-            print_header($strlicense, $strlicense, $strlicense);
+            print_header($strlicense, $strlicense, $strlicense, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("<A HREF=\"http://moodle.org\">Moodle</A> - Modular Object-Oriented Dynamic Learning Environment");
             print_heading(get_string("copyrightnotice"));
             print_simple_box_start("center");
@@ -108,7 +108,7 @@
 
         $strdatabasesetup    = get_string("databasesetup");
         $strdatabasesuccess  = get_string("databasesuccess");
-        print_header($strdatabasesetup, $strdatabasesetup, $strdatabasesetup);
+        print_header($strdatabasesetup, $strdatabasesetup, $strdatabasesetup, "", "", false, "&nbsp;", "&nbsp;");
         if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql")) {
             $db->debug = true;
             set_time_limit(0);  // To allow slow databases to complete the long SQL
@@ -138,7 +138,8 @@
             $a->newversion = $version;
             $strdatabasechecking = get_string("databasechecking", "", $a);
             $strdatabasesuccess  = get_string("databasesuccess");
-            print_header($strdatabasechecking, $strdatabasechecking, $strdatabasechecking);
+            print_header($strdatabasechecking, $strdatabasechecking, $strdatabasechecking, 
+                         "", "", false, "&nbsp;", "&nbsp;");
             print_heading($strdatabasechecking);
             $db->debug=true;
             if (main_upgrade($CFG->version)) {
@@ -160,7 +161,8 @@
        
     } else {
         $strcurrentversion = get_string("currentversion");
-        print_header($strcurrentversion, $strcurrentversion, $strcurrentversion);
+        print_header($strcurrentversion, $strcurrentversion, $strcurrentversion, 
+                     "", "", false, "&nbsp;", "&nbsp;");
 
         if (set_config("version", $version)) {
             print_heading("You are currently using Moodle version $version (Release $release)");
@@ -181,7 +183,7 @@
 
     if ($release <> $CFG->release) {  // Update the release version
         $strcurrentrelease = get_string("currentrelease");
-        print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease);
+        print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease, "", "", false, "&nbsp;", "&nbsp;");
         print_heading($release);
         if (!set_config("release", $release)) {
             notify("ERROR: Could not update release version in database!!");
@@ -262,7 +264,7 @@
         } else {    // module not installed yet, so install it
             if (empty($updated_modules)) {
                 $strmodulesetup    = get_string("modulesetup");
-                print_header($strmodulesetup, $strmodulesetup, $strmodulesetup);
+                print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, "", "", false, "&nbsp;", "&nbsp;");
             }
             print_heading($module->name);
             $updated_modules = true;
