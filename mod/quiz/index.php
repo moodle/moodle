@@ -58,7 +58,13 @@
     }
 
     foreach ($quizzes as $quiz) {
-        $link = "<A HREF=\"view.php?id=$quiz->coursemodule\">$quiz->name</A>";
+        if (!$quiz->visible) { 
+            //Show dimmed if the mod is hidden
+            $link = "<A class=\"dimmed\" HREF=\"view.php?id=$quiz->coursemodule\">$quiz->name</A>";
+        } else {
+            //Show normal if the mod is visible
+            $link = "<A HREF=\"view.php?id=$quiz->coursemodule\">$quiz->name</A>";
+        }
 
         $bestgrade = quiz_get_best_grade($quiz->id, $USER->id);
 
