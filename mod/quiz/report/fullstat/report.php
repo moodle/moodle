@@ -61,7 +61,7 @@ class quiz_report extends quiz_default_report {
             if($quests[$qid]['qtype'] == 8){
                   $thismin[$qid] = get_field("quiz_numerical","min","question","$qid");
                   $thismax[$qid] = get_field("quiz_numerical","max","question","$qid");
-                  $quests[$qid]["correct"] = $thismin[$qid] ."< $choice_data->answer >" .  $thismax[$qid];
+                  $quests[$qid]["correct"] = $thismin[$qid] ."&lt; $choice_data->answer &lt;" .  $thismax[$qid];
             }
             if($quests[$qid]['qtype'] >3) {continue;}
             //only get choices here if type is SHORTANSWER,TRUEFALSE or MULTICHOICE
@@ -659,7 +659,7 @@ class quiz_report extends quiz_default_report {
     //Print user responses
     print ("<table border=\"1\" align=\"center\" width=\"95%\" cellpadding=\"2\" cellspacing=\"0\">\n");
     $totcolcount = $table_colcount+2;
-    print("<tr><th colspan=$totcolcount>$strindivresp</th></tr>");
+    print("<tr><th colspan=\"$totcolcount\">$strindivresp</th></tr>");
     qr_print_headers($data_tally,"$strname","$strgrade");
 
     //now print the lines of answers
@@ -698,15 +698,15 @@ class quiz_report extends quiz_default_report {
         }
     }
      
-    print("</table><p>\n");
+    print("</table><br />\n");
         
     if($debug and !$download){
     print("<h3>Qtally</h3>");
     print_object($qtally);
     }
     //print tally of how many selected each choice
-    print ("<p><table width=\"95%\" border=\"1\" align=\"center\" cellpadding=\"2\" cellspacing=\"0\">\n");
-    print("<tr><th colspan=$totcolcount>$stritemanal</th></tr>");
+    print ("<br /><table width=\"95%\" border=\"1\" align=\"center\" cellpadding=\"2\" cellspacing=\"0\">\n");
+    print("<tr><th colspan=\"$totcolcount\">$stritemanal</th></tr>");
     qr_print_headers($data_tally,"Item","&nbsp;");
     //display row with correct answers
     print("<tr><th colspan=\"2\" align=\"right\">$strcorrresp:</th>");
@@ -760,7 +760,7 @@ class quiz_report extends quiz_default_report {
 
     //Now printout the questions (and M/C answers if $containsMC
 
-    print ("<p><table width=\"95%\" border=\"1\" align=\"center\" cellpadding=\"2\" cellspacing=\"0\">\n");
+    print ("<br /><table width=\"95%\" border=\"1\" align=\"center\" cellpadding=\"2\" cellspacing=\"0\">\n");
     if ($containsMCTF){$ws = " ". $strwithsummary;} else {$ws = "";}
     print("<tr><th colspan=\"3\">QUIZ: $quiz->name&nbsp;&nbsp; -- &nbsp;&nbsp;$strlistitems$ws</th></tr>\n");
     $qcount = 0;
@@ -905,7 +905,7 @@ function qr_print_headers($data_tally,$nm,$gd){
         } else {
             $colcount = 1;
         }
-        print("<th colspan=$colcount>Q-$qcount</th>");
+        print("<th colspan=\"$colcount\">Q-$qcount</th>");
     }
     print("</tr>\n");
 }
@@ -982,7 +982,7 @@ function qr_answer_lookup($qid,$thisanswer){
                 break;
             case 8:  //NUMERICAL
                 $returndata['data'] = $thisanswer;
-//                $returndata['data'] = $thismin . "<" . $thisanswer . ">" . $thismax;
+//                $returndata['data'] = $thismin . "&lt;" . $thisanswer . "&lt;" . $thismax;
                 $qtally[$qid]['response'][$thisanswer]++;
                 if ($thisanswer >= $thismin[$qid] and $thisanswer <= $thismax[$qid]){
                     $qtally[$qid]['correct']++;

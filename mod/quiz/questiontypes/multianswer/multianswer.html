@@ -6,7 +6,7 @@
 
 <tr valign="top">
 
-    <td align="right"><p><b><?php  print_string("category", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("category", "quiz") ?>:</b></td>
 
     <td>
 
@@ -18,11 +18,11 @@
 
 <tr valign="top">
 
-    <td align="right"><p><b><?php  print_string("questionname", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("questionname", "quiz") ?>:</b></td>
 
     <td>
 
-        <input type="text" name="name" size="40" value="<?php  p($question->name) ?>" />
+        <input type="text" name="name" size="40" value="<?php  p($question->name) ?>" alt="<?php  print_string("questionname", "quiz") ?>" />
 
         <?php  if (isset($err["name"])) formerr($err["name"]); ?>
 
@@ -32,7 +32,7 @@
 
 <tr valign="top">
 
-    <td align="right"><p><b><?php  print_string("question", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("question", "quiz") ?>:</b></td>
 
     <td>
 
@@ -64,7 +64,7 @@
 
 <tr valign="top">
 
-    <td align="right"><p><b><?php  print_string("imagedisplay", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("imagedisplay", "quiz") ?>:</b></td>
 
     <td>
 

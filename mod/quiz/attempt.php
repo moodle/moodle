@@ -82,7 +82,7 @@
             print_heading($quiz->name);
             print_heading(get_string("attempt", "quiz", $attemptnumber));
             if (trim(strip_tags($quiz->intro))) {
-                print_simple_box(format_text($quiz->intro), "CENTER");
+                print_simple_box(format_text($quiz->intro), "center");
             }
             echo "<br />\n";
         
@@ -92,7 +92,7 @@
             echo "<div align=\"center\">\n";
             print_string("requirepasswordmessage", "quiz");
             echo "<br /><br />\n";
-            echo " <input name=\"quizpassword\" type=\"password\" value=\"\" />";
+            echo " <input name=\"quizpassword\" type=\"password\" value=\"\" alt=\"password\" />";
             echo " <input type=\"submit\" value=\"".get_string("ok")."\" />\n";
             echo "</div>\n";
 
@@ -247,7 +247,7 @@
 
     print_heading(get_string("attempt", "quiz", $attemptnumber));
     if (trim(strip_tags($quiz->intro))) {
-        print_simple_box(format_text($quiz->intro), "CENTER");
+        print_simple_box(format_text($quiz->intro), "center");
     }
 
 

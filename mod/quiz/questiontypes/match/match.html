@@ -6,7 +6,7 @@
 
 <tr valign="top">
 
-    <td align="right"><p><b><?php  print_string("category", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("category", "quiz") ?>:</b></td>
 
     <td>
 
@@ -18,11 +18,11 @@
 
 <tr valign="top">
 
-    <td align="right"><p><b><?php  print_string("questionname", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("questionname", "quiz") ?>:</b></td>
 
     <td>
 
-        <input type="text" name="name" size="40" value="<?php  p($question->name) ?>" />
+        <input type="text" name="name" size="40" value="<?php  p($question->name) ?>" alt="<?php  print_string("questionname", "quiz") ?>" />
 
         <?php  if (isset($err["name"])) formerr($err["name"]); ?>
 
@@ -32,7 +32,7 @@
 
 <tr valign="top">
 
-    <td align="right"><p><b><?php  print_string("question", "quiz") ?>:</b></p>
+    <td align="right"><b><?php  print_string("question", "quiz") ?>:</b>
 
     <br />
 
@@ -40,7 +40,7 @@
 
     <br />
 
-    <p><font size="1">
+    <font size="1">
 
     <?php
 
@@ -56,7 +56,7 @@
 
     ?>
 
-    </font></p>
+    </font>
 
     </td>
 
@@ -110,7 +110,7 @@
 
 <tr valign="top">
 
-    <td align="right"><p><b><?php  print_string("imagedisplay", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("imagedisplay", "quiz") ?>:</b></td>
 
     <td>
 
@@ -134,9 +134,9 @@
 
 <tr valign="top">
 
-    <td align="right"><p><b><?php  print_string("choices", "quiz") ?></b>:</p></td>
+    <td align="right"><b><?php  print_string("choices", "quiz") ?></b>:</td>
 
-    <td><p><?php  print_string("filloutthreequestions", "quiz") ?></p>
+    <td><?php  print_string("filloutthreequestions", "quiz") ?>
 
     </td>
 
@@ -154,7 +154,7 @@
 
 <tr valign="top">
 
-    <td align="right"><p><b><?php  echo get_string("question", "quiz")." $i";  ?> :</b></p></td>
+    <td align="right"><b><?php  echo get_string("question", "quiz")." $i";  ?> :</b></td>
 
     <td>
 
@@ -164,7 +164,7 @@
 
         <?php  echo get_string("matchanswer", "quiz")." $i";  ?>&nbsp;&nbsp;
 
-        <input type="text" name="subanswers[]" size="50" value="<?php  p($subanswers[$i-1]) ?>" />
+        <input type="text" name="subanswers[]" size="50" value="<?php  p($subanswers[$i-1]) ?>" alt="<?php  echo get_string("matchanswer", "quiz")." $i";  ?>" />
 
     </td>
 

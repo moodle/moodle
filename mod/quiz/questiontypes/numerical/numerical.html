@@ -2,24 +2,24 @@
 <center>
 <table cellpadding="5">
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("category", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("category", "quiz") ?>:</b></td>
     <td>
     <?php   quiz_category_select_menu($course->id, true, true, $question->category); ?>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("questionname", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("questionname", "quiz") ?>:</b></td>
     <td>
-        <input type="text" name="name" size="50" value="<?php  p($question->name) ?>" />
+        <input type="text" name="name" size="50" value="<?php  p($question->name) ?>" alt="<?php  print_string("questionname", "quiz") ?>" />
         <?php  if (isset($err["name"])) formerr($err["name"]); ?>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("question", "quiz") ?>:</b></p>
+    <td align="right"><b><?php  print_string("question", "quiz") ?>:</b>
     <br />
     <br />
     <br />
-    <p><font size="1">
+    <font size="1">
     <?php
            if ($usehtmleditor) {
                helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
@@ -27,7 +27,7 @@
                helpbutton("text", get_string("helptext"), "moodle", true, true);
            }
     ?>
-    </font></p>
+    </font>
     </td>
     <td>
         <?php  if (isset($err["questiontext"])) {
@@ -54,7 +54,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("imagedisplay", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("imagedisplay", "quiz") ?>:</b></td>
     <td>
     <?php   if (empty($images)) {
             print_string("noimagesyet");
@@ -66,7 +66,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("correctanswer", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("correctanswer", "quiz") ?>:</b></td>
     <?php
         // Even thou the rest of the module can handle up to six numerical answers,
         // this form will limit the number of numerical answers to one only.
@@ -78,38 +78,38 @@
         }
     ?>
     <td>
-        <input align="LEFT" type="text" id="correct0" name="answer[]" size="20" value="<?php  p($answers[0]->answer) ?>" />&nbsp;&nbsp;
+        <input align="left" type="text" id="correct0" name="answer[]" size="20" value="<?php  p($answers[0]->answer) ?>" alt="<?php  print_string("correctanswer", "quiz") ?>" />&nbsp;&nbsp;
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("acceptederror", "quiz"); ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("acceptederror", "quiz"); ?>:</b></td>
     <td>
-        <input align="LEFT" type="text" id="acceptederror0" name="acceptederror[]" size="15" value="<?php  p($acceptederror) ?>" />&plusmn;
+        <input align="left" type="text" id="acceptederror0" name="acceptederror[]" size="15" value="<?php  p($acceptederror) ?>" alt="<?php  print_string("acceptederror", "quiz"); ?>" />&plusmn;
         <!-- Values max and min will be determined when the form is submitted -->
-        <input type="HIDDEN" id="min0" name="min[]" value="" />
-        <input type="HIDDEN" id="max0" name="max[]" value="" />
-        <input type="HIDDEN" name="fraction[]" value="1" />
+        <input type="hidden" id="min0" name="min[]" value="" />
+        <input type="hidden" id="max0" name="max[]" value="" />
+        <input type="hidden" name="fraction[]" value="1" />
         <br/>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("feedback", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("feedback", "quiz") ?>:</b></td>
     <td>
-        <textarea name="feedback[]" rows="2" cols="50" wrap="virtual"><?php  p($answers[0]->feedback) ?></textarea>
+        <textarea name="feedback[]" rows="2" cols="50"><?php  p($answers[0]->feedback) ?></textarea>
     </td>
 </tr>
 <tr valign="top">
-<td align="right"><p><b><?php  print_string("unit", "quiz") ?>:</b></p></td>
+<td align="right"><b><?php  print_string("unit", "quiz") ?>:</b></td>
     <td>
-        <p><input type="HIDDEN" name="multiplier[]" value="1.0" />
-        <input align="LEFT" type="text" id="defaultunit" name="unit[]"
-                size="5" value="<?php  p($units[0]->unit) ?>" />
-        <b>(<?php  print_string("optional", "quiz") ?>)</b></p>
+        <input type="hidden" name="multiplier[]" value="1.0" />
+        <input align="left" type="text" id="defaultunit" name="unit[]"
+                size="5" value="<?php  p($units[0]->unit) ?>" alt="<?php  print_string("unit", "quiz") ?>" />
+        <b>(<?php  print_string("optional", "quiz") ?>)</b>
     </td>
 </tr>
 <tr valign="top">
 <td></td>
-<td align="left"><p><b><?php  print_string("alternativeunits", "quiz") ?>:</b></p></td>
+<td align="left"><b><?php  print_string("alternativeunits", "quiz") ?>:</b></td>
 <td></td>
 </tr>
 <?php
@@ -119,14 +119,15 @@ for ($i=1; $i<count($units); $i++) {
 <tr valign="top">
 <td></td>
     <td align="left">
-        <p><b><?php  print_string("multiplier", "quiz") ?>:</b>
+        <b><?php  print_string("multiplier", "quiz") ?>:</b>
         <input type="text" id="<?php  p("multiplier$i") ?>" size="10"
-                align="RIGHT" name="multiplier[]"
-                value="<?php  p($unit->multiplier) ?>" />
+                align="right" name="multiplier[]"
+                value="<?php  p($unit->multiplier) ?>"
+                alt="<?php  print_string("multiplier", "quiz") ?>" />
         <b>&nbsp;&nbsp;&nbsp;<?php  print_string("unit", "quiz") ?>:</b>
-        <input align="LEFT" type="text" id="<?php  p("unit$i") ?>"
+        <input align="left" type="text" id="<?php  p("unit$i") ?>"
                 name="unit[]"
-                size="5" value="<?php  p($unit->unit) ?>" /></p>
+                size="5" value="<?php  p($unit->unit) ?>" />
     </td>
 </tr>
 <?php
@@ -136,10 +137,10 @@ for ($i=1; $i<count($units); $i++) {
 
 <input type="hidden" name="id" value="<?php  p($question->id) ?>" />
 <input type="hidden" name="qtype" value="<?php  p($question->qtype) ?>" />
-<input type="submit" onClick="return determineMinAndMax();"  value="<?php  print_string("savechanges") ?>" />
+<input type="submit" onclick="return determineMinAndMax();"  value="<?php  print_string("savechanges") ?>" />
 </center>
 </form>
-<script language="JAVASCRIPT">
+<script language="javascript" type="text/javascript">
 function determineMinAndMax() {
     // This client-side script will determine the values for min and max
     // based on the input for answer and acceptederror.

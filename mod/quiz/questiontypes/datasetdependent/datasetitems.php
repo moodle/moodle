@@ -146,7 +146,7 @@
     }
 
     $table->head = array($straction, $strdatasetnumber);
-    $table->align = array("CENTER", "CENTER");
+    $table->align = array("center", "center");
     $addtable->head = $table->head;
     if ($qtypeobj->supports_dataset_item_generation()) {
         if (isset($form->forceregeneration) && $form->forceregeneration) {
@@ -175,7 +175,7 @@
                     . ($qtypeobj->supports_dataset_item_generation()
                     ?  '<br/>' . $qtypeobj->custom_generator_tools($datasetdef)
                     : '');
-            $table->align[] = "CENTER";
+            $table->align[] = "center";
 
             // THE if-statement IS FOR BUT ONE THING
             // - to determine an item value for the input field
@@ -244,7 +244,7 @@
     if ($strquestionheader) {
         $table->head[] = $strquestionheader;
         $addtable->head[] = $strquestionheader;
-        $table->align[] = "CENTER";
+        $table->align[] = "center";
         $addline[] = $qtypeobj->comment_on_datasetitems($question, $data, $maxnumber + 1);
     }
 

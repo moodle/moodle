@@ -210,10 +210,14 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             echo "<input $readonly $name $checked $type  value=\"$answer->id\" />";
            
             echo "</td>";
+            
+            /// remove para tags - not needed
+            $options->para = false;
+            
             if ($readonly and $quiz->correctanswers and !empty($correctanswers[$nameprefix.$aid])) {
-                echo '<td valign="top" class="highlight">'.format_text("$qnumchar. $answer->answer").'</td>';
+                echo '<td valign="top" class="highlight">'.format_text("$qnumchar. $answer->answer", FORMAT_MOODLE , $options).'</td>';
             } else {
-                echo '<td valign="top">'.format_text("$qnumchar. $answer->answer").'</td>';
+                echo '<td valign="top">'.format_text("$qnumchar. $answer->answer", FORMAT_MOODLE, $options).'</td>';
             }
             if ($quiz->feedback) {
                echo "<td valign=\"top\">&nbsp;";

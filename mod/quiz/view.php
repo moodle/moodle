@@ -66,7 +66,7 @@
     print_heading($quiz->name);
 
     if (trim(strip_tags($quiz->intro))) {
-        print_simple_box(format_text($quiz->intro), "CENTER");
+        print_simple_box(format_text($quiz->intro), "center");
     }
 
 
@@ -161,6 +161,7 @@
                 }
                 $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
                 echo "<br />";
+                echo "</p>";
                 echo "<div align=\"center\">";
                 if ($quiz->timelimit) {
                     include("view_js.php");
@@ -168,7 +169,7 @@
                     print_single_button("attempt.php", $options, get_string("attemptquiznow","quiz"));
                 }
                 echo "</div>\n";
-                echo "</p>";
+                //echo "</p>";
             }
         } else {
             print_heading(get_string("nomoreattempts", "quiz"));

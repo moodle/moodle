@@ -63,15 +63,15 @@
 <center>
 <table cellpadding="5">
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("name") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("name") ?>:</b></td>
     <td>
         <input type="text" name="name" size="40" value="<?php p($form->name) ?>" />
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("introduction", "quiz") ?>:</b></p>
+    <td align="right"><b><?php print_string("introduction", "quiz") ?>:</b>
       <br />
-    <font size="1">
+      <span class="editorhelptext">
      <?php
         if ($usehtmleditor) {
            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
@@ -83,7 +83,7 @@
         } 
       ?>
       <br />
-      </font>
+      </span>
     </td>
     <td>
         <?php 
@@ -92,7 +92,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("quizopen", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("quizopen", "quiz") ?>:</b></td>
     <td>
     <?php
         if (!$form->timeopen and $course->format == "weeks") {
@@ -105,7 +105,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("quizclose", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("quizclose", "quiz") ?>:</b></td>
     <td>
     <?php
         if (!$form->timeclose and $course->format == "weeks") {
@@ -119,7 +119,7 @@
 </tr>
 <!-- BEGIN EDIT -->
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("timelimit", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("timelimit", "quiz") ?>:</b></td>
     <td>
     <?php
         print_timer_selector($form->timelimit, get_string("minutes","quiz"));
@@ -129,7 +129,7 @@
 </tr>
 <!-- END EDIT -->
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("shufflequestions", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("shufflequestions", "quiz") ?>:</b></td>
     <td>
     <?php
         $options = array();
@@ -141,7 +141,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("shuffleanswers", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("shuffleanswers", "quiz") ?>:</b></td>
     <td>
     <?php
         $options = array();
@@ -153,7 +153,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("attemptsallowed", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("attemptsallowed", "quiz") ?>:</b></td>
     <td>
     <?php
         $options = array();
@@ -168,7 +168,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("eachattemptbuildsonthelast", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("eachattemptbuildsonthelast", "quiz") ?>:</b></td>
     <td>
     <?php
         $options = array();
@@ -183,7 +183,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("grademethod", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("grademethod", "quiz") ?>:</b></td>
     <td>
     <?php
         $options = array();
@@ -197,7 +197,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("showfeedback", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("showfeedback", "quiz") ?>:</b></td>
     <td>
     <?php
         $options = array();
@@ -209,7 +209,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("showcorrectanswer", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("showcorrectanswer", "quiz") ?>:</b></td>
     <td>
     <?php
         $options = array();
@@ -221,7 +221,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("allowreview", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("allowreview", "quiz") ?>:</b></td>
     <td>
     <?php
         $options = array();
@@ -233,7 +233,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("maximumgrade") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("maximumgrade") ?>:</b></td>
     <td>
     <?php
         for ($i=100; $i>=1; $i--) {
@@ -247,14 +247,14 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("requirepassword", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("requirepassword", "quiz") ?>:</b></td>
     <td>
         <input type="text" name="password" size="40" value="<?php p($form->password) ?>" />
         <?php helpbutton("requirepassword", get_string("requirepassword", "quiz"), "quiz"); ?>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("requiresubnet", "quiz") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("requiresubnet", "quiz") ?>:</b></td>
     <td>
         <input type="text" name="subnet" size="40" value="<?php p($form->subnet) ?>" />
         <?php helpbutton("requiresubnet", get_string("requiresubnet", "quiz"), "quiz"); ?>

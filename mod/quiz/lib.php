@@ -208,14 +208,15 @@ class quiz_default_questiontype {
 
         /// Print question number and grade:
 
-        echo '<p align="center"><b>' . $number . '</b></p>';
+        echo '<center><b>' . $number . '</b></center>';
         if (false !== $grade) {
             $strmarks  = get_string("marks", "quiz");
-            echo '<p align="center"><font size="1">';
+            //echo '<p align="center"><font size="1">';
+            echo '<br /><center><font size="1">';
             if (false !== $actualgrade) {
-                echo "$strmarks: $actualgrade/$grade</font></p>";
+                echo "$strmarks: $actualgrade/$grade</font></center>";
             } else {
-                echo "$grade $strmarks</font></p>";
+                echo "$grade $strmarks</font></center>";
             }
         }
         print_spacer(1,100);
@@ -1172,7 +1173,7 @@ function quiz_category_select_menu($courseid,$published=false,$only_editable=fal
         $cname = quiz_get_category_coursename( $category );
         $seltxt = "";
         if ($cid==$selected) {
-            $seltxt = "selected=\"true\"";
+            $seltxt = "selected=\"selected\"";
         }
         if ((!$only_editable) || isteacheredit($category->course)) {
             echo "    <option value=\"$cid\" $seltxt>$cname</option>\n";

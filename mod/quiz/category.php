@@ -146,7 +146,7 @@
 
 /// Print the table of all categories
     $table->head  = array ($strcategory, $strcategoryinfo, $strpublish, $strquestions, $straction);
-    $table->align = array ("LEFT", "LEFT", "CENTER", "CENTER", "CENTER");
+    $table->align = array ("left", "left", "center", "center", "center");
     $table->size = array ("80", "80", "40", "40", "50");
     $table->width = 200;
     $table->nowrap = true;
