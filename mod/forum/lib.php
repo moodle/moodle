@@ -143,8 +143,9 @@ function forum_delete_instance($id) {
 
 
 function forum_cron () {
-// Function to be run periodically according to the moodle cron
-// Finds all posts that have yet to be mailed out, and mails them
+/// Function to be run periodically according to the moodle cron
+/// Finds all posts that have yet to be mailed out, and mails them
+/// out to all subscribers
 
     global $CFG, $USER;
 
@@ -152,12 +153,25 @@ function forum_cron () {
 
     if ($posts = forum_get_unmailed_posts($cutofftime)) {
 
+        /// Mark them all now as being mailed.  It's unlikely but possible there 
+        /// might be an error later so that a post is NOT actually mailed out, 
+        /// but since mail isn't crucial, we can accept this risk.  Doing it now
+        /// prevents the risk of duplicated mails, which is a worse problem.
+
+        foreach ($posts as $key => $post) {   
+            if (! set_field("forum_posts", "mailed", "1", "id", "$post->id")) {
+                echo "Error marking post id post->id as being mailed.  This post will not be mailed.\n";
+                unset($posts[$key]);
+            }
+        }
+
         $timenow = time();
 
         foreach ($posts as $post) {
 
+            echo "\n";
             print_string("processingpost", "forum", $post->id);
-            echo " ... ";
+            echo "\n";
 
             if (! $userfrom = get_record("user", "id", "$post->userid")) {
                 echo "Could not find user $post->userid\n";
@@ -184,9 +198,9 @@ function forum_cron () {
 
                 $mailcount=0;
                 foreach ($users as $userto) {
-                    $USER->lang = $userto->lang;  // Affects the language of get_string
+                    /// Override the language of get_string, so that mail is in correct language for the receiver.
+                    $USER->lang = $userto->lang;
                     $canreply = forum_user_can_post($forum, $userto);
-
 
                     $by->name = "$userfrom->firstname $userfrom->lastname";
                     $by->date = userdate($post->modified, "", $userto->timezone);
@@ -225,19 +239,19 @@ function forum_cron () {
                     }
   
                     if ($userto->mailformat == 1) {  // HTML
-                        $posthtml = "<P><FONT FACE=sans-serif>".
-                        "<A TARGET=\"_blank\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> ".
-                        "<A TARGET=\"_blank\" HREF=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</A> -> ".
-                        "<A TARGET=\"_blank\" HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</A>";
+                        $posthtml = "<p><font face=\"sans-serif\">".
+                        "<a target=\"_blank\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> ".
+                        "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</a> -> ".
+                        "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</a>";
                         if ($discussion->name == $forum->name) {
-                            $posthtml .= "</FONT></P>";
+                            $posthtml .= "</font></p>";
                         } else {
-                            $posthtml .= " -> <A TARGET=\"_blank\" HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</A></FONT></P>";
+                            $posthtml .= " -> <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</a></font></p>";
                         }
                         $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, false, false);
 
                         if ($canunsubscribe) {
-                            $posthtml .= "\n<BR><HR SIZE=1 NOSHADE><P ALIGN=RIGHT><FONT SIZE=1><A HREF=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</A></FONT></P>";
+                            $posthtml .= "\n<br /><hr size=\"1\" noshade /><p align=\"right\"><font size=\"1\"><a href=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</a></font></p>";
                         }
 
                     } else {
@@ -245,18 +259,14 @@ function forum_cron () {
                     }
    
                     if (! email_to_user($userto, $userfrom, $postsubject, $posttext, $posthtml)) {
-                        echo "Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id ($userto->email)\n";
+                        echo "Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id ($userto->email) .. not trying again.\n";
                     } else {
                         $mailcount++;
                     }
                 }
-                echo "mailed to $mailcount users ...";
-            }
 
-            if (! set_field("forum_posts", "mailed", "1", "id", "$post->id")) {
-                echo "Could not update the mailed field for id $post->id\n";
+                echo ".... mailed to $mailcount users.\n";
             }
-            echo "\n";
         }
     }
 
