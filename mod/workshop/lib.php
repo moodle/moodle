@@ -684,6 +684,7 @@ function workshop_list_all_ungraded_assessments($workshop) {
 function workshop_list_assessed_submissions($workshop, $user) {
 function workshop_list_peer_assessments($workshop, $user) {
 function workshop_list_student_submissions($workshop, $user) {
+function workshop_list_submissions_for_admin($workshop, $order) {
 function workshop_list_teacher_assessments($workshop, $user) {
 function workshop_list_teacher_submissions($workshop) {
 function workshop_list_unassessed_student_submissions($workshop, $user) {
@@ -1513,7 +1514,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
 			if (!$user = get_record("user", "id", $submission->userid)) {
 				error("workshop_list_submissions_for_admin: failure to get user record");
 				}
-			// has teacherer already assessed this submission
+			// has teacher already assessed this submission
 			if ($assessment = get_record_select("workshop_assessments", "submissionid = $submission->id
 					AND userid = $USER->id")) {
 				$curtime = time();
@@ -1536,7 +1537,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
 				}
 			$action .= " | <a href=\"submissions.php?action=adminconfirmdelete&a=$workshop->id&sid=$submission->id\">".
 				get_string("delete", "workshop")."</a>";
-			$table->data[] = array(workshop_print_submission_title($workshop, $submission), "$user-firstname $user->lastname", $action);
+			$table->data[] = array(workshop_print_submission_title($workshop, $submission), "$user->firstname $user->lastname", $action);
 			}
 		print_table($table);
 		}
@@ -1631,29 +1632,32 @@ function workshop_list_teacher_submissions($workshop, $user) {
 					}
 				}
 			}
-		// now list user's assessments
+		// now list user's assessments (but only list those which come from teacher submissions)
 		if ($assessments = workshop_get_user_assessments($workshop, $user)) {
 			$timenow = time();
 			foreach ($assessments as $assessment) {
 				if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {
 					error ("workshop_list_teacher_submissions: unable to get submission");
 					}
-				$comment = '';
-				if (($timenow - $assessment->timecreated) > $CFG->maxeditingtime) {
-					$action = "<A HREF=\"assessments.php?action=viewassessment&a=$workshop->id&aid=$assessment->id\">"
-						.get_string("view", "workshop")."</A>";
-					// has teacher graded user's assessment?
-					if ($assessment->timegraded) {
-						if (($timenow - $assessment->timegraded) > $CFG->maxeditingtime) {
-							$comment .= get_string("gradedbyteacher", "workshop", $course->teacher);
+				// submission from a teacher?
+				if (isteacher($workshop->course, $submission->userid)) {
+					$comment = '';
+					if (($timenow - $assessment->timecreated) > $CFG->maxeditingtime) {
+						$action = "<A HREF=\"assessments.php?action=viewassessment&a=$workshop->id&aid=$assessment->id\">"
+							.get_string("view", "workshop")."</A>";
+						// has teacher graded user's assessment?
+						if ($assessment->timegraded) {
+							if (($timenow - $assessment->timegraded) > $CFG->maxeditingtime) {
+								$comment .= get_string("gradedbyteacher", "workshop", $course->teacher);
+								}
 							}
 						}
+					else { // there's still time left to edit...
+						$action = "<A HREF=\"assessments.php?action=assesssubmission&a=$workshop->id&sid=$submission->id\">".
+							get_string("edit", "workshop")."</A>";
+						}
+					$table->data[] = array(workshop_print_submission_title($workshop, $submission), $action, $comment);
 					}
-				else { // there's still time left to edit...
-					$action = "<A HREF=\"assessments.php?action=assesssubmission&a=$workshop->id&sid=$submission->id\">".
-						get_string("edit", "workshop")."</A>";
-					}
-				$table->data[] = array(workshop_print_submission_title($workshop, $submission), $action, $comment);
 				}
 			}
 		print_table($table);
@@ -1816,8 +1820,8 @@ function workshop_print_assessment($workshop, $assessment = FALSE, $showcommentl
 	
 	if ($assessment) {
 		// set the internal flag is necessary
-		if (($assessment->userid == $USER->id) and (($timenow - $assessment->timecreated) < $CFG->maxeditingtime) or 
-				!$assessment->timeagreed) {
+		if (($assessment->userid == $USER->id) and ((($timenow - $assessment->timecreated) < $CFG->maxeditingtime) or 
+				!$assessment->timeagreed)) {
 			$allowchanges = true;
 			}
 		if ($allowchanges or !$workshop->agreeassessments or !$workshop->hidegrades or $assessment->timeagreed) {
@@ -2268,6 +2272,22 @@ function workshop_print_assessment($workshop, $assessment = FALSE, $showcommentl
 		}
 	echo "</CENTER>";
 	echo "</FORM>\n";
+	}
+
+
+function workshop_print_assessments_for_admin($workshop, $submission) {
+
+	if ($assessments =workshop_get_assessments($submission)) {
+		foreach ($assessments as $assessment) {
+			if (!$user = get_record("user", "id", $assessment->userid)) {
+				error (" workshop_print_assessments_for_admin: unable to get user record");
+				}
+			echo "<p><center><b>".get_string("assessmentby", "workshop", $user->firstname." ".$user->lastname)."</b></center></p>\n";
+			workshop_print_assessment($workshop, $assessment);
+			echo "<p align=\"right\"><a href=\"assessments.php?action=adminconfirmdelete&a=$workshop->id&aid=$assessment->id\">".
+				get_string("delete", "workshop")."</a></p><hr>\n";
+			}
+		}
 	}
 
 

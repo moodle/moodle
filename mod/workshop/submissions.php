@@ -78,7 +78,7 @@
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
 			}
-		if (!isset($_GET['sid'])) {
+		if (empty($_GET['sid'])) {
 			error("Admin confirm delete: submission id missing");
 			}
 			
@@ -93,10 +93,11 @@
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
 			}
-		if (!$sid = isset($_GET['sid'])) {
+		if (empty($_GET['sid'])) {
 			error("Admin delete: submission id missing");
 			}
-		if (!$submission = get_record("workshop_submissions", "id", $sid)) {
+	
+		if (!$submission = get_record("workshop_submissions", "id", $_GET['sid'])) {
 			error("Admin delete: can not get submission record");
 			}
 		print_string("deleting", "workshop");

@@ -11,7 +11,10 @@ Comments are seen by a third party, is this standard Moodle behaviour?
 Cron function should email something to the assessor when an assessment is
 	agreed.
 	
+Self assessments may need special handling, remove duplication in student 
+	view
+
 Ray Kingdon
-8 May 2003
+13 May 2003
 
 

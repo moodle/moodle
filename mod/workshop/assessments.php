@@ -5,6 +5,7 @@
 	ACTIONS handled are:
 
 	addcomment
+	adminlist
 	agreeassessment
 	assesssubmission
 	displaygradingform
@@ -110,6 +111,58 @@
 		}
 
 
+	/******************* admin confirm delete ************************************/
+	if ($action == 'adminconfirmdelete' ) {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+			}
+		if (empty($_GET['aid'])) {
+			error("Admin confirm delete: assessment id missing");
+			}
+			
+		notice_yesno(get_string("confirmdeletionofthisitem","workshop"), 
+			 "assessments.php?action=admindelete&id=$cm->id&aid=$_GET[aid]", "submissions.php?action=adminlist&id=$cm->id");
+		}
+	
+
+	/******************* admin delete ************************************/
+	elseif ($action == 'admindelete' ) {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+			}
+		if (empty($_GET['aid'])) {
+			error("Admin delete: submission id missing");
+			}
+			
+		print_string("deleting", "workshop");
+		// first delete all the associated records...
+		delete_records("workshop_comments", "assessmentid", $_GET['aid']);
+		delete_records("workshop_grades", "assessmentid", $_GET['aid']);
+		// ...now delete the assessment...
+		delete_records("workshop_assessments", "id", $_GET['aid']);
+		
+		print_continue("submissions.php?id=$cm->id&action=adminlist");
+		}
+	
+
+	/*********************** admin list of asssessments (by teachers)***********************/
+	elseif ($action == 'adminlist') {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+			}
+			
+		if (empty($_GET['sid'])) {
+			error ("Workshop asssessments: adminlist called with no sid");
+			}
+		$submission = get_record("workshop_submissions", "id", $_GET['sid']);
+		workshop_print_assessments_for_admin($workshop, $submission);
+		print_continue("submissions.php?action=adminlist&a=$workshop->id");
+		}
+
+
 	/*************** agree (to) assessment (by student) ***************************/
 	elseif ($action == 'agreeassessment') {
 		$timenow = time();
@@ -159,7 +212,7 @@
 	/*************** display grading form (viewed by student) *********************************/
 	elseif ($action == 'displaygradingform') {
 
-	print_heading_with_help(get_string("specimengradingform", "workshop"), "specimen", "workshop");
+	print_heading_with_help(get_string("specimenassessmentform", "workshop"), "specimen", "workshop");
 	
 	workshop_print_assessment($workshop); // called with no assessment
 	print_continue("view.php?a=$workshop->id");
