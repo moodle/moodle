@@ -4,13 +4,13 @@
 
     //This is the "graphical" structure of the glossary mod:
     //
-    //                     glossary
-    //                    (CL,pk->id)
-    //                        |
-    //                        |
-    //                        |
-    //                  glossary_entries
-    //         (UL,pk->id, fk->glossaryid,files)
+    //                     glossary ---------------------- glossary_categories
+    //                    (CL,pk->id)                  (CL,pk->id,fk->glossaryid)
+    //                        |                                       |
+    //                        |                                       |
+    //                        |                                       |
+    //                  glossary_entries -------------- glossary_entries_categories
+    //         (UL,pk->id, fk->glossaryid, files)      (UL, [pk->categoryid,entryid]
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -65,6 +65,7 @@
                 //Now check if want to restore user data and do it.
                 //Restore glossary_entries
                 $status = glossary_entries_restore_mods($mod->id,$newid,$info,$restore);
+                //Restore glossary_categories and glossary_category_entries
 //                $status = glossary_categories_restore_mods($mod->id,$newid,$info,$restore);
             } else {
                 $status = false;
@@ -159,34 +160,32 @@
 
         //Iterate over entries
         for($i = 0; $i < sizeof($categories); $i++) {
-               $cat_info = $categories[$i];
+            $cat_info = $categories[$i];
 
             //We'll need this later!!
-               $oldid = backup_todb($cat_info['#']['ID']['0']['#']);
+            $oldid = backup_todb($cat_info['#']['ID']['0']['#']);
 
             //Now, build the GLOSSARY_CATEGORIES record structure
-               $category->glossaryid = $new_glossary_id;
-               $category->name = backup_todb($cat_info['#']['NAME']['0']['#']);
+            $category->glossaryid = $new_glossary_id;
+            $category->name = backup_todb($cat_info['#']['NAME']['0']['#']);
 
-               $newid = insert_record ("glossary_categories",$category);
+            $newid = insert_record ("glossary_categories",$category);
 
-            	//Do some output
-               if (($i+1) % 50 == 0) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                         echo "<br>";
-                    }
-                         backup_flush(300);
-                    }
-                    if ($newid) {
-                         //We have the newid, update backup_ids
-                         backup_putid($restore->backup_unique_code,"glossary_categories",$oldid,$newid);
-                         //Now copy moddata associated files if needed
-                    } else {
-                         $status = false;
-                    }
-
-               }
+            //Do some output
+            if (($i+1) % 50 == 0) {
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+            if ($newid) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,"glossary_categories",$oldid,$newid);
+                //Now copy moddata associated files if needed
+            } else {
+                $status = false;
+            }
         }
 
         return $status;
