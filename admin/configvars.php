@@ -218,16 +218,17 @@ class configvarrss extends configvar {
     }
     $timenow = time();
     $timeformat = get_string('strftimedaytime');
+    $timeformat = substr($timeformat, 1);
 
     for ($tz = -26; $tz <= 26; $tz++) {
         $zone = (float)$tz/2.0;
         $usertime = $timenow + ($tz * 1800);
         if ($tz == 0) {
-            $timezones["$zone"] = gmstrftime($timeformat, $usertime)." (GMT)";
+            $timezones["$zone"] = gmdate($timeformat, $usertime)." (GMT)";
         } else if ($tz < 0) {
-            $timezones["$zone"] = gmstrftime($timeformat, $usertime)." (GMT$zone)";
+            $timezones["$zone"] = gmdate($timeformat, $usertime)." (GMT$zone)";
         } else {
-            $timezones["$zone"] = gmstrftime($timeformat, $usertime)." (GMT+$zone)";
+            $timezones["$zone"] = gmdate($timeformat, $usertime)." (GMT+$zone)";
         }
     }
 
