@@ -69,10 +69,6 @@ global $THEME;
         die;
     }
     
-    if (!isset($CFG->enrol)) { // This is a hack to fix bug 1598
-        $CFG->enrol = 'internal';
-    }
-
 /// If there are any errors in the standard libraries we want to know!
     error_reporting(E_ALL);
 
@@ -145,12 +141,18 @@ global $THEME;
     }
 
 
+
 /// Set error reporting back to normal
     if (empty($CFG->debug)) {
         $CFG->debug = 7;
     }
     error_reporting($CFG->debug);
 
+
+/// Set a default enrolment configuration (see bug 1598)
+    if (!isset($CFG->enrol)) {
+        $CFG->enrol = 'internal';
+    }
 
 /// File permissions on created directories in the $CFG->dataroot
 
@@ -159,13 +161,13 @@ global $THEME;
     }
 
 /// Set up smarty template system
-    require_once($CFG->libdir .'/smarty/Smarty.class.php');  
-    $smarty = new Smarty;
-    $smarty->template_dir = $CFG->dirroot .'/templates/'. $CFG->template;
-    if (!file_exists($CFG->dataroot .'/cache')) {
-        make_upload_directory('cache');
-    }
-    $smarty->compile_dir = $CFG->dataroot .'/cache';
+    //require_once($CFG->libdir .'/smarty/Smarty.class.php');  
+    //$smarty = new Smarty;
+    //$smarty->template_dir = $CFG->dirroot .'/templates/'. $CFG->template;
+    //if (!file_exists($CFG->dataroot .'/cache')) {
+    //    make_upload_directory('cache');
+    //}
+    //$smarty->compile_dir = $CFG->dataroot .'/cache';
 
 /// Set up session handling 
     if (empty($CFG->dbsessions)) {   /// File-based sessions
