@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 /// Library of extra functions for the dialogue module
 
@@ -328,7 +328,7 @@ function dialogue_list_conversations_closed($dialogue) {
                 $status = get_string("open", "dialogue");
             }
             $table->data[] = array("<a href=\"dialogues.php?id=$cm->id&action=showdialogues&cid=$conversation->id\">".
-                "$name</a>", $conversation->subject, $byuser." ".get_string("of", "dialogue")." ".$total,
+                "$name</a>", clean_text($conversation->subject), $byuser." ".get_string("of", "dialogue")." ".$total,
                 userdate($conversation->timemodified), $status);
             }
         print_table($table);
@@ -389,7 +389,7 @@ function dialogue_list_conversations_other($dialogue) {
                 $status = get_string("notyetseen", "dialogue");
             }
             $table->data[] = array("<a href=\"dialogues.php?id=$cm->id&action=printdialogue&cid=$conversation->id\">".
-                "$name</a>", $conversation->subject, $byuser." ".get_string("of", "dialogue")." ".$total,
+                "$name</a>", clean_text($conversation->subject), $byuser." ".get_string("of", "dialogue")." ".$total,
                 userdate($conversation->timemodified), $status);
             }
         print_table($table);
@@ -448,7 +448,7 @@ function dialogue_list_conversations_self($dialogue) {
             // print_user_picture($user->id, $course->id, $user->picture);
             echo "<b>".get_string("dialoguewith", "dialogue", fullname($otheruser)).
                 "</b></td>";
-            echo "<td bgcolor=\"$THEME->cellheading2\"><i>$conversation->subject&nbsp;</i><br />\n";
+            echo "<td bgcolor=\"$THEME->cellheading2\"><i>".clean_text($conversation->subject)."&nbsp;</i><br />\n";
             echo "<div align=\"right\">\n";
             if (!$conversation->subject) {
                 // conversation does not have a subject, show add subject link
@@ -473,14 +473,14 @@ function dialogue_list_conversations_self($dialogue) {
                     if ($entry->userid == $USER->id) {
                         echo "<tr><td colspan=\"2\" bgcolor=\"#FFFFFF\">\n";
                         echo text_to_html("<font size=\"1\">".get_string("onyouwrote", "dialogue", 
-                            userdate($entry->timecreated)).":</font><br />".$entry->text);
+                            userdate($entry->timecreated)).":</font><br />".clean_text($entry->text));
                         echo "</td></tr>\n";
                     }
                     else {
                         echo "<tr><td colspan=\"2\" bgcolor=\"$THEME->body\">\n";
                         echo text_to_html("<font size=\"1\">".get_string("onwrote", "dialogue", 
                                userdate($entry->timecreated)." ".$otheruser->firstname).
-                               ":</font><br />".$entry->text);
+                               ":</font><br />".clean_text($entry->text));
                         echo "</td></tr>\n";
                     }
                 }
@@ -552,7 +552,7 @@ function dialogue_print_conversation($dialogue, $conversation) {
     // print_user_picture($user->id, $course->id, $user->picture);
     echo "<b>".get_string("dialoguewith", "dialogue", fullname($otheruser)).
         "</b></td>";
-    echo "<td bgcolor=\"$THEME->cellheading2\"><i>$conversation->subject&nbsp;</i><br />\n";
+    echo "<td bgcolor=\"$THEME->cellheading2\"><i>".clean_text($conversation->subject)."&nbsp;</i><br />\n";
     echo "<div align=\"right\">\n";
     if (!$conversation->subject) {
         // conversation does not have a subject, show add subject link
@@ -571,13 +571,13 @@ function dialogue_print_conversation($dialogue, $conversation) {
             if ($entry->userid == $USER->id) {
                 echo "<tr><td colspan=\"2\" bgcolor=\"#FFFFFF\">\n";
                 echo text_to_html("<font size=\"1\">".get_string("onyouwrote", "dialogue", 
-                            userdate($entry->timecreated)).":</font><br />".$entry->text);
+                            userdate($entry->timecreated)).":</font><br />".clean_text($entry->text));
             }
             else {
                 echo "<tr><td colspan=\"2\" bgcolor=\"$THEME->body\">\n";
                 echo text_to_html("<font size=\"1\">".get_string("onwrote", "dialogue", 
                             userdate($entry->timecreated)." ".$otheruser->firstname).":</font><br />".
-                        $entry->text);
+                        clean_text($entry->text));
             }
         }
         echo "</td></tr>\n";
@@ -720,7 +720,7 @@ function dialogue_show_conversation($dialogue, $conversation) {
     // print_user_picture($user->id, $course->id, $user->picture);
     echo "<b>".get_string("dialoguewith", "dialogue", fullname($otheruser)).
         "</b></td>";
-    echo "<td bgcolor=\"$THEME->cellheading2\" valign=\"top\"><i>$conversation->subject&nbsp;</i></td></tr>";
+    echo "<td bgcolor=\"$THEME->cellheading2\" valign=\"top\"><i>".clean_text($conversation->subject)."&nbsp;</i></td></tr>";
 
     if ($entries = get_records_select("dialogue_entries", "conversationid = $conversation->id", "id")) {
         foreach ($entries as $entry) {
@@ -728,13 +728,13 @@ function dialogue_show_conversation($dialogue, $conversation) {
                 echo "<tr><td  colspan=\"2\" bgcolor=\"#FFFFFF\">\n";
                 echo text_to_html("<font size=\"1\">".get_string("onyouwrote", "dialogue", 
                     userdate($entry->timecreated)).
-                    ":</font><br />".$entry->text);
+                    ":</font><br />".clean_text($entry->text));
                 echo "</td></tr>\n";
             }
             else {
                 echo "<tr><td  colspan=\"2\" bgcolor=\"$THEME->body\">\n";
                 echo text_to_html("<font size=\"1\">".get_string("onwrote", "dialogue", 
-                    userdate($entry->timecreated)." ".$otheruser->firstname).":</font><br />".$entry->text);
+                    userdate($entry->timecreated)." ".$otheruser->firstname).":</font><br />".clean_text($entry->text));
                 echo "</td></tr>\n";
             }
         }
@@ -797,14 +797,14 @@ function dialogue_show_other_conversations($dialogue, $conversation) {
                             if ($entry->userid == $user->id) {
                                 echo "<tr><td  colspan=\"2\" bgcolor=\"#FFFFFF\">\n";
                                 echo text_to_html("<font size=\"1\">".get_string("onyouwrote", "dialogue", 
-                                    userdate($entry->timecreated)).":</font><br />".$entry->text);
+                                    userdate($entry->timecreated)).":</font><br />".clean_text($entry->text));
                                 echo "</td></tr>\n";
                             }
                             else {
                                 echo "<tr><td  colspan=\"2\" bgcolor=\"$THEME->body\">\n";
                                 echo text_to_html("<font size=\"1\">".get_string("onwrote", "dialogue", 
                                     userdate($entry->timecreated)." ".$otheruser->firstname).
-                                    ":</font><br />".$entry->text);
+                                    ":</font><br />".clean_text($entry->text));
                                 echo "</td></tr>\n";
                             }
                         }
