@@ -4,10 +4,10 @@ $string['absent'] = 'Absent';
 $string['accumulative'] = 'Cumulative';
 $string['action'] = 'Action';
 $string['ago'] = 'Il y a $a';
-$string['allgradeshaveamaximumof'] = 'La note maximale est de $a';
 $string['amend'] = 'Modifier';
 $string['amendassessmentelements'] = 'Modifier les éléments d\'évaluation';
 $string['amendtitle'] = 'Modifier le nom';
+$string['analysis'] = 'Analyse';
 $string['assess'] = 'Évaluer';
 $string['assessed'] = 'Évalué';
 $string['assessment'] = 'Évaluation';
@@ -20,15 +20,17 @@ $string['atthisstageyou'] = 'Vous venez de terminer une évaluation.<br />
 	Vous pouvez si vous le désirez réviser votre travail à la lumière de cette évaluation.<br />
 	Dans ce cas, n\'oubliez pas de réviser aussi votre évaluation.<br />
 	Vous pouvez le faire en cliquant sur le lien « Ré-évaluer » ci-dessous.';
-$string['awaitingfeedbackfromthe'] = 'En attente d\'un feedback de l\'enseignant';
 $string['awaitingassessmentbythe'] = 'En attente d\'une évaluation de l\'enseignant';
 $string['clearlateflag'] = 'Annuler l\'annonce « En retard »';
 $string['comment'] = 'Commentaire';
+$string['comparisonofassessments'] = 'Comparaison des évaluations';
 $string['confirmdeletionofthisitem'] = 'Confirmer la suppression de ce $a';
 $string['correct'] = 'Correct';
+$string['count'] = 'Nombre';
 $string['criterion'] = 'Critère';
 $string['deadline'] = 'Délai';
 $string['deadlineis'] = 'Le délai est $a';
+$string['deletesubmissionwarning'] = 'Attention ! Il y a \$a évaluations associée à ce travail.<br />Nous vous recommandons vivement de NE PAS supprimer ce travail.';
 $string['description'] = 'Consigne';
 $string['descriptionofexercise'] = 'Dans une activité « Exercice », la consigne de l\'exercice ou de la tâche à effectuer par l\'étudiant est placée dans un document PDF, HTML ou autre. Ce fichier est déposé dans l\'exercice par l\'enseignant avant l\'ouverture de l\'exercice pour les étudiants. Il est aussi possible de créer des variantes de la tâche à effectuer, là encore dans des fichiers que l\'on déposera dans l\'activité avant de l\'ouvrir aux étudiants.';
 $string['delete'] = 'Supprimer';
@@ -41,12 +43,14 @@ $string['edit'] = 'Modifier';
 $string['editingassessmentelements'] = 'Modifier les éléments d\'évaluation';
 $string['element'] = 'Élément';
 $string['elementweight'] = 'Coefficient';
+$string['enterpassword'] = 'Saisir le mot de passe';
 $string['entriessaved'] = 'Réglage enregistré';
 $string['errorbanded'] = 'Erreur cumulée';
 $string['excellent'] = 'Excellent';
 $string['exerciseassessments'] = 'Évaluations de l\'exercice';
 $string['exercisefeedback'] = 'Feedback de l\'exercice';
 $string['exercisesubmissions'] = 'Travaux remis de l\'exercice';
+$string['fair'] = 'Acceptable';
 $string['generalcomment'] = 'Commentaire général';
 $string['good'] = 'Bon';
 $string['gradeassessment'] = 'Noter l\'évaluation';
@@ -54,10 +58,13 @@ $string['gradeforassessment'] = 'Note de l\'évaluation';
 $string['gradeforstudentsassessment'] = 'Note de l\'évaluation de l\'étudiant';
 $string['gradeforsubmission'] = 'Note du travail remis';
 $string['gradetable'] = 'Tableau des notes';
+$string['gradinggrade'] = 'Noter les évaluations';
 $string['gradingstrategy'] = 'Stratégie d\'évaluation';
 $string['handlingofmultiplesubmissions'] = 'Traitement des remises multiples';
 $string['hidenamesfromstudents'] = 'Masquer les noms pour les étudiants';
 $string['incorrect'] = 'Incorrect';
+$string['late'] = 'En retard';
+$string['lax'] = 'Indulgent';
 $string['leaguetable'] = 'Tableau des meilleurs travaux';
 $string['managingassignment'] = 'Gestion de l\'exercice';
 $string['mail1'] = 'Votre travail « $a » a été évalué par';
@@ -65,7 +72,12 @@ $string['mail2'] = 'Les commentaires et la notre peuvent être consultés dans l\'
 $string['mail3'] = 'Vous pouvez le voir dans votre exercice';
 $string['mail6'] = 'Votre évaluation du travail « $a » a été notée';
 $string['mail7'] = 'Les commentaires fournis par $a sont disponibles dans l\'exercice ';
+$string['maximum'] = 'Maximum';
+$string['maximumgradeforstudentassessments'] = 'Note maximale des évaluations des étudiants&nbsp;: $a';
+$string['maximumgradeforsubmissions'] = 'Note maximale des travaux remis&nbsp;: \$a';
 $string['maximumsize'] = 'Taille maximale';
+$string['mean'] = 'Moyenne';
+$string['minimum'] = 'Minumum';
 $string['modulename'] = 'Exercice';
 $string['modulenameplural'] = 'Exercices';
 $string['movingtophase'] = 'Passage à la phase $a';
@@ -80,22 +92,24 @@ $string['noteonassessmentelements'] = 'L\'évaluation se fait à partir de divers 
 	sur l\'exercice dans le cours et on vous demandera d\'ajouter des éléments s\'il n\'y<br />
 	en a encore aucun. Vous pourrez changer le nombre des éléments en cliquant Modifier cet exercice<br />
 	d\'édition. Vous pouvez modifier les éléments en cliquant sur « Modifier les éléments d\'évaluation ».';
+$string['noteongradinggrade'] =	'Cette note mesure à quel point votre évaluation est en accord avec<br />
+	celle de l\'enseignant. Plus la note est élevée, meilleur est l\'accord entre les deux évaluations.';
 $string['noteonstudentassessments'] = '{Note donnée par l\'étudiant / Note de l\'évaluation donnée par l\'enseignant}';
-$string['notitlegiven'] = 'Aucun nom fourni';
 $string['notgraded'] = 'Sans note';
+$string['notitlegiven'] = 'Aucun nom fourni';
 $string['nowpleasemakeyourownassessment'] = 'Veuillez maintenant évaluer le travail de $a.<br />
 	Le formulaire d\'évaluation contient initialement les notes que s\'est donné l\'étudiant.<br />
-	Modifier ces évaluations au besoin et cliquer ensuite';
-	'Now Please make your own Assessment of the Piece of Work from $a.<br />
-	Note that the Assessment Form is initially given the same grades as the <br />
-	Student\'s Form. You should make any amendments you think necessary and then <br />
-	click on one of the buttons at the foot of the page.';
+	Faites toutes les modifications que vous jugez nécessaires, puis cliquez sur l\'un<br />
+	des boutons au bas de la page.';
 $string['numberofassessmentelements'] = 'Nombre de commentaires, d\'éléments d\'évaluation, de critères, de notes ou de catégories dans une rubrique';
+$string['numberofcriterionelements'] = 'Le nombre d\'éléments d\'évaluation doit être supérieur à un.';
 $string['numberofentries'] = 'Nombre de travaux';
+$string['numberofentriesinleaguetable'] = 'Nombre de travaux dans le tableau des meilleurs travaux';
 $string['numberofnegativeresponses'] = 'Nombre de réponses négatives';
 $string['onesubmission'] = 'Un travail remis';
 $string['optionaladjustment'] = 'Ajustement facultatif';
 $string['overallgrade'] = 'Note finale';
+$string['passwordprotectedexercise'] = 'Exercice protégé par mot de passe';
 $string['phase'] = 'Phase';
 $string['phase1'] = 'Mise en place de l\'exercice';
 $string['phase1short'] = 'Mise en place';
@@ -110,11 +124,12 @@ $string['pleaseusethisform'] = 'Veuillez compléter ce formulaire<br />
 $string['pleaseviewtheexercise'] = 'Veuillez consulter l\'exercice ci-dessous en cliquant sur son nom<br />
 	Merci de suivre les instructions données. Une fois les tâches terminées,<br />
 	veuillez cliquer sur le lien Évaluer (ou Ré-évaluer) ci-dessous.<br />
-	Cette évaluation faite, vous recevrez d\'autres indications pour continuer.';
+	Cette évaluation faite, vous recevrez d\'autres instructions pour remettre votre travail.';
 $string['poor'] = 'Faible';
 $string['present'] = 'Présent';
-$string['reasonforadjustment'] = 'Justification de l\'ajustement';
+$string['reasonforadjustment'] = 'Commentaire général/Justification de l\'ajustement';
 $string['reassess'] = 'Ré-évaluer';
+$string['regradestudentassessments'] = 'Ré-évaluer les évaluations des étudiants';
 $string['resubmissionfor'] = 'Nouvelle remise pour $a';
 $string['resubmitnote'] = '* signifie que l\'étudiant peut remettre un autre document.<br />
 	On peut activer ce comportement à chaque document remis en le ré-évaluant et en<br />
@@ -136,6 +151,8 @@ $string['scale10'] = 'Total sur 10';
 $string['scale20'] = 'Total sur 20';
 $string['scale100'] = 'Total sur 100';
 $string['specimenassessmentform'] = 'Exemple de formulaire d\'évaluation';
+$string['standarddeviation'] = 'Écart type';
+$string['strict'] = 'Strict';
 $string['studentallowedtoresubmit'] = 'Remises multiples autorisées';
 $string['studentassessments'] = 'Évaluations faites par les étudiants';
 $string['studentnotallowed'] = 'Remises multiples NON autorisées';
@@ -160,12 +177,16 @@ $string['thisisaresubmission'] = 'This is a Re-submission by $a.<br />Your asses
 	and click on one of the buttons at the foot of the page.';
 $string['title'] = 'Nom';
 $string['typeofscale'] = 'Type de barème';
+$string['unassessed'] = '$a pas évalué';
 $string['ungradedstudentassessments'] = '$a évaluations sans notes (travaux d\'étudiants)';
 $string['usemaximum'] = 'Utiliser la note maximale';
 $string['usemean'] = 'Utiliser la moyenne';
+$string['usepassword'] = 'Utiliser un mot de passe';
+$string['verylax'] = 'Très indulgent';
 $string['verypoor'] = 'Très faible';
+$string['verystrict'] = 'Très strict';
 $string['view'] = 'Afficher';
-$string['viewassessment'] = 'Afficher l\'évaluation';
+$string['viewteacherassessment'] = 'Afficher l\'évaluation de l\'enseignant';
 $string['warningonamendingelements'] = 'Attention ! Des évaluations ont été effectuées.<br />
 	NE modifiez PAS le nombre d\'éléments d\'évaluation, ni le type de barème, ni les coefficients des éléments.';
 $string['weightederrorcount'] = 'Nombre d\'erreurs pondérées : $a';
@@ -174,6 +195,7 @@ $string['weightforteacherassessments'] = 'Coefficient des évaluations de l\'ense
 $string['weights'] = 'Pondération';
 $string['weightssaved'] = 'Coefficients enregistrés';
 $string['weightsusedforoverallgrade'] = 'Coefficients utilisés pour la note finale';
+$string['wrongpassword'] = 'Mot de passe incorrect pour cet exercice';
 $string['yourassessment'] = 'Votre évaluation';
 $string['yourfeedbackgoeshere'] = 'Votre feedback s\'affichera ici';
 $string['yoursubmission'] = 'Votre travail';
