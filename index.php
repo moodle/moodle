@@ -71,6 +71,7 @@
              $moddata[]="<A HREF=\"admin/user.php\">".get_string("edituser")."</A>";
              $modicon[]=$icon;
              print_side_block("", $moddata, "", $modicon);
+             echo "<IMG SRC=\"pix/spacer.gif\" WIDTH=200 HEIGHT=0><BR>";
          }
       ?>
 
