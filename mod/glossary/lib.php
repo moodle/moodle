@@ -297,24 +297,115 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $tab="",$cat="") 
         }
     }
 }
-function  glossary_print_entry_concept($entry, $alias = true) {
-static $glossary; // to avoid unnecessary calls when dealing with the same glossary
-static $cm;
+function  glossary_print_entry_concept($entry) {
     echo $entry->concept;
-/*
-    if ($alias) {
-        if ($glossary->id != $entry->glossaryid) {
-            $glossary = get_record("glossary","id",$entry->glossaryid);
-            $cm = get_coursemodule_from_instance("glossary", $glossary->id, $glossary->course);
-        }
-        echo " <a title=\"" . get_string("editalias","glossary") . "\" href=\"alias.php?id=$cm->id&eid=$entry->id\"><img border=0 src=alias.gif></a>";
-    }
-*/
- }
+}
 
 function glossary_print_entry_definition($entry) {
     $definition = str_ireplace($entry->concept,"<nolink>$entry->concept</nolink>",$entry->definition);
     echo format_text($definition, $entry->format);
+}
+
+function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$tab="",$cat="", $mode = 'print') {
+    $return = '';
+    if ( $aliases = get_records("glossary_alias","entryid",$entry->id) ) {
+        foreach ($aliases as $alias) {
+            if ($alias->alias) {
+                if ($return == '') {
+                    $return = '<select style="font-size:8pt">';
+                }
+                $return .= "<option>$alias->alias</option>";
+            }
+        }
+        if ($return != '') {
+            $return .= '</select>';
+//            $return = "<table border=0 align=$align><tr><td>$return</td></tr></table>";
+        }
+    } 
+    if ($mode == 'print') {
+        echo $return;
+    } else {
+        return $return;
+    }
+}
+
+function glossary_print_entry_icons($course, $cm, $glossary, $entry,$tab="",$cat="", $mode = 'print') {
+    global $THEME, $USER;
+
+    $importedentry = ($entry->sourceglossaryid == $glossary->id);
+    $isteacher = isteacher($course->id);
+    $ismainglossary = $glossary->mainglossary;
+	
+    $return = "<font size=1>";
+
+    if (!$entry->approved) {
+        $return .= get_string("entryishidden","glossary");
+    }
+    $count = count_records("glossary_comments","entryid",$entry->id);
+    if ($count) {
+        $return .= " <a href=\"comments.php?id=$cm->id&eid=$entry->id\">$count ";
+        if ($count == 1) {
+            $return .= get_string("comment", "glossary");
+        } else {
+            $return .= get_string("comments", "glossary");
+        }
+        $return .= "</a>";
+    }
+    $return .= "</font>";
+    if ( $glossary->allowcomments and !isguest()) {
+        $return .= " <a title=\"" . get_string("addcomment","glossary") . "\" href=\"comment.php?id=$cm->id&eid=$entry->id\"><img src=\"comment.gif\" height=16 width=16 border=0></a> ";
+    }
+
+    if ($isteacher or $glossary->studentcanpost and $entry->userid == $USER->id) {
+        // only teachers can export entries so check it out
+        if ($isteacher and !$ismainglossary and !$importedentry) {
+            $mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
+            if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
+
+                $return .= " <a title=\"" . get_string("exporttomainglossary","glossary") . "\" href=\"exportentry.php?id=$cm->id&entry=$entry->id&tab=$tab&cat=$cat\"><img src=\"export.gif\" height=11 width=11 border=0></a> ";
+
+            }
+        }
+
+        if ( $entry->sourceglossaryid ) {
+            $icon = "minus.gif";   // graphical metaphor (minus) for deleting an imported entry
+        } else {
+            $icon = "../../pix/t/delete.gif";
+        }
+
+        // Exported entries can be updated/deleted only by teachers in the main glossary
+        if ( !$importedentry and ($isteacher or !$ismainglossary) ) {
+            $return .= " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&mode=delete&entry=$entry->id&tab=$tab&cat=$cat\"><img src=\"";
+            $return .= $icon;
+            $return .= "\" height=11 width=11 border=0></a> ";
+            
+            $return .= " <a title=\"" . get_string("edit") . "\" href=\"edit.php?id=$cm->id&e=$entry->id&tab=$tab&cat=$cat\"><img src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a>";
+        } elseif ( $importedentry ) {
+            $return .= " <font size=-1>" . get_string("exportedentry","glossary") . "</font>";
+        }
+    }
+    $return .= "&nbsp;&nbsp;"; // just to make up a little the output in Mozilla ;)
+    if ($mode == 'print') {
+        echo $return;
+    } else {
+        return $return;
+    }
+}
+
+function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $tab, $cat) {
+
+    $aliases = glossary_print_entry_aliases($course, $cm, $glossary, $entry, $tab, $cat,"html");
+    $icons   = glossary_print_entry_icons($course, $cm, $glossary, $entry, $tab, $cat,"html");
+    if ( $aliases ) {
+        echo '<table border="0" width="100%" align="center"><tr>' .
+              '<td align="right" width="50%" valign=top><font size=1>' .
+              get_string("aliases","glossary") . ': ' . $aliases . '</td>' .
+              '<td align=right width="50%" valign=top>'.
+              $icons .
+              '</td></tr></table>';
+    } else {
+        echo "<p align=right>$icons";
+    }
 }
 
 function glossary_print_entry_attachment($entry,$format=NULL,$align="right") {
@@ -348,8 +439,9 @@ function glossary_print_entry_by_default($course, $cm, $glossary, $entry,$tab=""
         echo "<b>";
         glossary_print_entry_concept($entry);
         echo ":</b> ";
+        glossary_print_entry_aliases($entry);
         glossary_print_entry_definition($entry);
-        glossary_print_entry_icons($course, $cm, $glossary, $entry,$tab,$cat);
+        glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$tab,$cat);
     echo "</td>";
     echo "</TR>";
 }
@@ -362,66 +454,8 @@ function glossary_print_entry_continuous($course, $cm, $glossary, $entry,$tab=""
         glossary_print_entry_concept($entry);
         echo " ";
         glossary_print_entry_definition($entry);
-        glossary_print_entry_icons($course, $cm, $glossary, $entry, $tab, $cat);
+        glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $tab, $cat);
     }
-}
-
-function glossary_print_entry_icons($course, $cm, $glossary, $entry,$tab="",$cat="") {
-    global $THEME, $USER;
-
-    $importedentry = ($entry->sourceglossaryid == $glossary->id);
-    $isteacher = isteacher($course->id);
-    $ismainglossary = $glossary->mainglossary;
-	
-    echo "<p align=\"right\"><font size=1>";
-
-    if (!$entry->approved) {
-        echo get_string("entryishidden","glossary");
-    }
-    $count = count_records("glossary_comments","entryid",$entry->id);
-    if ($count) {
-        echo " <a href=\"comments.php?id=$cm->id&eid=$entry->id\">$count ";
-        if ($count == 1) {
-            print_string("comment", "glossary");
-        } else {
-            print_string("comments", "glossary");
-        }
-        echo "</a>";
-    }
-    echo "</font>";
-    if ( $glossary->allowcomments and !isguest()) {
-        echo " <a title=\"" . get_string("addcomment","glossary") . "\" href=\"comment.php?id=$cm->id&eid=$entry->id\"><img src=\"comment.gif\" height=16 width=16 border=0></a> ";
-    }
-
-    if ($isteacher or $glossary->studentcanpost and $entry->userid == $USER->id) {
-        // only teachers can export entries so check it out
-        if ($isteacher and !$ismainglossary and !$importedentry) {
-            $mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
-            if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
-
-                echo " <a title=\"" . get_string("exporttomainglossary","glossary") . "\" href=\"exportentry.php?id=$cm->id&entry=$entry->id&tab=$tab&cat=$cat\"><img src=\"export.gif\" height=11 width=11 border=0></a> ";
-
-            }
-        }
-
-        if ( $entry->sourceglossaryid ) {
-            $icon = "minus.gif";   // graphical metaphor (minus) for deleting an imported entry
-        } else {
-            $icon = "../../pix/t/delete.gif";
-        }
-
-        // Exported entries can be updated/deleted only by teachers in the main glossary
-        if ( !$importedentry and ($isteacher or !$ismainglossary) ) {
-            echo " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&mode=delete&entry=$entry->id&tab=$tab&cat=$cat\"><img src=\"";
-            echo $icon;
-            echo "\" height=11 width=11 border=0></a> ";
-            
-            echo " <a title=\"" . get_string("edit") . "\" href=\"edit.php?id=$cm->id&e=$entry->id&tab=$tab&cat=$cat\"><img src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a>";
-        } elseif ( $importedentry ) {
-            echo " <font size=-1>" . get_string("exportedentry","glossary") . "</font>";
-        }
-    }
-    echo "&nbsp;&nbsp;"; // just to make up a little the output in Mozilla ;)
 }
 
 function glossary_search_entries($searchterms, $glossary, $includedefinition) {

@@ -20,7 +20,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry,$tab="",
         echo "\n<tr><td width=100% bgcolor=\"$THEME->cellcontent\">";
 		
         glossary_print_entry_definition($entry);
-        glossary_print_entry_icons($course, $cm, $glossary, $entry, $tab, $cat);
+        glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $tab, $cat);
     } else {
         echo "<center>";
         print_string("noentry", "glossary");

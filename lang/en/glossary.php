@@ -4,7 +4,7 @@
 $string['addcomment'] = "Add comment";
 $string['addentry'] = "Add a new entry";
 $string['approve'] = "Approve";
-$string['aliases'] = "Aliases";
+$string['aliases'] = "Alias(es)";
 $string['allentries'] = "ALL";
 $string['allcategories'] = "All Categories";
 $string['allowcomments'] = "Allow comments on entries";

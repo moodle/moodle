@@ -7,6 +7,7 @@ This is the Glossary module. Created and maintained by Williams Castillo. This a
 Basically, this module allows you to maintain a repository of data in the form of concepts, Entry->Definitions, etc. Thus:
 
 - Entries could be automatically linked from within moodle resources, labels, forum posts, etc.
+- Entries can have aliases which allows to automatically link the concept to other words than itself.
 - Glossaries can be viewed in a printer-friendly version format
 - The display format of the entries is modular so you can create your own formats (and share them with the Moodle community!)
 - Entries are posted by teachers and can be posted by students as well
@@ -15,6 +16,7 @@ Basically, this module allows you to maintain a repository of data in the form o
 - Entries can be commented by any registered user.
 - Entries can be categorized (one entry can belongs to zero or more categories)
 - Entries can be browsed by letters (initials), categories or by date.
+- Entries can be exported and imported
 
 Quick install instructions
 

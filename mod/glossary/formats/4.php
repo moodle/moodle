@@ -22,7 +22,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry,$tab="",
         echo glossary_print_entry_definition($entry);
 
 
-        glossary_print_entry_icons($course, $cm, $glossary, $entry, $tab, $cat);
+        glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $tab, $cat);
         echo '</td></tr></table>';
 
     } else {
