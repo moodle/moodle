@@ -192,12 +192,12 @@ function stripslashes_safe($string) {
     return $string;
 }
 
-if (!function_exists('str_ireplace')) {
+if (!function_exists('str_ireplace')) {    /// Only exists in PHP 5
     function str_ireplace($find, $replace, $string) {
     /// This does a search and replace, ignoring case
-    /// This function is only here versions of PHP older than version 5
-    /// may not have a native version of this function.
-    /// Taken from the PHP manual, by bradhuizenga@softhome.net
+    /// This function is only used for versions of PHP older than version 5
+    /// which do not have a native version of this function.
+    /// Taken from the PHP manual, by bradhuizenga @ softhome.net
 
         if (!is_array($find)) {
             $find = array($find);
@@ -227,6 +227,15 @@ if (!function_exists('str_ireplace')) {
             $string = implode($replace[$fKey],$between);
         }
         return ($string);
+    }
+}
+
+if (!function_exists('stripos')) {    /// Only exists in PHP 5
+    function stripos($haystack, $needle, $offset=0) {
+    /// This function is only used for versions of PHP older than version 5
+    /// which do not have a native version of this function.
+    /// Taken from the PHP manual, by dmarsh @ spscc.ctc.edu
+        return strpos(strtoupper($haystack), strtoupper($needle), $offset);
     }
 }
 
@@ -563,10 +572,6 @@ function filter_text($text, $courseid=NULL) {
 /// with $courseid and $text parameters
 
     global $CFG;
-
-    if (empty($courseid)) {
-        return $text;
-    }
 
     for ($i=1; $i<=10; $i++) {
         $variable = "textfilter$i";
