@@ -48,7 +48,7 @@
     print_simple_box(get_string("people"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
     $moddata[]="<A TITLE=\"".get_string("listofallpeople")."\" HREF=\"../user/index.php?id=$course->id\">".get_string("participants")."</A>";
     $modicon[]="<IMG SRC=\"../user/users.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-    $editmyprofile = "<A HREF=\"../user/view.php?id=$USER->id&course=$course->id\">".get_string("editmyprofile")."</A>";
+    $editmyprofile = "<A TITLE=\"$USER->firstname $USER->lastname\" HREF=\"../user/view.php?id=$USER->id&course=$course->id\">".get_string("editmyprofile")."</A>";
     if ($USER->description) {
         $moddata[]= $editmyprofile;
     } else {
