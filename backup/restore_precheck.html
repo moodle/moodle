@@ -9,6 +9,19 @@
         error ("File not specified");
     }
 
+    //Check login   
+    require_login();
+
+    //Check admin
+    if (!isadmin()) {
+        error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+    }
+
+    //Check site
+    if (!$site = get_site()) {
+        error("Site not found!");
+    }
+
     //Prepend dataroot to variable to have the absolute path
     $file = $CFG->dataroot."/".$file;
 
@@ -93,7 +106,25 @@
         }
     }
 
+    //Save course header and info into php session
+    if ($status) {
+        $SESSION->info = $info;
+        $SESSION->course_header = $course_header;
+    }
+
+    //Finally, a little form to continue
+    //with some hidden fields
+    if ($status) {
+        echo "<br><CENTER>";
+        $hidden["backup_unique_code"] = $backup_unique_code;
+        $hidden["launch"]             = "form";
+        $hidden["file"]               =  $file;
+        print_single_button("restore.php", $hidden, get_string("continue"),"post");
+        echo "</CENTER>";
+    }
+  
     if (!$status) {
         error ("An error has ocurred");
     }
+
 ?>

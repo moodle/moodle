@@ -1,6 +1,19 @@
 <?PHP //$Id$
     //This page prints the backup form to select everything
 
+    //Check login   
+    require_login();
+
+    //Check admin
+    if (!isadmin()) {
+        error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+    }
+
+    //Check site
+    if (!$site = get_site()) {
+        error("Site not found!");
+    }
+
    //Checks for the required files/functions to backup every mod
     //And check if there is data about it 
     $count = 0;

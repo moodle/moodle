@@ -65,8 +65,8 @@
     //Call the form, depending the step we are
     if (!$launch) {
         include_once("restore_precheck.html");
-    } else if ($launch == "check") {
-        include_once("backup_check.html");
+    } else if ($launch == "form") {
+        include_once("restore_form.html");
     } else if ($launch == "execute") {
         include_once("backup_execute.html");
     }
