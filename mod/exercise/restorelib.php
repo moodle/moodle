@@ -68,6 +68,8 @@
             $exercise->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
             $exercise->gradinggrade = backup_todb($info['MOD']['#']['GRADINGGRADE']['0']['#']);
             $exercise->showleaguetable = backup_todb($info['MOD']['#']['SHOWLEAGUETABLE']['0']['#']);
+            $exercise->usepassword = backup_todb($info['MOD']['#']['USEPASSWORD']['0']['#']);
+            $exercise->password = backup_todb($info['MOD']['#']['PASSWORD']['0']['#']);
 
             //The structure is equal to the db, so insert the exercise
             $newid = insert_record ("exercise",$exercise);

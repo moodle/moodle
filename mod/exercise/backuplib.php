@@ -65,6 +65,8 @@
                 fwrite ($bf,full_tag("GRADE",4,false,$exercise->grade));
                 fwrite ($bf,full_tag("GRADINGGRADE",4,false,$exercise->gradinggrade));
                 fwrite ($bf,full_tag("SHOWLEAGUETABLE",4,false,$exercise->showleaguetable));
+                fwrite ($bf,full_tag("USEPASSWORD",4,false,$exercise->usepassword));
+                fwrite ($bf,full_tag("PASSWORD",4,false,$exercise->password));
                 //Now we backup exercise elements
                 $status = backup_exercise_elements($bf,$preferences,$exercise->id);
                 //Now we backup any teacher submissions (these are an integral part of the exercise)
