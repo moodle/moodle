@@ -74,6 +74,9 @@ $string['parentofthispost'] = "Relativo a questo post";
 $string['postadded'] = "Il tuo messaggio è stato aggiunto con successo.<P>Hai \$a per editarlo se desideri apportare delle modifiche.";
 $string['postincontext'] = "Vedi questo messaggio nel contesto";
 $string['postmailinfo'] = "Questa è una copia del messaggio postato su \$a .
+
+
+
 Per aggiungere la tua risposta via internet, clicca su questo link:";
 $string['postrating1'] = "Le esposizioni in genere, sono INDIPENDENTI dai saperi";
 $string['postrating2'] = "Equamente indipendenti e connesse";

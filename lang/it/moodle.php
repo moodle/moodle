@@ -395,11 +395,17 @@ password: \$a->newpassword
 
 Per favore vai alla seguente pagina per cambiare la tua password:
 
+
+
 \$a-> link
+
+
 
 Nella maggior parte dei programmi di posta elettronica, questo deve apparire con un link in blu sul quale puoi semplicemente cliccare.
 
 Se questo non funziona, taglia e incolla questo indirizzo nella linea degli indirizzo in alto nel tuo browser web.
+
+
 
 Saluti dall' amministratore \$a->admin del sito
 

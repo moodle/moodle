@@ -34,6 +34,9 @@ $string['submitassignment'] = "Presenta il tuo compito usando questo form";
 $string['submitted'] = "Consegnato";
 $string['typeoffline'] = "Attività non in rete";
 $string['typeuploadsingle'] = "Trasferire un singolo file
+
+
+
 attibuibile per un valore compreso fra 0 e 100 punti";
 $string['uploadbadname'] = "Questo file contiene caratteri non conformi e non può essere trasferito.";
 $string['uploadedfiles'] = "files trasferiti";
