@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.3 development (2004042703)
+      // workshop.php - created with Moodle 1.3 development (2004043001)
 
 
 $string['absent'] = 'Afwezig';
@@ -139,7 +139,7 @@ $string['phase1'] = 'Begin taak';
 $string['phase1short'] = 'Begin';
 $string['phase2'] = 'Laat $a insturen';
 $string['phase2short'] = 'Insturen';
-$string['phase3'] = 'Laat $ insturen en evalueren';
+$string['phase3'] = 'Laat $a insturen en evalueren';
 $string['phase3short'] = 'Beide';
 $string['phase4'] = 'Laat $a evalueren';
 $string['phase4short'] = 'Evalueren';
