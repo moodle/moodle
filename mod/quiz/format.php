@@ -191,7 +191,7 @@ class quiz_default_format {
         // $questions = get_records("quiz_questions","category",$this->category->id);
         $questions = get_questions_category( $this->category );
 
-        notify("Exporting ".count($questions)." questions.");
+        notify("Exporting questions.");
         if (!count($questions)) {
             return true;
         }
@@ -204,8 +204,12 @@ class quiz_default_format {
         // iterate through questions
         foreach($questions as $question) {
           $count++;
-          echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
-          $expout .= $this->writequestion( $question ) . "\n";
+          $qtype = $question->qtype;
+          // ignore random questiond
+          if ($qtype!=RANDOM) {
+              echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
+              $expout .= $this->writequestion( $question ) . "\n";
+              }
           }
 
         // final pre-process on exported data
