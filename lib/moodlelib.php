@@ -357,7 +357,11 @@ function isadmin($userid=0) {
 /// Is the user an admin?
     global $USER;
 
-    if (!$userid) {
+    if (empty($USER)) {
+        return false;
+    }
+
+    if (empty($userid)) {
         return record_exists("user_admins", "userid", $USER->id);
     }
 
@@ -374,7 +378,7 @@ function isteacher($courseid, $userid=0) {
     }
 
     if (!$userid) {
-        return $USER->teacher[$courseid];
+        return !empty($USER->teacher[$courseid]);
     }
 
     return record_exists("user_teachers", "userid", $userid, "course", $courseid);
@@ -955,6 +959,35 @@ function get_list_of_languages() {
         unset($string);
     }
     return $languages;
+}
+
+function document_file($file, $include=true) {
+/// Can include a given document file (depends on second
+/// parameter) or just return info about it
+
+    global $CFG;
+
+    if (empty($file)) {
+        echo "Error 404";
+        return false;
+    }
+
+    $lang = current_language();
+    $file = clean_filename($file);
+
+    $info->filepath = "$CFG->dirroot/lang/$lang/docs/$file";
+    $info->urlpath  = "$CFG->wwwroot/lang/$lang/docs/$file";
+
+    if (!file_exists($info->filepath)) {
+        $info->filepath = "$CFG->dirroot/lang/en/docs/$file";
+        $info->urlpath  = "$CFG->wwwroot/lang/en/docs/$file";
+    }
+
+    if ($include) {
+        include($info->filepath);
+    }
+
+    return $info;
 }
 
 
