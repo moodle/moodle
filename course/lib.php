@@ -397,6 +397,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
 
 function make_log_url($module, $url) {
     switch ($module) {
+        case "user":
         case "course":
         case "user":
         case "file":
@@ -404,6 +405,10 @@ function make_log_url($module, $url) {
         case "lib":
         case "admin":
             return "/$module/$url";
+            break;
+        case "library":
+        case "":
+            return "/";
             break;
         default:
             return "/mod/$module/$url";
