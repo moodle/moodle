@@ -719,6 +719,8 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
 
         if (!empty($quiz->shufflequestions)) {    // Mix everything up
             $questions = swapshuffle_assoc($questions);
+        } else {
+            $shuffleorder= explode(",", $quiz->questions);  // Use defined order
         }
     }
 
