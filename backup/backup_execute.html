@@ -264,10 +264,6 @@
         $status = clean_temp_data ($preferences); 
     }
 
-    if (!$status) {
-        error ("An error has ocurred");
-    }
-
     //Ends th main ul
     echo "</ul>";
 
@@ -276,6 +272,10 @@
 
     //End the main table
     echo "</table>";
+    
+    if (!$status) {
+        error ("An error has ocurred");
+    }
 
     //Print final message
     print_simple_box(get_string("backupfinished"),"CENTER");
