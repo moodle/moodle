@@ -26,6 +26,6 @@ $string['-development'] = "Développement";
 $string['developer.html'] = "Manuel du développeur";
 $string['coding.html'] = "Guide de programmation";
 $string['cvs.html'] = "Utilisation de CVS";
-
+$string['translation.html'] = "Traduction";
 
 ?>
