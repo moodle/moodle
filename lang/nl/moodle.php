@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003101700)
+      // moodle.php - created with Moodle 1.2 development (2003102900)
 
 
 $string['action'] = "Actie";
@@ -359,7 +359,7 @@ $string['helpindex'] = "Index  helpbestanden";
 $string['helppicture'] = "Hoe je een afbeelding kunt uploaden";
 $string['helpquestions'] = "Hoe je vragen kunt stellen";
 $string['helpreading'] = "Lees zorgvuldig";
-$string['helprichtext'] = "Over de Richtext HTML editor";
+$string['helprichtext'] = "Over de HTML editor";
 $string['helpsummaries'] = "Over deze opsommingen";
 $string['helptext'] = "Hoe je een tekst kunt schrijven ";
 $string['helpwiki'] = "Hoe je een Wiki-tekst kunt schrijven";
@@ -372,11 +372,11 @@ $string['home'] = "Home";
 $string['hour'] = "uur";
 $string['hours'] = "uren";
 $string['howtomakethemes'] = "Hoe je nieuwe thema's kunt maken";
-$string['htmleditor'] = "Gebruik Richtext HTML editor (alleen voor IE 5.5 of later)";
-$string['htmleditoravailable'] = "De Richtext editor is beschikbaar";
-$string['htmleditordisabled'] = "Je hebt de Richtext editor uit gezet in je gebruikersprofiel";
-$string['htmleditordisabledadmin'] = "De beheerder heeft de Richtext editor uit gezet op deze site";
-$string['htmleditordisabledbrowser'] = "De Richtext editor is niet beschikbaar omdat je niet gebruik maakt van Internet Explorer 5.5 of later";
+$string['htmleditor'] = "Gebruik HTML editor (Werkt niet in alle browsers)";
+$string['htmleditoravailable'] = "De HTML-editor is beschikbaar";
+$string['htmleditordisabled'] = "Je hebt de HTML-editor uit gezet in je gebruikersprofiel";
+$string['htmleditordisabledadmin'] = "De beheerder heeft de HTML-editor uit gezet op deze site";
+$string['htmleditordisabledbrowser'] = "De HTML-editor is niet beschikbaar omdat je browser er niet compatibel mee is";
 $string['htmlformat'] = "Mooie HTML opmaak";
 $string['icqnumber'] = "ICQ nummer";
 $string['idnumber'] = "Nummer (ID)";
