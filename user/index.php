@@ -14,7 +14,7 @@
     optional_variable($lastinitial, "");     // only show students with this last initial
     optional_variable($firstinitial, "");    // only show students with this first initial
     optional_variable($perpage, "20");       // how many per page
-    optional_variable($_GET['format'], 'brief');      // what kind of view
+    optional_variable($_GET['format'], '');  // 'brief' for less details, '' for more
 
     $compactmode = ($_GET['format'] == 'brief');
 
