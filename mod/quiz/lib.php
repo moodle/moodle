@@ -168,9 +168,9 @@ function quiz_delete_instance($id) {
 function quiz_delete_course($course) {
 /// Given a course object, this function will clean up anything that
 /// would be leftover after all the instances were deleted
-/// In this case, all the quiz categories and questions
+/// In this case, all non-public quiz categories and questions
 
-    if ($categories = get_records("quiz_categories", "course", $course->id)) {
+    if ($categories = get_records_select("quiz_categories", "course = '$course->id' AND public = '0'")) {
         foreach ($categories as $category) {
             if ($questions = get_records("quiz_questions", "category", $category->id)) {
                 foreach ($questions as $question) {
