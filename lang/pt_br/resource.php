@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.1 development (2003072101)
+      // resource.php - created with Moodle 1.1 development (2003072800)
 
 
 $string['addresource'] = "Adicionar material";
+$string['configframesize'] = "Quando uma página web ou um arquivo é visualizado em um frame, este valor é o tamanho, em pixels, do frame que contém a navegação (top frame).";
 $string['editingaresource'] = "Editar material";
 $string['example'] = "Exemplo";
 $string['examplereference'] = "Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.";

@@ -131,6 +131,7 @@ $string['configsmtpuser'] = "Se você indicou um server SMTP acima, e o server re
 $string['configunzip'] = "Se o sistema utilizado for Unix, indique a localização do programa Unzip.";
 $string['configuration'] = "Configuração";
 $string['configvariables'] = "Configurar variáveis";
+$string['configwarning'] = "Preste muita atenção ao modificar esta configuração - valores estranhos podem causar problemas";
 $string['configzip'] = "Se o sistema utilizado for Unix, indique a localização do seu programa Zip.";
 $string['confirmed'] = "A sua inscrição foi confirmada";
 $string['confirmednot'] = "A sua inscrição ainda não foi confirmada!";
@@ -273,6 +274,7 @@ Em caso de dificuldades contate o administrador do site.
 ";
 $string['emailpasswordsent'] = "<p>Uma Email com a sua nova senha foi enviada ao seguinte endereço: <b>\$a->email</b>.
 <p>A nova senha foi criada automaticamente. Se você quiser, é possível <a href=\$a->link>mudar a senha</a>.";
+$string['enrolmentconfirmation'] = "Você tem certeza que quer fazer a inscrição neste curso?";
 $string['enrolmentkey'] = "Código de Inscrição";
 $string['enrolmentkeyfrom'] = "Este curso requer um código de inscrição -<BR> uma senha que deve ser usada a primeira vez que um usuário inscrito entra no curso.";
 $string['enrolmentkeyhint'] = "Código de inscrição errado, por favor tente novamente<BR> (uma dica - começa com '\$a')";
