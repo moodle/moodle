@@ -5,19 +5,6 @@
     optional_variable($preview);   // which theme to show
     optional_variable($choose);    // set this theme as default
 
-    if ($choose) {
-        $preview = $choose;
-    }
-
-    if ($preview) {
-        $CFG->theme = $preview;
-        $CFG->stylesheet  = "$CFG->wwwroot/theme/$CFG->theme/styles.php?themename=$preview";
-        $CFG->header      = "$CFG->dirroot/theme/$CFG->theme/header.html";
-        $CFG->footer      = "$CFG->dirroot/theme/$CFG->theme/footer.html";
-        include ("$CFG->theme/config.php");
-    }
-
-
     if (! $site = get_site()) {
         error("Site doesn't exist!");
     }
@@ -28,6 +15,20 @@
         error("You must be an administrator to change themes.");
     }
 
+    if ($choose) {
+        if (!is_dir($choose)) {
+            error("This theme is not installed!");
+        }
+        $preview = $choose;
+    }
+
+    if ($preview) {
+        $CFG->theme = $preview;
+        $CFG->stylesheet  = "$CFG->wwwroot/theme/$CFG->theme/styles.php?themename=$preview";
+        $CFG->header      = "$CFG->dirroot/theme/$CFG->theme/header.html";
+        $CFG->footer      = "$CFG->dirroot/theme/$CFG->theme/footer.html";
+        include ("$CFG->theme/config.php");
+    }
 
     $stradministration = get_string("administration");
     $strchoosetheme = get_string("choosetheme");
