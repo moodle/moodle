@@ -16,15 +16,15 @@
     //              |                                                                            workshop_submissions
     //              |                                                                        (UL,pk->id,fk->workshopid,files)
     //              |                                                                                    |
-    //              |        |---------------------------|      |--------------------------------|       |
-    //              |        |                           |      |                                |       |
-    //        workshop_elements                      workshop_grades                            workshop_assessments
-    //    (CL,pk->id,fk->workshopid)           (UL,pk->id,fk->assessmentid)                 (UL,pk->id,fk->submissionid)
-    //              |                          (          fk->elementno   )                              |
-    //              |                                                                                    |
-    //              |                                                                                    |
-    //          workshop_rubrics                                                                 workshop_comments
-    //    (CL,pk->id,fk->elementno)                                                        (UL,pk->id,fk->assessmentid)
+    //              |        |-------------------------------------|      |----------------------|       |
+    //              |        |                                     |      |                      |       |
+    //             workshop_elements                           workshop_grades                  workshop_assessments
+    //         (CL,pk->id,fk->workshopid)                (UL,pk->id,fk->assessmentid)       (UL,pk->id,fk->submissionid)
+    //              |                  |                 (          fk->elementno   )                    |
+    //              |                  |                                                                 |
+    //              |                  |                                                                 |
+    //      workshop_rubrics          workshop_stockcomments                                        workshop_comments
+    // (CL,pk->id,fk->elementno)   (CL, pk->id, fk->elementno)                             (UL,pk->id,fk->assessmentid)
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -70,6 +70,7 @@
             $workshop->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
             $workshop->submissionstart = backup_todb($info['MOD']['#']['SUBMISSIONSTART']['0']['#']);
             $workshop->assessmentstart = backup_todb($info['MOD']['#']['ASSESSMENTSTART']['0']['#']);
+            $workshop->deadline = backup_todb($info['MOD']['#']['DEADLINE']['0']['#']);
             $workshop->submissionend = backup_todb($info['MOD']['#']['SUBMISSIONEND']['0']['#']);
             $workshop->assessmentend = backup_todb($info['MOD']['#']['ASSESSMENTEND']['0']['#']);
             $workshop->releasegrades = backup_todb($info['MOD']['#']['RELEASEGRADES']['0']['#']);
@@ -84,6 +85,54 @@
             $workshop->showleaguetable = backup_todb($info['MOD']['#']['SHOWLEAGUETABLE']['0']['#']);
             $workshop->usepassword = backup_todb($info['MOD']['#']['USEPASSWORD']['0']['#']);
             $workshop->password = backup_todb($info['MOD']['#']['PASSWORD']['0']['#']);
+
+            //If we have retrieved workshop->phase, it's a pre 1.5 backup, so we have to do
+            //some conversions before inserting to DB. Upwards compatibility :-)
+            if ( isset($info['MOD']['#']['PHASE']['0']['#'])) { //It's a pre-15 backup file
+
+                //Adjust the wtype field (mimetised from the upgrade script)
+                $workshop->wtype = 0;
+                if ($workshop->includeself || $workshop->ntassessments) {
+                    $workshop->wtype = 1;    // 3 phases with grading grades
+                } else if ($workshop->nsassessments) {
+                    $workshop->wtype = 2;   // 5 phases with grading grades
+                }
+
+                //Now, adjust phases time limits (mimetised from the upgrade script too)
+                $early = 0;
+                $late = 0;
+                $now = time();
+                if ($now < $workshop->deadline) {
+                    $late = $workshop->deadline;
+                } else {
+                    $early = $workshop->deadline;
+                }
+                if ($workshop->phase > 1) {
+                    $workshop->submissionstart = $early;
+                } else {
+                    $workshop->submissionstart = $late;
+                }
+                if ($workshop->phase > 2) {
+                    $workshop->assessmentstart = $early;
+                } else {
+                    $workshop->assessmentstart = $late;
+                }
+                if ($workshop->phase > 3) {
+                    $workshop->submissionend = $early;
+                } else {
+                    $workshop->submissionend = $late;
+                }
+                if ($workshop->phase > 4) {
+                    $workshop->assessmentend = $early;
+                } else {
+                    $workshop->assessmentend = $late;
+                }
+                if ($workshop->phase > 5) {
+                    $workshop->releasegrades = $now;
+                } else {
+                    $workshop->releasegrades = $now + (4 * 7 * 24 * 60 * 60); //Grades will be available in 4 weeks
+                }
+            }
 
             //The structure is equal to the db, so insert the workshop
             $newid = insert_record ("workshop",$workshop);
