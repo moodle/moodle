@@ -79,7 +79,12 @@
     }
 
     if ($unsubscribe) {
-        forum_unsubscribe($unsubscribe, $forum->id);
+        if ($user = get_record('user', 'id', $unsubscribe)) {
+            forum_unsubscribe($user->id, $forum->id);
+            $info->name  = fullname($user);
+            $info->forum = $forum->name;
+            notify(get_string("nownotsubscribed", "forum", $info));
+        }
     }
 
     if (! $users = forum_subscribed_users($course, $forum, $currentgroup) ) {

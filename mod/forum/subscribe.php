@@ -70,7 +70,7 @@
         redirect($returnto, get_string("everyoneissubscribed", "forum"), 1);
     }
 
-    $info->name  = "$user->firstname $user->lastname";
+    $info->name  = fullname($user);
     $info->forum = $forum->name;
 
     if ( forum_is_subscribed($user->id, $forum->id) ) {
