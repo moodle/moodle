@@ -166,7 +166,7 @@
 
         return get_records_sql ("SELECT s.id , s.survey
                                  FROM {$CFG->prefix}survey_answers s,
-                                      {$CFG->prefix}forum a
+                                      {$CFG->prefix}survey a
                                  WHERE a.course = '$course' AND
                                        s.survey = a.id");
     }
