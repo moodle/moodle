@@ -1116,7 +1116,7 @@ function update_course_icon($courseid) {
 // Used to be an icon, but it's now a simple form button
     global $CFG, $USER;
 
-    if (isteacher($courseid)) {
+    if (isteacher($courseid) and iscreator()) {
         if (!empty($USER->editing)) {
             $string = get_string("turneditingoff");
             $edit = "off";

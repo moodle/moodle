@@ -42,7 +42,7 @@
     print_heading("$strsearchresults");
 
     $lastcategory = -1;
-    if ($courses = get_courses_search($search, "category ASC", $page*$perpage, $perpage)) {
+    if ($courses = get_courses_search($search, "category ASC, sortorder DESC", $page*$perpage, $perpage)) {
         foreach ($courses as $course) {
             if ($course->category != $lastcategory) {
                 $lastcategory = $course->category;

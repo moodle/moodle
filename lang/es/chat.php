@@ -12,6 +12,7 @@ $string['currentusers'] = "usuarios ";
 $string['donotusechattime'] = "No publicar tiempo de chat";
 $string['enterchat'] = "Entrar a la sala";
 $string['errornousers'] = "¡No puedo encontrar usuarios!";
+$string['helpchatting'] = "Ayuda del chat";
 $string['idle'] = "inactivo";
 $string['messagebeepseveryone'] = "\$a beeps a alguien";
 $string['messagebeepsyou'] = "\$a le acaba de enviar un beep";

@@ -26,7 +26,7 @@
 
     add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
 
-    if (isteacher($course->id)) {
+    if (isteacher($course->id) and iscreator()) {
         if (isset($edit)) {
             if ($edit == "on") {
                 $USER->editing = true;
@@ -48,6 +48,8 @@
                 move_section($course, $section, $move);
             }
         }
+    } else {
+        $USER->editing = false;
     }
 
     $SESSION->fromdiscussion = "$CFG->wwwroot/course/view.php?id=$course->id";
