@@ -949,7 +949,7 @@ function clean_filename($string) {
 /// Cleans a given filename by removing suspicious or troublesome characters
     $string = stripslashes($string);
     $string = eregi_replace("\.\.", "", $string);
-    $string = eregi_replace("[^([:alnum:]|\.)]", "_", $string);
+    $string = eregi_replace("[^(-|[:alnum:]|\.)]", "_", $string);
     return    eregi_replace("_+", "_", $string);
 }
 
