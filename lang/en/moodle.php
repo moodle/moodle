@@ -1044,5 +1044,5 @@ $string['edhelpfontsize'] = 'The default font-size sets the size of a font. <br 
 $string['edhelpcleanword'] = 'This setting enables or disables Word specific format filtering.';
 $string['edhelpenablespelling'] = 'Enable or disable spellchecking. When enabled, <strong>aspell</strong> must be installed on the server.';
 $string['edhelpfontlist'] = 'Define the fonts used on editors dropdown menu.';
-$string['editorresettodefaults'] = 'Reset to default values';
+$string['editorresettodefaults'] = 'Reset editor settings to default values';
 ?>
