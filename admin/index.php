@@ -71,7 +71,7 @@
                 $db->debug=false;
                 if (set_field("config", "value", "$version", "name", "version")) {
                     notify($strdatabasesuccess);
-                    print_continue("$CFG->wwwroot");
+                    print_continue("index.php");
                     die;
                 } else {
                     notify("Upgrade failed!  (Could not update version in config table)");
