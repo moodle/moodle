@@ -3269,6 +3269,18 @@
                         case "ICQ": 
                             $this->info->tempuser->icq = $this->getContents();
                             break;
+                        case "SKYPE": 
+                            $this->info->tempuser->skype = $this->getContents();
+                            break;
+                        case "AIM": 
+                            $this->info->tempuser->aim = $this->getContents();
+                            break;
+                        case "YAHOO": 
+                            $this->info->tempuser->yahoo = $this->getContents();
+                            break;
+                        case "MSN": 
+                            $this->info->tempuser->msn = $this->getContents();
+                            break;
                         case "PHONE1": 
                             $this->info->tempuser->phone1 = $this->getContents();
                             break;

@@ -1086,6 +1086,10 @@
                 fwrite ($bf,full_tag("EMAIL",4,false,$user_data->email));
                 fwrite ($bf,full_tag("EMAILSTOP",4,false,$user_data->emailstop));
                 fwrite ($bf,full_tag("ICQ",4,false,$user_data->icq));
+                fwrite ($bf,full_tag("SKYPE",4,false,$user_data->skype));
+                fwrite ($bf,full_tag("YAHOO",4,false,$user_data->yahoo));
+                fwrite ($bf,full_tag("AIM",4,false,$user_data->aim));
+                fwrite ($bf,full_tag("MSN",4,false,$user_data->msn));
                 fwrite ($bf,full_tag("PHONE1",4,false,$user_data->phone1));
                 fwrite ($bf,full_tag("PHONE2",4,false,$user_data->phone2));
                 fwrite ($bf,full_tag("INSTITUTION",4,false,$user_data->institution));
