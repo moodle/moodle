@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.8 (2003010600)
+      // moodle.php - created with Moodle 1.0.9 development (2003011300)
 
 
 $string['action'] = "操作";
@@ -363,7 +363,7 @@ $string['noteachersyet'] = "このコースにはまだ教師が登録されていません";
 $string['notenrolled'] = "\$a はこのコースには参加していません";
 $string['nothingnew'] = "最終ログインより変更されたものはありません";
 $string['nousersyet'] = "まだ利用者がいません";
-$string['now'] = "今";
+$string['now'] = "現在";
 $string['numberweeks'] = "週/トピックの表示数";
 $string['numdays'] = "\$a 日";
 $string['numminutes'] = "\$a 分";
@@ -439,13 +439,13 @@ $string['someerrorswerefound'] = "いくつかの情報が未入力又は間違っています。再度
 $string['startdate'] = "開講日";
 $string['startsignup'] = "新しいアカウントを作成する";
 $string['status'] = "状態";
-$string['strftimedate'] = "%%d %%B %%Y";
-$string['strftimedateshort'] = "%%d %%B";
-$string['strftimedatetime'] = "%%d %%B %%Y, %%I:%%M %%p";
-$string['strftimedaydate'] = "%%A, %%d %%B %%Y";
-$string['strftimedaydatetime'] = "%%A, %%d %%B %%Y, %%I:%%M %%p";
-$string['strftimerecent'] = "%%d %%b, %%H:%%M";
-$string['strftimerecentfull'] = "%%a, %%d %%b %%Y, %%I:%%M %%p";
+$string['strftimedate'] = "%%Y年 %%m月 %%d日";
+$string['strftimedateshort'] = "%%m/%%d";
+$string['strftimedatetime'] = "%%Y年 %%m月 %%d日, %%I:%%M %%p";
+$string['strftimedaydate'] = "%%Y年 %%m月 %%d日(%%A)";
+$string['strftimedaydatetime'] = "%%Y年 %%m月 %%d日(%%A) %%I:%%M %%p";
+$string['strftimerecent'] = "%%m月 %%d日, %%H:%%M";
+$string['strftimerecentfull'] = "%%Y年 %%m月 %%d日(%%a) %%I:%%M %%p";
 $string['strftimetime'] = "%%I:%%M %%p";
 $string['stringsnotset'] = "下記の文字は \$a で定義されていません。";
 $string['studentnotallowed'] = "申し訳ございません。このコースには '\$a' で入ることは出来ません。";
