@@ -269,11 +269,9 @@ function quiz_get_answers($question) {
                                            {$CFG->prefix}quiz_answers a
                                      WHERE sa.question = '$question->id' 
                                        AND sa.question = a.question ");
-            break;
 
         case TRUEFALSE:         // Should be always two answers
             return get_records("quiz_answers", "question", $question->id);
-            break;
 
         case MULTICHOICE:       // Should be multiple answers
             return get_records_sql("SELECT a.*, mc.single
@@ -281,11 +279,9 @@ function quiz_get_answers($question) {
                                            {$CFG->prefix}quiz_answers a
                                      WHERE mc.question = '$question->id' 
                                        AND mc.question = a.question ");
-            break;
 
         case MATCH:
             return get_records("quiz_match_sub", "question", $question->id);
-            break;
 
         case RANDOMSAMATCH:       // Could be any of many answers, return them all
             return get_records_sql("SELECT a.*
@@ -294,7 +290,6 @@ function quiz_get_answers($question) {
                                      WHERE q.category = '$question->category' 
                                        AND q.qtype = ".SHORTANSWER."
                                        AND q.id = a.question ");
-            break;
 
         case NUMERICAL:         // Logical support for multiple answers
             return get_records_sql("SELECT a.*, n.min, n.max
@@ -302,8 +297,13 @@ function quiz_get_answers($question) {
                                            {$CFG->prefix}quiz_answers a
                                      WHERE a.question = '$question->id'
                                        AND n.answer = a.id ");
-            break;
 
+        case DESCRIPTION:
+            return true; // there are no answers for description
+
+        case RANDOM:
+            return quiz_get_answers
+                    (get_record('quiz_questions', 'id', $question->random));
 
         default:
             return false;
@@ -1416,6 +1416,168 @@ function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
     return true;
 }
 
+function quiz_grade_attempt_question_result($question, $answers) {
+    $grade    = 0;   // default
+    $correct  = array();
+    $feedback = array();
+    $response = array();
+
+    switch ($question->qtype) {
+        case SHORTANSWER:
+            if ($question->answer) {
+                $question->answer = trim(stripslashes($question->answer[0]));
+            } else {
+                $question->answer = "";
+            }
+            $response[0] = $question->answer;
+            $bestshortanswer = 0;
+            foreach ($answers as $answer) {  // There might be multiple right answers
+                if ($answer->fraction > $bestshortanswer) {
+                    $correct[$answer->id] = $answer->answer;
+                    $bestshortanswer = $answer->fraction;
+                }
+                if (!$answer->usecase) {       // Don't compare case
+                    $answer->answer = strtolower($answer->answer);
+                    $question->answer = strtolower($question->answer);
+                }
+                if ($question->answer == $answer->answer) {
+                    $feedback[0] = $answer->feedback;
+                    $grade = (float)$answer->fraction * $question->grade;
+                }
+            }
+            break;
+
+        case NUMERICAL:
+            if ($question->answer) {
+                $question->answer = trim(stripslashes($question->answer[0]));
+            } else {
+                $question->answer = "";
+            }
+            $response[0] = $question->answer;
+            $bestshortanswer = 0;
+            foreach ($answers as $answer) {  // There might be multiple right answers
+                if ($answer->fraction > $bestshortanswer) {
+                    $correct[$answer->id] = $answer->answer;
+                    $bestshortanswer = $answer->fraction;
+                }
+                if ( ((float)$question->answer >= (float)$answer->min) and 
+                     ((float)$question->answer <= (float)$answer->max) ) {
+                    $feedback[0] = $answer->feedback;
+                    $grade = (float)$answer->fraction * $question->grade;
+                }
+            }
+            break;
+
+        case TRUEFALSE:
+            if ($question->answer) {
+                $question->answer = $question->answer[0];
+            } else {
+                $question->answer = NULL;
+            }
+            foreach($answers as $answer) {  // There should be two answers (true and false)
+                $feedback[$answer->id] = $answer->feedback;
+                if ($answer->fraction > 0) {
+                    $correct[$answer->id]  = true;
+                }
+                if ($question->answer == $answer->id) {
+                    $grade = (float)$answer->fraction * $question->grade;
+                    $response[$answer->id] = true;
+                }
+            }
+            break;
+
+
+        case MULTICHOICE:
+            foreach($answers as $answer) {  // There will be multiple answers, perhaps more than one is right
+                $feedback[$answer->id] = $answer->feedback;
+                if ($answer->fraction > 0) {
+                    $correct[$answer->id] = true;
+                }
+                if (!empty($question->answer)) {
+                    foreach ($question->answer as $questionanswer) {
+                        if ($questionanswer == $answer->id) {
+                            $response[$answer->id] = true;
+                            if ($answer->single) {
+                                $grade = (float)$answer->fraction * $question->grade;
+                                continue;
+                            } else {
+                                $grade += (float)$answer->fraction * $question->grade;
+                            }
+                        }
+                    }
+                }
+            }
+            break;
+
+        case MATCH:
+            $matchcount = $totalcount = 0;
+
+            foreach ($question->answer as $questionanswer) {  // Each answer is "subquestionid-answerid"
+                $totalcount++;
+                $qarr = explode('-', $questionanswer);        // Extract subquestion/answer.
+                $subquestionid = $qarr[0];
+                $subanswerid = $qarr[1];
+                if ($subquestionid and $subanswerid and (($subquestionid == $subanswerid) or 
+                    ($answers[$subquestionid]->answertext == $answers[$subanswerid]->answertext))) {   
+                    // Either the ids match exactly, or the answertexts match exactly 
+                    // (in case two subquestions had the same answer)
+                    $matchcount++;
+                    $correct[$subquestionid] = true;
+                } else {
+                    $correct[$subquestionid] = false;
+                }
+                $response[$subquestionid] = $subanswerid;
+            }
+
+            $grade = $question->grade * $matchcount / $totalcount;
+
+            break;
+
+        case RANDOMSAMATCH:
+            $bestanswer = array();
+            foreach ($answers as $answer) {  // Loop through them all looking for correct answers
+                if (empty($bestanswer[$answer->question])) {
+                    $bestanswer[$answer->question] = 0;
+                    $correct[$answer->question] = "";
+                }
+                if ($answer->fraction > $bestanswer[$answer->question]) {
+                    $bestanswer[$answer->question] = $answer->fraction;
+                    $correct[$answer->question] = $answer->answer;
+                }
+            }
+            $answerfraction = 1.0 / (float) count($question->answer);
+            foreach ($question->answer as $questionanswer) {  // For each random answered question
+                $rqarr = explode('-', $questionanswer);   // Extract question/answer.
+                $rquestion = $rqarr[0];
+                $ranswer = $rqarr[1];
+                $response[$rquestion] = $questionanswer;
+                if (isset($answers[$ranswer])) {         // If the answer exists in the list
+                    $answer = $answers[$ranswer];         
+                    $feedback[$rquestion] = $answer->feedback;
+                    if ($answer->question == $rquestion) {    // Check that this answer matches the question
+                        $grade += (float)$answer->fraction * $question->grade * $answerfraction;
+                    }
+                }
+            }
+            break;
+
+        case DESCRIPTION:  // Descriptions are not graded.
+            break;
+
+        case RANDOM:   // Returns a recursive call with the real question
+            $realquestion = get_record
+                    ('quiz_questions', 'id', $question->random);
+            $realquestion->answer = $question->answer;
+            $realquestion->grade = $question->grade;
+            return quiz_grade_attempt_question_result($realquestion, $answers);
+    }
+
+    $result->grade = max(0.0, $grade);  // No negative grades
+    $result->correct = $correct;
+    $result->feedback = $feedback;
+    $result->response = $response;
+    return $result;
+}
 
 function quiz_grade_attempt_results($quiz, $questions) {
 /// Given a list of questions (including answers for each one)
@@ -1443,187 +1605,20 @@ function quiz_grade_attempt_results($quiz, $questions) {
 
     foreach ($questions as $question) {
 
-        if (!empty($question->random)) {      // This question has been randomly chosen
-            $randomquestion = $question;      // Save it for later
-            if (!$question = get_record("quiz_questions", "id", $question->random)) {
-                error("Could not find the real question behind this random question!");
-            }
-            if (isset($randomquestion->answer)) {
-                $question->answer = $randomquestion->answer;
-            } else {
-                $question->answer = "";
-            }
-            $question->grade = $grades[$randomquestion->id];
-        } else {
-            $question->grade = $grades[$question->id];
-        }
+        $question->grade = $grades[$question->id];
         
-        if ($question->qtype != DESCRIPTION) {    // All real questions need answers defined
-            if (!$answers = quiz_get_answers($question)) {
-                error("No answers defined for question id $question->id!");
-            }
+        if (!$answers = quiz_get_answers($question)) {
+            error("No answers defined for question id $question->id!");
         }
 
-        $grade    = 0;   // default
-        $correct  = array();
-        $feedback = array();
-        $response = array();
+        $questionresult = quiz_grade_attempt_question_result($question,
+                                                             $answers);
 
-        switch ($question->qtype) {
-            case SHORTANSWER:
-                if ($question->answer) {
-                    $question->answer = trim(stripslashes($question->answer[0]));
-                } else {
-                    $question->answer = "";
-                }
-                $response[0] = $question->answer;
-                $bestshortanswer = 0;
-                foreach ($answers as $answer) {  // There might be multiple right answers
-                    if ($answer->fraction > $bestshortanswer) {
-                        $correct[$answer->id] = $answer->answer;
-                        $bestshortanswer = $answer->fraction;
-                    }
-                    if (!$answer->usecase) {       // Don't compare case
-                        $answer->answer = strtolower($answer->answer);
-                        $question->answer = strtolower($question->answer);
-                    }
-                    if ($question->answer == $answer->answer) {
-                        $feedback[0] = $answer->feedback;
-                        $grade = (float)$answer->fraction * $question->grade;
-                    }
-                }
-                break;
-
-            case NUMERICAL:
-                if ($question->answer) {
-                    $question->answer = trim(stripslashes($question->answer[0]));
-                } else {
-                    $question->answer = "";
-                }
-                $response[0] = $question->answer;
-                $bestshortanswer = 0;
-                foreach ($answers as $answer) {  // There might be multiple right answers
-                    if ($answer->fraction > $bestshortanswer) {
-                        $correct[$answer->id] = $answer->answer;
-                        $bestshortanswer = $answer->fraction;
-                    }
-                    if ( ((float)$question->answer >= (float)$answer->min) and 
-                         ((float)$question->answer <= (float)$answer->max) ) {
-                        $feedback[0] = $answer->feedback;
-                        $grade = (float)$answer->fraction * $question->grade;
-                    }
-                }
-                break;
-
-            case TRUEFALSE:
-                if ($question->answer) {
-                    $question->answer = $question->answer[0];
-                } else {
-                    $question->answer = NULL;
-                }
-                foreach($answers as $answer) {  // There should be two answers (true and false)
-                    $feedback[$answer->id] = $answer->feedback;
-                    if ($answer->fraction > 0) {
-                        $correct[$answer->id]  = true;
-                    }
-                    if ($question->answer == $answer->id) {
-                        $grade = (float)$answer->fraction * $question->grade;
-                        $response[$answer->id] = true;
-                    }
-                }
-                break;
-
-
-            case MULTICHOICE:
-                foreach($answers as $answer) {  // There will be multiple answers, perhaps more than one is right
-                    $feedback[$answer->id] = $answer->feedback;
-                    if ($answer->fraction > 0) {
-                        $correct[$answer->id] = true;
-                    }
-                    if (!empty($question->answer)) {
-                        foreach ($question->answer as $questionanswer) {
-                            if ($questionanswer == $answer->id) {
-                                $response[$answer->id] = true;
-                                if ($answer->single) {
-                                    $grade = (float)$answer->fraction * $question->grade;
-                                    continue;
-                                } else {
-                                    $grade += (float)$answer->fraction * $question->grade;
-                                }
-                            }
-                        }
-                    }
-                }
-                break;
-
-            case MATCH:
-                $matchcount = $totalcount = 0;
-
-                foreach ($question->answer as $questionanswer) {  // Each answer is "subquestionid-answerid"
-                    $totalcount++;
-                    $qarr = explode('-', $questionanswer);        // Extract subquestion/answer.
-                    $subquestionid = $qarr[0];
-                    $subanswerid = $qarr[1];
-                    if ($subquestionid and $subanswerid and (($subquestionid == $subanswerid) or 
-                        ($answers[$subquestionid]->answertext == $answers[$subanswerid]->answertext))) {   
-                        // Either the ids match exactly, or the answertexts match exactly 
-                        // (in case two subquestions had the same answer)
-                        $matchcount++;
-                        $correct[$subquestionid] = true;
-                    } else {
-                        $correct[$subquestionid] = false;
-                    }
-                    $response[$subquestionid] = $subanswerid;
-                }
-
-                $grade = $question->grade * $matchcount / $totalcount;
-
-                break;
-
-            case RANDOMSAMATCH:
-                $bestanswer = array();
-                foreach ($answers as $answer) {  // Loop through them all looking for correct answers
-                    if (empty($bestanswer[$answer->question])) {
-                        $bestanswer[$answer->question] = 0;
-                        $correct[$answer->question] = "";
-                    }
-                    if ($answer->fraction > $bestanswer[$answer->question]) {
-                        $bestanswer[$answer->question] = $answer->fraction;
-                        $correct[$answer->question] = $answer->answer;
-                    }
-                }
-                $answerfraction = 1.0 / (float) count($question->answer);
-                foreach ($question->answer as $questionanswer) {  // For each random answered question
-                    $rqarr = explode('-', $questionanswer);   // Extract question/answer.
-                    $rquestion = $rqarr[0];
-                    $ranswer = $rqarr[1];
-                    $response[$rquestion] = $questionanswer;
-                    if (isset($answers[$ranswer])) {         // If the answer exists in the list
-                        $answer = $answers[$ranswer];         
-                        $feedback[$rquestion] = $answer->feedback;
-                        if ($answer->question == $rquestion) {    // Check that this answer matches the question
-                            $grade += (float)$answer->fraction * $question->grade * $answerfraction;
-                        }
-                    }
-                }
-                break;
-
-        }
-
-        if (!empty($randomquestion)) {      // This question has been randomly chosen
-            $question = $randomquestion;    // Restore the question->id
-            unset($randomquestion);
-        }
-
-        if ($grade < 0.0) {   // No negative grades
-            $grade = 0.0;
-        }
-
-        $result->grades[$question->id] = round($grade, 2);
-        $result->sumgrades += $grade;
-        $result->feedback[$question->id] = $feedback;
-        $result->response[$question->id] = $response;
-        $result->correct[$question->id] = $correct;
+        $result->grades[$question->id] = round($questionresult->grade, 2);
+        $result->sumgrades += $questionresult->grade;
+        $result->feedback[$question->id] = $questionresult->feedback;
+        $result->response[$question->id] = $questionresult->response;
+        $result->correct[$question->id] = $questionresult->correct;
     }
 
     $fraction = (float)($result->sumgrades / $quiz->sumgrades);
