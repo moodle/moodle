@@ -762,6 +762,9 @@ body#doc-contents ul {
     padding:15px;
 }
 
+.loginbox .header {
+    background-image:url(gradient.jpg);
+}
 
 /*******************************************************************
 *** Message
