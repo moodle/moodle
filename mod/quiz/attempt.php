@@ -117,7 +117,7 @@
     }
     
 
-/// BEGIN EDIT Get time limit if any.
+/// Get time limit if any.
 
     $timelimit = $quiz->timelimit * 60;
 
@@ -135,7 +135,7 @@
     if($timelimit and $timerstartvalue <= 0) {
         $timerstartvalue = 1;
     }
-/// END EDIT
+
     $timenow = time();
     $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose) || isteacher($course->id);
 
@@ -201,6 +201,11 @@
 
         if (! quiz_save_best_grade($quiz, $USER->id)) {
             error("Sorry! Could not calculate your best grade!");
+        }
+        
+        if (empty($quiz->popup) and !$quiz->feedback) {
+            // No need to stop on this page, go directly to view.php
+            redirect('view.php?q='.$quiz->id);
         }
 
         $strgrade = get_string("grade");

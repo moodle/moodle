@@ -6,6 +6,7 @@
     require_login();
 
     optional_variable($courseid);
+    optional_variable($quizid);
 
     if (empty($destination)) {
         $destination = "";
@@ -13,7 +14,7 @@
 
     $modform = data_submitted($destination);
 
-    if ($modform and !empty($modform->course)) {    // form submitted from mod.html
+    if ($modform and !empty($modform->course)) { // data submitted
 
         $modform->name = trim($modform->name);
 
@@ -27,6 +28,15 @@
 
         $SESSION->modform = $modform;    // Save the form in the current session
 
+    } else if ($quizid) {
+        if (! $modform = get_record('quiz', 'id', $quizid)) {
+            error("The required quiz doesn't exist");
+        }
+        
+        $modform->instance = $modform->id;
+        
+        $SESSION->modform = $modform;    // Save the form in the current session
+
     } else if ($courseid) { // Page retrieve through "Edit Questions" link - no quiz selected
         $modform->course = $courseid;
         unset($modform->instance);
@@ -35,7 +45,9 @@
 
     } else {
         if (!isset($SESSION->modform)) {
-            error("You have used this page incorrectly!");
+        	// We currently also get here after editing a question by
+        	// following the edit link on the review page. Perhaps that should be fixed.
+            error('');
         }
 
         $modform = $SESSION->modform;
@@ -60,6 +72,10 @@
 
 
     // Now, check for commands on this page and modify variables as necessary
+    
+    if (isset($cancel)) {
+        redirect('view.php?q='.$modform->instance);
+    }
 
     if (!empty($up)) { /// Move the given question up a slot
         $questions = explode(",", $modform->questions);
@@ -147,6 +163,25 @@
             }
         }
     }
+    
+    if (!empty($save)) {  // Save the list of questions and grades in the database and return
+    
+        //If caller is correct, $SESSION->sesskey must exist and coincide
+        if (empty($SESSION->sesskey) or !confirm_sesskey($SESSION->sesskey)) {
+            error(get_string('confirmsesskeybad', 'error'));
+        }
+        //Unset this, check done
+        unset($SESSION->sesskey);
+        
+        quiz_update_instance($modform);
+        $coursemodule = get_coursemodule_from_instance('quiz', $modform->instance);
+        add_to_log($course->id, 'quiz', 'editquestions', 
+                           "view.php?id=$coursemodule", 
+                           "$modform->instance", $coursemodule); 
+        redirect('view.php?q='.$modform->instance);
+        die;
+    }
+ 
 
     if (!empty($cat)) { //-----------------------------------------------------------
         $modform->category = $cat;
@@ -204,11 +239,12 @@
             }
             notify("$strattemptsexist<br /><a href=\"report.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
         }
-
+        
+        $SESSION->sesskey = !empty($USER->id) ? $USER->sesskey : '';
         ?>
-        <form  name="theform" method="post" action=<?php echo $modform->destination ?>>
-        <input type="hidden" name="course"  value="<?php  p($modform->course) ?>" />
-        <input type="submit" value="<?php  print_string("savequiz", "quiz") ?>" />
+        <form method="post" action="edit.php">
+        <input type="hidden" name="sesskey" value="save" />
+        <input type="submit" name="save" value="<?php  print_string("savequiz", "quiz") ?>" />
         <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
         </form>
         </center>

@@ -9,7 +9,7 @@ if (!empty($quiz->popup)) {
 <!--
 
 document.write('<input type="button" value="<?php print_string('continue') ?>" '+
-               'onclick="javascript: window.opener.location.href=\'view.php?id=<?php echo $cm->id ?>\'; '+
+               'onclick="javascript: window.opener.location.href=\'../../course/view.php?id=<?php echo $course->id ?>\'; '+
                'window.close();" />');
 // -->
 </script>
@@ -19,7 +19,7 @@ document.write('<input type="button" value="<?php print_string('continue') ?>" '
 
 <?php
 } else {
-    print_single_button("view.php", array( 'id' => $cm->id ), get_string('continue'));
+    print_single_button("../../course/view.php", array( 'id' => $course->id ), get_string('continue'));
 }
 ?>
 </div>

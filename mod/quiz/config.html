@@ -9,7 +9,7 @@
     <?php print_string('sitedefault'); ?>
   </th>
   <th align="center">
-    <?php print_string('fix'); helpbutton("fixdefaults"); ?>
+    <?php print_string('hide'); helpbutton("hideoptions"); ?>
   </th>
 </tr>    
 
@@ -150,11 +150,13 @@
   <td align="right"><b><?php print_string("allowreview", "quiz") ?>:</b></td>
   <td>
     <?php
-       unset($options);
-       $options[0] = get_string("no");
-       $options[1] = get_string("yes");
-       choose_from_menu ($options, "quiz_allowreview", $CFG->quiz_allowreview, "", "", "");
-       helpbutton("review", get_string("allowreview","quiz"), "quiz");
+       $reviewoptions = array();
+       $reviewoptions[0] = get_string('reviewnever', 'quiz');
+       $reviewoptions[1] = get_string('reviewafter', 'quiz');
+       $reviewoptions[2] = get_string('reviewbefore', 'quiz');
+       $reviewoptions[3] = get_string('reviewalways', 'quiz');
+       choose_from_menu ($reviewoptions, "quiz_allowreview", $CFG->quiz_allowreview, "", "", "");
+       helpbutton("review2", get_string("allowreview","quiz"), "quiz");
     ?>
   </td>
   <td align="center">

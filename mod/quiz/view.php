@@ -34,6 +34,11 @@
     }
 
     require_login($course->id);
+    
+    // if no questions have been set up yet redirect to edit.php
+    if (!$quiz->questions and isteacheredit($course->id)) {
+        redirect('edit.php?quizid='.$quiz->id);
+    }
 
     add_to_log($course->id, "quiz", "view", "view.php?id=$cm->id", $quiz->id, $cm->id);
 
@@ -44,10 +49,20 @@
 
     $strquizzes = get_string("modulenameplural", "quiz");
     $strquiz  = get_string("modulename", "quiz");
+    $stredit = get_string('editquestions', 'quiz');
+    if (isteacheredit($course->id)) {
+        $buttons = "<table><tr><td><form target=\"$CFG->framename\" method=\"get\" action=\"edit.php\">".
+               "<input type=\"hidden\" name=\"quizid\" value=\"$quiz->id\" />".
+               "<input type=\"submit\" value=\"$stredit\" /></form></td><td>".
+               update_module_button($cm->id, $course->id, $strquiz).
+               '</td></tr></table>';
+    } else {
+        $buttons = '';
+    }
 
     print_header_simple("$quiz->name", "",
                  "<a href=\"index.php?id=$course->id\">$strquizzes</a> -> $quiz->name", 
-                 "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
+                 "", "", true, $buttons, navmenu($course, $cm));
 
     if (isteacher($course->id)) {
         $attemptcount = count_records_select("quiz_attempts", "quiz = '$quiz->id' AND timefinish > 0");
@@ -118,17 +133,17 @@
                 if ($attemptgrade == $mygrade) {
                     $attemptgrade = "<span class=\"highlight\">$attemptgrade</span>";
                 }
-                if (!$available and $quiz->review) {
+                if (quiz_review_allowed($quiz)) {
                     $attemptgrade = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">$attemptgrade</a>";
-                    $attempt->attempt = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">$attempt->attempt</a>";
+                    $attempt->attempt = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">#$attempt->attempt</a>";
                 }
                 $table->data[] = array( $attempt->attempt, 
                                         format_time($attempt->timefinish - $attempt->timestart),
                                         userdate($attempt->timefinish), 
                                         $attemptgrade);
             } else {  // No grades are being used
-                if (!$available and $quiz->review) {
-                    $attempt->attempt = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">$attempt->attempt</a>";
+                if (quiz_review_allowed($quiz)) {
+                    $attempt->attempt = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">#$attempt->attempt</a>";
                 }
                 $table->data[] = array( $attempt->attempt, 
                                         format_time($attempt->timefinish - $attempt->timestart),
@@ -176,8 +191,20 @@
         }
     }
 
-
 // Finish the page
     print_footer($course);
+    
+    function quiz_review_allowed($quiz) {
+        if (!$quiz->review) {
+            return false;
+        }
+        if ((time() < $quiz->timeclose) and ($quiz->review == QUIZ_REVIEW_AFTER)) {
+            return false;
+        }
+        if ((time() > $quiz->timeclose) and ($quiz->review == QUIZ_REVIEW_BEFORE)) {
+            return false;
+        }
+        return true;
+    }
 
 ?>

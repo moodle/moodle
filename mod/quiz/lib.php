@@ -43,6 +43,9 @@ define("QUIZ_MAX_NUMBER_ANSWERS", "10");
 
 define("QUIZ_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
 
+define('QUIZ_REVIEW_AFTER', 1);
+define('QUIZ_REVIEW_BEFORE', 2);
+
 $QUIZ_QTYPES= array();
 
 /// QUIZ_QTYPES INITIATION //////////////////
@@ -337,9 +340,15 @@ function quiz_add_instance($quiz) {
     if (!$quiz->id = insert_record("quiz", $quiz)) {
         return false;  // some error occurred
     }
+    
+    if (isset($quiz->optionsettingspref)) {
+        set_user_preference('quiz_optionsettingspref', $quiz->optionsettingspref);
+    }
 
     // The grades for every question in this quiz are stored in an array
-    if ($quiz->grades) {
+    // (because this is currently only called from mod.html there are not
+    // going to be any grades, but we will leave this code here just in case)
+    if (isset($quiz->grades)) {
         foreach ($quiz->grades as $question => $grade) {
             if ($question) {
                 unset($questiongrade);
@@ -390,7 +399,7 @@ function quiz_add_instance($quiz) {
 
 function quiz_update_instance($quiz) {
 /// Given an object containing all the necessary data,
-/// (defined by the form in mod.html) this function
+/// (defined by the form in mod.html or edit.php) this function
 /// will update an existing instance with new data.
 
     global $SESSION;
@@ -398,23 +407,28 @@ function quiz_update_instance($quiz) {
     unset($SESSION->modform);
 
     $quiz->timemodified = time();
-    $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday,
-                                     $quiz->openhour, $quiz->openminute, 0);
-    $quiz->timeclose = make_timestamp($quiz->closeyear, $quiz->closemonth, $quiz->closeday,
-                                      $quiz->closehour, $quiz->closeminute, 0);
+    if (isset($quiz->openyear)) { // this would not be set if we come from edit.php
+        $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday,
+                                         $quiz->openhour, $quiz->openminute, 0);
+        $quiz->timeclose = make_timestamp($quiz->closeyear, $quiz->closemonth, $quiz->closeday,
+                                          $quiz->closehour, $quiz->closeminute, 0);
+    }
     $quiz->id = $quiz->instance;
 
     if (!update_record("quiz", $quiz)) {
         return false;  // some error occurred
     }
 
+    if (isset($quiz->optionsettingspref)) {
+        set_user_preference('quiz_optionsettingspref', $quiz->optionsettingspref);
+    }
 
     // The grades for every question in this quiz are stored in an array
     // Insert or update records as appropriate
 
     $existing = get_records("quiz_question_grades", "quiz", $quiz->id, "", "question,grade,id");
 
-    if ($quiz->grades) {
+    if (isset($quiz->grades)) { // this will not be set if we come from mod.html
         foreach ($quiz->grades as $question => $grade) {
             if ($question) {
                 unset($questiongrade);
@@ -472,8 +486,6 @@ function quiz_update_instance($quiz) {
         $event->name        = $quiz->name;
         add_event($event);
     }
-
-    
 
     return true;
 }
@@ -1234,6 +1246,7 @@ function quiz_gradesmenu_options($defaultgrade) {
 
 function quiz_print_question_list($questionlist, $grades) {
 // Prints a list of quiz questions in a small layout form with knobs
+// returns sum of maximum grades
 // $questionlist is comma-separated list
 // $grades is an array of corresponding grades
 

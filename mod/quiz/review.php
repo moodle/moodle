@@ -46,8 +46,11 @@
         if (!$quiz->review) {
             error(get_string("noreview", "quiz"));
         }
-        if (time() < $quiz->timeclose) {
+        if (time() < $quiz->timeclose and $quiz->review == QUIZ_REVIEW_AFTER) {
             error(get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
+        }
+        if (time() > $quiz->timeclose and $quiz->review == QUIZ_REVIEW_BEFORE) {
+            error(get_string("noreview", "quiz"));
         }
         if ($attempt->userid != $USER->id) {
             error("This is not your attempt!");

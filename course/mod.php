@@ -76,7 +76,11 @@
                     error($return, "view.php?id=$course->id");
                 }
 
-                $SESSION->returnpage = "$CFG->wwwroot/mod/$mod->modulename/view.php?id=$mod->coursemodule";
+                if (isset($mod->redirect)) {
+                    $SESSION->returnpage = $mod->redirecturl;
+                } else {
+                    $SESSION->returnpage = "$CFG->wwwroot/mod/$mod->modulename/view.php?id=$mod->coursemodule";
+                }
 
                 add_to_log($course->id, "course", "update mod", 
                            "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
@@ -128,7 +132,11 @@
                     error("Could not update the course module with the correct section");
                 }   
 
-                $SESSION->returnpage = "$CFG->wwwroot/mod/$mod->modulename/view.php?id=$mod->coursemodule";
+                if (isset($mod->redirect)) {
+                    $SESSION->returnpage = $mod->redirecturl;
+                } else {
+                    $SESSION->returnpage = "$CFG->wwwroot/mod/$mod->modulename/view.php?id=$mod->coursemodule";
+                }
                 
                 add_to_log($course->id, "course", "add mod", 
                            "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
