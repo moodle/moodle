@@ -185,15 +185,17 @@
 
     // Print all the news items.
 
-    if ($news = forum_get_course_forum($course->id, "news")) {
-        print_simple_box(get_string("latestnews"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
-        print_simple_box_start("CENTER", "100%", "#FFFFFF", 3, 0);
-        echo "<FONT SIZE=1>";
-        forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "DESC", false);
-        echo "</FONT>";
-        print_simple_box_end();
+    if ($course->newsitems) {
+        if ($news = forum_get_course_forum($course->id, "news")) {
+            print_simple_box(get_string("latestnews"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+            print_simple_box_start("CENTER", "100%", "#FFFFFF", 3, 0);
+            echo "<FONT SIZE=1>";
+            forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "DESC", false);
+            echo "</FONT>";
+            print_simple_box_end();
+        }
+        echo "<BR>";
     }
-    echo "<BR>";
     
     // Print all the recent activity
     print_simple_box(get_string("recentactivity"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
