@@ -331,7 +331,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
             }
             optional_param('submitted', 0, PARAM_INT);
 
-            // Define the data we 're going to silently include in the instance config form here,
+            // Define the data we're going to silently include in the instance config form here,
             // so we can strip them from the submitted data BEFORE serializing it.
             $hiddendata = array(
                 'sesskey' => $USER->sesskey,
@@ -341,7 +341,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
             );
             // The 'id' thing is a crude hack in all its glory...
             // Redirecting the form submission back to ourself with qualified_me() was a good idea since otherwise
-            // we 'd need to have an "extra" script that would have to infer where to redirect us back just from
+            // we'd need to have an "extra" script that would have to infer where to redirect us back just from
             // the data in $instance (pagetype and pageid). But, "ourself" is most likely course/view.php and it needs
             // a course id. Hence the hack.
 
@@ -356,14 +356,14 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
                 // And nothing more, continue with displaying the page
             }
             else {
-                $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
+                $loggedinas = '<p class="logininfo">'. user_login_string($course, $USER) .'</p>';
                 print_header(get_string('blockconfigin', 'moodle', $course->fullname), $course->fullname, $course->shortname,
-                     "", "", true, update_course_icon($course->id), $loggedinas);
+                     '', '', true, update_course_icon($course->id), $loggedinas);
                 print_heading(get_string('blockconfiga', 'moodle', $block->name));
-                echo '<form method="post" action="'.strip_querystring(qualified_me()).'">'; // This I wouldn't call a hack but it sure looks cheeky
+                echo '<form method="post" action="'. strip_querystring(qualified_me()) .'">'; // This I wouldn't call a hack but it sure looks cheeky
                 echo '<p>';
                 foreach($hiddendata as $name => $val) {
-                    echo '<input type="hidden" name="'.$name.'" value="'.$val.'" />';
+                    echo '<input type="hidden" name="'. $name .'" value="'. $val .'" />';
                 }
                 echo '</p>';
                 $blockobject->instance_config_print();
