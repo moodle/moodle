@@ -410,6 +410,7 @@ function clam_handle_infected_file($file,$userid=0,$basiconly=false) {
         $now = date('YmdHis');
         if (rename($file,$CFG->quarantinedir.'/'.$now.'-user-'.$userid.'-infected')) { 
             $delete = false;
+            clam_log_infected($file,$CFG->quarantinedir.'/'.$now.'-user-'.$userid.'-infected',$userid);
             if ($basiconly) {
                 $notice .= "\n".get_string('clammovedfilebasic');
             }
@@ -436,6 +437,7 @@ function clam_handle_infected_file($file,$userid=0,$basiconly=false) {
     }
     if ($delete) {
         if (unlink($file)) {
+            clam_log_infected($file,'',$userid);
             $notice .= "\n".get_string('clamdeletedfile');
         }
         else {
@@ -601,13 +603,34 @@ function clam_log_upload($newfilepath,$course=null) {
     if (strpos($newfilepath,$CFG->dataroot) === false) {
         $newfilepath = $CFG->dataroot.'/'.$newfilepath;
     }
-    $CFG->debug=10;
     $courseid = 0;
     if ($course) {
         $courseid = $course->id;
     }
     add_to_log($courseid,"upload","upload","",$newfilepath);
 }
+
+/**
+ * This function logs to error_log and to the log table that an infected file has been found and what's happened to it.
+ * @param $oldfilepath - full path to the infected file before it was moved.
+ * @param $newfilepath - full path to the infected file since it was moved to the quarantine directory (if the file was deleted, leave empty).
+ * @param $userid - id of user who uploaded the file.
+ */
+function clam_log_infected($oldfilepath='',$newfilepath='',$userid=0) {
+
+    add_to_log(0,"upload","infected","",$oldfilepath,0,$userid);
+    
+    $user = get_record('user','id',$userid);
+    
+    $errorstr = 'Clam AV has found a file that is infected with a virus. It was uploaded by '
+        . ((empty($user) ? ' an unknown user ' : $user->firstname. ' '.$user->lastname))
+        . ((empty($oldfilepath)) ? '. The infected file was caught on upload ('.$oldfilepath.')' 
+           : '. The original file path of the infected file was '.$oldfilepath)
+        . ((empty($newfilepath)) ? '. The file has been deleted ' : '. The file has been moved to a quarantine directory and the new path is '.$newfilepath);
+
+    error_log($errorstr);
+}
+
 
 /**
  * some of the modules allow moving attachments (glossary), in which case we need to hunt down an original log and change the path.
