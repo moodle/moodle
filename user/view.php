@@ -7,6 +7,8 @@
 
     require_variable($id);
     require_variable($course);
+    optional_variable($enable, "");
+    optional_variable($disable, "");
 
 
     if (! $user = get_record("user", "id", $id) ) {
@@ -110,7 +112,33 @@
     }
 
     if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category) or isteacher($course->id)) {
-        print_row(get_string("email").":", obfuscate_mailto($user->email));
+
+        if (isteacheredit($course->id) or $currentuser) {   /// Can use the enable/disable email stuff
+            if (!empty($_GET['enable'])) {     /// Recieved a paramter to enable the email address
+                set_field('user', 'emailstop', 0, 'id', $user->id);
+                $user->emailstop = 0;
+            }
+            if (!empty($_GET['disable'])) {     /// Recieved a paramter to disable the email address
+                set_field('user', 'emailstop', 1, 'id', $user->id);
+                $user->emailstop = 1;
+            }
+            if ($user->emailstop) {
+                $switchparam = 'enable';
+                $switchtitle = get_string('emaildisable');
+                $switchpix   = 'show.gif';
+            } else {
+                $switchparam = 'disable';
+                $switchtitle = get_string('emailenable');
+                $switchpix   = 'hide.gif';
+            }
+            $emailswitch = "&nbsp<a title=\"$switchtitle\" ".
+                           "href=\"view.php?id=$user->id&course=$course->id&$switchparam=$user->id\">".
+                           "<img border=\"0\" width=11 height=11 src=\"$CFG->pixpath/t/$switchpix\"></a>";
+        } else {
+            $emailswitch = '';
+        }
+
+        print_row(get_string("email").":", obfuscate_mailto($user->email, '', $user->emailstop)."$emailswitch");
     }
 
     if ($user->url) {

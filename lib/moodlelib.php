@@ -1239,7 +1239,11 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     include_once("$CFG->libdir/phpmailer/class.phpmailer.php");
 
-    if (!$user) {
+    if (empty($user)) {
+        return false;
+    }
+
+    if (!empty($user->emailstop)) {
         return false;
     }
     

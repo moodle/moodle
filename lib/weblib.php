@@ -2059,17 +2059,23 @@ function obfuscate_text($plaintext) {
     return $obfuscated;
 }
 
-function obfuscate_mailto($email, $label="") {
+function obfuscate_mailto($email, $label="", $dimmed=false) {
 /// This function uses the above two functions to generate a fully
 /// obfuscated email link, ready to use.
 
     if (empty($label)) {
         $label = $email;
     }
-    return sprintf('<a href="%s:%s" title="%s">%s</a>', obfuscate_text('mailto'),
-                                                        obfuscate_email($email),
-                                                        obfuscate_text($email),
-                                                        obfuscate_text($label));
+    if ($dimmed) {
+        $title = get_string('emaildisable');
+        $dimmed = ' class="dimmed"';
+    } else {
+        $title = '';
+        $dimmed = '';
+    }
+    return sprintf("<a href=\"%s:%s\" $dimmed title=\"$title\">%s</a>", 
+                    obfuscate_text('mailto'), obfuscate_email($email),
+                    obfuscate_text($label));
 }
 
 function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
