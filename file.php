@@ -32,7 +32,7 @@
 
     // it's OK to get here if no course was specified
 
-    $pathname = "$CFG->dataroot$PATH_INFO";
+    $pathname = "$CFG->dataroot$pathinfo";
     $filename = $args[$numargs-1];
 
     $mimetype = mimeinfo("type", $filename);
