@@ -82,88 +82,91 @@ CREATE TABLE survey_answers (
 # Table structure for table `survey_questions`
 #
 
-CREATE TABLE survey_questions (
-  id int(10) unsigned NOT NULL auto_increment,
-  owner int(10) unsigned NOT NULL default '0',
-  text varchar(255) NOT NULL default '',
-  multi varchar(100) NOT NULL default '',
-  intro varchar(50) default NULL,
-  type tinyint(3) NOT NULL default '0',
-  options text,
-  PRIMARY KEY  (id)
+CREATE TABLE `survey_questions` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `text` varchar(255) NOT NULL default '',
+  `shorttext` varchar(30) NOT NULL default '',
+  `multi` varchar(100) NOT NULL default '',
+  `intro` varchar(50) default NULL,
+  `type` tinyint(3) NOT NULL default '0',
+  `options` text,
+  PRIMARY KEY  (`id`)
 ) TYPE=MyISAM;
 
 #
 # Dumping data for table `survey_questions`
 #
 
-INSERT INTO survey_questions VALUES (1, 0, 'my learning focuses on issues that interest me.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO survey_questions VALUES (2, 0, 'what I learn is important for my professional practice.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO survey_questions VALUES (3, 0, 'I learn how to improve my professional practice.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (4, 0, 'what I learn connects well with my professional practice.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO survey_questions VALUES (5, 0, 'I think critically about how I learn.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (6, 0, 'I think critically about my own ideas.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (7, 0, 'I think critically about other students\' ideas.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (8, 0, 'I think critically about ideas in the readings.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (9, 0, 'I explain my ideas to other students.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (10, 0, 'I ask other students to explain their ideas.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (11, 0, 'other students ask me to explain my ideas.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO survey_questions VALUES (12, 0, 'other students respond to my ideas.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO survey_questions VALUES (13, 0, 'the tutor stimulates my thinking.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO survey_questions VALUES (14, 0, 'the tutor encourages me to participate.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO survey_questions VALUES (15, 0, 'the tutor models good discourse.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO survey_questions VALUES (16, 0, 'the tutor models critical self-reflection.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO survey_questions VALUES (17, 0, 'other students encourage my participation.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO survey_questions VALUES (18, 0, 'other students praise my contribution.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO survey_questions VALUES (19, 0, 'other students value my contribution.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO survey_questions VALUES (20, 0, 'other students empathise with my struggle to learn.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO survey_questions VALUES (21, 0, 'I make good sense of other students\' messages.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (22, 0, 'other students make good sense of my messages.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO survey_questions VALUES (23, 0, 'I make good sense of the tutor\'s messages.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (24, 0, 'the tutor makes good sense of my messages.', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO survey_questions VALUES (25, 0, 'Relevance', '1,2,3,4', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (26, 0, 'Reflective Thinking', '5,6,7,8', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (27, 0, 'Interactivity', '9,10,11,12', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (28, 0, 'Tutor Support', '13,14,15,16', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (29, 0, 'Peer Support', '17,18,19,20', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (30, 0, 'Interpretation', '21,22,23,24', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (31, 0, 'Relevance', '1,2,3,4', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (32, 0, 'Reflective Thinking', '5,6,7,8', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (33, 0, 'Interactivity', '9,10,11,12', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (34, 0, 'Tutor Support', '13,14,15,16', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (35, 0, 'Peer Support', '17,18,19,20', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (36, 0, 'Interpretation', '21,22,23,24', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (37, 0, 'Relevance', '1,2,3,4', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (38, 0, 'Reflective Thinking', '5,6,7,8', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (39, 0, 'Interactivity', '9,10,11,12', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (40, 0, 'Tutor Support', '13,14,15,16', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (41, 0, 'Peer Support', '17,18,19,20', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (42, 0, 'Interpretation', '21,22,23,24', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO survey_questions VALUES (43, 0, 'How long did this survey take you to complete?', '', '', 1, 'under 1 min,1-2 min,2-3 min,3-4 min,4-5-min,5-10 min,more than 10\r');
-INSERT INTO survey_questions VALUES (44, 0, 'Do you have any other comments?', '', '', 0, '\r');
-INSERT INTO survey_questions VALUES (64, 0, 'I spend time figuring out what\'s "wrong" with things. For example, I\'ll look for something in a literary interpretation that isn\'t argued well enough.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (58, 0, 'I try to point out weaknesses in other people\'s thinking to help them clarify their arguments.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (59, 0, 'I tend to put myself in other people\'s shoes when discussing controversial issues, to see why they think the way they do.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (60, 0, 'One could call my way of analysing things "putting them on trial" because I am careful to consider all the evidence.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (61, 0, 'I value the use of logic and reason over the incorporation of my own concerns when solving problems.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (62, 0, 'I can obtain insight into opinions that differ from mine through empathy.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (63, 0, 'When I encounter people whose opinions seem alien to me, I make a deliberate effort to "extend" myself into that person, to try to see how they could have those opinions.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (56, 0, 'I have certain criteria I use in evaluating arguments.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (57, 0, 'I\'m more likely to try to understand someone else\'s opinion that to try to evaluate it.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (55, 0, 'I try to think with people instead of against them.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (54, 0, 'It\'s important for me to remain as objective as possible when I analyze something.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (53, 0, 'I often find myself arguing with the authors of books that I read, trying to logically figure out why they\'re wrong.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (52, 0, 'I am always interested in knowing why people say and believe the things they do.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (51, 0, 'I find that I can strengthen my own position through arguing with someone who disagrees with me.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (50, 0, 'I enjoy hearing the opinions of people who come from backgrounds different to mine - it helps me to understand how the same things can be seen in such different ways.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (49, 0, 'I feel that the best way for me to achieve my own identity is to interact with a variety of other people.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (48, 0, 'The most important part of my education has been learning to understand people who are very different to me.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (47, 0, 'I like to understand where other people are "coming from", what experiences have led them to feel the way they do.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (45, 0, 'In evaluating what someone says, I focus on the quality of their argument, not on the person who\'s presenting it.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (46, 0, 'I like playing devil\'s advocate - arguing the opposite of what someone is saying.', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (65, 0, 'Attitudes Towards Thinking and Learning', '45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64', 'In discussion ...', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (67, 0, 'Connected Learning', '63,62,59,57,55,49,52,50,48,47', 'Connected knowers...', -1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO survey_questions VALUES (68, 0, 'Separate Learning', '46,54,45,51,60,53,56,58,61,64', 'Separate knowers...', -1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (1, 'my learning focuses on issues that interest me.', 'focus on interesting issues', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
+INSERT INTO `survey_questions` VALUES (2, 'what I learn is important for my professional practice.', 'important to my practice', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
+INSERT INTO `survey_questions` VALUES (3, 'I learn how to improve my professional practice.', 'improve my practice', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (4, 'what I learn connects well with my professional practice.', 'connects with my practice', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
+INSERT INTO `survey_questions` VALUES (5, 'I think critically about how I learn.', 'I\'m critical of my learning', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (6, 'I think critically about my own ideas.', 'I\'m critical of my own ideas', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (7, 'I think critically about other students\' ideas.', 'I\'m critical of other students', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (8, 'I think critically about ideas in the readings.', 'I\'m critical of readings', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (9, 'I explain my ideas to other students.', 'I explain my ideas', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (10, 'I ask other students to explain their ideas.', 'I ask for explanations', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (11, 'other students ask me to explain my ideas.', 'I\'m asked to explain', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
+INSERT INTO `survey_questions` VALUES (12, 'other students respond to my ideas.', 'students respond to me', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
+INSERT INTO `survey_questions` VALUES (13, 'the tutor stimulates my thinking.', 'tutor stimulates thinking', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
+INSERT INTO `survey_questions` VALUES (14, 'the tutor encourages me to participate.', 'tutor encourages me', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
+INSERT INTO `survey_questions` VALUES (15, 'the tutor models good discourse.', 'tutor models discourse', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
+INSERT INTO `survey_questions` VALUES (16, 'the tutor models critical self-reflection.', 'tutor models self-reflection', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
+INSERT INTO `survey_questions` VALUES (17, 'other students encourage my participation.', 'students encourage me', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
+INSERT INTO `survey_questions` VALUES (18, 'other students praise my contribution.', 'students praise me', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
+INSERT INTO `survey_questions` VALUES (19, 'other students value my contribution.', 'students value me', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
+INSERT INTO `survey_questions` VALUES (20, 'other students empathise with my struggle to learn.', 'student empathise', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
+INSERT INTO `survey_questions` VALUES (21, 'I make good sense of other students\' messages.', 'I understand other students', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (22, 'other students make good sense of my messages.', 'students understand me', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
+INSERT INTO `survey_questions` VALUES (23, 'I make good sense of the tutor\'s messages.', 'I understand the tutor', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (24, 'the tutor makes good sense of my messages.', 'tutor understands me', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
+INSERT INTO `survey_questions` VALUES (25, 'Relevance', 'Relevance', '1,2,3,4', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (26, 'Reflective Thinking', 'Reflective Thinking', '5,6,7,8', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (27, 'Interactivity', 'Interactivity', '9,10,11,12', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (28, 'Tutor Support', 'Tutor Support', '13,14,15,16', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (29, 'Peer Support', 'Peer Support', '17,18,19,20', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (30, 'Interpretation', 'Interpretation', '21,22,23,24', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (31, 'Relevance', 'Relevance', '1,2,3,4', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (32, 'Reflective Thinking', 'Reflective Thinking', '5,6,7,8', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (33, 'Interactivity', 'Interactivity', '9,10,11,12', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (34, 'Tutor Support', 'Tutor Support', '13,14,15,16', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (35, 'Peer Support', '', '17,18,19,20', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (36, 'Interpretation', '', '21,22,23,24', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (37, 'Relevance', '', '1,2,3,4', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (38, 'Reflective Thinking', '', '5,6,7,8', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (39, 'Interactivity', '', '9,10,11,12', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (40, 'Tutor Support', '', '13,14,15,16', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (41, 'Peer Support', '', '17,18,19,20', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (42, 'Interpretation', '', '21,22,23,24', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
+INSERT INTO `survey_questions` VALUES (43, 'How long did this survey take you to complete?', '', '', '', 1, 'under 1 min,1-2 min,2-3 min,3-4 min,4-5-min,5-10 min,more than 10\r');
+INSERT INTO `survey_questions` VALUES (44, 'Do you have any other comments?', '', '', '', 0, '\r');
+INSERT INTO `survey_questions` VALUES (64, 'I spend time figuring out what\'s "wrong" with things. For example, I\'ll look for something in a literary interpretation that isn\'t argued well enough.', 'what\'s wrong?', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (58, 'I try to point out weaknesses in other people\'s thinking to help them clarify their arguments.', 'point out weaknesses', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (59, 'I tend to put myself in other people\'s shoes when discussing controversial issues, to see why they think the way they do.', 'put myself in their shoes', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (60, 'One could call my way of analysing things "putting them on trial" because I am careful to consider all the evidence.', 'putting on trial', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (61, 'I value the use of logic and reason over the incorporation of my own concerns when solving problems.', 'i value logic most', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (62, 'I can obtain insight into opinions that differ from mine through empathy.', 'insight from empathy', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (63, 'When I encounter people whose opinions seem alien to me, I make a deliberate effort to "extend" myself into that person, to try to see how they could have those opinions.', 'make effort to extend', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (56, 'I have certain criteria I use in evaluating arguments.', 'use criteria to evaluate', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (57, 'I\'m more likely to try to understand someone else\'s opinion that to try to evaluate it.', 'try to understand', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (55, 'I try to think with people instead of against them.', 'think WITH people', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (54, 'It\'s important for me to remain as objective as possible when I analyze something.', 'remain objective', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (53, 'I often find myself arguing with the authors of books that I read, trying to logically figure out why they\'re wrong.', 'argue with authors', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (52, 'I am always interested in knowing why people say and believe the things they do.', 'know why people do', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (51, 'I find that I can strengthen my own position through arguing with someone who disagrees with me.', 'strengthen by argue', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (50, 'I enjoy hearing the opinions of people who come from backgrounds different to mine - it helps me to understand how the same things can be seen in such different ways.', 'enjoy hearing opinions', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (49, 'I feel that the best way for me to achieve my own identity is to interact with a variety of other people.', 'interact with variety', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (48, 'The most important part of my education has been learning to understand people who are very different to me.', 'understand different people', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (47, 'I like to understand where other people are "coming from", what experiences have led them to feel the way they do.', 'where people come from', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (45, 'In evaluating what someone says, I focus on the quality of their argument, not on the person who\'s presenting it.', 'focus quality of argument', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (46, 'I like playing devil\'s advocate - arguing the opposite of what someone is saying.', 'play devil\'s advocate', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (65, 'Attitudes Towards Thinking and Learning', '', '45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64', 'In discussion ...', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (67, 'Connected Learning', '', '63,62,59,57,55,49,52,50,48,47', 'Connected knowers...', -1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+INSERT INTO `survey_questions` VALUES (68, 'Separate Learning', '', '46,54,45,51,60,53,56,58,61,64', 'Separate knowers...', -1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
+
+    
+
 
 
 #
