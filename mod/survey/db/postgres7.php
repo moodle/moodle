@@ -39,6 +39,11 @@ function survey_upgrade($oldversion) {
         modify_database('','CREATE INDEX prefix_survey_answers_survey_idx ON prefix_survey_answers (survey);');
         modify_database('','CREATE INDEX prefix_survey_answers_question_idx ON prefix_survey_answers (question);');
     }
+
+    if ($oldversion < 2005031600) {
+        execute_sql('SELECT setval(\''.$CFG->prefix.'survey_id_seq\', (select max(id) from '.$CFG->prefix.'survey))');
+        execute_sql('SELECT setval(\''.$CFG->prefix.'survey_questions_id_seq\', (select max(id) from '.$CFG->prefix.'survey_questions))');
+    }
     return true;
 }
 

@@ -39,6 +39,12 @@ INSERT INTO prefix_survey (id, course, template, days, timecreated, timemodified
 INSERT INTO prefix_survey (id, course, template, days, timecreated, timemodified, name, intro, questions) VALUES (5, 0, 0, 0, 985017600, 985017600, 'ciqname', 'ciqintro', '69,70,71,72,73');
 
 
+# Reset the sequence. doing it this way rather than simply taking out 
+# id from the preceeding sql to avoid missing fks.
+SELECT setval('prefix_survey_id_seq', (select max(id) from prefix_survey));
+
+
+
 
 #
 # Table structure for table survey_analysis
@@ -176,6 +182,12 @@ INSERT INTO prefix_survey_questions (id, text, shorttext, multi, intro, type, op
 INSERT INTO prefix_survey_questions (id, text, shorttext, multi, intro, type, options) VALUES (71, 'ciq3', 'ciq3short', '', '', 0, '');
 INSERT INTO prefix_survey_questions (id, text, shorttext, multi, intro, type, options) VALUES (72, 'ciq4', 'ciq4short', '', '', 0, '');
 INSERT INTO prefix_survey_questions (id, text, shorttext, multi, intro, type, options) VALUES (73, 'ciq5', 'ciq5short', '', '', 0, '');
+
+# Reset the sequence. doing it this way rather than simply taking out 
+# id from the preceeding sql to avoid missing fks.
+SELECT setval('prefix_survey_questions_id_seq', (select max(id) from prefix_survey_questions));
+
+
 
 #
 # Dumping data for table log_display
