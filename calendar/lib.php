@@ -213,7 +213,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                     $popupicon = $CFG->pixpath.'/c/user.gif';
                     $popupalt  = '';
                 }
-                $popupcontent .= '<div><img height="16" width="16" src="'.$popupicon.'" style="vertical-align: middle; margin-right: 4px;" alt="'.$popupalt.'" /><a href="'.$dayhref.'">'.$event->name.'</a></div>';
+                $popupcontent .= '<div><img height="16" width="16" src="'.$popupicon.'" style="vertical-align: middle; margin-right: 4px;" alt="'.$popupalt.'" /><a href="'.$dayhref.'">'.format_string($event->name,true).'</a></div>';
             }
 
             $popupcaption = get_string('eventsfor', 'calendar', userdate($events[$eventid]->timestart, $strftimetimedayshort));
@@ -341,6 +341,10 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
 function calendar_add_event_metadata($event) {
     global $CFG;
+
+    //Support multilang in event->name 
+    $event->name = format_string($event->name,true);
+   
     if(!empty($event->modulename)) {                                // Activity event
         // The module name is set. I will assume that it has to be displayed, and
         // also that it is an automatically-generated event. And of course that the
@@ -356,7 +360,7 @@ function calendar_add_event_metadata($event) {
         $icon = $CFG->modpixpath.'/'.$event->modulename.'/icon.gif';
 
         $event->icon = '<img height="16" width="16" src="'.$icon.'" alt="" title="'.$modulename.'" style="vertical-align: middle;" />';
-        $event->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.format_string($event->name,true).'</a>';
+        $event->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$event->name.'</a>';
         $event->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$module->course.'">'.$coursecache[$module->course]->fullname.'</a>';
         $event->cmid = $module->id;
 

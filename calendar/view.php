@@ -437,14 +437,14 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         if(isset($eventsbyday[$day])) {
             echo '<ul class="events-new">';
             foreach($eventsbyday[$day] as $eventindex) {
-                echo '<li><a href="'.$dayhref.'">'.$events[$eventindex]->name.'</a></li>';
+                echo '<li><a href="'.$dayhref.'">'.format_string($events[$eventindex]->name,true).'</a></li>';
             }
             echo '</ul>';
         }
         if(isset($durationbyday[$day])) {
             echo '<ul class="events-underway">';
             foreach($durationbyday[$day] as $eventindex) {
-                echo '<li>['.$events[$eventindex]->name.']</li>';
+                echo '<li>['.format_string($events[$eventindex]->name,true).']</li>';
             }
             echo '</ul>';
         }
