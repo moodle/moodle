@@ -46,14 +46,5 @@ $string['newwindowopen'] = 'Display this resource in a new popup window';
 $string['note'] = 'Note';
 $string['notefile'] = 'To upload more files into the course (so they appear in this list) use the <a href=\"$a\">File Manager</a>.';
 $string['notypechosen'] = 'You need to choose a type.  Use your back button to go back and retry.';
-$string['resourcetype'] = 'Type of resource';
-$string['resourcetype1'] = 'Reference';
-$string['resourcetype2'] = 'Web Page';
-$string['resourcetype3'] = 'Uploaded File';
-$string['resourcetype4'] = 'Plain text';
-$string['resourcetype5'] = 'Web Link';
-$string['resourcetype6'] = 'HTML text';
-$string['resourcetype7'] = 'Program';
-$string['resourcetype8'] = 'Wiki text';
 
 ?>
