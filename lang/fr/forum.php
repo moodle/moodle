@@ -1,6 +1,5 @@
 <?php // $Id$ 
 
-
 $string['addanewdiscussion'] = 'Ajouter un nouveau sujet de discussion';
 $string['addanewtopic'] = 'Ajouter un nouveau sujet';
 $string['allowchoice'] = 'Autoriser tout le monde à choisir de s\'abonner ou non';
@@ -19,7 +18,7 @@ $string['configmaxbytes'] = 'Taille maximale de l\'ensemble des annexes de tous 
 $string['configoldpostdays'] = 'Nombre de jours après lequel tout message est considéré comme lu.';
 $string['configreplytouser'] = 'Lorsqu\'un message est envoyé par courriel, doit-il contenir l\'adresse de courriel de son auteur, afin que le destinataire puisse l\'atteindre personnellement ? Même lorsque cette option est activée, les utilisateurs peuvent choisir dans leur profil de garder leur adresse secrète.';
 $string['configshortpost'] = 'Tout message plus court que cette longueur (code HTML non compris) est considéré comme message court';
-$string ['configtrackreadposts'] = 'Choisissez « Oui » pour activer la gestion des messages lus/non lus pour chaque utilisateur.';
+$string['configtrackreadposts'] = 'Choisissez « Oui » pour activer la gestion des messages lus/non lus pour chaque utilisateur.';
 $string['configusermarksread'] = 'Si « Oui », l\'utilisateur doit marquer manuellement un message comme lu. Si « Non », le message est automatiquement marqué comme lu après sa lecture.';
 $string['couldnotadd'] = 'Impossible d\'ajouter votre message à cause d\'une erreur indéterminée';
 $string['couldnotdeleteratings'] = 'Désolé, la suppression de ce message n\'est plus possible car quelqu\'un l\'a déjà évalué';
