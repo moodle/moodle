@@ -323,219 +323,33 @@ function rss_full_tag($tag,$level=0,$endline=true,$content,$to_utf=true) {
 
 //////////////////// LIBRARY FUNCTIONS FOR RSS_CLIENT BLOCK ////////////////
 
-//initialize config vars for rss_client block if missing
-if (empty($CFG->block_rss_client_submitters) ) {
+//initialize default config vars for rss_client block if needed
+if (!isset($CFG->block_rss_client_submitters) ) {
     $CFG->block_rss_client_submitters = 1; //default to admin only
 }
 if (empty($CFG->block_rss_client_num_entries) ) {
     $CFG->block_rss_client_num_entries = 5; //default to 5 entries per block
 }
-if (empty($CFG->block_rss_timeout) ) {
+if (!isset($CFG->block_rss_timeout) ) {
     $CFG->block_rss_timeout = 30;
 }
 
-/**
- * Determine by rss id if the raw xml is cached on the file system
- * @param int $rssid The id of this feed in the rss table
- * @return bool False if cache file is missing or expired
- */
-function rss_cache_valid_by_id($rssid) {
-    global $CFG;
-    $secs = $CFG->block_rss_timeout * 60;
-    
-    // If moodle dataroot cache folder is missing create it
-    if (!file_exists($CFG->dataroot .'/cache/')) {
-        mkdir($CFG->dataroot .'/cache');
-    }
-    // If moodle dataroot cache/rsscache folder is missing create it
-    if (!file_exists($CFG->dataroot .'/cache/rsscache/')) {
-        mkdir($CFG->dataroot .'/cache/rsscache');
-    }
-
-    $file = $CFG->dataroot .'/cache/rsscache/'. $rssid .'.xml';
-//    echo "file = ". $file; //debug
-
-    if (file_exists($file)) {
-        //check age of cached xml file
-    //      echo "file exists $file"; //debug
-
-        //get file information ignoring error information
-        $data = @stat($file);
-
-        $now = time();
-        //Note: there would be a problem here reading data[10] if the above stat() call failed
-        if (empty($data)) {
-            // error getting stat on file, return
-            return false;
-        }
-        if ( ($now - $data[10]) > $secs) {
-            // The cached file has expired.
-            return false;
-        }
-        // no error, cache file is valid
-        return true;
-    }
+// Defines for moodle's use of magpierss classes
+define('MAGPIE_DIR', $CFG->dirroot.'/rss/magpie/');
+define('MAGPIE_CACHE_DIR', $CFG->dataroot .'/cache/rsscache/');
+define('MAGPIE_CACHE_ON', true); //should be exposed as an admin config option
+define('MAGPIE_CACHE_FRESH_ONLY', false); //should be exposed as an admin config option
+define('MAGPIE_CACHE_AGE', $CFG->block_rss_timeout);
+if ($CFG->debug) {
+    define('MAGPIE_DEBUG', true);
+} else {
+    define('MAGPIE_DEBUG', false);
 }
 
-/**
- *   Determines whether or not to get a news feed remotely or from cache and reads it into a string
- * @param int rssid - id of feed in blog_rss table
- * @param string url - url of remote feed
- * @param string type - either 'A' or 'R' where A is an atom feed and R is either rss or rdf
- * @return Atom|MagpieRSS|null This function returns an Atom object in the case of an Atom feed, a MagpieRSS object in the case of an RDF/RSS feed or null if there was an error loading the remote feed.
- * NOTE that this function requires allow_url_fopen be On in your php.ini file 
- * (it may be off for security by your web host)
- */
-function rss_get_feed($rssid, $url, $type) {
-    global $CFG;
-    $errorstring = '';
-    $urlfailurestring = '<p>Failed to open remote news feed at: ' . $url .'</p><ul>Troubleshooting suggestions:<li> Ensure that the setting <strong>allow_url_fopen</strong> is <strong>On</strong> in the php.ini. For more details on why this setting is needed for this file wrapper call to work please refer to <a href="http://us2.php.net/filesystem">http://us2.php.net/filesystem</a></li><li>Ensure that you do not have a proxy enabled between your server and the remote site. If it is possible for you to launch a web browser on your server then you can test this by load the remote URL on the server itself.</li></ul>';
-    $filefailurestring = 'Could not open the file located at: ';
-    $file = $CFG->dataroot .'/cache/rsscache/'. $rssid .'.xml';
-
-    // some flags to be used in managing where the rss data is read from
-    $writetofile = false;
-    $readfromfile = false;
-    $readfromurl = false;
-    $cachefilevalid = false;
-
-    if (rss_cache_valid_by_id($rssid)) {
-        //valid xml feed info in cache, read from file
-        $readfromfile = true;
-        $cachefilevalid = true;
-    } else {
-        // xml feed missing or expired, read from source url
-        $readfromurl = true;
-    }
-    
-    if ($readfromfile) {
-        // Cached file has not expired. Attempt to read from cached file.
-        $xml = load_feed_from_file($file);
-        if (!empty($xml) && empty($xml->xml) && !empty($xml->ERROR)) {
-            // Failed to load from cache, attempt to read from source
-            if ($CFG->debug) {
-                if (!empty($xml) && !empty($xml->ERROR)) {
-                    $errorstring = $xml->ERROR . $errorstring .'<br />';
-                }
-                $errorstring = $filefailurestring . $file .'<br /><br />'. $errorstring .'<br />';
-            }
-            $readfromurl = true; // read from file failed, try to get from source next
-        }
-    }
-    
-    if ($readfromurl) {
-        $xml = load_feed_from_url($url);
-        if (!empty($xml) && !empty($xml->xml) && empty($xml->ERROR)) {
-            //success
-            $writetofile = true;
-        } else {
-            // Failed to load remote feed. Since the file exists attempt to read from cache
-            if ($CFG->debug) {
-                if (isset($xml) && isset($xml->ERROR)) {
-                    $errorstring = $xml->ERROR . $errorstring .'<br />';
-                }
-                $errorstring = $urlfailurestring .'<br /><br />'. $errorstring .'<br />';
-            }
-            $xml = load_feed_from_file($file);
-            if (!empty($xml) && empty($xml->xml) && !empty($xml->ERROR)) {
-                // Failed to load from cache as well!
-                if ($CFG->debug) {
-                    if (!empty($xml) && !empty($xml->ERROR)) {
-                        $errorstring = $xml->ERROR . $errorstring;
-                    }
-                    $errorstring = $filefailurestring . $file .'<br /><br />'. $errorstring .'<br />';
-                    $err->ERROR = $errorstring .'<br />';
-                    return $err;
-                }
-            }
-        }
-    }
-
-    // echo 'DEBUG: raw xml was loaded successfully:<br />';//debug
-    //print_object($xml); //debug
-    
-    //implode xml file. in some cases this operation may fail, capture failure info to errorstring.
-    ob_start();
-    $xmlstr = implode(' ', $xml->xml);
-    $errorstring .= ob_get_contents();
-    ob_end_clean();
-    //print_object($xmlstr);
-    
-    if ( $writetofile && !empty($xmlstr) ) { //write file to cache
-        // jlb: adding file:/ to the start of the file name fixed
-        // some caching problems that I was experiencing.
-        //$file="file:/" + $file;
-        file_put_contents($file, $xmlstr);
-    }
-    
-    if (empty($xmlstr) && !empty($errorstring)) {
-        $err->ERROR = 'XML file failed to implode correctly:<br /><br />'. $errorstring .'<br />';
-        return $err;
-    }
-    
-    if ($type == 'A') {
-        //note: Atom is being modified by a working group
-        //http://www.mnot.net/drafts/draft-nottingham-atom-format-02.html
-        include_once($CFG->dirroot .'/rss/class.Atom.php');
-        $atom = new Atom($xmlstr);
-        $atom->channel = $atom->feed;
-        $atom->items = $atom->entries;
-        $atom->channel['description'] = $atom->channel['tagline'];
-        for($i=0;$i<count($atom->items);$i++) {
-            $atom->items[$i]['description'] = $atom->items[$i]['content'];
-        }
-        return $atom;
-    } else {
-        include_once($CFG->dirroot .'/rss/class.RSS.php');
-        $rss = new MagpieRSS($xmlstr);
-        return $rss;
-    }
-}
-
-/**
- * @param string $file The path to the cached feed to load
- * @return stdObject Object with ->xml string value and ->ERROR string value if applicable.
- */
-function load_feed_from_file($file) {
-    global $CFG;
-    $errorstring = '';
-//          echo "read from cache"; //debug
-    //read in from cache
-    ob_start();
-    $xml = file($file);
-    $errorstring .= ob_get_contents();
-    ob_end_clean();
-
-    $returnobj->xml = $xml;
-    if (!empty($errorstring)){
-        $returnobj->ERROR = 'XML file failed to load:<br /><br />'. $errorstring .'<br />';
-    }
-    return $returnobj;
-}
-
-/**
- * @param string $url The url of the remote news feed to load
- * @return stdObject Object with ->xml string value and ->ERROR string value if applicable.
- */
-function load_feed_from_url($url) {
-    global $CFG;
-//          echo "read from source url"; //debug
-    //read from source url
-    $errorstring = '';
-//          echo "read from cache"; //debug
-    //read in from cache
-    ob_start();
-    $xml = file($url);
-    $errorstring .= ob_get_contents();
-    ob_end_clean();
-
-    $returnobj->xml = $xml;
-    if (!empty($errorstring)){
-        $returnobj->ERROR = 'XML url failed to load:<br />'. $errorstring;
-    }
-    return $returnobj;
-
-}
+// defines for config var block_rss_client_submitters
+define('SUBMITTERS_ALL_ACCOUNT_HOLDERS', 0);
+define('SUBMITTERS_ADMIN_ONLY', 1);
+define('SUBMITTERS_ADMIN_AND_TEACHER', 2);
 
 /**
  * @param int $rssid .
@@ -585,12 +399,12 @@ function rss_display_feeds($rssid='none') {
             if ($res->fields['userid'] == $USER->id || isadmin()){
                 $editString = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=rss_edit&rssid='. $res->fields['id'] .'&blogid='. $blogid .'">';
                 $editString .= '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. get_string('edit');
-$editString .= '" title="'. get_string('edit') .'" align="absmiddle" height=\"16\" width=\"16\" border=\"0\" /></a>';
+                $editString .= '" title="'. get_string('edit') .'" align="absmiddle" height="16" width="16" border="0" /></a>';
                 
                 $deleteString = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=delfeed&rssid='. $res->fields['id'];
                 $deleteString .= '&blogid='. $blogid .'" onClick="return confirm(\''. get_string('block_rss_delete_feed_confirm', 'block_rss_client') .'\');">';
                 $deleteString .= '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. get_string('delete');
-$deleteString .= '" title="'. get_string('delete') .'" align="absmiddle" border=\"0\" /></a>';
+                $deleteString .= '" title="'. get_string('delete') .'" align="absmiddle" border="0" /></a>';
             }
             print '<tr bgcolor="'. $THEME->cellcontent .'" class="forumpostmessage"><td><strong><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=view&rssid=';
             print $res->fields['id'] .'&blogid='. $blogid .'">'. $res->fields['title'] .'</a></strong><br />' ."\n";
@@ -598,7 +412,7 @@ $deleteString .= '" title="'. get_string('delete') .'" align="absmiddle" border=
             print $res->fields['url'] .'&nbsp;&nbsp;<a href="'. $res->fields['url'] .'" target=_new><img src="'. $rsspix .'" border="0" /></a>' ."\n";
             print '<a href="http://feeds.archive.org/validator/check?url='. $res->fields['url'] .'">(Validate)</a>';
             print '</td><td align="center">'. $editString .'</td>' ."\n";
-            print '<td align=\"center\">'. $deleteString .'</td>' ."\n";
+            print '<td align="center">'. $deleteString .'</td>' ."\n";
             print '</tr>'."\n";
             $res->MoveNext();
         }
@@ -635,13 +449,14 @@ function rss_get_form($act, $url, $rssid, $rsstype, $printnow=true) {
         $returnstring .= $url; 
     } 
     
-    $returnstring .= '" /><br /><select name="rsstype"><option value="R">RSS/RDF</option>
-    <option value="A"';
-    if ($act == 'rss_edit' and $rsstype == 'A') {
-        $returnstring .= ' selected';
-    } 
+    $returnstring .= '" /><br />';
+    //<select name="rsstype"><option value="R">RSS/RDF</option>
+    //<option value="A"';
+    //if ($act == 'rss_edit' and $rsstype == 'A') {
+    //    $returnstring .= ' selected';
+    //} 
     
-    $returnstring .= '>Atom</option></select>';
+    //$returnstring .= '>Atom</option></select>';
     
     $returnstring .= '<input type="hidden" name="act" value="';
     if ($act == 'rss_edit') {
@@ -663,41 +478,15 @@ function rss_get_form($act, $url, $rssid, $rsstype, $printnow=true) {
     }
     $returnstring .= '" />&nbsp;</form>';
     
-    $returnstring .= '<ul>' . get_string('block_rss_find_more_feeds', 'block_rss_client');
+//    $returnstring .= '<ul>' . get_string('block_rss_find_more_feeds', 'block_rss_client');
 // removed as this is possibly out of place here
 //    $returnstring .= '<li><a href="http://www.syndic8.com" target="_new">syndic8</a> <li><a href="http://www.newsisfree.com" target="_new">NewsIsFree</A>';
-    $returnstring .= '</ul>';
+//    $returnstring .= '</ul>';
     $returnstring .= '</td></tr></table>';
     
     if ($printnow){
         print $returnstring;
     }
     return $returnstring;
-}
-
-/**
- * added by Daryl Hawes for rss/atom feeds
- * found at http://us4.php.net/manual/en/function.fwrite.php
- * added check for moodle debug option. if off then use '@' to suppress error/warning messages
- * @param string $filename .
- * @param string $content .
- */
-if (! function_exists('file_put_contents')){
-    function file_put_contents($filename, $content) {
-        global $CFG;
-        $nr_of_bytes = 0;
-        if ($CFG->debug){
-            if (($file = fopen($filename, 'w+')) === false) return false;
-        } else {
-            if (($file = @fopen($filename, 'w+')) === false) return false;
-        }
-        if ($CFG->debug){
-            if ($nr_of_bytes = fwrite($file, $content, strlen($content)) === false) return false;
-        } else {
-            if ($nr_of_bytes = @fwrite($file, $content, strlen($content)) === false) return false;
-        }        
-        fclose($file);
-        return $nr_of_bytes;
-    }
 }
 ?>
