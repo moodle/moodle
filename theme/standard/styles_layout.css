@@ -127,6 +127,10 @@ a img {
     border-width:1px;
     border-style:solid;
 }
+
+.generalbox#intro {   /* On most modules */
+}
+
 .noticebox {
     border-width:1px;
     border-style:solid;
