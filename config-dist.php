@@ -41,15 +41,20 @@ $CFG->dbuser    = "username";
 $CFG->dbpass    = "password";
 
 
-// Next you need to tell Moodle where it is located
+// Next you need to tell Moodle where it is located.
+// Specify the full URL that moodle has been installed in:
 
 $CFG->wwwroot   = "http://example.com/moodle";
+
+
+// and now the full OS directory path to this same location:
+
 $CFG->dirroot   = "/web/moodle";
 
 
-// ...and where it can save files.  This directory should be writeable
-// by the web server user (usually 'nobody' or 'apache'), but it should 
-// not be accessible directly via the web.
+// Now you need a place where Moodle can save uploaded files.  This directory 
+// should be writeable by the web server user (usually 'nobody' or 'apache'), 
+// but it should not be accessible directly via the web.
 
 $CFG->dataroot  = "/home/moodledata";
 
@@ -62,7 +67,8 @@ $CFG->theme     = "standard";
 // Choose a sitewide language - this will affect text, buttons etc
 // See lib/languages.php for a full list of standard language codes.
 
-$CFG->lang     = "en";    
+$CFG->lang     = "en";      // Currently the only option
+
 
 // Choose a sitewide locale - this will affect the display of dates
 // You need to have this locale data installed on your operating 
@@ -87,7 +93,7 @@ $CFG->gdversion = 1;
 
 // If students haven't logged in for a very long time, then they are 
 // automatically unsubscribed from courses.  This parameter specifies
-// that time limit, in days.
+// that time limit, in DAYS.
 
 $CFG->longtimenosee = 100;
 
