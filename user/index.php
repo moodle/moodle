@@ -68,6 +68,8 @@
         $limit = "";
     }
 
+    $numstudentsall = count_records("user_students", "course", $course->id);
+
     if ($students = get_course_students($course->id, "$dsort $dir $limit")) {
         $numstudents = count($students);
         echo "<h2 align=center>$numstudents $course->students</h2>";
@@ -137,12 +139,11 @@
             }
             print_table($table);
 
-            if ($numstudents == USER_LARGE_CLASS and !$showall) {
-                $numstudents = count_records("user_students", "course", $course->id);
-                $moreinfo->count  = USER_LARGE_CLASS;
+            if ($numstudents < $numstudentsall and !$showall) {
+                $moreinfo->count  = $numstudents;
                 $moreinfo->things = strtolower($course->students);
                 echo "<center><p>".get_string("displayingfirst", "", $moreinfo);
-                echo " (<a href=\"index.php?id=$course->id&sort=$sort&dir=$dir&showall=1\">".get_string("showall", "", $numstudents)."</a>)";
+                echo " (<a href=\"index.php?id=$course->id&sort=$sort&dir=$dir&showall=1\">".get_string("showall", "", $numstudentsall)."</a>)";
                 echo "</p></center>";
             }
 
