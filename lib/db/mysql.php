@@ -1189,6 +1189,10 @@ function main_upgrade($oldversion=0) {
         table_column('groups', '', 'theme', 'varchar', '50', '', '', '', 'lang');
         table_column('user',   '', 'theme', 'varchar', '50', '', '', '', 'lang');
     }
+    
+    if ($oldversion < 2005021600) {     // course.idnumber should be varchar(100)
+        table_column('course', 'idnumber', 'idnumber', 'varchar', '100', '', '', '', '');
+    }
 
     return $result;
 }
