@@ -86,16 +86,20 @@
     </font>
     </td>
     <td>
+<<<<<<< mod.html
+        <!-- <textarea name="intro" rows=4 cols=50 wrap="virtual"><?php p($form->intro) ?></textarea> -->
+=======
         <?php print_textarea($usehtmleditor, 20, 50, 680, 400, "intro", $form->intro); ?>
+>>>>>>> 1.33
     </td>
 </tr>
 
 <tr valign=top>
     <td align=right><p><b><?php print_string("allowdiscussions", "forum", strtolower("$course->student")) ?>:</b></p></td>
     <td>
-        <?php 
+        <?php
             choose_from_menu($FORUM_OPEN_MODES, "open", $form->open, "");
-            helpbutton("allowdiscussions", get_string("allowdiscussions", 
+            helpbutton("allowdiscussions", get_string("allowdiscussions",
                        "forum", moodle_strtolower("$course->student")), "forum");
         ?>
     </td>
@@ -103,9 +107,9 @@
 <tr>
     <td align=right><p><b><?php print_string("forcesubscribeq", "forum") ?>:</b></p></td>
     <td>
-        <?php 
+        <?php
             unset($options);
-            $options[0] = get_string("no"); 
+            $options[0] = get_string("no");
             $options[1] = get_string("yes");
             choose_from_menu($options, "forcesubscribe", $form->forcesubscribe, "");
             helpbutton("subscription", get_string("forcesubscribeq", "forum"), "forum");
@@ -113,8 +117,8 @@
     </td>
 </tr>
 <tr valign=top>
-	<td align=right><p><b><?php  print_string("maxattachmentsize", "forum") ?>:</b></p></td>
-	<td>
+    <td align=right><p><b><?php  print_string("maxattachmentsize", "forum") ?>:</b></p></td>
+    <td>
         <?php
             $choices = get_max_upload_sizes($CFG->maxbytes, $course->maxbytes);
             $choices[1] = get_string("uploadnotallowed");
@@ -122,10 +126,10 @@
             choose_from_menu ($choices, "maxbytes", $form->maxbytes, "");
             helpbutton("maxattachmentsize", get_string("maxattachmentsize", "forum"), "forum");
         ?>
-	</td>
+    </td>
 </tr>
-<?php  
-    //Only show rss parameters if rss is activated at site and forum levels  
+<?php
+    //Only show rss parameters if rss is activated at site and forum levels
     if ($CFG->enablerssfeeds && $CFG->forum_enablerssfeeds) {
         echo "<tr valign=top>";
         echo "<td align=right><p><b>".get_string("rsstype").":</b></p></td>";
@@ -165,7 +169,7 @@
 <tr>
     <td align=right valign=top><p><b><?php print_string("allowratings", "forum") ?>:</b></p></td>
     <td>
-        <?php 
+        <?php
             echo "<script>";
             echo "  var subitemstime = ['startday','startmonth','startyear','starthour', 'startminute',".
                                        "'finishday','finishmonth','finishyear','finishhour','finishminute'];";

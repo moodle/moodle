@@ -288,6 +288,8 @@
         $configdata .= "<font size=+1>&nbsp;</font><a href=\"backup.php\">".get_string("backup")."</a> - <font size=1>".
                         get_string("adminhelpbackup")."</font><br />";
     }
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"editor.php\">". get_string("editorsettings") ."</a> - <font size=1>".
+                    get_string("adminhelpeditorsettings")."</font><br />";
 
     $table->data[] = array("<font size=+1><b><a href=\"configure.php\">".get_string("configuration")."</a></b>", 
                             $configdata);

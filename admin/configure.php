@@ -41,6 +41,9 @@
                                get_string("adminhelpbackup"));
     }
 
+    $table->data[]= array("<b><a href=\"editor.php\">". get_string("editorsettings") ."</a></b>",
+                    get_string("adminhelpeditorsettings"));
+
     print_table($table);
     
     print_footer($site);

@@ -1,0 +1,51 @@
+Add $CFG->aspellpath = '/path/to/aspell' to config.php
+
+copy speller folder to /moodle/lib/
+
+weblib.php
+function use_html_editor($name="",$courseid=0) {
+
+/// Sets up the HTML editor on textareas in the current page.
+/// If a field name is provided, then it will only be
+/// applied to that field - otherwise it will be used
+/// on every textarea in the page.
+///
+/// In most cases no arguments need to be supplied
+
+// Modification by Ludo ( Marc Alier to provide Spell Checking to the
+// html editor. August 2004 malier@lsi.upc.es
+/// START LUDO
+    global $CFG;
+    if(!empty($CFG->aspellpath)) {
+        echo "<script src=\"".$CFG->wwwroot."/lib/speller/spellChecker.js\"></script>";
+    }
+
+/// END LUDO
+
+    echo "<script language=\"javascript\" type=\"text/javascript\" defer=\"1\">\n";
+    if (empty($name)) {
+        echo "HTMLArea.replaceAll();\n";
+    } else {
+        if(!empty($CFG->aspellpath)) {
+        //START LUDO
+            echo "function clickHandler(editor, buttonId) {";
+            echo "editor._textArea.value = editor.getHTML();";
+            echo "var speller = new spellChecker( editor._textArea );";
+            echo "speller.popUpUrl ='$CFG->wwwroot/lib/speller/spellchecker.html';";
+            echo "speller.spellCheckScript = '$CFG->wwwroot/lib/speller/server-scripts/spellchecker.php?id=$courseid';";
+            echo "speller._moogle_edit=1;";
+            echo "speller._editor=editor;";
+            echo "speller.openChecker();";
+            //echo "    editor.setHTML(editor._textArea.value);";
+            echo "}\n"  ;
+            echo "var config = new HTMLArea.Config();\n";
+            echo "config.registerButton(\"spell-check\",  \"spell-check\", \"".$CFG->wwwroot."/lib/speller/spell.gif\", false, clickHandler);";
+            echo "config.toolbar.push([\"spell-check\"]);\n";
+            echo "HTMLArea.replace('$name', config);\n";
+        // FI LUDO */
+        } else {
+            echo "HTMLArea.replace('$name');\n";
+        }
+    }
+    echo "</script>\n";
+}

@@ -1821,10 +1821,11 @@ function use_html_editor($name="") {
 /// In most cases no arguments need to be supplied
 
     echo "<script language=\"javascript\" type=\"text/javascript\" defer=\"1\">\n";
+    print_editor_config();
     if (empty($name)) {
-        echo "HTMLArea.replaceAll();\n";
+        echo "\nHTMLArea.replaceAll(config);\n";
     } else {
-        echo "HTMLArea.replace('$name');\n";
+        echo "\nHTMLArea.replace('$name', config);\n";
     }
     echo "</script>\n";
 }
@@ -2516,6 +2517,84 @@ function print_side_block_end() {
     echo "\n";
 }
 
+function print_editor_config() {
+/// prints out the editor config.
 
+    global $CFG;
+
+    // print new config
+    echo "var config = new HTMLArea.Config();\n";
+    echo "config.pageStyle = \"body {";
+    if(!(empty($CFG->editorbackgroundcolor))) {
+        echo " background-color: $CFG->editorbackgroundcolor;";
+    }
+
+    if(!(empty($CFG->editorfontfamily))) {
+        echo " font-family: $CFG->editorfontfamily;";
+    }
+
+    if(!(empty($CFG->editorfontsize))) {
+        echo " font-size: $CFG->editorfontsize;";
+    }
+
+    echo " }\";\n";
+    echo "config.killWordOnPaste = ";
+    echo(!$CFG->editorkillword) ? "false":"true";
+    echo ";\n";
+    echo "config.fontname = {\n";
+
+    $fontlist = explode(";", $CFG->editorfontlist);
+    $i = 1;                     // Counter is used to get rid of the last comma.
+    $count = count($fontlist);  // Otherwise IE doesn't load the editor.
+
+    foreach($fontlist as $fontline) {
+        if(!empty($fontline)) {
+            list($fontkey, $fontvalue) = split(":", $fontline);
+            echo "\"". $fontkey ."\":\t'". $fontvalue ."'";
+            if($i < $count) {
+                echo ",\n";
+            }
+        }
+        $i++;
+    }
+    echo "};";
+
+    print_speller_code($usehtmleditor=true);
+}
+
+function print_speller_code ($usehtmleditor=false) {
+/// Prints out code needed for spellchecking.
+/// Original idea by Ludo (Marc Alier).
+    global $CFG;
+
+    if(!$usehtmleditor) {
+        echo "\n<script language=\"javascript\" type=\"text/javascript\">\n";
+        echo "function openSpellChecker() {\n";
+        echo "\tvar speller = new spellChecker();\n";
+        echo "\tspeller.popUpUrl = \"" . $CFG->wwwroot ."/lib/speller/spellchecker.html\";\n";
+        echo "\tspeller.spellCheckScript = \"". $CFG->wwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
+        echo "\tspeller.spellCheckAll();\n";
+        echo "}\n";
+        echo "</script>\n";
+    } else {
+        echo "\nfunction spellClickHandler(editor, buttonId) {\n";
+        echo "\teditor._textArea.value = editor.getHTML();\n";
+        echo "\tvar speller = new spellChecker( editor._textArea );\n";
+        echo "\tspeller.popUpUrl = \"" . $CFG->wwwroot ."/lib/speller/spellchecker.html\";\n";
+        echo "\tspeller.spellCheckScript = \"". $CFG->wwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
+        echo "\tspeller._moogle_edit=1;\n";
+        echo "\tspeller._editor=editor;\n";
+        echo "\tspeller.openChecker();\n";
+        echo "}\n";
+        echo "config.registerButton(\"spell-check\",  \"spell-check\", \"". $CFG->wwwroot ."/lib/speller/spell.gif\", false, spellClickHandler);\n";
+        echo "config.toolbar.push([\"spell-check\"]);\n";
+    }
+}
+
+function print_speller_button () {
+// print button for spellchecking
+// when editor is disabled
+    echo "<input type=\"button\" value=\"Check spelling\" onclick=\"openSpellChecker();\" />\n";
+}
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // moodle.php - created with Moodle 1.2 development (2004013101)
 
 $string['action'] = 'Action';
@@ -347,7 +347,7 @@ $string['emailformat'] = 'Email format';
 $string['emailmustbereal'] = 'Note: your email address must be a real one';
 $string['emailpasswordconfirmation'] = 'Hi $a->firstname,
 
-Someone (probably you) has requested a new password for your 
+Someone (probably you) has requested a new password for your
 account on \'$a->sitename\'.
 
 To confirm this and have a new password sent to you via email,
@@ -386,7 +386,7 @@ $string['enrolmentnotyet'] = 'Sorry, you can not access this course until <br />
 $string['enrolments'] = 'Enrolments';
 $string['enrolperiod'] = 'Enrolment period';
 $string['entercourse'] = 'Click to enter this course';
-$string['enteremailaddress'] = 'Enter in your email address to reset your 
+$string['enteremailaddress'] = 'Enter in your email address to reset your
    password and have the new password sent to you via email.';
 $string['entries'] = 'Entries';
 $string['error'] = 'Error';
@@ -564,7 +564,7 @@ $string['login'] = 'Login';
 $string['loginas'] = 'Login as';
 $string['loginguest'] = 'Login as a guest';
 $string['loginsite'] = 'Login to the site';
-$string['loginsteps'] = 'Hi! For full access to courses you\'ll need to take 
+$string['loginsteps'] = 'Hi! For full access to courses you\'ll need to take
    a minute to create a new account for yourself on this web site.
    Each of the individual courses may also have a one-time
    &quot;enrolment key&quot;, which you won\'t need until later. Here are
@@ -786,10 +786,10 @@ $string['refreshingevents'] = 'Refreshing events';
 $string['registration'] = 'Moodle Registration';
 $string['registrationemail'] = 'Email notifications';
 $string['registrationinfo'] = '<p>This page allows you to register your Moodle site with moodle.org.  Registration is free.
-The main benefit of registering is that you will be added to a low-volume mailing list 
+The main benefit of registering is that you will be added to a low-volume mailing list
 for important notifications such as security alerts and new releases of Moodle.
-<p>By default, your information will be kept private, and will never be sold or passed on to anyone else.  The only 
-   reason for collecting this information is for support purposes, and to help build up a statistical 
+<p>By default, your information will be kept private, and will never be sold or passed on to anyone else.  The only
+   reason for collecting this information is for support purposes, and to help build up a statistical
    picture of the Moodle community as a whole.
 <p>If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.
 <p>All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time by resubmitting this form.';
@@ -1019,5 +1019,19 @@ $string['yourlastlogin'] = 'Your last login was';
 $string['yourself'] = 'yourself';
 $string['yourteacher'] = 'your $a';
 $string['zippingbackup'] = 'Zipping backup';
-
+$string['editorsettings'] = 'Editor settings';
+$string['adminhelpeditorsettings'] = 'Define basic settings for HTML editor';
+$string['editorcommonsettings'] = 'Common settings';
+$string['editorbgcolor'] = 'Background-color';
+$string['editordefaultfont'] = 'Default font';
+$string['editorfontsize'] = 'Default font-size';
+$string['editorcleanonpaste'] = 'Clean Word HTML on paste';
+$string['editorenablespelling'] = 'Enable spellchecking';
+$string['editorfontlist'] = 'Fontlist';
+$string['edhelpbgcolor'] = 'Define editarea\'s background-color.<br />Valid values are for example: #ffffff or white';
+$string['edhelpfontfamily'] = 'The font-family property is a list of font family names and/or generic family names. Family names must be seperated with comma.';
+$string['edhelpfontsize'] = 'The default font-size sets the size of a font. <br />Valid values are for example: medium, large, smaller, larger, 10pt, 11px.';
+$string['edhelpcleanword'] = 'This setting enables or disables Word specific format filtering.';
+$string['edhelpenablespelling'] = 'Enable or disable spellchecking. When enabled, <strong>aspell</strong> must be installed on the server.';
+$string['edhelpfontlist'] = 'Define the fonts used on editors dropdown menu.';
 ?>

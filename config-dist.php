@@ -45,26 +45,26 @@ unset($CFG);  // Ignore this line
 // A special case exists when using PostgreSQL databases via sockets.    //
 // Define dbhost as follows, leaving dbname, dbuser, dbpass BLANK!:      //
 //    $CFG->dbhost = " user='muser' password='mpass' dbname='mdata'";    //
-//                
+//
 
 $CFG->dbtype    = 'mysql';       // mysql or postgres7 (for now)
-$CFG->dbhost    = 'localhost';   // eg localhost or db.isp.com 
+$CFG->dbhost    = 'localhost';   // eg localhost or db.isp.com
 $CFG->dbname    = 'moodle';      // database name, eg moodle
 $CFG->dbuser    = 'username';    // your database username
 $CFG->dbpass    = 'password';    // your database password
 $CFG->prefix    = 'mdl_';        // Prefix to use for all table names
 
 $CFG->dbpersist = false;         // Should database connections be reused?
-	             // "false" is the most stable setting
-	             // "true" can improve performance sometimes
+                 // "false" is the most stable setting
+                 // "true" can improve performance sometimes
 
 
 //=========================================================================
 // 2. WEB SITE LOCATION
 //=========================================================================
 // Now you need to tell Moodle where it is located. Specify the full
-// web address to where moodle has been installed.  If your web site 
-// is accessible via multiple URLs then choose the most natural one 
+// web address to where moodle has been installed.  If your web site
+// is accessible via multiple URLs then choose the most natural one
 // that your students would use.  Do not include a trailing slash
 
 $CFG->wwwroot   = 'http://example.com/moodle';
@@ -87,8 +87,8 @@ $CFG->dirroot   = '/home/example/public_html/moodle';
 // 4. DATA FILES LOCATION
 //=========================================================================
 // Now you need a place where Moodle can save uploaded files.  This
-// directory should be readable AND WRITEABLE by the web server user 
-// (usually 'nobody' or 'apache'), but it should not be accessible 
+// directory should be readable AND WRITEABLE by the web server user
+// (usually 'nobody' or 'apache'), but it should not be accessible
 // directly via the web.
 //
 // - On hosting systems you might need to make sure that your "group" has
@@ -103,9 +103,9 @@ $CFG->dataroot  = '/home/example/moodledata';
 // 5. DATA FILES PERMISSIONS
 //=========================================================================
 // The following parameter sets the permissions of new directories
-// created by Moodle within the data directory.  The format is in 
+// created by Moodle within the data directory.  The format is in
 // octal format (as used by the Unix utility chmod, for example).
-// The default is usually OK, but you may want to change it to 0750 
+// The default is usually OK, but you may want to change it to 0750
 // if you are concerned about world-access to the files (you will need
 // to make sure the web server process (eg Apache) can access the files.
 // NOTE: the prefixed 0 is important, and don't use quotes.
@@ -116,10 +116,10 @@ $CFG->directorypermissions = 0777;
 //=========================================================================
 // 6. DIRECTORY LOCATION  (most people can just ignore this setting)
 //=========================================================================
-// A very few webhosts use /admin as a special URL for you to access a 
-// control panel or something.  Unfortunately this conflicts with the 
-// standard location for the Moodle admin pages.  You can fix this by 
-// renaming the admin directory in your installation, and putting that 
+// A very few webhosts use /admin as a special URL for you to access a
+// control panel or something.  Unfortunately this conflicts with the
+// standard location for the Moodle admin pages.  You can fix this by
+// renaming the admin directory in your installation, and putting that
 // new name here.  eg "moodleadmin".  This will fix admin links in Moodle.
 
 $CFG->admin = 'admin';
@@ -133,7 +133,7 @@ $CFG->admin = 'admin';
 //
 //
 // Prevent users from updating their profile images
-//      $CFG->disableuserimages = true;  
+//      $CFG->disableuserimages = true;
 //
 // Prevent scheduled backups from operating (and hide the GUI for them)
 // Useful for webhost operators who have alternate methods of backups
@@ -144,8 +144,8 @@ $CFG->admin = 'admin';
 //      $CFG->restrictusers = 'teacher,fred,jim';
 //
 // Turning this on will make Moodle filter more than usual, including
-// forum subjects, activity names and so on (in ADDITION to the normal 
-// texts like forum postings, journals etc).  This is mostly only useful 
+// forum subjects, activity names and so on (in ADDITION to the normal
+// texts like forum postings, journals etc).  This is mostly only useful
 // when using the multilang filter.   This feature may not be complete.
 //      $CFG->filterall = true;
 //
@@ -157,17 +157,20 @@ $CFG->admin = 'admin';
 // The names here should all be existing blocks in the "blocks" directory.
 //      $CFG->defaultblocks = "participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity";
 //
-// This setting will put Moodle in Unicode mode.  It's very new and 
+// This setting will put Moodle in Unicode mode.  It's very new and
 // most likely doesn't work yet.   THIS IS FOR DEVELOPERS ONLY, IT IS
 // NOT RECOMMENDED FOR PRODUCTION SITES
 //      $CFG->unicode = true;
 //
-// Turning this on will make Moodle use a https connection just for the 
-// login page (providing a secure login), and then afterwards revert 
-// back to the normal http URL.  Requires https to be enabled on the 
+// Turning this on will make Moodle use a https connection just for the
+// login page (providing a secure login), and then afterwards revert
+// back to the normal http URL.  Requires https to be enabled on the
 // web server.
 //      $CFG->loginhttps = true;
-
+//
+// Aspell path. Required aspell installed on your server (0.50.1 or newer)
+// $CFG->aspellpath '/usr/bin/aspell'; // *nix
+// $CFG->aspellpath '"c:\path\to\aspell\aspell.exe"'; // Windows
 
 
 //=========================================================================
@@ -186,6 +189,6 @@ if (file_exists("$CFG->dirroot/lib/setup.php"))  {       // Do not edit
     }
     die;
 }
-// MAKE SURE WHEN YOU EDIT THIS FILE THAT THERE ARE NO SPACES, BLANK LINES, 
+// MAKE SURE WHEN YOU EDIT THIS FILE THAT THERE ARE NO SPACES, BLANK LINES,
 // RETURNS, OR ANYTHING ELSE AFTER THE TWO CHARACTERS ON THE NEXT LINE.
 ?>
