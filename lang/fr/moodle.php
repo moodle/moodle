@@ -444,23 +444,18 @@ $string['gd2'] = 'GD 2.x est installé';
 $string['gdneed'] = 'GD doit être installé pour visualiser ce graphique';
 $string['gdnot'] = 'GD n\'est pas installé';
 $string['go'] = 'Aller';
-$string['gpl'] = 'Copyright (C) 1999-2004 Martin Dougiamas (http://dougiamas.com)
+$string['gpl'] = 'Copyright (C) 1999-2005 Martin Dougiamas (http://moodle.com)
 
-This program is free software; you can redistribute it and/or modify
+Ce programme est libre, vous pouvez le redistribuer et/ou le modifier
+selon les termes de la Licence Publique Générale GNU publiée par la
+Free Software Foundation (version 2 ou bien toute autre version
+ultérieure choisie par vous).
 
-it under the terms of the GNU General Public License as published by
-
-the Free Software Foundation; either version 2 of the License, or
-
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-
-GNU General Public License for more details:
+Ce programme est distribué car potentiellement utile, mais
+SANS AUCUNE GARANTIE, ni explicite ni implicite, y compris les
+garanties de commercialisation ou d\'adaptation dans un but
+spécifique. Reportez-vous à la Licence Publique Générale GNU
+pour plus de détails&nbsp;:
 
 http://www.gnu.org/copyleft/gpl.html';
 $string['grade'] = 'Note';
