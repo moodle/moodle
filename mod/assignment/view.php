@@ -91,6 +91,7 @@
             if ($submission) {
                 echo "<P ALIGN=CENTER>".get_string("overwritewarning", "assignment")."</P>";
             }
+            print_heading(get_string("submitassignment", "assignment").":", "CENTER");
             assignment_print_upload_form($assignment);
         }
     }

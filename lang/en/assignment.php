@@ -20,6 +20,7 @@ $string['notsubmittedyet'] = "Not submitted yet";
 $string['overwritewarning'] = "Warning: uploading again will REPLACE your current submission";
 $string['submissionfeedback'] = "Submission feedback";
 $string['submissions'] = "Submissions";
+$string['submitassignment'] = "Submit your assignment using this form";
 $string['submitted'] = "Submitted";
 $string['typeuploadsingle'] = "Upload a single file, worth between 0 - 100 marks";
 $string['uploadedfiles'] = "uploaded files";
