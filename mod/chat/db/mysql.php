@@ -54,8 +54,8 @@ function chat_upgrade($oldversion) {
     }
 
     if ($oldversion < 2005020300) {
-        table_column('chat_users', '', 'course');
-        table_column('chat_users', '', 'lang', 'varchar', '10', '', '');
+        table_column('chat_users', '', 'course', 'integer', '10', 'unsigned', '0', 'not null', '');
+        table_column('chat_users', '', 'lang'  , 'varchar', '10', ''        , '' , 'not null', '');
     }
     
     return true;
