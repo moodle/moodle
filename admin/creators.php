@@ -19,6 +19,10 @@
         error("You must be an administrator to use this page.");
     }
 
+    if (!confirm_sesskey()) {
+        error(get_string('confirmsesskeybad', 'error'));
+    }
+
     $primaryadmin = get_admin();
 
 /// assign all of the configurable language strings

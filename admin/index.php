@@ -314,7 +314,7 @@
     $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=on\">".get_string("assignteachers")."</a> - <font size=1>".
                  get_string("adminhelpassignteachers").
                  " <img src=\"../pix/t/user.gif\" height=11 width=11></font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"creators.php\">".get_string("assigncreators")."</a> - <font size=1>".
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"creators.php?sesskey=$USER->sesskey\">".get_string("assigncreators")."</a> - <font size=1>".
                  get_string("adminhelpassigncreators")."</font><br />";
     $userdata .= "<font size=+1>&nbsp;</font><a href=\"admin.php?sesskey=$USER->sesskey\">".get_string("assignadmins")."</a> - <font size=1>".
                  get_string("adminhelpassignadmins")."</font><br />";
