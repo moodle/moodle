@@ -160,12 +160,17 @@ color: black;
   <table width="660" border="0" cellspacing="0" cellpadding="2">
     <tr>
       <td width="380" valign="top"><fieldset>
-        <legend><?php print_string("filebrowser","editor");?></legend>
+        <legend><?php 
+        if(isteacher($id)) {
+            print_string("filebrowser","editor");
+        } else {
+            print "";
+        }?></legend>
         
         <div class="space"></div>
         <?php print(isteacher($id))?
         "<iframe id=\"fbrowser\" name=\"fbrowser\" src=\"../coursefiles.php?id=".$course->id."\" width=\"360\" height=\"260\"></iframe>":
-        "<iframe src=\"blank.html\" width=\"360\" height=\"260\"></iframe>"; ?>
+        ""; ?>
 		<p>
 		</p>
   	    <div class="space"></div>

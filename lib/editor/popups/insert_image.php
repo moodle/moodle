@@ -260,10 +260,15 @@ form { margin-bottom: 0px; margin-top: 0px; }
   </table></form>
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
-      <td width="55%" valign="top"><?php print_string("filebrowser","editor");?>:<br>
+      <td width="55%" valign="top"><?php 
+      if(isteacher($id)) {
+          print_string("filebrowser","editor");
+      } else {
+          print "";
+      }?><br>
       <?php print(isteacher($id))?
 	  "<iframe id=\"ibrowser\" name=\"ibrowser\" src=\"".$CFG->wwwroot."/lib/editor/coursefiles.php?usecheckboxes=true&id=".$course->id."\" style=\"width: 100%; height: 200px;\"></iframe>":
-	  "<iframe src=\"about:blank\" style=\"width: 100%; height: 200px;\"></iframe>";?>
+	  "";?>
       </td>
       <td width="45%" valign="top"><?php print_string("preview","editor");?>:<br>
 	  <iframe id="ipreview" name="ipreview" src="about:blank" style="width: 100%; height: 200px;"></iframe>
