@@ -83,6 +83,9 @@ function tex2image($texexp) {
           make_upload_directory($CFG->teximagedir);
        }
        $pathname = "$CFG->dataroot/$CFG->teximagedir/$image";
+       if (file_exists($pathname)) {
+          unlink($pathname);
+       }
        $windows = 0;
          switch (PHP_OS) {
        case "Linux":
@@ -99,7 +102,7 @@ function tex2image($texexp) {
            $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp);
        break;
        }
-       system($cmd);
+       system($cmd, $status);
   }
   if ($texexp && file_exists($pathname)) {
            $lastmodified = filemtime($pathname);
@@ -113,8 +116,16 @@ function tex2image($texexp) {
            readfile("$pathname");
    } else {
            if (!$windows) {
-             $cmd = "$cmd 2>&1";
-             echo `$cmd` . "<br>\n";
+             $ecmd = "$cmd 2>&1";
+             echo `$ecmd` . "<br>\n";
+           }
+           echo "The shell command<br>$cmd<br>returned status = $status<br>\n";
+	   if ($status == 4) {
+	     echo "Status corresponds to illegal instruction<br>\n";
+           } else if ($status == 11) {
+	     echo "Status corresponds to bus error<br>\n";
+           } else if ($status == 22) {
+	     echo "Status corresponds to abnormal termination<br>\n";
            }
            echo "Image not found!";
    }

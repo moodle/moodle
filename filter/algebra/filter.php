@@ -149,7 +149,7 @@ function algebra_filter ($courseid, $text) {
            $texexp = `$cmd`;
            if (preg_match('/parsehilight/',$texexp)) {
              $text = str_replace( $matches[0][$i],"<b>Syntax error:</b> " . $texexp,$text);
-           } else {
+           } else if ($texexp) {
               $texexp = str_replace('#','\not= ',$texexp);
               $texexp = str_replace('%','\leq ',$texexp);
               $texexp = str_replace('!','\geq ',$texexp);
@@ -185,7 +185,9 @@ function algebra_filter ($courseid, $text) {
 	     $texcache->timemodified = time();
 	     insert_record("cache_filters",$texcache);
              $text = str_replace( $matches[0][$i], string_file_picture_algebra($filename, $texexp), $text);
-	   }
+	   } else {
+	     $text = str_replace( $matches[0][$i],"<b>Undetermined error:</b> ",$text);
+           }
 	} else {
           $text = str_replace( $matches[0][$i], string_file_picture_algebra($filename, $texcache->rawtext), $text);
 	}

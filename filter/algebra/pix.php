@@ -49,18 +49,19 @@
             $texexp = '\Large ' . $texexp;
             switch (PHP_OS) {
                 case "Linux":
-                    system("$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -e $pathname ". escapeshellarg($texexp) );
+                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -e $pathname ". escapeshellarg($texexp);
                 break;
                 case "WINNT":
                 case "WIN32":
                 case "Windows":
                     $texexp = str_replace('"','\"',$texexp);
-                    system("$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname \"$texexp\"");
+                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname \"$texexp\"";
                 break;
                 case "Darwin":
-                    system("$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp) );
+                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp);
                 break;
             }
+	    system($cmd, $status);
         }
     }
 
@@ -75,6 +76,7 @@
         header("Content-type: $filetype");
         readfile("$pathname");
     } else {
+        echo "The shell command<br>$cmd<br>returned status = $status<br>\n";
         echo "Image not found!";
     }
 
