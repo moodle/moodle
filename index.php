@@ -2,6 +2,7 @@
     // index.php - the front page.
     
     require("config.php");
+    include("mod/reading/lib.php"); 
 
     if (! $site = get_record("course", "category", 0)) {
         redirect("$CFG->wwwroot/admin/");
@@ -23,8 +24,16 @@
       <LI><A TITLE="Available courses on this server" HREF="course/"><B>Courses</B></A><BR></LI>
       <LI><A TITLE="Site-level Forums" HREF="mod/discuss/index.php?id=<?=$site->id?>">Forums</A></LI>
 
-      <? include("mod/reading/lib.php"); 
-         list_all_readings();
+      <? 
+         if ($readings = list_all_readings()) {
+             foreach ($readings as $reading) {
+	         echo "<LI>$reading";
+             }
+         }
+     
+         if ($USER->editing) {
+             echo "<P align=right><A HREF=\"$CFG->wwwroot/course/mod.php?id=$course->id&week=0&add=reading\">Add Reading</A>...</P>";
+         }
       ?>
 
         <BR><BR>
