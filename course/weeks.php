@@ -150,6 +150,7 @@
         if (!empty($sections[$week])) {
             $thisweek = $sections[$week];
         } else {
+            unset($thisweek);
             $thisweek->course = $course->id;   // Create a new week structure
             $thisweek->section = $week;
             $thisweek->summary = "";
