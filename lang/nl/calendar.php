@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004032800)
+      // calendar.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['april'] = 'April';
@@ -13,6 +13,7 @@ $string['courseevents'] = 'Vak';
 $string['dayview'] = 'Per dag';
 $string['daywithnoevents'] = 'Vandaag geen activiteiten';
 $string['december'] = 'December';
+$string['default'] = 'Standaard';
 $string['deleteevent'] = 'Wis activiteit';
 $string['detailedmonthview'] = 'Gedetaileerd maandoverzicht';
 $string['durationnone'] = 'Geen tijdsduur';
