@@ -918,28 +918,28 @@ function forum_print_discussion_header(&$post, $courseid, $ownpost=false, $reply
     echo "<tr class=\"forumpostheader\">";
 
     // Topic
-    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheadertopic\" valign=top width=\"100%\">";
+    echo "<td bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\" valign=top width=\"100%\">";
     echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">$post->subject</a>";
     echo "</td>\n";
 
     // Picture
-    echo "<td bgcolor=\"$THEME->cellheading2\" class=\"forumpostheaderpicture\" width=35>";
+    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderpicture\" width=35>";
     print_user_picture($post->userid, $courseid, $post->picture);
     echo "</td>\n";
 
     // User name
-    echo "<td bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadername\" align=left nowrap>";
+    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheadername\" align=left nowrap>";
     echo "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$post->firstname $post->lastname</a>";
     echo "</td>\n";
 
     // Replies
-    echo "<td bgcolor=\"$THEME->cellheading2\" class=\"forumpostheaderreplies\" align=center nowrap>";
+    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderreplies\" align=center nowrap>";
     if ($link) {
         echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">$post->replies</a>";
     }
     echo "</td>\n";
 
-    echo "<td bgcolor=\"$THEME->cellheading2\" class=\"forumpostheaderdate\" align=right nowrap>";
+    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderdate\" align=right nowrap>";
     if (!empty($post->timemodified)) {
         echo userdate($post->timemodified);
     } else {
