@@ -51,7 +51,15 @@
         $table->align[] = "CENTER";
     }
 
-    if ($forums = get_records("forum", "course", $id, "name ASC")) {
+    //Obtains all the forum data and visible field
+    if ($forums = get_records_sql("SELECT f.*,cm.visible as visible
+                                   FROM {$CFG->prefix}course_modules cm,
+                                        {$CFG->prefix}forum f
+                                   WHERE cm.course = '$id' AND
+                                         f.course = '$id' AND
+                                         f.id = cm.instance
+                                   ORDER BY name ASC"))
+       {
         foreach ($forums as $forum) {
             switch ($forum->type) {
                 case "news":
@@ -76,6 +84,15 @@
         foreach ($generalforums as $forum) {
             $count = count_records("forum_discussions", "forum", "$forum->id");
 
+            //Calculate the href
+            if (!$forum->visible) {
+                //Show dimmed if the mod is hidden
+                $tt_href = "<A class=\"dimmed\" HREF=\"view.php?f=$forum->id\">$forum->name</A>";
+            } else {
+            //Show normal if the mod is visible
+                $tt_href = "<A HREF=\"view.php?f=$forum->id\">$forum->name</A>";
+            }
+
             if ($can_subscribe) {
                 if (forum_is_forcesubscribed($forum->id)) {
                     $sublink = get_string("yes");
@@ -89,11 +106,9 @@
                     }
                     $sublink = "<A TITLE=\"$subtitle\" HREF=\"subscribe.php?id=$forum->id\">$subscribed</A>";
                 }
-                $table->data[] = array ("<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
-                                        "$forum->intro", "$count", "$sublink");
+                $table->data[] = array ($tt_href, "$forum->intro", "$count", "$sublink");
             } else {
-                $table->data[] = array ("<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
-                                        "$forum->intro", "$count");
+                $table->data[] = array ($tt_href, "$forum->intro", "$count");
             }
         }
         print_heading(get_string("generalforums", "forum"));
@@ -122,7 +137,16 @@
                 if (!$forum->section) {     // some forums are in the "0" section
                     $forum->section = "";
                 }
-    
+
+                //Calculate the href
+                if (!$forum->visible) {
+                    //Show dimmed if the mod is hidden
+                    $tt_href = "<A class=\"dimmed\" HREF=\"view.php?f=$forum->id\">$forum->name</A>";
+                } else {
+                //Show normal if the mod is visible
+                    $tt_href = "<A HREF=\"view.php?f=$forum->id\">$forum->name</A>";
+                }
+
                 if ($can_subscribe) {
                     if (forum_is_forcesubscribed($forum->id)) {
                         $sublink = get_string("yes");
@@ -136,11 +160,9 @@
                         }
                         $sublink = "<A TITLE=\"$subtitle\" HREF=\"subscribe.php?id=$forum->id\">$subscribed</A>";
                     }
-                    $table->data[] = array ("$forum->section", "<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
-                                            "$forum->intro", "$count", "$sublink");
+                    $table->data[] = array ("$forum->section", $tt_href, "$forum->intro", "$count", "$sublink");
                 } else {
-                    $table->data[] = array ("$forum->section", "<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
-                                            "$forum->intro", "$count");
+                    $table->data[] = array ("$forum->section", $tt_href, "$forum->intro", "$count");
                 }
             }
             print_heading(get_string("learningforums", "forum"));
