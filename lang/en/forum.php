@@ -149,6 +149,7 @@ $string['searchuserid'] = 'The Moodle ID of the author';
 $string['searchwords'] = 'These words can appear anywhere in the post';
 $string['searcholderposts'] = 'Search older posts...';
 $string['searchresults'] = 'Search results';
+$string['seeallposts'] = 'See all posts made by this user';
 $string['sendinratings'] = 'Send in my latest ratings';
 $string['showsubscribers'] = 'Show/edit current subscribers';
 $string['singleforum'] = 'A single simple discussion';

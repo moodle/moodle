@@ -2380,6 +2380,12 @@ function forum_print_user_discussions($courseid, $userid, $groupid=0) {
 
         print_heading( get_string("discussionsstartedbyrecent", "forum", $fullname) );
 
+        echo '<p align="center" class="allposts">';
+        echo '(<a href="'.$CFG->wwwroot.'/mod/forum/search.php?id='.$courseid.'&amp;userid='.$userid.'">';
+        echo get_string('seeallposts', 'forum');
+        echo '</a>)';
+        echo '</p>';
+
         foreach ($discussions as $discussion) {
             $countdiscussions++;
             if ($countdiscussions > $maxdiscussions) {

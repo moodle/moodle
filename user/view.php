@@ -252,7 +252,7 @@
     }
 
 //  Print other functions
-    echo "<center><table align=\"center\"><tr>";
+    echo '<div class="buttons"><table align="center"><tr>';
     if ($currentuser and !isguest()) {
         if ($internalpassword ) {
             echo "<td nowrap=\"nowrap\"><form action=\"$internalpassword\" method=\"get\">";
@@ -306,7 +306,7 @@
         }
     }
     echo "<td></td>";
-    echo "</tr></table></center>\n";
+    echo "</tr></table></div>\n";
 
     $isseparategroups = ($course->groupmode == SEPARATEGROUPS and
                          $course->groupmodeforce and
