@@ -42,6 +42,11 @@
 // File path to the directory where mathml_filter.php resides
     $CFG->algebrafilterdir = "filter/algebra";
     $CFG->texfilterdir = "filter/tex";
+    if ( (PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows") ) {
+      $CFG->algebrafilterdirwin = "filter\\algebra";
+    }
+
+
 
 /// These lines are important - the variable must match the name 
 /// of the actual function below
@@ -161,7 +166,7 @@ function algebra_filter ($courseid, $text) {
            $algebra = preg_replace('!\r\n?!',' ',$algebra);
            if ( (PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows") ) {
               $algebra = "\"". str_replace('"','\"',$algebra) . "\"";
-              $cmd  = "cd $CFG->dirroot/$CFG->algebrafilterdir & algebra2tex.pl $algebra";
+              $cmd  = "cd $CFG->dirroot\\$CFG->algebrafilterdirwin & algebra2tex.pl $algebra";
            } else {      
               $algebra = escapeshellarg($algebra);
               $cmd  = "cd $CFG->dirroot/$CFG->algebrafilterdir; ./algebra2tex.pl $algebra";
