@@ -9,6 +9,7 @@
 	notavailable (for students)
 	openexercise (for teachers)
 	setupassignment (for teachers)
+    showsubmissions (for students)
 	studentsview
 	submitassignment 
 	teachersview
@@ -72,7 +73,7 @@
 			case 0 :
 			case 1 : $action = 'notavailable'; break;
 			case 2 : $action = 'studentsview'; break;
-			case 3 : $action = 'notavailable'; break;
+			case 3 : $action = 'showsubmissions'; break;
 			case 4 : $action = 'displayfinalgrade';
 		}
 	}
@@ -230,6 +231,48 @@
 				}
 			}
 		}
+	}
+
+
+	/****************** showsubmissions (for students, in phase 3)***********************/
+	elseif ($action == 'showsubmissions') {
+		exercise_print_assignment_info($exercise);
+        print_heading(get_string("submissionsnowclosed", "exercise"));
+		// show student's assessment (linked to the teacher's exercise/submission
+		print_heading(get_string("yourassessment", "exercise"));
+		exercise_list_teacher_submissions($exercise, $USER);
+		echo "<hr size=\"1\" noshade>";
+        if ($submissions = exercise_get_user_submissions($exercise, $USER)) {
+		    print_heading(get_string("yoursubmission", "exercise"));
+            print_simple_box_start("center");
+            $table->head = array (get_string("submission", "exercise"),  get_string("submitted", "exercise"),
+                    get_string("assessed", "exercise"), get_string("grade"));
+            $table->width = "100%";
+            $table->align = array ("left", "left", "left", "center");
+            $table->size = array ("*", "*", "*", "*");
+            $table->cellpadding = 2;
+            $table->cellspacing = 0;
+
+            foreach ($submissions as $submission) {
+                if ($assessments = exercise_get_assessments($submission)) {
+                    // should only be one but we'll loop anyway
+                    foreach ($assessments as $assessment) {
+                        $table->data[] = array(exercise_print_submission_title($exercise, $submission), 
+                                userdate($submission->timecreated), userdate($assessment->timecreated), 
+                                "<a href=\"assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id\">".$assessment->grade * $exercise->grade / 100.0."</a>");
+                    }
+                } else {
+                    // submission not yet assessed (by teacher)
+                    $table->data[] = array(exercise_print_submission_title($exercise, $submission), 
+                            userdate($submission->timecreated), get_string("notassessedyet", "exercise"), 0);
+                }
+            }
+            print_table($table);
+            print_simple_box_end();
+        } else {
+            print_heading(get_string("nosubmissions", "exercise"));
+        }
+		echo "<hr size=\"1\" noshade>";
 	}
 
 

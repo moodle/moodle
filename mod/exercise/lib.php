@@ -1016,12 +1016,13 @@ function exercise_get_assess_logs($course, $timestart) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 function exercise_get_assessments($submission) {
-	// Return all assessments for this submission provided they are after the editing time, ordered oldest first, newest last
+	// Return all assessments for this submission provided they are after the editing time, 
+    // ordered oldest first, newest last
 	global $CFG;
 
 	$timenow = time();
     return get_records_select("exercise_assessments", "(submissionid = $submission->id) AND 
-		(timecreated < $timenow - $CFG->maxeditingtime)", "timecreated DESC");
+		(timecreated < $timenow - $CFG->maxeditingtime)", "timecreated ASC");
 }
 
 
@@ -1279,17 +1280,17 @@ function exercise_get_user_assessments($exercise, $user) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 function exercise_get_user_submissions($exercise, $user) {
-	// return submission of user newest first, oldest last
+	// return submission of user oldest first, newest last
 	// teachers submit "exercises"
     if (! $course = get_record("course", "id", $exercise->course)) {
         error("Course is misconfigured");
         }
 	if (isteacher($course->id, $user->id)) {
 		return get_records_select("exercise_submissions ",
-             "exerciseid = $exercise->id AND isexercise = 1", "timecreated DESC" );
+             "exerciseid = $exercise->id AND isexercise = 1", "timecreated" );
 		}
     return get_records_select("exercise_submissions ",
-             "exerciseid = $exercise->id AND userid = $user->id", "timecreated DESC" );
+             "exerciseid = $exercise->id AND userid = $user->id", "timecreated" );
 }
 
 
