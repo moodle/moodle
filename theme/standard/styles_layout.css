@@ -461,11 +461,11 @@ td.cal_event_description {
 }
 
 .sideblock .sideblockheading .hide-show img {
-    background: url('../../pix/t/switch.gif') no-repeat bottom;
+    background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
 }
 
 .sideblock.hidden .sideblockheading .hide-show img {
-    background: url('../../pix/t/down.gif') no-repeat bottom;
+    background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
 .sideblock.hidden .sideblockmain {
