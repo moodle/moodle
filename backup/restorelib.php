@@ -1715,7 +1715,7 @@
                         }
                         if ($newid) {
                             //We have the newid, update backup_ids
-                            backup_putid($restore->backup_unique_code,"group",
+                            backup_putid($restore->backup_unique_code,"groups",
                                          $group->id, $newid);
                         }
                         //Now restore members in the groups_members, only if
@@ -1724,6 +1724,10 @@
                             $status2 = restore_create_groups_members($newid,$info,$restore);
                         }
                     }   
+                }
+                //Now, restore group_files
+                if ($status && $status2) {
+                    $status2 = restore_group_files($restore); 
                 }
             }
         } else {
@@ -1966,6 +1970,61 @@
                                 backup_flush(300);
                             }
                         }
+                    }
+                }
+            }
+        }
+        //If status is ok and whe have dirs created, returns counter to inform
+        if ($status and $counter) {
+            return $counter;
+        } else {
+            return $status;
+        }
+    }
+
+    //This function restores the groupfiles from the temp (group_files) directory to the
+    //dataroot/groups directory
+    function restore_group_files($restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        $counter = 0;
+
+        //First, we check to "groups" exists and create is as necessary
+        //in CFG->dataroot
+        $dest_dir = $CFG->dataroot.'/groups';
+        $status = check_dir_exists($dest_dir,true);
+
+        //Now, we iterate over "group_files" records to check if that user dir must be
+        //copied (and renamed) to the "groups" dir.
+        $rootdir = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code."/group_files";
+        //Check if directory exists
+        if (is_dir($rootdir)) {
+            $list = list_directories ($rootdir);
+            if ($list) {
+                //Iterate
+                $counter = 0;
+                foreach ($list as $dir) {
+                    //Look for dir like groupid in backup_ids
+                    $data = get_record ("backup_ids","backup_code",$restore->backup_unique_code,
+                                                     "table_name","groups",
+                                                     "old_id",$dir);
+                    //If that group exists in backup_ids
+                    if ($data) {
+                        if (!file_exists($dest_dir."/".$data->new_id)) {
+                            $status = backup_copy_file($rootdir."/".$dir, $dest_dir."/".$data->new_id);
+                            $counter ++;
+                        }
+                        //Do some output
+                        if ($counter % 2 == 0) {
+                            echo ".";
+                            if ($counter % 40 == 0) {
+                                echo "<br />";
+                            }
+                            backup_flush(300);
+                        } 
                     }
                 }
             }

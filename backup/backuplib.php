@@ -460,6 +460,17 @@
         return $status;
     }
 
+    //Function to check and create the "group_files" dir to
+    //save all the user files we need from "groups" dir
+    function check_and_create_group_files_dir($backup_unique_code) {
+ 
+        global $CFG;
+
+            $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/group_files",true);
+
+        return $status;
+    }
+
     //Function to check and create the "course_files" dir to
     //save all the course files we need from "CFG->datadir/course" dir
     function check_and_create_course_files_dir($backup_unique_code) {
@@ -1437,6 +1448,11 @@
             }
             //End groups tag
             $status = fwrite ($bf,end_tag("GROUPS",2,true));
+
+            //Now save group_files
+            if ($status && $status2) {
+                $status2 = backup_copy_group_files($preferences);
+            }
         }
         return ($status && $status2);
     }
@@ -1578,6 +1594,43 @@
                     if ($data) {
                         $status = backup_copy_file($rootdir."/".$dir,
                                        $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/user_files/".$dir);
+                    }
+                }
+            }
+        }
+
+        return $status;
+    }
+
+    //This function copies all the needed files under the "groups" directory to the "group_files"
+    //directory under temp/backup
+    function backup_copy_group_files ($preferences) {
+
+        global $CFG;
+
+        $status = true;
+
+        //First we check if "group_files" exists and create it as necessary
+        //in temp/backup/$backup_code  dir
+        $status = check_and_create_group_files_dir($preferences->backup_unique_code);
+ 
+        //Now iterate over directories under "groups" to check if that user must be 
+        //copied to backup
+        
+        $rootdir = $CFG->dataroot.'/groups';
+        //Check if directory exists
+        if (is_dir($rootdir)) {
+            $list = list_directories ($rootdir);
+            if ($list) {
+                //Iterate
+                foreach ($list as $dir) {
+                    //Look for dir like group in groups table
+                    $data = get_record ('groups', 'courseid', $preferences->backup_course,
+                                                  'id',$dir);
+                    //If exists, copy it
+                    if ($data) {
+                        $status = backup_copy_file($rootdir."/".$dir,
+                                       $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/group_files/".$dir);
                     }
                 }
             }
